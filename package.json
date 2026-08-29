@@ -4,7 +4,9 @@
   "description": "Building the game:",
   "main": "out/html/index.html",
   "scripts": {
-    "dendrynexus": "dendrynexus"
+    "dendrynexus": "dendrynexus",
+    "build": "dendrynexus make-html && cp node_modules/d3/dist/d3.min.js out/html/d3.v7.min.js && cp -R assets/img out/html/",
+    "serve": "python3 -m http.server 8000 --directory out/html"
   },
   "repository": {
     "type": "git",
@@ -18,7 +20,8 @@
   },
   "homepage": "https://github.com/aucchen/social_democracy_alternate_history",
   "dependencies": {
-    "dendrynexus": "github:aucchen/dendrynexus",
+    "d3": "7.9.0",
+    "dendrynexus": "git+https://github.com/aucchen/dendrynexus.git#aa4287ed2c03940c52b190c0a8c102b795ac1c79",
     "parliament-svg": "^3.0.0"
   }
 }

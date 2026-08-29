@@ -345,7 +345,7 @@ Rudolf Hilferding is now an advisor.
 title: Otto Wels
 subtitle: Otto Wels is a long-time party organizer and member of the leadership, serving under Friedrich Ebert. {!<br><br>!}[? if difficulty < 0 : Actions -  Clear the Agenda, Party Discipline, Emergency Fundraising ?]
 is-card: true
-card-image: img/portraits/WelsRudolf.jpg
+card-image: img/portraits/WelsOtto.jpg
 tags: center_advisor
 view-if: wels_advisor = 0 and n_advisors < 3 and centrists_resign = 0
 on-arrival: wels_advisor = 1; n_advisors += 1

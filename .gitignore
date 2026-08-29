@@ -1,0 +1,15 @@
+# Installed dependencies
+node_modules/
+
+# Local editor and operating-system metadata
+.idea/
+.DS_Store
+
+# DendryNexus and deployment build output. The six tracked custom files in
+# out/html remain intentionally unignored.
+out/game.json
+out/html/core.js
+out/html/jquery-1.11.1.min.js
+out/html/d3.v7.min.js
+out/html/game.json
+out/html/img/
