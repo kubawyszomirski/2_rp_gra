@@ -53,8 +53,8 @@ and draws charts. Evidence: `package.json`, `source/info.dry`,
   its content and normally consumes the month's action.
 - A **deck** is a scene whose eligible tagged scenes can be drawn as cards.
   `main.party` draws `#party_affairs`; `main.govt` draws `#govt_affairs`.
-- The **hand** holds drawn cards. The normal difficulty route limits it to
-  three cards; easy mode uses four.
+- The **hand** holds drawn cards. The single gameplay route limits it to three
+  cards.
 - A **pinned card** is always presented separately and is not discarded when
   played. Advisers and the leadership-management entry use this behavior.
 
@@ -97,9 +97,9 @@ variable rename is not a local change.
 ### How the game starts
 
 The root scene routes on `started`. When it is zero, the player sees the start
-menu and chooses difficulty. `root.start` initializes the state, and the
-difficulty subscene adjusts a small set of values. Control reaches `main` (or
-`main.main_easy`), which creates the hand/decks. Evidence:
+menu. `root.start` initializes the state with the former Normal-mode values,
+then a single **Begin** choice reaches `main`, which creates the hand/decks.
+There is no difficulty selection. Evidence:
 `source/scenes/root.scene.dry`, `source/scenes/main.scene.dry`.
 
 ### A normal player turn
@@ -117,9 +117,10 @@ difficulty subscene adjusts a small set of values. Control reaches `main` (or
 6. The event selector evaluates `#event`. An eligible scheduled or threshold
    event may run; otherwise play returns to the main hand.
 
-Easy mode exposes a discard path that reverses the action marker, clears the
-card timer, resets the card visit count, and puts the card back into the hand.
-Adviser cancellation has similar targeted rollback behavior. Evidence:
+Eligible cards expose a return-to-hand path that reverses the action marker,
+clears the card timer, resets the card visit count, and puts the card back into
+the three-card hand. Adviser cancellation has similar targeted rollback
+behavior. Evidence:
 `source/scenes/easy_discard.scene.dry` and
 `source/scenes/cancel_advisor_action.scene.dry`.
 
@@ -148,8 +149,7 @@ institutional state changes.
 ```mermaid
 flowchart TD
     A[Start menu] --> B[root.start initializes state]
-    B --> C[Difficulty adjustments]
-    C --> D[Main hand]
+    B --> D[Main hand with fixed baseline]
     D --> E{Player action}
     E -->|Open deck| F[Filter eligible tagged cards]
     F --> G[Randomly draw a card]
@@ -177,19 +177,20 @@ be traced back to code.
 
 ### 1. Game initialization
 
-- **Purpose:** Create a complete starting state and choose the first playable
+- **Purpose:** Create a complete starting state and enter the single playable
   route.
-- **Player sees:** Start menu, difficulty options, credits, achievements, and
-  an election-simulation entry.
+- **Player sees:** Start menu, credits, achievements, an election-simulation
+  entry, and one **Begin** action after the introduction.
 - **Sequence:** `root` checks `started`; `root.start` assigns arrays, numeric
-  state, flags, names, records, and timers; a difficulty branch adjusts values;
-  control enters `main`.
+  state, flags, names, records, and timers using the fixed baseline; control
+  enters `main`.
 - **Scenes/files:** `root`, `root.start`, `root.start_menu*` in
   `source/scenes/root.scene.dry`; `source/scenes/main.scene.dry`;
   `source/scenes/election_simulation.scene.dry`.
-- **Important state:** `started`, `time`, `year`, `month`, `difficulty`,
-  `historical_mode`, `classes`, `parties`, `factions`, `timers`, and the bulk
-  of the values catalogued in `STATE_VARIABLES.md`.
+- **Important state:** `started`, `time`, `year`, `month`, legacy compatibility
+  flags `difficulty = 0` and `historical_mode = 0`, `classes`, `parties`,
+  `factions`, `timers`, and the bulk of the values catalogued in
+  `STATE_VARIABLES.md`.
 - **Depends on:** Dendry scene routing and embedded JavaScript.
 - **Depended on by:** Every gameplay system.
 - **Conditions/invariants:** Initialization must occur before normal play;
@@ -207,33 +208,34 @@ be traced back to code.
   a planned mechanic or is obsolete is **UNCLEAR — requires code investigation
   or runtime testing.**
 
-### 2. Difficulty selection
+### 2. Fixed gameplay baseline
 
-- **Purpose:** Change resource pressure, initial relationships, dissent, and
-  hand capacity without using a separate ruleset.
-- **Player sees:** Easy, normal, hard, and historical-mode choices.
-- **Sequence:** Start defaults are assigned, then the selected subscene
-  overwrites difficulty-sensitive values; easy routes to a four-card hand,
-  other modes to the three-card hand.
-- **Scenes/files:** Difficulty subscenes in `source/scenes/root.scene.dry` and
-  `main.main_easy` in `source/scenes/main.scene.dry`.
-- **Important state:** `difficulty` (`-1`, `0`, `1`, `2`), `historical_mode`,
-  `resources`, `dues`, `budget`, relationships, faction dissent, Reichsbanner
-  strength, and save-disabling state.
+- **Purpose:** Provide one consistent ruleset and starting state without asking
+  the player to choose a difficulty.
+- **Player sees:** No difficulty or historical-mode selection.
+- **Sequence:** `root.start` assigns the former Normal values and a single
+  **Begin** action enters the three-card `main` hand.
+- **Scenes/files:** `source/scenes/root.scene.dry` and
+  `source/scenes/main.scene.dry`.
+- **Important state:** `resources = 2`, `dues = 2`, `budget = 4`,
+  `rb_strength = 2000`, the baseline relationships and faction dissent, plus
+  compatibility values `difficulty = 0` and `historical_mode = 0`.
 - **Depends on:** Initialization and the hand system.
-- **Depended on by:** Action economy, discard availability, saving, polls, and
-  annual resource income.
-- **Conditions/invariants:** Historical mode disables saves and adds two
-  resources on year rollover; easy mode permits discard and a larger hand.
-- **Coupling/risks:** “Difficulty” changes both rules and starting political
-  conditions. Comparisons use exact numeric values in several scenes.
-- **Safe extension points:** A documented modifier applied after base
-  initialization, followed by a full route and UI test.
-- **Polish adaptation reconsideration:** Which knobs represent difficulty and
-  whether a no-save mode remains desirable.
+- **Depended on by:** Action economy, return-to-hand behavior, saving, polls,
+  achievements, and event choices.
+- **Conditions/invariants:** New games always use the former Normal mechanics:
+  three hand slots, saves and polls available, no historical-mode restrictions,
+  and no alternate starting-value overrides.
+- **Coupling/risks:** The two compatibility fields remain serialized because
+  old saves, runtime code, and mods may still read them. They are no longer
+  player-selectable and must stay fixed at zero for new games.
+- **Safe extension points:** Balance the fixed baseline directly and test the
+  opening state, hand capacity, saving, polls, card return, and achievements.
+- **Polish adaptation reconsideration:** Whether a future adaptation should
+  continue to use one fixed ruleset.
 - **Polish equivalent:** TBD — user historical research required.
-- **Unresolved:** The complete player-facing explanation of every hidden
-  modifier is **UNCLEAR — requires code investigation or runtime testing.**
+- **Unresolved:** Compatibility behavior when importing an old non-Normal save
+  is **UNCLEAR — requires code investigation or runtime testing.**
 
 ### 3. Calendar and month advancement
 
@@ -280,8 +282,8 @@ be traced back to code.
   `source/scenes/post_event.scene.dry`.
 - **Important state:** `resources`, `dues`, `budget`, `month_actions`, timers,
   and policy-specific cost variables such as `wtb_budget`.
-- **Depends on:** Difficulty, card availability, calendar, and coalition or
-  ministry access.
+- **Depends on:** Fixed starting resources, card availability, calendar, and
+  coalition or ministry access.
 - **Depended on by:** Campaigning, organizations, advisers, policies, media,
   political violence, and economic feedback.
 - **Conditions/invariants:** Party resources and government budget are not the
@@ -310,12 +312,12 @@ be traced back to code.
   `source/scenes/advisors/`, `source/scenes/easy_discard.scene.dry`, and
   `source/scenes/cancel_advisor_action.scene.dry`; behavior is implemented in
   the DendryNexus browser engine.
-- **Important state:** Engine hand state plus `difficulty`, `time`,
-  `last_advisor_action`, `last_cabinet_action`, and card timers.
+- **Important state:** Engine hand state plus `time`, `last_advisor_action`,
+  `last_cabinet_action`, and card timers.
 - **Depends on:** Dendry runtime, tags, `view-if`, visit counts, and timers.
 - **Depended on by:** The entire action-selection loop.
-- **Conditions/invariants:** Government deck requires `time >= 6`; normal hand
-  maximum is three and easy is four; pinned cards are not consumed.
+- **Conditions/invariants:** Government deck requires `time >= 6`; hand maximum
+  is three; pinned cards are not consumed.
 - **Coupling/risks:** Card IDs are reused as timer prefixes by discard/cancel
   logic. Renaming a scene can break that convention.
 - **Safe extension points:** A new tagged card with explicit eligibility,
@@ -862,16 +864,16 @@ be traced back to code.
   and a mod-loading interface where enabled.
 - **Sequence:** The customized browser code autosaves on new pages, serializes
   game state to browser storage, restores/imports it, and can pass a remote
-  game URL to the UI loader. Historical mode disables saves.
-- **Scenes/files:** State gate in `source/scenes/root.scene.dry`; customized
-  browser behavior in `out/html/game.js`, `out/html/index.html`, and
-  `out/html/mod_loader.js`.
-- **Important state:** Entire serialized game state, `historical_mode`, runtime
-  `disableSaves`, save-slot metadata, and `mods_table`.
+  game URL to the UI loader. Saves remain available in the fixed baseline.
+- **Scenes/files:** Fixed initialization in `source/scenes/root.scene.dry`, the
+  mod-loader scene in `source/scenes/mod_loader.scene.dry`, and customized
+  browser behavior in `out/html/game.js` and `out/html/index.html`.
+- **Important state:** Entire serialized game state, fixed compatibility value
+  `historical_mode = 0`, runtime `disableSaves`, save-slot metadata, and
+  `mods_table`.
 - **Depends on:** Browser `localStorage`, Dendry serialization, customized UI,
   and network/browser policy for URL loading.
-- **Depended on by:** Session continuity, historical mode, achievements, and mod
-  experimentation.
+- **Depended on by:** Session continuity, achievements, and mod experimentation.
 - **Conditions/invariants:** Two autosave and eight manual slots are visible in
   runtime code; the game ID/IFID helps separate game data.
 - **Coupling/risks:** Schema changes can make old saves inconsistent. Mod URLs
@@ -879,7 +881,7 @@ be traced back to code.
 - **Safe extension points:** Additive state with safe defaults; save-version
   testing before any rename/removal.
 - **Polish adaptation reconsideration:** Save compatibility policy, game/IFID
-  identity, historical-mode rules, mod catalog, and user warnings.
+  identity, mod catalog, and user warnings.
 - **Polish equivalent:** TBD — user historical research required.
 - **Unresolved:** Live URL loading, CORS behavior, malformed-save handling, and
   compatibility guarantees are **UNCLEAR — requires code investigation or
@@ -922,7 +924,7 @@ be traced back to code.
 
 ```mermaid
 flowchart LR
-    Init[Initialization and difficulty] --> Calendar[Calendar and actions]
+    Init[Fixed baseline initialization] --> Calendar[Calendar and actions]
     Init --> Support[Demographics and party support]
     Init --> Factions[Factions and dissent]
     Hand[Decks, hand, cards, pinned cards] --> Actions[Action/resource economy]
@@ -1023,8 +1025,8 @@ state-producing system, and each completed action returns to the monthly loop.
 - [ ] Provide an explicit safe return route.
 - [ ] Test all choices, including hidden/disabled conditions and cancellation.
 - [ ] Run `npm run build`; check D3/images remain in `out/html/`.
-- [ ] Browser-smoke-test normal, easy, hard, and historical modes where
-  relevant, including save behavior.
+- [ ] Browser-smoke-test the fixed gameplay route, including the opening state,
+  three-card hand, polls, and save behavior.
 - [ ] Add historical evidence to `HISTORICAL_SOURCES.md` before approving
   historical content.
 
