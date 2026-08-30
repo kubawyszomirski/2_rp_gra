@@ -1,29 +1,32 @@
-# Social Democracy: An Alternate History
+# PPS: An Alternate History
 
 ## Executive Game Overview
 
-**A plain-language guide to the current German baseline**
+**A plain-language guide to the PPS-1 transition over the German baseline**
 Prepared from the repository as it exists on 29 August 2026
 
 > **Scope note**
 >
 > This guide explains what the current game presents and how its source code
-> makes that experience work. It is not an independent history of Germany and
-> it does not propose Polish equivalents. Historical statements are described
-> as the game's framing unless independently documented elsewhere. Areas that
-> need Polish research or a design choice are marked:
+> makes that experience work. PPS identity, opening support, population groups,
+> and the January 1922 start are implemented; most other content remains the
+> German baseline. It is not an independent history. Historical statements are
+> described as the game's framing unless independently documented elsewhere.
+> Areas that need Polish research or a design choice are marked:
 > **TBD — user historical research and design decision required.**
 
 <!-- PDF_PAGE_BREAK -->
 
 ## Executive summary
 
-*Social Democracy: An Alternate History* is a political strategy and
-interactive-fiction game. The player directs Germany's Social Democratic Party
-(SPD) from the beginning of 1928 through a period of elections, economic
-crisis, unstable governments, political violence, and possible democratic
-collapse. The game is less about commanding units on a map than about managing
-an organization under pressure. The player chooses messages, alliances,
+*PPS: An Alternate History* is a political strategy and interactive-fiction
+game. The current PPS-1 build identifies the player party as PPS and starts in
+January 1922, then retains most German-baseline mechanics and the dated event
+calendar beginning in 1928 through a period of
+elections, economic crisis, unstable governments, political violence, and
+possible democratic collapse. The game is less about commanding units on a
+map than about managing an organization under pressure. The player chooses
+messages, alliances,
 leaders, policies, and institutional responses, then watches those decisions
 change the political landscape over months and years.
 
@@ -38,8 +41,9 @@ The central rhythm is simple:
 6. Resolve any event that has become due.
 7. Recalculate support, factions, the economy, and later election results.
 
-Under that straightforward loop is a highly connected simulation. A policy can
-please one SPD faction and anger another. A coalition can unlock ministries but
+Under that straightforward loop is a highly connected simulation. In PPS-1, a
+policy still pleases one inherited German faction and angers another. A
+coalition can unlock ministries but
 also create coalition dissent. Economic policy can reduce unemployment while
 increasing inflation, spending, or resistance from business and conservative
 institutions. Party organizations can help defend democracy, but militancy can
@@ -47,8 +51,8 @@ also make violent confrontation more likely. Elections reorganize the entire
 decision space because they change parliamentary strength, coalition options,
 government access, and cabinet control.
 
-The game does not reduce success to a single score. Its ending system asks what
-survived, who controls the state, whether civil war occurred, whether the SPD
+The game does not reduce success to a single score. Its inherited ending system asks what
+survived, who controls the state, whether civil war occurred, whether the player party
 remains in government, what economic program was achieved, and which special
 achievements were unlocked. Survival without an ideal outcome is possible;
 political or military defeat is also possible.
@@ -70,6 +74,22 @@ For a Polish adaptation, the general turn structure is potentially separable
 from the German content, but the party model, electoral rules, institutions,
 organizations, dated events, leaders, and international framework cannot be
 carried across by changing names alone.
+
+**Implemented start-date decision:** New games begin in **January 1922**. The
+remaining people, institutions, events, and mechanics still describe the
+German baseline. The retained May 1928 election is an interim gameplay
+schedule, not a researched Polish equivalent. The Polish end date, first
+election date, opening political state, and date-gated event schedule remain
+**TBD — user historical research and design decision required.**
+
+**Implemented PPS-1 decision:** Core presentation calls the player party
+**PPS — Polska Partia Socjalistyczna** while retaining `spd` as its internal
+compatibility ID. Opening displayed within-group support is 30% Robotnicy, 15%
+Inteligencja, 7% Drobnomieszczaństwo, 7% Chłopi, 1% Burżuazja i Ziemiaństwo,
+5% Mniejszości Narodowe, and approximately 23% Bezrobotni. The other parties,
+advisers, live five-faction model, action cards, organizations, institutions,
+dated events, and most endings remain a clearly marked German baseline. The
+ordinary action/month gameplay loop is unchanged.
 
 <!-- PDF_PAGE_BREAK -->
 
@@ -108,17 +128,17 @@ JavaScript or DendryNexus.
 
 ### What the game is about
 
-The game places the player in charge of the SPD as a political organization,
+The game now presents the player as leading the PPS as a political organization,
 not in the role of one fixed historical person. The player manages party
 strategy across elections and governments while the game's version of the
-German Republic faces growing economic and political danger.
+German Republic still supplies the temporary inherited political setting.
 
-At the opening in January 1928, the SPD is in opposition. The status panel
-shows the current president and chancellor, the parliamentary shares of the
-major parties, the next election date, party resources, internal dissent, and
-basic economic indicators. The opening text describes a temporarily favorable
-moment and directs the player toward the next election. This is the game's own
-framing, confirmed in `source/scenes/root.scene.dry` and the local interface.
+At the opening in January 1922, the status panel labels the player party PPS
+but still shows the German-baseline
+president and chancellor, the parliamentary shares of the major German
+parties, the retained May 1928 election date, party resources, internal
+dissent, and basic economic indicators. The opening text explicitly identifies
+this material as an interim baseline rather than Polish historical content.
 
 ### Who the player controls
 
@@ -182,8 +202,9 @@ timers and progress counters, and reveals consequences through later cards and
 events. Much of the tension comes from delayed effects rather than immediate
 failure messages.
 
-The local new-game introduction combines the 1928 starting situation with a
-single **Begin** action. There is no difficulty or historical-mode selection.
+The local new-game introduction displays January 1922 and explains that the
+remaining content retains the German baseline. It provides a single **Begin**
+action. There is no difficulty or historical-mode selection.
 
 **Technical reference:** `source/scenes/root.scene.dry`,
 `source/scenes/status.scene.dry`, and `source/scenes/game_over.scene.dry`.
@@ -209,7 +230,7 @@ one **Begin** action. It routes directly to the three-card main hand.
 
 ### What happens after Begin
 
-The 1928 introduction leads directly into the main hand. The Government
+The January 1922 introduction leads directly into the main hand. The Government
 Affairs deck is initially hidden and becomes available after the internal time
 counter reaches six, so the early game focuses on the party before opening the
 government-action layer. Saves and polls remain available.
@@ -554,9 +575,26 @@ the game performs two normalizations:
 2. It weights those group percentages by the group's size and converts the
    result into national party shares.
 
-The six starting groups are workers, old middle class, new middle class, rural,
-unemployed, and Catholics. The starting party list has eight categories; a
-later splinter party can be added dynamically.
+The implemented player-facing groups are Robotnicy, Drobnomieszczaństwo,
+Inteligencja, Chłopi, Burżuazja i Ziemiaństwo, Bezrobotni, and Mniejszości
+Narodowe. The five main classes total 100%: in January 1922 they are 27%, about
+12.22%, about 5.56%, 53%, and about 2.22%, respectively. Robotnicy rise
+linearly to exactly 30% and Chłopi decline linearly to exactly 50% by December
+1939; the other three main shares remain fixed. Bezrobotni begin at 3% and are
+an overlapping economic condition. Mniejszości Narodowe are a separate 30%
+overlapping identity weight; Polacy are the implied complement rather than an
+independently weighted group. The starting party list remains the eight German
+categories, and a later splinter party can still be added dynamically.
+
+For the current playable slice, Burżuazja i Ziemiaństwo copy the opening Old
+Middle Class party profile. Mniejszości Narodowe copy the Catholic party
+profile, and existing Catholic-targeting effects are bridged into that group.
+These are implemented gameplay placeholders, not claims of historical
+equivalence. Dedicated party profiles and minority-targeting mechanics remain
+**TBD — historical research required**. The approximate minority composition
+recorded for later design is 60% Chłopi, 17% Robotnicy, 19%
+Drobnomieszczaństwo, 3% Inteligencja, and 2% Burżuazja i Ziemiaństwo; it does
+not yet drive a second calculation.
 
 This design makes political effects indirect. A card that improves SPD appeal
 among workers may have a large national effect because workers have a large
@@ -628,9 +666,11 @@ government flags, `leverage`, and ministry-party fields.
 
 ### Internal party factions
 
-The SPD contains five modeled factions: Left, Center, Labor, Reformist, and
-Neorevisionist. Each has a strength and a dissent value. Cards, advisers,
-leadership decisions, coalition choices, and policies move those values.
+The live PPS-1 build still contains the five inherited German factions: Left,
+Center, Labor, Reformist, and Neorevisionist. Each has a strength and a dissent
+value. Cards, German placeholder advisers, leadership decisions, coalition
+choices, and policies move those values. The interface labels this system as a
+temporary baseline rather than presenting it as the finished PPS structure.
 
 After each action, faction strengths are normalized so they add to 100. Overall
 party dissent is a weighted result: anger in a strong faction matters more than
@@ -642,6 +682,15 @@ and can unlock party-disunity content. Several resignation or split events use
 60 as an important faction-dissent threshold. This is a feedback loop: a policy
 choice produces faction anger; anger weakens electoral gains; weaker results
 reduce government options; constrained government can cause more anger.
+
+The approved replacement, which is **planned but not implemented**, is Centrum
+PPS at 50 strength/0 dissent, Lewica PPS at 15/20, and Piłsudczycy at 35/5.
+Each has an approved 60-dissent consequence design. ZSZ is planned as an
+affiliated union power center rather than a faction. Replacing the live array
+alone would break card effects, advisers, monthly dissent, union behavior,
+split events, and displays, so the three-faction conversion is reserved for a
+later coherent slice with its own tests. Historical validation remains **TBD —
+historical research required**.
 
 ### Relationships with other parties
 
@@ -735,6 +784,15 @@ thousands of members; others are abstract. The interface's strength qdisplay
 uses common labels despite those differences. A future design should define
 units before rebalancing.
 
+The approved PPS organization design is **planned, not implemented**. ZSZ will
+be an affiliated union power center rather than a Labor faction. The PPS
+“social world” is intended to abstract TUR, OM TUR, Czerwone Harcerstwo TUR,
+RTPD, worker sport, cooperatives, and housing. Press will center on *Robotnik*,
+regional papers, outreach choices, and later censorship/resilience, without an
+independent radio branch. Exact history, dates, scale, variables, and balance
+remain **TBD — historical research required**; PPS-1 preserves the inherited
+cards and organization mechanics.
+
 ### Militancy and political violence
 
 The game tracks the Reichsbanner, Stahlhelm, SA, and RFB with separate strength,
@@ -745,6 +803,12 @@ persecute organizations.
 Violence is connected to party strategy and institutions rather than being a
 separate combat minigame. When escalation reaches a crisis, the game compares
 friendly and hostile forces and routes toward coup or civil-war outcomes.
+
+The approved future PPS self-defence model treats Milicja PPS and Akcja
+Socjalistyczna as two stages of one organization, separate from any later
+Polish equivalent of the Iron Front. This is not yet implemented: Reichsbanner
+and Iron Front state and events remain the explicit temporary baseline pending
+historical research and a bounded replacement slice.
 
 ### Police and institutional loyalty
 
@@ -1048,8 +1112,9 @@ ending is correct.
 The repository contains 167 source files: 158 scene files, eight qdisplays, and
 one metadata file. Those scene files define 1,117 source-authored scene nodes
 (158 top-level scenes and 959 subscenes). The compiled game contains five
-additional engine routing scenes. Static inspection identifies 989 literal or
-concretely constructed quality keys, although many are display helpers,
+additional engine routing scenes. The original audit identified 989 literal or
+concretely constructed quality keys; the implemented population slice adds 58,
+for a current expanded total of 1,047. Many are display helpers,
 candidate/timer families, or route-specific flags rather than independent
 headline mechanics.
 
@@ -1059,6 +1124,29 @@ For the technical detail behind these counts, see `MECHANICS_MAP.md` and
 <!-- PDF_PAGE_BREAK -->
 
 ## 14. Guidance for a future adaptation
+
+### Implemented campaign start
+
+The campaign starts in **January 1922**. The source implements this as
+`year = 1922`, `month = 1`, and relative `time = 1`. German absolute date gates
+retain their original years, so the first retained election is May 1928 at
+relative month `77`. The introduction identifies the people, institutions,
+events, and mechanics as an interim German baseline.
+
+The campaign end date, first Polish election date, opening office holders and
+parliamentary state, and first Polish scheduled events remain **TBD — user
+historical research and design decision required.**
+
+### Implemented population model
+
+New games use the approved seven-group support schema described in section 7.
+The five main classes are normalized to 100%, while unemployment and national
+minority identity overlap them. The January 1922 opening has 3% unemployment
+and 30% Mniejszości Narodowe. The demographic trend is implemented through
+December 1939, but the retained German campaign ending currently occurs
+earlier; reaching 1939 in ordinary play therefore depends on a separately
+approved chronology extension. Old saves are not guaranteed compatible, and
+no migration layer is included in this slice.
 
 This section classifies implementation patterns. It does not propose Polish
 history, institutions, parties, people, dates, or equivalents.
@@ -1130,7 +1218,7 @@ similar English label exists.
 - Should party resources and government budget remain abstract?
 - Should elections use approximate percentages or an exact seat system?
 - How much hidden state should the interface expose?
-- Should a no-save/no-polls historical mode remain?
+- Should the fixed baseline continue to expose both saves and polls?
 - Should advisers and ministries remain separate unlock layers?
 - Should political violence use abstract power multiplication?
 - Should old German saves or mods remain compatible with a future adaptation?
@@ -1174,8 +1262,9 @@ similar English label exists.
 **Start**
 
 1. Start game initializes the complete state.
-2. Choose easy, normal, hard, or historical mode.
-3. Read the 1928 introduction and enter the main hand.
+2. Select the single **Begin** action; there is no difficulty choice.
+3. Read the January 1922 interim-baseline introduction and enter the three-card
+   main hand.
 
 **Each month**
 
@@ -1245,7 +1334,7 @@ source/
 ├── info.dry                         game metadata
 ├── qdisplays/                       numeric values translated into words
 └── scenes/
-    ├── root.scene.dry               initialization and difficulty
+    ├── root.scene.dry               fixed initialization and opening route
     ├── main.scene.dry               decks, hand and pinned cards
     ├── post_event.scene.dry         monthly reconciliation and event check
     ├── election_algorithm.scene.dry support-to-vote calculation
@@ -1302,7 +1391,7 @@ For each item: **UNCLEAR — requires code investigation or runtime testing.**
 - `MECHANICS_MAP.md` contains the detailed system contracts, dependencies,
   thresholds, extension points, and source references.
 - `STATE_VARIABLES.md` contains categorized state contracts and the complete
-  expanded 989-key inventory.
+  expanded 1,047-key inventory.
 - `PLAN.md` is the user-owned decision worksheet for the future adaptation.
 - `HISTORICAL_SOURCES.md` is the empty evidence register for user research.
 

@@ -6,7 +6,8 @@
   "scripts": {
     "dendrynexus": "dendrynexus",
     "build": "dendrynexus make-html && cp node_modules/d3/dist/d3.min.js out/html/d3.v7.min.js && cp -R assets/img out/html/",
-    "serve": "python3 -m http.server 8000 --directory out/html"
+    "serve": "python3 -m http.server 8000 --directory out/html",
+    "test": "node --test tests/*.test.js"
   },
   "repository": {
     "type": "git",

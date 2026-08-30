@@ -26,13 +26,13 @@ find every dynamic reader.
 
 - All 167 files under `source/` were read: 158 scene files, eight qdisplay
   files, and `source/info.dry`.
-- The compiled expression/code representation in `out/game.json` yielded 865
-  literal `Q` keys.
-- Source loops construct a further 124 concrete keys from the documented class,
-  party, timer, faction, and presidential-candidate arrays.
-- The complete expanded inventory is therefore **989 identifiable state keys**.
-  It includes keys that a dynamic loop can access even if their value is absent
-  and consequently behaves as false/zero.
+- The original baseline audit identified 989 literal or constructible `Q`
+  keys. The approved population slice adds 58 identifiable keys: two group
+  weights, two quality-of-life placeholders, and two 27-key raw/normalized/
+  display class-party families (including SAPD).
+- The current expanded inventory is therefore **1,047 identifiable state
+  keys**. It includes keys that a dynamic loop can access even if their value
+  is absent and consequently behaves as false/zero.
 - JavaScript locals such as `party`, `class_votes`, and `candidate_votes` are
   not qualities and are excluded.
 - Dendry engine state such as the current hand, visit counts, and current scene
@@ -58,21 +58,21 @@ Each table covers the requested fields in compact form:
   state.
 - **Thresholds / uncertainty** records invariants, boundary values, and naming
   or lifecycle risks.
-- Every row carries the required adaptation field: **TBD — user decision
-  required.**
+- Every row carries an adaptation field. Approved decisions are recorded
+  directly; unresolved fields remain **TBD — user decision required.**
 
 ## Time and turn state
 
 | Exact name | Type / initialization / range | Writers / readers / display | Dependencies / kind | Thresholds / uncertainty | Polish adaptation decision |
 | --- | --- | --- | --- | --- | --- |
 | `started` | Number used as boolean; `root.start`, `0` before start and `1` on start | Written/read in `source/scenes/root.scene.dry`; controls start menu vs game | Root routing; persistent control state | Must be set before normal loop | TBD — user decision required. |
-| `time` | Integer month counter; `root.start`: `1`; increases by one per spent-action reconciliation | Written in `source/scenes/post_event.scene.dry`; read by cards/events including the government-deck gate | Calendar, events, elections; persistent simulation state | Government deck uses `time >= 6`; relationship to month/year must remain consistent | TBD — user decision required. |
-| `year` | Integer; `root.start`: `1928`; increments at month rollover | `post_event` and dated event conditions; shown in status | Calendar, events, ending; persistent simulation state | Month 13 resets to 1 and increments year; campaign-end events begin in 1934 | TBD — user decision required. |
-| `month` | Integer; `root.start`: `1`; normal values 1–12 | Written by `post_event`; read by scheduled events/elections; `source/qdisplays/month.qdisplay.dry` | Calendar and all scheduled content; persistent simulation state | Must remain 1–12 after reconciliation | TBD — user decision required. |
+| `time` | Integer month counter; `root.start`: `1`; increases by one per spent-action reconciliation | Written in `source/scenes/post_event.scene.dry`; read by cards/events including the government-deck gate | Calendar, events, elections; persistent simulation state | Government deck uses `time >= 6`; relationship to month/year must remain consistent | Retain `1` as the opening relative-time value unless the Polish calendar audit identifies a conflict. |
+| `year` | Integer; current `root.start`: `1922`; increments at month rollover | `post_event` and dated event conditions; shown in status | Calendar, events, ending; persistent simulation state | Month 13 resets to 1 and increments year; retained absolute-year German events begin in 1928 and campaign-end events begin in 1934 | Implemented as `1922`. German date gates retain their existing years until researched Polish replacements are approved. |
+| `month` | Integer; current `root.start`: `1`; normal values 1–12 | Written by `post_event`; read by scheduled events/elections; `source/qdisplays/month.qdisplay.dry` | Calendar and all scheduled content; persistent simulation state | Must remain 1–12 after reconciliation | Implemented as `1`, representing January. |
 | `month_actions` | Integer control count; `root.start`: `0`; most action cards add one | Written throughout party/government scenes and reset by `post_event`; no direct qdisplay | Determines whether time advances; temporary turn control persisted in saves | `>= 1` advances exactly one month; discard/cancel paths subtract one | TBD — user decision required. |
 | `timers` | Array of timer base names; initialized in `root.start` | Read by the decrement loop in `post_event`; not directly shown | All card/event cooldowns; persistent configuration state | A `<base>_timer` omitted from this array does not use central decrement | TBD — user decision required. |
 | `*_timer` | Nonnegative integer months by convention; many explicit zeros in `root.start`, others created later | Written by matching cards/events; read in `view-if`/choices and decremented in `post_event`; usually player sees availability, not the number | Hand eligibility, events, advisers; persistent cooldown state | Positive values decrement; most cards treat zero/absent as available; inconsistent initialization is a risk | TBD — user decision required. |
-| `next_election_year`, `next_election_month`, `next_election_time` | Integers; initialized in `root.start`; regular election code advances the year by four | Written/read in `source/scenes/events/election_1928.scene.dry`; event date is player-facing | Election scheduling; persistent simulation state | Month/year pair must agree with any time-counter use; role of `next_election_time` is less clear | TBD — user decision required. |
+| `next_election_year`, `next_election_month`, `next_election_time` | Integers; initialized to May 1928 and relative month `77` in `root.start`; regular election code advances the year by four | Written/read in `source/scenes/events/election_1928.scene.dry`; event date is player-facing | Election scheduling; persistent simulation state | January 1922 is `time = 1`, so May 1928 is `time = 77`; the month/year pair and relative counter must agree | Retain May 1928 only as an interim German-baseline schedule. The first Polish election remains **TBD — historical research required**. |
 
 ## Resources and action economy
 
@@ -81,15 +81,15 @@ Each table covers the requested fields in compact form:
 | `resources` | Integer-like party currency; fixed `root.start`: `2` | Many party/adviser cards spend/add it; shown in status | Party actions, organizations, advisers; persistent simulation state | Costs are embedded across scenes; no demonstrated global min/max | TBD — user decision required. |
 | `dues` | Integer-like recurring fundraising capacity; fixed `root.start`: `2` | `source/scenes/party_affairs/fundraising.scene.dry` and initialization; player-facing through resource outcomes/status | Resource income; persistent simulation state | Full runtime range is not established | TBD — user decision required. |
 | `budget` | Numeric government fiscal capacity/balance; fixed `root.start`: `4` | Government/economic/fiscal scenes and `post_event`; shown in status | Policy access, inflation feedback, capital strike; persistent simulation state | Negative is legal; `post_event` bands at 0, -2, and -5 alter inflation | TBD — user decision required. |
-| `difficulty` | Legacy integer compatibility field; fixed to `0` in `root.start` | Initialized in root and still read by dormant legacy branches or imported content; no player selection | Save/mod compatibility; persistent configuration state | New games must leave it at `0`, the former Normal value | TBD — user decision required. |
-| `historical_mode` | Legacy boolean-like compatibility field; fixed to `0` in `root.start` | Initialized in root and still read by dormant legacy/runtime gates; no player selection | Save/mod compatibility; persistent configuration state | New games must leave it false so saves, polls, and normal event choices remain available | TBD — user decision required. |
+| `difficulty` | Legacy integer compatibility field; fixed to `0` in `root.start` | Initialized in root and still read by dormant legacy branches or imported content; no player selection | Save/mod compatibility; persistent configuration state | New games must leave it at `0`, the former Normal value | Keep fixed at `0` for compatibility; do not expose a difficulty selection. |
+| `historical_mode` | Legacy boolean-like compatibility field; fixed to `0` in `root.start` | Initialized in root and still read by dormant legacy/runtime gates; no player selection | Save/mod compatibility; persistent configuration state | New games must leave it false so saves, polls, and normal event choices remain available | Keep false; do not expose a historical mode, and retain saves and polls. |
 | `last_advisor_action`, `last_cabinet_action` | ID/false-like temporary markers; initialized/reset to `0` | Adviser/cabinet actions write; cancellation and `post_event` read/reset | Pinned-card rollback; temporary control state | Must identify the card whose action can be cancelled; type varies between zero and identifiers | TBD — user decision required. |
 
 ## Elections and parliamentary state
 
 | Exact name or family | Type / initialization / range | Writers / readers / display | Dependencies / kind | Thresholds / uncertainty | Polish adaptation decision |
 | --- | --- | --- | --- | --- | --- |
-| `parties` | Array; eight base IDs in `root.start`, with `sapd` pushed by `source/scenes/events/sapd_formed.scene.dry` | Read by support/election/post-event/game-over loops and charts | Defines dynamic electoral state; persistent configuration/simulation state | Adding/removing/reordering requires initialization, formulas, UI, colors, and saves to agree | TBD — user decision required. |
+| `parties` | Array; eight base IDs in `root.start`, with `sapd` pushed by `source/scenes/events/sapd_formed.scene.dry` | Read by support/election/post-event/game-over loops and charts | Defines dynamic electoral state; persistent configuration/simulation state | Adding/removing/reordering requires initialization, formulas, UI, colors, and saves to agree | Keep `spd` as the internal PPS compatibility ID in PPS-1. The player-facing label is PPS; other party IDs remain the German baseline. |
 | `<party>_normalized` | Fraction number, normally 0–1; calculated by `post_event`/`election_algorithm` | Written in those calculators; read by presidential election, UI/charts, and events | Vote shares, candidate aggregation, achievements; derived persistent state | Party fractions should sum approximately to 1; division denominator must be nonzero | TBD — user decision required. |
 | `<party>_votes`, `<party>_votes_dec`, `<party>_votes_disp`, `<party>_votes_display` | Numeric and formatted derived variants; calculators assign rounded values | Election/post-event writers; election narrative/status readers | Player-facing vote representation and downstream election state; derived/display state | Similar suffixes have different rounding/format; `use_decimals` is TODO | TBD — user decision required. |
 | `<party>_r`, `<party>_r_disp` | Numeric parliamentary percentage and formatted version; initial base values in `root.start`, recalculated on election | Election writer; coalition formulas, parliament D3, endings, and narrative readers | Seats/proxy, coalitions, UI; persistent election result | Qualifying results are renormalized; source commonly treats percentages as seats proxy | TBD — user decision required. |
@@ -105,14 +105,17 @@ Each table covers the requested fields in compact form:
 
 | Exact name or family | Type / initialization / range | Writers / readers / display | Dependencies / kind | Thresholds / uncertainty | Polish adaptation decision |
 | --- | --- | --- | --- | --- | --- |
-| `classes` | Array of six class IDs initialized in `root.start` | Support/election/game-over loops read; no direct qdisplay | Defines demographic dynamic keys; persistent configuration state | Array members must have weights and every required party propensity | TBD — user decision required. |
-| `workers`, `old_middle`, `new_middle`, `rural`, `unemployed`, `catholics` | Numeric demographic/economic weights; initialized in `root.start` | Events/economic logic write some; support loop reads via dynamic class key; status/graphs show selected values | Support weighting and economy; persistent simulation state | `unemployed` is also economic unemployment and is floored at 1; class weights are not normalized in the same loop | TBD — user decision required. |
-| `<class>_<party>` | Numeric raw propensity; base matrix initialized in `root.start`, SAPD values created/read later | Most cards/events write selected cells; support/election loops read dynamically | Core party-support model; persistent simulation state | Negative values clamped to zero; rows need a nonzero sum; not percentages before normalization | TBD — user decision required. |
-| `<class>_<party>_normalized`, `<class>_<party>_display` | Numeric percent and rounded display value; generated by calculators | `post_event`, `election_algorithm`, and `game_over` write; conditions/status/achievements read | Elections, achievements, demographic UI; derived/display persistent state | Each class's normalized party values should sum to 100 | TBD — user decision required. |
+| `classes` | Array of seven active IDs initialized in `root.start`: `workers`, `old_middle`, `new_middle`, `rural`, `bourgeois_landowners`, `unemployed`, `national_minorities` | Support/election/game-over loops read; Library displays Polish labels | Defines demographic dynamic keys; persistent configuration state | Every member requires a weight and a nonzero party-propensity row; `catholics` is deliberately absent | Implemented for new games; old-save migration is out of scope. |
+| `workers`, `old_middle`, `new_middle`, `rural`, `bourgeois_landowners` | Numeric main-class shares; root: `27`, `110/9`, `50/9`, `53`, `20/9` | `post_event` updates `workers`/`rural`; support loops weight every field | Five-class structure and elections; persistent simulation state | Total is exactly 100; `workers` rises and `rural` falls linearly by three points over month indexes 0–215; other shares remain fixed | Implemented. December 1939 endpoint is 30/50, although the current campaign normally ends earlier. Historical basis remains **TBD — historical research required**. |
+| `unemployed` | Numeric percent-like overlapping economic condition; root: `3` | Year/economic events and policies write; support weighting, status, and graph read | Economy and elections; persistent simulation state | Floored at 1 in `post_event`; not part of the five-class 100% total; differs from `unemployment` | Implemented opening value; existing crisis mechanics preserved. |
+| `national_minorities` | Numeric overlapping identity weight; root: `30` | Support loops read; Library displays; currently fixed | Elections; persistent simulation state | Overlaps the main classes; Polacy are the implied complement and have no separate variable | Implemented as the temporary minorities group. |
+| `catholics` | Numeric legacy compatibility weight; root: `30`, not a member of `classes` | Existing German cards/events still write `catholics_*`; compatibility code reads those profiles | Transitional mechanics only; persistent compatibility state | Must not be weighted independently in `classes` | Retain temporarily until Catholic-targeting mechanics receive a researched minorities replacement. |
+| `<class>_<party>` | Numeric raw propensity; base matrix initialized in `root.start`, SAPD values created/read later | Most cards/events write selected cells; support/election loops read dynamically | Core party-support model; persistent simulation state | Negative values clamped to zero; rows need a nonzero sum; not percentages before normalization | `*_spd` remains the internal PPS family. Opening raw weights normalize to displayed PPS support of Robotnicy 30%, Inteligencja 15%, Drobnomieszczaństwo 7%, Chłopi 7%, Burżuazja i Ziemiaństwo 1%, Mniejszości Narodowe 5%, and approximately 23% Bezrobotni. Non-PPS `bourgeois_landowners_*` copy `old_middle_*`; `national_minorities_*` copy the Catholic compatibility profile. |
+| `<class>_<party>_normalized`, `<class>_<party>_display` | Numeric percent and rounded display value; generated by calculators | `post_event`, `election_algorithm`, and `game_over` write; conditions/status/achievements read | Elections, achievements, demographic UI; derived/display persistent state | Each class's normalized party values should sum to 100 | Retain the existing calculation for the approved playable slice. |
 | `party_support_records` | Array; `root.start`: `[]`; monthly dated objects appended | `post_event` writes; D3 chart in `library` reads | Historical support chart; persistent display-support state | Party keys must follow `parties`; SAPD introduction may produce sparse earlier/later records | TBD — user decision required. |
-| `factions` | Array `left`, `center`, `labor`, `reformist`, `neorevisionist`; initialized in root | `post_event` loops; leadership/cards use concrete fields | Faction normalization and dissent; persistent configuration state | Every member requires `_strength` and `_dissent` | TBD — user decision required. |
-| `<faction>_strength` | Numeric share; root starts 15/30/25/25/5 | Leadership/cards/events write; `post_event` normalizes; UI uses `strength` qdisplay | Overall dissent, splits, adviser balance; persistent simulation state | Nonnegative and normalized to total 100; zero total is not guarded | TBD — user decision required. |
-| `<faction>_dissent` | Numeric percent-like value; root starts vary | Policies/leaders/events write; `post_event` clamps; `dissent` qdisplay/player status | Overall dissent and split events; persistent simulation state | Clamped to 0–99; several split/resignation events use 60 | TBD — user decision required. |
+| `factions` | Array `left`, `center`, `labor`, `reformist`, `neorevisionist`; initialized in root | `post_event` loops; leadership/cards use concrete fields | Faction normalization and dissent; persistent configuration state | Every member requires `_strength` and `_dissent` | PPS-1 deliberately retains this inherited live array. Approved future model: Centrum PPS, Lewica PPS, Piłsudczycy; IDs and migration are not yet implemented. |
+| `<faction>_strength` | Numeric share; root starts 15/30/25/25/5 | Leadership/cards/events write; `post_event` normalizes; UI uses `strength` qdisplay | Overall dissent, splits, adviser balance; persistent simulation state | Nonnegative and normalized to total 100; zero total is not guarded | Current values stay unchanged in PPS-1. Approved future opening strengths total 100: Centrum 50, Lewica 15, Piłsudczycy 35. |
+| `<faction>_dissent` | Numeric percent-like value; root starts vary | Policies/leaders/events write; `post_event` clamps; `dissent` qdisplay/player status | Overall dissent and split events; persistent simulation state | Clamped to 0–99; several split/resignation events use 60 | Current values stay unchanged in PPS-1. Approved future opening dissents are Centrum 0, Lewica 20, Piłsudczycy 5, with approved 60-dissent consequences not yet implemented. |
 | `dissent`, `dissent_percent` | Fraction and percent; root starts `0.05`/`5`, recomputed monthly | `post_event` writes; support changes, party-disunity scenes, status and `dissent` qdisplay read | Party support effectiveness and faction consequences; derived persistent state | Weighted result; `dissent` capped at 0.95; party-disunity gate includes overall 0.3 | TBD — user decision required. |
 | `left_split`, `centrists_resign`, `reformists_resign`, `reformists_resigned`, `unions_independent`, `sapd_formed` | Number used as event flags; some root-initialized, some event-created | Faction event files write/read; later support/party arrays/endings depend on them | Party composition and consequences; persistent event flags | Similar resign flag spellings are inconsistent; SAPD push changes every party loop | TBD — user decision required. |
 
@@ -143,7 +146,7 @@ Each table covers the requested fields in compact form:
 
 | Exact name or family | Type / initialization / range | Writers / readers / display | Dependencies / kind | Thresholds / uncertainty | Polish adaptation decision |
 | --- | --- | --- | --- | --- | --- |
-| `unemployed` | Numeric percent-like value; root: `8.6` | Year/economic events and policies write; support weighting, status, and graph read | Economy and elections; persistent simulation state | Floored at 1 in `post_event`; differs from `unemployment` | TBD — user decision required. |
+| `unemployed` | Numeric percent-like value; root: `3` | Year/economic events and policies write; support weighting, status, and graph read | Economy and elections; persistent simulation state | Floored at 1 in `post_event`; differs from `unemployment`; overlaps rather than belonging to the main-class 100% | Opening value implemented; existing crisis behavior retained. |
 | `inflation` | Numeric percentage; root: `2.9` | Year events, policies, and monthly budget feedback write; status/graph/events read | Economy, support, crisis events; persistent simulation state | Monthly deficit bands use 0, -2, -5 budget and caps such as 2.5/5/10 | TBD — user decision required. |
 | `economic_growth` | Numeric percentage-like value; root: `4.4` | Year events/policies/monthly logic write; status/events read | Economy, unemployment, endings; persistent simulation state | No demonstrated universal clamp or range | TBD — user decision required. |
 | `economic_records` | Array of dated objects; root: `[]` | `post_event` appends inflation/unemployment; D3 reads | Economic chart; persistent display-support state | Date and field names must match chart code | TBD — user decision required. |
@@ -211,8 +214,10 @@ appear to lack a confirmed source reader:
   `kpd_party_leader` and `z_party_leader`.
 - `hindenburg_relation` and `hindenburg_enabled` have initialization evidence
   but no confirmed active mechanical reader in the compiled source.
-- `workers_qol`, `rural_qol`, `unemployed_qol`, `old_middle_qol`, and
-  `new_middle_qol` are explicitly described in source as currently unused.
+- `workers_qol`, `rural_qol`, `unemployed_qol`, `old_middle_qol`,
+  `new_middle_qol`, `bourgeois_landowners_qol`, and
+  `national_minorities_qol` are explicitly described in source as currently
+  unused.
 - Some named minister fields appear to be written for narrative completeness
   while access checks use only `<ministry>_minister_party`.
 - Flags including `harzburg_front_seen`, `muller_died_in_office`, and
@@ -279,10 +284,11 @@ testing.**
 
 ## Appendix: complete expanded state-key index
 
-This appendix lists the 989 literal or concretely constructible `Q` keys found
-by the audit. Constructible entries are included because loops can access them
-even when no explicit assignment exists. Alphabetization is case-insensitive;
-case variants remain separate exact keys.
+This appendix lists the original 989 literal or concretely constructible `Q`
+keys found by the audit, followed by the 58 population-model additions.
+Constructible entries are included because loops can access them even when no
+explicit assignment exists. Alphabetization inside each block is
+case-insensitive; case variants remain separate exact keys.
 
 <!-- COMPLETE_VARIABLE_INDEX -->
 `abortion`, `abortion_rights`, `achievement_anders_als_die_andern`, `achievement_arbeiter_von_wien`, `achievement_ausnahmezustand`, `achievement_bauernrevolution`, `achievement_bollwerk_der_demokratie`, `achievement_bruder_zur_sonne`
@@ -410,12 +416,25 @@ case variants remain separate exact keys.
 `z_minus_bvp_r`, `z_no_confidence`, `z_normalized`, `z_party_leader`, `z_r`, `z_r_disp`, `z_relation`, `z_support`
 `z_support_braun`, `z_votes`, `z_votes_dec`, `z_votes_disp`, `z_votes_display`
 
+### Population-model additions
+
+`bourgeois_landowners`, `bourgeois_landowners_ddp`, `bourgeois_landowners_ddp_display`, `bourgeois_landowners_ddp_normalized`, `bourgeois_landowners_dnvp`, `bourgeois_landowners_dnvp_display`, `bourgeois_landowners_dnvp_normalized`, `bourgeois_landowners_dvp`
+`bourgeois_landowners_dvp_display`, `bourgeois_landowners_dvp_normalized`, `bourgeois_landowners_kpd`, `bourgeois_landowners_kpd_display`, `bourgeois_landowners_kpd_normalized`, `bourgeois_landowners_nsdap`, `bourgeois_landowners_nsdap_display`, `bourgeois_landowners_nsdap_normalized`
+`bourgeois_landowners_other`, `bourgeois_landowners_other_display`, `bourgeois_landowners_other_normalized`, `bourgeois_landowners_qol`, `bourgeois_landowners_sapd`, `bourgeois_landowners_sapd_display`, `bourgeois_landowners_sapd_normalized`, `bourgeois_landowners_spd`
+`bourgeois_landowners_spd_display`, `bourgeois_landowners_spd_normalized`, `bourgeois_landowners_z`, `bourgeois_landowners_z_display`, `bourgeois_landowners_z_normalized`
+`national_minorities`, `national_minorities_ddp`, `national_minorities_ddp_display`, `national_minorities_ddp_normalized`, `national_minorities_dnvp`, `national_minorities_dnvp_display`, `national_minorities_dnvp_normalized`, `national_minorities_dvp`
+`national_minorities_dvp_display`, `national_minorities_dvp_normalized`, `national_minorities_kpd`, `national_minorities_kpd_display`, `national_minorities_kpd_normalized`, `national_minorities_nsdap`, `national_minorities_nsdap_display`, `national_minorities_nsdap_normalized`
+`national_minorities_other`, `national_minorities_other_display`, `national_minorities_other_normalized`, `national_minorities_qol`, `national_minorities_sapd`, `national_minorities_sapd_display`, `national_minorities_sapd_normalized`, `national_minorities_spd`
+`national_minorities_spd_display`, `national_minorities_spd_normalized`, `national_minorities_z`, `national_minorities_z_display`, `national_minorities_z_normalized`
+
 ## Dynamic-family provenance
 
 The expanded keys above come from these source constructs:
 
-- Classes: `workers`, `old_middle`, `new_middle`, `rural`, `unemployed`, and
-  `catholics` from `source/scenes/root.scene.dry`.
+- Active support groups: `workers`, `old_middle`, `new_middle`, `rural`,
+  `bourgeois_landowners`, `unemployed`, and `national_minorities` from
+  `source/scenes/root.scene.dry`. `catholics` remains only as compatibility
+  state feeding `national_minorities_*`.
 - Parties: `spd`, `kpd`, `z`, `ddp`, `dvp`, `dnvp`, `nsdap`, `other`, plus
   `sapd` added by `source/scenes/events/sapd_formed.scene.dry`.
 - Class-party families: raw, `_normalized`, and `_display`, constructed in

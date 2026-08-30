@@ -42,9 +42,8 @@ on-arrival: workers_spd += 3*(1-dissent); new_middle_spd += 3*(1-dissent); old_m
 As a people's party, we represent women of all classes.
 
 @campaign_catholics
-title: Campaign among political Catholics.
+title: Campaign among Mniejszości Narodowe.
 on-arrival: catholics_spd += 5*(1-dissent);
 
-Catholics have historically been tied to the Center Party, but there is no reason why our party cannot appeal to them. The Prussian Concordat in particular is a sign of our friendship with Catholicism.
-
+We have expanded our campaign among Mniejszości Narodowe. This temporarily uses the former Catholic-targeting mechanic pending a dedicated historical replacement.
 

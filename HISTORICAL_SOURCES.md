@@ -69,6 +69,43 @@ source location, and permitted use in its entry. Preserve
 
 ## Political parties and factions
 
+### Source entry PPS-DESIGN-TBD
+
+- **Source ID:** PPS-DESIGN-TBD
+- **Claim or game element supported:** PPS player identity, approved opening
+  support targets, and planned Centrum/Lewica/Piłsudczycy faction model.
+- **Category:** political parties and factions
+- **Relevant date or period:** January 1922 onward
+- **Full citation:** TBD — user historical research required.
+- **Author:** TBD
+- **Publication:** TBD
+- **Page number:** TBD
+- **URL or archive location:** TBD
+- **Date accessed:** TBD
+- **Primary or secondary source:** TBD
+- **Exact evidence or notes:** No historical source is recorded yet. Approved
+  gameplay inputs are displayed within-group PPS support of 30% Robotnicy, 15%
+  Inteligencja, 7% Drobnomieszczaństwo, 7% Chłopi, 1% Burżuazja i
+  Ziemiaństwo, 5% Mniejszości Narodowe, and inherited approximately 23%
+  Bezrobotni. The approved future faction opening is Centrum 50/0 dissent,
+  Lewica 15/20, and Piłsudczycy 35/5, with 60-dissent consequence designs.
+- **Confidence:** Historical confidence TBD; implementation confidence applies
+  only to the user-approved gameplay values.
+- **Conflicting sources:** TBD
+- **Intended gameplay use:** PPS-1 identity/support and a later coherent
+  faction/split slice.
+- **Historical fact:** **TBD — historical research required.**
+- **Gameplay simplification:** PPS-1 retains internal `spd`, other German
+  parties, five wired German factions, and German advisers for compatibility.
+- **Alternate-history departure:** TBD
+- **Licensing or attribution requirements:** None identified for design text;
+  future source requirements TBD.
+- **Implementation status:** Player identity and opening support implemented;
+  three-faction model and split consequences approved but not implemented.
+- **Related mechanic, variable and source file:** `parties`, `*_spd`,
+  `factions`, faction strength/dissent, `source/scenes/root.scene.dry`, status,
+  Library, elections, and future faction/adviser/split scenes.
+
 ### Source entry PARTY-TBD
 
 - **Source ID:** TBD
@@ -199,6 +236,40 @@ source location, and permitted use in its entry. Preserve
 
 ## Labor unions and social organizations
 
+### Source entry PPS-ORGANIZATIONS-DESIGN-TBD
+
+- **Source ID:** PPS-ORGANIZATIONS-DESIGN-TBD
+- **Claim or game element supported:** Planned ZSZ affiliate, PPS social world,
+  and press/propaganda structure.
+- **Category:** labor unions and social organizations
+- **Relevant date or period:** 1922–1939
+- **Full citation:** TBD — user historical research required.
+- **Author:** TBD
+- **Publication:** TBD
+- **Page number:** TBD
+- **URL or archive location:** TBD
+- **Date accessed:** TBD
+- **Primary or secondary source:** TBD
+- **Exact evidence or notes:** User-approved design names ZSZ; TUR, OM TUR,
+  Czerwone Harcerstwo TUR, RTPD, worker sport, cooperatives and housing; and a
+  press network centered on *Robotnik*, with regional papers, later censorship,
+  and no independent radio branch. No repository source validates the
+  historical descriptions, chronology, scale, or relationships yet.
+- **Confidence:** TBD
+- **Conflicting sources:** TBD
+- **Intended gameplay use:** Future affiliated-union, organization, welfare,
+  youth, recruitment, propaganda, and censorship mechanics.
+- **Historical fact:** **TBD — historical research required.**
+- **Gameplay simplification:** Planned aggregate systems; exact variables and
+  thresholds are not approved.
+- **Alternate-history departure:** TBD
+- **Licensing or attribution requirements:** TBD
+- **Implementation status:** Approved design only; not implemented. PPS-1
+  preserves German cards, Labor/ADGB, organizations, advisers, and media.
+- **Related mechanic, variable and source file:** Labor faction,
+  `unions_independent`, party-organization/media timers and scenes, welfare,
+  youth, culture, cooperatives, strikes, and future dedicated state.
+
 ### Source entry ORGANIZATION-TBD
 
 - **Source ID:** TBD
@@ -224,6 +295,39 @@ source location, and permitted use in its entry. Preserve
 - **Related mechanic, variable and source file:** TBD
 
 ## Political violence and paramilitary organizations
+
+### Source entry PPS-MILITIA-DESIGN-TBD
+
+- **Source ID:** PPS-MILITIA-DESIGN-TBD
+- **Claim or game element supported:** Planned Milicja PPS to Akcja
+  Socjalistyczna two-stage organization.
+- **Category:** political violence and paramilitary organizations
+- **Relevant date or period:** 1922–1939
+- **Full citation:** TBD — user historical research required.
+- **Author:** TBD
+- **Publication:** TBD
+- **Page number:** TBD
+- **URL or archive location:** TBD
+- **Date accessed:** TBD
+- **Primary or secondary source:** TBD
+- **Exact evidence or notes:** The approved design treats Milicja PPS and AS as
+  two stages of one PPS self-defence organization, mechanically separate from
+  any later Polish equivalent of the Iron Front. Historical formation, dates,
+  membership, activity, and state response are not yet sourced.
+- **Confidence:** TBD
+- **Conflicting sources:** TBD
+- **Intended gameplay use:** Future rally/strike defence, organization strength,
+  militancy, street confrontation, repression, and faction effects.
+- **Historical fact:** **TBD — historical research required.**
+- **Gameplay simplification:** Stage/strength/militancy model approved in
+  principle; values and thresholds are not yet approved.
+- **Alternate-history departure:** TBD
+- **Licensing or attribution requirements:** TBD
+- **Implementation status:** Approved design only; not implemented.
+  Reichsbanner and Iron Front remain the explicit German baseline.
+- **Related mechanic, variable and source file:** `rb_strength`,
+  `rb_militancy`, `iron_front_formed`, Reichsbanner/Iron Front, rally,
+  street-fighting, coup, and repression scenes.
 
 ### Source entry VIOLENCE-TBD
 
@@ -303,12 +407,14 @@ source location, and permitted use in its entry. Preserve
 
 ## Regional and demographic data
 
-### Source entry REGIONAL-TBD
+### Source entry REGIONAL-POPULATION-DESIGN-TBD
 
-- **Source ID:** TBD
-- **Claim or game element supported:** TBD
+- **Source ID:** REGIONAL-POPULATION-DESIGN-TBD
+- **Claim or game element supported:** Approved January 1922 population model,
+  its linear 1939 endpoint, and the provisional composition of Mniejszości
+  Narodowe.
 - **Category:** regional and demographic data
-- **Relevant date or period:** TBD
+- **Relevant date or period:** January 1922–December 1939
 - **Full citation:** TBD
 - **Author:** TBD
 - **Publication:** TBD
@@ -316,16 +422,32 @@ source location, and permitted use in its entry. Preserve
 - **URL or archive location:** TBD
 - **Date accessed:** TBD
 - **Primary or secondary source:** TBD
-- **Exact evidence or notes:** TBD
+- **Exact evidence or notes:** No historical evidence is recorded yet. The
+  current figures are user-approved gameplay inputs: five main classes are
+  normalized to 100%; Chłopi/Robotnicy move linearly 53/27 to 50/30;
+  Bezrobotni start at 3%; Mniejszości Narodowe are a 30% overlapping group.
+  Their provisional approximate composition is 60% Chłopi, 17% Robotnicy, 19%
+  Drobnomieszczaństwo, 3% Inteligencja, and 2% Burżuazja i Ziemiaństwo.
 - **Confidence:** TBD
 - **Conflicting sources:** TBD
-- **Intended gameplay use:** TBD
-- **Historical fact:** TBD
-- **Gameplay simplification:** TBD
+- **Intended gameplay use:** Opening demographic weights, long-term structural
+  trend, election support weighting, and player-facing demographic reference.
+- **Historical fact:** **TBD — historical research required.** Do not cite
+  these design figures as established historical facts.
+- **Gameplay simplification:** Implemented for the approved playable slice.
+  Polacy are the implied complement and are not a separate weighted group.
+  Minority composition is descriptive only. Burżuazja i Ziemiaństwo temporarily
+  inherit the Old Middle Class party profile; Mniejszości Narodowe temporarily
+  inherit Catholic support and targeting mechanics.
 - **Alternate-history departure:** TBD
 - **Licensing or attribution requirements:** TBD
-- **Implementation status:** TBD
-- **Related mechanic, variable and source file:** TBD
+- **Implementation status:** Implemented as a gameplay model; historical
+  validation and dedicated profiles remain pending.
+- **Related mechanic, variable and source file:** `classes`, `workers`,
+  `old_middle`, `new_middle`, `rural`, `bourgeois_landowners`, `unemployed`,
+  `national_minorities`, and dynamic class-party fields in
+  `source/scenes/root.scene.dry`, `source/scenes/post_event.scene.dry`, and
+  `source/scenes/election_algorithm.scene.dry`.
 
 ## Images
 

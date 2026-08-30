@@ -1,5 +1,10 @@
 title: Election
 on-arrival: {!
+// Compatibility bridge: existing Catholic-targeting effects temporarily apply
+// to Mniejszości Narodowe until a dedicated replacement is implemented.
+for (var party of Q.parties) {
+    Q['national_minorities_' + party] = Q['catholics_' + party];
+}
 // calculate normalized class voting amounts (0 to 100)
 for (var c of Q.classes) {
     var class_votes = 0;

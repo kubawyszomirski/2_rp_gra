@@ -8,16 +8,17 @@ set-jump: post_election
 
 @1928
 on-arrival: {!
-Q.workers = 46; // industry and trade
-Q.old_middle = 13; // "old mittelstand"
-// 16.4 trade & commerce, 6.6 public and private services, 4.4 domestic help
-Q.new_middle = 14; // "new mittelstand"
-Q.rural = 25; // agriculture and forestry employment... but many of those are proletarians so...
-// source: https://surface.syr.edu/cgi/viewcontent.cgi?filename=3&article=1016&context=books&type=additional page 43, table 3.3
+// May 1928 point on the approved January 1922–December 1939 class trend.
+Q.workers = 27 + 3*(76/215);
+Q.old_middle = 110/9;
+Q.new_middle = 50/9;
+Q.rural = 53 - 3*(76/215);
+Q.bourgeois_landowners = 20/9;
 Q.unemployed = 8.6;
+Q.national_minorities = 30;
 Q.catholics = 30;
 
-Q.classes = ['workers', 'old_middle', 'new_middle', 'rural', 'unemployed', 'catholics'];
+Q.classes = ['workers', 'old_middle', 'new_middle', 'rural', 'bourgeois_landowners', 'unemployed', 'national_minorities'];
 Q.parties = ['spd', 'kpd', 'z', 'ddp', 'dvp', 'dnvp', 'nsdap', 'other'];
 
 // Support for party by social group
@@ -75,22 +76,28 @@ Q.catholics_dvp = 5;
 Q.catholics_dnvp = 5;
 Q.catholics_nsdap = 0;
 Q.catholics_other = 10;
+
+for (var party of Q.parties) {
+    Q['bourgeois_landowners_' + party] = Q['old_middle_' + party];
+    Q['national_minorities_' + party] = Q['catholics_' + party];
+}
 !}
 go-to: election_algorithm
 set-jump: post_election
 
 @1930
 on-arrival: {!
-Q.workers = 46; // industry and trade
-Q.old_middle = 13; // "old mittelstand"
-// 16.4 trade & commerce, 6.6 public and private services, 4.4 domestic help
-Q.new_middle = 14; // "new mittelstand"
-Q.rural = 25; // agriculture and forestry employment... but many of those are proletarians so...
-// source: https://surface.syr.edu/cgi/viewcontent.cgi?filename=3&article=1016&context=books&type=additional page 43, table 3.3
+// September 1930 point on the approved January 1922–December 1939 class trend.
+Q.workers = 27 + 3*(104/215);
+Q.old_middle = 110/9;
+Q.new_middle = 50/9;
+Q.rural = 53 - 3*(104/215);
+Q.bourgeois_landowners = 20/9;
 Q.unemployed = 20;
+Q.national_minorities = 30;
 Q.catholics = 30;
 
-Q.classes = ['workers', 'old_middle', 'new_middle', 'rural', 'unemployed', 'catholics'];
+Q.classes = ['workers', 'old_middle', 'new_middle', 'rural', 'bourgeois_landowners', 'unemployed', 'national_minorities'];
 Q.parties = ['spd', 'kpd', 'z', 'ddp', 'dvp', 'dnvp', 'nsdap', 'other'];
 
 // Support for party by social group
@@ -149,6 +156,11 @@ Q.catholics_dnvp = 5;
 Q.catholics_nsdap = 10;
 Q.catholics_other = 5;
 
+for (var party of Q.parties) {
+    Q['bourgeois_landowners_' + party] = Q['old_middle_' + party];
+    Q['national_minorities_' + party] = Q['catholics_' + party];
+}
+
 Q.spd_r = 25;
 Q.kpd_r = 10;
 Q.z_r = 15;
@@ -163,16 +175,17 @@ set-jump: post_election
 
 @1932
 on-arrival: {!
-Q.workers = 46; // industry and trade
-Q.old_middle = 13; // "old mittelstand"
-// 16.4 trade & commerce, 6.6 public and private services, 4.4 domestic help
-Q.new_middle = 14; // "new mittelstand"
-Q.rural = 25; // agriculture and forestry employment... but many of those are proletarians so...
-// source: https://surface.syr.edu/cgi/viewcontent.cgi?filename=3&article=1016&context=books&type=additional page 43, table 3.3
+// July 1932 point on the approved January 1922–December 1939 class trend.
+Q.workers = 27 + 3*(126/215);
+Q.old_middle = 110/9;
+Q.new_middle = 50/9;
+Q.rural = 53 - 3*(126/215);
+Q.bourgeois_landowners = 20/9;
 Q.unemployed = 33;
+Q.national_minorities = 30;
 Q.catholics = 30;
 
-Q.classes = ['workers', 'old_middle', 'new_middle', 'rural', 'unemployed', 'catholics'];
+Q.classes = ['workers', 'old_middle', 'new_middle', 'rural', 'bourgeois_landowners', 'unemployed', 'national_minorities'];
 Q.parties = ['spd', 'kpd', 'z', 'ddp', 'dvp', 'dnvp', 'nsdap', 'other'];
 
 // Support for party by social group
@@ -231,6 +244,11 @@ Q.catholics_dnvp = 5;
 Q.catholics_nsdap = 10;
 Q.catholics_other = 5;
 
+for (var party of Q.parties) {
+    Q['bourgeois_landowners_' + party] = Q['old_middle_' + party];
+    Q['national_minorities_' + party] = Q['catholics_' + party];
+}
+
 Q.spd_r = 25;
 Q.kpd_r = 10;
 Q.z_r = 15;
@@ -284,7 +302,7 @@ The electoral system is essentially proportional, with the proportion of Reichst
 **Election results:**
 
 # 1928: 30, 1930: 25, 1932: 22
-SPD: [+ spd_r +]
+PPS: [+ spd_r +]
 
 # 1928: 15, 1930: 15, 1932: 
 Z + BVP: [+ z_r +]
@@ -309,11 +327,10 @@ Other: [+ other_r +]
 
 **Potential coalitions:**
 
-Weimar Coalition (SPD + Z + DDP): [+ weimar_coalition +]
+Weimar Coalition (PPS + Z + DDP): [+ weimar_coalition +]
 
-Grand Coalition (SPD + Z + BVP + DDP + DVP): [+ grand_coalition +]
+Grand Coalition (PPS + Z + BVP + DDP + DVP): [+ grand_coalition +]
 
 Bourgeois Coalition (Z + BVP + DDP + DVP + Others): [+ bourgeois_coalition +]
 
 Right-wing Coalition (Z + BVP + DVP + Others + DNVP): [+ right_coalition +]
-

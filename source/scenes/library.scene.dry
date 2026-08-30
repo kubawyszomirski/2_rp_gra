@@ -5,7 +5,7 @@ go-to: menu
 
 = The Library
 
-Herein contains relevant information about the government and politics of the German republic.
+This library is in transition. The player party and approved population model use the PPS adaptation, while the government, other parties, advisers, factions, organizations, cards, and events remain the temporary German baseline.
 
 @menu
 
@@ -34,7 +34,7 @@ Germany is divided into a number of states, each of which have their own governm
 @weimar_timeline
 go-to: menu
 
-= Timeline of the SPD and the Republic (until 1928)
+= Temporary German-baseline timeline (until 1928)
 
 **1875**: The SPD is formed as a merger of the General German Workers' Association, founded by Ferdinand Lassalle, and the Social Democratic Workers' Party of Germany, led by Wilhelm Liebknecht and August Bebel. Eventually, the SPD grows to become the largest party in the German Empire.
 
@@ -72,7 +72,7 @@ Chancellor: [+ chancellor +] ([+ chancellor_party +])
 Reichstag composition:
 
 # 1928: 30, 1930: 25, 1932: 22
-SPD: [+ spd_r +]%
+PPS: [+ spd_r +]%
 [? if sapd_formed and sapd_r > 0: SAPD: [+ sapd_r +]% ?]
 # 1928: 15, 1930: 15, 1932: 
 Z + BVP: [+ z_r +]%
@@ -89,8 +89,8 @@ NSDAP: [+ nsdap_r +]%
 # 1928: 9, 1930: 10
 Others: [+ other_r +]%
 
-SPD position: [? if spd_toleration : toleration ?][? if spd_in_government : in government - ?][? if spd_toleration == 0 and spd_in_government == 0 and spd_caretaker == 0 : opposition ?][? if spd_caretaker : caretaker government ?]
-[? if in_weimar_coalition and spd_in_government: Weimar Coalition ?][? if in_grand_coalition and spd_in_government: Grand Coalition ?][? if in_popular_front and spd_in_government: Popular Front ?][? if in_left_front and spd_in_government: Left Front ?][? if in_spd_majority and spd_in_government: SPD majority ?][? if in_minority_government and spd_in_government: minority government ?][? if in_emergency_government and spd_in_government: emergency government ?]
+PPS position: [? if spd_toleration : toleration ?][? if spd_in_government : in government - ?][? if spd_toleration == 0 and spd_in_government == 0 and spd_caretaker == 0 : opposition ?][? if spd_caretaker : caretaker government ?]
+[? if in_weimar_coalition and spd_in_government: Weimar Coalition ?][? if in_grand_coalition and spd_in_government: Grand Coalition ?][? if in_popular_front and spd_in_government: Popular Front ?][? if in_left_front and spd_in_government: Left Front ?][? if in_spd_majority and spd_in_government: PPS majority ?][? if in_minority_government and spd_in_government: minority government ?][? if in_emergency_government and spd_in_government: emergency government ?]
 
 [? if spd_in_government and not in_spd_majority and not in_left_front : Coalition dissent: [+ coalition_dissent : coalition_dissent +] ?]
 
@@ -123,17 +123,21 @@ go-to: menu
 
 **Demographic Groups**
 
-**Working Class**: The urban working class - blue-collar workers in factories, workshops, mines, and the like. Most are socialist, supporting either the SPD or KPD. They make up 40-50% of the population.
+The implemented January 1922 gameplay model uses five main classes whose shares total 100%. The figures are approved design values; historical sourcing remains **TBD — historical research required**.
 
-**Old Mittelstand**: The old middle class consists of independent artisans, shopkeepers, and small-time businesspeople. They tend to be conservative and are the strongest base for the far right. 10-15% of the population.
+**Chłopi**: 53% in January 1922. Their share declines linearly to exactly 50% in December 1939.
 
-**New Mittelstand**: The new middle class consists of white-collar workers and government employees. This is the base of liberalism. 10-15% of the population.
+**Robotnicy**: 27% in January 1922. Their share rises linearly to exactly 30% in December 1939.
 
-**Rural**: Small and large farmers and independent rural workers. Protestant farmers often support the DNVP. 20-30% of the population.
+**Drobnomieszczaństwo**: approximately 12.22% after normalising the approved opening figures.
 
-**Catholics** are the largest religious minority, at about 30% of the population. They disproportionately support the Center Party (or the Bavarian People's Party in Bavaria).
+**Inteligencja**: approximately 5.56% after normalisation.
 
-**Jews** account for between 0.5% to 1% of the population, and tend to support liberal parties, mostly the DDP, although substantial numbers support the SPD or KPD.
+**Burżuazja i Ziemiaństwo**: approximately 2.22% after normalisation. Its opening party profile temporarily copies the old Old Middle Class profile. This is a gameplay placeholder pending historical research.
+
+**Bezrobotni**: starts at 3%. Unemployment is an overlapping economic condition rather than a sixth main class, and retains the existing crisis-era mechanics.
+
+**Mniejszości Narodowe**: 30% of the population and overlapping with the five main classes. The provisional internal composition is approximately 60% Chłopi, 17% Robotnicy, 19% Drobnomieszczaństwo, 3% Inteligencja, and 2% Burżuazja i Ziemiaństwo. These approximate figures do not yet drive a separate calculation. This group temporarily inherits the former Catholic party profile and Catholic-targeting mechanics pending a dedicated replacement.
 
 
 @public_opinion
@@ -162,7 +166,7 @@ go-to: menu
 **Projected election results** (if the election were to be held now):
 
 # 1928: 30, 1930: 25, 1932: 22
-SPD: [+ spd_votes +]%
+PPS: [+ spd_votes +]%
 
 [? if sapd_formed: SAPD: [+ sapd_votes +]% ?]
 
@@ -189,22 +193,24 @@ Others: [+ other_votes +]%
 
 **Detailed results for each demographic**
 
-Workers: SPD: [+ workers_spd_display +]%, Z: [+ workers_z_display +]%, KPD: [+ workers_kpd_display +]%, [+ ddp_name +]: [+ workers_ddp_display +]%, DVP: [+ workers_dvp_display +]%; DNVP: [+ workers_dnvp_display +]%, NSDAP: [+ workers_nsdap_display +]%, Others: [+ workers_other_display +]% [? if sapd_formed: SAPD: [+ workers_sapd_display +]% ?]
+Robotnicy: PPS: [+ workers_spd_display +]%, Z: [+ workers_z_display +]%, KPD: [+ workers_kpd_display +]%, [+ ddp_name +]: [+ workers_ddp_display +]%, DVP: [+ workers_dvp_display +]%; DNVP: [+ workers_dnvp_display +]%, NSDAP: [+ workers_nsdap_display +]%, Others: [+ workers_other_display +]% [? if sapd_formed: SAPD: [+ workers_sapd_display +]% ?]
 
-New Middle Class: SPD: [+ new_middle_spd_display +]%, Z: [+ new_middle_z_display +]%, KPD: [+ new_middle_kpd_display +]%, [+ ddp_name +]: [+ new_middle_ddp_display +]%, DVP: [+ new_middle_dvp_display +]%; DNVP: [+ new_middle_dnvp_display +]%, NSDAP: [+ new_middle_nsdap_display +]%, Others: [+ new_middle_other_display +]% [? if sapd_formed: SAPD: [+ new_middle_sapd_display +]% ?]
+Inteligencja: PPS: [+ new_middle_spd_display +]%, Z: [+ new_middle_z_display +]%, KPD: [+ new_middle_kpd_display +]%, [+ ddp_name +]: [+ new_middle_ddp_display +]%, DVP: [+ new_middle_dvp_display +]%; DNVP: [+ new_middle_dnvp_display +]%, NSDAP: [+ new_middle_nsdap_display +]%, Others: [+ new_middle_other_display +]% [? if sapd_formed: SAPD: [+ new_middle_sapd_display +]% ?]
 
-Old Middle Class: SPD: [+ old_middle_spd_display +]%, Z: [+ old_middle_z_display +]%, KPD: [+ old_middle_kpd_display +]%, [+ ddp_name +]: [+ old_middle_ddp_display +]%, DVP: [+ old_middle_dvp_display +]%; DNVP: [+ old_middle_dnvp_display +]%, NSDAP: [+ old_middle_nsdap_display +]%, Others: [+ old_middle_other_display +]% [? if sapd_formed: SAPD: [+ old_middle_sapd_display +]% ?]
+Drobnomieszczaństwo: PPS: [+ old_middle_spd_display +]%, Z: [+ old_middle_z_display +]%, KPD: [+ old_middle_kpd_display +]%, [+ ddp_name +]: [+ old_middle_ddp_display +]%, DVP: [+ old_middle_dvp_display +]%; DNVP: [+ old_middle_dnvp_display +]%, NSDAP: [+ old_middle_nsdap_display +]%, Others: [+ old_middle_other_display +]% [? if sapd_formed: SAPD: [+ old_middle_sapd_display +]% ?]
 
-Rural: SPD: [+ rural_spd_display +]%, Z: [+ rural_z_display +]%, KPD: [+ rural_kpd_display +]%, [+ ddp_name +]: [+ rural_ddp_display +]%, DVP: [+ rural_dvp_display +]%; DNVP: [+ rural_dnvp_display +]%, NSDAP: [+ rural_nsdap_display +]%, Others: [+ rural_other_display +]% [? if sapd_formed: SAPD: [+ rural_sapd_display +]% ?]
+Chłopi: PPS: [+ rural_spd_display +]%, Z: [+ rural_z_display +]%, KPD: [+ rural_kpd_display +]%, [+ ddp_name +]: [+ rural_ddp_display +]%, DVP: [+ rural_dvp_display +]%; DNVP: [+ rural_dnvp_display +]%, NSDAP: [+ rural_nsdap_display +]%, Others: [+ rural_other_display +]% [? if sapd_formed: SAPD: [+ rural_sapd_display +]% ?]
 
-Unemployed: SPD: [+ unemployed_spd_display +]%, Z: [+ unemployed_z_display +]%, KPD: [+ unemployed_kpd_display +]%, [+ ddp_name +]: [+ unemployed_ddp_display +]%, DVP: [+ unemployed_dvp_display +]%; DNVP: [+ unemployed_dnvp_display +]%, NSDAP: [+ unemployed_nsdap_display +]%, Others: [+ unemployed_other_display +]% [? if sapd_formed: SAPD: [+ unemployed_sapd_display +]% ?]
+Burżuazja i Ziemiaństwo: PPS: [+ bourgeois_landowners_spd_display +]%, Z: [+ bourgeois_landowners_z_display +]%, KPD: [+ bourgeois_landowners_kpd_display +]%, [+ ddp_name +]: [+ bourgeois_landowners_ddp_display +]%, DVP: [+ bourgeois_landowners_dvp_display +]%; DNVP: [+ bourgeois_landowners_dnvp_display +]%, NSDAP: [+ bourgeois_landowners_nsdap_display +]%, Others: [+ bourgeois_landowners_other_display +]% [? if sapd_formed: SAPD: [+ bourgeois_landowners_sapd_display +]% ?]
 
-Catholics: SPD: [+ catholics_spd_display +]%, Z: [+ catholics_z_display +]%, KPD: [+ catholics_kpd_display +]%, [+ ddp_name +]: [+ catholics_ddp_display +]%, DVP: [+ catholics_dvp_display +]%; DNVP: [+ catholics_dnvp_display +]%, NSDAP: [+ catholics_nsdap_display +]%, Others: [+ catholics_other_display +]% [? if sapd_formed: SAPD: [+ catholics_sapd_display +]% ?]
+Bezrobotni: PPS: [+ unemployed_spd_display +]%, Z: [+ unemployed_z_display +]%, KPD: [+ unemployed_kpd_display +]%, [+ ddp_name +]: [+ unemployed_ddp_display +]%, DVP: [+ unemployed_dvp_display +]%; DNVP: [+ unemployed_dnvp_display +]%, NSDAP: [+ unemployed_nsdap_display +]%, Others: [+ unemployed_other_display +]% [? if sapd_formed: SAPD: [+ unemployed_sapd_display +]% ?]
+
+Mniejszości Narodowe: PPS: [+ national_minorities_spd_display +]%, Z: [+ national_minorities_z_display +]%, KPD: [+ national_minorities_kpd_display +]%, [+ ddp_name +]: [+ national_minorities_ddp_display +]%, DVP: [+ national_minorities_dvp_display +]%; DNVP: [+ national_minorities_dnvp_display +]%, NSDAP: [+ national_minorities_nsdap_display +]%, Others: [+ national_minorities_other_display +]% [? if sapd_formed: SAPD: [+ national_minorities_sapd_display +]% ?]
 
 @parties
 go-to: menu
 
-**SPD** - *Sozialdemokratische Partei Deutschlands* (Social Democratic Party of Germany) - this is us. We are a socialist and democratic party of the working class. We are the heirs of the legacy of Marx and Engels, Lassalle and Bebel. We are the foremost defenders of the Republic. The modern SPD was formed from a merger of the "Majority" SPD, which supported the Great War, and the "Independent" SPD or USPD, which opposed the war.
+**PPS** - *Polska Partia Socjalistyczna* - this is the player party. In the implemented PPS-1 slice, its opening support profile and player-facing label are Polish. Its advisers, factions, organizations, action cards, coalition context, and dated events remain temporary German-baseline mechanics pending dedicated replacements.
 
 **Z** - *Zentrumspartei* (Center Party) - a centrist to center-right Catholic party that supports the Republic, and has historically supported many of our labor, welfare, and anti-militarist priorities. They have often been in coalitions with us. They are often associated with the **BVP** (Bavarian People's Party), which represents Catholics in Bavaria. [? if year >= 1930 or chancellor = "Brüning" : They have appeared to take a more conservative turn recently, with the rise of Brüning and the party leader, Ludwig Kaas. ?]
 
@@ -284,7 +290,9 @@ Loyalty: [+ prussian_police_loyalty : loyalty +]
 @factions
 go-to: neorevisionists if neorevisionism > 0; menu if neorevisionism <= 0
 
-**Internal factions of the SPD**
+**Temporary German-baseline party factions**
+
+These five inherited factions remain mechanically active for compatibility. The approved future PPS model—Centrum PPS, Lewica PPS, and Piłsudczycy—is not implemented in this slice.
 
 Overall dissent: [+ dissent_percent : dissent +]
 
@@ -355,8 +363,8 @@ if (Q.sapd_formed && Q.sapd_r) {
 data = data.concat([
     {
         "id": "spd",
-        "legend": "SPD",
-        "name": "SPD",
+        "legend": "PPS",
+        "name": "PPS",
         "seats": Q.spd_r*5,
     },
     {
@@ -421,7 +429,7 @@ if (d3 && window) {
     var lines = d3.linegraph(false, false,
             Q.parties,
             {'spd': '#E3000F', 'kpd': '#8B0000', 'ddp': '#DCCA4A', 'z': '#000', 'dvp': '#D5AC27', 'dnvp': '#3f7bc1', 'nsdap': '#954B00', 'other': '#a0a0a0', 'sapd': '#c40000'},
-            {'spd': 'SPD', 'kpd': 'KPD', 'ddp': Q.ddp_name, 'z': 'Z + BVP', 'dvp': 'DVP', 'dnvp': 'DNVP', 'nsdap': 'NSDAP', 'other': 'Others', 'sapd': 'SAPD'});
+            {'spd': 'PPS', 'kpd': 'KPD', 'ddp': Q.ddp_name, 'z': 'Z + BVP', 'dvp': 'DVP', 'dnvp': 'DNVP', 'nsdap': 'NSDAP', 'other': 'Others', 'sapd': 'SAPD'});
     lines.width(width).height(400);
     //var svg = lines(Q.election_records);
     if (Q.election_records.length > 0) {
@@ -434,7 +442,7 @@ if (d3 && window) {
         var lines_2 = d3.linegraph(true, true,
             Q.parties,
             {'spd': '#E3000F', 'kpd': '#8B0000', 'ddp': '#DCCA4A', 'z': '#000', 'dvp': '#D5AC27', 'dnvp': '#3f7bc1', 'nsdap': '#954B00', 'other': '#a0a0a0', 'sapd': '#c40000'},
-            {'spd': 'SPD', 'kpd': 'KPD', 'ddp': Q.ddp_name, 'z': 'Z + BVP', 'dvp': 'DVP', 'dnvp': 'DNVP', 'nsdap': 'NSDAP', 'other': 'Others', 'sapd': 'SAPD'});
+            {'spd': 'PPS', 'kpd': 'KPD', 'ddp': Q.ddp_name, 'z': 'Z + BVP', 'dvp': 'DVP', 'dnvp': 'DNVP', 'nsdap': 'NSDAP', 'other': 'Others', 'sapd': 'SAPD'});
         lines_2.width(width).height(400);
         d3.select("#party_support_history").datum(Q.party_support_records).call(lines_2);
     }
@@ -456,7 +464,7 @@ if (d3 && window) {
 {!<svg id="reichstag" style="width: 500px; height: 250px;"> </svg>!}
 
 {!<table>!}
-{!<tr><td><div class="box" style='background-color:#E3000F; outline: 2px; outline-style: solid;'> </div></td><td>!} **SPD:** {!</td><td>!} **[+ spd_r +]%** {!</td></tr>!}
+{!<tr><td><div class="box" style='background-color:#E3000F; outline: 2px; outline-style: solid;'> </div></td><td>!} **PPS:** {!</td><td>!} **[+ spd_r +]%** {!</td></tr>!}
 
 [? if sapd_formed : {!<tr><td><div class="box" style='background-color:#C40000'> </div></td> <td> !}SAPD: {!</td><td>!} [+ sapd_r +]% {!</td></tr>!} ?]
 
@@ -479,7 +487,7 @@ if (d3 && window) {
 
 = Election history
 
-[? if year = 1928 and month < 5 : No new elections yet. ?]
+[? if year < 1928 or (year = 1928 and month < 5) : No new elections yet. ?]
 
 {!<svg id="election_history" style="width: 500px; height: 400px;"> </svg>!}
 

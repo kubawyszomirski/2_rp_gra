@@ -3,6 +3,11 @@ new-page: true
 on-arrival: {!
 Q.last_advisor_action = 0;
 Q.last_cabinet_action = 0;
+// Compatibility bridge: existing Catholic-targeting effects temporarily apply
+// to Mniejszości Narodowe until a dedicated replacement is implemented.
+for (var party of Q.parties) {
+    Q['national_minorities_' + party] = Q['catholics_' + party];
+}
 // make sure no stat is below 0.
 for (var c of Q.classes) {
     for (var party of Q.parties) {
@@ -353,7 +358,6 @@ if (Q.month_actions >= 1) {
             Q.old_middle_dvp -= 6/12;
             Q.new_middle_dvp -= 6/12;
             Q.rural_dvp -= 6/12;
-            Q.workers -= 4/12;
             Q.unemployed_nsdap += 7/12;
             Q.unemployed_kpd += 2/12;
             Q.rural_other -= 12/12;
@@ -383,7 +387,6 @@ if (Q.month_actions >= 1) {
             Q.unemployed += 5/12;
             Q.inflation -= 2/12;
             Q.catholics_z += 2/12;
-            Q.workers -= 4/12;
             Q.rural_dnvp -= 4/12;
             Q.rural_nsdap += 8/12;
             Q.new_middle_nsdap += 10/12;
@@ -425,7 +428,7 @@ if (Q.month_actions >= 1) {
             if (Q.rural_dnvp_normalized < 40) {
                 Q.rural_dnvp += 6/12;
             }
-            if (Q.catholics_z_normalized < 40) {
+            if (Q.national_minorities_z_normalized < 40) {
                 Q.catholics_z += 6/12;
             }
         }
@@ -456,10 +459,17 @@ if (Q.month_actions >= 1) {
         if (Q.rural_spd_normalized > 20) {
             Q.rural_spd -= 6/12;
         }
-        if (Q.catholics_spd_normalized > 20) {
+        if (Q.national_minorities_spd_normalized > 20) {
             Q.catholics_spd -= 6/12;
         }
     }
+
+    // Approved structural trend: from January 1922 through December 1939,
+    // Chłopi decline linearly from 53% to 50% while Robotnicy rise from 27% to 30%.
+    var demographic_month = (Q.year - 1922)*12 + (Q.month - 1);
+    var demographic_progress = Math.max(0, Math.min(1, demographic_month/215));
+    Q.workers = 27 + 3*demographic_progress;
+    Q.rural = 53 - 3*demographic_progress;
 }
 Q.has_event = 0;
 // check if there are any cards in #event, and then go to main if not.

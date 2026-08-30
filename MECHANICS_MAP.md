@@ -8,6 +8,32 @@ base is every file under `source/`, plus the build configuration, compiled
 `out/game.json`, and the customized browser files needed to trace display,
 saving, and mod loading. No external historical research was used.
 
+> **Implemented start-date decision:** New games start in **January 1922**.
+> The remaining people, institutions, events, and mechanics still represent
+> the German baseline until researched Polish replacements are approved. The
+> retained first German election remains May 1928; this is an interim gameplay
+> schedule, not a researched Polish equivalent.
+
+> **Implemented PPS-1 decision:** The player-facing party is **PPS — Polska
+> Partia Socjalistyczna**, while the internal party ID remains `spd` for
+> compatibility with dynamic support keys, elections, coalitions, saves, and
+> events. Opening displayed PPS support is 30% of Robotnicy, 15% of
+> Inteligencja, 7% of Drobnomieszczaństwo, 7% of Chłopi, 1% of Burżuazja i
+> Ziemiaństwo, and 5% of Mniejszości Narodowe. Bezrobotni retain approximately
+> 23%. Other parties, advisers, five factions, cards, organizations,
+> institutions, and dated events remain the explicit temporary German
+> baseline.
+
+The approved next-stage design is documented but not live: Centrum PPS,
+Lewica PPS, and Piłsudczycy will replace the five inherited factions at
+50/15/35; ZSZ will be an affiliated union power center rather than a faction;
+the PPS social world will cover TUR, youth/children, welfare, sport,
+cooperatives, and housing; press will center on *Robotnik* without a radio
+branch; and Milicja PPS may develop into Akcja Socjalistyczna as a two-stage
+organization separate from any future Polish Iron Front equivalent. Every
+historical detail remains **TBD — historical research required**, and each
+mechanical replacement requires its own bounded implementation and tests.
+
 Repository paths identify evidence, not files to edit automatically. When the
 code does not establish a behavior confidently, this document says:
 **UNCLEAR — requires code investigation or runtime testing.**
@@ -201,9 +227,13 @@ be traced back to code.
 - **Safe extension points:** Add an explicitly initialized flag and document
   all readers/writers; add new start-menu documentation-only links only after
   runtime review.
-- **Polish adaptation reconsideration:** Starting date, actors, social groups,
-  parties, institutions, economic values, and all named defaults.
-- **Polish equivalent:** TBD — user historical research required.
+- **Polish adaptation reconsideration:** Keep the current initialization
+  structure, with the campaign starting in January 1922. Do not shift German
+  dated events without approved Polish replacements.
+- **Polish equivalent:** Implemented opening calendar: `year = 1922`,
+  `month = 1`, and `time = 1`. The retained May 1928 German election is
+  relative month `77`; the first Polish election remains **TBD — historical
+  research required**.
 - **Unresolved:** Whether every apparently unused initial field is retained for
   a planned mechanic or is obsolete is **UNCLEAR — requires code investigation
   or runtime testing.**
@@ -233,7 +263,16 @@ be traced back to code.
   opening state, hand capacity, saving, polls, card return, and achievements.
 - **Polish adaptation reconsideration:** Whether a future adaptation should
   continue to use one fixed ruleset.
-- **Polish equivalent:** TBD — user historical research required.
+- **Polish equivalent:** Keep one fixed gameplay baseline, based on the former
+  Normal settings. The future Polish equivalent of the Reichsbanner is **Akcja
+  Socjalistyczna (AS)**. As part of the bounded Polish replacement, Reichsbanner
+  labels and `rb` state names should become Akcja Socjalistyczna labels and
+  `as` state names. This is a future migration target, not authorization for a
+  mass rename; every reader, writer, display, and save-compatibility effect must
+  be audited in a separately approved change. AS starts with zero strength as a
+  user-approved gameplay setup for January 1922. Its historical creation date
+  remains **TBD — historical research required** until a source is recorded in
+  `HISTORICAL_SOURCES.md`.
 - **Unresolved:** Compatibility behavior when importing an old non-Normal save
   is **UNCLEAR — requires code investigation or runtime testing.**
 
@@ -370,12 +409,15 @@ be traced back to code.
 - **Sequence:** For each class, negative raw propensities are clamped to zero;
   propensities are normalized within that class; normalized class preferences
   are weighted by class proportions; party totals are normalized; rounded vote
-  shares and display fields are produced.
+  shares and display fields are produced. Before calculation, the temporary
+  compatibility bridge copies the former Catholic party profile into
+  `national_minorities_*`.
 - **Scenes/files:** `source/scenes/post_event.scene.dry`,
   `source/scenes/election_algorithm.scene.dry`,
   `source/scenes/election_simulation.scene.dry`, campaigning and policy cards,
   and `source/scenes/library.scene.dry`.
-- **Important state:** `classes`, `parties`, class proportions; dynamic
+- **Important state:** `classes`, `parties`, the five main-class proportions,
+  overlapping `unemployed` and `national_minorities` weights; dynamic
   `<class>_<party>`, `_normalized`, and `_display` families; party
   `_support`, `_normalized`, `_votes`, `_votes_dec`, and `_votes_disp` fields;
   `dissent`.
@@ -390,12 +432,41 @@ be traced back to code.
   If one class total becomes zero, division-by-zero protection is not visible.
 - **Safe extension points:** Small changes to an existing raw preference with
   regression snapshots before and after normalization.
-- **Polish adaptation reconsideration:** Classes, parties, base propensities,
-  demographic weights, persuasion model, and rounding.
-- **Polish equivalent:** TBD — user historical research required.
+- **Polish adaptation reconsideration:** The class list and opening weights are
+  implemented. The player-facing PPS identity and approved opening support are
+  implemented, but other parties, permanent propensities after the opening,
+  persuasion balance, and rounding still require Polish research and testing.
+- **Polish equivalent:** Implemented player-facing groups are **Robotnicy**
+  (`workers`), **Drobnomieszczaństwo** (`old_middle`), **Inteligencja**
+  (`new_middle`), **Chłopi** (`rural`), **Burżuazja i Ziemiaństwo**
+  (`bourgeois_landowners`), **Bezrobotni** (`unemployed`), and
+  **Mniejszości Narodowe** (`national_minorities`). The five main classes total
+  100% in January 1922: 27%, 110/9% (about 12.22%), 50/9% (about 5.56%),
+  53%, and 20/9% (about 2.22%), respectively. From January 1922 to December
+  1939, Robotnicy rise linearly to exactly 30% and Chłopi decline linearly to
+  exactly 50%; the other three main-class shares remain fixed. Bezrobotni start
+  at 3% and retain the German crisis mechanics as an overlapping economic
+  condition. Mniejszości Narodowe are a 30% overlapping identity group; Polacy
+  are the implied complement and are not stored as a separate weight.
+
+  The provisional minority composition is approximately 60% Chłopi, 17%
+  Robotnicy, 19% Drobnomieszczaństwo, 3% Inteligencja, and 2% Burżuazja i
+  Ziemiaństwo. These approximate descriptive figures do not yet drive another
+  calculation. Non-PPS values for Burżuazja i Ziemiaństwo temporarily copy the
+  opening Old Middle Class profile; its PPS support is adjusted to the approved
+  displayed 1%. Mniejszości Narodowe temporarily copy the Catholic profile and
+  receive existing Catholic-targeting effects; the compatibility value is set
+  to produce the approved displayed 5% PPS support. Raw `*_spd` values are
+  hidden weights chosen so normalization displays the approved 30/15/7/7/1/5
+  targets; they are not themselves percentages. Bezrobotni retain the inherited
+  raw value, which displays as approximately 23%. These are gameplay
+  placeholders; permanent replacements are **TBD — historical research
+  required**. Other parties remain the German baseline by explicit scope.
 - **Unresolved:** Zero-total class behavior and the intended role of
   `old_demographics` are **UNCLEAR — requires code investigation or runtime
-  testing.**
+  testing.** The current campaign ending occurs before December 1939, so the
+  approved demographic endpoint is implemented and tested but not reachable
+  in ordinary play until campaign chronology is extended separately.
 
 ### 8. Elections and parliamentary allocation
 
@@ -507,7 +578,7 @@ be traced back to code.
   react to high values.
 - **Scenes/files:** `source/scenes/post_event.scene.dry`,
   `source/scenes/party_affairs/party_disunity.scene.dry`,
-  `source/scenes/shuffle_leadership.scene.dry`, and faction consequence files
+  `source/scenes/party_affairs/shuffle_leadership.scene.dry`, and faction consequence files
   under `source/scenes/events/`.
 - **Important state:** `factions`, each `<faction>_strength` and
   `<faction>_dissent`, `dissent`, `dissent_percent`, `left_split`,
@@ -526,7 +597,14 @@ be traced back to code.
   post-normalization and threshold tests.
 - **Polish adaptation reconsideration:** Faction identities, weights,
   ideological disagreements, leaders, and split consequences.
-- **Polish equivalent:** TBD — user historical research required.
+- **Polish equivalent:** **Approved but not implemented.** The future PPS model
+  is Centrum PPS 50 strength/0 dissent, Lewica PPS 15/20, and Piłsudczycy 35/5.
+  Each has an approved 60-dissent break path and possible successor behavior.
+  Replacing the live array alone would orphan existing card, adviser, union,
+  split-event, monthly-dissent, and UI writes, so PPS-1 deliberately retains
+  the five German factions. The full three-faction conversion must be one
+  separately tested slice. Historical validation is **TBD — historical
+  research required**.
 - **Unresolved:** Intended semantics of `centrist_dissent` versus
   `center_dissent` are **UNCLEAR — requires code investigation or runtime
   testing.**
@@ -572,7 +650,7 @@ be traced back to code.
   leadership shuffle adds/removes advisers up to `n_advisors`; selected actions
   set `advisor_action_timer` and `last_advisor_action`; cancellation can restore
   the previous card state.
-- **Scenes/files:** `source/scenes/shuffle_leadership.scene.dry`, all files under
+- **Scenes/files:** `source/scenes/party_affairs/shuffle_leadership.scene.dry`, all files under
   `source/scenes/advisors/`, `source/scenes/main.scene.dry`, and
   `source/scenes/cancel_advisor_action.scene.dry`.
 - **Important state:** `n_advisors`, every `*_advisor` flag,
@@ -739,7 +817,7 @@ be traced back to code.
   combinations of those values; threshold events trigger; outcome scenes set
   victory/defeat flags.
 - **Scenes/files:** `source/scenes/party_affairs/streetfighting.scene.dry`,
-  `source/scenes/civil_war.scene.dry`, organization scenes, and violence/coup
+  `source/scenes/events/civil_war.scene.dry`, organization scenes, and violence/coup
   files under `source/scenes/events/`; qdisplays `loyalty`, `militancy`, and
   `strength`.
 - **Important state:** `rb_*`, `sh_*`, `sa_*`, `rfb_*`, police and Reichswehr

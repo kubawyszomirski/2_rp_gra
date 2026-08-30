@@ -8,8 +8,10 @@ Q.workers_spd -= 3;
 Q.new_middle_sapd = 1;
 Q.old_middle_sapd = 0;
 Q.rural_sapd = 0;
+Q.bourgeois_landowners_sapd = 0;
 Q.unemployed_sapd = 2;
 Q.catholics_sapd = 0;
+Q.national_minorities_sapd = 0;
 
 Q.workers_other -= 5;
 
