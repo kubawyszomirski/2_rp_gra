@@ -72,8 +72,9 @@ source location, and permitted use in its entry. Preserve
 ### Source entry PPS-DESIGN-TBD
 
 - **Source ID:** PPS-DESIGN-TBD
-- **Claim or game element supported:** PPS player identity, approved opening
-  support targets, and planned Centrum/Lewica/Piłsudczycy faction model.
+- **Claim or game element supported:** PPS player identity, approved Polish
+  opening-party support matrix, and planned Centrum/Lewica/Piłsudczycy faction
+  model.
 - **Category:** political parties and factions
 - **Relevant date or period:** January 1922 onward
 - **Full citation:** TBD — user historical research required.
@@ -83,28 +84,36 @@ source location, and permitted use in its entry. Preserve
 - **URL or archive location:** TBD
 - **Date accessed:** TBD
 - **Primary or secondary source:** TBD
-- **Exact evidence or notes:** No historical source is recorded yet. Approved
-  gameplay inputs are displayed within-group PPS support of 30% Robotnicy, 15%
-  Inteligencja, 7% Drobnomieszczaństwo, 7% Chłopi, 1% Burżuazja i
-  Ziemiaństwo, 5% Mniejszości Narodowe, and inherited approximately 23%
-  Bezrobotni. The approved future faction opening is Centrum 50/0 dissent,
-  Lewica 15/20, and Piłsudczycy 35/5, with 60-dissent consequence designs.
+- **Exact evidence or notes:** No historical source is recorded yet. The
+  implemented gameplay matrix covers KPP, PPS, NPR, PSL Wyzwolenie, PSL Piast,
+  PSChD, ZLN, Blok Mniejszości Narodowych and Inne across all seven population
+  groups. The eight user-supplied named-party values are proportionally scaled
+  so Inne receives 8% per row and 12% among Chłopi. The approved future faction
+  opening is Centrum 50/0 dissent, Lewica 15/20, and Piłsudczycy 35/5, with
+  60-dissent consequence designs.
 - **Confidence:** Historical confidence TBD; implementation confidence applies
   only to the user-approved gameplay values.
 - **Conflicting sources:** TBD
-- **Intended gameplay use:** PPS-1 identity/support and a later coherent
-  faction/split slice.
+- **Intended gameplay use:** Opening polling/elections, campaigning,
+  relationships, first-cycle coalitions, and a later coherent faction/split
+  slice.
 - **Historical fact:** **TBD — historical research required.**
-- **Gameplay simplification:** PPS-1 retains internal `spd`, other German
-  parties, five wired German factions, and German advisers for compatibility.
+- **Gameplay simplification:** Active elections use semantic Polish IDs. A
+  narrow compatibility map carries inherited `spd`, `kpd`, `dvp`, and `dnvp`
+  support deltas into PPS, KPP, PSChD and ZLN. Five wired German factions,
+  German advisers and most dated content remain temporary placeholders.
 - **Alternate-history departure:** TBD
 - **Licensing or attribution requirements:** None identified for design text;
   future source requirements TBD.
-- **Implementation status:** Player identity and opening support implemented;
-  three-faction model and split consequences approved but not implemented.
-- **Related mechanic, variable and source file:** `parties`, `*_spd`,
-  `factions`, faction strength/dissent, `source/scenes/root.scene.dry`, status,
-  Library, elections, and future faction/adviser/split scenes.
+- **Implementation status:** Nine-party opening matrix, direct campaigning,
+  initial relationships and first-election coalition shell implemented;
+  three-faction model, later parties and split consequences approved/planned
+  but not implemented.
+- **Related mechanic, variable and source file:** `parties`, semantic
+  `<class>_<party>` families, `legacy_party_map`, relationship and coalition
+  fields, `factions`, `source/scenes/root.scene.dry`, status, Library,
+  campaigning, relationships, elections, and future faction/adviser/split
+  scenes.
 
 ### Source entry PARTY-TBD
 
@@ -157,6 +166,41 @@ source location, and permitted use in its entry. Preserve
 - **Related mechanic, variable and source file:** TBD
 
 ## Governments and coalitions
+
+### Source entry POLISH-COALITION-DESIGN-TBD
+
+- **Source ID:** POLISH-COALITION-DESIGN-TBD
+- **Claim or game element supported:** First-cycle Polish coalition and
+  toleration shell.
+- **Category:** governments and coalitions
+- **Relevant date or period:** Opening electoral cycle; exact historical date TBD
+- **Full citation:** TBD — user historical research required.
+- **Author:** TBD
+- **Publication:** TBD
+- **Page number:** TBD
+- **URL or archive location:** TBD
+- **Date accessed:** TBD
+- **Primary or secondary source:** TBD
+- **Exact evidence or notes:** User-approved gameplay combinations are Koalicja
+  Lewicy (PPS + PSL Wyzwolenie + Minorities Bloc), centre-left (PPS + both PSL
+  parties + NPR), Chjeno-Piast (ZLN + PSChD + PSL Piast), and a PPS–PSL
+  Wyzwolenie minority government externally tolerated by the Minorities Bloc.
+- **Confidence:** Historical confidence TBD; implementation confidence applies
+  only to the approved gameplay rules.
+- **Conflicting sources:** TBD
+- **Intended gameplay use:** First election and government-state setup.
+- **Historical fact:** **TBD — historical research required.** The implemented
+  formulas and placeholder leadership must not be cited as historical fact.
+- **Gameplay simplification:** Percentages stand in for seats; a 50% threshold
+  is used; named ministers are deliberately left TBD.
+- **Alternate-history departure:** Depends on election results and player choice.
+- **Licensing or attribution requirements:** None identified for design text.
+- **Implementation status:** Implemented for the first-election shell only.
+  Centrolew, Sanacja, broad coalition/fronts, democratic classification and
+  crisis rules remain planned.
+- **Related mechanic, variable and source file:** Polish `_r` fields,
+  relationship values, coalition totals and flags in
+  `source/scenes/events/election_1928.scene.dry`.
 
 ### Source entry GOVERNMENT-TBD
 
@@ -436,13 +480,15 @@ source location, and permitted use in its entry. Preserve
   these design figures as established historical facts.
 - **Gameplay simplification:** Implemented for the approved playable slice.
   Polacy are the implied complement and are not a separate weighted group.
-  Minority composition is descriptive only. Burżuazja i Ziemiaństwo temporarily
-  inherit the Old Middle Class party profile; Mniejszości Narodowe temporarily
-  inherit Catholic support and targeting mechanics.
+  Minority composition is descriptive only. Burżuazja i Ziemiaństwo and
+  Mniejszości Narodowe now have dedicated approved opening party rows. The
+  minority dimension remains an overlapping 30% weight; only inherited
+  Catholic-targeting PPS deltas are bridged into it.
 - **Alternate-history departure:** TBD
 - **Licensing or attribution requirements:** TBD
-- **Implementation status:** Implemented as a gameplay model; historical
-  validation and dedicated profiles remain pending.
+- **Implementation status:** Implemented as a gameplay model with dedicated
+  opening profiles; historical validation and a possible intersection model
+  remain pending.
 - **Related mechanic, variable and source file:** `classes`, `workers`,
   `old_middle`, `new_middle`, `rural`, `bourgeois_landowners`, `unemployed`,
   `national_minorities`, and dynamic class-party fields in

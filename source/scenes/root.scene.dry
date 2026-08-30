@@ -8,7 +8,7 @@ go-to: start_menu_2
 
 = PPS: An Alternate History
 
-**Temporary baseline notice:** You play as the **PPS (Polska Partia Socjalistyczna)**. The other parties, advisers, internal factions, action cards, events, governments, and institutions still use the inherited German baseline until their Polish replacements are researched, approved, and implemented.
+**Playable-slice notice:** You play as the **PPS (Polska Partia Socjalistyczna)**. The opening electoral parties, support model, campaigning targets, inter-party relations and first-election coalition shell are Polish. Advisers, internal factions, most action cards, dated events, governments and institutions still use the inherited German baseline until their Polish replacements are researched, approved and implemented.
 
 @start_menu_2
 
@@ -103,14 +103,24 @@ Q.moderate_plan_adopted = 0;
 
 // organizations
 
-// inter-party relations
+// Implemented opening Polish inter-party relations. These use the existing
+// relationship display bands; the numerical scores are authoritative.
+Q.psl_wyzwolenie_relation = 65;
+Q.minorities_bloc_relation = 50;
+Q.psl_piast_relation = 45;
+Q.npr_relation = 50;
+Q.pschd_relation = 30;
+Q.kpp_relation = 10;
+Q.zln_relation = 5;
+
+// Inactive German compatibility values remain available to inherited cards.
+// They do not determine Polish coalition eligibility.
 Q.z_relation = 50;
-Q.kpd_relation = 25;
-Q.ddp_relation = 60;
-Q.dvp_relation = 35;
-// DNVP and NSDAP are invariably hostile
-Q.DNVP_relation = 10;
-Q.NSDAP_relation = 0;
+Q.kpd_relation = 10;
+Q.ddp_relation = 50;
+Q.dvp_relation = 30;
+Q.dnvp_relation = 5;
+Q.nsdap_relation = 0;
 
 Q.kpd_leader = "Thälmann";
 // alternative is the Conciliators as party leader
@@ -237,112 +247,167 @@ Q.bourgeois_landowners_qol = 100;
 Q.national_minorities_qol = 100;
 
 Q.classes = ['workers', 'old_middle', 'new_middle', 'rural', 'bourgeois_landowners', 'unemployed', 'national_minorities'];
-Q.parties = ['spd', 'kpd', 'z', 'ddp', 'dvp', 'dnvp', 'nsdap', 'other'];
+Q.polish_party_system = 1;
+Q.player_party = 'pps';
+Q.parties = ['kpp', 'pps', 'npr', 'psl_wyzwolenie', 'psl_piast', 'pschd', 'zln', 'minorities_bloc', 'other'];
+Q.party_names = {
+    'kpp': 'KPP',
+    'pps': 'PPS',
+    'npr': 'NPR',
+    'psl_wyzwolenie': 'PSL Wyzwolenie',
+    'psl_piast': 'PSL Piast',
+    'pschd': 'PSChD',
+    'zln': 'ZLN',
+    'minorities_bloc': 'Blok Mniejszości Narodowych',
+    'other': 'Inne'
+};
+Q.party_colors = {
+    'kpp': '#8B0000',
+    'pps': '#E3000F',
+    'npr': '#C96A24',
+    'psl_wyzwolenie': '#6FAF45',
+    'psl_piast': '#2F7D32',
+    'pschd': '#D5AC27',
+    'zln': '#3F7BC1',
+    'minorities_bloc': '#7C5AA6',
+    'other': '#A0A0A0'
+};
 
 // TODO: add 'sapd' later on
 Q.sapd_formed = 0;
 
-// Support for party by social group.
-// These are hidden raw weights, not displayed percentages. The approved PPS
-// opening weights below normalize against the unchanged German party profiles
-// to the requested within-group support values.
-Q.workers_spd = 120/7; // 30% displayed PPS support among Robotnicy
-Q.workers_kpd = 20;
-Q.workers_z = 5;
-Q.workers_ddp = 0;
-Q.workers_dvp = 0;
-Q.workers_dnvp = 5;
-Q.workers_nsdap = 0;
-Q.workers_other = 10;
+// Approved opening within-group support. The eight named parties were scaled
+// proportionally to reserve exactly 8% for Other in every row except Chłopi,
+// where Other receives 12%. Every row therefore totals 100.
+Q.workers_kpp = 11.04;
+Q.workers_pps = 38.64;
+Q.workers_npr = 18.40;
+Q.workers_psl_wyzwolenie = 1.84;
+Q.workers_psl_piast = 0.92;
+Q.workers_pschd = 9.20;
+Q.workers_zln = 7.36;
+Q.workers_minorities_bloc = 4.60;
+Q.workers_other = 8;
 
-Q.old_middle_spd = 595/93; // 7% among Drobnomieszczaństwo
-Q.old_middle_kpd = 0;
-Q.old_middle_z = 5;
-Q.old_middle_ddp= 10;
-Q.old_middle_dvp = 25;
-Q.old_middle_dnvp = 25;
-Q.old_middle_nsdap = 10;
-Q.old_middle_other = 10;
+Q.old_middle_kpp = 1.84;
+Q.old_middle_pps = 9.20;
+Q.old_middle_npr = 12.88;
+Q.old_middle_psl_wyzwolenie = 3.68;
+Q.old_middle_psl_piast = 5.52;
+Q.old_middle_pschd = 18.40;
+Q.old_middle_zln = 29.44;
+Q.old_middle_minorities_bloc = 11.04;
+Q.old_middle_other = 8;
 
-Q.new_middle_spd = 273/17; // 15% among Inteligencja
-Q.new_middle_kpd = 1;
-Q.new_middle_z = 10;
-Q.new_middle_ddp= 25;
-Q.new_middle_dvp = 25;
-Q.new_middle_dnvp = 10;
-Q.new_middle_nsdap = 5;
-Q.new_middle_other = 15;
+Q.new_middle_kpp = 3.68;
+Q.new_middle_pps = 22.08;
+Q.new_middle_npr = 4.60;
+Q.new_middle_psl_wyzwolenie = 8.28;
+Q.new_middle_psl_piast = 4.60;
+Q.new_middle_pschd = 9.20;
+Q.new_middle_zln = 25.76;
+Q.new_middle_minorities_bloc = 13.80;
+Q.new_middle_other = 8;
 
-Q.rural_spd = 595/93; // 7% among Chłopi
-Q.rural_kpd = 0;
-Q.rural_z = 5;
-Q.rural_ddp= 5;
-Q.rural_dvp = 15;
-Q.rural_dnvp = 45;
-Q.rural_nsdap = 5;
-Q.rural_other = 10;
+Q.rural_kpp = 1.76;
+Q.rural_pps = 3.52;
+Q.rural_npr = 1.76;
+Q.rural_psl_wyzwolenie = 28.16;
+Q.rural_psl_piast = 29.92;
+Q.rural_pschd = 5.28;
+Q.rural_zln = 13.20;
+Q.rural_minorities_bloc = 4.40;
+Q.rural_other = 12;
 
-Q.unemployed_spd = 25; // retained baseline: approximately 23% displayed
-Q.unemployed_kpd = 55;
-Q.unemployed_z = 1;
-Q.unemployed_ddp = 0;
-Q.unemployed_dvp = 0;
-Q.unemployed_dnvp = 5;
-Q.unemployed_nsdap = 15;
-Q.unemployed_other = 9;
+Q.bourgeois_landowners_kpp = 0;
+Q.bourgeois_landowners_pps = 1.84;
+Q.bourgeois_landowners_npr = 3.68;
+Q.bourgeois_landowners_psl_wyzwolenie = 0.92;
+Q.bourgeois_landowners_psl_piast = 6.44;
+Q.bourgeois_landowners_pschd = 13.80;
+Q.bourgeois_landowners_zln = 48.76;
+Q.bourgeois_landowners_minorities_bloc = 16.56;
+Q.bourgeois_landowners_other = 8;
 
-Q.catholics_spd = 74/19; // compatibility source: 5% among Mniejszości Narodowe
-Q.catholics_kpd = 2;
-Q.catholics_z = 50;
-Q.catholics_ddp = 0;
-Q.catholics_dvp = 5;
-Q.catholics_dnvp = 5;
-Q.catholics_nsdap = 0;
-Q.catholics_other = 12;
+Q.unemployed_kpp = 29.44;
+Q.unemployed_pps = 34.96;
+Q.unemployed_npr = 11.04;
+Q.unemployed_psl_wyzwolenie = 1.84;
+Q.unemployed_psl_piast = 0.92;
+Q.unemployed_pschd = 4.60;
+Q.unemployed_zln = 3.68;
+Q.unemployed_minorities_bloc = 5.52;
+Q.unemployed_other = 8;
 
-// Approved temporary gameplay placeholders pending dedicated historical research.
-// Burżuazja i Ziemiaństwo inherit the opening Old Middle Class profile.
-// Mniejszości Narodowe inherit the existing Catholic profile and mechanics.
-for (var party of Q.parties) {
-    Q['bourgeois_landowners_' + party] = Q['old_middle_' + party];
-    Q['national_minorities_' + party] = Q['catholics_' + party];
+Q.national_minorities_kpp = 9.20;
+Q.national_minorities_pps = 6.44;
+Q.national_minorities_npr = 0.92;
+Q.national_minorities_psl_wyzwolenie = 1.84;
+Q.national_minorities_psl_piast = 0.92;
+Q.national_minorities_pschd = 0.92;
+Q.national_minorities_zln = 1.84;
+Q.national_minorities_minorities_bloc = 69.92;
+Q.national_minorities_other = 8;
+
+// Narrow compatibility bridge for inherited cards. Only the explicitly
+// approved direct mappings feed back into active Polish party support.
+Q.legacy_party_map = {'spd': 'pps', 'kpd': 'kpp', 'dvp': 'pschd', 'dnvp': 'zln'};
+for (var legacy_party in Q.legacy_party_map) {
+    var polish_party = Q.legacy_party_map[legacy_party];
+    for (var population_group of Q.classes) {
+        Q[population_group + '_' + legacy_party] = Q[population_group + '_' + polish_party];
+        Q[population_group + '_' + legacy_party + '_compat_base'] = Q[population_group + '_' + polish_party];
+    }
 }
-// The opening non-PPS profile remains copied from Old Middle Class, while the
-// PPS weight is adjusted to the separately approved 1% within-group support.
-Q.bourgeois_landowners_spd = 85/99;
+for (var inactive_party of ['z', 'ddp', 'nsdap']) {
+    for (var population_group of Q.classes) {
+        Q[population_group + '_' + inactive_party] = 0;
+    }
+    Q[inactive_party + '_normalized'] = 0;
+    Q[inactive_party + '_votes'] = 0;
+    Q[inactive_party + '_r'] = 0;
+}
+// Catholic-targeting cards remain as a temporary compatibility input for the
+// PPS minority row, but the election algorithm no longer overwrites the full
+// minority profile from Catholic values.
+Q.catholics_spd = Q.national_minorities_pps;
+Q.catholics_spd_compat_base = Q.catholics_spd;
 
 
-// Current Reichstag composition
-// % of Reichstag in Jan 1928
-// source: wikipedia
-// note: the Z figures also include the BVP (Bavarian people's party)
-// since they were ideologically similar, but they were separate parties.
-// They did not have a CDU/CSU-style relationship.
-Q.spd_r = 26;
-Q.kpd_r = 9;
-Q.z_r = 17;
-Q.ddp_r = 6;
-Q.dvp_r = 10;
-Q.dnvp_r = 20;
-Q.nsdap_r = 3;
-Q.other_r = 9;
+// Opening parliamentary composition is a gameplay projection from the approved
+// support model, rounded to whole percentages. Historical sourcing is TBD.
+Q.kpp_r = 6;
+Q.pps_r = 13;
+Q.npr_r = 6;
+Q.psl_wyzwolenie_r = 13;
+Q.psl_piast_r = 13;
+Q.pschd_r = 7;
+Q.zln_r = 12;
+Q.minorities_bloc_r = 20;
+Q.other_r = 10;
 
-// diff from prev
-Q.old_spd_r = 26;
-Q.old_kpd_r = 9;
-Q.old_z_r = 17;
-Q.old_ddp_r = 6;
-Q.old_dvp_r = 10;
-Q.old_dnvp_r = 20;
-Q.old_nsdap_r = 3;
-Q.old_other_r = 9;
+for (var party of Q.parties) {
+    Q['old_' + party + '_r'] = Q[party + '_r'];
+}
+// Parliamentary aliases used by inherited, still-temporary German content.
+Q.spd_r = Q.pps_r;
+Q.kpd_r = Q.kpp_r;
+Q.dvp_r = Q.pschd_r;
+Q.dnvp_r = Q.zln_r;
+Q.old_spd_r = Q.spd_r;
+Q.old_kpd_r = Q.kpd_r;
+Q.old_dvp_r = Q.dvp_r;
+Q.old_dnvp_r = Q.dnvp_r;
 
 // sapd isn't formed yet, but it may be formed
 Q.sapd_r = 0;
 Q.old_sapd_r = 0;
 
-// for changing the DDP's name to the DStP
-Q.ddp_name = "DDP";
+// Planned party lifecycle labels. Only ZLN is active in this slice.
+Q.zln_name = "ZLN";
+Q.sl_formed = 0;
+Q.bbwr_formed = 0;
+Q.ozn_formed = 0;
 
 // array of objects of the form {date: Date(), spd: 10, kpd: 12, ...} for each election
 Q.election_records = [];
@@ -358,6 +423,14 @@ Q.president = "Hindenburg";
 Q.chancellor = "Marx";
 Q.chancellor_party = 'Z';
 Q.spd_in_government = 0;
+Q.pps_in_government = 0;
+Q.kpp_in_government = 0;
+Q.npr_in_government = 0;
+Q.psl_wyzwolenie_in_government = 0;
+Q.psl_piast_in_government = 0;
+Q.pschd_in_government = 0;
+Q.zln_in_government = 0;
+Q.minorities_bloc_in_government = 0;
 Q.z_in_government = 1;
 Q.ddp_in_government = 0;
 Q.dvp_in_government = 1;
@@ -381,6 +454,10 @@ Q.in_spd_majority = 0;
 Q.grand_coalition_failed = 0;
 // if the SPD is ruling as part of a minority government
 Q.in_minority_government = 0;
+Q.in_polish_left_coalition = 0;
+Q.in_polish_center_left_coalition = 0;
+Q.in_chjeno_piast = 0;
+Q.minorities_toleration = 0;
 // national unity governmet
 
 // if you're in a coalition, this is an incremental counter for how many times dissent has happened from the right.
@@ -621,4 +698,4 @@ go-to: main
 
 The campaign begins in January 1922.
 
-The Polish opening situation is not yet implemented. Until researched Polish replacements are approved, the remaining people, institutions, events, and mechanics retain the German baseline.
+The Polish opening party system is implemented. The remaining people, institutions, dated events and unconverted mechanics retain the temporary German baseline.

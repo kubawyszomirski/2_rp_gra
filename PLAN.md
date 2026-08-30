@@ -148,14 +148,15 @@ mechanic and implementation surface.
 
 ## 9. Mechanics to adapt
 
-- **Status: undecided / researching / approved:** approved (population slice)
+- **Status: undecided / researching / approved:** implemented (population and opening-party slice)
 - **User decision:** Implement Robotnicy, Drobnomieszczaństwo, Inteligencja,
   Chłopi, Burżuazja i Ziemiaństwo, Bezrobotni, and Mniejszości Narodowe for new
   games. The five main classes total 100%; Bezrobotni and Mniejszości Narodowe
   overlap them. Polacy are the implied complement and are not separately
-  weighted. Do not replace the parties in this slice.
+  weighted. The subsequent approved opening-party slice now supplies dedicated
+  support rows for all seven groups.
 - **Historical evidence required:** Class shares, minority composition, and
-  dedicated party profiles remain **TBD — historical research required**. The
+  historical validation remains **TBD — historical research required**. The
   approved figures are implemented as gameplay design values, not documented
   historical facts.
 - **Design rationale:** Chłopi decline linearly from 53% in January 1922 to 50%
@@ -169,12 +170,12 @@ mechanic and implementation surface.
   `library.scene.dry`, `party_affairs/campaigning.scene.dry`, and tests.
 - **Acceptance criteria:** Opening main classes total exactly 100%; approved
   linear endpoints are exact; unemployment starts at 3%; minorities are
-  weighted at 30%; no active Catholic support group is displayed; the two
-  temporary party-profile mappings work; all affected election paths remain
+  weighted at 30%; no active Catholic support group is displayed; all seven
+  approved party-support rows work; all affected election paths remain
   finite and build/tests pass.
-- **Open questions:** Permanent Polish party profiles, historically supported
-  class figures and minority mechanics, campaign chronology through 1939, and
-  old-save migration remain outside this approved slice.
+- **Open questions:** Historically supported class figures, a possible future
+  intersection model for minority weighting, campaign chronology through
+  1939, and old-save migration remain outside this approved slice.
 
 ## 10. Mechanics to remove
 
@@ -215,31 +216,32 @@ mechanic and implementation surface.
 
 ## 12. Political parties and institutions
 
-- **Status: undecided / researching / approved:** approved (PPS-1 slice)
-- **User decision:** Replace the player-facing SPD identity with **PPS — Polska
-  Partia Socjalistyczna**, while retaining `spd` as the internal compatibility
-  ID. Opening displayed within-group PPS support is Robotnicy 30%,
-  Inteligencja 15%, Drobnomieszczaństwo 7%, Chłopi 7%, Burżuazja i
-  Ziemiaństwo 1%, and Mniejszości Narodowe 5%. Bezrobotni temporarily retain
-  the inherited approximately 23%. Other German parties remain unchanged.
-- **Historical evidence required:** The support figures are approved gameplay
-  inputs, not established historical facts. Validation is **TBD — historical
-  research required**.
-- **Design rationale:** This creates a testable PPS identity and worker-heavy
-  support base without breaking the dynamic party-key, coalition, save, chart,
-  or event systems.
-- **Original mechanic affected:** Player-party labels, opening raw support
-  weights, demographic projections, election displays, and charts.
-- **Variables/files likely affected:** `spd` remains in `parties`; all
-  `*_spd` families remain internal. Initialization is in
-  `source/scenes/root.scene.dry`; display is in root, status, Library, election
-  simulation, and election-result chart code.
-- **Acceptance criteria:** Core UI says PPS; hidden `spd` keys remain; opening
-  within-group display values match the approved targets; Robotnicy provide
-  the largest main-class PPS contribution; all election values remain finite;
-  and the temporary German baseline is explicit.
-- **Open questions:** Polish party model, coalitions, parliament, government,
-  institutions, event calendar, and complete historical content remain
+- **Status: undecided / researching / approved:** implemented (opening-party and first-election slice)
+- **User decision:** Active elections use semantic IDs for KPP, PPS, NPR, PSL
+  Wyzwolenie, PSL Piast, PSChD, ZLN, Blok Mniejszości Narodowych, and `other`.
+  Other receives exactly 8% of each opening support row and 12% among Chłopi;
+  the eight supplied party values are proportionally scaled to the remaining
+  92% or 88%. The 30% minority identity dimension remains overlapping for now.
+- **Historical evidence required:** Party descriptions, opening support values,
+  electoral strength and the resulting opening parliamentary projection are
+  approved gameplay inputs, not established historical facts. Validation is
+  **TBD — historical research required**.
+- **Design rationale:** Clear Polish IDs prevent German names from remaining in
+  elections, records and charts. A narrow compatibility map transfers inherited
+  `spd`→`pps`, `kpd`→`kpp`, `dvp`→`pschd`, and `dnvp`→`zln` support effects
+  without reactivating German parties.
+- **Original mechanic affected:** Party roster, opening support matrix,
+  campaigning, relationships, election simulation/results, coalition shell,
+  records, status, Library and D3 colors.
+- **Variables/files likely affected:** `parties`, `party_names`, `party_colors`,
+  `legacy_party_map`, all semantic class-party families, relationship fields,
+  parliamentary `_r` fields and the core party/election scenes.
+- **Acceptance criteria:** Nine semantic IDs are active; every row totals 100;
+  legacy direct mappings transfer once without duplication; elections and
+  records contain all nine parties; UI/charts use Polish labels; build and the
+  complete automated path tests pass.
+- **Open questions:** Historical validation, ZLN→SN, SL, BBWR, OZN, PPS split
+  parties, the post-first-election event calendar and save migration remain
   separate future slices.
 
 ## 13. Factions and advisers
@@ -273,14 +275,33 @@ mechanic and implementation surface.
 
 ## 14. Election and coalition design
 
-- **Status: undecided / researching / approved:** undecided
-- **User decision:** TBD — user decision required.
-- **Historical evidence required:** TBD — user historical research required.
-- **Design rationale:** TBD — user decision required.
-- **Original mechanic affected:** TBD — user decision required.
-- **Variables/files likely affected:** TBD — user decision required.
-- **Acceptance criteria:** TBD — user decision required.
-- **Open questions:** TBD — user decision required.
+- **Status: undecided / researching / approved:** implemented first-cycle shell; later systems planned
+- **User decision:** The implemented first-election menu may form a PPS
+  majority, Koalicja Lewicy (PPS + PSL Wyzwolenie + Minorities Bloc), a
+  centre-left coalition (PPS + both PSL parties + NPR), a PPS–PSL Wyzwolenie
+  minority government externally tolerated by the Minorities Bloc, or an
+  autonomous Chjeno-Piast government (ZLN + PSChD + PSL Piast). Minority
+  support is toleration, not cabinet membership.
+- **Historical evidence required:** Coalition names, dates, members,
+  parliamentary viability, leadership and cabinet allocation are **TBD —
+  historical research required**.
+- **Design rationale:** Replace German coalition arithmetic on the active first
+  election without inventing later democratic classifications, crisis
+  conditions or named ministers.
+- **Original mechanic affected:** Election result recording, largest-party
+  selection, coalition totals, government flags and active election routing.
+- **Variables/files likely affected:** `source/scenes/events/election_1928.scene.dry`,
+  semantic `_r` fields, `*_relation`, `in_polish_left_coalition`,
+  `in_polish_center_left_coalition`, `in_chjeno_piast`,
+  `minorities_toleration`, and tests.
+- **Acceptance criteria:** All parties receive results and history records;
+  coalition sums are deterministic; relationship gates work; toleration keeps
+  the Minorities Bloc outside government; inherited German coalition branches
+  are unreachable from Polish elections.
+- **Open questions:** Democratic classification, Depression realignment,
+  broad-coalition crisis rules, Centrolew, Sanacja, United Left, broad
+  democratic front, exact ministries and later autonomous governments are
+  planned but not implemented.
 
 ## 15. Economic design
 

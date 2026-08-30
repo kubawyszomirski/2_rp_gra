@@ -21,7 +21,7 @@ if (Q.economic_growth) {
 Resources available: [+ resources +]
 
 PPS position: [? if spd_toleration : toleration ?][? if spd_in_government : in government - ?][? if spd_toleration == 0 and spd_in_government == 0 and spd_caretaker == 0 : opposition ?][? if spd_caretaker : caretaker government ?]
-[? if in_weimar_coalition and spd_in_government: Weimar Coalition ?][? if in_grand_coalition and spd_in_government: Grand Coalition ?][? if in_popular_front and spd_in_government: Popular Front ?][? if in_left_front and spd_in_government: Left Front ?][? if in_spd_majority and spd_in_government: PPS majority ?][? if in_minority_government and spd_in_government: minority government ?][? if in_emergency_government and spd_in_government: emergency government ?]
+[? if in_polish_left_coalition and spd_in_government: Koalicja Lewicy ?][? if in_polish_center_left_coalition and spd_in_government: koalicja centrolewicowa ?][? if in_spd_majority and spd_in_government: PPS majority ?][? if in_minority_government and spd_in_government: minority government [? if minorities_toleration: with Minorities Bloc toleration ?] ?][? if in_chjeno_piast: opposition to Chjeno-Piast ?]
 
 [? if spd_in_government and not in_spd_majority and not in_left_front : Coalition dissent: [+ coalition_dissent : coalition_dissent +] ?]
 
@@ -35,25 +35,25 @@ President: [+ president +]
 
 Chancellor: [+ chancellor +] ([+ chancellor_party +])
 
-Reichstag composition:
+Sejm composition (gameplay percentages):
 
-# 1928: 30, 1930: 25, 1932: 22
-{!<span class="tooltip-text" title="Polska Partia Socjalistyczna">PPS</span>!}: [+ spd_r +]%
-[? if sapd_formed and sapd_r > 0: SAPD: [+ sapd_r +]% ?]
-# 1928: 15, 1930: 15, 1932: 
-{!<span class="tooltip-text" title="Center Party + Bavarian People's Party">Z + BVP</span>!}: [+ z_r +]%
-# 1928: 10, 1930: 13
-{!<span class="tooltip-text" title="Communist Party of Germany">KPD</span>!}: [+ kpd_r +]%
-# 1928: 5, 1930: 4 (as DstP)
-{!<span class="tooltip-text" title="German Democratic Party">!}[? if not ddp_name: DDP?][? if ddp_name != 0 : [+ ddp_name +]?]{!</span>!}: [+ ddp_r +]%
-# 1928: 9, 1930: 5
-{!<span class="tooltip-text" title="German People's Party">DVP</span>!}: [+ dvp_r +]%
-# 1928: 14, 1930: 7
-{!<span class="tooltip-text" title="German National People's Party">DNVP</span>!}: [+ dnvp_r +]%
-# 1928: 3, 1930: 18
-{!<span class="tooltip-text" title="National-Socialist German Worker's Party (Nazis)">NSDAP</span>!}: [+ nsdap_r +]%
-# 1928: 9, 1930: 10
-Others: [+ other_r +]%
+KPP: [+ kpp_r +]%
+
+PPS: [+ pps_r +]%
+
+NPR: [+ npr_r +]%
+
+PSL Wyzwolenie: [+ psl_wyzwolenie_r +]%
+
+PSL Piast: [+ psl_piast_r +]%
+
+PSChD: [+ pschd_r +]%
+
+[+ zln_name +]: [+ zln_r +]%
+
+Blok Mniejszości Narodowych: [+ minorities_bloc_r +]%
+
+Inne: [+ other_r +]%
 
 [? if spd_in_government = 1 : Budget: [+ budget +] ?]
 
@@ -75,18 +75,19 @@ Economic growth: [+ economic_growth_2 +]%
 
 = Inter-party Relations
 
+PSL Wyzwolenie: [+ psl_wyzwolenie_relation : relationships +]
 
-{!<span class="tooltip-text" title="Center Party">Z</span>!}: [+ z_relation : relationships +]
+Blok Mniejszości Narodowych: [+ minorities_bloc_relation : relationships +]
 
-{!<span class="tooltip-text" title="German Democratic Party">!}[? if not ddp_name: DDP?][? if ddp_name != 0 : [+ ddp_name +]?]{!</span>!}: [+ ddp_relation : relationships +]
+PSL Piast: [+ psl_piast_relation : relationships +]
 
-{!<span class="tooltip-text" title="German People's Party">DVP</span>!}: [+ dvp_relation : relationships +]
+NPR: [+ npr_relation : relationships +]
 
-{!<span class="tooltip-text" title="Communist Party of Germany">KPD</span>!}: [+ kpd_relation : relationships +]
+PSChD: [+ pschd_relation : relationships +]
 
-{!<span class="tooltip-text" title="German National People's Party">DNVP</span>!}: [+ dnvp_relation : relationships +]
+KPP: [+ kpp_relation : relationships +]
 
-{!<span class="tooltip-text" title="National-Socialist German Worker's Party (Nazis)">NSDAP</span>!}: [+ nsdap_relation : relationships +]
+ZLN: [+ zln_relation : relationships +]
 
 = Temporary German-baseline party factions
 
@@ -160,38 +161,38 @@ Q.socialism_disp = Math.round(Q.socialism);
 
 (if the election were to be held now):
 
-PPS: [+ spd_votes +]%
+KPP: [+ kpp_votes +]%
 
-[? if sapd_formed: SAPD: [+ sapd_votes +]% ?]
+PPS: [+ pps_votes +]%
 
-Z + BVP: [+ z_votes +]%
+NPR: [+ npr_votes +]%
 
-KPD: [+ kpd_votes +]%
+PSL Wyzwolenie: [+ psl_wyzwolenie_votes +]%
 
-[? if not ddp_name: DDP?][? if ddp_name != 0 : [+ ddp_name +]?]: [+ ddp_votes +]%
+PSL Piast: [+ psl_piast_votes +]%
 
-DVP: [+ dvp_votes +]%
+PSChD: [+ pschd_votes +]%
 
-DNVP: [+ dnvp_votes +]%
+ZLN: [+ zln_votes +]%
 
-NSDAP: [+ nsdap_votes +]%
+Blok Mniejszości Narodowych: [+ minorities_bloc_votes +]%
 
-Others: [+ other_votes +]%
+Inne: [+ other_votes +]%
 
 **Detailed results for each demographic**
 
-Robotnicy: PPS: [+ workers_spd_display +]%, Z: [+ workers_z_display +]%, KPD: [+ workers_kpd_display +]%, [? if not ddp_name: DDP?][? if ddp_name != 0 : [+ ddp_name +]?]: [+ workers_ddp_display +]%, DVP: [+ workers_dvp_display +]%; DNVP: [+ workers_dnvp_display +]%, NSDAP: [+ workers_nsdap_display +]%, Others: [+ workers_other_display +]% [? if sapd_formed: SAPD: [+ workers_sapd_display +]% ?]
+Robotnicy: KPP [+ workers_kpp_display +]%, PPS [+ workers_pps_display +]%, NPR [+ workers_npr_display +]%, PSL-W [+ workers_psl_wyzwolenie_display +]%, PSL-P [+ workers_psl_piast_display +]%, PSChD [+ workers_pschd_display +]%, ZLN [+ workers_zln_display +]%, Mniejszości [+ workers_minorities_bloc_display +]%, Inne [+ workers_other_display +]%
 
-Inteligencja: PPS: [+ new_middle_spd_display +]%, Z: [+ new_middle_z_display +]%, KPD: [+ new_middle_kpd_display +]%, [? if not ddp_name: DDP?][? if ddp_name != 0 : [+ ddp_name +]?]: [+ new_middle_ddp_display +]%, DVP: [+ new_middle_dvp_display +]%; DNVP: [+ new_middle_dnvp_display +]%, NSDAP: [+ new_middle_nsdap_display +]%, Others: [+ new_middle_other_display +]% [? if sapd_formed: SAPD: [+ new_middle_sapd_display +]% ?]
+Inteligencja: KPP [+ new_middle_kpp_display +]%, PPS [+ new_middle_pps_display +]%, NPR [+ new_middle_npr_display +]%, PSL-W [+ new_middle_psl_wyzwolenie_display +]%, PSL-P [+ new_middle_psl_piast_display +]%, PSChD [+ new_middle_pschd_display +]%, ZLN [+ new_middle_zln_display +]%, Mniejszości [+ new_middle_minorities_bloc_display +]%, Inne [+ new_middle_other_display +]%
 
-Drobnomieszczaństwo: PPS: [+ old_middle_spd_display +]%, Z: [+ old_middle_z_display +]%, KPD: [+ old_middle_kpd_display +]%, [? if not ddp_name: DDP?][? if ddp_name != 0 : [+ ddp_name +]?]: [+ old_middle_ddp_display +]%, DVP: [+ old_middle_dvp_display +]%; DNVP: [+ old_middle_dnvp_display +]%, NSDAP: [+ old_middle_nsdap_display +]%, Others: [+ old_middle_other_display +]% [? if sapd_formed: SAPD: [+ old_middle_sapd_display +]% ?]
+Drobnomieszczaństwo: KPP [+ old_middle_kpp_display +]%, PPS [+ old_middle_pps_display +]%, NPR [+ old_middle_npr_display +]%, PSL-W [+ old_middle_psl_wyzwolenie_display +]%, PSL-P [+ old_middle_psl_piast_display +]%, PSChD [+ old_middle_pschd_display +]%, ZLN [+ old_middle_zln_display +]%, Mniejszości [+ old_middle_minorities_bloc_display +]%, Inne [+ old_middle_other_display +]%
 
-Chłopi: PPS: [+ rural_spd_display +]%, Z: [+ rural_z_display +]%, KPD: [+ rural_kpd_display +]%, [? if not ddp_name: DDP?][? if ddp_name != 0 : [+ ddp_name +]?]: [+ rural_ddp_display +]%, DVP: [+ rural_dvp_display +]%; DNVP: [+ rural_dnvp_display +]%, NSDAP: [+ rural_nsdap_display +]%, Others: [+ rural_other_display +]% [? if sapd_formed: SAPD: [+ rural_sapd_display +]% ?]
+Chłopi: KPP [+ rural_kpp_display +]%, PPS [+ rural_pps_display +]%, NPR [+ rural_npr_display +]%, PSL-W [+ rural_psl_wyzwolenie_display +]%, PSL-P [+ rural_psl_piast_display +]%, PSChD [+ rural_pschd_display +]%, ZLN [+ rural_zln_display +]%, Mniejszości [+ rural_minorities_bloc_display +]%, Inne [+ rural_other_display +]%
 
-Burżuazja i Ziemiaństwo: PPS: [+ bourgeois_landowners_spd_display +]%, Z: [+ bourgeois_landowners_z_display +]%, KPD: [+ bourgeois_landowners_kpd_display +]%, [? if not ddp_name: DDP?][? if ddp_name != 0 : [+ ddp_name +]?]: [+ bourgeois_landowners_ddp_display +]%, DVP: [+ bourgeois_landowners_dvp_display +]%; DNVP: [+ bourgeois_landowners_dnvp_display +]%, NSDAP: [+ bourgeois_landowners_nsdap_display +]%, Others: [+ bourgeois_landowners_other_display +]% [? if sapd_formed: SAPD: [+ bourgeois_landowners_sapd_display +]% ?]
+Burżuazja i Ziemiaństwo: KPP [+ bourgeois_landowners_kpp_display +]%, PPS [+ bourgeois_landowners_pps_display +]%, NPR [+ bourgeois_landowners_npr_display +]%, PSL-W [+ bourgeois_landowners_psl_wyzwolenie_display +]%, PSL-P [+ bourgeois_landowners_psl_piast_display +]%, PSChD [+ bourgeois_landowners_pschd_display +]%, ZLN [+ bourgeois_landowners_zln_display +]%, Mniejszości [+ bourgeois_landowners_minorities_bloc_display +]%, Inne [+ bourgeois_landowners_other_display +]%
 
-Bezrobotni: PPS: [+ unemployed_spd_display +]%, Z: [+ unemployed_z_display +]%, KPD: [+ unemployed_kpd_display +]%, [? if not ddp_name: DDP?][? if ddp_name != 0 : [+ ddp_name +]?]: [+ unemployed_ddp_display +]%, DVP: [+ unemployed_dvp_display +]%; DNVP: [+ unemployed_dnvp_display +]%, NSDAP: [+ unemployed_nsdap_display +]%, Others: [+ unemployed_other_display +]% [? if sapd_formed: SAPD: [+ unemployed_sapd_display +]% ?]
+Bezrobotni: KPP [+ unemployed_kpp_display +]%, PPS [+ unemployed_pps_display +]%, NPR [+ unemployed_npr_display +]%, PSL-W [+ unemployed_psl_wyzwolenie_display +]%, PSL-P [+ unemployed_psl_piast_display +]%, PSChD [+ unemployed_pschd_display +]%, ZLN [+ unemployed_zln_display +]%, Mniejszości [+ unemployed_minorities_bloc_display +]%, Inne [+ unemployed_other_display +]%
 
-Mniejszości Narodowe: PPS: [+ national_minorities_spd_display +]%, Z: [+ national_minorities_z_display +]%, KPD: [+ national_minorities_kpd_display +]%, [? if not ddp_name: DDP?][? if ddp_name != 0 : [+ ddp_name +]?]: [+ national_minorities_ddp_display +]%, DVP: [+ national_minorities_dvp_display +]%; DNVP: [+ national_minorities_dnvp_display +]%, NSDAP: [+ national_minorities_nsdap_display +]%, Others: [+ national_minorities_other_display +]% [? if sapd_formed: SAPD: [+ national_minorities_sapd_display +]% ?]
+Mniejszości Narodowe: KPP [+ national_minorities_kpp_display +]%, PPS [+ national_minorities_pps_display +]%, NPR [+ national_minorities_npr_display +]%, PSL-W [+ national_minorities_psl_wyzwolenie_display +]%, PSL-P [+ national_minorities_psl_piast_display +]%, PSChD [+ national_minorities_pschd_display +]%, ZLN [+ national_minorities_zln_display +]%, Mniejszości [+ national_minorities_minorities_bloc_display +]%, Inne [+ national_minorities_other_display +]%
 
 Support for the Republic: [+ pro_republic_disp +]%

@@ -14,15 +14,17 @@ saving, and mod loading. No external historical research was used.
 > retained first German election remains May 1928; this is an interim gameplay
 > schedule, not a researched Polish equivalent.
 
-> **Implemented PPS-1 decision:** The player-facing party is **PPS — Polska
-> Partia Socjalistyczna**, while the internal party ID remains `spd` for
-> compatibility with dynamic support keys, elections, coalitions, saves, and
-> events. Opening displayed PPS support is 30% of Robotnicy, 15% of
-> Inteligencja, 7% of Drobnomieszczaństwo, 7% of Chłopi, 1% of Burżuazja i
-> Ziemiaństwo, and 5% of Mniejszości Narodowe. Bezrobotni retain approximately
-> 23%. Other parties, advisers, five factions, cards, organizations,
-> institutions, and dated events remain the explicit temporary German
-> baseline.
+> **Implemented Polish opening-party slice:** Active election IDs are `kpp`,
+> `pps`, `npr`, `psl_wyzwolenie`, `psl_piast`, `pschd`, `zln`,
+> `minorities_bloc`, and `other`. The approved eight-party support table is
+> proportionally scaled so `other` receives 8% in every row except Chłopi,
+> where it receives 12%. The 30% minority identity dimension remains an
+> overlapping weight. Campaigning, relationships, polling, charts, election
+> records and the first coalition shell use these IDs. A narrow compatibility
+> bridge transfers inherited support effects from `spd`, `kpd`, `dvp`, and
+> `dnvp` into PPS, KPP, PSChD, and ZLN respectively. Advisers, five factions,
+> most cards, institutions and dated events remain the explicit temporary
+> German baseline.
 
 The approved next-stage design is documented but not live: Centrum PPS,
 Lewica PPS, and Piłsudczycy will replace the five inherited factions at
@@ -452,16 +454,16 @@ be traced back to code.
   The provisional minority composition is approximately 60% Chłopi, 17%
   Robotnicy, 19% Drobnomieszczaństwo, 3% Inteligencja, and 2% Burżuazja i
   Ziemiaństwo. These approximate descriptive figures do not yet drive another
-  calculation. Non-PPS values for Burżuazja i Ziemiaństwo temporarily copy the
-  opening Old Middle Class profile; its PPS support is adjusted to the approved
-  displayed 1%. Mniejszości Narodowe temporarily copy the Catholic profile and
-  receive existing Catholic-targeting effects; the compatibility value is set
-  to produce the approved displayed 5% PPS support. Raw `*_spd` values are
-  hidden weights chosen so normalization displays the approved 30/15/7/7/1/5
-  targets; they are not themselves percentages. Bezrobotni retain the inherited
-  raw value, which displays as approximately 23%. These are gameplay
-  placeholders; permanent replacements are **TBD — historical research
-  required**. Other parties remain the German baseline by explicit scope.
+  intersection calculation. Each population group now has a dedicated
+  nine-party opening row. The eight approved named-party values are scaled to
+  reserve 8% for `other`, except Chłopi where 12% is reserved. Each row totals
+  exactly 100, so the raw values are also the initial within-group percentages.
+  The active IDs are `kpp`, `pps`, `npr`, `psl_wyzwolenie`, `psl_piast`,
+  `pschd`, `zln`, `minorities_bloc`, and `other`. Legacy Catholic-targeting PPS
+  changes and the four approved direct German mappings enter through explicit
+  compatibility deltas; they do not overwrite the Polish rows or reactivate a
+  German party. Historical validation remains **TBD — historical research
+  required**.
 - **Unresolved:** Zero-total class behavior and the intended role of
   `old_demographics` are **UNCLEAR — requires code investigation or runtime
   testing.** The current campaign ending occurs before December 1939, so the
@@ -531,6 +533,14 @@ be traced back to code.
 
 ### 10. Coalition formation and coalition dissent
 
+> **Implemented Polish boundary:** Active Polish elections bypass the inherited
+> German coalition menu. The first-cycle shell computes PPS majority, Koalicja
+> Lewicy, centre-left, Chjeno-Piast and minority-toleration totals. Minorities
+> Bloc toleration explicitly leaves that party outside the cabinet. The old
+> German branches remain in the source as inactive compatibility content.
+> Centrolew, Sanacja, United Left, broad democratic/front coalitions, democratic
+> classification and broad-coalition crisis rules are planned, not implemented.
+
 - **Purpose:** Translate an election into a government and make unstable
   alliances constrain policy.
 - **Player sees:** Available coalition/toleration choices, relationship gates,
@@ -562,7 +572,9 @@ be traced back to code.
   reset/setup sequence and has tests for every government flag.
 - **Polish adaptation reconsideration:** Parties, legal majority rules,
   toleration, head-of-state powers, coalition goals, and ministry bargaining.
-- **Polish equivalent:** TBD — user historical research required.
+- **Polish equivalent:** The first-cycle shell above is implemented as approved
+  gameplay design. Historical coalition validation and all later systems are
+  **TBD — historical research required**.
 - **Unresolved:** Exhaustive mutual exclusivity of all `in_*` flags is
   **UNCLEAR — requires code investigation or runtime testing.**
 

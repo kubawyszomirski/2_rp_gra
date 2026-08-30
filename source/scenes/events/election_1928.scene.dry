@@ -4,7 +4,7 @@ tags: event
 priority: -1
 view-if: (year = next_election_year and month >= next_election_month) or (year > next_election_year)
 on-departure: month_actions += 1; in_election = 0; next_election_year = next_election_year + 4; n_elections += 1; next_election_time = time + 48; papen_chancellor_timer = 4;
-set-jump: post_election_1928
+set-jump: post_election_polish
 face-image: img/Rothe_Wahlen_1903.jpg
 
 # TODO: should there be an image?
@@ -35,6 +35,147 @@ achievement: ausnahmezustand
 Fine. President [+ president +] has taken the unprecedented step of canceling these elections. New elections are scheduled for [+ next_election_month : month +] [+ next_election_year +].
 
 Let us hope this does not backfire.
+
+@post_election_polish
+on-arrival: {!
+var new_party_sum = 0;
+for (var party of Q.parties) {
+    Q['old_' + party + '_r'] = Q[party + '_r'];
+    if (Q.constitutional_reform > 0) {
+        if (Q[party + '_votes'] < Q.electoral_threshold || (Q.electoral_threshold > 1 && party == 'other') || Q[party + '_banned']) {
+            Q[party + '_r'] = 0;
+        } else {
+            Q[party + '_r'] = Q[party + '_votes'];
+        }
+        new_party_sum += Q[party + '_r'];
+    } else {
+        Q[party + '_r'] = Q[party + '_votes'];
+    }
+}
+if (Q.electoral_threshold > 0 && new_party_sum > 0) {
+    for (var party of Q.parties) {
+        if (Q[party + '_r'] > 0) {
+            Q[party + '_r'] = Q.use_decimals ? Math.round(Q[party + '_r']*1000/new_party_sum)/10 : Math.round(Q[party + '_r']*100/new_party_sum);
+        }
+    }
+}
+
+Q.largest_party_id = Q.parties[0];
+for (var party of Q.parties) {
+    Q[party + '_r_disp'] = Q.use_decimals ? Q[party + '_r'].toFixed(1) : Q[party + '_r'];
+    Q['change_' + party + '_r'] = Q[party + '_r'] - Q['old_' + party + '_r'];
+    Q['str_change_' + party] = (Q['change_' + party + '_r'] > 0 ? '+' : '') + Q['change_' + party + '_r'];
+    if (Q[party + '_r'] > Q[Q.largest_party_id + '_r']) {
+        Q.largest_party_id = party;
+    }
+}
+Q.largest_party = Q.party_names[Q.largest_party_id];
+
+// Implemented first-cycle coalitions only. The broader coalition, Centrolew,
+// Sanacja, United Left and later party systems remain planned.
+Q.polish_left_coalition = Q.pps_r + Q.psl_wyzwolenie_r + Q.minorities_bloc_r;
+Q.polish_center_left_coalition = Q.pps_r + Q.psl_wyzwolenie_r + Q.psl_piast_r + Q.npr_r;
+Q.chjeno_piast_coalition = Q.zln_r + Q.pschd_r + Q.psl_piast_r;
+Q.minority_toleration_total = Q.pps_r + Q.psl_wyzwolenie_r + Q.minorities_bloc_r;
+Q.anti_democratic_bloc = Q.kpp_r + Q.zln_r;
+
+Q.leverage = Q.pps_r;
+Q.coalition_dissent = 0;
+Q.spd_in_government = 0;
+Q.pps_in_government = 0;
+Q.kpp_in_government = 0;
+Q.npr_in_government = 0;
+Q.psl_wyzwolenie_in_government = 0;
+Q.psl_piast_in_government = 0;
+Q.pschd_in_government = 0;
+Q.zln_in_government = 0;
+Q.minorities_bloc_in_government = 0;
+Q.in_polish_left_coalition = 0;
+Q.in_polish_center_left_coalition = 0;
+Q.in_chjeno_piast = 0;
+Q.in_minority_government = 0;
+Q.minorities_toleration = 0;
+Q.spd_toleration = 0;
+Q.spd_caretaker = 0;
+
+// Keep inherited parliamentary aliases coherent for still-temporary cards.
+Q.spd_r = Q.pps_r;
+Q.kpd_r = Q.kpp_r;
+Q.dvp_r = Q.pschd_r;
+Q.dnvp_r = Q.zln_r;
+
+var election_result = {'date': new Date(Q.year, Q.month - 1)};
+for (var party of Q.parties) {
+    election_result[party] = Q[party + '_r'];
+}
+Q.election_records.push(election_result);
+!}
+
+= Wyniki wyborów
+
+Największe ugrupowanie: **[+ largest_party +]**.
+
+KPP: [+ kpp_r_disp +]% ([+ str_change_kpp +])
+
+PPS: [+ pps_r_disp +]% ([+ str_change_pps +])
+
+NPR: [+ npr_r_disp +]% ([+ str_change_npr +])
+
+PSL Wyzwolenie: [+ psl_wyzwolenie_r_disp +]% ([+ str_change_psl_wyzwolenie +])
+
+PSL Piast: [+ psl_piast_r_disp +]% ([+ str_change_psl_piast +])
+
+PSChD: [+ pschd_r_disp +]% ([+ str_change_pschd +])
+
+ZLN: [+ zln_r_disp +]% ([+ str_change_zln +])
+
+Blok Mniejszości Narodowych: [+ minorities_bloc_r_disp +]% ([+ str_change_minorities_bloc +])
+
+Inne: [+ other_r_disp +]% ([+ str_change_other +])
+
+Zaimplementowany wycinek obejmuje Koalicję Lewicy, koalicję centrolewicową, zewnętrzną tolerancję Bloku Mniejszości Narodowych oraz Chjeno-Piast. Pozostałe zatwierdzone lub planowane układy nie są jeszcze dostępne.
+
+- @polish_pps_majority: Utwórz samodzielny rząd PPS.
+- @polish_left_coalition: Utwórz Koalicję Lewicy.
+- @polish_center_left_coalition: Utwórz koalicję centrolewicową.
+- @polish_minority_toleration: Utwórz rząd PPS–PSL Wyzwolenie tolerowany przez Blok Mniejszości Narodowych.
+- @polish_chjeno_piast: Chjeno-Piast tworzy rząd; PPS przechodzi do opozycji.
+- @polish_opposition: Przejdź do opozycji, jeżeli nie powstaje zatwierdzona większość.
+
+@polish_pps_majority
+view-if: pps_r >= 50
+on-arrival: spd_in_government = 1; pps_in_government = 1; in_spd_majority = 1; chancellor = "TBD — historical research required"; chancellor_party = "PPS"
+
+PPS posiada większość i tworzy samodzielny rząd. Imienny skład gabinetu pozostaje do opracowania historycznego.
+
+@polish_left_coalition
+view-if: polish_left_coalition >= 50 and psl_wyzwolenie_relation >= 40 and minorities_bloc_relation >= 40
+on-arrival: spd_in_government = 1; pps_in_government = 1; psl_wyzwolenie_in_government = 1; minorities_bloc_in_government = 1; in_polish_left_coalition = 1; chancellor = "TBD — historical research required"; chancellor_party = "PPS"
+
+PPS, PSL Wyzwolenie i Blok Mniejszości Narodowych tworzą Koalicję Lewicy. Podział stanowisk i szczegółowy program pozostają planowane.
+
+@polish_center_left_coalition
+view-if: polish_center_left_coalition >= 50 and psl_wyzwolenie_relation >= 40 and psl_piast_relation >= 40 and npr_relation >= 40
+on-arrival: spd_in_government = 1; pps_in_government = 1; psl_wyzwolenie_in_government = 1; psl_piast_in_government = 1; npr_in_government = 1; in_polish_center_left_coalition = 1; chancellor = "TBD — historical research required"; chancellor_party = "PPS"
+
+PPS, oba stronnictwa ludowe i NPR tworzą koalicję centrolewicową. Podział stanowisk i szczegółowy program pozostają planowane.
+
+@polish_minority_toleration
+view-if: minority_toleration_total >= 50 and psl_wyzwolenie_relation >= 40 and minorities_bloc_relation >= 40
+on-arrival: spd_in_government = 1; pps_in_government = 1; psl_wyzwolenie_in_government = 1; minorities_bloc_in_government = 0; minorities_toleration = 1; in_minority_government = 1; chancellor = "TBD — historical research required"; chancellor_party = "PPS"
+
+PPS i PSL Wyzwolenie tworzą rząd mniejszościowy. Blok Mniejszości Narodowych pozostaje poza gabinetem i zapewnia mu zewnętrzną tolerancję.
+
+@polish_chjeno_piast
+view-if: chjeno_piast_coalition >= 50
+on-arrival: zln_in_government = 1; pschd_in_government = 1; psl_piast_in_government = 1; in_chjeno_piast = 1; chancellor = "TBD — historical research required"; chancellor_party = "Chjeno-Piast"
+
+ZLN, PSChD i PSL Piast tworzą większość Chjeno-Piast. PPS pozostaje w opozycji.
+
+@polish_opposition
+on-arrival: chancellor = "TBD — historical research required"; chancellor_party = "unresolved parliamentary government"
+
+Nie powstaje żadna z obecnie zaimplementowanych większości. PPS przechodzi do opozycji. Dalsze scenariusze kryzysowe pozostają planowane.
 
 @post_election_1928
 on-arrival: {!

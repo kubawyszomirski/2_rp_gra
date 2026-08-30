@@ -1,3 +1,4 @@
+view-if: not polish_party_system
 on-arrival: {!
 // set up the infrastructure
 Q.sapd_formed = 1;

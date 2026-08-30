@@ -2,15 +2,16 @@
 
 ## Executive Game Overview
 
-**A plain-language guide to the PPS-1 transition over the German baseline**
+**A plain-language guide to the Polish opening-party slice over the German baseline**
 Prepared from the repository as it exists on 29 August 2026
 
 > **Scope note**
 >
 > This guide explains what the current game presents and how its source code
 > makes that experience work. PPS identity, opening support, population groups,
-> and the January 1922 start are implemented; most other content remains the
-> German baseline. It is not an independent history. Historical statements are
+> the January 1922 start, nine-party electoral model, direct campaigning,
+> relationships and first-election coalition shell are implemented; most other
+> content remains the German baseline. It is not an independent history. Historical statements are
 > described as the game's framing unless independently documented elsewhere.
 > Areas that need Polish research or a design choice are marked:
 > **TBD — user historical research and design decision required.**
@@ -20,8 +21,9 @@ Prepared from the repository as it exists on 29 August 2026
 ## Executive summary
 
 *PPS: An Alternate History* is a political strategy and interactive-fiction
-game. The current PPS-1 build identifies the player party as PPS and starts in
-January 1922, then retains most German-baseline mechanics and the dated event
+game. The current build identifies the player party as PPS, starts in January
+1922, and uses nine semantic Polish party IDs for polling and elections. It
+then retains most German-baseline mechanics and the dated event
 calendar beginning in 1928 through a period of
 elections, economic crisis, unstable governments, political violence, and
 possible democratic collapse. The game is less about commanding units on a
@@ -41,7 +43,7 @@ The central rhythm is simple:
 6. Resolve any event that has become due.
 7. Recalculate support, factions, the economy, and later election results.
 
-Under that straightforward loop is a highly connected simulation. In PPS-1, a
+Under that straightforward loop is a highly connected simulation. In the current transitional build, a
 policy still pleases one inherited German faction and angers another. A
 coalition can unlock ministries but
 also create coalition dissent. Economic policy can reduce unemployment while
@@ -82,14 +84,16 @@ schedule, not a researched Polish equivalent. The Polish end date, first
 election date, opening political state, and date-gated event schedule remain
 **TBD — user historical research and design decision required.**
 
-**Implemented PPS-1 decision:** Core presentation calls the player party
-**PPS — Polska Partia Socjalistyczna** while retaining `spd` as its internal
-compatibility ID. Opening displayed within-group support is 30% Robotnicy, 15%
-Inteligencja, 7% Drobnomieszczaństwo, 7% Chłopi, 1% Burżuazja i Ziemiaństwo,
-5% Mniejszości Narodowe, and approximately 23% Bezrobotni. The other parties,
-advisers, live five-faction model, action cards, organizations, institutions,
-dated events, and most endings remain a clearly marked German baseline. The
-ordinary action/month gameplay loop is unchanged.
+**Implemented opening-party decision:** Active elections use KPP, PPS, NPR,
+PSL Wyzwolenie, PSL Piast, PSChD, ZLN, Blok Mniejszości Narodowych, and Inne.
+The supplied eight-party support values are proportionally scaled so Inne
+receives 8% in every population row except Chłopi, where it receives 12%.
+Campaigning covers all seven population groups. Polish relationship values and
+a limited first-election coalition/toleration shell are active. A narrow
+compatibility bridge preserves inherited support effects mapped from SPD, KPD,
+DVP and DNVP to PPS, KPP, PSChD and ZLN. Advisers, the live five-faction model,
+most action cards, organizations, institutions, dated events and endings remain
+a clearly marked German baseline. The ordinary action/month loop is unchanged.
 
 <!-- PDF_PAGE_BREAK -->
 
@@ -583,22 +587,23 @@ linearly to exactly 30% and Chłopi decline linearly to exactly 50% by December
 1939; the other three main shares remain fixed. Bezrobotni begin at 3% and are
 an overlapping economic condition. Mniejszości Narodowe are a separate 30%
 overlapping identity weight; Polacy are the implied complement rather than an
-independently weighted group. The starting party list remains the eight German
-categories, and a later splinter party can still be added dynamically.
+independently weighted group. The active party list is KPP, PPS, NPR, PSL
+Wyzwolenie, PSL Piast, PSChD, ZLN, Blok Mniejszości Narodowych, and Inne.
 
-For the current playable slice, Burżuazja i Ziemiaństwo copy the opening Old
-Middle Class party profile. Mniejszości Narodowe copy the Catholic party
-profile, and existing Catholic-targeting effects are bridged into that group.
-These are implemented gameplay placeholders, not claims of historical
-equivalence. Dedicated party profiles and minority-targeting mechanics remain
+Every group has a dedicated approved nine-party opening row. The eight named
+party values are proportionally scaled to reserve exactly 8% for Inne, except
+among Chłopi where Inne receives 12%. Because the rows total 100, their opening
+raw values also read as within-group percentages. Historical validation remains
 **TBD — historical research required**. The approximate minority composition
 recorded for later design is 60% Chłopi, 17% Robotnicy, 19%
 Drobnomieszczaństwo, 3% Inteligencja, and 2% Burżuazja i Ziemiaństwo; it does
-not yet drive a second calculation.
+not yet drive an intersection calculation. The 30% minority row remains an
+additional overlapping electoral dimension. Inherited Catholic-targeting PPS
+effects transfer only as deltas and no longer overwrite the whole row.
 
-This design makes political effects indirect. A card that improves SPD appeal
+This design makes political effects indirect. A card that improves PPS appeal
 among workers may have a large national effect because workers have a large
-weight. The same raw change among a smaller group may matter less. Overall SPD
+weight. The same raw change among a smaller group may matter less. Overall PPS
 dissent can reduce positive support gains in many scenes.
 
 **Failure conditions:** each social group's preference total must remain above
@@ -626,8 +631,17 @@ semicircle and provides space for election, support, and economic history.*
 
 ### Coalition formation
 
-Election code adds party shares into named coalition totals. The player then
-sees routes that can depend on:
+The active first-election code computes a deliberately limited Polish shell:
+
+- PPS majority;
+- Koalicja Lewicy: PPS + PSL Wyzwolenie + Minorities Bloc;
+- centre-left: PPS + PSL Wyzwolenie + PSL Piast + NPR;
+- a PPS–PSL Wyzwolenie minority government externally tolerated by the
+  Minorities Bloc;
+- Chjeno-Piast: ZLN + PSChD + PSL Piast.
+
+Minority toleration explicitly leaves the Minorities Bloc outside the cabinet.
+Routes can depend on:
 
 - whether the combination reaches a majority;
 - relations with partner parties;
@@ -636,9 +650,12 @@ sees routes that can depend on:
 - presidential and constitutional conditions;
 - earlier failed negotiations.
 
-Entering a coalition sets government flags, appoints a chancellor, assigns
-initial ministries, and opens a ministry negotiation. Parliamentary strength
-produces `leverage`, which the player spends to claim offices.
+Entering one of these routes sets first-cycle government flags. Named
+chancellors, ministry allocation and detailed coalition programs are left as
+**TBD — historical research required** rather than invented. The inherited
+German coalition branch remains in the source but Polish elections do not route
+through it. Centrolew, Sanacja, United Left, broad fronts/coalitions, democratic
+classification and crisis rules remain planned.
 
 ### Coalition dissent
 
@@ -694,15 +711,17 @@ historical research required**.
 
 ### Relationships with other parties
 
-Separate numeric values record relations with the Center Party, KPD, DDP, DVP,
-DNVP, and NSDAP. The player sees labels such as hostile, cold, neutral, warm,
-or friendly rather than the raw number. Coalition and presidential-election
-routes use their own numeric thresholds.
+Separate active numeric values record relations with PSL Wyzwolenie, Blok
+Mniejszości Narodowych, PSL Piast, NPR, PSChD, KPP, and ZLN. Their opening
+scores are 65, 50, 45, 50, 30, 10, and 5. The existing display bands remain
+authoritative, so those values display as friendly, neutral, neutral, neutral,
+cool, frigid, and hostile respectively. The implemented first-cycle coalition
+routes read the relevant partner values.
 
-This means a seemingly symbolic relationship card can change a future
-coalition or candidate negotiation. The source contains a case-sensitive
-initialization inconsistency for DNVP and NSDAP relations, so those two values
-require runtime verification.
+The relationship card now offers Polish opening-party outreach. Detailed
+historical disputes, presidential negotiations and later coalition effects are
+planned. Inactive German relationship values remain only for inherited content
+and do not determine Polish first-election eligibility.
 
 ### Advisers and leadership
 
@@ -1195,9 +1214,11 @@ design:
 These systems embed German names, institutions, laws, organizations, or event
 chronology directly into variables and routes:
 
-- SPD, KPD, Center/BVP, DDP/DStP, DVP, DNVP, NSDAP, SAPD, and “other” party
-  structure;
-- Reichstag coalition formulas and the current approximate seat display;
+- the still-inherited content and events associated with SPD, KPD, Center/BVP,
+  DDP/DStP, DVP, DNVP, NSDAP and SAPD, even though the active electoral roster
+  is now Polish;
+- detailed Polish parliamentary allocation, later coalition formulas and the
+  current approximate percentage-based seat display;
 - president/chancellor powers and the no-confidence/emergency-government paths;
 - Prussian government and police as a separate political layer;
 - Reichsbanner, Iron Front, SA, RFB, Stahlhelm, and Reichswehr systems;

@@ -3,11 +3,27 @@ new-page: true
 on-arrival: {!
 Q.last_advisor_action = 0;
 Q.last_cabinet_action = 0;
-// Compatibility bridge: existing Catholic-targeting effects temporarily apply
-// to Mniejszości Narodowe until a dedicated replacement is implemented.
-for (var party of Q.parties) {
-    Q['national_minorities_' + party] = Q['catholics_' + party];
+// Transfer inherited support effects into the semantic Polish party IDs.
+for (var legacy_party in Q.legacy_party_map) {
+    var polish_party = Q.legacy_party_map[legacy_party];
+    for (var population_group of Q.classes) {
+        var legacy_key = population_group + '_' + legacy_party;
+        var base_key = legacy_key + '_compat_base';
+        var polish_key = population_group + '_' + polish_party;
+        var legacy_delta = Q[legacy_key] - Q[base_key];
+        if (Number.isFinite(legacy_delta) && legacy_delta != 0) {
+            Q[polish_key] += legacy_delta;
+        }
+        Q[legacy_key] = Q[polish_key];
+        Q[base_key] = Q[polish_key];
+    }
 }
+var catholic_delta = Q.catholics_spd - Q.catholics_spd_compat_base;
+if (Number.isFinite(catholic_delta) && catholic_delta != 0) {
+    Q.national_minorities_pps += catholic_delta;
+}
+Q.catholics_spd = Q.national_minorities_pps;
+Q.catholics_spd_compat_base = Q.catholics_spd;
 // make sure no stat is below 0.
 for (var c of Q.classes) {
     for (var party of Q.parties) {
@@ -38,8 +54,15 @@ for (var c of Q.classes) {
         class_votes += Q[c+'_'+party];
     }
     for (var party of Q.parties) {
-        Q[c + '_' + party + '_normalized'] = 100*Q[c+'_'+party]/class_votes;
-        Q[c + '_' + party + '_display'] = Math.round(100*Q[c+'_'+party]/class_votes);
+        Q[c + '_' + party + '_normalized'] = class_votes > 0 ? 100*Q[c+'_'+party]/class_votes : 0;
+        Q[c + '_' + party + '_display'] = class_votes > 0 ? Math.round(100*Q[c+'_'+party]/class_votes) : 0;
+    }
+}
+for (var legacy_party in Q.legacy_party_map) {
+    var polish_party = Q.legacy_party_map[legacy_party];
+    for (var population_group of Q.classes) {
+        Q[population_group + '_' + legacy_party + '_normalized'] = Q[population_group + '_' + polish_party + '_normalized'];
+        Q[population_group + '_' + legacy_party + '_display'] = Q[population_group + '_' + polish_party + '_display'];
     }
 }
 // calculate support for each of the parties
@@ -61,6 +84,13 @@ for (var party of Q.parties) {
     Q[party+'_normalized'] = Q[party + '_support']/total_support;
     Q[party+'_votes'] = Math.round(Q[party+'_normalized']*100);
     Q[party+'_votes_display'] = Math.round(Q[party+'_normalized']*100);
+}
+for (var legacy_party in Q.legacy_party_map) {
+    var polish_party = Q.legacy_party_map[legacy_party];
+    Q[legacy_party + '_support'] = Q[polish_party + '_support'];
+    Q[legacy_party + '_normalized'] = Q[polish_party + '_normalized'];
+    Q[legacy_party + '_votes'] = Q[polish_party + '_votes'];
+    Q[legacy_party + '_votes_display'] = Q[polish_party + '_votes_display'];
 }
 
 

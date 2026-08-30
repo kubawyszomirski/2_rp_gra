@@ -584,6 +584,30 @@ table {
 .seat.nsdap {
     fill: #954B00;
 }
+.seat.kpp {
+    fill: #8B0000;
+}
+.seat.pps {
+    fill: #E3000F;
+}
+.seat.npr {
+    fill: #C96A24;
+}
+.seat.psl_wyzwolenie {
+    fill: #6FAF45;
+}
+.seat.psl_piast {
+    fill: #2F7D32;
+}
+.seat.pschd {
+    fill: #D5AC27;
+}
+.seat.zln {
+    fill: #3F7BC1;
+}
+.seat.minorities_bloc {
+    fill: #7C5AA6;
+}
 .seat.sapd {
     fill: #C40000;
 }
