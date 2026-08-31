@@ -73,7 +73,7 @@ source location, and permitted use in its entry. Preserve
 
 - **Source ID:** PPS-DESIGN-TBD
 - **Claim or game element supported:** PPS player identity, approved Polish
-  opening-party support matrix, and planned Centrum/Lewica/Piłsudczycy faction
+  opening-party support matrix, and implemented Centrum/Lewica/Piłsudczycy faction
   model.
 - **Category:** political parties and factions
 - **Relevant date or period:** January 1922 onward
@@ -88,32 +88,78 @@ source location, and permitted use in its entry. Preserve
   implemented gameplay matrix covers KPP, PPS, NPR, PSL Wyzwolenie, PSL Piast,
   PSChD, ZLN, Blok Mniejszości Narodowych and Inne across all seven population
   groups. The eight user-supplied named-party values are proportionally scaled
-  so Inne receives 8% per row and 12% among Chłopi. The approved future faction
+  so Inne receives 8% per row and 12% among Chłopi. The implemented faction
   opening is Centrum 50/0 dissent, Lewica 15/20, and Piłsudczycy 35/5, with
   60-dissent consequence designs.
 - **Confidence:** Historical confidence TBD; implementation confidence applies
   only to the user-approved gameplay values.
 - **Conflicting sources:** TBD
 - **Intended gameplay use:** Opening polling/elections, campaigning,
-  relationships, first-cycle coalitions, and a later coherent faction/split
-  slice.
+  relationships, first-cycle coalitions, and the active faction/split slice.
 - **Historical fact:** **TBD — historical research required.**
 - **Gameplay simplification:** Active elections use semantic Polish IDs. A
   narrow compatibility map carries inherited `spd`, `kpd`, `dvp`, and `dnvp`
-  support deltas into PPS, KPP, PSChD and ZLN. Five wired German factions,
-  German advisers and most dated content remain temporary placeholders.
+  support deltas into PPS, KPP, PSChD and ZLN. A separate bridge transfers
+  inherited German card faction deltas into the three active PPS currents;
+  this is not a historical equivalence. The active adviser roster is now
+  Polish, while most dated content remains temporary baseline material.
 - **Alternate-history departure:** TBD
 - **Licensing or attribution requirements:** None identified for design text;
   future source requirements TBD.
 - **Implementation status:** Nine-party opening matrix, direct campaigning,
-  initial relationships and first-election coalition shell implemented;
-  three-faction model, later parties and split consequences approved/planned
-  but not implemented.
+  initial relationships, first-election coalition shell, three-faction model,
+  fourteen-person PPS adviser pool, and immediate 60-dissent consequences
+  implemented. Later parties and historically conditioned successor formation
+  remain planned.
 - **Related mechanic, variable and source file:** `parties`, semantic
   `<class>_<party>` families, `legacy_party_map`, relationship and coalition
   fields, `factions`, `source/scenes/root.scene.dry`, status, Library,
   campaigning, relationships, elections, and future faction/adviser/split
   scenes.
+
+### Source entry PPS-ADVISERS-USER-DESIGN
+
+- **Source ID:** PPS-ADVISERS-USER-DESIGN
+- **Claim or game element supported:** Approved playable PPS adviser pool,
+  faction assignments, entry/departure schedule, named split departures and
+  action directions.
+- **Category:** party leadership and factions
+- **Relevant date or period:** January 1922 onward
+- **Full citation:** User-supplied gameplay design in the project conversation;
+  no external historical source supplied.
+- **Author:** Project owner
+- **Publication:** Project design decision
+- **Page number:** Not applicable
+- **URL or archive location:** Not applicable
+- **Date accessed:** 31 August 2026
+- **Exact claim or evidence extracted:** Fourteen advisers are assigned to
+  Centrum, Lewica or Piłsudczycy; Daszyński, Pużak and Perl are the opening
+  active team; Próchnik and Drobner enter in 1928 and Dubois in 1930; Perl
+  leaves in April 1927 and Daszyński in 1931; named faction-split departures
+  follow the approved matrix and apply only after a person's entry date.
+- **Confidence:** High as an approved gameplay specification; historical
+  confidence **TBD — historical research required**.
+- **Conflicting sources:** Not investigated.
+- **Intended gameplay use:** Active adviser roster, leadership changes,
+  cooldown actions, date gating and faction-split consequences.
+- **Historical fact:** **TBD — historical research required.** The roster,
+  dates, roles and split behavior must not be cited as established history from
+  this entry alone.
+- **Gameplay simplification:** Three active slots; a shared six-month cooldown;
+  first appointment gives +5 faction strength; dismissal gives +5 faction
+  dissent; reappointment gives no repeated strength bonus. The year-only 1931
+  Daszyński departure is provisionally applied in January.
+- **Alternate-history departure:** Adviser availability after faction splits
+  follows the approved gameplay matrix; successor parties are not yet formed.
+- **Licensing or attribution requirements:** None for the supplied design text;
+  future portrait assets require separate licensing review.
+- **Implementation status:** Implemented. Actions needing Centrolew, Sanacja,
+  PPS-dFR, municipal government, a Polish economic programme or formal PPS–KPP
+  joint action remain explicitly planned.
+- **Related mechanic, variable and source file:** Fourteen semantic adviser
+  flags, `*_appointed_once`, `*_left_adviser_pool`, `n_advisors`,
+  `advisor_action_timer`, `source/scenes/advisors/`, leadership management,
+  `post_event`, and the three PPS split scenes.
 
 ### Source entry PARTY-TBD
 
@@ -308,9 +354,11 @@ source location, and permitted use in its entry. Preserve
   thresholds are not approved.
 - **Alternate-history departure:** TBD
 - **Licensing or attribution requirements:** TBD
-- **Implementation status:** Approved design only; not implemented. PPS-1
-  preserves German cards, Labor/ADGB, organizations, advisers, and media.
-- **Related mechanic, variable and source file:** Labor faction,
+- **Implementation status:** Approved design only; not implemented. The
+  inherited Labor/ADGB measure is separated from active PPS factions. The game
+  now has Polish advisers, but still preserves German-baseline organization and
+  media cards beneath some adviser entry points.
+- **Related mechanic, variable and source file:** Affiliated Labor compatibility measure,
   `unions_independent`, party-organization/media timers and scenes, welfare,
   youth, culture, cooperatives, strikes, and future dedicated state.
 
@@ -343,8 +391,8 @@ source location, and permitted use in its entry. Preserve
 ### Source entry PPS-MILITIA-DESIGN-TBD
 
 - **Source ID:** PPS-MILITIA-DESIGN-TBD
-- **Claim or game element supported:** Planned Milicja PPS to Akcja
-  Socjalistyczna two-stage organization.
+- **Claim or game element supported:** Implemented Milicja PPS to Akcja
+  Socjalistyczna two-stage gameplay organization.
 - **Category:** political violence and paramilitary organizations
 - **Relevant date or period:** 1922–1939
 - **Full citation:** TBD — user historical research required.
@@ -356,22 +404,27 @@ source location, and permitted use in its entry. Preserve
 - **Primary or secondary source:** TBD
 - **Exact evidence or notes:** The approved design treats Milicja PPS and AS as
   two stages of one PPS self-defence organization, mechanically separate from
-  any later Polish equivalent of the Iron Front. Historical formation, dates,
+  any later Polish equivalent of the Iron Front. The user-approved opening is
+  200 active organized members at 0.10 militancy; reorganization preserves
+  strength and adds a provisional 0.10 militancy. Historical formation, dates,
   membership, activity, and state response are not yet sourced.
 - **Confidence:** TBD
 - **Conflicting sources:** TBD
-- **Intended gameplay use:** Future rally/strike defence, organization strength,
+- **Intended gameplay use:** Rally/strike defence, organization strength,
   militancy, street confrontation, repression, and faction effects.
 - **Historical fact:** **TBD — historical research required.**
-- **Gameplay simplification:** Stage/strength/militancy model approved in
-  principle; values and thresholds are not yet approved.
+- **Gameplay simplification:** Implemented stage/strength/militancy model;
+  approved opponents are nationalist militias, communist militias and state
+  police. Union cooperation does not merge manpower.
 - **Alternate-history departure:** TBD
 - **Licensing or attribution requirements:** TBD
-- **Implementation status:** Approved design only; not implemented.
-  Reichsbanner and Iron Front remain the explicit German baseline.
-- **Related mechanic, variable and source file:** `rb_strength`,
-  `rb_militancy`, `iron_front_formed`, Reichsbanner/Iron Front, rally,
-  street-fighting, coup, and repression scenes.
+- **Implementation status:** Playable slice implemented. Semantic PPS militia
+  state drives organization, rally, street-conflict and crisis calculations;
+  the Iron Front remains separate and is disabled in the Polish path.
+- **Related mechanic, variable and source file:** `pps_militia_stage`,
+  `pps_militia_strength`, `pps_militia_militancy`, union/legal state,
+  `source/scenes/party_affairs/reichsbanner.scene.dry`, rally,
+  street-fighting and crisis scenes.
 
 ### Source entry VIOLENCE-TBD
 

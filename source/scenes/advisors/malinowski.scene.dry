@@ -1,0 +1,29 @@
+title: Marian Malinowski
+is-pinned-card: true
+tags: advisor
+view-if: malinowski_advisor = 1
+new-page: true
+
+= Marian Malinowski
+
+Malinowski represents the organizational base of the Piłsudczyk current.
+
+- @organize_pilsudczycy
+- @support_government
+- @root: Return to main
+
+@organize_pilsudczycy
+title: Organize Piłsudczycy
+choose-if: advisor_action_timer = 0
+unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?]
+on-arrival: advisor_action_timer = 6; pilsudczycy_strength += 5; pilsudczycy_dissent -= 5
+
+The Piłsudczyk current improves its internal organization.
+
+@support_government
+title: Support the Government
+choose-if: advisor_action_timer = 0 and spd_in_government = 1
+unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?][? if spd_in_government = 0 : The PPS is not in government. ?]
+on-arrival: advisor_action_timer = 6; coalition_dissent -= 1 if coalition_dissent > 0; pilsudczycy_dissent -= 5; lewica_dissent += 3
+
+The Piłsudczyk current supports governmental stability, while Lewica becomes more dissatisfied.

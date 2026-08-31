@@ -1,0 +1,38 @@
+title: Split in Lewica PPS
+subtitle: The socialist left breaks with the party leadership.
+new-page: true
+tags: event
+view-if: polish_faction_system and lewica_dissent >= 60 and not lewica_split
+on-arrival: {!
+Q.lewica_split = 1;
+Q.lewica_strength /= 2;
+Q.workers_pps -= 5;
+Q.unemployed_pps -= 5;
+Q.workers_kpp += 3;
+Q.workers_other += 2;
+var departing_advisers = ['czapinski'];
+if (Q.year >= 1928) {
+    departing_advisers.push('prochnik', 'drobner');
+}
+if (Q.year >= 1930) {
+    departing_advisers.push('dubois');
+}
+for (var adviser of departing_advisers) {
+    if (Q[adviser + '_advisor']) {
+        Q[adviser + '_advisor'] = 0;
+        Q.n_advisors -= 1;
+    }
+    Q[adviser + '_left_adviser_pool'] = 1;
+}
+!}
+max-visits: 1
+
+= Lewica leaves the PPS
+
+The leadership of Lewica PPS has broken with the party. Its strength inside the PPS is halved. Kazimierz Czapiński, Adam Próchnik, Stanisław Dubois and Bolesław Drobner leave only if their adviser-pool entry date has already arrived. Zygmunt Zaremba remains. The PPS loses support among workers and unemployed people, while KPP and smaller socialist alternatives benefit.
+
+An adviser whose entry date has not yet arrived is not removed by this event. For example, a split before 1930 does not prevent Dubois from entering the pool in 1930.
+
+The creation, name and electoral profile of a successor such as PPS-L remain planned until the later-party system and historical conditions are implemented.
+
+- @root: Continue

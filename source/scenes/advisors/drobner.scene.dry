@@ -1,0 +1,22 @@
+title: Bolesław Drobner
+is-pinned-card: true
+tags: advisor
+view-if: drobner_advisor = 1
+new-page: true
+
+= Bolesław Drobner
+
+Drobner enters the adviser pool in 1928. He represents Lewica PPS and focuses on political negotiation with KPP.
+
+**Planned, not implemented:** Joint Workers' Action requires a dedicated cooperation state. It will not merge KPP, trade-union or PPS militia manpower.
+
+- @negotiate_kpp
+- @root: Return to main
+
+@negotiate_kpp
+title: Negotiate with KPP
+choose-if: advisor_action_timer = 0
+unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?]
+on-arrival: advisor_action_timer = 6; kpp_relation += 5*(1-dissent); lewica_strength += 3; centrum_dissent += 2
+
+Relations with KPP improve, while parts of Centrum object.

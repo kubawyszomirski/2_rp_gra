@@ -1,0 +1,22 @@
+title: Kazimierz Czapiński
+is-pinned-card: true
+tags: advisor
+view-if: czapinski_advisor = 1
+new-page: true
+
+= Kazimierz Czapiński
+
+Czapiński represents Lewica PPS and concentrates on socialist education and economic doctrine.
+
+**Planned, not implemented:** Socialist Economic Programme requires the dedicated Polish economic-policy system.
+
+- @socialist_education
+- @root: Return to main
+
+@socialist_education
+title: Socialist Education
+subtitle: Make the Party Organizations card available immediately.
+choose-if: advisor_action_timer = 0
+unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?]
+on-arrival: advisor_action_timer = 6; party_organizations_timer = 0; lewica_strength += 3; lewica_dissent -= 3; last_advisor_action = 1
+go-to: party_organizations

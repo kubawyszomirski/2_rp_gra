@@ -1,0 +1,22 @@
+title: Bronisław Ziemięcki
+is-pinned-card: true
+tags: advisor
+view-if: ziemiecki_advisor = 1
+new-page: true
+
+= Bronisław Ziemięcki
+
+Ziemięcki represents the Piłsudczyk current while favoring conditional parliamentary cooperation.
+
+**Planned, not implemented:** Municipal Socialism requires a dedicated local-government system.
+
+- @conditional_toleration
+- @root: Return to main
+
+@conditional_toleration
+title: Conditional Toleration
+choose-if: advisor_action_timer = 0
+unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?]
+on-arrival: advisor_action_timer = 6; pilsudczycy_dissent -= 5; centrum_dissent -= 2; lewica_dissent += 2; coalition_dissent -= 1 if coalition_dissent > 0
+
+Ziemięcki argues for limited cooperation without unconditional political submission.

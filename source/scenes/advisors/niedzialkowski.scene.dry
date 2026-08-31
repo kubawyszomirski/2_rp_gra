@@ -1,0 +1,22 @@
+title: Mieczysław Niedziałkowski
+is-pinned-card: true
+tags: advisor
+view-if: niedzialkowski_advisor = 1
+new-page: true
+
+= Mieczysław Niedziałkowski
+
+Niedziałkowski represents Centrum PPS and concentrates on constitutional democracy and democratic alliances.
+
+**Planned, not implemented:** Build Centrolew will become available with the dedicated Centrolew system.
+
+- @defend_democracy
+- @root: Return to main
+
+@defend_democracy
+title: Defend Constitutional Democracy
+choose-if: advisor_action_timer = 0
+unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?]
+on-arrival: advisor_action_timer = 6; pro_republic += 5*(1-dissent); centrum_strength += 3; centrum_dissent -= 3
+
+The PPS makes a coordinated defence of parliamentary and constitutional government.

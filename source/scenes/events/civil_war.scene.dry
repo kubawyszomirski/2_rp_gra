@@ -1,7 +1,7 @@
 title: Civil War
 audio: music/communist/A_las_barricadas.ogg
 on-arrival: {!
-Q.rb_strength = Math.round(Q.rb_strength);
+Q.pps_militia_strength = Math.round(Q.pps_militia_strength);
 Q.sh_strength = Math.round(Q.sh_strength);
 Q.sa_strength = Math.round(Q.sa_strength);
 // re-calculate dissent, in case we transitioned from, say, the KPD support that raised reformist dissent.
@@ -22,7 +22,7 @@ Q.civil_war_seen = 1;
 // our allies
 Q.total_power = 0;
 // TODO:  lower reichsbanner strength if the party's popularity is very low.
-Q.rb_power = Q.rb_strength*Q.rb_militancy;
+Q.rb_power = Q.pps_militia_strength*Q.pps_militia_militancy;
 if (Q.dissent > 0.15) {
     Q.rb_power *= (1 - Q.dissent/1.5);
 }
@@ -91,9 +91,9 @@ Our enemies are the nationalist Stahlhelm, with [+ sh_strength +] thousand troop
 
 [? if chancellor_party == "KPD" or president == "Thälmann" : The KPD's paramilitary, the RFB, is leading the battle, and we are their co-combatants. ?]
 
-On our side, we have the Reichsbanner, at [+ rb_strength +] thousand members. [? if dissent > 0.15 and dissent <= 0.25: It is somewhat weakened by dissent within the party, and some members choose not to fight. ?][? if dissent > 0.25 and dissent < 0.5: It is weakened by dissent within the party, and many members choose not to fight. ?][? if dissent >= 0.5: It is heavily weakened by dissent within the party, and a substantial portion of members choose not to fight. ?]
+[+ pps_militia_name +] contributes approximately [+ pps_militia_strength +] active organized members. [? if dissent > 0.15 and dissent <= 0.25: It is somewhat weakened by dissent within the party, and some members choose not to fight. ?][? if dissent > 0.25 and dissent < 0.5: It is weakened by dissent within the party, and many members choose not to fight. ?][? if dissent >= 0.5: It is heavily weakened by dissent within the party, and a substantial portion of members choose not to fight. ?]
 
-[? if rb_militancy < 0.25 : Unfortunately, the Reichsbanner are poorly trained and equipped, and will not be able to stand against our more militarized opponents. ?][? if rb_militancy >= 0.25 and rb_militancy < 0.5 : We have spent some resources training and equipping the Reichsbanner. Let us hope our people can persist. ?][? if rb_militancy >= 0.5 : We have spent quite a great deal of resources on turning the Reichsbanner into a fighting force. Let us hope that they survive. ?]
+[? if pps_militia_militancy < 0.25 : Unfortunately, the militia is poorly trained and equipped and cannot stand against more militarized opponents. ?][? if pps_militia_militancy >= 0.25 and pps_militia_militancy < 0.5 : We have spent resources training and equipping the militia. ?][? if pps_militia_militancy >= 0.5 : We have invested heavily in turning the militia into a fighting force. ?]
 
 What else do we have?
 
@@ -159,7 +159,7 @@ go-to: defeat if total_defeat = 1; long_war if long_war = 1; republic_victory if
 
 = Total Defeat
 
-Our forces are no match for those of the reactionaries. Reichsbanner fighters are quickly overpowered by the forces of the Stahlhelm, SA, and Reichswehr. Many are killed before the rest surrender. Our remaining leaders flee the country or face execution, as the reactionaries take absolute power over Germany.
+Our forces are no match for those of the reactionaries. PPS militia members are quickly overpowered by nationalist militias and hostile state forces. Many are killed before the rest surrender.
 
 Our resistance will be recorded in the history books, and in the future, our names will be honored. But for now, all is lost.
 
@@ -205,7 +205,7 @@ unavailable-subtitle: Our relations are not strong enough.
 max-visits: 1
 go-to: long_war_intervention
 
-We send a call for help to the Soviet Union. The KPD receives the bulk of the aid, while the Reichsbanner and our loyal military units are left floundering. If we win, this does not bode well for our future.
+We send a call for help to the Soviet Union. The communists receive the bulk of the aid, while the PPS militia and our loyal military units are left floundering. If we win, this does not bode well for our future.
 
 @east_aid
 choose-if: east_relation >= 2
@@ -223,4 +223,3 @@ Poland and Czechoslovakia are largely too absorbed in their own problems to be o
 The battle lines hold, and the SA, Stahlhelm, and pro-coup Reichswehr forces are defeated. Today, the forces of the republic prevail over the fascists and the reactionaries. There is a new revolution in Germany. Let us hope it produces a longer-lasting peace than the previous one.
 
 - @game_over: Game over.
-

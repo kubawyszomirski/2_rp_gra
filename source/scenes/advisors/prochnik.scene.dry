@@ -1,0 +1,29 @@
+title: Adam Próchnik
+is-pinned-card: true
+tags: advisor
+view-if: prochnik_advisor = 1
+new-page: true
+
+= Adam Próchnik
+
+Próchnik enters the adviser pool in 1928. He represents Lewica PPS and combines republican socialism with openness to discussions with KPP.
+
+- @republican_left
+- @discuss_united_front
+- @root: Return to main
+
+@republican_left
+title: Republican Left
+choose-if: advisor_action_timer = 0
+unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?]
+on-arrival: advisor_action_timer = 6; pro_republic += 5*(1-dissent); lewica_strength += 5; lewica_dissent -= 5; workers_pps += 2*(1-dissent); new_middle_pps += 3*(1-dissent)
+
+Lewica presents socialism and defence of democratic government as a common cause.
+
+@discuss_united_front
+title: Discuss a United Front
+choose-if: advisor_action_timer = 0
+unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?]
+on-arrival: advisor_action_timer = 6; kpp_relation += 5*(1-dissent); lewica_strength += 2; centrum_dissent += 2
+
+Discussions improve relations with KPP but concern Centrum. This is political dialogue, not a formal coalition or militia merger.

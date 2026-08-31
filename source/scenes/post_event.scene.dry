@@ -24,6 +24,28 @@ if (Number.isFinite(catholic_delta) && catholic_delta != 0) {
 }
 Q.catholics_spd = Q.national_minorities_pps;
 Q.catholics_spd_compat_base = Q.catholics_spd;
+
+// Transfer changes from inherited Reichsbanner calculations into the one
+// canonical PPS self-defence organization. Direct Milicja/AS actions already
+// write the semantic fields, so only the legacy deltas are added here.
+var legacy_militia_strength_delta = Q.rb_strength - Q.rb_strength_compat_base;
+var legacy_militia_militancy_delta = Q.rb_militancy - Q.rb_militancy_compat_base;
+if (Number.isFinite(legacy_militia_strength_delta) && legacy_militia_strength_delta != 0) {
+    Q.pps_militia_strength += legacy_militia_strength_delta;
+}
+if (Number.isFinite(legacy_militia_militancy_delta) && legacy_militia_militancy_delta != 0) {
+    Q.pps_militia_militancy += legacy_militia_militancy_delta;
+}
+if (Q.pps_militia_strength < 0) {
+    Q.pps_militia_strength = 0;
+}
+if (Q.pps_militia_militancy < 0) {
+    Q.pps_militia_militancy = 0;
+}
+Q.rb_strength = Q.pps_militia_strength;
+Q.rb_militancy = Q.pps_militia_militancy;
+Q.rb_strength_compat_base = Q.rb_strength;
+Q.rb_militancy_compat_base = Q.rb_militancy;
 // make sure no stat is below 0.
 for (var c of Q.classes) {
     for (var party of Q.parties) {
@@ -94,15 +116,66 @@ for (var legacy_party in Q.legacy_party_map) {
 }
 
 
-// set faction strength/dissent to 0
-for (var c of Q.factions) {
-    if (Q[c+'_dissent'] < 0) {
-        Q[c+'_dissent'] = 0;
-    } else if (Q[c+'_dissent'] >= 100) {
-        Q[c+'_dissent'] = 99;
+// Transfer inherited German faction changes into the active PPS faction
+// model. This is a temporary gameplay bridge, not a historical equivalence.
+// Labor remains a separate affiliated trade-union power centre.
+for (var legacy_faction in Q.legacy_faction_map) {
+    var pps_faction = Q.legacy_faction_map[legacy_faction];
+    var legacy_strength_key = legacy_faction + '_strength';
+    var legacy_dissent_key = legacy_faction + '_dissent';
+    var strength_base_key = legacy_strength_key + '_compat_base';
+    var dissent_base_key = legacy_dissent_key + '_compat_base';
+    var strength_delta = Q[legacy_strength_key] - Q[strength_base_key];
+    var dissent_delta = Q[legacy_dissent_key] - Q[dissent_base_key];
+    if (Number.isFinite(strength_delta) && strength_delta != 0) {
+        Q[pps_faction + '_strength'] += strength_delta;
     }
-    if (Q[c+'_strength'] < 0) {
-        Q[c+'_strength'] = 0;
+    if (Number.isFinite(dissent_delta) && dissent_delta != 0) {
+        Q[pps_faction + '_dissent'] += dissent_delta;
+    }
+}
+
+// Preserve the inherited five-field balance for conditions in unadapted
+// cards, then store a new compatibility baseline so normalization is not
+// transferred into the PPS factions as a fresh political change.
+var legacy_total_strength = 0;
+for (var legacy_faction of Q.legacy_factions) {
+    if (Q[legacy_faction + '_dissent'] < 0) {
+        Q[legacy_faction + '_dissent'] = 0;
+    } else if (Q[legacy_faction + '_dissent'] >= 100) {
+        Q[legacy_faction + '_dissent'] = 99;
+    }
+    if (Q[legacy_faction + '_strength'] < 0) {
+        Q[legacy_faction + '_strength'] = 0;
+    }
+    legacy_total_strength += Q[legacy_faction + '_strength'];
+}
+if (legacy_total_strength > 0) {
+    for (var legacy_faction of Q.legacy_factions) {
+        Q[legacy_faction + '_strength'] = 100 * Q[legacy_faction + '_strength'] / legacy_total_strength;
+    }
+}
+for (var legacy_faction of Q.legacy_factions) {
+    Q[legacy_faction + '_strength_compat_base'] = Q[legacy_faction + '_strength'];
+    Q[legacy_faction + '_dissent_compat_base'] = Q[legacy_faction + '_dissent'];
+}
+
+// Clamp and normalize the three active PPS factions.
+var total_strength = 0;
+for (var faction of Q.factions) {
+    if (Q[faction + '_dissent'] < 0) {
+        Q[faction + '_dissent'] = 0;
+    } else if (Q[faction + '_dissent'] >= 100) {
+        Q[faction + '_dissent'] = 99;
+    }
+    if (Q[faction + '_strength'] < 0) {
+        Q[faction + '_strength'] = 0;
+    }
+    total_strength += Q[faction + '_strength'];
+}
+if (total_strength > 0) {
+    for (var faction of Q.factions) {
+        Q[faction + '_strength'] = 100 * Q[faction + '_strength'] / total_strength;
     }
 }
 
@@ -110,20 +183,13 @@ if (Q.unemployed <= 1) {
     Q.unemployed = 1;
 }
 
-// re-calculate dissent.
-var total_strength = Q.left_strength + Q.center_strength + Q.labor_strength + Q.reformist_strength + Q.neorevisionist_strength;
-
-// normalize strength for the different factions
-Q.left_strength = 100*Q.left_strength/total_strength;
-Q.center_strength = 100*Q.center_strength/total_strength;
-Q.labor_strength = 100*Q.labor_strength/total_strength;
-Q.reformist_strength = 100*Q.reformist_strength/total_strength;
-Q.neorevisionist_strength = 100*Q.neorevisionist_strength/total_strength;
-
-var total_dissent = Q.left_strength*Q.left_dissent + Q.center_strength*Q.center_dissent + Q.labor_strength*Q.labor_dissent + Q.reformist_strength*Q.reformist_dissent + Q.neorevisionist_strength*Q.neorevisionist_dissent;
-
-
-Q.dissent = 0.01*total_dissent/total_strength;
+// Recalculate overall party dissent from the three active PPS factions only.
+// The separate Labor power centre retains its own dissent but is excluded.
+var total_dissent = 0;
+for (var faction of Q.factions) {
+    total_dissent += Q[faction + '_strength'] * Q[faction + '_dissent'];
+}
+Q.dissent = total_strength > 0 ? 0.01 * total_dissent / 100 : 0;
 Q.dissent_percent = Q.dissent*100;
 console.log('new dissent: ' + Q.dissent);
 
@@ -150,6 +216,23 @@ if (Q.month_actions >= 1) {
         if (Q[timer+'_timer'] && Q[timer+'_timer'] > 0) {
             Q[timer+'_timer'] -= 1;
         }
+    }
+    // Deterministic PPS adviser-pool departures. April 1927 is explicit in
+    // the approved schedule. Daszyński's year-only 1931 departure is applied
+    // at the beginning of that year until a more precise month is approved.
+    if (!Q.perl_left_adviser_pool && (Q.year > 1927 || (Q.year == 1927 && Q.month >= 4))) {
+        if (Q.perl_advisor) {
+            Q.perl_advisor = 0;
+            Q.n_advisors -= 1;
+        }
+        Q.perl_left_adviser_pool = 1;
+    }
+    if (!Q.daszynski_left_adviser_pool && Q.year >= 1931) {
+        if (Q.daszynski_advisor) {
+            Q.daszynski_advisor = 0;
+            Q.n_advisors -= 1;
+        }
+        Q.daszynski_left_adviser_pool = 1;
     }
     // append to historical party support records
     var party_support_results = {'date': new Date(Q.year, Q.month - 1)};

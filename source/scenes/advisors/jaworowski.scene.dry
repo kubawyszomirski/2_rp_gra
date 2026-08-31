@@ -1,0 +1,22 @@
+title: Rajmund Jaworowski
+is-pinned-card: true
+tags: advisor
+view-if: jaworowski_advisor = 1
+new-page: true
+
+= Rajmund Jaworowski
+
+Jaworowski represents the Piłsudczyk current inside the PPS.
+
+**Planned, not implemented:** A separate PPS-dFR organizational action requires the later-party and Sanacja systems.
+
+- @back_pilsudski
+- @root: Return to main
+
+@back_pilsudski
+title: Back Piłsudski
+choose-if: advisor_action_timer = 0
+unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?]
+on-arrival: advisor_action_timer = 6; pilsudczycy_strength += 5; pilsudczycy_dissent -= 5; centrum_dissent += 2; lewica_dissent += 2
+
+The Piłsudczyk current becomes stronger and more cohesive, while the other PPS factions become more uneasy.

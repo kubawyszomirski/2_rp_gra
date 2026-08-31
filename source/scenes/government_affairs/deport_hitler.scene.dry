@@ -14,14 +14,14 @@ go-to: deport_violence if sa_strength >= 200; deport_success if sa_strength < 20
 
 @deport_violence
 
-When the police approach, he is surrounded by his SA guards, preventing him from being extricated! We can attempt to force a confrontation, but that may have negative consequences. The Reichsbanner may also attempt to draw off the SA.
+When the police approach, he is surrounded by his SA guards. This inherited German event uses [+ pps_militia_name +] as the player party's self-defence force.
 
 - @force_approach: Force the approach!
 - @no_deport: Cancel the deportation.
 
 @force_approach
 on-arrival: {!
-var total_allied_strength = Q.rb_strength*Q.rb_militancy + Q.prussian_police_strength*Q.prussian_police_militancy*Q.prussian_police_loyalty;
+var total_allied_strength = Q.pps_militia_strength*Q.pps_militia_militancy + Q.prussian_police_strength*Q.prussian_police_militancy*Q.prussian_police_loyalty;
 var enemy_strength = Q.sa_strength*Q.sa_militancy;
 console.log('Deporting Hitler - force approach');
 console.log(total_allied_strength, enemy_strength);
@@ -43,7 +43,7 @@ Unfortunately, our forces fail to disloge the SA from their positions surroundin
 on-arrival: hitler_deported = 1; sa_strength = sa_strength/2; workers_nsdap -= 10; new_middle_nsdap -= 10; old_middle_nsdap -= 10; rural_nsdap -= 10; unemployed_nsdap -= 10; sa_banned = 1; coup_progress -= 2; nsdap_leader = "Goebbels"
 achievement: deport_hitler
 
-The confrontation ends with the police and Reichsbanner prevailing, capturing Hitler so he can be deported! This is a sign of weakness, and his physical distance makes organizing difficult, impeding the Nazi effort to win more votes.
+The confrontation ends with the police and [+ pps_militia_name +] prevailing, capturing Hitler so he can be deported.
 
 In Hitler's absence, Joseph Goebbels has become the temporary leader of the Nazi party, with substantial influence from Hermann Göring.
 

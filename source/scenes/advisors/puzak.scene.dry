@@ -1,0 +1,30 @@
+title: Kazimierz Pużak
+is-pinned-card: true
+tags: advisor
+view-if: puzak_advisor = 1
+new-page: true
+
+= Kazimierz Pużak
+
+Pużak represents Centrum PPS and concentrates on discipline and party organization.
+
+- @party_discipline
+- @mobilize_organization
+- @root: Return to main
+
+@party_discipline
+title: Party Discipline
+subtitle: Reduce dissent in all three PPS factions.
+choose-if: advisor_action_timer = 0
+unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?]
+on-arrival: advisor_action_timer = 6; centrum_dissent -= 5; lewica_dissent -= 5; pilsudczycy_dissent -= 5
+
+The party leadership reinforces common discipline without treating the affiliated unions as a fourth PPS faction.
+
+@mobilize_organization
+title: Mobilize Organization
+subtitle: Make the Party Organizations card available immediately.
+choose-if: advisor_action_timer = 0
+unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?]
+on-arrival: advisor_action_timer = 6; party_organizations_timer = 0; last_advisor_action = 1
+go-to: party_organizations

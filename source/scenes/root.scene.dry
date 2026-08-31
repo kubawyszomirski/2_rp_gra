@@ -8,7 +8,7 @@ go-to: start_menu_2
 
 = PPS: An Alternate History
 
-**Playable-slice notice:** You play as the **PPS (Polska Partia Socjalistyczna)**. The opening electoral parties, support model, campaigning targets, inter-party relations and first-election coalition shell are Polish. Advisers, internal factions, most action cards, dated events, governments and institutions still use the inherited German baseline until their Polish replacements are researched, approved and implemented.
+**Playable-slice notice:** You play as the **PPS (Polska Partia Socjalistyczna)**. The opening electoral parties, support model, campaigning targets, inter-party relations, first-election coalition shell, three internal PPS factions, advisers and PPS self-defence organization are Polish. Most action cards, dated events, governments and institutions still use the inherited German baseline until their Polish replacements are researched, approved and implemented.
 
 @start_menu_2
 
@@ -48,9 +48,29 @@ Q.dues = 2;
 Q.dissent = 0.05;
 Q.dissent_percent = 5;
 
-// factions
-Q.factions = ['left', 'center', 'labor', 'reformist', 'neorevisionist'];
-// should this be normalized to 100%?
+// Active PPS factions. These are gameplay abstractions rather than formal
+// historical organizations.
+Q.polish_faction_system = 1;
+Q.factions = ['centrum', 'lewica', 'pilsudczycy'];
+Q.centrum_strength = 50;
+Q.centrum_dissent = 0;
+Q.lewica_strength = 15;
+Q.lewica_dissent = 20;
+Q.pilsudczycy_strength = 35;
+Q.pilsudczycy_dissent = 5;
+
+// Inherited German faction values remain as a shadow compatibility model for
+// cards that have not yet received Polish faction reactions. Deltas from the
+// mapped fields transfer once into the active PPS factions in post_event.
+// Labor remains a separate affiliated trade-union power centre and is not an
+// active PPS faction.
+Q.legacy_factions = ['left', 'center', 'labor', 'reformist', 'neorevisionist'];
+Q.legacy_faction_map = {
+    left: 'lewica',
+    center: 'centrum',
+    reformist: 'centrum',
+    neorevisionist: 'pilsudczycy'
+};
 Q.left_strength = 15;
 Q.left_dissent = 20;
 Q.center_strength = 30;
@@ -61,12 +81,20 @@ Q.reformist_strength = 25;
 Q.reformist_dissent = 5;
 Q.neorevisionist_strength = 5;
 Q.neorevisionist_dissent = 10;
+for (var legacy_faction of Q.legacy_factions) {
+    Q[legacy_faction + '_strength_compat_base'] = Q[legacy_faction + '_strength'];
+    Q[legacy_faction + '_dissent_compat_base'] = Q[legacy_faction + '_dissent'];
+}
 
 // secret events...
 Q.unions_independent = 0;
 Q.centrists_resign = 0;
 Q.left_split = 0;
 Q.reformists_resigned = 0;
+Q.reformists_resign = 0;
+Q.centrum_resigned = 0;
+Q.lewica_split = 0;
+Q.pilsudczycy_split = 0;
 
 // have we discovered neorevisionism?
 Q.neorevisionism = 0;
@@ -90,7 +118,8 @@ Q.communist_coalition = 0;
 Q.economic_plan = 0;
 // have we officially adopted the WTB plan?
 Q.wtb_adopted = 0;
-// have we formed the iron front?
+// The inherited Iron Front remains disabled in the Polish playable path. It
+// is not used to represent Akcja Socjalistyczna.
 Q.iron_front_formed = 0;
 // people's party support
 Q.peoples_party_support = 0;
@@ -141,11 +170,28 @@ Q.spd_prussia = 1;
 // Options: spd, z, dnvp, papen, nsdap
 Q.prussian_government = "SPD";
 
-// The array of forces - paramilitary groups
-// Number of members in 1928 (in thousands)
-// Reichsbanner, stahlhelm, SA, rotfrontkämpferbund
-Q.rb_strength = 2000;
-Q.rb_militancy = 0.01;
+// PPS self-defence organization. Strength is the approximate number of
+// active, organized members available for party self-defence. Milicja PPS and
+// Akcja Socjalistyczna are two stages of this same organization.
+Q.pps_militia_stage = 1;
+Q.pps_militia_name = "Milicja PPS";
+Q.pps_militia_strength = 200;
+Q.pps_militia_militancy = 0.10;
+Q.pps_militia_banned = 0;
+Q.pps_militia_repressed = 0;
+Q.pps_militia_union_cooperation = 0;
+Q.akcja_socjalistyczna_formed = 0;
+Q.funded_pps_militia = 0;
+Q.pps_militia_investment = 0;
+Q.pps_militia_training_cost = 1;
+Q.pps_militia_opponents = ['nationalist_militias', 'communist_militias', 'state_police'];
+
+// Shadow Reichsbanner fields preserve inherited German event calculations.
+// Deltas transfer once in post_event; these are not a second organization.
+Q.rb_strength = Q.pps_militia_strength;
+Q.rb_militancy = Q.pps_militia_militancy;
+Q.rb_strength_compat_base = Q.rb_strength;
+Q.rb_militancy_compat_base = Q.rb_militancy;
 Q.women_in_rb = 0;
 Q.rb_banned = 0;
 Q.sh_strength = 500;
@@ -562,7 +608,7 @@ Q.timers = ['advisor_action', 'confronting_nazis', 'crisis_program',
             'fundraising', 'ideology',
             'inter_party_relationships', 'international_relations',
             'iron_front', 'media', 'enemies',
-            'party_organizations', 'rally', 'reichsbanner',
+            'party_organizations', 'rally', 'pps_militia',
             'shuffle_leadership', 'streetfighting', 'peoples_party',
             'party_disunity',
             // govt
@@ -593,7 +639,7 @@ Q.media_timer = 0;
 Q.enemies_timer = 0;
 Q.party_organizations_timer =  0;
 Q.rally_timer = 0;
-Q.reichsbanner_timer = 0;
+Q.pps_militia_timer = 0;
 Q.shuffle_leadership_timer = 0;
 Q.streetfighting_timer = 0;
 Q.peoples_party_timer = 0;
@@ -634,13 +680,64 @@ Q.kpd_ultimatum_timer = 0;
 Q.march_on_berlin_timer = 0;
 
 
-// all the initial advisors are centrists.
-Q.wels_advisor = 1; // Otto Wels
-Q.muller_advisor = 1; // Hermann Müller
+// The player may have three active advisers. The complete Polish pool uses
+// semantic IDs; the three January 1922 advisers are all associated with
+// Centrum PPS. *_appointed_once prevents repeated appointment bonuses, while
+// *_left_adviser_pool records permanent departures without blocking a later
+// entrant from appearing after an earlier faction split.
+Q.daszynski_advisor = 1;
+Q.puzak_advisor = 1;
+Q.perl_advisor = 1;
+Q.niedzialkowski_advisor = 0;
+Q.arciszewski_advisor = 0;
+Q.zaremba_advisor = 0;
+Q.czapinski_advisor = 0;
+Q.prochnik_advisor = 0;
+Q.dubois_advisor = 0;
+Q.drobner_advisor = 0;
+Q.jaworowski_advisor = 0;
+Q.moraczewski_advisor = 0;
+Q.ziemiecki_advisor = 0;
+Q.malinowski_advisor = 0;
+
+Q.daszynski_appointed_once = 1;
+Q.puzak_appointed_once = 1;
+Q.perl_appointed_once = 1;
+Q.niedzialkowski_appointed_once = 0;
+Q.arciszewski_appointed_once = 0;
+Q.zaremba_appointed_once = 0;
+Q.czapinski_appointed_once = 0;
+Q.prochnik_appointed_once = 0;
+Q.dubois_appointed_once = 0;
+Q.drobner_appointed_once = 0;
+Q.jaworowski_appointed_once = 0;
+Q.moraczewski_appointed_once = 0;
+Q.ziemiecki_appointed_once = 0;
+Q.malinowski_appointed_once = 0;
+
+Q.daszynski_left_adviser_pool = 0;
+Q.puzak_left_adviser_pool = 0;
+Q.perl_left_adviser_pool = 0;
+Q.niedzialkowski_left_adviser_pool = 0;
+Q.arciszewski_left_adviser_pool = 0;
+Q.zaremba_left_adviser_pool = 0;
+Q.czapinski_left_adviser_pool = 0;
+Q.prochnik_left_adviser_pool = 0;
+Q.dubois_left_adviser_pool = 0;
+Q.drobner_left_adviser_pool = 0;
+Q.jaworowski_left_adviser_pool = 0;
+Q.moraczewski_left_adviser_pool = 0;
+Q.ziemiecki_left_adviser_pool = 0;
+Q.malinowski_left_adviser_pool = 0;
+
+// Inactive German adviser state remains for inherited event compatibility,
+// but German advisers are no longer part of the playable PPS adviser pool.
+Q.wels_advisor = 0; // Otto Wels
+Q.muller_advisor = 0; // Hermann Müller
 Q.muller_dead = 0;
 // okay I know Arthur Crispien was a leader irl but i couldn't find much interesting about him...
 Q.crispien_advisor = 0; // Arthur Crispien
-Q.hilferding_advisor = 1; // Rudolf Hilferding
+Q.hilferding_advisor = 0; // Rudolf Hilferding
 
 // left advisors
 Q.sender_advisor = 0; // Toni Sender
@@ -698,4 +795,4 @@ go-to: main
 
 The campaign begins in January 1922.
 
-The Polish opening party system is implemented. The remaining people, institutions, dated events and unconverted mechanics retain the temporary German baseline.
+The Polish opening party and adviser systems are implemented. Remaining office holders, institutions, dated events and unconverted mechanics retain the temporary German baseline.

@@ -1,0 +1,31 @@
+title: Tomasz Arciszewski
+is-pinned-card: true
+tags: advisor
+view-if: arciszewski_advisor = 1
+new-page: true
+
+= Tomasz Arciszewski
+
+Arciszewski represents Centrum PPS while maintaining strong connections to workers and the affiliated trade-union movement.
+
+- @organize_workers
+- @labour_programme
+- @root: Return to main
+
+@organize_workers
+title: Organize Workers
+choose-if: advisor_action_timer = 0
+unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?]
+on-arrival: advisor_action_timer = 6; workers_pps += 4*(1-dissent); labor_strength += 2; labor_dissent -= 3
+
+The party and affiliated unions expand workplace organization. Union members are not added to militia manpower.
+
+@labour_programme
+title: Labour Programme
+subtitle: Use government access to advance labour legislation.
+choose-if: advisor_action_timer = 0 and spd_in_government = 1
+unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?][? if spd_in_government = 0 : The PPS is not in government. ?]
+on-arrival: advisor_action_timer = 6; labor_rights_timer = 0; last_advisor_action = 1
+go-to: labor_rights
+
+The detailed labour-policy card remains inherited baseline content pending its Polish replacement.

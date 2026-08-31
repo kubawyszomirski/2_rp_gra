@@ -22,17 +22,19 @@ saving, and mod loading. No external historical research was used.
 > overlapping weight. Campaigning, relationships, polling, charts, election
 > records and the first coalition shell use these IDs. A narrow compatibility
 > bridge transfers inherited support effects from `spd`, `kpd`, `dvp`, and
-> `dnvp` into PPS, KPP, PSChD, and ZLN respectively. Advisers, five factions,
-> most cards, institutions and dated events remain the explicit temporary
-> German baseline.
+> `dnvp` into PPS, KPP, PSChD, and ZLN respectively. The active internal
+> faction model is Centrum PPS, Lewica PPS, and Piłsudczycy, with a
+> fourteen-person Polish adviser pool. Most cards, institutions and dated
+> events remain the explicit temporary German baseline.
 
-The approved next-stage design is documented but not live: Centrum PPS,
-Lewica PPS, and Piłsudczycy will replace the five inherited factions at
-50/15/35; ZSZ will be an affiliated union power center rather than a faction;
+The implemented faction slice uses Centrum PPS, Lewica PPS, and Piłsudczycy
+at 50/15/35; the inherited Labor values remain a separate affiliated-union
+compatibility model rather than a faction. A researched ZSZ replacement,
 the PPS social world will cover TUR, youth/children, welfare, sport,
 cooperatives, and housing; press will center on *Robotnik* without a radio
-branch; and Milicja PPS may develop into Akcja Socjalistyczna as a two-stage
-organization separate from any future Polish Iron Front equivalent. Every
+branch. The implemented PPS self-defence slice starts with Milicja PPS and
+allows its reorganization into Akcja Socjalistyczna as the second stage of one
+organization, separate from any future Polish Iron Front equivalent. Every
 historical detail remains **TBD — historical research required**, and each
 mechanical replacement requires its own bounded implementation and tests.
 
@@ -250,7 +252,7 @@ be traced back to code.
 - **Scenes/files:** `source/scenes/root.scene.dry` and
   `source/scenes/main.scene.dry`.
 - **Important state:** `resources = 2`, `dues = 2`, `budget = 4`,
-  `rb_strength = 2000`, the baseline relationships and faction dissent, plus
+  `pps_militia_strength = 200`, the baseline relationships and faction dissent, plus
   compatibility values `difficulty = 0` and `historical_mode = 0`.
 - **Depends on:** Initialization and the hand system.
 - **Depended on by:** Action economy, return-to-hand behavior, saving, polls,
@@ -266,15 +268,10 @@ be traced back to code.
 - **Polish adaptation reconsideration:** Whether a future adaptation should
   continue to use one fixed ruleset.
 - **Polish equivalent:** Keep one fixed gameplay baseline, based on the former
-  Normal settings. The future Polish equivalent of the Reichsbanner is **Akcja
-  Socjalistyczna (AS)**. As part of the bounded Polish replacement, Reichsbanner
-  labels and `rb` state names should become Akcja Socjalistyczna labels and
-  `as` state names. This is a future migration target, not authorization for a
-  mass rename; every reader, writer, display, and save-compatibility effect must
-  be audited in a separately approved change. AS starts with zero strength as a
-  user-approved gameplay setup for January 1922. Its historical creation date
-  remains **TBD — historical research required** until a source is recorded in
-  `HISTORICAL_SOURCES.md`.
+  Normal settings. Milicja PPS exists in January 1922 with 200 active organized
+  members and 0.10 militancy. A one-time player action reorganizes it into
+  Akcja Socjalistyczna, preserves strength and adds 0.10 militancy. Historical
+  chronology and scale remain **TBD — historical research required**.
 - **Unresolved:** Compatibility behavior when importing an old non-Normal save
   is **UNCLEAR — requires code investigation or runtime testing.**
 
@@ -411,9 +408,9 @@ be traced back to code.
 - **Sequence:** For each class, negative raw propensities are clamped to zero;
   propensities are normalized within that class; normalized class preferences
   are weighted by class proportions; party totals are normalized; rounded vote
-  shares and display fields are produced. Before calculation, the temporary
-  compatibility bridge copies the former Catholic party profile into
-  `national_minorities_*`.
+  shares and display fields are produced. Before calculation, the compatibility
+  bridge transfers only new deltas from the four approved German-ID mappings
+  and the inherited Catholic-targeting PPS input into semantic Polish fields.
 - **Scenes/files:** `source/scenes/post_event.scene.dry`,
   `source/scenes/election_algorithm.scene.dry`,
   `source/scenes/election_simulation.scene.dry`, campaigning and policy cards,
@@ -434,10 +431,10 @@ be traced back to code.
   If one class total becomes zero, division-by-zero protection is not visible.
 - **Safe extension points:** Small changes to an existing raw preference with
   regression snapshots before and after normalization.
-- **Polish adaptation reconsideration:** The class list and opening weights are
-  implemented. The player-facing PPS identity and approved opening support are
-  implemented, but other parties, permanent propensities after the opening,
-  persuasion balance, and rounding still require Polish research and testing.
+- **Polish adaptation reconsideration:** The class list, nine-party opening
+  matrix, semantic IDs, direct campaigning and first-cycle election path are
+  implemented. Long-term party movement, persuasion balance, later party
+  lifecycles and historical validation still require research and testing.
 - **Polish equivalent:** Implemented player-facing groups are **Robotnicy**
   (`workers`), **Drobnomieszczaństwo** (`old_middle`), **Inteligencja**
   (`new_middle`), **Chłopi** (`rural`), **Burżuazja i Ziemiaństwo**
@@ -593,9 +590,9 @@ be traced back to code.
   `source/scenes/party_affairs/shuffle_leadership.scene.dry`, and faction consequence files
   under `source/scenes/events/`.
 - **Important state:** `factions`, each `<faction>_strength` and
-  `<faction>_dissent`, `dissent`, `dissent_percent`, `left_split`,
-  `centrists_resign`, `reformists_resign`/`reformists_resigned`, and
-  `unions_independent`.
+  `<faction>_dissent`, `dissent`, `dissent_percent`, `lewica_split`,
+  `centrum_resigned`, `pilsudczycy_split`, `legacy_factions`,
+  `legacy_faction_map`, and the separate `labor_*` compatibility fields.
 - **Depends on:** Leadership/advisers, policies, event thresholds, and monthly
   normalization.
 - **Depended on by:** Support gains, party unity cards, splinter formation,
@@ -603,23 +600,25 @@ be traced back to code.
 - **Conditions/invariants:** Faction strengths are normalized to total 100;
   individual dissent is clamped to 0–99; overall dissent is capped at 0.95;
   split/resignation events commonly use 60 dissent.
-- **Coupling/risks:** A raw strength total of zero would divide by zero. Similar
-  singular/plural flag names create maintenance risk.
+- **Coupling/risks:** Inherited cards still write five legacy fields. Their
+  deltas are transferred once through an explicit bridge; Polish adviser
+  actions bypass the bridge and write semantic PPS fields directly. Mixing
+  those paths incorrectly would duplicate or silently lose reactions.
 - **Safe extension points:** An effect on one documented faction value, with
   post-normalization and threshold tests.
 - **Polish adaptation reconsideration:** Faction identities, weights,
   ideological disagreements, leaders, and split consequences.
-- **Polish equivalent:** **Approved but not implemented.** The future PPS model
-  is Centrum PPS 50 strength/0 dissent, Lewica PPS 15/20, and Piłsudczycy 35/5.
-  Each has an approved 60-dissent break path and possible successor behavior.
-  Replacing the live array alone would orphan existing card, adviser, union,
-  split-event, monthly-dissent, and UI writes, so PPS-1 deliberately retains
-  the five German factions. The full three-faction conversion must be one
-  separately tested slice. Historical validation is **TBD — historical
-  research required**.
-- **Unresolved:** Intended semantics of `centrist_dissent` versus
-  `center_dissent` are **UNCLEAR — requires code investigation or runtime
-  testing.**
+- **Polish equivalent:** **Implemented gameplay slice.** Centrum PPS opens at
+  50 strength/0 dissent, Lewica PPS at 15/20, and Piłsudczycy at 35/5. Their
+  strengths normalize to 100 and alone determine overall party dissent. At 60
+  dissent, their approved break consequences fire once: Lewica and
+  Piłsudczycy halve their remaining strength, while Centrum falls to 30% of
+  its former strength; support and the approved named PPS advisers are lost.
+  PPS-L, PPS-dFR, SPP and Sanacja destinations remain planned, not active.
+  Historical validation is **TBD — historical research required**.
+- **Unresolved:** The exact historically researched card reactions, ZSZ model,
+  successor-party profiles and unimplemented adviser-dependent systems remain
+  pending.
 
 ### 12. Relationships with other parties
 
@@ -634,23 +633,28 @@ be traced back to code.
   coalition code in `source/scenes/events/election_1928.scene.dry`,
   `source/scenes/events/death_of_hindenburg_president.scene.dry`, and
   `source/qdisplays/relationships.qdisplay.dry`.
-- **Important state:** `z_relation`, `kpd_relation`, `ddp_relation`,
-  `dvp_relation`, `dnvp_relation`, `nsdap_relation`, plus foreign relationship
-  values handled separately.
+- **Important state:** `psl_wyzwolenie_relation`,
+  `minorities_bloc_relation`, `psl_piast_relation`, `npr_relation`,
+  `pschd_relation`, `kpp_relation`, and `zln_relation`, plus inactive German
+  compatibility and foreign relationship values handled separately.
 - **Depends on:** Party/policy choices, leadership, and events.
 - **Depended on by:** Coalition access, candidate coordination, no-confidence
   votes, and some events.
 - **Conditions/invariants:** Qdisplay bands run from hostile at 5 or below to
   very friendly at 75 or above; individual choices use their own thresholds.
-- **Coupling/risks:** Initialization uses uppercase `DNVP_relation` and
-  `NSDAP_relation`, while later code reads lowercase forms.
+- **Coupling/risks:** Inherited German cards still read or write their legacy
+  relationship values; those values must not accidentally become Polish
+  coalition gates.
 - **Safe extension points:** A clearly named relationship change with a stated
   reason and boundary test at each affected gate.
 - **Polish adaptation reconsideration:** Party list, relationship dimensions,
   baseline values, and what cooperation each threshold enables.
-- **Polish equivalent:** TBD — user historical research required.
-- **Unresolved:** Whether uppercase initial values ever feed lowercase readers
-  is **UNCLEAR — requires code investigation or runtime testing.**
+- **Polish equivalent:** Implemented opening values are 65/50/45/50/30/10/5
+  for PSL Wyzwolenie, Minorities Bloc, PSL Piast, NPR, PSChD, KPP and ZLN.
+  Existing qdisplay bands remain authoritative. Historical validation and later
+  interactions are **TBD — historical research required**.
+- **Unresolved:** Detailed bilateral disputes and later regime-dependent
+  relationship effects remain planned.
 
 ### 13. Advisers and leadership
 
@@ -658,32 +662,44 @@ be traced back to code.
   and use periodic actions with faction consequences.
 - **Player sees:** Pinned adviser cards, roster management, adviser-specific
   actions, and cooldown restrictions.
-- **Sequence:** `#advisor` supplies 25 top-level adviser/cabinet cards;
-  leadership shuffle adds/removes advisers up to `n_advisors`; selected actions
-  set `advisor_action_timer` and `last_advisor_action`; cancellation can restore
-  the previous card state.
+- **Sequence:** `#advisor` supplies the active Polish adviser cards and the
+  inherited cabinet card. Leadership management adds/removes advisers while
+  enforcing three active slots. Selected actions set the shared six-month
+  `advisor_action_timer`; actions that open another card use
+  `last_advisor_action` so cancellation can restore availability.
 - **Scenes/files:** `source/scenes/party_affairs/shuffle_leadership.scene.dry`, all files under
   `source/scenes/advisors/`, `source/scenes/main.scene.dry`, and
   `source/scenes/cancel_advisor_action.scene.dry`.
-- **Important state:** `n_advisors`, every `*_advisor` flag,
-  `advisor_action_timer`, `last_advisor_action`, faction strength/dissent, and
-  policy-specific state touched by each adviser.
+- **Important state:** `n_advisors`, fourteen semantic `<name>_advisor` flags,
+  `<name>_appointed_once`, `<name>_left_adviser_pool`,
+  `advisor_action_timer`, `last_advisor_action`, faction strength/dissent, year
+  and month, and policy-specific state touched by each adviser.
 - **Depends on:** Pinned-card runtime, factions, timers, resources, and scene
   visit state.
 - **Depended on by:** Most policy systems, party support, organizations,
   coalition management, and institutional actions.
-- **Conditions/invariants:** Starting roster maximum is three; a shared adviser
-  cooldown is normally six in action scenes; roster changes alter faction
-  balance.
+- **Conditions/invariants:** Daszyński, Pużak and Perl fill the three January
+  1922 slots. First appointment adds +5 faction strength, removal adds +5
+  faction dissent, and reappointment cannot repeat the strength bonus.
+  Próchnik/Drobner enter in 1928, Dubois in 1930, Perl leaves in April 1927,
+  and Daszyński leaves at the beginning of 1931. A split removes only a named
+  adviser whose pool-entry date has arrived.
 - **Coupling/risks:** Adviser effects reach many unrelated systems. IDs, flags,
-  tags, and roster choices must agree.
+  dates, split departure flags and roster choices must agree. The year-only
+  Daszyński departure is provisionally interpreted as January 1931.
 - **Safe extension points:** One adviser with a unique flag, faction tag,
   bounded action, shared timer, and add/remove coverage.
-- **Polish adaptation reconsideration:** Entire roster, eligibility, faction
-  placement, actions, and biographical presentation.
-- **Polish equivalent:** TBD — user historical research required.
-- **Unresolved:** Whether every adviser action uses the same intended cooldown
-  is **UNCLEAR — requires code investigation or runtime testing.**
+- **Polish equivalent:** Implemented fourteen-person PPS pool: five Centrum,
+  five Lewica and four Piłsudczyk advisers. Starting actions and conservative
+  actions backed by existing state are playable. Missing-system actions are
+  labelled planned rather than simulated through unrelated German mechanics.
+- **Militia boundary:** Dubois can make the Milicja PPS/Akcja Socjalistyczna
+  card immediately available, but neither that action nor youth organizing
+  adds free militia strength or militancy. Union and KPP manpower remain
+  separate.
+- **Unresolved:** Centrolew, Sanacja, PPS-dFR, municipal socialism, the Polish
+  socialist economic programme, formal PPS–KPP joint action, repression,
+  portraits and historically sourced biographies remain planned.
 
 ### 14. Cabinet and ministries
 
@@ -790,17 +806,19 @@ be traced back to code.
 
 - **Purpose:** Let the player invest in party infrastructure, media, culture,
   campaigning, and allied organizations.
-- **Player sees:** Party organization, campaign, media, rally, Reichsbanner,
-  Iron Front, and related action cards.
+- **Player sees:** Party organization, campaign, media, rally, Milicja PPS or
+  Akcja Socjalistyczna, and related action cards.
 - **Sequence:** Cards spend resources, set timers, and change demographic
   support, faction state, organization strength, or later-event flags.
 - **Scenes/files:** `source/scenes/party_affairs/party_organizations.scene.dry`,
   `campaigning.scene.dry`, `media.scene.dry`, `rally.scene.dry`,
-  `reichsbanner.scene.dry`, `iron_front.scene.dry`, and related event files.
+  `reichsbanner.scene.dry` (retained filename, Polish content),
+  `iron_front.scene.dry` (German-only gated content), and related event files.
 - **Important state:** `resources`, `party_organizations_timer`,
   `campaign_media`, `commercialized_media`, `radio`,
-  `cultural_organizations`, `rb_strength`, `rb_militancy`,
-  `iron_front_formed`, and demographic preference values.
+  `cultural_organizations`, `pps_militia_stage`, `pps_militia_strength`,
+  `pps_militia_militancy`, `pps_militia_union_cooperation`, and demographic
+  preference values.
 - **Depends on:** Action economy, timers, party support, factions, and
   political-violence state.
 - **Depended on by:** Elections, street conflict, coup resistance,
@@ -813,10 +831,15 @@ be traced back to code.
   cost, one primary effect, and explicit downstream tests.
 - **Polish adaptation reconsideration:** Organization list, legal status,
   membership/strength scale, media channels, and links to violence.
-- **Polish equivalent:** TBD — user historical research required.
-- **Unresolved:** Which organization values are intended as people, abstract
-  strength, or percentages is **UNCLEAR — requires code investigation or
-  runtime testing.**
+- **Polish equivalent:** **Implemented playable slice.** Strength is the
+  approximate number of active organized members available for party
+  self-defence. Trade unions can cooperate without adding their manpower.
+  Nationalist militias, communist militias and state police are the approved
+  opponent categories; their current numerical fields remain inherited
+  compatibility state. The Iron Front is not used as AS.
+- **Unresolved:** Historical formation date, leadership, recruitment scale,
+  state response and Polish opponent values remain **TBD — historical research
+  required**.
 
 ### 18. Militancy, loyalty, and political violence
 

@@ -1,0 +1,32 @@
+title: Feliks Perl
+is-pinned-card: true
+tags: advisor
+view-if: perl_advisor = 1
+new-page: true
+
+= Feliks Perl
+
+Perl represents Centrum PPS and concentrates on the party line and socialist press.
+
+- @define_party_line
+- @direct_party_press
+- @root: Return to main
+
+@define_party_line
+title: Define Party Line
+subtitle: Strengthen the position and cohesion of Centrum PPS.
+choose-if: advisor_action_timer = 0
+unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?]
+on-arrival: advisor_action_timer = 6; centrum_strength += 5; centrum_dissent -= 5
+
+Perl sets out a clearer political line for Centrum PPS.
+
+@direct_party_press
+title: Direct Party Press
+subtitle: Make the Media card available immediately.
+choose-if: advisor_action_timer = 0
+unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?]
+on-arrival: advisor_action_timer = 6; media_timer = 0; last_advisor_action = 1
+go-to: media
+
+Perl turns the leadership's attention to „Robotnik” and the wider PPS press. The underlying media choices remain part of the temporary inherited card system.

@@ -43,9 +43,10 @@ The central rhythm is simple:
 6. Resolve any event that has become due.
 7. Recalculate support, factions, the economy, and later election results.
 
-Under that straightforward loop is a highly connected simulation. In the current transitional build, a
-policy still pleases one inherited German faction and angers another. A
-coalition can unlock ministries but
+Under that straightforward loop is a highly connected simulation. In the
+current transitional build, a policy can change an inherited compatibility
+field whose delta is then applied to an active PPS faction. A coalition can
+unlock ministries but
 also create coalition dissent. Economic policy can reduce unemployment while
 increasing inflation, spending, or resistance from business and conservative
 institutions. Party organizations can help defend democracy, but militancy can
@@ -91,9 +92,12 @@ receives 8% in every population row except Chłopi, where it receives 12%.
 Campaigning covers all seven population groups. Polish relationship values and
 a limited first-election coalition/toleration shell are active. A narrow
 compatibility bridge preserves inherited support effects mapped from SPD, KPD,
-DVP and DNVP to PPS, KPP, PSChD and ZLN. Advisers, the live five-faction model,
-most action cards, organizations, institutions, dated events and endings remain
-a clearly marked German baseline. The ordinary action/month loop is unchanged.
+DVP and DNVP to PPS, KPP, PSChD and ZLN. The active faction model is Centrum
+PPS, Lewica PPS and Piłsudczycy, with a separate inherited union measure. A
+fourteen-person Polish adviser pool is active, with three simultaneous slots,
+date-based availability and named split departures. Most action cards,
+organizations, institutions, dated events and endings remain a clearly marked
+German baseline. The ordinary action/month loop is unchanged.
 
 <!-- PDF_PAGE_BREAK -->
 
@@ -229,7 +233,7 @@ shares, office holders, event flags, advisers, and cooldown timers.
 
 Initialization now uses one fixed baseline: 2 party resources, dues of 2, a
 government budget of 4, the baseline relationships and faction dissent, and a
-Reichsbanner strength of 2,000. After reading the introduction, the player has
+Milicja PPS strength of 200 active organized members. After reading the introduction, the player has
 one **Begin** action. It routes directly to the three-card main hand.
 
 ### What happens after Begin
@@ -351,8 +355,9 @@ At the beginning of the fixed baseline, the party has 2 resources and dues of
 2. **Maintain dues** adds resources equal to current dues. At the default start,
    that means gaining 2 resources.
 3. **Reduce dues** first lowers dues by one, then adds the new dues amount to
-   resources. It also reduces dissent in four factions. At the default start,
-   dues become 1 and the party gains 1 resource.
+   resources. Its inherited effects reduce Lewica and Centrum dissent through
+   the compatibility bridge and separately reduce union dissent. At the
+   default start, dues become 1 and the party gains 1 resource.
 4. **Increase dues** raises dues by one and adds the new amount to resources,
    but lowers SPD support among workers and unemployed people. The penalty is
    worse under high unemployment and when dues are already high.
@@ -683,11 +688,10 @@ government flags, `leverage`, and ministry-party fields.
 
 ### Internal party factions
 
-The live PPS-1 build still contains the five inherited German factions: Left,
-Center, Labor, Reformist, and Neorevisionist. Each has a strength and a dissent
-value. Cards, German placeholder advisers, leadership decisions, coalition
-choices, and policies move those values. The interface labels this system as a
-temporary baseline rather than presenting it as the finished PPS structure.
+The live build uses three active PPS currents: Centrum PPS, Lewica PPS, and
+Piłsudczycy. They open at 50/15/35 strength and 0/20/5 dissent. These are
+approved gameplay abstractions; their precise historical boundaries and
+opening proportions remain **TBD — historical research required**.
 
 After each action, faction strengths are normalized so they add to 100. Overall
 party dissent is a weighted result: anger in a strong faction matters more than
@@ -700,14 +704,21 @@ and can unlock party-disunity content. Several resignation or split events use
 choice produces faction anger; anger weakens electoral gains; weaker results
 reduce government options; constrained government can cause more anger.
 
-The approved replacement, which is **planned but not implemented**, is Centrum
-PPS at 50 strength/0 dissent, Lewica PPS at 15/20, and Piłsudczycy at 35/5.
-Each has an approved 60-dissent consequence design. ZSZ is planned as an
-affiliated union power center rather than a faction. Replacing the live array
-alone would break card effects, advisers, monthly dissent, union behavior,
-split events, and displays, so the three-faction conversion is reserved for a
-later coherent slice with its own tests. Historical validation remains **TBD —
-historical research required**.
+At 60 dissent, each current has an implemented one-shot consequence. Lewica
+and Piłsudczycy lose half their current strength; Centrum falls to 30% of its
+previous strength. Each route also applies its approved immediate support and
+named adviser losses. Formation of PPS-L, PPS-dFR, SPP or cooperation with
+Sanacja remains planned because those later parties and chronology do not yet
+exist.
+
+The Polish advisers write semantic PPS faction fields directly. Unadapted
+cards still write inherited faction fields, so a compatibility bridge
+transfers their changes once into the active PPS currents: Left to Lewica,
+Center and Reformist to Centrum, and Neorevisionist to Piłsudczycy. This is a
+technical bridge, not a claim of historical equivalence. The inherited Labor
+values remain a separate union power centre, excluded from PPS faction
+normalization and overall dissent, until a researched ZSZ mechanic replaces
+them.
 
 ### Relationships with other parties
 
@@ -725,14 +736,29 @@ and do not determine Polish first-election eligibility.
 
 ### Advisers and leadership
 
-The player begins with three pinned advisers. The broader adviser library
-contains people associated with factions or specialist roles. Leadership
-management adds or removes advisers and can change faction strength/dissent.
+The player begins with Ignacy Daszyński, Kazimierz Pużak and Feliks Perl in the
+three active adviser slots. The full pool contains fourteen Polish advisers:
+five associated with Centrum, five with Lewica and four with Piłsudczycy.
+Leadership management dismisses and appoints advisers but never permits more
+than three active simultaneously.
 
-Adviser actions generally use a shared cooldown. They can shortcut or modify
-other systems: campaign support, faction management, organizations,
-institutional policy, or government work. Because they are pinned, advisers
-feel like strategic capabilities rather than random issues.
+Every adviser uses one shared six-month action cooldown. A person's first
+appointment adds five strength to their faction; dismissal adds five dissent;
+reappointment cannot repeat the strength bonus. Próchnik and Drobner enter the
+pool in 1928 and Dubois in 1930. Perl leaves in April 1927. Because only a year
+was approved for Daszyński, the current implementation applies his departure
+at the beginning of 1931.
+
+Faction splits use named departure lists. They only remove advisers whose
+entry date has arrived. A Lewica split in 1926 therefore removes Czapiński but
+does not prevent Próchnik and Drobner entering in 1928 or Dubois in 1930.
+
+Advisers can alter party support, faction cohesion and relationships or open
+an existing organization/policy card. Dubois's Workers' Self-Defence action
+opens the Milicja PPS/Akcja Socjalistyczna card without granting free manpower
+or militancy. Actions that require Centrolew, Sanacja, PPS-dFR, municipal
+government, a Polish socialist economic programme or formal PPS–KPP joint
+action are marked as planned rather than simulated through unrelated systems.
 
 ### Cabinet positions and ministries
 
@@ -794,7 +820,7 @@ isolation.
 ### Political organizations
 
 Party Affairs cards support campaigning, media, cultural organizations,
-rallies, party organization, the Reichsbanner, and the Iron Front. These
+rallies, party organization, Milicja PPS, and later Akcja Socjalistyczna. These
 actions spend party resources and change support, organization strength,
 militancy, faction mood, or later event flags.
 
@@ -803,8 +829,9 @@ thousands of members; others are abstract. The interface's strength qdisplay
 uses common labels despite those differences. A future design should define
 units before rebalancing.
 
-The approved PPS organization design is **planned, not implemented**. ZSZ will
-be an affiliated union power center rather than a Labor faction. The PPS
+The approved PPS organization design is **planned, not implemented**. The
+current inherited Labor measure is already separated from PPS factions, but a
+researched ZSZ system has not replaced it. The PPS
 “social world” is intended to abstract TUR, OM TUR, Czerwone Harcerstwo TUR,
 RTPD, worker sport, cooperatives, and housing. Press will center on *Robotnik*,
 regional papers, outreach choices, and later censorship/resilience, without an
@@ -814,20 +841,23 @@ cards and organization mechanics.
 
 ### Militancy and political violence
 
-The game tracks the Reichsbanner, Stahlhelm, SA, and RFB with separate strength,
-militancy, and ban state. Conflict scenes derive power by combining these
-values. Political choices can strengthen, restrain, militarize, ban, or
-persecute organizations.
+The playable PPS path tracks Milicja PPS with strength, militancy, stage and
+legal state. It opens with 200 active organized members and 0.10 militancy.
+Conflict scenes derive its power by multiplying strength by militancy. The
+inherited nationalist, communist and state-force numbers remain temporary
+opponent inputs.
 
 Violence is connected to party strategy and institutions rather than being a
 separate combat minigame. When escalation reaches a crisis, the game compares
 friendly and hostile forces and routes toward coup or civil-war outcomes.
 
-The approved future PPS self-defence model treats Milicja PPS and Akcja
-Socjalistyczna as two stages of one organization, separate from any later
-Polish equivalent of the Iron Front. This is not yet implemented: Reichsbanner
-and Iron Front state and events remain the explicit temporary baseline pending
-historical research and a bounded replacement slice.
+The implemented self-defence model treats Milicja PPS and Akcja Socjalistyczna
+as two stages of one organization, separate from any future Polish equivalent
+of the Iron Front. The player may reorganize the Milicja into AS, retaining its
+membership and gaining 0.10 militancy. Trade-union cooperation improves
+coordination without merging union manpower. The organization is initially
+legal and unrepressed. Historical validation remains **TBD — historical
+research required**.
 
 ### Police and institutional loyalty
 
@@ -919,7 +949,7 @@ direction of influence, not every connection.
 flowchart LR
     R[Party resources] --> A[Available political actions]
     A --> S[Social-group support]
-    A --> F[SPD factions and dissent]
+    A --> F[PPS factions and dissent]
     A --> O[Organizations]
     S --> E[Election result]
     F --> S

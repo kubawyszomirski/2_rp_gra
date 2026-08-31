@@ -17,6 +17,7 @@ Carlo Mierendorff is the founder of the neo-revisionist ideological tendency, an
 
 @iron_front_buildup
 title: Build up the Iron Front
+view-if: not polish_party_system
 subtitle: Increase our propaganda measures to recruit more members into the Reichsbanner. 
 choose-if: advisor_action_timer == 0 and iron_front_formed
 unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before next advisor action. ?][? if iron_front_formed == 0 : The Iron Front has not yet been formed. ?]
@@ -27,6 +28,7 @@ We have recruited more members into the Reichsbanner.
 
 @form_iron_front
 title: Forming the Iron Front
+view-if: not polish_party_system
 choose-if: advisor_action_timer == 0 and iron_front_formed == 0 and nazi_urgency >= 2
 unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before next advisor action. ?][? if iron_front_formed : The Iron Front has already been formed. ?][? if nazi_urgency < 2 : The party does not yet see the danger of the Nazis. ?]
 on-arrival: advisor_action_timer = 6; rb_strength += 50; nazi_urgency += 1
@@ -38,6 +40,6 @@ title: Warning about the Nazis
 subtitle: By warning the party about the Nazis, we can spur our members to action.
 choose-if: advisor_action_timer == 0
 unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before next advisor action. ?]
-on-arrival: advisor_action_timer = 6; nazi_urgency += 1; rb_militancy += 0.01; nsdap_workers -= 4*(1-dissent);
+on-arrival: advisor_action_timer = 6; nazi_urgency += 1; pps_militia_militancy += 0.01; nsdap_workers -= 4*(1-dissent);
 
 We have begun a propaganda campaign to warn our members away from the Nazis.

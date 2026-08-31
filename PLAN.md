@@ -206,8 +206,9 @@ mechanic and implementation surface.
 - **Original mechanic affected:** Labor faction/ADGB, party organizations,
   media/propaganda, workers' welfare, youth, culture, cooperatives, and timers.
 - **Variables/files likely affected:** Party-organization, media, labor,
-  adviser, strike, and faction scenes plus new organization state. None are
-  changed by PPS-1.
+  adviser, strike, and faction scenes plus new organization state. The faction
+  slice only separates the inherited Labor measure from the active PPS
+  factions; it does not implement a researched ZSZ organization.
 - **Acceptance criteria:** A future bounded slice must define ownership,
   strength/discontent, faction alignment, timers, thresholds, and tests before
   replacing an inherited mechanic.
@@ -246,32 +247,45 @@ mechanic and implementation surface.
 
 ## 13. Factions and advisers
 
-- **Status: undecided / researching / approved:** approved design; not implemented
-- **User decision:** The future PPS faction model has **Centrum PPS 50**,
-  **Lewica PPS 15**, and **Piłsudczycy 35**. The supplied initial dissents are
-  0, 20, and 5 respectively. At 60 dissent, each faction can trigger its
-  approved split/resignation consequences, with possible PPS-L, SPP, or PPS-dFR
-  outcomes depending on chronology and political conditions. German advisers
-  remain visible placeholders in PPS-1 and will be assigned or replaced later.
-- **Historical evidence required:** Faction definitions, strengths, dissent,
-  people, organizations, split names, dates, and destinations are **TBD —
-  historical research required**.
-- **Design rationale:** The approved three-way model totals 100, but cannot
-  safely replace five heavily wired factions without adapting cards, monthly
-  dissent, advisers, split events, organizations, and UI together.
-- **Original mechanic affected:** Five-faction normalization, dissent,
-  party-disunity events, adviser eligibility/departure, support modifiers,
-  Labor/union behavior, and SAPD formation.
-- **Variables/files likely affected:** `factions`, all faction strength/dissent
-  fields, `post_event`, party-disunity and leadership cards, adviser scenes,
-  split events, support/election initialization, and status/Library display.
-- **Acceptance criteria:** PPS-1 preserves the live five-faction system and
-  advisers. A later faction slice must implement all three factions, overall
-  dissent, every 60-dissent path, adviser exits, organization effects, and
-  regression coverage as one coherent change.
-- **Open questions:** Exact split timing/eligibility, successor-party profiles,
-  adviser assignments, public-sector/veteran/railway support representation,
-  and interactions after an earlier split remain pending.
+- **Status: undecided / researching / approved:** approved faction and adviser
+  playable slice implemented; historical validation and dependent Polish
+  systems remain.
+- **User decision:** The active PPS faction model has **Centrum PPS 50**,
+  **Lewica PPS 15**, and **Piłsudczycy 35**, with opening dissents 0, 20 and 5.
+  The complete visible adviser pool contains fourteen Polish politicians, of
+  whom at most three are active. Daszyński, Pużak and Perl are active in
+  January 1922. Every action uses the shared six-month cooldown.
+- **Implemented adviser roster:** Centrum — Ignacy Daszyński, Kazimierz Pużak,
+  Feliks Perl, Mieczysław Niedziałkowski and Tomasz Arciszewski; Lewica —
+  Zygmunt Zaremba, Kazimierz Czapiński, Adam Próchnik, Stanisław Dubois and
+  Bolesław Drobner; Piłsudczycy — Rajmund Jaworowski, Jędrzej Moraczewski,
+  Bronisław Ziemięcki and Marian Malinowski.
+- **Implemented availability:** Próchnik and Drobner enter in 1928 and Dubois
+  in 1930. Perl leaves in April 1927. Daszyński leaves at the beginning of
+  1931 as the conservative interpretation of the approved year-only date.
+  Split departures affect only advisers whose entry date has arrived.
+- **Implemented leadership rule:** First appointment gives the associated
+  faction +5 strength; dismissal gives it +5 dissent; reappointment cannot
+  repeat the strength bonus. Starting advisers are already marked as appointed.
+- **Implemented split departures:** Centrum crisis removes Daszyński, Perl and
+  Niedziałkowski; Lewica split removes Czapiński and, if already entered,
+  Próchnik, Dubois and Drobner; Piłsudczyk split removes Jaworowski,
+  Moraczewski and Malinowski. Pużak, Arciszewski, Zaremba and Ziemięcki remain.
+- **Implemented boundary:** Adviser actions use semantic PPS faction and Polish
+  relationship variables directly. Actions depending on Centrolew, Sanacja,
+  PPS-dFR, municipal government, a Polish economic programme or formal joint
+  action with KPP remain explicitly planned. Dubois opens the PPS self-defence
+  card but grants no free manpower or militancy.
+- **Historical evidence required:** The supplied roster, faction placement,
+  availability/departure schedule and political roles are approved gameplay
+  inputs but remain **TBD — historical research required** as historical claims.
+- **Acceptance criteria:** Three active slots; all fourteen Polish adviser cards
+  exist; the approved starting six actions work; availability and named split
+  departures are deterministic; later entrants survive earlier splits; no
+  German adviser is selectable; build and complete automated path tests pass.
+- **Open questions:** Successor-party creation, precise 1931 departure month,
+  adviser portraits, repression/imprisonment, and the gated dependent actions
+  remain separate future slices.
 
 ## 14. Election and coalition design
 
@@ -316,11 +330,12 @@ mechanic and implementation surface.
 
 ## 16. Political violence and institutional loyalty
 
-- **Status: undecided / researching / approved:** approved design; not implemented
-- **User decision:** Milicja PPS and Akcja Socjalistyczna are two stages of one
-  future PPS organization. They remain separate from any later Polish
-  equivalent of the Iron Front. PPS-1 retains Reichsbanner/Iron Front mechanics
-  unchanged as a visible temporary baseline.
+- **Status: undecided / researching / approved:** approved playable slice implemented
+- **User decision:** Milicja PPS exists in January 1922 with 200 active
+  organized members and 0.10 militancy. The player can reorganize it into
+  Akcja Socjalistyczna, preserving membership and adding a provisional 0.10
+  militancy. They are two stages of one organization, separate from any later
+  Polish equivalent of the Iron Front.
 - **Historical evidence required:** Formation, chronology, membership, role,
   relationship to PPS, and use of force are **TBD — historical research
   required**.
@@ -330,15 +345,17 @@ mechanic and implementation surface.
 - **Original mechanic affected:** Reichsbanner strength/militancy, Iron Front
   formation, rally defence, street fighting, bans, repression, and faction
   reactions.
-- **Variables/files likely affected:** Paramilitary initialization and status,
-  `reichsbanner.scene.dry`, `iron_front.scene.dry`, street-fighting and coup
-  events, plus future Milicja/AS stage state.
-- **Acceptance criteria:** A later slice must model stage, strength, militancy,
-  defensive/confrontational use, repression, faction effects, and relevant
-  event outcomes without reusing `iron_front_formed` ambiguously.
-- **Open questions:** Exact dates, scale, leadership, legal status, opponents,
-  state response, and relationship to unions and other PPS organizations remain
-  pending.
+- **Implemented boundary:** Semantic stage, strength, militancy, legal status,
+  union cooperation, investment, rally defence, street conflict and inherited
+  crisis calculations are active. The German Iron Front and cross-party exodus
+  are gated out of the Polish path. Legacy `rb_*` fields are a synchronized
+  compatibility shadow only.
+- **Acceptance criteria:** Opening state is exactly 200/0.10, stage one is
+  legal and unrepressed, reorganization is one-time and produces stage two at
+  unchanged strength/0.20 militancy, unions add no strength, all self-defence
+  power calculations use semantic state, and tests/build/UI pass.
+- **Open questions:** Exact historical dates, leadership, recruitment scale,
+  state repression and semantic Polish opponent variables remain pending.
 
 ## 17. Content scope
 

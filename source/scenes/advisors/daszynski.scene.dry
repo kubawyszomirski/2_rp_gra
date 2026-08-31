@@ -1,0 +1,31 @@
+title: Ignacy Daszyński
+is-pinned-card: true
+tags: advisor
+view-if: daszynski_advisor = 1
+new-page: true
+
+= Ignacy Daszyński
+
+Daszyński represents Centrum PPS and specializes in parliamentary negotiation.
+
+- @parliamentary_compromise
+- @broker_coalition
+- @root: Return to main
+
+@parliamentary_compromise
+title: Parliamentary Compromise
+subtitle: Improve relations with potential parliamentary partners.
+choose-if: advisor_action_timer = 0
+unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?]
+on-arrival: advisor_action_timer = 6; psl_piast_relation += 3; npr_relation += 3; pschd_relation += 2
+
+Daszyński opens discussions with PSL Piast, NPR and PSChD.
+
+@broker_coalition
+title: Broker a Coalition
+subtitle: Reduce tension inside the governing coalition.
+choose-if: advisor_action_timer = 0 and spd_in_government = 1 and coalition_dissent > 0
+unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?][? if spd_in_government = 0 : The PPS is not in government. ?][? if coalition_dissent <= 0 : The coalition has no current dissent to resolve. ?]
+on-arrival: advisor_action_timer = 6; coalition_dissent -= 1
+
+The immediate coalition dispute has been contained.

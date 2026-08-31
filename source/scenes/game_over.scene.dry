@@ -322,7 +322,7 @@ go-to: eg_menu if started == 1; root.start_menu_2 if started == 0
 = Completed Achievements in this Playthrough
 
 
-[? if game_achievement_eiserne_front : **Eiserne Front** - form the Iron Front. ?]
+[? if game_achievement_eiserne_front and not polish_party_system : **Eiserne Front** - form the Iron Front. ?]
 
 [? if game_achievement_civil_war : **Bürgerkrieg** - enter a long civil war. ?]
 
@@ -374,7 +374,7 @@ go-to: eg_menu if started == 1; root.start_menu_2 if started == 0
 
 [? if game_achievement_hirschfeld: **Hirschfeld** - pass reforms for homosexual rights. ?]
 
-[? if game_achievement_women_reichsbanner: **Mädchen in Uniform** - a woman's place is in the Reichsbanner. ?]
+[? if game_achievement_women_reichsbanner and not polish_party_system: **Mädchen in Uniform** - a woman's place is in the Reichsbanner. ?]
 
 [? if game_achievement_anders_als_die_andern: **Anders als die Andern** - sexual minorities will defend the Republic. ?]
 
@@ -425,7 +425,7 @@ go-to: eg_menu if started == 1; root.start_menu_2 if started == 0
 = Completed Achievements Overall
 
 
-[? if achievement_eiserne_front : **Eiserne Front** - form the Iron Front. ?]
+[? if achievement_eiserne_front and not polish_party_system : **Eiserne Front** - form the Iron Front. ?]
 
 [? if achievement_civil_war : **Bürgerkrieg** - enter a long civil war. ?]
 
@@ -477,7 +477,7 @@ go-to: eg_menu if started == 1; root.start_menu_2 if started == 0
 
 [? if achievement_hirschfeld: **Hirschfeld** - pass reforms for homosexual rights. ?]
 
-[? if achievement_women_reichsbanner: **Mädchen in Uniform** - a woman's place is in the Reichsbanner. ?]
+[? if achievement_women_reichsbanner and not polish_party_system: **Mädchen in Uniform** - a woman's place is in the Reichsbanner. ?]
 
 [? if achievement_anders_als_die_andern: **Anders als die Andern** - sexual minorities will defend the Republic. ?]
 
@@ -526,7 +526,7 @@ go-to: eg_menu if started == 1; root.start_menu_2 if started == 0
 
 = Incomplete Achievements
 
-[? if not achievement_eiserne_front : **Eiserne Front** - form the Iron Front. ?]
+[? if not achievement_eiserne_front and not polish_party_system : **Eiserne Front** - form the Iron Front. ?]
 
 [? if not achievement_civil_war : **Bürgerkrieg** - enter a long civil war. ?]
 
@@ -578,7 +578,7 @@ go-to: eg_menu if started == 1; root.start_menu_2 if started == 0
 
 [? if not achievement_hirschfeld: **Hirschfeld** - pass reforms for homosexual rights. ?]
 
-[? if not achievement_women_reichsbanner: **Mädchen in Uniform** - a woman's place is in the Reichsbanner. ?]
+[? if not achievement_women_reichsbanner and not polish_party_system: **Mädchen in Uniform** - a woman's place is in the Reichsbanner. ?]
 
 [? if not achievement_anders_als_die_andern: **Anders als die Andern** - sexual minorities will defend the Republic. ?]
 

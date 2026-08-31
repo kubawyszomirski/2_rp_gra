@@ -5,7 +5,7 @@ go-to: menu
 
 = The Library
 
-This library is in transition. The player party and approved population model use the PPS adaptation, while the government, other parties, advisers, factions, organizations, cards, and events remain the temporary German baseline.
+This library is in transition. The player party, approved population and opening-party models, three internal PPS factions, PPS adviser pool, and PPS self-defence organization are implemented. The government, most other organizations, most cards, and dated events remain the temporary German baseline.
 
 @menu
 
@@ -17,6 +17,7 @@ This library is in transition. The player party and approved population model us
 - @public_opinion: Public opinion (and projected election results)
 - @paramilitaries: Paramilitary groups
 - @factions: Internal factions
+- @advisers: PPS advisers
 - @figures: Figures and charts
 - @backSpecialScene: Exit library.
 
@@ -190,7 +191,7 @@ go-to: menu
 
 The following parties are active in elections, polling and the first implemented government-formation cycle. Their numerical support profiles and gameplay descriptions are approved design inputs. Historical sourcing remains incomplete unless separately recorded in the historical-sources document.
 
-**PPS — Polska Partia Socjalistyczna:** the player party. It depends heavily on Robotnicy while retaining smaller bases among other groups. Its advisers, most action-card narratives and several institutions remain temporary German-baseline content.
+**PPS — Polska Partia Socjalistyczna:** the player party. It depends heavily on Robotnicy while retaining smaller bases among other groups. Its adviser pool is Polish; most action-card narratives and several institutions remain temporary German-baseline content.
 
 **KPP — Komunistyczna Partia Polski:** communist opposition. Current relations: [+ kpp_relation : relationships +]
 
@@ -212,7 +213,7 @@ The following parties are active in elections, polling and the first implemented
 
 @paramilitaries
 on-arrival: {!
-Q.rb_strength = Math.round(Q.rb_strength);
+Q.pps_militia_strength = Math.round(Q.pps_militia_strength);
 Q.sh_strength = Math.round(Q.sh_strength);
 Q.sa_strength = Math.round(Q.sa_strength); 
 !}
@@ -220,93 +221,110 @@ go-to: menu
 
 **Paramilitary groups:**
 
-**Reichsbanner Schwarz-Rot-Gold**: The Reichsbanner is an organization affiliated with all of the democratic parties - the SPD, Z, and DDP, but primarily with the SPD. Historically, this has been an unarmed organization.
+**[+ pps_militia_name +]**: the PPS self-defence organization. It protects meetings, offices, demonstrations and strikes against nationalist militias, communist militias and hostile state police. It begins as Milicja PPS and can be reorganized into Akcja Socjalistyczna. Historical details remain **TBD — historical research required**.
 
-Strength: [+ rb_strength +] thousand
+Active organized members: [+ pps_militia_strength +]
 
-Militarization: [+ rb_militancy : militancy +]
+Militancy: [+ pps_militia_militancy : militancy +]
 
-**Rotfrontkämpferbund (RFB)**: The "Red Front Fighter's League" is associated with the KPD.
+It is legal and not initially repressed. Trade-union cooperation improves coordination but never automatically adds union members to its strength.
+
+**Temporary opponent model:** The following German formations still supply inherited numerical values. In the approved Polish design they represent communist militias, nationalist militias and state forces until their dedicated replacements are researched.
+
+**Communist militias**: currently use the inherited RFB numerical model.
 
 Strength: [+ rfb_strength +] thousand
 
 Militarization: [+ rfb_militancy : militancy +]
 
-**Der Stahlhelm**: A right-wing nationalist organization of primarily Great War veterans, descended from the *Freikorps* that emerged after the war. Associated with the DNVP.
+**Nationalist militias — veteran formations**: currently use the inherited Stahlhelm numerical model.
 
 Strength: [+ sh_strength +] thousand
 
 Militarization: [+ sh_militancy : militancy +]
 
-**Sturmabteilung (SA)**: This is the nazi paramilitary group.
+**Nationalist militias — mass formations**: currently use the inherited SA numerical model.
 
 Strength: [+ sa_strength +] thousand
 
 Militarization: [+ sa_militancy : militancy +]
 
-**Official military/paramilitary groups:**
+**Temporary state-force model:**
 
-**Reichswehr**: [+ reichswehr_strength +] thousand troops. This is Germany's military.
+**State military**: [+ reichswehr_strength +] thousand troops in the inherited numerical model.
 
 Loyalty: [+ reichswehr_loyalty : loyalty +]
 
-**Prussian police**: [+ prussian_police_strength +] thousand members.
+**State police**: [+ prussian_police_strength +] thousand members in the inherited numerical model.
 
 Loyalty: [+ prussian_police_loyalty : loyalty +]
 
 
 
 @factions
-go-to: neorevisionists if neorevisionism > 0; menu if neorevisionism <= 0
+go-to: menu
 
-**Temporary German-baseline party factions**
+**Implemented PPS faction model**
 
-These five inherited factions remain mechanically active for compatibility. The approved future PPS model—Centrum PPS, Lewica PPS, and Piłsudczycy—is not implemented in this slice.
+The three currents below are gameplay abstractions. Their historical boundaries, memberships and opening proportions remain **TBD — historical research required**.
 
 Overall dissent: [+ dissent_percent : dissent +]
 
-**Left**
+**Centrum PPS**
 
-Many leftists are former members of the USPD (the left-wing, anti-war Independent Social Democratic Party), or are young radicals. Many are interested in closer cooperation with the KPD, and some support extraparliamentary action.
+The parliamentary democratic-socialist current emphasizes reform, workers' rights, defence of democracy and Polish independence.
 
-Strength: [+ left_strength : strength +]
+Strength: [+ centrum_strength : strength +]
 
-Dissent: [+ left_dissent : dissent +]
+Dissent: [+ centrum_dissent : dissent +]
 
-**Centrists**
+**Lewica PPS**
 
-Centrists in the SPD are followers of the doctrine of orthodox Marxism as expounded by Karl Kautsky and later Rudolf Hilferding. They seek a middle course between reform and revolution, while defending the democratic state.
+The left current emphasizes class struggle, faster socialisation, opposition to bourgeois governments and greater openness to extra-parliamentary pressure.
 
-Strength: [+ center_strength : strength +]
+Strength: [+ lewica_strength : strength +]
 
-Dissent: [+ center_dissent : dissent +]
+Dissent: [+ lewica_dissent : dissent +]
 
-**Labor**
+**Piłsudczycy**
 
-Many SPD members are also part of the ADGB, the federation of free trade unions. Their goal is economic reform and benefits for organized workers.
+The Piłsudski-oriented current combines the independence tradition and social reform with a stronger-state, anti-communist outlook.
+
+Strength: [+ pilsudczycy_strength : strength +]
+
+Dissent: [+ pilsudczycy_dissent : dissent +]
+
+**Affiliated trade unions — temporary compatibility model**
+
+The inherited Labor values temporarily represent the trade-union power centre. It is separate from the three PPS factions and is excluded from their normalization and from overall party dissent. A researched ZSZ replacement remains planned.
 
 Strength: [+ labor_strength : strength +]
 
 Dissent: [+ labor_dissent : dissent +]
 
-**Reformists**
+Inherited German card effects are transferred to the three active currents through a temporary compatibility bridge. The active advisers now use the semantic PPS faction fields directly. The remaining bridge is a gameplay device, not a claim that German and Polish factions were historically equivalent.
 
-Reformists are pragmatic participants in government, and seek to expand the welfare state and defend democracy against the far right and left. [? if spd_prussia : They are dominant in the state government of Prussia. ?]
-
-Strength: [+ reformist_strength : strength +]
-
-Dissent: [+ reformist_dissent : dissent +]
-
-@neorevisionists
+@advisers
+title: PPS Advisers
 go-to: menu
 
-**Neorevisionists**
+= PPS advisers
 
-Neorevisionists focus on defending the republic and expanding democracy, while also expanding the party's base beyond the working class to create a people's party. They support new propaganda methods and extraparliamentary action in defense of the republic.
+The PPS has three active adviser slots and a fourteen-person Polish adviser pool. Using any adviser action starts one shared six-month cooldown. Dismissing an adviser adds five dissent to their faction. A person's first appointment adds five faction strength; reappointing the same person does not repeat that bonus.
 
-Strength: [+ neorevisionist_strength : strength +]
+The January 1922 active team is **Ignacy Daszyński**, **Kazimierz Pużak**, and **Feliks Perl**.
 
-Dissent: [+ neorevisionist_dissent : dissent +]
+**Centrum PPS:** Daszyński, Pużak, Perl, Mieczysław Niedziałkowski and Tomasz Arciszewski.
+
+**Lewica PPS:** Zygmunt Zaremba, Kazimierz Czapiński, Adam Próchnik, Stanisław Dubois and Bolesław Drobner.
+
+**Piłsudczycy:** Rajmund Jaworowski, Jędrzej Moraczewski, Bronisław Ziemięcki and Marian Malinowski.
+
+Próchnik and Drobner enter the pool in 1928; Dubois enters in 1930. Perl leaves in April 1927. Daszyński leaves at the beginning of 1931 under the current year-only gameplay schedule.
+
+Faction splits use named departures. A split only removes a person whose entry date has already arrived. Consequently, a Lewica split before 1930 does not prevent Dubois from entering in 1930.
+
+Some approved adviser actions remain visibly marked as planned because Centrolew, Sanacja, municipal government, a Polish socialist economic programme, and formal PPS–KPP joint action do not yet have dedicated mechanics.
 
 
 @figures

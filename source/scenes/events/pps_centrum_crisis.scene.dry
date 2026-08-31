@@ -1,0 +1,27 @@
+title: Collapse of Centrum PPS leadership
+subtitle: The parliamentary leadership loses control of the party.
+new-page: true
+tags: event
+view-if: polish_faction_system and centrum_dissent >= 60 and not centrum_resigned
+on-arrival: {!
+Q.centrum_resigned = 1;
+Q.centrum_strength *= 0.3;
+Q.workers_pps -= 5;
+Q.new_middle_pps -= 3;
+for (var adviser of ['daszynski', 'perl', 'niedzialkowski']) {
+    if (Q[adviser + '_advisor']) {
+        Q[adviser + '_advisor'] = 0;
+        Q.n_advisors -= 1;
+    }
+    Q[adviser + '_left_adviser_pool'] = 1;
+}
+!}
+max-visits: 1
+
+= Centrum loses control
+
+The parliamentary leadership can no longer hold Centrum PPS together. Its strength falls to thirty percent of its previous value. Ignacy Daszyński, Feliks Perl and Mieczysław Niedziałkowski leave the adviser pool if they have already entered it; Kazimierz Pużak and Tomasz Arciszewski remain available. The PPS also loses support among moderate workers and the intelligentsia.
+
+The possible formation of Socjaldemokratyczna Partia Pracy and defections after an earlier split remain planned until the later-party system is implemented.
+
+- @root: Continue

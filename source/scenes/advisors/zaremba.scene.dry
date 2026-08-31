@@ -1,0 +1,22 @@
+title: Zygmunt Zaremba
+is-pinned-card: true
+tags: advisor
+view-if: zaremba_advisor = 1
+new-page: true
+
+= Zygmunt Zaremba
+
+Zaremba represents Lewica PPS and emphasizes class campaigning and a future worker–peasant strategy.
+
+**Planned, not implemented:** Worker–Peasant Front requires a dedicated alliance mechanic.
+
+- @class_campaign
+- @root: Return to main
+
+@class_campaign
+title: Class Campaign
+choose-if: advisor_action_timer = 0
+unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?]
+on-arrival: advisor_action_timer = 6; workers_pps += 4*(1-dissent); unemployed_pps += 3*(1-dissent); old_middle_pps -= 3; new_middle_pps -= 2; lewica_strength += 5; lewica_dissent -= 5
+
+A strongly class-oriented campaign consolidates workers and unemployed supporters while limiting broader middle-class appeal.

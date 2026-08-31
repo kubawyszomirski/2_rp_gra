@@ -27,11 +27,11 @@ on-arrival: advisor_action_timer = 6; resources += dues
 We have gained +[+ dues +] resources.
 
 @build_reichsbanner
-title: Reichsbanner
-subtitle: Schumacher supports providing more resources to the Reichsbanner.
+title: PPS self-defence
+subtitle: Schumacher supports providing more resources to the PPS self-defence organization.
 choose-if: advisor_action_timer = 0
 unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before next advisor action. ?]
-on-arrival: advisor_action_timer = 6; reichsbanner_timer -= 6; last_advisor_action = 1
+on-arrival: advisor_action_timer = 6; pps_militia_timer -= 6; last_advisor_action = 1
 go-to: reichsbanner
 
 @moderate_economic_plan
@@ -41,4 +41,3 @@ choose-if: advisor_action_timer = 0 and moderate_plan_adopted = 0 and black_thur
 unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before next advisor action. ?] [? if moderate_economic_plan = 0 : We have already adopted the reformist economic plan. ?] [? if black_thursday_seen == 0 : We are not currently in an economic crisis. ?]
 on-arrival: advisor_action_timer = 6
 go-to: crisis_program.support_moderate
-

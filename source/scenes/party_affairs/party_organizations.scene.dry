@@ -15,7 +15,7 @@ In addition to being a political party, the SPD is a social world onto itself, w
 - @newspapers: Fund more newspapers and journalists.
 - @welfare: Fund more mutual aid and welfare programs.
 - @culture: Fund sports leagues, educational, and cultural programs.
-- @rb: Fund the Reichsbanner, our self-defense organization.
+- @rb: Fund Milicja PPS, our self-defence organization.
 - @youth: We have the reputation of being a party for old men. Support the youth organizations.
 - @nothing: Do not increase funding for any program.
 - @easy_discard
@@ -52,17 +52,17 @@ It is not enough for the SPD to solely be a political party. The Worker Singer's
 choose-if: resources > 0
 unavailable-subtitle: Not enough resources.
 subtitle: -1 resources
-on-arrival: resources -= 1; rb_strength  += 100; rb_militancy += 0.01; reichsbanner_timer = 0; funded_reichsbanner += 1
+on-arrival: resources -= 1; pps_militia_strength += 100; pps_militia_militancy += 0.01; pps_militia_timer = 0; funded_pps_militia += 1
 
-We have increased recruiting to the Reichsbanner.
+We have increased recruiting and organizational support for Milicja PPS. If it has already been reorganized, the funding goes to Akcja Socjalistyczna instead.
 
 @youth
 choose-if: resources > 0
 unavailable-subtitle: Not enough resources.
 subtitle: -1 resources
-on-arrival: resources -= 1; rb_strength += 50; rb_militancy += 0.02; young_socialists += 1; left_strength += 5; neorevisionist_strength += 5; radicalization += 1;
+on-arrival: resources -= 1; pps_militia_strength += 50; pps_militia_militancy += 0.02; young_socialists += 1; lewica_strength += 5; pilsudczycy_strength += 5; radicalization += 1;
 
-Our new youth members flock to the left or neorevisionist wings of the party, and also bring new radicalism to the Reichsbanner.
+Some young activists join Lewica or the Piłsudczyk current and strengthen the party's self-defence organization.
 
 @nothing
 
