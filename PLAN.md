@@ -7,8 +7,8 @@ approve. It does not propose Polish historical equivalents, mechanics, dates,
 or scope. The existing German game remains the working baseline until a
 specific replacement has evidence and approval.
 
-For each section, change **Status** only to one of `undecided`, `researching`,
-or `approved`. Add evidence to `HISTORICAL_SOURCES.md`, then link its Source IDs
+For each section, distinguish `undecided`, `researching`, `approved` and an
+approved slice that is `implemented`. Add evidence to `HISTORICAL_SOURCES.md`, then link its Source IDs
 here. Use `MECHANICS_MAP.md` and `STATE_VARIABLES.md` to trace the original
 mechanic and implementation surface.
 
@@ -57,9 +57,10 @@ mechanic and implementation surface.
 - **User decision:** The campaign starts in **January 1922**. This date is now
   implemented.
   The campaign end date remains TBD — user decision required.
-- **Historical evidence required:** Evidence supporting the historical framing
-  and opening political situation for January 1922 is **TBD — historical
-  research required**.
+- **Historical evidence:** Opening institutions and cabinet are recorded under
+  `OPENING-CONSTITUTION-1922` and `PONIKOWSKI-FIRST-CABINET`. The approved
+  parliament and PPS position are distinguished from historical evidence under
+  `OPENING-1922-DESIGN` below.
 - **Design rationale:** The January 1922 start date is approved. A fuller
   rationale remains TBD — user decision required.
 - **Original mechanic affected:** The German baseline initialized January 1928
@@ -76,9 +77,71 @@ mechanic and implementation surface.
   German date gates retain their existing calendar years; the opening clearly
   identifies the remaining German material as an interim baseline until Polish
   replacements are researched and approved.
-- **Open questions:** Campaign end date, first election date, opening office
-  holders and parliamentary state, and the first set of scheduled events are
-  TBD — user historical research and design decision required.
+- **Chronology decision:** November 1922 elections are planned, not implemented.
+  Leave the live May 1928 scheduler and subsequent four-year scheduling alone
+  for this slice. No campaign cutoff is introduced.
+- **Open questions:** Election mechanics, later cabinets, the first set of Polish
+  scheduled events and the campaign end date require their own approved slices.
+
+### Polish Opening State — approved and implemented, 2 September 2026
+
+- **Opening:** Józef Piłsudski as Naczelnik Państwa; Antoni Ponikowski as prime
+  minister of a predominantly expert cabinet; Sejm Ustawodawczy; March
+  Constitution with transitional arrangements, not an operating Senate or
+  presidential-election system at the start.
+- **Parliament:** Use 444 MPs from January as an explicit simplification. The
+  supplied August percentages total 100.1%; normalize them and allocate whole
+  MPs by largest remainder, with party order as a deterministic tie-break.
+
+  | Party/group | Supplied % | Opening MPs |
+  | --- | ---: | ---: |
+  | KPP | 0.5 | 2 |
+  | PPS | 7.9 | 35 |
+  | NPR | 4.9 | 22 |
+  | PSL Wyzwolenie | 5.6 | 25 |
+  | PSL Piast | 22.2 | 99 |
+  | PSChD | 6.0 | 27 |
+  | ZLN | 18.8 | 83 |
+  | Minority deputies | 3.9 | 17 |
+  | Inne | 30.3 | 134 |
+  | **Total** | **100.1** | **444** |
+
+  These are not exact January historical counts or opinion polls. `other` is
+  an aggregate; minority deputies are not presented as a January BMN club.
+  Party IDs, support rows and the existing KPP label are otherwise unchanged.
+- **PPS position:** External toleration, outside cabinet, no ministries. Use
+  `pps_external_toleration`, not inherited `spd_toleration`. Campaigning,
+  organizing, advisers and militia development keep their existing rules.
+- **Ten portfolios:** Labour; Interior; Treasury; Industry & Trade; Justice;
+  Foreign Affairs; Agriculture; Military Affairs; Education; Public Works /
+  Communications. The Library shows Polish labels and cabinet ownership, not
+  named ministers or appointment actions. The last two are state/display only;
+  Public Works / Communications combines historical departments.
+- **Authority:** While the opening cabinet remains active, inherited Prussian
+  government/police-command options, executive education and German toleration
+  management are unavailable. Existing ministry checks block taxation and
+  appointments. Government Affairs stays hidden even at month six to avoid an
+  empty deck. Police/army figures, `spd_prussia` force compatibility, militia
+  calculations and unrelated events are retained.
+- **Lifecycle:** Ordinary actions and monthly polling do not change opening
+  seats or cabinet. Existing government replacement retires opening labels,
+  toleration and unassigned portfolio placeholders without overwriting new
+  assignments. Election/result writers retire the opening parliamentary
+  snapshot. This is cleanup, not a Polish successor-government simulation.
+- **Boundary:** The January cabinet snapshot can persist beyond its historical
+  period; from March the UI warns that later cabinet chronology is missing.
+  November/December do not automatically create elections, Senate or president.
+- **Acceptance:** Real-engine tests cover initialization, allowed/blocked
+  choices, campaign→month progression, date gates, government/election cleanup
+  and same-version saves. Browser checks cover start, cabinet, all 444 dots and
+  a fundraising turn into February. Build/tests and D3/image checks are required.
+- **Evidence/files:** `OPENING-1922-DESIGN`, `SU-1922-AUGUST-COMPOSITION`,
+  `OPENING-CONSTITUTION-1922`, `PONIKOWSKI-FIRST-CABINET`;
+  `source/scenes/root.scene.dry`, `source/scenes/polish_opening_state.scene.dry`,
+  `source/scenes/status.scene.dry`, `source/scenes/library.scene.dry`,
+  `source/scenes/main.scene.dry`, `source/scenes/post_event.scene.dry`,
+  `source/scenes/events/election_1928.scene.dry`, the targeted authority guards,
+  and `tests/polish-opening-state.test.js`.
 
 ## 3. Player role and political scope
 
@@ -223,10 +286,10 @@ mechanic and implementation surface.
   Other receives exactly 8% of each opening support row and 12% among Chłopi;
   the eight supplied party values are proportionally scaled to the remaining
   92% or 88%. The 30% minority identity dimension remains overlapping for now.
-- **Historical evidence required:** Party descriptions, opening support values,
-  electoral strength and the resulting opening parliamentary projection are
-  approved gameplay inputs, not established historical facts. Validation is
-  **TBD — historical research required**.
+- **Historical evidence required:** Party descriptions and opening public-support
+  values are approved gameplay inputs, not established historical facts.
+  Validation is **TBD — historical research required**. Opening parliamentary
+  seats now use the separate August-share approximation in section 2, not polling.
 - **Design rationale:** Clear Polish IDs prevent German names from remaining in
   elections, records and charts. A narrow compatibility map transfers inherited
   `spd`→`pps`, `kpd`→`kpp`, `dvp`→`pschd`, and `dnvp`→`zln` support effects
@@ -462,4 +525,4 @@ Use this table only after a section above reaches `approved`.
 
 | Decision section | Approval date | Approved wording/version | Related Source IDs | Implementation task/commit |
 | --- | --- | --- | --- | --- |
-| TBD | TBD | TBD | TBD | TBD |
+| 2, 12, 14 — Polish Opening State | 2026-09-02 | 444-MP opening; Ponikowski external toleration; ten read-only portfolios; narrow authority guards; unchanged election scheduler and no cutoff | OPENING-1922-DESIGN; SU-1922-AUGUST-COMPOSITION; OPENING-CONSTITUTION-1922; PONIKOWSKI-FIRST-CABINET | Implemented working-tree slice; not committed |

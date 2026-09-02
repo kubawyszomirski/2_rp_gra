@@ -3,15 +3,16 @@
 ## Executive Game Overview
 
 **A plain-language guide to the Polish opening-party slice over the German baseline**
-Prepared from the repository as it exists on 29 August 2026
+Prepared from the repository; Polish Opening State update: 2 September 2026
 
 > **Scope note**
 >
 > This guide explains what the current game presents and how its source code
 > makes that experience work. PPS identity, opening support, population groups,
 > the January 1922 start, nine-party electoral model, direct campaigning,
-> relationships and first-election coalition shell are implemented; most other
-> content remains the German baseline. It is not an independent history. Historical statements are
+> relationships, first-election coalition shell and the bounded Ponikowski
+> opening state are implemented; most other content remains the German baseline.
+> It is not an independent history. Historical statements are
 > described as the game's framing unless independently documented elsewhere.
 > Areas that need Polish research or a design choice are marked:
 > **TBD — user historical research and design decision required.**
@@ -35,8 +36,8 @@ change the political landscape over months and years.
 The central rhythm is simple:
 
 1. Return to a main screen that represents the party's current opportunities.
-2. Draw an eligible action card from the Party Affairs or Government Affairs
-   deck.
+2. Draw an eligible Party Affairs card; Government Affairs requires executive
+   access beyond the opening external-toleration state as well as its time gate.
 3. Play a card and choose how to respond.
 4. Spend resources or accept political consequences.
 5. Advance one month.
@@ -78,12 +79,19 @@ from the German content, but the party model, electoral rules, institutions,
 organizations, dated events, leaders, and international framework cannot be
 carried across by changing names alone.
 
-**Implemented start-date decision:** New games begin in **January 1922**. The
-remaining people, institutions, events, and mechanics still describe the
-German baseline. The retained May 1928 election is an interim gameplay
-schedule, not a researched Polish equivalent. The Polish end date, first
-election date, opening political state, and date-gated event schedule remain
-**TBD — user historical research and design decision required.**
+**Implemented opening:** New games begin in **January 1922** with Józef
+Piłsudski as **Naczelnik Państwa**, Antoni Ponikowski as prime minister and a
+simplified **444-MP Sejm Ustawodawczy**. PPS tolerates the cabinet from outside;
+it has no ministers or executive/police-command powers. Ten cabinet portfolios
+are available for read-only inspection. The constitutional description accounts
+for transitional arrangements rather than presenting Piłsudski as president.
+
+**Deliberate development boundary:** November 1922 elections are planned but
+not implemented; the live scheduler still starts in May 1928. Later cabinets,
+the presidential transition and a full Polish election system are not added.
+If the January cabinet persists beyond February, the UI warns about the missing
+chronology. Existing government/election transitions retire stale opening
+metadata without inventing a Polish successor. There is no new campaign cutoff.
 
 **Implemented opening-party decision:** Active elections use KPP, PPS, NPR,
 PSL Wyzwolenie, PSL Piast, PSChD, ZLN, Blok Mniejszości Narodowych, and Inne.
@@ -138,15 +146,15 @@ JavaScript or DendryNexus.
 
 The game now presents the player as leading the PPS as a political organization,
 not in the role of one fixed historical person. The player manages party
-strategy across elections and governments while the game's version of the
-German Republic still supplies the temporary inherited political setting.
+strategy across elections and governments. The approved Polish opening sits
+over many still-inherited German systems; it is not yet a complete Polish chapter.
 
-At the opening in January 1922, the status panel labels the player party PPS
-but still shows the German-baseline
-president and chancellor, the parliamentary shares of the major German
-parties, the retained May 1928 election date, party resources, internal
-dissent, and basic economic indicators. The opening text explicitly identifies
-this material as an interim baseline rather than Polish historical content.
+At the opening, status shows Piłsudski's state office, Ponikowski's cabinet,
+PPS external toleration, exact whole-MP counts for the nine parliamentary
+categories, party resources, dissent and inherited economic indicators.
+The parliament is the approved August-share approximation used from January,
+not an exact January roster. The live election date and planned November 1922
+replacement are labelled separately. Opinion polls do not change sitting MPs.
 
 ### Who the player controls
 
@@ -238,10 +246,12 @@ one **Begin** action. It routes directly to the three-card main hand.
 
 ### What happens after Begin
 
-The January 1922 introduction leads directly into the main hand. The Government
-Affairs deck is initially hidden and becomes available after the internal time
-counter reaches six, so the early game focuses on the party before opening the
-government-action layer. Saves and polls remain available.
+The January 1922 introduction leads directly into the main hand. Party work,
+advisers and militia development remain available under their existing rules.
+Government Affairs stays hidden while the opening cabinet remains active, even
+when the inherited month-six gate is reached, because PPS has no executive
+actions. Read-only cabinet inspection is always available through the Library.
+Saves and polls remain available; no month is spent inspecting the cabinet.
 
 ### Fixed-baseline compatibility
 
@@ -512,8 +522,9 @@ is the small set of issues currently on the desk.
 
 The Party Affairs deck contains campaigning, fundraising, ideology, media,
 organization, relationships, rallies, leadership, and similar party work. The
-Government Affairs deck contains policy and ministerial work and appears after
-the early-game time gate. A card can also be hidden by its own requirements,
+Government Affairs deck contains policy and ministerial work and requires both
+the early-game time gate and retirement of the opening-cabinet guard. A card can
+also be hidden by its own requirements,
 including cooldown, government position, ministry ownership, date, resources,
 or earlier choices.
 
@@ -623,16 +634,24 @@ parliamentary share; qualifying results are normalized again. The game stores
 the previous result, calculates the change, finds the largest party, and saves
 the result for charts.
 
-The parliamentary display uses percentages as an approximate seat share. The
-D3 semicircle multiplies shares into roughly 500 colored positions. The source
-contains a `use_decimals` TODO, and there is no confirmed district-level or
-remainder-seat allocator. The graphic is therefore a useful overview, not
-evidence of a fully exact seat model.
+The opening D3 semicircle has exactly **444 dots**, one per MP. Seats are KPP 2,
+PPS 35, NPR 22, PSL Wyzwolenie 25, PSL Piast 99, PSChD 27, ZLN 83, minority
+deputies 17 and Inne 134. Supplied August percentages total 100.1%; normalization
+and largest-remainder rounding make them fit 444. Displayed percentages are
+recalculated from those seats, so they can differ slightly from the supplied
+rounded shares. Minority deputies are an aggregate, not a claim that BMN was
+already a single January parliamentary club.
+
+After an existing election or other result writer replaces these shares, the
+opening chart is retired. The inherited roughly 500-dot percentage illustration
+remains, clearly labelled temporary. A proper Polish election allocator is
+still planned; the opening snapshot is not an election conducted during play.
 
 <!-- PDF_SCREENSHOT: charts -->
 
-*Figure 3. The local Library renders the starting Reichstag as an approximate
-semicircle and provides space for election, support, and economic history.*
+*Figure 3. The Library renders the simplified opening Sejm as 444 dots and
+provides space for election, support and economic history. Older exported
+screenshots may predate this opening-state update.*
 
 ### Coalition formation
 
@@ -762,7 +781,20 @@ action are marked as planned rather than simulated through unrelated systems.
 
 ### Cabinet positions and ministries
 
-Government entry does not grant every policy automatically. The player can
+At the opening, PPS holds **none** of the ten portfolios. The Library lists
+Labour, Interior, Treasury, Industry & Trade, Justice, Foreign Affairs,
+Agriculture, Military Affairs, Education, and Public Works / Communications
+with Polish names and cabinet ownership. It does not list invented ministers.
+Education and Public Works are portfolio placeholders, not new policy systems;
+the combined Public Works category is a gameplay simplification.
+
+External toleration does not let the player set taxes, appoint ministers or
+command the police through inherited Prussian powers. Militia defence remains
+available; police statistics and underlying force calculations are retained.
+Polish toleration never automatically activates German toleration choices.
+
+The following is **retained legacy behavior after the opening**, not a completed
+Polish cabinet allocator. Government entry does not grant every policy. The player can
 spend election-derived leverage on ministries such as Labor, Interior, Finance,
 Economic, Justice, Foreign, Agriculture, and Reichswehr. Ministry-party fields
 gate government cards; named minister fields support the narrative; goal fields

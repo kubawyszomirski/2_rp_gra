@@ -3,16 +3,18 @@
 ## Purpose and evidence boundary
 
 This document explains the existing game as implemented. It is a map of the
-German baseline, not a design proposal for a Polish replacement. The evidence
+German baseline and approved Polish slices, not approval for further replacements. The evidence
 base is every file under `source/`, plus the build configuration, compiled
 `out/game.json`, and the customized browser files needed to trace display,
-saving, and mod loading. No external historical research was used.
+saving, and mod loading. Historical evidence for approved replacements is
+recorded separately in `HISTORICAL_SOURCES.md`.
 
 > **Implemented start-date decision:** New games start in **January 1922**.
-> The remaining people, institutions, events, and mechanics still represent
-> the German baseline until researched Polish replacements are approved. The
-> retained first German election remains May 1928; this is an interim gameplay
-> schedule, not a researched Polish equivalent.
+> The opening now has Piłsudski as Naczelnik Państwa, Ponikowski as prime
+> minister, external PPS toleration and a simplified 444-MP Sejm Ustawodawczy.
+> Later cabinets and most events/mechanics still use the temporary baseline.
+> November 1922 elections are planned, not implemented; the live first election
+> remains May 1928. No campaign cutoff was introduced.
 
 > **Implemented Polish opening-party slice:** Active election IDs are `kpp`,
 > `pps`, `npr`, `psl_wyzwolenie`, `psl_piast`, `pschd`, `zln`,
@@ -134,8 +136,9 @@ There is no difficulty selection. Evidence:
 
 ### A normal player turn
 
-1. The main screen shows the party deck, and after the time gate, the
-   government deck. Adviser/leadership cards are pinned.
+1. The main screen shows the party deck. Government Affairs also requires the
+   time gate and an inactive opening-cabinet guard; external PPS toleration
+   grants no executive actions. Adviser/leadership cards are pinned.
 2. The player opens a deck. Dendry filters its tagged cards by conditions and
    randomly draws an eligible card if the hand is not full.
 3. The player opens a drawn card, chooses an option, and the scene updates
@@ -236,8 +239,8 @@ be traced back to code.
   dated events without approved Polish replacements.
 - **Polish equivalent:** Implemented opening calendar: `year = 1922`,
   `month = 1`, and `time = 1`. The retained May 1928 German election is
-  relative month `77`; the first Polish election remains **TBD — historical
-  research required**.
+  relative month `77`. November 1922 Polish elections are planned but not yet
+  implemented; see the opening contract in sections 8–10 and `PLAN.md`.
 - **Unresolved:** Whether every apparently unused initial field is retained for
   a planned mechanic or is obsolete is **UNCLEAR — requires code investigation
   or runtime testing.**
@@ -469,6 +472,14 @@ be traced back to code.
 
 ### 8. Elections and parliamentary allocation
 
+The opening is now a separate, fixed parliamentary snapshot, not a simulated
+election: the supplied August shares (total 100.1%) are normalized to 444 MPs by
+largest remainder in `source/scenes/root.scene.dry`. Counts in party order are
+2/35/22/25/99/27/83/17/134. Current and old `_r` values start at `100 * MPs / 444`;
+public-support rows and polls are unchanged. This does not implement Polish
+district allocation or the November 1922 election. The live election algorithm
+below remains percentage-based and retires the snapshot on result processing.
+
 - **Purpose:** Freeze current support into an election result, enforce legal
   rules, compare with the prior result, and open government formation.
 - **Player sees:** Vote shares/changes, largest party, coalition options, and
@@ -505,30 +516,47 @@ be traced back to code.
 - **Purpose:** Visualize the election result as a semicircular chamber.
 - **Player sees:** A colored parliament graphic after elections and in relevant
   display areas.
-- **Sequence:** Election result values are passed to the D3 helper; each share
-  is multiplied by roughly five to create an approximately 500-seat visual;
-  `parliament-svg` lays out colored dots/seats.
+- **Sequence:** While `opening_sejm_active`, Library figures pass the exact
+  opening counts to `out/html/d3-parliament.js`: one dot per MP, total 444.
+  Afterwards the inherited roughly 500-dot percentage illustration remains,
+  explicitly labelled as temporary rather than a Polish seat allocation.
 - **Scenes/files:** D3 calls in `source/scenes/events/election_1928.scene.dry`
   and `source/scenes/library.scene.dry`; scripts loaded by
   `out/html/index.html`; copied D3 from the build script in `package.json`.
-- **Important state:** Party `_r` values, colors/labels in the figure helper,
-  and `election_records` for charts.
-- **Depends on:** Election results, D3, `parliament-svg`, and browser DOM.
+- **Important state:** `opening_sejm_active`, `opening_sejm_seats`,
+  `sejm_total_seats`, party `_r` values, `parliament_names`, and `election_records`.
+- **Depends on:** Opening snapshot/election results, D3, the customized
+  `out/html/d3-parliament.js` helper and browser DOM. The installed
+  `parliament-svg` dependency remains untouched.
 - **Depended on by:** Player interpretation only; no confirmed gameplay writer
   reads the rendered output.
-- **Conditions/invariants:** Visualization is approximate and is not evidence
-  of a separate electoral seat algorithm.
+- **Conditions/invariants:** Opening chart and text must agree on all nine
+  counts. The opening approximation is not the exact historical January roster.
+  Poll changes never change sitting MPs; a result writer invalidates the snapshot.
 - **Coupling/risks:** Party order, colors, and hard-coded labels must match
   election state. Removing `parliament-svg` is explicitly out of scope.
 - **Safe extension points:** Display-only labels/colors after verifying every
   party and the browser layout.
 - **Polish adaptation reconsideration:** Chamber size/layout, party set,
   colors, legend, and whether an exact allocator is required.
-- **Polish equivalent:** TBD — user historical research required.
+- **Polish equivalent:** Implemented 444-seat opening approximation only;
+  subsequent Polish election allocation remains planned.
 - **Unresolved:** Responsive behavior and accessibility of the SVG are
   **UNCLEAR — requires code investigation or runtime testing.**
 
 ### 10. Coalition formation and coalition dissent
+
+**Opening-state contract:** `pps_external_toleration = 1` means support from
+outside Ponikowski's cabinet, never inherited German `spd_toleration`, cabinet
+membership or ministry access. All coalition/member flags and `spd_toleration`
+start false. `source/scenes/polish_opening_state.scene.dry` runs after root
+initialization and post-event reconciliation and before main/status/Library
+displays. It retires opening metadata if the executive or ministry ownership
+is replaced; the two existing election-result branches retire it explicitly.
+New assignments are preserved and no Polish successor is invented. Parliament
+has its own validity flag: a cabinet change alone does not dissolve it.
+Past February, the UI warns when the January snapshot persists. This cleanup
+does not implement cabinet chronology or freeze the existing event scheduler.
 
 > **Implemented Polish boundary:** Active Polish elections bypass the inherited
 > German coalition menu. The first-cycle shell computes PPS majority, Koalicja
@@ -702,6 +730,28 @@ be traced back to code.
   portraits and historically sourced biographies remain planned.
 
 ### 14. Cabinet and ministries
+
+**Implemented opening:** The read-only Library lists ten Polish categories:
+Labour (`labor`), Interior (`interior`), Treasury (`finance`), Industry & Trade
+(`economic`), Justice (`justice`), Foreign Affairs (`foreign`), Agriculture
+(`agriculture`), Military Affairs (`reichswehr`), Education (`education`) and
+Public Works / Communications (`public_works`). All use the non-party-ID
+sentinel `opening_expert_cabinet`; names are empty and PPS owns none. The two
+new keys have no policy cards or allocation algorithm. The combined Public
+Works category is a gameplay simplification, not a literal historical roster.
+
+**Authority boundary:** Existing government/ownership checks block tax,
+appointment and ministerial actions. Additional opening guards cover
+`source/scenes/government_affairs/{prussian_affairs,dealing_with_toleration,education_science,deport_hitler}.scene.dry`,
+police protection in `source/scenes/party_affairs/rally.scene.dry`, and police
+training in `source/scenes/party_affairs/streetfighting.scene.dry`. The main
+government deck stays hidden while the opening is active, including at its
+month-six unlock. `spd_prussia` and force statistics remain for compatibility,
+not as authority to command Polish police. Militia-only defence and ordinary
+party/adviser actions remain available under existing conditions.
+
+The following allocation mechanics are retained legacy behavior, not a new
+Polish ten-portfolio ministry system:
 
 - **Purpose:** Restrict government actions according to coalition participation
   and offices controlled by the player party.

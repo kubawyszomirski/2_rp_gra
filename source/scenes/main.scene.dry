@@ -1,6 +1,7 @@
 title: Next month
 set-bg: img/map_2.jpg
 is-hand: true
+call: polish_opening_state
 on-arrival: {!
 if (Q.advisor_action_timer <= 0) {
     Q.pinnedCardsDescription = 'Advisors - an action is available.';
@@ -14,7 +15,9 @@ max-cards: 3
 
 #Here, the main deck will be displayed. Clicking on the deck draws a card into your hand. Clicking on a card activates that card.
 
-[? if year = 1928 and month = 2 : The current bourgeois-right government has fallen. The next elections are slated for May of this year. ?]
+[? if year = 1928 and month = 2 and not polish_opening_government_active : The current bourgeois-right government has fallen. The next elections are slated for May of this year. ?]
+
+[? if polish_opening_government_active and time >= 6 : PPS tolerates the government but holds no ministries. Government Affairs has no available executive actions in this opening slice. You can inspect all ten portfolios in the Library and continue using Party Affairs and advisers. ?]
 
 - @party
 - @govt
@@ -30,7 +33,7 @@ is-deck: true
 
 @govt
 title: Government Affairs
-view-if: time >= 6
+view-if: time >= 6 and not polish_opening_government_active
 card-image: img/reichstag_2.jpg
 is-deck: true
 

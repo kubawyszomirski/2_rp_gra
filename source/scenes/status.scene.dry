@@ -1,6 +1,7 @@
 title: Status
 new-page: true
 is-special: true
+call: polish_opening_state
 on-arrival: {!
 if (Q.unemployed) {
     Q.unemployed_2 = Q.unemployed.toFixed(1);
@@ -20,7 +21,7 @@ if (Q.economic_growth) {
 
 Resources available: [+ resources +]
 
-PPS position: [? if spd_toleration : toleration ?][? if spd_in_government : in government - ?][? if spd_toleration == 0 and spd_in_government == 0 and spd_caretaker == 0 : opposition ?][? if spd_caretaker : caretaker government ?]
+PPS position: [+ pps_government_position +].
 [? if in_polish_left_coalition and spd_in_government: Koalicja Lewicy ?][? if in_polish_center_left_coalition and spd_in_government: koalicja centrolewicowa ?][? if in_spd_majority and spd_in_government: PPS majority ?][? if in_minority_government and spd_in_government: minority government [? if minorities_toleration: with Minorities Bloc toleration ?] ?][? if in_chjeno_piast: opposition to Chjeno-Piast ?]
 
 [? if spd_in_government and not in_spd_majority and not in_left_front : Coalition dissent: [+ coalition_dissent : coalition_dissent +] ?]
@@ -31,33 +32,41 @@ Internal dissent: [+ dissent_percent : dissent +]
 
 = Government
 
-President: [+ president +]
+Head of state: [+ head_of_state_display +]
 
-Chancellor: [+ chancellor +] ([+ chancellor_party +])
+Prime minister: [+ prime_minister_display +]
 
-Sejm composition (gameplay percentages):
+[? if polish_opening_government_active : March Constitution with transitional arrangements: the Sejm Ustawodawczy and Naczelnik Państwa remain in office. No operating Senate or presidential officeholder is simulated at the opening. ?]
 
-KPP: [+ kpp_r +]%
+[? if polish_opening_government_active and (year > 1922 or month > 2) : Development notice: the January cabinet snapshot is still in use. Later cabinet chronology has not been implemented. ?]
 
-PPS: [+ pps_r +]%
+= [+ parliament_heading +]
 
-NPR: [+ npr_r +]%
+[? if opening_sejm_active : Approved simplification: August 1922 club shares scaled to 444 MPs from January, not an exact historical January roster. Campaigning changes public support, not these seats. Percentages are rounded for display. ?]
 
-PSL Wyzwolenie: [+ psl_wyzwolenie_r +]%
+KPP: [+ kpp_sejm_display +]
 
-PSL Piast: [+ psl_piast_r +]%
+PPS: [+ pps_sejm_display +]
 
-PSChD: [+ pschd_r +]%
+NPR: [+ npr_sejm_display +]
 
-[+ zln_name +]: [+ zln_r +]%
+PSL Wyzwolenie: [+ psl_wyzwolenie_sejm_display +]
 
-Blok Mniejszości Narodowych: [+ minorities_bloc_r +]%
+PSL Piast: [+ psl_piast_sejm_display +]
 
-Inne: [+ other_r +]%
+PSChD: [+ pschd_sejm_display +]
+
+[+ zln_name +]: [+ zln_sejm_display +]
+
+[? if opening_sejm_active : Minority deputies ?][? if not opening_sejm_active : Blok Mniejszości Narodowych ?]: [+ minorities_bloc_sejm_display +]
+
+Inne: [+ other_sejm_display +]
 
 [? if spd_in_government = 1 : Budget: [+ budget +] ?]
 
-Next election: [+ next_election_month : month +] [+ next_election_year +]
+Live election schedule (inherited): [+ next_election_month : month +] [+ next_election_year +]
+
+**November 1922 Polish elections are planned, not implemented.** The retained scheduler starts in May 1928; later events can still change it. This is a development limitation, not the intended Polish election calendar.
 
 = Economics
 

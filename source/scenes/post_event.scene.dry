@@ -1,5 +1,6 @@
 title: Post Event
 new-page: true
+call: polish_opening_state
 on-arrival: {!
 Q.last_advisor_action = 0;
 Q.last_cabinet_action = 0;

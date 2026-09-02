@@ -37,7 +37,12 @@ Fine. President [+ president +] has taken the unprecedented step of canceling th
 Let us hope this does not backfire.
 
 @post_election_polish
+call: polish_opening_state
 on-arrival: {!
+// Retire opening metadata, without changing this inherited election's schedule
+// or its approved first-cycle coalition outcomes.
+Q.opening_sejm_active = 0;
+Q.polish_opening_government_active = 0;
 var new_party_sum = 0;
 for (var party of Q.parties) {
     Q['old_' + party + '_r'] = Q[party + '_r'];
@@ -178,7 +183,10 @@ on-arrival: chancellor = "TBD — historical research required"; chancellor_part
 Nie powstaje żadna z obecnie zaimplementowanych większości. PPS przechodzi do opozycji. Dalsze scenariusze kryzysowe pozostają planowane.
 
 @post_election_1928
+call: polish_opening_state
 on-arrival: {!
+Q.opening_sejm_active = 0;
+Q.polish_opening_government_active = 0;
 // set old results
 // election threshold constitutional reform
 // banning parties

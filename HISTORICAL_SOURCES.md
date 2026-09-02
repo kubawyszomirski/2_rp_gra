@@ -187,6 +187,199 @@ source location, and permitted use in its entry. Preserve
 
 ## Elections and parliamentary composition
 
+### Source entry SU-1922-AUGUST-COMPOSITION
+
+- **Source ID:** SU-1922-AUGUST-COMPOSITION
+- **Claim or game element supported:** Dated outgoing Legislative Sejm
+  composition for comparison with the game's opening parliamentary projection.
+- **Category:** elections and parliamentary composition
+- **Relevant date or period:** August 1922, before the November election;
+  not a verified January 1922 opening roster.
+- **Full citation:** Contentplus.pl, "Struktura polityczna Sejmu Ustawodawczego
+  w latach 1919–1922", in ZPE, "Na drodze ku stabilizacji. Sejm Ustawodawczy
+  1919–1922 i uchwalenie małej konstytucji", section "Schemat", undated;
+  based on Piotr A. Tusiński, *Sejm Ustawodawczy Rzeczypospolitej Polskiej
+  1919–1922*, Warszawa 2019. The underlying book was not inspected.
+- **Author:** Contentplus.pl, using Tusiński's data.
+- **Publication:** Zintegrowana Platforma Edukacyjna (ZPE).
+- **Page number:** HTML timeline entry "Sierpień 1922".
+- **URL or archive location:** https://zpe.gov.pl/a/schemat/D7Hnd95fX
+- **Date accessed:** 2026-09-02
+- **Primary or secondary source:** Secondary educational compilation.
+- **Exact evidence or notes:** August total: 432. Selected club counts:
+
+  | Source grouping | Deputies |
+  | --- | ---: |
+  | Communist parliamentary faction | 2 |
+  | Socialist parliamentary group (PPS) | 34 |
+  | National workers' group, labelled NZR by ZPE | 21 |
+  | PSL Wyzwolenie | 24 |
+  | PSL Piast | 96 |
+  | Narodowo-Chrześcijański Klub Robotniczy | 26 |
+  | ZLN | 81 |
+  | Jewish deputies | 10 |
+  | German deputies | 7 |
+
+- **Confidence:** Medium-high for this dated secondary-source snapshot;
+  exact January membership and party-to-club mappings need further research.
+- **Conflicting sources:** ZPE's national-workers label is NZR, whereas the
+  [July 1922 table on Polish Wikipedia](https://pl.wikipedia.org/wiki/Sejm_Ustawodawczy_(1919%E2%80%931922))
+  labels the 21-member group NPR. That table contains incorrect percentages,
+  including 10.4% beside 34 socialist deputies; calculate shares independently.
+  ZPE separately reports 431 deputies in November, with changed club sizes.
+  Do not combine those dates or treat either as the January roster.
+- **Intended gameplay use:** Evidence behind the approved opening approximation;
+  see `OPENING-1922-DESIGN`. The historical counts in this entry remain unchanged.
+- **Historical fact:** Dated club counts reported above; shares calculated as
+  deputies / 432, so PPS is 7.87% and PSL Piast 22.22%.
+- **Gameplay simplification:** Mapping the national-workers group to `npr`,
+  NChKR to `pschd`, and 17 separate minority deputies to `minorities_bloc`
+  requires explicit distinctions between parties, clubs and electoral alliances.
+  Under those provisional groupings, the unrepresented remainder is 131
+  deputies (30.32%); this is our arithmetic aggregation, not a historical party.
+- **Alternate-history departure:** None established by this research.
+- **Unresolved research question:** Exact January 1922 roster and vacancies;
+  individual club memberships; treatment of substantial parties outside our roster.
+- **Licensing or attribution requirements:** Timeline credits Contentplus.pl
+  and CC BY-SA 3.0. No image or timeline asset copied into the game.
+- **Implementation status:** A separate 444-MP approximation is now approved and
+  implemented. That approval does not make these August counts a January roster.
+- **Related mechanic, variable and source file:** Opening `<party>_r` values in
+  `source/scenes/root.scene.dry`; derived from `opening_sejm_seats`, not polling.
+
+### Source entry OPENING-1922-DESIGN
+
+- **Source ID / category:** OPENING-1922-DESIGN; user-approved gameplay design,
+  not an independent historical source.
+- **Evidence and date:** User approval in this task, 2026-09-02. Normalize the
+  supplied August percentages (0.5/7.9/4.9/5.6/22.2/6.0/18.8/3.9/30.3;
+  total 100.1%) and allocate 444 whole MPs by largest remainder.
+- **Implemented values:** KPP 2, PPS 35, NPR 22, PSL Wyzwolenie 25, PSL Piast 99,
+  PSChD 27, ZLN 83, minority deputies 17, Inne 134. Polls remain independent.
+- **Historical fact:** `SU-1922-AUGUST-COMPOSITION` records a different chamber
+  size and date. Neither 444 MPs in January nor this exact allocation is asserted
+  as a historical reconstruction. Existing KPP naming remains an approved
+  temporary convention; see `KPRP-KPP-NAME-1925`.
+- **Gameplay simplification:** Use these August-derived proportions from January;
+  aggregate minority deputies without claiming a single January BMN club;
+  ten stable portfolio categories, including combined Public Works /
+  Communications; PPS external toleration with no cabinet seats.
+- **Unresolved historical research:** Precise January PPS parliamentary stance
+  and voting practice remain **TBD — historical research required**. Approving
+  toleration as an initial game state does not establish a historical agreement.
+- **Alternate history / chronology:** No new alternate-history succession.
+  November 1922 elections, December presidential transition and later cabinets
+  are planned, not implemented. Retaining May 1928 scheduling or an opening
+  cabinet beyond its historical term is a development limitation, not history.
+- **Implementation:** `source/scenes/root.scene.dry`,
+  `source/scenes/polish_opening_state.scene.dry`, status/Library and authority
+  guards; acceptance and portfolio list in `PLAN.md` section 2.
+- **Rights:** No media copied. Existing image/music credits remain unchanged;
+  code's MIT licence does not automatically cover media or cited editions.
+
+### Source entry SU-CHADECJA-CLUB
+
+- **Source ID:** SU-CHADECJA-CLUB
+- **Claim or game element supported:** Historical identity of the parliamentary
+  group used for a cautious comparison with the code's `pschd` entry.
+- **Category:** elections and parliamentary composition
+- **Relevant date or period:** Legislative Sejm constitutional debates, 1919–1921.
+- **Full citation:** Paweł Magiera, "Kwestia kwalifikacji narodowych i wyznaniowych
+  Prezydenta RP w polskiej debacie ustrojowej i pracach konstytucyjnych Sejmu
+  Ustawodawczego z lat 1919–1921", in *Polska niepodległa 1918–2018. Księga
+  rocznicowa z okazji 100 rocznicy odzyskania niepodległości*, Warszawa:
+  Think & Make, 2018, p. 261, ISBN 978-83-950934-0-1.
+- **Author:** Paweł Magiera.
+- **Publication:** Think & Make anniversary collection.
+- **Page number:** Printed p. 261, PDF page 261 (zero-based index 260).
+- **URL or archive location:** https://think-make.pl/wp-content/uploads/2020/10/Polska-niepodleg%C5%82a-1918-%E2%80%93-2018-Ksi%C4%99ga-rocznicowa-z-okazji.pdf
+- **Date accessed:** 2026-09-02
+- **Primary or secondary source:** Secondary scholarly chapter.
+- **Exact evidence or notes:** Identifies NChKR as the parliamentary
+  representation of Christian democracy and identifies the party created in
+  May 1920 as Chrześcijańsko-Narodowe Stronnictwo Pracy.
+- **Confidence:** High for the identification stated by the source.
+- **Conflicting sources:** None identified for this narrow claim.
+- **Intended gameplay use:** Explain the historical club behind a PSChD comparison.
+- **Historical fact:** NChKR represented Christian democracy in the cited debates.
+- **Gameplay simplification:** Using the persistent `pschd` ID for this club
+  does not establish that the club and later party name are interchangeable.
+- **Alternate-history departure:** None.
+- **Unresolved research question:** Exact date-dependent party names and roster.
+- **Licensing or attribution requirements:** Publication reserves copyright;
+  only a short factual paraphrase and citation are recorded.
+- **Implementation status:** Research only.
+- **Related mechanic, variable and source file:** `pschd_r` in
+  `source/scenes/root.scene.dry`.
+
+### Source entry BMN-1922-ELECTORAL-ALLIANCE
+
+- **Source ID:** BMN-1922-ELECTORAL-ALLIANCE
+- **Claim or game element supported:** Distinguish the 1922 minority electoral
+  alliance from separate minority parliamentary clubs in the outgoing Sejm.
+- **Category:** elections and parliamentary composition
+- **Relevant date or period:** August 1922 election preparations.
+- **Full citation:** "Blok mniejszości narodowych", *Tydzień Polski*, no. 35,
+  Warszawa, 26 August 1922, p. 7.
+- **Author:** Unsigned news item.
+- **Publication:** Tydzień Polski.
+- **Page number:** Printed p. 7, PDF page 7 (zero-based index 6).
+- **URL or archive location:** https://rcin.org.pl/Content/190916/PDF/WA248_211888_P-II-175_tydz-polski-1922-35_o.pdf
+- **Date accessed:** 2026-09-02
+- **Primary or secondary source:** Primary contemporary newspaper report.
+- **Exact evidence or notes:** Reports an agreement of minority representatives
+  in Warsaw on 17 August and reproduces a declaration creating a joint
+  electoral committee. Existing Jewish and German deputies attended.
+- **Confidence:** High that this report distinguishes an electoral committee
+  from the sitting parliamentary representation.
+- **Conflicting sources:** Some retrospective accounts date the alliance to
+  earlier August. This entry establishes the reported agreement, not a definitive
+  first foundation date.
+- **Intended gameplay use:** Avoid describing 17 minority deputies as a single
+  historical BMN parliamentary club, or backdating the electoral alliance to January.
+- **Historical fact:** Contemporary evidence of an August electoral agreement.
+- **Gameplay simplification:** Combining separate minority clubs into one
+  `minorities_bloc_r` would be an explicit game abstraction.
+- **Alternate-history departure:** A January electoral alliance would require
+  separate historical evidence or an approved alternate-history premise.
+- **Unresolved research question:** Precise foundation chronology and the
+  affiliation of each sitting minority deputy to the electoral alliance.
+- **Licensing or attribution requirements:** No facsimile or asset copied;
+  citation does not establish reuse rights for the archive's images.
+- **Implementation status:** Research only.
+- **Related mechanic, variable and source file:** `minorities_bloc_r` and
+  `party_names` in `source/scenes/root.scene.dry`.
+
+### Source entry KPRP-KPP-NAME-1925
+
+- **Source ID:** KPRP-KPP-NAME-1925
+- **Claim or game element supported:** Date-dependent communist party name.
+- **Category:** elections and parliamentary composition
+- **Relevant date or period:** 1922 and the 1925 renaming.
+- **Full citation:** Instytut Pamięci Narodowej, "ul. Leszczyńskiego Juliana",
+  archived historical biographical notice, undated.
+- **Author:** Institutional; individual author not identified.
+- **Publication:** IPN archive.
+- **Page number:** HTML paragraph about the third KPRP congress.
+- **URL or archive location:** https://archiwum.ipn.gov.pl/pl/upamietnianie/dekomunizacja/zmiany-nazw-ulic/nazwy-ulic/nazwy-do-zmiany/37008%2Cul-Leszczynskiego-Juliana.html
+- **Date accessed:** 2026-09-02
+- **Primary or secondary source:** Secondary institutional account.
+- **Exact evidence or notes:** Dates the change from Komunistyczna Partia
+  Robotnicza Polski (KPRP) to Komunistyczna Partia Polski (KPP) to 1925.
+- **Confidence:** High for this narrow naming chronology.
+- **Conflicting sources:** None identified for the renaming year.
+- **Intended gameplay use:** Separate a stable internal ID from a historical label.
+- **Historical fact:** The 1922 party name was KPRP; KPP followed in 1925.
+- **Gameplay simplification:** The code currently uses `kpp` and displays KPP
+  throughout the opening model.
+- **Alternate-history departure:** None inferred from an internal variable name.
+- **Unresolved research question:** Date-dependent display implementation remains
+  a future decision; this source is not evidence for parliamentary seat counts.
+- **Licensing or attribution requirements:** Factual paraphrase only; no media reuse.
+- **Implementation status:** Research only.
+- **Related mechanic, variable and source file:** `party_names.kpp` in
+  `source/scenes/root.scene.dry`.
+
 ### Source entry ELECTION-TBD
 
 - **Source ID:** TBD
@@ -212,6 +405,36 @@ source location, and permitted use in its entry. Preserve
 - **Related mechanic, variable and source file:** TBD
 
 ## Governments and coalitions
+
+### Source entry PONIKOWSKI-FIRST-CABINET
+
+- **Source ID / category:** PONIKOWSKI-FIRST-CABINET; opening government and
+  ministry terminology.
+- **Citation:** Marek Kornat and Patryk Tomaszewski (eds.), *Protokoły posiedzeń
+  Rady Ministrów Rzeczypospolitej Polskiej 1918–1923*, vol. VIII, *Pierwszy
+  gabinet Antoniego Ponikowskiego, 19 września 1921 – 5 marca 1922*, Warszawa:
+  Instytut Historii PAN, 2022, ISBN 978-83-66911-28-4.
+- **Source / access:** [RCIN edition](https://rcin.org.pl/ihpan/Content/239864/WA303_276186_II15098-8_Kornat-Tomaszewski.pdf),
+  accessed 2026-09-02; published primary cabinet records with scholarly editing.
+- **Evidence:** Volume chronology places Ponikowski's first cabinet in January
+  1922. Printed p. 657 (PDF page 656) lists departments including separate
+  railways, public works, posts, education, health and labour.
+- **Confidence / limits:** High for cabinet identity/period and that department
+  list; it is not evidence for exactly ten ministries or a PPS toleration pact.
+- **Administrative character:** Piotr A. Tusiński's study of parliamentarians
+  in interwar cabinets, *Przegląd Sejmowy* 6(131)/2015,
+  [p. 115](https://orka.sejm.gov.pl/przeglad.nsf/0/D519E888835B02D1C1257F460042BC5B/%24File/ps131.pdf)
+  describes extensive administrative experience among Ponikowski's ministers
+  and department heads, while also identifying parliamentary members. This
+  supports “predominantly expert/administrative,” not “all personally non-party.”
+  Secondary scholarly evidence, accessed 2026-09-02; no inference about PPS
+  toleration follows from that classification.
+- **Gameplay use:** Opening PM and cautious Polish portfolio terminology.
+  The ten-category display is the approved aggregation in `OPENING-1922-DESIGN`;
+  no personal minister roster is implemented. Later cabinets remain planned.
+- **Related files:** `source/scenes/root.scene.dry`,
+  `source/scenes/library.scene.dry`, `source/scenes/status.scene.dry`.
+- **Rights:** Citation/paraphrase only; no page facsimile or media imported.
 
 ### Source entry POLISH-COALITION-DESIGN-TBD
 
@@ -273,6 +496,35 @@ source location, and permitted use in its entry. Preserve
 - **Related mechanic, variable and source file:** TBD
 
 ## Institutions and constitutional powers
+
+### Source entry OPENING-CONSTITUTION-1922
+
+- **Source ID / category:** OPENING-CONSTITUTION-1922; institutional opening
+  and transitional constitutional arrangements.
+- **Primary sources:**
+  - [Sejm resolution of 20 February 1919](https://libr.sejm.gov.pl/tek01/txt/kpol/1919.html),
+    Dz.Pr.P.P. 1919 nr 19 poz. 226: Piłsudski entrusted with Naczelnik Państwa.
+  - [Transitional Act of 18 May 1921](https://eli.gov.pl/api/acts/DU/1921/268/text/O/D19210268.pdf),
+    Dz.U. 1921 nr 44 poz. 268, arts. 1–4: continuing Sejm Ustawodawczy and
+    Naczelnik powers until the new institutions take office.
+  - March Constitution, Dz.U. 1921 nr 44 poz. 267:
+    [art. 11](https://biblioteka.sejm.gov.pl/tek01/txt/kpol/1921a-r2.html)
+    gives the Sejm a five-year term from its opening;
+    [art. 39](https://biblioteka.sejm.gov.pl/tek01/txt/kpol/1921a-r3.html)
+    provides a seven-year president elected by the Sejm and Senate together.
+- **Access / confidence:** 2026-09-02; high for these specific provisions.
+- **Implemented interpretation:** Describe January as March Constitution with
+  transitional arrangements, not the full later institutional machinery.
+  Piłsudski's state office is distinct from the PPS Piłsudczycy faction.
+- **Planned, not implemented:** Polish election/term scheduling, presidential
+  election and Senate simulation. The retained four-year scheduling is not
+  justified by these sources. No Sejm-only presidential election is asserted
+  as historical; any future simplified procedure needs its own approval.
+- **Research boundary / rights:** Exact political practice and PPS cabinet
+  support need separate evidence; legal texts alone do not settle them. No
+  media imported or new licence claim made.
+- **Related files:** `source/scenes/root.scene.dry`,
+  `source/scenes/library.scene.dry`, `source/scenes/status.scene.dry`.
 
 ### Source entry INSTITUTION-TBD
 

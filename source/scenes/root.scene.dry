@@ -8,7 +8,7 @@ go-to: start_menu_2
 
 = PPS: An Alternate History
 
-**Playable-slice notice:** You play as the **PPS (Polska Partia Socjalistyczna)**. The opening electoral parties, support model, campaigning targets, inter-party relations, first-election coalition shell, three internal PPS factions, advisers and PPS self-defence organization are Polish. Most action cards, dated events, governments and institutions still use the inherited German baseline until their Polish replacements are researched, approved and implemented.
+**Playable-slice notice:** You play as the **PPS (Polska Partia Socjalistyczna)**. The January 1922 opening government, simplified parliament, electoral parties, support model, factions, advisers and PPS self-defence organization are implemented Polish slices. Most action cards, dated events and later governments still use the inherited German baseline. November 1922 elections are planned, not implemented; the live election schedule still begins in May 1928.
 
 @start_menu_2
 
@@ -19,6 +19,7 @@ go-to: start_menu_2
 
 
 @start
+call: polish_opening_state
 on-arrival: {!
 Q.started = 1;
 // time elapsed (in months)
@@ -420,17 +421,32 @@ Q.catholics_spd = Q.national_minorities_pps;
 Q.catholics_spd_compat_base = Q.catholics_spd;
 
 
-// Opening parliamentary composition is a gameplay projection from the approved
-// support model, rounded to whole percentages. Historical sourcing is TBD.
-Q.kpp_r = 6;
-Q.pps_r = 13;
-Q.npr_r = 6;
-Q.psl_wyzwolenie_r = 13;
-Q.psl_piast_r = 13;
-Q.pschd_r = 7;
-Q.zln_r = 12;
-Q.minorities_bloc_r = 20;
-Q.other_r = 10;
+// Approved simplification: 444 MPs from January 1922, using the user's rounded
+// August shares (100.1% total), NOT current polling or a January historical roster.
+// Integer tenths avoid floating-point ties. Largest remainders allocate exactly
+// 444 seats; ties use the existing party order. This is only an opening snapshot,
+// not a replacement for the inherited election algorithm.
+Q.sejm_total_seats = 444;
+Q.opening_sejm_active = 1;
+Q.opening_sejm_seats = {};
+var opening_weights = [5, 79, 49, 56, 222, 60, 188, 39, 303];
+var opening_weight_total = opening_weights.reduce(function(sum, value) { return sum + value; }, 0);
+var opening_remainders = [];
+var seats_assigned = 0;
+Q.parties.forEach(function(party, index) {
+    var numerator = opening_weights[index] * Q.sejm_total_seats;
+    var seats = Math.floor(numerator / opening_weight_total);
+    Q.opening_sejm_seats[party] = seats;
+    seats_assigned += seats;
+    opening_remainders.push({party: party, index: index, remainder: numerator % opening_weight_total});
+});
+opening_remainders.sort(function(a, b) { return b.remainder - a.remainder || a.index - b.index; });
+for (var seat = 0; seat < Q.sejm_total_seats - seats_assigned; seat++) {
+    Q.opening_sejm_seats[opening_remainders[seat].party] += 1;
+}
+for (var party of Q.parties) {
+    Q[party + '_r'] = 100 * Q.opening_sejm_seats[party] / Q.sejm_total_seats;
+}
 
 for (var party of Q.parties) {
     Q['old_' + party + '_r'] = Q[party + '_r'];
@@ -463,12 +479,18 @@ Q.party_support_records = [];
 Q.economic_records = [];
 
 
-// State of the government
-Q.president = "Hindenburg";
-// starting chancellor: Wilhelm Marx
-Q.chancellor = "Marx";
-Q.chancellor_party = 'Z';
+// January 1922 opening. Legacy office keys remain for unconverted consumers;
+// Piłsudski is NOT put in the presidency or connected to PPS faction state.
+Q.polish_opening_government_active = 1;
+Q.polish_cabinet_id = 'ponikowski_1';
+Q.head_of_state_office = 'naczelnik_panstwa';
+Q.head_of_state_name = 'Józef Piłsudski';
+Q.pps_external_toleration = 1;
+Q.president = '';
+Q.chancellor = 'Antoni Ponikowski';
+Q.chancellor_party = 'expert_cabinet';
 Q.spd_in_government = 0;
+Q.spd_caretaker = 0;
 Q.pps_in_government = 0;
 Q.kpp_in_government = 0;
 Q.npr_in_government = 0;
@@ -477,10 +499,10 @@ Q.psl_piast_in_government = 0;
 Q.pschd_in_government = 0;
 Q.zln_in_government = 0;
 Q.minorities_bloc_in_government = 0;
-Q.z_in_government = 1;
+Q.z_in_government = 0;
 Q.ddp_in_government = 0;
-Q.dvp_in_government = 1;
-Q.dnvp_in_government = 1;
+Q.dvp_in_government = 0;
+Q.dnvp_in_government = 0;
 Q.kpd_in_government = 0;
 Q.nsdap_in_government = 0;
 
@@ -511,31 +533,32 @@ Q.coalition_dissent = 0;
 // dissent from the KPD, in a popular front or left front government
 Q.kpd_coalition_dissent = 0;
 
-// does the SPD tolerate the government even if it is not a participant?
+// German toleration routes are NOT the Polish external-toleration relationship.
 Q.spd_toleration = 0;
 
 // is the current government a presidential minority government?
 Q.minority_government = 0;
 
-// ministries - which parties control the ministries?
-// starting with the 4th Marx cabinet https://en.wikipedia.org/wiki/Fourth_Marx_cabinet
-// is the agricultural ministry useful at all?
-Q.foreign_minister = 'Streseman';
-Q.foreign_minister_party = 'DVP';
-Q.interior_minister = 'von Keudell';
-Q.interior_minister_party = 'DNVP';
-Q.justice_minister = 'Hergt';
-Q.justice_minister_party = 'DNVP';
-Q.labor_minister = 'Brauns';
-Q.labor_minister_party = 'Z';
-Q.reichswehr_minister = 'Groener';
-Q.reichswehr_minister_party = 'I';
-Q.economic_minister = 'Curtius';
-Q.economic_minister_party = 'DVP';
-Q.finance_minister = 'Köhler';
-Q.finance_minister_party = 'Z';
-Q.agriculture_minister = 'Schiele';
-Q.agriculture_minister_party = 'DNVP';
+// Stable Polish gameplay portfolios, not an exact roster of historical ministries.
+// Existing keys are retained to avoid rewriting policy mechanics. New portfolios
+// are display/state only; no policy cards or allocation system are added.
+Q.polish_portfolios = {
+    labor: 'Praca i Opieka Społeczna',
+    interior: 'Sprawy Wewnętrzne',
+    finance: 'Skarb',
+    economic: 'Przemysł i Handel',
+    justice: 'Sprawiedliwość',
+    foreign: 'Sprawy Zagraniczne',
+    agriculture: 'Rolnictwo i Dobra Państwowe',
+    reichswehr: 'Sprawy Wojskowe',
+    education: 'Wyznania Religijne i Oświecenie Publiczne',
+    public_works: 'Roboty Publiczne i Komunikacja'
+};
+for (var portfolio in Q.polish_portfolios) {
+    Q[portfolio + '_minister'] = '';
+    // This means cabinet-administered, not that every incumbent was non-party.
+    Q[portfolio + '_minister_party'] = 'opening_expert_cabinet';
+}
 
 // Events: what has occurred?
 Q.panzerkreuzer_seen = 0;
@@ -776,13 +799,15 @@ Q.stampfer_advisor = 0; // Friedrich Stampfer
 set-bg: img/map_2.jpg
 new-page: true
 
-> *"Such a general development cannot be attributed to the false tactics of any single party or to the mistakes of individual leaders. On the contrary, the conduct of individual leaders is determined largely by the sentiments of the people as a whole. It would be erroneous, however, to regard the sentiments of the moment as reflecting the natural make-up and character of the people. They are merely the consequence of the special circumstances which have brought about this profound degradation of the entire nation."*
+= Poland, January 1922
 
- - Karl Kautsky, *Hitlerism and Social Democracy*, 1934
+Józef Piłsudski is **Naczelnik Państwa**, not President of the Republic. **Antoni Ponikowski** leads a predominantly expert cabinet. The **Sejm Ustawodawczy** remains the legislature under the transitional arrangements accompanying the March Constitution; there is no operating Senate or presidential officeholder at the opening.
 
-This is a game of alternate history. While historical accuracy is a major concern, keep in mind that this is a *game*, and that any divergence from actual events will necessarily have to involve some element of make-believe. Nevertheless, please let the author know if there are any glaring mistakes.
+**We tolerate Ponikowski's government, but we are outside the cabinet and control no ministries.** Campaigning, party organization, advisers and Milicja PPS remain available under their existing rules. Toleration does not grant command of the state police or executive powers.
 
-For more information on the politics and government of the German Republic, see the "Library" page on the top left. If this is your first time playing the game, it is strongly recommended that you read at least some of this information.
+The opening uses an approved **444-MP gameplay approximation**, calculated from rounded August 1922 club shares, not an exact January roster. Parliamentary representation is separate from changing public support.
+
+Read the Library for the opening institutions and cabinet portfolios. **November 1922 elections are planned, not implemented. The live schedule still starts in May 1928.** Later cabinet changes and most dated events remain an unfinished, mixed baseline; this is not a complete Polish campaign.
 
 - @1928_main: Begin
 
@@ -795,4 +820,6 @@ go-to: main
 
 The campaign begins in January 1922.
 
-The Polish opening party and adviser systems are implemented. Remaining office holders, institutions, dated events and unconverted mechanics retain the temporary German baseline.
+Naczelnik Państwa: **Józef Piłsudski**. Prime minister: **Antoni Ponikowski**. Legislature: **Sejm Ustawodawczy**.
+
+PPS provides external toleration, without cabinet membership or ministry control. The opening state is implemented; later governments, elections and unconverted mechanics remain temporary. November 1922 elections are planned, while the live scheduler still points to May 1928.

@@ -1,17 +1,18 @@
 title: library
 new-page: true
 is-special: true
+call: polish_opening_state
 go-to: menu
 
 = The Library
 
-This library is in transition. The player party, approved population and opening-party models, three internal PPS factions, PPS adviser pool, and PPS self-defence organization are implemented. The government, most other organizations, most cards, and dated events remain the temporary German baseline.
+This library is in transition. The Polish January 1922 opening government and simplified parliament, player party, population model, PPS factions, advisers and self-defence organization are implemented. Later governments, most other organizations, most cards and dated events remain an unfinished, mixed baseline.
 
 @menu
 
-- @government: Germany's system of government
+- @government: Poland's opening constitutional arrangements
 - @weimar_timeline: Timeline of the Weimar Republic before 1928
-- @curr_gov: Current government details
+- @curr_gov: Current government and cabinet portfolios
 - @demographics: Demographics
 - @parties: Parties
 - @public_opinion: Public opinion (and projected election results)
@@ -24,13 +25,19 @@ This library is in transition. The player party, approved population and opening
 @government
 go-to: menu
 
-The German Republic, called by some of our detractors as the "Weimar Republic", is a parliamentary republic with a somewhat weak president and a strong parliament, called the Reichstag. The Reichstag is responsible for governing, while the President has a largely ceremonial role but also has some important governing responsibilities.
+= Poland in January 1922
 
-The Reichstag is elected based on a proportional representation system, giving parties seats roughly proportional to their vote share in each electoral district. The Reichstag then elects the Chancellor and the cabinet by a majority vote, who are responsible for government. A majority vote-of-no-confidence can remove the current government.
+The March Constitution has been adopted, but its transitional arrangements preserve the **Sejm Ustawodawczy** and the office of **Naczelnik Państwa**, held by Józef Piłsudski. The transitional act of 18 May 1921 continued the Naczelnik's earlier powers pending the new presidency. There is no operating Senate or presidential officeholder at the opening. Piłsudski's state office is independent of the Piłsudczycy faction inside PPS.
 
-The President is elected by a national direct vote, in two rounds. The second round is used if the first round does not result in a majority for one candidate; the candidate who receives a plurality in the second round becomes president (there is no obligation for weaker candidates to drop out). The role of the president is mostly to represent Germany, but he also has some crucial governing powers. The president and chancellor can together use emergency decrees to govern, bypassing the Reichstag. The president can also appoint or remove a chancellor when a parliamentary majority is unable to be established, and can thus influence the formation of a government.
+**Antoni Ponikowski** leads a predominantly expert/administrative cabinet. This does not mean every minister was personally non-party. In this approved gameplay opening, PPS tolerates the cabinet from outside and holds no ministries. The exact historical basis for January PPS toleration remains **TBD — historical research required**.
 
-Germany is divided into a number of states, each of which have their own governments with some responsibilities. By far the largest and most important state is Prussia.
+Toleration is not executive control. You can organize PPS, campaign, use advisers and develop Milicja PPS, but cannot direct government taxation, appoint ministers or command the police through inherited Prussian powers. Cabinet portfolios can be inspected without joining the government. Adviser appointments do not appoint ministers.
+
+The opening **444-MP** parliament is an approved simplification: rounded August 1922 club percentages are normalized and allocated as whole seats, not asserted to be the historical January roster. Existing party IDs stand for simplified parliamentary categories. Minority deputies are an aggregate, not a claim that a single minority electoral bloc already existed in January. Campaigning changes public support, not sitting MPs.
+
+**Planned, not implemented:** the November 1922 parliamentary election, the December presidential election and subsequent cabinets. The March Constitution provided five-year Sejm terms from the opening of the chamber and seven-year presidential terms, with the president elected by the Sejm and Senate together as the National Assembly. Senate simulation is outside the current scope; a later Sejm-only election would be an explicit gameplay simplification.
+
+**Live scheduler:** this build still starts with the inherited May 1928 election. Later inherited events can alter that date. The opening slice does not implement the intended Polish election calendar or guarantee a coherent later campaign. It introduces no campaign cutoff.
 
 @weimar_timeline
 go-to: menu
@@ -62,19 +69,20 @@ go-to: menu
 **1926**: A referendum on the expropriation of the princes, supported by the SPD and KPD, fails.
 
 @curr_gov
-go-to: cabinet if spd_in_government; menu if not spd_in_government
+call: polish_opening_state
+go-to: cabinet
 
 = Current Government
 
-President: [+ president +]
+Head of state: [+ head_of_state_display +]
 
-Chancellor: [+ chancellor +] ([+ chancellor_party +])
+Prime minister: [+ prime_minister_display +]
 
-Sejm composition (gameplay percentages):
+[? if polish_opening_government_active and (year > 1922 or month > 2) : Development notice: the January cabinet snapshot is still in use. Later cabinet chronology has not been implemented. ?]
 
-KPP [+ kpp_r +]%, PPS [+ pps_r +]%, NPR [+ npr_r +]%, PSL Wyzwolenie [+ psl_wyzwolenie_r +]%, PSL Piast [+ psl_piast_r +]%, PSChD [+ pschd_r +]%, [+ zln_name +] [+ zln_r +]%, Blok Mniejszości Narodowych [+ minorities_bloc_r +]%, Inne [+ other_r +]%.
+[+ parliament_heading +]. See Figures and charts for the parliamentary breakdown, separately from Public opinion.
 
-PPS position: [? if spd_toleration : toleration ?][? if spd_in_government : in government - ?][? if spd_toleration == 0 and spd_in_government == 0 and spd_caretaker == 0 : opposition ?][? if spd_caretaker : caretaker government ?]
+PPS position: [+ pps_government_position +].
 [? if in_polish_left_coalition and spd_in_government: Koalicja Lewicy ?][? if in_polish_center_left_coalition and spd_in_government: koalicja centrolewicowa ?][? if in_spd_majority and spd_in_government: PPS majority ?][? if in_minority_government and spd_in_government: minority government [? if minorities_toleration: with Minorities Bloc toleration ?] ?][? if in_chjeno_piast: opposition to Chjeno-Piast ?]
 
 [? if spd_in_government and not in_spd_majority and not in_left_front : Coalition dissent: [+ coalition_dissent : coalition_dissent +] ?]
@@ -82,25 +90,36 @@ PPS position: [? if spd_toleration : toleration ?][? if spd_in_government : in g
 [? if spd_in_government and (in_left_front or in_popular_front): KPD coalition dissent: [+ kpd_coalition_dissent : coalition_dissent +] ?]
 
 @cabinet
+call: polish_opening_state
 go-to: menu
 
-Current cabinet:
+= Cabinet portfolios (read-only)
 
-Labor: [+ labor_minister_party +]
+These are ten stable Polish gameplay categories, not an exact historical ministry roster. Public Works / Communications combines several historical departments. Individual ministers are not simulated; inspecting this page grants no policy or appointment powers.
 
-Interior: [+ interior_minister_party +]
+[? if not polish_opening_government_active : Later portfolio allocation remains incomplete. Any ownership below comes from the temporary government framework, not a researched Polish cabinet. ?]
 
-Finance: [+ finance_minister_party +]
+Praca i Opieka Społeczna (Labour): [+ labor_portfolio_display +]
 
-Economic: [+ economic_minister_party +]
+Sprawy Wewnętrzne (Interior): [+ interior_portfolio_display +]
 
-Justice: [+ justice_minister_party +]
+Skarb (Treasury): [+ finance_portfolio_display +]
 
-Foreign: [+ foreign_minister_party +]
+Przemysł i Handel (Industry & Trade): [+ economic_portfolio_display +]
 
-Reichswehr: [+ reichswehr_minister_party +]
+Sprawiedliwość (Justice): [+ justice_portfolio_display +]
 
-Agriculture: [+ agriculture_minister_party +]
+Sprawy Zagraniczne (Foreign Affairs): [+ foreign_portfolio_display +]
+
+Rolnictwo i Dobra Państwowe (Agriculture): [+ agriculture_portfolio_display +]
+
+Sprawy Wojskowe (Military Affairs): [+ reichswehr_portfolio_display +]
+
+Wyznania Religijne i Oświecenie Publiczne (Education): [+ education_portfolio_display +]
+
+Roboty Publiczne i Komunikacja (Public Works / Communications): [+ public_works_portfolio_display +]
+
+Education and Public Works are represented as portfolios only; new policy actions and a Polish ministry-allocation system are not implemented.
 
 
 @demographics
@@ -329,18 +348,19 @@ Some approved adviser actions remain visibly marked as planned because Centrolew
 
 @figures
 title: Figures and Charts
+call: polish_opening_state
 go-to: menu
 on-display: {!
-data = [];
+var data = [];
 for (var party of Q.parties) {
     data.push({
         "id": party,
-        "legend": Q.party_names[party],
-        "name": Q.party_names[party],
-        "seats": Math.round(Q[party + '_r']*5)
+        "legend": Q.parliament_names[party],
+        "name": Q.parliament_names[party],
+        "seats": Q.opening_sejm_active ? Q.opening_sejm_seats[party] : Math.round(Q[party + '_r']*5)
     });
 }
-if (d3 && window) {
+if (typeof d3 !== 'undefined' && typeof window !== 'undefined') {
     // get screen width
     var width = 500;
     var height = 500;
@@ -355,6 +375,10 @@ if (d3 && window) {
     parliament.enter.fromCenter(true).smallToBig(true);
     parliament.exit.toCenter(false).bigToSmall(true);
     d3.select("#reichstag").datum(data).call(parliament);
+    // Use the same palette as the legend/history, including the Other category.
+    for (var party of Q.parties) {
+        d3.select("#reichstag").selectAll(".seat." + party).style("fill", Q.party_colors[party]);
+    }
 
     var lines = d3.linegraph(false, false,
             Q.parties,
@@ -389,25 +413,29 @@ if (d3 && window) {
 }
 !}
 
-= Sejm composition
+= [+ parliament_heading +]
+
+[? if opening_sejm_active : Each dot represents one MP in the approved 444-seat opening approximation, using August club shares from January. Percentages are rounded for display; these are not current opinion polls. ?]
+
+[? if not opening_sejm_active : The opening snapshot has ended. This inherited chart illustrates parliamentary percentages with approximately 500 dots; a Polish seat-allocation system for later elections is not implemented. ?]
 
 {!<svg id="reichstag" style="width: 500px; height: 250px;"> </svg>!}
 
 {!<table>!}
-{!<tr><td><div class="box" style='background-color:#8B0000'> </div></td><td>!} KPP {!</td><td>!} [+ kpp_r +]% {!</td></tr>!}
-{!<tr><td><div class="box" style='background-color:#E3000F; outline: 2px; outline-style: solid;'> </div></td><td>!} **PPS** {!</td><td>!} **[+ pps_r +]%** {!</td></tr>!}
-{!<tr><td><div class="box" style='background-color:#C96A24'> </div></td><td>!} NPR {!</td><td>!} [+ npr_r +]% {!</td></tr>!}
-{!<tr><td><div class="box" style='background-color:#6FAF45'> </div></td><td>!} PSL Wyzwolenie {!</td><td>!} [+ psl_wyzwolenie_r +]% {!</td></tr>!}
-{!<tr><td><div class="box" style='background-color:#2F7D32'> </div></td><td>!} PSL Piast {!</td><td>!} [+ psl_piast_r +]% {!</td></tr>!}
-{!<tr><td><div class="box" style='background-color:#D5AC27'> </div></td><td>!} PSChD {!</td><td>!} [+ pschd_r +]% {!</td></tr>!}
-{!<tr><td><div class="box" style='background-color:#3F7BC1'> </div></td><td>!} [+ zln_name +] {!</td><td>!} [+ zln_r +]% {!</td></tr>!}
-{!<tr><td><div class="box" style='background-color:#7C5AA6'> </div></td><td>!} Blok Mniejszości Narodowych {!</td><td>!} [+ minorities_bloc_r +]% {!</td></tr>!}
-{!<tr><td><div class="box" style='background-color:#A0A0A0'> </div></td><td>!} Inne {!</td><td>!} [+ other_r +]% {!</td></tr>!}
+{!<tr><td><div class="box" style='background-color:#8B0000'> </div></td><td>!} KPP {!</td><td>!} [+ kpp_sejm_display +] {!</td></tr>!}
+{!<tr><td><div class="box" style='background-color:#E3000F; outline: 2px; outline-style: solid;'> </div></td><td>!} **PPS** {!</td><td>!} **[+ pps_sejm_display +]** {!</td></tr>!}
+{!<tr><td><div class="box" style='background-color:#C96A24'> </div></td><td>!} NPR {!</td><td>!} [+ npr_sejm_display +] {!</td></tr>!}
+{!<tr><td><div class="box" style='background-color:#6FAF45'> </div></td><td>!} PSL Wyzwolenie {!</td><td>!} [+ psl_wyzwolenie_sejm_display +] {!</td></tr>!}
+{!<tr><td><div class="box" style='background-color:#2F7D32'> </div></td><td>!} PSL Piast {!</td><td>!} [+ psl_piast_sejm_display +] {!</td></tr>!}
+{!<tr><td><div class="box" style='background-color:#D5AC27'> </div></td><td>!} PSChD {!</td><td>!} [+ pschd_sejm_display +] {!</td></tr>!}
+{!<tr><td><div class="box" style='background-color:#3F7BC1'> </div></td><td>!} [+ zln_name +] {!</td><td>!} [+ zln_sejm_display +] {!</td></tr>!}
+{!<tr><td><div class="box" style='background-color:#7C5AA6'> </div></td><td>!} [? if opening_sejm_active : Minority deputies ?][? if not opening_sejm_active : Blok Mniejszości Narodowych ?] {!</td><td>!} [+ minorities_bloc_sejm_display +] {!</td></tr>!}
+{!<tr><td><div class="box" style='background-color:#A0A0A0'> </div></td><td>!} Inne {!</td><td>!} [+ other_sejm_display +] {!</td></tr>!}
 {!</table>!}
 
 = Election history
 
-[? if year < 1928 or (year = 1928 and month < 5) : No new elections yet. ?]
+[? if n_elections = 0 : No new elections yet. The opening parliamentary snapshot is not an election held during play. ?]
 
 {!<svg id="election_history" style="width: 500px; height: 400px;"> </svg>!}
 

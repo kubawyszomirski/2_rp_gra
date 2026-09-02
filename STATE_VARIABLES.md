@@ -30,14 +30,14 @@ find every dynamic reader.
   keys. The approved population slice adds 58 identifiable keys: two group
   weights, two quality-of-life placeholders, and two 27-key raw/normalized/
   display class-party families (including SAPD).
-- The current expanded inventory is therefore **1,047 identifiable state
-  keys**. It includes keys that a dynamic loop can access even if their value
-  is absent and consequently behaves as false/zero.
+- That audit snapshot contained **1,047 identifiable state keys**. This is not
+  a recounted total after the later party, adviser and opening-state slices;
+  their contracts are documented below. It includes keys that a dynamic loop
+  can access even if their value is absent and behaves as false/zero.
 - JavaScript locals such as `party`, `class_votes`, and `candidate_votes` are
   not qualities and are excluded.
 - Dendry engine state such as the current hand, visit counts, and current scene
-  is persistent runtime state but is not included in the 934 source-quality
-  keys.
+  is persistent runtime state but is not included in those source-quality counts.
 
 This is a static evidence inventory. “Appears unread” and “not initialized” do
 not prove a defect; dynamic access, runtime code, and route ordering must be
@@ -66,13 +66,13 @@ Each table covers the requested fields in compact form:
 | Exact name | Type / initialization / range | Writers / readers / display | Dependencies / kind | Thresholds / uncertainty | Polish adaptation decision |
 | --- | --- | --- | --- | --- | --- |
 | `started` | Number used as boolean; `root.start`, `0` before start and `1` on start | Written/read in `source/scenes/root.scene.dry`; controls start menu vs game | Root routing; persistent control state | Must be set before normal loop | TBD — user decision required. |
-| `time` | Integer month counter; `root.start`: `1`; increases by one per spent-action reconciliation | Written in `source/scenes/post_event.scene.dry`; read by cards/events including the government-deck gate | Calendar, events, elections; persistent simulation state | Government deck uses `time >= 6`; relationship to month/year must remain consistent | Retain `1` as the opening relative-time value unless the Polish calendar audit identifies a conflict. |
+| `time` | Integer month counter; `root.start`: `1`; increases by one per spent-action reconciliation | Written in `source/scenes/post_event.scene.dry`; read by cards/events including the government-deck gate | Calendar, events, elections; persistent simulation state | Government deck needs `time >= 6` AND inactive opening-cabinet guard; relationship to month/year must remain consistent | Retain `1` as the opening relative-time value. |
 | `year` | Integer; current `root.start`: `1922`; increments at month rollover | `post_event` and dated event conditions; shown in status | Calendar, events, ending; persistent simulation state | Month 13 resets to 1 and increments year; retained absolute-year German events begin in 1928 and campaign-end events begin in 1934 | Implemented as `1922`. German date gates retain their existing years until researched Polish replacements are approved. |
 | `month` | Integer; current `root.start`: `1`; normal values 1–12 | Written by `post_event`; read by scheduled events/elections; `source/qdisplays/month.qdisplay.dry` | Calendar and all scheduled content; persistent simulation state | Must remain 1–12 after reconciliation | Implemented as `1`, representing January. |
 | `month_actions` | Integer control count; `root.start`: `0`; most action cards add one | Written throughout party/government scenes and reset by `post_event`; no direct qdisplay | Determines whether time advances; temporary turn control persisted in saves | `>= 1` advances exactly one month; discard/cancel paths subtract one | TBD — user decision required. |
 | `timers` | Array of timer base names; initialized in `root.start` | Read by the decrement loop in `post_event`; not directly shown | All card/event cooldowns; persistent configuration state | A `<base>_timer` omitted from this array does not use central decrement | TBD — user decision required. |
 | `*_timer` | Nonnegative integer months by convention; many explicit zeros in `root.start`, others created later | Written by matching cards/events; read in `view-if`/choices and decremented in `post_event`; usually player sees availability, not the number | Hand eligibility, events, advisers; persistent cooldown state | Positive values decrement; most cards treat zero/absent as available; inconsistent initialization is a risk | TBD — user decision required. |
-| `next_election_year`, `next_election_month`, `next_election_time` | Integers; initialized to May 1928 and relative month `77` in `root.start`; regular election code advances the year by four | Written/read in `source/scenes/events/election_1928.scene.dry`; event date is player-facing | Election scheduling; persistent simulation state | January 1922 is `time = 1`, so May 1928 is `time = 77`; the month/year pair and relative counter must agree | Retain May 1928 only as an interim German-baseline schedule. The first Polish election remains **TBD — historical research required**. |
+| `next_election_year`, `next_election_month`, `next_election_time` | Integers; initialized to May 1928 and relative month `77` in `root.start`; regular election code advances the year by four | Written/read in `source/scenes/events/election_1928.scene.dry`; event date is player-facing | Election scheduling; persistent simulation state | January 1922 is `time = 1`, so May 1928 is `time = 77`; the month/year pair and relative counter must agree | Deliberately unchanged in opening slice. November 1922 Polish elections are planned, not implemented; the actual scheduler remains inherited. |
 
 ## Resources and action economy
 
@@ -94,7 +94,7 @@ Each table covers the requested fields in compact form:
 | `legacy_party_map` | Object initialized as `spd`→`pps`, `kpd`→`kpp`, `dvp`→`pschd`, `dnvp`→`zln` | `post_event` and `election_algorithm` transfer deltas; inherited scenes write legacy families | Compatibility layer; persistent transitional state | Transfer bases must be refreshed after each transfer to prevent duplicate effects | Implemented narrowly; no mapping is inferred for Zentrum, DDP or NSDAP. |
 | `<party>_normalized` | Fraction number, normally 0–1; calculated by `post_event`/`election_algorithm` | Written in those calculators; read by presidential election, UI/charts, and events | Vote shares, candidate aggregation, achievements; derived persistent state | Party fractions should sum approximately to 1; division denominator must be nonzero | TBD — user decision required. |
 | `<party>_votes`, `<party>_votes_dec`, `<party>_votes_disp`, `<party>_votes_display` | Numeric and formatted derived variants; calculators assign rounded values | Election/post-event writers; election narrative/status readers | Player-facing vote representation and downstream election state; derived/display state | Similar suffixes have different rounding/format; `use_decimals` is TODO | TBD — user decision required. |
-| `<party>_r`, `<party>_r_disp` | Numeric parliamentary percentage and formatted version; initial base values in `root.start`, recalculated on election | Election writer; coalition formulas, parliament D3, endings, and narrative readers | Seats/proxy, coalitions, UI; persistent election result | Qualifying results are renormalized; source commonly treats percentages as seats proxy | TBD — user decision required. |
+| `<party>_r`, `<party>_r_disp` | Numeric parliamentary percentage and formatted version; root starts at `100 * opening_sejm_seats[party] / 444`; recalculated on election | Election writer; coalition formulas, parliament D3, endings and narrative readers | Seats/proxy, coalitions, UI; persistent result | Opening counts, not polls, are authoritative; subsequent elections retain percentage proxies | Implemented separate opening snapshot; not a Polish election allocator. |
 | `old_<party>_r`, `change_<party>_r`, `str_change_<party>` | Prior numeric result, numeric delta, formatted signed delta; initialized/calculated in root/election | Election code writes/reads; result screen displays | Election comparison; persistent/display-support state | Must update as one family before overwriting current result | TBD — user decision required. |
 | `electoral_threshold` | Numeric percent; `root.start`: `0` | Constitutional-policy writers; election filter reader; policy/result presentation | Election inclusion and coalition totals; persistent rule state | Party is removed when votes are below threshold; “other” has special handling above 1 | TBD — user decision required. |
 | `kpd_banned`, `nsdap_banned` and dynamic `<party>_banned` reads | Number used as boolean; explicit two-party flags initialized `0` | Constitutional/institutional scenes write; election loop dynamically reads for every party | Election eligibility; persistent rule/flag state | Only two explicit base flags are evidenced; absent dynamic keys act false in compiled conditions | TBD — user decision required. |
@@ -125,6 +125,43 @@ Each table covers the requested fields in compact form:
 | `left_split`, `centrists_resign`, `reformists_resign`, `reformists_resigned`, `unions_independent`, `sapd_formed` | Legacy compatibility flags | Inherited event/card files may read/write them | Transitional inherited mechanics | German faction split/resignation scenes are gated off when `polish_faction_system` is active | Retained compatibility state; not PPS faction outcomes. |
 
 ## Coalition and inter-party state
+
+### Implemented Polish Opening State contract
+
+Initialization is in `source/scenes/root.scene.dry`. The helper
+`source/scenes/polish_opening_state.scene.dry` runs **after** initialization and
+monthly reconciliation and before main/status/Library displays. The following
+state is for new games and same-version saves, not an old-save migration.
+
+| Exact name/family | Type and initial value | Writers/readers and invariant |
+| --- | --- | --- |
+| `polish_opening_government_active` | Boolean-like number, `1` | Root initializes; helper and both election-result branches clear it. Guards opening executive/Prussian police routes, government deck and display. Never reactivated automatically. |
+| `polish_cabinet_id` | String, `ponikowski_1` | Root/helper; display/lifecycle identity. Cleared when the opening is retired, not assigned to a researched successor. |
+| `head_of_state_office`, `head_of_state_name` | Strings, `naczelnik_panstwa`, `Józef Piłsudski` | Root/helper and UI. Separate from the PPS Piłsudczycy faction. Cleared on opening retirement; no invented successor. |
+| `pps_external_toleration` | Boolean-like number, `1` | Root/helper; PPS-position text only. Grants no ministry or cabinet membership; never copied into `spd_toleration`. Clears when this opening government is replaced. |
+| `chancellor`, `chancellor_party`, `president` | Strings, `Antoni Ponikowski`, `expert_cabinet`, empty string | Retained executive compatibility keys; existing event writers still work. Empty president does not mean Piłsudski is president. Later named-string comparisons are unchanged. |
+| `polish_portfolios` | Object mapping ten stable keys to Polish labels | Root and read-only Library/helper. Keys: `labor`, `interior`, `finance`, `economic`, `justice`, `foreign`, `agriculture`, `reichswehr`, `education`, `public_works`. Last two add no policy/allocator behavior. |
+| `<portfolio>_minister_party`, `<portfolio>_minister` | Strings, `opening_expert_cabinet` and empty name | The sentinel denotes cabinet administration outside PPS, not a claim that all ministers were non-party. Helper clears remaining sentinels after replacement but preserves new owners/names. Existing ministry checks must not treat the sentinel as PPS/SPD ownership. |
+| `sejm_total_seats` | Integer, `444` | Root; denominator for this opening only. Not a promise about later legacy charts/elections. |
+| `opening_sejm_seats` | ID→integer object, 2/35/22/25/99/27/83/17/134 in party order | Root largest-remainder allocation from normalized supplied August shares. Sum is exactly 444. Retained as an archive after invalidation, never reused as current results then. |
+| `opening_sejm_active` | Boolean-like number, `1` | Election result branches clear it; helper also clears when any `_r` differs from `100 * opening MPs / 444` by more than `1e-9` or `n_elections > 0`. Cabinet replacement alone does not clear it. Polling is independent. |
+| `head_of_state_display`, `prime_minister_display`, `pps_government_position`, `parliament_heading`, `parliament_names`, `<party>_sejm_display`, `<portfolio>_portfolio_display` | Derived strings/maps | Helper refreshes for status/Library. Opening minority representation is labelled “Minority deputies”; global party IDs/names remain unchanged. Later unimplemented state is explicitly labelled temporary. |
+
+The helper recognizes replacement through executive identity, government/
+caretaker/legacy-toleration flags, ministry-owner changes or an election. It
+clears only opening metadata and remaining opening placeholders, never new
+government assignments or the calendar. No new timers are introduced. From
+March 1922 the UI warns if the January cabinet snapshot persists. November
+1922 is **planned, not scheduled**: the live `next_election_*` still starts at
+May 1928 / relative month 77 and retains inherited subsequent scheduling.
+
+Opening `spd_in_government`, `pps_in_government`, `spd_caretaker`, coalition
+flags, legacy `spd_toleration` and minority toleration all start at zero.
+`spd_prussia = 1` deliberately remains for force compatibility, **not** police
+command rights: rally/police-training and Prussian executive options have
+opening-specific guards. Police figures and militia mechanics are unchanged.
+
+### Retained coalition and relationship families
 
 | Exact name or family | Type / initialization / range | Writers / readers / display | Dependencies / kind | Thresholds / uncertainty | Polish adaptation decision |
 | --- | --- | --- | --- | --- | --- |
