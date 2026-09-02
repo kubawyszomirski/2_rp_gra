@@ -13,8 +13,8 @@ recorded separately in `HISTORICAL_SOURCES.md`.
 > The opening now has Piłsudski as Naczelnik Państwa, Ponikowski as prime
 > minister, external PPS toleration and a simplified 444-MP Sejm Ustawodawczy.
 > Later cabinets and most events/mechanics still use the temporary baseline.
-> November 1922 elections are planned, not implemented; the live first election
-> remains May 1928. No campaign cutoff was introduced.
+> The November 1922 Sejm election now records exact seats separately from votes.
+> May 1928 remains the temporary next date. No cutoff was introduced.
 
 > **Implemented Polish opening-party slice:** Active election IDs are `kpp`,
 > `pps`, `npr`, `psl_wyzwolenie`, `psl_piast`, `pschd`, `zln`,
@@ -147,8 +147,9 @@ There is no difficulty selection. Evidence:
 5. `post_event` normalizes support and faction values. If at least one action
    was spent, it advances one month, decrements timers, records graph data, and
    applies economic feedback.
-6. The event selector evaluates `#event`. An eligible scheduled or threshold
-   event may run; otherwise play returns to the main hand.
+6. A due/in-progress Sejm election has an exclusive route before another
+   ordinary action. Otherwise the `#event` selector may run an eligible event;
+   if none exists, play returns to the main hand.
 
 Eligible cards expose a return-to-hand path that reverses the action marker,
 clears the card timer, resets the card visit count, and puts the card back into
@@ -165,10 +166,10 @@ selector exposes the currently eligible event choices. The compiled tag index
 contains 69 top-level event scenes. Some are scheduled by `year`/`month`;
 others react to values such as coup or capital-strike progress.
 
-The election event becomes eligible at `next_election_year` and
-`next_election_month`. It calls `election_algorithm`, processes thresholds and
-bans, calculates displayed parliamentary shares, then enters coalition
-formation. It schedules the next regular election and records results.
+After monthly processing, an exclusive route enters `sejm_election` when due
+or resumes its saved phase. `election_algorithm` refreshes voting intentions;
+`sejm_election_result` records exact votes/seats once, then the existing Polish
+government choices use integer-seat majorities. No monthly action is charged.
 
 End conditions route to `game_over`, which computes achievements and selects
 an eligible tagged ending. Some endings are defeat states, some are victory or
@@ -238,9 +239,9 @@ be traced back to code.
   structure, with the campaign starting in January 1922. Do not shift German
   dated events without approved Polish replacements.
 - **Polish equivalent:** Implemented opening calendar: `year = 1922`,
-  `month = 1`, and `time = 1`. The retained May 1928 German election is
-  relative month `77`. November 1922 Polish elections are planned but not yet
-  implemented; see the opening contract in sections 8–10 and `PLAN.md`.
+  `month = 1`, and `time = 1`. The first election is November, relative month
+  `11`; the temporary next date is May 1928, relative month `77`. See sections
+  8–10 and `PLAN.md` for the implemented election and continuation boundary.
 - **Unresolved:** Whether every apparently unused initial field is retained for
   a planned mechanic or is obsolete is **UNCLEAR — requires code investigation
   or runtime testing.**
@@ -476,40 +477,47 @@ The opening is now a separate, fixed parliamentary snapshot, not a simulated
 election: the supplied August shares (total 100.1%) are normalized to 444 MPs by
 largest remainder in `source/scenes/root.scene.dry`. Counts in party order are
 2/35/22/25/99/27/83/17/134. Current and old `_r` values start at `100 * MPs / 444`;
-public-support rows and polls are unchanged. This does not implement Polish
-district allocation or the November 1922 election. The live election algorithm
-below remains percentage-based and retires the snapshot on result processing.
+public-support rows and polls are unchanged. November uses a separate national
+heuristic, not historical district allocation.
 
-- **Purpose:** Freeze current support into an election result, enforce legal
-  rules, compare with the prior result, and open government formation.
-- **Player sees:** Vote shares/changes, largest party, coalition options, and
-  ministry bargaining.
-- **Sequence:** The event invokes `election_algorithm`; shares below the
-  threshold or for banned parties are zeroed; remaining shares are
-  renormalized; old/result/change fields are updated; coalition totals and
-  largest party are calculated; government/ministry state is reset; results
-  are recorded; the next election is scheduled.
-- **Scenes/files:** `source/scenes/election_algorithm.scene.dry` and
+- **Purpose:** Freeze current support into an election result, apply approved
+  allocation rules, compare with the prior parliament, and open government formation.
+- **Player sees:** Votes %, MPs and seat %, MP/seat-share changes, distinct
+  largest-list/party labels, and Polish coalition choices. No ministry bargaining.
+- **Sequence:** After the month's effects, refresh polling, combine first-election
+  ZLN+PSChD as ChZJN, split Inne into 2% lists plus a remainder, apply the approved
+  bands, normalize weights and allocate integer seats by largest remainder.
+  Attribute ChZJN MPs in proportion to election support. Publish one immutable
+  `sejm_results` entry and update `sejm_parliament`; reset government/portfolios;
+  select an approved government and return to the same month. Exact remainder
+  ties use lexical IDs. First election has no new threshold/bans; later
+  constitutional-reform exclusions retain their existing compatibility purpose.
+- **Scenes/files:** `source/scenes/election_algorithm.scene.dry`,
+  `source/scenes/sejm_election.scene.dry`, `source/scenes/sejm_election_result.scene.dry`,
+  `source/scenes/polish_opening_state.scene.dry`, and Polish choices retained in
   `source/scenes/events/election_1928.scene.dry`.
-- **Important state:** `next_election_year`, `next_election_month`,
-  `n_elections`, `electoral_threshold`, party bans, `<party>_r`,
-  `old_<party>_r`, `change_<party>_r`, `largest_party`, coalition totals,
-  `leverage`, `election_records`, and `use_decimals`.
+- **Important state:** `sejm_pending`, `sejm_results`, `sejm_parliament`,
+  `<party>_seats`, `sejm_majority_required`, `next_election_*`, `n_elections`;
+  derived `<party>_r`, coalition totals, `leverage` and `election_records`;
+  continuation-only `electoral_threshold` and party bans.
 - **Depends on:** Party support, calendar, constitutional rules, and party list.
 - **Depended on by:** Parliament display, coalitions, ministries, government
   events, and endings.
-- **Conditions/invariants:** Regular next election is advanced four years;
-  qualifying shares are renormalized; `use_decimals` is marked TODO in source.
-- **Coupling/risks:** The code usually treats result percentages as a proxy for
-  seats. Coalition formulas contain explicit adjustments, so changing parties
-  or thresholds requires a full formula audit.
+- **Conditions/invariants:** Exactly 444 integer seats, majority 223; no month
+  charged; repeated calculation/navigation/load cannot duplicate results.
+  May 1928 follows November temporarily, with later legacy scheduling retained.
+- **Coupling/risks:** `_r` and legacy aliases remain seat percentages, never MP
+  counts. `leverage` retains percentage units. Polling `_votes` remains a rounded
+  display adapter, not recorded votes. Band boundaries intentionally create jumps.
 - **Safe extension points:** An election-specific rule behind a documented
   flag, with fixtures for threshold, ban, rounding, and coalition totals.
-- **Polish adaptation reconsideration:** Electoral law, districts/seats,
-  parties, term length, bans, coalition arithmetic, and office allocation.
-- **Polish equivalent:** TBD — user historical research required.
-- **Unresolved:** Exact seat allocation beyond percentage-based approximation
-  is **UNCLEAR — requires code investigation or runtime testing.**
+- **Polish adaptation reconsideration:** Later electoral chronology, parties,
+  term length, bans, coalition rules and office allocation. Geographic/district
+  modeling is excluded by decision, not required to finish this slice.
+- **Polish equivalent:** Approved national heuristic, with user-confirmed
+  calibrated weights; no geographical concentration model is planned here.
+- **Unresolved:** Later historical election dates, cabinets and presidential
+  succession remain **TBD — historical research required**.
 
 ### 9. Parliament display
 
@@ -518,8 +526,9 @@ below remains percentage-based and retires the snapshot on result processing.
   display areas.
 - **Sequence:** While `opening_sejm_active`, Library figures pass the exact
   opening counts to `out/html/d3-parliament.js`: one dot per MP, total 444.
-  Afterwards the inherited roughly 500-dot percentage illustration remains,
-  explicitly labelled as temporary rather than a Polish seat allocation.
+  Elected parliaments also use exact counts, with ChZJN grouped in its first
+  election. Recorded history tables separate votes, MPs and seat percentages.
+  `sejm_display_rows` and `sejm_history` derive from the same result records.
 - **Scenes/files:** D3 calls in `source/scenes/events/election_1928.scene.dry`
   and `source/scenes/library.scene.dry`; scripts loaded by
   `out/html/index.html`; copied D3 from the build script in `package.json`.
@@ -532,15 +541,16 @@ below remains percentage-based and retires the snapshot on result processing.
   reads the rendered output.
 - **Conditions/invariants:** Opening chart and text must agree on all nine
   counts. The opening approximation is not the exact historical January roster.
-  Poll changes never change sitting MPs; a result writer invalidates the snapshot.
+  Poll changes never change sitting MPs; only the authoritative result writer
+  replaces the snapshot. Old `_r` writes are repaired from the parliament.
 - **Coupling/risks:** Party order, colors, and hard-coded labels must match
   election state. Removing `parliament-svg` is explicitly out of scope.
 - **Safe extension points:** Display-only labels/colors after verifying every
   party and the browser layout.
-- **Polish adaptation reconsideration:** Chamber size/layout, party set,
-  colors, legend, and whether an exact allocator is required.
-- **Polish equivalent:** Implemented 444-seat opening approximation only;
-  subsequent Polish election allocation remains planned.
+- **Polish adaptation reconsideration:** Future party set, colors and layout;
+  the exact allocator and one-MP-per-dot decision are already implemented.
+- **Polish equivalent:** Exact opening/elected counts and combined first-election
+  ChZJN display implemented. No historical district/geographical model.
 - **Unresolved:** Responsive behavior and accessibility of the SVG are
   **UNCLEAR — requires code investigation or runtime testing.**
 
@@ -552,14 +562,14 @@ membership or ministry access. All coalition/member flags and `spd_toleration`
 start false. `source/scenes/polish_opening_state.scene.dry` runs after root
 initialization and post-event reconciliation and before main/status/Library
 displays. It retires opening metadata if the executive or ministry ownership
-is replaced; the two existing election-result branches retire it explicitly.
+is replaced; the new result writer retires the opening cabinet explicitly.
 New assignments are preserved and no Polish successor is invented. Parliament
 has its own validity flag: a cabinet change alone does not dissolve it.
 Past February, the UI warns when the January snapshot persists. This cleanup
 does not implement cabinet chronology or freeze the existing event scheduler.
 
 > **Implemented Polish boundary:** Active Polish elections bypass the inherited
-> German coalition menu. The first-cycle shell computes PPS majority, Koalicja
+> German coalition menu. Exact MP totals compute PPS majority, Koalicja
 > Lewicy, centre-left, Chjeno-Piast and minority-toleration totals. Minorities
 > Bloc toleration explicitly leaves that party outside the cabinet. The old
 > German branches remain in the source as inactive compatibility content.
@@ -569,12 +579,12 @@ does not implement cabinet chronology or freeze the existing event scheduler.
 - **Purpose:** Translate an election into a government and make unstable
   alliances constrain policy.
 - **Player sees:** Available coalition/toleration choices, relationship gates,
-  ministry negotiations, coalition disputes, and confidence votes.
-- **Sequence:** Election code computes named coalition totals; menus gate paths
-  by majority, relationships, leadership, resources, and president; chosen
-  routes set `in_*` flags and cabinet access; later actions/events change
-  `coalition_dissent`; high dissent can trigger coalition affairs or a vote of
-  no confidence.
+  and explicitly temporary government information, not ministry negotiations.
+- **Sequence:** Exact seats and retained relationship gates determine the
+  choices. Government selection sets member/coalition flags once. External
+  minority-bloc toleration never grants it cabinet membership. Dissent still
+  changes under retained welfare/adviser rules; German confidence/toleration
+  routes are guarded off. A Polish cabinet-crisis replacement remains planned.
 - **Scenes/files:** Coalition sections of
   `source/scenes/events/election_1928.scene.dry`,
   `source/scenes/government_affairs/coalition_affairs.scene.dry`,
@@ -588,9 +598,9 @@ does not implement cabinet chronology or freeze the existing event scheduler.
   president/chancellor state.
 - **Depended on by:** Government card access, ministries, policy viability,
   no-confidence events, and endings.
-- **Conditions/invariants:** Majority checks generally use 50; coalition
-  dissent's qdisplay bands are 0, 1, 2, 3, and 4+; the constructive vote flag
-  changes confidence-vote logic.
+- **Conditions/invariants:** Polish majority checks require 223 of 444; coalition
+  dissent's qdisplay bands are 0, 1, 2, 3, and 4+. The constructive-vote flag
+  survives only in the guarded inherited confidence logic.
 - **Coupling/risks:** Many mutually related flags represent one government.
   Incomplete reset can leave contradictory coalition state.
 - **Safe extension points:** A new coalition path that reuses a centralized
@@ -741,17 +751,21 @@ new keys have no policy cards or allocation algorithm. The combined Public
 Works category is a gameplay simplification, not a literal historical roster.
 
 **Authority boundary:** Existing government/ownership checks block tax,
-appointment and ministerial actions. Additional opening guards cover
+appointment and ministerial actions. Persistent Polish safeguards cover
 `source/scenes/government_affairs/{prussian_affairs,dealing_with_toleration,education_science,deport_hitler}.scene.dry`,
 police protection in `source/scenes/party_affairs/rally.scene.dry`, and police
 training in `source/scenes/party_affairs/streetfighting.scene.dry`. The main
 government deck stays hidden while the opening is active, including at its
 month-six unlock. `spd_prussia` and force statistics remain for compatibility,
 not as authority to command Polish police. Militia-only defence and ordinary
-party/adviser actions remain available under existing conditions.
+party/adviser actions remain available under existing conditions. After the
+election, guards also exclude German War Guilt, cabinet allocation/shuffle,
+confidence and toleration routes. Generic welfare remains a labelled temporary
+mechanic. The government deck requires at least one eligible remaining card.
 
-The following allocation mechanics are retained legacy behavior, not a new
-Polish ten-portfolio ministry system:
+The following allocation mechanics remain in source but are **not reached by
+the Polish election**. All ten portfolios are cleared and unallocated after
+its minimal government choice; no new Polish ministry system is implied:
 
 - **Purpose:** Restrict government actions according to coalition participation
   and offices controlled by the player party.

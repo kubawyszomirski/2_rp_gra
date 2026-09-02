@@ -72,7 +72,7 @@ Each table covers the requested fields in compact form:
 | `month_actions` | Integer control count; `root.start`: `0`; most action cards add one | Written throughout party/government scenes and reset by `post_event`; no direct qdisplay | Determines whether time advances; temporary turn control persisted in saves | `>= 1` advances exactly one month; discard/cancel paths subtract one | TBD — user decision required. |
 | `timers` | Array of timer base names; initialized in `root.start` | Read by the decrement loop in `post_event`; not directly shown | All card/event cooldowns; persistent configuration state | A `<base>_timer` omitted from this array does not use central decrement | TBD — user decision required. |
 | `*_timer` | Nonnegative integer months by convention; many explicit zeros in `root.start`, others created later | Written by matching cards/events; read in `view-if`/choices and decremented in `post_event`; usually player sees availability, not the number | Hand eligibility, events, advisers; persistent cooldown state | Positive values decrement; most cards treat zero/absent as available; inconsistent initialization is a risk | TBD — user decision required. |
-| `next_election_year`, `next_election_month`, `next_election_time` | Integers; initialized to May 1928 and relative month `77` in `root.start`; regular election code advances the year by four | Written/read in `source/scenes/events/election_1928.scene.dry`; event date is player-facing | Election scheduling; persistent simulation state | January 1922 is `time = 1`, so May 1928 is `time = 77`; the month/year pair and relative counter must agree | Deliberately unchanged in opening slice. November 1922 Polish elections are planned, not implemented; the actual scheduler remains inherited. |
+| `next_election_year`, `next_election_month`, `next_election_time` | Integers; root: `1922`, `11`, `11`; first result schedules `1928`, `5`, `77` | Opening helper protects the first date; `sejm_election_result` schedules continuation; later inherited scheduling writers remain | Election scheduling; persistent simulation state | Month/year and relative counter agree. Later ordinary results schedule four years from the actual election date | November 1922 implemented. May 1928 and subsequent inherited scheduling are explicitly temporary, not approved Polish chronology. |
 
 ## Resources and action economy
 
@@ -94,14 +94,48 @@ Each table covers the requested fields in compact form:
 | `legacy_party_map` | Object initialized as `spd`→`pps`, `kpd`→`kpp`, `dvp`→`pschd`, `dnvp`→`zln` | `post_event` and `election_algorithm` transfer deltas; inherited scenes write legacy families | Compatibility layer; persistent transitional state | Transfer bases must be refreshed after each transfer to prevent duplicate effects | Implemented narrowly; no mapping is inferred for Zentrum, DDP or NSDAP. |
 | `<party>_normalized` | Fraction number, normally 0–1; calculated by `post_event`/`election_algorithm` | Written in those calculators; read by presidential election, UI/charts, and events | Vote shares, candidate aggregation, achievements; derived persistent state | Party fractions should sum approximately to 1; division denominator must be nonzero | TBD — user decision required. |
 | `<party>_votes`, `<party>_votes_dec`, `<party>_votes_disp`, `<party>_votes_display` | Numeric and formatted derived variants; calculators assign rounded values | Election/post-event writers; election narrative/status readers | Player-facing vote representation and downstream election state; derived/display state | Similar suffixes have different rounding/format; `use_decimals` is TODO | TBD — user decision required. |
-| `<party>_r`, `<party>_r_disp` | Numeric parliamentary percentage and formatted version; root starts at `100 * opening_sejm_seats[party] / 444`; recalculated on election | Election writer; coalition formulas, parliament D3, endings and narrative readers | Seats/proxy, coalitions, UI; persistent result | Opening counts, not polls, are authoritative; subsequent elections retain percentage proxies | Implemented separate opening snapshot; not a Polish election allocator. |
+| `<party>_r`, `<party>_r_disp` | Parliamentary percentage / legacy formatted variant; `_r = 100 * <party>_seats / sejm_total_seats` | Opening helper rebuilds `_r` from the opening snapshot or recorded result, including legacy aliases | Compatibility for unadapted readers; not authoritative electoral state | Never votes or seat counts. UI uses fresh `_sejm_display` and result rows instead of potentially stale `_r_disp` | Exact integer seats implemented; inherited percentage readers retained. |
 | `old_<party>_r`, `change_<party>_r`, `str_change_<party>` | Prior numeric result, numeric delta, formatted signed delta; initialized/calculated in root/election | Election code writes/reads; result screen displays | Election comparison; persistent/display-support state | Must update as one family before overwriting current result | TBD — user decision required. |
-| `electoral_threshold` | Numeric percent; `root.start`: `0` | Constitutional-policy writers; election filter reader; policy/result presentation | Election inclusion and coalition totals; persistent rule state | Party is removed when votes are below threshold; “other” has special handling above 1 | TBD — user decision required. |
+| `electoral_threshold` | Numeric percent; `root.start`: `0` | Retained constitutional-policy writers; continuation result filter | Legacy continuation eligibility only | First November result ignores inherited exclusions. Later elections exclude below-threshold parties and Other when threshold exceeds 1 | Preserve later legacy behavior; not a reconstruction of Polish electoral law. |
 | `kpd_banned`, `nsdap_banned` and dynamic `<party>_banned` reads | Number used as boolean; explicit two-party flags initialized `0` | Constitutional/institutional scenes write; election loop dynamically reads for every party | Election eligibility; persistent rule/flag state | Only two explicit base flags are evidenced; absent dynamic keys act false in compiled conditions | TBD — user decision required. |
-| `n_elections` | Integer counter; initialized in `root.start` | Election event increments; events/endings may read | Campaign progress and conditional content; persistent simulation state | Increment once per completed election | TBD — user decision required. |
+| `n_elections` | Integer counter; root: `0` | Atomic `sejm_election_result` writer increments when publishing a new record | Campaign progress and conditional content | Re-entering results, restoring a same-version save or visiting Library must not increment it again | Implemented idempotent result recording. |
 | `largest_party`, `has_majority`, `any_majority`, `pass_threshold` | String/boolean-like helpers, assigned during election/government logic | Election and presidential-election code; coalition menus/narrative | Government formation; temporary/derived persistent control state | Recompute after each relevant result; lifecycle outside election is not uniformly documented | TBD — user decision required. |
 | Inherited German coalition totals (`weimar_coalition`, `grand_coalition`, `bourgeois_coalition`, `center_right_coalition`, `right_coalition`, `far_right_coalition`, `left_coalition`, `popular_front_coalition`, `anti_democratic_coalition`, `neo_weimar_coalition`, `hitler_right_coalition`, `progressive_coalition`) | Numeric compatibility values in the retained German election branch | Inactive German result/government scenes write/read | Legacy compatibility only for Polish games | The active Polish election no longer routes through these formulas | Preserve until the remaining German event/government routes are replaced; do not use them as Polish coalition state. |
-| `election_records` | Array of dated result objects; `root.start`: `[]` | Election code appends; `source/scenes/library.scene.dry`/D3 reads | Election history chart; persistent display-support state | Object keys must match party IDs and chart configuration | TBD — user decision required. |
+| `election_records` | Flat array of dated party seat percentages; root: `[]` | Opening helper regenerates from `sejm_results` | Temporary compatibility only | Not the authoritative history; current Library uses `sejm_history`, with distinct votes, MPs and seat percentages | Implemented derived adapter. |
+
+### Authoritative Sejm election contract
+
+Source: `source/scenes/sejm_election.scene.dry`,
+`source/scenes/sejm_election_result.scene.dry`,
+`source/scenes/polish_opening_state.scene.dry`; tests:
+`tests/sejm-election.test.js`. The opening snapshot, changing polls and recorded
+elections are separate objects. Neither campaigning nor a legacy `_r` write
+replaces a parliament. The menu-only simulator does not write these objects.
+
+| Exact name/family | Type / lifecycle | Contract and consumers |
+| --- | --- | --- |
+| `polish_election_system`, `polish_government_safeguards` | Boolean-like numbers; root: `1` / `1` | Select the new result path and keep approved German executive, Prussian-police, confidence and toleration routes unavailable after the opening as well. They are not a campaign cutoff. |
+| `sejm_pending` | Root: `null`; object with `id`, `year`, `month`, `first`, `phase` and later `government_choice` | Phases `pending` → `results` → `complete`. The ID prevents duplicate publication; a government choice is applied only once. Serializable with ordinary Dendry state. |
+| `sejm_results` | Root: `[]`; append-only array | Authoritative frozen records: `id`, `year`, `month`, `date`, `kind`, `method`, `total_seats`, `party_names`, `party_votes`, `party_seats`, `lists`, `previous_parliament`. `date` is a month-bucket ISO key; it is not a claim of polling on the first day. |
+| Result `lists` | Array of objects with `id`, `name`, `members`, `vote_share`, `multiplier`, `weight`, `seats` and `anonymous` where applicable | First result combines ZLN + PSChD as ChZJN. Other becomes 2% lists plus a remainder. Named parties remain separate in `party_votes`/`party_seats`. Coalition membership never includes a `chzjn` party ID. |
+| `sejm_parliament` | Root opening snapshot; replaced only on a valid result | Current parliament cache with `id`, `kind`, `total_seats`, `party_seats`, `party_names`; elected cache is rebuilt from the matching record. `previous_parliament` archives the actual prior counts/size without recursive history. |
+| `sejm_first_election_completed` | Root: `0`; first valid result: `1` | Protects November 1922 from inherited scheduling writes until recorded. ChZJN is first-election-only; subsequent records have kind `legacy_continuation`. |
+| `<party>_seats`, `sejm_majority_required` | Derived integers | All seats sum to chamber size. Majority = `floor(total / 2) + 1`, hence 223 of 444; 222 is insufficient. `_r` remains a derived percentage, not another result writer. |
+| `polish_left_seats`, `polish_center_left_seats`, `chjeno_piast_seats`, `pps_wyzwolenie_seats` | Derived integer sums | Government choices use these totals and unchanged relation gates. `minorities_toleration` never makes the minority bloc a cabinet member; `in_minority_government` is true only if the cabinet itself lacks a majority. |
+| `sejm_election_due`, `sejm_election_in_progress`, `sejm_forming_government` | Derived booleans | Exclusive routing from `post_event` / `main` ensures the due election cannot be skipped for another normal monthly action. Results and government choice consume no extra month. |
+| `sejm_election_error` | Root: empty string; validation message if needed | Invalid/all-zero input does not partially replace a parliament or append history. |
+| `sejm_display_rows`, `sejm_history`, `sejm_chart_colors`, `sejm_has_chzjn`, `sejm_has_result` | Derived presentation data | Status, exact-seat D3 chart and history agree. ChZJN grouped for its recorded election; Other aggregates its independent lists for display only. |
+| `sejm_largest_lists`, `sejm_largest_parties`, `largest_party_id`, `largest_party` | Derived names / legacy single-party adapter | Largest list is by recorded votes; largest named party by seats, excluding aggregated Other. All ties displayed; the legacy single-party ID uses lexical order. |
+| `<list>_election_display`, `sejm_vote_comparison_notice`, `sejm_result_date` | Derived strings | Separate vote %, MPs, seat %, MP deltas and seat-percentage-point deltas. Previous votes are N/A for the opening snapshot or a changed electoral alliance. |
+| `polish_government_actions_available` | Derived boolean in `main` | Show the government deck only when at least one eligible card remains; an empty protected deck cannot consume the turn. |
+
+Allocation uses full-precision national polling and the user-confirmed calibrated
+bands: below 2% ×0.25, 2–<5 ×0.55, 5–<10 ×0.85, 10–<15 ×1.025,
+15–<25 ×1.10, 25%+ ×1.25. Normalize weighted lists, allocate integer seats by
+largest remainder, and break exact ties by lexical list ID. ChZJN's internal
+seats use the same integer method on election-time ZLN/PSChD support. These are
+approved gameplay rules, not the historical district system; geography is out
+of scope. Invalid input fails without publishing partial state.
 
 ## Party support and factions
 
@@ -135,38 +169,39 @@ state is for new games and same-version saves, not an old-save migration.
 
 | Exact name/family | Type and initial value | Writers/readers and invariant |
 | --- | --- | --- |
-| `polish_opening_government_active` | Boolean-like number, `1` | Root initializes; helper and both election-result branches clear it. Guards opening executive/Prussian police routes, government deck and display. Never reactivated automatically. |
+| `polish_opening_government_active` | Boolean-like number, `1` | Root initializes; helper and the canonical election writer clear it. Opening government identity is never reactivated automatically. Later authority safeguards have their own flag. |
 | `polish_cabinet_id` | String, `ponikowski_1` | Root/helper; display/lifecycle identity. Cleared when the opening is retired, not assigned to a researched successor. |
-| `head_of_state_office`, `head_of_state_name` | Strings, `naczelnik_panstwa`, `Józef Piłsudski` | Root/helper and UI. Separate from the PPS Piłsudczycy faction. Cleared on opening retirement; no invented successor. |
+| `head_of_state_office`, `head_of_state_name` | Strings, `naczelnik_panstwa`, `Józef Piłsudski` | Separate from the PPS Piłsudczycy faction. Cabinet/election replacement preserves them; a later explicit legacy `president` takes display precedence with a temporary-framework notice. No Polish succession is invented. |
 | `pps_external_toleration` | Boolean-like number, `1` | Root/helper; PPS-position text only. Grants no ministry or cabinet membership; never copied into `spd_toleration`. Clears when this opening government is replaced. |
 | `chancellor`, `chancellor_party`, `president` | Strings, `Antoni Ponikowski`, `expert_cabinet`, empty string | Retained executive compatibility keys; existing event writers still work. Empty president does not mean Piłsudski is president. Later named-string comparisons are unchanged. |
 | `polish_portfolios` | Object mapping ten stable keys to Polish labels | Root and read-only Library/helper. Keys: `labor`, `interior`, `finance`, `economic`, `justice`, `foreign`, `agriculture`, `reichswehr`, `education`, `public_works`. Last two add no policy/allocator behavior. |
 | `<portfolio>_minister_party`, `<portfolio>_minister` | Strings, `opening_expert_cabinet` and empty name | The sentinel denotes cabinet administration outside PPS, not a claim that all ministers were non-party. Helper clears remaining sentinels after replacement but preserves new owners/names. Existing ministry checks must not treat the sentinel as PPS/SPD ownership. |
-| `sejm_total_seats` | Integer, `444` | Root; denominator for this opening only. Not a promise about later legacy charts/elections. |
+| `sejm_total_seats` | Integer, `444` | Current chamber size, used for allocation, majority, seat percentages and exact chart dots. |
 | `opening_sejm_seats` | ID→integer object, 2/35/22/25/99/27/83/17/134 in party order | Root largest-remainder allocation from normalized supplied August shares. Sum is exactly 444. Retained as an archive after invalidation, never reused as current results then. |
-| `opening_sejm_active` | Boolean-like number, `1` | Election result branches clear it; helper also clears when any `_r` differs from `100 * opening MPs / 444` by more than `1e-9` or `n_elections > 0`. Cabinet replacement alone does not clear it. Polling is independent. |
+| `opening_sejm_active` | Boolean-like number, `1` | Derived from `sejm_parliament.kind`; clears on an elected parliament. Stray `_r` writes are repaired, not accepted as results. Old difference-detection remains only for states without `polish_election_system`. Cabinet replacement alone does not clear the snapshot. |
 | `head_of_state_display`, `prime_minister_display`, `pps_government_position`, `parliament_heading`, `parliament_names`, `<party>_sejm_display`, `<portfolio>_portfolio_display` | Derived strings/maps | Helper refreshes for status/Library. Opening minority representation is labelled “Minority deputies”; global party IDs/names remain unchanged. Later unimplemented state is explicitly labelled temporary. |
 
 The helper recognizes replacement through executive identity, government/
 caretaker/legacy-toleration flags, ministry-owner changes or an election. It
 clears only opening metadata and remaining opening placeholders, never new
-government assignments or the calendar. No new timers are introduced. From
-March 1922 the UI warns if the January cabinet snapshot persists. November
-1922 is **planned, not scheduled**: the live `next_election_*` still starts at
-May 1928 / relative month 77 and retains inherited subsequent scheduling.
+government assignments. No new timers are introduced. From March 1922 the UI
+warns if the January cabinet snapshot persists. November 1922 is now scheduled
+and implemented; May 1928 / relative month 77 is only the temporary next date
+after that result, followed by inherited scheduling.
 
 Opening `spd_in_government`, `pps_in_government`, `spd_caretaker`, coalition
 flags, legacy `spd_toleration` and minority toleration all start at zero.
 `spd_prussia = 1` deliberately remains for force compatibility, **not** police
 command rights: rally/police-training and Prussian executive options have
-opening-specific guards. Police figures and militia mechanics are unchanged.
+the persistent `polish_government_safeguards` guard. Police figures and militia
+mechanics are unchanged. Generic welfare remains explicitly labelled legacy.
 
 ### Retained coalition and relationship families
 
 | Exact name or family | Type / initialization / range | Writers / readers / display | Dependencies / kind | Thresholds / uncertainty | Polish adaptation decision |
 | --- | --- | --- | --- | --- | --- |
 | `in_spd_majority`, `in_polish_left_coalition`, `in_polish_center_left_coalition`, `in_chjeno_piast`, `in_minority_government`, `minorities_toleration` | Number used as related booleans; initialized/reset around the Polish election | Active Polish election routes write; status/Library read; inherited government access still reads `spd_in_government` | First-cycle government identity and access; persistent simulation state | Active result processing resets all six before offering routes; later inherited government events require further adaptation | Implemented first-cycle shell. Minorities toleration requires `minorities_bloc_in_government = 0`. |
-| `polish_left_coalition`, `polish_center_left_coalition`, `chjeno_piast_coalition`, `minority_toleration_total`, `anti_democratic_bloc` | Numeric percentage totals calculated after a Polish election | Active election result scene writes; coalition options/tests read | First-cycle coalition availability and reporting | Majority routes use 50; `anti_democratic_bloc` is a metric only | Implemented where specified. Democratic classification and broad-coalition crisis logic remain planned. |
+| `polish_left_coalition`, `polish_center_left_coalition`, `chjeno_piast_coalition`, `minority_toleration_total`, `anti_democratic_bloc` | Derived seat-percentage totals | Opening helper rebuilds from integer party seats | Percentage compatibility and reporting only; active majority gates use exact seats | `anti_democratic_bloc` remains a legacy metric, not a Polish democratic classification | Democratic classification and broad-coalition crisis logic remain planned. |
 | `coalition_dissent` | Numeric step-like value; initialized/reset around government formation | Government choices/events write; coalition affairs and qdisplay read | Government stability and confidence votes; persistent simulation state | Qdisplay: 0 very low, 1 low, 2 medium, 3 high, 4+ very high | TBD — user decision required. |
 | `kpd_coalition_dissent`, `kpd_goals_seen`, `kpd_goals_completed`, `kpd_coalition_success`, `popular_front_success` | Numeric counters/boolean flags created in coalition/event routes | Popular/left-front and KPD event files write/read; narrative/ending use | Specific coalition stability; persistent event/simulation state | Lifecycle depends on entering those routes; several are not root-initialized | TBD — user decision required. |
 | `psl_wyzwolenie_relation`, `minorities_bloc_relation`, `psl_piast_relation`, `npr_relation`, `pschd_relation`, `kpp_relation`, `zln_relation` | Numeric relationships initialized to 65/50/45/50/30/10/5 | Polish relationship card writes; status/Library display; first-cycle coalition gates read selected values | Cooperation and coalition eligibility; persistent simulation state | Existing qdisplay bands are authoritative, so 65 displays friendly, 50 neutral, 10 frigid and 5 hostile | Implemented. Legacy German relationship fields remain inactive compatibility state for inherited content. |

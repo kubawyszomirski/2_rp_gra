@@ -267,10 +267,11 @@ source location, and permitted use in its entry. Preserve
 - **Unresolved historical research:** Precise January PPS parliamentary stance
   and voting practice remain **TBD — historical research required**. Approving
   toleration as an initial game state does not establish a historical agreement.
-- **Alternate history / chronology:** No new alternate-history succession.
-  November 1922 elections, December presidential transition and later cabinets
-  are planned, not implemented. Retaining May 1928 scheduling or an opening
-  cabinet beyond its historical term is a development limitation, not history.
+- **Alternate history / chronology:** The initial opening-only limit has been
+  superseded by `SEJM-1922-ELECTION-DESIGN`: November elections are implemented.
+  December presidential transition and researched successor cabinets remain
+  planned. Retaining May 1928 as the next election or an opening cabinet beyond
+  its historical term is a development limitation, not history.
 - **Implementation:** `source/scenes/root.scene.dry`,
   `source/scenes/polish_opening_state.scene.dry`, status/Library and authority
   guards; acceptance and portfolio list in `PLAN.md` section 2.
@@ -380,6 +381,49 @@ source location, and permitted use in its entry. Preserve
 - **Related mechanic, variable and source file:** `party_names.kpp` in
   `source/scenes/root.scene.dry`.
 
+### Source entry SEJM-1922-ELECTION-DESIGN
+
+- **Category / evidence:** User-approved November election gameplay design,
+  approved 2 September 2026; implementation checked 3 September 2026. Not an
+  independent historical source or a recreation of the legal allocation system.
+- **Historical anchors:**
+  - [Decree of 18 August 1922, Dz.U. 1922 nr 66 poz. 593](https://eli.gov.pl/api/acts/DU/1922/593/text/O/D19220593.pdf),
+    first page: Sejm voting on **5 November 1922**, Senate on 12 November.
+  - [Sejm electoral law of 28 July 1922, Dz.U. 1922 nr 66 poz. 590](https://eli.gov.pl/api/acts/DU/1922/590/text.html),
+    art. 9: **444 MPs**, comprising 372 district-list and 72 national-list seats.
+  - Accessed 3 September 2026; primary legal sources, high confidence for these
+    specific dates/counts. The implemented heuristic does **not** reproduce
+    those two historical allocation tiers.
+- **Approved calibrated design:** The user confirms the national multiplier
+  curve is already calibrated: <2% ×0.25; 2–<5 ×0.55; 5–<10 ×0.85;
+  10–<15 ×1.025; 15–<25 ×1.10; 25%+ ×1.25. Calibration is resolved for this
+  slice; no new independent empirical calibration is claimed here.
+- **Approved simplifications:** Normalize weighted lists and allocate 444 whole
+  MPs by largest remainder. Other consists of anonymous 2% lists plus a smaller
+  remainder preserving its total. Geographic concentration is deliberately out
+  of scope, not an outstanding implementation obligation. First-election ChZJN
+  combines only ZLN + PSChD, then divides its seats by their election-time
+  support; this is the approved internal attribution, not a historical club
+  reconstruction. The parties remain separate after the election.
+- **Timing / authority simplifications:** Election and minimal government choice
+  finish within November without extra monthly actions. A strict majority is
+  223 of 444 for these gameplay options, not a claim that every historical vote
+  required 223. No Senate, named successor cabinet or presidential election is
+  invented. Portfolios stay unallocated and approved German executive/confidence
+  and toleration routes remain guarded; generic welfare stays labelled legacy.
+- **Alternate history:** Results follow the player's changed support, not fixed
+  historical national results. Parliamentary snapshots and votes remain distinct.
+- **Implemented:** `source/scenes/sejm_election.scene.dry`,
+  `source/scenes/sejm_election_result.scene.dry`,
+  `source/scenes/polish_opening_state.scene.dry`, six Polish government choices
+  in `source/scenes/events/election_1928.scene.dry`, status/Library, and
+  `tests/sejm-election.test.js`.
+- **Still unresolved:** Successor cabinets, presidential succession and
+  subsequent Polish election chronology: **TBD — historical research required**.
+  Temporary May 1928 scheduling and later legacy rules remain visibly labelled.
+- **Rights:** No media imported; image/music credits preserved. The repository's
+  MIT code licence does not automatically cover media assets or cited editions.
+
 ### Source entry ELECTION-TBD
 
 - **Source ID:** TBD
@@ -460,11 +504,14 @@ source location, and permitted use in its entry. Preserve
 - **Intended gameplay use:** First election and government-state setup.
 - **Historical fact:** **TBD — historical research required.** The implemented
   formulas and placeholder leadership must not be cited as historical fact.
-- **Gameplay simplification:** Percentages stand in for seats; a 50% threshold
-  is used; named ministers are deliberately left TBD.
+- **Gameplay simplification:** Exact 444-seat allocation now replaces the old
+  percentage proxy; the approved government threshold is 223 MPs. Named
+  ministers and portfolio allocation are deliberately left TBD. External
+  minority toleration does not imply cabinet membership.
 - **Alternate-history departure:** Depends on election results and player choice.
 - **Licensing or attribution requirements:** None identified for design text.
-- **Implementation status:** Implemented for the first-election shell only.
+- **Implementation status:** Minimal choices implemented in the November 1922
+  election and reused during temporary legacy continuation.
   Centrolew, Sanacja, broad coalition/fronts, democratic classification and
   crisis rules remain planned.
 - **Related mechanic, variable and source file:** Polish `_r` fields,
@@ -516,8 +563,9 @@ source location, and permitted use in its entry. Preserve
 - **Implemented interpretation:** Describe January as March Constitution with
   transitional arrangements, not the full later institutional machinery.
   Piłsudski's state office is distinct from the PPS Piłsudczycy faction.
-- **Planned, not implemented:** Polish election/term scheduling, presidential
-  election and Senate simulation. The retained four-year scheduling is not
+- **Planned, not implemented:** Subsequent Polish election/term scheduling,
+  presidential election and Senate simulation. The first November election is
+  implemented under `SEJM-1922-ELECTION-DESIGN`. Retained four-year scheduling is not
   justified by these sources. No Sejm-only presidential election is asserted
   as historical; any future simplified procedure needs its own approval.
 - **Research boundary / rights:** Exact political practice and PPS cabinet
@@ -858,4 +906,5 @@ Add one row whenever an entry above is assigned a stable Source ID.
 
 | Source ID | Category | Short claim/game element | Status | Related PLAN.md decision |
 | --- | --- | --- | --- | --- |
+| SEJM-1922-ELECTION-DESIGN | Elections / user-approved design | November date, 444 MPs, calibrated heuristic, ChZJN and small lists | Implemented bounded slice; future chronology unresolved | November 1922 election slice |
 | TBD | TBD | TBD | TBD | TBD |

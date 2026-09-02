@@ -2,7 +2,10 @@ title: Next month
 set-bg: img/map_2.jpg
 is-hand: true
 call: polish_opening_state
+go-to: sejm_election if sejm_election_due or sejm_election_in_progress
 on-arrival: {!
+Q.polish_government_actions_available = this._compileChoices(this.game.scenes['main.govt'])
+    .some(function(choice) { return choice.canChoose && this.game.scenes[choice.id].isCard; }, this);
 if (Q.advisor_action_timer <= 0) {
     Q.pinnedCardsDescription = 'Advisors - an action is available.';
 } else if (Q.advisor_action_timer == 1) {
@@ -19,6 +22,8 @@ max-cards: 3
 
 [? if polish_opening_government_active and time >= 6 : PPS tolerates the government but holds no ministries. Government Affairs has no available executive actions in this opening slice. You can inspect all ten portfolios in the Library and continue using Party Affairs and advisers. ?]
 
+[? if sejm_first_election_completed : Development notice: the November election and Polish government choices are implemented. Successor cabinets, presidential succession and later election chronology remain temporary. Prussian executive powers and German confidence/toleration routes remain unavailable; generic welfare and the broader monthly simulation retain legacy mechanics. ?]
+
 - @party
 - @govt
 - #advisor
@@ -33,7 +38,7 @@ is-deck: true
 
 @govt
 title: Government Affairs
-view-if: time >= 6 and not polish_opening_government_active
+view-if: time >= 6 and not polish_opening_government_active and (not polish_government_safeguards or polish_government_actions_available)
 card-image: img/reichstag_2.jpg
 is-deck: true
 

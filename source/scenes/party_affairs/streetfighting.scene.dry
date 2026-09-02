@@ -44,7 +44,7 @@ max-visits: 2
 The militia and trade unions improve their coordination in protecting rallies and strikes. Union members are not added to militia strength.
 
 @prussian_police_training
-view-if: not polish_opening_government_active and spd_prussia == 1 and prussian_police_loyalty > 0.5
+view-if: not polish_government_safeguards and not polish_opening_government_active and spd_prussia == 1 and prussian_police_loyalty > 0.5
 on-arrival: pps_militia_militancy += 0.05; sa_strength += 50; prussian_police_training += 1
 
 Cooperative elements of the state police help train the militia, although other police formations may remain hostile.

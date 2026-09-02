@@ -3,15 +3,16 @@
 ## Executive Game Overview
 
 **A plain-language guide to the Polish opening-party slice over the German baseline**
-Prepared from the repository; Polish Opening State update: 2 September 2026
+Prepared from the repository; November 1922 election update: 3 September 2026
 
 > **Scope note**
 >
 > This guide explains what the current game presents and how its source code
 > makes that experience work. PPS identity, opening support, population groups,
 > the January 1922 start, nine-party electoral model, direct campaigning,
-> relationships, first-election coalition shell and the bounded Ponikowski
-> opening state are implemented; most other content remains the German baseline.
+> relationships, the bounded Ponikowski opening, November 1922 election with
+> exact seats and minimal government choices are implemented; most other content
+> remains the German baseline.
 > It is not an independent history. Historical statements are
 > described as the game's framing unless independently documented elsewhere.
 > Areas that need Polish research or a design choice are marked:
@@ -42,13 +43,14 @@ The central rhythm is simple:
 4. Spend resources or accept political consequences.
 5. Advance one month.
 6. Resolve any event that has become due.
-7. Recalculate support, factions, the economy, and later election results.
+7. Continue with changed support, factions and economy. A due election freezes
+   a separate result; it and the government choice consume no additional month.
 
 Under that straightforward loop is a highly connected simulation. In the
 current transitional build, a policy can change an inherited compatibility
-field whose delta is then applied to an active PPS faction. A coalition can
-unlock ministries but
-also create coalition dissent. Economic policy can reduce unemployment while
+field whose delta is then applied to an active PPS faction. The inherited
+government model connects ministries with coalition dissent, but the current
+Polish election deliberately does not allocate ministries. Economic policy can reduce unemployment while
 increasing inflation, spending, or resistance from business and conservative
 institutions. Party organizations can help defend democracy, but militancy can
 also make violent confrontation more likely. Elections reorganize the entire
@@ -86,12 +88,16 @@ it has no ministers or executive/police-command powers. Ten cabinet portfolios
 are available for read-only inspection. The constitutional description accounts
 for transitional arrangements rather than presenting Piłsudski as president.
 
-**Deliberate development boundary:** November 1922 elections are planned but
-not implemented; the live scheduler still starts in May 1928. Later cabinets,
-the presidential transition and a full Polish election system are not added.
-If the January cabinet persists beyond February, the UI warns about the missing
-chronology. Existing government/election transitions retire stale opening
-metadata without inventing a Polish successor. There is no new campaign cutoff.
+**Implemented election and development boundary:** The first election resolves
+in **November 1922**, replacing the opening snapshot with exactly **444 elected
+MPs**. **223 MPs** is the majority needed for the approved government choices;
+444 remains the total chamber size. Results and government choice finish in
+November without extra monthly actions. Named successor cabinets, presidential
+succession and Senate are not implemented. The next date, **May 1928**, is
+explicitly temporary; later inherited elections reuse the same exact-seat writer.
+If Ponikowski persists beyond February, a warning still identifies missing
+cabinet chronology. Approved German executive/confidence/toleration routes stay
+guarded after the opening. There is no new campaign cutoff.
 
 **Implemented opening-party decision:** Active elections use KPP, PPS, NPR,
 PSL Wyzwolenie, PSL Piast, PSChD, ZLN, Blok Mniejszości Narodowych, and Inne.
@@ -153,8 +159,8 @@ At the opening, status shows Piłsudski's state office, Ponikowski's cabinet,
 PPS external toleration, exact whole-MP counts for the nine parliamentary
 categories, party resources, dissent and inherited economic indicators.
 The parliament is the approved August-share approximation used from January,
-not an exact January roster. The live election date and planned November 1922
-replacement are labelled separately. Opinion polls do not change sitting MPs.
+not an exact January roster. November's election replaces it; current polling,
+frozen votes and sitting MPs are kept distinct. Opinion polls do not change MPs.
 
 ### Who the player controls
 
@@ -470,10 +476,12 @@ That requires focused runtime testing.
 
 ### Elections and major crises
 
-Elections interrupt the ordinary loop with a larger sequence: recalculate vote
-shares, apply thresholds and bans, produce parliamentary shares, show results,
-calculate possible coalitions, choose a government path, negotiate ministries,
-and schedule the next election.
+The first November election interrupts the loop after monthly reconciliation
+and before another normal action: recalculate votes, combine electoral lists,
+apply the approved weights, allocate 444 MPs, show the frozen results and choose
+a government path. No ministry bargaining or extra monthly charge follows.
+Later legacy-scheduled elections reuse this writer but retain inherited
+threshold/ban effects and do not automatically recreate ChZJN.
 
 Major crises can similarly branch into multi-scene sequences. They may change
 the action economy, remove government options, force institutional decisions,
@@ -628,11 +636,18 @@ but does not visibly guard every possible zero denominator.
 
 ### Elections and parliamentary shares
 
-At an election, the game recalculates support, then applies the current
-electoral threshold and party bans. Parties that fail the rule receive zero
-parliamentary share; qualifying results are normalized again. The game stores
-the previous result, calculates the change, finds the largest party, and saves
-the result for charts.
+November uses freshly calculated, full-precision national support, not rounded
+poll labels. Electoral lists receive the user-confirmed calibrated multipliers:
+below 2% ×0.25; 2–<5% ×0.55; 5–<10% ×0.85; 10–<15% ×1.025;
+15–<25% ×1.10; 25%+ ×1.25. Weighted shares are normalized, then whole seats
+allocated by largest remainder (lexical list ID breaks exact ties).
+
+Other consists of separate anonymous **2% lists plus a smaller remainder**,
+preserving its national total; it does not earn a large-party bonus as one bloc.
+For this first election only, **ChZJN = ZLN + PSChD** receives a combined-list
+allocation. Its MPs are divided proportionally to those two parties' support
+at election time. They remain separate for relationships and government choices.
+No geographic model or historical district allocation is simulated.
 
 The opening D3 semicircle has exactly **444 dots**, one per MP. Seats are KPP 2,
 PPS 35, NPR 22, PSL Wyzwolenie 25, PSL Piast 99, PSChD 27, ZLN 83, minority
@@ -642,16 +657,18 @@ recalculated from those seats, so they can differ slightly from the supplied
 rounded shares. Minority deputies are an aggregate, not a claim that BMN was
 already a single January parliamentary club.
 
-After an existing election or other result writer replaces these shares, the
-opening chart is retired. The inherited roughly 500-dot percentage illustration
-remains, clearly labelled temporary. A proper Polish election allocator is
-still planned; the opening snapshot is not an election conducted during play.
+After the election, the chart still has exactly 444 dots, now from the recorded
+result. ChZJN appears as one group in results, status and the seat chart. History
+keeps separate **vote %, MPs and seat %** columns. The opening snapshot has no
+previous vote result, so that comparison says N/A; MP and seat-share changes
+compare with its real 444-seat composition. Subsequent polling cannot rewrite
+these records, including after a same-version save/reload.
 
 <!-- PDF_SCREENSHOT: charts -->
 
-*Figure 3. The Library renders the simplified opening Sejm as 444 dots and
-provides space for election, support and economic history. Older exported
-screenshots may predate this opening-state update.*
+*Figure 3. The Library renders the current Sejm as exactly 444 dots and keeps
+election results separate from support/economic history. Older exported
+screenshots may predate this election update.*
 
 ### Coalition formation
 
@@ -660,40 +677,45 @@ The active first-election code computes a deliberately limited Polish shell:
 - PPS majority;
 - Koalicja Lewicy: PPS + PSL Wyzwolenie + Minorities Bloc;
 - centre-left: PPS + PSL Wyzwolenie + PSL Piast + NPR;
-- a PPS–PSL Wyzwolenie minority government externally tolerated by the
+- a PPS–PSL Wyzwolenie government externally tolerated by the
   Minorities Bloc;
 - Chjeno-Piast: ZLN + PSChD + PSL Piast.
 
 Minority toleration explicitly leaves the Minorities Bloc outside the cabinet.
-Routes can depend on:
-
-- whether the combination reaches a majority;
-- relations with partner parties;
-- available resources or leverage;
-- party leadership;
-- presidential and constitutional conditions;
-- earlier failed negotiations.
+The cabinet is called a minority government only when its own seats are below
+223. Available routes use **exact seats** and the already implemented partner
+relation gates; 222 seats do not pass. Remaining in opposition is always an
+available fallback. No new leadership, resource, presidential or negotiation
+prerequisites are added in this slice.
 
 Entering one of these routes sets first-cycle government flags. Named
 chancellors, ministry allocation and detailed coalition programs are left as
 **TBD — historical research required** rather than invented. The inherited
 German coalition branch remains in the source but Polish elections do not route
 through it. Centrolew, Sanacja, United Left, broad fronts/coalitions, democratic
-classification and crisis rules remain planned.
+classification and crisis rules remain planned. The election clears previous
+cabinet ownership and flags. All ten portfolios remain unallocated; PPS entry
+does not grant inherited Prussian or German executive powers. Generic welfare
+is explicitly marked a temporary inherited mechanic.
 
 ### Coalition dissent
 
 Coalition dissent represents conflict among governing partners. Policy choices
 can raise it; coalition-management actions can address it. The interface
-summarizes it from very low through very high. High dissent can contribute to
-coalition crises or confidence votes.
+summarizes it from very low through very high. Those legacy counters remain,
+but the German general and KPD confidence-vote routes are guarded in Polish
+games. A researched Polish cabinet-crisis system is not implemented here.
 
 The government is represented by many separate flags rather than one single
 government object. That creates a risk: incomplete resets can leave
-contradictory states. The intended mutual exclusivity of every coalition flag
-requires route testing.
+contradictory states. Tests cover the six current outcome paths, resets,
+toleration without membership and repeated-result/save entry. This is not a
+certification of every later inherited government transition.
 
 **Technical reference:** `source/scenes/election_algorithm.scene.dry`,
+`source/scenes/sejm_election.scene.dry`,
+`source/scenes/sejm_election_result.scene.dry`,
+`source/scenes/polish_opening_state.scene.dry`,
 `source/scenes/events/election_1928.scene.dry`,
 `source/scenes/government_affairs/coalition_affairs.scene.dry`, and
 `source/scenes/library.scene.dry`. Important state includes the dynamic
@@ -793,12 +815,13 @@ command the police through inherited Prussian powers. Militia defence remains
 available; police statistics and underlying force calculations are retained.
 Polish toleration never automatically activates German toleration choices.
 
-The following is **retained legacy behavior after the opening**, not a completed
-Polish cabinet allocator. Government entry does not grant every policy. The player can
-spend election-derived leverage on ministries such as Labor, Interior, Finance,
-Economic, Justice, Foreign, Agriculture, and Reichswehr. Ministry-party fields
-gate government cards; named minister fields support the narrative; goal fields
-track office-specific tasks.
+The old leverage-based allocator remains in source but is **not entered by the
+Polish election**. Government entry does not automatically award ministries.
+The ten portfolio categories show “Allocation not implemented” after formation;
+researched ownership, ministers and policy powers require a later slice.
+Legacy ministry-party fields still gate unadapted cards, named minister fields
+support narrative, and goal fields track office-specific tasks. The government
+deck is hidden if no eligible cards remain, rather than offering an empty hand.
 
 Coalition bargains, office ownership, named ministers, and goals are stored
 separately. A government redesign therefore has to update all four layers.
@@ -1018,10 +1041,11 @@ anger.
 
 #### Coalition-survival loop
 
-A coalition grants ministries and the ability to enact policy. Controversial
-policy raises coalition dissent. High dissent creates disputes or confidence
-votes. Loss of government removes access to the ministries needed to continue
-or repair the program.
+The inherited model links cabinet membership, ministry access, controversial
+policy and coalition dissent. The Polish slice currently stops at minimal
+government membership: it does not allocate ministries, and the old German
+confidence routes are guarded. Completing this feedback loop is future work,
+not a capability granted by winning November's election.
 
 #### Economic-crisis loop
 
@@ -1091,11 +1115,11 @@ option; the status panel remains visible for context.*
 
 ### Parliament and graphs
 
-The Library's parliament graphic is an approximate visual representation of
-party result percentages. Election history records election results; party
-support history records monthly normalized support; economic history records
-inflation and unemployment. At the beginning of a game the history charts are
-mostly empty.
+The Library's parliament graphic is an exact one-dot-per-MP representation.
+Recorded election history separates votes, MPs and seat percentages, with the
+first ChZJN alliance grouped. Party support history records changing monthly
+support; economic history records inflation and unemployment. The opening
+snapshot is not inserted as a fictional prior election.
 
 ### Important hidden state
 
@@ -1210,13 +1234,14 @@ For the technical detail behind these counts, see `MECHANICS_MAP.md` and
 
 The campaign starts in **January 1922**. The source implements this as
 `year = 1922`, `month = 1`, and relative `time = 1`. German absolute date gates
-retain their original years, so the first retained election is May 1928 at
-relative month `77`. The introduction identifies the people, institutions,
-events, and mechanics as an interim German baseline.
+retain their original years except the approved first election: **November
+1922**, relative month `11`. Following that election, May 1928 / month `77`
+is the temporary next date. The introduction identifies remaining institutions,
+events and mechanics as an interim German baseline.
 
-The campaign end date, first Polish election date, opening office holders and
-parliamentary state, and first Polish scheduled events remain **TBD — user
-historical research and design decision required.**
+Opening offices, the opening parliament and first election are implemented.
+Successor cabinets, presidential succession, later Polish elections and the
+campaign end remain **TBD — user historical research and design decision required.**
 
 ### Implemented population model
 
@@ -1279,8 +1304,8 @@ chronology directly into variables and routes:
 - the still-inherited content and events associated with SPD, KPD, Center/BVP,
   DDP/DStP, DVP, DNVP, NSDAP and SAPD, even though the active electoral roster
   is now Polish;
-- detailed Polish parliamentary allocation, later coalition formulas and the
-  current approximate percentage-based seat display;
+- later Polish electoral chronology, party alliances and coalition formulas;
+  the approved national seat heuristic and exact display are already implemented;
 - president/chancellor powers and the no-confidence/emergency-government paths;
 - Prussian government and police as a separate political layer;
 - Reichsbanner, Iron Front, SA, RFB, Stahlhelm, and Reichswehr systems;
@@ -1299,7 +1324,8 @@ similar English label exists.
 - Should time remain one major action per month?
 - Should the player draw random actions or choose directly from a menu?
 - Should party resources and government budget remain abstract?
-- Should elections use approximate percentages or an exact seat system?
+- Which later electoral alliances and government transitions should replace
+  the remaining legacy chronology? Exact seats are already implemented.
 - How much hidden state should the interface expose?
 - Should the fixed baseline continue to expose both saves and polls?
 - Should advisers and ministries remain separate unlock layers?
@@ -1369,12 +1395,15 @@ similar English label exists.
 **At elections**
 
 1. Recalculate vote shares.
-2. Apply threshold and ban rules.
-3. Save parliamentary results and changes.
-4. Calculate coalition totals.
+2. Form lists (first-election ChZJN; Other as 2% lists and a remainder), apply
+   calibrated weights and allocate exactly 444 MPs. Later continuation alone
+   retains inherited threshold/ban rules.
+3. Freeze votes, seats and previous-parliament comparison once.
+4. Calculate exact coalition totals; majority is 223 MPs.
 5. Choose government, opposition, toleration, or another available path.
-6. Use leverage to negotiate ministries.
-7. Continue with a new government state and future election date.
+6. Leave ministries unallocated and keep the approved authority safeguards.
+7. Continue in the same month with the new government state and the visibly
+   temporary future election date. No new campaign cutoff is imposed.
 
 **At the end**
 
@@ -1393,13 +1422,13 @@ similar English label exists.
 | --- | --- | --- | --- |
 | Cards and hand | Which available issue to draw and play | Time, opportunity, randomness | `source/scenes/main.scene.dry` |
 | Resources | Party spending and fundraising | Campaigns, media, advisers, organizations | Party Affairs scenes |
-| Support | Appeal among six modeled social groups | Vote shares and elections | `post_event`, `election_algorithm` |
-| Elections | Thresholds, results, coalition arithmetic | Government, leverage, ministries | `events/election_1928.scene.dry` |
-| Coalitions | Partners, stability, confidence | Government survival and policy access | Coalition/government event scenes |
-| Factions | Strength and dissent of five SPD blocs | Support effectiveness, splits, leadership | `post_event`, `party_disunity` |
+| Support | Appeal among seven modeled population groups | Vote shares and elections | `post_event`, `election_algorithm` |
+| Elections | Frozen votes, exact seats, electoral lists | Government choices, result history | `sejm_election.scene.dry`, `sejm_election_result.scene.dry` |
+| Coalitions | Partners and external toleration | Minimal government membership; further policy powers planned | Polish choices in `events/election_1928.scene.dry` |
+| Factions | Strength and dissent of three PPS factions | Support effectiveness, splits, leadership | `post_event`, `party_disunity` |
 | Relationships | Cooperation with other parties | Coalitions, votes, candidates | `inter_party_relationships` |
 | Advisers | Active specialist roster and cooldown | Shortcuts/modifiers across systems | `advisors/`, `shuffle_leadership` |
-| Ministries | Offices claimed with leverage | Government card access and goals | Election and Government Affairs scenes |
+| Ministries | Ten read-only categories; allocator planned | Ownership-dependent cards remain gated | Opening helper and Government Affairs scenes |
 | Economy | Inflation, unemployment, growth, policy stages | Support, budget, crisis, endings | `post_event`, economic-policy scenes |
 | Finance | Taxes, tariffs, budget | Inflation, growth, resistance, policy capacity | `fiscal_policy` |
 | Organizations | Party/media/defense investment | Support, militancy, violence capacity | Party Affairs organization scenes |
@@ -1449,13 +1478,13 @@ The following are audit findings, not instructions to “clean up” the source:
    `reformists_resigned`, and several singular/plural names coexist.
 5. Some event flags and timers are read without explicit root initialization
    and rely on absent-as-false behavior or route order.
-6. A zero total in support or faction normalization has no clearly confirmed
-   guard.
+6. Zero-total national polling and PPS faction strength have guards; every
+   remaining inherited normalization path is not certified.
 7. The exact behavior when several events have equal eligibility/priority is
    unclear.
 8. The `use_decimals` election option is marked TODO.
-9. The parliament display is approximate rather than a confirmed exact seat
-   allocator.
+9. Parliament now has an exact-seat allocator and chart; historical district
+   modeling is deliberately excluded from the approved national heuristic.
 10. Government identity is spread across many flags whose complete mutual
     exclusivity has not been runtime-tested.
 11. Strength, militancy, loyalty, and power use mixed scales.

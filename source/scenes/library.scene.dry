@@ -6,7 +6,7 @@ go-to: menu
 
 = The Library
 
-This library is in transition. The Polish January 1922 opening government and simplified parliament, player party, population model, PPS factions, advisers and self-defence organization are implemented. Later governments, most other organizations, most cards and dated events remain an unfinished, mixed baseline.
+This library is in transition. The Polish January 1922 opening government and simplified parliament, November 1922 election with exact seats, player party, population model, PPS factions, advisers and self-defence organization are implemented. Later governments, most other organizations, most cards and dated events remain an unfinished, mixed baseline.
 
 @menu
 
@@ -15,7 +15,7 @@ This library is in transition. The Polish January 1922 opening government and si
 - @curr_gov: Current government and cabinet portfolios
 - @demographics: Demographics
 - @parties: Parties
-- @public_opinion: Public opinion (and projected election results)
+- @public_opinion: Public opinion (voting intentions, not seats)
 - @paramilitaries: Paramilitary groups
 - @factions: Internal factions
 - @advisers: PPS advisers
@@ -35,9 +35,11 @@ Toleration is not executive control. You can organize PPS, campaign, use adviser
 
 The opening **444-MP** parliament is an approved simplification: rounded August 1922 club percentages are normalized and allocated as whole seats, not asserted to be the historical January roster. Existing party IDs stand for simplified parliamentary categories. Minority deputies are an aggregate, not a claim that a single minority electoral bloc already existed in January. Campaigning changes public support, not sitting MPs.
 
-**Planned, not implemented:** the November 1922 parliamentary election, the December presidential election and subsequent cabinets. The March Constitution provided five-year Sejm terms from the opening of the chamber and seven-year presidential terms, with the president elected by the Sejm and Senate together as the National Assembly. Senate simulation is outside the current scope; a later Sejm-only election would be an explicit gameplay simplification.
+**Implemented election:** November 1922, 444 Sejm MPs, a 223-MP majority and the approved national seat heuristic. ChZJN combines ZLN and PSChD votes and seats for display, while its constituent parties remain separate. The Senate is not simulated. Voting and government formation take place within one monthly sequence.
 
-**Live scheduler:** this build still starts with the inherited May 1928 election. Later inherited events can alter that date. The opening slice does not implement the intended Polish election calendar or guarantee a coherent later campaign. It introduces no campaign cutoff.
+**Planned, not implemented:** presidential succession and subsequent historical cabinets. The March Constitution provided five-year Sejm terms from the opening of the chamber and seven-year presidential terms, with the president elected by the Sejm and Senate together as the National Assembly. The next date after November is temporarily May 1928; inherited events can alter later dates. Continuation elections use the same seat calculation, without pretending to implement later Polish chronology or alliances. There is no campaign cutoff.
+
+**Approved election design:** the national vote-to-seat multipliers are 0.25 below 2%, 0.55 from 2%, 0.85 from 5%, 1.025 from 10%, 1.10 from 15%, and 1.25 from 25%. Weighted totals are normalized before whole seats are allocated by largest remainders. The user supplied/confirmed this calibration. These are gameplay rules, not the historical district law. There is no geographic model. Inne is split into 2% anonymous lists plus any smaller remainder, not counted as one electoral alliance. ChZJN seats are attributed to ZLN and PSChD proportionally to their support at the election.
 
 @weimar_timeline
 go-to: menu
@@ -167,7 +169,7 @@ Support for the Republic: [+ pro_republic_disp +]%
 view-if: (not historical_mode) or game_over
 go-to: menu
 
-**Projected election results** (if the election were to be held now):
+**Voting intentions** — current party preferences, not seats or recorded election votes:
 
 KPP: [+ kpp_votes +]%
 
@@ -351,15 +353,9 @@ title: Figures and Charts
 call: polish_opening_state
 go-to: menu
 on-display: {!
-var data = [];
-for (var party of Q.parties) {
-    data.push({
-        "id": party,
-        "legend": Q.parliament_names[party],
-        "name": Q.parliament_names[party],
-        "seats": Q.opening_sejm_active ? Q.opening_sejm_seats[party] : Math.round(Q[party + '_r']*5)
-    });
-}
+var data = Q.sejm_display_rows.map(function(row) {
+    return {id: row.id, legend: row.name, name: row.name, seats: row.seats};
+});
 if (typeof d3 !== 'undefined' && typeof window !== 'undefined') {
     // get screen width
     var width = 500;
@@ -376,20 +372,26 @@ if (typeof d3 !== 'undefined' && typeof window !== 'undefined') {
     parliament.exit.toCenter(false).bigToSmall(true);
     d3.select("#reichstag").datum(data).call(parliament);
     // Use the same palette as the legend/history, including the Other category.
-    for (var party of Q.parties) {
-        d3.select("#reichstag").selectAll(".seat." + party).style("fill", Q.party_colors[party]);
+    for (var row of Q.sejm_display_rows) {
+        d3.select("#reichstag").selectAll(".seat." + row.id).style("fill", Q.sejm_chart_colors[row.id]);
     }
 
-    var lines = d3.linegraph(false, false,
-            Q.parties,
-            Q.party_colors,
-            Q.party_names);
-    lines.width(width).height(400);
-    //var svg = lines(Q.election_records);
-    if (Q.election_records.length > 0) {
-        d3.select("#election_history").datum(Q.election_records).call(lines);
+    // Accessible history tables use the same immutable list results as the
+    // parliament. ChZJN is one row, never double-counted alongside its parties.
+    var history = d3.select('#election_history');
+    history.selectAll('*').remove();
+    for (var election of Q.sejm_history) {
+        history.append('h3').text(election.date + ' — ' + election.total + ' MPs' +
+            (election.kind === 'legacy_continuation' ? ' (temporary continuation)' : ''));
+        var table = history.append('table');
+        table.append('caption').text('Recorded votes and seats; Inne aggregates separate small lists');
+        table.append('thead').append('tr').selectAll('th')
+            .data(['Electoral list / category', 'Votes %', 'MPs', 'Seats %']).enter().append('th').text(function(value) { return value; });
+        var rows = table.append('tbody').selectAll('tr').data(election.rows).enter().append('tr');
+        rows.selectAll('td').data(function(row) {
+            return [row.name, row.votes.toFixed(2), row.seats, row.share.toFixed(2)];
+        }).enter().append('td').text(function(value) { return value; });
     }
-    //document.getElementById('election_history').innerHTML = svg.outerHTML;
 
     // party support records should not have so many ticks
     if (!Q.historical_mode || Q.game_over) {
@@ -417,7 +419,7 @@ if (typeof d3 !== 'undefined' && typeof window !== 'undefined') {
 
 [? if opening_sejm_active : Each dot represents one MP in the approved 444-seat opening approximation, using August club shares from January. Percentages are rounded for display; these are not current opinion polls. ?]
 
-[? if not opening_sejm_active : The opening snapshot has ended. This inherited chart illustrates parliamentary percentages with approximately 500 dots; a Polish seat-allocation system for later elections is not implemented. ?]
+[? if not opening_sejm_active : Each dot represents one MP in the recorded [+ sejm_total_seats +]-seat result, not current polling. Majority: [+ sejm_majority_required +] MPs. [? if sejm_has_chzjn : ChZJN is displayed as one bloc; ZLN and PSChD remain separate political parties. ?] ?]
 
 {!<svg id="reichstag" style="width: 500px; height: 250px;"> </svg>!}
 
@@ -427,8 +429,9 @@ if (typeof d3 !== 'undefined' && typeof window !== 'undefined') {
 {!<tr><td><div class="box" style='background-color:#C96A24'> </div></td><td>!} NPR {!</td><td>!} [+ npr_sejm_display +] {!</td></tr>!}
 {!<tr><td><div class="box" style='background-color:#6FAF45'> </div></td><td>!} PSL Wyzwolenie {!</td><td>!} [+ psl_wyzwolenie_sejm_display +] {!</td></tr>!}
 {!<tr><td><div class="box" style='background-color:#2F7D32'> </div></td><td>!} PSL Piast {!</td><td>!} [+ psl_piast_sejm_display +] {!</td></tr>!}
-{!<tr><td><div class="box" style='background-color:#D5AC27'> </div></td><td>!} PSChD {!</td><td>!} [+ pschd_sejm_display +] {!</td></tr>!}
-{!<tr><td><div class="box" style='background-color:#3F7BC1'> </div></td><td>!} [+ zln_name +] {!</td><td>!} [+ zln_sejm_display +] {!</td></tr>!}
+[? if not sejm_has_chzjn : {!<tr><td><div class="box" style='background-color:#D5AC27'> </div></td><td>!} PSChD {!</td><td>!} [+ pschd_sejm_display +] {!</td></tr>!} ?]
+[? if not sejm_has_chzjn : {!<tr><td><div class="box" style='background-color:#3F7BC1'> </div></td><td>!} [+ zln_name +] {!</td><td>!} [+ zln_sejm_display +] {!</td></tr>!} ?]
+[? if sejm_has_chzjn : {!<tr><td><div class="box" style='background-color:#3F7BC1'> </div></td><td>!} ChZJN (ZLN + PSChD) {!</td><td>!} [+ chzjn_sejm_display +] {!</td></tr>!} ?]
 {!<tr><td><div class="box" style='background-color:#7C5AA6'> </div></td><td>!} [? if opening_sejm_active : Minority deputies ?][? if not opening_sejm_active : Blok Mniejszości Narodowych ?] {!</td><td>!} [+ minorities_bloc_sejm_display +] {!</td></tr>!}
 {!<tr><td><div class="box" style='background-color:#A0A0A0'> </div></td><td>!} Inne {!</td><td>!} [+ other_sejm_display +] {!</td></tr>!}
 {!</table>!}
@@ -437,7 +440,7 @@ if (typeof d3 !== 'undefined' && typeof window !== 'undefined') {
 
 [? if n_elections = 0 : No new elections yet. The opening parliamentary snapshot is not an election held during play. ?]
 
-{!<svg id="election_history" style="width: 500px; height: 400px;"> </svg>!}
+{!<div id="election_history" style="overflow-x: auto;"></div>!}
 
 = Party support history
 

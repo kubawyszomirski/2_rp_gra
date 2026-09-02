@@ -8,7 +8,7 @@ go-to: start_menu_2
 
 = PPS: An Alternate History
 
-**Playable-slice notice:** You play as the **PPS (Polska Partia Socjalistyczna)**. The January 1922 opening government, simplified parliament, electoral parties, support model, factions, advisers and PPS self-defence organization are implemented Polish slices. Most action cards, dated events and later governments still use the inherited German baseline. November 1922 elections are planned, not implemented; the live election schedule still begins in May 1928.
+**Playable-slice notice:** You play as the **PPS (Polska Partia Socjalistyczna)**. The January 1922 opening, November 1922 Sejm election, electoral parties, support model, factions, advisers and PPS self-defence organization are implemented Polish slices. Most action cards, dated events and later governments remain an unfinished German-baseline simulation. After November, May 1928 is the temporary next election date, not a researched Polish chronology. There is no campaign cutoff.
 
 @start_menu_2
 
@@ -424,8 +424,8 @@ Q.catholics_spd_compat_base = Q.catholics_spd;
 // Approved simplification: 444 MPs from January 1922, using the user's rounded
 // August shares (100.1% total), NOT current polling or a January historical roster.
 // Integer tenths avoid floating-point ties. Largest remainders allocate exactly
-// 444 seats; ties use the existing party order. This is only an opening snapshot,
-// not a replacement for the inherited election algorithm.
+// 444 seats; ties use the existing party order. This is a parliamentary snapshot,
+// not an election or a measurement of January voting intentions.
 Q.sejm_total_seats = 444;
 Q.opening_sejm_active = 1;
 Q.opening_sejm_seats = {};
@@ -447,6 +447,17 @@ for (var seat = 0; seat < Q.sejm_total_seats - seats_assigned; seat++) {
 for (var party of Q.parties) {
     Q[party + '_r'] = 100 * Q.opening_sejm_seats[party] / Q.sejm_total_seats;
 }
+Q.polish_election_system = 1;
+Q.polish_government_safeguards = 1;
+Q.sejm_first_election_completed = 0;
+Q.sejm_pending = null;
+Q.sejm_results = [];
+Q.sejm_election_error = '';
+Q.sejm_parliament = {
+    id: 'opening_1922', kind: 'opening_snapshot', total_seats: Q.sejm_total_seats,
+    party_seats: Object.assign({}, Q.opening_sejm_seats),
+    party_names: Object.assign({}, Q.party_names)
+};
 
 for (var party of Q.parties) {
     Q['old_' + party + '_r'] = Q[party + '_r'];
@@ -672,10 +683,10 @@ Q.n_elections = 0;
 Q.no_majority_elections = 0;
 // elections are not on a timer, but rather there is an indicator for whether you're in an electoral cycle.
 Q.in_election = 1;
-Q.next_election_year = 1928;
-Q.next_election_month = 5;
-// January 1922 is time 1, so May 1928 is time 77.
-Q.next_election_time = 77;
+Q.next_election_year = 1922;
+Q.next_election_month = 11;
+// January 1922 is time 1; the first Sejm election is November, time 11.
+Q.next_election_time = 11;
 // government affairs timers
 Q.agricultural_policy_timer = 0;
 Q.domestic_enemies_timer = 0;
@@ -807,7 +818,7 @@ Józef Piłsudski is **Naczelnik Państwa**, not President of the Republic. **An
 
 The opening uses an approved **444-MP gameplay approximation**, calculated from rounded August 1922 club shares, not an exact January roster. Parliamentary representation is separate from changing public support.
 
-Read the Library for the opening institutions and cabinet portfolios. **November 1922 elections are planned, not implemented. The live schedule still starts in May 1928.** Later cabinet changes and most dated events remain an unfinished, mixed baseline; this is not a complete Polish campaign.
+Read the Library for the opening institutions and cabinet portfolios. **The first Sejm election is in November 1922: 444 MPs, with 223 needed for a majority.** The election and government choice consume no extra monthly actions. May 1928 is the temporary next election after November; successor cabinets, presidential succession and most dated events remain unfinished. This is not a complete Polish campaign.
 
 - @1928_main: Begin
 
@@ -822,4 +833,4 @@ The campaign begins in January 1922.
 
 Naczelnik Państwa: **Józef Piłsudski**. Prime minister: **Antoni Ponikowski**. Legislature: **Sejm Ustawodawczy**.
 
-PPS provides external toleration, without cabinet membership or ministry control. The opening state is implemented; later governments, elections and unconverted mechanics remain temporary. November 1922 elections are planned, while the live scheduler still points to May 1928.
+PPS provides external toleration, without cabinet membership or ministry control. The opening and November 1922 Sejm election are implemented. May 1928 is the temporary next election after November; later governments, presidential succession and unconverted mechanics remain unfinished.

@@ -54,9 +54,11 @@ PSL Wyzwolenie: [+ psl_wyzwolenie_sejm_display +]
 
 PSL Piast: [+ psl_piast_sejm_display +]
 
-PSChD: [+ pschd_sejm_display +]
+[? if not sejm_has_chzjn : PSChD: [+ pschd_sejm_display +] ?]
 
-[+ zln_name +]: [+ zln_sejm_display +]
+[? if not sejm_has_chzjn : [+ zln_name +]: [+ zln_sejm_display +] ?]
+
+[? if sejm_has_chzjn : ChZJN (ZLN + PSChD): [+ chzjn_sejm_display +]. The parties remain separate for government formation. ?]
 
 [? if opening_sejm_active : Minority deputies ?][? if not opening_sejm_active : Blok Mniejszości Narodowych ?]: [+ minorities_bloc_sejm_display +]
 
@@ -64,9 +66,13 @@ Inne: [+ other_sejm_display +]
 
 [? if spd_in_government = 1 : Budget: [+ budget +] ?]
 
-Live election schedule (inherited): [+ next_election_month : month +] [+ next_election_year +]
+Next Sejm election: [+ next_election_month : month +] [+ next_election_year +]
 
-**November 1922 Polish elections are planned, not implemented.** The retained scheduler starts in May 1928; later events can still change it. This is a development limitation, not the intended Polish election calendar.
+[? if not sejm_first_election_completed : The first Sejm election is in November 1922. It allocates 444 MPs from voting intentions; ChZJN combines ZLN and PSChD on the ballot. ?]
+
+[? if sejm_first_election_completed : The November election is implemented. May 1928 is the initial continuation date; later legacy events can change subsequent dates. Later Polish chronology and presidential succession remain unimplemented, not a historically accurate schedule. ?]
+
+Majority required: [+ sejm_majority_required +] of [+ sejm_total_seats +] MPs. Recorded votes and election history are available in the Library; polling below is not the sitting parliament.
 
 = Economics
 
@@ -172,9 +178,9 @@ Q.nationalism_disp = Math.round(Q.nationalism);
 Q.socialism_disp = Math.round(Q.socialism);
 !}
 
-= Projected election results
+= Voting intentions
 
-(if the election were to be held now):
+Current party preferences, not seats or previously recorded votes:
 
 KPP: [+ kpp_votes +]%
 

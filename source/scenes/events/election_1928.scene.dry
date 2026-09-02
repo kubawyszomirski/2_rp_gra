@@ -2,8 +2,14 @@ title: Reichstag Elections
 new-page: true
 tags: event
 priority: -1
-view-if: (year = next_election_year and month >= next_election_month) or (year > next_election_year)
-on-departure: month_actions += 1; in_election = 0; next_election_year = next_election_year + 4; n_elections += 1; next_election_time = time + 48; papen_chancellor_timer = 4;
+view-if: not polish_election_system and ((year = next_election_year and month >= next_election_month) or (year > next_election_year))
+go-to: sejm_election if polish_election_system
+on-departure: {!
+if (!Q.polish_election_system) {
+    Q.month_actions += 1; Q.in_election = 0; Q.next_election_year += 4;
+    Q.n_elections += 1; Q.next_election_time = Q.time + 48; Q.papen_chancellor_timer = 4;
+}
+!}
 set-jump: post_election_polish
 face-image: img/Rothe_Wahlen_1903.jpg
 
@@ -21,7 +27,7 @@ The Reichstag elections are to be held now.
 @cancel_elections
 title: We cannot hold the elections now. Cancel the elections.
 subtitle: This is an anti-democratic move that may backfire.
-view-if: in_emergency_government == 1 and president == "Braun" and not presidential_powers
+view-if: not polish_election_system and in_emergency_government == 1 and president == "Braun" and not presidential_powers
 
 Since we are currently ruling as part of an emergency government, we may use quasi-constitutional trickery to significantly delay these elections, and continue governing via Article 48. This is likely to be extremely unpopular both with our base and with the other parties. However, this may be necessary to prevent the extremists from gaining power.
 
@@ -38,7 +44,9 @@ Let us hope this does not backfire.
 
 @post_election_polish
 call: polish_opening_state
+go-to: sejm_election.results if polish_election_system
 on-arrival: {!
+if (Q.polish_election_system) return;
 // Retire opening metadata, without changing this inherited election's schedule
 // or its approved first-cycle coalition outcomes.
 Q.opening_sejm_active = 0;
@@ -148,43 +156,84 @@ Zaimplementowany wycinek obejmuje Koalicję Lewicy, koalicję centrolewicową, z
 - @polish_opposition: Przejdź do opozycji, jeżeli nie powstaje zatwierdzona większość.
 
 @polish_pps_majority
-view-if: pps_r >= 50
-on-arrival: spd_in_government = 1; pps_in_government = 1; in_spd_majority = 1; chancellor = "TBD — historical research required"; chancellor_party = "PPS"
+view-if: sejm_forming_government and pps_seats >= sejm_majority_required
+go-to: sejm_election.finish
+on-arrival: {!
+if (!Q.sejm_pending || Q.sejm_pending.phase !== 'results' || Q.sejm_pending.government_choice) return;
+Q.spd_in_government = 1; Q.pps_in_government = 1; Q.in_spd_majority = 1;
+Q.chancellor = 'TBD — historical research required'; Q.chancellor_party = 'PPS';
+Q.sejm_pending.government_choice = 'pps_majority';
+!}
 
 PPS posiada większość i tworzy samodzielny rząd. Imienny skład gabinetu pozostaje do opracowania historycznego.
 
 @polish_left_coalition
-view-if: polish_left_coalition >= 50 and psl_wyzwolenie_relation >= 40 and minorities_bloc_relation >= 40
-on-arrival: spd_in_government = 1; pps_in_government = 1; psl_wyzwolenie_in_government = 1; minorities_bloc_in_government = 1; in_polish_left_coalition = 1; chancellor = "TBD — historical research required"; chancellor_party = "PPS"
+view-if: sejm_forming_government and polish_left_seats >= sejm_majority_required and psl_wyzwolenie_relation >= 40 and minorities_bloc_relation >= 40
+go-to: sejm_election.finish
+on-arrival: {!
+if (!Q.sejm_pending || Q.sejm_pending.phase !== 'results' || Q.sejm_pending.government_choice) return;
+Q.spd_in_government = 1; Q.pps_in_government = 1; Q.psl_wyzwolenie_in_government = 1;
+Q.minorities_bloc_in_government = 1; Q.in_polish_left_coalition = 1;
+Q.chancellor = 'TBD — historical research required'; Q.chancellor_party = 'PPS';
+Q.sejm_pending.government_choice = 'polish_left';
+!}
 
 PPS, PSL Wyzwolenie i Blok Mniejszości Narodowych tworzą Koalicję Lewicy. Podział stanowisk i szczegółowy program pozostają planowane.
 
 @polish_center_left_coalition
-view-if: polish_center_left_coalition >= 50 and psl_wyzwolenie_relation >= 40 and psl_piast_relation >= 40 and npr_relation >= 40
-on-arrival: spd_in_government = 1; pps_in_government = 1; psl_wyzwolenie_in_government = 1; psl_piast_in_government = 1; npr_in_government = 1; in_polish_center_left_coalition = 1; chancellor = "TBD — historical research required"; chancellor_party = "PPS"
+view-if: sejm_forming_government and polish_center_left_seats >= sejm_majority_required and psl_wyzwolenie_relation >= 40 and psl_piast_relation >= 40 and npr_relation >= 40
+go-to: sejm_election.finish
+on-arrival: {!
+if (!Q.sejm_pending || Q.sejm_pending.phase !== 'results' || Q.sejm_pending.government_choice) return;
+Q.spd_in_government = 1; Q.pps_in_government = 1; Q.psl_wyzwolenie_in_government = 1;
+Q.psl_piast_in_government = 1; Q.npr_in_government = 1; Q.in_polish_center_left_coalition = 1;
+Q.chancellor = 'TBD — historical research required'; Q.chancellor_party = 'PPS';
+Q.sejm_pending.government_choice = 'polish_center_left';
+!}
 
 PPS, oba stronnictwa ludowe i NPR tworzą koalicję centrolewicową. Podział stanowisk i szczegółowy program pozostają planowane.
 
 @polish_minority_toleration
-view-if: minority_toleration_total >= 50 and psl_wyzwolenie_relation >= 40 and minorities_bloc_relation >= 40
-on-arrival: spd_in_government = 1; pps_in_government = 1; psl_wyzwolenie_in_government = 1; minorities_bloc_in_government = 0; minorities_toleration = 1; in_minority_government = 1; chancellor = "TBD — historical research required"; chancellor_party = "PPS"
+view-if: sejm_forming_government and polish_left_seats >= sejm_majority_required and psl_wyzwolenie_relation >= 40 and minorities_bloc_relation >= 40
+go-to: sejm_election.finish
+on-arrival: {!
+if (!Q.sejm_pending || Q.sejm_pending.phase !== 'results' || Q.sejm_pending.government_choice) return;
+Q.spd_in_government = 1; Q.pps_in_government = 1; Q.psl_wyzwolenie_in_government = 1;
+Q.minorities_bloc_in_government = 0; Q.minorities_toleration = 1;
+Q.in_minority_government = Q.pps_wyzwolenie_seats < Q.sejm_majority_required ? 1 : 0;
+Q.chancellor = 'TBD — historical research required'; Q.chancellor_party = 'PPS';
+Q.sejm_pending.government_choice = 'minority_toleration';
+!}
 
-PPS i PSL Wyzwolenie tworzą rząd mniejszościowy. Blok Mniejszości Narodowych pozostaje poza gabinetem i zapewnia mu zewnętrzną tolerancję.
+PPS i PSL Wyzwolenie tworzą rząd[? if in_minority_government : mniejszościowy ?]. Blok Mniejszości Narodowych pozostaje poza gabinetem i zapewnia mu zewnętrzną tolerancję.
 
 @polish_chjeno_piast
-view-if: chjeno_piast_coalition >= 50
-on-arrival: zln_in_government = 1; pschd_in_government = 1; psl_piast_in_government = 1; in_chjeno_piast = 1; chancellor = "TBD — historical research required"; chancellor_party = "Chjeno-Piast"
+view-if: sejm_forming_government and chjeno_piast_seats >= sejm_majority_required
+go-to: sejm_election.finish
+on-arrival: {!
+if (!Q.sejm_pending || Q.sejm_pending.phase !== 'results' || Q.sejm_pending.government_choice) return;
+Q.zln_in_government = 1; Q.pschd_in_government = 1; Q.psl_piast_in_government = 1; Q.in_chjeno_piast = 1;
+Q.chancellor = 'TBD — historical research required'; Q.chancellor_party = 'Chjeno-Piast';
+Q.sejm_pending.government_choice = 'chjeno_piast';
+!}
 
 ZLN, PSChD i PSL Piast tworzą większość Chjeno-Piast. PPS pozostaje w opozycji.
 
 @polish_opposition
-on-arrival: chancellor = "TBD — historical research required"; chancellor_party = "unresolved parliamentary government"
+view-if: sejm_forming_government
+go-to: sejm_election.finish
+on-arrival: {!
+if (!Q.sejm_pending || Q.sejm_pending.phase !== 'results' || Q.sejm_pending.government_choice) return;
+Q.chancellor = 'TBD — historical research required'; Q.chancellor_party = 'unresolved parliamentary government';
+Q.sejm_pending.government_choice = 'opposition';
+!}
 
-Nie powstaje żadna z obecnie zaimplementowanych większości. PPS przechodzi do opozycji. Dalsze scenariusze kryzysowe pozostają planowane.
+PPS pozostaje w opozycji. To także dostępny wybór, gdy arytmetycznie możliwa jest koalicja z PPS. Dalsze scenariusze kryzysowe pozostają planowane.
 
 @post_election_1928
 call: polish_opening_state
 on-arrival: {!
+if (Q.polish_election_system) return;
 Q.opening_sejm_active = 0;
 Q.polish_opening_government_active = 0;
 // set old results
@@ -416,7 +465,7 @@ if (window && d3) {
     d3.select("#reichstag").datum(data).call(parliament);
 }
 !}
-go-to: coalition_menu
+go-to: sejm_election.results if polish_election_system; coalition_menu if not polish_election_system
 
 = Election results
 
@@ -462,6 +511,7 @@ Right-wing Coalition (Z + BVP + DVP + Others + DNVP): [+ right_coalition +]%
 There are some potential coalition arrangements.
 
 @coalition_menu
+view-if: not polish_election_system
 
 - @spd_majority
 - @weimar_coalition
@@ -482,7 +532,7 @@ There are some potential coalition arrangements.
 title: A new "Popular Front" coalition?
 subtitle: SPD + KPD + Z + [+ ddp_name +]  [? if sapd_formed: + SAPD ?]([+ popular_front_coalition +]%)
 unavailable-subtitle: SPD + KPD + Z + [+ ddp_name +] [? if sapd_formed: + SAPD ?]([+ popular_front_coalition +]%) - [? if ((kpd_relation < 65 and kpd_party_leader == "Thälmann") or (kpd_relation < 45 and kpd_party_leader == "Conciliators")): We do not have good enough relations with the KPD. ?][? if (z_relation < 45 and z_party_leader == "Joos") or (z_relation < 65 and z_party_leader != "Joos" and kpd_party_leader != "Conciliators") or (z_relation < 55 and z_party_leader != "Joos" and kpd_party_leader == "Conciliators"): We do not have good enough relations with the Center Party. ?][? if communist_coalition < 3 : The Communists are unwilling to compromise at all. ?]
-view-if: popular_front_coalition >= 50
+view-if: not polish_election_system and popular_front_coalition >= 50
 choose-if: (((kpd_relation >= 65 and kpd_party_leader == "Thälmann") or (kpd_relation >= 45 and kpd_party_leader == "Conciliators")) and ((z_relation >= 45 and z_party_leader == "Joos") or (z_relation >= 65 and z_party_leader != "Joos" and kpd_party_leader != "Conciliators") or (z_relation >= 55 and z_party_leader != "Joos" and kpd_party_leader == "Conciliators")) and ddp_relation >= 50 and communist_coalition >= 3) or (z_party_leader == "Joos" and kpd_party_leader == "Conciliators" and z_relation >= 30 and kpd_relation >= 30)
 
 Could we really form a coalition that included both the Center and the Communists? It seems like an absurd concept, but given our good relationships with both sides, it is not an impossibility.
@@ -601,7 +651,7 @@ Alternatively, Braun could use the emergency powers of the presidency. Article 4
 title: Is a United Left coalition possible?
 subtitle: SPD + KPD [? if sapd_formed: + SAPD ?] ([+ left_coalition +]%)
 unavailable-subtitle: SPD + KPD [? if sapd_formed: + SAPD ?] ([+ left_coalition +]%). [? if kpd_relation < 50 : We do not have adequate relations with the KPD. ?][? if communist_coalition < 3 : The Communists are too committed to their radical ways to partake in government. ?]
-view-if: left_coalition >= 50
+view-if: not polish_election_system and left_coalition >= 50
 choose-if: (kpd_relation >= 50 or (kpd_party_leader == "Conciliators" and kpd_relation >= 40)) and communist_coalition >= 3
 
 There are enough votes for a SPD + KPD coalition government, if such a thing were actually possible.
@@ -881,7 +931,7 @@ There is no path to a majority government for now. The scheming around President
 @spd_majority
 title: SPD majority alone
 subtitle: SPD: [+ spd_r +]%
-view-if: spd_r >= 50
+view-if: not polish_election_system and spd_r >= 50
 on-arrival: chancellor = "Empty"; chancellor_party = "SPD"; spd_in_government = 1; in_spd_majority = 1; pro_republic += 5; foreign_minister_party = "SPD"; foreign_minister = "Breitscheid"; interior_minister_party = "SPD"; interior_minister = "Severing"; justice_minister_party = "SPD"; justice_minister = "Radbruch"; labor_minister_party = "SPD"; labor_minister = "Wissell"; reichswehr_minister_party = "SPD"; reichswehr_minister = "Leber"; economic_minister_party = "SPD"; economic_minister = "Schmidt"; finance_minister_party = "SPD"; finance_minister = "Hilferding"; agriculture_minister_party = "SPD"; agriculture_minister = "Baade"; reichswehr_loyalty -= 0.05; 
 achievement: majority_party
 
@@ -1070,7 +1120,7 @@ We have won the vote of no confidence, and are currently ruling under an SPD min
 @weimar_coalition
 title: We can form a Weimar Coalition.
 subtitle: SPD + Z + [+ ddp_name +] [? if sapd_formed and kpd_relation >= 30 : + SAPD toleration ?] ([+ weimar_coalition +]%)
-view-if: weimar_coalition >= 50
+view-if: not polish_election_system and weimar_coalition >= 50
 on-arrival: leverage += 5; leverage += 5 if z_party_leader == "Joos"; in_weimar_coalition = 1; spd_in_government = 1; in_popular_front = 0; in_left_front = 0; foreign_minister_party = "Z"; interior_minister_party = "Z"; justice_minister_party = ddp_name; labor_minister_party = "Z"; reichswehr_minister_party = "I"; economic_minister_party = ddp_name; finance_minister_party = "Z"; agriculture_minister_party = "Z"; foreign_minister = "Wirth"; interior_minister = "Wirth"; justice_minister = "Koch-Weser"; labor_minister = "Stegerwald"; reichswehr_minister = "Groener"; economic_minister = "Dietrich"; finance_minister = "Köhler"; agriculture_minister = "Hermes";
 achievement: weimar_coalition
 
@@ -1097,7 +1147,7 @@ Rudolf Breitscheid has been appointed chancellor.
 
 @grand_coalition
 title: We can form a Grand Coalition.
-view-if: grand_coalition >= 50 and grand_coalition_failed == 0
+view-if: not polish_election_system and grand_coalition >= 50 and grand_coalition_failed == 0
 subtitle: SPD + Z + BVP + [+ ddp_name +] + DVP ([+ grand_coalition +]%)
 on-arrival: in_grand_coalition = 1; in_popular_front = 0; in_left_front = 0
 go-to: grand_coalition_spd_lead if (n_elections <= 1 and largest_party == "SPD") or (largest_party == "SPD" and spd_r >= 30) or president = "Braun"; grand_coalition_z_lead if president != "Braun" and ((n_elections > 1 and spd_r < 30) or (n_elections <= 1 and largest_party != "SPD"))
@@ -1387,6 +1437,8 @@ We are seen as responsible for the failure to form a government, and many of our
 
 
 @ministries
+view-if: not polish_election_system
+go-to: main if polish_election_system
 
 We can pick from any number of ministries. Controlling a ministry allows us to directly effect policy in that area. [? if in_left_front : Any ministry that we do not take will be given to the KPD. ?] [? if in_left_front and reichswehr_minister_party == "KPD" : If the KPD controls the Reichswehr Ministry, the army will most likely revolt. ?]
 

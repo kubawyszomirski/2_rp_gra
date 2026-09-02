@@ -55,7 +55,7 @@ function runCode(code, Q, extraContext = {}) {
     Image: function Image() {},
     ...extraContext,
   };
-  vm.runInNewContext(code, context);
+  vm.runInNewContext(`(function () {\n${code}\n}).call(this)`, context);
   return Q;
 }
 
@@ -281,17 +281,19 @@ test('Polish relationship actions update the implemented coalition partners', ()
 
 test('first-election processing records all parties and computes only the implemented coalition shell', () => {
   const Q = runElection(newGameState());
-  runScene('election_1928.post_election_polish', Q);
+  Q.sejm_pending = {id: 'fixture', year: 1922, month: 11, first: true, phase: 'pending'};
+  runScene('sejm_election_result', Q);
+  runScene('polish_opening_state', Q);
 
   assert.equal(Q.election_records.length, 1);
   assert.deepEqual(Object.keys(Q.election_records[0]).sort(), ['date', ...expectedParties].sort());
   for (const party of expectedParties) {
-    assert.equal(Q[`${party}_r`], Q[`${party}_votes`]);
+    closeTo(Q[`${party}_r`], 100 * Q.sejm_results[0].party_seats[party] / 444);
   }
   assert.equal(Q.largest_party_id, 'minorities_bloc');
-  assert.equal(Q.polish_left_coalition, Q.pps_r + Q.psl_wyzwolenie_r + Q.minorities_bloc_r);
-  assert.equal(Q.polish_center_left_coalition, Q.pps_r + Q.psl_wyzwolenie_r + Q.psl_piast_r + Q.npr_r);
-  assert.equal(Q.chjeno_piast_coalition, Q.zln_r + Q.pschd_r + Q.psl_piast_r);
+  closeTo(Q.polish_left_coalition, Q.pps_r + Q.psl_wyzwolenie_r + Q.minorities_bloc_r);
+  closeTo(Q.polish_center_left_coalition, Q.pps_r + Q.psl_wyzwolenie_r + Q.psl_piast_r + Q.npr_r);
+  closeTo(Q.chjeno_piast_coalition, Q.zln_r + Q.pschd_r + Q.psl_piast_r);
   assert.equal(Q.anti_democratic_bloc, Q.kpp_r + Q.zln_r);
   assert.equal(Q.spd_r, Q.pps_r);
   assert.equal(Q.kpd_r, Q.kpp_r);
@@ -299,6 +301,9 @@ test('first-election processing records all parties and computes only the implem
 
 test('minority-supported government is external toleration, not cabinet membership', () => {
   const Q = newGameState();
+  Q.sejm_pending = {phase: 'results'};
+  Q.pps_wyzwolenie_seats = 150;
+  Q.sejm_majority_required = 223;
   runScene('election_1928.polish_minority_toleration', Q);
 
   assert.equal(Q.pps_in_government, 1);
@@ -355,10 +360,11 @@ test('the election simulator uses the same Polish opening matrix', () => {
   runScene('election_simulation.post_election', Q);
 
   assert.deepEqual(Array.from(Q.parties), expectedParties);
-  assert.equal(Q.largest_party_id, 'minorities_bloc');
+  assert.equal(Q.simulation_largest_party_id, 'minorities_bloc');
   assert.equal(Q.rural_other_display, 12);
   for (const party of expectedParties) {
-    assert.ok(Number.isFinite(Q[`${party}_r`]));
+    assert.ok(Number.isFinite(Q[`${party}_normalized`]));
+    assert.equal(Q[`${party}_r`], undefined, 'preview must not allocate parliamentary shares');
   }
 });
 

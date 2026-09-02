@@ -8,6 +8,8 @@ card-image: img/portraits/JuchaczMarie.jpg
 
 = Social Welfare Policy
 
+[? if polish_government_safeguards : Temporary mechanic: this inherited welfare card remains playable after Polish government formation. Its spending/support effects are retained, not a researched PPS welfare programme. The German confidence-vote storyline is excluded. ?]
+
 The social welfare program, including unemployment insurance, healthcare, and old-age care, is the proudest achievement of the SPD in our time in government. There is continuous pressure to dismantle the welfare system[? if black_thursday_seen = 1 :, especially given the economic crisis ?].
 
 - @reduce_spending: Reduce spending on welfare.

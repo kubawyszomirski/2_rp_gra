@@ -608,7 +608,7 @@ if (this.ui && this.ui.show_portraits) {
 if (typeof window !== "undefined" && window.generateBar) {
 }
 !}
-go-to: events_choice if has_event = 1; main if has_event = 0
+go-to: sejm_election if sejm_election_due or sejm_election_in_progress; events_choice if not sejm_election_due and not sejm_election_in_progress and has_event = 1; main if not sejm_election_due and not sejm_election_in_progress and has_event = 0
 
 = [+ month : month +] [+ year +]
 

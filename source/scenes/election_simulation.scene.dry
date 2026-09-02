@@ -1,4 +1,6 @@
 title: Election Simulation
+view-if: not started
+go-to: main if started
 set-jump: post_election
 
 The implemented simulator covers the approved January 1922 Polish opening model. The inherited German 1928, 1930 and 1932 scenarios have been retired from the active Polish party system.
@@ -7,6 +9,7 @@ The implemented simulator covers the approved January 1922 Polish opening model.
 
 @opening
 on-arrival: {!
+if (Q.started) return;
 Q.year = 1922;
 Q.month = 1;
 Q.old_demographics = 0;
@@ -47,50 +50,40 @@ for (var legacy_party in Q.legacy_party_map) {
 Q.catholics_spd = Q.national_minorities_pps;
 Q.catholics_spd_compat_base = Q.catholics_spd;
 !}
-go-to: election_algorithm
+go-to: main if started; election_algorithm if not started
 set-jump: post_election
 
 @post_election
 on-arrival: {!
-Q.largest_party_id = Q.parties[0];
+Q.simulation_largest_party_id = Q.parties[0];
 for (var party of Q.parties) {
-    Q[party + '_r'] = Q[party + '_votes'];
-    if (Q[party + '_r'] > Q[Q.largest_party_id + '_r']) {
-        Q.largest_party_id = party;
+    if (Q[party + '_normalized'] > Q[Q.simulation_largest_party_id + '_normalized']) {
+        Q.simulation_largest_party_id = party;
     }
 }
-Q.largest_party = Q.party_names[Q.largest_party_id];
-Q.polish_left_coalition = Q.pps_r + Q.psl_wyzwolenie_r + Q.minorities_bloc_r;
-Q.polish_center_left_coalition = Q.pps_r + Q.psl_wyzwolenie_r + Q.psl_piast_r + Q.npr_r;
-Q.chjeno_piast_coalition = Q.zln_r + Q.pschd_r + Q.psl_piast_r;
+Q.simulation_largest_party = Q.party_names[Q.simulation_largest_party_id];
 !}
 
-= January 1922 gameplay projection
+= January 1922 voting intentions (not parliamentary seats)
 
-KPP: [+ kpp_r +]%
+KPP: [+ kpp_votes_disp +]%
 
-PPS: [+ pps_r +]%
+PPS: [+ pps_votes_disp +]%
 
-NPR: [+ npr_r +]%
+NPR: [+ npr_votes_disp +]%
 
-PSL Wyzwolenie: [+ psl_wyzwolenie_r +]%
+PSL Wyzwolenie: [+ psl_wyzwolenie_votes_disp +]%
 
-PSL Piast: [+ psl_piast_r +]%
+PSL Piast: [+ psl_piast_votes_disp +]%
 
-PSChD: [+ pschd_r +]%
+PSChD: [+ pschd_votes_disp +]%
 
-ZLN: [+ zln_r +]%
+ZLN: [+ zln_votes_disp +]%
 
-Blok Mniejszości Narodowych: [+ minorities_bloc_r +]%
+Blok Mniejszości Narodowych: [+ minorities_bloc_votes_disp +]%
 
-Inne: [+ other_r +]%
+Inne: [+ other_votes_disp +]%
 
-Największe ugrupowanie: [+ largest_party +]
-
-Koalicja Lewicy: [+ polish_left_coalition +]%
-
-Koalicja centrolewicowa: [+ polish_center_left_coalition +]%
-
-Chjeno-Piast: [+ chjeno_piast_coalition +]%
+Highest voting intention: [+ simulation_largest_party +]. This preview does not allocate seats or change a sitting parliament.
 
 - @root.start_menu: Return to main menu

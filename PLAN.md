@@ -73,14 +73,15 @@ mechanic and implementation surface.
   `source/scenes/root.scene.dry`; reconciliation in
   `source/scenes/post_event.scene.dry`.
 - **Acceptance criteria:** New games initialize and display January 1922; the
-  retained May 1928 election is represented consistently as relative month 77;
+  first Sejm election is November 1922 (relative month 11), followed temporarily
+  by May 1928 (relative month 77);
   German date gates retain their existing calendar years; the opening clearly
   identifies the remaining German material as an interim baseline until Polish
   replacements are researched and approved.
-- **Chronology decision:** November 1922 elections are planned, not implemented.
-  Leave the live May 1928 scheduler and subsequent four-year scheduling alone
-  for this slice. No campaign cutoff is introduced.
-- **Open questions:** Election mechanics, later cabinets, the first set of Polish
+- **Chronology decision:** November 1922 is implemented as a Sejm-only election.
+  May 1928 and subsequent inherited scheduling remain a labelled continuation
+  placeholder; all elections share exact-seat recording. No cutoff is introduced.
+- **Open questions:** Later cabinets, presidential succession, later Polish
   scheduled events and the campaign end date require their own approved slices.
 
 ### Polish Opening State — approved and implemented, 2 September 2026
@@ -117,7 +118,7 @@ mechanic and implementation surface.
   Communications. The Library shows Polish labels and cabinet ownership, not
   named ministers or appointment actions. The last two are state/display only;
   Public Works / Communications combines historical departments.
-- **Authority:** While the opening cabinet remains active, inherited Prussian
+- **Authority:** Under the approved election safeguards, inherited Prussian
   government/police-command options, executive education and German toleration
   management are unavailable. Existing ministry checks block taxation and
   appointments. Government Affairs stays hidden even at month six to avoid an
@@ -126,11 +127,13 @@ mechanic and implementation surface.
 - **Lifecycle:** Ordinary actions and monthly polling do not change opening
   seats or cabinet. Existing government replacement retires opening labels,
   toleration and unassigned portfolio placeholders without overwriting new
-  assignments. Election/result writers retire the opening parliamentary
-  snapshot. This is cleanup, not a Polish successor-government simulation.
+  assignments. Only the authoritative election writer replaces the opening
+  parliament; polling and stray legacy percentage writes cannot do so.
+  Cabinet replacement no longer clears the head-of-state identity.
 - **Boundary:** The January cabinet snapshot can persist beyond its historical
   period; from March the UI warns that later cabinet chronology is missing.
-  November/December do not automatically create elections, Senate or president.
+  November now triggers the approved election below; no Senate or presidential
+  succession is automatically created. Later cabinets remain unresearched.
 - **Acceptance:** Real-engine tests cover initialization, allowed/blocked
   choices, campaign→month progression, date gates, government/election cleanup
   and same-version saves. Browser checks cover start, cabinet, all 444 dots and
@@ -352,7 +355,7 @@ mechanic and implementation surface.
 
 ## 14. Election and coalition design
 
-- **Status: undecided / researching / approved:** implemented first-cycle shell; later systems planned
+- **Status: undecided / researching / approved:** November 1922 slice implemented; later chronology planned
 - **User decision:** The implemented first-election menu may form a PPS
   majority, Koalicja Lewicy (PPS + PSL Wyzwolenie + Minorities Bloc), a
   centre-left coalition (PPS + both PSL parties + NPR), a PPS–PSL Wyzwolenie
@@ -379,6 +382,49 @@ mechanic and implementation surface.
   broad-coalition crisis rules, Centrolew, Sanacja, United Left, broad
   democratic front, exact ministries and later autonomous governments are
   planned but not implemented.
+
+### November 1922 election — approved playable slice
+
+- **Player path:** October action → monthly processing → mandatory November
+  election → recorded result → an existing Polish government choice → ordinary
+  November play. Results and government selection charge no monthly action.
+  Dendry automatic routes are mutually exclusive so the election cannot be
+  randomly bypassed. Other eligible events resume afterwards.
+- **Distinct state:** live voting intentions, immutable recorded votes/seats,
+  and sitting parliamentary seats. Opening MPs retain the approved August-share
+  approximation. Election records do not invent a prior vote from that snapshot.
+- **Allocation:** 444 integer MPs; majority is 223. Unrounded national votes use
+  multipliers 0.25 below 2%, 0.55 at 2%, 0.85 at 5%, 1.025 at 10%, 1.10 at 15%,
+  and 1.25 at 25%. Normalize weights, floor seat quotas, then award largest
+  remainders; exact ties use lexical list IDs. The user confirms calibration;
+  recalibration and geographic concentration are not outstanding work here.
+  Band-edge jumps and normalization are intentional properties of this rule.
+- **Inne:** preserve total support, split into anonymous 2% lists plus a smaller
+  remainder. Allocate each separately and aggregate only for display. No single
+  Other-list bonus, joint coalition or fictitious named parties.
+- **ChZJN:** first election only, ZLN + PSChD. Combine votes before applying
+  the multiplier. Attribute its integer seats by those parties' support at the
+  election, using largest remainders. Results, status and seat charts show one
+  bloc; the parties stay separate for relationships and cabinet membership.
+- **Government:** retain the six choices and existing relationship gates;
+  count exact MPs. External minority-bloc support does not make it a cabinet
+  member. An already-majority PPS–Wyzwolenie cabinet is not labelled minority.
+  Opposition remains a voluntary choice. Reset stale government/portfolio flags;
+  no new named ministers, ministry allocation or presidential succession.
+- **Safeguards:** retain force/support/faction adapters. Keep Prussian executive
+  and police options blocked after the opening; exclude German War Guilt,
+  confidence/toleration and old cabinet-allocation entry routes. Generic welfare
+  remains explicitly temporary. No general German-content shutdown or cutoff.
+- **Continuation:** after November set May 1928, then retain subsequent legacy
+  date requests/four-year cadence through the same result writer. ChZJN is not
+  automatically recreated in later elections. No new first-election threshold
+  or ban; subsequent constitutional-reform exclusions remain compatibility.
+- **Saves:** persist the election ID/phase and one result. New-game/same-version
+  saves are supported; no older-save migration is promised.
+- **Evidence/verification:** `SEJM-1922-ELECTION-DESIGN` in the research register;
+  `source/scenes/sejm_election.scene.dry`, `sejm_election_result.scene.dry`,
+  `polish_opening_state.scene.dry`, updated UI and legacy entry guards;
+  `tests/sejm-election.test.js` and optional `tests/sejm-browser-smoke.cjs`.
 
 ## 15. Economic design
 
@@ -526,3 +572,4 @@ Use this table only after a section above reaches `approved`.
 | Decision section | Approval date | Approved wording/version | Related Source IDs | Implementation task/commit |
 | --- | --- | --- | --- | --- |
 | 2, 12, 14 — Polish Opening State | 2026-09-02 | 444-MP opening; Ponikowski external toleration; ten read-only portfolios; narrow authority guards; unchanged election scheduler and no cutoff | OPENING-1922-DESIGN; SU-1922-AUGUST-COMPOSITION; OPENING-CONSTITUTION-1922; PONIKOWSKI-FIRST-CABINET | Implemented working-tree slice; not committed |
+| 2, 14 — November Sejm election | 2026-09-02 | Approved bands; Other at 2%; ChZJN support-based attribution/grouped display; 444 MPs/223 majority; no monthly charge; safeguards and temporary continuation | SEJM-1922-ELECTION-DESIGN | Implemented working-tree slice; not committed or pushed |
