@@ -8,7 +8,7 @@ go-to: start_menu_2
 
 = PPS: An Alternate History
 
-**Playable-slice notice:** You play as the **PPS (Polska Partia Socjalistyczna)**. The January 1922 opening, November 1922 Sejm election, electoral parties, support model, factions, advisers and PPS self-defence organization are implemented Polish slices. Most action cards, dated events and later governments remain an unfinished German-baseline simulation. After November, May 1928 is the temporary next election date, not a researched Polish chronology. There is no campaign cutoff.
+**Playable-slice notice:** You play as the **PPS (Polska Partia Socjalistyczna)**. The January 1922 opening, November 1922 Sejm election, December 1922 presidential succession, electoral parties, support model, factions, advisers and PPS self-defence organization are implemented Polish slices. Most action cards, dated events and later governments remain an unfinished German-baseline simulation. After December 1922, May 1928 is the temporary next election date, not a researched Polish chronology. There is no campaign cutoff.
 
 @start_menu_2
 
@@ -459,6 +459,40 @@ Q.sejm_parliament = {
     party_names: Object.assign({}, Q.party_names)
 };
 
+// Polish presidential succession is separate from the inherited direct-popular
+// German presidency. The semantic object is authoritative; the legacy
+// `president` and `presidential_powers` fields are deliberately not reused.
+Q.polish_presidential_system = 1;
+Q.polish_presidential_sequence_completed = 0;
+Q.polish_presidential_pending = null;
+Q.polish_presidential_due = 0;
+Q.polish_presidential_in_progress = 0;
+Q.polish_presidential_phase = '';
+Q.polish_presidency = {
+    constitution: {
+        id: 'march_constitution_1921',
+        election_body: 'national_assembly',
+        term_years: 7,
+        government_acts_require_countersignature: true,
+        appoints_prime_minister: true,
+        appoints_ministers_on_prime_minister_proposal: true,
+        legislative_veto: false,
+        independent_decrees: false,
+        dissolve_sejm: 'requires_three_fifths_senate_consent'
+    },
+    current: {
+        office_id: 'naczelnik_panstwa',
+        holder_id: 'jozef_pilsudski',
+        holder_name: 'Józef Piłsudski',
+        status: 'incumbent',
+        since: '1922-01-01-game-opening'
+    },
+    assembly: null,
+    elections: [],
+    transitions: [],
+    pps_decisions: []
+};
+
 for (var party of Q.parties) {
     Q['old_' + party + '_r'] = Q[party + '_r'];
 }
@@ -818,7 +852,7 @@ Józef Piłsudski is **Naczelnik Państwa**, not President of the Republic. **An
 
 The opening uses an approved **444-MP gameplay approximation**, calculated from rounded August 1922 club shares, not an exact January roster. Parliamentary representation is separate from changing public support.
 
-Read the Library for the opening institutions and cabinet portfolios. **The first Sejm election is in November 1922: 444 MPs, with 223 needed for a majority.** The election and government choice consume no extra monthly actions. May 1928 is the temporary next election after November; successor cabinets, presidential succession and most dated events remain unfinished. This is not a complete Polish campaign.
+Read the Library for the opening institutions and cabinet portfolios. **The first Sejm election is in November 1922: 444 MPs, with 223 needed for a majority.** Its government choice consumes no extra monthly action. In December, the game resolves the two approved presidential elections and the constitutional transfer without another action. May 1928 remains the temporary next parliamentary election; successor cabinets, later presidential chronology and most dated events remain unfinished. This is not a complete Polish campaign.
 
 - @1928_main: Begin
 
@@ -833,4 +867,4 @@ The campaign begins in January 1922.
 
 Naczelnik Państwa: **Józef Piłsudski**. Prime minister: **Antoni Ponikowski**. Legislature: **Sejm Ustawodawczy**.
 
-PPS provides external toleration, without cabinet membership or ministry control. The opening and November 1922 Sejm election are implemented. May 1928 is the temporary next election after November; later governments, presidential succession and unconverted mechanics remain unfinished.
+PPS provides external toleration, without cabinet membership or ministry control. The opening, November 1922 Sejm election and December presidential succession are implemented. May 1928 is the temporary next parliamentary election; later governments, later presidential chronology and unconverted mechanics remain unfinished.

@@ -516,8 +516,54 @@ heuristic, not historical district allocation.
   modeling is excluded by decision, not required to finish this slice.
 - **Polish equivalent:** Approved national heuristic, with user-confirmed
   calibrated weights; no geographical concentration model is planned here.
-- **Unresolved:** Later historical election dates, cabinets and presidential
-  succession remain **TBD — historical research required**.
+- **Unresolved:** Later historical Sejm election dates, later presidential
+  elections and cabinets remain **TBD — historical research required**.
+
+### 8a. December 1922 presidency and National Assembly
+
+- **Purpose:** Replace the inherited direct-popular German presidential route
+  with the approved first Polish constitutional succession.
+- **Player sees:** The five first-election candidates, only the final
+  Narutowicz–Zamoyski ballot and its supporting parties, Piłsudski's transfer,
+  Narutowicz's assassination and PPS response, then the final
+  Wojciechowski–Morawski ballot and its supporting parties.
+- **Sequence:** After the November government phase is complete and an ordinary
+  action advances the game to December, `post_event` routes to the mandatory
+  sequence before `#event`. It freezes 444 current Sejm MPs, proportionally
+  allocates 111 Senate proxies by largest remainder, and records a 555-member
+  Assembly. The sequence uses saved phases, writes each fixed historical ballot
+  and transition once, then resumes deferred December events without another
+  action or month advance.
+- **Scenes/files:** `source/scenes/polish_presidential_sequence.scene.dry`,
+  `source/scenes/polish_opening_state.scene.dry`, `source/scenes/main.scene.dry`,
+  `source/scenes/post_event.scene.dry`, Status/Library, and narrow guards in the
+  German 1932 election and 1934 Hindenburg-death scenes.
+- **Important state:** `polish_presidential_system`,
+  `polish_presidential_pending`, `polish_presidential_phase`,
+  `polish_presidential_sequence_completed`, and canonical `polish_presidency`
+  sections `constitution`, `current`, `assembly`, `elections`, `transitions`,
+  and `pps_decisions`.
+- **Depends on:** A completed `sejm_pending.phase = complete`, the current
+  immutable `sejm_parliament`, the December calendar boundary, and
+  `daszynski_left_adviser_pool` for the one approved candidacy exception.
+- **Depended on by:** Head-of-state Status/Library display, future Polish
+  constitutional actions, later cabinet formation and later presidential events.
+- **Conditions/invariants:** Fixed winners; 444+111=555; no mutation of the
+  Sejm or current cabinet; no numerical effects from nominations or PPS's
+  assassination response; no write to legacy `president` or
+  `presidential_powers`; no duplicate history after navigation or save/resume.
+- **Compatibility boundary:** The German 1932 popular election and both 1934
+  Hindenburg succession routes are unavailable under
+  `polish_presidential_system`. The rest of the German chronology is not globally
+  disabled by this slice. The 1932 annual text reports the missing later Polish
+  chronology instead of promising the German election.
+- **Approved simplifications:** The Senate has the Sejm's proportional party
+  distribution and exists only as an Assembly snapshot. Only final ballots are
+  displayed. Maciej Rataj's brief acting presidency is omitted from playable
+  state, while the historical record identifies this as a simplification.
+- **Unresolved:** Variable results, alternative presidents, later Polish
+  presidential elections, actual Senate composition and general Senate powers,
+  successor cabinets, and numerical political consequences remain planned.
 
 ### 9. Parliament display
 

@@ -2,7 +2,7 @@ title: Next month
 set-bg: img/map_2.jpg
 is-hand: true
 call: polish_opening_state
-go-to: sejm_election if sejm_election_due or sejm_election_in_progress
+go-to: sejm_election if sejm_election_due or sejm_election_in_progress; polish_presidential_sequence if not sejm_election_due and not sejm_election_in_progress and (polish_presidential_due or polish_presidential_in_progress)
 on-arrival: {!
 Q.polish_government_actions_available = this._compileChoices(this.game.scenes['main.govt'])
     .some(function(choice) { return choice.canChoose && this.game.scenes[choice.id].isCard; }, this);
@@ -22,7 +22,9 @@ max-cards: 3
 
 [? if polish_opening_government_active and time >= 6 : PPS tolerates the government but holds no ministries. Government Affairs has no available executive actions in this opening slice. You can inspect all ten portfolios in the Library and continue using Party Affairs and advisers. ?]
 
-[? if sejm_first_election_completed : Development notice: the November election and Polish government choices are implemented. Successor cabinets, presidential succession and later election chronology remain temporary. Prussian executive powers and German confidence/toleration routes remain unavailable; generic welfare and the broader monthly simulation retain legacy mechanics. ?]
+[? if sejm_first_election_completed and not polish_presidential_sequence_completed : Development notice: the November election and Polish government choices are implemented. The mandatory December presidential sequence is next. Successor cabinets and later election chronology remain temporary. ?]
+
+[? if polish_presidential_sequence_completed : Development notice: the November Sejm election and December presidential succession are implemented. Successor cabinets, later presidential elections and later parliamentary chronology remain temporary. Prussian executive powers and German confidence/toleration routes remain unavailable; generic welfare and the broader monthly simulation retain legacy mechanics. ?]
 
 - @party
 - @govt

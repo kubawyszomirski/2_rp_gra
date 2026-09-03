@@ -408,9 +408,10 @@ source location, and permitted use in its entry. Preserve
 - **Timing / authority simplifications:** Election and minimal government choice
   finish within November without extra monthly actions. A strict majority is
   223 of 444 for these gameplay options, not a claim that every historical vote
-  required 223. No Senate, named successor cabinet or presidential election is
-  invented. Portfolios stay unallocated and approved German executive/confidence
-  and toleration routes remain guarded; generic welfare stays labelled legacy.
+  required 223. No named successor cabinet or general Senate is invented.
+  Portfolios stay unallocated and approved German executive/confidence and
+  toleration routes remain guarded; generic welfare stays labelled legacy. The
+  separately approved December presidency is recorded below.
 - **Alternate history:** Results follow the player's changed support, not fixed
   historical national results. Parliamentary snapshots and votes remain distinct.
 - **Implemented:** `source/scenes/sejm_election.scene.dry`,
@@ -418,11 +419,78 @@ source location, and permitted use in its entry. Preserve
   `source/scenes/polish_opening_state.scene.dry`, six Polish government choices
   in `source/scenes/events/election_1928.scene.dry`, status/Library, and
   `tests/sejm-election.test.js`.
-- **Still unresolved:** Successor cabinets, presidential succession and
-  subsequent Polish election chronology: **TBD — historical research required**.
+- **Still unresolved:** Successor cabinets, later presidential elections and
+  subsequent Polish parliamentary chronology: **TBD — historical research required**.
   Temporary May 1928 scheduling and later legacy rules remain visibly labelled.
 - **Rights:** No media imported; image/music credits preserved. The repository's
   MIT code licence does not automatically cover media assets or cited editions.
+
+### Source entry PRESIDENCY-1922-SEQUENCE
+
+- **Category / evidence:** December 1922 presidency, National Assembly,
+  constitutional authority, assassination and user-approved gameplay compression.
+- **Constitutional primary source:** [Constitution of 17 March 1921, Chapter III](https://biblioteka.sejm.gov.pl/tek01/txt/kpol/1921a-r3.html),
+  arts. 39–46 and 54: election for seven years by an absolute majority of the
+  Sejm and Senate assembled as the National Assembly; countersignature for
+  governmental acts; appointment of the prime minister and ministers on the
+  prime minister's proposal; presidential oath. [Chapter II](https://biblioteka.sejm.gov.pl/tek01/txt/kpol/1921a-r2.html),
+  arts. 26 and 35–36, establishes the Senate relationship, promulgation of laws
+  and the qualified Senate consent required for presidential dissolution of the
+  Sejm. Official Sejm Library transcription; accessed 3 September 2026.
+- **Senate evidence:** Senate of the Republic, [resolution/history of the first Senate](https://www.senat.gov.pl/download/gfx/senat/pl/senatuchwaly/3472/plik/658uch.pdf):
+  the first Senate comprised 111 members. Official institutional source;
+  accessed 3 September 2026.
+- **Ballots and candidates:** Zintegrowana Platforma Edukacyjna,
+  [1922 election tables](https://zpe.gov.pl/a/schemat/DKdwB9T3l), records the five
+  first-election candidates and the ballot progression, including the final
+  Narutowicz 289 / Zamoyski 227 result and 29 blank ballots, and the 20 December
+  Wojciechowski 298 / Morawski 221 result. Secondary educational compilation;
+  accessed 3 September 2026.
+- **Office chronology:** The [official President of Poland account of Narutowicz](https://www.prezydent.pl/aktualnosci/wydarzenia/prezydent-upamietnil-gabriela-narutowicza,62492)
+  records his presidency and assassination on 16 December. The
+  [official Wojciechowski commemoration](https://www.prezydent.pl/aktualnosci/wydarzenia/100-lecia-wyboru-stanislawa-wojciechowskiego-na-prezydenta-%2C62582)
+  records his election on 20 December. Official institutional secondary
+  accounts; accessed 3 September 2026. The game records Narutowicz's oath on
+  11 December and the Piłsudski transfer on 14 December from the cited Sejm and
+  official transition accounts reviewed for this slice.
+- **Party support in the final ballots:** The first final ballot is summarized
+  as PSL Wyzwolenie, PPS, most of PSL Piast, the minority bloc and part of NPR
+  for Narutowicz; ZLN/PSChD and other right parliamentarians for Zamoyski. The
+  second records PSL Piast, PSL Wyzwolenie, PPS, NPR and the minority bloc for
+  Wojciechowski; the right for Morawski. This is a broad club-level display, not
+  a claim that every member voted with a party whip. Supporting secondary
+  discussion: Marek Białokur, [“Dlaczego Gabriel Narutowicz został prezydentem...”](https://eks.uwr.edu.pl/wp-content/uploads/sites/198/2024/01/01_01_M_Bialokur_Dlaczego_Gabriel_Narutowicz_zostal_prezydentem.pdf),
+  and the 1922 succession discussion in [Eunomia 2(95)/2018](https://www.ojs.akademiarac.edu.pl/index.php/eunomia/article/download/37/35/),
+  accessed 3 September 2026.
+- **PPS response:** Krzysztof Kawalec, IPN,
+  [“Śmierć prezydenta”](https://ipn.gov.pl/pl/historia-z-ipn/138478%2CKrzysztof-Kawalec-Smierc-prezydenta.html),
+  describes Daszyński stopping contemplated violent reprisals. This supports the
+  unavailable armed-reprisal route; it does not turn lawful prosecution into
+  armed retaliation. Secondary institutional account; accessed 3 September 2026.
+- **Historical fact:** The constitutional rules, candidates, fixed ballot
+  totals, office transfers, assassination and Wojciechowski succession above.
+  Historically, Marshal of the Sejm Maciej Rataj briefly exercised presidential
+  duties after Narutowicz's death; the game does not deny that fact.
+- **Approved gameplay simplifications:** Derive a temporary 111-seat Senate in
+  the same party proportions as the game's current 444-seat Sejm; show only the
+  final ballots; keep both winners fixed; omit Rataj's acting interlude from
+  playable state; preserve the selected government and all portfolios; record
+  PPS nominations/response without numerical effects.
+- **Alternate-history handling:** If Daszyński has already left PPS through the
+  implemented Centrum crisis, PPS has no first-election candidate. This changes
+  the nomination record but not the approved fixed winner. Other alternative
+  presidents and their consequences are planned, not implemented.
+- **Implementation status:** Implemented bounded slice. Later presidential
+  elections, actual Senate composition and powers as a general mechanic,
+  successor cabinets and variable results remain **TBD — historical research
+  and design required**.
+- **Related mechanic, variable and source file:** `polish_presidency`,
+  `polish_presidential_pending`, `head_of_state_*`;
+  `source/scenes/polish_presidential_sequence.scene.dry`, routing and UI helpers,
+  and `tests/polish-presidential-sequence.test.js`.
+- **Rights:** Facts are paraphrased and linked; no source media was imported.
+  Image/music credits are preserved, and the code's MIT licence does not extend
+  automatically to cited publications or media assets.
 
 ### Source entry ELECTION-TBD
 
@@ -907,4 +975,5 @@ Add one row whenever an entry above is assigned a stable Source ID.
 | Source ID | Category | Short claim/game element | Status | Related PLAN.md decision |
 | --- | --- | --- | --- | --- |
 | SEJM-1922-ELECTION-DESIGN | Elections / user-approved design | November date, 444 MPs, calibrated heuristic, ChZJN and small lists | Implemented bounded slice; future chronology unresolved | November 1922 election slice |
+| PRESIDENCY-1922-SEQUENCE | Constitution / presidential elections | March-Constitution office and fixed December 1922 succession | Implemented bounded slice; later presidency/Senate/cabinets unresolved | December 1922 presidential succession |
 | TBD | TBD | TBD | TBD | TBD |

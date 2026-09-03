@@ -171,9 +171,9 @@ state is for new games and same-version saves, not an old-save migration.
 | --- | --- | --- |
 | `polish_opening_government_active` | Boolean-like number, `1` | Root initializes; helper and the canonical election writer clear it. Opening government identity is never reactivated automatically. Later authority safeguards have their own flag. |
 | `polish_cabinet_id` | String, `ponikowski_1` | Root/helper; display/lifecycle identity. Cleared when the opening is retired, not assigned to a researched successor. |
-| `head_of_state_office`, `head_of_state_name` | Strings, `naczelnik_panstwa`, `Józef Piłsudski` | Separate from the PPS Piłsudczycy faction. Cabinet/election replacement preserves them; a later explicit legacy `president` takes display precedence with a temporary-framework notice. No Polish succession is invented. |
+| `head_of_state_office`, `head_of_state_name` | Strings, initially `naczelnik_panstwa`, `Józef Piłsudski` | Derived compatibility/display fields for the authoritative `polish_presidency.current`. December changes them to `prezydent_rp` and finally Stanisław Wojciechowski. Separate from the PPS Piłsudczycy faction. |
 | `pps_external_toleration` | Boolean-like number, `1` | Root/helper; PPS-position text only. Grants no ministry or cabinet membership; never copied into `spd_toleration`. Clears when this opening government is replaced. |
-| `chancellor`, `chancellor_party`, `president` | Strings, `Antoni Ponikowski`, `expert_cabinet`, empty string | Retained executive compatibility keys; existing event writers still work. Empty president does not mean Piłsudski is president. Later named-string comparisons are unchanged. |
+| `chancellor`, `chancellor_party`, `president` | Strings, `Antoni Ponikowski`, `expert_cabinet`, empty string | Retained executive compatibility keys. The Polish sequence preserves the first two and never writes `president`; empty legacy `president` does not mean that the Polish presidency is vacant. |
 | `polish_portfolios` | Object mapping ten stable keys to Polish labels | Root and read-only Library/helper. Keys: `labor`, `interior`, `finance`, `economic`, `justice`, `foreign`, `agriculture`, `reichswehr`, `education`, `public_works`. Last two add no policy/allocator behavior. |
 | `<portfolio>_minister_party`, `<portfolio>_minister` | Strings, `opening_expert_cabinet` and empty name | The sentinel denotes cabinet administration outside PPS, not a claim that all ministers were non-party. Helper clears remaining sentinels after replacement but preserves new owners/names. Existing ministry checks must not treat the sentinel as PPS/SPD ownership. |
 | `sejm_total_seats` | Integer, `444` | Current chamber size, used for allocation, majority, seat percentages and exact chart dots. |
@@ -185,9 +185,10 @@ The helper recognizes replacement through executive identity, government/
 caretaker/legacy-toleration flags, ministry-owner changes or an election. It
 clears only opening metadata and remaining opening placeholders, never new
 government assignments. No new timers are introduced. From March 1922 the UI
-warns if the January cabinet snapshot persists. November 1922 is now scheduled
-and implemented; May 1928 / relative month 77 is only the temporary next date
-after that result, followed by inherited scheduling.
+warns if the January cabinet snapshot persists. November 1922 is scheduled and
+implemented; the December presidency then preserves the selected government.
+May 1928 / relative month 77 is only the temporary next parliamentary date,
+followed by inherited scheduling.
 
 Opening `spd_in_government`, `pps_in_government`, `spd_caretaker`, coalition
 flags, legacy `spd_toleration` and minority toleration all start at zero.
@@ -195,6 +196,27 @@ flags, legacy `spd_toleration` and minority toleration all start at zero.
 command rights: rally/police-training and Prussian executive options have
 the persistent `polish_government_safeguards` guard. Police figures and militia
 mechanics are unchanged. Generic welfare remains explicitly labelled legacy.
+
+### Implemented Polish presidential-state contract
+
+| Exact name/family | Type and initial value | Writers/readers and invariant |
+| --- | --- | --- |
+| `polish_presidential_system` | Boolean-like number, `1` | Enables the semantic Polish system and narrowly disables the German 1932 direct election and 1934 Hindenburg succession routes. It is not a campaign-wide content cutoff. |
+| `polish_presidency` | Object with `constitution`, `current`, `assembly`, `elections`, `transitions`, `pps_decisions` | Root initializes; the December sequence writes; opening helper, Status and Library read. This is the authoritative Polish office and immutable history. |
+| `polish_presidency.constitution` | Semantic object for `march_constitution_1921` | Seven-year National Assembly election; countersignature; prime-minister appointment; ministers on PM proposal; no separate legislative veto or inherited independent-decree power; Sejm dissolution requires the recorded Senate-consent rule. Never inferred from `presidential_powers`. |
+| `polish_presidency.current` | Object; initially Piłsudski as `naczelnik_panstwa` | Sequence changes to Narutowicz as `prezydent_rp`, a short compressed-succession marker, then Wojciechowski. The approved playable state deliberately omits Rataj's brief acting presidency. |
+| `polish_presidency.assembly` | `null`, then immutable 555-member snapshot | Contains the current 444 Sejm seats, 111 Senate proxies apportioned proportionally by largest remainder, combined party seats and names. It does not create a general Senate mechanic or alter `sejm_parliament`. |
+| `polish_presidency.elections` | Empty array, then two records | Fixed final ballots: Narutowicz 289 / Zamoyski 227 plus 29 blank on 9 December; Wojciechowski 298 / Morawski 221 on 20 December. Each record includes semantic candidate IDs and supporting party IDs. Results are not calculated from the simplified Assembly. |
+| `polish_presidency.transitions` | Empty array | Records Narutowicz's oath, Piłsudski's transfer, assassination, and Wojciechowski's oath/assumption exactly once. Does not record an acting holder under the approved compression. |
+| `polish_presidency.pps_decisions` | Empty array | Records first candidacy, peaceful constitutional response and second non-candidacy. No numerical effects. First candidacy depends on `daszynski_left_adviser_pool`, not `daszynski_advisor`. |
+| `polish_presidential_pending` | `null`, then resumable phase object | Stores Assembly copy, nominations, response and phase. Same-version save/re-entry must not duplicate decisions, ballots or transitions. |
+| `polish_presidential_phase`, `polish_presidential_due`, `polish_presidential_in_progress`, `polish_presidential_sequence_completed` | Derived string/boolean-like controls | Opening helper and sequence maintain routing. Due only after completed November government formation at December-or-later; mandatory route precedes ordinary events and consumes no action/month. |
+| `polish_first_presidential_election_recorded`, `polish_second_presidential_election_recorded`, `national_assembly_total` | Derived display fields | Opening helper rebuilds from canonical state for Status/Library; never authoritative writers. |
+| `president`, `presidential_powers`, `presidential_election_seen` | Legacy German compatibility state | Unchanged by the Polish sequence. German named-string/power semantics are not Polish constitutional semantics. Later Polish events must read `polish_presidency`, while remaining inherited users require separate review. |
+
+Variable presidential outcomes, later elections, a permanent Senate, successor
+cabinets and numerical consequences are planned, not silently represented by
+the fixed December records.
 
 ### Retained coalition and relationship families
 
@@ -206,7 +228,7 @@ mechanics are unchanged. Generic welfare remains explicitly labelled legacy.
 | `kpd_coalition_dissent`, `kpd_goals_seen`, `kpd_goals_completed`, `kpd_coalition_success`, `popular_front_success` | Numeric counters/boolean flags created in coalition/event routes | Popular/left-front and KPD event files write/read; narrative/ending use | Specific coalition stability; persistent event/simulation state | Lifecycle depends on entering those routes; several are not root-initialized | TBD — user decision required. |
 | `psl_wyzwolenie_relation`, `minorities_bloc_relation`, `psl_piast_relation`, `npr_relation`, `pschd_relation`, `kpp_relation`, `zln_relation` | Numeric relationships initialized to 65/50/45/50/30/10/5 | Polish relationship card writes; status/Library display; first-cycle coalition gates read selected values | Cooperation and coalition eligibility; persistent simulation state | Existing qdisplay bands are authoritative, so 65 displays friendly, 50 neutral, 10 frigid and 5 hostile | Implemented. Legacy German relationship fields remain inactive compatibility state for inherited content. |
 | `spd_toleration`, `communist_coalition`, `kpd_truce`, `tried_supporting_kpd` | Numeric policy/route flags; initialized or created by relevant choices | Election, inter-party and KPD routes | Coalition option availability and consequences; persistent choice/event state | Meanings are route-specific rather than one common scale | TBD — user decision required. |
-| `chancellor`, `chancellor_party`, `old_chancellor`, `president` | Strings; initialized and reassigned by election/government/head-of-state events | Coalition and major event writers; status, institutions, endings readers | Government, constitutional and terminal routes; persistent simulation state | Named strings are used in exact comparisons; renaming display text can break logic | TBD — user decision required. |
+| `chancellor`, `chancellor_party`, `old_chancellor`, `president` | Legacy strings; initialized and reassigned by inherited election/government/head-of-state events | Coalition and major German event writers; some inherited endings readers | Temporary government and legacy constitutional state | Named comparisons remain fragile; Polish presidency deliberately does not write `president` | Retain only as compatibility. New Polish head-of-state work must use `polish_presidency`. |
 
 ## Advisers, cabinet, and leadership
 

@@ -1,0 +1,220 @@
+title: Polish opening state consistency
+on-arrival: {!
+// Called after initialization/actions and before government displays. Never
+// restore an opening government over a later event's legitimate state changes.
+if (!Q.polish_portfolios) {
+    return;
+}
+var government_changed = Q.chancellor !== 'Antoni Ponikowski' ||
+    Q.chancellor_party !== 'expert_cabinet' || Q.president !== '' ||
+    Q.spd_in_government || Q.pps_in_government || Q.spd_caretaker ||
+    Q.spd_toleration || Q.n_elections > 0;
+for (var party of Q.parties.concat(['z', 'ddp', 'dvp', 'dnvp', 'kpd', 'nsdap'])) {
+    government_changed = government_changed || !!Q[party + '_in_government'];
+}
+for (var portfolio in Q.polish_portfolios) {
+    government_changed = government_changed || Q[portfolio + '_minister_party'] !== 'opening_expert_cabinet';
+}
+if (Q.polish_opening_government_active && government_changed) {
+    Q.polish_opening_government_active = 0;
+}
+if (!Q.polish_opening_government_active) {
+    Q.pps_external_toleration = 0;
+    Q.polish_cabinet_id = '';
+    // A cabinet/election change is not a presidential succession. A later
+    // explicit legacy president still takes precedence in the display below.
+    // Clear only opening placeholders, never assignments made by the new route.
+    for (var portfolio in Q.polish_portfolios) {
+        if (Q[portfolio + '_minister_party'] === 'opening_expert_cabinet') {
+            Q[portfolio + '_minister_party'] = '';
+        }
+    }
+}
+
+// Compatibility for saves/builds without the new election model only.
+if (Q.opening_sejm_active && !Q.polish_election_system) {
+    for (var party of Q.parties) {
+        var opening_share = 100 * Q.opening_sejm_seats[party] / Q.sejm_total_seats;
+        if (Q.n_elections > 0 || Math.abs(Q[party + '_r'] - opening_share) > 0.000000001) {
+            Q.opening_sejm_active = 0;
+        }
+    }
+}
+
+// The Polish office object is authoritative once its sequence is active or
+// complete. A pre-existing explicit legacy president can still describe an
+// inherited fixture before that boundary, but Polish transitions never write
+// the legacy `president` or `presidential_powers` fields.
+Q.polish_presidential_phase = Q.polish_presidential_pending ? Q.polish_presidential_pending.phase : '';
+Q.polish_presidential_in_progress = !!(Q.polish_presidential_pending &&
+    Q.polish_presidential_pending.phase !== 'complete');
+Q.polish_presidential_due = !!(Q.polish_presidential_system && Q.sejm_first_election_completed &&
+    Q.sejm_pending && Q.sejm_pending.phase === 'complete' &&
+    !Q.polish_presidential_sequence_completed &&
+    (Q.year > 1922 || (Q.year === 1922 && Q.month >= 12)));
+Q.polish_first_presidential_election_recorded = !!(Q.polish_presidency &&
+    Q.polish_presidency.elections.some(function(item) { return item.id === 'president_1922_12_09'; }));
+Q.polish_second_presidential_election_recorded = !!(Q.polish_presidency &&
+    Q.polish_presidency.elections.some(function(item) { return item.id === 'president_1922_12_20'; }));
+Q.national_assembly_total = Q.polish_presidency && Q.polish_presidency.assembly ?
+    Q.polish_presidency.assembly.total_members : 0;
+if (Q.polish_presidential_system && Q.polish_presidency &&
+        (!Q.president || Q.polish_presidential_in_progress || Q.polish_presidential_sequence_completed)) {
+    var currentHead = Q.polish_presidency.current;
+    if (currentHead.status === 'succession_compressed') {
+        Q.head_of_state_display = 'Presidential succession in progress (brief acting presidency omitted by approved gameplay compression)';
+    } else {
+        Q.head_of_state_office = currentHead.office_id;
+        Q.head_of_state_name = currentHead.holder_name;
+        Q.head_of_state_display = currentHead.holder_name +
+            (currentHead.office_id === 'prezydent_rp' ? ' — Prezydent Rzeczypospolitej' : ' — Naczelnik Państwa');
+    }
+} else {
+    Q.head_of_state_display = Q.president ?
+        Q.president + ' (temporary inherited framework)' :
+        Q.head_of_state_name + ' — Naczelnik Państwa';
+}
+Q.prime_minister_display = Q.polish_opening_government_active ?
+    'Antoni Ponikowski — predominantly expert cabinet' :
+    Q.chancellor + ' (' + Q.chancellor_party + '; temporary government framework)';
+Q.pps_government_position = Q.pps_external_toleration ?
+    'External toleration of Ponikowski; outside the cabinet; no PPS ministries' :
+    (Q.spd_caretaker ? 'Caretaker government' :
+    (Q.spd_in_government ? 'In government' : (Q.spd_toleration ? 'Toleration (inherited framework)' : 'Opposition')));
+Q.parliament_heading = Q.opening_sejm_active ?
+    'Sejm Ustawodawczy — 444 MPs (gameplay approximation)' :
+    'Parliamentary results — temporary framework';
+Q.parliament_names = Object.assign({}, Q.party_names);
+if (Q.opening_sejm_active) {
+    Q.parliament_names.minorities_bloc = 'Minority deputies';
+}
+for (var party of Q.parties) {
+    Q[party + '_sejm_display'] = (Q.opening_sejm_active ? Q.opening_sejm_seats[party] + ' MPs; ' : '') +
+        Number(Q[party + '_r']).toFixed(1) + '%';
+}
+for (var portfolio in Q.polish_portfolios) {
+    var owner = Q[portfolio + '_minister_party'];
+    Q[portfolio + '_portfolio_display'] = Q.polish_opening_government_active ?
+        'Cabinet-administered; outside PPS control' :
+        (owner ? owner + ' (temporary ownership)' : 'Allocation not implemented');
+}
+if (Q.polish_election_system && Q.sejm_parliament) {
+    var parliament = Q.sejm_parliament;
+    var result = Q.sejm_results.find(function(item) { return item.id === parliament.id; });
+    // Recorded results are authoritative. Rebuild their parliamentary cache
+    // and legacy percentages; unrelated legacy _r writes cannot replace them.
+    if (result) {
+        parliament.total_seats = result.total_seats;
+        parliament.party_seats = Object.assign({}, result.party_seats);
+    }
+    Q.sejm_total_seats = parliament.total_seats;
+    Q.sejm_majority_required = Math.floor(parliament.total_seats / 2) + 1;
+    Q.opening_sejm_active = parliament.kind === 'opening_snapshot' ? 1 : 0;
+    Q.sejm_has_result = !!result;
+    Q.sejm_has_chzjn = !!(result && result.lists.some(function(row) { return row.id === 'chzjn'; }));
+    Q.parliament_heading = Q.opening_sejm_active ?
+        'Sejm Ustawodawczy — ' + parliament.total_seats + ' MPs (gameplay approximation)' :
+        'Sejm — ' + parliament.total_seats + ' MPs';
+    for (var party of Q.parties) {
+        Q[party + '_seats'] = parliament.party_seats[party] || 0;
+        Q[party + '_r'] = 100 * Q[party + '_seats'] / parliament.total_seats;
+        Q[party + '_sejm_display'] = Q[party + '_seats'] + ' MPs; ' + Q[party + '_r'].toFixed(1) + '% of seats';
+        if (result) {
+            var previous = result.previous_parliament;
+            Q['old_' + party + '_r'] = 100 * (previous.party_seats[party] || 0) / previous.total_seats;
+            Q['change_' + party + '_r'] = Q[party + '_r'] - Q['old_' + party + '_r'];
+        }
+    }
+    for (var legacy in Q.legacy_party_map) {
+        var party = Q.legacy_party_map[legacy];
+        Q[legacy + '_r'] = Q[party + '_r'];
+        Q['old_' + legacy + '_r'] = Q['old_' + party + '_r'];
+    }
+    Q.polish_left_seats = Q.pps_seats + Q.psl_wyzwolenie_seats + Q.minorities_bloc_seats;
+    Q.polish_center_left_seats = Q.pps_seats + Q.psl_wyzwolenie_seats + Q.psl_piast_seats + Q.npr_seats;
+    Q.chjeno_piast_seats = Q.zln_seats + Q.pschd_seats + Q.psl_piast_seats;
+    Q.pps_wyzwolenie_seats = Q.pps_seats + Q.psl_wyzwolenie_seats;
+    // Retain percentage units for legacy consumers; these are not new
+    // democratic classifications or Polish constitutional voting rules.
+    Q.polish_left_coalition = 100 * Q.polish_left_seats / parliament.total_seats;
+    Q.polish_center_left_coalition = 100 * Q.polish_center_left_seats / parliament.total_seats;
+    Q.chjeno_piast_coalition = 100 * Q.chjeno_piast_seats / parliament.total_seats;
+    Q.minority_toleration_total = Q.polish_left_coalition;
+    Q.anti_democratic_bloc = Q.kpp_r + Q.zln_r;
+    Q.leverage = Q.pps_r;
+
+    function displayRows(record) {
+        var rows = record.lists.filter(function(row) { return !row.anonymous; }).map(function(row) {
+            return {id: row.id, name: row.name, members: row.members.slice(),
+                votes: row.vote_share, seats: row.seats, share: 100 * row.seats / record.total_seats};
+        });
+        var small = record.lists.filter(function(row) { return row.anonymous; });
+        rows.push({id: 'other', name: 'Inne (separate small lists)', members: ['other'],
+            votes: small.reduce(function(n, row) { return n + row.vote_share; }, 0),
+            seats: record.party_seats.other || 0,
+            share: 100 * (record.party_seats.other || 0) / record.total_seats});
+        return rows;
+    }
+    function signed(n, digits) { return (n > 0 ? '+' : '') + n.toFixed(digits); }
+    Q.sejm_display_rows = result ? displayRows(result) : Q.parties.map(function(party) {
+        return {id: party, name: Q.parliament_names[party], seats: Q[party + '_seats'], share: Q[party + '_r']};
+    });
+    Q.sejm_chart_colors = Object.assign({chzjn: '#3F7BC1'}, Q.party_colors);
+    Q.sejm_history = Q.sejm_results.map(function(record) {
+        return {id: record.id, date: record.date.slice(0, 7), total: record.total_seats,
+            kind: record.kind, rows: displayRows(record)};
+    });
+    // The old flat history is a derived adapter only, never the source of seats.
+    Q.election_records = Q.sejm_results.map(function(record) {
+        var flat = {date: record.date};
+        for (var party in record.party_seats) flat[party] = 100 * record.party_seats[party] / record.total_seats;
+        return flat;
+    });
+    if (result) {
+        Q.sejm_result_date = result.date.slice(0, 7);
+        var previousResult = Q.sejm_results.find(function(record) { return record.id === result.previous_parliament.id; });
+        Q.sejm_vote_comparison_notice = previousResult ?
+            'Vote changes are shown only for comparable electoral lists; a changed alliance has no like-for-like vote comparison.' :
+            'Previous vote comparison: not available. The opening parliament is a snapshot, not a previous election.';
+        var previousRows = previousResult ? displayRows(previousResult) : [];
+        for (var row of Q.sejm_display_rows) {
+            var comparable = row.members.every(function(id) { return Object.hasOwn(result.previous_parliament.party_seats, id); });
+            var oldSeats = row.members.reduce(function(n, id) { return n + (result.previous_parliament.party_seats[id] || 0); }, 0);
+            var oldShare = 100 * oldSeats / result.previous_parliament.total_seats;
+            var previousRow = previousRows.find(function(old) {
+                return old.id === row.id && old.members.join(',') === row.members.join(',');
+            });
+            Q[row.id + '_election_display'] = row.votes.toFixed(2) + '% votes; ' + row.seats +
+                ' MPs; ' + row.share.toFixed(2) + '% of seats' +
+                (comparable ? ' (MP change ' + signed(row.seats - oldSeats, 0) + '; seat-share change ' +
+                signed(row.share - oldShare, 2) + ' pp)' : ' (previous parliament not comparable)') +
+                (previousRow ? '; vote change ' + signed(row.votes - previousRow.votes, 2) + ' pp' : '; previous votes N/A');
+        }
+        Q.chzjn_sejm_display = (Q.zln_seats + Q.pschd_seats) + ' MPs; ' + (Q.zln_r + Q.pschd_r).toFixed(1) + '% of seats';
+        var maxVotes = Math.max.apply(null, result.lists.map(function(row) { return row.vote_share; }));
+        Q.sejm_largest_lists = result.lists.filter(function(row) { return Math.abs(row.vote_share - maxVotes) < 1e-9; })
+            .map(function(row) { return row.name; }).join(', ');
+        var named = Object.keys(result.party_seats).filter(function(id) { return id !== 'other'; });
+        var maxSeats = Math.max.apply(null, named.map(function(id) { return result.party_seats[id]; }));
+        var largest = named.filter(function(id) { return result.party_seats[id] === maxSeats; }).sort();
+        Q.largest_party_id = maxSeats > 0 ? largest[0] : '';
+        Q.largest_party = Q.largest_party_id ? result.party_names[Q.largest_party_id] : '';
+        Q.sejm_largest_parties = maxSeats > 0 ? largest.map(function(id) { return result.party_names[id]; }).join(', ') : 'None with seats';
+    }
+    Q.sejm_election_in_progress = !!(Q.sejm_pending && Q.sejm_pending.phase !== 'complete');
+    Q.sejm_forming_government = !!(Q.sejm_pending && Q.sejm_pending.phase === 'results');
+    if (!Q.sejm_first_election_completed) {
+        // Only the first fixed election overrides inherited scheduling writes.
+        Q.next_election_year = 1922;
+        Q.next_election_month = 11;
+        Q.next_election_time = Q.time + (1922 - Q.year) * 12 + 11 - Q.month;
+    }
+    Q.sejm_election_due = Q.year > Q.next_election_year ||
+        (Q.year === Q.next_election_year && Q.month >= Q.next_election_month);
+    if (Q.sejm_forming_government) {
+        Q.pps_government_position = 'Government formation pending';
+    } else if (Q.spd_in_government && Q.minorities_toleration) {
+        Q.pps_government_position = 'In government with external minority-bloc toleration (outside cabinet)';
+    }
+}
+!}

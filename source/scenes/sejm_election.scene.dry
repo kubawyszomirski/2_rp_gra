@@ -1,0 +1,129 @@
+title: Wybory do Sejmu
+new-page: true
+call: polish_opening_state
+on-arrival: {!
+// The monthly router enters here after processing the month, before another
+// ordinary action. Re-entry resumes the saved phase instead of creating a vote.
+if (Q.polish_election_system && Q.sejm_election_due &&
+        (!Q.sejm_pending || Q.sejm_pending.phase === 'complete')) {
+    Q.sejm_pending = {
+        id: 'sejm_' + Q.year + '_' + Q.month + '_' + (Q.n_elections + 1),
+        year: Q.year, month: Q.month,
+        first: !Q.sejm_first_election_completed, phase: 'pending'
+    };
+    Q.in_election = 1;
+}
+!}
+go-to: results if sejm_forming_government; main if not sejm_election_in_progress
+
+= Wybory do Sejmu — [+ month : month +] [+ year +]
+
+[? if not sejm_first_election_completed : The Sejm election of 5 November 1922 is now due. Voting, results and government formation are compressed into one November sequence. A general Senate is not simulated; December will derive a proportional 111-seat snapshot only for the National Assembly. ChZJN contests as a joint ZLN–PSChD list. ?]
+
+[? if sejm_first_election_completed : This is a continuation election using the shared 444-seat calculation. Its date and political context still come from the temporary legacy scheduler; later Polish chronology and alliances are not implemented. ?]
+
+Campaigning and monthly effects determine voting intentions. We will record those votes once, allocate **444 MPs**, and then consider governments. A majority requires **223 MPs**. Reading these screens and choosing a government does not spend another monthly action.
+
+- @calculate: Count the votes.
+
+@calculate
+go-to: election_algorithm
+set-jump: sejm_election.allocate
+
+@allocate
+call: sejm_election_result
+go-to: results if sejm_election_error = ""; error if sejm_election_error != ""
+
+@error
+new-page: true
+
+= The election could not be calculated
+
+[+ sejm_election_error +]
+
+No parliamentary seats, election counter or history were changed. This indicates invalid simulation data, not an election outcome.
+
+- @calculate: Retry the calculation.
+
+@results
+new-page: true
+call: polish_opening_state
+go-to: main if not sejm_has_result; government if sejm_has_result
+
+= Sejm election result — [+ sejm_result_date +]
+
+Each line separates **votes**, **MPs**, and **share of seats**. Changes refer to the previous parliament, not previous votes. Display rounding does not determine seats.
+
+KPP: [+ kpp_election_display +]
+
+PPS: [+ pps_election_display +]
+
+NPR: [+ npr_election_display +]
+
+PSL Wyzwolenie: [+ psl_wyzwolenie_election_display +]
+
+PSL Piast: [+ psl_piast_election_display +]
+
+[? if sejm_has_chzjn : ChZJN (ZLN + PSChD): [+ chzjn_election_display +] ?]
+
+[? if not sejm_has_chzjn : PSChD: [+ pschd_election_display +] ?]
+
+[? if not sejm_has_chzjn : ZLN: [+ zln_election_display +] ?]
+
+Blok Mniejszości Narodowych: [+ minorities_bloc_election_display +]
+
+Inne (separate small lists, not one alliance): [+ other_election_display +]
+
+Total: [+ sejm_total_seats +] MPs. Majority: [+ sejm_majority_required +] MPs.
+
+Largest electoral list(s): [+ sejm_largest_lists +]. Largest named parliamentary party/group(s): [+ sejm_largest_parties +].
+
+[? if sejm_has_chzjn : ChZJN is displayed together, but ZLN and PSChD remain separate parties for relations and cabinet membership. Its MPs are attributed in proportion to their support at this election. ?]
+
+[+ sejm_vote_comparison_notice +]
+
+The Library's Figures and charts page shows the same parliament and recorded results. Later campaigning changes polling, not this election.
+
+@government
+call: polish_opening_state
+
+= Government formation
+
+PPS alone: [+ pps_seats +] MPs.
+
+Koalicja Lewicy (PPS, Wyzwolenie, minority bloc): [+ polish_left_seats +] MPs.
+
+Centre-left (PPS, Wyzwolenie, Piast, NPR): [+ polish_center_left_seats +] MPs.
+
+PPS–Wyzwolenie cabinet: [+ pps_wyzwolenie_seats +] MPs; with external minority-bloc support: [+ polish_left_seats +] MPs.
+
+Chjeno-Piast (ZLN, PSChD, Piast): [+ chjeno_piast_seats +] MPs.
+
+Existing relationship requirements still apply. ChZJN is an electoral list, not an obligation to remain a parliamentary coalition. Named successor cabinets and ministry allocation remain unimplemented. The approved presidential succession follows in December without changing the selected government.
+
+- @election_1928.polish_pps_majority: Form a PPS majority government.
+- @election_1928.polish_left_coalition: Form Koalicja Lewicy.
+- @election_1928.polish_center_left_coalition: Form a centre-left coalition.
+- @election_1928.polish_minority_toleration: Form a PPS–Wyzwolenie government with external minority-bloc support.
+- @election_1928.polish_chjeno_piast: Chjeno-Piast forms the government; PPS enters opposition.
+- @election_1928.polish_opposition: Keep PPS in opposition.
+- @return_to_play: Continue.
+
+@return_to_play
+view-if: not sejm_forming_government
+go-to: root
+
+@finish
+call: polish_opening_state
+on-arrival: {!
+if (Q.sejm_pending && Q.sejm_pending.phase === 'results' && Q.sejm_pending.government_choice) {
+    Q.sejm_pending.phase = 'complete';
+    Q.in_election = 0;
+}
+!}
+
+PPS position: [+ pps_government_position +].
+
+This completes the election sequence without spending a monthly action. Parliamentary results remain fixed between elections. The approved presidential succession follows in December; government portfolios and subsequent historical cabinets still need their own Polish slice. Inherited Prussian executive powers remain unavailable. Generic welfare and wider monthly simulation are temporary legacy mechanics.
+
+- @root: Resume play.

@@ -56,7 +56,8 @@ mechanic and implementation surface.
 - **Status: undecided / researching / approved:** researching
 - **User decision:** The campaign starts in **January 1922**. This date is now
   implemented.
-  The campaign end date remains TBD — user decision required.
+  The campaign end date remains TBD — user decision required. The implemented
+  opening chronology now includes the December 1922 presidential succession.
 - **Historical evidence:** Opening institutions and cabinet are recorded under
   `OPENING-CONSTITUTION-1922` and `PONIKOWSKI-FIRST-CABINET`. The approved
   parliament and PPS position are distinguished from historical evidence under
@@ -78,10 +79,12 @@ mechanic and implementation surface.
   German date gates retain their existing calendar years; the opening clearly
   identifies the remaining German material as an interim baseline until Polish
   replacements are researched and approved.
-- **Chronology decision:** November 1922 is implemented as a Sejm-only election.
-  May 1928 and subsequent inherited scheduling remain a labelled continuation
-  placeholder; all elections share exact-seat recording. No cutoff is introduced.
-- **Open questions:** Later cabinets, presidential succession, later Polish
+- **Chronology decision:** November 1922 is implemented as a Sejm election,
+  followed by the approved fixed presidential sequence in December. May 1928
+  and subsequent inherited parliamentary scheduling remain a labelled
+  continuation placeholder; all Sejm elections share exact-seat recording. No
+  cutoff is introduced.
+- **Open questions:** Later cabinets, later presidential elections, later Polish
   scheduled events and the campaign end date require their own approved slices.
 
 ### Polish Opening State — approved and implemented, 2 September 2026
@@ -132,8 +135,9 @@ mechanic and implementation surface.
   Cabinet replacement no longer clears the head-of-state identity.
 - **Boundary:** The January cabinet snapshot can persist beyond its historical
   period; from March the UI warns that later cabinet chronology is missing.
-  November now triggers the approved election below; no Senate or presidential
-  succession is automatically created. Later cabinets remain unresearched.
+  November triggers the approved election below. December creates a proportional
+  111-seat Senate snapshot only for the National Assembly and resolves the
+  approved presidential succession. Later cabinets remain unresearched.
 - **Acceptance:** Real-engine tests cover initialization, allowed/blocked
   choices, campaign→month progression, date gates, government/election cleanup
   and same-version saves. Browser checks cover start, cabinet, all 444 dots and
@@ -410,7 +414,8 @@ mechanic and implementation surface.
   count exact MPs. External minority-bloc support does not make it a cabinet
   member. An already-majority PPS–Wyzwolenie cabinet is not labelled minority.
   Opposition remains a voluntary choice. Reset stale government/portfolio flags;
-  no new named ministers, ministry allocation or presidential succession.
+  no new named ministers or ministry allocation. The December presidential
+  succession preserves whichever government was selected.
 - **Safeguards:** retain force/support/faction adapters. Keep Prussian executive
   and police options blocked after the opening; exclude German War Guilt,
   confidence/toleration and old cabinet-allocation entry routes. Generic welfare
@@ -425,6 +430,52 @@ mechanic and implementation surface.
   `source/scenes/sejm_election.scene.dry`, `sejm_election_result.scene.dry`,
   `polish_opening_state.scene.dry`, updated UI and legacy entry guards;
   `tests/sejm-election.test.js` and optional `tests/sejm-browser-smoke.cjs`.
+
+### December 1922 presidential succession — approved playable slice
+
+- **Timing:** After the completed November Sejm result and government choice,
+  the next ordinary action advances to December. The presidential sequence then
+  pre-empts ordinary events, resolves completely without another action or
+  month advance, and returns to the deferred December event/action flow.
+- **Constitution:** Use a separate semantic March-Constitution profile. The
+  President is elected for seven years by the Sejm and Senate as the National
+  Assembly; government acts require countersignature; ministers other than the
+  prime minister are appointed on the prime minister's proposal. Do not reuse
+  the inherited German `presidential_powers` model.
+- **Assembly:** Freeze the current 444 Sejm MPs and derive exactly 111 Senate
+  seats proportionally by largest remainder, with lexical party-ID tie breaks.
+  This 555-member snapshot exists only for the presidential record and does not
+  implement a general Senate, Senate election or second-chamber gameplay.
+- **First election:** Present all five historical candidates. Force Ignacy
+  Daszyński's PPS candidacy unless he has already left PPS through the Centrum
+  crisis; active adviser-slot status is irrelevant and unchanged. Collapse the
+  display to the final Narutowicz–Zamoyski ballot. Narutowicz wins 289–227, with
+  29 blank ballots; display the historically supported party groupings.
+- **Transfer and assassination:** Record Narutowicz's oath on 11 December and
+  Piłsudski's formal transfer of authority on 14 December. Record the 16 December
+  assassination. By explicit gameplay decision, omit Maciej Rataj's brief acting
+  presidency from the playable state while documenting that omission as a
+  simplification, not a historical claim.
+- **PPS response:** Peaceful defence of the constitutional order and lawful
+  accountability is the available historical path. Armed reprisals remain
+  visible but unavailable. Record the choice without numerical support,
+  relationship, faction, resource or militia effects.
+- **Second election:** PPS does not run Daszyński; the alternative is visible
+  but unavailable. Display the final Wojciechowski–Morawski ballot and party
+  supporters. Wojciechowski wins 298–221 and becomes the authoritative current
+  president.
+- **State boundary:** `polish_presidency` stores constitution, current holder,
+  Assembly, immutable elections, transitions and PPS decisions. The legacy
+  `president` and `presidential_powers` remain untouched. German 1932 direct
+  election and Hindenburg succession routes are guarded only while the Polish
+  presidential system is active.
+- **Deferred scope:** Variable presidential outcomes, later presidents,
+  president-dependent cabinet changes, a permanent Senate and successor-cabinet
+  chronology remain planned. The current cabinet and ten portfolios are preserved.
+- **Evidence/verification:** `PRESIDENCY-1922-SEQUENCE` in the research register;
+  `source/scenes/polish_presidential_sequence.scene.dry`, the routing and display
+  helpers, `tests/polish-presidential-sequence.test.js`, and the extended browser
+  smoke path.
 
 ## 15. Economic design
 

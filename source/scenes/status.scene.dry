@@ -38,6 +38,10 @@ Prime minister: [+ prime_minister_display +]
 
 [? if polish_opening_government_active : March Constitution with transitional arrangements: the Sejm Ustawodawczy and Naczelnik Państwa remain in office. No operating Senate or presidential officeholder is simulated at the opening. ?]
 
+[? if polish_presidential_in_progress : The December 1922 presidential succession is in progress. It does not spend another monthly action. ?]
+
+[? if polish_presidential_sequence_completed : March Constitution: the President is elected by the Sejm and Senate together as the National Assembly. Government acts require countersignature. The German direct-popular presidency and its legacy powers are not active. ?]
+
 [? if polish_opening_government_active and (year > 1922 or month > 2) : Development notice: the January cabinet snapshot is still in use. Later cabinet chronology has not been implemented. ?]
 
 = [+ parliament_heading +]
@@ -70,7 +74,9 @@ Next Sejm election: [+ next_election_month : month +] [+ next_election_year +]
 
 [? if not sejm_first_election_completed : The first Sejm election is in November 1922. It allocates 444 MPs from voting intentions; ChZJN combines ZLN and PSChD on the ballot. ?]
 
-[? if sejm_first_election_completed : The November election is implemented. May 1928 is the initial continuation date; later legacy events can change subsequent dates. Later Polish chronology and presidential succession remain unimplemented, not a historically accurate schedule. ?]
+[? if sejm_first_election_completed and not polish_presidential_sequence_completed : The November election is implemented. The December 1922 presidential sequence follows after the next monthly action. ?]
+
+[? if polish_presidential_sequence_completed : The November election and December presidential succession are implemented. The 111-seat Senate existed only as a proportional National Assembly snapshot; a general Senate mechanic is not implemented. May 1928 remains a temporary parliamentary continuation date, not researched Polish chronology. ?]
 
 Majority required: [+ sejm_majority_required +] of [+ sejm_total_seats +] MPs. Recorded votes and election history are available in the Library; polling below is not the sitting parliament.
 

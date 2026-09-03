@@ -23,4 +23,5 @@ max-visits: 1
 
 A new year begins. [? if works_program = 0 : There is little to no good news in Germany. The economic depression has still not bottomed out. ?][? if works_program >= 1 and unemployment >= 20 : We have begun to launch a public works program, but unemployment is still stubbornly high. The people are beginning to finally have optimism, however. ?][? if works_program >= 1 and unemployment < 20 : We have begun to launch a public works program, and unemployment is finally starting to fall. The people are beginning to finally have optimism. ?]
 
-The presidential election is in April of this year.
+[? if not polish_presidential_system : The presidential election is in April of this year. ?]
+[? if polish_presidential_system : Later Polish presidential chronology after December 1922 is not implemented; the inherited German presidential election is unavailable. ?]

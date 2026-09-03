@@ -1,0 +1,327 @@
+title: Wybory Prezydenta Rzeczypospolitej
+new-page: true
+call: polish_opening_state
+on-arrival: {!
+// This mandatory December sequence is resumable and never advances the month.
+// Its 111-seat Senate is only a proportional National Assembly snapshot, not a
+// general Senate simulation. Fixed historical ballots are not calculated from
+// that simplified composition.
+if (Q.polish_presidential_system && Q.polish_presidential_due &&
+        !Q.polish_presidential_pending && !Q.polish_presidential_sequence_completed) {
+    function copy(value) { return JSON.parse(JSON.stringify(value)); }
+    function compareId(a, b) { return a < b ? -1 : a > b ? 1 : 0; }
+    var senateTotal = 111;
+    var sejm = Q.sejm_parliament;
+    var senateSeats = {};
+    var assemblySeats = {};
+    var assigned = 0;
+    var remainders = Q.parties.map(function(party) {
+        var exact = senateTotal * (sejm.party_seats[party] || 0) / sejm.total_seats;
+        var seats = Math.floor(exact);
+        senateSeats[party] = seats;
+        assigned += seats;
+        return {party: party, remainder: exact - seats};
+    });
+    remainders.sort(function(a, b) {
+        return b.remainder - a.remainder || compareId(a.party, b.party);
+    });
+    for (var index = 0; index < senateTotal - assigned; index++) {
+        senateSeats[remainders[index].party] += 1;
+    }
+    for (var party of Q.parties) {
+        assemblySeats[party] = (sejm.party_seats[party] || 0) + senateSeats[party];
+    }
+    var assembly = {
+        id: 'national_assembly_1922_12',
+        kind: 'gameplay_proportional_senate_snapshot',
+        sejm_total: sejm.total_seats,
+        senate_total: senateTotal,
+        total_members: sejm.total_seats + senateTotal,
+        sejm_seats: copy(sejm.party_seats),
+        senate_seats: senateSeats,
+        party_seats: assemblySeats,
+        party_names: copy(Q.party_names)
+    };
+    Q.polish_presidency.assembly = copy(assembly);
+    Q.polish_presidential_pending = {
+        id: 'presidential_december_1922',
+        phase: 'first_nomination',
+        assembly: copy(assembly),
+        first_pps_candidate: null,
+        second_pps_candidate: null,
+        assassination_response: null
+    };
+    Q.polish_presidential_phase = 'first_nomination';
+}
+!}
+go-to: first_nomination if polish_presidential_phase = "first_nomination"; first_final if polish_presidential_phase = "first_final"; first_transfer if polish_presidential_phase = "first_transfer"; assassination if polish_presidential_phase = "assassination"; response if polish_presidential_phase = "response"; second_nomination if polish_presidential_phase = "second_nomination"; second_final if polish_presidential_phase = "second_final"; main if polish_presidential_phase = "" or polish_presidential_sequence_completed
+
+@first_nomination
+new-page: true
+go-to: first_without_daszynski if daszynski_left_adviser_pool
+
+= Zgromadzenie Narodowe — 9 December 1922
+
+The first President of the Republic will be elected by the **National Assembly**: the 444-member Sejm together with an approved 111-seat Senate approximation. The Senate snapshot follows the Sejm party proportions for this sequence only; it is not a complete second-chamber mechanic.
+
+Five candidates enter the historical ballots: **Maurycy Zamoyski** for the right, **Stanisław Wojciechowski** for PSL Piast, **Jan Baudouin de Courtenay** for the national minorities, **Gabriel Narutowicz** for PSL Wyzwolenie, and **Ignacy Daszyński** for PPS.
+
+The game compresses the earlier ballots and displays only the final contest. The result is fixed historically rather than recalculated from the simplified Assembly.
+
+- @confirm_daszynski: Confirm Ignacy Daszyński as the PPS candidate.
+- @decline_daszynski: Do not nominate Ignacy Daszyński.
+
+@confirm_daszynski
+on-arrival: {!
+if (Q.polish_presidential_pending && Q.polish_presidential_pending.phase === 'first_nomination') {
+    Q.polish_presidential_pending.first_pps_candidate = 'ignacy_daszynski';
+    Q.polish_presidency.pps_decisions.push({
+        id: 'first_presidential_nomination_1922', date: '1922-12-09',
+        decision: 'nominate_ignacy_daszynski',
+        active_adviser_slot_required: false
+    });
+    Q.polish_presidential_pending.phase = 'first_final';
+    Q.polish_presidential_phase = 'first_final';
+}
+!}
+go-to: first_final
+
+PPS confirms its historical candidate. This candidacy does not remove Daszyński from an active adviser slot and has no numerical support, faction, relationship or resource effect.
+
+@decline_daszynski
+choose-if: 1 = 0
+unavailable-subtitle: Historical outcome: PPS nominated Daszyński. This alternative is not implemented.
+go-to: first_final
+
+@first_without_daszynski
+new-page: true
+on-arrival: {!
+if (Q.polish_presidential_pending && Q.polish_presidential_pending.phase === 'first_nomination') {
+    Q.polish_presidential_pending.first_pps_candidate = '';
+    Q.polish_presidency.pps_decisions.push({
+        id: 'first_presidential_nomination_1922', date: '1922-12-09',
+        decision: 'no_pps_candidate_after_daszynski_departure',
+        active_adviser_slot_required: false
+    });
+    Q.polish_presidential_pending.phase = 'first_final';
+    Q.polish_presidential_phase = 'first_final';
+}
+!}
+
+= PPS has no candidate
+
+Ignacy Daszyński has already left the PPS through the implemented Centrum crisis. His former adviser-slot status is irrelevant, but the party cannot now force him to stand as its candidate. This is an alternate nomination state; the approved presidential result remains fixed.
+
+- @first_final: Continue to the final ballot.
+
+@first_final
+new-page: true
+on-arrival: {!
+if (Q.polish_presidential_pending && Q.polish_presidential_pending.phase === 'first_final') {
+    if (!Q.polish_presidency.elections.some(function(election) { return election.id === 'president_1922_12_09'; })) {
+        Q.polish_presidency.elections.push({
+            id: 'president_1922_12_09', date: '1922-12-09',
+            body: 'national_assembly', method: 'fixed_historical_final_ballot',
+            assembly_id: Q.polish_presidential_pending.assembly.id,
+            pps_candidate: Q.polish_presidential_pending.first_pps_candidate,
+            final_ballot: [
+                {candidate_id: 'gabriel_narutowicz', candidate_name: 'Gabriel Narutowicz', votes: 289,
+                 supporters: ['psl_wyzwolenie', 'pps', 'psl_piast', 'minorities_bloc', 'npr']},
+                {candidate_id: 'maurycy_zamoyski', candidate_name: 'Maurycy Zamoyski', votes: 227,
+                 supporters: ['zln', 'pschd']}
+            ],
+            blank_ballots: 29,
+            winner_id: 'gabriel_narutowicz', winner_name: 'Gabriel Narutowicz'
+        });
+    }
+    Q.polish_presidential_pending.phase = 'first_transfer';
+    Q.polish_presidential_phase = 'first_transfer';
+}
+!}
+
+= Final ballot — 9 December 1922
+
+**Gabriel Narutowicz — 289 votes**
+Supported by PSL Wyzwolenie, PPS, most of PSL Piast, the Blok Mniejszości Narodowych and part of NPR.
+
+**Maurycy Zamoyski — 227 votes**
+Supported by ZLN and PSChD within ChZJN, together with other right-wing parliamentarians.
+
+There are also 29 blank ballots. **Gabriel Narutowicz is elected President of the Republic.** These are fixed historical totals, not a ballot calculated from the game's proportional Senate approximation.
+
+- @first_transfer: Continue to the constitutional transfer.
+
+@first_transfer
+new-page: true
+on-arrival: {!
+if (Q.polish_presidential_pending && Q.polish_presidential_pending.phase === 'first_transfer') {
+    if (!Q.polish_presidency.transitions.some(function(item) { return item.id === 'narutowicz_oath'; })) {
+        Q.polish_presidency.transitions.push({
+            id: 'narutowicz_oath', date: '1922-12-11', kind: 'presidential_oath',
+            office_id: 'prezydent_rp', holder_id: 'gabriel_narutowicz', holder_name: 'Gabriel Narutowicz'
+        });
+        Q.polish_presidency.transitions.push({
+            id: 'pilsudski_transfer', date: '1922-12-14', kind: 'transfer_from_naczelnik_panstwa',
+            from_holder_id: 'jozef_pilsudski', to_holder_id: 'gabriel_narutowicz'
+        });
+    }
+    Q.polish_presidency.current = {
+        office_id: 'prezydent_rp', holder_id: 'gabriel_narutowicz',
+        holder_name: 'Gabriel Narutowicz', status: 'incumbent', since: '1922-12-11'
+    };
+    Q.head_of_state_office = 'prezydent_rp';
+    Q.head_of_state_name = 'Gabriel Narutowicz';
+    Q.polish_presidential_pending.phase = 'assassination';
+    Q.polish_presidential_phase = 'assassination';
+}
+!}
+
+= The presidency begins
+
+Gabriel Narutowicz takes the constitutional oath on 11 December. On 14 December, Józef Piłsudski formally transfers state authority to the President, ending the transitional office of Naczelnik Państwa.
+
+The presidency is governed by the March Constitution. Government acts require ministerial countersignature; the President appoints the prime minister and appoints ministers on the prime minister's proposal. The office does not inherit the German president's direct-popular mandate, independent emergency-decree model or legacy game powers.
+
+- @assassination: Continue to 16 December.
+
+@assassination
+new-page: true
+on-arrival: {!
+if (Q.polish_presidential_pending && Q.polish_presidential_pending.phase === 'assassination') {
+    if (!Q.polish_presidency.transitions.some(function(item) { return item.id === 'narutowicz_assassinated'; })) {
+        Q.polish_presidency.transitions.push({
+            id: 'narutowicz_assassinated', date: '1922-12-16', kind: 'assassination',
+            holder_id: 'gabriel_narutowicz', holder_name: 'Gabriel Narutowicz'
+        });
+    }
+    // Approved compression: do not simulate the brief acting presidency.
+    Q.polish_presidency.current = {
+        office_id: 'prezydent_rp', holder_id: '', holder_name: '',
+        status: 'succession_compressed', since: '1922-12-16'
+    };
+    Q.head_of_state_office = 'prezydent_rp';
+    Q.head_of_state_name = '';
+    Q.polish_presidential_pending.phase = 'response';
+    Q.polish_presidential_phase = 'response';
+}
+!}
+go-to: response
+
+@response
+new-page: true
+
+= The assassination of Gabriel Narutowicz
+
+On 16 December, Gabriel Narutowicz is assassinated at the Zachęta gallery by Eligiusz Niewiadomski after a campaign of nationalist hostility against the elected President. The game compresses the short constitutional interregnum and proceeds directly to the PPS response and the second election.
+
+PPS leaders must defend the constitutional order while preventing grief and anger from becoming political retaliation.
+
+- @constitutional_response: Defend democracy through peaceful mobilization and demand lawful accountability.
+- @armed_reprisals: Authorize armed reprisals against nationalist leaders and press organizations.
+
+@constitutional_response
+on-arrival: {!
+if (Q.polish_presidential_pending && Q.polish_presidential_pending.phase === 'response') {
+    Q.polish_presidential_pending.assassination_response = 'constitutional_peaceful_mobilization';
+    if (!Q.polish_presidency.pps_decisions.some(function(item) { return item.id === 'narutowicz_assassination_response'; })) {
+        Q.polish_presidency.pps_decisions.push({
+            id: 'narutowicz_assassination_response', date: '1922-12-16',
+            decision: 'constitutional_peaceful_mobilization', numerical_effects: false
+        });
+    }
+    Q.polish_presidential_pending.phase = 'second_nomination';
+    Q.polish_presidential_phase = 'second_nomination';
+}
+!}
+go-to: second_nomination
+
+PPS supports peaceful democratic mobilization and lawful accountability. This approved historical choice is recorded without changing support, relationships, faction state, resources, or militia strength and militancy.
+
+@armed_reprisals
+choose-if: 1 = 0
+unavailable-subtitle: Historical outcome: Daszyński opposed armed political reprisals. This alternative is not implemented.
+go-to: second_nomination
+
+@second_nomination
+new-page: true
+
+= The second election — 20 December 1922
+
+The National Assembly reconvenes. **Stanisław Wojciechowski**, supported by PSL Piast, faces **Kazimierz Morawski**, the candidate of the right. Only this final ballot is simulated.
+
+- @do_not_run_daszynski_second: Do not run Ignacy Daszyński; support the historical parliamentary outcome.
+- @run_daszynski_second: Run Ignacy Daszyński as the PPS candidate.
+
+@do_not_run_daszynski_second
+on-arrival: {!
+if (Q.polish_presidential_pending && Q.polish_presidential_pending.phase === 'second_nomination') {
+    Q.polish_presidential_pending.second_pps_candidate = '';
+    Q.polish_presidency.pps_decisions.push({
+        id: 'second_presidential_nomination_1922', date: '1922-12-20',
+        decision: 'no_pps_candidate_support_historical_outcome',
+        active_adviser_slot_required: false
+    });
+    Q.polish_presidential_pending.phase = 'second_final';
+    Q.polish_presidential_phase = 'second_final';
+}
+!}
+go-to: second_final
+
+@run_daszynski_second
+choose-if: 1 = 0
+unavailable-subtitle: Historical outcome: PPS did not run Daszyński in the second election. This alternative is not implemented.
+go-to: second_final
+
+@second_final
+new-page: true
+on-arrival: {!
+if (Q.polish_presidential_pending && Q.polish_presidential_pending.phase === 'second_final') {
+    if (!Q.polish_presidency.elections.some(function(election) { return election.id === 'president_1922_12_20'; })) {
+        Q.polish_presidency.elections.push({
+            id: 'president_1922_12_20', date: '1922-12-20',
+            body: 'national_assembly', method: 'fixed_historical_final_ballot',
+            assembly_id: Q.polish_presidential_pending.assembly.id,
+            pps_candidate: '',
+            final_ballot: [
+                {candidate_id: 'stanislaw_wojciechowski', candidate_name: 'Stanisław Wojciechowski', votes: 298,
+                 supporters: ['psl_piast', 'psl_wyzwolenie', 'pps', 'npr', 'minorities_bloc']},
+                {candidate_id: 'kazimierz_morawski', candidate_name: 'Kazimierz Morawski', votes: 221,
+                 supporters: ['zln', 'pschd']}
+            ],
+            winner_id: 'stanislaw_wojciechowski', winner_name: 'Stanisław Wojciechowski'
+        });
+    }
+    if (!Q.polish_presidency.transitions.some(function(item) { return item.id === 'wojciechowski_oath'; })) {
+        Q.polish_presidency.transitions.push({
+            id: 'wojciechowski_oath', date: '1922-12-20', kind: 'presidential_oath_and_assumption',
+            office_id: 'prezydent_rp', holder_id: 'stanislaw_wojciechowski', holder_name: 'Stanisław Wojciechowski'
+        });
+    }
+    Q.polish_presidency.current = {
+        office_id: 'prezydent_rp', holder_id: 'stanislaw_wojciechowski',
+        holder_name: 'Stanisław Wojciechowski', status: 'incumbent', since: '1922-12-20'
+    };
+    Q.head_of_state_office = 'prezydent_rp';
+    Q.head_of_state_name = 'Stanisław Wojciechowski';
+    Q.polish_presidential_pending.phase = 'complete';
+    Q.polish_presidential_phase = 'complete';
+    Q.polish_presidential_sequence_completed = 1;
+}
+!}
+
+= Final ballot — 20 December 1922
+
+**Stanisław Wojciechowski — 298 votes**
+Supported by PSL Piast, PSL Wyzwolenie, PPS, NPR and the Blok Mniejszości Narodowych.
+
+**Kazimierz Morawski — 221 votes**
+Supported by ZLN and PSChD within ChZJN, together with other right-wing parliamentarians.
+
+**Stanisław Wojciechowski is elected and assumes the office of President of the Republic.** The current government and all ten portfolio assignments remain unchanged; successor-cabinet chronology requires a separate researched slice.
+
+- @finish: Resume December play.
+
+@finish
+go-to: root
+
+The two approved presidential results and PPS decisions are now part of the permanent game history. No monthly action has been spent.

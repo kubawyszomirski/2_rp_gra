@@ -3,7 +3,7 @@
 ## Executive Game Overview
 
 **A plain-language guide to the Polish opening-party slice over the German baseline**
-Prepared from the repository; November 1922 election update: 3 September 2026
+Prepared from the repository; December 1922 presidential update: 3 September 2026
 
 > **Scope note**
 >
@@ -11,7 +11,8 @@ Prepared from the repository; November 1922 election update: 3 September 2026
 > makes that experience work. PPS identity, opening support, population groups,
 > the January 1922 start, nine-party electoral model, direct campaigning,
 > relationships, the bounded Ponikowski opening, November 1922 election with
-> exact seats and minimal government choices are implemented; most other content
+> exact seats, minimal government choices and December presidential succession
+> are implemented; most other content
 > remains the German baseline.
 > It is not an independent history. Historical statements are
 > described as the game's framing unless independently documented elsewhere.
@@ -43,8 +44,10 @@ The central rhythm is simple:
 4. Spend resources or accept political consequences.
 5. Advance one month.
 6. Resolve any event that has become due.
-7. Continue with changed support, factions and economy. A due election freezes
-   a separate result; it and the government choice consume no additional month.
+7. Continue with changed support, factions and economy. A due Sejm election
+   freezes a separate result; it and the government choice consume no additional
+   month. The mandatory December presidential sequence likewise resolves without
+   another action or month advance.
 
 Under that straightforward loop is a highly connected simulation. In the
 current transitional build, a policy can change an inherited compatibility
@@ -88,12 +91,16 @@ it has no ministers or executive/police-command powers. Ten cabinet portfolios
 are available for read-only inspection. The constitutional description accounts
 for transitional arrangements rather than presenting Piłsudski as president.
 
-**Implemented election and development boundary:** The first election resolves
+**Implemented election and presidential boundary:** The first Sejm election resolves
 in **November 1922**, replacing the opening snapshot with exactly **444 elected
 MPs**. **223 MPs** is the majority needed for the approved government choices;
 444 remains the total chamber size. Results and government choice finish in
-November without extra monthly actions. Named successor cabinets, presidential
-succession and Senate are not implemented. The next date, **May 1928**, is
+November without extra monthly actions. In December, a fixed historical
+National Assembly sequence elects Gabriel Narutowicz, records his assassination,
+and elects Stanisław Wojciechowski. It derives 111 Senate seats proportionally
+only for a 555-member Assembly snapshot; this is not a general Senate mechanic.
+Named successor cabinets and later presidential elections are not implemented.
+The next parliamentary date, **May 1928**, is
 explicitly temporary; later inherited elections reuse the same exact-seat writer.
 If Ponikowski persists beyond February, a warning still identifies missing
 cabinet chronology. Approved German executive/confidence/toleration routes stay
@@ -670,6 +677,47 @@ these records, including after a same-version save/reload.
 election results separate from support/economic history. Older exported
 screenshots may predate this election update.*
 
+### December 1922 presidential succession
+
+After the November government choice, the next ordinary party action advances
+the game into December. The presidential sequence then takes priority over
+ordinary events and completes without spending another action or changing the
+month. Any simultaneously eligible event waits and resumes afterwards.
+
+The sequence uses a separate semantic March-Constitution model rather than the
+German direct-popular presidency. It freezes the current 444-member Sejm and
+adds exactly 111 proportional Senate proxies to form a 555-member National
+Assembly snapshot. The Senate distribution is an approved gameplay
+simplification, not a full Senate election or second-chamber system. The ballot
+totals themselves are fixed historical records, not calculated from that proxy.
+
+The player sees only the final ballots and the broad supporting party groups:
+
+- Gabriel Narutowicz defeats Maurycy Zamoyski 289–227 on 9 December, with
+  29 blank ballots.
+- Narutowicz takes the oath and receives the transfer of state authority from
+  Józef Piłsudski, ending the Naczelnik Państwa transition.
+- Narutowicz is assassinated on 16 December. PPS follows the available peaceful
+  constitutional response; armed reprisals are shown but unavailable. This
+  records no new numerical political or militia effects.
+- Stanisław Wojciechowski defeats Kazimierz Morawski 298–221 on 20 December and
+  becomes President of the Republic.
+
+Daszyński remains the first PPS candidate unless he has already left the party
+through the implemented Centrum crisis. Whether he is currently selected in an
+active adviser slot does not matter, and the sequence never changes that slot.
+PPS does not run him in the second election; that alternative is displayed but
+unavailable. The brief historical acting presidency of Maciej Rataj is omitted
+from playable state by explicit simplification.
+
+The selected government and all portfolio fields survive unchanged. The Polish
+record does not write the inherited `president` or `presidential_powers` fields,
+whose German name comparisons and power semantics remain compatibility state.
+The German 1932 popular election and 1934 Hindenburg succession routes are
+narrowly disabled; this does not create a broader content cutoff. Later Polish
+presidents, variable outcomes, permanent Senate gameplay and president-dependent
+cabinet consequences remain planned.
+
 ### Coalition formation
 
 The active first-election code computes a deliberately limited Polish shell:
@@ -685,8 +733,9 @@ Minority toleration explicitly leaves the Minorities Bloc outside the cabinet.
 The cabinet is called a minority government only when its own seats are below
 223. Available routes use **exact seats** and the already implemented partner
 relation gates; 222 seats do not pass. Remaining in opposition is always an
-available fallback. No new leadership, resource, presidential or negotiation
-prerequisites are added in this slice.
+available fallback. No new leadership, resource or negotiation prerequisites
+are added by the parliamentary-election slice; the separate December presidency
+preserves the selected result.
 
 Entering one of these routes sets first-cycle government flags. Named
 chancellors, ministry allocation and detailed coalition programs are left as
@@ -771,8 +820,8 @@ cool, frigid, and hostile respectively. The implemented first-cycle coalition
 routes read the relevant partner values.
 
 The relationship card now offers Polish opening-party outreach. Detailed
-historical disputes, presidential negotiations and later coalition effects are
-planned. Inactive German relationship values remain only for inherited content
+historical disputes, later presidential negotiations and later coalition effects
+are planned. Inactive German relationship values remain only for inherited content
 and do not determine Polish first-election eligibility.
 
 ### Advisers and leadership
@@ -1214,14 +1263,13 @@ ending is correct.
 
 ### Scale of the current source
 
-The repository contains 167 source files: 158 scene files, eight qdisplays, and
-one metadata file. Those scene files define 1,117 source-authored scene nodes
-(158 top-level scenes and 959 subscenes). The compiled game contains five
-additional engine routing scenes. The original audit identified 989 literal or
-concretely constructed quality keys; the implemented population slice adds 58,
-for a current expanded total of 1,047. Many are display helpers,
-candidate/timer families, or route-specific flags rather than independent
-headline mechanics.
+The repository currently contains 188 source files: 179 scene files, eight
+qdisplays, and one metadata file. Those scene files define 1,141 source-authored
+scene nodes (179 top-level scenes and 962 subscenes). The compiled game contains
+five additional engine routing scenes. The older exact quality-key inventory has
+not been rerun after the opening, Sejm and presidency slices; new semantic
+objects and display helpers should not be confused with independent headline
+mechanics.
 
 For the technical detail behind these counts, see `MECHANICS_MAP.md` and
 `STATE_VARIABLES.md`.
@@ -1234,14 +1282,17 @@ For the technical detail behind these counts, see `MECHANICS_MAP.md` and
 
 The campaign starts in **January 1922**. The source implements this as
 `year = 1922`, `month = 1`, and relative `time = 1`. German absolute date gates
-retain their original years except the approved first election: **November
-1922**, relative month `11`. Following that election, May 1928 / month `77`
-is the temporary next date. The introduction identifies remaining institutions,
-events and mechanics as an interim German baseline.
+retain their original years except the approved first Sejm election: **November
+1922**, relative month `11`. The next ordinary action reaches December and the
+two fixed presidential elections resolve without another month charge.
+Following that sequence, May 1928 / month `77` is the temporary next
+parliamentary date. The introduction identifies remaining institutions, events
+and mechanics as an interim German baseline.
 
-Opening offices, the opening parliament and first election are implemented.
-Successor cabinets, presidential succession, later Polish elections and the
-campaign end remain **TBD — user historical research and design decision required.**
+Opening offices, the opening parliament, first Sejm election and December 1922
+presidential succession are implemented. Successor cabinets, a general Senate,
+later presidential/parliamentary elections and the campaign end remain
+**TBD — user historical research and design decision required.**
 
 ### Implemented population model
 

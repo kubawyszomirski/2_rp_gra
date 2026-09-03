@@ -1,0 +1,148 @@
+title: Record a Sejm election
+on-arrival: {!
+// One atomic result writer. Everything is computed locally before publishing;
+// the saved election ID and phase make navigation/save re-entry idempotent.
+Q.sejm_election_error = '';
+var pending = Q.sejm_pending;
+if (!Q.polish_election_system || !pending || pending.phase !== 'pending') return;
+if (Q.sejm_results.some(function(result) { return result.id === pending.id; })) return;
+
+function fail(message) { Q.sejm_election_error = message; }
+function copy(value) { return JSON.parse(JSON.stringify(value)); }
+function compareId(a, b) { return a < b ? -1 : a > b ? 1 : 0; }
+function multiplier(vote) {
+    if (vote >= 25) return 1.25;
+    if (vote >= 15) return 1.10;
+    if (vote >= 10) return 1.025;
+    if (vote >= 5) return 0.85;
+    if (vote >= 2) return 0.55;
+    return 0.25;
+}
+function apportion(rows, total, weightKey) {
+    var sum = rows.reduce(function(n, row) { return n + row[weightKey]; }, 0);
+    if (!(sum > 0)) return false;
+    var assigned = 0;
+    var ranked = rows.map(function(row) {
+        var exact = total * row[weightKey] / sum;
+        row.seats = Math.floor(exact);
+        assigned += row.seats;
+        return {row: row, remainder: exact - row.seats};
+    }).filter(function(item) { return item.row[weightKey] > 0; });
+    ranked.sort(function(a, b) {
+        return b.remainder - a.remainder || compareId(a.row.id, b.row.id);
+    });
+    for (var index = 0; index < total - assigned; index++) ranked[index].row.seats++;
+    return true;
+}
+var total = Q.sejm_total_seats;
+if (!Number.isSafeInteger(total) || total <= 0) {
+    fail('The chamber size must be a positive integer.'); return;
+}
+var parties = Q.parties.slice();
+var votes = {};
+var eligible = {};
+var voteSum = 0;
+for (var party of parties) {
+    var value = Q[party + '_normalized'];
+    if (!Number.isFinite(value) || value < 0) {
+        fail('Voting intentions contain an invalid value for ' + party + '.'); return;
+    }
+    // First-election design: no new legal threshold or historical bans.
+    // Later continuation retains the existing constitutional-reform exclusions.
+    eligible[party] = pending.first || !(Q.constitutional_reform > 0 &&
+        (value * 100 < Q.electoral_threshold || Q[party + '_banned'] ||
+         (Q.electoral_threshold > 1 && party === 'other')));
+    votes[party] = value * 100;
+    voteSum += votes[party];
+}
+if (!(voteSum > 0)) { fail('All voting intentions are zero.'); return; }
+for (var party of parties) votes[party] = votes[party] * 100 / voteSum;
+
+var lists = [];
+var joint = pending.first && parties.includes('zln') && parties.includes('pschd');
+for (var party of parties) {
+    if (joint && party === 'pschd') continue;
+    if (party === 'other') {
+        // Preserve the exact aggregate: full 2% anonymous lists plus a final
+        // remainder. The aggregate itself never receives a large-list bonus.
+        var remaining = votes.other;
+        var index = 1;
+        do {
+            var share = Math.min(2, remaining);
+            lists.push({id: 'other_' + String(index).padStart(2, '0'),
+                name: 'Inne — lista ' + index, members: ['other'],
+                vote_share: share, eligible: eligible.other, anonymous: true});
+            remaining = Math.max(0, remaining - share);
+            index++;
+        } while (remaining > 1e-12);
+    } else {
+        var members = joint && party === 'zln' ? ['zln', 'pschd'] : [party];
+        lists.push({id: members.length > 1 ? 'chzjn' : party,
+            name: members.length > 1 ? 'ChZJN (ZLN + PSChD)' : Q.party_names[party],
+            members: members, vote_share: members.reduce(function(n, id) { return n + votes[id]; }, 0),
+            eligible: members.some(function(id) { return eligible[id]; }), anonymous: false});
+    }
+}
+for (var list of lists) {
+    list.multiplier = multiplier(list.vote_share);
+    list.weight = list.eligible ? list.vote_share * list.multiplier : 0;
+}
+if (!apportion(lists, total, 'weight')) {
+    fail('No eligible list has positive support.'); return;
+}
+var seats = Object.fromEntries(parties.map(function(party) { return [party, 0]; }));
+for (var list of lists) {
+    if (list.members.length === 1) seats[list.members[0]] += list.seats;
+    else {
+        var attribution = list.members.map(function(party) {
+            return {id: party, weight: eligible[party] ? votes[party] : 0, seats: 0};
+        });
+        if (list.seats > 0) apportion(attribution, list.seats, 'weight');
+        list.party_seats = {};
+        for (var row of attribution) {
+            seats[row.id] += row.seats;
+            list.party_seats[row.id] = row.seats;
+        }
+    }
+}
+var result = {
+    id: pending.id, year: pending.year, month: pending.month,
+    date: pending.year + '-' + String(pending.month).padStart(2, '0') + '-01',
+    kind: pending.first ? 'november_1922' : 'legacy_continuation',
+    method: 'approved_bands_largest_remainders_v1', total_seats: total,
+    party_names: copy(Q.party_names), party_votes: votes, party_seats: seats,
+    lists: lists, previous_parliament: copy(Q.sejm_parliament)
+};
+// Keep snapshots shallow across elections: previous parliament has seats and
+// identity only, not a recursively nested history or an invented previous vote.
+Q.sejm_results.push(result);
+Q.sejm_parliament = {id: result.id, kind: 'elected', total_seats: total,
+    party_seats: copy(seats), party_names: copy(result.party_names)};
+Q.opening_sejm_active = 0;
+Q.polish_opening_government_active = 0;
+Q.pps_external_toleration = 0;
+Q.polish_cabinet_id = '';
+Q.n_elections += 1;
+Q.sejm_first_election_completed = 1;
+pending.phase = 'results';
+Q.in_election = 1;
+// No monthly action, Papen timer or German election achievement is awarded.
+Q.next_election_year = pending.first ? 1928 : pending.year + 4;
+Q.next_election_month = pending.first ? 5 : pending.month;
+Q.next_election_time = Q.time + (Q.next_election_year - Q.year) * 12 + Q.next_election_month - Q.month;
+
+for (var party of parties.concat(['spd', 'kpd', 'dvp', 'dnvp', 'z', 'ddp', 'nsdap'])) {
+    Q[party + '_in_government'] = 0;
+}
+for (var flag of ['in_spd_majority', 'in_polish_left_coalition', 'in_polish_center_left_coalition',
+    'in_chjeno_piast', 'in_minority_government', 'minorities_toleration', 'spd_toleration',
+    'spd_caretaker', 'in_grand_coalition', 'in_weimar_coalition', 'in_popular_front',
+    'in_left_front', 'in_right_coalition', 'in_emergency_government']) Q[flag] = 0;
+for (var portfolio in Q.polish_portfolios) {
+    Q[portfolio + '_minister_party'] = '';
+    Q[portfolio + '_minister'] = '';
+}
+Q.coalition_dissent = 0;
+Q.chancellor = 'Government formation pending';
+Q.chancellor_party = 'pending_polish_government';
+!}

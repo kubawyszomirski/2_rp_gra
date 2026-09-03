@@ -608,7 +608,7 @@ if (this.ui && this.ui.show_portraits) {
 if (typeof window !== "undefined" && window.generateBar) {
 }
 !}
-go-to: sejm_election if sejm_election_due or sejm_election_in_progress; events_choice if not sejm_election_due and not sejm_election_in_progress and has_event = 1; main if not sejm_election_due and not sejm_election_in_progress and has_event = 0
+go-to: sejm_election if sejm_election_due or sejm_election_in_progress; polish_presidential_sequence if not sejm_election_due and not sejm_election_in_progress and (polish_presidential_due or polish_presidential_in_progress); events_choice if not sejm_election_due and not sejm_election_in_progress and not polish_presidential_due and not polish_presidential_in_progress and has_event = 1; main if not sejm_election_due and not sejm_election_in_progress and not polish_presidential_due and not polish_presidential_in_progress and has_event = 0
 
 = [+ month : month +] [+ year +]
 

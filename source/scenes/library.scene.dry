@@ -6,11 +6,12 @@ go-to: menu
 
 = The Library
 
-This library is in transition. The Polish January 1922 opening government and simplified parliament, November 1922 election with exact seats, player party, population model, PPS factions, advisers and self-defence organization are implemented. Later governments, most other organizations, most cards and dated events remain an unfinished, mixed baseline.
+This library is in transition. The Polish January 1922 opening government and simplified parliament, November 1922 election with exact seats, December 1922 presidential succession, player party, population model, PPS factions, advisers and self-defence organization are implemented. Later governments, most other organizations, most cards and dated events remain an unfinished, mixed baseline.
 
 @menu
 
 - @government: Poland's opening constitutional arrangements
+- @presidency: Presidential office and December 1922 elections
 - @weimar_timeline: Timeline of the Weimar Republic before 1928
 - @curr_gov: Current government and cabinet portfolios
 - @demographics: Demographics
@@ -35,11 +36,39 @@ Toleration is not executive control. You can organize PPS, campaign, use adviser
 
 The opening **444-MP** parliament is an approved simplification: rounded August 1922 club percentages are normalized and allocated as whole seats, not asserted to be the historical January roster. Existing party IDs stand for simplified parliamentary categories. Minority deputies are an aggregate, not a claim that a single minority electoral bloc already existed in January. Campaigning changes public support, not sitting MPs.
 
-**Implemented election:** November 1922, 444 Sejm MPs, a 223-MP majority and the approved national seat heuristic. ChZJN combines ZLN and PSChD votes and seats for display, while its constituent parties remain separate. The Senate is not simulated. Voting and government formation take place within one monthly sequence.
+**Implemented parliamentary election:** November 1922, 444 Sejm MPs, a 223-MP majority and the approved national seat heuristic. ChZJN combines ZLN and PSChD votes and seats for display, while its constituent parties remain separate. Voting and government formation take place within one monthly sequence.
 
-**Planned, not implemented:** presidential succession and subsequent historical cabinets. The March Constitution provided five-year Sejm terms from the opening of the chamber and seven-year presidential terms, with the president elected by the Sejm and Senate together as the National Assembly. The next date after November is temporarily May 1928; inherited events can alter later dates. Continuation elections use the same seat calculation, without pretending to implement later Polish chronology or alliances. There is no campaign cutoff.
+**Implemented presidential succession:** the December sequence uses the March Constitution's National Assembly procedure, fixed historical final ballots, Piłsudski's transfer to Narutowicz, Narutowicz's assassination and Wojciechowski's election. A proportional 111-seat Senate snapshot is created only for the 555-member Assembly; no general Senate mechanic exists. The approved compression omits the brief acting presidency. See the dedicated presidency page.
+
+**Planned, not implemented:** subsequent presidential elections and historical cabinets. The next parliamentary date after November is temporarily May 1928; inherited events can alter later dates. Continuation elections use the same seat calculation, without pretending to implement later Polish chronology or alliances. There is no campaign cutoff.
 
 **Approved election design:** the national vote-to-seat multipliers are 0.25 below 2%, 0.55 from 2%, 0.85 from 5%, 1.025 from 10%, 1.10 from 15%, and 1.25 from 25%. Weighted totals are normalized before whole seats are allocated by largest remainders. The user supplied/confirmed this calibration. These are gameplay rules, not the historical district law. There is no geographic model. Inne is split into 2% anonymous lists plus any smaller remainder, not counted as one electoral alliance. ChZJN seats are attributed to ZLN and PSChD proportionally to their support at the election.
+
+@presidency
+call: polish_opening_state
+go-to: menu
+
+= President of the Republic
+
+Current head of state: **[+ head_of_state_display +]**.
+
+Under the March Constitution, the Sejm and Senate elect the President together as the National Assembly for a seven-year term. Government acts require countersignature by the prime minister and responsible minister. The President appoints the prime minister and appoints other ministers on the prime minister's proposal. The office has no separate legislative veto or inherited German emergency-decree mechanic; dissolution of the Sejm requires the constitutionally specified Senate consent.
+
+[? if not sejm_first_election_completed : The presidency does not operate at the January opening. The November Sejm election must take place before the December presidential sequence. ?]
+
+[? if sejm_first_election_completed and not polish_first_presidential_election_recorded : The mandatory December 1922 presidential sequence has not yet begun. ?]
+
+[? if polish_presidential_in_progress : The December sequence is in progress and will resume from its saved phase. ?]
+
+[? if national_assembly_total > 0 : **Gameplay Assembly:** 444 Sejm MPs plus a proportional 111-seat Senate snapshot, for **[+ national_assembly_total +] members**. This does not implement a permanent Senate chamber. Fixed historical ballots are not recalculated from this simplified composition. ?]
+
+[? if polish_first_presidential_election_recorded : **Final ballot, 9 December 1922:** Gabriel Narutowicz — 289 votes (PSL Wyzwolenie, PPS, most of PSL Piast, Blok Mniejszości Narodowych and part of NPR); Maurycy Zamoyski — 227 votes (ZLN and PSChD within ChZJN, with other right-wing parliamentarians). There were 29 blank ballots. Narutowicz was elected, took the oath on 11 December, and received the formal transfer of state authority from Józef Piłsudski on 14 December. ?]
+
+[? if polish_first_presidential_election_recorded : **16 December:** Narutowicz was assassinated. PPS's peaceful constitutional response is recorded without numerical effects. The game omits the brief acting presidency as an approved chronology compression. ?]
+
+[? if polish_second_presidential_election_recorded : **Final ballot, 20 December 1922:** Stanisław Wojciechowski — 298 votes (PSL Piast, PSL Wyzwolenie, PPS, NPR and Blok Mniejszości Narodowych); Kazimierz Morawski — 221 votes (ZLN and PSChD within ChZJN, with other right-wing parliamentarians). Wojciechowski was elected and assumed the presidency. ?]
+
+Later Polish presidential elections, variable outcomes and their cabinet consequences remain planned. The inherited German direct-popular election and Hindenburg succession routes are unavailable under the Polish system.
 
 @weimar_timeline
 go-to: menu
