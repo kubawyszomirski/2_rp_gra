@@ -1,0 +1,100 @@
+{
+  "scope": "M19: one current version for coding (technical chapters 1-22) and a separated decision archive (chapter 23); guide history appendix; registers with a current state above the archive of entries. Structure checks, anchor resolution of every markdown link, optional preservation check against the pre-M19 copies.",
+  "hashes": {
+    "docs/POLISH_TECHNICAL_REFERENCE.md": "8aba6f238f43c61b53eecb1e52c13903a7661bf426453fe6033fc633da68aaa4",
+    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "2402955a7669c2ad1bfd208ba3e4b704ab79574304554f4b51576fcf2195b42e",
+    "docs/POLISH_MECHANICS_AUDIT.md": "070de0c9d624d01594c387dd4b43a0db3edf873a194d390266d56acf6c469fa0",
+    "HISTORICAL_SOURCES.md": "e1ec7d942a88e7fb667593763e412e28485f63e2de936108bf8ce7837b42269d",
+    "PLAN.md": "b05bea07adfd4df0be88fd15a7f1f3da551ff3b128bead1f5f03d1b5f285da09",
+    "MECHANICS_MAP.md": "7820b553f24f76f2be49d37db84a51adbda7a9232cde7c0c664252324ba455c1",
+    "STATE_VARIABLES.md": "cd61b984fc14199a3a9d245b9a75bd70b34501b03b5a75dcacb521f8c0ac1b70",
+    "TRANSITION_MATRIX.md": "0e10cf51eaaaa892e7190a4428fb02126003da0e3a3525510ee7f5bb7d25cc41"
+  },
+  "structure": {
+    "indexSubsectionsChecked": 86,
+    "technical": {
+      "chapters": 23,
+      "revisionParagraphsInArchive": 17,
+      "approvalLogsInArchive": 21,
+      "archiveStartsAtLine": 3939
+    },
+    "guide": {
+      "chapters": 19,
+      "notesInAppendix": 47,
+      "appendixStartsAtLine": 1708
+    },
+    "registers": {
+      "PLAN.md": {
+        "areas": 18,
+        "archiveStartsAtLine": 51
+      },
+      "MECHANICS_MAP.md": {
+        "areas": 18,
+        "archiveStartsAtLine": 51
+      },
+      "STATE_VARIABLES.md": {
+        "areas": 18,
+        "archiveStartsAtLine": 59
+      },
+      "TRANSITION_MATRIX.md": {
+        "areas": 18,
+        "archiveStartsAtLine": 51
+      }
+    }
+  },
+  "links": {
+    "fileLinks": 601,
+    "missingFiles": 0,
+    "anchorLinks": 384,
+    "anchorLinksIntoM19Docs": 117,
+    "brokenAnchors": 0
+  },
+  "preservation": {
+    "run": true,
+    "perFile": {
+      "docs/POLISH_TECHNICAL_REFERENCE.md": {
+        "linesLost": 2,
+        "anchorsKept": 213
+      },
+      "docs/POLISH_DESCRIPTIVE_GUIDE.md": {
+        "linesLost": 0,
+        "anchorsKept": 120
+      },
+      "docs/POLISH_MECHANICS_AUDIT.md": {
+        "linesLost": 8,
+        "anchorsKept": 22
+      },
+      "HISTORICAL_SOURCES.md": {
+        "linesLost": 0,
+        "anchorsKept": 86
+      },
+      "PLAN.md": {
+        "linesLost": 0,
+        "anchorsKept": 61
+      },
+      "MECHANICS_MAP.md": {
+        "linesLost": 1,
+        "anchorsKept": 73
+      },
+      "STATE_VARIABLES.md": {
+        "linesLost": 0,
+        "anchorsKept": 55
+      },
+      "TRANSITION_MATRIX.md": {
+        "linesLost": 0,
+        "anchorsKept": 44
+      }
+    },
+    "knownEdits": {
+      "docs/POLISH_TECHNICAL_REFERENCE.md": 2,
+      "MECHANICS_MAP.md": 1
+    },
+    "moved": {
+      "technicalHeader": 1,
+      "technicalRevisions": 17,
+      "technicalLogLines": 90,
+      "guideNotes": 30
+    },
+    "note": "recorded by an earlier run with M19_BACKUP_DIR; not repeated in this run"
+  }
+}

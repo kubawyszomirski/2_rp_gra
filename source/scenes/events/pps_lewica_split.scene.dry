@@ -2,7 +2,7 @@ title: Split in Lewica PPS
 subtitle: The socialist left breaks with the party leadership.
 new-page: true
 tags: event
-view-if: polish_faction_system and lewica_dissent >= 60 and not lewica_split
+view-if: not polish_party_rules and (polish_faction_system and lewica_dissent >= 60 and not lewica_split)
 on-arrival: {!
 Q.lewica_split = 1;
 Q.lewica_strength /= 2;

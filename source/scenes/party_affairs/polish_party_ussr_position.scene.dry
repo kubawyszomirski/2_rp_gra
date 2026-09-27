@@ -1,0 +1,60 @@
+title: PPS and the Soviet Model
+subtitle: The line of PPS towards the Soviet model of power.
+new-page: true
+is-card: true
+tags: party_affairs
+card-image: img/international.jpg
+view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.stanceAvailable(Q, 'ussr_position') !}
+on-arrival: {!
+// Card party.ussr_position (catalogue 4.8; technical reference 10.10): 1 T, 0 R, the card then waits 12 months. The present line is shown and cannot be
+// chosen again; closing the card is free (Z — 0.32).
+PolishParty.stanceView(Q, 'ussr_position');
+!}
+
+= PPS and the Soviet Model
+
+The present line: **[+ pl_stance_current +]**. A new declaration costs this month's action; it changes no law in force and gives no reform by itself.
+
+- @sympathetic
+- @independent
+- @critical
+- @easy_discard
+
+@sympathetic
+title: Solidarity with the Soviet state as an attempt to build socialism
+subtitle: Relation with the KPP +5 once in the chapter; Centrum dissent +5.
+choose-if: {! return PolishParty.stanceStatus(Q, 'ussr_position', 'sympathetic').available !}
+unavailable-subtitle: [+ pl_stance_sympathetic_why +]
+on-arrival: {!
+PolishParty.stanceChoose(Q, 'ussr_position', 'sympathetic');
+!}
+go-to: result
+
+@independent
+title: Independence: workers’ cooperation without the Soviet model
+subtitle: No change of relations or dissent.
+choose-if: {! return PolishParty.stanceStatus(Q, 'ussr_position', 'independent').available !}
+unavailable-subtitle: [+ pl_stance_independent_why +]
+on-arrival: {!
+PolishParty.stanceChoose(Q, 'ussr_position', 'independent');
+!}
+go-to: result
+
+@critical
+title: Condemn Soviet authoritarianism and the subordination of the labour movement
+subtitle: Relation with the KPP −5; no faction reaction.
+choose-if: {! return PolishParty.stanceStatus(Q, 'ussr_position', 'critical').available !}
+unavailable-subtitle: [+ pl_stance_critical_why +]
+on-arrival: {!
+PolishParty.stanceChoose(Q, 'ussr_position', 'critical');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= PPS and the Soviet Model
+
+[+ pl_party_result +]
+
+- @root: Continue.

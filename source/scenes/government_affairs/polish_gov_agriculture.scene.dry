@@ -1,0 +1,66 @@
+title: Modernisation of Agriculture
+subtitle: Agriculture: advice, consolidation, cooperative processing.
+new-page: true
+is-card: true
+tags: govt_affairs
+card-image: img/flags.jpg
+view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'agriculture_development') !}
+on-arrival: {!
+// Card government.agriculture_development (technical reference 17.11–17.12; card catalogue 8.9). Opening and closing
+// the card are free; a confirmed option costs this month's action, or the one free step of an adviser
+// who opened the card. Options that need a system of a later stage are shown with their reason.
+PolishProjects.cardView(Q, 'agriculture_development');
+!}
+
+= Modernisation of agriculture
+
+Each project covers one of three tranches of the countryside and costs 1 B for 4 months, nothing after. The same area does not get the same improvement twice; land reform and modernisation may cover the same people.
+
+[+ pl_gc_budget +]
+
+[+ pl_gc_projects +]
+
+- @advisory
+- @consolidation
+- @cooperative_processing_sales
+- @easy_discard
+- @cancel_advisor_action
+
+@advisory
+title: Advice, tools and cooperative modernisation
+subtitle: Agrarian pressure −2; better conditions of the farms covered.
+choose-if: {! return PolishProjects.optionStatus(Q, 'agriculture_development', 'advisory').available !}
+unavailable-subtitle: [+ pl_agriculture_development_advisory_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'agriculture_development', 'advisory');
+!}
+go-to: result
+
+@consolidation
+title: Voluntary consolidation of land
+subtitle: Agrarian pressure −2; needs its law; a dispute over borders halts it.
+choose-if: {! return PolishProjects.optionStatus(Q, 'agriculture_development', 'consolidation').available !}
+unavailable-subtitle: [+ pl_agriculture_development_consolidation_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'agriculture_development', 'consolidation');
+!}
+go-to: result
+
+@cooperative_processing_sales
+title: Cooperative processing and sales
+subtitle: Needs a cooperative executor; the cooperatives of PPS come with stage 5.
+choose-if: {! return PolishProjects.optionStatus(Q, 'agriculture_development', 'cooperative_processing_sales').available !}
+unavailable-subtitle: [+ pl_agriculture_development_cooperative_processing_sales_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'agriculture_development', 'cooperative_processing_sales');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= Modernisation of agriculture
+
+[+ pl_gc_result +]
+
+- @root: Continue.

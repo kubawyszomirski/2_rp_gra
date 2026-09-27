@@ -1,0 +1,170 @@
+{
+  "scope": "Card catalogue 0.32: coverage of every reference card family, sub-action, event and advisor action; table template; statuses; cited sections and 21.1 tests; code files; 17.2 cost tokens; approved stance-card rules; index and grouped questions.",
+  "hashes": {
+    "docs/POLISH_CARD_CATALOGUE.md": "d78c3f50e6d47b3b6315354dc1379dd3ffd63ef13906bac2b68fb93e7e0bd62f",
+    "docs/POLISH_TECHNICAL_REFERENCE.md": "8aba6f238f43c61b53eecb1e52c13903a7661bf426453fe6033fc633da68aaa4",
+    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "2402955a7669c2ad1bfd208ba3e4b704ab79574304554f4b51576fcf2195b42e",
+    "docs/POLISH_MECHANICS_AUDIT.md": "070de0c9d624d01594c387dd4b43a0db3edf873a194d390266d56acf6c469fa0"
+  },
+  "entries": 69,
+  "cards": 49,
+  "events": 20,
+  "requiredIds": {
+    "10.5 party deck": 16,
+    "17.2 actions": 55,
+    "17.3 events": 18,
+    "17.9 links": 16,
+    "17.10 parliament": 10,
+    "17.11 government": 16,
+    "10.4.3 advisors": 22
+  },
+  "costChecks": 48,
+  "openQuestions": 0,
+  "byBatch": {
+    "4": {
+      "entries": 8,
+      "questions": 0
+    },
+    "5": {
+      "entries": 10,
+      "questions": 0
+    },
+    "6": {
+      "entries": 8,
+      "questions": 0
+    },
+    "7": {
+      "entries": 10,
+      "questions": 0
+    },
+    "8": {
+      "entries": 16,
+      "questions": 0
+    },
+    "9": {
+      "entries": 17,
+      "questions": 0
+    }
+  },
+  "optionStatuses": {
+    "Z / P": 206,
+    "P; historycznie B": 5,
+    "P": 11,
+    "Z": 28,
+    "H / Z / P": 2
+  },
+  "citedTests": 191,
+  "batch1": {
+    "capitalLand": [
+      "PSChD",
+      "ZLN"
+    ],
+    "autonomyDistances": {
+      "zlnCultural": 2,
+      "minoritiesCultural": 1,
+      "minoritiesAutonomy": 0
+    },
+    "rulesChecked": 10
+  },
+  "batch2": {
+    "rulesChecked": 12,
+    "organizingGain": 2.2,
+    "militiaCodeCentreReaction": true
+  },
+  "batch3": {
+    "rulesChecked": 11,
+    "assessmentRadius": [
+      30,
+      20,
+      10,
+      5
+    ],
+    "acceptanceAfterCompromise": 65
+  },
+  "batch4": {
+    "rulesChecked": 8,
+    "armyDistance": {
+      "PPS": {
+        "full": 2,
+        "limited": 0
+      },
+      "Wyzwolenie": {
+        "full": 1,
+        "limited": 1
+      },
+      "Piast": {
+        "full": 2,
+        "limited": 0
+      },
+      "NPR": {
+        "full": 2,
+        "limited": 0
+      },
+      "PSChD": {
+        "full": 2,
+        "limited": 0
+      },
+      "ZLN": {
+        "full": 1,
+        "limited": 1
+      },
+      "Reprezentanci komunistyczni": {
+        "full": 2,
+        "limited": 0
+      },
+      "Żydowska reprezentacja": {
+        "full": 2,
+        "limited": 0
+      },
+      "Pozostałe mniejszości": {
+        "full": 2,
+        "limited": 0
+      }
+    },
+    "dropsLabour": [
+      "centrolew_early"
+    ]
+  },
+  "batch5": {
+    "rulesChecked": 17,
+    "benefits": {
+      "reliefRunning": 2,
+      "expandTo2": 4,
+      "focus": 1
+    },
+    "investmentFund": {
+      "creditBuild": 2,
+      "bankBuild": 1,
+      "loanThreshold": 40,
+      "agreementReward": -8
+    },
+    "removedOptions": 6
+  },
+  "batch6": {
+    "rulesChecked": 11,
+    "centreReaction": {
+      "own": 5,
+      "total": 8
+    },
+    "newIds": [
+      "party.faction_split",
+      "society.strike_settlement_rejection"
+    ]
+  },
+  "queue": {
+    "approvedCategories": {
+      "opening.cabinet_1922": 2,
+      "politics.pils_parliament_criticism": 6,
+      "presidency.security_crisis": 2,
+      "presidency.assassination_response": 5,
+      "society.niewiadomski_cult": 6,
+      "society.strike_settlement_rejection": 1,
+      "cabinet.austerity_1926": 4
+    },
+    "sameMonthOrder": [
+      "society.strike_settlement_rejection",
+      "cabinet.austerity_1926",
+      "politics.pils_parliament_criticism"
+    ]
+  }
+}

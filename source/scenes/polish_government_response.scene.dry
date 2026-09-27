@@ -1,0 +1,75 @@
+title: Answer to a Partner
+subtitle: [+ pl_resp_subtitle +]
+is-pinned-card: true
+card-image: img/muller_cabinet.jpg
+view-if: {! return !!Q.S && !!PolishGovernment.responseCase(Q) !}
+new-page: true
+on-arrival: {!
+// The guaranteed answer of card 7.6 (technical reference 9.8): a partner's warning or ultimatum, or a
+// motion to dismiss the cabinet after a partner withdrew, gives PPS one answer for 0 T per case; so do the review
+// after three months and the end of a six-month toleration agreement (9.7, stage 6).
+Q.pl_sup_mode = 'response';
+var open = PolishGovernment.responseCase(Q);
+Q.pl_resp_kind = open ? open.kind : '';
+Q.pl_resp_by = open ? PolishGovernment.describeParty(open.by) : '';
+Q.pl_sup_member = PolishGovernment.ppsStance(Q.S) === 'member' ? 1 : 0;
+Q.pl_sup_withdraw_reason = PolishGovernment.supportOptionStatus(Q, 'withdraw', 'response').reason;
+Q.pl_sup_demand_reason = PolishGovernment.supportOptionStatus(Q, 'bargain', 'response').reason;
+Q.pl_sup_extension_reason = PolishGovernment.supportOptionStatus(Q, 'extension', 'response').reason;
+Q.pl_sup_motion_reason = PolishGovernment.dismissalSupportStatus(Q).reason;
+!}
+
+= [? if pl_resp_kind = "warning" : A warning from [+ pl_resp_by +] ?][? if pl_resp_kind = "ultimatum" : An ultimatum from [+ pl_resp_by +] ?][? if pl_resp_kind = "motion" : A motion to dismiss the cabinet ?][? if pl_resp_kind = "review" : The review of our toleration of [+ pl_resp_by +] ?][? if pl_resp_kind = "renewal" : The end of our toleration of [+ pl_resp_by +] ?]
+
+[? if pl_resp_kind = "warning" : A promise of our agreement is overdue and the tension has passed 40. [+ pl_resp_by +] warns that its support is at risk. ?]
+
+[? if pl_resp_kind = "ultimatum" : The tension has passed 60. Unless the broken promise is met or extended, [+ pl_resp_by +] ends its support at the settlement two months after the ultimatum. ?]
+
+[? if pl_resp_kind = "motion" : [+ pl_resp_by +] has withdrawn its support from the cabinet, and a motion to dismiss it is before the Sejm. Without our answer PPS abstains when it is voted at the next settlement. ?]
+
+[? if pl_resp_kind = "review" : Our toleration of [+ pl_resp_by +] is an agreement for six months, and three of them have passed. We can keep our support, bargain or persuade for a new demand, or end our support. ?]
+
+[? if pl_resp_kind = "renewal" : The six months of our toleration of [+ pl_resp_by +] are over. Keeping our support renews the agreement for six months, with a new review after three; without an answer the toleration goes on unchanged. ?]
+
+[? if pl_agreement_notices : [+ pl_agreement_notices +] ?]
+
+One answer costs no month. Leaving this card without an answer changes nothing.
+
+- @polish_government_support.maintain
+- view-if: pl_resp_kind != "motion"
+- @polish_government_support.extension
+- view-if: pl_resp_kind != "motion"
+- @polish_government_support.bargain
+- view-if: pl_resp_kind != "motion"
+- @polish_government_support.persuade
+- view-if: pl_resp_kind != "motion"
+- @polish_government_support.withdraw
+- view-if: pl_resp_kind != "motion"
+- @motion_support
+- @motion_refuse
+- @later
+
+@motion_support
+title: Support the motion to dismiss the cabinet
+subtitle: The motion passes if more MPs vote for it than against, with at least 148 present.
+view-if: pl_resp_kind = "motion"
+choose-if: {! return PolishGovernment.dismissalSupportStatus(Q).available !}
+unavailable-subtitle: [+ pl_sup_motion_reason +]
+on-arrival: {!
+PolishGovernment.answerMotion(Q, 'support');
+!}
+go-to: polish_government_support.vote_result
+
+@motion_refuse
+title: Do not take part in bringing the cabinet down
+subtitle: PPS abstains; the motion is voted on now.
+view-if: pl_resp_kind = "motion"
+on-arrival: {!
+PolishGovernment.answerMotion(Q, 'refuse');
+!}
+go-to: polish_government_support.vote_result
+
+@later
+title: Not now
+subtitle: The case stays open; this card remains available.
+go-to: main

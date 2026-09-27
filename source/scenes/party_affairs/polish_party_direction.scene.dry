@@ -1,0 +1,71 @@
+title: Political Direction
+subtitle: How PPS builds its influence.
+new-page: true
+is-card: true
+tags: party_affairs
+card-image: img/poster_2.jpg
+view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.stanceAvailable(Q, 'direction') !}
+on-arrival: {!
+// Card party.direction (catalogue 4.1; technical reference 10.5–10.6): 1 T, 0 R, the card then waits 6 months. The present line is shown and cannot be
+// chosen again; closing the card is free (Z — 0.32).
+PolishParty.stanceView(Q, 'direction');
+!}
+
+= Political Direction
+
+The present line: **[+ pl_stance_current +]**. A new declaration costs this month's action; it changes no law in force and gives no reform by itself.
+
+- @parliamentary_socialism
+- @class_independence
+- @workers_gains
+- @democratic_movement
+- @easy_discard
+
+@parliamentary_socialism
+title: Parliamentary socialism
+subtitle: A parliamentary campaign gains ×1.10 while a PPS bill is before the chambers.
+choose-if: {! return PolishParty.stanceStatus(Q, 'direction', 'parliamentary_socialism').available !}
+unavailable-subtitle: [+ pl_stance_parliamentary_socialism_why +]
+on-arrival: {!
+PolishParty.stanceChoose(Q, 'direction', 'parliamentary_socialism');
+!}
+go-to: result
+
+@class_independence
+title: Independent class politics
+subtitle: A class campaign gains ×1.10. Alliances stay possible, but a joint list against a public promise needs renegotiation.
+choose-if: {! return PolishParty.stanceStatus(Q, 'direction', 'class_independence').available !}
+unavailable-subtitle: [+ pl_stance_class_independence_why +]
+on-arrival: {!
+PolishParty.stanceChoose(Q, 'direction', 'class_independence');
+!}
+go-to: result
+
+@workers_gains
+title: Defend the workers’ gains
+subtitle: A campaign for the workers’ gains ×1.10 while a protection or the inspection works, ×1.15 when a cut is on the table.
+choose-if: {! return PolishParty.stanceStatus(Q, 'direction', 'workers_gains').available !}
+unavailable-subtitle: [+ pl_stance_workers_gains_why +]
+on-arrival: {!
+PolishParty.stanceChoose(Q, 'direction', 'workers_gains');
+!}
+go-to: result
+
+@democratic_movement
+title: A broad democratic movement
+subtitle: A democracy campaign ×1.00 without a threat, ×1.15 under a threat to democracy.
+choose-if: {! return PolishParty.stanceStatus(Q, 'direction', 'democratic_movement').available !}
+unavailable-subtitle: [+ pl_stance_democratic_movement_why +]
+on-arrival: {!
+PolishParty.stanceChoose(Q, 'direction', 'democratic_movement');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= Political Direction
+
+[+ pl_party_result +]
+
+- @root: Continue.

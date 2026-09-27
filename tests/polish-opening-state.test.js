@@ -3,13 +3,26 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { test, mock, beforeEach, afterEach } = require('node:test');
 const { convertJSONToGame, DendryEngine, NullUserInterface } = require('dendrynexus/lib/engine');
+// The page loads the rules module before core.js and installs the engine hooks; the engine tests
+// load the same built copies.
+globalThis.PolishRules = require(path.join(__dirname, '..', 'out', 'html', 'polish_rules.js'));
+globalThis.PolishInstitutions = require(path.join(__dirname, '..', 'out', 'html', 'polish_institutions.js'));
+globalThis.PolishEconomy = require(path.join(__dirname, '..', 'out', 'html', 'polish_economy.js'));
+globalThis.PolishGovernment = require(path.join(__dirname, '..', 'out', 'html', 'polish_government.js'));
+globalThis.PolishElectorate = require(path.join(__dirname, '..', 'out', 'html', 'polish_electorate.js'));
+globalThis.PolishProjects = require(path.join(__dirname, '..', 'out', 'html', 'polish_projects.js'));
+globalThis.PolishParty = require(path.join(__dirname, '..', 'out', 'html', 'polish_party.js'));
+globalThis.PolishUnions = require(path.join(__dirname, '..', 'out', 'html', 'polish_unions.js'));
+globalThis.PolishPolitics = require(path.join(__dirname, '..', 'out', 'html', 'polish_politics.js'));
+globalThis.PolishSecurity = require(path.join(__dirname, '..', 'out', 'html', 'polish_security.js'));
+require(path.join(__dirname, '..', 'out', 'html', 'polish_engine_hooks.js')).install(DendryEngine.prototype, globalThis.PolishRules);
 
 // Use the actual compiled Dendry engine, including calls, conditions, event
 // selection and navigation. The existing suite separately tests individual effects.
 const gameJSON = fs.readFileSync(path.join(__dirname, '..', 'out', 'game.json'), 'utf8');
 const diagnostics = [];
 mock.method(console, 'log', (...args) => {
-  if (String(args[0]).startsWith('Error in')) diagnostics.push(args.map(String).join(' '));
+  if (String(args[0]).startsWith('Error')) diagnostics.push(args.map(String).join(' '));
 });
 beforeEach(() => { diagnostics.length = 0; });
 afterEach(() => { assert.deepEqual(diagnostics, [], 'Dendry must not silently swallow script/condition errors'); });
@@ -18,8 +31,10 @@ const seats = {
   kpp: 2, pps: 35, npr: 22, psl_wyzwolenie: 25, psl_piast: 99,
   pschd: 27, zln: 83, minorities_bloc: 17, other: 134,
 };
+// Nine portfolios (technical reference 8.5, 20.1.1): public works are part of Labour.
 const portfolioKeys = ['labor', 'interior', 'finance', 'economic', 'justice',
-  'foreign', 'agriculture', 'reichswehr', 'education', 'public_works'];
+  'foreign', 'agriculture', 'reichswehr', 'education'];
+const { formCabinet } = require('./helpers/dendry');
 
 function createEngine() {
   let game;
@@ -32,6 +47,10 @@ function createEngine() {
   ui.newPage = () => { ui.paragraphs = []; };
   ui.displayContent = (content) => { ui.paragraphs.push(...content); };
   const engine = new DendryEngine(ui, game);
+  // Inherited scenes use window.dendryUI.dendryEngine and the page's d3 charts. Outside the
+  // browser this stand-in points at the running engine and leaves the charts out.
+  globalThis.window = { dendryUI: { dendryEngine: engine } };
+  globalThis.d3 = undefined;
   engine.beginGame([1922]);
   return engine;
 }
@@ -90,7 +109,7 @@ test('fresh opening initializes exactly 444 MPs independently from polling', () 
   assert.deepEqual(Q.election_records, []);
 });
 
-test('opening offices, toleration and all ten portfolios grant no executive powers', () => {
+test('opening offices, toleration and all nine portfolios grant no executive powers', () => {
   const engine = startGame();
   const Q = engine.state.qualities;
   assert.equal(Q.polish_cabinet_id, 'ponikowski_1');
@@ -109,6 +128,7 @@ test('opening offices, toleration and all ten portfolios grant no executive powe
     assert.equal(Q[`${key}_minister`], '');
     assert.equal(Q[`${key}_minister_party`], 'opening_expert_cabinet');
   }
+  assert.equal(Q.public_works_minister_party, '', 'no tenth portfolio');
   for (const id of ['fiscal_policy', 'police', 'military_policy', 'judiciary',
     'foreign_policy', 'agricultural_policy', 'labor_affairs', 'shuffle_cabinet',
     'education_science', 'constitutional_reform', 'dealing_with_toleration', 'cabinet']) {
@@ -143,7 +163,7 @@ test('opening, status and read-only cabinet agree without changing time or membe
   for (const label of Object.values(engine.state.qualities.polish_portfolios)) {
     assert.ok(cabinet.includes(label), label);
   }
-  assert.equal((cabinet.match(/Cabinet-administered; outside PPS control/g) || []).length, 10);
+  assert.equal((cabinet.match(/Cabinet-administered; outside PPS control/g) || []).length, 9);
   assert.equal(engine.state.qualities.time, 1);
   assert.equal(engine.state.qualities.spd_in_government, 0);
   engine.goToScene('backSpecialScene');
@@ -159,8 +179,11 @@ test('campaign choice, consequences, event processing and February preserve gove
   const before = parliamentaryShares(Q);
   const initialSupport = Q.workers_pps;
   const initialPoll = Q.pps_normalized;
-  playEligibleFixture(engine, 'campaigning');
-  choose(engine, 'campaigning.workers');
+  // Stage 5: the Media card replaces the inherited campaigning card (card catalogue 5.3).
+  playEligibleFixture(engine, 'polish_party_media');
+  choose(engine, 'polish_party_media.campaign');
+  choose(engine, 'polish_party_media.topic_class');
+  choose(engine, 'polish_party_media.to_workers');
   assert.ok(Q.workers_pps > initialSupport);
   choose(engine, 'root');
   assert.equal(engine.state.sceneId, 'main');
@@ -214,15 +237,16 @@ test('external toleration preserves adviser diplomacy and playable militia devel
   engine.playPinnedCard('daszynski');
   assert.equal(condition(engine, 'daszynski.broker_coalition', 'chooseIf'), false);
   choose(engine, 'daszynski.parliamentary_compromise');
-  assert.equal(Q.psl_piast_relation, relation + 3);
+  assert.equal(Q.psl_piast_relation, relation + 5, 'Parliamentary Compromise of 10.4.3: PSL Piast +5');
   choose(engine, 'root');
   assert.equal(Q.spd_in_government, 0);
   assert.equal(Q.pps_external_toleration, 1);
   const month = Q.month;
-  playEligibleFixture(engine, 'reichsbanner');
-  choose(engine, 'reichsbanner.militant');
+  // Stage 5: the Polish card Milicja PPS (card catalogue 5.2) replaces the inherited self-defence card.
+  playEligibleFixture(engine, 'polish_party_militia');
+  choose(engine, 'polish_party_militia.recruit');
   assert.equal(Q.pps_militia_strength, 300);
-  assert.ok(Math.abs(Q.pps_militia_militancy - 0.15) < 1e-9);
+  assert.ok(Math.abs(Q.pps_militia_militancy - 0.10) < 1e-9, 'recruiting gives no efficiency bonus');
   choose(engine, 'root');
   assert.equal(Q.month, month + 1);
   assert.equal(Q.polish_opening_government_active, 1);
@@ -279,14 +303,16 @@ test('legacy entry redirects to exact-seat election without its old monthly char
   choose(engine, 'sejm_election.calculate');
   assert.equal(engine.state.sceneId, 'sejm_election.government');
   assert.equal(Q.opening_sejm_active, 0);
+  // The previous cabinet governs as caretaker until the head of state appoints a new one (8.8).
   assert.equal(Q.polish_opening_government_active, 0);
-  assert.equal(Q.pps_external_toleration, 0);
-  assert.equal(Q.polish_cabinet_id, '');
+  assert.equal(Q.polish_cabinet_id, 'ponikowski_1');
+  assert.equal(Q.S.cabinet.status, 'caretaker');
   assert.equal(Q.head_of_state_name, 'Józef Piłsudski');
-  assert.equal(Q.education_minister_party, '');
   assert.equal(Q.public_works_minister_party, '');
-  choose(engine, 'election_1928.polish_opposition');
+  formCabinet(engine, { mode: 'opposition' });
   choose(engine, 'root');
+  assert.notEqual(Q.polish_cabinet_id, 'ponikowski_1');
+  assert.equal(Q.pps_external_toleration, 0);
   assert.equal(Q.next_election_year, 1928);
   assert.equal(Q.month, 11);
   assert.equal(Q.time, 11);
@@ -297,24 +323,27 @@ test('legacy entry redirects to exact-seat election without its old monthly char
   assert.match(content(engine), /444 MPs/);
 });
 
-test('government replacement invalidates only opening metadata, not new assignments or parliament', () => {
+test('legacy writes to government fields cannot replace the cabinet record: the mirrors are rewritten', () => {
+  // Stage 3 (technical reference 8.4, 8.5): the cabinet in Q.S is the only authority for the
+  // government; inherited fields that scenes read are mirrors, rewritten from it.
   const engine = startGame();
   const Q = engine.state.qualities;
+  const cabinet = JSON.parse(JSON.stringify(Q.S.cabinet));
   Q.chancellor = 'Replacement fixture';
   Q.chancellor_party = 'PPS';
   Q.spd_in_government = 1;
   Q.pps_in_government = 1;
   Q.finance_minister_party = 'SPD';
   engine.goToScene('status');
-  assert.equal(Q.pps_external_toleration, 0);
-  assert.equal(Q.polish_opening_government_active, 0);
-  assert.equal(Q.chancellor, 'Replacement fixture');
-  assert.equal(Q.finance_minister_party, 'SPD');
+  assert.deepEqual(Q.S.cabinet, cabinet);
+  assert.equal(Q.pps_external_toleration, 1);
+  assert.equal(Q.polish_opening_government_active, 1);
+  assert.equal(Q.chancellor, 'Antoni Ponikowski');
+  assert.equal(Q.spd_in_government, 0);
+  assert.equal(Q.pps_in_government, 0);
+  assert.equal(Q.finance_minister_party, 'opening_expert_cabinet');
   assert.equal(Q.opening_sejm_active, 1);
-  assert.match(content(engine), /Replacement fixture/);
-  engine.goToScene('polish_opening_state');
-  assert.equal(Q.chancellor, 'Replacement fixture');
-  assert.equal(Q.finance_minister_party, 'SPD');
+  assert.doesNotMatch(content(engine), /Replacement fixture/);
 });
 
 test('unsupported legacy share writes cannot replace the authoritative opening parliament', () => {
@@ -339,8 +368,10 @@ test('same-version save/restore preserves the opening and remains playable', () 
   restored.goToScene('status');
   assert.match(content(restored), /Józef Piłsudski/);
   restored.goToScene('backSpecialScene');
-  playEligibleFixture(restored, 'campaigning');
-  choose(restored, 'campaigning.workers');
+  playEligibleFixture(restored, 'polish_party_media');
+  choose(restored, 'polish_party_media.campaign');
+  choose(restored, 'polish_party_media.topic_class');
+  choose(restored, 'polish_party_media.to_workers');
   choose(restored, 'root');
   assert.equal(restored.state.qualities.month, 2);
 });
@@ -364,7 +395,7 @@ test('Polish external toleration never enables legacy toleration choices at cris
   assert.equal(Q.chancellor, 'Antoni Ponikowski');
 });
 
-test('an eligible inherited cabinet event is preserved and its assignments survive cleanup', () => {
+test('an inherited cabinet event keeps its other effects, but its cabinet assignments are rewritten', () => {
   const engine = startGame();
   const Q = engine.state.qualities;
   // Fixture representing a later legacy government, not a route the opening
@@ -381,15 +412,21 @@ test('an eligible inherited cabinet event is preserved and its assignments survi
   assert.equal(condition(engine, 'papen_chancellor'), true);
   engine.goToScene('papen_chancellor');
   engine.goToScene('status');
-  assert.equal(Q.polish_opening_government_active, 0);
-  assert.equal(Q.pps_external_toleration, 0);
-  assert.equal(Q.chancellor, 'Papen');
+  // The cabinet record decides (8.4): the German event cannot appoint a chancellor or ministers.
+  assert.equal(Q.polish_opening_government_active, 1);
+  assert.equal(Q.pps_external_toleration, 1);
+  assert.equal(Q.chancellor, 'Antoni Ponikowski');
   assert.equal(Q.president, 'Hindenburg');
-  assert.equal(Q.finance_minister_party, 'I');
+  assert.equal(Q.finance_minister_party, 'opening_expert_cabinet');
   assert.equal(Q.judicial_reform, 1);
-  assert.equal(Q.next_election_time, 128);
-  assert.equal(Q.education_minister_party, '');
+  // The inherited event still writes a German election date, but the Polish legal record keeps the
+  // date (technical reference 7.4).
+  assert.equal(Q.next_election_time, PolishInstitutions.nextElection(Q.S).time);
+  assert.equal(Q.education_minister_party, 'opening_expert_cabinet');
   assert.equal(Q.opening_sejm_active, 1);
-  assert.doesNotMatch(content(engine), /Ponikowski|Naczelnik Państwa/);
-  assert.match(content(engine), /temporary government framework/);
+  assert.match(content(engine), /Antoni Ponikowski — predominantly expert cabinet/);
+  assert.doesNotMatch(content(engine), /Papen|temporary government framework/);
+  // The legacy German president no longer describes the Polish head of state (leak 5 of 20.2).
+  assert.doesNotMatch(content(engine), /Hindenburg/);
+  assert.match(content(engine), /Head of state: ","Józef Piłsudski — Naczelnik Państwa/);
 });

@@ -1,0 +1,104 @@
+title: Budget and the Costs of the Crisis
+subtitle: Answer the cabinet's package before the Sejm votes on it.
+is-pinned-card: true
+card-image: img/reichstag_2.jpg
+view-if: {! return !!Q.S && PolishProjects.budgetCardAvailable(Q) !}
+new-page: true
+on-arrival: {!
+// Card parliament.finance_amendment (technical reference 17.10; card catalogue 7.3): open while a package
+// of this cabinet waits for its vote and PPS is in the cabinet or supports it (decision 5 of stage 4).
+// One answer for 0 T; the partners judge a PPS condition by 8.3.
+var view = PolishProjects.budgetView(Q);
+Q.pl_bud_package = view.package;
+Q.pl_bud_project = view.project;
+Q.pl_bud_reason = view.reason;
+Q.pl_bud_necessary = view.necessary ? 1 : 0;
+Q.pl_bud_forecast = view.forecast;
+Q.pl_bud_vote = view.vote;
+for (var option of ['protect', 'wealth', 'loan']) {
+    Q['pl_bud_' + option + '_why'] = PolishProjects.budgetOptionStatus(Q, option).reason;
+}
+!}
+
+= The cabinet's package
+
+Because [+ pl_bud_reason +], the cabinet proposes: [+ pl_bud_package +][? if pl_bud_project : , with [+ pl_bud_project +] ?]. The Sejm votes at the settlement of [+ pl_bud_vote +]. Budget: [+ pl_bud_forecast +].
+
+[? if pl_bud_necessary : The premier treats this package as necessary: if it is refused, he presents one revision, and resigns if that fails too. ?]
+
+A condition of PPS is judged by the cabinet's partners. If they refuse it, PPS votes against the package; if PPS votes were needed, the package falls.
+
+- @support
+- @protect
+- @wealth
+- @loan
+- @refuse
+- @later
+
+@support
+title: Support the package as proposed
+subtitle: PPS shares the responsibility for the policy it supports.
+on-arrival: {!
+var answer = PolishProjects.answerBudget(Q, 'support');
+Q.pl_bud_result = 'PPS will vote for the package.';
+!}
+go-to: result
+
+@protect
+title: Protect workers' spending
+subtitle: The package without the cut of benefits; the budget loses that saving.
+choose-if: {! return PolishProjects.budgetOptionStatus(Q, 'protect').available !}
+unavailable-subtitle: [+ pl_bud_protect_why +]
+on-arrival: {!
+var answer = PolishProjects.answerBudget(Q, 'protect');
+Q.pl_bud_result = (answer.accepted ? 'The partners accept: the cut of benefits leaves the package, and PPS will vote for it.' :
+    'The partners refuse; PPS will vote against the package.') + ' ' + PolishGovernment.describeAnswers({evaluations: answer.evaluations});
+!}
+go-to: result
+
+@wealth
+title: Shift the burden to wealth
+subtitle: A progressive tax or the extraordinary wealth tax instead of burdens on broad groups; business pressure +4 or +8.
+choose-if: {! return PolishProjects.budgetOptionStatus(Q, 'wealth').available !}
+unavailable-subtitle: [+ pl_bud_wealth_why +]
+on-arrival: {!
+var answer = PolishProjects.answerBudget(Q, 'wealth');
+Q.pl_bud_result = (answer.accepted ? 'The partners accept the tax on wealth instead; PPS will vote for the package.' :
+    'The partners refuse; PPS will vote against the package.') + ' ' + PolishGovernment.describeAnswers({evaluations: answer.evaluations});
+!}
+go-to: result
+
+@loan
+title: Propose a loan instead of cuts
+subtitle: A domestic loan: +3 B for 6 months, then −1 B for 12 months. Needs credit of at least 40.
+choose-if: {! return PolishProjects.budgetOptionStatus(Q, 'loan').available !}
+unavailable-subtitle: [+ pl_bud_loan_why +]
+on-arrival: {!
+var answer = PolishProjects.answerBudget(Q, 'loan');
+Q.pl_bud_result = (answer.accepted ? 'The partners accept the loan instead of the cuts; PPS will vote for the package.' :
+    'The partners refuse; PPS will vote against the package.') + ' ' + PolishGovernment.describeAnswers({evaluations: answer.evaluations});
+!}
+go-to: result
+
+@refuse
+title: Refuse
+subtitle: PPS does not support the package.
+on-arrival: {!
+PolishProjects.answerBudget(Q, 'refuse');
+Q.pl_bud_result = 'PPS will vote against the package.';
+!}
+go-to: result
+
+@later
+title: Not now
+subtitle: Without an answer PPS votes as its role binds it.
+go-to: main
+
+@result
+new-page: true
+
+= The cabinet's package
+
+[+ pl_bud_result +]
+
+- @root: Continue.

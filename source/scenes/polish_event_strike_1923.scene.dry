@@ -1,0 +1,59 @@
+title: Wage Demands and Strikes
+subtitle: Real wages have stayed below 80 for three months; the workers demand a rise.
+new-page: true
+tags: pl_event
+card-image: img/generalstrike.jpg
+view-if: {! return !!Q.S && !!Q.polish_union_rules && PolishUnions.caseDue(Q) !}
+on-arrival: {!
+// Event society.strike_1923, B8+B10 (technical reference 17.5, 17.16.5; card catalogue 9.8): one answer of PPS for
+// 0 T with the state's answer in the same phase. Three months of real wages below 80 open the case; the grievance
+// of 15.1 comes with stage 7 (decision 1A of stage 6). A strike then goes to its partner and protection steps.
+PolishUnions.caseView(Q);
+!}
+
+= Wage demands and strikes
+
+[+ pl_case_text +]
+
+- @negotiate
+- @economic_strike
+- @cabinet_resignation
+
+@negotiate
+title: Negotiate before the protest spreads
+subtitle: A limited wage offer (threshold 40); the government answers now. No strike spares the fund but weakens the pressure; a refusal is no concession.
+choose-if: {! return PolishUnions.caseStatus(Q, 'negotiate').available !}
+unavailable-subtitle: [+ pl_case_negotiate_why +]
+on-arrival: {!
+PolishUnions.caseChoose(Q, 'negotiate');
+!}
+go-to: result
+
+@economic_strike
+title: A limited strike for wages and working conditions
+subtitle: The covered branches strike for the agreed demands (threshold 40); the union funds pay every active month.
+choose-if: {! return PolishUnions.caseStatus(Q, 'economic_strike').available !}
+unavailable-subtitle: [+ pl_case_economic_strike_why +]
+on-arrival: {!
+PolishUnions.caseChoose(Q, 'economic_strike');
+!}
+go-to: polish_strike_steps
+
+@cabinet_resignation
+title: Join the strike to a demand that the cabinet resign
+subtitle: A political goal (threshold 80): the Left −3 dissent under the class line, the Centre +8 without it. A resignation needs a real departure or a vote.
+choose-if: {! return PolishUnions.caseStatus(Q, 'cabinet_resignation').available !}
+unavailable-subtitle: [+ pl_case_cabinet_resignation_why +]
+on-arrival: {!
+PolishUnions.caseChoose(Q, 'cabinet_resignation');
+!}
+go-to: polish_strike_steps
+
+@result
+new-page: true
+
+= Wage demands and strikes
+
+[+ pl_union_result +]
+
+- @root: Continue.

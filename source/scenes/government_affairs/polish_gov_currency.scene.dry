@@ -1,0 +1,66 @@
+title: Currency Stabilisation
+subtitle: Treasury: one currency reform, prepared then launched.
+new-page: true
+is-card: true
+tags: govt_affairs
+card-image: img/danat_bank.jpg
+view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'currency_stabilisation') !}
+on-arrival: {!
+// Card government.currency_stabilisation (technical reference 17.11–17.12; card catalogue 8.4). Opening and closing
+// the card are free; a confirmed option costs this month's action, or the one free step of an adviser
+// who opened the card. Options that need a system of a later stage are shown with their reason.
+PolishProjects.cardView(Q, 'currency_stabilisation');
+!}
+
+= Currency stabilisation
+
+A financial crisis — a budget below −2 B or inflation of at least 20% a month for two months — opens the one currency reform. Choosing a variant prepares it (1 T); its launch with the currency law and the necessary financing waits in the agenda (1 T). When it is completed the złoty ends the marka pressures and the ordinary emission.
+
+[+ pl_gc_budget +]
+
+[+ pl_gc_projects +]
+
+- @rapid_cuts
+- @protected
+- @gradual
+- @easy_discard
+- @cancel_advisor_action
+
+@rapid_cuts
+title: Rapid stabilisation with savings
+subtitle: 2 B for 3 months; needs adopted cuts of at least 1 B; a credit shock +10 for 3 months from the launch.
+choose-if: {! return PolishProjects.optionStatus(Q, 'currency_stabilisation', 'rapid_cuts').available !}
+unavailable-subtitle: [+ pl_currency_stabilisation_rapid_cuts_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'currency_stabilisation', 'rapid_cuts');
+!}
+go-to: result
+
+@protected
+title: Stabilisation with protections and a burden on wealth
+subtitle: 2 B for 3 months; needs a protection for the unemployed and its financing; the same credit shock.
+choose-if: {! return PolishProjects.optionStatus(Q, 'currency_stabilisation', 'protected').available !}
+unavailable-subtitle: [+ pl_currency_stabilisation_protected_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'currency_stabilisation', 'protected');
+!}
+go-to: result
+
+@gradual
+title: Gradual limitation of emission
+subtitle: 1 B for 5 months; a credit shock +5 for 5 months; the marka pressure lasts longer.
+choose-if: {! return PolishProjects.optionStatus(Q, 'currency_stabilisation', 'gradual').available !}
+unavailable-subtitle: [+ pl_currency_stabilisation_gradual_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'currency_stabilisation', 'gradual');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= Currency stabilisation
+
+[+ pl_gc_result +]
+
+- @root: Continue.

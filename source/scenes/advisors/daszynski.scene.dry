@@ -3,6 +3,11 @@ is-pinned-card: true
 tags: advisor
 view-if: daszynski_advisor = 1
 new-page: true
+on-arrival: {!
+// Adviser actions of technical reference 10.4.3 (card catalogue 6.6): 0 T, their own R, one shared cooldown of
+// six months for all advisers (4.4); the effects are the approved P numbers, applied by PolishParty.
+PolishParty.advisorView(Q, 'daszynski');
+!}
 
 = Ignacy Daszyński
 
@@ -14,18 +19,28 @@ Daszyński represents Centrum PPS and specializes in parliamentary negotiation.
 
 @parliamentary_compromise
 title: Parliamentary Compromise
-subtitle: Improve relations with potential parliamentary partners.
-choose-if: advisor_action_timer = 0
-unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?]
-on-arrival: advisor_action_timer = 6; psl_piast_relation += 3; npr_relation += 3; pschd_relation += 2
+subtitle: Relations: PSL Piast +5, NPR +5, PSChD +4. A toleration still needs a candidate, a programme and real support.
+choose-if: {! return PolishParty.advisorActionStatus(Q, 'daszynski', 'parliamentary_compromise').available !}
+unavailable-subtitle: [+ pl_advact_parliamentary_compromise_why +]
+call: polish_advisor_commit
+on-arrival: {!
+PolishParty.advisorAction(Q, 'daszynski', 'parliamentary_compromise');
+!}
 
-Daszyński opens discussions with PSL Piast, NPR and PSChD.
+[+ pl_party_result +]
+
+- @root: Continue.
 
 @broker_coalition
 title: Broker a Coalition
-subtitle: Reduce tension inside the governing coalition.
-choose-if: advisor_action_timer = 0 and spd_in_government = 1 and coalition_dissent > 0
-unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?][? if spd_in_government = 0 : The PPS is not in government. ?][? if coalition_dissent <= 0 : The coalition has no current dissent to resolve. ?]
-on-arrival: advisor_action_timer = 6; coalition_dissent -= 1
+subtitle: In a coalition, reduce the tension of each cabinet agreement by 10; or add 5 to the partners' evaluation of one broad cabinet offer in preparation.
+choose-if: {! return Q.advisor_action_timer <= 0 && PolishGovernment.brokerStatus(Q).available !}
+unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?][? if advisor_action_timer <= 0 : Needs PPS in a coalition with a cabinet agreement under tension, or a broad cabinet offer in preparation. ?]
+call: polish_advisor_commit
+on-arrival: {!
+// Technical reference 10.4.3: one mode, no free relation change and no bypass of the crisis gate.
+Q.advisor_action_timer = 6;
+Q.pl_broker_mode = PolishGovernment.brokerCoalition(Q);
+!}
 
-The immediate coalition dispute has been contained.
+[? if pl_broker_mode = "tension" : Daszyński eases the disputes inside the coalition: the tension of each cabinet agreement falls by 10. A broken promise stays broken. ?][? if pl_broker_mode = "broad_offer" : Daszyński prepares the ground for our broad cabinet offer: its partners weigh it 5 points more favourably. ?]

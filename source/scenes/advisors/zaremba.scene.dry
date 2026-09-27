@@ -3,20 +3,44 @@ is-pinned-card: true
 tags: advisor
 view-if: zaremba_advisor = 1
 new-page: true
+on-arrival: {!
+// Adviser actions of technical reference 10.4.3 (card catalogue 6.6): 0 T, their own R, one shared cooldown of
+// six months for all advisers (4.4); the effects are the approved P numbers, applied by PolishParty.
+PolishParty.advisorView(Q, 'zaremba');
+!}
 
 = Zygmunt Zaremba
 
 Zaremba represents Lewica PPS and emphasizes class campaigning and a future worker–peasant strategy.
 
-**Planned, not implemented:** Worker–Peasant Front requires a dedicated alliance mechanic.
-
+- @worker_peasant_front
 - @class_campaign
 - @root: Return to main
 
+@worker_peasant_front
+title: Worker-Peasant Front
+subtitle: Relation with PSL Wyzwolenie +8. No list is formed by the name of the front.
+choose-if: {! return PolishParty.advisorActionStatus(Q, 'zaremba', 'worker_peasant_front').available !}
+unavailable-subtitle: [+ pl_advact_worker_peasant_front_why +]
+call: polish_advisor_commit
+on-arrival: {!
+PolishParty.advisorAction(Q, 'zaremba', 'worker_peasant_front');
+!}
+
+[+ pl_party_result +]
+
+- @root: Continue.
+
 @class_campaign
 title: Class Campaign
-choose-if: advisor_action_timer = 0
-unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?]
-on-arrival: advisor_action_timer = 6; workers_pps += 4*(1-dissent); unemployed_pps += 3*(1-dissent); old_middle_pps -= 3; new_middle_pps -= 2; lewica_strength += 5; lewica_dissent -= 5
+subtitle: 1 R; PPS gains among employed workers (+4 base) and the unemployed (+3), loses among the petty bourgeoisie (−2); Lewica +4 strength, dissent −5.
+choose-if: {! return PolishParty.advisorActionStatus(Q, 'zaremba', 'class_campaign').available !}
+unavailable-subtitle: [+ pl_advact_class_campaign_why +]
+call: polish_advisor_commit
+on-arrival: {!
+PolishParty.advisorAction(Q, 'zaremba', 'class_campaign');
+!}
 
-A strongly class-oriented campaign consolidates workers and unemployed supporters while limiting broader middle-class appeal.
+[+ pl_party_result +]
+
+- @root: Continue.

@@ -2,7 +2,7 @@ title: Change PPS Advisers
 new-page: true
 is-card: true
 tags: party_affairs
-view-if: shuffle_leadership_timer = 0
+view-if: not polish_party_rules and (shuffle_leadership_timer = 0)
 on-arrival: month_activities += 1; shuffle_leadership_timer = 8;
 card-image: img/workers.jpg
 go-to: rm_main

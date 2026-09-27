@@ -1,0 +1,98 @@
+title: Review of the Protection
+subtitle: The cabinet's partners want to cut the benefit.
+new-page: true
+tags: pl_event
+view-if: {! return !!Q.S && PolishProjects.austerityEventDue(Q) !}
+on-arrival: {!
+// Event cabinet.austerity_1926 (technical reference 17.13 B19, 17.16.4; card catalogue 9.13): once, in
+// I–IV 1926 — the review in the sixth month of Skrzyński's cabinet with a full protection of 2 B, or a
+// budget below −2 B for two months. The four answers of the government-support card (9.8), for 0 T.
+Q.pl_aus_threat = 0;
+!}
+
+= The review of the protection
+
+The partners on the right propose to limit the protection for the unemployed from 2 B to 1 B a month — a programme demand, also while the budget can pay. The one compromise keeps 2 B with the existing or a lawfully improved financing. A cut needs a change of the law and gives only +1 B.
+
+- @bargain
+- @persuade
+- @maintain
+- @withdraw
+
+@bargain
+title: Demand the full protection, or we end our support
+subtitle: The partners weigh how much they need PPS; those who give in think less of us (relation −3).
+on-arrival: {!
+var out = PolishProjects.austerityChoose(Q, 'bargain');
+Q.pl_aus_threat = out.threat ? 1 : 0;
+Q.pl_aus_result = (out.accepted ? 'The partners accept: the protection stays at 2 B.' : 'The partners refuse.') + ' ' +
+    PolishGovernment.describeAnswers({evaluations: out.evaluations});
+!}
+go-to: threat if pl_aus_threat; result if not pl_aus_threat
+
+@persuade
+title: Persuade them without a threat
+subtitle: The same offer; no relation change either way. If refused, the cut goes to the vote.
+on-arrival: {!
+var out = PolishProjects.austerityChoose(Q, 'persuade');
+Q.pl_aus_result = out.accepted ? 'The partners accept: the protection stays at 2 B. ' + PolishGovernment.describeAnswers({evaluations: out.evaluations}) :
+    'The partners refuse. ' + (out.cut.status === 'rejected' ? 'The cut finds no majority; the protection stays.' : 'The Sejm adopts the cut: the protection falls to 1 B.');
+!}
+go-to: result
+
+@maintain
+title: Keep our support despite the dispute
+subtitle: The cut passes if it has support.
+on-arrival: {!
+var out = PolishProjects.austerityChoose(Q, 'maintain');
+Q.pl_aus_result = out.cut.status === 'rejected' ? 'The cut finds no majority; the protection stays at 2 B.' : 'The Sejm adopts the cut: the protection falls to 1 B.';
+!}
+go-to: result
+
+@withdraw
+title: Withdraw our support
+subtitle: PPS leaves; the cabinet may stay if the rest of its base accepts the programme.
+on-arrival: {!
+var out = PolishProjects.austerityChoose(Q, 'withdraw');
+Q.pl_aus_result = out.fell ? 'PPS leaves and the cabinet resigns.' : 'PPS leaves the cabinet. It governs without PPS unless the Sejm dismisses it.';
+!}
+go-to: result
+
+@threat
+new-page: true
+
+= The partners refuse
+
+[+ pl_aus_result +]
+
+A threat must be real. We decide now, without spending another month.
+
+- @carry_out
+- @back_down
+
+@carry_out
+title: Carry out the threat: end our support
+on-arrival: {!
+var out = PolishProjects.austerityThreat(Q, 'carry_out');
+Q.pl_aus_result = out.fell ? 'PPS leaves and the cabinet resigns.' : 'PPS leaves the cabinet.';
+!}
+go-to: result
+
+@back_down
+title: Back down
+subtitle: Reputation −5; the cut goes to the vote; later threats against this cabinet count only as persuasion.
+on-arrival: {!
+var out = PolishProjects.austerityThreat(Q, 'back_down');
+Q.pl_aus_result = out.cut.status === 'rejected' ? 'We back down. The cut finds no majority; the protection stays.' : 'We back down. The Sejm adopts the cut: the protection falls to 1 B.';
+!}
+go-to: result
+
+@result
+new-page: true
+call: polish_opening_state
+
+= The review of the protection
+
+[+ pl_aus_result +]
+
+- @root: Continue.

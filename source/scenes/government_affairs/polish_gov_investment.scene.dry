@@ -1,0 +1,66 @@
+title: Capital for Investment
+subtitle: Treasury or Industry: how the credit instrument is financed.
+new-page: true
+is-card: true
+tags: govt_affairs
+card-image: img/Mann_der_Arbeit.jpg
+view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'investment_fund') !}
+on-arrival: {!
+// Card government.investment_fund (technical reference 17.11–17.12; card catalogue 8.5). Opening and closing
+// the card are free; a confirmed option costs this month's action, or the one free step of an adviser
+// who opened the card. Options that need a system of a later stage are shown with their reason.
+PolishProjects.cardView(Q, 'investment_fund');
+!}
+
+= Capital for investment
+
+The credit instrument is a large project: 2 B of building for 2 months, then 1 B to run, and +5 to the credit target while it works. The variants differ in who pays and who must agree: one financing, one cost, one effect.
+
+[+ pl_gc_budget +]
+
+[+ pl_gc_projects +]
+
+- @public
+- @banks
+- @cooperative
+- @easy_discard
+- @cancel_advisor_action
+
+@public
+title: Public fund
+subtitle: The state pays everything: 2 B of building, 1 B to run.
+choose-if: {! return PolishProjects.optionStatus(Q, 'investment_fund', 'public').available !}
+unavailable-subtitle: [+ pl_investment_fund_public_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'investment_fund', 'public');
+!}
+go-to: result
+
+@banks
+title: Agreement with banks and industry
+subtitle: The state pays half of the building: 1 B, then 1 B; business pressure −8. Needs credit of at least 40.
+choose-if: {! return PolishProjects.optionStatus(Q, 'investment_fund', 'banks').available !}
+unavailable-subtitle: [+ pl_investment_fund_banks_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'investment_fund', 'banks');
+!}
+go-to: result
+
+@cooperative
+title: Cooperative financing
+subtitle: Credit for farms and small workshops through cooperatives. The cooperatives of PPS come with stage 5.
+choose-if: {! return PolishProjects.optionStatus(Q, 'investment_fund', 'cooperative').available !}
+unavailable-subtitle: [+ pl_investment_fund_cooperative_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'investment_fund', 'cooperative');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= Capital for investment
+
+[+ pl_gc_result +]
+
+- @root: Continue.

@@ -1,11 +1,1020 @@
 # Historical Source Register
 
+## PL-STAGE7-DEMOCRACY-COUP-2026-09-27 — stage 7 of the implementation plan implemented
+
+- **Authority:** the user approved the detailed stage 7 plan and its three
+  decisions: three dated scenario inputs of the test profile
+  `normal_chapter1_v1` (the dispute of the Chief of State with Ponikowski in
+  June 1922, the military case from January 1925 and one ceremony from
+  January 1923), while the return of Chjeno-Piast follows from play and the
+  rest of the 17.16.3 axis stays in stage 8; in the historical branch of the
+  presidency the election of Narutowicz always ends in his assassination,
+  with no protection model, and the response follows only a confirmed death;
+  restrictions come from existing actions (strike repression, press
+  confiscation and the authorities' answer to executed unlawful violence of
+  PPS organisations), each with a legal profile, a repressive cabinet bans the
+  Milicja, and the Justice review lifts only an unlawful restriction. The
+  plan's working assumptions (P) were approved with it, and the user started
+  each of the parts 7a–7e.
+- **Contract:** technical reference 0.48, sections 2.4, 4.2, 4.5, 8.7,
+  10.7, 13.4, 15.1–15.3, 16.1–16.7, 16.8.8, 17.5–17.7, 17.10–17.13 (with
+  17.12.2–17.12.4 and 17.12.6), 17.16.3, 19.1, 19.2, 20.2 and 23.21;
+  `docs/POLISH_IMPLEMENTATION_PLAN.md`, chapter 17;
+  `docs/POLISH_CARD_CATALOGUE.md`, entries 6.8, 7.5, 8.12, 8.14, 8.15, 9.1,
+  9.2, 9.4–9.6, 9.14 and 9.15, with the code rows of 4.2, 5.3, 7.1, 7.9, 8.11
+  and 8.13 updated.
+- **Classification:** implementation (K) of approved rules. The synthetic army
+  groupings `synthetic_test_v2` and their loyalties, the steps of the force
+  assessment (±30, ±20, ±10 and ±5 pp for 1 R, then three months), the coup
+  gates (a political crisis at pressure 55, preparations called off below 40
+  with a three-month pause, an attempt at 65 with capacity 30), the engine
+  `coup_f_v1` with the numbers of the M08 profile, the pressure impulses (+8
+  for the public military episode, +20 for the return of Chjeno-Piast), the
+  grievance indices and weights, the violence of a serious episode (+10), the
+  democracy effects, the effects of the responses to the assassination and
+  the ceremony, the relief of an agreement with Piłsudski with its six-month
+  review, and the dates of the scenario inputs are gameplay test values (P),
+  not measured historical quantities.
+- **Historical boundary:** the cabinet axis Ponikowski — Śliwiński — Nowak
+  follows `PL-1922-1926-CABINETS`; the course of the June 1922 dispute is
+  **TBD — historical research required**, and the game models it only as the
+  resignation of the sitting cabinet. The election of Narutowicz, his
+  assassination and the succession follow `PRESIDENCY-1922-SEQUENCE`; making
+  the assassination certain in that branch is a gameplay simplification, and
+  no other president is assassinated. The ceremony of the Niewiadomski cult
+  keeps the limits of `PL-CONTENT-1922-1926-2026-09`: its place is **TBD —
+  historical research required**, and the Mass for democracy remains an
+  alternate gameplay response. PPS and the railway workers in a coup keep the
+  limits of `PPS-MAY-1926-ROLE`. The army groupings, their routes and
+  loyalties, the date of the military case and the course of the May 1926
+  mediation are **TBD — historical research required**; the groupings have no
+  historical identity, and a coup in another month or with another result is
+  an alternate-history outcome, not a claim. No new historical fact, person,
+  organisation or citation is introduced.
+- **Evidence:** `tests/rules-politics.test.js` (13 tests),
+  `tests/polish-democracy.test.js` (5), `tests/rules-coup.test.js` (26) and
+  `tests/polish-coup.test.js` (13), the adapted foundation, institutions,
+  presidential-sequence, projects and party-system tests,
+  `analysis/implementation-plan/check.cjs` and
+  `analysis/card-catalogue/check.cjs`; `npm test` 417 of 417; the game engine
+  reproduces the distributions of `analysis/m08-coup-profile/` with a
+  difference of 0 in 64 settings; a browser smoke test of a new game in
+  schema 8 with the Status rows of democracy and the forces of the state, a
+  force assessment from the Party agenda and a settled month.
+- **Status:** implemented. No dependency or scenario metadata changed.
+
+## PL-STAGE6-UNIONS-2026-09-27 — stage 6 of the implementation plan implemented
+
+- **Authority:** the user approved the detailed stage 6 plan and its three
+  decisions: grievance of technical 15.1 stays in stage 7, the strike case
+  opens through the wage route of 17.16.5, a refused demand or an own strike,
+  and its grievance effects are recorded once for stage 7; plants enter the
+  record through problems of existing systems (a credit crisis, an active
+  business reaction, a strike ended by exhaustion), synthetic and without
+  names, and public control needs a law; the authorities answer from a cabinet
+  profile, a PPS minister replaces it only within its competence, one clash is
+  drawn per phase, the Milicja protection costs 0.5 R and loses 2% of its
+  people in a clash, and violence and exposure wait for stage 7. During part
+  6a the user chose the M18 order of the party ledger (membership moves
+  before dues income). The plan's working assumptions (P) were approved with
+  it.
+- **Contract:** technical reference 0.47, sections 2.4, 4.2, 4.5, 5.5,
+  9.6–9.8, 10.4.3, 11.4, 11.7, 12.4, 13.1, 14.1–14.5, 16.5, 17.4, 17.5,
+  17.5.1, 17.11, 17.12, 17.12.5, 17.16.5, 20.2 and 23.20;
+  `docs/POLISH_IMPLEMENTATION_PLAN.md`, chapter 16;
+  `docs/POLISH_CARD_CATALOGUE.md`, entries 5.10, 7.10 and 9.7–9.9, with the
+  code rows of 5.5, 6.6, 7.1, 8.1, 8.6 and 9.11 updated.
+- **Classification:** implementation (K) of approved rules. The lines of a
+  strike call (50), the sector importance (60/90/40), the thresholds
+  (40/60/80), the wage scope (0.6/0.2/0.2), the disruption weights, the E6
+  threshold of 10 points, the communist contribution and presence, the state
+  profile `strike_state_profiles_v1`, the clash risk, the plant profile
+  `synthetic_plants_v1` (lost capacity 20, 10% of a branch's workers), the
+  term of a collective agreement (12 months) and of a derogation (6 months),
+  Grabski's test relation (50), the financing test of his protections and the
+  six-month toleration with a review after three are gameplay test values
+  (P), not measured historical quantities.
+- **Historical boundary:** the plants have no names and no historical
+  identity. The Kraków window (October–November 1923) and the context of the
+  1923 strikes keep their sources and uncertainty in
+  `PL-CONTENT-1922-1926-2026-09`; Grabski's candidacy window comes from
+  `PL-1922-1926-CABINETS`. The state profile is not a historical label of any
+  government, and the communists' goals in the strikes are **TBD — historical
+  research required**. No new historical fact, person, organisation or
+  citation is introduced.
+- **Evidence:** `tests/rules-strike.test.js` (27 tests) and
+  `tests/polish-strike.test.js` (6 tests), the adapted foundation, economy,
+  opening, election, projects and party-system tests,
+  `analysis/implementation-plan/check.cjs` and
+  `analysis/card-catalogue/check.cjs`; `npm test` 360 of 360; a browser
+  smoke test of a new game with the Trade Unions card, a collective agreement
+  through the Labour card, the Industry card with a recorded plant, and a
+  rescue prepared and launched from the agenda.
+- **Status:** implemented. No dependency or scenario metadata changed.
+
+## PL-STAGE5-PARTY-2026-09-27 — stage 5 of the implementation plan implemented
+
+- **Authority:** the user approved the detailed stage 5 plan and its three
+  decisions: 54 disjoint electorate cells now, with preferences calibrated so
+  that the national result of the opening is exactly the previous one and the
+  class rows as mirrors; three union branches (industry, rail, farm labour)
+  already in stage 5, with the values of technical 3.2 and the fund of 14.1,
+  while readiness, disputes, strikes and the Grabski protections stay in
+  stage 6; the demand of the card E3 takes back the recorded reversible cause
+  of dissent with the largest share, and without such a cause there is no
+  card. The plan's working assumptions (P) were approved with it.
+- **Contract:** technical reference 0.46, sections 2.4, 4.2, 4.4, 4.5,
+  5.1–5.6, 7.6, 8.6, 9.5, 9.8, 10.1–10.3, 10.4.2–10.4.4, 10.5–10.10,
+  13.1–13.5, 14.1, 17.4, 20.2 and 23.19; `docs/POLISH_IMPLEMENTATION_PLAN.md`,
+  chapter 15; `docs/POLISH_CARD_CATALOGUE.md`, entries 4.1–4.8, 5.1–5.9,
+  6.2–6.7 and 9.10.
+- **Classification:** implementation (K) of approved rules. The cell profile
+  `cells_synthetic_v1` (identities 70/10/20, half of each urban class in the
+  large cities, turnout 0.70, trust 50, base reach 20), the calibration of the
+  cell preferences, the party ledger, dues, apparatus, press, TUR courses,
+  cooperatives, the Milicja and AS costs, the union branches, the campaign
+  factors, the stance reactions of `faction_stance_profile_v1`, the faction
+  cases, the departure recipients (Lewica to the KPP, the others to Other),
+  the technical splinter clubs, the adviser effects and the empty profile of
+  faction reactions to a break of support are gameplay test values (P), not
+  measured historical quantities.
+- **Historical boundary:** the advisers, their faction assignments and dates
+  are the approved game profiles of `PL-ADVISORS-REVIEW-2026-09-10`, not new
+  historical claims; Próchnik, Drobner and Dubois stay the cast of the
+  continuation (M17). The founding date of TUR (January 1923) is the H value
+  of technical 13.2 with its source in `PL-CONTENT-1922-1926-2026-09`. The
+  splinter clubs have technical IDs and no historical names. The cell shares
+  of identities and cities are not a demographic reconstruction; the
+  historical cross-tabulations are **TBD — historical research required**.
+  No new historical fact, person, organisation or citation is introduced.
+- **Evidence:** `tests/rules-party.test.js`, `tests/polish-party.test.js`,
+  `tests/rules-electorate.test.js`, `tests/rules-strategy.test.js`,
+  `tests/rules-factions.test.js`, the adapted foundation, economy, cabinet,
+  government-card, institutions, presidential, election, opening, turn and
+  party-system tests, `analysis/implementation-plan/check.cjs` and
+  `analysis/card-catalogue/check.cjs`; `npm test` 327 of 327; a browser smoke
+  test of a new game, the Status panel, the Party deck, a press campaign and
+  the monthly ledger, an adviser action, a stance card closed for free, the
+  party agenda and a stance change.
+- **Status:** implemented. No dependency or scenario metadata changed.
+
+## PL-STAGE4-ECONOMY-2026-09-27 — stage 4 of the implementation plan implemented
+
+- **Authority:** the user approved the detailed stage 4 plan and its five
+  decisions: the dated scenario pressures of technical 17.16.2 and the
+  economic part of the cabinet review of 17.16.4 now, the political axis of
+  17.16.3 in stage 8; the flow of 5.6 and the outflow of 17.4 on the existing
+  class rows, with the unemployed row reading the workers' index, the
+  minorities row reading the class indices weighted by class size and the
+  weight `Q.unemployed` fixed at 3; stage-3 programme points become concrete
+  projects, due dates and rules, with `ppsResponsible` refined by portfolio;
+  options that need later-stage systems are visible but blocked with their
+  reason, their effects wait in `pending_effects`, and nine dependent tests
+  move to stages 5–7; the Budget card is available while a concrete cabinet
+  package awaits its vote, with no annual budget.
+- **Contract:** technical reference 0.45, sections 2.4, 4.2, 4.5, 5.4, 5.6,
+  7.2, 7.6, 8.5, 8.6, 9.1, 9.7, 11.1, 11.3, 11.9, 12.2, 17.4, 17.10, 17.11,
+  17.15, 17.16.2, 17.16.4, 20.2 and 23.18;
+  `docs/POLISH_IMPLEMENTATION_PLAN.md`, chapter 14.
+- **Classification:** implementation (K) of approved rules. The economic
+  profile `economy_simple_v1`, the budget points B, the scenario pressures,
+  the instrument positions and schedules, the project costs and durations,
+  the simplified Senate review, the cabinet review profiles (expert, Grabski,
+  Skrzyński, right, left and broad cabinets), the emission limit, the orders
+  profile `synthetic_orders_v1` and all thresholds are gameplay test values
+  (P), not measured historical series or historical positions of these
+  cabinets and parties.
+- **Historical boundary:** the dated pressures reproduce the approved M02
+  scenario profile of technical 17.16.2; the currency reform, its date and the
+  change to the złoty follow from play, not from a fixed historical date. The
+  prime ministers named in the review profiles come from the candidate windows
+  of `PL-1922-1926-CABINETS` (technical 8.7); their profiles are P. The two
+  heritage objects are the approved objects of technical 12.8. Which labour
+  laws are in force at the start of the game is **TBD — historical research
+  required**; until then the game starts with none of the laws it models. No
+  new historical fact, person, organisation or citation is introduced.
+- **Evidence:** `tests/rules-economy.test.js`, `tests/rules-projects.test.js`,
+  `tests/polish-economy.test.js`, `tests/polish-government-cards.test.js`, the
+  adapted foundation, negotiation, cabinet, election, opening and party-system
+  tests, `analysis/implementation-plan/check.cjs` and
+  `analysis/card-catalogue/check.cjs`; `npm test` 251 of 251; a browser smoke
+  test of Status, the constitutional card and the agenda, a left cabinet after
+  the 1922 election, the welfare and public-works cards, the Senate review of a
+  constitutional motion, a fiscal crisis with the stabilisation event, the
+  currency reform, emission, the złoty and the Library chart.
+- **Status:** implemented. No dependency or scenario metadata changed.
+
+## PL-STAGE3-GOVERNMENT-2026-09-26 — stage 3 of the implementation plan implemented
+
+- **Authority:** the user approved the detailed stage 3 plan and its seven
+  decisions: three parts 3a–3c; relations in `S.actors` with mirrors and two
+  minority representations; prime-ministerial candidates with the profile P
+  and the historical windows of technical 8.7; fixed minimum programmes and
+  automatic portfolios; promises that need stage-4 programmes wait without a
+  due date, with one test-only programme; card 9.1 moves to stage 7; marked P
+  simplifications for the vote forecast, the formation order, the list window,
+  the crisis indicators and the dismissal motion.
+- **Contract:** technical reference 0.44, sections 2.4, 5.5, 6.5, 7.1, 7.5,
+  8.3, 8.5–8.8, 9.2–9.4, 9.8, 10.4.3, 17.4, 20.1.1, 20.2 and 23.17;
+  `docs/POLISH_IMPLEMENTATION_PLAN.md`, chapter 13.
+- **Classification:** implementation (K) of approved rules. The party
+  profiles, minimum programmes, list profiles (`list_profiles_v1`), portfolio
+  preferences, the vote forecast, the offer scores and all thresholds are
+  gameplay test values (P), not historical positions of these parties or
+  historical agreements.
+- **Historical boundary:** only the candidate windows (Ponikowski, Nowak,
+  Sikorski, Witos, Grabski, Skrzyński) come from `PL-1922-1926-CABINETS`
+  (technical 8.7, H); they give a ranking bonus and never appoint anyone by
+  date. Thugutt, Daszyński and every non-historical cabinet are alternatives
+  (P). Worker protection is the P example of technical 9.1. The minority
+  split of 1/3 and 2/3 is the approved gameplay split of technical 5.5. No new
+  historical fact, person, organisation or citation is introduced; the
+  historical basis of the January 1922 PPS toleration remains **TBD —
+  historical research required**.
+- **Evidence:** `tests/rules-negotiation.test.js`, `tests/polish-cabinet.test.js`,
+  the adapted election, presidency, opening, party-system and institutions
+  tests, `analysis/implementation-plan/check.cjs` and
+  `analysis/card-catalogue/check.cjs`; `npm test` 185 of 185; a browser smoke
+  test of the formation, the support card, the list agreement and a mid-formation
+  save and load.
+- **Status:** implemented. No dependency or scenario metadata changed.
+
+## PL-STAGE2-INSTITUTIONS-2026-09-26 — stage 2 of the implementation plan implemented
+
+- **Authority:** the user approved the detailed stage 2 plan and its five
+  decisions: card 7.7 and the test "Kompromis listowy a Lewica" move to stage 3
+  and the test "C4" to stage 4; the Marshal and the President are counted from
+  the clubs' votes with the test profile `office_profiles_1922_v1`; gaps in the
+  reference are filled with marked P simplifications; the chapter ends with a
+  minimal report after the next lawful election; a second rules file,
+  `source/rules/polish_institutions.js`.
+- **Contract:** technical reference 0.43, sections 2.4, 6.1, 6.3–6.5, 7.1–7.5,
+  19.1–19.2, 20.1, 20.2 and 23.16; `docs/POLISH_IMPLEMENTATION_PLAN.md`,
+  chapter 12.
+- **Classification:** implementation (K) of approved rules. The office profile,
+  the absence of a right-wing Marshal candidate, the Marshal option conditions,
+  the mandate replacement rule (`next_on_list_v1`) and the senior-member chair
+  are gameplay test values (P), not historical claims.
+- **Historical boundary:** the December 1922 candidates, the dates of the oath,
+  the transfer and the assassination, and Rataj's acting presidency come from
+  the sources of `PRESIDENCY-1922-SEQUENCE`; the 1922 rivalry of Rataj and
+  Śmiarowski follows technical 7.5 (`PL-CONTENT-1922-1926-2026-09`). The fixed
+  historical ballots remain only as a labelled historical note in the Library.
+  19 February 1928 is the game's default legal calendar (technical 7.4), not
+  the historical election date. The procedure for replacing an MP elected
+  President and the chair of an unresolved Marshal vote remain **TBD —
+  historical research required**.
+- **Evidence:** `tests/rules-institutions.test.js`,
+  `tests/polish-institutions.test.js`, the adapted election, presidency and
+  opening tests, `analysis/implementation-plan/check.cjs`; `npm test` 144 of
+  144; the old and new seat code give identical results on 20,000 random inputs.
+- **Status:** implemented. No dependency or scenario metadata changed.
+
+## PL-STAGE1-TURN-2026-09-26 — stage 1 of the implementation plan implemented
+
+- **Authority:** the user approved the detailed stage 1 plan and its four
+  decisions: a shared bridge for inherited cards, card draws through an engine
+  hook, a free monthly discard card, and adviser redirects at no month cost.
+- **Contract:** technical reference 0.42, sections 4.2–4.6 and 23.15;
+  `docs/POLISH_IMPLEMENTATION_PLAN.md`, chapter 11.
+- **Classification:** implementation (K) of approved rules; gameplay changes
+  follow technical 4.2–4.6. Three additions within the decisions are recorded
+  in 23.15.
+- **Historical boundary:** no historical claim.
+- **Evidence:** `tests/rules-turn.test.js`, `tests/polish-turn.test.js`,
+  `analysis/implementation-plan/check.cjs`; `npm test` 122 of 122.
+- **Status:** implemented. No dependency or scenario metadata changed.
+
+## PL-STAGE0-FOUNDATION-2026-09-26 — stage 0 of the implementation plan implemented
+
+- **Authority:** the user approved the detailed stage 0 plan and its four
+  decisions: one state object `Q.S`, a save check in `out/html/game.js` with a
+  safety net in `main` and `post_event`, stricter engine-error checks in the
+  existing tests, and the inherited "Return card to hand" error left to stage 1.
+- **Contract:** technical reference 0.41, sections 2.4, 19.3, 20.1 and 23.14;
+  `docs/POLISH_IMPLEMENTATION_PLAN.md`, chapters 9 and 10 and appendix E.
+- **Classification:** implementation (K). No gameplay rule changed; eight
+  order-independent walks of the game match the previous build step by step.
+- **Historical boundary:** no historical claim.
+- **Evidence:** `tests/rules-foundation.test.js`, `tests/polish-foundation.test.js`,
+  `analysis/implementation-plan/check.cjs`; `npm test` 97 of 97.
+- **Status:** implemented. No dependency or scenario metadata changed.
+
+## PL-IMPLEMENTATION-PLAN-2026-09-26 — implementation plan and technical decisions
+
+- **Authority:** the user asked for a comprehensive implementation plan for
+  chapter 1 and decided three questions: the rules live in a separate
+  JavaScript module (option A), player-facing text is English only for now,
+  and a save without a matching schema version requires a new game. The user
+  asked for the plan to be written down and expanded.
+- **Contract:** `docs/POLISH_IMPLEMENTATION_PLAN.md`; technical reference 0.40,
+  sections 19.3, 20.1 and 20.3.
+- **Classification:** project and architecture decisions (Z). No gameplay rule
+  changed. The approved changes to `package.json` and `out/html/index.html`
+  happen only in stage 0.
+- **Historical boundary:** no historical claim. Research for the five items
+  marked `TBD — historical research required` stays deferred.
+- **Evidence:** `analysis/implementation-plan/check.cjs`, `results.json` and
+  `REPORT.md`.
+- **Status:** approved. No Dendry source, generated output, dependency or
+  scenario metadata changed.
+
+## PL-CARD-CATALOGUE-QUEUE-2026-09-26 — approved queue categories; research deferred
+
+- **Authority:** the user accepted, unchanged, the seven event-queue categories
+  that the card catalogue had inferred from technical 4.5, and asked for them
+  to be written down. The user also decided that no further historical
+  research is needed for now.
+- **Contract:** technical reference 0.39, section 4.5, with one new 21.1 test
+  row ("Kolejność kategorii wydarzeń").
+- **Classification:** gameplay-rule clarification (Z). The categories only
+  order events that fall due in the same month.
+- **Historical boundary:** no new historical claim. Five items remain marked
+  `TBD — historical research required`:
+  - the PPS factions' positions on five stance cards;
+  - the parties' positions on Slavic autonomy;
+  - historical military posts and their scope;
+  - KPP goals in strikes;
+  - the May 1926 troop groupings, routes and loyalties.
+  Research is deferred by the user; the game keeps the marked synthetic test
+  values.
+- **Evidence:** `analysis/card-catalogue/check.cjs`, `results.json` and
+  `REPORT.md`.
+- **Status:** approved. No Dendry source, generated output, dependency or
+  scenario metadata changed.
+
+## PL-CARD-CATALOGUE-BATCH6-2026-09-26 — approved answers for the events
+
+- **Authority:** the user reviewed the four open questions of catalogue batch 6
+  (events and sequences) and one issue found during the review: which answer
+  to Piłsudski's criticism of parliament contradicts a lasting PPS line. The
+  user accepted all five proposals and asked for them to be written down.
+- **Contract:** technical reference 0.38, sections 10.2, 10.7, 14.5, 17.3 and
+  17.15, with five new 21.1 test rows. The catalogue now has no open
+  questions.
+- **Classification:** gameplay-rule clarifications (Z) and test values (P):
+  - the IDs `party.faction_split` (E3) and
+    `society.strike_settlement_rejection` (E6), with their instance keys;
+  - a mandatory answer to the parliament-criticism event;
+  - the 17.3 row for `cabinet.austerity_1926` aligned with 17.13 and 17.16.4;
+  - the only contradiction: supporting the criticism under the
+    `parliamentarism` line (Centre +3).
+- **Historical boundary:** no new historical claim. The contradiction rule
+  follows the guide's documented examples of compatible stances and its
+  description of the Centre (chapter 5). Content attributed to Piłsudski still
+  requires a source; synthetic scenes stay P.
+- **Evidence:** `analysis/card-catalogue/check.cjs`, `results.json` and
+  `REPORT.md`.
+- **Status:** batch 6 reviewed; all six batches are reviewed. No Dendry
+  source, generated output, dependency or scenario metadata changed.
+
+## PL-CARD-CATALOGUE-BATCH5-2026-09-26 — approved answers for the government cards
+
+- **Authority:** the user reviewed the eight open questions of catalogue batch 5
+  (government cards) and one issue found during the review: paid options with
+  no effect. The user accepted all nine proposals and asked for them to be
+  written down.
+- **Contract:** technical reference 0.37, sections 10.6, 11.9, 12.7, 12.8,
+  17.2, 17.11 and 17.12, with nine new 21.1 test rows. Catalogue batch 5 now
+  has no open questions.
+- **Classification:** gameplay-rule clarifications and test values (P):
+  - no paid "keep", "postpone" or "leave it to the owners" options in six
+    government cards;
+  - the collective agreement and the hardship exemption at 0 B;
+  - the costs of "expand" and "focus" benefits;
+  - `government.collection` in the finance card;
+  - "burden broad groups" and "money issue" from the 11.9 instruments;
+  - three investment-fund variants;
+  - the enterprise rescue as a credit variant;
+  - investigation cost and the confirmed case as a polemic addressee;
+  - no faction reaction to the secular school.
+- **Historical boundary:** no new historical claim. The secular school keeps
+  no faction reaction because the documentation names no PPS faction opposed
+  to it; historical faction positions remain `TBD — historical research
+  required`. Card 6 in 17.10 was aligned with the already approved 0.36 rule.
+- **Evidence:** `analysis/card-catalogue/check.cjs`, `results.json` and
+  `REPORT.md`.
+- **Status:** batch 5 reviewed. No Dendry source, generated output, dependency
+  or scenario metadata changed.
+
+## PL-CARD-CATALOGUE-BATCH4-2026-09-26 — approved answers for the parliamentary cards
+
+- **Authority:** the user reviewed the six open questions of catalogue batch 4
+  (parliamentary cards) and one issue found during the review. The user
+  accepted all seven proposals and asked for the documentation.
+- **Contract:** technical reference 0.36, sections 6.5, 8.7, 9.8, 12.4, 16.3
+  and 17.10, with seven new 21.1 test rows. Catalogue batch 4 now has no open
+  questions.
+- **Classification:** gameplay-rule clarifications and test values (P):
+  - "keep support" only as a crisis response;
+  - no paid no-effect options in the army-oversight card;
+  - budget-card options mapped to the 11.9 instruments;
+  - no cooldown for cards 3–5;
+  - the limited oversight reform (`army=0`, +0.025, 1 B for 2 months);
+  - the Left's reaction to a list without labour points;
+  - the formation impasse as a state.
+- **Historical boundary:** no new historical claim. The Left's reaction
+  follows the guide's documented faction description (chapter 5).
+- **Evidence:** `analysis/card-catalogue/check.cjs`, `results.json` and
+  `REPORT.md`.
+- **Status:** batch 4 reviewed. No Dendry source, generated output, dependency
+  or scenario metadata changed.
+
+## PL-CARD-CATALOGUE-BATCH3-2026-09-26 — approved answers for relations, programme, unity and advisers
+
+- **Authority:** the user reviewed the eight open questions of catalogue batch 3
+  and accepted all eight proposals. For the security assessment the user
+  first considered removing it, then accepted the proposal. The user asked
+  for the documentation.
+- **Contract:** technical reference 0.35, sections 9.5, 10.2, 10.4.2, 10.5,
+  16.8.1 and 17.2, with seven new 21.1 test rows. The party deck now lists 16
+  families, because the adviser change is a separate card. Catalogue batch 3
+  now has no open questions.
+- **Classification:** gameplay-rule clarifications (P):
+  - no paid no-effect options in the programme and unity cards;
+  - postponing a faction case;
+  - two compromise variants;
+  - the unity card access;
+  - the separate adviser card;
+  - KPP contact placement and agenda identifiers;
+  - the security assessment as an agenda action.
+- **Historical boundary:** no new historical claim.
+- **Evidence:** `analysis/card-catalogue/check.cjs`, `results.json` and
+  `REPORT.md`.
+- **Status:** batch 3 reviewed. No Dendry source, generated output, dependency
+  or scenario metadata changed.
+
+## PL-CARD-CATALOGUE-BATCH2-2026-09-26 — approved answers for party resources and organisations
+
+- **Authority:** the user reviewed the ten open questions of catalogue batch 2
+  (party resources and organisations), accepted all eight proposals and
+  asked for the documentation.
+- **Contract:** technical reference 0.34, sections 4.4, 10.5, 12.4, 13.1,
+  13.3, 13.5, 14.1 and 17.2, with four new 21.1 test rows. Catalogue batch 2
+  now has no open questions.
+- **Classification:** gameplay-rule clarifications (P):
+  - no paid no-effect options in the Organisations and Dues cards;
+  - the Centre reacts to the first militarisation;
+  - the Media card scope and its missing card cooldown;
+  - the `union.align` identifier;
+  - organisational work in the cells of any class;
+  - no separate cap on cooperatives.
+- **Historical boundary:** no new historical claim. The Centre's reaction to
+  militarisation follows the direction of the existing Polish Milicja card in
+  `source/scenes/party_affairs/reichsbanner.scene.dry` (K). Historical faction
+  positions remain `TBD — historical research required`.
+- **Evidence:** `analysis/card-catalogue/check.cjs`, `results.json` and
+  `REPORT.md`.
+- **Status:** batch 2 reviewed. No Dendry source, generated output, dependency
+  or scenario metadata changed.
+
+## PL-CARD-CATALOGUE-BATCH1-2026-09-26 — approved answers for the stance cards
+
+- **Authority:** the user reviewed the nine open questions of catalogue batch 1
+  (stance cards), accepted every proposal, chose variant A for the Bund and
+  asked for the documentation.
+- **Contract:** technical reference 0.33, sections 5.5, 7.6, 8.6, 10.5–10.8,
+  10.10 and 16.7, with eight new 21.1 test rows. The catalogue batch 1 now has
+  no open questions, and one note moved to the organisational-work card (5.7).
+- **Classification:** gameplay-rule clarifications and synthetic test values
+  (P):
+  - the ZLN as the game's national-right addressee;
+  - capital-and-land addressees from the 8.6 test ideals;
+  - test ideals on the autonomy axis: ZLN −2, other minorities +1;
+  - Bund trust starting at 50;
+  - the Bund is not a party;
+  - one dead faction reaction removed.
+- **Historical boundary:** no new historical claim. Assigning the ZLN to the
+  national-right pool is a game mapping. Historical party positions on
+  minority autonomy and faction positions remain `TBD — historical research
+  required`.
+- **Evidence:** `analysis/card-catalogue/check.cjs`, `results.json` and
+  `REPORT.md`.
+- **Status:** batch 1 reviewed. No Dendry source, generated output, dependency
+  or scenario metadata changed.
+
+## PL-CARD-CATALOGUE-2026-09-26 — approved card catalogue and stance-card rules
+
+- **Authority:** the user asked for a template and the first card batch, then
+  approved the proposed package and asked for the catalogue to be done for
+  all remaining cards.
+- **Contract:** `docs/POLISH_CARD_CATALOGUE.md`, reference 0.32. It has one
+  table per card: header, options and open questions. It contains only card
+  and option names, not full player-facing texts. It has 69 entries in six
+  batches and 45 open questions, and it is a draft awaiting the user's review.
+- **Rule changes approved with it (technical 10.5, 10.10, 21.1):**
+  - in the eight stance cards the current line cannot be chosen again, and
+    closing the card is free;
+  - test faction profile `faction_stance_profile_v1`: the Piłsudczycy reject
+    `pils_influence=oppose_military_interference` and the Centre rejects
+    `pils_influence=support`. The profile is built only from the guide's
+    faction descriptions (chapter 5) and the reactions already written in
+    technical 10.7.
+- **Classification:** documentation structure plus two small gameplay-rule
+  proposals approved by the user. Numbers remain P.
+- **Historical boundary:** no new historical claim. Historical faction
+  positions remain `TBD — historical research required`. The catalogue
+  repeats only historical notes that are already in the reference with their
+  source IDs.
+- **Evidence:** `analysis/card-catalogue/check.cjs`, `results.json` and
+  `REPORT.md` check coverage, structure, costs against 17.2, sources and
+  tests.
+- **Status:** approved structure; catalogue content awaits batch-by-batch
+  review. No Dendry source, generated output, dependency or scenario
+  metadata changed.
+
+## PL-M19-DOCUMENT-STRUCTURE-2026-09-26 — approved documentation structure
+
+- **Authority:** the user asked for a solution to audit M19 and approved two
+  decisions: keep the history in the same files, in a clearly separated
+  archive at the end; and make the card catalogue for coding the next step,
+  family by family. The user then asked for the documentation.
+- **Contract:** technical reference 0.31: current rules in chapters 1–22 and
+  the decision archive in chapter 23. The descriptive guide has a history
+  appendix. PLAN, MECHANICS_MAP, STATE_VARIABLES and TRANSITION_MATRIX start
+  with "Current state"; the audit closes M19.
+- **Classification:** documentation structure only. No rule, value or
+  historical claim changed. Two stale sentences in current rules were
+  corrected to match already approved decisions (10.9, 17.16). One archived
+  link in `MECHANICS_MAP.md` now points at the current heading of technical
+  17.10.
+- **Historical boundary:** no new historical claim, date or citation.
+- **Evidence:** `analysis/m19-document-structure/check.cjs`, `results.json`
+  and `REPORT.md`:
+  - structure checks;
+  - an anchor check of every link into the technical reference;
+  - a one-time check that every moved paragraph is preserved.
+- **Status:** M19 closed in documentation. This register keeps its dated-entry
+  form as the source log. No Dendry source, generated output, dependency or
+  scenario metadata changed.
+
+## PL-M18-MEMBERSHIP-APPARATUS-2026-09-26 — approved membership and apparatus rules
+
+- **Authority:** the user asked for a solution to audit M18 and approved two
+  decisions: the member index is a real, growing scale of the party, and the
+  apparatus income is 0.15 R per level. The user then asked for the
+  documentation.
+- **Contract:** technical 0.30, 13.1, with cross-references in 17, 21.1 and
+  22.24; descriptive guide chapter 4; audit M18; project registers.
+- **Classification:** gameplay simplification: the target formula, the 5%
+  monthly approach, the 50–150 bounds, the dues factor and the apparatus
+  income. These are P values, not historical findings.
+- **Historical boundary:** documenting this model adds no new historical
+  claim, date or citation. The index is a relative scale; historical PPS
+  membership figures remain **TBD — historical research required**.
+- **Evidence:** `analysis/m18-membership-apparatus/check.cjs`,
+  `results.json` and `REPORT.md`:
+  - unit checks;
+  - a 52-month opening comparison;
+  - the 144 archived M02 runs on the robustness engine, patched in memory
+    only.
+- **Status:** M18 closed in documentation. No Dendry source, generated output,
+  dependency or scenario metadata changed.
+
+## PL-M17-LATE-ADVISORS-2026-09-26 — approved late-advisor and KPP path rules
+
+- **Authority:** the user asked for a solution to audit M17 and approved two
+  decisions: Próchnik and Drobner as continuation advisors, and an ordinary
+  path to the KPP (contact from relation 10, then conversations). The user
+  then asked for the documentation.
+- **Contract:** technical 0.29, 9.5 and 10.4.3, with cross-references in 8.1,
+  21.1 and 22.23; descriptive guide chapters 3 and 5; audit M17; project
+  registers.
+- **Classification:** gameplay simplification: the contact threshold 10 and
+  the extension of ordinary conversations to the KPP. These are P values. The
+  advisors' dates and profiles stay accepted game profiles, as recorded on
+  10 September 2026, not new historical claims.
+- **Historical boundary:** documenting this model adds no new historical
+  claim, date or citation.
+- **Evidence:** `analysis/m17-late-advisors/check.cjs`, `results.json` and
+  `REPORT.md`: unit checks of the old and new paths, and a check that M02 does
+  not use these advisors or communist cooperation.
+- **Status:** M17 closed in documentation. No Dendry source, generated output,
+  dependency or scenario metadata changed.
+
+## PL-M06-OFFICE-ELECTIONS-2026-09-26 — approved office-election rules
+
+- **Authority:** the user asked for a solution to the remaining M06
+  exceptions and approved two decisions: more votes wins the final, and a
+  safety net. The user then asked for the documentation. The 50/50 tie lot
+  from 0.18 is unchanged.
+- **Contract:** technical 0.28, 7.3 and 7.5, with cross-references in 4.5, 7.1,
+  21.1 and 22.22; descriptive guide chapter 9; audit M06; project registers.
+- **Classification:** gameplay simplification: the final-round rule, the
+  guaranteed attendance and candidacies, and the safety net. They are not
+  claims about the 1922 procedure.
+- **Historical boundary:** art. 39 of the 1921 constitution (absolute majority
+  of the National Assembly) is already recorded in 7.1. The detailed rules of
+  the Assembly and Sejm votes, including abstentions and deputising, remain
+  **TBD — historical research required**.
+- **Evidence:** `analysis/m06-office-elections/check.cjs`, `results.json` and
+  `REPORT.md`: unit checks, a grid of 175 finals, and a check that M02 scripts
+  the 1922 offices.
+- **Status:** M06 closed in documentation. No Dendry source, generated output,
+  dependency or scenario metadata changed.
+
+## PL-M16-SPLIT-RECALCULATION-2026-09-26 — approved split recalculation
+
+- **Authority:** the user asked for a solution to audit M16 and approved the
+  proposal with three decisions:
+  - voters leave in the same proportion as members;
+  - dissent of the remaining part falls by 20;
+  - MPs stay assigned to factions until a real transfer.
+
+  The user then asked for the documentation.
+- **Contract:** technical 0.27, 10.2, with cross-references in 2.4, 10.9,
+  16.8.7, 21.1 and 22.21; descriptive guide chapter 5; audit M16; project
+  registers.
+- **Classification:** gameplay simplification: the 40% split share, the −20
+  dissent drop, the proportional voter loss and the frozen MP assignment.
+  These are P values, not historical findings.
+- **Historical boundary:** documenting this model adds no new historical
+  claim, date or citation. Historical PPS splits and their electorates remain
+  **TBD — historical research required**.
+- **Evidence:** `analysis/m16-split-recalculation/check.cjs`, `results.json`
+  and `REPORT.md`: unit checks on the opening party profile, and a check that
+  the archived M02 run asserts dissent below 60.
+- **Status:** M16 closed in documentation. No Dendry source, generated output,
+  dependency or scenario metadata changed.
+
+## PL-M15-AS-BENEFIT-2026-09-26 — approved AS benefit
+
+- **Authority:** the user asked for a solution to audit M15 and approved the
+  proposal with two decisions: option (a), better call execution plus up to
+  three concurrent actions before a coup, and a +0.15 compliance bonus. The
+  user then asked for the documentation.
+- **Contract:** technical 0.26, 13.3 and 13.4, with cross-references in
+  16.8.2, 16.8.3, 17.6, 21.1 and 22.20; descriptive guide chapters 6 and 14;
+  audit M15; project registers.
+- **Classification:** gameplay simplification: the +0.15 bonus, the
+  three-action limit and the engine's fill order. These are P values, not
+  historical findings.
+- **Historical boundary:** documenting this model adds no new historical
+  claim, date or citation. The historical role and strength of the Akcja
+  Socjalistyczna remain **TBD — historical research required**. Early AS
+  stays an approved alternative-history option, as before.
+- **Evidence:** `analysis/m15-as-benefit/check.cjs`, `results.json` and
+  `REPORT.md`:
+  - unit checks;
+  - the exact M08 enumeration at democracy 60;
+  - a check that the archived M02 engine has no militia force.
+- **Status:** M15 closed in documentation. No Dendry source, generated output,
+  dependency or scenario metadata changed.
+
+## PL-M13-COMMUNIST-DISCIPLINE-2026-09-25 — approved communist cooperation rules
+
+- **Authority:** the user asked for a solution to audit M13 and approved the
+  proposal with two decisions:
+  - KPP discipline depends on the relation and goal fit;
+  - PPS agrees the cooperation line through the existing unity-card
+    compromise.
+
+  The user then asked for the documentation.
+- **Contract:** technical 0.25, 9.5 and 9.6, with cross-references in 10.5,
+  17, 21.1 and 22.19; descriptive guide chapter 3; audit M13; project
+  registers.
+- **Classification:** gameplay simplification: the discipline formula, the
+  goal-fit levels, the +15/−15 acceptance changes and the threshold 60. These
+  are P values, not historical findings.
+- **Historical boundary:** documenting this model adds no new historical
+  claim, date or citation. The KPP's actual goals in particular strikes, such
+  as those of 1923, remain **TBD — historical research required**. The German
+  KPD faction rules are deliberately not adopted.
+- **Evidence:** `analysis/m13-communist-discipline/check.cjs`, `results.json`
+  and `REPORT.md`: unit checks, and a check that the archived M02 engine
+  contains no communist cooperation.
+- **Status:** M13 closed in documentation. No Dendry source, generated output,
+  dependency or scenario metadata changed.
+
+## PL-M12-STRIKE-SETTLEMENT-2026-09-25 — approved strike settlement rules
+
+- **Authority:** the user asked for a solution to audit M12 and approved the
+  proposal with two decisions:
+  - the cost of continuing uses both the fund shortfall and fatigue;
+  - fragility uses cabinet support and disputes.
+
+  The user then asked for the documentation.
+- **Contract:** technical 0.24, 14.4, 14.5 and 17.4, with cross-references in
+  17.16, 21.1 and 22.18; descriptive guide chapter 6; audit M12; project
+  registers.
+- **Classification:** gameplay simplification: the consent weights, the cost
+  of continuing, and the fragility formula with its base 50, the 222-seat
+  majority line and the 0.5 tension weight. These are P values, not
+  historical findings.
+- **Historical boundary:** documenting this model adds no new historical
+  claim, date or citation. The support of the scripted opening cabinets in the
+  diagnostics uses the synthetic toleration assumption of M09.
+- **Evidence:** `analysis/m12-strike-settlement/check.cjs`, `results.json`
+  and `REPORT.md`:
+  - unit checks of both formulas;
+  - the 144 archived M02 runs on the robustness engine, patched in memory
+    only, alone and on top of M10 and M11.
+- **Status:** M12 closed in documentation. No Dendry source, generated output,
+  dependency or scenario metadata changed.
+
+## PL-M11-THREAT-PERSUASION-2026-09-25 — approved threat and persuasion rules
+
+- **Authority:** the user asked for a solution to audit M11 and approved the
+  proposal with two decisions: a choice after a refused threat (carry it out,
+  or back down at a price), and a −3 relation cost for a forced concession.
+  The user then asked for the documentation.
+- **Contract:** technical 0.23, 9.8, with cross-references in 2.4, 8.3, 17.4,
+  17.16, 21.1 and 22.17; descriptive guide chapter 9; audit M11; project
+  registers.
+- **Classification:** gameplay simplification: the −5 credibility for a
+  withdrawn threat, the per-cabinet discount of later threats and the −3
+  relation for a forced concession. These are P values, not historical
+  findings.
+- **Historical boundary:** documenting this model adds no new historical
+  claim, date or citation. The German original's "urge against austerity"
+  option (−3 relation with the partners whatever the outcome) is cited only as
+  a design comparison, from `source/scenes/government_affairs/dealing_with_toleration.scene.dry`.
+- **Evidence:** `analysis/m11-threat-persuasion/check.cjs`, `results.json` and
+  `REPORT.md`:
+  - unit checks of the 8.3 score for both options;
+  - the archived M02 welfare-review cases;
+  - the 144 archived M02 runs on the robustness engine, patched in memory
+    only, alone and together with M10.
+- **Status:** M11 closed in documentation. No Dendry source, generated output,
+  dependency or scenario metadata changed.
+
+## PL-M10-AUTHORITY-DEMOCRACY-2026-09-25 — approved authority and democracy rules
+
+- **Authority:** the user asked for a solution to audit M10 and answered the
+  proposal with three decisions:
+  - democracy acts on army readiness and, a little, on coup pressure;
+  - democracy may grow on its own, but only slowly;
+  - the army effect is gentle.
+
+  The user then approved the concrete numbers, including 1–3 month later M02
+  attempts, and asked for the documentation.
+- **Contract:** technical 0.22, 15.2, 15.3 and 16.1, with cross-references in
+  2.3–2.4, 10.7, 16.2, 16.4, 16.8, 17, 20.2, 21.1 and 22.16; descriptive guide
+  chapters 4 and 14; audit M10; project registers.
+- **Classification:** gameplay simplification:
+  - the 12-month institutional log and the +1/−2 speech entries;
+  - the democracy reference point 53 and the two event terms;
+  - the pressure term `0.01 × (60 − democracy)`;
+  - the democracy-dependent loyalty shift (2.5 pp per 10 points, cap ±10 pp).
+
+  These are P values, not historical statistics or findings.
+- **Historical boundary:** documenting this model adds no new historical
+  claim, date or citation. Whether and how democratic sentiment affected coup
+  pressure and the conduct of officers and units in May 1926 remains
+  **TBD — historical research required**.
+- **Evidence:** `analysis/m10-authority-democracy/check.cjs`, `results.json`
+  and `REPORT.md`:
+  - unit checks of the log and the democracy equations;
+  - a replay of the 144 archived M02 runs on the M02 robustness engine, with
+    the new rules patched in memory only;
+  - the exact M08 enumeration with democracy-shifted synthetic loyalties.
+- **Status:** M10 closed in documentation. No Dendry source, generated output,
+  dependency or scenario metadata changed.
+
+## PL-M09-LIVING-CONDITIONS-2026-09-25 — approved economy–voter flow
+
+- **Authority:** the user asked for a solution to audit M09, compared it with
+  the German original and asked how inflation and growth are handled. On
+  25 September 2026 the user decided: gentle strength, improvement at half
+  strength, no extra inflation term for the middle classes, and peasants who
+  react but less than other classes. The user then requested the
+  documentation.
+- **Contract:** technical 0.21, 5.6, with cross-references in 2.3–2.4, 5.4,
+  11.6, 15.1, 17.4, 20.2, 21.1 and 22.15; descriptive guide chapters 7 and 11;
+  audit M09; project registers.
+- **Classification:** gameplay simplification:
+  - the living-conditions index, the class sensitivities 1/0.5/0.25/0.2/0 and
+    −2 points per percentage point of unemployment;
+  - the monthly rates and caps, responsibility weights 1/0.5/0 and the
+    share-based split;
+  - the peasants' 1/5 share, which interprets the user's decision.
+
+  These are P values, not historical statistics or findings about Polish
+  voting behaviour.
+- **Historical boundary:** documenting this model adds no new historical
+  claim, date or citation. The worked 1923 example uses synthetic M02
+  scenario traces, not historical wage or vote data. How strongly interwar
+  voters of each class punished governing parties for economic conditions
+  remains **TBD — historical research required**.
+- **Evidence:** `analysis/m09-living-conditions/check.cjs`, `results.json`
+  and `REPORT.md`: replay of the archived M02 monthly traces (seed 01, three
+  parliaments × four strategies) with this flow only, plus invariant checks.
+  Expert-cabinet supporters in the traces are a synthetic assumption. This is
+  not an election forecast.
+- **Status:** M09 closed in documentation. No Dendry source, generated output,
+  dependency or scenario metadata changed.
+
+## PL-M08-COUP-PROFILE-2026-09-24 — approved coup resolution
+
+- **Authority:** user reviewed the M08 proposal in several explanation rounds
+  and approved the simplified eight-rule model on 24 September 2026. The user
+  asked for a simpler model with fewer rounds when one side is clearly stronger,
+  PPS influence only when it significantly affects the fighting, no named
+  guarantor, about 40–50% Piłsudski wins with a passive PPS, and no-winner
+  endings rarer than victories. The user then requested the documentation.
+- **Contract:** technical 0.20, 16.8, with cross-references in 16.1–16.7,
+  17.15, 19.1, 21.1 and 22.14; descriptive guide chapter 14; audit M08;
+  project registers.
+- **Classification:** gameplay simplification and alternate-history design:
+  - the round rules, three settlement offers and their actor profiles;
+  - the significant-participation gate and the counterfactual concession test;
+  - the `synthetic_test_v2` loyalties and the working F10+F11 effects.
+  
+  These are P values, not historical statistics or findings.
+- **Historical boundary:** existing `PPS-MAY-1926-ROLE` supports PPS support
+  for the coup and the relevance of railway workers, without deterministic
+  control by party leaders. Documenting this model adds no new historical
+  claim, date or citation. The following remain
+  **TBD — historical research required**:
+  - actual military units, strengths, loyalties and transport routes;
+  - mediation attempts during the crisis;
+  - candidates for a cabinet change.
+  
+  The offered compromises are counterfactual gameplay options, not claims that
+  they were proposed in May 1926.
+- **Evidence:** `analysis/m08-coup-profile/check.cjs`, `results.json` and
+  `REPORT.md`: exact enumeration of 81 synthetic allegiance outcomes plus
+  invariant checks. This is not a campaign simulation.
+- **Status:** M08 closed in documentation. No Dendry source, generated output,
+  dependency or scenario metadata changed.
+
+## PL-M07-EXECUTION-SCOPE-2026-09-22 — approved bounded profiles
+
+- **Authority:** user accepted the eight-part M07 proposal and requested its
+  documentation: executable orders/police/redress/nominations/representation,
+  limited autonomy, broad safeguards through the existing democratic reform,
+  council state/federation/full political autonomy deferred to continuation.
+- **Contract:** technical 0.19, 10.4.4 / 10.8 / 11.5 / 12.3–4 / 16.3 /
+  17.12.1–7; both Polish guides, audit and project registers synchronized.
+- **Classification:** approved gameplay scope; numerical costs/effects are
+  prototype P values, not historical statistics. The +4 raw Lewica strength
+  and +3 Centrum dissent specify the accepted qualitative council-line effect
+  using existing faction mechanics, not a sourced historical measurement.
+- **History still required:** actual military positions, candidates and legal
+  appointing powers; findings in particular legal cases; autonomy territories,
+  recipient authorities and population exposure. Mark missing content
+  **TBD — historical research required**; synthetic profiles must be labelled.
+- **No historical claim:** the proposed limited delegation law, workplace
+  decision rights or a later federation/council state are not asserted to
+  have occurred. No new historical citation was invented or required to adopt
+  these openly alternative gameplay proposals.
+- **Status:** M07 mechanics/scope closed in documentation. Game source, the
+  accepted M02 diagnostic and scenario metadata remain unchanged; prototype
+  balance and historical operational forces (M08) remain separate work.
+
+## PL-M06-FINALIST-TIE — approved gameplay rule
+
+- **Authority:** user requested random selection between the two candidates
+  when their final vote is tied, in the discussion of president/speaker elections.
+- **Decision:** each finalist has probability 1/2; one saved draw, unchanged vote
+  totals, no extra card/month. Technical 0.18, 4.6 / 7.3 / 7.5.
+- **Classification:** approved gameplay simplification, not a claim about
+  historical election law. Quorum and valid candidacies remain prerequisites.
+- **Scope:** resolves final ties only; other M06 deadlocks remain open.
+
+## PL-M05-LEGISLATIVE-TIMING-2026-09-22 — approved D clarification
+
+- **Authority:** user accepted M05's recommendation: exactly two cards,
+  automatic dated procedure after D2, explicit entry into force/first payment,
+  PPS authorship, financing/executor and no bypass of the one-initiative limit.
+- **Decision:** technical reference 0.17, 5.4 / 7.2 / 12.2–3 / 17.15; both Polish
+  guides and the audit/registers synchronized. M05 closed in documentation.
+- **Classification:** the unemployment bill is a gameplay proposal. Scheduling
+  at +30/+60 uses the existing legal framework already cited in 7.2; choosing
+  those processing dates, same-day promulgation/entry, bounded amendment
+  variants and expiry at dissolution are explicit P simplifications, not a
+  reconstructed historical legislative episode. No new historical claim.
+- **Balance proposal:** PPS authorship share 0.40 uses the existing scale;
+  reward only once after full delivery, without stacking voting or ministry
+  bonuses. Funding and payment still depend on the shared budget/authority.
+- **Verification scope:** documentation coherence and numerical/calendar
+  examples. Full automatic Senate processing and save/resume require future
+  implementation tests; this does not claim they exist in Dendry.
+
+## PL-M02-FINAL-TUNING-2026-09-22 — final bounded scenario correction
+
+- **Authority:** user explicitly approved removing the May gate on +20,
+  tying it to an actual Chjeno-Piast return after a stabilization or broad
+  cabinet during an unresolved army dispute, and removing the additional
+  relationship minima for welfare compromise.
+- **Contract:** technical 0.16, 15.3 / 17.16.11; common offer score ≥60,
+  feasible funding and hard conditions; +2/month, threshold 65 and other
+  numbers unchanged. Scenario metadata 5, no new meter or card.
+- **Evidence:** [final report](analysis/m02-robustness/REPORT.md), same existing
+  suite run once after the correction. [Prior report](analysis/m02-robustness/REPORT_0_15.md)
+  and `baseline-0.15.json` preserve the earlier findings and comparison data.
+- **Classification:** approved gameplay simplification and prototype values,
+  not new historical evidence. January 1925 main-test and June 1923 sensitivity
+  onsets remain provisional; dates and duration of concrete military disputes:
+  **TBD — historical research required**. No claim of one historically proven
+  continuous conflict from either date.
+- **Status:** M02 documentation ready for implementation. Full gameplay balance,
+  hand draws, elections and historical operational forces are not validated by
+  this diagnostic. Earlier source entries remain records of prior revisions.
+
+## PL-M02-ROBUSTNESS-2026-09-22 — paired diagnostic campaigns
+
+- **Authority:** user requested four strategies with shared draws and three
+  parliaments, reporting crisis dates, refusals, execution and player influence.
+- **Evidence:** `analysis/m02-robustness/REPORT.md`, `engine.cjs`,
+  `negotiations.cjs`, `run.cjs`, `SUMMARY.md`, `TRACES.md`, `results.json`,
+  `monthly.csv`; technical reference 17.16.10. 144 main, 216 decision-control
+  and 36 army-onset runs. Prior archives preserved; 59 consent scores reproduced.
+- **Classification:** game-design diagnostics, not new historical statistics.
+  The 444-seat distributions, ten Piast defectors, profiles of financing demands,
+  minority terms, candidate programme positions and reconstruction willingness
+  are P inputs. Neutral fiscal position for Sikorski and -1 for Witos are explicit
+  test profiles; they are not sourced historical preferences or newly approved
+  universal actor rules. Existing legal-opening/army inputs remain controlled.
+- **Result:** strategy effects survive paired comparison, but conditional May
+  pressure timing does not survive the calculated cabinet chain. Baseline H
+  reaches February 1927. No pressure number, rule or historical fact was altered
+  to restore May. Unresolved choices are recorded in M02.
+- **Limits:** planned ordinary-card access rather than full hand draws; candidate
+  subset; no prediction of election results; synthetic force outcomes. No Dendry
+  changes, no new source claim and no closure of M02/M06/M08/M09.
+
+## PL-M02-PRESSURE-2026-09-22 — M02 step 3
+
+- **Authority:** user requested event coverage first, then pressure calibration,
+  allowing May 1926, earlier agreement, later attempt or prevention, with no
+  threshold forced by the date. Documentation and isolated diagnostics only.
+- **Historical evidence:** Włodzimierz Suleja, “Zamach majowy”, IPN, 12 May 2023,
+  [article](https://przystanekhistoria.pl/pa2/teksty/100884,Zamach-majowy.html),
+  accessed 21 September 2026. Describes the November 1925 warning and officer
+  demonstration, and the earlier dispute over army leadership. Exact events
+  and dates are summarized once in the pressure report.
+- **Gameplay classification:** combining related public interventions into one
+  conditional +8 impulse is P, not a measured historical quantity or evidence
+  that a signed agreement was broken. No new foreign-policy mechanic. January
+  1925 as army-case opening is inherited test input, not historical dating.
+- **Diagnostic evidence:** `analysis/m02-pressure-calibration/check.cjs`,
+  `REPORT.md`, `RESULTS.md`, `results.json`; 272 archived readings reproduced,
+  20 variants, three step-2 projections, one-shot and gate checks. Keep +2/M
+  and threshold 65. Technical reference 0.15 / scenario version 4.
+- **Limits:** frozen cabinet/economy traces and synthetic forces; actual actor
+  consent and the lifecycle of earlier disputes need integrated campaigns.
+  A long-open 1923 dispute can produce an earlier attempt. Do not suppress it
+  to obtain May. M02 remains partially open; no Dendry changes.
+
+## PL-M02-POLITICAL-CHAIN-2026-09-21 — step 2
+
+- **Authority:** user requested the complete causal political chain, including
+  partner positions, PPS choices, government survival and succession after both
+  Grabski proposals fail. Documentation/diagnostics; no Dendry changes.
+- **Evidence:** technical 17.16.8; `analysis/m02-political-chain/check.cjs`,
+  `REPORT.md`, `TRACES.md`, `results.json`. All 59 step-1 scores are reproduced;
+  16 political variants use explicitly controlled macroeconomic/legal inputs.
+- **Classification:** P game-design profiles, not new historical evidence.
+  Earmarked-funding demands, candidate mandates, two 45-seat minority groups,
+  the ten-MP land-guarantee condition, ranking scores and voting totals are
+  synthetic scenario data. Do not attribute these exact motives or votes to
+  historical parties. Earlier sourced cabinet chronology remains unchanged.
+- **Result and limits:** two rejected programmes can lead through a real
+  resignation and evaluated appointment; PPS departure can instead preserve
+  Skrzynski. Economic feedback, full reputations, other unlocked candidates,
+  elections and historical coup calibration remain outside these trace tests.
+  New documentary contract is reference 0.14 / scenario metadata version 3.
+
+## PL-M02-NEGOTIATIONS-2026-09-21 — step 1 calculations
+
+- **Authority:** user requested step 1 of the M02 completion plan: calculate
+  actual acceptance of four agreements under existing negotiation rules.
+- **Evidence:** `analysis/m02-negotiations/REPORT.md`, `check.cjs`, `results.json`
+  and `SCORES.md`; technical reference 8.3/8.6/8.8/9.7/9.8 and archived 0.13 inputs.
+- **Classification:** game-design diagnostics. Grabski fiscal ideal +1 and
+  candidate relations 50, Skrzynski's explicit mandate, NPR's conditional
+  Economic portfolio fallback and prepared alternative offers are P test data,
+  not sourced historical positions or proof of those historical coalitions.
+- **Limits:** no new historical research or gameplay changes. Timing of offers,
+  financial-law support, full reputations and MP declarations need integration.
+  The earlier 230-vote return of Witos cannot silently restore ten defectors.
+
+## D–G design decision — 11 September 2026
+
+**Source:** the user's approval of one D bill with two cards and the remaining
+simplified E–G proposals, with the explicit correction that E3 concerns part
+of a faction, normally without an advisor departure.
+
+**Classification:** approved gameplay simplification, not new historical
+research. The unemployment-protection bill and its full/reduced benefit
+profiles are a game-design initiative, not an assertion of a particular
+historical bill or vote. Concrete costs/thresholds remain proposed balance.
+Cabinet stabilization remains an alternate constitutional reform; it is not
+presented as an already existing constitutional procedure. Existing evidence
+for institutions and events below is unchanged.
+
+The faction split scenario does not identify an invented historical splinter
+party or presume that a named advisor actually left in this episode. Any
+historically framed exception requires evidence; absent it, the scenario
+must remain explicitly alternate history or `TBD — historical research required`.
+Canonical design: technical 10.2 and 17.15; descriptive 5 and 11.
+
 ## Purpose
 
-This is an empty research register. It contains no historical claims,
-citations, proposed equivalents, or example facts. Create one entry for each
-source/claim relationship so that evidence, design interpretation, licensing,
-and implementation can be reviewed independently.
+This register records source/claim relationships so that evidence, design
+interpretation, licensing and implementation can be reviewed independently.
+Unfilled templates remain research tasks, not evidence for the game.
 
 Do not assume that an image, recording, or other media asset is covered by the
 repository's MIT code licence. Record the asset's own licence, attribution,
@@ -264,6 +1273,9 @@ source location, and permitted use in its entry. Preserve
   aggregate minority deputies without claiming a single January BMN club;
   ten stable portfolio categories, including combined Public Works /
   Communications; PPS external toleration with no cabinet seats.
+- **Superseded in stage 3 (26 September 2026):** the game now has nine
+  portfolios, and public works belong to Labour (technical 8.5, 20.1.1); see
+  `PL-STAGE3-GOVERNMENT-2026-09-26`.
 - **Unresolved historical research:** Precise January PPS parliamentary stance
   and voting practice remain **TBD — historical research required**. Approving
   toleration as an initial game state does not establish a historical agreement.
@@ -422,6 +1434,13 @@ source location, and permitted use in its entry. Preserve
 - **Still unresolved:** Successor cabinets, later presidential elections and
   subsequent Polish parliamentary chronology: **TBD — historical research required**.
   Temporary May 1928 scheduling and later legacy rules remain visibly labelled.
+- **Superseded in stage 2 (26 September 2026):** the next election follows the
+  legal calendar of technical 7.4 (19 February 1928, a game calendar), and its
+  certified result ends the chapter; see `PL-STAGE2-INSTITUTIONS-2026-09-26`.
+- **Superseded in stage 3 (26 September 2026):** successor cabinets are formed
+  by negotiation (P) instead of six fixed options; the historical chronology
+  enters only through the candidate windows of `PL-1922-1926-CABINETS`; see
+  `PL-STAGE3-GOVERNMENT-2026-09-26`.
 - **Rights:** No media imported; image/music credits preserved. The repository's
   MIT code licence does not automatically cover media assets or cited editions.
 
@@ -484,6 +1503,12 @@ source location, and permitted use in its entry. Preserve
   elections, actual Senate composition and powers as a general mechanic,
   successor cabinets and variable results remain **TBD — historical research
   and design required**.
+- **Superseded in stage 2 (26 September 2026):** the fixed winners and ballots
+  are no longer the game result. The game counts both December elections from
+  the recorded Assembly with the approved test profile, keeps the historical
+  ballots as a labelled Library note, records the elected Marshal as acting
+  President after the assassination, and follows the assassination branch only
+  when Narutowicz is elected. See `PL-STAGE2-INSTITUTIONS-2026-09-26`.
 - **Related mechanic, variable and source file:** `polish_presidency`,
   `polish_presidential_pending`, `head_of_state_*`;
   `source/scenes/polish_presidential_sequence.scene.dry`, routing and UI helpers,
@@ -968,6 +1993,270 @@ source location, and permitted use in its entry. Preserve
 - **Implementation status:** TBD
 - **Related mechanic, variable and source file:** TBD
 
+## First-chapter masterplan sources — 8 September 2026
+
+### Source entry PPS-CHAPTER1-DESIGN-2026-09
+
+- **Category / source:** User-approved game design; this conversation,
+  8 September 2026, including the explicit militia clarification.
+- **Claim supported:** January 1922 first chapter; coup or next legal election
+  boundary; domestic scope; plausible alternate outcomes; dynamic 1922
+  presidency; monthly action/card/adviser framework; temporary negotiating
+  strength; three government positions; ten portfolios; Polish economic
+  indicators; costly communist cooperation; separate coup pressure/capacity.
+- **Explicit alternate-history decision:** Militarize Milicja PPS, then permit
+  a sufficiently strong and prepared organization to become AS early. The
+  user confirmed this means the party militia, not state police. A 1934 date
+  gate was rejected; the immediate existing reorganization remains code only.
+- **Confidence / boundary:** High for the user's design choices, not evidence
+  of historical facts. Minority differentiation was accepted provisionally.
+  Further synthesis and open matters are identified in the guide, especially
+  the no-coup date and assassination alternatives. The early-election endpoint
+  was subsequently approved; see `PL-TECHNICAL-DRAFT-2026-09`.
+- **Implementation status:** Documentation only, in
+  `docs/POLISH_DESCRIPTIVE_GUIDE.md` and the project-plan updates. No gameplay
+  changed. Earlier source entries remain evidence of their historical slices.
+- **Rights:** No external text or media copied beyond ordinary citations.
+
+### Source entry PPS-CHAPTER1-NOTION-NOTES
+
+- **Category / sources:** User's working design and historical notes,
+  [Polish-version notes](https://app.notion.com/p/notes-for-the-polish-version-3d282c5228d580f09615f7c82ac854a2)
+  and [2 RP Biblioteka](https://app.notion.com/p/2-RP-Biblioteka-3be82c5228d580869335ed6ecedbeae5).
+- **Relevant material:** Society, economy, political overview, PPS
+  organizations, political/PPS history through 1922 and in 1922–1926.
+  Accessed 8 September 2026 through the browser.
+- **Use / confidence:** Research leads, proposed conflicts, historical
+  orientation and the user's desired game. Not independent confirmation of
+  statistics, dates, organization membership or cabinet positions.
+- **Research boundary:** Verify event chronologies and definitions before
+  implementation. Distinguish a cabinet's resignation from the end of its
+  caretaker service; verify minority electoral alliances and party legality.
+  Exact historical AS chronology remains research work; an early AS is
+  separately permitted design, not a historical claim.
+- **Status / related file:** Critical synthesis in the Polish descriptive
+  guide. Unverified assertions remain `TBD — historical research required`.
+
+### Source entry PL-1924-FISCAL-CURRENCY
+
+- **Category / period:** Public finance and monetary reform, 1923–1925.
+- **Primary source:** [Ustawa z dnia 11 stycznia 1924 r. o naprawie Skarbu
+  Państwa i reformie walutowej](https://eli.gov.pl/api/acts/DU/1924/28/text.html),
+  Dz.U. 1924 nr 4 poz. 28, especially art. 1; official ELI transcription.
+- **Institutional historical source:** Narodowy Bank Polski,
+  [Zarys historii polskiej bankowości centralnej](https://nbp.pl/wp-content/uploads/2022/11/zarys-historii-polskiej-bankowosci-centralnej-1.pdf),
+  Bank Polski SA discussion.
+- **Access / confidence:** 8 September 2026; high for the cited legal provisions
+  and distinction between bank issue, Treasury issue and credit constraints.
+- **Historical evidence:** The reform joins revenue, economy in expenditure,
+  institutional/monetary change and defined executive authorization. Bank and
+  Treasury financing cannot be treated as unrestricted identical powers.
+- **Proposed game use:** Multi-stage stabilization, separate fiscal flows and
+  funding, real wages, credit and implementation constraints. None of the
+  sources establishes the game's numerical multipliers or starting statistics.
+- **Status / boundary:** Research support for guide section 11; no economic
+  implementation. Wider economic calibration remains required. Paraphrase
+  and links only; no images imported or additional licence claim made.
+
+### Source entry PL-1925-LAND-REFORM
+
+- **Primary source:** [Ustawa z dnia 28 grudnia 1925 r. o wykonaniu reformy
+  rolnej](https://eli.gov.pl/api/acts/DU/1926/1/text.html), Dz.U. 1926 nr 1 poz. 1,
+  official ELI transcription; accessed 8 September 2026.
+- **Claim / confidence:** High for the date and enacted legal scheme of land
+  reform. Detailed practice, regional distribution and historical results need
+  further evidence beyond the text of the act.
+- **Proposed use:** Separate reform authorization from land transfer, credit,
+  administrative execution and resulting social benefit. The game may offer
+  alternatives but must label their divergence from the act.
+- **Status / related file:** Research support for sections 11–12 of
+  `docs/POLISH_DESCRIPTIVE_GUIDE.md`; no gameplay or balancing values supplied.
+
+### Source entry PPS-MAY-1926-ROLE
+
+- **Scholarly source:** Wawrzyniec Kowalski, “Stanowisko Polskiej Partii
+  Socjalistycznej wobec zamachu majowego w 1926 roku”, *Studia nad
+  Autorytaryzmem i Totalitaryzmem* 40, nr 2 (2018),
+  DOI 10.19195/2300-7249.40.2.5,
+  [publisher PDF](https://wuwr.pl/sfzh/article/download/1342/1313/1313).
+- **Corroborating source:** PAP / dzieje.pl,
+  [93. rocznica zamachu majowego](https://dzieje.pl/aktualnosci/zamach-majowy).
+- **Access / category:** 8 September 2026; historical research and institutional
+  reporting, secondary sources.
+- **Supported historical point:** PPS support for the coup and the relevance
+  of railway workers; contemporary expectations of Piłsudski differed from
+  later anti-sanacja politics. This does not establish uniform views in every
+  local organization or deterministic control by party leaders.
+- **Proposed use:** Separate party stance, organizational participation and
+  transport effects; permit historically motivated disagreement within PPS.
+- **Boundary / status:** Coup-intent and capacity meters, outcome rules and
+  counterfactual guarantees are game design, not findings of these sources.
+  Used in guide sections 5 and 14; no conflict implementation. Exact operational
+  actors, numbers and timing require further research.
+
+### Source entry PL-1922-1926-CABINETS
+
+- **Source:** Piotr A. Tusiński, study of MPs/senators in Second Republic
+  cabinets, *Przegląd Sejmowy* 6(131)/2015, especially the cabinet chronology
+  on printed page 111,
+  [Sejm-hosted issue](https://orka.sejm.gov.pl/przeglad.nsf/0/D519E888835B02D1C1257F460042BC5B/%24File/ps131.pdf).
+- **Access / kind:** 8 September 2026; secondary scholarly reference.
+- **Supported use:** Chronology distinguishes appointment, resignation and
+  caretaker periods. Include Sikorski between the December crisis and the
+  1923 Witos cabinet; do not collapse PPS's April 1926 departure into the
+  later Skrzyński resignation.
+- **Boundary / status:** Guide sections 9 and 12. Coalition mechanics and
+  conditional survival of historical cabinets are design. Detailed party
+  commitments and all alternate candidates still need research.
+
+Constitutional evidence for the guide remains under `OPENING-CONSTITUTION-1922`
+and `PRESIDENCY-1922-SEQUENCE`. The Sejm Library text of Chapters II and III was
+rechecked on 8 September 2026 for the term, dissolution, parliamentary functions,
+presidential election and speaker succession. Dynamic outcomes replace the
+earlier fixed-result design prospectively; they do not change the historical
+facts recorded in those entries.
+
+## Technical-reference sources — 9 September 2026
+
+### Source entry PL-TECHNICAL-DRAFT-2026-09
+
+- **Category / source:** User design instructions and clarification replies in
+  this conversation; recorded 9 September 2026.
+- **Approved decisions:** Include concrete draft costs, thresholds and formulas
+  where useful, explicitly as proposals for testing. The first legal
+  parliamentary election after the 1922 election ends the first chapter,
+  including an early election before the May Coup.
+- **Boundary:** Approval to specify draft numbers is not approval of each
+  balancing constant, a historical claim, or an instruction to implement the
+  whole proposed state model. The 19 February 1928 calendar and four-round
+  conflict handoff are separate proposals, not additional approved decisions.
+- **Use / status:** `docs/POLISH_TECHNICAL_REFERENCE.md`, version 0.1,
+  `balance_v0_1`; synchronized design notices in the descriptive guide, plan,
+  mechanics map, state inventory and transition matrix. Documentation only.
+- **Historical fact / licensing:** No historical claim or external media.
+
+### Source entry PL-1922-LEGAL-PROCEDURES
+
+- **Category / period:** Constitutional institutions and legal election
+  scheduling under the 1921 Constitution and the 1922 Sejm electoral law.
+- **Primary sources:** Sejm Library constitutional text:
+  [Chapter II](https://biblioteka.sejm.gov.pl/tek01/txt/kpol/1921a-r2.html),
+  [Chapter III](https://biblioteka.sejm.gov.pl/tek01/txt/kpol/1921a-r3.html),
+  [Chapter VI](https://biblioteka.sejm.gov.pl/tek01/txt/kpol/1921a-r6.html);
+  official ELI [Sejm electoral law of 28 July 1922, Dz.U. 1922 no. 66 item 590](https://eli.gov.pl/api/acts/DU/1922/590/text.html).
+- **Institutional chronology:** Senate Chancellery,
+  [Kadencje Sejmu i Senatu w latach 1922–1939](https://www.senat.gov.pl/gfx/senat/userfiles/_public/k8/statystyki/senat_1922-1939/01_kadencje_1922-1939.pdf).
+- **Access / confidence:** Rechecked during the 8–9 September 2026 documentation
+  work; high for the cited provisions and the recorded term dates. Detailed
+  parliamentary voting regulations and historical implementation require
+  additional research.
+- **Historical evidence:** Constitution art. 11 gives five years from the
+  opening; art. 26 distinguishes Sejm self-dissolution from presidential
+  dissolution with Senate consent and sets the 90-day election limit after
+  dissolution. Art. 32 and 58 distinguish ordinary voting and a request for
+  ministerial resignation. Art. 35 specifies Senate handling of bills;
+  art. 39–45 cover the presidency and executive functions; art. 125 specifies
+  constitutional amendment procedure. Electoral-law art. 9 distinguishes
+  372 district and 72 national-list mandates; art. 13–14 concern the election
+  order and a Sunday vote no earlier than 78 days after announcement. The
+  institutional chronology records opening on 28 November 1922 and the
+  five-year term ending on 28 November 1927.
+- **Gameplay simplification:** A typed ballot record, deterministic club
+  allocation and a Senate proxy derived from Sejm seats. Qualified-vote
+  denominators and the prototype presidential elimination algorithm are
+  explicitly proposed conventions pending the relevant historical rules.
+  The existing banded 444-seat allocation is not a reconstruction of the
+  statutory district/national-list procedure.
+- **Alternate-history calculation:** Under unchanged rules, choosing
+  announcement on 29 November 1927 yields day 78 on 15 February 1928 and the
+  following Sunday on 19 February. This is a proposed permissible schedule
+  in a no-coup campaign, not the historical election date or the only possible
+  legal schedule. Constructive no confidence requires an alternate reform;
+  it is not attributed to the original March Constitution.
+- **Related files / status:** Sections 6–7 and 19 of
+  `docs/POLISH_TECHNICAL_REFERENCE.md`; source support only, no gameplay changes.
+- **Rights:** Links and paraphrase; no images or media imported.
+
+### Source entry PL-DESIGN-SIMPLIFICATION-2026-09
+
+- **Category / source:** User's latest instructions in this conversation,
+  recorded 9 September 2026; renewed read of
+  [notes for the polish version](https://app.notion.com/p/notes-for-the-polish-version-3d282c5228d580f09615f7c82ac854a2)
+  through the browser on the same date.
+- **Approved design:** Only Jewish and other-minority categories alongside
+  the Polish majority; Normal difficulty only; one decision whether to
+  nominate a PPS presidential candidate, followed by the final ballot result.
+- **Critical use of notes:** Add proposed program declarations, scope of
+  cooperation with Jewish/other-minority actors, secularism, popular versus
+  party-focused press, and a bounded response to confiscation. These reuse
+  current design structures; they do not assert researched starting values,
+  actual confiscation dates or the historical uniformity of minorities.
+- **Not adopted from older notes:** Automatic assassination of every left
+  president; mechanically predetermined coups; contradictory candidate
+  outcome shortcuts; unresearched major investments from later decades.
+  Existing chapter boundaries and later explicit user decisions take priority.
+- **Economy comparison:** Repository evidence in
+  `source/scenes/post_event.scene.dry`, the fiscal/economic policy cards and
+  `docs/GERMAN_ORIGINAL_TECHNICAL_REFERENCE.md` shows a four-indicator German
+  core plus auxiliary policy counters. The Polish draft has seven principal
+  economic readings and additional fiscal/project/sector machinery. The
+  conclusion that it is more complex is a design assessment, not a historical
+  statistic. A simpler supporting model is recommended but not yet selected.
+- **Status / related files:** Documentation-only revision of both Polish
+  guides and companion design notices; no gameplay or dependency changes.
+- **Historical boundary / rights:** Notes are design input, not independent
+  historical proof. Concrete events and profiles remain
+  `TBD — historical research required`. Paraphrase and links only; no media.
+
+### Source entry PL-CONTENT-1922-1926-2026-09
+
+- **Category / access:** User-approved content expansion; historical support
+  checked during the 9 September 2026 documentation work. This entry separates
+  source evidence from the proposed choices in technical-reference version 0.3.
+- **Design authorization:** The user explicitly requested named coalitions and
+  electoral alliances, historical cabinets and alternative premiers, three
+  speakers, constitutional variants, concessions to Piłsudski, fiscal and land
+  policies, Grabski toleration, minority/education choices, TUR and four concrete
+  crises. Wawel/Royal Castle restoration belongs to Education by user decision.
+  Earlier Polish decisions in `PLAN.md`, `MECHANICS_MAP.md`, `STATE_VARIABLES.md`
+  and `TRANSITION_MATRIX.md` were reconciled with later chapter constraints;
+  superseded fixed outcomes and later-decade content were not reinstated.
+
+| Historical support | Evidence used | Limit on interpretation |
+|---|---|---|
+| Speaker election | Jan Kocznur, [Eugeniusz Śmiarowski, Palestra 1967, pp. 122–127](https://bazhum.muzhp.pl/media/texts/palestra/1967-tom-11-numer-3111/palestra-r1967-t11-n3111-s122-127.pdf) | Supports the Śmiarowski–Rataj contest. No exact historical tally is imposed; Daszyński's victory is an alternative |
+| Cabinet progression and PPS in Skrzyński's government | Existing `PL-1922-1926-CABINETS`, including [Przegląd Sejmowy 6(131)/2015](https://orka.sejm.gov.pl/przeglad.nsf/0/D519E888835B02D1C1257F460042BC5B/%24File/ps131.pdf) | Moraczewski and Ziemięcki belong to the historical cabinet context. Combining public works/communications into one game portfolio is a simplification |
+| Wealth taxation | [Act of 11 August 1923, Dz.U. 1923 item 746](https://eli.gov.pl/api/acts/DU/1923/746/text.html) | Confirms the instrument; the game's six-month duration and B yields are proposed balance, not statutory numbers |
+| Consolidation of land | [Act of 31 July 1923, Dz.U. 1923 item 718](https://eli.gov.pl/api/acts/DU/1923/718/text.html) | Supports a distinct scalenie/komasacja procedure. It is not interchangeable with parcelation or automatically consensual in every dispute |
+| School law | [Act of 31 July 1924, official record](https://isap.sejm.gov.pl/isap.nsf/DocDetails.xsp?id=wdu19240790766) | Used for the dated school-policy context; detailed territorial and language rules need further research. The guide's alternatives are not a transcription of the act |
+| Kraków and the 1923 settlement | [Ilustrowany Kuryer Codzienny, 9 November 1923, no. 280](https://jbc.bj.uj.edu.pl/Content/550939/NDIGORP026264.pdf); contemporary indexed report of the agreement | Supports the presence of economic demands and issues of extraordinary proceedings and railway workers. Full scene attribution, local sequence and casualties still require corroboration; newspaper reporting is not a final judicial finding |
+| Niewiadomski cult and services | [Contemporary report, 31 May 1923, no. 122, p. 4](https://jbc.bj.uj.edu.pl/Content/1000040/NDIGCZAS102892_1923_122.pdf), covering the Brejski–Wysiński dispute | Contains both an accusation of public glorification and the priest's denial of its alleged political character. Supports a disputed political issue, not the claim that every service glorified the murder or that PPS actually disrupted this event |
+| Żyrardów controversy by 1924 | [Republika, 26 April 1924, no. 114, p. 9](https://bc.wbp.lodz.pl/Content/26841/Republika1924_IpolroczeNr114.pdf), article on the affair and parliamentary argument | Supports an early-chapter scandal and disputed responsibility. Does not establish a final conviction, a precise universally agreed transaction date or the outcome of later proceedings |
+| TUR's educational function | TUR's own [Cele, zadania i rozwój 1923–1929](https://dlibra.umcs.lublin.pl/Content/43094/B89816.pdf), especially pp. 2–3 | Reports founding in January 1923, reading rooms, libraries, self-education and specialist courses. Later cumulative reach is not imported as the 1923 starting strength |
+| Wawel restoration | Wawel museum, [Cegiełki wawelskie](https://wawel.krakow.pl/cegielki-wawelskie) | Documents interwar fundraising and restoration, including the chapter's period. It does not establish the game's price, rewards or exclusive ministerial competence |
+| Warsaw Royal Castle restoration | Royal Castle museum, [Zamek Królewski w latach 1914–1939](https://www.zamek-krolewski.pl/strona/historia/608-zamek-krolewski-w-latach-1914-1939) | Supports interwar restoration; avoid conflating it with post-1945 reconstruction or assuming all later presidential adaptations already existed in 1922 |
+
+- **Existing evidence retained:** `PL-1924-FISCAL-CURRENCY`,
+  `PL-1925-LAND-REFORM`, `PL-1922-LEGAL-PROCEDURES`,
+  `PRESIDENCY-1922-SEQUENCE` and `PPS-MAY-1926-ROLE` support the surrounding
+  chronology and institutions. The three packages offered to Piłsudski are
+  proposed alternatives, not a claim that those exact offers occurred.
+- **Gameplay simplification / alternate history:** Coalition labels define
+  negotiated participants; early Centrolew, alternative premiers, constructive
+  no confidence, expanded presidential arbitration and an early independent
+  inspectorate are explicitly proposed variants. Relations, costs, success
+  thresholds, militancy effects and sector reactions are P, not historical
+  statistics. The user approved including these subjects; the numerical and
+  legal implementation details still require review and calibration.
+- **Unresolved:** Detailed cabinet preference profiles, particular services
+  and street incidents, scope of administrative powers, historical fiscal
+  quantities and evidence for alternative prosecutions remain
+  `TBD — historical research required`. Original press is used critically,
+  without adopting its partisan allegations as fact.
+- **Files / status:** Both Polish guides and companion design registers;
+  documentation only. No source, generated output, media or dependencies changed.
+- **Rights:** Links and limited paraphrase; no media imported.
+
 ## Register index
 
 Add one row whenever an entry above is assigned a stable Source ID.
@@ -976,4 +2265,185 @@ Add one row whenever an entry above is assigned a stable Source ID.
 | --- | --- | --- | --- | --- |
 | SEJM-1922-ELECTION-DESIGN | Elections / user-approved design | November date, 444 MPs, calibrated heuristic, ChZJN and small lists | Implemented bounded slice; future chronology unresolved | November 1922 election slice |
 | PRESIDENCY-1922-SEQUENCE | Constitution / presidential elections | March-Constitution office and fixed December 1922 succession | Implemented bounded slice; later presidency/Senate/cabinets unresolved | December 1922 presidential succession |
+| PPS-CHAPTER1-DESIGN-2026-09 | User-approved design | First-chapter direction and early AS after militia preparation | Documented; implementation pending | Current design direction, 8 September 2026 |
+| PPS-CHAPTER1-NOTION-NOTES | User working notes | Design preferences and historical research leads | Critical synthesis; verification required | First-chapter masterplan |
+| PL-1924-FISCAL-CURRENCY | Economy / legislation | Fiscal and monetary reform, distinct financing constraints | Researched design input | First-chapter economy |
+| PL-1925-LAND-REFORM | Agrarian policy / legislation | 28 December 1925 land-reform act | Researched design input | First-chapter economy and chronology |
+| PPS-MAY-1926-ROLE | PPS / political conflict | Party support and railway organization in the May Coup | Researched design input | Coup and organization model |
+| PL-1922-1926-CABINETS | Cabinet chronology | Cabinet sequence and distinct resignation/caretaker periods | Researched design input | Government and event model |
+| PL-TECHNICAL-DRAFT-2026-09 | User-approved design | Draft numerical specification and early legal election endpoint | Documented; implementation pending | Technical-reference decisions, 9 September 2026 |
+| PL-1922-LEGAL-PROCEDURES | Constitution / electoral law | Typed ballots, legal calendar and distinction from proposed rules | Researched design input | Parliamentary procedures and chapter boundary |
+| PL-DESIGN-SIMPLIFICATION-2026-09 | User design / critical notes review | Two minority categories, Normal only, final presidential result; program/press proposals and economy comparison | Documentation only; economy choice pending | Latest simplifications |
+| PL-CONTENT-1922-1926-2026-09 | Approved content / historical support | Named political configurations, policy variants, TUR, concrete crises and Education heritage decisions | Documentation only; numerical proposals and historical gaps distinguished | Concrete political catalog, 9 September 2026 |
+| PL-M08-COUP-PROFILE-2026-09-24 | User-approved design | Coup profile coup_f_v1: rounds, three offers, significant-participation F9, prolonged-conflict ending, counterfactual concessions, synthetic forces v2 | Documented; historical forces and mediation TBD; implementation pending | M08 resolved in documentation, 24 September 2026 |
+| PL-M09-LIVING-CONDITIONS-2026-09-25 | User-approved design | Monthly living-conditions support flow: class index from real wages and unemployment, government responsibility 1/0.5/0, half-strength reward, share-based recipients | Documented; historical voter sensitivity TBD; implementation pending | M09 resolved in documentation, 25 September 2026 |
+| PL-M10-AUTHORITY-DEMOCRACY-2026-09-25 | User-approved design | Sejm authority from one 12-month institutional log; slow democracy drift; democracy-dependent army readiness and a small coup-pressure term | Documented; historical link TBD; implementation pending | M10 resolved in documentation, 25 September 2026 |
+| PL-M11-THREAT-PERSUASION-2026-09-25 | User-approved design | Real bargaining threat (carry out or back down at −5 credibility), −3 relation for a forced concession, persuasion keeps relations | Documented; implementation pending | M11 resolved in documentation, 25 September 2026 |
+| PL-M12-STRIKE-SETTLEMENT-2026-09-25 | User-approved design | Union consent reads the cost of continuing (fund shortfall or fatigue); strike-negotiation fragility reads cabinet support and disputes instead of Sejm authority | Documented; implementation pending | M12 resolved in documentation, 25 September 2026 |
+| PL-M13-COMMUNIST-DISCIPLINE-2026-09-25 | User-approved design | KPP discipline in a joint strike from relation and goal fit; PPS internal acceptance acts only on PPS, raised by the unity-card compromise | Documented; historical KPP goals TBD; implementation pending | M13 resolved in documentation, 25 September 2026 |
+| PL-M15-AS-BENEFIT-2026-09-26 | User-approved design | Militia one action at a time; AS +0.15 compliance and up to three concurrent actions before a coup; one coup task | Documented; historical AS role TBD; implementation pending | M15 resolved in documentation, 26 September 2026 |
+| PL-M16-SPLIT-RECALCULATION-2026-09-26 | User-approved design | One E3 split recalculation (40% of the faction base, as the 25% purge), proportional voter loss, remaining dissent −20, frozen faction MP assignment | Documented; historical splits TBD; implementation pending | M16 resolved in documentation, 26 September 2026 |
+| PL-M06-OFFICE-ELECTIONS-2026-09-26 | User-approved design | Office-election final decided by more votes, guaranteed attendance and two candidacies, safety net with a retry next month | Documented; detailed 1922 procedure TBD; implementation pending | M06 resolved in documentation, 26 September 2026 |
+| PL-M17-LATE-ADVISORS-2026-09-26 | User-approved design | Próchnik and Drobner as continuation advisors; KPP contact from relation 10, then ordinary conversations | Documented; implementation pending | M17 resolved in documentation, 26 September 2026 |
+| PL-M18-MEMBERSHIP-APPARATUS-2026-09-26 | User-approved design | Member index 0–150 growing toward a target from worker support and union reach; apparatus income 0.15 R per level | Documented; historical membership TBD; implementation pending | M18 resolved in documentation, 26 September 2026 |
+| PL-M19-DOCUMENT-STRUCTURE-2026-09-26 | User-approved design | One current specification (technical chapters 1–22) separated from the decision archive; current-state summaries in registers; card catalogue as the next step | Documented; card catalogue pending | M19 resolved in documentation, 26 September 2026 |
+| PL-CARD-CATALOGUE-2026-09-26 | User-approved design | Card catalogue for coding (one table per card, 69 entries, 45 open questions); current line of stance cards not selectable; test faction profile v1 | Documented; review pending | Card catalogue drafted, 26 September 2026 |
+| PL-CARD-CATALOGUE-BATCH1-2026-09-26 | User-approved design | Answers to the nine stance-card questions: polemic addressees, Piłsudski line limits concessions, arbitration needs the strong-presidency line, autonomy-axis test ideals, Bund not a party | Documented | Catalogue batch 1 reviewed, 26 September 2026 |
+| PL-CARD-CATALOGUE-BATCH2-2026-09-26 | User-approved design | Answers to the ten party-resources questions: no paid no-effect options, Centre reacts to militarisation, Media card scope, `union.align`, organisational work in any class, no cap on cooperatives | Documented | Catalogue batch 2 reviewed, 26 September 2026 |
+| PL-CARD-CATALOGUE-BATCH3-2026-09-26 | User-approved design | Answers to the eight relations, programme, unity and adviser questions: postponement, two compromise variants, unity access, separate adviser card, KPP contact and agenda, security assessment in the agenda | Documented | Catalogue batch 3 reviewed, 26 September 2026 |
+| PL-CARD-CATALOGUE-BATCH4-2026-09-26 | User-approved design | Answers to the parliamentary-card questions: keep support only in a crisis, no paid army-card options, budget options via 11.9, no cooldown for cards 3–5, limited oversight reform, the Left and the early Centrolew, formation impasse | Documented | Catalogue batch 4 reviewed, 26 September 2026 |
+| PL-CARD-CATALOGUE-BATCH5-2026-09-26 | User-approved design | Answers to the government-card questions: no paid no-effect options, agreement and exemption at 0 B, expand and focus benefits, tax collection and broad-group, money-issue options in the finance card, investment-fund variants, enterprise rescue, investigation cost and addressee, secular school without faction reaction | Documented | Catalogue batch 5 reviewed, 26 September 2026 |
+| PL-CARD-CATALOGUE-BATCH6-2026-09-26 | User-approved design | Answers to the event questions: E3 and E6 IDs, a mandatory answer to the parliament criticism, the 1926 austerity row, the only contradiction with a lasting line | Documented | Catalogue batch 6 reviewed; all batches reviewed, 26 September 2026 |
+| PL-CARD-CATALOGUE-QUEUE-2026-09-26 | User-approved design | Seven event-queue categories approved in 4.5; historical research for five TBD items deferred | Documented | Approved, 26 September 2026 |
+| PL-IMPLEMENTATION-PLAN-2026-09-26 | User-approved design | Implementation plan for chapter 1: rules module, English-only text for now, new game for incompatible saves | Documented | Approved, 26 September 2026 |
+| PL-STAGE0-FOUNDATION-2026-09-26 | Implementation | Stage 0: rules module, `Q.S` state, save check, stricter engine tests; gameplay unchanged | Implemented | Implemented, 26 September 2026 |
+| PL-STAGE1-TURN-2026-09-26 | Implementation | Stage 1: monthly clock, adviser transactions, card closing and discard, recorded draws, event queue | Implemented | Implemented, 26 September 2026 |
+| PL-STAGE2-INSTITUTIONS-2026-09-26 | Implementation | Stage 2: election records, Senate, ballots, Marshal and President counted from club votes, legal calendar, chapter end and report | Implemented | Implemented, 26 September 2026 |
+| PL-STAGE3-GOVERNMENT-2026-09-26 | Implementation | Stage 3: relations in `S.actors`, agreements with tension and ultimatums, one-offer cabinet formation, nine portfolios, the Parliament deck with support and list-agreement cards | Implemented | Implemented, 26 September 2026 |
+| PL-STAGE4-ECONOMY-2026-09-27 | Implementation | Stage 4: monthly economy `economy_simple_v1` in `S.economy`, dated scenario pressures, living-conditions flow and outflow, projects and laws with a simplified Senate, cabinet packages and review, bill D, three constitutional reforms, thirteen government cards, agenda, Budget card and three economic events; German economy switched off | Implemented | Implemented, 27 September 2026 |
+| PL-STAGE5-PARTY-2026-09-27 | Implementation | Stage 5: 54 electorate cells with the opening result unchanged, the party ledger, organisations, Milicja and AS, three union branches, eight stance cards and the economic programme, the Media card, the KPP agenda and the Bund, faction cases and the card E3 with the M16 split, the unity card with the purge, the adviser card and the adviser actions of 10.4.3; inherited party cards and faction crises switched off, leak 10 closed | Implemented | Implemented, 27 September 2026 |
+| PL-STAGE6-UNIONS-2026-09-27 | Implementation | Stage 6: unions and strikes in `S.strikes` (the steps of a dispute, a strike month, one recorded round of talks, the union's consent, settlements and their execution, E6), the 1923 wage case and Kraków, the authorities by cabinet profile, the communists and the Milicja in a strike, the Sejm response, synthetic plants in `S.enterprises`, collective agreements, derogations, the rescue, public control and representation, Grabski's protections and the six-month toleration; the German strike events switched off | Implemented | Implemented, 27 September 2026 |
+| PL-STAGE7-DEMOCRACY-COUP-2026-09-27 | Implementation | Stage 7: democracy, violence, cases and restrictions with a legal profile, grievance and coup pressure in `S.politics`; synthetic army groupings, the force assessment, police, army control and the agreement with Piłsudski in `S.security`; the coup engine `coup_f_v1` in `S.coup` with the M08 profile; the 1922 cabinet crisis, Piłsudski's criticism, the assassination of Narutowicz with the response and the Niewiadomski ceremony; the fuller chapter report; 26 German scenes guarded | Implemented | Implemented, 27 September 2026 |
 | TBD | TBD | TBD | TBD | TBD |
+
+### Source entry PL-PARTY-CARDS-REVIEW-2026-09-10
+
+- **Category / access:** User-approved game-design review, 10 September 2026.
+  Re-read the rendered Notion design page on that date:
+  [notes for the polish version](https://app.notion.com/p/notes-for-the-polish-version-3d282c5228d580f09615f7c82ac854a2?source=copy_link).
+- **Authorization:** The user's numbered review approves strategic party
+  cards and requests their integration into documentation. Direction effects
+  must depend on political circumstances; the current cabinet is removed as
+  a principal-opponent option; Piłsudski influence and response to attacks on
+  parliament are separate. Maximum selections: three economic priorities and
+  two different organizational investments. Forms of power: parliamentarism,
+  stronger presidency and workers' councils.
+- **Minorities from the notes:** Four Slavic-autonomy positions — a federal
+  model with Ukrainian/Belarusian constituent units, regional autonomy,
+  cultural/educational/organizational freedoms without autonomy, polonisation.
+  Jewish cooperation has broad, labour-only and no-cooperation variants.
+  These are design alternatives, not claims that PPS historically adopted
+  each position. The prior two-category population simplification remains.
+- **Other approved subjects:** Contextual strike strategy, especially Kraków;
+  evolutionary Milicja recruitment/militarization before AS; media and dues;
+  faction expulsion with loss of influence/support and reduced dissent;
+  full/limited/no cooperation with communists in a strike; an event on PPS's
+  attitude to the USSR. The final Milicja sentence is interpreted as retaining
+  recruitment and militarization while dropping independent command upgrades.
+- **Superseded proposals:** A separate religion card, the former militia
+  command gate, the old one-option economic/organization menus and three
+  independent communist-trial cards. Their earlier source/design entries
+  document history of the draft rather than current implementation approval.
+- **Domestic and chapter boundary:** The USSR card concerns Polish party
+  politics; no diplomacy, Moscow funding or additional International system.
+  Early democratic organization survives in the chapter report for possible
+  later opposition to Sanacja; that continuation is not simulated here.
+- **Historical boundary:** Notion is user-authored design input, not independent
+  proof of an event, quote, faction position or political response. Historical
+  content for named Piłsudski statements, specific Soviet debates, faction
+  expulsions and territorial implementation remains
+  `TBD — historical research required`. Federal/council-state implementation
+  needs a later bounded design; declarations do not create it immediately.
+- **Proposal boundary:** All numeric modifiers, selection transaction schemas,
+  500-member AS threshold, dues/member index, expulsion percentages and
+  detailed USSR answers are P. No claim of validated campaign balance.
+- **Related files / status:** `docs/POLISH_DESCRIPTIVE_GUIDE.md`,
+  `docs/POLISH_TECHNICAL_REFERENCE.md` 0.4, `PLAN.md`, `MECHANICS_MAP.md`,
+  `STATE_VARIABLES.md`, `TRANSITION_MATRIX.md`. Documentation only; no source,
+  generated game, asset, dependency, commit or deployment changes. No media
+  copied from Notion; its content is paraphrased as design provenance.
+
+## PL-PARLIAMENT-CARDS-REVIEW-2026-09-10
+
+- **Type:** user-approved design, comparison with repository source; not new historical evidence.
+- **Decision:** user reviewed the parliamentary proposal, merged formation and participation (including Grabski), removed negotiation priority, restricted available coalitions and budget access, moved Piłsudski concessions to government, merged support/withdrawal/no-confidence handling, restricted the early-election card to real cabinet falls, and simplified the final two events. The subsequent instruction “ok, zaimplementuj w dokumentacji” approves recording that revision.
+- **Approved scope:** 12 families in descriptive section 3 and technical 17.10; unavailable choices greyed out with reasons; explicit negotiated minority support; real crisis needed for broad/stabilization offers; exactly two Żyrardów choices and three parliamentary strike responses. Earlier party-card choices remain intact.
+- **Repository evidence (K):** `source/scenes/government_affairs/dealing_with_toleration.scene.dry` offers ending toleration, urging a policy change, improving relations, a conditional coalition and staying the course. `source/scenes/government_affairs/coalition_affairs.scene.dry` handles coalition conflict and government withdrawal. These support the simpler political menu requested by the user, not direct copying of every branch or number.
+- **Boundary:** those German scenes schedule elections at `time + 3` on the relevant withdrawal branches. The Polish design does not import that automatic result; actual dismissal and the legal dissolution procedure remain distinct. Legal evidence stays in `PL-1922-LEGAL-PROCEDURES`. A cabinet-fall gate is a game availability decision, not a claim that every historical legal dissolution required a prior fall.
+- **Historical content retained:** cabinet chronology and actor availability use `PL-1922-1926-CABINETS`; Kraków and Żyrardów retain the sources and uncertainty in `PL-CONTENT-1922-1926-2026-09`. The simplified Żyrardów card does not assert guilt from publication or invent a later court outcome. No new historical event or citation is introduced by the revision.
+- **Proposed, not approved balance (P):** field names, crisis thresholds/readiness bonus, action costs/cooldowns and conditional numerical effects. Exact political willingness remains calibration, not a historical statistic.
+- **Outputs:** `docs/POLISH_DESCRIPTIVE_GUIDE.md`, `docs/POLISH_TECHNICAL_REFERENCE.md` 0.5 and companion planning/state/transition registers. Documentation only; no Dendry or runtime changes.
+
+## PL-GOVERNMENT-CARDS-REVIEW-2026-09-10
+
+- **Type:** user-approved gameplay design; not a new claim about historical institutions.
+- **Decision:** user accepted the 16 basic government families and two crisis responses, with the correction: “mozemy usunac ministerstwo Roboty Publiczne / Komunikacja, i dodac te karte ministerstwu pracy”. The current design has nine ministries. Earlier approvals of ten are superseded for future gameplay, not rewritten as historical or implemented facts.
+- **Approved content:** labour protection/welfare, finance/stabilization, public/private/cooperative investment, industrial intervention, public works under Labour, land and agricultural modernization, school access/secularity and minority languages, police/justice/army, Piłsudski concessions, heritage, state strike response and actual business noncooperation. Exact variants: technical 17.11, descriptive section 3.
+- **Simplification:** employment works, transport infrastructure and housing from the works card are assigned to Labour. This does not claim that the historical Ministry of Labour held every corresponding power, or that named historical Labour and Public Works ministers held one shared post. Historical cabinet evidence remains in `PL-1922-1926-CABINETS`.
+- **Existing design/evidence:** constitutional authority, land, currency, schools, strikes, and heritage retain the sources and research boundaries in `PL-1922-LEGAL-PROCEDURES`, `PL-1924-FISCAL-CURRENCY` and `PL-CONTENT-1922-1926-2026-09`. No new historical date, institution, statistic, court result or primary citation is asserted by adding card variants.
+- **Baseline inspiration:** government capabilities and simple policy choices were compared with `docs/GERMAN_ORIGINAL_DESCRIPTIVE_GUIDE.md` and repository scenes such as `source/scenes/government_affairs/police.scene.dry` and `source/scenes/government_affairs/judiciary.scene.dry`. The Polish proposal does not import their historical institutional assumptions, automatic evidence or effects.
+- **Still proposed:** costs, durations, coefficients, detailed institutional profiles and migration behavior. Police/justice/appointment profiles need historical research before implementation; an absent profile is not zero-cost authority. Approval does not settle the previously deferred economy-complexity choice.
+- **Outputs:** descriptive guide, technical reference 0.6, PLAN, MECHANICS_MAP, STATE_VARIABLES and TRANSITION_MATRIX. Source/runtime and their ten-key inventory remain unchanged; future migration must preserve offices, agreements and project accounting explicitly.
+
+## PL-ADVISORS-REVIEW-2026-09-10
+
+- **Type:** user design instruction and repository-code audit; no new historical claims.
+- **User instruction:** analyze German advisors; make appointment affect faction strength and dissent; turn the supplied A1–A13 actions into direct, non-repetitive mechanics; one or two actions per person; review and implement in documentation. KKP is interpreted as KPRP/KPP.
+- **Observed German surfaces:** menus of 24 retained German advisor files in `source/scenes/advisors/`: aufhauser, baade, braun, breitscheid, hilferding, hirschfeld, juchacz, leber, leipart, levi, mierendorff, muller, pfulf, radbruch, rosenfeld, schumacher, sender, severing, seydewitz, siemsen, stampfer, wels, wissell, woytinsky. Menu presence is distinguished from reachability; some files contain later Polish edits (notably Schumacher's self-defence redirect).
+- **Direct code evidence:** Wels Party Discipline changes dissent immediately; Müller changes coalition dissent/relations and defends toleration; Hilferding changes multiple faction strengths and dissent (five-month exception); Stampfer uses media redirects and faction editorials; Leipart/Seydewitz target classes; Wissell/Radbruch/Hilferding/Woytinsky gate policy shortcuts by office/program state; Levi/Rosenfeld trade KPD relations and cooperation preparation against faction dissent. Full repository-relative paths and representative effects are in technical 10.4.1.
+- **Appointment evidence boundary:** current `source/scenes/party_affairs/shuffle_leadership.scene.dry` is Polish and records first-appointment +5 raw strength and voluntary-dismissal +5 dissent. Its appointed_once guards prevent repeats. The German-original appointment assessment comes from the existing audit `docs/GERMAN_ORIGINAL_TECHNICAL_REFERENCE.md`, “Advisors form a second route-access system”: effects were not uniform for every German appointee. The new −5 dissent on first appointment is a Polish proposal, not falsely attributed to that source.
+- **Synthesis:** retain 22 actions across A1–A13; Jaworowski external Piłsudski support, Moraczewski works, Ziemięcki toleration and municipalities, Malinowski faction organization. Fold repetitive general cooperation/support into existing cabinet/relation actions. Próchnik specializes in Republican Left, while Drobner owns KPP negotiation and concrete joint action. This follows the user's permission for one or two actions rather than treating every listed alternative as compulsory duplication.
+- **Scope:** no new fourth PPS faction, no separate pro_democracy balance, no extra municipal population. Sanacja and SL refer only to suitable later scenario actors. Current dates and chapter endpoint remain unchanged; January 1928 entrants may only act if play has not ended, Dubois remains outside this chapter. Roster faction labels, historical availability and institutional details retain their existing research status.
+- **Proposals:** all exact coefficients, temporary modifiers, the synthetic municipal split, policy-stage access rules and appointment reduction are test parameters. Joint demonstrations/protective actions use real participation and completion, not a historical assertion that a specific meeting or alliance occurred. Worker-representation policy needs a sourced legal profile before implementation.
+- **Outputs:** Polish descriptive guide section 5, technical reference 0.7 section 10.4 and linked state/plan/mechanics/transition registers. Source, German documentation and generated output are unchanged.
+
+## PL-EVENTS-B-REVIEW-2026-09-10 — user review of political/social scenes
+
+- **Source/type:** user's numbered B1–B21 corrections in this task, applied to the earlier conversational proposal; design authorization, not historical evidence.
+- **Scope:** simplified B1/B2/B4/B5; B8+B10 and B11+B12 merged; B9 retained; B13 moved to ordinary party actions; B14/B16 gated; B7/B18 use cabinet formation, B19 government support; standalone B3/B6/B15/B17/B20/B21 withdrawn. Technical 0.8 section 17.13 is the full mapping.
+- **New proposed choice:** limited economic strike without a cabinet-resignation demand, completing the requested three choices of B8+B10.
+- **Democracy Mass:** user's alternate gameplay response to the Niewiadomski cult, requiring an actual consenting host and organization. This entry supplies no evidence that PPS historically organized such a service. Names, place and historical portrayal remain TBD — historical research required.
+- **Numerical proposals:** B2 dissent −2, B5 event cost/outcome, B14 organizational/contact gates and B13 timing are balance proposals, not historical statistics.
+- **Preservation:** withdrawn cards do not delete earlier historical sources or imply that confiscations, Żyrardów, land/language disputes or business resistance did not occur. Existing source-code audits remain unchanged. Actual coup mechanics and chapter endpoints remain in scope; only the extra B21 preparatory menu is removed.
+- **Files:** both Polish guides and PLAN, MECHANICS_MAP, STATE_VARIABLES, TRANSITION_MATRIX; no source or generated-output edits.
+
+## PL-C-SCENES-REVIEW-2026-09-11 — simplify negotiation and procedure scenes
+
+- Source: user's C1–C9 review in this task; design authorization, not historical evidence.
+- C1 merges all cabinet choices on one screen. C3 retains alliance selection only. C2/C4/C8/C9 are removed as scenes; C5/C6/C7 retained.
+- Technical 0.9 section 17.14 maps every decision. One-off offer evaluation, fixed electoral-alliance profiles and automatic procedural handling are gameplay simplifications. They do not establish historical conduct of PPS or replace legal voting rules.
+- Removing early-election and vacancy screens preserves already lawful election dates, the next-election endpoint and correct acting presidency. It adds no replacement dissolution lottery or extra policy menu.
+- Both Polish guides and four project registers updated; source, runtime and earlier historical evidence unchanged.
+
+## PL-ECONOMY-SIMPLIFICATION-2026-09-14 — approved simpler economic design
+
+- Source/type: the user's explicit acceptance of the M01 recommendations in this conversation; design authorization, not a historical source.
+- Approved: seven economic readings; one abstract state budget; one decision for small reforms and preparation/implementation for large ones; one capital-pressure/reaction process. Remove the detailed public treasury ledger and manual staff allocation. Preserve ministries, legal authority, coalition consent, financing choices and separate party resources.
+- Integration: reference 0.11 updates project costs, D benefits, independent state execution, coalition delivery, advisor actions, TUR, save/report and verification cases. New coefficients, fiscal thresholds, borrowing periods and stabilization variants are P, not measured historical facts or final balance.
+- Existing sources for taxes, currency, land, education and organizations remain valid evidence in their own scope. This entry adds no historical claims, institutions or statistics.
+- Documentation only. No gameplay, generated output, assets, dependency or license changes.
+
+## PL-NORMAL-SCENARIO-2026-09-20 — approved scenario and selective Notion synthesis
+
+- **Authorization:** user accepted the reviewed Normal scenario and asked to implement it in documentation. Approved scope: pressure calendar, short autonomous cabinet rules, conditional crises, continuation without a coup and three comparative runs (politically passive PPS, external support, formal cabinet membership). This approves the design and draft test parameters, not production calibration or gameplay implementation.
+- **Current contract:** technical reference 0.12, section 17.16, `normal_chapter1_v1`; descriptive guide sections 12, 15 and 17. The same Normal difficulty and existing scene manifest remain. Source and generated runtime are unchanged.
+- **Reading performed for the proposal:** the public Notion library and all eight requested chapters were read through the browser in this task. These are the user's research notes, not independent verification of every historical assertion. The design notes were also read in full; their older suggestions do not override subsequent accepted scene removals or simplifications.
+
+| User material | Use in the approved scenario |
+|---|---|
+| [Library index](https://app.notion.com/p/2-RP-Biblioteka-3be82c5228d580869335ed6ecedbeae5) | Source collection and distinction between chapter material and later developments |
+| [Społeczeństwo](https://app.notion.com/p/Spo-ecze-stwo-3c882c5228d5801392ffe8a87e8c100f?pvs=25) | Workers, rural constraints and intersecting identities; do not import 1931 proportions as exact 1922 initial values |
+| [Gospodarka](https://app.notion.com/p/Gospodarka-3c882c5228d580e5b3c0e4654004b2fe?pvs=25) | Inflation/stabilization, distinct credit crisis, rural pressures and recovery; not a separate international trade simulation |
+| [Polityka — ogólny zarys](https://app.notion.com/p/Polityka-og-lny-zarys-3c882c5228d580169e01f6b7a9ad94dc?pvs=25) | Conflicting social demands, autonomous peasant/Christian-democratic partners and minority representation |
+| [Organizacje PPS](https://app.notion.com/p/Organizacje-PPS-3c882c5228d580a5a5edd28650177249?pvs=25) | Unions, press, TUR, self-defence and cooperatives as preparation; later membership totals are not starting strength |
+| [Historia polityczna II RP 1919–1922](https://app.notion.com/p/Historia-polityczna-II-RP-1919-1922-3c882c5228d5807e9673eeb48519eead?pvs=25) | Fragmented parliament and 1922 cabinet/Naczelnik conflict; no replay of pre-1922 wars |
+| [Historia PPS 1919–1922](https://app.notion.com/p/Historia-PPS-1919-1922-3c882c5228d580cb9f7affe716bad1bd?pvs=25) | Parliamentary-socialist inheritance, internal disagreements and communist competition; factions remain a game simplification |
+| [Historia polityczna II RP 1922–1926](https://app.notion.com/p/Historia-polityczna-II-RP-1922-1926-3c882c5228d58059929bdaab81b03792?pvs=25) | Cabinet offers, political violence, land compromise and unresolved army conflict |
+| [Historia PPS 1922–1926](https://app.notion.com/p/Historia-PPS-1922-1926-3c882c5228d58070b527d290aaae993a?pvs=25) | Controlled mobilization, tolerance of stabilization, labour-rights conflict and costs of cabinet participation |
+| [Notes for the Polish version](https://app.notion.com/p/notes-for-the-polish-version-3d282c5228d580f09615f7c82ac854a2) | PPS weaker than SPD, influence outside ministries, party organization, concrete military concessions and mixable strategies |
+
+- **Historical corroboration used in the proposal:** existing `PL-1924-FISCAL-CURRENCY`, `PL-1922-1926-CABINETS`, `PL-CONTENT-1922-1926-2026-09` and `PPS-MAY-1926-ROLE` remain the principal evidence entries. NBP's [Bankoteka special issue on Grabski](https://nbp.pl/wp-content/uploads/2022/11/bankoteka-specjalne-2.pdf) distinguishes stabilization from the 1925 crisis; the research turn obtained indexed excerpts, while direct PDF retrieval was blocked. Do not describe that attempt as a new full PDF reading. No numerical shock in the game is sourced from these publications.
+- **Chronology correction:** the PPS chapter in Notion conflates its April departure with Skrzyński's resignation. The scenario distinguishes these events. The cabinet's 5 May 1926 resignation is corroborated by the [Krakowski Rocznik Archiwalny, vol. XVIII](https://kra.ank.gov.pl/wp-content/uploads/2021/06/Krakowski-Rocznik-Archiwalny-18_2012.pdf), indexed passage, and contemporary [7 May 1926 newspaper reporting](https://jbc.bj.uj.edu.pl/Content/1001034/NDIGCZAS102892_1926_104.pdf). This revision did not edit the user's Notion notes.
+- **Gameplay simplifications / alternate history:** economic pressure plateaus and magnitudes; one cabinet initiative per month outside PPS portfolios; wage-loss duration and +8/+10 addressed grievance impulses; draft minimum coup opportunity date of 1 March 1926; conditional survival of historical cabinets, early stabilization and continuation without a coup. The date floor represents the approved spring-1926 scenario boundary, not a claim about a historical order to start the coup. Concrete threat, ceremony, repression and military-unit attribution still require their existing sourced profiles: **TBD — historical research required** where absent.
+- **Selection and exclusions:** no automatic assassination of every left-wing president; no compulsory replacement of a viable cabinet; no arbitrary rule prohibiting the same premier's return; no coup success bonus to production; no revival of withdrawn Żyrardów/religion/event menus; no new minority categories, sports/child-organization systems or 1930s economic projects. Historical names/organizations are not made available solely to fill a no-coup calendar.
+- **Verification boundary:** documentation review connects N-A/N-B/N-C to existing costs, authority, agreements and chapter endpoints. Full campaigns were not simulated. M02 remains partially open for calibration; office impasse, operational force profiles and other existing audit findings retain their own status.
+
+## PL-M02-REVISION-2026-09-21 — approved corrections after four controlled runs
+
+- **Type:** user-approved game design, diagnostic evidence and German mechanical inspiration; not a new historical source.
+- **Authorization:** the user asked to implement the reviewed proposals pragmatically. Scope: documentation of crisis coalition entry, concrete cabinet disputes, protest access, settlement consequences, pressure accounting and transport before coup resolution.
+- **Canonical target:** technical reference 0.13, scenario metadata version 2; both Polish guides and the planning/state/transition registers. Dendry gameplay remains unchanged.
+- **German evidence:** `source/scenes/events/unemployment_insurance_1.scene.dry` offers welfare cuts, coalition exit or a relationship-gated compromise; `source/scenes/government_affairs/dealing_with_toleration.scene.dry` uses existing support/pressure/withdrawal choices. These are game mechanisms. Their immediate German succession and election effects are not Polish constitutional rules and are not copied.
+- **New gameplay parameters P:** first six-month broad-cabinet review during an active credit crisis; proposed full-benefit cost 2→1 B; full-benefit compromise using existing financing and draft relationship gates ZLN 25 / PSChD 45; one tax-funded Grabski credit revision; wage recovery up to 3; first actual settlement benefit -4 grievance to recipients; military resolution no earlier than phase 2. Political preferences and this timing are simplifications, not claims about historical decisions on those exact terms.
+- **Evidence:** `analysis/m02-four-runs/REPORT.md` and `analysis/m02-revision-13/REPORT.md`. The old four-run report corrects an overinterpretation of the rail test: its remote reserve drew Piłsudski, so a separate explicitly fixed-loyalty comparison is needed to isolate enemy transport.
+- **Limits:** controlled mandates, actor consents, party cohesion and synthetic forces remain explicit inputs. The historical-intention fixture reaches the cabinet dispute and replacement but a December 1926 coup; historical calibration remains open. No new historical facts or external citations have been inferred from simulation output.

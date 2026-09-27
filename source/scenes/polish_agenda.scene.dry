@@ -1,0 +1,202 @@
+title: Agenda
+subtitle: Prepared reforms wait here for their launch.
+is-pinned-card: true
+card-image: img/reichstag_1.jpg
+view-if: {! return !!Q.S && PolishProjects.agendaAvailable(Q) !}
+new-page: true
+on-arrival: {!
+// The agenda of prepared reforms (technical reference 12.2, 17.11): the next step of a prepared project
+// needs no card from the hand and no renewal; it still costs this month's action (1 T) and needs its law,
+// its financing and its executor. A new programme starts only at a forecast budget of −2 B or above (11.3).
+PolishProjects.agendaView(Q);
+!}
+
+= The agenda
+
+[+ pl_agenda_lines +]
+
+[+ pl_agenda_budget +]
+
+- @launch_public_works
+- @launch_credit_instrument
+- @launch_land_program
+- @launch_agriculture_development
+- @launch_education_program
+- @launch_minority_schools
+- @launch_heritage
+- @launch_currency_reform
+- @launch_plant_rescue
+- @launch_enterprise_representation
+- @launch_army_control
+- @launch_limited_autonomy
+- @submit_democratic_guarantees
+- @submit_constructive_vonc
+- @submit_presidential_arbitration
+- @later
+
+@launch_public_works
+title: Launch the prepared public works
+view-if: {! return PolishProjects.agendaItemsFor(Q).indexOf('public_works') >= 0 !}
+choose-if: {! return PolishProjects.agendaStatus(Q, 'public_works').available !}
+unavailable-subtitle: [+ pl_agenda_public_works_why +]
+on-arrival: {!
+PolishProjects.agendaChoose(Q, 'public_works');
+!}
+go-to: result
+
+@launch_credit_instrument
+title: Launch the prepared credit instrument
+view-if: {! return PolishProjects.agendaItemsFor(Q).indexOf('credit_instrument') >= 0 !}
+choose-if: {! return PolishProjects.agendaStatus(Q, 'credit_instrument').available !}
+unavailable-subtitle: [+ pl_agenda_credit_instrument_why +]
+on-arrival: {!
+PolishProjects.agendaChoose(Q, 'credit_instrument');
+!}
+go-to: result
+
+@launch_land_program
+title: Put the land reform to the Sejm and launch it
+view-if: {! return PolishProjects.agendaItemsFor(Q).indexOf('land_program') >= 0 !}
+choose-if: {! return PolishProjects.agendaStatus(Q, 'land_program').available !}
+unavailable-subtitle: [+ pl_agenda_land_program_why +]
+on-arrival: {!
+PolishProjects.agendaChoose(Q, 'land_program');
+!}
+go-to: result
+
+@launch_agriculture_development
+title: Launch the prepared modernisation of agriculture
+view-if: {! return PolishProjects.agendaItemsFor(Q).indexOf('agriculture_development') >= 0 !}
+choose-if: {! return PolishProjects.agendaStatus(Q, 'agriculture_development').available !}
+unavailable-subtitle: [+ pl_agenda_agriculture_development_why +]
+on-arrival: {!
+PolishProjects.agendaChoose(Q, 'agriculture_development');
+!}
+go-to: result
+
+@launch_education_program
+title: Launch the prepared school programme
+view-if: {! return PolishProjects.agendaItemsFor(Q).indexOf('education_program') >= 0 !}
+choose-if: {! return PolishProjects.agendaStatus(Q, 'education_program').available !}
+unavailable-subtitle: [+ pl_agenda_education_program_why +]
+on-arrival: {!
+PolishProjects.agendaChoose(Q, 'education_program');
+!}
+go-to: result
+
+@launch_minority_schools
+title: Launch the prepared minority schools
+view-if: {! return PolishProjects.agendaItemsFor(Q).indexOf('minority_schools') >= 0 !}
+choose-if: {! return PolishProjects.agendaStatus(Q, 'minority_schools').available !}
+unavailable-subtitle: [+ pl_agenda_minority_schools_why +]
+on-arrival: {!
+PolishProjects.agendaChoose(Q, 'minority_schools');
+!}
+go-to: result
+
+@launch_heritage
+title: Launch the prepared restoration
+view-if: {! return PolishProjects.agendaItemsFor(Q).indexOf('heritage') >= 0 !}
+choose-if: {! return PolishProjects.agendaStatus(Q, 'heritage').available !}
+unavailable-subtitle: [+ pl_agenda_heritage_why +]
+on-arrival: {!
+PolishProjects.agendaChoose(Q, 'heritage');
+!}
+go-to: result
+
+@launch_currency_reform
+title: Launch the currency reform with its financing
+view-if: {! return PolishProjects.agendaItemsFor(Q).indexOf('currency_reform') >= 0 !}
+choose-if: {! return PolishProjects.agendaStatus(Q, 'currency_reform').available !}
+unavailable-subtitle: [+ pl_agenda_currency_reform_why +]
+on-arrival: {!
+PolishProjects.agendaChoose(Q, 'currency_reform');
+!}
+go-to: result
+
+@launch_plant_rescue
+title: Launch the prepared rescue of a plant
+view-if: {! return PolishProjects.agendaItemsFor(Q).indexOf('plant_rescue') >= 0 !}
+choose-if: {! return PolishProjects.agendaStatus(Q, 'plant_rescue').available !}
+unavailable-subtitle: [+ pl_agenda_plant_rescue_why +]
+on-arrival: {!
+PolishProjects.agendaChoose(Q, 'plant_rescue');
+!}
+go-to: result
+
+@launch_enterprise_representation
+title: Put co-decision in the public plant to the Sejm and launch it
+view-if: {! return PolishProjects.agendaItemsFor(Q).indexOf('enterprise_representation') >= 0 !}
+choose-if: {! return PolishProjects.agendaStatus(Q, 'enterprise_representation').available !}
+unavailable-subtitle: [+ pl_agenda_enterprise_representation_why +]
+on-arrival: {!
+PolishProjects.agendaChoose(Q, 'enterprise_representation');
+!}
+go-to: result
+
+@launch_army_control
+title: Put civilian control of the army to the Sejm and launch it
+view-if: {! return PolishProjects.agendaItemsFor(Q).indexOf('army_control') >= 0 !}
+choose-if: {! return PolishProjects.agendaStatus(Q, 'army_control').available !}
+unavailable-subtitle: [+ pl_agenda_army_control_why +]
+on-arrival: {!
+PolishProjects.agendaChoose(Q, 'army_control');
+!}
+go-to: result
+
+@launch_limited_autonomy
+title: Put the limited autonomy of one area to the Sejm and launch it
+view-if: {! return PolishProjects.agendaItemsFor(Q).indexOf('limited_autonomy') >= 0 !}
+choose-if: {! return PolishProjects.agendaStatus(Q, 'limited_autonomy').available !}
+unavailable-subtitle: [+ pl_agenda_limited_autonomy_why +]
+on-arrival: {!
+PolishProjects.agendaChoose(Q, 'limited_autonomy');
+!}
+go-to: result
+
+@submit_democratic_guarantees
+title: File the motion: democratic guarantees
+subtitle: Two thirds of the valid votes in the Sejm now, then in the Senate after 30 days.
+view-if: {! return PolishProjects.agendaItemsFor(Q).indexOf('submit_democratic_guarantees') >= 0 !}
+choose-if: {! return PolishProjects.agendaStatus(Q, 'submit_democratic_guarantees').available !}
+unavailable-subtitle: [+ pl_agenda_submit_democratic_guarantees_why +]
+on-arrival: {!
+PolishProjects.agendaChoose(Q, 'submit_democratic_guarantees');
+!}
+go-to: result
+
+@submit_constructive_vonc
+title: File the motion: constructive vote of no confidence
+subtitle: Two thirds of the valid votes in the Sejm now, then in the Senate after 30 days.
+view-if: {! return PolishProjects.agendaItemsFor(Q).indexOf('submit_constructive_vonc') >= 0 !}
+choose-if: {! return PolishProjects.agendaStatus(Q, 'submit_constructive_vonc').available !}
+unavailable-subtitle: [+ pl_agenda_submit_constructive_vonc_why +]
+on-arrival: {!
+PolishProjects.agendaChoose(Q, 'submit_constructive_vonc');
+!}
+go-to: result
+
+@submit_presidential_arbitration
+title: File the motion: presidential arbitration
+subtitle: Two thirds of the valid votes in the Sejm now, then in the Senate after 30 days.
+view-if: {! return PolishProjects.agendaItemsFor(Q).indexOf('submit_presidential_arbitration') >= 0 !}
+choose-if: {! return PolishProjects.agendaStatus(Q, 'submit_presidential_arbitration').available !}
+unavailable-subtitle: [+ pl_agenda_submit_presidential_arbitration_why +]
+on-arrival: {!
+PolishProjects.agendaChoose(Q, 'submit_presidential_arbitration');
+!}
+go-to: result
+
+@later
+title: Not now
+subtitle: The prepared reforms keep their preparation.
+go-to: main
+
+@result
+new-page: true
+
+= The agenda
+
+[+ pl_gc_result +]
+
+- @root: Continue.

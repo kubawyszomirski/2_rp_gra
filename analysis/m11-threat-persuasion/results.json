@@ -1,0 +1,261 @@
+{
+  "scope": "M11: bargaining threat versus persuasion (technical 9.8). Unit checks, archived M02 review cases, and the 144 main M02 runs on the archived robustness engine patched in memory (alone and together with M10). Not a campaign run.",
+  "rule": {
+    "backDownCredibility": -5,
+    "forcedConcessionRelation": -3
+  },
+  "hashes": {
+    "docs/POLISH_TECHNICAL_REFERENCE.md": "8aba6f238f43c61b53eecb1e52c13903a7661bf426453fe6033fc633da68aaa4",
+    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "2402955a7669c2ad1bfd208ba3e4b704ab79574304554f4b51576fcf2195b42e",
+    "docs/POLISH_MECHANICS_AUDIT.md": "070de0c9d624d01594c387dd4b43a0db3edf873a194d390266d56acf6c469fa0",
+    "analysis/m02-robustness/engine.cjs": "e0b544d65a4381ed7698f3f649fd54e41714a3a1027852a7ea455d0ad49b43cd",
+    "analysis/m02-negotiations/results.json": "b96a4ea65193a54b21b36d2b7829691c49eb993ac82450b55626dcd1bc814882"
+  },
+  "review": {
+    "C|bargain": {
+      "accepted": false,
+      "relationsBefore": {
+        "piast": 53,
+        "npr": 54,
+        "pschd": 46,
+        "zln": 25
+      },
+      "relationsAfter": {
+        "piast": 53,
+        "npr": 54,
+        "pschd": 46,
+        "zln": 25
+      }
+    },
+    "C+kontakt|bargain": {
+      "accepted": true,
+      "relationsBefore": {
+        "piast": 53,
+        "npr": 54,
+        "pschd": 46,
+        "zln": 29
+      },
+      "relationsAfter": {
+        "piast": 50,
+        "npr": 51,
+        "pschd": 43,
+        "zln": 26
+      }
+    },
+    "C|persuade": {
+      "accepted": false,
+      "relationsBefore": {
+        "piast": 53,
+        "npr": 54,
+        "pschd": 46,
+        "zln": 25
+      },
+      "relationsAfter": {
+        "piast": 53,
+        "npr": 54,
+        "pschd": 46,
+        "zln": 25
+      }
+    },
+    "C+3kontakty|persuade": {
+      "accepted": true,
+      "relationsBefore": {
+        "piast": 53,
+        "npr": 54,
+        "pschd": 46,
+        "zln": 37
+      },
+      "relationsAfter": {
+        "piast": 53,
+        "npr": 54,
+        "pschd": 46,
+        "zln": 37
+      }
+    },
+    "H|bargain": {
+      "accepted": false,
+      "relationsBefore": {
+        "piast": 53,
+        "npr": 54,
+        "pschd": 46,
+        "zln": 5
+      },
+      "relationsAfter": {
+        "piast": 53,
+        "npr": 54,
+        "pschd": 46,
+        "zln": 5
+      }
+    }
+  },
+  "scenario": {
+    "reviews": {
+      "total": 48,
+      "accepted": 36,
+      "refused": 12
+    },
+    "m11VersusArchive": {
+      "changedEndpoint": 0,
+      "changedCabinets": 0,
+      "lost": 0,
+      "gained": 0,
+      "delays": {
+        "0": 96
+      }
+    },
+    "m10m11VersusM10": {
+      "changedEndpoint": 0,
+      "changedCabinets": 0,
+      "lost": 0,
+      "gained": 0,
+      "delays": {
+        "0": 96
+      }
+    },
+    "withdrawalShift": {
+      "-1": 12
+    }
+  },
+  "seed01": {
+    "base|A": {
+      "archived": "1926-03",
+      "m11": "1926-03",
+      "m10": "1926-04",
+      "m10m11": "1926-04",
+      "reviews": [],
+      "withdrawal": [
+        null,
+        null
+      ]
+    },
+    "base|B": {
+      "archived": "none",
+      "m11": "none",
+      "m10": "none",
+      "m10m11": "none",
+      "reviews": [],
+      "withdrawal": [
+        null,
+        null
+      ]
+    },
+    "base|C": {
+      "archived": "none",
+      "m11": "none",
+      "m10": "none",
+      "m10m11": "none",
+      "reviews": [
+        true
+      ],
+      "withdrawal": [
+        null,
+        null
+      ]
+    },
+    "base|H": {
+      "archived": "1926-04",
+      "m11": "1926-04",
+      "m10": "1926-06",
+      "m10m11": "1926-06",
+      "reviews": [
+        false
+      ],
+      "withdrawal": [
+        "1926-02",
+        "1926-01"
+      ]
+    },
+    "favorable|A": {
+      "archived": "1927-03",
+      "m11": "1927-03",
+      "m10": "1927-04",
+      "m10m11": "1927-04",
+      "reviews": [],
+      "withdrawal": [
+        null,
+        null
+      ]
+    },
+    "favorable|B": {
+      "archived": "none",
+      "m11": "none",
+      "m10": "none",
+      "m10m11": "none",
+      "reviews": [],
+      "withdrawal": [
+        null,
+        null
+      ]
+    },
+    "favorable|C": {
+      "archived": "none",
+      "m11": "none",
+      "m10": "none",
+      "m10m11": "none",
+      "reviews": [
+        true
+      ],
+      "withdrawal": [
+        null,
+        null
+      ]
+    },
+    "favorable|H": {
+      "archived": "1927-01",
+      "m11": "1927-01",
+      "m10": "1927-03",
+      "m10m11": "1927-03",
+      "reviews": [
+        true
+      ],
+      "withdrawal": [
+        null,
+        null
+      ]
+    },
+    "harder|A": {
+      "archived": "1927-04",
+      "m11": "1927-04",
+      "m10": "1927-06",
+      "m10m11": "1927-06",
+      "reviews": [],
+      "withdrawal": [
+        null,
+        null
+      ]
+    },
+    "harder|B": {
+      "archived": "1927-05",
+      "m11": "1927-05",
+      "m10": "1927-08",
+      "m10m11": "1927-08",
+      "reviews": [],
+      "withdrawal": [
+        null,
+        null
+      ]
+    },
+    "harder|C": {
+      "archived": "1927-05",
+      "m11": "1927-05",
+      "m10": "1927-08",
+      "m10m11": "1927-08",
+      "reviews": [],
+      "withdrawal": [
+        null,
+        null
+      ]
+    },
+    "harder|H": {
+      "archived": "1927-05",
+      "m11": "1927-05",
+      "m10": "1927-08",
+      "m10m11": "1927-08",
+      "reviews": [],
+      "withdrawal": [
+        null,
+        null
+      ]
+    }
+  }
+}

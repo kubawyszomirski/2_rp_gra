@@ -5,6 +5,17 @@ const test = require('node:test');
 const vm = require('node:vm');
 
 const gamePath = path.join(__dirname, '..', 'out', 'game.json');
+// The page loads the rules module before core.js; scene code run here needs the same global.
+const PolishRules = require(path.join(__dirname, '..', 'out', 'html', 'polish_rules.js'));
+const PolishInstitutions = require(path.join(__dirname, '..', 'out', 'html', 'polish_institutions.js'));
+const PolishEconomy = require(path.join(__dirname, '..', 'out', 'html', 'polish_economy.js'));
+const PolishGovernment = require(path.join(__dirname, '..', 'out', 'html', 'polish_government.js'));
+const PolishProjects = require(path.join(__dirname, '..', 'out', 'html', 'polish_projects.js'));
+const PolishElectorate = require(path.join(__dirname, '..', 'out', 'html', 'polish_electorate.js'));
+const PolishParty = require(path.join(__dirname, '..', 'out', 'html', 'polish_party.js'));
+const PolishUnions = require(path.join(__dirname, '..', 'out', 'html', 'polish_unions.js'));
+const PolishPolitics = require(path.join(__dirname, '..', 'out', 'html', 'polish_politics.js'));
+const PolishSecurity = require(path.join(__dirname, '..', 'out', 'html', 'polish_security.js'));
 const game = JSON.parse(fs.readFileSync(gamePath, 'utf8'));
 const htmlShell = fs.readFileSync(path.join(__dirname, '..', 'out', 'html', 'index.html'), 'utf8');
 const gameCss = fs.readFileSync(path.join(__dirname, '..', 'out', 'html', 'game.css'), 'utf8');
@@ -53,6 +64,18 @@ function runCode(code, Q, extraContext = {}) {
     console: { log() {} },
     Date,
     Image: function Image() {},
+    PolishRules,
+    PolishInstitutions,
+    PolishEconomy,
+    PolishGovernment,
+    PolishProjects,
+    PolishElectorate,
+    PolishParty,
+    PolishUnions,
+    PolishPolitics,
+    PolishSecurity,
+    // The engine's generator state as read by root.start; fixed here.
+    random: { getState: () => [1922, 0, 0, 0, 0] },
     ...extraContext,
   };
   vm.runInNewContext(`(function () {\n${code}\n}).call(this)`, context);
@@ -128,42 +151,19 @@ test('new games use the approved semantic PPS faction model', () => {
   assert.ok(!Object.hasOwn(Q.legacy_faction_map, 'labor'));
 });
 
-test('legacy faction effects transfer once and active PPS strengths normalize', () => {
+test('stage 5: German faction fields no longer feed the PPS factions; a write to a Polish mirror is taken over once', () => {
   const Q = newGameState();
   Q.center_strength += 4;
-  Q.reformist_strength += 3;
-  Q.left_strength += 5;
-  Q.neorevisionist_strength += 6;
-  Q.labor_strength += 9;
-  Q.center_dissent += 2;
-  Q.reformist_dissent += 3;
   Q.left_dissent += 4;
-  Q.neorevisionist_dissent += 5;
-  Q.labor_dissent += 20;
-
   runPostEvent(Q);
-
-  closeTo(Q.centrum_strength, 100 * 57 / 118);
-  closeTo(Q.lewica_strength, 100 * 20 / 118);
-  closeTo(Q.pilsudczycy_strength, 100 * 41 / 118);
-  closeTo(Q.centrum_strength + Q.lewica_strength + Q.pilsudczycy_strength, 100);
-  assert.equal(Q.centrum_dissent, 5);
-  assert.equal(Q.lewica_dissent, 24);
-  assert.equal(Q.pilsudczycy_dissent, 10);
-  const expectedDissent = 0.01 * (
-    Q.centrum_strength * 5 + Q.lewica_strength * 24 + Q.pilsudczycy_strength * 10
-  ) / 100;
-  closeTo(Q.dissent, expectedDissent);
-
-  const activeSnapshot = Q.factions.map((faction) => [
-    Q[`${faction}_strength`],
-    Q[`${faction}_dissent`],
-  ]);
+  closeTo(Q.centrum_strength, 50);
+  assert.equal(Q.lewica_dissent, 20, 'the German bridge is off in the Polish game (10.1)');
+  Q.lewica_dissent += 6;
   runPostEvent(Q);
-  for (let index = 0; index < Q.factions.length; index += 1) {
-    closeTo(Q[`${Q.factions[index]}_strength`], activeSnapshot[index][0]);
-    closeTo(Q[`${Q.factions[index]}_dissent`], activeSnapshot[index][1]);
-  }
+  assert.equal(Q.S.actors.pps.factions.lewica.dissent, 26, 'the owner takes over the mirror write');
+  runPostEvent(Q);
+  assert.equal(Q.S.actors.pps.factions.lewica.dissent, 26, 'once');
+  closeTo(Q.dissent, (50 * 0 + 15 * 26 + 35 * 5) / 10000);
 });
 
 test('the affiliated Labor power centre is excluded from PPS dissent', () => {
@@ -182,11 +182,14 @@ test('the affiliated Labor power centre is excluded from PPS dissent', () => {
 test('every opening support row totals 100 with the approved Other allocation', () => {
   const Q = newGameState();
 
+  // Stage 5 (decision 1A): the approved opening rows are the input the cells are built from; the class rows
+  // are then mirrors of the cells and still total 100.
   for (const populationGroup of expectedClasses) {
-    const actual = expectedParties.map((party) => Q[`${populationGroup}_${party}`]);
-    assert.deepEqual(actual, openingRows[populationGroup], populationGroup);
-    closeTo(actual.reduce((sum, value) => sum + value, 0), 100);
-    assert.equal(Q[`${populationGroup}_other`], populationGroup === 'rural' ? 12 : 8);
+    const input = Array.from(Q.S.society.seed_rows[populationGroup]); // an array of the VM context
+    assert.deepEqual(input, openingRows[populationGroup], populationGroup);
+    closeTo(input.reduce((sum, value) => sum + value, 0), 100);
+    assert.equal(input[expectedParties.indexOf('other')], populationGroup === 'rural' ? 12 : 8);
+    closeTo(expectedParties.reduce((sum, party) => sum + Q[`${populationGroup}_${party}`], 0), 100);
   }
 });
 
@@ -209,26 +212,29 @@ test('opening national projection is deterministic under retained overlapping mi
     closeTo(Q[`${party}_normalized`] * 100, percentage, 0.001);
     assert.ok(Number.isFinite(Q[`${party}_votes_dec`]));
   }
-  assert.equal(Q.workers_pps_display, 39);
-  assert.equal(Q.rural_other_display, 12);
-  assert.equal(Q.national_minorities_minorities_bloc_display, 70);
+  // Stage 5: the class rows are mirrors of the cells and include the minorities of each class; the national
+  // result above is unchanged (decision 1A).
+  assert.equal(Q.workers_pps_display, 33);
+  assert.equal(Q.rural_other_display, 11);
+  assert.equal(Q.national_minorities_minorities_bloc_display, 68);
 });
 
 test('legacy card changes transfer only through approved direct mappings', () => {
   const Q = newGameState();
+  const before = {workers_pps: Q.workers_pps, rural_zln: Q.rural_zln, old_middle_pschd: Q.old_middle_pschd};
   Q.workers_spd += 4;
-  Q.unemployed_kpd += 3;
   Q.old_middle_dvp += 2;
   Q.rural_dnvp += 5;
-  Q.catholics_spd += 6;
+  Q.workers_nsdap += 7;
 
   runElection(Q);
 
-  closeTo(Q.workers_pps, openingRows.workers[1] + 4);
-  closeTo(Q.unemployed_kpp, openingRows.unemployed[0] + 3);
-  closeTo(Q.old_middle_pschd, openingRows.old_middle[5] + 2);
-  closeTo(Q.rural_zln, openingRows.rural[6] + 5);
-  closeTo(Q.national_minorities_pps, openingRows.national_minorities[1] + 6);
+  // Stage 5: the cells of the row take the change over, every cell moving by the same pp before its shares
+  // are normalized again (as the old normalized rows did); unmapped German parties change nothing.
+  closeTo(Q.workers_pps, (before.workers_pps + 4) * 100 / 104, 1e-9);
+  closeTo(Q.old_middle_pschd, (before.old_middle_pschd + 2) * 100 / 102, 1e-9);
+  closeTo(Q.rural_zln, (before.rural_zln + 5) * 100 / 105, 1e-9);
+  closeTo(expectedParties.reduce((sum, party) => sum + Q[`workers_${party}`], 0), 100);
   assert.ok(!Q.parties.includes('nsdap'));
 });
 
@@ -264,19 +270,23 @@ test('campaigning covers every approved population group and respects dissent', 
   }
 });
 
-test('Polish relationship actions update the implemented coalition partners', () => {
-  const left = newGameState();
-  left.resources = 2;
-  runScene('inter_party_relationships.left_partners', left);
-  closeTo(left.psl_wyzwolenie_relation, 65 + 4 * (1 - left.dissent));
-  closeTo(left.minorities_bloc_relation, 50 + 4 * (1 - left.dissent));
+test('a talk raises the relation with one partner by 4, costs the month and no resources (card 6.1)', () => {
+  const Q = newGameState();
+  Q.resources = 2;
+  runScene('inter_party_relationships.psl_wyzwolenie', Q);
+  assert.equal(Q.S.actors.relations.psl_wyzwolenie, 69);
+  assert.equal(Q.psl_wyzwolenie_relation, 69, 'the inherited field mirrors the relation');
+  assert.equal(Q.resources, 2, 'no party resources');
+  assert.equal(Q.month_actions, 1, 'the main action of the month');
+  assert.equal(Q.S.turn.pending.action_id, 'party.outreach');
+  assert.equal(Q.S.cooldowns['outreach.psl_wyzwolenie'], Q.time + 3);
+  assert.equal(Q.psl_piast_relation, 45, 'one partner per talk');
 
-  const center = newGameState();
-  center.resources = 2;
-  runScene('inter_party_relationships.center_left_partners', center);
-  closeTo(center.psl_piast_relation, 45 + 3 * (1 - center.dissent));
-  closeTo(center.npr_relation, 50 + 3 * (1 - center.dissent));
-  closeTo(center.pschd_relation, 30 + 2 * (1 - center.dissent));
+  // The minority bloc field is the seat-weighted average of its two representations (5.5).
+  const M = newGameState();
+  runScene('inter_party_relationships.jewish_rep', M);
+  assert.equal(M.S.actors.relations.jewish_rep, 54);
+  closeTo(M.minorities_bloc_relation, (6 * 54 + 11 * 50) / 17);
 });
 
 test('first-election processing records all parties and computes only the implemented coalition shell', () => {
@@ -300,17 +310,22 @@ test('first-election processing records all parties and computes only the implem
 });
 
 test('minority-supported government is external toleration, not cabinet membership', () => {
-  const Q = newGameState();
-  Q.sejm_pending = {phase: 'results'};
-  Q.pps_wyzwolenie_seats = 150;
-  Q.sejm_majority_required = 223;
-  runScene('election_1928.polish_minority_toleration', Q);
+  const Q = runElection(newGameState());
+  Q.sejm_pending = {id: 'fixture', year: 1922, month: 11, first: true, phase: 'pending'};
+  runScene('sejm_election_result', Q);
+  runScene('polish_opening_state', Q);
+  // One cabinet offer (8.8): PPS and PSL Wyzwolenie, supported from outside by both minority representations.
+  PolishGovernment.setDraft(Q, 'configuration_id', 'left_minority');
+  PolishGovernment.setDraft(Q, 'seek_minority_support', true);
+  const result = PolishGovernment.submitFormation(Q);
+  runScene('polish_opening_state', Q);
 
+  assert.equal(result.appointed.configuration_id, 'left_minority');
   assert.equal(Q.pps_in_government, 1);
   assert.equal(Q.psl_wyzwolenie_in_government, 1);
   assert.equal(Q.minorities_bloc_in_government, 0);
   assert.equal(Q.minorities_toleration, 1);
-  assert.equal(Q.in_minority_government, 1);
+  assert.equal(Q.in_minority_government, Q.pps_seats + Q.psl_wyzwolenie_seats < Q.sejm_majority_required ? 1 : 0);
 });
 
 test('the structural class trend still reaches its exact approved endpoints', () => {
@@ -322,8 +337,10 @@ test('the structural class trend still reaches its exact approved endpoints', ()
   closeTo(february1922.rural, 53 - 3 / 215);
 
   const december1939 = newGameState();
+  // The month clock is time (technical reference 4.1); year and month follow from it.
   december1939.year = 1939;
   december1939.month = 11;
+  december1939.time = PolishRules.timeOf(1939, 11);
   december1939.month_actions = 1;
   runPostEvent(december1939);
   assert.equal(december1939.month, 12);
@@ -416,6 +433,7 @@ test('new games use the approved three-person starting team and full Polish advi
     'zaremba', 'czapinski', 'prochnik', 'dubois', 'drobner',
     'jaworowski', 'moraczewski', 'ziemiecki', 'malinowski',
   ];
+  const continuation = ['prochnik', 'dubois', 'drobner'];
 
   assert.equal(Q.n_advisors, 3);
   assert.equal(Q.daszynski_advisor, 1);
@@ -426,7 +444,9 @@ test('new games use the approved three-person starting team and full Polish advi
   }
   for (const adviser of polishAdvisers) {
     assert.ok(game.scenes[adviser], adviser);
-    assert.ok(game.scenes[adviser].options.length >= 2, `${adviser} has a usable action and return option`);
+    // Z — 0.29 (M17): Próchnik, Drobner and Dubois are the cast of the continuation, with no action in chapter 1.
+    if (continuation.includes(adviser)) assert.equal(game.scenes[adviser].options.length, 1, `${adviser} only returns`);
+    else assert.ok(game.scenes[adviser].options.length >= 2, `${adviser} has a usable action and return option`);
     assert.equal(Q[`${adviser}_left_adviser_pool`], 0, adviser);
   }
   for (const legacy of ['wels', 'muller', 'hilferding']) {
@@ -434,46 +454,50 @@ test('new games use the approved three-person starting team and full Polish advi
   }
 });
 
-test('the six approved starting-adviser actions use semantic PPS state and one shared cooldown', () => {
+test('the six approved starting-adviser actions follow 10.4.3 and write only the Polish state', () => {
   const compromise = newGameState();
   runScene('daszynski.parliamentary_compromise', compromise);
-  assert.equal(compromise.psl_piast_relation, 48);
-  assert.equal(compromise.npr_relation, 53);
-  assert.equal(compromise.pschd_relation, 32);
-  assert.equal(compromise.advisor_action_timer, 6);
+  assert.deepEqual([compromise.S.actors.relations.psl_piast, compromise.S.actors.relations.npr, compromise.S.actors.relations.pschd], [50, 55, 34]);
+  assert.equal(compromise.psl_piast_relation, 50, 'the mirror follows the owner');
 
-  const coalition = newGameState();
-  coalition.spd_in_government = 1;
-  coalition.coalition_dissent = 2;
+  // Broker a Coalition (10.4.3): in a coalition, −10 tension on each cabinet agreement, not below 0.
+  const coalition = runElection(newGameState());
+  coalition.sejm_pending = {id: 'fixture', year: 1922, month: 11, first: true, phase: 'pending'};
+  runScene('sejm_election_result', coalition);
+  PolishGovernment.setDraft(coalition, 'configuration_id', 'left_minority');
+  PolishGovernment.submitFormation(coalition);
+  const agreements = coalition.S.cabinet.agreement_ids.map(id => coalition.S.agreements[id]).filter(a => a.kind === 'cabinet');
+  assert.ok(agreements.length > 0);
+  agreements[0].tension = 25;
   runScene('daszynski.broker_coalition', coalition);
-  assert.equal(coalition.coalition_dissent, 1);
+  assert.equal(agreements[0].tension, 15);
+  assert.equal(coalition.pl_broker_mode, 'tension');
 
+  // Pużak (21.1): dissents 8/20/40 become 0/8/28.
   const discipline = newGameState();
-  discipline.centrum_dissent = 10;
-  discipline.lewica_dissent = 20;
-  discipline.pilsudczycy_dissent = 30;
+  const f = discipline.S.actors.pps.factions;
+  f.centrum.dissent = 8; f.lewica.dissent = 20; f.pilsudczycy.dissent = 40;
   runScene('puzak.party_discipline', discipline);
-  assert.equal(discipline.centrum_dissent, 5);
-  assert.equal(discipline.lewica_dissent, 15);
-  assert.equal(discipline.pilsudczycy_dissent, 25);
+  assert.deepEqual([f.centrum.dissent, f.lewica.dissent, f.pilsudczycy.dissent], [0, 8, 28]);
 
   const organization = newGameState();
-  organization.party_organizations_timer = 4;
   runScene('puzak.mobilize_organization', organization);
-  assert.equal(organization.party_organizations_timer, 0);
-  assert.equal(organization.last_advisor_action, 1);
+  const workers = organization.S.society.cells.filter(c => c.class_id === 'workers');
+  assert.ok(workers.every(c => Math.abs(c.base_reach_pps - 31) < 1e-9), '+10 × 1.10 in a workers’ party');
+  assert.equal(organization.S.advisors.effects.at(-1).kind, 'workers_campaign_multiplier');
+  assert.equal(organization.S.party_orgs.cash, 1, '1 R');
 
   const partyLine = newGameState();
   runScene('perl.define_party_line', partyLine);
-  assert.equal(partyLine.centrum_strength, 55);
-  assert.equal(partyLine.centrum_dissent, -5);
+  const line = partyLine.S.actors.pps.factions;
+  closeTo(line.centrum.strength, 100 * 58 / 104);
+  closeTo(line.pilsudczycy.strength, 100 * 31 / 104);
+  assert.equal(line.centrum.dissent, 0);
 
   const press = newGameState();
-  press.media_timer = 4;
   runScene('perl.direct_party_press', press);
-  assert.equal(press.media_timer, 0);
-  assert.equal(press.last_advisor_action, 1);
-  assert.equal(press.advisor_action_timer, 6);
+  assert.equal(press.S.party_orgs.press.credibility, 65);
+  assert.equal(press.S.advisors.effects.at(-1).kind, 'press_campaign_multiplier');
 });
 
 test('leadership appointments strengthen a faction once and dismissals add dissent', () => {
@@ -517,6 +541,7 @@ test('dated adviser arrivals and deterministic departures follow the approved sc
   const perl = newGameState();
   perl.year = 1927;
   perl.month = 3;
+  perl.time = PolishRules.timeOf(1927, 3);
   perl.month_actions = 1;
   runPostEvent(perl);
   assert.equal(perl.month, 4);
@@ -530,6 +555,7 @@ test('dated adviser arrivals and deterministic departures follow the approved sc
   daszynski.n_advisors = 2;
   daszynski.year = 1930;
   daszynski.month = 12;
+  daszynski.time = PolishRules.timeOf(1930, 12);
   daszynski.month_actions = 1;
   runPostEvent(daszynski);
   assert.equal(daszynski.year, 1931);
@@ -571,11 +597,12 @@ test('named split departures affect only advisers whose pool-entry date has arri
 
   const centrum = newGameState();
   centrum.centrum_dissent = 60;
+  const cb = {workers_pps: centrum.workers_pps, new_middle_pps: centrum.new_middle_pps};
   runScene('pps_centrum_crisis', centrum);
   assert.equal(centrum.centrum_resigned, 1);
   assert.equal(centrum.centrum_strength, 15);
-  assert.equal(centrum.workers_pps, openingRows.workers[1] - 5);
-  assert.equal(centrum.new_middle_pps, openingRows.new_middle[1] - 3);
+  closeTo(centrum.workers_pps, cb.workers_pps - 5);
+  closeTo(centrum.new_middle_pps, cb.new_middle_pps - 3);
   assert.equal(centrum.daszynski_advisor, 0);
   assert.equal(centrum.perl_advisor, 0);
   assert.equal(centrum.puzak_advisor, 1);
@@ -592,13 +619,15 @@ test('named split departures affect only advisers whose pool-entry date has arri
   pilsudczycy.moraczewski_advisor = 1;
   pilsudczycy.ziemiecki_advisor = 1;
   pilsudczycy.n_advisors = 3;
+  const pb = {workers_pps: pilsudczycy.workers_pps, new_middle_pps: pilsudczycy.new_middle_pps, workers_other: pilsudczycy.workers_other,
+    new_middle_other: pilsudczycy.new_middle_other};
   runScene('pps_pilsudczycy_split', pilsudczycy);
   assert.equal(pilsudczycy.pilsudczycy_split, 1);
   assert.equal(pilsudczycy.pilsudczycy_strength, 17.5);
-  assert.equal(pilsudczycy.workers_pps, openingRows.workers[1] - 3);
-  assert.equal(pilsudczycy.new_middle_pps, openingRows.new_middle[1] - 2);
-  assert.equal(pilsudczycy.workers_other, openingRows.workers[8] + 3);
-  assert.equal(pilsudczycy.new_middle_other, openingRows.new_middle[8] + 2);
+  closeTo(pilsudczycy.workers_pps, pb.workers_pps - 3);
+  closeTo(pilsudczycy.new_middle_pps, pb.new_middle_pps - 2);
+  closeTo(pilsudczycy.workers_other, pb.workers_other + 3);
+  closeTo(pilsudczycy.new_middle_other, pb.new_middle_other + 2);
   assert.equal(pilsudczycy.jaworowski_advisor, 0);
   assert.equal(pilsudczycy.moraczewski_advisor, 0);
   assert.equal(pilsudczycy.ziemiecki_advisor, 1);
@@ -649,22 +678,14 @@ test('new games start with the approved Milicja PPS state', () => {
   assert.equal(Q.rb_militancy, Q.pps_militia_militancy);
 });
 
-test('Dubois provides access to self-defence choices without free manpower or militancy', () => {
-  const selfDefence = newGameState();
-  selfDefence.pps_militia_timer = 4;
-  const openingStrength = selfDefence.pps_militia_strength;
-  const openingMilitancy = selfDefence.pps_militia_militancy;
-  runScene('dubois.workers_self_defence', selfDefence);
-  assert.equal(selfDefence.pps_militia_timer, 0);
-  assert.equal(selfDefence.pps_militia_strength, openingStrength);
-  assert.equal(selfDefence.pps_militia_militancy, openingMilitancy);
-  assert.equal(selfDefence.last_advisor_action, 1);
-  assert.equal(selfDefence.advisor_action_timer, 6);
-
-  const youth = newGameState();
-  runScene('dubois.organize_youth', youth);
-  assert.equal(youth.pps_militia_strength, openingStrength);
-  assert.equal(youth.pps_militia_militancy, openingMilitancy);
+test('Dubois, Próchnik and Drobner belong to the continuation: no action in chapter 1 and no pro_republic write (leak 10)', () => {
+  for (const adviser of ['dubois', 'prochnik', 'drobner']) {
+    assert.deepEqual(game.scenes[adviser].options.map(o => o.id), ['@root'], adviser);
+  }
+  for (const adviser of ['niedzialkowski', 'prochnik']) {
+    const source = fs.readFileSync(path.join(__dirname, '..', 'source', 'scenes', 'advisors', `${adviser}.scene.dry`), 'utf8');
+    assert.ok(!/pro_republic/.test(source), `${adviser} writes no pro_republic`);
+  }
 });
 
 test('reorganization creates Akcja Socjalistyczna without creating manpower', () => {
@@ -717,18 +738,18 @@ test('Milicja investment and rally defence use semantic militia state', () => {
   closeTo(Q.pps_militia_success, 35);
 });
 
-test('legacy Reichsbanner deltas transfer once into the PPS militia', () => {
+test('stage 5: legacy Reichsbanner deltas no longer move Milicja PPS; its owner is S.militia', () => {
   const Q = newGameState();
   Q.rb_strength += 25;
   Q.rb_militancy += 0.03;
 
   runPostEvent(Q);
-  assert.equal(Q.pps_militia_strength, 225);
-  closeTo(Q.pps_militia_militancy, 0.13);
-
+  assert.equal(Q.pps_militia_strength, 200);
+  closeTo(Q.pps_militia_militancy, 0.10);
+  assert.equal(Q.rb_strength, 200, 'the mirror is written back');
+  Q.pps_militia_strength += 50;
   runPostEvent(Q);
-  assert.equal(Q.pps_militia_strength, 225);
-  closeTo(Q.pps_militia_militancy, 0.13);
+  assert.equal(Q.S.militia.strength, 250, 'a write to the Polish mirror is taken over once');
 });
 
 test('inherited crisis calculations read the semantic PPS militia power', () => {

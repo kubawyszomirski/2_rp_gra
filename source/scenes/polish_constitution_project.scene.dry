@@ -1,0 +1,64 @@
+title: Constitutional Reform
+subtitle: Three separate projects, each with its own act.
+new-page: true
+is-card: true
+tags: parliament_affairs
+card-image: img/reichstag_3.jpg
+view-if: {! return !!Q.S && PolishProjects.constitutionCardAvailable(Q) !}
+on-arrival: {!
+// Card parliament.constitution_project (technical reference 7.6, 17.10; card catalogue 7.4). Preparing a
+// reform takes two main actions: this card prepares the text (1 T); filing the motion waits in the
+// agenda. The amendment needs two thirds of the valid votes in the Sejm (quorum 222) and in the Senate
+// (quorum 56), and the signatures of at least 111 MPs.
+for (var reform of ['democratic_guarantees', 'constructive_vonc', 'presidential_arbitration']) {
+    Q['pl_con_' + reform + '_why'] = PolishProjects.constitutionStatus(Q, reform).reason;
+}
+!}
+
+= Constitutional reform
+
+Each project is a separate alternative with its own act. After its promulgation and one month of implementation it costs 1 B once and changes the rules it names; no declaration alone changes the constitution.
+
+- @democratic_guarantees
+- @constructive_vonc
+- @presidential_arbitration
+- @easy_discard
+
+@democratic_guarantees
+title: Democratic guarantees
+subtitle: Protection of associations, equal rights and self-government; relations with Wyzwolenie and both minority representations +4; ZLN is against.
+choose-if: {! return PolishProjects.constitutionStatus(Q, 'democratic_guarantees').available !}
+unavailable-subtitle: [+ pl_con_democratic_guarantees_why +]
+on-arrival: {!
+PolishProjects.constitutionChoose(Q, 'democratic_guarantees', 'card');
+!}
+go-to: result
+
+@constructive_vonc
+title: Constructive vote of no confidence
+subtitle: Dismissing a cabinet needs 223 votes for an agreed successor at the same time. It protects cabinets PPS does not want too.
+choose-if: {! return PolishProjects.constitutionStatus(Q, 'constructive_vonc').available !}
+unavailable-subtitle: [+ pl_con_constructive_vonc_why +]
+on-arrival: {!
+PolishProjects.constitutionChoose(Q, 'constructive_vonc', 'card');
+!}
+go-to: result
+
+@presidential_arbitration
+title: Presidential arbitration
+subtitle: After two failed formations in 3 months the President may dissolve the Sejm; Lewica +8 dissent.
+choose-if: {! return PolishProjects.constitutionStatus(Q, 'presidential_arbitration').available !}
+unavailable-subtitle: [+ pl_con_presidential_arbitration_why +]
+on-arrival: {!
+PolishProjects.constitutionChoose(Q, 'presidential_arbitration', 'card');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= Constitutional reform
+
+The text is prepared. Filing the motion — the second main action — waits in the agenda.
+
+- @root: Continue.

@@ -1,0 +1,53 @@
+title: Parliamentary Control of the Army
+subtitle: At a prepared project or a concrete military case: full civilian oversight or a limited reform.
+new-page: true
+is-card: true
+tags: parliament_affairs
+card-image: img/reichstag_3.jpg
+view-if: {! return !!Q.S && !!Q.polish_security_rules && PolishProjects.armyOversightAvailable(Q) !}
+on-arrival: {!
+// Card parliament.army_oversight (technical reference 16.3, 17.10, 17.12.4; card catalogue 7.5): 1 T; it prepares
+// the one project of civilian control, which the agenda then puts to the Sejm; the cabinet executes it. A law the
+// Sejm refused is not filed again unchanged, and the same scope never gives a second +0.05.
+PolishProjects.armyOversightView(Q);
+!}
+
+= Parliamentary control of the army
+
+[+ pl_ao_line +]
+
+There are no paid "explanations of the minister" and no postponement; closing the card is free.
+
+- @civilian_oversight
+- @limited_reform
+- @easy_discard
+- @cancel_advisor_action
+
+@civilian_oversight
+title: Fuller civilian oversight
+subtitle: In the offer army +2; after the law 1 B for three months; then the group +0.05 of legal loyalty.
+choose-if: {! return PolishProjects.armyOversightStatus(Q, 'civilian_oversight').available !}
+unavailable-subtitle: [+ pl_ao_civilian_oversight_why +]
+on-arrival: {!
+PolishProjects.armyOversightChoose(Q, 'civilian_oversight');
+!}
+go-to: result
+
+@limited_reform
+title: A limited reform
+subtitle: In the offer army 0, which Piast, NPR and the Christian Democrats accept more easily; 1 B for two months; then +0.025.
+choose-if: {! return PolishProjects.armyOversightStatus(Q, 'limited_reform').available !}
+unavailable-subtitle: [+ pl_ao_limited_reform_why +]
+on-arrival: {!
+PolishProjects.armyOversightChoose(Q, 'limited_reform');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= Parliamentary control of the army
+
+[+ pl_gc_result +]
+
+- @root: Continue.

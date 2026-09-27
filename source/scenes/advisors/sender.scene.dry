@@ -2,7 +2,7 @@ title: Toni Sender
 is-pinned-card: true
 tags: advisor, left
 card-image: img/portraits/SenderToni.jpg
-view-if: sender_advisor = 1
+view-if: not polish_security_rules and (sender_advisor = 1)
 new-page: true 
 
 = Toni Sender

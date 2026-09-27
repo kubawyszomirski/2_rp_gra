@@ -1,0 +1,176 @@
+title: Change PPS Advisers
+subtitle: The final team of three advisers, in one decision.
+new-page: true
+is-card: true
+tags: party_affairs
+card-image: img/map_3.jpg
+view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.advisersAvailable(Q) !}
+on-arrival: {!
+// Card party.advisers (technical reference 10.4.2; card catalogue 6.5; Z — 0.35: a separate card): 1 T,
+// cd 6 M; it does not reset the adviser cooldown. Próchnik, Drobner and Dubois belong to the continuation.
+Q.pl_adv_draft = PolishParty.activeAdvisers(Q).join(',');
+PolishParty.advisersView(Q);
+!}
+
+= Change PPS advisers
+
+The present team: [+ pl_adv_draft_text +]. A first appointment strengthens the person's faction (+5 strength, −5 dissent); a dismissal adds +5 dissent; a return gives nothing new.
+
+- @compose
+- @easy_discard
+
+@compose
+title: Compose the team
+go-to: menu
+
+@menu
+new-page: true
+on-arrival: {!
+PolishParty.advisersView(Q);
+!}
+
+= The new team
+
+Chosen: [+ pl_adv_draft_text +]. Nothing is spent until you confirm.
+
+- @toggle_daszynski
+- @toggle_puzak
+- @toggle_perl
+- @toggle_niedzialkowski
+- @toggle_arciszewski
+- @toggle_zaremba
+- @toggle_czapinski
+- @toggle_jaworowski
+- @toggle_moraczewski
+- @toggle_ziemiecki
+- @toggle_malinowski
+- @confirm
+- @polish_party_advisers: Start again.
+
+@toggle_daszynski
+title: Ignacy Daszyński (Centrum)
+subtitle: [? if pl_adv_daszynski_in = 1 : In the team — remove from it. ?][? if pl_adv_daszynski_in = 0 : Add to the team. ?]
+choose-if: pl_adv_daszynski_in = 1 or pl_adv_daszynski_can_add = 1
+unavailable-subtitle: [+ pl_adv_daszynski_why +]
+on-arrival: {!
+PolishParty.advisersToggle(Q, 'daszynski');
+!}
+go-to: menu
+
+@toggle_puzak
+title: Kazimierz Pużak (Centrum)
+subtitle: [? if pl_adv_puzak_in = 1 : In the team — remove from it. ?][? if pl_adv_puzak_in = 0 : Add to the team. ?]
+choose-if: pl_adv_puzak_in = 1 or pl_adv_puzak_can_add = 1
+unavailable-subtitle: [+ pl_adv_puzak_why +]
+on-arrival: {!
+PolishParty.advisersToggle(Q, 'puzak');
+!}
+go-to: menu
+
+@toggle_perl
+title: Feliks Perl (Centrum)
+subtitle: [? if pl_adv_perl_in = 1 : In the team — remove from it. ?][? if pl_adv_perl_in = 0 : Add to the team. ?]
+choose-if: pl_adv_perl_in = 1 or pl_adv_perl_can_add = 1
+unavailable-subtitle: [+ pl_adv_perl_why +]
+on-arrival: {!
+PolishParty.advisersToggle(Q, 'perl');
+!}
+go-to: menu
+
+@toggle_niedzialkowski
+title: Mieczysław Niedziałkowski (Centrum)
+subtitle: [? if pl_adv_niedzialkowski_in = 1 : In the team — remove from it. ?][? if pl_adv_niedzialkowski_in = 0 : Add to the team. ?]
+choose-if: pl_adv_niedzialkowski_in = 1 or pl_adv_niedzialkowski_can_add = 1
+unavailable-subtitle: [+ pl_adv_niedzialkowski_why +]
+on-arrival: {!
+PolishParty.advisersToggle(Q, 'niedzialkowski');
+!}
+go-to: menu
+
+@toggle_arciszewski
+title: Tomasz Arciszewski (Centrum)
+subtitle: [? if pl_adv_arciszewski_in = 1 : In the team — remove from it. ?][? if pl_adv_arciszewski_in = 0 : Add to the team. ?]
+choose-if: pl_adv_arciszewski_in = 1 or pl_adv_arciszewski_can_add = 1
+unavailable-subtitle: [+ pl_adv_arciszewski_why +]
+on-arrival: {!
+PolishParty.advisersToggle(Q, 'arciszewski');
+!}
+go-to: menu
+
+@toggle_zaremba
+title: Zygmunt Zaremba (Lewica)
+subtitle: [? if pl_adv_zaremba_in = 1 : In the team — remove from it. ?][? if pl_adv_zaremba_in = 0 : Add to the team. ?]
+choose-if: pl_adv_zaremba_in = 1 or pl_adv_zaremba_can_add = 1
+unavailable-subtitle: [+ pl_adv_zaremba_why +]
+on-arrival: {!
+PolishParty.advisersToggle(Q, 'zaremba');
+!}
+go-to: menu
+
+@toggle_czapinski
+title: Kazimierz Czapiński (Lewica)
+subtitle: [? if pl_adv_czapinski_in = 1 : In the team — remove from it. ?][? if pl_adv_czapinski_in = 0 : Add to the team. ?]
+choose-if: pl_adv_czapinski_in = 1 or pl_adv_czapinski_can_add = 1
+unavailable-subtitle: [+ pl_adv_czapinski_why +]
+on-arrival: {!
+PolishParty.advisersToggle(Q, 'czapinski');
+!}
+go-to: menu
+
+@toggle_jaworowski
+title: Rajmund Jaworowski (Piłsudczycy)
+subtitle: [? if pl_adv_jaworowski_in = 1 : In the team — remove from it. ?][? if pl_adv_jaworowski_in = 0 : Add to the team. ?]
+choose-if: pl_adv_jaworowski_in = 1 or pl_adv_jaworowski_can_add = 1
+unavailable-subtitle: [+ pl_adv_jaworowski_why +]
+on-arrival: {!
+PolishParty.advisersToggle(Q, 'jaworowski');
+!}
+go-to: menu
+
+@toggle_moraczewski
+title: Jędrzej Moraczewski (Piłsudczycy)
+subtitle: [? if pl_adv_moraczewski_in = 1 : In the team — remove from it. ?][? if pl_adv_moraczewski_in = 0 : Add to the team. ?]
+choose-if: pl_adv_moraczewski_in = 1 or pl_adv_moraczewski_can_add = 1
+unavailable-subtitle: [+ pl_adv_moraczewski_why +]
+on-arrival: {!
+PolishParty.advisersToggle(Q, 'moraczewski');
+!}
+go-to: menu
+
+@toggle_ziemiecki
+title: Bronisław Ziemięcki (Piłsudczycy)
+subtitle: [? if pl_adv_ziemiecki_in = 1 : In the team — remove from it. ?][? if pl_adv_ziemiecki_in = 0 : Add to the team. ?]
+choose-if: pl_adv_ziemiecki_in = 1 or pl_adv_ziemiecki_can_add = 1
+unavailable-subtitle: [+ pl_adv_ziemiecki_why +]
+on-arrival: {!
+PolishParty.advisersToggle(Q, 'ziemiecki');
+!}
+go-to: menu
+
+@toggle_malinowski
+title: Marian Malinowski (Piłsudczycy)
+subtitle: [? if pl_adv_malinowski_in = 1 : In the team — remove from it. ?][? if pl_adv_malinowski_in = 0 : Add to the team. ?]
+choose-if: pl_adv_malinowski_in = 1 or pl_adv_malinowski_can_add = 1
+unavailable-subtitle: [+ pl_adv_malinowski_why +]
+on-arrival: {!
+PolishParty.advisersToggle(Q, 'malinowski');
+!}
+go-to: menu
+
+@confirm
+title: Confirm the team
+choose-if: {! return PolishParty.advisersStatus(Q, String(Q.pl_adv_draft || '').split(',').filter(Boolean)).available !}
+unavailable-subtitle: [+ pl_adv_confirm_why +]
+on-arrival: {!
+PolishParty.advisersChoose(Q, String(Q.pl_adv_draft || '').split(',').filter(Boolean));
+!}
+go-to: result
+
+@result
+new-page: true
+
+= Change PPS advisers
+
+[+ pl_party_result +]
+
+- @root: Continue.

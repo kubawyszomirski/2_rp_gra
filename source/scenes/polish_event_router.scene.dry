@@ -1,0 +1,7 @@
+title: Event
+on-arrival: {!
+PolishRules.markEventEntered(Q);
+!}
+go-to-ref: pl_next_event
+
+# Routes to the one event chosen by the event queue (technical reference 4.5).

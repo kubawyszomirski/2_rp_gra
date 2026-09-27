@@ -1,0 +1,71 @@
+{
+  "scope": "M18: membership growth toward a target from worker support and union reach, cap 150; apparatus bonus 0.15 (technical 13.1). Unit checks, a 52-month opening comparison and the 144 main M02 runs on the robustness engine patched in memory (reach ratio only; support not modelled there).",
+  "rule": {
+    "targetBounds": [
+      50,
+      150
+    ],
+    "approach": 0.05,
+    "duesFactorPerLevel": 0.05,
+    "apparatusBonus": 0.15,
+    "oldApparatusBonus": 0.2,
+    "duesIncome": 0.25,
+    "apparatusCost": 0.1,
+    "pressCost": 0.1,
+    "militiaCost": 0.1
+  },
+  "hashes": {
+    "docs/POLISH_TECHNICAL_REFERENCE.md": "8aba6f238f43c61b53eecb1e52c13903a7661bf426453fe6033fc633da68aaa4",
+    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "2402955a7669c2ad1bfd208ba3e4b704ab79574304554f4b51576fcf2195b42e",
+    "docs/POLISH_MECHANICS_AUDIT.md": "070de0c9d624d01594c387dd4b43a0db3edf873a194d390266d56acf6c469fa0",
+    "analysis/m02-robustness/engine.cjs": "e0b544d65a4381ed7698f3f649fd54e41714a3a1027852a7ea455d0ad49b43cd"
+  },
+  "examples": {
+    "duesLongRun": {
+      "dues2": 0.5,
+      "dues3": 0.7125,
+      "members2": 100,
+      "members3": 95
+    }
+  },
+  "openings": {
+    "apparatus1": {
+      "before": 3.200000000000024,
+      "after": 0.6000000000000103,
+      "memberIndexAfter": 100,
+      "actions": 1
+    },
+    "apparatus3": {
+      "before": 9.300000000000013,
+      "after": 1.6500000000000021,
+      "memberIndexAfter": 100,
+      "actions": 3
+    },
+    "unions3": {
+      "before": -2.999999999999991,
+      "after": 3.260639081097491,
+      "memberIndexAfter": 134.7564307252897,
+      "actions": 3
+    }
+  },
+  "scenario": {
+    "bonusOnly": {
+      "endpointsChanged": 0,
+      "cabinetSequencesChanged": 0,
+      "minCash": 0.25,
+      "endCashDelta": [
+        -3.6499999999999844,
+        0
+      ]
+    },
+    "approved": {
+      "endpointsChanged": 0,
+      "cabinetSequencesChanged": 0,
+      "minCash": 0.25,
+      "endCashDelta": [
+        0,
+        12.464974122986945
+      ]
+    }
+  }
+}

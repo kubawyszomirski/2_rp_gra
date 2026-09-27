@@ -1,0 +1,88 @@
+title: Stabilisation
+subtitle: The budget or the currency is in crisis.
+new-page: true
+tags: pl_event
+view-if: {! return !!Q.S && PolishProjects.stabilizationEventDue(Q) !}
+on-arrival: {!
+// Event economy.stabilization (technical reference 17.3, 17.13 B14, 11.9; card catalogue 9.11): a
+// financial crisis without a currency reform. With the Treasury PPS chooses the variant of the one
+// reform (the answer is free; the launch costs the ordinary action and B); without it the cabinet may
+// prepare the reform itself (17.16.4) and PPS answers its package with the Budget card.
+Q.pl_ev_treasury = PolishProjects.ppsHolds(Q.S, 'finance') ? 1 : 0;
+Q.pl_ev_terms_why = PolishProjects.eventStatus(Q, 'stabilization', 'protections_terms').reason;
+Q.pl_ev_protected_why = PolishProjects.eventStatus(Q, 'stabilization', 'protected').reason;
+!}
+
+= A financial crisis
+
+The budget has stayed below −2 B, or inflation at 20% a month or more, for two settlements. A currency reform is now possible: one project, prepared and then launched with the currency law and its financing.
+
+[? if pl_ev_treasury : PPS holds the Treasury and chooses the variant now. The launch waits in the agenda. ?]
+
+[? if not pl_ev_treasury : PPS does not hold the Treasury. The cabinet may prepare the reform itself; its package will come before the Sejm, where PPS can answer it with the Budget card if it sits in the cabinet or supports it. ?]
+
+- @rapid_cuts
+- @protected
+- @gradual
+- @protections_terms
+- @wait
+
+@rapid_cuts
+title: Rapid stabilisation with savings
+subtitle: 2 B for 3 months; needs cuts of at least 1 B; a credit shock +10 for 3 months.
+view-if: pl_ev_treasury
+choose-if: {! return PolishProjects.eventStatus(Q, 'stabilization', 'rapid_cuts').available !}
+on-arrival: {!
+PolishProjects.eventChoose(Q, 'stabilization', 'rapid_cuts');
+!}
+go-to: result
+
+@protected
+title: Stabilisation with protections and a burden on wealth
+subtitle: 2 B for 3 months; needs a protection for the unemployed and its financing.
+view-if: pl_ev_treasury
+choose-if: {! return PolishProjects.eventStatus(Q, 'stabilization', 'protected').available !}
+unavailable-subtitle: [+ pl_ev_protected_why +]
+on-arrival: {!
+PolishProjects.eventChoose(Q, 'stabilization', 'protected');
+!}
+go-to: result
+
+@gradual
+title: Gradual limitation of emission
+subtitle: 1 B for 5 months; a credit shock +5 for 5 months; the marka pressure lasts longer.
+view-if: pl_ev_treasury
+choose-if: {! return PolishProjects.eventStatus(Q, 'stabilization', 'gradual').available !}
+on-arrival: {!
+PolishProjects.eventChoose(Q, 'stabilization', 'gradual');
+!}
+go-to: result
+
+@protections_terms
+title: Offer toleration for protections and a burden on wealth
+subtitle: Opens the formation card with Grabski tolerated by PPS; the terms, their conditions and the usual cost of the offer apply there.
+view-if: not pl_ev_treasury
+choose-if: {! return PolishProjects.eventStatus(Q, 'stabilization', 'protections_terms').available !}
+unavailable-subtitle: [+ pl_ev_terms_why +]
+on-arrival: {!
+PolishProjects.eventChoose(Q, 'stabilization', 'protections_terms');
+!}
+go-to: polish_cabinet_formation
+
+@wait
+title: Leave the reform to the cabinet
+subtitle: PPS answers the cabinet's package when it comes.
+view-if: not pl_ev_treasury
+on-arrival: {!
+PolishProjects.eventChoose(Q, 'stabilization', 'wait');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= A financial crisis
+
+[+ pl_gc_result +]
+
+- @root: Continue.

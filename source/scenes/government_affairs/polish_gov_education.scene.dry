@@ -1,0 +1,66 @@
+title: Education Policy
+subtitle: Education: village schools, adult education, a secular school.
+new-page: true
+is-card: true
+tags: govt_affairs
+card-image: img/Der_wahre_Jacob.jpg
+view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'education_program') !}
+on-arrival: {!
+// Card government.education_program (technical reference 17.11–17.12; card catalogue 8.10). Opening and closing
+// the card are free; a confirmed option costs this month's action, or the one free step of an adviser
+// who opened the card. Options that need a system of a later stage are shown with their reason.
+PolishProjects.cardView(Q, 'education_program');
+!}
+
+= Education policy
+
+A school programme is large: 1 B for 4 months of building, then 1 B to run, in up to three separate tranches. The same scope of schools is never financed twice.
+
+[+ pl_gc_budget +]
+
+[+ pl_gc_projects +]
+
+- @rural_access
+- @urban_worker_adult_access
+- @secular
+- @easy_discard
+- @cancel_advisor_action
+
+@rural_access
+title: Village schools
+subtitle: Schools for the villages covered; trust of the recipients +4 when they work (stage 5).
+choose-if: {! return PolishProjects.optionStatus(Q, 'education_program', 'rural_access').available !}
+unavailable-subtitle: [+ pl_education_program_rural_access_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'education_program', 'rural_access');
+!}
+go-to: result
+
+@urban_worker_adult_access
+title: Education of the poor and adults in workers’ centres
+subtitle: Trust of the recipients +4; it does not replace TUR.
+choose-if: {! return PolishProjects.optionStatus(Q, 'education_program', 'urban_worker_adult_access').available !}
+unavailable-subtitle: [+ pl_education_program_urban_worker_adult_access_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'education_program', 'urban_worker_adult_access');
+!}
+go-to: result
+
+@secular
+title: A secular school with religious freedom
+subtitle: Needs its law; PSChD judges the content by its programme. Against an agreed religious compromise it breaks that agreement.
+choose-if: {! return PolishProjects.optionStatus(Q, 'education_program', 'secular').available !}
+unavailable-subtitle: [+ pl_education_program_secular_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'education_program', 'secular');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= Education policy
+
+[+ pl_gc_result +]
+
+- @root: Continue.

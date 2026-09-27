@@ -1,0 +1,55 @@
+title: The Judiciary
+subtitle: Justice: the joint democratic guarantees, or the review of one abuse.
+new-page: true
+is-card: true
+tags: govt_affairs
+card-image: img/reichstag_3.jpg
+view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'justice_policy') !}
+on-arrival: {!
+// Card government.justice_policy (technical reference 17.11–17.12; card catalogue 8.13). Opening and closing
+// the card are free; a confirmed option costs this month's action, or the one free step of an adviser
+// who opened the card. Options that need a system of a later stage are shown with their reason.
+PolishProjects.cardView(Q, 'justice_policy');
+!}
+
+= The judiciary
+
+The minister does not annul another authority’s judgement by naming a policy. The broad variant leads to the one project of democratic guarantees, with its own constitutional procedure.
+
+[+ pl_gc_budget +]
+
+[+ pl_gc_projects +]
+
+- @broad_safeguards
+- @limited_redress
+- @easy_discard
+- @cancel_advisor_action
+
+@broad_safeguards
+title: A joint project of democratic guarantees
+subtitle: The one democratic_guarantees reform: two main actions, two thirds in both chambers, then 1 B for a month.
+choose-if: {! return PolishProjects.optionStatus(Q, 'justice_policy', 'broad_safeguards').available !}
+unavailable-subtitle: [+ pl_justice_policy_broad_safeguards_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'justice_policy', 'broad_safeguards');
+!}
+go-to: result
+
+@limited_redress
+title: Review of a named abuse
+subtitle: 1 B for a month; needs an active restriction of a named case. A confirmed unlawful act lifts only that restriction; without grounds the review ends without relief.
+choose-if: {! return PolishProjects.optionStatus(Q, 'justice_policy', 'limited_redress').available !}
+unavailable-subtitle: [+ pl_justice_policy_limited_redress_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'justice_policy', 'limited_redress');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= The judiciary
+
+[+ pl_gc_result +]
+
+- @root: Continue.

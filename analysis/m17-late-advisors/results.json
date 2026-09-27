@@ -1,0 +1,82 @@
+{
+  "scope": "M17: Prochnik and Drobner as continuation advisors; chapter-1 path to KPP cooperation through ordinary actions (technical 8.1, 9.5-9.6, 10.4.3). Unit checks; M02 unaffected.",
+  "rule": {
+    "start": 10,
+    "contactThreshold": 10,
+    "contactGain": 4,
+    "talkGain": 4,
+    "talkGainAbove70": 2,
+    "talkCooldown": 3,
+    "limitedThreshold": 20,
+    "fullThreshold": 30,
+    "rulesThreshold": 50,
+    "sympatheticGain": 5
+  },
+  "hashes": {
+    "docs/POLISH_TECHNICAL_REFERENCE.md": "8aba6f238f43c61b53eecb1e52c13903a7661bf426453fe6033fc633da68aaa4",
+    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "2402955a7669c2ad1bfd208ba3e4b704ab79574304554f4b51576fcf2195b42e",
+    "docs/POLISH_MECHANICS_AUDIT.md": "070de0c9d624d01594c387dd4b43a0db3edf873a194d390266d56acf6c469fa0",
+    "analysis/m02-robustness/engine.cjs": "e0b544d65a4381ed7698f3f649fd54e41714a3a1027852a7ea455d0ad49b43cd"
+  },
+  "roster": {
+    "A12": {
+      "id": "prochnik",
+      "availability": "continuation"
+    },
+    "A13": {
+      "id": "drobner",
+      "availability": "continuation"
+    }
+  },
+  "chapterEnds": {
+    "coup": "III 1926 – VIII 1927 (archived M02 attempts)",
+    "elections": "1928-02-19"
+  },
+  "results": {
+    "old": {
+      "open": false,
+      "reached": {}
+    },
+    "plain": {
+      "open": true,
+      "reached": {
+        "limited": {
+          "month": 4,
+          "actions": 3,
+          "relation": 22
+        },
+        "full": {
+          "month": 10,
+          "actions": 5,
+          "relation": 30
+        },
+        "rules": {
+          "month": 25,
+          "actions": 10,
+          "relation": 50
+        }
+      }
+    },
+    "withSympatheticStance": {
+      "open": true,
+      "reached": {
+        "limited": {
+          "month": 4,
+          "actions": 3,
+          "relation": 22
+        },
+        "full": {
+          "month": 10,
+          "actions": 5,
+          "relation": 30
+        },
+        "rules": {
+          "month": 25,
+          "actions": 10,
+          "relation": 50
+        }
+      }
+    }
+  },
+  "m02Unaffected": true
+}

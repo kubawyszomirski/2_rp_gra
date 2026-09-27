@@ -1,0 +1,63 @@
+title: Milicja PPS
+subtitle: Recruit, militarise, or reorganise the self-defence as Akcja Socjalistyczna.
+new-page: true
+is-card: true
+tags: party_affairs
+card-image: img/protest.jpg
+view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.militiaAvailable(Q) !}
+on-arrival: {!
+// Card party.militia (technical reference 13.3–13.4; card catalogue 5.2): two basic steps and a
+// conditional reorganisation; the same steps as in the card Organisations of PPS, with the same cooldowns.
+PolishParty.partyDisplay(Q);
+Q.pl_mil_recruit_why = PolishParty.militiaStatus(Q, 'recruit').reason;
+Q.pl_mil_militarize_why = PolishParty.militiaStatus(Q, 'militarize').reason;
+Q.pl_mil_as_why = PolishParty.militiaStatus(Q, 'as').reason;
+!}
+
+= Milicja PPS
+
+[+ pl_party_militia +]. The upkeep is 0.10 R a month for every 200 members (0.10 R more after AS). An unfinanced month adds 5 fatigue.
+
+- @recruit
+- @militarize
+- @form_as
+- @easy_discard
+
+@recruit
+title: Recruit
+subtitle: 1 R; +100 members, no efficiency bonus. Waits 2 months.
+choose-if: {! return PolishParty.militiaStatus(Q, 'recruit').available !}
+unavailable-subtitle: [+ pl_mil_recruit_why +]
+on-arrival: {!
+PolishParty.militiaChoose(Q, 'recruit');
+!}
+go-to: result
+
+@militarize
+title: Militarise
+subtitle: 2 R; training and discipline: efficiency +0.10, up to 0.70. The first time, Centrum dissent +3. Waits 3 months.
+choose-if: {! return PolishParty.militiaStatus(Q, 'militarize').available !}
+unavailable-subtitle: [+ pl_mil_militarize_why +]
+on-arrival: {!
+PolishParty.militiaChoose(Q, 'militarize');
+!}
+go-to: result
+
+@form_as
+title: Reorganise as Akcja Socjalistyczna
+subtitle: 2 R, once; needs a militarised Milicja of at least 500, legality, no arrears and a reserve. Members follow a call better (+0.15); up to three cases at once before a coup.
+choose-if: {! return PolishParty.militiaStatus(Q, 'as').available !}
+unavailable-subtitle: [+ pl_mil_as_why +]
+on-arrival: {!
+PolishParty.militiaChoose(Q, 'as');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= Milicja PPS
+
+[+ pl_party_result +]
+
+- @root: Continue.

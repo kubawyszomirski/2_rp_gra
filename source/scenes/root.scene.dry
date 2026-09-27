@@ -8,7 +8,7 @@ go-to: start_menu_2
 
 = PPS: An Alternate History
 
-**Playable-slice notice:** You play as the **PPS (Polska Partia Socjalistyczna)**. The January 1922 opening, November 1922 Sejm election, December 1922 presidential succession, electoral parties, support model, factions, advisers and PPS self-defence organization are implemented Polish slices. Most action cards, dated events and later governments remain an unfinished German-baseline simulation. After December 1922, May 1928 is the temporary next election date, not a researched Polish chronology. There is no campaign cutoff.
+**Playable-slice notice:** You play as the **PPS (Polska Partia Socjalistyczna)**. The January 1922 opening, November 1922 Sejm election, negotiated cabinet formation, December 1922 Marshal and presidential elections, electoral parties, support model, factions, advisers and PPS self-defence organization are implemented Polish slices. Most action cards and dated events remain an unfinished German-baseline simulation. The chapter ends with the next lawful Sejm election, on 19 February 1928 in the game's default legal calendar (not the historical election date), followed by a chapter report.
 
 @start_menu_2
 
@@ -478,7 +478,9 @@ Q.polish_presidency = {
         appoints_ministers_on_prime_minister_proposal: true,
         legislative_veto: false,
         independent_decrees: false,
-        dissolve_sejm: 'requires_three_fifths_senate_consent'
+        dissolve_sejm: 'requires_three_fifths_senate_consent',
+        // The three separate constitutional projects of 7.6 (card 7.4): the record of the law in force.
+        reforms: {democratic_guarantees: false, constructive_vonc: false, presidential_arbitration: false}
     },
     current: {
         office_id: 'naczelnik_panstwa',
@@ -584,9 +586,9 @@ Q.spd_toleration = 0;
 // is the current government a presidential minority government?
 Q.minority_government = 0;
 
-// Stable Polish gameplay portfolios, not an exact roster of historical ministries.
-// Existing keys are retained to avoid rewriting policy mechanics. New portfolios
-// are display/state only; no policy cards or allocation system are added.
+// Nine stable Polish gameplay portfolios (technical reference 8.5, 20.1.1), not an exact roster of
+// historical ministries. Existing keys are retained to avoid rewriting policy mechanics. The cabinet
+// record Q.S.cabinet owns them; the *_minister_party fields are mirrors written from it.
 Q.polish_portfolios = {
     labor: 'Praca i Opieka Społeczna',
     interior: 'Sprawy Wewnętrzne',
@@ -596,14 +598,16 @@ Q.polish_portfolios = {
     foreign: 'Sprawy Zagraniczne',
     agriculture: 'Rolnictwo i Dobra Państwowe',
     reichswehr: 'Sprawy Wojskowe',
-    education: 'Wyznania Religijne i Oświecenie Publiczne',
-    public_works: 'Roboty Publiczne i Komunikacja'
+    education: 'Wyznania Religijne i Oświecenie Publiczne'
 };
 for (var portfolio in Q.polish_portfolios) {
     Q[portfolio + '_minister'] = '';
     // This means cabinet-administered, not that every incumbent was non-party.
     Q[portfolio + '_minister_party'] = 'opening_expert_cabinet';
 }
+// Public works are part of Labour, not a tenth portfolio; the old field stays empty.
+Q.public_works_minister = '';
+Q.public_works_minister_party = '';
 
 // Events: what has occurred?
 Q.panzerkreuzer_seen = 0;
@@ -672,7 +676,7 @@ Q.n_advisors = 3;
 // timer - this decrements by 1 every turn, and is set to 5 whenever an advisor action is used, so that you can only use one advisor action every 5 months.
 // let's just put all of the timers here...
 // most party affairs and government affairs cards are on a timer.
-Q.timers = ['advisor_action', 'confronting_nazis', 'crisis_program',
+Q.timers = ['confronting_nazis', 'crisis_program',
             'fundraising', 'ideology',
             'inter_party_relationships', 'international_relations',
             'iron_front', 'media', 'enemies',
@@ -840,6 +844,41 @@ Q.schumacher_advisor = 0; // Kurt Schumacher (post-1930)
 Q.hirschfeld_advisor = 0; // Magnus Hirschfeld
 Q.radbruch_advisor = 0; // Gustav Radbruch
 Q.stampfer_advisor = 0; // Friedrich Stampfer
+
+// Polish chapter state: the state tree S of the technical reference (2.4), created by the rules
+// module (source/rules/polish_rules.js). The seed reads the generator state without drawing from it.
+// The parliament, Senate and ballot domains start from the opening Sejm (polish_institutions.js);
+// actors, agreements and the opening cabinet from the relations and cabinet above
+// (polish_government.js); the economy and society from economy_simple_v1 (polish_economy.js).
+Q.S = PolishRules.createFoundationState({randomState: this.random.getState(),
+    institutions: PolishInstitutions.createInstitutionState(Q),
+    government: PolishGovernment.createGovernmentState(Q),
+    economy: PolishEconomy.createEconomyState()});
+PolishGovernment.writeRelationMirrors(Q);
+// The Polish economy (stage 4) owns budget, prices, wages, output, credit and unemployment; the
+// inherited fields are mirrors written from S.economy, and the German monthly economy is off.
+Q.polish_economy_system = 1;
+PolishEconomy.writeEconomyMirrors(Q);
+// The party of stage 5 (implementation plan, decision 1A): disjoint cells of the electorate own the
+// preferences, built so that today's national result of the opening stays exactly the same; the class
+// rows become their mirrors. Party money, organisations, Milicja, the union branches and the factions have
+// their owner in Q.S; the inherited fields are mirrors (technical reference 5.1–5.2, 10.1, 13, 14.1).
+PolishElectorate.seedCells(Q);
+PolishElectorate.writeClassMirrors(Q);
+PolishParty.attachPartyState(Q);
+Q.polish_party_rules = 1;
+// Stage 6: unions and strikes (technical reference 14.1–14.5): the branches get the lines of a strike call, and the
+// records of strikes and plants start empty.
+PolishUnions.attachUnionState(Q);
+Q.polish_union_rules = 1;
+// Stage 7: politics and society (technical reference 15.1–15.3): the journal of institutions, democracy, violence,
+// the grievance of the cells and the pressure towards a coup.
+PolishPolitics.attachPoliticsState(Q);
+Q.polish_politics_rules = 1;
+// Stage 7: the forces of the state (technical reference 16.1–16.3, 16.7): the synthetic army groups, the police, the
+// uncertain assessment of their loyalty and the agreement with Piłsudski.
+PolishSecurity.attachSecurityState(Q);
+Q.polish_security_rules = 1;
 !}
 set-bg: img/map_2.jpg
 new-page: true
@@ -852,7 +891,7 @@ Józef Piłsudski is **Naczelnik Państwa**, not President of the Republic. **An
 
 The opening uses an approved **444-MP gameplay approximation**, calculated from rounded August 1922 club shares, not an exact January roster. Parliamentary representation is separate from changing public support.
 
-Read the Library for the opening institutions and cabinet portfolios. **The first Sejm election is in November 1922: 444 MPs, with 223 needed for a majority.** Its government choice consumes no extra monthly action. In December, the game resolves the two approved presidential elections and the constitutional transfer without another action. May 1928 remains the temporary next parliamentary election; successor cabinets, later presidential chronology and most dated events remain unfinished. This is not a complete Polish campaign.
+Read the Library for the opening institutions and cabinet portfolios. **The first Sejm election is in November 1922: 444 MPs, with 223 needed for a majority.** The cabinet that follows is negotiated in the same sequence and consumes no extra monthly action. In December, the new Sejm elects its Marshal and the National Assembly elects the President without another action; the clubs' votes decide both offices. The next Sejm election follows the game's legal calendar on 19 February 1928, and its certified result ends this chapter with a report. Most dated events remain unfinished. This is not a complete Polish campaign.
 
 - @1928_main: Begin
 
@@ -867,4 +906,4 @@ The campaign begins in January 1922.
 
 Naczelnik Państwa: **Józef Piłsudski**. Prime minister: **Antoni Ponikowski**. Legislature: **Sejm Ustawodawczy**.
 
-PPS provides external toleration, without cabinet membership or ministry control. The opening, November 1922 Sejm election and December presidential succession are implemented. May 1928 is the temporary next parliamentary election; later governments, later presidential chronology and unconverted mechanics remain unfinished.
+PPS provides external toleration, without cabinet membership or ministry control. The opening, November 1922 Sejm election and December presidential succession are implemented. The next Sejm election follows the game's legal calendar on 19 February 1928, and its certified result ends this chapter; later presidential chronology and unconverted mechanics remain unfinished.

@@ -1,0 +1,75 @@
+title: The strike: partners and protection
+new-page: true
+on-arrival: {!
+// The steps of a strike that has just begun (technical reference 9.6, 17.5; card catalogue 9.7): the answer to the
+// communists' part in it, then the protection by Milicja PPS. Both cost no month; the funds and the protection are
+// paid once through the strike.
+PolishUnions.stepsView(Q);
+!}
+
+= [+ pl_st_title +]
+
+[+ pl_st_text +]
+
+- @full
+- @limited
+- @none
+- @protect
+- @no_protection
+- @done
+
+@full
+title: Full cooperation with the communists
+subtitle: A joint committee for the whole action; it binds their whole contribution. The Centre +5 dissent while the acceptance inside PPS is below 60.
+view-if: pl_st_stage = "cooperation"
+choose-if: {! return PolishUnions.cooperationStatus(Q, 'full').available !}
+unavailable-subtitle: [+ pl_st_full_why +]
+on-arrival: {!
+PolishUnions.chooseCooperation(Q, 'full');
+!}
+go-to: polish_strike_steps
+
+@limited
+title: Limited coordination with the communists
+subtitle: A joint limited demand and the timing and safety of the action; separate leaderships. The Centre +2 while the acceptance is below 60.
+view-if: pl_st_stage = "cooperation"
+choose-if: {! return PolishUnions.cooperationStatus(Q, 'limited').available !}
+unavailable-subtitle: [+ pl_st_limited_why +]
+on-arrival: {!
+PolishUnions.chooseCooperation(Q, 'limited');
+!}
+go-to: polish_strike_steps
+
+@none
+title: No cooperation
+subtitle: PPS keeps its own demands and leads the protest alone; the communists act on their own.
+view-if: pl_st_stage = "cooperation"
+on-arrival: {!
+PolishUnions.chooseCooperation(Q, 'none');
+!}
+go-to: polish_strike_steps
+
+@protect
+title: Protect the strikers with Milicja PPS
+subtitle: 0.5 R and the people of the Milicja; it lowers the exposure of the covered people, not the risk of a clash, and it can lose people.
+view-if: pl_st_stage = "protection"
+choose-if: {! return PolishUnions.protectionStatus(Q, 'protect').available !}
+unavailable-subtitle: [+ pl_st_protect_why +]
+on-arrival: {!
+PolishUnions.chooseProtection(Q, 'protect');
+!}
+go-to: polish_strike_steps
+
+@no_protection
+title: No protection
+subtitle: The Milicja stays out of the strike.
+view-if: pl_st_stage = "protection"
+on-arrival: {!
+PolishUnions.chooseProtection(Q, 'none');
+!}
+go-to: polish_strike_steps
+
+@done
+title: Continue
+view-if: pl_st_stage = "done"
+go-to: root

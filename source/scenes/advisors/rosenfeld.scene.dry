@@ -2,7 +2,7 @@ title: Kurt Rosenfeld
 is-pinned-card: true
 tags: advisor, left
 card-image: img/portraits/RosenfeldKurt.jpg
-view-if: rosenfeld_advisor = 1
+view-if: not polish_security_rules and (rosenfeld_advisor = 1)
 new-page: true 
 
 = Kurt Rosenfeld

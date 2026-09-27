@@ -3,20 +3,29 @@ is-pinned-card: true
 tags: advisor
 view-if: jaworowski_advisor = 1
 new-page: true
+on-arrival: {!
+// Adviser actions of technical reference 10.4.3 (card catalogue 6.6): 0 T, their own R, one shared cooldown of
+// six months for all advisers (4.4); the effects are the approved P numbers, applied by PolishParty.
+PolishParty.advisorView(Q, 'jaworowski');
+!}
 
 = Rajmund Jaworowski
 
 Jaworowski represents the Piłsudczyk current inside the PPS.
-
-**Planned, not implemented:** A separate PPS-dFR organizational action requires the later-party and Sanacja systems.
 
 - @back_pilsudski
 - @root: Return to main
 
 @back_pilsudski
 title: Back Piłsudski
-choose-if: advisor_action_timer = 0
-unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?]
-on-arrival: advisor_action_timer = 6; pilsudczycy_strength += 5; pilsudczycy_dissent -= 5; centrum_dissent += 2; lewica_dissent += 2
+subtitle: Relation with Piłsudski +8; Piłsudczycy +5 strength; Centrum and Lewica dissent +3. No posts or cabinet cooperation by itself.
+choose-if: {! return PolishParty.advisorActionStatus(Q, 'jaworowski', 'back_pilsudski').available !}
+unavailable-subtitle: [+ pl_advact_back_pilsudski_why +]
+call: polish_advisor_commit
+on-arrival: {!
+PolishParty.advisorAction(Q, 'jaworowski', 'back_pilsudski');
+!}
 
-The Piłsudczyk current becomes stronger and more cohesive, while the other PPS factions become more uneasy.
+[+ pl_party_result +]
+
+- @root: Continue.

@@ -88,31 +88,44 @@ const { chromium } = require(process.argv[2] || 'playwright');
     await choose('library.public_opinion');
     assert.match(await page.locator('#content').innerText(), /Voting intentions/);
     await page.locator('#stats-link').click();
-    await choose('election_1928.polish_opposition');
+    // The one-screen cabinet formation (card 7.1): PPS stays in opposition, one submit, the result.
+    await choose('polish_cabinet_formation');
+    await choose('polish_cabinet_formation.modes');
+    await choose('polish_cabinet_formation.mode_opposition');
+    await choose('polish_cabinet_formation.submit');
+    assert.match(await page.locator('#content').innerText(), /The head of state appoints|No cabinet could be appointed/);
+    await choose('polish_cabinet_formation.done');
     await choose('root');
     assert.equal((await snapshot()).month, 11);
     await campaign();
+    // December: the Sejm elects its Marshal first (technical reference 7.5), then the President.
+    assert.equal(await page.evaluate(() => window.dendryUI.dendryEngine.state.sceneId),
+      'polish_speaker_election.choice');
+    await choose('polish_speaker_election.rataj');
+    assert.match(await page.locator('#content').innerText(), /is elected Marshal of the Sejm/);
+    await choose('polish_speaker_election.finish');
     assert.equal(await page.evaluate(() => window.dendryUI.dendryEngine.state.sceneId),
       'polish_presidential_sequence.first_nomination');
     assert.match(await page.locator('#content').innerText(), /National Assembly/);
     const firstChoices = await page.evaluate(() => window.dendryUI.dendryEngine.getCurrentChoices()
       .map(choice => ({id: choice.id, canChoose: choice.canChoose})));
-    assert.equal(firstChoices.find(choice => choice.id === 'polish_presidential_sequence.decline_daszynski').canChoose, false);
-    await choose('polish_presidential_sequence.confirm_daszynski');
-    assert.match(await page.locator('#content').innerText(), /Gabriel Narutowicz — 289 votes/);
-    assert.match(await page.locator('#content').innerText(), /Maurycy Zamoyski — 227 votes/);
+    assert.equal(firstChoices.find(choice => choice.id === 'polish_presidential_sequence.confirm_daszynski').canChoose, true);
+    await choose('polish_presidential_sequence.decline_daszynski');
+    // The final result is counted from the clubs' votes (7.3), not fixed historical totals.
+    assert.match(await page.locator('#content').innerText(), /Gabriel Narutowicz is elected President/);
+    assert.match(await page.locator('#content').innerText(), /Final ballot: Gabriel Narutowicz — \d+ votes/);
     await choose('polish_presidential_sequence.first_transfer');
     await choose('polish_presidential_sequence.assassination');
     const responseChoices = await page.evaluate(() => window.dendryUI.dendryEngine.getCurrentChoices()
       .map(choice => ({id: choice.id, canChoose: choice.canChoose})));
     assert.equal(responseChoices.find(choice => choice.id === 'polish_presidential_sequence.armed_reprisals').canChoose, false);
+    assert.match(await page.locator('#content').innerText(), /Maciej Rataj substitutes for the President/);
     await choose('polish_presidential_sequence.constitutional_response');
     const secondChoices = await page.evaluate(() => window.dendryUI.dendryEngine.getCurrentChoices()
       .map(choice => ({id: choice.id, canChoose: choice.canChoose})));
-    assert.equal(secondChoices.find(choice => choice.id === 'polish_presidential_sequence.run_daszynski_second').canChoose, false);
+    assert.equal(secondChoices.find(choice => choice.id === 'polish_presidential_sequence.run_daszynski_second').canChoose, true);
     await choose('polish_presidential_sequence.do_not_run_daszynski_second');
-    assert.match(await page.locator('#content').innerText(), /Stanisław Wojciechowski — 298 votes/);
-    assert.match(await page.locator('#content').innerText(), /Kazimierz Morawski — 221 votes/);
+    assert.match(await page.locator('#content').innerText(), /Stanisław Wojciechowski is elected/);
     await page.screenshot({path: path.join(directory, 'presidential-result.png'), fullPage: true});
     await choose('polish_presidential_sequence.finish');
     const after = await snapshot();
@@ -133,7 +146,7 @@ const { chromium } = require(process.argv[2] || 'playwright');
     console.log(JSON.stringify({passed: true, chart, screenshots: directory,
       checks: ['January–October campaign path', 'November results and sidebar', '444 chart dots and ChZJN grouping',
         'recorded vote/seat history', 'browser reload and save-state restore', 'government choice without month charge',
-        'December presidential final ballots and disabled alternatives', '555-member Assembly snapshot',
+        'December Marshal and counted presidential ballots', '555-member Assembly snapshot',
         'Wojciechowski office state without legacy-president writes'], errors, failedRequests}, null, 2));
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });

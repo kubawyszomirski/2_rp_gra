@@ -1,0 +1,84 @@
+{
+  "scope": "M15: militia one action at a time; AS +0.15 compliance and up to three concurrent actions before a coup (technical 13.3-13.4, 16.8). Unit checks and the exact M08 enumeration at democracy 60. Not a campaign run.",
+  "rule": {
+    "asComplianceBonus": 0.15,
+    "asMaxActions": 3,
+    "protectionPerF": 0.1,
+    "protectionCap": 0.4
+  },
+  "hashes": {
+    "docs/POLISH_TECHNICAL_REFERENCE.md": "8aba6f238f43c61b53eecb1e52c13903a7661bf426453fe6033fc633da68aaa4",
+    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "2402955a7669c2ad1bfd208ba3e4b704ab79574304554f4b51576fcf2195b42e",
+    "docs/POLISH_MECHANICS_AUDIT.md": "070de0c9d624d01594c387dd4b43a0db3edf873a194d390266d56acf6c469fa0",
+    "analysis/m02-robustness/engine.cjs": "e0b544d65a4381ed7698f3f649fd54e41714a3a1027852a7ea455d0ad49b43cd",
+    "analysis/m08-coup-profile/check.cjs": "117c774d0d702de80c73d6d39e56e9bd25f35ae418cdee3d1d522d35ff4f21eb"
+  },
+  "turnout": {
+    "20": {
+      "milicja": 0.7150000000000001,
+      "as": 0.8650000000000001,
+      "ratio": 1.2097902097902098
+    },
+    "50": {
+      "milicja": 0.8350000000000001,
+      "as": 0.9850000000000001,
+      "ratio": 1.1796407185628743
+    },
+    "100": {
+      "milicja": 1,
+      "as": 1,
+      "ratio": 1
+    }
+  },
+  "coup": {
+    "defend_4F": {
+      "milicjaF": 4,
+      "asF": 4.718562874251497,
+      "milicja": {
+        "pils": 0.4373124999999997,
+        "legal": 0.29862499999999986,
+        "compromise": 0.2640625,
+        "f9": 0.0615625
+      },
+      "as": {
+        "pils": 0.39681249999999973,
+        "legal": 0.2989999999999999,
+        "compromise": 0.30418749999999994,
+        "f9": 0.30418749999999994
+      }
+    },
+    "defend_6F": {
+      "milicjaF": 6,
+      "asF": 7.0778443113772465,
+      "milicja": {
+        "pils": 0.39681249999999973,
+        "legal": 0.35974999999999985,
+        "compromise": 0.2434375,
+        "f9": 0.2434375
+      },
+      "as": {
+        "pils": 0.3360624999999998,
+        "legal": 0.35974999999999985,
+        "compromise": 0.30418749999999994,
+        "f9": 0.30418749999999994
+      }
+    },
+    "support_6F": {
+      "milicjaF": 6,
+      "asF": 7.0778443113772465,
+      "milicja": {
+        "pils": 0.6475625000000003,
+        "legal": 0.21037499999999992,
+        "compromise": 0.1420625,
+        "f9": 0.1420625
+      },
+      "as": {
+        "pils": 0.6475625000000003,
+        "legal": 0.20974999999999994,
+        "compromise": 0.1426875,
+        "f9": 0.1426875
+      }
+    }
+  },
+  "m02UsesMilitiaForce": false
+}

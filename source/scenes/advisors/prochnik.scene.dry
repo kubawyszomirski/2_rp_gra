@@ -6,24 +6,8 @@ new-page: true
 
 = Adam Próchnik
 
-Próchnik enters the adviser pool in 1928. He represents Lewica PPS and combines republican socialism with openness to discussions with KPP.
+Próchnik belongs to the cast of the continuation (from January 1928 in chapter 2). He represents Lewica PPS and combines republican socialism with openness to discussions with the KPP.
 
-- @republican_left
-- @discuss_united_front
+His actions are recorded for chapter 2 (Z — 0.29, M17); in this chapter he cannot be appointed.
+
 - @root: Return to main
-
-@republican_left
-title: Republican Left
-choose-if: advisor_action_timer = 0
-unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?]
-on-arrival: advisor_action_timer = 6; pro_republic += 5*(1-dissent); lewica_strength += 5; lewica_dissent -= 5; workers_pps += 2*(1-dissent); new_middle_pps += 3*(1-dissent)
-
-Lewica presents socialism and defence of democratic government as a common cause.
-
-@discuss_united_front
-title: Discuss a United Front
-choose-if: advisor_action_timer = 0
-unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?]
-on-arrival: advisor_action_timer = 6; kpp_relation += 5*(1-dissent); lewica_strength += 2; centrum_dissent += 2
-
-Discussions improve relations with KPP but concern Centrum. This is political dialogue, not a formal coalition or militia merger.

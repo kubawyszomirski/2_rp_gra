@@ -3,6 +3,11 @@ is-pinned-card: true
 tags: advisor
 view-if: perl_advisor = 1
 new-page: true
+on-arrival: {!
+// Adviser actions of technical reference 10.4.3 (card catalogue 6.6): 0 T, their own R, one shared cooldown of
+// six months for all advisers (4.4); the effects are the approved P numbers, applied by PolishParty.
+PolishParty.advisorView(Q, 'perl');
+!}
 
 = Feliks Perl
 
@@ -13,20 +18,29 @@ Perl represents Centrum PPS and concentrates on the party line and socialist pre
 - @root: Return to main
 
 @define_party_line
-title: Define Party Line
-subtitle: Strengthen the position and cohesion of Centrum PPS.
-choose-if: advisor_action_timer = 0
-unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?]
-on-arrival: advisor_action_timer = 6; centrum_strength += 5; centrum_dissent -= 5
+title: Define the Party Line
+subtitle: Centrum +8 strength and −8 dissent, Piłsudczycy −4; among the workers votes move from the KPP to PPS.
+choose-if: {! return PolishParty.advisorActionStatus(Q, 'perl', 'define_party_line').available !}
+unavailable-subtitle: [+ pl_advact_define_party_line_why +]
+call: polish_advisor_commit
+on-arrival: {!
+PolishParty.advisorAction(Q, 'perl', 'define_party_line');
+!}
 
-Perl sets out a clearer political line for Centrum PPS.
+[+ pl_party_result +]
+
+- @root: Continue.
 
 @direct_party_press
-title: Direct Party Press
-subtitle: Make the Media card available immediately.
-choose-if: advisor_action_timer = 0
-unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?]
-on-arrival: advisor_action_timer = 6; media_timer = 0; last_advisor_action = 1
-go-to: media
+title: Direct the Party Press
+subtitle: 1 R; press credibility +5; press campaigns ×1.25 for six months. Needs a working press.
+choose-if: {! return PolishParty.advisorActionStatus(Q, 'perl', 'direct_party_press').available !}
+unavailable-subtitle: [+ pl_advact_direct_party_press_why +]
+call: polish_advisor_commit
+on-arrival: {!
+PolishParty.advisorAction(Q, 'perl', 'direct_party_press');
+!}
 
-Perl turns the leadership's attention to „Robotnik” and the wider PPS press. The underlying media choices remain part of the temporary inherited card system.
+[+ pl_party_result +]
+
+- @root: Continue.

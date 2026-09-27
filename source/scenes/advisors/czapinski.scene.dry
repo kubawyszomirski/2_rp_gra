@@ -3,20 +3,62 @@ is-pinned-card: true
 tags: advisor
 view-if: czapinski_advisor = 1
 new-page: true
+on-arrival: {!
+// Adviser actions of technical reference 10.4.3 (card catalogue 6.6): 0 T, their own R, one shared cooldown of
+// six months for all advisers (4.4); the effects are the approved P numbers, applied by PolishParty.
+PolishParty.advisorView(Q, 'czapinski');
+// Stage 6: the two variants of the Industry card are checked without the month's action, which the adviser waives.
+Q.pl_czap_public_control_why = Q.S ? PolishProjects.optionStatus(Q, 'industrial_policy', 'public_control', {adviser: true}).reason : '';
+Q.pl_czap_representation_why = Q.S ? PolishProjects.optionStatus(Q, 'industrial_policy', 'worker_representation', {adviser: true}).reason : '';
+!}
 
 = Kazimierz Czapiński
 
 Czapiński represents Lewica PPS and concentrates on socialist education and economic doctrine.
 
-**Planned, not implemented:** Socialist Economic Programme requires the dedicated Polish economic-policy system.
-
+- @economic_finance
+- @economic_public_control
+- @economic_representation
 - @socialist_education
 - @root: Return to main
 
+@economic_finance
+title: Socialist Economic Programme: progressive and wealth taxes
+subtitle: Opens the Treasury card; its one step costs no month (the law, the money and the executor remain).
+choose-if: {! return Q.advisor_action_timer <= 0 && !!Q.S && PolishProjects.cardAvailable(Q, 'finance_package') !}
+unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?][? if advisor_action_timer <= 0 : Needs PPS in the cabinet with the Treasury. ?]
+call: polish_advisor_commit
+on-arrival: advisor_action_timer = 6; last_advisor_action = 1
+go-to: polish_gov_finance
+
+@economic_public_control
+title: Socialist Economic Programme: public ownership
+subtitle: Opens the Industry card for the public control of a recorded plant; its one step costs no month (the act and the vote remain).
+choose-if: {! return Q.advisor_action_timer <= 0 && !!Q.S && PolishProjects.optionStatus(Q, 'industrial_policy', 'public_control', {adviser: true}).available !}
+unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?][? if advisor_action_timer <= 0 : [+ pl_czap_public_control_why +] ?]
+call: polish_advisor_commit
+on-arrival: advisor_action_timer = 6; last_advisor_action = 1
+go-to: polish_gov_industry
+
+@economic_representation
+title: Socialist Economic Programme: workers’ representation in management
+subtitle: Opens the Industry card for the workers' representation in a public plant; its one step costs no month (a law for co-decision remains).
+choose-if: {! return Q.advisor_action_timer <= 0 && !!Q.S && PolishProjects.optionStatus(Q, 'industrial_policy', 'worker_representation', {adviser: true}).available !}
+unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?][? if advisor_action_timer <= 0 : [+ pl_czap_representation_why +] ?]
+call: polish_advisor_commit
+on-arrival: advisor_action_timer = 6; last_advisor_action = 1
+go-to: polish_gov_industry
+
 @socialist_education
 title: Socialist Education
-subtitle: Make the Party Organizations card available immediately.
-choose-if: advisor_action_timer = 0
-unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?]
-on-arrival: advisor_action_timer = 6; party_organizations_timer = 0; lewica_strength += 3; lewica_dissent -= 3; last_advisor_action = 1
-go-to: party_organizations
+subtitle: 1 R and a working TUR; Lewica +6 strength and −5 dissent; for six months the flow of workers from PPS to the KPP is halved.
+choose-if: {! return PolishParty.advisorActionStatus(Q, 'czapinski', 'socialist_education').available !}
+unavailable-subtitle: [+ pl_advact_socialist_education_why +]
+call: polish_advisor_commit
+on-arrival: {!
+PolishParty.advisorAction(Q, 'czapinski', 'socialist_education');
+!}
+
+[+ pl_party_result +]
+
+- @root: Continue.

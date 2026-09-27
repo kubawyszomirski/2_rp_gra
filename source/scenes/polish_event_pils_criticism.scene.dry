@@ -1,0 +1,53 @@
+title: Piłsudski Criticises Parliament
+subtitle: A recorded speech of Piłsudski against the Sejm; PPS must answer it this month.
+new-page: true
+tags: pl_event
+card-image: img/reichstag_2.jpg
+view-if: {! return !!Q.S && !!Q.polish_politics_rules && PolishPolitics.criticismDue(Q) !}
+on-arrival: {!
+// Event politics.pils_parliament_criticism, B2 (technical reference 10.7, 15.2; card catalogue 9.2; Z — 0.38): one
+// mandatory answer for 0 T per recorded speech, before the next ordinary action; no option to stay silent. The
+// speech is a synthetic game profile (P), not a historical quotation.
+PolishPolitics.criticismView(Q);
+!}
+
+= Piłsudski criticises parliament
+
+In this game Józef Piłsudski speaks publicly against the Sejm over [+ pl_crit_topic +]. The wording is a synthetic game event, not a historical quotation. PPS must answer this month; the answer is recorded in the journal of institutions and does not change our lasting line on Piłsudski or on the form of power.
+
+- @support
+- @defend
+- @reform
+
+@support
+title: Support the criticism of parliamentarism
+subtitle: Relation with Piłsudski +4; Piłsudczycy dissent −3, Centre +5. The authority of the Sejm −2 for twelve months. [+ pl_crit_warning +]
+on-arrival: {!
+PolishPolitics.criticismChoose(Q, 'support');
+!}
+go-to: result
+
+@defend
+title: Defend parliament and the lawful change of governments
+subtitle: Relation with Piłsudski −4; Piłsudczycy dissent +5, Centre −3. The authority of the Sejm +1 for twelve months.
+on-arrival: {!
+PolishPolitics.criticismChoose(Q, 'defend');
+!}
+go-to: result
+
+@reform
+title: Parliament should be reformed to work better
+subtitle: No change of relation; Centre dissent −2. It supports the line of reform but creates no project, path or votes.
+on-arrival: {!
+PolishPolitics.criticismChoose(Q, 'reform');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= Piłsudski criticises parliament
+
+[+ pl_crit_result +]
+
+- @root: Continue.

@@ -1,0 +1,77 @@
+title: Wawel or the Royal Castle
+subtitle: Education: conservation work on one of two buildings.
+new-page: true
+is-card: true
+tags: govt_affairs
+card-image: img/poster_1.png
+view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'heritage_restoration') !}
+on-arrival: {!
+// Card government.heritage_restoration (technical reference 17.11–17.12; card catalogue 8.16). Opening and closing
+// the card are free; a confirmed option costs this month's action, or the one free step of an adviser
+// who opened the card. Options that need a system of a later stage are shown with their reason.
+PolishProjects.cardView(Q, 'heritage_restoration');
+!}
+
+= Wawel or the Royal Castle
+
+Works in existing buildings, within the existing competences and the budget. Limited conservation is a small reform (1 T, 1 B for 2 months); a wider restoration with public access is a large one (2 B for 4 months). One project for each building; a completed one is not started again.
+
+[+ pl_gc_budget +]
+
+[+ pl_gc_projects +]
+
+- @wawel_conservation
+- @wawel_restoration
+- @zamek_conservation
+- @zamek_restoration
+- @easy_discard
+- @cancel_advisor_action
+
+@wawel_conservation
+title: Wawel: limited conservation
+subtitle: 1 B for 2 months; PPS reputation +1 when it was the open sponsor.
+choose-if: {! return PolishProjects.optionStatus(Q, 'heritage_restoration', 'wawel_conservation').available !}
+unavailable-subtitle: [+ pl_heritage_restoration_wawel_conservation_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'heritage_restoration', 'wawel_conservation');
+!}
+go-to: result
+
+@wawel_restoration
+title: Wawel: wider restoration and public access
+subtitle: 2 B for 4 months; reputation +2; trust of the intelligentsia +3 (stage 5). Extends a running conservation.
+choose-if: {! return PolishProjects.optionStatus(Q, 'heritage_restoration', 'wawel_restoration').available !}
+unavailable-subtitle: [+ pl_heritage_restoration_wawel_restoration_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'heritage_restoration', 'wawel_restoration');
+!}
+go-to: result
+
+@zamek_conservation
+title: Royal Castle: limited conservation
+subtitle: 1 B for 2 months; PPS reputation +1 when it was the open sponsor.
+choose-if: {! return PolishProjects.optionStatus(Q, 'heritage_restoration', 'zamek_conservation').available !}
+unavailable-subtitle: [+ pl_heritage_restoration_zamek_conservation_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'heritage_restoration', 'zamek_conservation');
+!}
+go-to: result
+
+@zamek_restoration
+title: Royal Castle: wider restoration and public access
+subtitle: 2 B for 4 months; reputation +2; trust of the intelligentsia +3 (stage 5). Extends a running conservation.
+choose-if: {! return PolishProjects.optionStatus(Q, 'heritage_restoration', 'zamek_restoration').available !}
+unavailable-subtitle: [+ pl_heritage_restoration_zamek_restoration_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'heritage_restoration', 'zamek_restoration');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= Wawel or the Royal Castle
+
+[+ pl_gc_result +]
+
+- @root: Continue.

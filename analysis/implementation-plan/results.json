@@ -1,0 +1,168 @@
+{
+  "scope": "Implementation plan 0.40: stages 0-8, catalogue entries, 21.1 tests and 20.2 leaks each assigned once; scope sections, files and links exist; approved decisions recorded.",
+  "hashes": {
+    "docs/POLISH_IMPLEMENTATION_PLAN.md": "cc314eecb199032bfdbe3fb75921c66b3c1a43388c75ce346f3ecb6a4ae1daa6",
+    "docs/POLISH_TECHNICAL_REFERENCE.md": "8aba6f238f43c61b53eecb1e52c13903a7661bf426453fe6033fc633da68aaa4",
+    "docs/POLISH_CARD_CATALOGUE.md": "d78c3f50e6d47b3b6315354dc1379dd3ffd63ef13906bac2b68fb93e7e0bd62f"
+  },
+  "stages": 9,
+  "cardsByStage": {
+    "0": 0,
+    "1": 0,
+    "2": 4,
+    "3": 4,
+    "4": 19,
+    "5": 24,
+    "6": 5,
+    "7": 12,
+    "8": 1
+  },
+  "testsByStage": {
+    "0": 1,
+    "1": 4,
+    "2": 15,
+    "3": 23,
+    "4": 35,
+    "5": 67,
+    "6": 18,
+    "7": 53,
+    "8": 0
+  },
+  "tests": 216,
+  "leaksByStage": {
+    "0": [],
+    "1": [
+      6,
+      8
+    ],
+    "2": [
+      4,
+      5,
+      7
+    ],
+    "3": [
+      2
+    ],
+    "4": [
+      1,
+      9
+    ],
+    "5": [
+      10
+    ],
+    "6": [],
+    "7": [
+      3
+    ],
+    "8": []
+  },
+  "manifestRows": 8,
+  "files": {
+    "existingChecked": 285,
+    "plannedNewFiles": []
+  },
+  "links": 6,
+  "stage0": {
+    "done": true,
+    "files": [
+      "source/rules/polish_rules.js",
+      "source/scenes/polish_incompatible_save.scene.dry",
+      "tests/helpers/dendry.js",
+      "tests/rules-foundation.test.js",
+      "tests/polish-foundation.test.js"
+    ],
+    "appendixEVariables": 7
+  },
+  "stage1": {
+    "done": true,
+    "files": [
+      "source/rules/polish_engine_hooks.js",
+      "source/scenes/polish_advisor_commit.scene.dry",
+      "source/scenes/polish_event_router.scene.dry",
+      "source/scenes/polish_discard.scene.dry",
+      "tests/rules-turn.test.js",
+      "tests/polish-turn.test.js"
+    ],
+    "adviserCommits": 24
+  },
+  "stage2": {
+    "done": true,
+    "files": [
+      "source/rules/polish_institutions.js",
+      "source/scenes/polish_speaker_election.scene.dry",
+      "source/scenes/polish_chapter_report.scene.dry",
+      "tests/rules-institutions.test.js",
+      "tests/polish-institutions.test.js"
+    ],
+    "movedToStage3": [
+      "7.7",
+      "Kompromis listowy a Lewica"
+    ],
+    "movedToStage4": [
+      "C4"
+    ]
+  },
+  "stage3": {
+    "done": true,
+    "files": [
+      "source/rules/polish_government.js",
+      "source/scenes/polish_cabinet_formation.scene.dry",
+      "source/scenes/polish_government_support.scene.dry",
+      "source/scenes/polish_government_response.scene.dry",
+      "source/scenes/polish_list_agreement.scene.dry",
+      "tests/rules-negotiation.test.js",
+      "tests/polish-cabinet.test.js"
+    ],
+    "movedToStage7": [
+      "9.1"
+    ]
+  },
+  "stage4": {
+    "done": true,
+    "files": 26,
+    "movedTests": {
+      "5": [
+        "Populacja",
+        "Warianty funduszu inwestycyjnego",
+        "Szkoły"
+      ],
+      "6": [
+        "Ratunek zakładu",
+        "Wspólna karta gabinetowa"
+      ],
+      "7": [
+        "Reprezentacja",
+        "Autonomia",
+        "Sprawiedliwość",
+        "Rozszerzyć i skupić osłony"
+      ]
+    }
+  },
+  "stage5": {
+    "done": true,
+    "files": 24,
+    "unionsFromStage6": [
+      "S.unions: three branches"
+    ],
+    "leakClosed": 10
+  },
+  "stage6": {
+    "done": true,
+    "files": 8,
+    "testsImplemented": 18,
+    "kNotes": 26,
+    "plantProfile": "synthetic_plants_v1",
+    "stateProfile": "strike_state_profiles_v1"
+  },
+  "stage7": {
+    "done": true,
+    "files": 15,
+    "testsImplemented": 53,
+    "kNotes": 32,
+    "scenarioProfile": "normal_chapter1_v1",
+    "forceProfile": "synthetic_test_v2",
+    "coupProfile": "coup_f_v1",
+    "guardedGermanScenes": 26,
+    "leakClosed": 3
+  }
+}

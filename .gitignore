@@ -13,3 +13,15 @@ out/html/jquery-1.11.1.min.js
 out/html/d3.v7.min.js
 out/html/game.json
 out/html/img/
+# Copied from source/rules/ by npm run build.
+out/html/polish_rules.js
+out/html/polish_institutions.js
+out/html/polish_government.js
+out/html/polish_economy.js
+out/html/polish_projects.js
+out/html/polish_electorate.js
+out/html/polish_party.js
+out/html/polish_unions.js
+out/html/polish_politics.js
+out/html/polish_security.js
+out/html/polish_engine_hooks.js

@@ -1,0 +1,5437 @@
+{
+  "hashes": {
+    "docs/POLISH_TECHNICAL_REFERENCE.md": "8aba6f238f43c61b53eecb1e52c13903a7661bf426453fe6033fc633da68aaa4",
+    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "2402955a7669c2ad1bfd208ba3e4b704ab79574304554f4b51576fcf2195b42e"
+  },
+  "assumptions": [
+    "Same controlled mandates, consent fixtures, cohort mixing and random seed as the earlier four-run report.",
+    "New broad-coalition minimum includes the existing full benefit or a feasible accepted new benefit; no duplication.",
+    "The right proposes cuts at the first six-month review during the active credit crisis. Its declared willingness to retain or replace Skrzynski is supplied; actual ballots are checked.",
+    "The right majority refuses the 1923 resignation demand; PPS switches to an economic offer next round. Political faction effects are not a fully simulated party campaign.",
+    "The original random draw sends the remote reserve to Pilsudski. A separate fixed-side test, explicitly labelled, isolates enemy transport.",
+    "Grabski refusal cases are isolated agreement checks, not full campaigns after his resignation."
+  ],
+  "runs": [
+    {
+      "config": {
+        "id": "A",
+        "label": "PPS bierna",
+        "organized": false,
+        "welfare": false,
+        "coalition": false,
+        "militaryRequest": null,
+        "stance": "neutral"
+      },
+      "options": {
+        "revision13": true
+      },
+      "endpoint": {
+        "kind": "synthetic_coup_result",
+        "date": "1927-08",
+        "outcome": "pils_victory",
+        "capacity": 36.231,
+        "rounds": 3,
+        "pressure": 66,
+        "postCoupOutput": 89.33114485547664
+      },
+      "may1926": {
+        "run": "A",
+        "date": "1926-05",
+        "time": 53,
+        "cabinet": "Grabski",
+        "ppsMode": "opposition",
+        "inflation": 0.0019213417679855027,
+        "wage": 100,
+        "credit": 52.953225919787144,
+        "output": 87.13253794384019,
+        "marketUnemployment": 7.811917062118259,
+        "unemployment": 7.811917062118259,
+        "agrarian": 45.06930337856103,
+        "privateGrowth": -0.23742910864987618,
+        "creditTarget": 53.99972552260457,
+        "budget": 1.3669954154817687,
+        "coverage": 1,
+        "projectCharges": 1,
+        "policyBudget": 0,
+        "taxLevel": 1,
+        "businessPressure": 22,
+        "workerGrievance": 62.402665465845345,
+        "unemployedGrievance": 72.05667363398338,
+        "workerRadicalization": 1.507899501526633,
+        "uncontrolledUpperBound": 0.9514998136167796,
+        "nationalGrievance": 42.17364704469731,
+        "authority": 55,
+        "democracy": 74.43000000000012,
+        "violence": 0,
+        "pressure": 38,
+        "militaryOpen": true,
+        "cash": 12.599999999999987,
+        "apparatus": 1,
+        "industryReach": 20,
+        "industryReadiness": 25,
+        "railReach": 20,
+        "railReadiness": 25,
+        "railFund": 1.8400000000000014,
+        "partySpending": 0,
+        "ppsActiveActions": 0,
+        "governmentInitiatives": 0,
+        "strikeDisruption": 0,
+        "benefit": false,
+        "worksUnits": 0,
+        "agreementTension": 0,
+        "currencyCrisis": false,
+        "fiscalCrisis": false
+      },
+      "projects": [
+        {
+          "kind": "land",
+          "cost": 2,
+          "upkeep": 0,
+          "duration": 4,
+          "start": 18,
+          "progress": 100,
+          "firstEffect": 23
+        },
+        {
+          "kind": "currency",
+          "cost": 2,
+          "upkeep": 0,
+          "duration": 3,
+          "start": 20,
+          "progress": 100,
+          "firstEffect": 24
+        },
+        {
+          "kind": "credit",
+          "cost": 2,
+          "upkeep": 1,
+          "duration": 2,
+          "start": 43,
+          "progress": 100,
+          "firstEffect": 45
+        }
+      ],
+      "events": [
+        {
+          "time": 6,
+          "date": "1922-06",
+          "kind": "fixture",
+          "message": "Brak uzgodnionego kompromisu z Naczelnikiem; dymisja Ponikowskiego. Próba Śliwińskiego bez przyjętego poparcia."
+        },
+        {
+          "time": 7,
+          "date": "1922-07",
+          "kind": "cabinet",
+          "message": "Ponikowski (obowiązki) → Nowak: przyjęta administracyjna oferta kompromisowa",
+          "ppsMode": "opposition",
+          "fixture": true
+        },
+        {
+          "time": 11,
+          "date": "1922-11",
+          "kind": "fixture",
+          "message": "Wspólny zamrożony wynik wyborów 1922.",
+          "seats": {
+            "pps": 41,
+            "wyzwolenie": 49,
+            "npr": 18,
+            "piast": 70,
+            "pschd": 60,
+            "zln": 100,
+            "minorities": 90,
+            "other": 14,
+            "kpp": 2
+          }
+        },
+        {
+          "time": 12,
+          "date": "1922-12",
+          "kind": "fixture",
+          "message": "Gałąź Narutowicza, legalne zastępstwo Rataja i następca; to wejście polityczne, nie losowanie ryzyka zabójstwa."
+        },
+        {
+          "time": 12,
+          "date": "1922-12",
+          "kind": "cabinet",
+          "message": "Nowak → Sikorski: przyjęta oferta ciągłości władz po kryzysie prezydenckim",
+          "ppsMode": "external_support",
+          "fixture": true
+        },
+        {
+          "time": 12,
+          "date": "1922-12",
+          "kind": "cabinet",
+          "message": "Sikorski: ochrona zagrożonych instytucji, koszt 1 B przez miesiąc."
+        },
+        {
+          "time": 13,
+          "date": "1923-01",
+          "kind": "offer_input",
+          "message": "Sikorski proponuje porozumienie pracownicze; brak zgody wskazanego wykonawcy, bez efektu i bez dymisji za opcjonalny punkt."
+        },
+        {
+          "time": 16,
+          "date": "1923-04",
+          "kind": "crisis",
+          "message": "Dwa zakończone miesiące inflacji ≥20%: bramka kryzysu walutowego."
+        },
+        {
+          "time": 16,
+          "date": "1923-04",
+          "kind": "cabinet",
+          "message": "Przygotowanie reformy walutowej po dwóch miesiącach inflacji ≥20%."
+        },
+        {
+          "time": 17,
+          "date": "1923-05",
+          "kind": "ballot",
+          "message": "Przyjęte żądanie ustąpienia Sikorskiego na rzecz oferty prawicy i Piasta.",
+          "yes": 230,
+          "no": 214,
+          "declarationsAreFixture": true
+        },
+        {
+          "time": 17,
+          "date": "1923-05",
+          "kind": "cabinet",
+          "message": "Sikorski → Chjeno-Piast: zaakceptowana oferta ziemska i finansowa; większość parlamentarna",
+          "ppsMode": "opposition"
+        },
+        {
+          "time": 17,
+          "date": "1923-05",
+          "kind": "cabinet",
+          "message": "Przygotowanie uzgodnionej parcelacji z odszkodowaniem."
+        },
+        {
+          "time": 18,
+          "date": "1923-06",
+          "kind": "cabinet",
+          "message": "Wdrożenie land; koszt 2 B, czas 4 M.",
+          "forecast": -1.0586261263704508
+        },
+        {
+          "time": 19,
+          "date": "1923-07",
+          "kind": "cabinet",
+          "message": "Szersza podstawa podatku: +1 B trwale; uzgodniony pakiet finansowania."
+        },
+        {
+          "time": 20,
+          "date": "1923-08",
+          "kind": "cabinet",
+          "message": "Wdrożenie currency; koszt 2 B, czas 3 M.",
+          "forecast": -1.0765772488595489
+        },
+        {
+          "time": 22,
+          "date": "1923-10",
+          "kind": "crisis",
+          "message": "Trzy miesiące płac <80: żądanie wyrównania; brak przyjętej ugody do rozliczenia, +8 adresatom (80% zatrudnionych)."
+        },
+        {
+          "time": 22,
+          "date": "1923-10",
+          "kind": "completion",
+          "message": "land: ukończony, efekt od 1923-11."
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "crisis",
+          "message": "Dwa zakończone miesiące budżetu <−2 B: bramka kryzysu finansowego."
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "project_effect",
+          "message": "Pierwszy efekt: land."
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "agreement_fulfilled",
+          "message": "Wykonane zobowiązanie: land."
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "fiscal_review",
+          "message": "Przegląd po niedoborze: ukończona parcelacja przestaje obciążać budżet; kontynuacja zobowiązań jest wykonalna bez nowej korekty.",
+          "currentForecast": -1.12136411875181
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "pps_event",
+          "message": "PPS nie organizuje protestu ani nie negocjuje ugody. Żądanie pozostaje otwarte."
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "completion",
+          "message": "currency: ukończony, efekt od 1923-12."
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "project_effect",
+          "message": "Pierwszy efekt: currency."
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "agreement_fulfilled",
+          "message": "Wykonane zobowiązanie: currency."
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "fixture",
+          "message": "Dziesięciu posłów Piasta zmienia deklarację poparcia wskutek wewnętrznego sporu politycznego. Liczba jest syntetyczna."
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "ballot",
+          "message": "Skuteczne głosowanie o ustąpieniu Chjeno-Piasta.",
+          "yes": 224,
+          "no": 220
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "cabinet",
+          "message": "Chjeno-Piast → Grabski: przyjęta oferta ekspercka; PPS może wynegocjować osłonę",
+          "ppsMode": "opposition",
+          "guaranteedSupport": 238,
+          "welfareAgreement": false
+        },
+        {
+          "time": 37,
+          "date": "1925-01",
+          "kind": "fixture",
+          "message": "Otwarta konkretna sprawa organizacji naczelnych władz wojskowych; wspólne wejście testu."
+        },
+        {
+          "time": 42,
+          "date": "1925-06",
+          "kind": "crisis",
+          "message": "Datowany kryzys kredytowy: +12 do szoku kredytu, −0,4 pp produkcji."
+        },
+        {
+          "time": 42,
+          "date": "1925-06",
+          "kind": "cabinet",
+          "message": "Przygotowanie instrumentu kredytowego po otwarciu kryzysu."
+        },
+        {
+          "time": 43,
+          "date": "1925-07",
+          "kind": "cabinet",
+          "message": "Wdrożenie credit; koszt 2 B, czas 2 M.",
+          "forecast": 0.5555200255780002
+        },
+        {
+          "time": 44,
+          "date": "1925-08",
+          "kind": "completion",
+          "message": "credit: ukończony, efekt od 1925-09."
+        },
+        {
+          "time": 45,
+          "date": "1925-09",
+          "kind": "project_effect",
+          "message": "Pierwszy efekt: credit."
+        },
+        {
+          "time": 45,
+          "date": "1925-09",
+          "kind": "agreement_fulfilled",
+          "message": "Wykonane zobowiązanie: credit."
+        },
+        {
+          "time": 53,
+          "date": "1926-05",
+          "kind": "historical_checkpoint",
+          "message": "Maj nie powołuje nowego rządu ani nie uruchamia próby samą datą.",
+          "pressure": 38,
+          "cabinet": "Grabski"
+        },
+        {
+          "time": 68,
+          "date": "1927-08",
+          "kind": "coup",
+          "message": "Rozstrzygnięcie syntetycznej próby: pils_victory.",
+          "capacity": 36.231,
+          "pressure": 66,
+          "stance": "neutral",
+          "forces": [
+            {
+              "id": "capital_legal",
+              "f": 45,
+              "ready": 0.8,
+              "command": 0.8,
+              "legal": 0.9,
+              "pils": 0.05,
+              "phase": 0,
+              "side": "legal",
+              "draw": 0.35743266018107533,
+              "loss": 6.651099783355274
+            },
+            {
+              "id": "capital_pils",
+              "f": 55,
+              "ready": 0.85,
+              "command": 0.85,
+              "legal": 0.05,
+              "pils": 0.9,
+              "phase": 0,
+              "side": "pils",
+              "draw": 0.7083165678195655,
+              "loss": 4.508254923178992
+            },
+            {
+              "id": "near",
+              "f": 25,
+              "ready": 0.7,
+              "command": 0.7,
+              "legal": 0.35,
+              "pils": 0.45,
+              "phase": 1,
+              "side": "pils",
+              "draw": 0.6854594778269529,
+              "loss": 1.250839981397632
+            },
+            {
+              "id": "remote",
+              "f": 35,
+              "ready": 0.7,
+              "command": 0.7,
+              "legal": 0.7,
+              "pils": 0.15,
+              "phase": 2,
+              "side": "pils",
+              "draw": 0.7156099695712328,
+              "loss": 0.7889348744198261
+            }
+          ],
+          "rounds": [
+            {
+              "phase": 0,
+              "F": {
+                "pils": 39.7375,
+                "legal": 28.8
+              },
+              "railParticipation": 0,
+              "delay": 0,
+              "streak": {
+                "pils": 1,
+                "legal": 0
+              }
+            },
+            {
+              "phase": 1,
+              "F": {
+                "pils": 50.65165903702353,
+                "legal": 27.46415903702353
+              },
+              "railParticipation": 0,
+              "delay": 0,
+              "streak": {
+                "pils": 2,
+                "legal": 0
+              }
+            },
+            {
+              "phase": 2,
+              "F": {
+                "pils": 66.37699985420525,
+                "legal": 26.039499854205264
+              },
+              "railParticipation": 0,
+              "delay": 0,
+              "streak": {
+                "pils": 3,
+                "legal": 0
+              }
+            }
+          ],
+          "outputLossPercent": 1.5
+        }
+      ],
+      "blocked": []
+    },
+    {
+      "config": {
+        "id": "B",
+        "label": "PPS tolerująca",
+        "organized": true,
+        "welfare": true,
+        "coalition": false,
+        "militaryRequest": "1925-06",
+        "stance": "legal"
+      },
+      "options": {
+        "revision13": true
+      },
+      "endpoint": {
+        "kind": "scheduled_election_boundary",
+        "date": "1928-02-19",
+        "pressure": 4,
+        "note": "Boundary before the next ordinary turn; electoral preferences/results not forecast."
+      },
+      "may1926": {
+        "run": "B",
+        "date": "1926-05",
+        "time": 53,
+        "cabinet": "Grabski",
+        "ppsMode": "external_support",
+        "inflation": 0.0019213417679855027,
+        "wage": 100,
+        "credit": 52.953225919787144,
+        "output": 86.05232886466592,
+        "marketUnemployment": 8.245389201286109,
+        "unemployment": 8.245389201286109,
+        "agrarian": 45.06930337856103,
+        "privateGrowth": -0.23742910864987618,
+        "creditTarget": 53.99972552260457,
+        "budget": 0.31285641978814827,
+        "coverage": 1,
+        "projectCharges": 3,
+        "policyBudget": 0,
+        "taxLevel": 2,
+        "businessPressure": 34,
+        "workerGrievance": 60.88027530403896,
+        "unemployedGrievance": 21.324947601830644,
+        "workerRadicalization": 0.2600460132040025,
+        "uncontrolledUpperBound": 0.1496803751987061,
+        "nationalGrievance": 40.35408238871584,
+        "authority": 55,
+        "democracy": 77.75000000000009,
+        "violence": 0,
+        "pressure": 4,
+        "militaryOpen": false,
+        "cash": 15.899999999999968,
+        "apparatus": 2,
+        "industryReach": 50,
+        "industryReadiness": 55,
+        "railReach": 50,
+        "railReadiness": 55,
+        "railFund": 4.039624375,
+        "partySpending": 8,
+        "ppsActiveActions": 21,
+        "governmentInitiatives": 0,
+        "strikeDisruption": 0,
+        "benefit": true,
+        "worksUnits": 0,
+        "agreementTension": 0,
+        "currencyCrisis": false,
+        "fiscalCrisis": false
+      },
+      "projects": [
+        {
+          "kind": "land",
+          "cost": 2,
+          "upkeep": 0,
+          "duration": 4,
+          "start": 18,
+          "progress": 100,
+          "firstEffect": 23
+        },
+        {
+          "kind": "currency",
+          "cost": 2,
+          "upkeep": 0,
+          "duration": 3,
+          "start": 20,
+          "progress": 100,
+          "firstEffect": 24
+        },
+        {
+          "kind": "credit",
+          "cost": 2,
+          "upkeep": 1,
+          "duration": 2,
+          "start": 43,
+          "progress": 100,
+          "firstEffect": 45
+        }
+      ],
+      "events": [
+        {
+          "time": 1,
+          "date": "1922-01",
+          "kind": "pps_action",
+          "message": "apparatus",
+          "cashAfterChoice": 0
+        },
+        {
+          "time": 2,
+          "date": "1922-02",
+          "kind": "pps_action",
+          "message": "collect",
+          "cashAfterChoice": 2.3
+        },
+        {
+          "time": 3,
+          "date": "1922-03",
+          "kind": "pps_action",
+          "message": "reach: industry",
+          "cashAfterChoice": 1.6
+        },
+        {
+          "time": 4,
+          "date": "1922-04",
+          "kind": "pps_action",
+          "message": "ready: industry",
+          "cashAfterChoice": 1.9
+        },
+        {
+          "time": 5,
+          "date": "1922-05",
+          "kind": "pps_action",
+          "message": "reach: industry",
+          "cashAfterChoice": 1.1999999999999997
+        },
+        {
+          "time": 6,
+          "date": "1922-06",
+          "kind": "fixture",
+          "message": "Brak uzgodnionego kompromisu z Naczelnikiem; dymisja Ponikowskiego. Próba Śliwińskiego bez przyjętego poparcia."
+        },
+        {
+          "time": 6,
+          "date": "1922-06",
+          "kind": "pps_action",
+          "message": "collect",
+          "cashAfterChoice": 3.4999999999999996
+        },
+        {
+          "time": 7,
+          "date": "1922-07",
+          "kind": "cabinet",
+          "message": "Ponikowski (obowiązki) → Nowak: przyjęta administracyjna oferta kompromisowa",
+          "ppsMode": "opposition",
+          "fixture": true
+        },
+        {
+          "time": 7,
+          "date": "1922-07",
+          "kind": "pps_action",
+          "message": "reach: rail",
+          "cashAfterChoice": 2.7999999999999994
+        },
+        {
+          "time": 8,
+          "date": "1922-08",
+          "kind": "pps_action",
+          "message": "ready: rail",
+          "cashAfterChoice": 3.099999999999999
+        },
+        {
+          "time": 9,
+          "date": "1922-09",
+          "kind": "pps_action",
+          "message": "reach: rail",
+          "cashAfterChoice": 2.399999999999999
+        },
+        {
+          "time": 10,
+          "date": "1922-10",
+          "kind": "pps_action",
+          "message": "ready: rail",
+          "cashAfterChoice": 2.699999999999999
+        },
+        {
+          "time": 11,
+          "date": "1922-11",
+          "kind": "fixture",
+          "message": "Wspólny zamrożony wynik wyborów 1922.",
+          "seats": {
+            "pps": 41,
+            "wyzwolenie": 49,
+            "npr": 18,
+            "piast": 70,
+            "pschd": 60,
+            "zln": 100,
+            "minorities": 90,
+            "other": 14,
+            "kpp": 2
+          }
+        },
+        {
+          "time": 11,
+          "date": "1922-11",
+          "kind": "pps_action",
+          "message": "contact: piast",
+          "cashAfterChoice": 2.9999999999999987
+        },
+        {
+          "time": 12,
+          "date": "1922-12",
+          "kind": "fixture",
+          "message": "Gałąź Narutowicza, legalne zastępstwo Rataja i następca; to wejście polityczne, nie losowanie ryzyka zabójstwa."
+        },
+        {
+          "time": 12,
+          "date": "1922-12",
+          "kind": "cabinet",
+          "message": "Nowak → Sikorski: przyjęta oferta ciągłości władz po kryzysie prezydenckim",
+          "ppsMode": "external_support",
+          "fixture": true
+        },
+        {
+          "time": 12,
+          "date": "1922-12",
+          "kind": "pps_event",
+          "message": "Pokojowa mobilizacja republikańska, 1 R."
+        },
+        {
+          "time": 12,
+          "date": "1922-12",
+          "kind": "pps_action",
+          "message": "collect",
+          "cashAfterChoice": 4.299999999999999
+        },
+        {
+          "time": 12,
+          "date": "1922-12",
+          "kind": "cabinet",
+          "message": "Sikorski: ochrona zagrożonych instytucji, koszt 1 B przez miesiąc."
+        },
+        {
+          "time": 13,
+          "date": "1923-01",
+          "kind": "pps_action",
+          "message": "ready: industry",
+          "cashAfterChoice": 4.599999999999999
+        },
+        {
+          "time": 13,
+          "date": "1923-01",
+          "kind": "offer_input",
+          "message": "Sikorski proponuje porozumienie pracownicze; brak zgody wskazanego wykonawcy, bez efektu i bez dymisji za opcjonalny punkt."
+        },
+        {
+          "time": 14,
+          "date": "1923-02",
+          "kind": "pps_action",
+          "message": "contact: piast",
+          "cashAfterChoice": 4.899999999999999
+        },
+        {
+          "time": 15,
+          "date": "1923-03",
+          "kind": "pps_action",
+          "message": "contact: npr",
+          "cashAfterChoice": 5.199999999999998
+        },
+        {
+          "time": 16,
+          "date": "1923-04",
+          "kind": "crisis",
+          "message": "Dwa zakończone miesiące inflacji ≥20%: bramka kryzysu walutowego."
+        },
+        {
+          "time": 16,
+          "date": "1923-04",
+          "kind": "pps_action",
+          "message": "fund: industry",
+          "cashAfterChoice": 4.499999999999998
+        },
+        {
+          "time": 16,
+          "date": "1923-04",
+          "kind": "cabinet",
+          "message": "Przygotowanie reformy walutowej po dwóch miesiącach inflacji ≥20%."
+        },
+        {
+          "time": 17,
+          "date": "1923-05",
+          "kind": "ballot",
+          "message": "Przyjęte żądanie ustąpienia Sikorskiego na rzecz oferty prawicy i Piasta.",
+          "yes": 230,
+          "no": 214,
+          "declarationsAreFixture": true
+        },
+        {
+          "time": 17,
+          "date": "1923-05",
+          "kind": "cabinet",
+          "message": "Sikorski → Chjeno-Piast: zaakceptowana oferta ziemska i finansowa; większość parlamentarna",
+          "ppsMode": "opposition"
+        },
+        {
+          "time": 17,
+          "date": "1923-05",
+          "kind": "pps_action",
+          "message": "contact: pschd",
+          "cashAfterChoice": 4.799999999999998
+        },
+        {
+          "time": 17,
+          "date": "1923-05",
+          "kind": "cabinet",
+          "message": "Przygotowanie uzgodnionej parcelacji z odszkodowaniem."
+        },
+        {
+          "time": 18,
+          "date": "1923-06",
+          "kind": "cabinet",
+          "message": "Wdrożenie land; koszt 2 B, czas 4 M.",
+          "forecast": -1.0586261263704508
+        },
+        {
+          "time": 19,
+          "date": "1923-07",
+          "kind": "cabinet",
+          "message": "Szersza podstawa podatku: +1 B trwale; uzgodniony pakiet finansowania."
+        },
+        {
+          "time": 20,
+          "date": "1923-08",
+          "kind": "pps_action",
+          "message": "contact: pschd",
+          "cashAfterChoice": 5.6999999999999975
+        },
+        {
+          "time": 20,
+          "date": "1923-08",
+          "kind": "cabinet",
+          "message": "Wdrożenie currency; koszt 2 B, czas 3 M.",
+          "forecast": -1.0765772488595489
+        },
+        {
+          "time": 22,
+          "date": "1923-10",
+          "kind": "crisis",
+          "message": "Trzy miesiące płac <80: żądanie wyrównania; brak przyjętej ugody do rozliczenia, +8 adresatom (80% zatrudnionych)."
+        },
+        {
+          "time": 22,
+          "date": "1923-10",
+          "kind": "completion",
+          "message": "land: ukończony, efekt od 1923-11."
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "crisis",
+          "message": "Dwa zakończone miesiące budżetu <−2 B: bramka kryzysu finansowego."
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "project_effect",
+          "message": "Pierwszy efekt: land."
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "agreement_fulfilled",
+          "message": "Wykonane zobowiązanie: land."
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "fiscal_review",
+          "message": "Przegląd po niedoborze: ukończona parcelacja przestaje obciążać budżet; kontynuacja zobowiązań jest wykonalna bez nowej korekty.",
+          "currentForecast": -1.12136411875181
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "pps_action",
+          "message": "contact: pschd",
+          "cashAfterChoice": 6.599999999999997
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "settlement_offer",
+          "message": "Ograniczona ugoda: odrzucona.",
+          "chance": 0.46091562500000005,
+          "draw": 0.6716401379089803,
+          "ids": [
+            "industry",
+            "rail"
+          ]
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "strike",
+          "message": "Po odmowie rokowań PPS rozpoczyna ograniczoną akcję."
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "state_response_input",
+          "message": "Wykonana militaryzacja kolei po odmowie ugody; +10 branżowo, ważone w populacji."
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "clash_avoided",
+          "message": "Represyjna reakcja nie kończy się starciem w tym rzucie.",
+          "clashRisk": 0.18284999999999996,
+          "draw": 0.32024633628316224
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "completion",
+          "message": "currency: ukończony, efekt od 1923-12."
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "project_effect",
+          "message": "Pierwszy efekt: currency."
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "agreement_fulfilled",
+          "message": "Wykonane zobowiązanie: currency."
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "fixture",
+          "message": "Dziesięciu posłów Piasta zmienia deklarację poparcia wskutek wewnętrznego sporu politycznego. Liczba jest syntetyczna."
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "ballot",
+          "message": "Skuteczne głosowanie o ustąpieniu Chjeno-Piasta.",
+          "yes": 224,
+          "no": 220
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "cabinet",
+          "message": "Chjeno-Piast → Grabski: przyjęta oferta ekspercka; PPS może wynegocjować osłonę",
+          "ppsMode": "external_support",
+          "guaranteedSupport": 238,
+          "welfareAgreement": true
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "cabinet",
+          "message": "Wdrożenie wynegocjowanej osłony 2 B: progresja +1 B trwale oraz podatek majątkowy +2 B na 6 M.",
+          "forecast": 1.8366716175394773
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "settlement_offer",
+          "message": "Ograniczona ugoda: odrzucona.",
+          "chance": 0.4414240625,
+          "draw": 0.6815031503792852,
+          "ids": [
+            "industry",
+            "rail"
+          ]
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "agreement_fulfilled",
+          "message": "Wykonane zobowiązanie: benefit."
+        },
+        {
+          "time": 25,
+          "date": "1924-01",
+          "kind": "settlement_offer",
+          "message": "Ograniczona ugoda: odrzucona.",
+          "chance": 0.42767828125,
+          "draw": 0.9106231883633882,
+          "ids": [
+            "industry",
+            "rail"
+          ]
+        },
+        {
+          "time": 26,
+          "date": "1924-02",
+          "kind": "pps_action",
+          "message": "contact: pschd",
+          "cashAfterChoice": 7.4999999999999964
+        },
+        {
+          "time": 26,
+          "date": "1924-02",
+          "kind": "settlement_offer",
+          "message": "Ograniczona ugoda: przyjęta.",
+          "chance": 0.4219325,
+          "draw": 0.24341670656576753,
+          "ids": [
+            "industry",
+            "rail"
+          ]
+        },
+        {
+          "time": 26,
+          "date": "1924-02",
+          "kind": "strike_end",
+          "message": "Zakończenie na uzgodnionych warunkach; podwyżka dopiero od następnego miesiąca."
+        },
+        {
+          "time": 27,
+          "date": "1924-03",
+          "kind": "settlement_relief",
+          "message": "Pierwsza wykonana korzyść ugody: −4 niezadowolenia adresatom (80% zatrudnionych), raz."
+        },
+        {
+          "time": 27,
+          "date": "1924-03",
+          "kind": "agreement_fulfilled",
+          "message": "Wykonane zobowiązanie: wage-27."
+        },
+        {
+          "time": 27,
+          "date": "1924-03",
+          "kind": "settlement_executed",
+          "message": "Wykonanie ugody płacowej: pierwszy miesiąc podwyżki; żądanie płacowe zamknięte. Bez automatycznego uchylenia represji."
+        },
+        {
+          "time": 37,
+          "date": "1925-01",
+          "kind": "fixture",
+          "message": "Otwarta konkretna sprawa organizacji naczelnych władz wojskowych; wspólne wejście testu."
+        },
+        {
+          "time": 42,
+          "date": "1925-06",
+          "kind": "crisis",
+          "message": "Datowany kryzys kredytowy: +12 do szoku kredytu, −0,4 pp produkcji."
+        },
+        {
+          "time": 42,
+          "date": "1925-06",
+          "kind": "pps_action",
+          "message": "military_request",
+          "cashAfterChoice": 12.29999999999998
+        },
+        {
+          "time": 42,
+          "date": "1925-06",
+          "kind": "cabinet",
+          "message": "Przygotowanie instrumentu kredytowego po otwarciu kryzysu."
+        },
+        {
+          "time": 43,
+          "date": "1925-07",
+          "kind": "cabinet",
+          "message": "Wdrożenie credit; koszt 2 B, czas 2 M.",
+          "forecast": -0.5026293817188936
+        },
+        {
+          "time": 44,
+          "date": "1925-08",
+          "kind": "military_compromise",
+          "message": "Wykonane uzgodnione stanowisko pod cywilną kontrolą: −12 presji raz; sprawa zamknięta.",
+          "executor": "Grabski",
+          "offerAcceptanceIsFixture": true,
+          "nearReserveLoyaltyChange": 0.05
+        },
+        {
+          "time": 44,
+          "date": "1925-08",
+          "kind": "completion",
+          "message": "credit: ukończony, efekt od 1925-09."
+        },
+        {
+          "time": 45,
+          "date": "1925-09",
+          "kind": "project_effect",
+          "message": "Pierwszy efekt: credit."
+        },
+        {
+          "time": 45,
+          "date": "1925-09",
+          "kind": "agreement_fulfilled",
+          "message": "Wykonane zobowiązanie: credit."
+        },
+        {
+          "time": 50,
+          "date": "1926-02",
+          "kind": "military_review",
+          "message": "Strony potwierdzają wykonanie i przedłużenie umowy na 6 M; bez ponownej ulgi.",
+          "acceptanceIsFixture": true
+        },
+        {
+          "time": 53,
+          "date": "1926-05",
+          "kind": "historical_checkpoint",
+          "message": "Maj nie powołuje nowego rządu ani nie uruchamia próby samą datą.",
+          "pressure": 4,
+          "cabinet": "Grabski"
+        },
+        {
+          "time": 56,
+          "date": "1926-08",
+          "kind": "military_review",
+          "message": "Strony potwierdzają wykonanie i przedłużenie umowy na 6 M; bez ponownej ulgi.",
+          "acceptanceIsFixture": true
+        },
+        {
+          "time": 62,
+          "date": "1927-02",
+          "kind": "military_review",
+          "message": "Strony potwierdzają wykonanie i przedłużenie umowy na 6 M; bez ponownej ulgi.",
+          "acceptanceIsFixture": true
+        },
+        {
+          "time": 68,
+          "date": "1927-08",
+          "kind": "military_review",
+          "message": "Strony potwierdzają wykonanie i przedłużenie umowy na 6 M; bez ponownej ulgi.",
+          "acceptanceIsFixture": true
+        }
+      ],
+      "blocked": []
+    },
+    {
+      "config": {
+        "id": "C",
+        "label": "PPS współrządząca",
+        "organized": true,
+        "welfare": true,
+        "coalition": true,
+        "militaryRequest": "1925-12",
+        "stance": "legal"
+      },
+      "options": {
+        "revision13": true
+      },
+      "endpoint": {
+        "kind": "scheduled_election_boundary",
+        "date": "1928-02-19",
+        "pressure": 10,
+        "note": "Boundary before the next ordinary turn; electoral preferences/results not forecast."
+      },
+      "may1926": {
+        "run": "C",
+        "date": "1926-05",
+        "time": 53,
+        "cabinet": "Skrzyński",
+        "ppsMode": "member",
+        "inflation": 0.0019213417679855027,
+        "wage": 100,
+        "credit": 52.953225919787144,
+        "output": 86.8310658381107,
+        "marketUnemployment": 8.245389201286109,
+        "unemployment": 7.745389201286109,
+        "agrarian": 45.06930337856103,
+        "privateGrowth": -0.23742910864987618,
+        "creditTarget": 53.99972552260457,
+        "budget": -0.6611615579818775,
+        "coverage": 1,
+        "projectCharges": 4,
+        "policyBudget": 0,
+        "taxLevel": 2,
+        "businessPressure": 34,
+        "workerGrievance": 60.668327280681474,
+        "unemployedGrievance": 20.910380943075914,
+        "workerRadicalization": 0.23339433188934786,
+        "uncontrolledUpperBound": 0.13427888809336264,
+        "nationalGrievance": 40.34550168086346,
+        "authority": 59,
+        "democracy": 78.59000000000002,
+        "violence": 0,
+        "pressure": 10,
+        "militaryOpen": false,
+        "cash": 15.899999999999968,
+        "apparatus": 2,
+        "industryReach": 50,
+        "industryReadiness": 55,
+        "railReach": 50,
+        "railReadiness": 55,
+        "railFund": 4.039624375,
+        "partySpending": 8,
+        "ppsActiveActions": 27,
+        "governmentInitiatives": 0,
+        "strikeDisruption": 0,
+        "benefit": true,
+        "worksUnits": 2,
+        "agreementTension": 0,
+        "currencyCrisis": false,
+        "fiscalCrisis": false
+      },
+      "projects": [
+        {
+          "kind": "land",
+          "cost": 2,
+          "upkeep": 0,
+          "duration": 4,
+          "start": 18,
+          "progress": 100,
+          "firstEffect": 23
+        },
+        {
+          "kind": "currency",
+          "cost": 2,
+          "upkeep": 0,
+          "duration": 3,
+          "start": 20,
+          "progress": 100,
+          "firstEffect": 24
+        },
+        {
+          "kind": "credit",
+          "cost": 2,
+          "upkeep": 1,
+          "duration": 2,
+          "start": 43,
+          "progress": 100,
+          "firstEffect": 45
+        },
+        {
+          "kind": "works",
+          "cost": 2,
+          "upkeep": 1,
+          "duration": 3,
+          "start": 48,
+          "progress": 100,
+          "firstEffect": 51
+        }
+      ],
+      "events": [
+        {
+          "time": 1,
+          "date": "1922-01",
+          "kind": "pps_action",
+          "message": "apparatus",
+          "cashAfterChoice": 0
+        },
+        {
+          "time": 2,
+          "date": "1922-02",
+          "kind": "pps_action",
+          "message": "collect",
+          "cashAfterChoice": 2.3
+        },
+        {
+          "time": 3,
+          "date": "1922-03",
+          "kind": "pps_action",
+          "message": "reach: industry",
+          "cashAfterChoice": 1.6
+        },
+        {
+          "time": 4,
+          "date": "1922-04",
+          "kind": "pps_action",
+          "message": "ready: industry",
+          "cashAfterChoice": 1.9
+        },
+        {
+          "time": 5,
+          "date": "1922-05",
+          "kind": "pps_action",
+          "message": "reach: industry",
+          "cashAfterChoice": 1.1999999999999997
+        },
+        {
+          "time": 6,
+          "date": "1922-06",
+          "kind": "fixture",
+          "message": "Brak uzgodnionego kompromisu z Naczelnikiem; dymisja Ponikowskiego. Próba Śliwińskiego bez przyjętego poparcia."
+        },
+        {
+          "time": 6,
+          "date": "1922-06",
+          "kind": "pps_action",
+          "message": "collect",
+          "cashAfterChoice": 3.4999999999999996
+        },
+        {
+          "time": 7,
+          "date": "1922-07",
+          "kind": "cabinet",
+          "message": "Ponikowski (obowiązki) → Nowak: przyjęta administracyjna oferta kompromisowa",
+          "ppsMode": "opposition",
+          "fixture": true
+        },
+        {
+          "time": 7,
+          "date": "1922-07",
+          "kind": "pps_action",
+          "message": "reach: rail",
+          "cashAfterChoice": 2.7999999999999994
+        },
+        {
+          "time": 8,
+          "date": "1922-08",
+          "kind": "pps_action",
+          "message": "ready: rail",
+          "cashAfterChoice": 3.099999999999999
+        },
+        {
+          "time": 9,
+          "date": "1922-09",
+          "kind": "pps_action",
+          "message": "reach: rail",
+          "cashAfterChoice": 2.399999999999999
+        },
+        {
+          "time": 10,
+          "date": "1922-10",
+          "kind": "pps_action",
+          "message": "ready: rail",
+          "cashAfterChoice": 2.699999999999999
+        },
+        {
+          "time": 11,
+          "date": "1922-11",
+          "kind": "fixture",
+          "message": "Wspólny zamrożony wynik wyborów 1922.",
+          "seats": {
+            "pps": 41,
+            "wyzwolenie": 49,
+            "npr": 18,
+            "piast": 70,
+            "pschd": 60,
+            "zln": 100,
+            "minorities": 90,
+            "other": 14,
+            "kpp": 2
+          }
+        },
+        {
+          "time": 11,
+          "date": "1922-11",
+          "kind": "pps_action",
+          "message": "contact: piast",
+          "cashAfterChoice": 2.9999999999999987
+        },
+        {
+          "time": 12,
+          "date": "1922-12",
+          "kind": "fixture",
+          "message": "Gałąź Narutowicza, legalne zastępstwo Rataja i następca; to wejście polityczne, nie losowanie ryzyka zabójstwa."
+        },
+        {
+          "time": 12,
+          "date": "1922-12",
+          "kind": "cabinet",
+          "message": "Nowak → Sikorski: przyjęta oferta ciągłości władz po kryzysie prezydenckim",
+          "ppsMode": "external_support",
+          "fixture": true
+        },
+        {
+          "time": 12,
+          "date": "1922-12",
+          "kind": "pps_event",
+          "message": "Pokojowa mobilizacja republikańska, 1 R."
+        },
+        {
+          "time": 12,
+          "date": "1922-12",
+          "kind": "pps_action",
+          "message": "collect",
+          "cashAfterChoice": 4.299999999999999
+        },
+        {
+          "time": 12,
+          "date": "1922-12",
+          "kind": "cabinet",
+          "message": "Sikorski: ochrona zagrożonych instytucji, koszt 1 B przez miesiąc."
+        },
+        {
+          "time": 13,
+          "date": "1923-01",
+          "kind": "pps_action",
+          "message": "ready: industry",
+          "cashAfterChoice": 4.599999999999999
+        },
+        {
+          "time": 13,
+          "date": "1923-01",
+          "kind": "offer_input",
+          "message": "Sikorski proponuje porozumienie pracownicze; brak zgody wskazanego wykonawcy, bez efektu i bez dymisji za opcjonalny punkt."
+        },
+        {
+          "time": 14,
+          "date": "1923-02",
+          "kind": "pps_action",
+          "message": "contact: piast",
+          "cashAfterChoice": 4.899999999999999
+        },
+        {
+          "time": 15,
+          "date": "1923-03",
+          "kind": "pps_action",
+          "message": "contact: npr",
+          "cashAfterChoice": 5.199999999999998
+        },
+        {
+          "time": 16,
+          "date": "1923-04",
+          "kind": "crisis",
+          "message": "Dwa zakończone miesiące inflacji ≥20%: bramka kryzysu walutowego."
+        },
+        {
+          "time": 16,
+          "date": "1923-04",
+          "kind": "pps_action",
+          "message": "fund: industry",
+          "cashAfterChoice": 4.499999999999998
+        },
+        {
+          "time": 16,
+          "date": "1923-04",
+          "kind": "cabinet",
+          "message": "Przygotowanie reformy walutowej po dwóch miesiącach inflacji ≥20%."
+        },
+        {
+          "time": 17,
+          "date": "1923-05",
+          "kind": "ballot",
+          "message": "Przyjęte żądanie ustąpienia Sikorskiego na rzecz oferty prawicy i Piasta.",
+          "yes": 230,
+          "no": 214,
+          "declarationsAreFixture": true
+        },
+        {
+          "time": 17,
+          "date": "1923-05",
+          "kind": "cabinet",
+          "message": "Sikorski → Chjeno-Piast: zaakceptowana oferta ziemska i finansowa; większość parlamentarna",
+          "ppsMode": "opposition"
+        },
+        {
+          "time": 17,
+          "date": "1923-05",
+          "kind": "pps_action",
+          "message": "contact: pschd",
+          "cashAfterChoice": 4.799999999999998
+        },
+        {
+          "time": 17,
+          "date": "1923-05",
+          "kind": "cabinet",
+          "message": "Przygotowanie uzgodnionej parcelacji z odszkodowaniem."
+        },
+        {
+          "time": 18,
+          "date": "1923-06",
+          "kind": "cabinet",
+          "message": "Wdrożenie land; koszt 2 B, czas 4 M.",
+          "forecast": -1.0586261263704508
+        },
+        {
+          "time": 19,
+          "date": "1923-07",
+          "kind": "cabinet",
+          "message": "Szersza podstawa podatku: +1 B trwale; uzgodniony pakiet finansowania."
+        },
+        {
+          "time": 20,
+          "date": "1923-08",
+          "kind": "pps_action",
+          "message": "contact: pschd",
+          "cashAfterChoice": 5.6999999999999975
+        },
+        {
+          "time": 20,
+          "date": "1923-08",
+          "kind": "cabinet",
+          "message": "Wdrożenie currency; koszt 2 B, czas 3 M.",
+          "forecast": -1.0765772488595489
+        },
+        {
+          "time": 22,
+          "date": "1923-10",
+          "kind": "crisis",
+          "message": "Trzy miesiące płac <80: żądanie wyrównania; brak przyjętej ugody do rozliczenia, +8 adresatom (80% zatrudnionych)."
+        },
+        {
+          "time": 22,
+          "date": "1923-10",
+          "kind": "completion",
+          "message": "land: ukończony, efekt od 1923-11."
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "crisis",
+          "message": "Dwa zakończone miesiące budżetu <−2 B: bramka kryzysu finansowego."
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "project_effect",
+          "message": "Pierwszy efekt: land."
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "agreement_fulfilled",
+          "message": "Wykonane zobowiązanie: land."
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "fiscal_review",
+          "message": "Przegląd po niedoborze: ukończona parcelacja przestaje obciążać budżet; kontynuacja zobowiązań jest wykonalna bez nowej korekty.",
+          "currentForecast": -1.12136411875181
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "pps_action",
+          "message": "contact: pschd",
+          "cashAfterChoice": 6.599999999999997
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "strike",
+          "message": "Ograniczony strajk przemysłowy i kolejowy, bez automatycznej dymisji."
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "settlement_offer",
+          "message": "Ograniczona ugoda: odrzucona.",
+          "chance": 0.45516984375,
+          "draw": 0.6716401379089803,
+          "ids": [
+            "industry",
+            "rail"
+          ]
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "state_response_input",
+          "message": "Wykonana militaryzacja kolei po odmowie ugody; +10 branżowo, ważone w populacji."
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "clash_avoided",
+          "message": "Represyjna reakcja nie kończy się starciem w tym rzucie.",
+          "clashRisk": 0.18284999999999996,
+          "draw": 0.32024633628316224
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "completion",
+          "message": "currency: ukończony, efekt od 1923-12."
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "project_effect",
+          "message": "Pierwszy efekt: currency."
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "agreement_fulfilled",
+          "message": "Wykonane zobowiązanie: currency."
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "fixture",
+          "message": "Dziesięciu posłów Piasta zmienia deklarację poparcia wskutek wewnętrznego sporu politycznego. Liczba jest syntetyczna."
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "ballot",
+          "message": "Skuteczne głosowanie o ustąpieniu Chjeno-Piasta.",
+          "yes": 224,
+          "no": 220
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "cabinet",
+          "message": "Chjeno-Piast → Grabski: przyjęta oferta ekspercka; PPS może wynegocjować osłonę",
+          "ppsMode": "external_support",
+          "guaranteedSupport": 238,
+          "welfareAgreement": true
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "cabinet",
+          "message": "Wdrożenie wynegocjowanej osłony 2 B: progresja +1 B trwale oraz podatek majątkowy +2 B na 6 M.",
+          "forecast": 1.8366716175394773
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "settlement_offer",
+          "message": "Ograniczona ugoda: odrzucona.",
+          "chance": 0.4414240625,
+          "draw": 0.6815031503792852,
+          "ids": [
+            "industry",
+            "rail"
+          ]
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "agreement_fulfilled",
+          "message": "Wykonane zobowiązanie: benefit."
+        },
+        {
+          "time": 25,
+          "date": "1924-01",
+          "kind": "pps_action",
+          "message": "contact: zln",
+          "cashAfterChoice": 7.199999999999997
+        },
+        {
+          "time": 25,
+          "date": "1924-01",
+          "kind": "settlement_offer",
+          "message": "Ograniczona ugoda: odrzucona.",
+          "chance": 0.42767828125,
+          "draw": 0.9106231883633882,
+          "ids": [
+            "industry",
+            "rail"
+          ]
+        },
+        {
+          "time": 26,
+          "date": "1924-02",
+          "kind": "pps_action",
+          "message": "contact: pschd",
+          "cashAfterChoice": 7.4999999999999964
+        },
+        {
+          "time": 26,
+          "date": "1924-02",
+          "kind": "settlement_offer",
+          "message": "Ograniczona ugoda: przyjęta.",
+          "chance": 0.4219325,
+          "draw": 0.24341670656576753,
+          "ids": [
+            "industry",
+            "rail"
+          ]
+        },
+        {
+          "time": 26,
+          "date": "1924-02",
+          "kind": "strike_end",
+          "message": "Zakończenie na uzgodnionych warunkach; podwyżka dopiero od następnego miesiąca."
+        },
+        {
+          "time": 27,
+          "date": "1924-03",
+          "kind": "settlement_relief",
+          "message": "Pierwsza wykonana korzyść ugody: −4 niezadowolenia adresatom (80% zatrudnionych), raz."
+        },
+        {
+          "time": 27,
+          "date": "1924-03",
+          "kind": "agreement_fulfilled",
+          "message": "Wykonane zobowiązanie: wage-27."
+        },
+        {
+          "time": 27,
+          "date": "1924-03",
+          "kind": "settlement_executed",
+          "message": "Wykonanie ugody płacowej: pierwszy miesiąc podwyżki; żądanie płacowe zamknięte. Bez automatycznego uchylenia represji."
+        },
+        {
+          "time": 28,
+          "date": "1924-04",
+          "kind": "pps_action",
+          "message": "contact: zln",
+          "cashAfterChoice": 8.099999999999994
+        },
+        {
+          "time": 31,
+          "date": "1924-07",
+          "kind": "pps_action",
+          "message": "contact: zln",
+          "cashAfterChoice": 8.999999999999991
+        },
+        {
+          "time": 34,
+          "date": "1924-10",
+          "kind": "pps_action",
+          "message": "contact: zln",
+          "cashAfterChoice": 9.899999999999988
+        },
+        {
+          "time": 37,
+          "date": "1925-01",
+          "kind": "fixture",
+          "message": "Otwarta konkretna sprawa organizacji naczelnych władz wojskowych; wspólne wejście testu."
+        },
+        {
+          "time": 37,
+          "date": "1925-01",
+          "kind": "pps_action",
+          "message": "contact: zln",
+          "cashAfterChoice": 10.799999999999985
+        },
+        {
+          "time": 42,
+          "date": "1925-06",
+          "kind": "crisis",
+          "message": "Datowany kryzys kredytowy: +12 do szoku kredytu, −0,4 pp produkcji."
+        },
+        {
+          "time": 42,
+          "date": "1925-06",
+          "kind": "cabinet",
+          "message": "Przygotowanie instrumentu kredytowego po otwarciu kryzysu."
+        },
+        {
+          "time": 43,
+          "date": "1925-07",
+          "kind": "cabinet",
+          "message": "Wdrożenie credit; koszt 2 B, czas 2 M.",
+          "forecast": -0.5026293817188936
+        },
+        {
+          "time": 44,
+          "date": "1925-08",
+          "kind": "completion",
+          "message": "credit: ukończony, efekt od 1925-09."
+        },
+        {
+          "time": 45,
+          "date": "1925-09",
+          "kind": "project_effect",
+          "message": "Pierwszy efekt: credit."
+        },
+        {
+          "time": 45,
+          "date": "1925-09",
+          "kind": "agreement_fulfilled",
+          "message": "Wykonane zobowiązanie: credit."
+        },
+        {
+          "time": 47,
+          "date": "1925-11",
+          "kind": "cabinet",
+          "message": "Grabski → Skrzyński: przyjęta przebudowa rządu w odpowiedzi na kryzys kredytowy",
+          "ppsMode": "member",
+          "declaredSupport": 289,
+          "ppsMinistry": "labor",
+          "otherActorsConsentIsFixture": true
+        },
+        {
+          "time": 47,
+          "date": "1925-11",
+          "kind": "pps_action",
+          "message": "prepare_works",
+          "cashAfterChoice": 13.799999999999974
+        },
+        {
+          "time": 48,
+          "date": "1925-12",
+          "kind": "pps",
+          "message": "Wdrożenie works; koszt 2 B, czas 3 M.",
+          "forecast": -1.6171790155414478
+        },
+        {
+          "time": 48,
+          "date": "1925-12",
+          "kind": "pps_action",
+          "message": "launch_works",
+          "cashAfterChoice": 14.099999999999973
+        },
+        {
+          "time": 48,
+          "date": "1925-12",
+          "kind": "military_compromise",
+          "message": "Wykonane uzgodnione stanowisko pod cywilną kontrolą: −12 presji raz; sprawa zamknięta.",
+          "executor": "Skrzyński",
+          "offerAcceptanceIsFixture": true,
+          "nearReserveLoyaltyChange": 0.05
+        },
+        {
+          "time": 50,
+          "date": "1926-02",
+          "kind": "completion",
+          "message": "works: ukończony, efekt od 1926-03."
+        },
+        {
+          "time": 51,
+          "date": "1926-03",
+          "kind": "project_effect",
+          "message": "Pierwszy efekt: works."
+        },
+        {
+          "time": 51,
+          "date": "1926-03",
+          "kind": "agreement_fulfilled",
+          "message": "Wykonane zobowiązanie: works."
+        },
+        {
+          "time": 52,
+          "date": "1926-04",
+          "kind": "austerity_offer",
+          "message": "Sześciomiesięczny przegląd: prawicowi partnerzy proponują osłonę 2→1 B.",
+          "budgetBefore": -0.6634582311328239,
+          "reason": "policy_preference",
+          "actorProposalIsFixture": true
+        },
+        {
+          "time": 52,
+          "date": "1926-04",
+          "kind": "austerity_compromise",
+          "message": "Przyjęto jedyny kompromis: pełne osłony, obecne wykonalne finansowanie. Bez ponownej nagrody za starą umowę.",
+          "consentIsFixture": true
+        },
+        {
+          "time": 53,
+          "date": "1926-05",
+          "kind": "historical_checkpoint",
+          "message": "Maj nie powołuje nowego rządu ani nie uruchamia próby samą datą.",
+          "pressure": 10,
+          "cabinet": "Skrzyński"
+        },
+        {
+          "time": 54,
+          "date": "1926-06",
+          "kind": "military_review",
+          "message": "Strony potwierdzają wykonanie i przedłużenie umowy na 6 M; bez ponownej ulgi.",
+          "acceptanceIsFixture": true
+        },
+        {
+          "time": 60,
+          "date": "1926-12",
+          "kind": "military_review",
+          "message": "Strony potwierdzają wykonanie i przedłużenie umowy na 6 M; bez ponownej ulgi.",
+          "acceptanceIsFixture": true
+        },
+        {
+          "time": 66,
+          "date": "1927-06",
+          "kind": "military_review",
+          "message": "Strony potwierdzają wykonanie i przedłużenie umowy na 6 M; bez ponownej ulgi.",
+          "acceptanceIsFixture": true
+        },
+        {
+          "time": 72,
+          "date": "1927-12",
+          "kind": "military_review",
+          "message": "Strony potwierdzają wykonanie i przedłużenie umowy na 6 M; bez ponownej ulgi.",
+          "acceptanceIsFixture": true
+        }
+      ],
+      "blocked": []
+    },
+    {
+      "config": {
+        "id": "H",
+        "label": "Decyzje zbliżone do historycznych",
+        "organized": true,
+        "welfare": false,
+        "coalition": true,
+        "historical": true,
+        "militaryRequest": null,
+        "stance": "pils"
+      },
+      "options": {
+        "revision13": true
+      },
+      "endpoint": {
+        "kind": "synthetic_coup_result",
+        "date": "1926-12",
+        "outcome": "pils_victory",
+        "capacity": 36.231,
+        "rounds": 3,
+        "pressure": 66,
+        "postCoupOutput": 84.61775533846662
+      },
+      "may1926": {
+        "run": "H",
+        "date": "1926-05",
+        "time": 53,
+        "cabinet": "Chjeno-Piast 1926",
+        "ppsMode": "opposition",
+        "inflation": 0.0019213417679855027,
+        "wage": 100,
+        "credit": 52.953225919787144,
+        "output": 85.11521737640052,
+        "marketUnemployment": 8.624870420864232,
+        "unemployment": 8.624870420864232,
+        "agrarian": 45.06930337856103,
+        "privateGrowth": -0.23742910864987618,
+        "creditTarget": 53.99972552260457,
+        "budget": 0.265889331836596,
+        "coverage": 1,
+        "projectCharges": 2,
+        "policyBudget": 0,
+        "taxLevel": 1,
+        "businessPressure": 22,
+        "workerGrievance": 61.07001591382803,
+        "unemployedGrievance": 54.17511171327766,
+        "workerRadicalization": 0.47526645766848485,
+        "uncontrolledUpperBound": 0.2871200472501247,
+        "nationalGrievance": 41.290898802150046,
+        "authority": 67,
+        "democracy": 78.11000000000008,
+        "violence": 0,
+        "pressure": 54,
+        "militaryOpen": true,
+        "cash": 11.899999999999979,
+        "apparatus": 2,
+        "industryReach": 50,
+        "industryReadiness": 55,
+        "railReach": 95,
+        "railReadiness": 100,
+        "railFund": 7.3010662812500025,
+        "partySpending": 12,
+        "ppsActiveActions": 27,
+        "governmentInitiatives": 1,
+        "strikeDisruption": 0,
+        "benefit": true,
+        "worksUnits": 0,
+        "agreementTension": 0,
+        "currencyCrisis": false,
+        "fiscalCrisis": false
+      },
+      "projects": [
+        {
+          "kind": "land",
+          "cost": 2,
+          "upkeep": 0,
+          "duration": 4,
+          "start": 18,
+          "progress": 100,
+          "firstEffect": 23
+        },
+        {
+          "kind": "currency",
+          "cost": 2,
+          "upkeep": 0,
+          "duration": 3,
+          "start": 20,
+          "progress": 100,
+          "firstEffect": 24
+        },
+        {
+          "kind": "credit",
+          "cost": 2,
+          "upkeep": 1,
+          "duration": 2,
+          "start": 43,
+          "progress": 100,
+          "firstEffect": 45
+        }
+      ],
+      "events": [
+        {
+          "time": 1,
+          "date": "1922-01",
+          "kind": "pps_action",
+          "message": "apparatus",
+          "cashAfterChoice": 0
+        },
+        {
+          "time": 2,
+          "date": "1922-02",
+          "kind": "pps_action",
+          "message": "collect",
+          "cashAfterChoice": 2.3
+        },
+        {
+          "time": 3,
+          "date": "1922-03",
+          "kind": "pps_action",
+          "message": "reach: industry",
+          "cashAfterChoice": 1.6
+        },
+        {
+          "time": 4,
+          "date": "1922-04",
+          "kind": "pps_action",
+          "message": "ready: industry",
+          "cashAfterChoice": 1.9
+        },
+        {
+          "time": 5,
+          "date": "1922-05",
+          "kind": "pps_action",
+          "message": "reach: industry",
+          "cashAfterChoice": 1.1999999999999997
+        },
+        {
+          "time": 6,
+          "date": "1922-06",
+          "kind": "fixture",
+          "message": "Brak uzgodnionego kompromisu z Naczelnikiem; dymisja Ponikowskiego. Próba Śliwińskiego bez przyjętego poparcia."
+        },
+        {
+          "time": 6,
+          "date": "1922-06",
+          "kind": "pps_action",
+          "message": "collect",
+          "cashAfterChoice": 3.4999999999999996
+        },
+        {
+          "time": 7,
+          "date": "1922-07",
+          "kind": "cabinet",
+          "message": "Ponikowski (obowiązki) → Nowak: przyjęta administracyjna oferta kompromisowa",
+          "ppsMode": "opposition",
+          "fixture": true
+        },
+        {
+          "time": 7,
+          "date": "1922-07",
+          "kind": "pps_action",
+          "message": "reach: rail",
+          "cashAfterChoice": 2.7999999999999994
+        },
+        {
+          "time": 8,
+          "date": "1922-08",
+          "kind": "pps_action",
+          "message": "ready: rail",
+          "cashAfterChoice": 3.099999999999999
+        },
+        {
+          "time": 9,
+          "date": "1922-09",
+          "kind": "pps_action",
+          "message": "reach: rail",
+          "cashAfterChoice": 2.399999999999999
+        },
+        {
+          "time": 10,
+          "date": "1922-10",
+          "kind": "pps_action",
+          "message": "ready: rail",
+          "cashAfterChoice": 2.699999999999999
+        },
+        {
+          "time": 11,
+          "date": "1922-11",
+          "kind": "fixture",
+          "message": "Wspólny zamrożony wynik wyborów 1922.",
+          "seats": {
+            "pps": 41,
+            "wyzwolenie": 49,
+            "npr": 18,
+            "piast": 70,
+            "pschd": 60,
+            "zln": 100,
+            "minorities": 90,
+            "other": 14,
+            "kpp": 2
+          }
+        },
+        {
+          "time": 11,
+          "date": "1922-11",
+          "kind": "pps_action",
+          "message": "contact: piast",
+          "cashAfterChoice": 2.9999999999999987
+        },
+        {
+          "time": 12,
+          "date": "1922-12",
+          "kind": "fixture",
+          "message": "Gałąź Narutowicza, legalne zastępstwo Rataja i następca; to wejście polityczne, nie losowanie ryzyka zabójstwa."
+        },
+        {
+          "time": 12,
+          "date": "1922-12",
+          "kind": "cabinet",
+          "message": "Nowak → Sikorski: przyjęta oferta ciągłości władz po kryzysie prezydenckim",
+          "ppsMode": "external_support",
+          "fixture": true
+        },
+        {
+          "time": 12,
+          "date": "1922-12",
+          "kind": "pps_event",
+          "message": "Pokojowa mobilizacja republikańska, 1 R."
+        },
+        {
+          "time": 12,
+          "date": "1922-12",
+          "kind": "pps_action",
+          "message": "collect",
+          "cashAfterChoice": 4.299999999999999
+        },
+        {
+          "time": 12,
+          "date": "1922-12",
+          "kind": "cabinet",
+          "message": "Sikorski: ochrona zagrożonych instytucji, koszt 1 B przez miesiąc."
+        },
+        {
+          "time": 13,
+          "date": "1923-01",
+          "kind": "pps_action",
+          "message": "ready: industry",
+          "cashAfterChoice": 4.599999999999999
+        },
+        {
+          "time": 13,
+          "date": "1923-01",
+          "kind": "offer_input",
+          "message": "Sikorski proponuje porozumienie pracownicze; brak zgody wskazanego wykonawcy, bez efektu i bez dymisji za opcjonalny punkt."
+        },
+        {
+          "time": 14,
+          "date": "1923-02",
+          "kind": "pps_action",
+          "message": "contact: piast",
+          "cashAfterChoice": 4.899999999999999
+        },
+        {
+          "time": 15,
+          "date": "1923-03",
+          "kind": "pps_action",
+          "message": "contact: npr",
+          "cashAfterChoice": 5.199999999999998
+        },
+        {
+          "time": 16,
+          "date": "1923-04",
+          "kind": "crisis",
+          "message": "Dwa zakończone miesiące inflacji ≥20%: bramka kryzysu walutowego."
+        },
+        {
+          "time": 16,
+          "date": "1923-04",
+          "kind": "pps_action",
+          "message": "fund: industry",
+          "cashAfterChoice": 4.499999999999998
+        },
+        {
+          "time": 16,
+          "date": "1923-04",
+          "kind": "cabinet",
+          "message": "Przygotowanie reformy walutowej po dwóch miesiącach inflacji ≥20%."
+        },
+        {
+          "time": 17,
+          "date": "1923-05",
+          "kind": "ballot",
+          "message": "Przyjęte żądanie ustąpienia Sikorskiego na rzecz oferty prawicy i Piasta.",
+          "yes": 230,
+          "no": 214,
+          "declarationsAreFixture": true
+        },
+        {
+          "time": 17,
+          "date": "1923-05",
+          "kind": "cabinet",
+          "message": "Sikorski → Chjeno-Piast: zaakceptowana oferta ziemska i finansowa; większość parlamentarna",
+          "ppsMode": "opposition"
+        },
+        {
+          "time": 17,
+          "date": "1923-05",
+          "kind": "pps_action",
+          "message": "contact: pschd",
+          "cashAfterChoice": 4.799999999999998
+        },
+        {
+          "time": 17,
+          "date": "1923-05",
+          "kind": "cabinet",
+          "message": "Przygotowanie uzgodnionej parcelacji z odszkodowaniem."
+        },
+        {
+          "time": 18,
+          "date": "1923-06",
+          "kind": "cabinet",
+          "message": "Wdrożenie land; koszt 2 B, czas 4 M.",
+          "forecast": -1.0586261263704508
+        },
+        {
+          "time": 19,
+          "date": "1923-07",
+          "kind": "pps_action",
+          "message": "reach: rail",
+          "cashAfterChoice": 4.399999999999998
+        },
+        {
+          "time": 19,
+          "date": "1923-07",
+          "kind": "cabinet",
+          "message": "Szersza podstawa podatku: +1 B trwale; uzgodniony pakiet finansowania."
+        },
+        {
+          "time": 20,
+          "date": "1923-08",
+          "kind": "pps_action",
+          "message": "contact: pschd",
+          "cashAfterChoice": 4.6999999999999975
+        },
+        {
+          "time": 20,
+          "date": "1923-08",
+          "kind": "cabinet",
+          "message": "Wdrożenie currency; koszt 2 B, czas 3 M.",
+          "forecast": -1.0765772488595489
+        },
+        {
+          "time": 21,
+          "date": "1923-09",
+          "kind": "pps_action",
+          "message": "ready: rail",
+          "cashAfterChoice": 4.999999999999997
+        },
+        {
+          "time": 22,
+          "date": "1923-10",
+          "kind": "pps_action",
+          "message": "reach: rail",
+          "cashAfterChoice": 4.299999999999997
+        },
+        {
+          "time": 22,
+          "date": "1923-10",
+          "kind": "crisis",
+          "message": "Trzy miesiące płac <80: żądanie wyrównania; brak przyjętej ugody do rozliczenia, +8 adresatom (80% zatrudnionych)."
+        },
+        {
+          "time": 22,
+          "date": "1923-10",
+          "kind": "completion",
+          "message": "land: ukończony, efekt od 1923-11."
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "crisis",
+          "message": "Dwa zakończone miesiące budżetu <−2 B: bramka kryzysu finansowego."
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "project_effect",
+          "message": "Pierwszy efekt: land."
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "agreement_fulfilled",
+          "message": "Wykonane zobowiązanie: land."
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "fiscal_review",
+          "message": "Przegląd po niedoborze: ukończona parcelacja przestaje obciążać budżet; kontynuacja zobowiązań jest wykonalna bez nowej korekty.",
+          "currentForecast": -1.12136411875181
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "pps_action",
+          "message": "contact: pschd",
+          "cashAfterChoice": 4.599999999999997
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "political_strike_goal",
+          "message": "Postulat dymisji dostępny w otwartym sporze; próg żądania 80, brak automatycznej mobilizacji ogólnej.",
+          "workerG": 47.42886764531527
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "strike",
+          "message": "Ograniczony strajk przemysłowy i kolejowy, bez automatycznej dymisji."
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "political_offer_refused",
+          "message": "Żądanie dymisji zgłoszone, lecz premier i większość go nie przyjmują. Następna runda PPS wraca do ograniczonej oferty płacowej.",
+          "threshold": 80,
+          "actorRefusalIsFixture": true
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "state_response_input",
+          "message": "Wykonana militaryzacja kolei po odmowie ugody; +10 branżowo, ważone w populacji."
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "clash_avoided",
+          "message": "Represyjna reakcja nie kończy się starciem w tym rzucie.",
+          "clashRisk": 0.18284999999999996,
+          "draw": 0.32024633628316224
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "completion",
+          "message": "currency: ukończony, efekt od 1923-12."
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "project_effect",
+          "message": "Pierwszy efekt: currency."
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "agreement_fulfilled",
+          "message": "Wykonane zobowiązanie: currency."
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "fixture",
+          "message": "Dziesięciu posłów Piasta zmienia deklarację poparcia wskutek wewnętrznego sporu politycznego. Liczba jest syntetyczna."
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "ballot",
+          "message": "Skuteczne głosowanie o ustąpieniu Chjeno-Piasta.",
+          "yes": 224,
+          "no": 220
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "cabinet",
+          "message": "Chjeno-Piast → Grabski: przyjęta oferta ekspercka; PPS może wynegocjować osłonę",
+          "ppsMode": "external_support",
+          "guaranteedSupport": 238,
+          "welfareAgreement": false
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "pps_action",
+          "message": "ready: rail",
+          "cashAfterChoice": 4.899999999999997
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "settlement_offer",
+          "message": "Ograniczona ugoda: odrzucona.",
+          "chance": 0.4414240625,
+          "draw": 0.6815031503792852,
+          "ids": [
+            "industry",
+            "rail"
+          ]
+        },
+        {
+          "time": 25,
+          "date": "1924-01",
+          "kind": "pps_action",
+          "message": "reach: rail",
+          "cashAfterChoice": 4.199999999999997
+        },
+        {
+          "time": 25,
+          "date": "1924-01",
+          "kind": "settlement_offer",
+          "message": "Ograniczona ugoda: odrzucona.",
+          "chance": 0.4356782812500001,
+          "draw": 0.9106231883633882,
+          "ids": [
+            "industry",
+            "rail"
+          ]
+        },
+        {
+          "time": 26,
+          "date": "1924-02",
+          "kind": "pps_action",
+          "message": "contact: pschd",
+          "cashAfterChoice": 4.4999999999999964
+        },
+        {
+          "time": 26,
+          "date": "1924-02",
+          "kind": "settlement_offer",
+          "message": "Ograniczona ugoda: przyjęta.",
+          "chance": 0.42993250000000005,
+          "draw": 0.24341670656576753,
+          "ids": [
+            "industry",
+            "rail"
+          ]
+        },
+        {
+          "time": 26,
+          "date": "1924-02",
+          "kind": "strike_end",
+          "message": "Zakończenie na uzgodnionych warunkach; podwyżka dopiero od następnego miesiąca."
+        },
+        {
+          "time": 27,
+          "date": "1924-03",
+          "kind": "settlement_relief",
+          "message": "Pierwsza wykonana korzyść ugody: −4 niezadowolenia adresatom (80% zatrudnionych), raz."
+        },
+        {
+          "time": 27,
+          "date": "1924-03",
+          "kind": "agreement_fulfilled",
+          "message": "Wykonane zobowiązanie: wage-27."
+        },
+        {
+          "time": 27,
+          "date": "1924-03",
+          "kind": "settlement_executed",
+          "message": "Wykonanie ugody płacowej: pierwszy miesiąc podwyżki; żądanie płacowe zamknięte. Bez automatycznego uchylenia represji."
+        },
+        {
+          "time": 27,
+          "date": "1924-03",
+          "kind": "pps_action",
+          "message": "ready: rail",
+          "cashAfterChoice": 4.799999999999996
+        },
+        {
+          "time": 30,
+          "date": "1924-06",
+          "kind": "pps_action",
+          "message": "fund: rail",
+          "cashAfterChoice": 4.699999999999996
+        },
+        {
+          "time": 37,
+          "date": "1925-01",
+          "kind": "fixture",
+          "message": "Otwarta konkretna sprawa organizacji naczelnych władz wojskowych; wspólne wejście testu."
+        },
+        {
+          "time": 42,
+          "date": "1925-06",
+          "kind": "crisis",
+          "message": "Datowany kryzys kredytowy: +12 do szoku kredytu, −0,4 pp produkcji."
+        },
+        {
+          "time": 42,
+          "date": "1925-06",
+          "kind": "cabinet",
+          "message": "Przygotowanie instrumentu kredytowego po otwarciu kryzysu."
+        },
+        {
+          "time": 43,
+          "date": "1925-07",
+          "kind": "cabinet",
+          "message": "Wdrożenie credit; koszt 2 B, czas 2 M.",
+          "forecast": 0.44839416721948755
+        },
+        {
+          "time": 44,
+          "date": "1925-08",
+          "kind": "completion",
+          "message": "credit: ukończony, efekt od 1925-09."
+        },
+        {
+          "time": 45,
+          "date": "1925-09",
+          "kind": "project_effect",
+          "message": "Pierwszy efekt: credit."
+        },
+        {
+          "time": 45,
+          "date": "1925-09",
+          "kind": "agreement_fulfilled",
+          "message": "Wykonane zobowiązanie: credit."
+        },
+        {
+          "time": 47,
+          "date": "1925-11",
+          "kind": "crisis_offer",
+          "message": "Ratunkowa oferta bez osobnej bramki relacji; zgody na wspólne minimum i urzędy pozostają jawnym wejściem.",
+          "missing": [
+            "zln: 5 < 25"
+          ]
+        },
+        {
+          "time": 47,
+          "date": "1925-11",
+          "kind": "cabinet",
+          "message": "Grabski → Skrzyński: przyjęta przebudowa rządu w odpowiedzi na kryzys kredytowy",
+          "ppsMode": "member",
+          "declaredSupport": 289,
+          "ppsMinistry": "labor",
+          "otherActorsConsentIsFixture": true
+        },
+        {
+          "time": 47,
+          "date": "1925-11",
+          "kind": "cabinet",
+          "message": "Wykonanie przyjętego minimum PPS: osłona 2 B z istniejącej przestrzeni finansowej; bez nowego podatku i bez kopii programu."
+        },
+        {
+          "time": 47,
+          "date": "1925-11",
+          "kind": "agreement_fulfilled",
+          "message": "Wykonane zobowiązanie: benefit."
+        },
+        {
+          "time": 52,
+          "date": "1926-04",
+          "kind": "austerity_offer",
+          "message": "Sześciomiesięczny przegląd: prawicowi partnerzy proponują osłonę 2→1 B.",
+          "budgetBefore": -0.7235461566559822,
+          "reason": "policy_preference",
+          "actorProposalIsFixture": true
+        },
+        {
+          "time": 52,
+          "date": "1926-04",
+          "kind": "pps_withdrawal",
+          "message": "Kompromis odrzucony; PPS wycofuje ministrów. Gabinet jeszcze nie odwołany."
+        },
+        {
+          "time": 53,
+          "date": "1926-05",
+          "kind": "ballot",
+          "message": "Partnerzy akceptują własną ofertę Witosa i głosują za zmianą gabinetu.",
+          "yes": 230,
+          "no": 214,
+          "declarationsAreFixture": true
+        },
+        {
+          "time": 53,
+          "date": "1926-05",
+          "kind": "cabinet",
+          "message": "Skrzyński → Chjeno-Piast 1926: skuteczne głosowanie i przyjęta oferta; nie samo wyjście PPS",
+          "ppsMode": "opposition"
+        },
+        {
+          "time": 53,
+          "date": "1926-05",
+          "kind": "chjeno_impulse",
+          "message": "Faktyczny powrót tej konfiguracji: +20 presji raz."
+        },
+        {
+          "time": 53,
+          "date": "1926-05",
+          "kind": "austerity_cut",
+          "message": "Nowy gabinet uchwala własne ograniczenie świadczenia 2→1 B. PPS w opozycji, program nie znika.",
+          "legalConsentIsFixture": true
+        },
+        {
+          "time": 53,
+          "date": "1926-05",
+          "kind": "historical_checkpoint",
+          "message": "Maj nie powołuje nowego rządu ani nie uruchamia próby samą datą.",
+          "pressure": 54,
+          "cabinet": "Chjeno-Piast 1926"
+        },
+        {
+          "time": 60,
+          "date": "1926-12",
+          "kind": "coup",
+          "message": "Rozstrzygnięcie syntetycznej próby: pils_victory.",
+          "capacity": 36.231,
+          "pressure": 66,
+          "stance": "pils",
+          "railUsed": true,
+          "forces": [
+            {
+              "id": "capital_legal",
+              "f": 45,
+              "ready": 0.8,
+              "command": 0.8,
+              "legal": 0.9,
+              "pils": 0.05,
+              "phase": 0,
+              "side": "legal",
+              "draw": 0.35743266018107533,
+              "loss": 6.651099783355274
+            },
+            {
+              "id": "capital_pils",
+              "f": 55,
+              "ready": 0.85,
+              "command": 0.85,
+              "legal": 0.05,
+              "pils": 0.9,
+              "phase": 0,
+              "side": "pils",
+              "draw": 0.7083165678195655,
+              "loss": 4.508254923178992
+            },
+            {
+              "id": "near",
+              "f": 25,
+              "ready": 0.7,
+              "command": 0.7,
+              "legal": 0.35,
+              "pils": 0.45,
+              "phase": 1,
+              "side": "pils",
+              "draw": 0.6854594778269529,
+              "loss": 1.250839981397632
+            },
+            {
+              "id": "remote",
+              "f": 35,
+              "ready": 0.7,
+              "command": 0.7,
+              "legal": 0.7,
+              "pils": 0.15,
+              "phase": 2,
+              "side": "pils",
+              "draw": 0.7156099695712328,
+              "loss": 0.7889348744198261
+            }
+          ],
+          "rounds": [
+            {
+              "phase": 0,
+              "F": {
+                "pils": 39.7375,
+                "legal": 28.8
+              },
+              "railParticipation": 79.39625,
+              "delay": 2,
+              "streak": {
+                "pils": 1,
+                "legal": 0
+              }
+            },
+            {
+              "phase": 1,
+              "F": {
+                "pils": 50.65165903702353,
+                "legal": 27.46415903702353
+              },
+              "railParticipation": 79.39625,
+              "delay": 2,
+              "streak": {
+                "pils": 2,
+                "legal": 0
+              }
+            },
+            {
+              "phase": 2,
+              "F": {
+                "pils": 66.37699985420525,
+                "legal": 26.039499854205264
+              },
+              "railParticipation": 79.39625,
+              "delay": 2,
+              "streak": {
+                "pils": 3,
+                "legal": 0
+              }
+            }
+          ],
+          "outputLossPercent": 1.92873975
+        }
+      ],
+      "blocked": []
+    }
+  ],
+  "additional": [
+    {
+      "config": {
+        "id": "C",
+        "label": "PPS współrządząca",
+        "organized": true,
+        "welfare": true,
+        "coalition": true,
+        "militaryRequest": "1925-12",
+        "stance": "legal"
+      },
+      "options": {
+        "revision13": true,
+        "broadResponse": "accept_cuts"
+      },
+      "endpoint": {
+        "kind": "scheduled_election_boundary",
+        "date": "1928-02-19",
+        "pressure": 10,
+        "note": "Boundary before the next ordinary turn; electoral preferences/results not forecast."
+      },
+      "may1926": {
+        "run": "C",
+        "date": "1926-05",
+        "time": 53,
+        "cabinet": "Skrzyński",
+        "ppsMode": "member",
+        "inflation": 0.0019213417679855027,
+        "wage": 100,
+        "credit": 52.953225919787144,
+        "output": 86.8310658381107,
+        "marketUnemployment": 8.245389201286109,
+        "unemployment": 7.745389201286109,
+        "agrarian": 45.06930337856103,
+        "privateGrowth": -0.23742910864987618,
+        "creditTarget": 53.99972552260457,
+        "budget": 0.3388384420181225,
+        "coverage": 1,
+        "projectCharges": 3,
+        "policyBudget": 0,
+        "taxLevel": 2,
+        "businessPressure": 34,
+        "workerGrievance": 60.668327280681474,
+        "unemployedGrievance": 22.899651955046025,
+        "workerRadicalization": 0.23339433188934786,
+        "uncontrolledUpperBound": 0.1346384945696476,
+        "nationalGrievance": 40.39609022433455,
+        "authority": 59,
+        "democracy": 78.59000000000002,
+        "violence": 0,
+        "pressure": 10,
+        "militaryOpen": false,
+        "cash": 15.899999999999968,
+        "apparatus": 2,
+        "industryReach": 50,
+        "industryReadiness": 55,
+        "railReach": 50,
+        "railReadiness": 55,
+        "railFund": 4.039624375,
+        "partySpending": 8,
+        "ppsActiveActions": 27,
+        "governmentInitiatives": 0,
+        "strikeDisruption": 0,
+        "benefit": true,
+        "worksUnits": 2,
+        "agreementTension": 0,
+        "currencyCrisis": false,
+        "fiscalCrisis": false
+      },
+      "projects": [
+        {
+          "kind": "land",
+          "cost": 2,
+          "upkeep": 0,
+          "duration": 4,
+          "start": 18,
+          "progress": 100,
+          "firstEffect": 23
+        },
+        {
+          "kind": "currency",
+          "cost": 2,
+          "upkeep": 0,
+          "duration": 3,
+          "start": 20,
+          "progress": 100,
+          "firstEffect": 24
+        },
+        {
+          "kind": "credit",
+          "cost": 2,
+          "upkeep": 1,
+          "duration": 2,
+          "start": 43,
+          "progress": 100,
+          "firstEffect": 45
+        },
+        {
+          "kind": "works",
+          "cost": 2,
+          "upkeep": 1,
+          "duration": 3,
+          "start": 48,
+          "progress": 100,
+          "firstEffect": 51
+        }
+      ],
+      "events": [
+        {
+          "time": 1,
+          "date": "1922-01",
+          "kind": "pps_action",
+          "message": "apparatus",
+          "cashAfterChoice": 0
+        },
+        {
+          "time": 2,
+          "date": "1922-02",
+          "kind": "pps_action",
+          "message": "collect",
+          "cashAfterChoice": 2.3
+        },
+        {
+          "time": 3,
+          "date": "1922-03",
+          "kind": "pps_action",
+          "message": "reach: industry",
+          "cashAfterChoice": 1.6
+        },
+        {
+          "time": 4,
+          "date": "1922-04",
+          "kind": "pps_action",
+          "message": "ready: industry",
+          "cashAfterChoice": 1.9
+        },
+        {
+          "time": 5,
+          "date": "1922-05",
+          "kind": "pps_action",
+          "message": "reach: industry",
+          "cashAfterChoice": 1.1999999999999997
+        },
+        {
+          "time": 6,
+          "date": "1922-06",
+          "kind": "fixture",
+          "message": "Brak uzgodnionego kompromisu z Naczelnikiem; dymisja Ponikowskiego. Próba Śliwińskiego bez przyjętego poparcia."
+        },
+        {
+          "time": 6,
+          "date": "1922-06",
+          "kind": "pps_action",
+          "message": "collect",
+          "cashAfterChoice": 3.4999999999999996
+        },
+        {
+          "time": 7,
+          "date": "1922-07",
+          "kind": "cabinet",
+          "message": "Ponikowski (obowiązki) → Nowak: przyjęta administracyjna oferta kompromisowa",
+          "ppsMode": "opposition",
+          "fixture": true
+        },
+        {
+          "time": 7,
+          "date": "1922-07",
+          "kind": "pps_action",
+          "message": "reach: rail",
+          "cashAfterChoice": 2.7999999999999994
+        },
+        {
+          "time": 8,
+          "date": "1922-08",
+          "kind": "pps_action",
+          "message": "ready: rail",
+          "cashAfterChoice": 3.099999999999999
+        },
+        {
+          "time": 9,
+          "date": "1922-09",
+          "kind": "pps_action",
+          "message": "reach: rail",
+          "cashAfterChoice": 2.399999999999999
+        },
+        {
+          "time": 10,
+          "date": "1922-10",
+          "kind": "pps_action",
+          "message": "ready: rail",
+          "cashAfterChoice": 2.699999999999999
+        },
+        {
+          "time": 11,
+          "date": "1922-11",
+          "kind": "fixture",
+          "message": "Wspólny zamrożony wynik wyborów 1922.",
+          "seats": {
+            "pps": 41,
+            "wyzwolenie": 49,
+            "npr": 18,
+            "piast": 70,
+            "pschd": 60,
+            "zln": 100,
+            "minorities": 90,
+            "other": 14,
+            "kpp": 2
+          }
+        },
+        {
+          "time": 11,
+          "date": "1922-11",
+          "kind": "pps_action",
+          "message": "contact: piast",
+          "cashAfterChoice": 2.9999999999999987
+        },
+        {
+          "time": 12,
+          "date": "1922-12",
+          "kind": "fixture",
+          "message": "Gałąź Narutowicza, legalne zastępstwo Rataja i następca; to wejście polityczne, nie losowanie ryzyka zabójstwa."
+        },
+        {
+          "time": 12,
+          "date": "1922-12",
+          "kind": "cabinet",
+          "message": "Nowak → Sikorski: przyjęta oferta ciągłości władz po kryzysie prezydenckim",
+          "ppsMode": "external_support",
+          "fixture": true
+        },
+        {
+          "time": 12,
+          "date": "1922-12",
+          "kind": "pps_event",
+          "message": "Pokojowa mobilizacja republikańska, 1 R."
+        },
+        {
+          "time": 12,
+          "date": "1922-12",
+          "kind": "pps_action",
+          "message": "collect",
+          "cashAfterChoice": 4.299999999999999
+        },
+        {
+          "time": 12,
+          "date": "1922-12",
+          "kind": "cabinet",
+          "message": "Sikorski: ochrona zagrożonych instytucji, koszt 1 B przez miesiąc."
+        },
+        {
+          "time": 13,
+          "date": "1923-01",
+          "kind": "pps_action",
+          "message": "ready: industry",
+          "cashAfterChoice": 4.599999999999999
+        },
+        {
+          "time": 13,
+          "date": "1923-01",
+          "kind": "offer_input",
+          "message": "Sikorski proponuje porozumienie pracownicze; brak zgody wskazanego wykonawcy, bez efektu i bez dymisji za opcjonalny punkt."
+        },
+        {
+          "time": 14,
+          "date": "1923-02",
+          "kind": "pps_action",
+          "message": "contact: piast",
+          "cashAfterChoice": 4.899999999999999
+        },
+        {
+          "time": 15,
+          "date": "1923-03",
+          "kind": "pps_action",
+          "message": "contact: npr",
+          "cashAfterChoice": 5.199999999999998
+        },
+        {
+          "time": 16,
+          "date": "1923-04",
+          "kind": "crisis",
+          "message": "Dwa zakończone miesiące inflacji ≥20%: bramka kryzysu walutowego."
+        },
+        {
+          "time": 16,
+          "date": "1923-04",
+          "kind": "pps_action",
+          "message": "fund: industry",
+          "cashAfterChoice": 4.499999999999998
+        },
+        {
+          "time": 16,
+          "date": "1923-04",
+          "kind": "cabinet",
+          "message": "Przygotowanie reformy walutowej po dwóch miesiącach inflacji ≥20%."
+        },
+        {
+          "time": 17,
+          "date": "1923-05",
+          "kind": "ballot",
+          "message": "Przyjęte żądanie ustąpienia Sikorskiego na rzecz oferty prawicy i Piasta.",
+          "yes": 230,
+          "no": 214,
+          "declarationsAreFixture": true
+        },
+        {
+          "time": 17,
+          "date": "1923-05",
+          "kind": "cabinet",
+          "message": "Sikorski → Chjeno-Piast: zaakceptowana oferta ziemska i finansowa; większość parlamentarna",
+          "ppsMode": "opposition"
+        },
+        {
+          "time": 17,
+          "date": "1923-05",
+          "kind": "pps_action",
+          "message": "contact: pschd",
+          "cashAfterChoice": 4.799999999999998
+        },
+        {
+          "time": 17,
+          "date": "1923-05",
+          "kind": "cabinet",
+          "message": "Przygotowanie uzgodnionej parcelacji z odszkodowaniem."
+        },
+        {
+          "time": 18,
+          "date": "1923-06",
+          "kind": "cabinet",
+          "message": "Wdrożenie land; koszt 2 B, czas 4 M.",
+          "forecast": -1.0586261263704508
+        },
+        {
+          "time": 19,
+          "date": "1923-07",
+          "kind": "cabinet",
+          "message": "Szersza podstawa podatku: +1 B trwale; uzgodniony pakiet finansowania."
+        },
+        {
+          "time": 20,
+          "date": "1923-08",
+          "kind": "pps_action",
+          "message": "contact: pschd",
+          "cashAfterChoice": 5.6999999999999975
+        },
+        {
+          "time": 20,
+          "date": "1923-08",
+          "kind": "cabinet",
+          "message": "Wdrożenie currency; koszt 2 B, czas 3 M.",
+          "forecast": -1.0765772488595489
+        },
+        {
+          "time": 22,
+          "date": "1923-10",
+          "kind": "crisis",
+          "message": "Trzy miesiące płac <80: żądanie wyrównania; brak przyjętej ugody do rozliczenia, +8 adresatom (80% zatrudnionych)."
+        },
+        {
+          "time": 22,
+          "date": "1923-10",
+          "kind": "completion",
+          "message": "land: ukończony, efekt od 1923-11."
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "crisis",
+          "message": "Dwa zakończone miesiące budżetu <−2 B: bramka kryzysu finansowego."
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "project_effect",
+          "message": "Pierwszy efekt: land."
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "agreement_fulfilled",
+          "message": "Wykonane zobowiązanie: land."
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "fiscal_review",
+          "message": "Przegląd po niedoborze: ukończona parcelacja przestaje obciążać budżet; kontynuacja zobowiązań jest wykonalna bez nowej korekty.",
+          "currentForecast": -1.12136411875181
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "pps_action",
+          "message": "contact: pschd",
+          "cashAfterChoice": 6.599999999999997
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "strike",
+          "message": "Ograniczony strajk przemysłowy i kolejowy, bez automatycznej dymisji."
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "settlement_offer",
+          "message": "Ograniczona ugoda: odrzucona.",
+          "chance": 0.45516984375,
+          "draw": 0.6716401379089803,
+          "ids": [
+            "industry",
+            "rail"
+          ]
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "state_response_input",
+          "message": "Wykonana militaryzacja kolei po odmowie ugody; +10 branżowo, ważone w populacji."
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "clash_avoided",
+          "message": "Represyjna reakcja nie kończy się starciem w tym rzucie.",
+          "clashRisk": 0.18284999999999996,
+          "draw": 0.32024633628316224
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "completion",
+          "message": "currency: ukończony, efekt od 1923-12."
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "project_effect",
+          "message": "Pierwszy efekt: currency."
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "agreement_fulfilled",
+          "message": "Wykonane zobowiązanie: currency."
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "fixture",
+          "message": "Dziesięciu posłów Piasta zmienia deklarację poparcia wskutek wewnętrznego sporu politycznego. Liczba jest syntetyczna."
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "ballot",
+          "message": "Skuteczne głosowanie o ustąpieniu Chjeno-Piasta.",
+          "yes": 224,
+          "no": 220
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "cabinet",
+          "message": "Chjeno-Piast → Grabski: przyjęta oferta ekspercka; PPS może wynegocjować osłonę",
+          "ppsMode": "external_support",
+          "guaranteedSupport": 238,
+          "welfareAgreement": true
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "cabinet",
+          "message": "Wdrożenie wynegocjowanej osłony 2 B: progresja +1 B trwale oraz podatek majątkowy +2 B na 6 M.",
+          "forecast": 1.8366716175394773
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "settlement_offer",
+          "message": "Ograniczona ugoda: odrzucona.",
+          "chance": 0.4414240625,
+          "draw": 0.6815031503792852,
+          "ids": [
+            "industry",
+            "rail"
+          ]
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "agreement_fulfilled",
+          "message": "Wykonane zobowiązanie: benefit."
+        },
+        {
+          "time": 25,
+          "date": "1924-01",
+          "kind": "pps_action",
+          "message": "contact: zln",
+          "cashAfterChoice": 7.199999999999997
+        },
+        {
+          "time": 25,
+          "date": "1924-01",
+          "kind": "settlement_offer",
+          "message": "Ograniczona ugoda: odrzucona.",
+          "chance": 0.42767828125,
+          "draw": 0.9106231883633882,
+          "ids": [
+            "industry",
+            "rail"
+          ]
+        },
+        {
+          "time": 26,
+          "date": "1924-02",
+          "kind": "pps_action",
+          "message": "contact: pschd",
+          "cashAfterChoice": 7.4999999999999964
+        },
+        {
+          "time": 26,
+          "date": "1924-02",
+          "kind": "settlement_offer",
+          "message": "Ograniczona ugoda: przyjęta.",
+          "chance": 0.4219325,
+          "draw": 0.24341670656576753,
+          "ids": [
+            "industry",
+            "rail"
+          ]
+        },
+        {
+          "time": 26,
+          "date": "1924-02",
+          "kind": "strike_end",
+          "message": "Zakończenie na uzgodnionych warunkach; podwyżka dopiero od następnego miesiąca."
+        },
+        {
+          "time": 27,
+          "date": "1924-03",
+          "kind": "settlement_relief",
+          "message": "Pierwsza wykonana korzyść ugody: −4 niezadowolenia adresatom (80% zatrudnionych), raz."
+        },
+        {
+          "time": 27,
+          "date": "1924-03",
+          "kind": "agreement_fulfilled",
+          "message": "Wykonane zobowiązanie: wage-27."
+        },
+        {
+          "time": 27,
+          "date": "1924-03",
+          "kind": "settlement_executed",
+          "message": "Wykonanie ugody płacowej: pierwszy miesiąc podwyżki; żądanie płacowe zamknięte. Bez automatycznego uchylenia represji."
+        },
+        {
+          "time": 28,
+          "date": "1924-04",
+          "kind": "pps_action",
+          "message": "contact: zln",
+          "cashAfterChoice": 8.099999999999994
+        },
+        {
+          "time": 31,
+          "date": "1924-07",
+          "kind": "pps_action",
+          "message": "contact: zln",
+          "cashAfterChoice": 8.999999999999991
+        },
+        {
+          "time": 34,
+          "date": "1924-10",
+          "kind": "pps_action",
+          "message": "contact: zln",
+          "cashAfterChoice": 9.899999999999988
+        },
+        {
+          "time": 37,
+          "date": "1925-01",
+          "kind": "fixture",
+          "message": "Otwarta konkretna sprawa organizacji naczelnych władz wojskowych; wspólne wejście testu."
+        },
+        {
+          "time": 37,
+          "date": "1925-01",
+          "kind": "pps_action",
+          "message": "contact: zln",
+          "cashAfterChoice": 10.799999999999985
+        },
+        {
+          "time": 42,
+          "date": "1925-06",
+          "kind": "crisis",
+          "message": "Datowany kryzys kredytowy: +12 do szoku kredytu, −0,4 pp produkcji."
+        },
+        {
+          "time": 42,
+          "date": "1925-06",
+          "kind": "cabinet",
+          "message": "Przygotowanie instrumentu kredytowego po otwarciu kryzysu."
+        },
+        {
+          "time": 43,
+          "date": "1925-07",
+          "kind": "cabinet",
+          "message": "Wdrożenie credit; koszt 2 B, czas 2 M.",
+          "forecast": -0.5026293817188936
+        },
+        {
+          "time": 44,
+          "date": "1925-08",
+          "kind": "completion",
+          "message": "credit: ukończony, efekt od 1925-09."
+        },
+        {
+          "time": 45,
+          "date": "1925-09",
+          "kind": "project_effect",
+          "message": "Pierwszy efekt: credit."
+        },
+        {
+          "time": 45,
+          "date": "1925-09",
+          "kind": "agreement_fulfilled",
+          "message": "Wykonane zobowiązanie: credit."
+        },
+        {
+          "time": 47,
+          "date": "1925-11",
+          "kind": "cabinet",
+          "message": "Grabski → Skrzyński: przyjęta przebudowa rządu w odpowiedzi na kryzys kredytowy",
+          "ppsMode": "member",
+          "declaredSupport": 289,
+          "ppsMinistry": "labor",
+          "otherActorsConsentIsFixture": true
+        },
+        {
+          "time": 47,
+          "date": "1925-11",
+          "kind": "pps_action",
+          "message": "prepare_works",
+          "cashAfterChoice": 13.799999999999974
+        },
+        {
+          "time": 48,
+          "date": "1925-12",
+          "kind": "pps",
+          "message": "Wdrożenie works; koszt 2 B, czas 3 M.",
+          "forecast": -1.6171790155414478
+        },
+        {
+          "time": 48,
+          "date": "1925-12",
+          "kind": "pps_action",
+          "message": "launch_works",
+          "cashAfterChoice": 14.099999999999973
+        },
+        {
+          "time": 48,
+          "date": "1925-12",
+          "kind": "military_compromise",
+          "message": "Wykonane uzgodnione stanowisko pod cywilną kontrolą: −12 presji raz; sprawa zamknięta.",
+          "executor": "Skrzyński",
+          "offerAcceptanceIsFixture": true,
+          "nearReserveLoyaltyChange": 0.05
+        },
+        {
+          "time": 50,
+          "date": "1926-02",
+          "kind": "completion",
+          "message": "works: ukończony, efekt od 1926-03."
+        },
+        {
+          "time": 51,
+          "date": "1926-03",
+          "kind": "project_effect",
+          "message": "Pierwszy efekt: works."
+        },
+        {
+          "time": 51,
+          "date": "1926-03",
+          "kind": "agreement_fulfilled",
+          "message": "Wykonane zobowiązanie: works."
+        },
+        {
+          "time": 52,
+          "date": "1926-04",
+          "kind": "austerity_offer",
+          "message": "Sześciomiesięczny przegląd: prawicowi partnerzy proponują osłonę 2→1 B.",
+          "budgetBefore": -0.6634582311328239,
+          "reason": "policy_preference",
+          "actorProposalIsFixture": true
+        },
+        {
+          "time": 52,
+          "date": "1926-04",
+          "kind": "austerity_cut",
+          "message": "PPS przyjmuje zmianę istniejącego świadczenia 2→1 B; ustawa i zgody przyjęte w profilu.",
+          "leftDissentIfNoPartyConsent": 8
+        },
+        {
+          "time": 53,
+          "date": "1926-05",
+          "kind": "historical_checkpoint",
+          "message": "Maj nie powołuje nowego rządu ani nie uruchamia próby samą datą.",
+          "pressure": 10,
+          "cabinet": "Skrzyński"
+        },
+        {
+          "time": 54,
+          "date": "1926-06",
+          "kind": "military_review",
+          "message": "Strony potwierdzają wykonanie i przedłużenie umowy na 6 M; bez ponownej ulgi.",
+          "acceptanceIsFixture": true
+        },
+        {
+          "time": 60,
+          "date": "1926-12",
+          "kind": "military_review",
+          "message": "Strony potwierdzają wykonanie i przedłużenie umowy na 6 M; bez ponownej ulgi.",
+          "acceptanceIsFixture": true
+        },
+        {
+          "time": 66,
+          "date": "1927-06",
+          "kind": "military_review",
+          "message": "Strony potwierdzają wykonanie i przedłużenie umowy na 6 M; bez ponownej ulgi.",
+          "acceptanceIsFixture": true
+        },
+        {
+          "time": 72,
+          "date": "1927-12",
+          "kind": "military_review",
+          "message": "Strony potwierdzają wykonanie i przedłużenie umowy na 6 M; bez ponownej ulgi.",
+          "acceptanceIsFixture": true
+        }
+      ],
+      "blocked": []
+    },
+    {
+      "config": {
+        "id": "H",
+        "label": "Decyzje zbliżone do historycznych",
+        "organized": true,
+        "welfare": false,
+        "coalition": true,
+        "historical": true,
+        "militaryRequest": null,
+        "stance": "pils"
+      },
+      "options": {
+        "revision13": true,
+        "rightFormsReplacement": false
+      },
+      "endpoint": {
+        "kind": "synthetic_coup_result",
+        "date": "1927-10",
+        "outcome": "pils_victory",
+        "capacity": 36.231,
+        "rounds": 3,
+        "pressure": 66,
+        "postCoupOutput": 87.01202018644868
+      },
+      "may1926": {
+        "run": "H",
+        "date": "1926-05",
+        "time": 53,
+        "cabinet": "Skrzyński",
+        "ppsMode": "opposition",
+        "inflation": 0.0019213417679855027,
+        "wage": 100,
+        "credit": 52.953225919787144,
+        "output": 85.11521737640052,
+        "marketUnemployment": 8.624870420864232,
+        "unemployment": 8.624870420864232,
+        "agrarian": 45.06930337856103,
+        "privateGrowth": -0.23742910864987618,
+        "creditTarget": 53.99972552260457,
+        "budget": -0.734110668163404,
+        "coverage": 1,
+        "projectCharges": 3,
+        "policyBudget": 0,
+        "taxLevel": 1,
+        "businessPressure": 22,
+        "workerGrievance": 61.07001591382803,
+        "unemployedGrievance": 53.17511171327766,
+        "workerRadicalization": 0.47526645766848485,
+        "uncontrolledUpperBound": 0.2867101360888473,
+        "nationalGrievance": 41.26258047760154,
+        "authority": 63,
+        "democracy": 77.99000000000008,
+        "violence": 0,
+        "pressure": 34,
+        "militaryOpen": true,
+        "cash": 11.899999999999979,
+        "apparatus": 2,
+        "industryReach": 50,
+        "industryReadiness": 55,
+        "railReach": 95,
+        "railReadiness": 100,
+        "railFund": 7.3010662812500025,
+        "partySpending": 12,
+        "ppsActiveActions": 27,
+        "governmentInitiatives": 0,
+        "strikeDisruption": 0,
+        "benefit": true,
+        "worksUnits": 0,
+        "agreementTension": 0,
+        "currencyCrisis": false,
+        "fiscalCrisis": false
+      },
+      "projects": [
+        {
+          "kind": "land",
+          "cost": 2,
+          "upkeep": 0,
+          "duration": 4,
+          "start": 18,
+          "progress": 100,
+          "firstEffect": 23
+        },
+        {
+          "kind": "currency",
+          "cost": 2,
+          "upkeep": 0,
+          "duration": 3,
+          "start": 20,
+          "progress": 100,
+          "firstEffect": 24
+        },
+        {
+          "kind": "credit",
+          "cost": 2,
+          "upkeep": 1,
+          "duration": 2,
+          "start": 43,
+          "progress": 100,
+          "firstEffect": 45
+        }
+      ],
+      "events": [
+        {
+          "time": 1,
+          "date": "1922-01",
+          "kind": "pps_action",
+          "message": "apparatus",
+          "cashAfterChoice": 0
+        },
+        {
+          "time": 2,
+          "date": "1922-02",
+          "kind": "pps_action",
+          "message": "collect",
+          "cashAfterChoice": 2.3
+        },
+        {
+          "time": 3,
+          "date": "1922-03",
+          "kind": "pps_action",
+          "message": "reach: industry",
+          "cashAfterChoice": 1.6
+        },
+        {
+          "time": 4,
+          "date": "1922-04",
+          "kind": "pps_action",
+          "message": "ready: industry",
+          "cashAfterChoice": 1.9
+        },
+        {
+          "time": 5,
+          "date": "1922-05",
+          "kind": "pps_action",
+          "message": "reach: industry",
+          "cashAfterChoice": 1.1999999999999997
+        },
+        {
+          "time": 6,
+          "date": "1922-06",
+          "kind": "fixture",
+          "message": "Brak uzgodnionego kompromisu z Naczelnikiem; dymisja Ponikowskiego. Próba Śliwińskiego bez przyjętego poparcia."
+        },
+        {
+          "time": 6,
+          "date": "1922-06",
+          "kind": "pps_action",
+          "message": "collect",
+          "cashAfterChoice": 3.4999999999999996
+        },
+        {
+          "time": 7,
+          "date": "1922-07",
+          "kind": "cabinet",
+          "message": "Ponikowski (obowiązki) → Nowak: przyjęta administracyjna oferta kompromisowa",
+          "ppsMode": "opposition",
+          "fixture": true
+        },
+        {
+          "time": 7,
+          "date": "1922-07",
+          "kind": "pps_action",
+          "message": "reach: rail",
+          "cashAfterChoice": 2.7999999999999994
+        },
+        {
+          "time": 8,
+          "date": "1922-08",
+          "kind": "pps_action",
+          "message": "ready: rail",
+          "cashAfterChoice": 3.099999999999999
+        },
+        {
+          "time": 9,
+          "date": "1922-09",
+          "kind": "pps_action",
+          "message": "reach: rail",
+          "cashAfterChoice": 2.399999999999999
+        },
+        {
+          "time": 10,
+          "date": "1922-10",
+          "kind": "pps_action",
+          "message": "ready: rail",
+          "cashAfterChoice": 2.699999999999999
+        },
+        {
+          "time": 11,
+          "date": "1922-11",
+          "kind": "fixture",
+          "message": "Wspólny zamrożony wynik wyborów 1922.",
+          "seats": {
+            "pps": 41,
+            "wyzwolenie": 49,
+            "npr": 18,
+            "piast": 70,
+            "pschd": 60,
+            "zln": 100,
+            "minorities": 90,
+            "other": 14,
+            "kpp": 2
+          }
+        },
+        {
+          "time": 11,
+          "date": "1922-11",
+          "kind": "pps_action",
+          "message": "contact: piast",
+          "cashAfterChoice": 2.9999999999999987
+        },
+        {
+          "time": 12,
+          "date": "1922-12",
+          "kind": "fixture",
+          "message": "Gałąź Narutowicza, legalne zastępstwo Rataja i następca; to wejście polityczne, nie losowanie ryzyka zabójstwa."
+        },
+        {
+          "time": 12,
+          "date": "1922-12",
+          "kind": "cabinet",
+          "message": "Nowak → Sikorski: przyjęta oferta ciągłości władz po kryzysie prezydenckim",
+          "ppsMode": "external_support",
+          "fixture": true
+        },
+        {
+          "time": 12,
+          "date": "1922-12",
+          "kind": "pps_event",
+          "message": "Pokojowa mobilizacja republikańska, 1 R."
+        },
+        {
+          "time": 12,
+          "date": "1922-12",
+          "kind": "pps_action",
+          "message": "collect",
+          "cashAfterChoice": 4.299999999999999
+        },
+        {
+          "time": 12,
+          "date": "1922-12",
+          "kind": "cabinet",
+          "message": "Sikorski: ochrona zagrożonych instytucji, koszt 1 B przez miesiąc."
+        },
+        {
+          "time": 13,
+          "date": "1923-01",
+          "kind": "pps_action",
+          "message": "ready: industry",
+          "cashAfterChoice": 4.599999999999999
+        },
+        {
+          "time": 13,
+          "date": "1923-01",
+          "kind": "offer_input",
+          "message": "Sikorski proponuje porozumienie pracownicze; brak zgody wskazanego wykonawcy, bez efektu i bez dymisji za opcjonalny punkt."
+        },
+        {
+          "time": 14,
+          "date": "1923-02",
+          "kind": "pps_action",
+          "message": "contact: piast",
+          "cashAfterChoice": 4.899999999999999
+        },
+        {
+          "time": 15,
+          "date": "1923-03",
+          "kind": "pps_action",
+          "message": "contact: npr",
+          "cashAfterChoice": 5.199999999999998
+        },
+        {
+          "time": 16,
+          "date": "1923-04",
+          "kind": "crisis",
+          "message": "Dwa zakończone miesiące inflacji ≥20%: bramka kryzysu walutowego."
+        },
+        {
+          "time": 16,
+          "date": "1923-04",
+          "kind": "pps_action",
+          "message": "fund: industry",
+          "cashAfterChoice": 4.499999999999998
+        },
+        {
+          "time": 16,
+          "date": "1923-04",
+          "kind": "cabinet",
+          "message": "Przygotowanie reformy walutowej po dwóch miesiącach inflacji ≥20%."
+        },
+        {
+          "time": 17,
+          "date": "1923-05",
+          "kind": "ballot",
+          "message": "Przyjęte żądanie ustąpienia Sikorskiego na rzecz oferty prawicy i Piasta.",
+          "yes": 230,
+          "no": 214,
+          "declarationsAreFixture": true
+        },
+        {
+          "time": 17,
+          "date": "1923-05",
+          "kind": "cabinet",
+          "message": "Sikorski → Chjeno-Piast: zaakceptowana oferta ziemska i finansowa; większość parlamentarna",
+          "ppsMode": "opposition"
+        },
+        {
+          "time": 17,
+          "date": "1923-05",
+          "kind": "pps_action",
+          "message": "contact: pschd",
+          "cashAfterChoice": 4.799999999999998
+        },
+        {
+          "time": 17,
+          "date": "1923-05",
+          "kind": "cabinet",
+          "message": "Przygotowanie uzgodnionej parcelacji z odszkodowaniem."
+        },
+        {
+          "time": 18,
+          "date": "1923-06",
+          "kind": "cabinet",
+          "message": "Wdrożenie land; koszt 2 B, czas 4 M.",
+          "forecast": -1.0586261263704508
+        },
+        {
+          "time": 19,
+          "date": "1923-07",
+          "kind": "pps_action",
+          "message": "reach: rail",
+          "cashAfterChoice": 4.399999999999998
+        },
+        {
+          "time": 19,
+          "date": "1923-07",
+          "kind": "cabinet",
+          "message": "Szersza podstawa podatku: +1 B trwale; uzgodniony pakiet finansowania."
+        },
+        {
+          "time": 20,
+          "date": "1923-08",
+          "kind": "pps_action",
+          "message": "contact: pschd",
+          "cashAfterChoice": 4.6999999999999975
+        },
+        {
+          "time": 20,
+          "date": "1923-08",
+          "kind": "cabinet",
+          "message": "Wdrożenie currency; koszt 2 B, czas 3 M.",
+          "forecast": -1.0765772488595489
+        },
+        {
+          "time": 21,
+          "date": "1923-09",
+          "kind": "pps_action",
+          "message": "ready: rail",
+          "cashAfterChoice": 4.999999999999997
+        },
+        {
+          "time": 22,
+          "date": "1923-10",
+          "kind": "pps_action",
+          "message": "reach: rail",
+          "cashAfterChoice": 4.299999999999997
+        },
+        {
+          "time": 22,
+          "date": "1923-10",
+          "kind": "crisis",
+          "message": "Trzy miesiące płac <80: żądanie wyrównania; brak przyjętej ugody do rozliczenia, +8 adresatom (80% zatrudnionych)."
+        },
+        {
+          "time": 22,
+          "date": "1923-10",
+          "kind": "completion",
+          "message": "land: ukończony, efekt od 1923-11."
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "crisis",
+          "message": "Dwa zakończone miesiące budżetu <−2 B: bramka kryzysu finansowego."
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "project_effect",
+          "message": "Pierwszy efekt: land."
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "agreement_fulfilled",
+          "message": "Wykonane zobowiązanie: land."
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "fiscal_review",
+          "message": "Przegląd po niedoborze: ukończona parcelacja przestaje obciążać budżet; kontynuacja zobowiązań jest wykonalna bez nowej korekty.",
+          "currentForecast": -1.12136411875181
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "pps_action",
+          "message": "contact: pschd",
+          "cashAfterChoice": 4.599999999999997
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "political_strike_goal",
+          "message": "Postulat dymisji dostępny w otwartym sporze; próg żądania 80, brak automatycznej mobilizacji ogólnej.",
+          "workerG": 47.42886764531527
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "strike",
+          "message": "Ograniczony strajk przemysłowy i kolejowy, bez automatycznej dymisji."
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "political_offer_refused",
+          "message": "Żądanie dymisji zgłoszone, lecz premier i większość go nie przyjmują. Następna runda PPS wraca do ograniczonej oferty płacowej.",
+          "threshold": 80,
+          "actorRefusalIsFixture": true
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "state_response_input",
+          "message": "Wykonana militaryzacja kolei po odmowie ugody; +10 branżowo, ważone w populacji."
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "clash_avoided",
+          "message": "Represyjna reakcja nie kończy się starciem w tym rzucie.",
+          "clashRisk": 0.18284999999999996,
+          "draw": 0.32024633628316224
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "completion",
+          "message": "currency: ukończony, efekt od 1923-12."
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "project_effect",
+          "message": "Pierwszy efekt: currency."
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "agreement_fulfilled",
+          "message": "Wykonane zobowiązanie: currency."
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "fixture",
+          "message": "Dziesięciu posłów Piasta zmienia deklarację poparcia wskutek wewnętrznego sporu politycznego. Liczba jest syntetyczna."
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "ballot",
+          "message": "Skuteczne głosowanie o ustąpieniu Chjeno-Piasta.",
+          "yes": 224,
+          "no": 220
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "cabinet",
+          "message": "Chjeno-Piast → Grabski: przyjęta oferta ekspercka; PPS może wynegocjować osłonę",
+          "ppsMode": "external_support",
+          "guaranteedSupport": 238,
+          "welfareAgreement": false
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "pps_action",
+          "message": "ready: rail",
+          "cashAfterChoice": 4.899999999999997
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "settlement_offer",
+          "message": "Ograniczona ugoda: odrzucona.",
+          "chance": 0.4414240625,
+          "draw": 0.6815031503792852,
+          "ids": [
+            "industry",
+            "rail"
+          ]
+        },
+        {
+          "time": 25,
+          "date": "1924-01",
+          "kind": "pps_action",
+          "message": "reach: rail",
+          "cashAfterChoice": 4.199999999999997
+        },
+        {
+          "time": 25,
+          "date": "1924-01",
+          "kind": "settlement_offer",
+          "message": "Ograniczona ugoda: odrzucona.",
+          "chance": 0.4356782812500001,
+          "draw": 0.9106231883633882,
+          "ids": [
+            "industry",
+            "rail"
+          ]
+        },
+        {
+          "time": 26,
+          "date": "1924-02",
+          "kind": "pps_action",
+          "message": "contact: pschd",
+          "cashAfterChoice": 4.4999999999999964
+        },
+        {
+          "time": 26,
+          "date": "1924-02",
+          "kind": "settlement_offer",
+          "message": "Ograniczona ugoda: przyjęta.",
+          "chance": 0.42993250000000005,
+          "draw": 0.24341670656576753,
+          "ids": [
+            "industry",
+            "rail"
+          ]
+        },
+        {
+          "time": 26,
+          "date": "1924-02",
+          "kind": "strike_end",
+          "message": "Zakończenie na uzgodnionych warunkach; podwyżka dopiero od następnego miesiąca."
+        },
+        {
+          "time": 27,
+          "date": "1924-03",
+          "kind": "settlement_relief",
+          "message": "Pierwsza wykonana korzyść ugody: −4 niezadowolenia adresatom (80% zatrudnionych), raz."
+        },
+        {
+          "time": 27,
+          "date": "1924-03",
+          "kind": "agreement_fulfilled",
+          "message": "Wykonane zobowiązanie: wage-27."
+        },
+        {
+          "time": 27,
+          "date": "1924-03",
+          "kind": "settlement_executed",
+          "message": "Wykonanie ugody płacowej: pierwszy miesiąc podwyżki; żądanie płacowe zamknięte. Bez automatycznego uchylenia represji."
+        },
+        {
+          "time": 27,
+          "date": "1924-03",
+          "kind": "pps_action",
+          "message": "ready: rail",
+          "cashAfterChoice": 4.799999999999996
+        },
+        {
+          "time": 30,
+          "date": "1924-06",
+          "kind": "pps_action",
+          "message": "fund: rail",
+          "cashAfterChoice": 4.699999999999996
+        },
+        {
+          "time": 37,
+          "date": "1925-01",
+          "kind": "fixture",
+          "message": "Otwarta konkretna sprawa organizacji naczelnych władz wojskowych; wspólne wejście testu."
+        },
+        {
+          "time": 42,
+          "date": "1925-06",
+          "kind": "crisis",
+          "message": "Datowany kryzys kredytowy: +12 do szoku kredytu, −0,4 pp produkcji."
+        },
+        {
+          "time": 42,
+          "date": "1925-06",
+          "kind": "cabinet",
+          "message": "Przygotowanie instrumentu kredytowego po otwarciu kryzysu."
+        },
+        {
+          "time": 43,
+          "date": "1925-07",
+          "kind": "cabinet",
+          "message": "Wdrożenie credit; koszt 2 B, czas 2 M.",
+          "forecast": 0.44839416721948755
+        },
+        {
+          "time": 44,
+          "date": "1925-08",
+          "kind": "completion",
+          "message": "credit: ukończony, efekt od 1925-09."
+        },
+        {
+          "time": 45,
+          "date": "1925-09",
+          "kind": "project_effect",
+          "message": "Pierwszy efekt: credit."
+        },
+        {
+          "time": 45,
+          "date": "1925-09",
+          "kind": "agreement_fulfilled",
+          "message": "Wykonane zobowiązanie: credit."
+        },
+        {
+          "time": 47,
+          "date": "1925-11",
+          "kind": "crisis_offer",
+          "message": "Ratunkowa oferta bez osobnej bramki relacji; zgody na wspólne minimum i urzędy pozostają jawnym wejściem.",
+          "missing": [
+            "zln: 5 < 25"
+          ]
+        },
+        {
+          "time": 47,
+          "date": "1925-11",
+          "kind": "cabinet",
+          "message": "Grabski → Skrzyński: przyjęta przebudowa rządu w odpowiedzi na kryzys kredytowy",
+          "ppsMode": "member",
+          "declaredSupport": 289,
+          "ppsMinistry": "labor",
+          "otherActorsConsentIsFixture": true
+        },
+        {
+          "time": 47,
+          "date": "1925-11",
+          "kind": "cabinet",
+          "message": "Wykonanie przyjętego minimum PPS: osłona 2 B z istniejącej przestrzeni finansowej; bez nowego podatku i bez kopii programu."
+        },
+        {
+          "time": 47,
+          "date": "1925-11",
+          "kind": "agreement_fulfilled",
+          "message": "Wykonane zobowiązanie: benefit."
+        },
+        {
+          "time": 52,
+          "date": "1926-04",
+          "kind": "austerity_offer",
+          "message": "Sześciomiesięczny przegląd: prawicowi partnerzy proponują osłonę 2→1 B.",
+          "budgetBefore": -0.7235461566559822,
+          "reason": "policy_preference",
+          "actorProposalIsFixture": true
+        },
+        {
+          "time": 52,
+          "date": "1926-04",
+          "kind": "pps_withdrawal",
+          "message": "Kompromis odrzucony; PPS wycofuje ministrów. Gabinet jeszcze nie odwołany."
+        },
+        {
+          "time": 53,
+          "date": "1926-05",
+          "kind": "historical_checkpoint",
+          "message": "Maj nie powołuje nowego rządu ani nie uruchamia próby samą datą.",
+          "pressure": 34,
+          "cabinet": "Skrzyński"
+        },
+        {
+          "time": 70,
+          "date": "1927-10",
+          "kind": "coup",
+          "message": "Rozstrzygnięcie syntetycznej próby: pils_victory.",
+          "capacity": 36.231,
+          "pressure": 66,
+          "stance": "pils",
+          "railUsed": true,
+          "forces": [
+            {
+              "id": "capital_legal",
+              "f": 45,
+              "ready": 0.8,
+              "command": 0.8,
+              "legal": 0.9,
+              "pils": 0.05,
+              "phase": 0,
+              "side": "legal",
+              "draw": 0.35743266018107533,
+              "loss": 6.651099783355274
+            },
+            {
+              "id": "capital_pils",
+              "f": 55,
+              "ready": 0.85,
+              "command": 0.85,
+              "legal": 0.05,
+              "pils": 0.9,
+              "phase": 0,
+              "side": "pils",
+              "draw": 0.7083165678195655,
+              "loss": 4.508254923178992
+            },
+            {
+              "id": "near",
+              "f": 25,
+              "ready": 0.7,
+              "command": 0.7,
+              "legal": 0.35,
+              "pils": 0.45,
+              "phase": 1,
+              "side": "pils",
+              "draw": 0.6854594778269529,
+              "loss": 1.250839981397632
+            },
+            {
+              "id": "remote",
+              "f": 35,
+              "ready": 0.7,
+              "command": 0.7,
+              "legal": 0.7,
+              "pils": 0.15,
+              "phase": 2,
+              "side": "pils",
+              "draw": 0.7156099695712328,
+              "loss": 0.7889348744198261
+            }
+          ],
+          "rounds": [
+            {
+              "phase": 0,
+              "F": {
+                "pils": 39.7375,
+                "legal": 28.8
+              },
+              "railParticipation": 79.39625,
+              "delay": 2,
+              "streak": {
+                "pils": 1,
+                "legal": 0
+              }
+            },
+            {
+              "phase": 1,
+              "F": {
+                "pils": 50.65165903702353,
+                "legal": 27.46415903702353
+              },
+              "railParticipation": 79.39625,
+              "delay": 2,
+              "streak": {
+                "pils": 2,
+                "legal": 0
+              }
+            },
+            {
+              "phase": 2,
+              "F": {
+                "pils": 66.37699985420525,
+                "legal": 26.039499854205264
+              },
+              "railParticipation": 79.39625,
+              "delay": 2,
+              "streak": {
+                "pils": 3,
+                "legal": 0
+              }
+            }
+          ],
+          "outputLossPercent": 1.92873975
+        }
+      ],
+      "blocked": []
+    },
+    {
+      "config": {
+        "id": "C",
+        "label": "PPS współrządząca",
+        "organized": true,
+        "welfare": true,
+        "coalition": true,
+        "militaryRequest": "1925-12",
+        "stance": "legal"
+      },
+      "options": {
+        "revision13": true,
+        "rightAcceptsCompromise": false,
+        "rightFormsReplacement": false
+      },
+      "endpoint": {
+        "kind": "scheduled_election_boundary",
+        "date": "1928-02-19",
+        "pressure": 10,
+        "note": "Boundary before the next ordinary turn; electoral preferences/results not forecast."
+      },
+      "may1926": {
+        "run": "C",
+        "date": "1926-05",
+        "time": 53,
+        "cabinet": "Skrzyński",
+        "ppsMode": "opposition",
+        "inflation": 0.0019213417679855027,
+        "wage": 100,
+        "credit": 52.953225919787144,
+        "output": 86.8310658381107,
+        "marketUnemployment": 8.245389201286109,
+        "unemployment": 7.745389201286109,
+        "agrarian": 45.06930337856103,
+        "privateGrowth": -0.23742910864987618,
+        "creditTarget": 53.99972552260457,
+        "budget": -0.6611615579818775,
+        "coverage": 1,
+        "projectCharges": 4,
+        "policyBudget": 0,
+        "taxLevel": 2,
+        "businessPressure": 34,
+        "workerGrievance": 60.668327280681474,
+        "unemployedGrievance": 20.910380943075914,
+        "workerRadicalization": 0.23339433188934786,
+        "uncontrolledUpperBound": 0.13427888809336264,
+        "nationalGrievance": 40.34550168086346,
+        "authority": 59,
+        "democracy": 78.59000000000002,
+        "violence": 0,
+        "pressure": 10,
+        "militaryOpen": false,
+        "cash": 15.899999999999968,
+        "apparatus": 2,
+        "industryReach": 50,
+        "industryReadiness": 55,
+        "railReach": 50,
+        "railReadiness": 55,
+        "railFund": 4.039624375,
+        "partySpending": 8,
+        "ppsActiveActions": 27,
+        "governmentInitiatives": 0,
+        "strikeDisruption": 0,
+        "benefit": true,
+        "worksUnits": 2,
+        "agreementTension": 0,
+        "currencyCrisis": false,
+        "fiscalCrisis": false
+      },
+      "projects": [
+        {
+          "kind": "land",
+          "cost": 2,
+          "upkeep": 0,
+          "duration": 4,
+          "start": 18,
+          "progress": 100,
+          "firstEffect": 23
+        },
+        {
+          "kind": "currency",
+          "cost": 2,
+          "upkeep": 0,
+          "duration": 3,
+          "start": 20,
+          "progress": 100,
+          "firstEffect": 24
+        },
+        {
+          "kind": "credit",
+          "cost": 2,
+          "upkeep": 1,
+          "duration": 2,
+          "start": 43,
+          "progress": 100,
+          "firstEffect": 45
+        },
+        {
+          "kind": "works",
+          "cost": 2,
+          "upkeep": 1,
+          "duration": 3,
+          "start": 48,
+          "progress": 100,
+          "firstEffect": 51
+        }
+      ],
+      "events": [
+        {
+          "time": 1,
+          "date": "1922-01",
+          "kind": "pps_action",
+          "message": "apparatus",
+          "cashAfterChoice": 0
+        },
+        {
+          "time": 2,
+          "date": "1922-02",
+          "kind": "pps_action",
+          "message": "collect",
+          "cashAfterChoice": 2.3
+        },
+        {
+          "time": 3,
+          "date": "1922-03",
+          "kind": "pps_action",
+          "message": "reach: industry",
+          "cashAfterChoice": 1.6
+        },
+        {
+          "time": 4,
+          "date": "1922-04",
+          "kind": "pps_action",
+          "message": "ready: industry",
+          "cashAfterChoice": 1.9
+        },
+        {
+          "time": 5,
+          "date": "1922-05",
+          "kind": "pps_action",
+          "message": "reach: industry",
+          "cashAfterChoice": 1.1999999999999997
+        },
+        {
+          "time": 6,
+          "date": "1922-06",
+          "kind": "fixture",
+          "message": "Brak uzgodnionego kompromisu z Naczelnikiem; dymisja Ponikowskiego. Próba Śliwińskiego bez przyjętego poparcia."
+        },
+        {
+          "time": 6,
+          "date": "1922-06",
+          "kind": "pps_action",
+          "message": "collect",
+          "cashAfterChoice": 3.4999999999999996
+        },
+        {
+          "time": 7,
+          "date": "1922-07",
+          "kind": "cabinet",
+          "message": "Ponikowski (obowiązki) → Nowak: przyjęta administracyjna oferta kompromisowa",
+          "ppsMode": "opposition",
+          "fixture": true
+        },
+        {
+          "time": 7,
+          "date": "1922-07",
+          "kind": "pps_action",
+          "message": "reach: rail",
+          "cashAfterChoice": 2.7999999999999994
+        },
+        {
+          "time": 8,
+          "date": "1922-08",
+          "kind": "pps_action",
+          "message": "ready: rail",
+          "cashAfterChoice": 3.099999999999999
+        },
+        {
+          "time": 9,
+          "date": "1922-09",
+          "kind": "pps_action",
+          "message": "reach: rail",
+          "cashAfterChoice": 2.399999999999999
+        },
+        {
+          "time": 10,
+          "date": "1922-10",
+          "kind": "pps_action",
+          "message": "ready: rail",
+          "cashAfterChoice": 2.699999999999999
+        },
+        {
+          "time": 11,
+          "date": "1922-11",
+          "kind": "fixture",
+          "message": "Wspólny zamrożony wynik wyborów 1922.",
+          "seats": {
+            "pps": 41,
+            "wyzwolenie": 49,
+            "npr": 18,
+            "piast": 70,
+            "pschd": 60,
+            "zln": 100,
+            "minorities": 90,
+            "other": 14,
+            "kpp": 2
+          }
+        },
+        {
+          "time": 11,
+          "date": "1922-11",
+          "kind": "pps_action",
+          "message": "contact: piast",
+          "cashAfterChoice": 2.9999999999999987
+        },
+        {
+          "time": 12,
+          "date": "1922-12",
+          "kind": "fixture",
+          "message": "Gałąź Narutowicza, legalne zastępstwo Rataja i następca; to wejście polityczne, nie losowanie ryzyka zabójstwa."
+        },
+        {
+          "time": 12,
+          "date": "1922-12",
+          "kind": "cabinet",
+          "message": "Nowak → Sikorski: przyjęta oferta ciągłości władz po kryzysie prezydenckim",
+          "ppsMode": "external_support",
+          "fixture": true
+        },
+        {
+          "time": 12,
+          "date": "1922-12",
+          "kind": "pps_event",
+          "message": "Pokojowa mobilizacja republikańska, 1 R."
+        },
+        {
+          "time": 12,
+          "date": "1922-12",
+          "kind": "pps_action",
+          "message": "collect",
+          "cashAfterChoice": 4.299999999999999
+        },
+        {
+          "time": 12,
+          "date": "1922-12",
+          "kind": "cabinet",
+          "message": "Sikorski: ochrona zagrożonych instytucji, koszt 1 B przez miesiąc."
+        },
+        {
+          "time": 13,
+          "date": "1923-01",
+          "kind": "pps_action",
+          "message": "ready: industry",
+          "cashAfterChoice": 4.599999999999999
+        },
+        {
+          "time": 13,
+          "date": "1923-01",
+          "kind": "offer_input",
+          "message": "Sikorski proponuje porozumienie pracownicze; brak zgody wskazanego wykonawcy, bez efektu i bez dymisji za opcjonalny punkt."
+        },
+        {
+          "time": 14,
+          "date": "1923-02",
+          "kind": "pps_action",
+          "message": "contact: piast",
+          "cashAfterChoice": 4.899999999999999
+        },
+        {
+          "time": 15,
+          "date": "1923-03",
+          "kind": "pps_action",
+          "message": "contact: npr",
+          "cashAfterChoice": 5.199999999999998
+        },
+        {
+          "time": 16,
+          "date": "1923-04",
+          "kind": "crisis",
+          "message": "Dwa zakończone miesiące inflacji ≥20%: bramka kryzysu walutowego."
+        },
+        {
+          "time": 16,
+          "date": "1923-04",
+          "kind": "pps_action",
+          "message": "fund: industry",
+          "cashAfterChoice": 4.499999999999998
+        },
+        {
+          "time": 16,
+          "date": "1923-04",
+          "kind": "cabinet",
+          "message": "Przygotowanie reformy walutowej po dwóch miesiącach inflacji ≥20%."
+        },
+        {
+          "time": 17,
+          "date": "1923-05",
+          "kind": "ballot",
+          "message": "Przyjęte żądanie ustąpienia Sikorskiego na rzecz oferty prawicy i Piasta.",
+          "yes": 230,
+          "no": 214,
+          "declarationsAreFixture": true
+        },
+        {
+          "time": 17,
+          "date": "1923-05",
+          "kind": "cabinet",
+          "message": "Sikorski → Chjeno-Piast: zaakceptowana oferta ziemska i finansowa; większość parlamentarna",
+          "ppsMode": "opposition"
+        },
+        {
+          "time": 17,
+          "date": "1923-05",
+          "kind": "pps_action",
+          "message": "contact: pschd",
+          "cashAfterChoice": 4.799999999999998
+        },
+        {
+          "time": 17,
+          "date": "1923-05",
+          "kind": "cabinet",
+          "message": "Przygotowanie uzgodnionej parcelacji z odszkodowaniem."
+        },
+        {
+          "time": 18,
+          "date": "1923-06",
+          "kind": "cabinet",
+          "message": "Wdrożenie land; koszt 2 B, czas 4 M.",
+          "forecast": -1.0586261263704508
+        },
+        {
+          "time": 19,
+          "date": "1923-07",
+          "kind": "cabinet",
+          "message": "Szersza podstawa podatku: +1 B trwale; uzgodniony pakiet finansowania."
+        },
+        {
+          "time": 20,
+          "date": "1923-08",
+          "kind": "pps_action",
+          "message": "contact: pschd",
+          "cashAfterChoice": 5.6999999999999975
+        },
+        {
+          "time": 20,
+          "date": "1923-08",
+          "kind": "cabinet",
+          "message": "Wdrożenie currency; koszt 2 B, czas 3 M.",
+          "forecast": -1.0765772488595489
+        },
+        {
+          "time": 22,
+          "date": "1923-10",
+          "kind": "crisis",
+          "message": "Trzy miesiące płac <80: żądanie wyrównania; brak przyjętej ugody do rozliczenia, +8 adresatom (80% zatrudnionych)."
+        },
+        {
+          "time": 22,
+          "date": "1923-10",
+          "kind": "completion",
+          "message": "land: ukończony, efekt od 1923-11."
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "crisis",
+          "message": "Dwa zakończone miesiące budżetu <−2 B: bramka kryzysu finansowego."
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "project_effect",
+          "message": "Pierwszy efekt: land."
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "agreement_fulfilled",
+          "message": "Wykonane zobowiązanie: land."
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "fiscal_review",
+          "message": "Przegląd po niedoborze: ukończona parcelacja przestaje obciążać budżet; kontynuacja zobowiązań jest wykonalna bez nowej korekty.",
+          "currentForecast": -1.12136411875181
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "pps_action",
+          "message": "contact: pschd",
+          "cashAfterChoice": 6.599999999999997
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "strike",
+          "message": "Ograniczony strajk przemysłowy i kolejowy, bez automatycznej dymisji."
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "settlement_offer",
+          "message": "Ograniczona ugoda: odrzucona.",
+          "chance": 0.45516984375,
+          "draw": 0.6716401379089803,
+          "ids": [
+            "industry",
+            "rail"
+          ]
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "state_response_input",
+          "message": "Wykonana militaryzacja kolei po odmowie ugody; +10 branżowo, ważone w populacji."
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "clash_avoided",
+          "message": "Represyjna reakcja nie kończy się starciem w tym rzucie.",
+          "clashRisk": 0.18284999999999996,
+          "draw": 0.32024633628316224
+        },
+        {
+          "time": 23,
+          "date": "1923-11",
+          "kind": "completion",
+          "message": "currency: ukończony, efekt od 1923-12."
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "project_effect",
+          "message": "Pierwszy efekt: currency."
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "agreement_fulfilled",
+          "message": "Wykonane zobowiązanie: currency."
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "fixture",
+          "message": "Dziesięciu posłów Piasta zmienia deklarację poparcia wskutek wewnętrznego sporu politycznego. Liczba jest syntetyczna."
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "ballot",
+          "message": "Skuteczne głosowanie o ustąpieniu Chjeno-Piasta.",
+          "yes": 224,
+          "no": 220
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "cabinet",
+          "message": "Chjeno-Piast → Grabski: przyjęta oferta ekspercka; PPS może wynegocjować osłonę",
+          "ppsMode": "external_support",
+          "guaranteedSupport": 238,
+          "welfareAgreement": true
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "cabinet",
+          "message": "Wdrożenie wynegocjowanej osłony 2 B: progresja +1 B trwale oraz podatek majątkowy +2 B na 6 M.",
+          "forecast": 1.8366716175394773
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "settlement_offer",
+          "message": "Ograniczona ugoda: odrzucona.",
+          "chance": 0.4414240625,
+          "draw": 0.6815031503792852,
+          "ids": [
+            "industry",
+            "rail"
+          ]
+        },
+        {
+          "time": 24,
+          "date": "1923-12",
+          "kind": "agreement_fulfilled",
+          "message": "Wykonane zobowiązanie: benefit."
+        },
+        {
+          "time": 25,
+          "date": "1924-01",
+          "kind": "pps_action",
+          "message": "contact: zln",
+          "cashAfterChoice": 7.199999999999997
+        },
+        {
+          "time": 25,
+          "date": "1924-01",
+          "kind": "settlement_offer",
+          "message": "Ograniczona ugoda: odrzucona.",
+          "chance": 0.42767828125,
+          "draw": 0.9106231883633882,
+          "ids": [
+            "industry",
+            "rail"
+          ]
+        },
+        {
+          "time": 26,
+          "date": "1924-02",
+          "kind": "pps_action",
+          "message": "contact: pschd",
+          "cashAfterChoice": 7.4999999999999964
+        },
+        {
+          "time": 26,
+          "date": "1924-02",
+          "kind": "settlement_offer",
+          "message": "Ograniczona ugoda: przyjęta.",
+          "chance": 0.4219325,
+          "draw": 0.24341670656576753,
+          "ids": [
+            "industry",
+            "rail"
+          ]
+        },
+        {
+          "time": 26,
+          "date": "1924-02",
+          "kind": "strike_end",
+          "message": "Zakończenie na uzgodnionych warunkach; podwyżka dopiero od następnego miesiąca."
+        },
+        {
+          "time": 27,
+          "date": "1924-03",
+          "kind": "settlement_relief",
+          "message": "Pierwsza wykonana korzyść ugody: −4 niezadowolenia adresatom (80% zatrudnionych), raz."
+        },
+        {
+          "time": 27,
+          "date": "1924-03",
+          "kind": "agreement_fulfilled",
+          "message": "Wykonane zobowiązanie: wage-27."
+        },
+        {
+          "time": 27,
+          "date": "1924-03",
+          "kind": "settlement_executed",
+          "message": "Wykonanie ugody płacowej: pierwszy miesiąc podwyżki; żądanie płacowe zamknięte. Bez automatycznego uchylenia represji."
+        },
+        {
+          "time": 28,
+          "date": "1924-04",
+          "kind": "pps_action",
+          "message": "contact: zln",
+          "cashAfterChoice": 8.099999999999994
+        },
+        {
+          "time": 31,
+          "date": "1924-07",
+          "kind": "pps_action",
+          "message": "contact: zln",
+          "cashAfterChoice": 8.999999999999991
+        },
+        {
+          "time": 34,
+          "date": "1924-10",
+          "kind": "pps_action",
+          "message": "contact: zln",
+          "cashAfterChoice": 9.899999999999988
+        },
+        {
+          "time": 37,
+          "date": "1925-01",
+          "kind": "fixture",
+          "message": "Otwarta konkretna sprawa organizacji naczelnych władz wojskowych; wspólne wejście testu."
+        },
+        {
+          "time": 37,
+          "date": "1925-01",
+          "kind": "pps_action",
+          "message": "contact: zln",
+          "cashAfterChoice": 10.799999999999985
+        },
+        {
+          "time": 42,
+          "date": "1925-06",
+          "kind": "crisis",
+          "message": "Datowany kryzys kredytowy: +12 do szoku kredytu, −0,4 pp produkcji."
+        },
+        {
+          "time": 42,
+          "date": "1925-06",
+          "kind": "cabinet",
+          "message": "Przygotowanie instrumentu kredytowego po otwarciu kryzysu."
+        },
+        {
+          "time": 43,
+          "date": "1925-07",
+          "kind": "cabinet",
+          "message": "Wdrożenie credit; koszt 2 B, czas 2 M.",
+          "forecast": -0.5026293817188936
+        },
+        {
+          "time": 44,
+          "date": "1925-08",
+          "kind": "completion",
+          "message": "credit: ukończony, efekt od 1925-09."
+        },
+        {
+          "time": 45,
+          "date": "1925-09",
+          "kind": "project_effect",
+          "message": "Pierwszy efekt: credit."
+        },
+        {
+          "time": 45,
+          "date": "1925-09",
+          "kind": "agreement_fulfilled",
+          "message": "Wykonane zobowiązanie: credit."
+        },
+        {
+          "time": 47,
+          "date": "1925-11",
+          "kind": "cabinet",
+          "message": "Grabski → Skrzyński: przyjęta przebudowa rządu w odpowiedzi na kryzys kredytowy",
+          "ppsMode": "member",
+          "declaredSupport": 289,
+          "ppsMinistry": "labor",
+          "otherActorsConsentIsFixture": true
+        },
+        {
+          "time": 47,
+          "date": "1925-11",
+          "kind": "pps_action",
+          "message": "prepare_works",
+          "cashAfterChoice": 13.799999999999974
+        },
+        {
+          "time": 48,
+          "date": "1925-12",
+          "kind": "pps",
+          "message": "Wdrożenie works; koszt 2 B, czas 3 M.",
+          "forecast": -1.6171790155414478
+        },
+        {
+          "time": 48,
+          "date": "1925-12",
+          "kind": "pps_action",
+          "message": "launch_works",
+          "cashAfterChoice": 14.099999999999973
+        },
+        {
+          "time": 48,
+          "date": "1925-12",
+          "kind": "military_compromise",
+          "message": "Wykonane uzgodnione stanowisko pod cywilną kontrolą: −12 presji raz; sprawa zamknięta.",
+          "executor": "Skrzyński",
+          "offerAcceptanceIsFixture": true,
+          "nearReserveLoyaltyChange": 0.05
+        },
+        {
+          "time": 50,
+          "date": "1926-02",
+          "kind": "completion",
+          "message": "works: ukończony, efekt od 1926-03."
+        },
+        {
+          "time": 51,
+          "date": "1926-03",
+          "kind": "project_effect",
+          "message": "Pierwszy efekt: works."
+        },
+        {
+          "time": 51,
+          "date": "1926-03",
+          "kind": "agreement_fulfilled",
+          "message": "Wykonane zobowiązanie: works."
+        },
+        {
+          "time": 52,
+          "date": "1926-04",
+          "kind": "austerity_offer",
+          "message": "Sześciomiesięczny przegląd: prawicowi partnerzy proponują osłonę 2→1 B.",
+          "budgetBefore": -0.6634582311328239,
+          "reason": "policy_preference",
+          "actorProposalIsFixture": true
+        },
+        {
+          "time": 52,
+          "date": "1926-04",
+          "kind": "pps_withdrawal",
+          "message": "Kompromis odrzucony; PPS wycofuje ministrów. Gabinet jeszcze nie odwołany."
+        },
+        {
+          "time": 53,
+          "date": "1926-05",
+          "kind": "historical_checkpoint",
+          "message": "Maj nie powołuje nowego rządu ani nie uruchamia próby samą datą.",
+          "pressure": 10,
+          "cabinet": "Skrzyński"
+        },
+        {
+          "time": 54,
+          "date": "1926-06",
+          "kind": "military_review",
+          "message": "Strony potwierdzają wykonanie i przedłużenie umowy na 6 M; bez ponownej ulgi.",
+          "acceptanceIsFixture": true
+        },
+        {
+          "time": 60,
+          "date": "1926-12",
+          "kind": "military_review",
+          "message": "Strony potwierdzają wykonanie i przedłużenie umowy na 6 M; bez ponownej ulgi.",
+          "acceptanceIsFixture": true
+        },
+        {
+          "time": 66,
+          "date": "1927-06",
+          "kind": "military_review",
+          "message": "Strony potwierdzają wykonanie i przedłużenie umowy na 6 M; bez ponownej ulgi.",
+          "acceptanceIsFixture": true
+        },
+        {
+          "time": 72,
+          "date": "1927-12",
+          "kind": "military_review",
+          "message": "Strony potwierdzają wykonanie i przedłużenie umowy na 6 M; bez ponownej ulgi.",
+          "acceptanceIsFixture": true
+        }
+      ],
+      "blocked": []
+    }
+  ],
+  "railCases": [
+    {
+      "revision13": false,
+      "rail": true,
+      "endpoint": {
+        "kind": "synthetic_coup_result",
+        "date": "1927-09",
+        "outcome": "pils_victory",
+        "capacity": 36.231,
+        "rounds": 2,
+        "pressure": 66,
+        "postCoupOutput": 87.39069212745463
+      },
+      "coup": {
+        "time": 69,
+        "date": "1927-09",
+        "kind": "coup",
+        "message": "Rozstrzygnięcie syntetycznej próby: pils_victory.",
+        "capacity": 36.231,
+        "pressure": 66,
+        "stance": "pils",
+        "railUsed": true,
+        "forces": [
+          {
+            "id": "capital_legal",
+            "f": 45,
+            "ready": 0.8,
+            "command": 0.8,
+            "legal": 0.9,
+            "pils": 0.05,
+            "phase": 0,
+            "side": "legal",
+            "draw": 0.35743266018107533,
+            "loss": 4.313281477804281
+          },
+          {
+            "id": "capital_pils",
+            "f": 55,
+            "ready": 0.85,
+            "command": 0.85,
+            "legal": 0.05,
+            "pils": 0.9,
+            "phase": 0,
+            "side": "pils",
+            "draw": 0.7083165678195655,
+            "loss": 3.3438743809422466
+          },
+          {
+            "id": "near",
+            "f": 25,
+            "ready": 0.7,
+            "command": 0.7,
+            "legal": 0.35,
+            "pils": 0.45,
+            "phase": 1,
+            "side": "pils",
+            "draw": 0.6854594778269529,
+            "loss": 0.7031651133958523
+          },
+          {
+            "id": "remote",
+            "f": 35,
+            "ready": 0.7,
+            "command": 0.7,
+            "legal": 0.7,
+            "pils": 0.15,
+            "phase": 2,
+            "side": "legal",
+            "draw": 0.7156099695712328,
+            "loss": 0
+          }
+        ],
+        "rounds": [
+          {
+            "phase": 0,
+            "F": {
+              "pils": 39.7375,
+              "legal": 28.8
+            },
+            "railParticipation": 79.39625,
+            "delay": 2,
+            "streak": {
+              "pils": 1,
+              "legal": 0
+            }
+          },
+          {
+            "phase": 1,
+            "F": {
+              "pils": 50.65165903702353,
+              "legal": 27.46415903702353
+            },
+            "railParticipation": 79.39625,
+            "delay": 2,
+            "streak": {
+              "pils": 2,
+              "legal": 0
+            }
+          }
+        ],
+        "outputLossPercent": 1.42873975
+      }
+    },
+    {
+      "revision13": false,
+      "rail": false,
+      "endpoint": {
+        "kind": "synthetic_coup_result",
+        "date": "1927-09",
+        "outcome": "pils_victory",
+        "capacity": 36.231,
+        "rounds": 2,
+        "pressure": 66,
+        "postCoupOutput": 87.77080153662749
+      },
+      "coup": {
+        "time": 69,
+        "date": "1927-09",
+        "kind": "coup",
+        "message": "Rozstrzygnięcie syntetycznej próby: pils_victory.",
+        "capacity": 36.231,
+        "pressure": 66,
+        "stance": "pils",
+        "railUsed": false,
+        "forces": [
+          {
+            "id": "capital_legal",
+            "f": 45,
+            "ready": 0.8,
+            "command": 0.8,
+            "legal": 0.9,
+            "pils": 0.05,
+            "phase": 0,
+            "side": "legal",
+            "draw": 0.35743266018107533,
+            "loss": 4.313281477804281
+          },
+          {
+            "id": "capital_pils",
+            "f": 55,
+            "ready": 0.85,
+            "command": 0.85,
+            "legal": 0.05,
+            "pils": 0.9,
+            "phase": 0,
+            "side": "pils",
+            "draw": 0.7083165678195655,
+            "loss": 3.3438743809422466
+          },
+          {
+            "id": "near",
+            "f": 25,
+            "ready": 0.7,
+            "command": 0.7,
+            "legal": 0.35,
+            "pils": 0.45,
+            "phase": 1,
+            "side": "pils",
+            "draw": 0.6854594778269529,
+            "loss": 0.7031651133958523
+          },
+          {
+            "id": "remote",
+            "f": 35,
+            "ready": 0.7,
+            "command": 0.7,
+            "legal": 0.7,
+            "pils": 0.15,
+            "phase": 2,
+            "side": "legal",
+            "draw": 0.7156099695712328,
+            "loss": 0
+          }
+        ],
+        "rounds": [
+          {
+            "phase": 0,
+            "F": {
+              "pils": 39.7375,
+              "legal": 28.8
+            },
+            "railParticipation": 0,
+            "delay": 0,
+            "streak": {
+              "pils": 1,
+              "legal": 0
+            }
+          },
+          {
+            "phase": 1,
+            "F": {
+              "pils": 50.65165903702353,
+              "legal": 27.46415903702353
+            },
+            "railParticipation": 0,
+            "delay": 0,
+            "streak": {
+              "pils": 2,
+              "legal": 0
+            }
+          }
+        ],
+        "outputLossPercent": 1
+      }
+    },
+    {
+      "revision13": true,
+      "rail": true,
+      "endpoint": {
+        "kind": "synthetic_coup_result",
+        "date": "1926-12",
+        "outcome": "pils_victory",
+        "capacity": 36.231,
+        "rounds": 3,
+        "pressure": 66,
+        "postCoupOutput": 84.61775533846662
+      },
+      "coup": {
+        "time": 60,
+        "date": "1926-12",
+        "kind": "coup",
+        "message": "Rozstrzygnięcie syntetycznej próby: pils_victory.",
+        "capacity": 36.231,
+        "pressure": 66,
+        "stance": "pils",
+        "railUsed": true,
+        "forces": [
+          {
+            "id": "capital_legal",
+            "f": 45,
+            "ready": 0.8,
+            "command": 0.8,
+            "legal": 0.9,
+            "pils": 0.05,
+            "phase": 0,
+            "side": "legal",
+            "draw": 0.35743266018107533,
+            "loss": 6.442127744889461
+          },
+          {
+            "id": "capital_pils",
+            "f": 55,
+            "ready": 0.85,
+            "command": 0.85,
+            "legal": 0.05,
+            "pils": 0.9,
+            "phase": 0,
+            "side": "pils",
+            "draw": 0.7083165678195655,
+            "loss": 4.773567198583354
+          },
+          {
+            "id": "near",
+            "f": 25,
+            "ready": 0.7,
+            "command": 0.7,
+            "legal": 0.35,
+            "pils": 0.45,
+            "phase": 1,
+            "side": "pils",
+            "draw": 0.6854594778269529,
+            "loss": 1.3756315423526178
+          },
+          {
+            "id": "remote",
+            "f": 35,
+            "ready": 0.7,
+            "command": 0.7,
+            "legal": 0.7,
+            "pils": 0.15,
+            "phase": 2,
+            "side": "legal",
+            "draw": 0.7156099695712328,
+            "loss": 0
+          }
+        ],
+        "rounds": [
+          {
+            "phase": 0,
+            "F": {
+              "pils": 39.7375,
+              "legal": 28.8
+            },
+            "railParticipation": 79.39625,
+            "delay": 2,
+            "streak": {
+              "pils": 1,
+              "legal": 0
+            }
+          },
+          {
+            "phase": 1,
+            "F": {
+              "pils": 50.65165903702353,
+              "legal": 27.46415903702353
+            },
+            "railParticipation": 79.39625,
+            "delay": 2,
+            "streak": {
+              "pils": 2,
+              "legal": 0
+            }
+          },
+          {
+            "phase": 2,
+            "F": {
+              "pils": 49.22699985420526,
+              "legal": 26.039499854205264
+            },
+            "railParticipation": 79.39625,
+            "delay": 2,
+            "streak": {
+              "pils": 3,
+              "legal": 0
+            }
+          }
+        ],
+        "outputLossPercent": 1.92873975
+      }
+    },
+    {
+      "revision13": true,
+      "rail": false,
+      "endpoint": {
+        "kind": "synthetic_coup_result",
+        "date": "1926-12",
+        "outcome": "prolonged_conflict",
+        "capacity": 36.231,
+        "rounds": 4,
+        "pressure": 66,
+        "postCoupOutput": 84.5562706345433
+      },
+      "coup": {
+        "time": 60,
+        "date": "1926-12",
+        "kind": "coup",
+        "message": "Rozstrzygnięcie syntetycznej próby: prolonged_conflict.",
+        "capacity": 36.231,
+        "pressure": 66,
+        "stance": "pils",
+        "railUsed": false,
+        "forces": [
+          {
+            "id": "capital_legal",
+            "f": 45,
+            "ready": 0.8,
+            "command": 0.8,
+            "legal": 0.9,
+            "pils": 0.05,
+            "phase": 0,
+            "side": "legal",
+            "draw": 0.35743266018107533,
+            "loss": 7.71120169641293
+          },
+          {
+            "id": "capital_pils",
+            "f": 55,
+            "ready": 0.85,
+            "command": 0.85,
+            "legal": 0.05,
+            "pils": 0.9,
+            "phase": 0,
+            "side": "pils",
+            "draw": 0.7083165678195655,
+            "loss": 7.128798256418839
+          },
+          {
+            "id": "near",
+            "f": 25,
+            "ready": 0.7,
+            "command": 0.7,
+            "legal": 0.35,
+            "pils": 0.45,
+            "phase": 1,
+            "side": "pils",
+            "draw": 0.6854594778269529,
+            "loss": 2.4834316231027427
+          },
+          {
+            "id": "remote",
+            "f": 35,
+            "ready": 0.7,
+            "command": 0.7,
+            "legal": 0.7,
+            "pils": 0.15,
+            "phase": 2,
+            "side": "legal",
+            "draw": 0.7156099695712328,
+            "loss": 2.922998265058527
+          }
+        ],
+        "rounds": [
+          {
+            "phase": 0,
+            "F": {
+              "pils": 39.7375,
+              "legal": 28.8
+            },
+            "railParticipation": 0,
+            "delay": 0,
+            "streak": {
+              "pils": 1,
+              "legal": 0
+            }
+          },
+          {
+            "phase": 1,
+            "F": {
+              "pils": 50.65165903702353,
+              "legal": 27.46415903702353
+            },
+            "railParticipation": 0,
+            "delay": 0,
+            "streak": {
+              "pils": 2,
+              "legal": 0
+            }
+          },
+          {
+            "phase": 2,
+            "F": {
+              "pils": 49.22699985420526,
+              "legal": 43.189499854205266
+            },
+            "railParticipation": 0,
+            "delay": 0,
+            "streak": {
+              "pils": 0,
+              "legal": 0
+            }
+          },
+          {
+            "phase": 3,
+            "F": {
+              "pils": 47.38655836617285,
+              "legal": 41.34905836617286
+            },
+            "railParticipation": 0,
+            "delay": 0,
+            "streak": {
+              "pils": 0,
+              "legal": 0
+            }
+          }
+        ],
+        "outputLossPercent": 2
+      }
+    }
+  ],
+  "creditCases": [
+    {
+      "name": "Existing budget and consent",
+      "input": {
+        "budgetAfterProject": -1,
+        "initialConsent": true,
+        "revisedConsent": false,
+        "executor": true,
+        "legal": true
+      },
+      "outcome": {
+        "result": "accepted",
+        "revisedOffers": 0,
+        "budget": -1
+      }
+    },
+    {
+      "name": "Wealth tax repairs missing funding",
+      "input": {
+        "budgetAfterProject": -3,
+        "initialConsent": false,
+        "revisedConsent": true,
+        "executor": true,
+        "legal": true
+      },
+      "outcome": {
+        "result": "accepted",
+        "revisedOffers": 1,
+        "budget": -1
+      }
+    },
+    {
+      "name": "Both offers refused",
+      "input": {
+        "budgetAfterProject": -1,
+        "initialConsent": false,
+        "revisedConsent": false,
+        "executor": true,
+        "legal": true
+      },
+      "outcome": {
+        "result": "resigned",
+        "revisedOffers": 1,
+        "budget": 1
+      }
+    },
+    {
+      "name": "Tax cannot replace unwilling executor",
+      "input": {
+        "budgetAfterProject": -1,
+        "initialConsent": false,
+        "revisedConsent": true,
+        "executor": false,
+        "legal": true
+      },
+      "outcome": {
+        "result": "resigned",
+        "revisedOffers": 0,
+        "reason": "no_feasible_amendment"
+      }
+    },
+    {
+      "name": "Active tax cannot be duplicated",
+      "input": {
+        "budgetAfterProject": -3,
+        "initialConsent": false,
+        "revisedConsent": true,
+        "executor": true,
+        "legal": true,
+        "wealthAlreadyActive": true
+      },
+      "outcome": {
+        "result": "resigned",
+        "revisedOffers": 0,
+        "reason": "no_feasible_amendment"
+      }
+    }
+  ]
+}

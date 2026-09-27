@@ -1,2 +1,9 @@
 title: Back to main
 go-to: root
+on-arrival: {!
+// From the first page of a card this is the same as "Close card" and costs nothing (technical
+// reference 4.3); from any later page it is only navigation.
+if (Q.S) {
+    PolishRules.closeCard(Q, this.state);
+}
+!}

@@ -1,0 +1,60 @@
+title: Piłsudski’s Influence
+subtitle: The lasting line of PPS towards Piłsudski.
+new-page: true
+is-card: true
+tags: party_affairs
+card-image: img/map_3.jpg
+view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.stanceAvailable(Q, 'pils_influence') !}
+on-arrival: {!
+// Card party.pils_influence (catalogue 4.3; technical reference 10.7): 1 T, 0 R, the card then waits 6 months. The present line is shown and cannot be
+// chosen again; closing the card is free (Z — 0.32).
+PolishParty.stanceView(Q, 'pils_influence');
+!}
+
+= Piłsudski’s Influence
+
+The present line: **[+ pl_stance_current +]**. A new declaration costs this month's action; it changes no law in force and gives no reform by itself.
+
+- @support
+- @conditional
+- @oppose_military_interference
+- @easy_discard
+
+@support
+title: Support his influence
+subtitle: Relation with Piłsudski +4 (not again within 12 months); Centrum dissent +3.
+choose-if: {! return PolishParty.stanceStatus(Q, 'pils_influence', 'support').available !}
+unavailable-subtitle: [+ pl_stance_support_why +]
+on-arrival: {!
+PolishParty.stanceChoose(Q, 'pils_influence', 'support');
+!}
+go-to: result
+
+@conditional
+title: Support it on conditions
+subtitle: Concessions only with civilian control or responsibility before the Sejm.
+choose-if: {! return PolishParty.stanceStatus(Q, 'pils_influence', 'conditional').available !}
+unavailable-subtitle: [+ pl_stance_conditional_why +]
+on-arrival: {!
+PolishParty.stanceChoose(Q, 'pils_influence', 'conditional');
+!}
+go-to: result
+
+@oppose_military_interference
+title: Oppose the army’s interference
+subtitle: Relation −4; Piłsudczycy dissent +3; no autonomous military power until the line changes.
+choose-if: {! return PolishParty.stanceStatus(Q, 'pils_influence', 'oppose_military_interference').available !}
+unavailable-subtitle: [+ pl_stance_oppose_military_interference_why +]
+on-arrival: {!
+PolishParty.stanceChoose(Q, 'pils_influence', 'oppose_military_interference');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= Piłsudski’s Influence
+
+[+ pl_party_result +]
+
+- @root: Continue.

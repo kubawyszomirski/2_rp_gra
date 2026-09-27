@@ -1,0 +1,54 @@
+{
+  "scope": "M16: explicit E3 split recalculation (40% of the faction base), frozen faction MP assignment, remaining dissent -20 (technical 10.2, 10.9). Unit checks on the opening party profile; archived M02 runs never reach dissent 60.",
+  "rule": {
+    "split": {
+      "share": 0.4,
+      "remainingDissentDrop": 20
+    },
+    "purge": {
+      "share": 0.25,
+      "remainingDissentDrop": 15
+    }
+  },
+  "hashes": {
+    "docs/POLISH_TECHNICAL_REFERENCE.md": "8aba6f238f43c61b53eecb1e52c13903a7661bf426453fe6033fc633da68aaa4",
+    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "2402955a7669c2ad1bfd208ba3e4b704ab79574304554f4b51576fcf2195b42e",
+    "docs/POLISH_MECHANICS_AUDIT.md": "070de0c9d624d01594c387dd4b43a0db3edf873a194d390266d56acf6c469fa0",
+    "analysis/m02-robustness/run.cjs": "95f07cfa95bdfcea31b996a50683febe661d4fcb4485d0d0c72334a408ca1b62"
+  },
+  "examples": {
+    "lewica": {
+      "removedShare": 0.06,
+      "strength": {
+        "centrum": 53.191489361702125,
+        "lewica": 9.574468085106384,
+        "pilsudczycy": 37.234042553191486
+      },
+      "remainingDissent": 45,
+      "leavingMPs": 2,
+      "ppsBefore": 14.6904,
+      "ppsAfter": 13.808976000000001,
+      "cohesionBefore": 88.5,
+      "cohesionAfter": 93.82978723404256
+    },
+    "pilsudczycy": {
+      "removedShare": 0.14,
+      "leavingMPs": 5,
+      "ppsAfter": 12.633744,
+      "remainingDissent": 42
+    },
+    "purgeLewica": {
+      "removedShare": 0.0375,
+      "leavingMPs": 1,
+      "remainingDissent": 50
+    },
+    "withoutFreeze": {
+      "lewicaStrength": 24.107142857142858,
+      "lewicaSeatsIfReallocated": 8,
+      "transferIfReallocated": 3,
+      "frozenSeats": 5,
+      "frozenTransfer": 2
+    }
+  },
+  "m02GuardsDissent": true
+}

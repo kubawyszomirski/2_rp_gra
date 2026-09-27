@@ -1,0 +1,108 @@
+title: Workers’ Rights
+subtitle: Labour: working time, collective agreements, derogations.
+new-page: true
+is-card: true
+tags: govt_affairs
+card-image: img/workers.jpg
+view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'labor_rights') !}
+on-arrival: {!
+// Card government.labor_rights (technical reference 17.11–17.12; card catalogue 8.1). Opening and closing
+// the card are free; a confirmed option costs this month's action, or the one free step of an adviser
+// who opened the card. Collective agreements and derogations use the union branches and plant records of
+// stage 6 (PolishUnions).
+PolishProjects.cardView(Q, 'labor_rights');
+!}
+
+= Workers’ rights
+
+Labour enforces the law on working time and oversees agreements between employers and unions. An inspection is a small reform: one decision, 1 B for two months of building, then 1 B to run. Its law goes to the Sejm and the Senate in the same decision. A collective agreement and a derogation cost the budget nothing.
+
+[+ pl_gc_budget +]
+
+[+ pl_gc_projects +]
+
+[+ pl_gc_plants +]
+
+- @inspection
+- @collective
+- @derogation
+- @easy_discard
+- @cancel_advisor_action
+
+@inspection
+title: Inspection and enforcement of working time
+subtitle: Protection +1 level once it works; 1 B for 2 months, then 1 B a month. Needs the law.
+choose-if: {! return PolishProjects.optionStatus(Q, 'labor_rights', 'inspection').available !}
+unavailable-subtitle: [+ pl_labor_rights_inspection_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'labor_rights', 'inspection');
+!}
+go-to: result
+
+@collective
+title: Collective agreements
+subtitle: 1 T, 0 B: the employers who sign pay. Wages rise once through the economy, with no reaction of business.
+choose-if: {! return PolishProjects.optionStatus(Q, 'labor_rights', 'collective').available !}
+unavailable-subtitle: [+ pl_labor_rights_collective_why +]
+go-to: collective_menu
+
+@collective_menu
+new-page: true
+
+= Collective agreements
+
+A collective agreement of one branch records its employers, the union, the covered workers, the wage conditions and a term of twelve months. Its wage effect is that of a settled wage clause: +2 pp times the branch's scope, for two months. A branch in an open dispute settles its wages there instead.
+
+- @collective_industry
+- @collective_rail
+- @collective_farm_labour
+- @polish_gov_labor_rights: Back to the card.
+
+@collective_industry
+title: Industry
+subtitle: Wages +1.2 pp for two months (scope 0.6).
+choose-if: {! return PolishProjects.optionStatus(Q, 'labor_rights', 'collective', {branch: 'industry'}).available !}
+unavailable-subtitle: [+ pl_collective_industry_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'labor_rights', 'collective', {branch: 'industry'});
+!}
+go-to: result
+
+@collective_rail
+title: Railways
+subtitle: Wages +0.4 pp for two months (scope 0.2).
+choose-if: {! return PolishProjects.optionStatus(Q, 'labor_rights', 'collective', {branch: 'rail'}).available !}
+unavailable-subtitle: [+ pl_collective_rail_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'labor_rights', 'collective', {branch: 'rail'});
+!}
+go-to: result
+
+@collective_farm_labour
+title: Agricultural labour
+subtitle: Wages +0.4 pp for two months (scope 0.2).
+choose-if: {! return PolishProjects.optionStatus(Q, 'labor_rights', 'collective', {branch: 'farm_labour'}).available !}
+unavailable-subtitle: [+ pl_collective_farm_labour_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'labor_rights', 'collective', {branch: 'farm_labour'});
+!}
+go-to: result
+
+@derogation
+title: Limited derogations in threatened plants
+subtitle: 1 T, 0 B, for the oldest recorded plant in difficulty, six months: business pressure −4; its workers' grievance +3 (stage 7). Needs the law on working time.
+choose-if: {! return PolishProjects.optionStatus(Q, 'labor_rights', 'derogation').available !}
+unavailable-subtitle: [+ pl_labor_rights_derogation_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'labor_rights', 'derogation');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= Workers’ rights
+
+[+ pl_gc_result +]
+
+- @root: Continue.

@@ -1,5 +1,642 @@
 # State Variable Inventory
 
+## Current state — reference 0.48, 27 September 2026
+
+This section is the only current summary in this file. This inventory lists the important game-state records; the target domains are defined in technical section 2.4. Everything under "Archive of entries" below is kept unchanged for traceability. It is history, not an implementation instruction; where it differs from the technical reference, the technical reference wins.
+
+- **Canonical specification:** `docs/POLISH_TECHNICAL_REFERENCE.md`, chapters 1–22 (reference 0.48); its chapter 23 holds the decision history.
+- **Player-facing description:** `docs/POLISH_DESCRIPTIVE_GUIDE.md`.
+- **Audit:** every item of `docs/POLISH_MECHANICS_AUDIT.md` (M01–M19) is closed in documentation; balance and behaviour still need the playable prototype.
+- **Card catalogue for coding:** `docs/POLISH_CARD_CATALOGUE.md` (reference 0.32) has one table for each of its 69 entries (card families, agenda actions and events): access, options, time and resource cost, effects, end state and cooldown. It creates no rules; where it differs from the technical reference, the reference wins.
+- **Next step:** stage 8 of the implementation plan — scene content, the Normal scenario, calibration of the test values and the full campaign checks of 21.2 — after the user approves its detailed plan. The user reviewed all six catalogue batches in 0.33–0.38, and the catalogue has no open questions.
+- **Stage 7 implemented (K, 0.48):** two new rules files own democracy and the forces of the state. `source/rules/polish_politics.js` keeps the institutional log and the authority of the Sejm, attachment to democracy, violence, cases and restrictions with a legal profile, the grievance and radicalisation of the electorate cells and the coup pressure with its impulses. `source/rules/polish_security.js` owns the synthetic army groupings (`synthetic_test_v2`) with their effective loyalty, the capacity for an attempt, the force assessment on the Party agenda (1 T and 1 R; the interval narrows 30 → 20 → 10 → 5 pp), the police, army control and nominations, the agreement with Piłsudski with its review, the gates of an attempt and the coup engine `coup_f_v1`, which reproduces the M08 profile exactly. Decision 1A: three dated scenario inputs of the test profile `normal_chapter1_v1` — the dispute of the Chief of State with Ponikowski in June 1922 (the cabinet resigns, card 9.1, and Piłsudski's criticism of parliament, card 9.2, needs one mandatory answer), the military case from January 1925 (a test input; the historical date is TBD — historical research required) and one ceremony from January 1923. Decision 2B: in the historical branch the election of Narutowicz always ends in his assassination, with no protection model; the response (card 9.5) follows only a confirmed death, before the second vote of the National Assembly. Decision 3A: restrictions come from existing actions — strike repression, press confiscation and the authorities' answer to executed unlawful violence of PPS organisations; a repressive cabinet bans the Milicja (a lawful restriction), and the Justice review lifts only an unlawful one. New cards: army oversight in the Sejm, the Interior, Military Affairs and the agreement with Piłsudski; Śliwiński (June–July 1922) and Piłsudski (only after an agreed premiership) are formation candidates. An attempt is possible from March 1926; its steps F3–F11 cost no month, and a resolved coup ends the first chapter with a fuller report (society, democracy, the forces of the state, unfinished matters and what the continuation owes). Twenty-six German scenes that write `coup_progress` or `pro_republic` are guarded by `not polish_security_rules`; their files stay. Two automatic campaign walks ended in a coup in autumn 1927 won by Piłsudski; calibration is stage 8. Saves of schema 7 need a new game. Schema version 8; `npm test` 417 of 417.
+- **Stage 6 implemented (K, 0.47):** a new rules file, `source/rules/polish_unions.js`, owns unions and strikes. The pinned "Trade Unions" card has the steps of a dispute for each of the three branches (agree limited or broad demands, a joint meeting on the strike line or on the agreed end, mediation, start the protest; each 1 T). A strike draws once a month on its branch fund, adds fatigue and disrupts output; one recorded draw a month decides the government's offer, the union's consent follows 17.4, and PPS answers an offer in the Sejm response (card 7.10: demands, settlement or order, 0 T). The employers execute a settlement's wage clause the next month (+2 pp times the branch's wage scope for two months); a refusing group of at least 10 points of participation opens E6 (card 9.9). Decision 1A kept grievance in stage 7: the 1923 case (card 9.8) opens after three months of real wages below 80, after a refused demand or with an own strike, and effects on grievance, violence and repression exposure are recorded for stage 7. Decision 3A: the authorities answer from the cabinet profile `strike_state_profiles_v1` (P), and a PPS minister replaces it only within its competence; one clash is drawn per phase, and the Milicja protection costs 0.5 R and loses 2% of its people in a clash. The communist cooperation step (card 9.7) records one trial and one discipline draw; a strike in industry is a joint action with the Bund. Decision 2A: synthetic plants (profile `synthetic_plants_v1`, no names) are recorded by a credit crisis, an active business reaction or a strike ended by exhaustion. The Labour card now has collective agreements (1 T, 0 B, a wage effect through 11.4) and derogations (business pressure −4, grievance +3 for stage 7, six months); the Industry card has the rescue of a plant (2 B for 2 months, then 1 B), public control by law (business pressure +15) and workers' representation in a public plant; Czapiński's two variants open the Industry card. Grabski's protection terms open with apparatus 2, union reach 40 and relation 40; he answers in the same commit, and tolerating him is a six-month agreement with a review after three. The user also chose the M18 order of the party ledger: membership moves before dues income. The German events `labor_unrest` and `unions_declare_independence` are guarded by `not polish_union_rules`; their files stay. Saves of schema 6 need a new game. Schema version 7; `npm test` 360 of 360.
+- **Stage 5 implemented (K, 0.46):** two new rules files own the electorate and the party. `source/rules/polish_electorate.js` replaces the seven overlapping class rows with 54 disjoint cells (class × identity 70/10/20 × employment × large city), each with its own preferences, turnout, PPS reach and trust. Decision 1A calibrated the opening so that the national result is exactly the previous one; the class rows are now mirrors, averages of their cells including the minorities of each class. The poll, the votes, the 5.6 flow and the 17.4 outflow run on the cells, and unemployment moves mass between employed and unemployed cells. `source/rules/polish_party.js` owns the monthly party ledger of 13.1 (dues, apparatus, press, TUR, cooperatives, Milicja upkeep, arrears without negative cash, membership moving towards the M18 target), the Organisations card with up to two packages, Milicja and AS on the costs and gates of 13.3, and three union branches (decision 2A: industry, rail and farm labour with reach and a monthly fund; readiness, disputes, strikes and the Grabski protections wait for stage 6). It also owns eight stance cards with the line in `S.actors.pps.strategy`, the economic programme, the Media card (press, union, polemic and turnout campaigns: topic, then audience, with saturation), the KPP agenda and the Bund's trust. The factions live in `S.actors.pps.factions`; a faction with dissent of 60 and a live cause opens a case, and the card E3 `party.faction_split` asks it (decision 3A: the demand takes back the recorded reversible cause with the largest share). Accepting changes the policy; refusing lets 40% of the faction's base leave with its voters and MPs, who go to a technical splinter club (M16). The unity card has a concession, the common KPP line, a postponement and the purge; the adviser change is a separate card, and all adviser actions of 10.4.3 work, with timed effects. The Party deck has the 16 cards of the 10.5 manifest. The inherited party cards are switched off by `not polish_party_rules`, and the three automatic faction crises left the event queue; their files stay. The German bridges for support rows and the five old factions are off, and Niedziałkowski and Próchnik no longer write `pro_republic` (leak 10). Faction reactions to a real break of support run through one hook with an empty test profile. Saves of schema 5 need a new game. Schema version 6; `npm test` 327 of 327.
+- **Stage 4 implemented (K, 0.45):** two new rules files own the economy and the work of the state. `source/rules/polish_economy.js` settles the monthly economy of technical 11.1–11.9 (profile `economy_simple_v1`): budget points B, the marka and the złoty, monthly inflation, wages, output, credit, unemployment, agrarian pressure and business pressure, with the dated scenario pressures of 17.16.2; it also runs the living-conditions flow of 5.6 and the outflow of disappointed voters of 17.4 on the existing class rows. `source/rules/polish_projects.js` owns projects, laws (the Sejm vote, a simplified Senate review after 30 days and a return after 60), the fiscal instruments of 11.9, cabinet packages voted at the next settlement, one review a month by the cabinet without PPS (17.16.4), the unemployment bill D, the three constitutional reforms of 7.6, the government cards and three economic events. `S.economy` is the only owner: `Q.budget`, `Q.inflation` (now monthly) and `Q.economic_growth` are its mirrors, and the weight of the unemployed row `Q.unemployed` stays 3. The German monthly economy and support rules in `post_event`, the high-inflation event and nine replaced German government cards are switched off by `not polish_economy_system` (leaks 1 and 9); their files stay. Thirteen Polish government cards (`polish_gov_*`) enter the Government deck only through a PPS portfolio; options that need stages 5–7 are visible and blocked with their reason, and their effects wait in the project record (`pending_effects`). Pinned cards: the Agenda (it launches prepared large programmes and files constitutional motions), the unemployment bill D (after the 1922 election, while PPS is not in the cabinet) and the Budget card (while a cabinet package awaits its vote; 0 T). Programme promises from stage 3 now have projects, due dates and rules, and PPS answers only for promises in its own portfolios. Decision 4 moved nine tests of 21.1 to stages 5–7. Saves of schema 4 need a new game. Schema version 5; `npm test` 251 of 251.
+- **Stage 3 implemented (K, 0.44):** a third rules file, `source/rules/polish_government.js`, owns relations, agreements and cabinets. Relations with PPS live in `S.actors` (the `Q.<party>_relation` fields are mirrors), and the minority bloc splits into a Jewish representation (1/3 of its seats) and other minorities (2/3). After the 1922 election the cabinet is formed by one offer on one screen (card 7.1): configuration, prime minister, the role of PPS, a request for minority support and the PPS portfolios; each partner answers yes or no with its reason, and the head of state appoints the best feasible offer, with or without PPS. There are nine portfolios, and public works belong to Labour. A fall opens a mandatory formation; three failed rounds bring an impasse with a caretaker cabinet. A new Parliament deck holds the cabinet initiative (1 T in a crisis), Support for the Government (card 7.6: end support and vote on dismissal, a threat or persuasion about financed worker protection) and, in the list window, the Electoral Agreement (card 7.7). Agreements settle monthly: tension, a warning at 40, an ultimatum at 60 with a 0 T answer, one extension and the partner's withdrawal. Promises that need stage-4 programmes wait without a due date, so no ultimatum occurs in play yet. The Rataj package becomes an agreement with PSL Piast, and a Daszyński victory as Marshal gives reputation +5. The German coalition counter has no effect (leak 2), and card 9.1 moved to stage 7. Schema version 4; `npm test` 185 of 185.
+- **Stage 2 implemented (K, 0.43):** a second rules file, `source/rules/polish_institutions.js`, records each Sejm election in one transaction: the result (now `certified`, with its sequence, legal basis and ballot date), one club per party and a 111-seat Senate derived once (`sejm_proxy_v1`). The seat calculation moved there unchanged (20,000 random cases give identical results), and later elections apply no German thresholds or bans. In December 1922 the Sejm elects its Marshal (support Śmiarowski, agree on Rataj or nominate Daszyński) and the National Assembly elects the President (nominate Daszyński or not). Both offices are counted from the clubs' votes with the test profile `office_profiles_1922_v1` (P), with the M06 final, the tie lot and the safety net. Narutowicz's assassination follows only his election, and the elected Marshal then acts as President. The legal calendar puts the next election on 19 February 1928 (t=74); the 21 inherited files that write election dates can no longer move it. Its certified result ends the chapter before any government formation and shows a one-screen report; after that no month is settled. Decision 1 moved card 7.7 and the test "Kompromis listowy a Lewica" to stage 3 and the test "C4" to stage 4. Schema version 3; `npm test` 144 of 144.
+- **Stage 1 implemented (K, 0.42):** one monthly clock and one settlement per month (`PolishRules.beginMonthSettlement`); Polish adviser actions commit through the rules module with a dated shared cooldown (t+6), and an adviser opening a card makes that whole step cost no month; closing an inherited card from its first page ("Close card" or "Back to main") undoes exactly what its opening wrote and returns it to the hand; one free discard a month on the "Discard a card" card; card draws pick uniformly among legal cards sorted by ID with a recorded roll; due Polish events come one at a time from the queue (category, then ID) through `polish_event_router`, and German events are no longer offered. Schema version 2; `npm test` 122 of 122.
+- **Stage 0 implemented (K, 0.41):** the rules module `source/rules/polish_rules.js` is copied by `npm run build` and loaded by the page and the tests. A new game creates the state tree as `Q.S` (schema version 1). `out/html/game.js` checks every loaded save, and `main` and `post_event` stop an incompatible save at `polish_incompatible_save` before a month is settled. Engine tests now catch every engine error. Gameplay is unchanged: eight order-independent walks, 15,788 steps in total, match the previous build. One inherited error ("Return card to hand") stays until stage 1.
+- **State records added in stage 7 (K, 0.48, schema 8):** `S.politics` (democracy, `parliament_authority` from the `institutional_log`, violence and its episodes, `cases` and `restrictions` with a legal profile, speeches, democracy effects, `due` event keys and history), `S.security` (`profile_id`, `forces` with loyalty, commitment and losses, logistics, `police`, `army_control` projects, `threats`, the `known` intervals of the force assessment and `assessments`), `S.coup` (pressure and its `impulses`, `phase`, `attempt_id`, stance, commitments, round, F9 answer, settlement, outcome, the PPS contribution, concessions and `next_attempt_available_at`), `S.actors.pilsudski` (`agreement_id`, the cases already relieved, history) and `S.scenario.inputs` (`dispute_1922`, `military_case`, `niewiadomski_cult`). The legacy `coup_progress` and `pro_republic` are no longer written in the Polish game.
+- **State records added in stage 6 (K, 0.47, schema 7):** `S.strikes` (`seq`; `records` — strikes and wage cases with branches, demands, threshold, status, participants and coverage, cost paid, disruption, rounds with recorded draws, the open offer, settlements with clauses and executors, the authorities' answer, clashes, protection, steps, the communist cooperation and the outcome; `due` event keys; `wage_watch`; the month's `inputs` for the economy; `pending_effects` for stage 7) and `S.enterprises` (`seq`; `records` of synthetic plants with branch, cause, owner, status, capacity, derogation, rescue, public act, representation and their own `pending_effects`; `watch` of the episodes). The branches of `S.unions` gain the lines `strike` and `agreed_end` in `alignment`, `dissent_causes` and collective agreements in `agreements`; a toleration agreement in `S.agreements` can carry a `term` with its review.
+- **State records added in stage 5 (K, 0.46, schema 6):** `S.party_orgs` (`profile_id`, `cash`, `dues`, `apparatus` with `level`, `member_index`, `worker_support0` and `union_reach0`, `press` with `reach`, `credibility`, `format`, `popular_adopted`, `campaigns`, `restrictions`, `unpaid_months` and `cases`, `tur` with `level`, `cadres`, `available_from`, `active_build`, `active_course`, `prepared_campaigns` and `completed_courses`, `cooperatives.projects`, `arrears`, `last_ledger`, `mirror_base`); `S.militia` (`strength`, `militancy`, `stage`, `militarized`, `militarized_once`, `fatigue`, `arrears`, `assignments`, `banned`, `repressed`, `dissent`, `alignment`, `unpaid_last`); `S.unions` (three branches `industry`, `rail`, `farm_labour`, each with `reach`, `readiness`, `trust`, `autonomy`, `dissent`, `fatigue`, `fund`, `alignment`, `agreements`, `strike`); `S.faction_cases` (`list` of cases with the faction, status, demand, postponement and resolution, `manifests` of departures, `seq`, `due_case_id`); `S.society.cells` (54 cells with `class_id`, `identity_id`, `employment`, `settlement`, `mass`, `propensity`, `turnout_base`, `turnout_bonus`, `trust_pps`, `base_reach_pps`, `campaigns`) with `parties`, `seed_rows`, `cell_profile`, `seed_method`, `class_shares` and `mirror_rows`; `S.actors.pps` (`factions` with `strength`, `dissent`, `seats` and `reactions`, `strategy`, `strategy_history`, `reactions`, `program`); `S.actors.communist_cooperation` (`trial_records`, `rules`, `rules_agreed`, `pps_internal_acceptance`, `active_agreement`); `S.actors.bund` (`trust`, `joint_actions`); `S.actors.relations.pilsudski` (60); `S.advisors.effects`; and the PPS club's `faction_seats` in `S.parliament.clubs`. `Q.polish_party_rules = 1` marks the Polish party. `Q.resources`, `Q.dues`, `Q.pps_militia_*`, `Q.<faction>_strength`, `Q.<faction>_dissent`, `Q.dissent` and the class rows `Q.<class>_<party>` are mirrors. Displays: the `pl_party_*` fields and the `pl_<card>_<option>_why` reasons of blocked options.
+- **State records added in stage 4 (K, 0.45, schema 5):** `S.economy` (`profile_id`, `currency_regime`, `inflation_m`, `real_wage`, `output`, `credit`, `market_unemployment`, `unemployment`, `budget_base`, `tax_level`, `tax_incidence`, `policies`, `budget`, `business_pressure`, `business_state`, `warning_since`, `calm_months`, `business_cases`, `shocks`, `history` with one reading a month, `last_growth`, `pending_package`, `packages`, `package_revision`); `S.society` (`agrarian_pressure`, `living_conditions_last` for the seven class rows, `rural_improvements`); `S.parliament.laws` (each law with its ballots, dated Senate steps and status); `S.chapter.unemployment_bill` (the record of bill D); project records in `S.projects` (type, variant, status, preparation, `authorized`, build and upkeep charges in B, `effects_applied`, `pending_effects`); and `Q.polish_presidency.constitution.reforms` (three reforms, all false at the start; `S.parliament.constructive_vonc` and `Q.constructive_vonc` are its adapters). `Q.polish_economy_system = 1` marks a Polish economy. `Q.budget`, `Q.inflation`, `Q.economic_growth` and `Q.pl_unemployment` are written only from `S.economy`; `Q.unemployed` stays 3. Displays: the `pl_eco_*` fields, `pl_economy_notices` and the `pl_<card>_<option>_why` reasons of blocked options.
+- **State records added in stage 3 (K, 0.44, schema 4):** `S.actors` (`relations`, `mirror_base`, `pps.credibility`, `pps.applied`, `kpp_channel`); `S.agreements` (by ID: `kind`, `parties`, `cabinet_id`, `status`, `obligations`, `support_scope`, `tension`, `warning_issued`, `ultimatum`, `extensions_used`, `responsibility`, `response`, `history`); `S.cabinet` (`id`, `pm`, `pm_name`, `party`, `configuration_id`, `status`, `pps_mode`, nine `portfolios`, `partner_ids`, `supporter_ids`, `appointment_basis`, `programme`, `support_seats`, `majority`, `agreement_ids`, `accepted_postulates`, `dismissal_motion`, `pending_threat`, `pps_threat_discounted`, `fell_at`); `S.negotiation` (a cabinet offer being prepared) and `S.cabinet_crisis` (`status` open or impasse, `failed_proposals`, `snapshot`); `S.history.negotiations` and `S.history.cabinets`; `S.parliament.alliances`; cooldowns `outreach.<party>` and `support.<cabinet>`. The inherited government fields (`spd_in_government`, `pps_in_government`, `<party>_in_government`, `chancellor`, `chancellor_party`, `<portfolio>_minister_party`, `pps_external_toleration`, `minorities_toleration`, `in_minority_government`, `polish_cabinet_id`, `polish_opening_government_active`) are mirrors written from `S.cabinet`; `public_works_minister_party` stays empty and `coalition_dissent` zero. `Q.polish_portfolios` has nine keys. Display and routing fields: `pl_form_*`, `pl_fres_*`, `pl_sup_*`, `pl_resp_*`, `pl_list_*`, `pl_cabinet_support_display`, `pl_cabinet_crisis_display`, `pl_agreement_tension_display`, `pl_agreement_notices`, `pl_last_dismissal_display`, `pl_last_dismissal_passed`, `pl_joint_lists_display`, `polish_parliament_actions_available` and the route value `cabinet` of `pl_route`.
+- **State records added in stage 2 (K, 0.43, schema 3):** `S.parliament` (`chamber_id`, `clubs`, `transfers`, `replacements`, `speaker`, `speaker_elections`, `term`, `previous_term`, `next_election`), `S.senate` (`status`, `total`, `club_seats`, `records`, `method`, `result_id`) and `S.ballots`; `S.chapter` now receives `status=ended`, the reason, the trigger and the report. Sejm results gain `sequence_after_opening`, `legal_basis`, `status`, `ballot_date` and `senate_result_id`. Presidential runs in `Q.polish_presidency.elections` gain the counted rounds, the preference snapshot and `tie_break`; unresolved runs go to `failed_elections`. Display and routing fields written by `polish_opening_state`: `pl_route`, `pl_next_election_display`, `pl_speaker_display`, `pl_senate_display`, `pl_chapter_ended`, `polish_speaker_due` and `polish_speaker_in_progress`; `next_election_year`, `next_election_month` and `next_election_time` only mirror `S.parliament.next_election`.
+- **State records added in stage 1 (K, 0.42, schema 2):** `S.turn.discard_used`, `S.turn.card_view` (what an opened card changed, for closing it), `S.turn.draw_serial`, `S.events.serial` and the `EventRun` in `S.events.active`; `S.cooldowns.advisor` holds the adviser date. Display fields written by the rules module: `Q.advisor_action_timer` (remaining months), `Q.pl_hand_card_1`–`3` and `Q.pl_hand_count`; `Q.pl_next_event` names the event the router enters.
+- **New state records (K, 0.41):** `Q.S` holds the state tree S of technical 2.4 and is written only by the rules module; stage 0 creates `meta`, `turn`, `advisors`, `cooldowns`, `events`, `projects`, `rng`, `history` (`months`, `actions`, `reasons`), `chapter` and `scenario`. `Q.polish_save_incompatible` is set to 1 only for a save that fails the schema check; compatible games never have it.
+- **Implementation plan (Z, 0.40):** `docs/POLISH_IMPLEMENTATION_PLAN.md` expands technical 20.3 into stages 0–8. Each stage lists its files, state, legacy writers to disable and 21.1 tests, and the plan starts the takeover manifest. Decisions: the rules live in a separate plain-JavaScript module in `source/rules/`, copied by `npm run build` and loaded by the page and the tests; player-facing text is English only for now, keeping Polish proper names; a save without a matching schema version shows a message and requires a new game.
+- **Queue categories and research (Z, 0.39):** the seven event-queue categories that the catalogue had inferred from 4.5 are approved unchanged and written in 4.5. Historical research for the five items marked `TBD — historical research required` is deferred by the user; until then the game uses the marked test values.
+- **Batch-6 answers (Z, 0.38):** E3 has the ID `party.faction_split` (one definition for all factions, keyed by `case_id`); E6 has the ID `society.strike_settlement_rejection` (keyed by `strike_id + settlement_id`); the answer to Piłsudski's criticism of parliament is mandatory, with no "stay silent" option; the 17.3 row for `cabinet.austerity_1926` now uses the four 9.8 answers, as 17.13 and 17.16.4 already did; only supporting the criticism under the `parliamentarism` line contradicts a lasting line, and then the Centre reacts +3.
+- **Batch-5 answers (Z, 0.37):** the government cards have no paid "keep", "postpone" or "leave it to the owners" options, and closing a card is free (the Piłsudski card keeps its refusal, which leads to cabinet formation); a collective agreement and a hardship exemption cost 1 T and 0 B (the exemption: capital pressure −4, grievance of the covered workers +3, and it expires); "expand benefits" raises the scope by 1, up to 3, at +2 B a month per level, while "focus" gives full relief to the neediest half of the recipients for 1 B instead of 2; the finance card gains "burden broad groups" (indirect taxes, a broader tax base or fiscal customs), "money issue" (1–3 points before stabilisation, a temporary coin issue of 1 point for 3 months after it) and `government.collection`; the three investment-fund variants differ in who pays and who must agree; the enterprise rescue is a variant of the conditional credit; police investigations cost 1 T and 1 B for 1 month, and a confirmed one makes that party the addressee of the "unconstitutional force" polemic; the secular school has no faction reaction. Parliamentary card 6 in 17.10 now repeats the 0.36 crisis-only rule for "keep support".
+- **Batch-4 answers (Z, 0.36):** "keep support" is only a crisis response; the army-oversight card drops its paid "minister's explanations" and "postpone"; budget-card options use the 11.9 instruments; parliamentary cards 3–5 have no cooldown; the limited army reform is the compromise version (`army=0`, +0.025 legal loyalty, 1 B for 2 months); the Left reacts +3 only to a list that drops labour points, i.e. the early Centrolew; after three failed cabinet proposals the game enters an impasse with a caretaker cabinet.
+- **Batch-3 answers (Z, 0.35):** the programme card cannot confirm an unchanged set and the unity card has no plain "hold the line"; "persuade to postpone" delays a faction case for 3 months without lowering dissent; the compromise has two variants (one faction: 1 T, 1 R, cd 3 M, dissent −8; the communist line: 1 T, cd 6 M, +15 acceptance in each faction); the unity card appears only with a faction dissent of at least 30 or an open KPP channel; the adviser change is a separate card; `kpp.contact` sits in the outreach card and `kpp.trial`, `kpp.rules`, `kpp.agreement` in the "Cooperation with the KPP" agenda; the security assessment is a permanent agenda action.
+- **Batch-2 answers (Z, 0.34):** the Organisations and Dues cards have no paid no-effect options; the Centre reacts +3 to the first militarisation of the Milicja; the Media card has no card cooldown and includes the turnout campaign and press investigation; the joint political meeting is `union.align`; organisational work adds +2 reach to one union branch or to the cells of one chosen class, not the press or TUR; cooperatives have no separate cap.
+- **Stance cards (Z, 0.32):** the current line cannot be chosen again, and closing the card is free. Test faction profile `faction_stance_profile_v1`: the Piłsudczycy reject opposing military interference, and the Centre rejects supporting Piłsudski's influence (technical 10.5). Batch-1 answers (Z, 0.33): the direction works through campaigns; polemic addressees are the ZLN for the national right, parties with fiscal and land ideals ≤ −1 for defenders of capital and land, and a party with an open violence case for unconstitutional force; the Piłsudski line limits concessions but does not gate them; presidential arbitration needs the strong-presidency line; test ideals on the autonomy axis are ZLN −2 and other minorities +1; the Bund is an organisation, not a party; condemning the Soviet model triggers no faction reaction.
+- **Code:** the M08–M19 documentation work changed no gameplay code, dependency or scenario metadata (version 5).
+
+| Area | Canonical section of the technical reference | Latest approval |
+|---|---|---|
+| Rule status, scope and markers | 1 | — |
+| State ownership, units, indicators, domain register | 2 | stage 0: `Q.S` (2.4), stage 2 (2.4), stage 4 (2.4), stage 5 (2.4), stage 6 (2.4), stage 7 (2.4) |
+| Time, cards, settlement order, event queue | 4 | M06 (4.5), organisational work (4.4), queue categories (4.5), stage 1 (4.1–4.6), stage 4 (4.2, 4.5), stage 5 (4.2, 4.4, 4.5), stage 6 (4.2, 4.5), stage 7 (4.2, 4.5) |
+| Electorate, campaigns, support flows | 5 | M09 (5.6), Bund not a party (5.5), stage 4 (5.4, 5.6), stage 5 (5.1–5.6), stage 6 (5.5) |
+| Elections, institutions, presidency and speaker | 6–7 | M06 (7.3, 7.5), arbitration and the PPS line (7.6), list compromise (6.5), stage 2 (6.1, 6.3–6.5, 7.1–7.5), stage 4 (7.2, 7.6), stage 5 (7.6) |
+| Relations, conversations, offers, cabinets | 8 | M11 (8.3), M17 (8.1), autonomy axis (8.6), formation impasse (8.7), stage 4 (8.5, 8.6), stage 5 (8.6), stage 7 (8.7) |
+| Agreements, government support, communist cooperation | 9 | M11 (9.8), M13 (9.5–9.6), M17 (9.5), KPP agenda (9.5), keeping support only in a crisis (9.8), stage 4 (9.1, 9.7), stage 5 (9.5, 9.8), stage 6 (9.6–9.8) |
+| Factions, compliance, advisors, strategic cards | 10 | M10 (10.7), M16 (10.2), M17 (10.4.3), card catalogue (10.2, 10.4.2, 10.5–10.10), stage 5 (10.1–10.10), stage 6 (10.4.3), stage 7 (10.7) |
+| Economy, state finances, projects | 11–12 | M01 (0.11), M07 (17.12), budget card and investment-fund variants (11.9), card catalogue (12.7, 12.8), stage 4 (11.1, 11.3, 11.9, 12.2), stage 6 (11.4, 11.7, 12.4) |
+| PPS organisations, party finances, Milicja and AS | 13 | M18 (13.1), M15 (13.3–13.4), card catalogue (13.1–13.5), stage 5 (13.1–13.5), stage 6 (13.1), stage 7 (13.4) |
+| Unions, strikes, settlements | 14 | M12 (14.4–14.5), `union.align` (14.1), E6 ID (14.5), stage 5 (14.1), stage 6 (14.1–14.5) |
+| Grievance, democracy, coup pressure | 15 | M10 (15.2–15.3), stage 7 (15.1–15.3) |
+| Police, army, coup | 16 | M08 (16.8), M10 (16.1), M15 (16.8.3), force assessment (16.8.1), limited oversight reform (16.3), stage 6 (16.5), stage 7 (16.1–16.7, 16.8.8) |
+| Cards, events, Normal scenario | 17 | M02 (17.16), M05 (17.15), M07 (17.12), M12 (17.4), card catalogue (17.3, 17.10–17.12, 17.15), stage 4 (17.4, 17.10, 17.11, 17.15, 17.16.2, 17.16.4), stage 5 (17.4), stage 6 (17.4, 17.5, 17.5.1, 17.11, 17.12, 17.12.5, 17.16.5), stage 7 (17.5, 17.6, 17.7, 17.10, 17.11, 17.12, 17.12.2–17.12.4, 17.12.6, 17.13, 17.16.3) |
+| Chapter end, report, save | 19 | M08 (19.1), old saves (19.3), stage 2 (19.1–19.2), stage 7 (19.1, 19.2) |
+| Dendry integration and legacy rules to disable | 20 | M09, M10 (20.2), rules module and language (20.1), implementation plan (20.3), stage 2 (20.1, 20.2), stage 4 (20.2), stage 5 (20.2), stage 6 (20.2), stage 7 (20.2) |
+| Verification criteria and tests | 21 | all of the above (21.1) |
+| Decision archive | 23 | M19, card catalogue, stages 0–7 (23.14–23.21) |
+
+## Archive of entries — history, not implementation instructions
+
+All sections below this heading are earlier dated entries and the original worksheet, kept as they were written. Read them through the current state above.
+
+## Membership state — reference 0.30, M18
+
+Target contract, not implemented state. Canonical: technical 13.1.
+
+| Record / derived value | Contract |
+|---|---|
+| `apparatus.member_index` | 0–150, start 100; moves monthly toward the target; cut at once by departures |
+| Membership target | Derived each month from PPS worker support, average union reach, their opening values and the dues level |
+| Apparatus income per level | 0.15 R × member_index/100 (was 0.20) |
+
+Diagnostics: `analysis/m18-membership-apparatus/`. Documentation only.
+
+## Late-advisor and KPP contact state — reference 0.29, M17
+
+Target contract, not implemented state. Canonical: technical 9.5 and 10.4.3.
+
+| Record / derived value | Contract |
+|---|---|
+| Advisor availability for A12, A13 | `continuation`; not offered in chapter 1 |
+| `S.actors.communist_cooperation.contact_open` | Can become true from relation 10; enables ordinary 8.1 conversations with the KPP |
+| KPP relation (`Q.kpp_relation`) | Start 10 (K); ordinary conversations +4 after the channel opens |
+
+Diagnostics: `analysis/m17-late-advisors/`. Documentation only.
+
+## Office-election state — reference 0.28, M06
+
+Target contract, not implemented state. Canonical: technical 7.3 and 7.5.
+
+| Record / derived value | Contract |
+|---|---|
+| `PresidentialElectionRun.status` / speaker `EventRun` | `elected` normally; `no_election` only through the safety net, with the acting holder and a retry date next month |
+| `tie_break` | Unchanged from 0.18: `lot_50_50` with the saved roll, only for an exact tie of two finalists |
+| Election profile | At least two valid candidacies and the acting holder; validated before the vote |
+
+Diagnostics: `analysis/m06-office-elections/`. Documentation only.
+
+## Faction split state — reference 0.27, M16
+
+Target contract, not implemented state. Canonical: technical 10.2.
+
+| Record / derived value | Contract |
+|---|---|
+| PPS club `faction_seats` in `S.parliament.clubs` | Integer MPs per faction; set after each election by largest remainders; changed only by real transfers |
+| `departure_manifest` | Share 0.40 (split) or 0.25 (purge), recipient of lost voters, named organisations and advisors; applied once |
+| Faction strength and dissent | Recomputed once after departure: strength ×0.6 then normalise; remaining dissent −20 (split) or −15 (purge) |
+
+Diagnostics: `analysis/m16-split-recalculation/`. Documentation only.
+
+## Milicja and AS values — reference 0.26, M15
+
+Target contract, not implemented state. Canonical: technical 13.3–13.4. No
+new stored field.
+
+| Record / derived value | Contract |
+|---|---|
+| `pps_militia_stage` | 1 or 2; stage 2 (AS) gives `effectiveCompliance = min(1, compliance + 0.15)` |
+| `S.militia.assignments` | Stage 1: one concurrent matter; stage 2: at most three, filled by the engine in event order up to 4 F each |
+
+Diagnostics: `analysis/m15-as-benefit/`. Documentation only.
+
+## Communist cooperation state — reference 0.25, M13
+
+Target contract, not implemented state. Canonical: technical 9.5–9.6.
+
+| Record / derived value | Contract |
+|---|---|
+| `S.actors.communist_cooperation.pps_internal_acceptance` | Faction-weighted support; raised by the `party.unity` compromise (+15 per faction); read only for PPS effects: Centre dissent and the durable-front gate |
+| Event profile `partner_goal` | `limited`, `broad` or `structural`; test value `broad`; historical values TBD |
+| `partnerCompliance` | Derived from the KPP relation and the goal fit; one saved roll per strike agreement |
+
+Diagnostics: `analysis/m13-communist-discipline/`. Documentation only.
+
+## Strike settlement values — reference 0.24, M12
+
+Target contract, not implemented state. Canonical: technical 14.4 and 17.4.
+No new stored field.
+
+| Derived value | Contract |
+|---|---|
+| `strikeContinuationCost` | `max(100×(1−fundCoverage), fatigue)` from the existing `UnionBranch.fund` and `fatigue`; not the coup's `costOfContinuing` (16.6) |
+| `governmentFragility` | From `S.cabinet` status, the seats of parties with responsibility `r>0` (5.6) and the highest `Agreement.tension` of the cabinet; no longer reads `parliament_authority` |
+
+Diagnostics: `analysis/m12-strike-settlement/`. Documentation only.
+
+## Threat state — reference 0.23, M11
+
+Target contract, not implemented state. Canonical: technical 9.8.
+
+| Record / derived value | Contract |
+|---|---|
+| `S.cabinet.pps_threat_discounted` | Boolean, false for every new cabinet; set when PPS backs down from a refused threat; makes later `bargain` use `need=0` |
+| PPS credibility (reputation) | −5 once per negotiation ID for a withdrawn threat, as for a new culpable breach (17.4) |
+| Party relations | −3 for each party accepting an offer made under threat, once per offer |
+
+Diagnostics: `analysis/m11-threat-persuasion/`. Documentation only.
+
+## Authority and democracy state — reference 0.22, M10
+
+Target contract, not implemented state. Canonical: technical 15.2, 15.3 and
+16.1.
+
+| Record / derived value | Contract |
+|---|---|
+| `S.politics.institutional_log` | `InstitutionalEntry[]` with `id, t, kind, source_id`; kinds `law, resolution, failure, gap, breach, stance_defense, stance_criticism`; one entry per source ID; counts while `t > time−12` |
+| `S.politics.parliament_authority` | Last read of the 15.2 formula from the log; no other writer; rebuilt on load |
+| `S.politics.democracy` | Stored state; monthly equation with reference point 53 plus one-off effects; the two event terms count each case ID and `restriction_id` once |
+| Democracy pressure term | Derived each month from democracy at the start of the period; not stored separately |
+| Effective loyalty | Derived from stored `Force.loyalty_*` and current democracy; never written back; the F5 roll reads democracy at attempt declaration |
+| Coup report | Democracy at attempt declaration and the resulting loyalty shift |
+
+Inherited `pro_republic`, still written by the current advisor scenes, has no
+role in the Polish contract. Diagnostics: `analysis/m10-authority-democracy/`.
+Documentation only.
+
+## Living-conditions state — reference 0.21, M09
+
+Target contract, not implemented state. Canonical: technical 5.6.
+
+| Record / derived value | Contract |
+|---|---|
+| `S.society.living_conditions_last` | `classId -> number` for `workers`, `new_middle`, `old_middle`, `rural`, `bourgeois_landowners`; the last index read; initialised from the opening state (100 in the synthetic profile) |
+| `conditions[class]` | Derived each month after the economy; never an independent source |
+| Responsibility `r[party]` | Derived from `S.cabinet` and `S.agreements` in the same snapshot: 1 / 0.5 / 0 |
+| History record | Per class `change`, `flowPP` and pp moved per party, reason `living_conditions` |
+
+Legacy `Q.<class>_qol` (source comment: currently unused) stay unwritten; the
+M09 index deliberately excludes benefits. Diagnostics:
+`analysis/m09-living-conditions/`. Documentation only.
+
+## Coup contract state — reference 0.20, M08
+
+Target contract, not implemented state. Canonical: technical 16.8.
+
+| Record / derived value | Contract |
+|---|---|
+| `S.coup` additions | `next_attempt_available_at` (initial 1), `f9 {completed_rounds, offer_id, response}`, `settlement {offer_id, round, clauses}`, `pps_contribution` (`decisive/accelerating/none/adverse`), `concessions_to_pps` (list) |
+| `S.coup.phase` | `dormant → political_crisis → attempt_declared → pps_stance → organization_commitment → execution_and_transport → resolved`; crisis at pressure ≥55, call-off at executing stand-down or pressure <40 sets retry t+3 |
+| `credibleStandDownAgreement` | Derived from `S.actors.pilsudski.agreement_id`: active, execution started, no overdue clause/open breach, before `review_at` (start+6) or premier variant with an active Piłsudski cabinet; same value as 16.7 `credibleCompromiseOperating` |
+| `operationalWindow` | Derived: scenario window (Normal t≥51) and at least one phase-0 group leaning to Piłsudski with readiness ≥0.50 |
+| `Force.rail_delay_cap` | 0–2 alternative-route limit; synthetic remote reserve 2, other groups 0 |
+| Synthetic force profile | `synthetic_test_v2`: near reserve 0.30/0.50/0.20, remote 0.50/0.25/0.25 (legal/Piłsudski/neutral); expected capacity 38.1 |
+| `S.security.known` | ±30 pp loyalty interval with a saved centre offset per group; `security.assess` −10 pp to 5 pp |
+| Rolls | `coup_<attempt_id>:<force_id>:allegiance` after F5; `<force_id>:known` for estimates; counterfactual replay reuses saved rolls |
+| Report | Outcome, offer, F9 record, round log (forces, arrivals, delays, streaks), losses, rail fund, militia, rolls, contribution, concessions, faction/relation effects, `continuation_requirements` |
+
+Trust in settlement reads democracy directly; no guarantor reputation field is
+used by the coup. Supersedes the 0.13 phase-2 floor below and the 0.10 F9 gate
+of positive participation. Diagnostics: `analysis/m08-coup-profile/`. Scenario
+metadata remains version 5; documentation only.
+
+## M07 project payloads and readers — reference 0.19
+
+No new global economy, autonomy or workers-council meter. Existing Project,
+Agreement, EventRun, actor programme and force records own the state:
+
+| Record | Required payload / existing reader |
+|---|---|
+| Orders Project/Agreement | Branch, beneficiaries, supplier/commissioner, deliverable, funding and fixed 3-month contract from started_at; monthly coverage feeds activeOutputShock once; single active package |
+| Police Project | Legal scope, 3-month progress, effects_applied; existing police.command and lawful_compliance each +10 once to 100; chapter completion from project history |
+| Redress EventRun/Project | case_id, restriction_id, competent authority, legal findings and final result; affects only that restriction |
+| Broad safeguards | Existing democratic_guarantees project ID; no parallel judicial-reform bonus |
+| Military Project.policy_choices | position_id, candidate_id, authorization, force_ids and concrete conflict reference; applied nomination IDs and dated readiness modifier, bounded normalized loyalty transfer |
+| Worker representation policy_choices | worker_representation=consultative/decision_rights, enterprise_ids, worker_actor_id, beneficiaries, covered_decisions and authority/owner Agreement; one scope record for upgrades, consultation/consent read before later enterprise decisions |
+| Autonomy policy_choices | territory_id, recipient_authority_id, delegated_capabilities, law/Agreement references and beneficiaries; later legal authority checks read delegation |
+| Programme | Existing form_of_power/slavic_autonomy stay distinct from enacted reforms; history marks the first council-line influence bonus, without a new faction |
+
+See technical 17.12.1–7. Unfinished reforms do not grant finished rights;
+repeated entry/load does not duplicate effect IDs. Existing cadre-free project
+execution and two minority aggregates remain. Proposed schemas only; no live
+state migration or change to scenario version 5.
+
+## Office-election tie record — reference 0.18
+
+`PresidentialElectionRun.tie_break` is null or
+`{method:'lot_50_50',finalist_ids,roll_id,winner_id}`; speaker elections use the
+same data in existing `EventRun.payload`. Use `S.rng.rolls` keyed by election
+run ID and `:final_tie`; sorted finalist IDs map draws <0.5 / ≥0.5 to first/second.
+Persist the result with the office outcome; load/menu return never rerolls.
+No new meter or change to vote totals. Proposed documentation, not live state.
+
+## Current D record — reference 0.17, M05
+
+`chapter.unemployment_bill` adds `in_procedure` and `expired` to the earlier
+status set: `pending` alone permits D2, `in_procedure` runs dates automatically,
+`enacted` means entry into force. Record submitted/final variants, `ballot_ids`,
+`submitted_at`, `senate_notice_due`, `senate_return_due`, `effective_at`,
+`next_step`, permitted compromise and applied action/stage IDs. Dates are
+calendar dates; project start/first-effect fields still identify settlements.
+
+The shared Project owns `sponsor=pps`, `executor=labor_administration`,
+`financing_policy_ids`/general-budget funding, `responsibility` (PPS share 0.40)
+and the existing one-time effect record. No second benefit or reward ledger.
+No phase reopens D2 after commitment; government entry suspends only pending
+D2. Recorded legal duties survive cabinet changes. Technical 5.4 / 17.15;
+these are documentation contracts, not implemented fields. Scenario remains 5.
+
+## Final M02 state contract — reference 0.16, 22 September 2026
+
+`S.scenario.version=5` supersedes version 4. No new meter or card. Existing
+appointment history, predecessor programme profile and open army EventRun
+supply the return condition. Preserve the single applied-effect record.
+`chjeno1926Impulse` / `cabinet.chjeno_return_1926` retain their IDs, but the
+suffix does not impose a year or May gate. No retroactive replay after loading.
+
+Welfare consent reads the common score, funding and hard conditions; it no
+longer reads a second relationship-minimum gate. Existing rates and thresholds
+are unchanged. Dates of concrete military disputes remain provisional test
+inputs (`TBD — historical research required`). Technical 17.16.11 and
+[final diagnostic](analysis/m02-robustness/REPORT.md). Older dated entries below
+record previous contracts; M02 is ready for implementation.
+
+## Paired state diagnostics — 22 September 2026
+
+M02 step 4 introduces no new game variable or schema version. Scenario version
+4 / reference 0.15 remain current. The separate diagnostic records actual
+programme authorization, preparation, progress, first effect and upkeep;
+accepted/rejected offers and votes; obligations and PPS delivery reputation;
+monthly budgets, organizational funds, factions and pressure. No failed offer
+receives an operating programme or a later delivery reward.
+
+Shared random keys identify a wage-offer round, clash round or force decision;
+branch timing does not shift the tape. Three alternative election outcomes
+are explicit inputs, not changing live polling. Next-election results and full
+hand availability are not simulated. See [scope and outputs](analysis/m02-robustness/REPORT.md).
+
+## Current pressure state contract — reference 0.15, 22 September 2026
+
+`S.scenario.version=4` supersedes version 3 below. Keep existing pressure,
+EventRun, Agreement and history records; no extra global meter. A public
+military episode records its concrete demand, army-case ID, formation-crisis
+ID, officer backing and applied-effect ID in the existing event payload.
+Related public statements share one effect ID. Monthly settlement IDs prevent
+repeated +2/+3 accrual; event impulses are already applied and must not be
+added again by monthly settlement. `pressureAfterEvents` in 15.3 is explanatory
+notation for current pressure, not another saved balance.
+
+An executed agreement resolves only the covered case; actual breach can reopen
+it, expiry alone cannot. Preserve processed effects and `last_settled_time`
+on loading/migration; set attempt-active before queuing F. Never replay new
+historical impulses into an old save to force a May threshold. Technical 4.2,
+15.3, 16.7, 17.16.9; [checks](analysis/m02-pressure-calibration/REPORT.md).
+
+## Current M02 chain state — reference 0.14
+
+`S.scenario.version=3` supersedes version 2 below. Technical 17.16.8 keeps the
+existing EventRun/Negotiation/Agreement records: cause, first/revised offer IDs,
+refusal reason, next review, terminal result and evaluated candidate batch.
+Store the material support/programme snapshot so an unchanged month or reload
+does not repeat formation. Preserve dissenting MPs inside the existing party's
+seat total, fiscal instrument dates and inherited programmes. No new global
+crisis meter. Migration preserves processed events; it does not replay shocks.
+
+M02 step 1 (21 IX): technical 8.9 and
+[the negotiation report](analysis/m02-negotiations/REPORT.md) supply explicit
+P test inputs for existing actor/offer records, not new global variables.
+Keep candidate relations separate from PPS-party relations; substitute the
+actual obligation ledger for controlled credibility 50 in integrated runs.
+Portfolio ownership remains unique. Missing profiles must not imply consent.
+
+## Current M02 state contract — reference 0.13, 21 September 2026
+
+Supersedes the corresponding earlier target rows, not the German code inventory.
+No additional global political or economic meter. Source:
+`PL-M02-REVISION-2026-09-21`; technical 11.4, 14.5, 15.3, 16.6, 17.16.4.
+
+| Record / derived value | Contract |
+|---|---|
+| `S.scenario.version` | 2 for the corrected `normal_chapter1_v1` manifest; do not replay old shocks on migration |
+| Wage recovery | Derived from starting credit >=45, non-rising monthly inflation <=5; at most 3 index points up to 100; actual negotiated raises are separate |
+| Wage case | Limited access at grievance >=50 or unresolved rejected demand; political resignation goal uses the same case; broader mobilization still requires 60 |
+| Settlement record | Once-only recipient grievance relief 4 after first full delivered due benefit; no reward for signature or repeated payments |
+| Military cases and delivered obligation IDs | Derive total +2/M for any open military conflict and at most -2/M for newly delivered civil obligations; retain one-off military concessions |
+| Essential-offer `EventRun.payload` | `cabinet_id,original_offer_id,revised_offer_id,status,next_review_at`; initial/revision_due/accepted/resigned/closed, one amendment |
+| Broad-cabinet agreement | Named full benefit, financing, `review_at=formed_at+5`, review completed once; proposed cut changes no expenditure before legal acceptance |
+| Coup phase | Synthetic objective requires phase >=2 in addition to two consecutive rounds of >1.20 superiority and actual objective access; no additional player menu |
+
+Focused checks and limits: [revision report](analysis/m02-revision-13/REPORT.md).
+
+## Normal scenario state — reference 0.12, 20 September 2026
+
+Target contract, not implemented state. Canonical:
+[technical 17.16](docs/POLISH_TECHNICAL_REFERENCE.md#1716-scenariusz-normalny--normal_chapter1_v1).
+
+| State / record | Initialization and readers |
+|---|---|
+| `S.scenario` | `{profile_id:"normal_chapter1_v1", version:1, npc_reviewed_time:null}`; monthly scheduler, save and report |
+| `S.economy.shocks` | Normal loads dated records from 17.16.2; empty only in explicitly isolated tests. Fields: id/channel/value/starts_at/ends_at/condition/source_ref |
+| Shock lifetime | Half-open month intervals; null end means no calendar expiry. Marka/stabilizing condition; only one marka period at a time |
+| `ActionTxn.source=cabinet` | Autonomous initiative, consumes_month=false; one review per t, including across reload or same-month replacement of the premier |
+| Wage/rail dispute `EventRun.payload` | Addressed group, demand and response/deadline, military order if any, unique effect IDs; no duplicate +8/+10 on reopening |
+| Historical event context | Actual candidate, accepted offer, resignation/vote or unfulfilled agreement; historical date alone cannot replace the cabinet |
+| `operationalWindow` | Derived; Normal false before spring 1926 (P: 1 March), then actual forces/logistics required; not automatically true for every later month |
+| End/report | Preserve scenario version, financing, policies, disputes and reasons; first resolved coup or first legal election after 1922 |
+
+No new political currency, general crisis meter or public-action budget. New
+social effects target existing populations, with branch exposure weighted into
+aggregate cells once. NPC initiative never debits PPS resources or repeats the
+PPS minister's action. Updated game saves will need the manifest/version; old
+saves cannot silently acquire elapsed shocks as a second retroactive charge.
+Source: `PL-NORMAL-SCENARIO-2026-09-20`. M02 calibration remains open in part.
+
+## Approved simple economy — reference 0.11, 14 September 2026
+
+This is the current **target**, superseding older Polish ledger proposals. The
+German/current-code inventory below remains evidence of existing behavior.
+Canonical rules: [technical sections 11–12](docs/POLISH_TECHNICAL_REFERENCE.md#11-gospodarka-i-finanse-pełny-kontrakt-miesięczny).
+
+| Target state | Initial value / reader |
+|---|---|
+| `S.economy.inflation_m`, `real_wage`, `output`, `credit` | P: 4%, 100, 100, 55; monthly formulas, social conditions and budget |
+| `market_unemployment`, derived `unemployment` | 3%; count public employment once against private unemployment |
+| `S.society.agrarian_pressure` | 45; credit, completed reforms and rural conditions |
+| `budget_base`, `tax_level`, derived `budget` | 2 B, 0, +2 B; a fiscal-space score, never accumulated cash |
+| `policies` and `shocks` | Empty in isolated tests; dated modifiers with unique IDs and conditions |
+| `business_pressure`, `business_state`, `warning_since`, `calm_months` | 10, quiet, null, 0; one warning/active-reaction process |
+| `Project.build_budget_B`, `upkeep_budget_B` | Mutually exclusive phase charges, scaled once by scope |
+| `Project.preparation`, `status`, `progress` | 0/100; idea/prepared/executing/operating/paused/completed/repealed; no authorized/funded player stages |
+| `Project.financing_policy_ids`, derived `coverage` | References to accepted instruments; 1/0.5/0 from common fiscal conditions and legal execution |
+
+Remove proposed state-treasury cash/debt/arrears/reservations and sectoral
+business ledgers, not party R balances, union funds or organizational arrears.
+A loan is one dated +3 B/6 M then −1 B/12 M instrument, with no overlap until
+its service period ends (P). Party upkeep remains an actual deduction of R.
+Do not migrate old B amounts by renaming fields; this scale is different.
+`ppsCanChoose` and `stateCanExecute` separate player access from state duty.
+D executes through Labour without a PPS minister; advisors replace one step;
+TUR supplies full preparation and one month of execution savings, once.
+Numbers are draft balance. Source: `PL-ECONOMY-SIMPLIFICATION-2026-09-14`.
+
+## D–G state contract — reference 0.10, 11 September 2026
+
+These are proposed records, not new implemented variables. See technical 17.15.
+
+| Record | Contract |
+|---|---|
+| `chapter.unemployment_bill` | Updated by 0.17: one initiative, with `in_procedure` and `expired` in addition to the former statuses. Variants, project/ballot IDs, daily deadlines and applied stage IDs; see current D record above. Government entry suspends only pending D2, not committed legal processing |
+| Unemployment Project | Full or fixed reduced-benefit profile; one shared execution record with Labour policy, no double payment/effect. Budget and legal execution remain required; no staff allocation or additional D menus |
+| Faction E3 case | Concrete demand, faction portion and previewed departure manifest; completed case cannot retrigger solely from the same dissent value |
+| `departure_manifest.advisor_ids` | Default empty for E3; only a named, previewed exception may remove an advisor with the group. Not automatic removal of everyone affiliated with that faction |
+| E6 event | Keyed to actual strike and accepted settlement; two responses, once per settlement, no duplicate communist-refusal event |
+| Coup stance/commitment | Existing `mediate` means neutral; permits none or protective Milicja only. Side, capacity and compliance derive task/scale, without tactical menus |
+| Coup F9 | Actual positive organizational participation plus a feasible offer; at most once per attempt. Political support alone does not qualify |
+| Final report/save | F10+F11 or G7 is the start of G8, one report; loading restores state and applied IDs without rerolling or reapplying costs |
+
+Faction warning thresholds 30/45 are panel information; proposed 60 opens
+E3 only with an actual demand. The old faction t+2 ultimatum scene chain is
+superseded; coalition agreement deadlines remain separate. Removed D/E/F/G
+scenes must not be reintroduced merely because the underlying state persists.
+
+## C-scene contract — reference 0.9, 11 September 2026
+
+| Existing record | Simplified successor |
+|---|---|
+| Cabinet Negotiation | One editable scene, one submitted offer and result; no interactive round field or counteroffer response |
+| Electoral-list agreement | Fixed profile program/candidate allocation, one alliance choice and acceptance; no second terms phase |
+| Legislative record | Automatic votes and Senate response from program/agreements; legal thresholds retained |
+| S.cabinet_crisis | Still records real government fall and successor; no longer unlocks early-election action |
+| canInitiateEarlyElection | Removed action-availability predicate; legal election schedule remains independent |
+| Presidency vacancy | Automatic acting-holder/date/reason update before successor choice; no C9 scene state |
+
+Coup rounds and B strike choices are not removed by this simplification.
+Source: `PL-C-SCENES-REVIEW-2026-09-11`; technical 17.14, not implemented code.
+
+
+## Event contract revision — reference 0.8, 10 September 2026
+
+Proposed successor only; technical 17.13 gives the complete B1–B21 mapping.
+
+| Existing owner | Revised contract |
+|---|---|
+| EventRun.payload for a strike | strike_strategy=negotiate/economic_strike/cabinet_resignation; government_response records only the responsible actor's executed scope; no separate B10 menu |
+| Strike settlement / parliament_response | B11+B12 share demands/settlement/order, one offer and one outcome; no second acceptance reward |
+| party.ussr_position / ussr_stance | Regular party action, 1 T, 0 R, cooldown 12 M; unchanged choice has no repeated effects |
+| B5 event | democracy_mass requires host acceptance/place/organization; one actual campaign and outcome, not a new church-relations currency |
+| B14 negotiations | Read apparatus level, relevant union reach, actual recipient relation and accepted contact; no new leverage currency; finance and execution still required |
+| B16 crisis | Read ppsCanChoose for each instrument and stateCanExecute for delivery; one crisis_id, same underlying project/budget; no general access from merely supporting a cabinet |
+| Retired B menus | No new zyrardow publicity rewards, business-conflict responses or press-confiscation menus; actual restrictions, one business reaction, presidency outcomes and coup pressure remain |
+
+Source: `PL-EVENTS-B-REVIEW-2026-09-10`. Older entries describe prior proposals
+or inspected code and do not override this successor contract.
+
+
+## Advisor contract — reference 0.7, 10 September 2026
+
+These are proposed successor rules, not changes to the implemented inventory.
+Technical 10.4 has the 13 profiles / 22 actions and all parameters.
+
+| Owner | New contract / constraint |
+|---|---|
+| Existing advisor and appointed_once flags | First appointment +5 raw faction strength, −5 dissent once; initial trio already marked; dismissal +5 dissent, no double penalty for split/death |
+| `S.cooldowns.advisor_action` | One available-at time shared by every advisor, t+6; old advisor_action_timer is only an adapter |
+| `ActionTxn` with source=advisor | Additional advisor_id, subaction_id, project_id; one cost/commit/one-stage permission, never a second independently writable transaction |
+| `S.advisors.effects` | Initially []; action/kind/audience/start/expiry/value/used_by records; no stacking same kind, automatic expiry |
+| Existing raw faction strengths/dissents | Clamp and normalize once after all deltas; relative influence is not newly earned MPs |
+| Society cells and `base_reach_pps` | Direct bounded vote transfers, Pużak/city organization; coalition relationships are separate values |
+| `settlement=major_city/other` | Partition existing cell mass for Municipal Socialism, preserving class/identity/employment and votes; test split 1/2 is synthetic, historical shares pending |
+| `pro_democracy` label | Read/write existing S.politics.democracy, not a duplicate state field |
+| TrialRecord action_id/kind | strike/demonstration/protective_action, optional strike_id; one unique actual event, completed before success counts |
+
+Sanacja is a later label for the appropriate actor, not extra current relation
+currency; SL requires its own later profile. Conditional toleration reads an
+actual current minority cabinet, its aligned profile and external-support
+agreement. The KPP-protection effect retains only otherwise outgoing PPS
+support; it never deletes KPP gains from other parties. Existing inventory
+entries below continue to describe today's behavior. Source:
+`PL-ADVISORS-REVIEW-2026-09-10`.
+
+## Government-card state — reference 0.6, 10 September 2026
+
+The **target** cabinet has nine unique portfolio keys: `labor`, `interior`,
+`finance`, `economic`, `justice`, `agriculture`, `reichswehr`, `education`,
+`foreign`. Labour includes public works/infrastructure/housing. The old
+`polish_portfolios.public_works` is still present in unchanged runtime and
+must not be confused with the retained party priority `public_works` or new
+action family `government.public_works`. No source variables were renamed.
+
+| Record / proposed field | Lifecycle and consumer |
+|---|---|
+| `S.cabinet.portfolios` | Nine unique keys for the new manifest; one formal holder each; no duplicate Labour allocation for two former ministries |
+| `Project.variant`, `policy_choices`, `beneficiaries`, `financing_policy_ids` | Persist approved government choices, not a global exclusive economic route; empty until proposed, effects only after execution |
+| Works `required_capabilities` | Labour plus actual funding authorization; employment/infrastructure/housing variants use existing project and output/employment accounting |
+| Stabilization variant and financing references | rapid_cuts/protected/gradual; defer executes nothing; approved simple profiles in 17.12 and actual emission from 11.2 |
+| School variants | Access/secularity and language are separate properties or project scopes; same school cost and benefit cannot be counted twice |
+| Security/justice case and `force_ids` | Actual evidence, legal authorization and affected units; no generated guilt, preferred verdict or universal loyalty |
+| Strike `EventRun.payload.government_response` | protect_negotiate/protect_sites/disperse once per phase, before execution; distinct from `Strike.parliament_response` and communist cooperation |
+| Business reaction | One pressure and quiet/warning/active state in 11.7; no business-conflict choice card; affected sector is a tag, not a separate simulation |
+
+Derived output contributions, coverage and availability read projects and
+agreements; no new spendable capital, extra dashboard reading or free credit.
+Migration of old cabinets with different Labour/Works holders requires an
+explicit versioned contract; technical 20.1.1. Current implementation entries
+below remain unchanged. Source: `PL-GOVERNMENT-CARDS-REVIEW-2026-09-10`.
+
+## Parliamentary-card state — reference 0.5, 10 September 2026
+
+Proposed record additions below implement the approved design contract in
+documentation only. They add no main dashboard values or spendable leverage.
+Details: technical 7.4, 8.8, 9.8, 17.5.1, 17.8 and 17.10.
+
+| Owner / field P | Initialization and lifecycle | Consumer |
+|---|---|---|
+| `S.cabinet_crisis` | Null; actual fall creates ID, fallen cabinet, reason and open status; active successor closes it | Availability of early-election initiative, distinct from lawful election schedule |
+| `Negotiation.context` | Actual event/reason, not a player-editable crisis selector | Initial post-election versus real later crisis gates |
+| `Negotiation.configuration_id`, `candidate_id`, `programme_profile`, `pps_mode_proposed` | Draft values in one formation offer | Configuration/candidate/terms and actual accepted PPS role; Grabski is a profile |
+| `Negotiation.seek_minority_support`, `minority_terms` | False / empty before request; accepted commitments persist in agreements | Preview of possible support, then actual votes from two existing minority segments |
+| `Negotiation.availability_snapshot`, `phase` | Dated preview and current stage, recomputed before commitment | Greyed-out reasons; one transaction and total initiative cost |
+| Derived `crisisOfferAllowed`, `severeCrisis`, `crisisCooperation` | Compute from actual context, recorded cabinet falls and existing economic/social/institutional crisis | Gate and willingness to negotiate; no independent coup or popularity reward |
+| Derived `canUseBudgetCard`, `hasCurrentCabinetSupport` | Active cabinet, pending package, membership or actual current external support | Special budget negotiation; a one-off favourable vote is insufficient |
+| `Strike.parliament_response` | Null, then demands/settlement/order once per strike | Existing compliance, concessions and settlement; no duplicate strike fund |
+| Żyrardów `EventRun.payload` | Evidence, publicise/restrain, affected partner, actual request for restraint, prior disclosure promise, exposed workers and effects-applied flag | Two-choice outcome, saved once; no leak roll or staged investigation menu |
+
+Government-support negotiations reuse existing agreements and ballots; a PPS
+exit does not itself set the whole cabinet to fallen. `can_negotiate` may use
+real conditional support, whereas appointment requires accepted commitments.
+Current support must be recorded for the current cabinet, including explicit
+opening toleration; raw relationship scores never substitute for it. Party
+Piłsudski stance does not grant the executive authority required by the
+government concession card. Earlier generic event payload descriptions remain
+valid only within these simplified branch contracts.
+Design source: `PL-PARLIAMENT-CARDS-REVIEW-2026-09-10`.
+
+## Planned state contract — updated 10 September 2026
+
+The implementation inventory below is unchanged by the design documented in
+[POLISH_DESCRIPTIVE_GUIDE.md](docs/POLISH_DESCRIPTIVE_GUIDE.md). That guide's
+section 4 proposes fifteen main status readings: party resources, PPS polling,
+PPS MPs, cohesion, monthly inflation, a real-wage index, defined urban-worker
+unemployment, fiscal room, industrial production, credit availability,
+agrarian pressure, social dissatisfaction, democratic commitment, political
+coup pressure and derived coup capacity. This is a display budget, not a claim
+that all game state fits into fifteen scalar variables.
+
+Proposed canonical keys, initial values, clamps, units and formulas are now
+specified in [POLISH_TECHNICAL_REFERENCE.md](docs/POLISH_TECHNICAL_REFERENCE.md),
+especially sections 2–4 and the individual system contracts. New domains use
+the proposed `Q.pl` namespace alongside explicitly retained authoritative
+fields. These are test proposals, not newly implemented state. Do not silently
+rename inherited qualities: existing fields retain the readers/writers below
+until bounded replacements and their migrations are built and tested.
+
+Version 0.2 narrows the proposed identity enum to `polish,jewish,other_minorities`.
+Two aggregate minority negotiators share existing minority seats; the current
+single relation becomes a read-only derived compatibility value only when that
+replacement is implemented. Bund remains an organizational partner, not an
+additional population or automatic owner of all Jewish MPs. The current
+inventory below still records the unchanged implemented model.
+
+Normal remains the sole difficulty. The proposed presidential run stores one
+nomination choice and a final ballot, with automatic internal transfers and no
+interactive rounds. Proposed party-program fields, press format and temporary
+press restrictions reuse actor/event records. Economy simplification was approved
+on 14 September: current technical sections 11–12 define economy_simple_v1.
+This changes the target documentation, not the implementation inventory below.
+
+The technical reference also specifies the approved endpoint: the next legal
+parliamentary election after 1922 ends this chapter even if held early. Its
+proposed report and save schemas preserve unfinished projects, agreements,
+losses, event phases and recorded random results for continuation.
+
+**Party-card state in reference 0.4, 10 September (not implemented):**
+
+| Proposed field / owner | Initial value / constraint | Read by |
+|---|---|---|
+| `S.actors.pps.strategy.direction` | `parliamentary_socialism`, one of four directions; P | Contextual campaign and organizational choices, 10.6 |
+| `.main_opponent` | `nationalist_right`; no current-cabinet enum | Targeted campaigning, actual opponent vote pool and response |
+| `.pils_influence` | `conditional`; support/conditional/oppose military interference | Concession availability and internal political alignment |
+| `.form_of_power` | `parliamentarism`; also strong presidency or workers' councils | Declared method, not current legal constitution |
+| `.electoral_base` | `workers`; four orientations | Organizational reach and campaign audience |
+| `.economic_priorities` | Empty set, maximum three unique priorities | Program agenda, project preparation and promises |
+| `.slavic_autonomy` | `cultural_rights`; federation/regional autonomy/cultural rights/polonisation | Domestic rights and constitutional proposals; no new population category |
+| `.jewish_cooperation` | `labour_only`; broad/labour-only/none | Cooperation scope, Bund and minority negotiators |
+| `.ussr_stance` | `uncommitted`; event writes sympathetic/independent/critical | Domestic relations with KPRP/KPP and faction expectations |
+| `.democratic_preparation` | Empty list of completed-action IDs | Audit of existing alignment changes; no second passive bonus |
+| `ActionTxn.selected_options` | Draft set; default max 1, economic program 3, organizations 2 | Atomic validation, cost and shared cooldowns |
+| `S.party_orgs.apparatus.member_index` | 100, range 0–100, P | Dues, expulsion and effective party income |
+| `S.faction_cases` expulsion resolution | No initial departure manifest | Faction normalization, reduced support and actual MP/adviser transfers |
+| `Strike.communist_cooperation` and `trial_records` | Null / empty; one resolved record per distinct strike | Full/limited/none mode, compliance, unrest and preparation gates |
+| Piłsudski criticism `EventRun` | Concrete speech/debate, response and resolved ID | Separate event effects; does not overwrite influence policy |
+
+All strategy defaults and numeric mappings are P. The program display and
+actor `issue_ideals` are projections of authoritative strategy and specific
+offers, not parallel writable programs. `democraticThreat` and
+`strategyFactor` are derived. Completed strike successes/failures are counts
+of unique records, not a separately spendable `communist_coalition` value.
+
+Milicja retains `Q.pps_militia_strength/militancy/stage`. The proposed
+`S.militia.command` is removed; training is part of militarization. Police and
+regular army command fields remain independent. `S.militia.militarized`,
+upkeep, legal status and the proposed strength threshold control access to
+AS. Existing runtime qualities below remain unchanged until implementation.
+
+**Proposed content state in reference 0.3 (retained unless superseded above):** Named coalition,
+list, premier and policy variants are saved in existing typed records, not
+parallel progress meters. The additions have the following owners:
+
+| Proposed state | Owner / initialization | Read by |
+|---|---|---|
+| Cabinet/list participant set, agreed program and chosen candidate | `Negotiation`, `Agreement`, election/cabinet records; none before proposal | Offers, ballots, portfolio access and later breaches |
+| Land/fiscal/institution/army program positions | Actor `issue_ideals`; synthetic profiles in 8.6 | Program fit and explicit red lines |
+| Democratic guarantees, constructive no confidence, presidential arbitration | `Q.polish_presidency.constitution.reforms`; false initially | Specific legal procedures in 7.6; no generic government immunity |
+| Tax incidence and finite fiscal instruments | `S.economy.tax_incidence=broad`, `policies=[]` | One derived budget and dated financing/cost effects in 11.2/11.9 |
+| Variant, beneficiaries and completed geographic tranche | `Project`; no new completed tranches initially | Execution, actual social effect, prevention of duplicate projects |
+| TUR construction and selected course | `S.party_orgs.tur` process records; null initially | Paid months, unlocks, one-use campaign preparation |
+| Modes and results of communist strike cooperation | Cooperation record with distinct strike IDs and completed agreements | Stronger parliamentary pact gates in 9.6; repeated views never add a trial |
+| Current Piłsudski concession | `S.actors.pilsudski.agreement_id=null` | Delivery, pressure relief once, affected force loyalties |
+| Crisis facts, evidence and follow-up state | `EventRun.payload={}`, then `S.events.resolved` | Kraków, assassination response, cult and scandal branches |
+
+`offerScore` names the existing acceptance score, not a new currency.
+`majorCrisis` is derived from recorded cabinet failures, social grievance or
+the specified inflation history. Policy budget modifiers are components of one
+derived budget, not separately spendable cash. No new main dashboard reading is added.
+
+The future contract must distinguish:
+
+- party resources, temporary negotiating position and state finance;
+- abstract fiscal room, temporary financing and program obligations;
+- polling, votes, sitting mandates, electoral lists and governing agreements;
+- class membership, minority identity and employment status without treating
+  the same people as additional population;
+- party relations, particular promises, dissent and actual withdrawal of support;
+- social grievance, protest participation, violence and support for democracy;
+- relations with Piłsudski, inclination toward a coup and available capacity;
+- militia members, readiness, command, upkeep and legal status; unions and
+  state police never become automatic militia manpower;
+- project declaration, authorization, funding, execution and observed outcome.
+
+The militia successor must record militarization and sufficient preparation
+before early AS becomes available. The user explicitly confirmed Milicja PPS
+as the target. The existing `pps_militia_stage` values and immediate action
+remain actual code, not the newly approved progression.
+
+Future coup calculations must run after the relevant choices and remain
+resumable during the event. A chapter report preserves institutions, actors,
+losses, economy, organizations and outstanding agreements rather than only a
+single victory flag. Historical starting data and balance thresholds are still
+separate research/calibration tasks.
+
 ## Purpose and method
 
 A Dendry **quality** is a persistent game-state value. In embedded JavaScript,

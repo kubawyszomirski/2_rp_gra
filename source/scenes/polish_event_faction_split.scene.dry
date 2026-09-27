@@ -1,0 +1,43 @@
+title: Part of a Faction Threatens to Leave
+subtitle: A faction's dissent has reached 60 over a concrete demand.
+new-page: true
+tags: pl_event
+view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.factionSplitDue(Q) !}
+on-arrival: {!
+// Event party.faction_split, E3 (technical reference 10.2, 17.15; card catalogue 9.10; Z — 0.38): one
+// definition for every faction, one instance per faction case. Two choices, a mandatory answer of 0 T. The
+// demand takes back the recorded cause with the largest share of the dissent (decision 3A of stage 5).
+PolishParty.factionSplitView(Q);
+!}
+
+= Part of [+ pl_e3_faction +] threatens to leave
+
+The dissent of [+ pl_e3_faction +] is [+ pl_e3_dissent +]. Its leaders demand that PPS [+ pl_e3_demand +]. If PPS keeps its line: [+ pl_e3_preview +]
+
+- @accept
+- @refuse
+
+@accept
+title: Accept the demand and keep unity
+subtitle: PPS makes the change at once, without cost; the faction's dissent −5. Partners react to the changed policy itself.
+on-arrival: {!
+PolishParty.factionSplitAccept(Q);
+!}
+go-to: result
+
+@refuse
+title: Keep the line of PPS and accept the split
+subtitle: 40% of the faction's base leaves with its voters and MPs; the rest of the faction's dissent −20.
+on-arrival: {!
+PolishParty.factionSplitRefuse(Q);
+!}
+go-to: result
+
+@result
+new-page: true
+
+= The faction's answer
+
+[+ pl_party_result +]
+
+- @root: Continue.

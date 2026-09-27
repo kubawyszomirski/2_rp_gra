@@ -2,10 +2,28 @@ title: Post Event
 new-page: true
 call: polish_opening_state
 on-arrival: {!
+// Save compatibility (technical reference 19.3, Z — 0.40): a save without the current
+// state schema stops here instead of continuing with old state.
+if (typeof PolishRules === 'undefined' || !PolishRules.isSaveCompatible(Q)) {
+    Q.polish_save_incompatible = 1;
+    return;
+}
+// After the end of the chapter nothing more is settled: no new month, cost, loss or event (19.2).
+if (Q.S.chapter.status === 'ended') {
+    Q.has_event = 0;
+    return;
+}
 Q.last_advisor_action = 0;
 Q.last_cabinet_action = 0;
+// Since stage 5 the cells of the electorate own the preferences: changes an inherited scene still wrote
+// to a class row are taken over by the cells of that row, and the rows are written back from the cells
+// (technical reference 5.2; decision 1A of stage 5).
+if (Q.polish_party_rules) {
+    PolishElectorate.absorbRowEdits(Q);
+}
 // Transfer inherited support effects into the semantic Polish party IDs.
 for (var legacy_party in Q.legacy_party_map) {
+    if (Q.polish_party_rules) break;
     var polish_party = Q.legacy_party_map[legacy_party];
     for (var population_group of Q.classes) {
         var legacy_key = population_group + '_' + legacy_party;
@@ -20,7 +38,7 @@ for (var legacy_party in Q.legacy_party_map) {
     }
 }
 var catholic_delta = Q.catholics_spd - Q.catholics_spd_compat_base;
-if (Number.isFinite(catholic_delta) && catholic_delta != 0) {
+if (!Q.polish_party_rules && Number.isFinite(catholic_delta) && catholic_delta != 0) {
     Q.national_minorities_pps += catholic_delta;
 }
 Q.catholics_spd = Q.national_minorities_pps;
@@ -29,8 +47,8 @@ Q.catholics_spd_compat_base = Q.catholics_spd;
 // Transfer changes from inherited Reichsbanner calculations into the one
 // canonical PPS self-defence organization. Direct Milicja/AS actions already
 // write the semantic fields, so only the legacy deltas are added here.
-var legacy_militia_strength_delta = Q.rb_strength - Q.rb_strength_compat_base;
-var legacy_militia_militancy_delta = Q.rb_militancy - Q.rb_militancy_compat_base;
+var legacy_militia_strength_delta = Q.polish_party_rules ? 0 : Q.rb_strength - Q.rb_strength_compat_base;
+var legacy_militia_militancy_delta = Q.polish_party_rules ? 0 : Q.rb_militancy - Q.rb_militancy_compat_base;
 if (Number.isFinite(legacy_militia_strength_delta) && legacy_militia_strength_delta != 0) {
     Q.pps_militia_strength += legacy_militia_strength_delta;
 }
@@ -67,7 +85,13 @@ if (Q.pro_republic >= 100) {
     Q.pro_republic = 99;
 }
 // re-calculate party support
-// calculate normalized class voting for the achievements
+// calculate normalized class voting for the achievements. The same calculation runs again after the
+// month's settlement, because the living-conditions flow (5.6) changes the class rows.
+function recomputeSupport() {
+if (Q.polish_party_rules) {
+    PolishElectorate.absorbRowEdits(Q);
+    PolishElectorate.writeClassMirrors(Q);
+}
 for (var c of Q.classes) {
     var class_votes = 0;
     for (var party of Q.parties) {
@@ -90,7 +114,13 @@ for (var legacy_party in Q.legacy_party_map) {
 }
 // calculate support for each of the parties
 var total_support = 0; 
+// Stage 5: the national result is the votes of the cells (5.2), not a sum of overlapping rows.
+var cell_votes = Q.polish_party_rules ? PolishElectorate.writeNationalQualities(Q) : null;
 for (var party of Q.parties) {
+    if (cell_votes) {
+        total_support += Q[party + '_support'];
+        continue;
+    }
     var party_support = 0;
     for (var c of Q.classes) {
         if (Q.old_demographics) { 
@@ -115,12 +145,16 @@ for (var legacy_party in Q.legacy_party_map) {
     Q[legacy_party + '_votes'] = Q[polish_party + '_votes'];
     Q[legacy_party + '_votes_display'] = Q[polish_party + '_votes_display'];
 }
+}
+recomputeSupport();
 
 
 // Transfer inherited German faction changes into the active PPS faction
 // model. This is a temporary gameplay bridge, not a historical equivalence.
 // Labor remains a separate affiliated trade-union power centre.
 for (var legacy_faction in Q.legacy_faction_map) {
+    // Stage 5: the German factions no longer feed the PPS factions in the Polish game (10.1).
+    if (Q.polish_party_rules) break;
     var pps_faction = Q.legacy_faction_map[legacy_faction];
     var legacy_strength_key = legacy_faction + '_strength';
     var legacy_dissent_key = legacy_faction + '_dissent';
@@ -161,6 +195,11 @@ for (var legacy_faction of Q.legacy_factions) {
     Q[legacy_faction + '_dissent_compat_base'] = Q[legacy_faction + '_dissent'];
 }
 
+// Stage 5: the factions have their owner in Q.S (10.1); the inherited changes above are taken over and
+// the mirrors, with the party's dissent, are written from the owner.
+if (Q.polish_party_rules) {
+    PolishParty.syncMirrors(Q);
+}
 // Clamp and normalize the three active PPS factions.
 var total_strength = 0;
 for (var faction of Q.factions) {
@@ -200,17 +239,15 @@ if (Q.dissent < 0) {
     Q.dissent = 0.95;
 }
 
-// 1. update dates
-if (Q.month_actions >= 1) {
-    Q.time += 1;
-    Q.month_actions = 0;
-    Q.month += 1;
-    if (Q.month >= 13) {
-        Q.month = 1;
-        Q.year += 1;
-        if (Q.historical_mode) {
-            Q.resources += 2;
-        }
+// 1. One month is settled once (technical reference 4.1-4.2). The rules module moves the clock and
+// waives the month of a card opened by an adviser. Since stage 4 the Polish settlement of period t
+// runs in the order of 4.2 (PolishProjects.settleMonth): laws, scenario effects, the cabinet's
+// initiative, finances and projects, the economy, the living-conditions flow and promises; the
+// inherited German economy below is off in the Polish game (leaks 1 and 9 of 20.2).
+var settlement = PolishRules.beginMonthSettlement(Q, this.state);
+if (settlement) {
+    if (Q.month == 1 && Q.historical_mode) {
+        Q.resources += 2;
     }
     // decrement timers
     for (timer of Q.timers) {
@@ -235,6 +272,27 @@ if (Q.month_actions >= 1) {
         }
         Q.daszynski_left_adviser_pool = 1;
     }
+    // Stage 6: the unions' funds, due settlement clauses and one draw of each strike, before the economy of the
+    // period (4.2 step 4; technical reference 14.1–14.5).
+    if (Q.polish_union_rules) {
+        PolishUnions.beginMonth(Q, settlement);
+    }
+    if (Q.polish_economy_system) {
+        PolishProjects.settleMonth(Q, settlement);
+    }
+    // Stage 5: the party's own month (13.1–13.4): income, upkeep and arrears, membership, TUR, cooperatives and
+    // Milicja fatigue, after the economy and the flows (4.2 step 6).
+    if (Q.polish_party_rules) {
+        PolishParty.settleMonth(Q, settlement);
+    }
+    // Stage 6: one round of talks of each strike and the end of an exhausted one (4.2 step 6; 14.3–14.4).
+    if (Q.polish_union_rules) {
+        PolishUnions.endMonth(Q, settlement);
+    }
+    // The inherited German economy and its support rules (budget → inflation, growth and
+    // unemployment, pro_republic erosion, NSDAP flows and the 1929–1934 drifts) stay in this file for
+    // the German baseline and do not run in the Polish game.
+    if (!Q.polish_economy_system) {
     // append to historical party support records
     var party_support_results = {'date': new Date(Q.year, Q.month - 1)};
     for (var party of Q.parties) {
@@ -578,21 +636,76 @@ if (Q.month_actions >= 1) {
         }
     }
 
+    }
+
     // Approved structural trend: from January 1922 through December 1939,
     // Chłopi decline linearly from 53% to 50% while Robotnicy rise from 27% to 30%.
     var demographic_month = (Q.year - 1922)*12 + (Q.month - 1);
     var demographic_progress = Math.max(0, Math.min(1, demographic_month/215));
     Q.workers = 27 + 3*demographic_progress;
     Q.rural = 53 - 3*demographic_progress;
+    if (Q.polish_party_rules) {
+        PolishElectorate.applyClassShares(Q.S, {workers: Q.workers, old_middle: Q.old_middle, new_middle: Q.new_middle,
+            rural: Q.rural, bourgeois_landowners: Q.bourgeois_landowners});
+    }
+    // Agreements (technical reference 9.2, 4.2 step 6): fulfilment, breaches and tension once a month,
+    // then warnings, ultimatums and their expiry, and a dismissal motion left without an answer.
+    PolishGovernment.syncRelations(Q);
+    PolishGovernment.settleAgreements(Q);
+    PolishGovernment.writeGovernmentMirrors(Q);
+    // Stage 5: a broken own promise of PPS costs trust and support among its recipients (5.4).
+    if (Q.polish_party_rules) {
+        PolishParty.afterAgreements(Q);
+    }
+    // Stage 7 (4.2 step 6): the recorded effects reach the cells, then grievance and radicalisation, the journal and
+    // the authority of the Sejm, the pressure towards a coup, democracy and violence (15.1–15.3).
+    if (Q.polish_politics_rules) {
+        PolishPolitics.settleMonth(Q, settlement);
+    }
+    // Stage 7 (16.1–16.3, 16.7): the temporary modifiers of the forces, the execution and review of the agreement with
+    // Piłsudski, after democracy of this month.
+    if (Q.polish_security_rules) {
+        PolishSecurity.settleMonth(Q, settlement);
+    }
+    if (Q.polish_economy_system) {
+        // 4.2 step 7: one record of period t, after the flow of 5.6 changed the class rows.
+        recomputeSupport();
+        var polish_support = {'date': new Date(PolishRules.yearOf(settlement.t), PolishRules.monthOf(settlement.t) - 1)};
+        for (var party of Q.parties) {
+            polish_support[party] = Q[party + '_normalized']*100;
+        }
+        Q.party_support_records.push(polish_support);
+        PolishEconomy.writeEconomyMirrors(Q);
+        Q.economic_records.push({'date': new Date(PolishRules.yearOf(settlement.t), PolishRules.monthOf(settlement.t) - 1),
+                                 'inflation': Q.S.economy.inflation_m,
+                                 'unemployment': Q.S.economy.unemployment});
+    }
+    PolishRules.completeMonthSettlement(Q, settlement);
+}
+if (Q.polish_economy_system) {
+    PolishEconomy.writeEconomyMirrors(Q);
+}
+if (Q.polish_party_rules) {
+    PolishParty.writeMirrors(Q);
+}
+PolishRules.refreshMirrors(Q);
+// Stage 7: after an event package, before the next ordinary action (4.2): the speeches and impulses due now.
+if (Q.polish_politics_rules) {
+    PolishPolitics.afterEvents(Q);
 }
 Q.has_event = 0;
-// check if there are any cards in #event, and then go to main if not.
+// Event queue (technical reference 4.5): the Polish events that are due now, one at a time in a
+// fixed order. German events keep the tag event and are no longer offered (implementation plan,
+// stage 1).
 var scene = this.game.scenes['post_event.events_choice'];
-var choices = this._compileChoices(scene);
-if (choices && choices[0].title != "Continue...") {
+var choices = this._compileChoices(scene) || [];
+var due = choices.filter(function(choice) {
+    return choice.canChoose !== false && choice.title != "Continue...";
+}).map(function(choice) { return choice.id; });
+var next_event = PolishRules.nextEvent(Q, due);
+if (next_event) {
+    Q.pl_next_event = next_event;
     Q.has_event = 1;
-} else {
-    has_event = 0;
 }
 // pre-load all of the event images
 if (this.ui && this.ui.show_portraits) {
@@ -608,12 +721,12 @@ if (this.ui && this.ui.show_portraits) {
 if (typeof window !== "undefined" && window.generateBar) {
 }
 !}
-go-to: sejm_election if sejm_election_due or sejm_election_in_progress; polish_presidential_sequence if not sejm_election_due and not sejm_election_in_progress and (polish_presidential_due or polish_presidential_in_progress); events_choice if not sejm_election_due and not sejm_election_in_progress and not polish_presidential_due and not polish_presidential_in_progress and has_event = 1; main if not sejm_election_due and not sejm_election_in_progress and not polish_presidential_due and not polish_presidential_in_progress and has_event = 0
+go-to: polish_incompatible_save if pl_route = "incompatible"; polish_chapter_report if pl_route = "report"; sejm_election if pl_route = "sejm"; polish_speaker_election if pl_route = "speaker"; polish_presidential_sequence if pl_route = "presidency"; polish_cabinet_formation if pl_route = "cabinet"; polish_event_router if pl_route = "event"; main if pl_route = ""
 
 = [+ month : month +] [+ year +]
 
 @events_choice
 
-- #event
+- #pl_event
 
 # This scene is solely for updating numbers after events, and routing to special events.

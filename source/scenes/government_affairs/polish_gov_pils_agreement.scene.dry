@@ -1,0 +1,75 @@
+title: Agreement with Piłsudski
+subtitle: A concrete concession under a legal procedure, or a refusal and a civilian cabinet.
+new-page: true
+is-card: true
+tags: govt_affairs
+card-image: img/reichstag_2.jpg
+view-if: {! return !!Q.S && !!Q.polish_security_rules && PolishSecurity.pilsCardAvailable(Q) !}
+on-arrival: {!
+// Card government.pils_agreement (technical reference 16.7, 16.8.1; card catalogue 8.15): the card opens an offer,
+// it does not buy a relief of pressure. An own initiative costs this month's action; the answer in the political
+// crisis of a coup costs none. One agreement at a time; its relief comes once, when its execution starts.
+PolishSecurity.pilsView(Q);
+!}
+
+= Agreement with Piłsudski
+
+[+ pl_pils_line +]
+
+Piłsudski judges an offer by its programme, the real function it gives him and the credibility of PPS; the minimal relation is only a gate. The dispute about the organisation of the supreme military authorities is the historical background; an early inspectorate and the premiership on these terms are alternatives of the game.
+
+- @military_function
+- @inspectorate
+- @pils_premier
+- @refuse
+- @easy_discard
+- @cancel_advisor_action
+
+@military_function
+title: A military function under civilian control
+subtitle: Relation 40; once executed: pressure −12, relation +4, Piłsudczycy −5 dissent; nominations up to +0.05 of loyalty to him in the group under him.
+choose-if: {! return PolishSecurity.concessionStatus(Q, 'military_function').available !}
+unavailable-subtitle: [+ pl_pils_military_function_why +]
+on-arrival: {!
+PolishSecurity.concessionChoose(Q, 'military_function');
+!}
+go-to: result
+
+@inspectorate
+title: An independent inspectorate with freer nominations
+subtitle: Relation 60 and a change of the law, filed now; once in force: pressure −25, relation +4, Piłsudczycy −8, Centrum +8 dissent unless it shares this line; up to +0.10 of loyalty.
+choose-if: {! return PolishSecurity.concessionStatus(Q, 'inspectorate').available !}
+unavailable-subtitle: [+ pl_pils_inspectorate_why +]
+on-arrival: {!
+PolishSecurity.concessionChoose(Q, 'inspectorate');
+!}
+go-to: result
+
+@pils_premier
+title: Piłsudski as prime minister of a legal cabinet
+subtitle: Relation 65; he becomes a candidate of the next formation of a cabinet. After his real appointment: pressure −20, relation +4, Piłsudczycy −5.
+choose-if: {! return PolishSecurity.concessionStatus(Q, 'pils_premier').available !}
+unavailable-subtitle: [+ pl_pils_pils_premier_why +]
+on-arrival: {!
+PolishSecurity.concessionChoose(Q, 'pils_premier');
+!}
+go-to: result
+
+@refuse
+title: Refuse concessions and offer a civilian cabinet
+subtitle: No free relief of pressure; the first new civil obligation fulfilled may lower it once.
+choose-if: {! return PolishSecurity.concessionStatus(Q, 'refuse').available !}
+unavailable-subtitle: [+ pl_pils_refuse_why +]
+on-arrival: {!
+PolishSecurity.concessionChoose(Q, 'refuse');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= Agreement with Piłsudski
+
+[+ pl_pils_result +]
+
+- @root: Continue.

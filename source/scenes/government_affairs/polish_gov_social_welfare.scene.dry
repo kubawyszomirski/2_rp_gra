@@ -1,0 +1,66 @@
+title: Benefits and Aid for the Unemployed
+subtitle: Labour: one protection programme for the unemployed.
+new-page: true
+is-card: true
+tags: govt_affairs
+card-image: img/Kollwitz_Arbeitslosigkeit.jpg
+view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'social_welfare') !}
+on-arrival: {!
+// Card government.social_welfare (technical reference 17.11–17.12; card catalogue 8.2). Opening and closing
+// the card are free; a confirmed option costs this month's action, or the one free step of an adviser
+// who opened the card. Options that need a system of a later stage are shown with their reason.
+PolishProjects.cardView(Q, 'social_welfare');
+!}
+
+= Benefits and aid for the unemployed
+
+There is one protection programme for these recipients. It pays from the month it starts, even under a caretaker cabinet. Each level of scope costs 2 B a month; a benefit does not lower unemployment itself.
+
+[+ pl_gc_budget +]
+
+[+ pl_gc_projects +]
+
+- @expand
+- @focus
+- @limit
+- @easy_discard
+- @cancel_advisor_action
+
+@expand
+title: Extend the protection
+subtitle: Start the protection (2 B a month), or extend it by one level of scope (+2 B), up to 3.
+choose-if: {! return PolishProjects.optionStatus(Q, 'social_welfare', 'expand').available !}
+unavailable-subtitle: [+ pl_social_welfare_expand_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'social_welfare', 'expand');
+!}
+go-to: result
+
+@focus
+title: Focus the aid on the most needy
+subtitle: Half of the recipients, the most needy, with the full relief: 1 B instead of 2.
+choose-if: {! return PolishProjects.optionStatus(Q, 'social_welfare', 'focus').available !}
+unavailable-subtitle: [+ pl_social_welfare_focus_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'social_welfare', 'focus');
+!}
+go-to: result
+
+@limit
+title: Limit the benefits
+subtitle: A legal change of the benefit: only the difference, e.g. 2 → 1 B. Breaks the guarantee; Lewica +8 dissent.
+choose-if: {! return PolishProjects.optionStatus(Q, 'social_welfare', 'limit').available !}
+unavailable-subtitle: [+ pl_social_welfare_limit_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'social_welfare', 'limit');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= Benefits and aid for the unemployed
+
+[+ pl_gc_result +]
+
+- @root: Continue.

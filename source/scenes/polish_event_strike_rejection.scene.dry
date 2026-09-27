@@ -1,0 +1,44 @@
+title: The Strikers Reject the Settlement
+subtitle: PPS accepted a settlement, but part of the strikers will not end the action.
+new-page: true
+tags: pl_event
+card-image: img/protest.jpg
+view-if: {! return !!Q.S && !!Q.polish_union_rules && PolishUnions.rejectionDue(Q) !}
+on-arrival: {!
+// Event society.strike_settlement_rejection, E6 (technical reference 14.5, 17.15; card catalogue 9.9; Z — 0.38): only
+// after a real settlement accepted by PPS and a real refusal; one instance per strike and settlement, 0 T, two answers,
+// no renegotiation. The answer does not settle the signature again.
+PolishUnions.rejectionView(Q);
+!}
+
+= The strikers reject the settlement
+
+[+ pl_rej_text +]
+
+- @uphold
+- @support
+
+@uphold
+title: Uphold the settlement and call for the end of the strike
+subtitle: The obligation stands; part of the strikers may go on without PPS, and the branches that refused have the end imposed (dissent +10, trust −8).
+on-arrival: {!
+PolishUnions.rejectionChoose(Q, 'uphold');
+!}
+go-to: result
+
+@support
+title: Support the further strike
+subtitle: The mobilisation and its costs go on, and PPS breaks the settlement it accepted (credibility −5). It forces no better offer.
+on-arrival: {!
+PolishUnions.rejectionChoose(Q, 'support');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= The strikers reject the settlement
+
+[+ pl_union_result +]
+
+- @root: Continue.

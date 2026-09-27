@@ -3,20 +3,44 @@ is-pinned-card: true
 tags: advisor
 view-if: niedzialkowski_advisor = 1
 new-page: true
+on-arrival: {!
+// Adviser actions of technical reference 10.4.3 (card catalogue 6.6): 0 T, their own R, one shared cooldown of
+// six months for all advisers (4.4); the effects are the approved P numbers, applied by PolishParty.
+PolishParty.advisorView(Q, 'niedzialkowski');
+!}
 
 = Mieczysław Niedziałkowski
 
 Niedziałkowski represents Centrum PPS and concentrates on constitutional democracy and democratic alliances.
 
-**Planned, not implemented:** Build Centrolew will become available with the dedicated Centrolew system.
-
+- @build_centrolew
 - @defend_democracy
 - @root: Return to main
 
+@build_centrolew
+title: Build Centrolew
+subtitle: Relations with PSL Piast, PSL Wyzwolenie, NPR and PSChD +3. No alliance or majority by itself.
+choose-if: {! return PolishParty.advisorActionStatus(Q, 'niedzialkowski', 'build_centrolew').available !}
+unavailable-subtitle: [+ pl_advact_build_centrolew_why +]
+call: polish_advisor_commit
+on-arrival: {!
+PolishParty.advisorAction(Q, 'niedzialkowski', 'build_centrolew');
+!}
+
+[+ pl_party_result +]
+
+- @root: Continue.
+
 @defend_democracy
 title: Defend Constitutional Democracy
-choose-if: advisor_action_timer = 0
-unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?]
-on-arrival: advisor_action_timer = 6; pro_republic += 5*(1-dissent); centrum_strength += 3; centrum_dissent -= 3
+subtitle: The organisations of PPS stand closer to the legal institutions (+5); attachment to democracy +5 at the next monthly settlement. For six months supporting an openly authoritarian project costs Centrum +5 dissent.
+choose-if: {! return PolishParty.advisorActionStatus(Q, 'niedzialkowski', 'defend_democracy').available !}
+unavailable-subtitle: [+ pl_advact_defend_democracy_why +]
+call: polish_advisor_commit
+on-arrival: {!
+PolishParty.advisorAction(Q, 'niedzialkowski', 'defend_democracy');
+!}
 
-The PPS makes a coordinated defence of parliamentary and constitutional government.
+[+ pl_party_result +]
+
+- @root: Continue.

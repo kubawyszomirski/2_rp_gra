@@ -1,0 +1,106 @@
+title: Chapter report
+new-page: true
+on-arrival: {!
+// The one chapter report (technical reference 19.2). It reads the copy saved when the chapter ended,
+// so opening it again adds no month, cost, loss or second report.
+Q.pl_report_ready = 0;
+var chapter = Q.S && !Q.polish_save_incompatible ? Q.S.chapter : null;
+var report = chapter && chapter.status === 'ended' ? chapter.report : null;
+if (report) {
+    var state = report.state;
+    // Stage 7d: a resolved coup is the turning point; the Sejm of the last election stays in the report (19.1).
+    var coup = state.turning_point.type === 'coup' ? state.turning_point : null;
+    var point = coup ? state.last_election : state.turning_point;
+    var names = point.party_seats ? Q.party_names : {};
+    var order = Q.parties.slice().sort(function(a, b) {
+        return (point.party_seats[b] || 0) - (point.party_seats[a] || 0) || (a < b ? -1 : a > b ? 1 : 0);
+    });
+    Q.pl_report_date = report.date;
+    Q.pl_report_coup = coup ? 1 : 0;
+    Q.pl_report_coup_line = coup ? ({pils_victory: 'Piłsudski won', legal_victory: 'the legal government prevailed',
+        constitutional_compromise: 'a constitutional compromise was reached', prolonged_conflict: 'the conflict continues without a winner'})[coup.outcome] +
+        ' after ' + coup.round + (coup.round === 1 ? ' round' : ' rounds') + '; the contribution of PPS: ' + coup.pps_contribution : '';
+    Q.pl_report_continuation = report.continuation_requirements.join('; ');
+    Q.pl_report_seats = order.map(function(party) {
+        var now = point.party_seats[party] || 0;
+        var before = point.previous_party_seats ? point.previous_party_seats[party] || 0 : null;
+        return (names[party] || party) + ' ' + now + (before === null ? '' : ' (1922: ' + before + ')');
+    }).join('; ');
+    Q.pl_report_pps = state.pps.seats + ' MPs (1922: ' + state.pps.seats_1922 + '); ' + state.pps.vote_share.toFixed(1) + '% of the vote';
+    var f = state.pps.factions;
+    Q.pl_report_factions = 'Centrum ' + Math.round(f.centrum.strength) + '% (dissent ' + Math.round(f.centrum.dissent) + (f.centrum.resigned ? ', left the party' : '') + '); ' +
+        'Lewica ' + Math.round(f.lewica.strength) + '% (dissent ' + Math.round(f.lewica.dissent) + (f.lewica.split ? ', split' : '') + '); ' +
+        'Piłsudczycy ' + Math.round(f.pilsudczycy.strength) + '% (dissent ' + Math.round(f.pilsudczycy.dissent) + (f.pilsudczycy.split ? ', split' : '') + ')';
+    var president = state.constitution.president;
+    Q.pl_report_president = president ? president.holder_name + (president.status === 'acting' ? ' (acting)' : '') : 'None recorded';
+    Q.pl_report_speaker = state.constitution.outgoing_speaker ? state.constitution.outgoing_speaker.name : 'Vacant';
+    Q.pl_report_senate = state.constitution.senate.total + ' senators (' + state.constitution.senate.method + ')';
+    Q.pl_report_government = state.government.prime_minister + '; PPS: ' + state.government.pps_position;
+    Q.pl_report_not_modelled = report.not_modelled.join('; ');
+    Q.pl_report_uncertainties = report.uncertainties.join(' ');
+    Q.pl_report_ledger = report.ledger_summary.months_settled + ' months settled, ' + report.ledger_summary.actions +
+        ' actions, ' + report.ledger_summary.ballots + ' recorded ballots, ' + report.ledger_summary.rolls + ' recorded rolls';
+    // Stage 7 (19.2): society, democracy, the forces of the state and what is left unfinished.
+    var soc = state.society;
+    var classNames = {workers: 'workers', rural: 'peasants', new_middle: 'intelligentsia', old_middle: 'petty bourgeoisie', bourgeois_landowners: 'bourgeoisie and landowners'};
+    Q.pl_report_society = soc ? Object.keys(classNames).map(function(id) {
+        var c = soc.by_class[id];
+        return classNames[id] + ': PPS ' + c.pps.toFixed(1) + '%, grievance ' + Math.round(c.grievance) + ', radicalisation ' + Math.round(c.radicalization);
+    }).join('; ') : 'not recorded';
+    var pol = state.politics;
+    Q.pl_report_politics = pol ? 'attachment to democracy ' + Math.round(pol.democracy) + ', authority of the Sejm ' + Math.round(pol.parliament_authority) +
+        ', violence ' + Math.round(pol.violence) + ', pressure towards a coup ' + Math.round(pol.coup_pressure) : 'not recorded';
+    var sec = state.security;
+    Q.pl_report_forces = sec ? sec.forces.map(function(f) {
+        var k = sec.known[f.id];
+        return f.id.replace('_', ' ') + (f.committed_side ? ' — ' + f.committed_side + ', losses ' + f.losses_F.toFixed(1) + ' F' : '') +
+            '; loyalty to Piłsudski known ±' + k.radius + ' pp';
+    }).join('; ') : 'not recorded';
+    var un = state.unfinished;
+    Q.pl_report_unfinished = un ? un.projects.length + ' projects under way, ' + un.laws_in_procedure.length + ' laws in procedure, ' +
+        un.promises.length + ' agreements with open promises, ' + un.ultimatums.length + ' open ultimatums' : 'not recorded';
+    if (!Q.pl_report_continuation) Q.pl_report_continuation = 'nothing recorded';
+    Q.pl_report_ready = 1;
+}
+!}
+
+= The end of the first chapter
+
+[? if not pl_report_ready : The chapter has not ended. ?]
+
+[? if pl_report_ready and not pl_report_coup : **Turning point.** The next lawful Sejm election, held on [+ pl_report_date +], has been certified. The first chapter ends here, before a new government is formed. ?]
+
+[? if pl_report_ready and pl_report_coup : **Turning point.** The attempt against the government of [+ pl_report_date +] is resolved: [+ pl_report_coup_line +]. The first chapter ends here. ?]
+
+[? if pl_report_ready and not pl_report_coup : **The new Sejm (444 MPs).** [+ pl_report_seats +]. ?]
+
+[? if pl_report_ready and pl_report_coup : **The Sejm at the end of the chapter (444 MPs).** [+ pl_report_seats +]. ?]
+
+[? if pl_report_ready and pl_report_coup : **What the continuation owes.** [+ pl_report_continuation +]. ?]
+
+[? if pl_report_ready : **PPS.** [+ pl_report_pps +]. Factions: [+ pl_report_factions +]. ?]
+
+[? if pl_report_ready : **Institutions.** President: [+ pl_report_president +]. Marshal of the Sejm (outgoing Sejm): [+ pl_report_speaker +]. Senate: [+ pl_report_senate +]. ?]
+
+[? if pl_report_ready : **Government at the end of the chapter.** [+ pl_report_government +]. ?]
+
+[? if pl_report_ready : **Society.** [+ pl_report_society +]. ?]
+
+[? if pl_report_ready : **Democracy.** [+ pl_report_politics +]. ?]
+
+[? if pl_report_ready : **Forces of the state.** [+ pl_report_forces +]. ?]
+
+[? if pl_report_ready : **Unfinished matters.** [+ pl_report_unfinished +]. ?]
+
+[? if pl_report_ready : **Not yet modelled in this version.** [+ pl_report_not_modelled +]. ?]
+
+[? if pl_report_ready : **Uncertainties.** [+ pl_report_uncertainties +] ?]
+
+[? if pl_report_ready : **Record.** [+ pl_report_ledger +]. ?]
+
+This report describes the state of the country and the party; it is not a score. No decisions remain in this chapter. You can still open the Status and Library pages and save the game. Reload the page to start a new game.
+
+- @again: Read the report again.
+
+@again
+go-to: polish_chapter_report

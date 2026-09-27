@@ -9,11 +9,41 @@
                  month: 'short',
                  day: 'numeric' };
 
+  // Save compatibility (technical reference 19.3, Z — 0.40). Loading a save never runs scene
+  // scripts, so the check runs here, right after every load: quick load, save slots, autosave or
+  // file import. The scenes main and post_event repeat the check as a safety net.
+  var guardLoadedSaves = function(dendryUI) {
+    var proto = Object.getPrototypeOf(dendryUI.dendryEngine);
+    if (proto.polishSaveGuard) {
+      return;
+    }
+    var setState = proto.setState;
+    proto.setState = function(state) {
+      var result = setState.call(this, state);
+      var rules = window.PolishRules;
+      if (!rules || !rules.isSaveCompatible(this.state.qualities)) {
+        var message = 'This save comes from an older version of the game and cannot be continued. ' +
+            'Older saves are not converted.\n\nStart a new game now?';
+        if (window.confirm(message)) {
+          this.beginGame();
+        } else {
+          this.state.qualities.polish_save_incompatible = 1;
+          this.goToScene('polish_incompatible_save');
+        }
+      }
+      return result;
+    };
+    proto.polishSaveGuard = true;
+  };
+
   var main = function(dendryUI) {
     ui = dendryUI;
     game = ui.game;
 
     // Add your custom code here.
+    guardLoadedSaves(dendryUI);
+    // Card draws, deck checks and card opening follow the Polish rules (implementation plan, stage 1).
+    window.PolishEngineHooks.install(Object.getPrototypeOf(dendryUI.dendryEngine), window.PolishRules);
   };
 
   var TITLE = "Social Democracy: An Alternate History" + '_' + "Autumn Chen";

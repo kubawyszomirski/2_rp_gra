@@ -1,0 +1,89 @@
+title: After the Assassination
+subtitle: The President has been killed; PPS decides how its organisations answer.
+new-page: true
+tags: pl_event
+card-image: img/protest.jpg
+view-if: {! return !!Q.S && !!Q.polish_politics_rules && PolishPolitics.responseDue(Q) !}
+on-arrival: {!
+// Event presidency.assassination_response, B4 (technical reference 17.6, 17.5, 15.2, 13.4; card catalogue 9.5;
+// decision 2B of stage 7): only after a confirmed death and the vacancy filled by the Marshal; one decision, 0 T; the
+// costs of the chosen tool in R. The gathering is tested for a clash by 17.5; only executed unlawful violence
+// records a case against the PPS organisations.
+PolishPolitics.responseView(Q);
+var current = Q.polish_presidency ? Q.polish_presidency.current : null;
+Q.pl_b4_acting = current && current.status === 'acting' ? current.holder_name : '';
+!}
+
+= After the assassination of Gabriel Narutowicz
+
+[? if pl_b4_acting : [+ pl_b4_acting +], Marshal of the Sejm, substitutes for the President until the National Assembly elects a successor. ?]
+
+PPS must defend the constitutional order while preventing grief and anger from becoming political retaliation. The answer is ours; the conduct of the police and the authorities follows their own profile.
+
+- @defend
+- @restraint
+- @retaliation
+
+@defend
+title: A mass defence of the republic
+subtitle: 1 R; a campaign on the defence of democracy through our press or our unions. A peaceful gathering gives democracy +2 once; it does not authorise a general strike.
+choose-if: {! return PolishPolitics.responseStatus(Q, 'defend').available !}
+unavailable-subtitle: [+ pl_b4_defend_why +]
+go-to: protection
+
+@restraint
+title: Restraint and a focus on the lawful succession
+subtitle: 0 R; our declaration and our votes in the National Assembly, without a mass campaign. Those promised a public mobilisation may be disappointed.
+choose-if: {! return PolishPolitics.responseStatus(Q, 'restraint').available !}
+unavailable-subtitle: [+ pl_b4_restraint_why +]
+on-arrival: {!
+PolishPolitics.responseChoose(Q, 'restraint');
+!}
+go-to: result
+
+@retaliation
+title: Allow our Milicja a retaliatory confrontation
+subtitle: 0.5 R; the Centrum objects (+8 dissent). A confrontation that really happens is unlawful violence: a case against the PPS organisations and a reaction of the authorities.
+choose-if: {! return PolishPolitics.responseStatus(Q, 'retaliation').available !}
+unavailable-subtitle: [+ pl_b4_retaliation_why +]
+on-arrival: {!
+PolishPolitics.responseChoose(Q, 'retaliation');
+!}
+go-to: result
+
+@protection
+new-page: true
+
+= Protecting the gathering
+
+The Milicja can protect the gathering for 0.5 R more. Protection lowers the exposure of the people it covers; it does not remove the risk of a clash, and before Akcja Socjalistyczna the Milicja can protect only one matter at a time.
+
+- @unprotected
+- @protected
+- @polish_event_assassination_response: Back to the answers.
+
+@unprotected
+title: Hold the gathering without the Milicja
+on-arrival: {!
+PolishPolitics.responseChoose(Q, 'defend', {protect: false});
+!}
+go-to: result
+
+@protected
+title: Protect the gathering with the Milicja
+subtitle: 0.5 R more.
+choose-if: {! return PolishPolitics.responseStatus(Q, 'defend', true).available !}
+unavailable-subtitle: [+ pl_b4_protect_why +]
+on-arrival: {!
+PolishPolitics.responseChoose(Q, 'defend', {protect: true});
+!}
+go-to: result
+
+@result
+new-page: true
+
+= After the assassination
+
+[+ pl_b4_result +]
+
+- @root: Continue.

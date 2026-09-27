@@ -1,0 +1,847 @@
+{
+  "scope": "M10: institutional log for authority; democracy pivot 53 and pressure term replayed with the archived M02 robustness engine (144 main runs, patched in memory); democracy-shifted loyalties of synthetic_test_v2 with the exact M08 enumeration. Not a campaign run, not historical forces.",
+  "rule": {
+    "window": 12,
+    "democracyPivot": 53,
+    "oldPivot": 50,
+    "pressurePerPoint": 0.01,
+    "pressureCap": 0.5,
+    "shiftPerPoint": 0.0025,
+    "shiftCentre": 60,
+    "shiftCap": 0.1
+  },
+  "weights": {
+    "law": 4,
+    "resolution": 4,
+    "failure": -6,
+    "gap": -3,
+    "breach": -5,
+    "stance_defense": 1,
+    "stance_criticism": -2
+  },
+  "hashes": {
+    "docs/POLISH_TECHNICAL_REFERENCE.md": "8aba6f238f43c61b53eecb1e52c13903a7661bf426453fe6033fc633da68aaa4",
+    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "2402955a7669c2ad1bfd208ba3e4b704ab79574304554f4b51576fcf2195b42e",
+    "docs/POLISH_MECHANICS_AUDIT.md": "070de0c9d624d01594c387dd4b43a0db3edf873a194d390266d56acf6c469fa0",
+    "analysis/m02-robustness/engine.cjs": "e0b544d65a4381ed7698f3f649fd54e41714a3a1027852a7ea455d0ad49b43cd",
+    "analysis/m08-coup-profile/check.cjs": "117c774d0d702de80c73d6d39e56e9bd25f35ae418cdee3d1d522d35ff4f21eb"
+  },
+  "attemptsArchived": 96,
+  "dates": {
+    "approved": {
+      "kept": 96,
+      "lost": 0,
+      "gained": 0,
+      "delays": {
+        "1": 24,
+        "2": 36,
+        "3": 36
+      },
+      "democracyAtAttempt": [
+        64.92000000000006,
+        75.44000000000003
+      ]
+    },
+    "drift_only": {
+      "kept": 96,
+      "lost": 0,
+      "gained": 0,
+      "delays": {
+        "0": 96
+      },
+      "democracyAtAttempt": [
+        64.86000000000006,
+        74.36000000000001
+      ]
+    },
+    "pressure_x2": {
+      "kept": 96,
+      "lost": 0,
+      "gained": 0,
+      "delays": {
+        "2": 24,
+        "3": 12,
+        "4": 24,
+        "5": 12,
+        "6": 24
+      },
+      "democracyAtAttempt": [
+        64.98000000000006,
+        76.40000000000003
+      ]
+    }
+  },
+  "seed01": {
+    "base|A": {
+      "archived": "1926-03",
+      "approved": "1926-04",
+      "pressure_x2": "1926-05"
+    },
+    "base|B": {
+      "archived": "none",
+      "approved": "none",
+      "pressure_x2": "none"
+    },
+    "base|C": {
+      "archived": "none",
+      "approved": "none",
+      "pressure_x2": "none"
+    },
+    "base|H": {
+      "archived": "1926-04",
+      "approved": "1926-06",
+      "pressure_x2": "1926-08"
+    },
+    "favorable|A": {
+      "archived": "1927-03",
+      "approved": "1927-04",
+      "pressure_x2": "1927-05"
+    },
+    "favorable|B": {
+      "archived": "none",
+      "approved": "none",
+      "pressure_x2": "none"
+    },
+    "favorable|C": {
+      "archived": "none",
+      "approved": "none",
+      "pressure_x2": "none"
+    },
+    "favorable|H": {
+      "archived": "1927-01",
+      "approved": "1927-03",
+      "pressure_x2": "1927-04"
+    },
+    "harder|A": {
+      "archived": "1927-04",
+      "approved": "1927-06",
+      "pressure_x2": "1927-08"
+    },
+    "harder|B": {
+      "archived": "1927-05",
+      "approved": "1927-08",
+      "pressure_x2": "1927-11"
+    },
+    "harder|C": {
+      "archived": "1927-05",
+      "approved": "1927-08",
+      "pressure_x2": "1927-11"
+    },
+    "harder|H": {
+      "archived": "1927-05",
+      "approved": "1927-08",
+      "pressure_x2": "1927-10"
+    }
+  },
+  "attempts": {
+    "democracy": [
+      64.92000000000006,
+      75.44000000000003
+    ],
+    "passivePils": [
+      0.4112236083984375,
+      0.4292118896484376
+    ]
+  },
+  "example": {
+    "authority": 53,
+    "months": 12,
+    "democracyEffect": -0.72,
+    "strikeChancePP": 0.4
+  },
+  "table": {
+    "0": {
+      "capacity": 43.1865,
+      "passive": {
+        "pils": 0.485075,
+        "legal": 0.17605,
+        "compromise": 0,
+        "prolonged": 0.338875
+      },
+      "support_rail": {
+        "pils": 0.7843249999999998,
+        "legal": 0.04630000000000001,
+        "compromise": 0,
+        "prolonged": 0.16937500000000003
+      },
+      "support_militia": {
+        "pils": 0.7421999999999999,
+        "legal": 0.17597500000000002,
+        "compromise": 0,
+        "prolonged": 0.08182500000000002
+      },
+      "defend_as": {
+        "pils": 0.47225,
+        "legal": 0.2577999999999999,
+        "compromise": 0,
+        "prolonged": 0.26995
+      },
+      "defend_rail": {
+        "pils": 0.39425000000000004,
+        "legal": 0.17675000000000002,
+        "compromise": 0,
+        "prolonged": 0.42900000000000005
+      }
+    },
+    "5": {
+      "capacity": 43.1865,
+      "passive": {
+        "pils": 0.485075,
+        "legal": 0.17605,
+        "compromise": 0,
+        "prolonged": 0.338875
+      },
+      "support_rail": {
+        "pils": 0.7843249999999998,
+        "legal": 0.04630000000000001,
+        "compromise": 0,
+        "prolonged": 0.16937500000000003
+      },
+      "support_militia": {
+        "pils": 0.7421999999999999,
+        "legal": 0.17597500000000002,
+        "compromise": 0,
+        "prolonged": 0.08182500000000002
+      },
+      "defend_as": {
+        "pils": 0.47225,
+        "legal": 0.2577999999999999,
+        "compromise": 0,
+        "prolonged": 0.26995
+      },
+      "defend_rail": {
+        "pils": 0.39425000000000004,
+        "legal": 0.17675000000000002,
+        "compromise": 0,
+        "prolonged": 0.42900000000000005
+      }
+    },
+    "10": {
+      "capacity": 43.1865,
+      "passive": {
+        "pils": 0.485075,
+        "legal": 0.17605,
+        "compromise": 0,
+        "prolonged": 0.338875
+      },
+      "support_rail": {
+        "pils": 0.7843249999999998,
+        "legal": 0.04630000000000001,
+        "compromise": 0,
+        "prolonged": 0.16937500000000003
+      },
+      "support_militia": {
+        "pils": 0.7421999999999999,
+        "legal": 0.17597500000000002,
+        "compromise": 0,
+        "prolonged": 0.08182500000000002
+      },
+      "defend_as": {
+        "pils": 0.47225,
+        "legal": 0.2577999999999999,
+        "compromise": 0,
+        "prolonged": 0.26995
+      },
+      "defend_rail": {
+        "pils": 0.39425000000000004,
+        "legal": 0.17675000000000002,
+        "compromise": 0,
+        "prolonged": 0.42900000000000005
+      }
+    },
+    "15": {
+      "capacity": 43.1865,
+      "passive": {
+        "pils": 0.485075,
+        "legal": 0.17605,
+        "compromise": 0,
+        "prolonged": 0.338875
+      },
+      "support_rail": {
+        "pils": 0.7843249999999998,
+        "legal": 0.04630000000000001,
+        "compromise": 0,
+        "prolonged": 0.16937500000000003
+      },
+      "support_militia": {
+        "pils": 0.7421999999999999,
+        "legal": 0.17597500000000002,
+        "compromise": 0,
+        "prolonged": 0.08182500000000002
+      },
+      "defend_as": {
+        "pils": 0.47225,
+        "legal": 0.2577999999999999,
+        "compromise": 0,
+        "prolonged": 0.26995
+      },
+      "defend_rail": {
+        "pils": 0.39425000000000004,
+        "legal": 0.17675000000000002,
+        "compromise": 0,
+        "prolonged": 0.42900000000000005
+      }
+    },
+    "20": {
+      "capacity": 43.1865,
+      "passive": {
+        "pils": 0.485075,
+        "legal": 0.17605,
+        "compromise": 0,
+        "prolonged": 0.338875
+      },
+      "support_rail": {
+        "pils": 0.7843249999999998,
+        "legal": 0.04630000000000001,
+        "compromise": 0,
+        "prolonged": 0.16937500000000003
+      },
+      "support_militia": {
+        "pils": 0.7421999999999999,
+        "legal": 0.17597500000000002,
+        "compromise": 0,
+        "prolonged": 0.08182500000000002
+      },
+      "defend_as": {
+        "pils": 0.47225,
+        "legal": 0.2577999999999999,
+        "compromise": 0,
+        "prolonged": 0.26995
+      },
+      "defend_rail": {
+        "pils": 0.39425000000000004,
+        "legal": 0.17675000000000002,
+        "compromise": 0,
+        "prolonged": 0.42900000000000005
+      }
+    },
+    "25": {
+      "capacity": 42.892500000000005,
+      "passive": {
+        "pils": 0.48181015624999995,
+        "legal": 0.17608515625,
+        "compromise": 0,
+        "prolonged": 0.3421046875
+      },
+      "support_rail": {
+        "pils": 0.78106015625,
+        "legal": 0.04636640625,
+        "compromise": 0,
+        "prolonged": 0.1725734375
+      },
+      "support_militia": {
+        "pils": 0.7336335937499999,
+        "legal": 0.17599375,
+        "compromise": 0,
+        "prolonged": 0.09037265624999999
+      },
+      "defend_as": {
+        "pils": 0.46617968749999994,
+        "legal": 0.26636640624999997,
+        "compromise": 0,
+        "prolonged": 0.26745390625000004
+      },
+      "defend_rail": {
+        "pils": 0.39425,
+        "legal": 0.17678125000000003,
+        "compromise": 0,
+        "prolonged": 0.42896875000000007
+      }
+    },
+    "30": {
+      "capacity": 42.5985,
+      "passive": {
+        "pils": 0.47854687499999987,
+        "legal": 0.176121875,
+        "compromise": 0,
+        "prolonged": 0.34533125000000003
+      },
+      "support_rail": {
+        "pils": 0.7777968750000002,
+        "legal": 0.04643437500000001,
+        "compromise": 0,
+        "prolonged": 0.17576875
+      },
+      "support_militia": {
+        "pils": 0.7250656250000002,
+        "legal": 0.17601250000000002,
+        "compromise": 0,
+        "prolonged": 0.09892187499999999
+      },
+      "defend_as": {
+        "pils": 0.4598437499999999,
+        "legal": 0.27493437499999995,
+        "compromise": 0,
+        "prolonged": 0.26522187500000005
+      },
+      "defend_rail": {
+        "pils": 0.39424999999999993,
+        "legal": 0.1768125,
+        "compromise": 0,
+        "prolonged": 0.4289375
+      }
+    },
+    "35": {
+      "capacity": 42.304500000000004,
+      "passive": {
+        "pils": 0.47528515625,
+        "legal": 0.17616015625000003,
+        "compromise": 0,
+        "prolonged": 0.3485546875000001
+      },
+      "support_rail": {
+        "pils": 0.77453515625,
+        "legal": 0.04650390624999999,
+        "compromise": 0,
+        "prolonged": 0.1789609375
+      },
+      "support_militia": {
+        "pils": 0.71649609375,
+        "legal": 0.17603125000000003,
+        "compromise": 0,
+        "prolonged": 0.10747265625000003
+      },
+      "defend_as": {
+        "pils": 0.4532421875,
+        "legal": 0.28350390625,
+        "compromise": 0,
+        "prolonged": 0.2632539062500001
+      },
+      "defend_rail": {
+        "pils": 0.39425000000000004,
+        "legal": 0.17684375000000002,
+        "compromise": 0,
+        "prolonged": 0.42890625000000004
+      }
+    },
+    "40": {
+      "capacity": 42.01050000000001,
+      "passive": {
+        "pils": 0.47202500000000003,
+        "legal": 0.1762,
+        "compromise": 0,
+        "prolonged": 0.351775
+      },
+      "support_rail": {
+        "pils": 0.771275,
+        "legal": 0.04657500000000001,
+        "compromise": 0,
+        "prolonged": 0.18215
+      },
+      "support_militia": {
+        "pils": 0.7079250000000001,
+        "legal": 0.17604999999999998,
+        "compromise": 0,
+        "prolonged": 0.11602500000000003
+      },
+      "defend_as": {
+        "pils": 0.4463750000000001,
+        "legal": 0.29207500000000003,
+        "compromise": 0,
+        "prolonged": 0.26155000000000006
+      },
+      "defend_rail": {
+        "pils": 0.3942500000000001,
+        "legal": 0.176875,
+        "compromise": 0,
+        "prolonged": 0.4288750000000001
+      }
+    },
+    "45": {
+      "capacity": 41.031125,
+      "passive": {
+        "pils": 0.4636685302734376,
+        "legal": 0.18614306640624997,
+        "compromise": 0.0685546875,
+        "prolonged": 0.28163371582031244
+      },
+      "support_rail": {
+        "pils": 0.7590230224609378,
+        "legal": 0.05835009765624999,
+        "compromise": 0,
+        "prolonged": 0.18262687988281254
+      },
+      "support_militia": {
+        "pils": 0.6929290039062503,
+        "legal": 0.18419882812499996,
+        "compromise": 0.00015107421875,
+        "prolonged": 0.12272109375
+      },
+      "defend_as": {
+        "pils": 0.4343479492187501,
+        "legal": 0.30905439453125005,
+        "compromise": 0.0004997070312499998,
+        "prolonged": 0.25609794921874995
+      },
+      "defend_rail": {
+        "pils": 0.3901982421875001,
+        "legal": 0.18673828125,
+        "compromise": 0.0685546875,
+        "prolonged": 0.35450878906249994
+      }
+    },
+    "50": {
+      "capacity": 40.051750000000006,
+      "passive": {
+        "pils": 0.45521835937499994,
+        "legal": 0.19625546875000002,
+        "compromise": 0.12978984375000002,
+        "prolonged": 0.21873632812500002
+      },
+      "support_rail": {
+        "pils": 0.7467574218750004,
+        "legal": 0.07017734375,
+        "compromise": 0.18280546875,
+        "prolonged": 0.00025976562500000007
+      },
+      "support_militia": {
+        "pils": 0.6778648437500006,
+        "legal": 0.192640625,
+        "compromise": 0.07330078125000002,
+        "prolonged": 0.05619375
+      },
+      "defend_as": {
+        "pils": 0.42207578124999995,
+        "legal": 0.3259898437500002,
+        "compromise": 0.251934375,
+        "prolonged": 0
+      },
+      "defend_rail": {
+        "pils": 0.38591406249999993,
+        "legal": 0.196796875,
+        "compromise": 0.12948046875000002,
+        "prolonged": 0.28780859374999995
+      }
+    },
+    "55": {
+      "capacity": 39.072374999999994,
+      "passive": {
+        "pils": 0.4466654052734376,
+        "legal": 0.20654013671875002,
+        "compromise": 0.34673183593750007,
+        "prolonged": 0.00006262207031250001
+      },
+      "support_rail": {
+        "pils": 0.7344632568359375,
+        "legal": 0.08205966796875,
+        "compromise": 0.1832826171875,
+        "prolonged": 0.00019445800781250005
+      },
+      "support_militia": {
+        "pils": 0.66274013671875,
+        "legal": 0.201368359375,
+        "compromise": 0.13589150390625002,
+        "prolonged": 0
+      },
+      "defend_as": {
+        "pils": 0.4095625976562501,
+        "legal": 0.3428866210937502,
+        "compromise": 0.24755078125,
+        "prolonged": 0
+      },
+      "defend_rail": {
+        "pils": 0.3813916015625001,
+        "legal": 0.20705078125000004,
+        "compromise": 0.41142578125,
+        "prolonged": 0.00013183593750000004
+      }
+    },
+    "60": {
+      "capacity": 38.093,
+      "passive": {
+        "pils": 0.4379999999999997,
+        "legal": 0.2169999999999999,
+        "compromise": 0.345,
+        "prolonged": 0
+      },
+      "support_rail": {
+        "pils": 0.7221250000000002,
+        "legal": 0.094,
+        "compromise": 0.18387499999999996,
+        "prolonged": 0
+      },
+      "support_militia": {
+        "pils": 0.6475625000000003,
+        "legal": 0.21037499999999992,
+        "compromise": 0.1420625,
+        "prolonged": 0
+      },
+      "defend_as": {
+        "pils": 0.39681249999999973,
+        "legal": 0.35974999999999985,
+        "compromise": 0.2434375,
+        "prolonged": 0
+      },
+      "defend_rail": {
+        "pils": 0.3766249999999998,
+        "legal": 0.2174999999999999,
+        "compromise": 0.405875,
+        "prolonged": 0
+      }
+    },
+    "65": {
+      "capacity": 37.113625,
+      "passive": {
+        "pils": 0.4292118896484376,
+        "legal": 0.22763798828125006,
+        "compromise": 0.34315012207031254,
+        "prolonged": 0
+      },
+      "support_rail": {
+        "pils": 0.7097265380859376,
+        "legal": 0.10600126953124998,
+        "compromise": 0.1842721923828125,
+        "prolonged": 0
+      },
+      "support_militia": {
+        "pils": 0.63233955078125,
+        "legal": 0.21965351562500005,
+        "compromise": 0.14800693359375,
+        "prolonged": 0
+      },
+      "defend_as": {
+        "pils": 0.3838295898437501,
+        "legal": 0.37658525390625003,
+        "compromise": 0.23958515625000004,
+        "prolonged": 0
+      },
+      "defend_rail": {
+        "pils": 0.3716083984375001,
+        "legal": 0.22814453125000006,
+        "compromise": 0.4002470703125,
+        "prolonged": 0
+      }
+    },
+    "70": {
+      "capacity": 36.13425,
+      "passive": {
+        "pils": 0.42029023437500007,
+        "legal": 0.23845703125,
+        "compromise": 0.34125273437500003,
+        "prolonged": 0
+      },
+      "support_rail": {
+        "pils": 0.6972511718750001,
+        "legal": 0.11806640625000002,
+        "compromise": 0.184682421875,
+        "prolonged": 0
+      },
+      "support_militia": {
+        "pils": 0.6170789062500002,
+        "legal": 0.22919687500000002,
+        "compromise": 0.15372421874999997,
+        "prolonged": 0
+      },
+      "defend_as": {
+        "pils": 0.37061796875,
+        "legal": 0.39339765624999995,
+        "compromise": 0.235984375,
+        "prolonged": 0
+      },
+      "defend_rail": {
+        "pils": 0.36633593750000004,
+        "legal": 0.238984375,
+        "compromise": 0.39467968750000004,
+        "prolonged": 0
+      }
+    },
+    "75": {
+      "capacity": 35.154875,
+      "passive": {
+        "pils": 0.4112236083984375,
+        "legal": 0.24946005859375,
+        "compromise": 0.3393163330078126,
+        "prolonged": 0
+      },
+      "support_rail": {
+        "pils": 0.6846816162109377,
+        "legal": 0.13019833984375,
+        "compromise": 0.18512004394531253,
+        "prolonged": 0
+      },
+      "support_militia": {
+        "pils": 0.6017881835937501,
+        "legal": 0.238998046875,
+        "compromise": 0.15921376953125002,
+        "prolonged": 0
+      },
+      "defend_as": {
+        "pils": 0.35718173828125005,
+        "legal": 0.41019248046875006,
+        "compromise": 0.23262578125000005,
+        "prolonged": 0
+      },
+      "defend_rail": {
+        "pils": 0.3608017578125,
+        "legal": 0.25001953125,
+        "compromise": 0.38917871093750006,
+        "prolonged": 0
+      }
+    },
+    "80": {
+      "capacity": 34.1755,
+      "passive": {
+        "pils": 0.402,
+        "legal": 0.26064999999999994,
+        "compromise": 0.33735,
+        "prolonged": 0
+      },
+      "support_rail": {
+        "pils": 0.672,
+        "legal": 0.1424,
+        "compromise": 0.1856,
+        "prolonged": 0
+      },
+      "support_militia": {
+        "pils": 0.586475,
+        "legal": 0.24905000000000002,
+        "compromise": 0.16447499999999998,
+        "prolonged": 0
+      },
+      "defend_as": {
+        "pils": 0.343525,
+        "legal": 0.4269749999999998,
+        "compromise": 0.22949999999999998,
+        "prolonged": 0
+      },
+      "defend_rail": {
+        "pils": 0.355,
+        "legal": 0.2612499999999999,
+        "compromise": 0.38375,
+        "prolonged": 0
+      }
+    },
+    "85": {
+      "capacity": 33.484125,
+      "passive": {
+        "pils": 0.3936083984375001,
+        "legal": 0.27099218750000004,
+        "compromise": 0.3353994140625,
+        "prolonged": 0
+      },
+      "support_rail": {
+        "pils": 0.6598818359374999,
+        "legal": 0.1539921875,
+        "compromise": 0.1861259765625,
+        "prolonged": 0
+      },
+      "support_militia": {
+        "pils": 0.5716572265625001,
+        "legal": 0.25874902343750006,
+        "compromise": 0.16959375,
+        "prolonged": 0
+      },
+      "defend_as": {
+        "pils": 0.3305908203125001,
+        "legal": 0.4426953125000001,
+        "compromise": 0.2267138671875,
+        "prolonged": 0
+      },
+      "defend_rail": {
+        "pils": 0.3500234375000001,
+        "legal": 0.27162500000000006,
+        "compromise": 0.37835156249999996,
+        "prolonged": 0
+      }
+    },
+    "90": {
+      "capacity": 32.79275,
+      "passive": {
+        "pils": 0.38527031250000005,
+        "legal": 0.28134375,
+        "compromise": 0.3333859375,
+        "prolonged": 0
+      },
+      "support_rail": {
+        "pils": 0.6478015625000001,
+        "legal": 0.16559374999999998,
+        "compromise": 0.1866046875,
+        "prolonged": 0
+      },
+      "support_militia": {
+        "pils": 0.5569109375000001,
+        "legal": 0.2686015625,
+        "compromise": 0.17448750000000002,
+        "prolonged": 0
+      },
+      "defend_as": {
+        "pils": 0.3176515625,
+        "legal": 0.45820625000000004,
+        "compromise": 0.22414218750000003,
+        "prolonged": 0
+      },
+      "defend_rail": {
+        "pils": 0.34503125000000007,
+        "legal": 0.28200000000000003,
+        "compromise": 0.37296874999999996,
+        "prolonged": 0
+      }
+    },
+    "95": {
+      "capacity": 32.101375000000004,
+      "passive": {
+        "pils": 0.3769845703125,
+        "legal": 0.1820171875,
+        "compromise": 0.44099824218750006,
+        "prolonged": 0
+      },
+      "support_rail": {
+        "pils": 0.6357580078124999,
+        "legal": 0.1772046875,
+        "compromise": 0.18703730468750002,
+        "prolonged": 0
+      },
+      "support_militia": {
+        "pils": 0.5422466796875,
+        "legal": 0.2785970703125,
+        "compromise": 0.17915625000000004,
+        "prolonged": 0
+      },
+      "defend_as": {
+        "pils": 0.2690693359375,
+        "legal": 0.28978125,
+        "compromise": 0.4411494140625001,
+        "prolonged": 0
+      },
+      "defend_rail": {
+        "pils": 0.3400234375,
+        "legal": 0.1826875,
+        "compromise": 0.4772890625000001,
+        "prolonged": 0
+      }
+    },
+    "100": {
+      "capacity": 31.409999999999997,
+      "passive": {
+        "pils": 0.3356750000000001,
+        "legal": 0.19182500000000002,
+        "compromise": 0.47250000000000003,
+        "prolonged": 0
+      },
+      "support_rail": {
+        "pils": 0.5906750000000002,
+        "legal": 0.18882500000000002,
+        "compromise": 0.22050000000000003,
+        "prolonged": 0
+      },
+      "support_militia": {
+        "pils": 0.495275,
+        "legal": 0.18072500000000002,
+        "compromise": 0.32400000000000007,
+        "prolonged": 0
+      },
+      "defend_as": {
+        "pils": 0.227,
+        "legal": 0.19700000000000004,
+        "compromise": 0.5760000000000001,
+        "prolonged": 0
+      },
+      "defend_rail": {
+        "pils": 0.33500000000000013,
+        "legal": 0.19250000000000003,
+        "compromise": 0.47250000000000003,
+        "prolonged": 0
+      }
+    }
+  }
+}

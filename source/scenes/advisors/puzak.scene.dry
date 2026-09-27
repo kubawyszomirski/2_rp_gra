@@ -3,6 +3,11 @@ is-pinned-card: true
 tags: advisor
 view-if: puzak_advisor = 1
 new-page: true
+on-arrival: {!
+// Adviser actions of technical reference 10.4.3 (card catalogue 6.6): 0 T, their own R, one shared cooldown of
+// six months for all advisers (4.4); the effects are the approved P numbers, applied by PolishParty.
+PolishParty.advisorView(Q, 'puzak');
+!}
 
 = Kazimierz Pużak
 
@@ -14,17 +19,28 @@ Pużak represents Centrum PPS and concentrates on discipline and party organizat
 
 @party_discipline
 title: Party Discipline
-subtitle: Reduce dissent in all three PPS factions.
-choose-if: advisor_action_timer = 0
-unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?]
-on-arrival: advisor_action_timer = 6; centrum_dissent -= 5; lewica_dissent -= 5; pilsudczycy_dissent -= 5
+subtitle: Dissent −12 in each of the three factions. It removes no cause of later growth.
+choose-if: {! return PolishParty.advisorActionStatus(Q, 'puzak', 'party_discipline').available !}
+unavailable-subtitle: [+ pl_advact_party_discipline_why +]
+call: polish_advisor_commit
+on-arrival: {!
+PolishParty.advisorAction(Q, 'puzak', 'party_discipline');
+!}
 
-The party leadership reinforces common discipline without treating the affiliated unions as a fourth PPS faction.
+[+ pl_party_result +]
+
+- @root: Continue.
 
 @mobilize_organization
-title: Mobilize Organization
-subtitle: Make the Party Organizations card available immediately.
-choose-if: advisor_action_timer = 0
-unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?]
-on-arrival: advisor_action_timer = 6; party_organizations_timer = 0; last_advisor_action = 1
-go-to: party_organizations
+title: Mobilize the Organization
+subtitle: 1 R; the base reach of PPS among the workers +10; campaigns among workers ×1.20 for six months.
+choose-if: {! return PolishParty.advisorActionStatus(Q, 'puzak', 'mobilize_organization').available !}
+unavailable-subtitle: [+ pl_advact_mobilize_organization_why +]
+call: polish_advisor_commit
+on-arrival: {!
+PolishParty.advisorAction(Q, 'puzak', 'mobilize_organization');
+!}
+
+[+ pl_party_result +]
+
+- @root: Continue.

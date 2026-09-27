@@ -1,0 +1,100 @@
+title: Economic Programme
+subtitle: Up to three priorities of PPS for the economy.
+new-page: true
+is-card: true
+tags: party_affairs
+card-image: img/arbeiterbew.jpg
+view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.programmeAvailable(Q) !}
+on-arrival: {!
+// Card party.economic_program (technical reference 10.5; card catalogue 6.2): the whole set of 0–3
+// priorities in one transaction, 1 T, cd 6 M; only a set different from the present one can be confirmed.
+Q.pl_prog_draft = Q.S.actors.pps.strategy.economic_priorities.join(',');
+PolishParty.programmeView(Q);
+!}
+
+= Economic programme
+
+The present programme: [+ pl_prog_current +]. Choose up to three priorities, then confirm the set. The priorities prepare nothing by themselves; each programme still needs its card, its law, its money and its executor.
+
+- @edit
+- @easy_discard
+
+@edit
+title: Compose the programme
+go-to: menu
+
+@menu
+new-page: true
+on-arrival: {!
+PolishParty.programmeView(Q);
+!}
+
+= The new programme
+
+Chosen: [+ pl_prog_draft_text +]. Nothing is spent until you confirm.
+
+- @toggle_stabilisation_with_protection
+- @toggle_public_works
+- @toggle_wealth_and_investment
+- @toggle_socialisation
+- @toggle_agrarian_labour
+- @confirm
+- @polish_party_economic_program: Start again.
+
+@toggle_stabilisation_with_protection
+title: Stabilisation with protections
+subtitle: [? if pl_prog_stabilisation_with_protection_in = 1 : Chosen — remove it from the set. ?][? if pl_prog_stabilisation_with_protection_in = 0 : Add it to the set. ?]
+on-arrival: {!
+PolishParty.programmeToggle(Q, 'stabilisation_with_protection');
+!}
+go-to: menu
+
+@toggle_public_works
+title: Public works and employment
+subtitle: [? if pl_prog_public_works_in = 1 : Chosen — remove it from the set. ?][? if pl_prog_public_works_in = 0 : Add it to the set. ?]
+on-arrival: {!
+PolishParty.programmeToggle(Q, 'public_works');
+!}
+go-to: menu
+
+@toggle_wealth_and_investment
+title: Wealth taxes and capital for investment
+subtitle: [? if pl_prog_wealth_and_investment_in = 1 : Chosen — remove it from the set. ?][? if pl_prog_wealth_and_investment_in = 0 : Add it to the set. ?]
+on-arrival: {!
+PolishParty.programmeToggle(Q, 'wealth_and_investment');
+!}
+go-to: menu
+
+@toggle_socialisation
+title: Socialisation of selected enterprises
+subtitle: [? if pl_prog_socialisation_in = 1 : Chosen — remove it from the set. ?][? if pl_prog_socialisation_in = 0 : Add it to the set. ?]
+on-arrival: {!
+PolishParty.programmeToggle(Q, 'socialisation');
+!}
+go-to: menu
+
+@toggle_agrarian_labour
+title: An agrarian and workers’ programme
+subtitle: [? if pl_prog_agrarian_labour_in = 1 : Chosen — remove it from the set. ?][? if pl_prog_agrarian_labour_in = 0 : Add it to the set. ?]
+on-arrival: {!
+PolishParty.programmeToggle(Q, 'agrarian_labour');
+!}
+go-to: menu
+
+@confirm
+title: Confirm the programme
+choose-if: {! return PolishParty.programmeStatus(Q, String(Q.pl_prog_draft || '').split(',').filter(Boolean)).available !}
+unavailable-subtitle: [+ pl_prog_confirm_why +]
+on-arrival: {!
+PolishParty.programmeChoose(Q, String(Q.pl_prog_draft || '').split(',').filter(Boolean));
+!}
+go-to: result
+
+@result
+new-page: true
+
+= Economic programme
+
+[+ pl_party_result +]
+
+- @root: Continue.

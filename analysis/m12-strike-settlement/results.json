@@ -1,0 +1,194 @@
+{
+  "scope": "M12: union settlement consent reads the cost of continuing; strike-negotiation fragility reads cabinet support and disputes (technical 14.4, 17.4). Unit checks and the 144 main M02 runs on the archived robustness engine patched in memory, alone and on top of M10+M11. Not a campaign run.",
+  "rule": {
+    "consentThreshold": 50,
+    "weights": {
+      "fulfilment": 0.5,
+      "trust": 0.3,
+      "costOfContinuing": 0.2
+    },
+    "fragilityBase": 50,
+    "majority": 222,
+    "tensionWeight": 0.5
+  },
+  "hashes": {
+    "docs/POLISH_TECHNICAL_REFERENCE.md": "8aba6f238f43c61b53eecb1e52c13903a7661bf426453fe6033fc633da68aaa4",
+    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "2402955a7669c2ad1bfd208ba3e4b704ab79574304554f4b51576fcf2195b42e",
+    "docs/POLISH_MECHANICS_AUDIT.md": "070de0c9d624d01594c387dd4b43a0db3edf873a194d390266d56acf6c469fa0",
+    "analysis/m02-robustness/engine.cjs": "e0b544d65a4381ed7698f3f649fd54e41714a3a1027852a7ea455d0ad49b43cd"
+  },
+  "scenario": {
+    "m12VersusArchive": {
+      "offers": 229,
+      "acceptedBefore": 108,
+      "acceptedAfter": 108,
+      "runsWithOtherOfferOutcome": 10,
+      "endpointsChanged": 1,
+      "cabinetSequencesChanged": 0,
+      "lost": 0,
+      "gained": 0,
+      "chanceChange": [
+        -0.08200000000000002,
+        0.033999999999999975
+      ],
+      "changedRuns": [
+        {
+          "run": "base|B|m02-robustness-05",
+          "settlementBefore": "1924-01",
+          "settlementAfter": "1923-11",
+          "endpointBefore": "none",
+          "endpointAfter": "none"
+        },
+        {
+          "run": "base|B|m02-robustness-10",
+          "settlementBefore": "1924-06",
+          "settlementAfter": "1923-11",
+          "endpointBefore": "none",
+          "endpointAfter": "none"
+        },
+        {
+          "run": "base|C|m02-robustness-05",
+          "settlementBefore": "1924-01",
+          "settlementAfter": "1923-11",
+          "endpointBefore": "none",
+          "endpointAfter": "none"
+        },
+        {
+          "run": "base|C|m02-robustness-10",
+          "settlementBefore": "1924-06",
+          "settlementAfter": "1923-11",
+          "endpointBefore": "none",
+          "endpointAfter": "none"
+        },
+        {
+          "run": "favorable|B|m02-robustness-05",
+          "settlementBefore": "1923-11",
+          "settlementAfter": "1924-01",
+          "endpointBefore": "none",
+          "endpointAfter": "none"
+        },
+        {
+          "run": "favorable|B|m02-robustness-10",
+          "settlementBefore": "1923-11",
+          "settlementAfter": "1924-06",
+          "endpointBefore": "none",
+          "endpointAfter": "none"
+        },
+        {
+          "run": "favorable|C|m02-robustness-10",
+          "settlementBefore": "1923-11",
+          "settlementAfter": "1924-06",
+          "endpointBefore": "none",
+          "endpointAfter": "none"
+        },
+        {
+          "run": "favorable|H|m02-robustness-10",
+          "settlementBefore": "1923-12",
+          "settlementAfter": "1924-07",
+          "endpointBefore": "1927-01",
+          "endpointAfter": "1927-01"
+        },
+        {
+          "run": "harder|B|m02-robustness-10",
+          "settlementBefore": "1924-06",
+          "settlementAfter": "1923-11",
+          "endpointBefore": "1927-06",
+          "endpointAfter": "1927-05"
+        },
+        {
+          "run": "harder|H|m02-robustness-10",
+          "settlementBefore": "1924-07",
+          "settlementAfter": "1923-12",
+          "endpointBefore": "1927-05",
+          "endpointAfter": "1927-05"
+        }
+      ]
+    },
+    "m10m11m12VersusM10m11": {
+      "offers": 229,
+      "acceptedBefore": 108,
+      "acceptedAfter": 108,
+      "runsWithOtherOfferOutcome": 10,
+      "endpointsChanged": 1,
+      "cabinetSequencesChanged": 0,
+      "lost": 0,
+      "gained": 0,
+      "chanceChange": [
+        -0.08200000000000002,
+        0.033999999999999975
+      ],
+      "changedRuns": [
+        {
+          "run": "base|B|m02-robustness-05",
+          "settlementBefore": "1924-01",
+          "settlementAfter": "1923-11",
+          "endpointBefore": "none",
+          "endpointAfter": "none"
+        },
+        {
+          "run": "base|B|m02-robustness-10",
+          "settlementBefore": "1924-06",
+          "settlementAfter": "1923-11",
+          "endpointBefore": "none",
+          "endpointAfter": "none"
+        },
+        {
+          "run": "base|C|m02-robustness-05",
+          "settlementBefore": "1924-01",
+          "settlementAfter": "1923-11",
+          "endpointBefore": "none",
+          "endpointAfter": "none"
+        },
+        {
+          "run": "base|C|m02-robustness-10",
+          "settlementBefore": "1924-06",
+          "settlementAfter": "1923-11",
+          "endpointBefore": "none",
+          "endpointAfter": "none"
+        },
+        {
+          "run": "favorable|B|m02-robustness-05",
+          "settlementBefore": "1923-11",
+          "settlementAfter": "1924-01",
+          "endpointBefore": "none",
+          "endpointAfter": "none"
+        },
+        {
+          "run": "favorable|B|m02-robustness-10",
+          "settlementBefore": "1923-11",
+          "settlementAfter": "1924-06",
+          "endpointBefore": "none",
+          "endpointAfter": "none"
+        },
+        {
+          "run": "favorable|C|m02-robustness-10",
+          "settlementBefore": "1923-11",
+          "settlementAfter": "1924-06",
+          "endpointBefore": "none",
+          "endpointAfter": "none"
+        },
+        {
+          "run": "favorable|H|m02-robustness-10",
+          "settlementBefore": "1923-12",
+          "settlementAfter": "1924-07",
+          "endpointBefore": "1927-03",
+          "endpointAfter": "1927-03"
+        },
+        {
+          "run": "harder|B|m02-robustness-10",
+          "settlementBefore": "1924-06",
+          "settlementAfter": "1923-11",
+          "endpointBefore": "1927-09",
+          "endpointAfter": "1927-08"
+        },
+        {
+          "run": "harder|H|m02-robustness-10",
+          "settlementBefore": "1924-07",
+          "settlementAfter": "1923-12",
+          "endpointBefore": "1927-08",
+          "endpointAfter": "1927-08"
+        }
+      ]
+    }
+  }
+}

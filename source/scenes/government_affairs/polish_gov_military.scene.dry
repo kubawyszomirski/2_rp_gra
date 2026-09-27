@@ -1,0 +1,66 @@
+title: Military Affairs
+subtitle: Civilian control of the army: oversight, lawful changes of personnel, or a limited reform.
+new-page: true
+is-card: true
+tags: govt_affairs
+card-image: img/map_3.jpg
+view-if: {! return !!Q.S && !!Q.polish_security_rules && PolishProjects.cardAvailable(Q, 'military_policy') !}
+on-arrival: {!
+// Card government.military_policy (technical reference 16.3, 17.12.4; card catalogue 8.14): one project of civilian
+// control for the one synthetic post over the near reserve. Preparing it costs this month's action, its launch in
+// the agenda another; its effects come once per scope of the reform.
+PolishProjects.cardView(Q, 'military_policy');
+!}
+
+= Military affairs
+
+The post and its scope are a marked synthetic function over one group of the army; the historical appointments are not reconstructed. A compromise that gives Piłsudski personal powers goes through the agreement with him, not through this card.
+
+[+ pl_gc_budget +]
+
+[+ pl_gc_projects +]
+
+- @civilian_oversight
+- @personnel_changes
+- @organizational_compromise
+- @easy_discard
+- @cancel_advisor_action
+
+@civilian_oversight
+title: Prepare full civilian oversight
+subtitle: A law with army +2, then 1 B for three months; after it the group gains +0.05 of loyalty to the legal authorities.
+choose-if: {! return PolishProjects.optionStatus(Q, 'military_policy', 'civilian_oversight').available !}
+unavailable-subtitle: [+ pl_military_policy_civilian_oversight_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'military_policy', 'civilian_oversight');
+!}
+go-to: result
+
+@personnel_changes
+title: Prepare lawful changes of personnel
+subtitle: The same project with a named nomination: +0.05 legal loyalty, the group's readiness −0.05 for two months, and a real conflict raises the pressure.
+choose-if: {! return PolishProjects.optionStatus(Q, 'military_policy', 'personnel_changes').available !}
+unavailable-subtitle: [+ pl_military_policy_personnel_changes_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'military_policy', 'personnel_changes');
+!}
+go-to: result
+
+@organizational_compromise
+title: Prepare an organisational compromise limiting the reform
+subtitle: A law with army 0, then 1 B for two months; the group gains +0.025 of legal loyalty.
+choose-if: {! return PolishProjects.optionStatus(Q, 'military_policy', 'organizational_compromise').available !}
+unavailable-subtitle: [+ pl_military_policy_organizational_compromise_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'military_policy', 'organizational_compromise');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= Military affairs
+
+[+ pl_gc_result +]
+
+- @root: Continue.

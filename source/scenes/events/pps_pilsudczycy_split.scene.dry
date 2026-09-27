@@ -2,7 +2,7 @@ title: Piłsudczycy leave the PPS
 subtitle: The Piłsudski-oriented current breaks with the party.
 new-page: true
 tags: event
-view-if: polish_faction_system and pilsudczycy_dissent >= 60 and not pilsudczycy_split
+view-if: not polish_party_rules and (polish_faction_system and pilsudczycy_dissent >= 60 and not pilsudczycy_split)
 on-arrival: {!
 Q.pilsudczycy_split = 1;
 Q.pilsudczycy_strength /= 2;

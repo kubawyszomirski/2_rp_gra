@@ -1,0 +1,4115 @@
+{
+  "scope": "M02 step 1: isolated consent calculations; NOT an integrated campaign",
+  "hashes": {
+    "docs/POLISH_TECHNICAL_REFERENCE.md": "8aba6f238f43c61b53eecb1e52c13903a7661bf426453fe6033fc633da68aaa4",
+    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "2402955a7669c2ad1bfd208ba3e4b704ab79574304554f4b51576fcf2195b42e",
+    "analysis/m02-revision-13/results.json": "1cfb49e3e0184379412a1268b331abb677ada8c6006ac6d9d0047094f864d5fe",
+    "analysis/m02-revision-13/monthly.csv": "843ffa5512922c53997a53d5e2b2473ae6804dd7be36d42589f8d9aba088ae6d"
+  },
+  "assumptions": [
+    "Programme fiscal=0 is the narrow financed broad-government minimum; fiscal=+2 is the PPS wealth-burden package; Witos offers fiscal=-1 and compensated land=0.",
+    "Grabski fiscal ideal +1, direct PPS relation 50 and a solvent legal stabilization mandate are explicit new synthetic P inputs. His availability/contact does not use PPS-Piast relations. A separate fiscal=0 sensitivity case shows dependence on this missing profile.",
+    "Skrzynski fiscal ideal 0 and neutral direct relation 50 are P; his mandate requires PPS participation and the funded broad minimum. Appointment still needs all party consents.",
+    "Credibility is held at 50, breaches at zero. Earlier replays do not supply a partner-specific reputation ledger. No free +3 for every cabinet project.",
+    "The NPR economic fallback requires full welfare and independent unions, and is a new P offer profile, not another ministry.",
+    "Other governments and a prepared Witos offer are explicit available alternatives; they need hard political availability, programme, offices and potential votes. Their base scores are not supplied accept=true flags.",
+    "The Witos initiative and willingness of Piast to propose its own programme are context inputs, just as PPS choosing to submit its own offer. Scheduling that initiative is step 2.",
+    "Grabski programme acceptance does not establish a tax majority; separate financier and legal consent remain necessary. Test shows refusals of three crucial tax voters.",
+    "Finance and institutional authority for already authorized broad-cabinet policies are controlled preconditions. This calculation does not invent a Senate vote or private lender approval.",
+    "Prepared C/H add player actions to the earlier plans; they are counterfactual offer checks, not replays of the old action schedules. Advisor eligibility, pinning and cooldown still apply.",
+    "Review calculations use archived April states conditionally on a coalition having formed; earlier rows cannot remain a proven campaign after a failed November offer."
+  ],
+  "forecast": 1.8366716175394773,
+  "ministries": {
+    "labor": "pps",
+    "agriculture": "piast",
+    "economic": "npr",
+    "justice": "pschd",
+    "finance": "zln"
+  },
+  "reports": [
+    {
+      "id": "grabski_prepared",
+      "label": "Grabski: osłony i podatek majątkowy, przygotowane PPS",
+      "input": {
+        "actor": "grabski",
+        "relation": 50,
+        "programme": {
+          "fiscal": 2
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "grabski",
+            "relation": 50,
+            "programme": {
+              "fiscal": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "expert_continuation",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "apparatus2": true,
+          "unionReach40": true,
+          "directRelation40": true,
+          "candidateMandate": true,
+          "fullFunding": true
+        },
+        "crisisCooperation": 15
+      },
+      "result": {
+        "programFit": 75,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 63.75,
+        "bestAlternativeScore": 70.83333333333334,
+        "need": 44.16666666666666,
+        "score": 68.16666666666667,
+        "failedGates": [],
+        "accepted": true,
+        "alternatives": [
+          {
+            "id": "expert_continuation",
+            "hardFeasible": true,
+            "programFit": 75,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 63.75
+          }
+        ]
+      }
+    },
+    {
+      "id": "grabski_unprepared",
+      "label": "Grabski: ta sama oferta bez organizacji",
+      "input": {
+        "actor": "grabski",
+        "relation": 50,
+        "programme": {
+          "fiscal": 2
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "grabski",
+            "relation": 50,
+            "programme": {
+              "fiscal": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "expert_continuation",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "apparatus2": false,
+          "unionReach40": false,
+          "directRelation40": true,
+          "candidateMandate": true,
+          "fullFunding": true
+        },
+        "crisisCooperation": 15
+      },
+      "result": {
+        "programFit": 75,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 63.75,
+        "bestAlternativeScore": 70.83333333333334,
+        "need": 44.16666666666666,
+        "score": 68.16666666666667,
+        "failedGates": [
+          "apparatus2",
+          "unionReach40"
+        ],
+        "accepted": false,
+        "alternatives": [
+          {
+            "id": "expert_continuation",
+            "hardFeasible": true,
+            "programFit": 75,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 63.75
+          }
+        ]
+      }
+    },
+    {
+      "id": "grabski_no_funding",
+      "label": "Grabski: brak wykonalnego finansowania",
+      "input": {
+        "actor": "grabski",
+        "relation": 50,
+        "programme": {
+          "fiscal": 2
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "grabski",
+            "relation": 50,
+            "programme": {
+              "fiscal": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "expert_continuation",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "apparatus2": true,
+          "unionReach40": true,
+          "directRelation40": true,
+          "candidateMandate": true,
+          "fullFunding": false
+        },
+        "crisisCooperation": 15
+      },
+      "result": {
+        "programFit": 75,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 63.75,
+        "bestAlternativeScore": 70.83333333333334,
+        "need": 44.16666666666666,
+        "score": 68.16666666666667,
+        "failedGates": [
+          "fullFunding"
+        ],
+        "accepted": false,
+        "alternatives": [
+          {
+            "id": "expert_continuation",
+            "hardFeasible": true,
+            "programFit": 75,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 63.75
+          }
+        ]
+      }
+    },
+    {
+      "id": "grabski_expired_crisis",
+      "label": "Grabski: ta sama oferta po ustaniu premii kryzysowej",
+      "input": {
+        "actor": "grabski",
+        "relation": 50,
+        "programme": {
+          "fiscal": 2
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "grabski",
+            "relation": 50,
+            "programme": {
+              "fiscal": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "expert_continuation",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "apparatus2": true,
+          "unionReach40": true,
+          "directRelation40": true,
+          "candidateMandate": true,
+          "fullFunding": true
+        },
+        "crisisCooperation": 0
+      },
+      "result": {
+        "programFit": 75,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 63.75,
+        "bestAlternativeScore": 70.83333333333334,
+        "need": 29.166666666666657,
+        "score": 66.66666666666667,
+        "failedGates": [],
+        "accepted": true,
+        "alternatives": [
+          {
+            "id": "expert_continuation",
+            "hardFeasible": true,
+            "programFit": 75,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 63.75
+          }
+        ]
+      }
+    },
+    {
+      "id": "grabski_neutral_profile",
+      "label": "Grabski: wrażliwość na ideał fiscal=0 zamiast +1",
+      "input": {
+        "actor": "grabski_neutral_fiscal",
+        "relation": 50,
+        "programme": {
+          "fiscal": 2
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "grabski_neutral_fiscal",
+            "relation": 50,
+            "programme": {
+              "fiscal": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "expert_continuation",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "apparatus2": true,
+          "unionReach40": true,
+          "directRelation40": true,
+          "candidateMandate": true,
+          "fullFunding": true
+        },
+        "crisisCooperation": 15
+      },
+      "result": {
+        "programFit": 50,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 55,
+        "bestAlternativeScore": 80.55555555555556,
+        "need": 34.44444444444444,
+        "score": 58.44444444444444,
+        "failedGates": [],
+        "accepted": false,
+        "alternatives": [
+          {
+            "id": "expert_continuation",
+            "hardFeasible": true,
+            "programFit": 100,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 72.5
+          }
+        ]
+      }
+    },
+    {
+      "id": "tax_piast",
+      "label": "Głos finansowy: piast, fiscal=+2",
+      "input": {
+        "actor": "piast",
+        "relation": 50,
+        "programme": {
+          "fiscal": 2
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "piast",
+            "relation": 50,
+            "programme": {
+              "fiscal": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "expert_continuation",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "legalProgramme": true
+        }
+      },
+      "result": {
+        "programFit": 50,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 55,
+        "bestAlternativeScore": 80.55555555555556,
+        "need": 19.444444444444443,
+        "score": 56.94444444444444,
+        "failedGates": [],
+        "accepted": false,
+        "alternatives": [
+          {
+            "id": "expert_continuation",
+            "hardFeasible": true,
+            "programFit": 100,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 72.5
+          }
+        ]
+      }
+    },
+    {
+      "id": "tax_npr",
+      "label": "Głos finansowy: npr, fiscal=+2",
+      "input": {
+        "actor": "npr",
+        "relation": 50,
+        "programme": {
+          "fiscal": 2
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "npr",
+            "relation": 50,
+            "programme": {
+              "fiscal": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "expert_continuation",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "legalProgramme": true
+        }
+      },
+      "result": {
+        "programFit": 50,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 55,
+        "bestAlternativeScore": 80.55555555555556,
+        "need": 19.444444444444443,
+        "score": 56.94444444444444,
+        "failedGates": [],
+        "accepted": false,
+        "alternatives": [
+          {
+            "id": "expert_continuation",
+            "hardFeasible": true,
+            "programFit": 100,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 72.5
+          }
+        ]
+      }
+    },
+    {
+      "id": "tax_pschd",
+      "label": "Głos finansowy: pschd, fiscal=+2",
+      "input": {
+        "actor": "pschd",
+        "relation": 50,
+        "programme": {
+          "fiscal": 2
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "pschd",
+            "relation": 50,
+            "programme": {
+              "fiscal": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "expert_continuation",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "legalProgramme": true
+        }
+      },
+      "result": {
+        "programFit": 25,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 46.25,
+        "bestAlternativeScore": 70.83333333333334,
+        "need": 29.166666666666657,
+        "score": 49.166666666666664,
+        "failedGates": [],
+        "accepted": false,
+        "alternatives": [
+          {
+            "id": "expert_continuation",
+            "hardFeasible": true,
+            "programFit": 75,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 63.75
+          }
+        ]
+      }
+    },
+    {
+      "id": "skrzynski_candidate",
+      "label": "Skrzyński: przyjęcie kandydatury z pełnym minimum",
+      "input": {
+        "actor": "skrzynski",
+        "relation": 50,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "skrzynski",
+            "relation": 50,
+            "programme": {
+              "fiscal": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "expert_continuation",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "ppsJoins": true,
+          "creditCrisis": true,
+          "fundedMinimum": true
+        }
+      },
+      "result": {
+        "programFit": 100,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 72.5,
+        "bestAlternativeScore": 80.55555555555556,
+        "need": 19.444444444444443,
+        "score": 74.44444444444444,
+        "failedGates": [],
+        "accepted": true,
+        "alternatives": [
+          {
+            "id": "expert_continuation",
+            "hardFeasible": true,
+            "programFit": 100,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 72.5
+          }
+        ]
+      }
+    },
+    {
+      "id": "broad_C_false_0_0_false_piast",
+      "label": "Skrzyński C: piast; NPR economic=false, doradca=0, kontakty ZLN=0, brak alternatywy=false",
+      "input": {
+        "actor": "piast",
+        "relation": 53,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "piast",
+            "relation": 50,
+            "programme": {
+              "fiscal": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "expert_continuation",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "creditCrisis": true,
+          "minimumProgramme": true,
+          "noRedLine": true,
+          "ownMinistry": true,
+          "finance": true
+        },
+        "advisorBonus": 0,
+        "crisisCooperation": 0
+      },
+      "result": {
+        "programFit": 100,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 73.25,
+        "bestAlternativeScore": 80.55555555555556,
+        "need": 19.444444444444443,
+        "score": 75.19444444444444,
+        "failedGates": [],
+        "accepted": true,
+        "alternatives": [
+          {
+            "id": "expert_continuation",
+            "hardFeasible": true,
+            "programFit": 100,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 72.5
+          }
+        ]
+      }
+    },
+    {
+      "id": "broad_C_false_0_0_false_npr",
+      "label": "Skrzyński C: npr; NPR economic=false, doradca=0, kontakty ZLN=0, brak alternatywy=false",
+      "input": {
+        "actor": "npr",
+        "relation": 54,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": false
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "npr",
+            "relation": 50,
+            "programme": {
+              "fiscal": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "expert_continuation",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "creditCrisis": true,
+          "minimumProgramme": true,
+          "noRedLine": true,
+          "ownMinistry": false,
+          "finance": true
+        },
+        "advisorBonus": 0,
+        "crisisCooperation": 0
+      },
+      "result": {
+        "programFit": 100,
+        "portfolioFit": 0,
+        "breachPenalty": 0,
+        "base": 53.5,
+        "bestAlternativeScore": 80.55555555555556,
+        "need": 19.444444444444443,
+        "score": 55.44444444444444,
+        "failedGates": [
+          "ownMinistry"
+        ],
+        "accepted": false,
+        "alternatives": [
+          {
+            "id": "expert_continuation",
+            "hardFeasible": true,
+            "programFit": 100,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 72.5
+          }
+        ]
+      }
+    },
+    {
+      "id": "broad_C_false_0_0_false_pschd",
+      "label": "Skrzyński C: pschd; NPR economic=false, doradca=0, kontakty ZLN=0, brak alternatywy=false",
+      "input": {
+        "actor": "pschd",
+        "relation": 46,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "pschd",
+            "relation": 60,
+            "programme": {
+              "fiscal": -1,
+              "land": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "prepared_witos",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "creditCrisis": true,
+          "minimumProgramme": true,
+          "noRedLine": true,
+          "ownMinistry": true,
+          "finance": true
+        },
+        "advisorBonus": 0,
+        "crisisCooperation": 0
+      },
+      "result": {
+        "programFit": 75,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 62.75,
+        "bestAlternativeScore": 78.47222222222221,
+        "need": 21.527777777777786,
+        "score": 64.90277777777777,
+        "failedGates": [],
+        "accepted": true,
+        "alternatives": [
+          {
+            "id": "prepared_witos",
+            "hardFeasible": true,
+            "programFit": 87.5,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 70.625
+          }
+        ]
+      }
+    },
+    {
+      "id": "broad_C_false_0_0_false_zln",
+      "label": "Skrzyński C: zln; NPR economic=false, doradca=0, kontakty ZLN=0, brak alternatywy=false",
+      "input": {
+        "actor": "zln",
+        "relation": 25,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "zln",
+            "relation": 60,
+            "programme": {
+              "fiscal": -1,
+              "land": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "prepared_witos",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "creditCrisis": true,
+          "minimumProgramme": true,
+          "noRedLine": true,
+          "ownMinistry": true,
+          "finance": true
+        },
+        "advisorBonus": 0,
+        "crisisCooperation": 0
+      },
+      "result": {
+        "programFit": 75,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 57.5,
+        "bestAlternativeScore": 78.47222222222221,
+        "need": 21.527777777777786,
+        "score": 59.65277777777778,
+        "failedGates": [],
+        "accepted": false,
+        "alternatives": [
+          {
+            "id": "prepared_witos",
+            "hardFeasible": true,
+            "programFit": 87.5,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 70.625
+          }
+        ]
+      }
+    },
+    {
+      "id": "broad_H_false_0_0_false_piast",
+      "label": "Skrzyński H: piast; NPR economic=false, doradca=0, kontakty ZLN=0, brak alternatywy=false",
+      "input": {
+        "actor": "piast",
+        "relation": 53,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "piast",
+            "relation": 50,
+            "programme": {
+              "fiscal": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "expert_continuation",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "creditCrisis": true,
+          "minimumProgramme": true,
+          "noRedLine": true,
+          "ownMinistry": true,
+          "finance": true
+        },
+        "advisorBonus": 0,
+        "crisisCooperation": 0
+      },
+      "result": {
+        "programFit": 100,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 73.25,
+        "bestAlternativeScore": 80.55555555555556,
+        "need": 19.444444444444443,
+        "score": 75.19444444444444,
+        "failedGates": [],
+        "accepted": true,
+        "alternatives": [
+          {
+            "id": "expert_continuation",
+            "hardFeasible": true,
+            "programFit": 100,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 72.5
+          }
+        ]
+      }
+    },
+    {
+      "id": "broad_H_false_0_0_false_npr",
+      "label": "Skrzyński H: npr; NPR economic=false, doradca=0, kontakty ZLN=0, brak alternatywy=false",
+      "input": {
+        "actor": "npr",
+        "relation": 54,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": false
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "npr",
+            "relation": 50,
+            "programme": {
+              "fiscal": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "expert_continuation",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "creditCrisis": true,
+          "minimumProgramme": true,
+          "noRedLine": true,
+          "ownMinistry": false,
+          "finance": true
+        },
+        "advisorBonus": 0,
+        "crisisCooperation": 0
+      },
+      "result": {
+        "programFit": 100,
+        "portfolioFit": 0,
+        "breachPenalty": 0,
+        "base": 53.5,
+        "bestAlternativeScore": 80.55555555555556,
+        "need": 19.444444444444443,
+        "score": 55.44444444444444,
+        "failedGates": [
+          "ownMinistry"
+        ],
+        "accepted": false,
+        "alternatives": [
+          {
+            "id": "expert_continuation",
+            "hardFeasible": true,
+            "programFit": 100,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 72.5
+          }
+        ]
+      }
+    },
+    {
+      "id": "broad_H_false_0_0_false_pschd",
+      "label": "Skrzyński H: pschd; NPR economic=false, doradca=0, kontakty ZLN=0, brak alternatywy=false",
+      "input": {
+        "actor": "pschd",
+        "relation": 46,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "pschd",
+            "relation": 60,
+            "programme": {
+              "fiscal": -1,
+              "land": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "prepared_witos",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "creditCrisis": true,
+          "minimumProgramme": true,
+          "noRedLine": true,
+          "ownMinistry": true,
+          "finance": true
+        },
+        "advisorBonus": 0,
+        "crisisCooperation": 0
+      },
+      "result": {
+        "programFit": 75,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 62.75,
+        "bestAlternativeScore": 78.47222222222221,
+        "need": 21.527777777777786,
+        "score": 64.90277777777777,
+        "failedGates": [],
+        "accepted": true,
+        "alternatives": [
+          {
+            "id": "prepared_witos",
+            "hardFeasible": true,
+            "programFit": 87.5,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 70.625
+          }
+        ]
+      }
+    },
+    {
+      "id": "broad_H_false_0_0_false_zln",
+      "label": "Skrzyński H: zln; NPR economic=false, doradca=0, kontakty ZLN=0, brak alternatywy=false",
+      "input": {
+        "actor": "zln",
+        "relation": 5,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "zln",
+            "relation": 60,
+            "programme": {
+              "fiscal": -1,
+              "land": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "prepared_witos",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "creditCrisis": true,
+          "minimumProgramme": true,
+          "noRedLine": true,
+          "ownMinistry": true,
+          "finance": true
+        },
+        "advisorBonus": 0,
+        "crisisCooperation": 0
+      },
+      "result": {
+        "programFit": 75,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 52.5,
+        "bestAlternativeScore": 78.47222222222221,
+        "need": 21.527777777777786,
+        "score": 54.65277777777778,
+        "failedGates": [],
+        "accepted": false,
+        "alternatives": [
+          {
+            "id": "prepared_witos",
+            "hardFeasible": true,
+            "programFit": 87.5,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 70.625
+          }
+        ]
+      }
+    },
+    {
+      "id": "broad_C_true_0_0_false_piast",
+      "label": "Skrzyński C: piast; NPR economic=true, doradca=0, kontakty ZLN=0, brak alternatywy=false",
+      "input": {
+        "actor": "piast",
+        "relation": 53,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "piast",
+            "relation": 50,
+            "programme": {
+              "fiscal": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "expert_continuation",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "creditCrisis": true,
+          "minimumProgramme": true,
+          "noRedLine": true,
+          "ownMinistry": true,
+          "finance": true
+        },
+        "advisorBonus": 0,
+        "crisisCooperation": 0
+      },
+      "result": {
+        "programFit": 100,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 73.25,
+        "bestAlternativeScore": 80.55555555555556,
+        "need": 19.444444444444443,
+        "score": 75.19444444444444,
+        "failedGates": [],
+        "accepted": true,
+        "alternatives": [
+          {
+            "id": "expert_continuation",
+            "hardFeasible": true,
+            "programFit": 100,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 72.5
+          }
+        ]
+      }
+    },
+    {
+      "id": "broad_C_true_0_0_false_npr",
+      "label": "Skrzyński C: npr; NPR economic=true, doradca=0, kontakty ZLN=0, brak alternatywy=false",
+      "input": {
+        "actor": "npr",
+        "relation": 54,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "npr",
+            "relation": 50,
+            "programme": {
+              "fiscal": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "expert_continuation",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "creditCrisis": true,
+          "minimumProgramme": true,
+          "noRedLine": true,
+          "ownMinistry": true,
+          "finance": true
+        },
+        "advisorBonus": 0,
+        "crisisCooperation": 0
+      },
+      "result": {
+        "programFit": 100,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 73.5,
+        "bestAlternativeScore": 80.55555555555556,
+        "need": 19.444444444444443,
+        "score": 75.44444444444444,
+        "failedGates": [],
+        "accepted": true,
+        "alternatives": [
+          {
+            "id": "expert_continuation",
+            "hardFeasible": true,
+            "programFit": 100,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 72.5
+          }
+        ]
+      }
+    },
+    {
+      "id": "broad_C_true_0_0_false_pschd",
+      "label": "Skrzyński C: pschd; NPR economic=true, doradca=0, kontakty ZLN=0, brak alternatywy=false",
+      "input": {
+        "actor": "pschd",
+        "relation": 46,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "pschd",
+            "relation": 60,
+            "programme": {
+              "fiscal": -1,
+              "land": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "prepared_witos",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "creditCrisis": true,
+          "minimumProgramme": true,
+          "noRedLine": true,
+          "ownMinistry": true,
+          "finance": true
+        },
+        "advisorBonus": 0,
+        "crisisCooperation": 0
+      },
+      "result": {
+        "programFit": 75,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 62.75,
+        "bestAlternativeScore": 78.47222222222221,
+        "need": 21.527777777777786,
+        "score": 64.90277777777777,
+        "failedGates": [],
+        "accepted": true,
+        "alternatives": [
+          {
+            "id": "prepared_witos",
+            "hardFeasible": true,
+            "programFit": 87.5,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 70.625
+          }
+        ]
+      }
+    },
+    {
+      "id": "broad_C_true_0_0_false_zln",
+      "label": "Skrzyński C: zln; NPR economic=true, doradca=0, kontakty ZLN=0, brak alternatywy=false",
+      "input": {
+        "actor": "zln",
+        "relation": 25,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "zln",
+            "relation": 60,
+            "programme": {
+              "fiscal": -1,
+              "land": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "prepared_witos",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "creditCrisis": true,
+          "minimumProgramme": true,
+          "noRedLine": true,
+          "ownMinistry": true,
+          "finance": true
+        },
+        "advisorBonus": 0,
+        "crisisCooperation": 0
+      },
+      "result": {
+        "programFit": 75,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 57.5,
+        "bestAlternativeScore": 78.47222222222221,
+        "need": 21.527777777777786,
+        "score": 59.65277777777778,
+        "failedGates": [],
+        "accepted": false,
+        "alternatives": [
+          {
+            "id": "prepared_witos",
+            "hardFeasible": true,
+            "programFit": 87.5,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 70.625
+          }
+        ]
+      }
+    },
+    {
+      "id": "broad_H_true_0_0_false_piast",
+      "label": "Skrzyński H: piast; NPR economic=true, doradca=0, kontakty ZLN=0, brak alternatywy=false",
+      "input": {
+        "actor": "piast",
+        "relation": 53,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "piast",
+            "relation": 50,
+            "programme": {
+              "fiscal": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "expert_continuation",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "creditCrisis": true,
+          "minimumProgramme": true,
+          "noRedLine": true,
+          "ownMinistry": true,
+          "finance": true
+        },
+        "advisorBonus": 0,
+        "crisisCooperation": 0
+      },
+      "result": {
+        "programFit": 100,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 73.25,
+        "bestAlternativeScore": 80.55555555555556,
+        "need": 19.444444444444443,
+        "score": 75.19444444444444,
+        "failedGates": [],
+        "accepted": true,
+        "alternatives": [
+          {
+            "id": "expert_continuation",
+            "hardFeasible": true,
+            "programFit": 100,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 72.5
+          }
+        ]
+      }
+    },
+    {
+      "id": "broad_H_true_0_0_false_npr",
+      "label": "Skrzyński H: npr; NPR economic=true, doradca=0, kontakty ZLN=0, brak alternatywy=false",
+      "input": {
+        "actor": "npr",
+        "relation": 54,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "npr",
+            "relation": 50,
+            "programme": {
+              "fiscal": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "expert_continuation",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "creditCrisis": true,
+          "minimumProgramme": true,
+          "noRedLine": true,
+          "ownMinistry": true,
+          "finance": true
+        },
+        "advisorBonus": 0,
+        "crisisCooperation": 0
+      },
+      "result": {
+        "programFit": 100,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 73.5,
+        "bestAlternativeScore": 80.55555555555556,
+        "need": 19.444444444444443,
+        "score": 75.44444444444444,
+        "failedGates": [],
+        "accepted": true,
+        "alternatives": [
+          {
+            "id": "expert_continuation",
+            "hardFeasible": true,
+            "programFit": 100,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 72.5
+          }
+        ]
+      }
+    },
+    {
+      "id": "broad_H_true_0_0_false_pschd",
+      "label": "Skrzyński H: pschd; NPR economic=true, doradca=0, kontakty ZLN=0, brak alternatywy=false",
+      "input": {
+        "actor": "pschd",
+        "relation": 46,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "pschd",
+            "relation": 60,
+            "programme": {
+              "fiscal": -1,
+              "land": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "prepared_witos",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "creditCrisis": true,
+          "minimumProgramme": true,
+          "noRedLine": true,
+          "ownMinistry": true,
+          "finance": true
+        },
+        "advisorBonus": 0,
+        "crisisCooperation": 0
+      },
+      "result": {
+        "programFit": 75,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 62.75,
+        "bestAlternativeScore": 78.47222222222221,
+        "need": 21.527777777777786,
+        "score": 64.90277777777777,
+        "failedGates": [],
+        "accepted": true,
+        "alternatives": [
+          {
+            "id": "prepared_witos",
+            "hardFeasible": true,
+            "programFit": 87.5,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 70.625
+          }
+        ]
+      }
+    },
+    {
+      "id": "broad_H_true_0_0_false_zln",
+      "label": "Skrzyński H: zln; NPR economic=true, doradca=0, kontakty ZLN=0, brak alternatywy=false",
+      "input": {
+        "actor": "zln",
+        "relation": 5,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "zln",
+            "relation": 60,
+            "programme": {
+              "fiscal": -1,
+              "land": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "prepared_witos",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "creditCrisis": true,
+          "minimumProgramme": true,
+          "noRedLine": true,
+          "ownMinistry": true,
+          "finance": true
+        },
+        "advisorBonus": 0,
+        "crisisCooperation": 0
+      },
+      "result": {
+        "programFit": 75,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 52.5,
+        "bestAlternativeScore": 78.47222222222221,
+        "need": 21.527777777777786,
+        "score": 54.65277777777778,
+        "failedGates": [],
+        "accepted": false,
+        "alternatives": [
+          {
+            "id": "prepared_witos",
+            "hardFeasible": true,
+            "programFit": 87.5,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 70.625
+          }
+        ]
+      }
+    },
+    {
+      "id": "broad_C_true_0_1_false_piast",
+      "label": "Skrzyński C: piast; NPR economic=true, doradca=0, kontakty ZLN=1, brak alternatywy=false",
+      "input": {
+        "actor": "piast",
+        "relation": 53,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "piast",
+            "relation": 50,
+            "programme": {
+              "fiscal": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "expert_continuation",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "creditCrisis": true,
+          "minimumProgramme": true,
+          "noRedLine": true,
+          "ownMinistry": true,
+          "finance": true
+        },
+        "advisorBonus": 0,
+        "crisisCooperation": 0
+      },
+      "result": {
+        "programFit": 100,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 73.25,
+        "bestAlternativeScore": 80.55555555555556,
+        "need": 19.444444444444443,
+        "score": 75.19444444444444,
+        "failedGates": [],
+        "accepted": true,
+        "alternatives": [
+          {
+            "id": "expert_continuation",
+            "hardFeasible": true,
+            "programFit": 100,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 72.5
+          }
+        ]
+      }
+    },
+    {
+      "id": "broad_C_true_0_1_false_npr",
+      "label": "Skrzyński C: npr; NPR economic=true, doradca=0, kontakty ZLN=1, brak alternatywy=false",
+      "input": {
+        "actor": "npr",
+        "relation": 54,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "npr",
+            "relation": 50,
+            "programme": {
+              "fiscal": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "expert_continuation",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "creditCrisis": true,
+          "minimumProgramme": true,
+          "noRedLine": true,
+          "ownMinistry": true,
+          "finance": true
+        },
+        "advisorBonus": 0,
+        "crisisCooperation": 0
+      },
+      "result": {
+        "programFit": 100,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 73.5,
+        "bestAlternativeScore": 80.55555555555556,
+        "need": 19.444444444444443,
+        "score": 75.44444444444444,
+        "failedGates": [],
+        "accepted": true,
+        "alternatives": [
+          {
+            "id": "expert_continuation",
+            "hardFeasible": true,
+            "programFit": 100,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 72.5
+          }
+        ]
+      }
+    },
+    {
+      "id": "broad_C_true_0_1_false_pschd",
+      "label": "Skrzyński C: pschd; NPR economic=true, doradca=0, kontakty ZLN=1, brak alternatywy=false",
+      "input": {
+        "actor": "pschd",
+        "relation": 46,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "pschd",
+            "relation": 60,
+            "programme": {
+              "fiscal": -1,
+              "land": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "prepared_witos",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "creditCrisis": true,
+          "minimumProgramme": true,
+          "noRedLine": true,
+          "ownMinistry": true,
+          "finance": true
+        },
+        "advisorBonus": 0,
+        "crisisCooperation": 0
+      },
+      "result": {
+        "programFit": 75,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 62.75,
+        "bestAlternativeScore": 78.47222222222221,
+        "need": 21.527777777777786,
+        "score": 64.90277777777777,
+        "failedGates": [],
+        "accepted": true,
+        "alternatives": [
+          {
+            "id": "prepared_witos",
+            "hardFeasible": true,
+            "programFit": 87.5,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 70.625
+          }
+        ]
+      }
+    },
+    {
+      "id": "broad_C_true_0_1_false_zln",
+      "label": "Skrzyński C: zln; NPR economic=true, doradca=0, kontakty ZLN=1, brak alternatywy=false",
+      "input": {
+        "actor": "zln",
+        "relation": 29,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "zln",
+            "relation": 60,
+            "programme": {
+              "fiscal": -1,
+              "land": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "prepared_witos",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "creditCrisis": true,
+          "minimumProgramme": true,
+          "noRedLine": true,
+          "ownMinistry": true,
+          "finance": true
+        },
+        "advisorBonus": 0,
+        "crisisCooperation": 0
+      },
+      "result": {
+        "programFit": 75,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 58.5,
+        "bestAlternativeScore": 78.47222222222221,
+        "need": 21.527777777777786,
+        "score": 60.65277777777778,
+        "failedGates": [],
+        "accepted": true,
+        "alternatives": [
+          {
+            "id": "prepared_witos",
+            "hardFeasible": true,
+            "programFit": 87.5,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 70.625
+          }
+        ]
+      }
+    },
+    {
+      "id": "broad_H_true_5_1_false_piast",
+      "label": "Skrzyński H: piast; NPR economic=true, doradca=5, kontakty ZLN=1, brak alternatywy=false",
+      "input": {
+        "actor": "piast",
+        "relation": 53,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "piast",
+            "relation": 50,
+            "programme": {
+              "fiscal": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "expert_continuation",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "creditCrisis": true,
+          "minimumProgramme": true,
+          "noRedLine": true,
+          "ownMinistry": true,
+          "finance": true
+        },
+        "advisorBonus": 5,
+        "crisisCooperation": 0
+      },
+      "result": {
+        "programFit": 100,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 73.25,
+        "bestAlternativeScore": 80.55555555555556,
+        "need": 19.444444444444443,
+        "score": 80.19444444444444,
+        "failedGates": [],
+        "accepted": true,
+        "alternatives": [
+          {
+            "id": "expert_continuation",
+            "hardFeasible": true,
+            "programFit": 100,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 72.5
+          }
+        ]
+      }
+    },
+    {
+      "id": "broad_H_true_5_1_false_npr",
+      "label": "Skrzyński H: npr; NPR economic=true, doradca=5, kontakty ZLN=1, brak alternatywy=false",
+      "input": {
+        "actor": "npr",
+        "relation": 54,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "npr",
+            "relation": 50,
+            "programme": {
+              "fiscal": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "expert_continuation",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "creditCrisis": true,
+          "minimumProgramme": true,
+          "noRedLine": true,
+          "ownMinistry": true,
+          "finance": true
+        },
+        "advisorBonus": 5,
+        "crisisCooperation": 0
+      },
+      "result": {
+        "programFit": 100,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 73.5,
+        "bestAlternativeScore": 80.55555555555556,
+        "need": 19.444444444444443,
+        "score": 80.44444444444444,
+        "failedGates": [],
+        "accepted": true,
+        "alternatives": [
+          {
+            "id": "expert_continuation",
+            "hardFeasible": true,
+            "programFit": 100,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 72.5
+          }
+        ]
+      }
+    },
+    {
+      "id": "broad_H_true_5_1_false_pschd",
+      "label": "Skrzyński H: pschd; NPR economic=true, doradca=5, kontakty ZLN=1, brak alternatywy=false",
+      "input": {
+        "actor": "pschd",
+        "relation": 46,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "pschd",
+            "relation": 60,
+            "programme": {
+              "fiscal": -1,
+              "land": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "prepared_witos",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "creditCrisis": true,
+          "minimumProgramme": true,
+          "noRedLine": true,
+          "ownMinistry": true,
+          "finance": true
+        },
+        "advisorBonus": 5,
+        "crisisCooperation": 0
+      },
+      "result": {
+        "programFit": 75,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 62.75,
+        "bestAlternativeScore": 78.47222222222221,
+        "need": 21.527777777777786,
+        "score": 69.90277777777777,
+        "failedGates": [],
+        "accepted": true,
+        "alternatives": [
+          {
+            "id": "prepared_witos",
+            "hardFeasible": true,
+            "programFit": 87.5,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 70.625
+          }
+        ]
+      }
+    },
+    {
+      "id": "broad_H_true_5_1_false_zln",
+      "label": "Skrzyński H: zln; NPR economic=true, doradca=5, kontakty ZLN=1, brak alternatywy=false",
+      "input": {
+        "actor": "zln",
+        "relation": 9,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "zln",
+            "relation": 60,
+            "programme": {
+              "fiscal": -1,
+              "land": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "prepared_witos",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "creditCrisis": true,
+          "minimumProgramme": true,
+          "noRedLine": true,
+          "ownMinistry": true,
+          "finance": true
+        },
+        "advisorBonus": 5,
+        "crisisCooperation": 0
+      },
+      "result": {
+        "programFit": 75,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 53.5,
+        "bestAlternativeScore": 78.47222222222221,
+        "need": 21.527777777777786,
+        "score": 60.65277777777778,
+        "failedGates": [],
+        "accepted": true,
+        "alternatives": [
+          {
+            "id": "prepared_witos",
+            "hardFeasible": true,
+            "programFit": 87.5,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 70.625
+          }
+        ]
+      }
+    },
+    {
+      "id": "broad_H_true_0_0_true_piast",
+      "label": "Skrzyński H: piast; NPR economic=true, doradca=0, kontakty ZLN=0, brak alternatywy=true",
+      "input": {
+        "actor": "piast",
+        "relation": 53,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [],
+        "gates": {
+          "creditCrisis": true,
+          "minimumProgramme": true,
+          "noRedLine": true,
+          "ownMinistry": true,
+          "finance": true
+        },
+        "advisorBonus": 0,
+        "crisisCooperation": 0
+      },
+      "result": {
+        "programFit": 100,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 73.25,
+        "bestAlternativeScore": 0,
+        "need": 100,
+        "score": 83.25,
+        "failedGates": [],
+        "accepted": true,
+        "alternatives": []
+      }
+    },
+    {
+      "id": "broad_H_true_0_0_true_npr",
+      "label": "Skrzyński H: npr; NPR economic=true, doradca=0, kontakty ZLN=0, brak alternatywy=true",
+      "input": {
+        "actor": "npr",
+        "relation": 54,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [],
+        "gates": {
+          "creditCrisis": true,
+          "minimumProgramme": true,
+          "noRedLine": true,
+          "ownMinistry": true,
+          "finance": true
+        },
+        "advisorBonus": 0,
+        "crisisCooperation": 0
+      },
+      "result": {
+        "programFit": 100,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 73.5,
+        "bestAlternativeScore": 0,
+        "need": 100,
+        "score": 83.5,
+        "failedGates": [],
+        "accepted": true,
+        "alternatives": []
+      }
+    },
+    {
+      "id": "broad_H_true_0_0_true_pschd",
+      "label": "Skrzyński H: pschd; NPR economic=true, doradca=0, kontakty ZLN=0, brak alternatywy=true",
+      "input": {
+        "actor": "pschd",
+        "relation": 46,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [],
+        "gates": {
+          "creditCrisis": true,
+          "minimumProgramme": true,
+          "noRedLine": true,
+          "ownMinistry": true,
+          "finance": true
+        },
+        "advisorBonus": 0,
+        "crisisCooperation": 0
+      },
+      "result": {
+        "programFit": 75,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 62.75,
+        "bestAlternativeScore": 0,
+        "need": 100,
+        "score": 72.75,
+        "failedGates": [],
+        "accepted": true,
+        "alternatives": []
+      }
+    },
+    {
+      "id": "broad_H_true_0_0_true_zln",
+      "label": "Skrzyński H: zln; NPR economic=true, doradca=0, kontakty ZLN=0, brak alternatywy=true",
+      "input": {
+        "actor": "zln",
+        "relation": 5,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [],
+        "gates": {
+          "creditCrisis": true,
+          "minimumProgramme": true,
+          "noRedLine": true,
+          "ownMinistry": true,
+          "finance": true
+        },
+        "advisorBonus": 0,
+        "crisisCooperation": 0
+      },
+      "result": {
+        "programFit": 75,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 52.5,
+        "bestAlternativeScore": 0,
+        "need": 100,
+        "score": 62.5,
+        "failedGates": [],
+        "accepted": true,
+        "alternatives": []
+      }
+    },
+    {
+      "id": "keep_C_bargain_piast",
+      "label": "Osłony C, bargain: piast",
+      "input": {
+        "actor": "piast",
+        "relation": 53,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "piast",
+            "relation": 50,
+            "programme": {
+              "fiscal": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "expert_continuation",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "relationGate": true,
+          "finance": true,
+          "legalContinuation": true
+        },
+        "mode": "bargain"
+      },
+      "result": {
+        "programFit": 100,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 73.25,
+        "bestAlternativeScore": 80.55555555555556,
+        "need": 19.444444444444443,
+        "score": 75.19444444444444,
+        "failedGates": [],
+        "accepted": true,
+        "alternatives": [
+          {
+            "id": "expert_continuation",
+            "hardFeasible": true,
+            "programFit": 100,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 72.5
+          }
+        ]
+      }
+    },
+    {
+      "id": "keep_C_bargain_npr",
+      "label": "Osłony C, bargain: npr",
+      "input": {
+        "actor": "npr",
+        "relation": 54,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "npr",
+            "relation": 50,
+            "programme": {
+              "fiscal": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "expert_continuation",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "relationGate": true,
+          "finance": true,
+          "legalContinuation": true
+        },
+        "mode": "bargain"
+      },
+      "result": {
+        "programFit": 100,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 73.5,
+        "bestAlternativeScore": 80.55555555555556,
+        "need": 19.444444444444443,
+        "score": 75.44444444444444,
+        "failedGates": [],
+        "accepted": true,
+        "alternatives": [
+          {
+            "id": "expert_continuation",
+            "hardFeasible": true,
+            "programFit": 100,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 72.5
+          }
+        ]
+      }
+    },
+    {
+      "id": "keep_C_bargain_pschd",
+      "label": "Osłony C, bargain: pschd",
+      "input": {
+        "actor": "pschd",
+        "relation": 46,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "pschd",
+            "relation": 60,
+            "programme": {
+              "fiscal": -1,
+              "land": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "prepared_witos",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "relationGate": true,
+          "finance": true,
+          "legalContinuation": true
+        },
+        "mode": "bargain"
+      },
+      "result": {
+        "programFit": 75,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 62.75,
+        "bestAlternativeScore": 78.47222222222221,
+        "need": 21.527777777777786,
+        "score": 64.90277777777777,
+        "failedGates": [],
+        "accepted": true,
+        "alternatives": [
+          {
+            "id": "prepared_witos",
+            "hardFeasible": true,
+            "programFit": 87.5,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 70.625
+          }
+        ]
+      }
+    },
+    {
+      "id": "keep_C_bargain_zln",
+      "label": "Osłony C, bargain: zln",
+      "input": {
+        "actor": "zln",
+        "relation": 25,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "zln",
+            "relation": 60,
+            "programme": {
+              "fiscal": -1,
+              "land": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "prepared_witos",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "relationGate": true,
+          "finance": true,
+          "legalContinuation": true
+        },
+        "mode": "bargain"
+      },
+      "result": {
+        "programFit": 75,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 57.5,
+        "bestAlternativeScore": 78.47222222222221,
+        "need": 21.527777777777786,
+        "score": 59.65277777777778,
+        "failedGates": [],
+        "accepted": false,
+        "alternatives": [
+          {
+            "id": "prepared_witos",
+            "hardFeasible": true,
+            "programFit": 87.5,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 70.625
+          }
+        ]
+      }
+    },
+    {
+      "id": "keep_C+kontakt_bargain_piast",
+      "label": "Osłony C+kontakt, bargain: piast",
+      "input": {
+        "actor": "piast",
+        "relation": 53,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "piast",
+            "relation": 50,
+            "programme": {
+              "fiscal": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "expert_continuation",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "relationGate": true,
+          "finance": true,
+          "legalContinuation": true
+        },
+        "mode": "bargain"
+      },
+      "result": {
+        "programFit": 100,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 73.25,
+        "bestAlternativeScore": 80.55555555555556,
+        "need": 19.444444444444443,
+        "score": 75.19444444444444,
+        "failedGates": [],
+        "accepted": true,
+        "alternatives": [
+          {
+            "id": "expert_continuation",
+            "hardFeasible": true,
+            "programFit": 100,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 72.5
+          }
+        ]
+      }
+    },
+    {
+      "id": "keep_C+kontakt_bargain_npr",
+      "label": "Osłony C+kontakt, bargain: npr",
+      "input": {
+        "actor": "npr",
+        "relation": 54,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "npr",
+            "relation": 50,
+            "programme": {
+              "fiscal": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "expert_continuation",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "relationGate": true,
+          "finance": true,
+          "legalContinuation": true
+        },
+        "mode": "bargain"
+      },
+      "result": {
+        "programFit": 100,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 73.5,
+        "bestAlternativeScore": 80.55555555555556,
+        "need": 19.444444444444443,
+        "score": 75.44444444444444,
+        "failedGates": [],
+        "accepted": true,
+        "alternatives": [
+          {
+            "id": "expert_continuation",
+            "hardFeasible": true,
+            "programFit": 100,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 72.5
+          }
+        ]
+      }
+    },
+    {
+      "id": "keep_C+kontakt_bargain_pschd",
+      "label": "Osłony C+kontakt, bargain: pschd",
+      "input": {
+        "actor": "pschd",
+        "relation": 46,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "pschd",
+            "relation": 60,
+            "programme": {
+              "fiscal": -1,
+              "land": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "prepared_witos",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "relationGate": true,
+          "finance": true,
+          "legalContinuation": true
+        },
+        "mode": "bargain"
+      },
+      "result": {
+        "programFit": 75,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 62.75,
+        "bestAlternativeScore": 78.47222222222221,
+        "need": 21.527777777777786,
+        "score": 64.90277777777777,
+        "failedGates": [],
+        "accepted": true,
+        "alternatives": [
+          {
+            "id": "prepared_witos",
+            "hardFeasible": true,
+            "programFit": 87.5,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 70.625
+          }
+        ]
+      }
+    },
+    {
+      "id": "keep_C+kontakt_bargain_zln",
+      "label": "Osłony C+kontakt, bargain: zln",
+      "input": {
+        "actor": "zln",
+        "relation": 29,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "zln",
+            "relation": 60,
+            "programme": {
+              "fiscal": -1,
+              "land": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "prepared_witos",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "relationGate": true,
+          "finance": true,
+          "legalContinuation": true
+        },
+        "mode": "bargain"
+      },
+      "result": {
+        "programFit": 75,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 58.5,
+        "bestAlternativeScore": 78.47222222222221,
+        "need": 21.527777777777786,
+        "score": 60.65277777777778,
+        "failedGates": [],
+        "accepted": true,
+        "alternatives": [
+          {
+            "id": "prepared_witos",
+            "hardFeasible": true,
+            "programFit": 87.5,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 70.625
+          }
+        ]
+      }
+    },
+    {
+      "id": "keep_C_persuade_piast",
+      "label": "Osłony C, persuade: piast",
+      "input": {
+        "actor": "piast",
+        "relation": 53,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "piast",
+            "relation": 50,
+            "programme": {
+              "fiscal": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "expert_continuation",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "relationGate": true,
+          "finance": true,
+          "legalContinuation": true
+        },
+        "mode": "persuade"
+      },
+      "result": {
+        "programFit": 100,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 73.25,
+        "bestAlternativeScore": 80.55555555555556,
+        "need": 0,
+        "score": 73.25,
+        "failedGates": [],
+        "accepted": true,
+        "alternatives": [
+          {
+            "id": "expert_continuation",
+            "hardFeasible": true,
+            "programFit": 100,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 72.5
+          }
+        ]
+      }
+    },
+    {
+      "id": "keep_C_persuade_npr",
+      "label": "Osłony C, persuade: npr",
+      "input": {
+        "actor": "npr",
+        "relation": 54,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "npr",
+            "relation": 50,
+            "programme": {
+              "fiscal": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "expert_continuation",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "relationGate": true,
+          "finance": true,
+          "legalContinuation": true
+        },
+        "mode": "persuade"
+      },
+      "result": {
+        "programFit": 100,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 73.5,
+        "bestAlternativeScore": 80.55555555555556,
+        "need": 0,
+        "score": 73.5,
+        "failedGates": [],
+        "accepted": true,
+        "alternatives": [
+          {
+            "id": "expert_continuation",
+            "hardFeasible": true,
+            "programFit": 100,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 72.5
+          }
+        ]
+      }
+    },
+    {
+      "id": "keep_C_persuade_pschd",
+      "label": "Osłony C, persuade: pschd",
+      "input": {
+        "actor": "pschd",
+        "relation": 46,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "pschd",
+            "relation": 60,
+            "programme": {
+              "fiscal": -1,
+              "land": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "prepared_witos",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "relationGate": true,
+          "finance": true,
+          "legalContinuation": true
+        },
+        "mode": "persuade"
+      },
+      "result": {
+        "programFit": 75,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 62.75,
+        "bestAlternativeScore": 78.47222222222221,
+        "need": 0,
+        "score": 62.75,
+        "failedGates": [],
+        "accepted": true,
+        "alternatives": [
+          {
+            "id": "prepared_witos",
+            "hardFeasible": true,
+            "programFit": 87.5,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 70.625
+          }
+        ]
+      }
+    },
+    {
+      "id": "keep_C_persuade_zln",
+      "label": "Osłony C, persuade: zln",
+      "input": {
+        "actor": "zln",
+        "relation": 25,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "zln",
+            "relation": 60,
+            "programme": {
+              "fiscal": -1,
+              "land": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "prepared_witos",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "relationGate": true,
+          "finance": true,
+          "legalContinuation": true
+        },
+        "mode": "persuade"
+      },
+      "result": {
+        "programFit": 75,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 57.5,
+        "bestAlternativeScore": 78.47222222222221,
+        "need": 0,
+        "score": 57.5,
+        "failedGates": [],
+        "accepted": false,
+        "alternatives": [
+          {
+            "id": "prepared_witos",
+            "hardFeasible": true,
+            "programFit": 87.5,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 70.625
+          }
+        ]
+      }
+    },
+    {
+      "id": "keep_C+3kontakty_persuade_piast",
+      "label": "Osłony C+3kontakty, persuade: piast",
+      "input": {
+        "actor": "piast",
+        "relation": 53,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "piast",
+            "relation": 50,
+            "programme": {
+              "fiscal": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "expert_continuation",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "relationGate": true,
+          "finance": true,
+          "legalContinuation": true
+        },
+        "mode": "persuade"
+      },
+      "result": {
+        "programFit": 100,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 73.25,
+        "bestAlternativeScore": 80.55555555555556,
+        "need": 0,
+        "score": 73.25,
+        "failedGates": [],
+        "accepted": true,
+        "alternatives": [
+          {
+            "id": "expert_continuation",
+            "hardFeasible": true,
+            "programFit": 100,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 72.5
+          }
+        ]
+      }
+    },
+    {
+      "id": "keep_C+3kontakty_persuade_npr",
+      "label": "Osłony C+3kontakty, persuade: npr",
+      "input": {
+        "actor": "npr",
+        "relation": 54,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "npr",
+            "relation": 50,
+            "programme": {
+              "fiscal": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "expert_continuation",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "relationGate": true,
+          "finance": true,
+          "legalContinuation": true
+        },
+        "mode": "persuade"
+      },
+      "result": {
+        "programFit": 100,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 73.5,
+        "bestAlternativeScore": 80.55555555555556,
+        "need": 0,
+        "score": 73.5,
+        "failedGates": [],
+        "accepted": true,
+        "alternatives": [
+          {
+            "id": "expert_continuation",
+            "hardFeasible": true,
+            "programFit": 100,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 72.5
+          }
+        ]
+      }
+    },
+    {
+      "id": "keep_C+3kontakty_persuade_pschd",
+      "label": "Osłony C+3kontakty, persuade: pschd",
+      "input": {
+        "actor": "pschd",
+        "relation": 46,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "pschd",
+            "relation": 60,
+            "programme": {
+              "fiscal": -1,
+              "land": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "prepared_witos",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "relationGate": true,
+          "finance": true,
+          "legalContinuation": true
+        },
+        "mode": "persuade"
+      },
+      "result": {
+        "programFit": 75,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 62.75,
+        "bestAlternativeScore": 78.47222222222221,
+        "need": 0,
+        "score": 62.75,
+        "failedGates": [],
+        "accepted": true,
+        "alternatives": [
+          {
+            "id": "prepared_witos",
+            "hardFeasible": true,
+            "programFit": 87.5,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 70.625
+          }
+        ]
+      }
+    },
+    {
+      "id": "keep_C+3kontakty_persuade_zln",
+      "label": "Osłony C+3kontakty, persuade: zln",
+      "input": {
+        "actor": "zln",
+        "relation": 37,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "zln",
+            "relation": 60,
+            "programme": {
+              "fiscal": -1,
+              "land": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "prepared_witos",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "relationGate": true,
+          "finance": true,
+          "legalContinuation": true
+        },
+        "mode": "persuade"
+      },
+      "result": {
+        "programFit": 75,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 60.5,
+        "bestAlternativeScore": 78.47222222222221,
+        "need": 0,
+        "score": 60.5,
+        "failedGates": [],
+        "accepted": true,
+        "alternatives": [
+          {
+            "id": "prepared_witos",
+            "hardFeasible": true,
+            "programFit": 87.5,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 70.625
+          }
+        ]
+      }
+    },
+    {
+      "id": "keep_H_bargain_piast",
+      "label": "Osłony H, bargain: piast",
+      "input": {
+        "actor": "piast",
+        "relation": 53,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "piast",
+            "relation": 50,
+            "programme": {
+              "fiscal": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "expert_continuation",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "relationGate": false,
+          "finance": true,
+          "legalContinuation": true
+        },
+        "mode": "bargain"
+      },
+      "result": {
+        "programFit": 100,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 73.25,
+        "bestAlternativeScore": 80.55555555555556,
+        "need": 19.444444444444443,
+        "score": 75.19444444444444,
+        "failedGates": [
+          "relationGate"
+        ],
+        "accepted": false,
+        "alternatives": [
+          {
+            "id": "expert_continuation",
+            "hardFeasible": true,
+            "programFit": 100,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 72.5
+          }
+        ]
+      }
+    },
+    {
+      "id": "keep_H_bargain_npr",
+      "label": "Osłony H, bargain: npr",
+      "input": {
+        "actor": "npr",
+        "relation": 54,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "npr",
+            "relation": 50,
+            "programme": {
+              "fiscal": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "expert_continuation",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "relationGate": false,
+          "finance": true,
+          "legalContinuation": true
+        },
+        "mode": "bargain"
+      },
+      "result": {
+        "programFit": 100,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 73.5,
+        "bestAlternativeScore": 80.55555555555556,
+        "need": 19.444444444444443,
+        "score": 75.44444444444444,
+        "failedGates": [
+          "relationGate"
+        ],
+        "accepted": false,
+        "alternatives": [
+          {
+            "id": "expert_continuation",
+            "hardFeasible": true,
+            "programFit": 100,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 72.5
+          }
+        ]
+      }
+    },
+    {
+      "id": "keep_H_bargain_pschd",
+      "label": "Osłony H, bargain: pschd",
+      "input": {
+        "actor": "pschd",
+        "relation": 46,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "pschd",
+            "relation": 60,
+            "programme": {
+              "fiscal": -1,
+              "land": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "prepared_witos",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "relationGate": false,
+          "finance": true,
+          "legalContinuation": true
+        },
+        "mode": "bargain"
+      },
+      "result": {
+        "programFit": 75,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 62.75,
+        "bestAlternativeScore": 78.47222222222221,
+        "need": 21.527777777777786,
+        "score": 64.90277777777777,
+        "failedGates": [
+          "relationGate"
+        ],
+        "accepted": false,
+        "alternatives": [
+          {
+            "id": "prepared_witos",
+            "hardFeasible": true,
+            "programFit": 87.5,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 70.625
+          }
+        ]
+      }
+    },
+    {
+      "id": "keep_H_bargain_zln",
+      "label": "Osłony H, bargain: zln",
+      "input": {
+        "actor": "zln",
+        "relation": 5,
+        "programme": {
+          "fiscal": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "zln",
+            "relation": 60,
+            "programme": {
+              "fiscal": -1,
+              "land": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "prepared_witos",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "relationGate": false,
+          "finance": true,
+          "legalContinuation": true
+        },
+        "mode": "bargain"
+      },
+      "result": {
+        "programFit": 75,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 52.5,
+        "bestAlternativeScore": 78.47222222222221,
+        "need": 21.527777777777786,
+        "score": 54.65277777777778,
+        "failedGates": [
+          "relationGate"
+        ],
+        "accepted": false,
+        "alternatives": [
+          {
+            "id": "prepared_witos",
+            "hardFeasible": true,
+            "programFit": 87.5,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 70.625
+          }
+        ]
+      }
+    },
+    {
+      "id": "witos_pschd",
+      "label": "Witos: pschd",
+      "input": {
+        "actor": "pschd",
+        "relation": 60,
+        "programme": {
+          "fiscal": -1,
+          "land": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "pschd",
+            "relation": 50,
+            "programme": {
+              "fiscal": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "expert_continuation",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "candidateAvailable": true,
+          "legalProgramme": true,
+          "ownMinistry": true,
+          "noRedLine": true
+        }
+      },
+      "result": {
+        "programFit": 87.5,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 70.625,
+        "bestAlternativeScore": 70.83333333333334,
+        "need": 29.166666666666657,
+        "score": 73.54166666666667,
+        "failedGates": [],
+        "accepted": true,
+        "alternatives": [
+          {
+            "id": "expert_continuation",
+            "hardFeasible": true,
+            "programFit": 75,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 63.75
+          }
+        ]
+      }
+    },
+    {
+      "id": "witos_zln",
+      "label": "Witos: zln",
+      "input": {
+        "actor": "zln",
+        "relation": 60,
+        "programme": {
+          "fiscal": -1,
+          "land": 0
+        },
+        "credibility": 50,
+        "demands": [
+          {
+            "id": "specified_portfolio_or_execution",
+            "weight": 1,
+            "met": true
+          }
+        ],
+        "alternatives": [
+          {
+            "actor": "zln",
+            "relation": 50,
+            "programme": {
+              "fiscal": 0
+            },
+            "credibility": 50,
+            "demands": [
+              {
+                "id": "specified_portfolio_or_execution",
+                "weight": 1,
+                "met": true
+              }
+            ],
+            "alternatives": [],
+            "gates": {
+              "legalProgramme": true
+            },
+            "id": "expert_continuation",
+            "hardFeasible": true
+          }
+        ],
+        "gates": {
+          "candidateAvailable": true,
+          "legalProgramme": true,
+          "ownMinistry": true,
+          "noRedLine": true
+        }
+      },
+      "result": {
+        "programFit": 87.5,
+        "portfolioFit": 100,
+        "breachPenalty": 0,
+        "base": 70.625,
+        "bestAlternativeScore": 70.83333333333334,
+        "need": 29.166666666666657,
+        "score": 73.54166666666667,
+        "failedGates": [],
+        "accepted": true,
+        "alternatives": [
+          {
+            "id": "expert_continuation",
+            "hardFeasible": true,
+            "programFit": 75,
+            "portfolioFit": 100,
+            "breachPenalty": 0,
+            "base": 63.75
+          }
+        ]
+      }
+    }
+  ],
+  "vote": {
+    "yes": 230,
+    "no": 214,
+    "passes": true,
+    "condition": "Piast submits the offer; accepted partners commit to the replacement vote; all other MPs oppose."
+  },
+  "lostTen": {
+    "yes": 220,
+    "no": 224,
+    "passes": false
+  }
+}

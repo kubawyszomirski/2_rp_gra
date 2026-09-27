@@ -1,0 +1,355 @@
+title: Organisations of PPS
+subtitle: Up to two investments in one action: unions, press, TUR, Milicja or cooperatives.
+new-page: true
+is-card: true
+tags: party_affairs
+card-image: img/workers.jpg
+view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.organizationsAvailable(Q) !}
+on-arrival: {!
+// Card party.organizations (technical reference 13.5; card catalogue 5.1): one or two different
+// organisations, at most one package in each, one month and the sum of their R. Nothing is spent before
+// the confirmation; a missing R blocks the whole package, never half of it.
+PolishParty.organizationsView(Q);
+Q.pl_org_pick1 = '';
+Q.pl_org_pick2 = '';
+!}
+
+= Organisations of PPS
+
+PPS has [+ pl_org_cash +] R. Choose the first investment; a second one for another organisation can follow. The card itself costs one month and waits two months before it comes back.
+
+- @p1_union_organize_industry
+- @p1_union_organize_rail
+- @p1_union_organize_farm_labour
+- @p1_union_fund_industry
+- @p1_union_fund_rail
+- @p1_union_fund_farm_labour
+- @p1_press_distribution
+- @p1_tur
+- @p1_militia_recruit
+- @p1_militia_militarize
+- @p1_cooperative_workers
+- @p1_cooperative_rural
+- @easy_discard
+
+@p1_union_organize_industry
+title: Organise the industrial branch
+subtitle: 1 R; the branch’s reach +15 with the modifiers of the party’s character and TUR.
+choose-if: {! return PolishParty.packageStatus(Q, 'union_organize_industry', 0).available !}
+unavailable-subtitle: [+ pl_org_union_organize_industry_why +]
+on-arrival: {!
+Q.pl_org_pick1 = 'union_organize_industry';
+PolishParty.organizationsSecondView(Q, 'union_organize_industry');
+!}
+go-to: second
+
+@p1_union_organize_rail
+title: Organise the railway branch
+subtitle: 1 R; the branch’s reach +15 with modifiers.
+choose-if: {! return PolishParty.packageStatus(Q, 'union_organize_rail', 0).available !}
+unavailable-subtitle: [+ pl_org_union_organize_rail_why +]
+on-arrival: {!
+Q.pl_org_pick1 = 'union_organize_rail';
+PolishParty.organizationsSecondView(Q, 'union_organize_rail');
+!}
+go-to: second
+
+@p1_union_organize_farm_labour
+title: Organise agricultural labour
+subtitle: 1 R; the branch’s reach +15 with modifiers.
+choose-if: {! return PolishParty.packageStatus(Q, 'union_organize_farm_labour', 0).available !}
+unavailable-subtitle: [+ pl_org_union_organize_farm_labour_why +]
+on-arrival: {!
+Q.pl_org_pick1 = 'union_organize_farm_labour';
+PolishParty.organizationsSecondView(Q, 'union_organize_farm_labour');
+!}
+go-to: second
+
+@p1_union_fund_industry
+title: Support the industrial union fund
+subtitle: 1 R to the union; its money cannot be taken back.
+choose-if: {! return PolishParty.packageStatus(Q, 'union_fund_industry', 0).available !}
+unavailable-subtitle: [+ pl_org_union_fund_industry_why +]
+on-arrival: {!
+Q.pl_org_pick1 = 'union_fund_industry';
+PolishParty.organizationsSecondView(Q, 'union_fund_industry');
+!}
+go-to: second
+
+@p1_union_fund_rail
+title: Support the railway union fund
+subtitle: 1 R to the union.
+choose-if: {! return PolishParty.packageStatus(Q, 'union_fund_rail', 0).available !}
+unavailable-subtitle: [+ pl_org_union_fund_rail_why +]
+on-arrival: {!
+Q.pl_org_pick1 = 'union_fund_rail';
+PolishParty.organizationsSecondView(Q, 'union_fund_rail');
+!}
+go-to: second
+
+@p1_union_fund_farm_labour
+title: Support the agricultural union fund
+subtitle: 1 R to the union.
+choose-if: {! return PolishParty.packageStatus(Q, 'union_fund_farm_labour', 0).available !}
+unavailable-subtitle: [+ pl_org_union_fund_farm_labour_why +]
+on-arrival: {!
+Q.pl_org_pick1 = 'union_fund_farm_labour';
+PolishParty.organizationsSecondView(Q, 'union_fund_farm_labour');
+!}
+go-to: second
+
+@p1_press_distribution
+title: Extend the distribution of the press
+subtitle: 1 R; press reach +10.
+choose-if: {! return PolishParty.packageStatus(Q, 'press_distribution', 0).available !}
+unavailable-subtitle: [+ pl_org_press_distribution_why +]
+on-arrival: {!
+Q.pl_org_pick1 = 'press_distribution';
+PolishParty.organizationsSecondView(Q, 'press_distribution');
+!}
+go-to: second
+
+@p1_tur
+title: Start the next stage of TUR
+subtitle: 2 R; after two financed months TUR rises one level and gains 10 cadres.
+choose-if: {! return PolishParty.packageStatus(Q, 'tur', 0).available !}
+unavailable-subtitle: [+ pl_org_tur_why +]
+on-arrival: {!
+Q.pl_org_pick1 = 'tur';
+PolishParty.organizationsSecondView(Q, 'tur');
+!}
+go-to: second
+
+@p1_militia_recruit
+title: Recruit into Milicja
+subtitle: 1 R; +100 members; needs a reserve for three months of upkeep.
+choose-if: {! return PolishParty.packageStatus(Q, 'militia_recruit', 0).available !}
+unavailable-subtitle: [+ pl_org_militia_recruit_why +]
+on-arrival: {!
+Q.pl_org_pick1 = 'militia_recruit';
+PolishParty.organizationsSecondView(Q, 'militia_recruit');
+!}
+go-to: second
+
+@p1_militia_militarize
+title: Militarise Milicja
+subtitle: 2 R; efficiency +0.10, up to 0.70.
+choose-if: {! return PolishParty.packageStatus(Q, 'militia_militarize', 0).available !}
+unavailable-subtitle: [+ pl_org_militia_militarize_why +]
+on-arrival: {!
+Q.pl_org_pick1 = 'militia_militarize';
+PolishParty.organizationsSecondView(Q, 'militia_militarize');
+!}
+go-to: second
+
+@p1_cooperative_workers
+title: Prepare a workers’ consumer cooperative
+subtitle: 1 R; its launch waits in the party agenda (2 R).
+choose-if: {! return PolishParty.packageStatus(Q, 'cooperative_workers', 0).available !}
+unavailable-subtitle: [+ pl_org_cooperative_workers_why +]
+on-arrival: {!
+Q.pl_org_pick1 = 'cooperative_workers';
+PolishParty.organizationsSecondView(Q, 'cooperative_workers');
+!}
+go-to: second
+
+@p1_cooperative_rural
+title: Prepare a village cooperative of smallholders
+subtitle: 1 R; its launch waits in the party agenda (2 R).
+choose-if: {! return PolishParty.packageStatus(Q, 'cooperative_rural', 0).available !}
+unavailable-subtitle: [+ pl_org_cooperative_rural_why +]
+on-arrival: {!
+Q.pl_org_pick1 = 'cooperative_rural';
+PolishParty.organizationsSecondView(Q, 'cooperative_rural');
+!}
+go-to: second
+
+@second
+new-page: true
+
+= A second organisation
+
+You may add one investment for another organisation, for the same month. Nothing is spent until you confirm.
+
+- @p2_union_organize_industry
+- @p2_union_organize_rail
+- @p2_union_organize_farm_labour
+- @p2_union_fund_industry
+- @p2_union_fund_rail
+- @p2_union_fund_farm_labour
+- @p2_press_distribution
+- @p2_tur
+- @p2_militia_recruit
+- @p2_militia_militarize
+- @p2_cooperative_workers
+- @p2_cooperative_rural
+- @only_one
+- @polish_party_organizations: Choose again from the beginning.
+
+@p2_union_organize_industry
+title: Organise the industrial branch
+subtitle: 1 R; the branch’s reach +15 with the modifiers of the party’s character and TUR.
+choose-if: pl_org2_union_organize_industry_ok = 1
+unavailable-subtitle: [+ pl_org2_union_organize_industry_why +]
+on-arrival: {!
+Q.pl_org_pick2 = 'union_organize_industry';
+PolishParty.selectionSummary(Q, [Q.pl_org_pick1, Q.pl_org_pick2]);
+!}
+go-to: confirm
+
+@p2_union_organize_rail
+title: Organise the railway branch
+subtitle: 1 R; the branch’s reach +15 with modifiers.
+choose-if: pl_org2_union_organize_rail_ok = 1
+unavailable-subtitle: [+ pl_org2_union_organize_rail_why +]
+on-arrival: {!
+Q.pl_org_pick2 = 'union_organize_rail';
+PolishParty.selectionSummary(Q, [Q.pl_org_pick1, Q.pl_org_pick2]);
+!}
+go-to: confirm
+
+@p2_union_organize_farm_labour
+title: Organise agricultural labour
+subtitle: 1 R; the branch’s reach +15 with modifiers.
+choose-if: pl_org2_union_organize_farm_labour_ok = 1
+unavailable-subtitle: [+ pl_org2_union_organize_farm_labour_why +]
+on-arrival: {!
+Q.pl_org_pick2 = 'union_organize_farm_labour';
+PolishParty.selectionSummary(Q, [Q.pl_org_pick1, Q.pl_org_pick2]);
+!}
+go-to: confirm
+
+@p2_union_fund_industry
+title: Support the industrial union fund
+subtitle: 1 R to the union; its money cannot be taken back.
+choose-if: pl_org2_union_fund_industry_ok = 1
+unavailable-subtitle: [+ pl_org2_union_fund_industry_why +]
+on-arrival: {!
+Q.pl_org_pick2 = 'union_fund_industry';
+PolishParty.selectionSummary(Q, [Q.pl_org_pick1, Q.pl_org_pick2]);
+!}
+go-to: confirm
+
+@p2_union_fund_rail
+title: Support the railway union fund
+subtitle: 1 R to the union.
+choose-if: pl_org2_union_fund_rail_ok = 1
+unavailable-subtitle: [+ pl_org2_union_fund_rail_why +]
+on-arrival: {!
+Q.pl_org_pick2 = 'union_fund_rail';
+PolishParty.selectionSummary(Q, [Q.pl_org_pick1, Q.pl_org_pick2]);
+!}
+go-to: confirm
+
+@p2_union_fund_farm_labour
+title: Support the agricultural union fund
+subtitle: 1 R to the union.
+choose-if: pl_org2_union_fund_farm_labour_ok = 1
+unavailable-subtitle: [+ pl_org2_union_fund_farm_labour_why +]
+on-arrival: {!
+Q.pl_org_pick2 = 'union_fund_farm_labour';
+PolishParty.selectionSummary(Q, [Q.pl_org_pick1, Q.pl_org_pick2]);
+!}
+go-to: confirm
+
+@p2_press_distribution
+title: Extend the distribution of the press
+subtitle: 1 R; press reach +10.
+choose-if: pl_org2_press_distribution_ok = 1
+unavailable-subtitle: [+ pl_org2_press_distribution_why +]
+on-arrival: {!
+Q.pl_org_pick2 = 'press_distribution';
+PolishParty.selectionSummary(Q, [Q.pl_org_pick1, Q.pl_org_pick2]);
+!}
+go-to: confirm
+
+@p2_tur
+title: Start the next stage of TUR
+subtitle: 2 R; after two financed months TUR rises one level and gains 10 cadres.
+choose-if: pl_org2_tur_ok = 1
+unavailable-subtitle: [+ pl_org2_tur_why +]
+on-arrival: {!
+Q.pl_org_pick2 = 'tur';
+PolishParty.selectionSummary(Q, [Q.pl_org_pick1, Q.pl_org_pick2]);
+!}
+go-to: confirm
+
+@p2_militia_recruit
+title: Recruit into Milicja
+subtitle: 1 R; +100 members; needs a reserve for three months of upkeep.
+choose-if: pl_org2_militia_recruit_ok = 1
+unavailable-subtitle: [+ pl_org2_militia_recruit_why +]
+on-arrival: {!
+Q.pl_org_pick2 = 'militia_recruit';
+PolishParty.selectionSummary(Q, [Q.pl_org_pick1, Q.pl_org_pick2]);
+!}
+go-to: confirm
+
+@p2_militia_militarize
+title: Militarise Milicja
+subtitle: 2 R; efficiency +0.10, up to 0.70.
+choose-if: pl_org2_militia_militarize_ok = 1
+unavailable-subtitle: [+ pl_org2_militia_militarize_why +]
+on-arrival: {!
+Q.pl_org_pick2 = 'militia_militarize';
+PolishParty.selectionSummary(Q, [Q.pl_org_pick1, Q.pl_org_pick2]);
+!}
+go-to: confirm
+
+@p2_cooperative_workers
+title: Prepare a workers’ consumer cooperative
+subtitle: 1 R; its launch waits in the party agenda (2 R).
+choose-if: pl_org2_cooperative_workers_ok = 1
+unavailable-subtitle: [+ pl_org2_cooperative_workers_why +]
+on-arrival: {!
+Q.pl_org_pick2 = 'cooperative_workers';
+PolishParty.selectionSummary(Q, [Q.pl_org_pick1, Q.pl_org_pick2]);
+!}
+go-to: confirm
+
+@p2_cooperative_rural
+title: Prepare a village cooperative of smallholders
+subtitle: 1 R; its launch waits in the party agenda (2 R).
+choose-if: pl_org2_cooperative_rural_ok = 1
+unavailable-subtitle: [+ pl_org2_cooperative_rural_why +]
+on-arrival: {!
+Q.pl_org_pick2 = 'cooperative_rural';
+PolishParty.selectionSummary(Q, [Q.pl_org_pick1, Q.pl_org_pick2]);
+!}
+go-to: confirm
+
+@only_one
+title: Invest only in the first organisation
+on-arrival: {!
+Q.pl_org_pick2 = '';
+PolishParty.selectionSummary(Q, [Q.pl_org_pick1]);
+!}
+go-to: confirm
+
+@confirm
+new-page: true
+
+= Confirm the investment
+
+[+ pl_org_summary +]
+
+- @do_confirm
+- @polish_party_organizations: Choose again from the beginning.
+
+@do_confirm
+title: Confirm
+choose-if: {! return PolishParty.selectionStatus(Q, [Q.pl_org_pick1].concat(Q.pl_org_pick2 ? [Q.pl_org_pick2] : [])).available !}
+unavailable-subtitle: [+ pl_org_confirm_why +]
+on-arrival: {!
+PolishParty.organizationsChoose(Q, [Q.pl_org_pick1].concat(Q.pl_org_pick2 ? [Q.pl_org_pick2] : []));
+!}
+go-to: result
+
+@result
+new-page: true
+
+= Organisations of PPS
+
+[+ pl_party_result +]
+
+- @root: Continue.

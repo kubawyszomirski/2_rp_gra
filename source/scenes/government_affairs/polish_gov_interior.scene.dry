@@ -1,0 +1,91 @@
+title: Police and Internal Security
+subtitle: The Interior: the police, the investigation of named violence, protection, and a limited autonomy.
+new-page: true
+is-card: true
+tags: govt_affairs
+card-image: img/protest.jpg
+view-if: {! return !!Q.S && !!Q.polish_security_rules && PolishProjects.cardAvailable(Q, 'internal_security') !}
+on-arrival: {!
+// Card government.internal_security (technical reference 16.3, 17.12.2, 17.12.6; card catalogue 8.12). Opening and
+// closing the card are free; a confirmed option costs this month's action. The police stay an organ of the state:
+// a change of government neither undoes the training nor makes them an organisation of PPS.
+PolishProjects.cardView(Q, 'internal_security');
+Q.pl_police_line = PolishSecurity.policeLine(Q);
+!}
+
+= Police and internal security
+
+[+ pl_police_line +]
+
+An investigation names a recorded case; its label points to the case, not to a proof of guilt. The autonomy delegates schools, the official language and cultural institutions of one area to its self-government; it is an alternative of the game.
+
+[+ pl_gc_budget +]
+
+[+ pl_gc_projects +]
+
+- @professionalization
+- @investigate_far_right
+- @investigate_communist
+- @police_protection
+- @limited_autonomy
+- @easy_discard
+- @cancel_advisor_action
+
+@professionalization
+title: Professionalise the police and subordinate it to lawful authorities
+subtitle: 1 B for three months; then command and lawful compliance +10, once in the chapter.
+choose-if: {! return PolishProjects.optionStatus(Q, 'internal_security', 'professionalization').available !}
+unavailable-subtitle: [+ pl_internal_security_professionalization_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'internal_security', 'professionalization');
+!}
+go-to: result
+
+@investigate_far_right
+title: Investigate the named violence of the far right
+subtitle: 1 B for one month; needs a recorded case. A confirmed investigation assigns the case to a party.
+choose-if: {! return PolishProjects.optionStatus(Q, 'internal_security', 'investigate_far_right').available !}
+unavailable-subtitle: [+ pl_internal_security_investigate_far_right_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'internal_security', 'investigate_far_right');
+!}
+go-to: result
+
+@investigate_communist
+title: Investigate the named violence of the communists
+subtitle: 1 B for one month; needs a recorded case. A confirmed investigation assigns the case to a party.
+choose-if: {! return PolishProjects.optionStatus(Q, 'internal_security', 'investigate_communist').available !}
+unavailable-subtitle: [+ pl_internal_security_investigate_communist_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'internal_security', 'investigate_communist');
+!}
+go-to: result
+
+@police_protection
+title: Protect a named gathering or institution
+subtitle: 1 B for one month; the capacity of protection of this case +10 times its execution, this month.
+choose-if: {! return PolishProjects.optionStatus(Q, 'internal_security', 'police_protection').available !}
+unavailable-subtitle: [+ pl_internal_security_police_protection_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'internal_security', 'police_protection');
+!}
+go-to: result
+
+@limited_autonomy
+title: Prepare a limited autonomy of one area
+subtitle: Needs an agreed point with the representation of the other minorities; a law, then 1 B for three months.
+choose-if: {! return PolishProjects.optionStatus(Q, 'internal_security', 'limited_autonomy').available !}
+unavailable-subtitle: [+ pl_internal_security_limited_autonomy_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'internal_security', 'limited_autonomy');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= Police and internal security
+
+[+ pl_gc_result +]
+
+- @root: Continue.

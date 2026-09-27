@@ -6,7 +6,7 @@ go-to: menu
 
 = The Library
 
-This library is in transition. The Polish January 1922 opening government and simplified parliament, November 1922 election with exact seats, December 1922 presidential succession, player party, population model, PPS factions, advisers and self-defence organization are implemented. Later governments, most other organizations, most cards and dated events remain an unfinished, mixed baseline.
+This library is in transition. The Polish January 1922 opening government and simplified parliament, November 1922 election with exact seats, December 1922 Marshal and presidential elections, the legal calendar to the next election and the chapter report, negotiated cabinets with their nine portfolios, agreements, support for the government and electoral lists, the Polish economy with its budget, projects, laws and state cards, player party, population model, PPS factions, advisers and self-defence organization are implemented. Party organisations, unions and strikes, democracy, state forces, most other cards and dated events remain an unfinished, mixed baseline.
 
 @menu
 
@@ -38,9 +38,11 @@ The opening **444-MP** parliament is an approved simplification: rounded August 
 
 **Implemented parliamentary election:** November 1922, 444 Sejm MPs, a 223-MP majority and the approved national seat heuristic. ChZJN combines ZLN and PSChD votes and seats for display, while its constituent parties remain separate. Voting and government formation take place within one monthly sequence.
 
-**Implemented presidential succession:** the December sequence uses the March Constitution's National Assembly procedure, fixed historical final ballots, Piłsudski's transfer to Narutowicz, Narutowicz's assassination and Wojciechowski's election. A proportional 111-seat Senate snapshot is created only for the 555-member Assembly; no general Senate mechanic exists. The approved compression omits the brief acting presidency. See the dedicated presidency page.
+**Implemented December offices:** the new Sejm elects its Marshal, then the National Assembly elects the President under the March Constitution's procedure. The clubs' votes decide both offices, using an approved test profile of each club's acceptable candidates; only the final ballot is shown and an exact tie between two finalists is decided by a recorded lot. The historical threat branch — the assassination of Narutowicz — happens only if Narutowicz is elected; the Marshal then substitutes for the President. The Senate's 111 seats are derived once from the Sejm result (sejm_proxy_v1, a simplification). See the dedicated presidency page.
 
-**Planned, not implemented:** subsequent presidential elections and historical cabinets. The next parliamentary date after November is temporarily May 1928; inherited events can alter later dates. Continuation elections use the same seat calculation, without pretending to implement later Polish chronology or alliances. There is no campaign cutoff.
+**Legal calendar and the end of the chapter:** there are no early elections without a lawful act. The Sejm's five-year term runs from 28 November 1922; in the game's default calendar the next election is on Sunday 19 February 1928 (not the historical election date). It uses the same seat calculation without German thresholds or bans, and its certified result ends the chapter with a report, before a new government is formed.
+
+**Planned, not implemented:** electoral alliances beyond the first ChZJN list, historical cabinets and later presidential elections.
 
 **Approved election design:** the national vote-to-seat multipliers are 0.25 below 2%, 0.55 from 2%, 0.85 from 5%, 1.025 from 10%, 1.10 from 15%, and 1.25 from 25%. Weighted totals are normalized before whole seats are allocated by largest remainders. The user supplied/confirmed this calibration. These are gameplay rules, not the historical district law. There is no geographic model. Inne is split into 2% anonymous lists plus any smaller remainder, not counted as one electoral alliance. ChZJN seats are attributed to ZLN and PSChD proportionally to their support at the election.
 
@@ -58,17 +60,21 @@ Under the March Constitution, the Sejm and Senate elect the President together a
 
 [? if sejm_first_election_completed and not polish_first_presidential_election_recorded : The mandatory December 1922 presidential sequence has not yet begun. ?]
 
+[? if sejm_first_election_completed : Marshal of the Sejm: [+ pl_speaker_display +]. ?]
+
 [? if polish_presidential_in_progress : The December sequence is in progress and will resume from its saved phase. ?]
 
-[? if national_assembly_total > 0 : **Gameplay Assembly:** 444 Sejm MPs plus a proportional 111-seat Senate snapshot, for **[+ national_assembly_total +] members**. This does not implement a permanent Senate chamber. Fixed historical ballots are not recalculated from this simplified composition. ?]
+[? if national_assembly_total > 0 : **Gameplay Assembly:** 444 Sejm MPs plus the 111 recorded senators, for **[+ national_assembly_total +] members**. The Senate is derived once from the Sejm result; it is a simplification, not a separate campaign. ?]
 
-[? if polish_first_presidential_election_recorded : **Final ballot, 9 December 1922:** Gabriel Narutowicz — 289 votes (PSL Wyzwolenie, PPS, most of PSL Piast, Blok Mniejszości Narodowych and part of NPR); Maurycy Zamoyski — 227 votes (ZLN and PSChD within ChZJN, with other right-wing parliamentarians). There were 29 blank ballots. Narutowicz was elected, took the oath on 11 December, and received the formal transfer of state authority from Józef Piłsudski on 14 December. ?]
+[? if polish_first_presidential_election_recorded : **In this game — final ballot, 9 December 1922:** [+ pl_pres_first_lines +]. [+ pl_pres_first_winner +] was elected (PPS nomination: [+ pl_pres_first_nominee +]). ?]
 
-[? if polish_first_presidential_election_recorded : **16 December:** Narutowicz was assassinated. PPS's peaceful constitutional response is recorded without numerical effects. The game omits the brief acting presidency as an approved chronology compression. ?]
+[? if pl_pres_first_tie : The first final was a tie decided by a recorded lot. ?]
 
-[? if polish_second_presidential_election_recorded : **Final ballot, 20 December 1922:** Stanisław Wojciechowski — 298 votes (PSL Piast, PSL Wyzwolenie, PPS, NPR and Blok Mniejszości Narodowych); Kazimierz Morawski — 221 votes (ZLN and PSChD within ChZJN, with other right-wing parliamentarians). Wojciechowski was elected and assumed the presidency. ?]
+[? if polish_second_presidential_election_recorded : **In this game — final ballot, 20 December 1922:** [+ pl_pres_second_lines +]. [+ pl_pres_second_winner +] was elected (PPS nomination: [+ pl_pres_second_nominee +]). ?]
 
-Later Polish presidential elections, variable outcomes and their cabinet consequences remain planned. The inherited German direct-popular election and Hindenburg succession routes are unavailable under the Polish system.
+**Historical note (documented fact, not a game result):** on 9 December 1922 the National Assembly elected Gabriel Narutowicz by 289 votes to 227 for Maurycy Zamoyski, with 29 blank ballots; Narutowicz took the oath on 11 December, received the transfer of authority from Józef Piłsudski on 14 December and was assassinated on 16 December. Marshal Maciej Rataj briefly exercised the President's duties. On 20 December Stanisław Wojciechowski was elected by 298 votes to 221 for Kazimierz Morawski.
+
+Later Polish presidential elections and their cabinet consequences remain planned. The inherited German direct-popular election and Hindenburg succession routes are unavailable under the Polish system.
 
 @weimar_timeline
 go-to: menu
@@ -114,11 +120,14 @@ Prime minister: [+ prime_minister_display +]
 [+ parliament_heading +]. See Figures and charts for the parliamentary breakdown, separately from Public opinion.
 
 PPS position: [+ pps_government_position +].
-[? if in_polish_left_coalition and spd_in_government: Koalicja Lewicy ?][? if in_polish_center_left_coalition and spd_in_government: koalicja centrolewicowa ?][? if in_spd_majority and spd_in_government: PPS majority ?][? if in_minority_government and spd_in_government: minority government [? if minorities_toleration: with Minorities Bloc toleration ?] ?][? if in_chjeno_piast: opposition to Chjeno-Piast ?]
 
-[? if spd_in_government and not in_spd_majority and not in_left_front : Coalition dissent: [+ coalition_dissent : coalition_dissent +] ?]
+[? if pl_cabinet_support_display : Cabinet support: [+ pl_cabinet_support_display +]. ?]
 
-[? if spd_in_government and (in_left_front or in_popular_front): KPD coalition dissent: [+ kpd_coalition_dissent : coalition_dissent +] ?]
+[? if pl_cabinet_crisis_display : [+ pl_cabinet_crisis_display +] ?]
+
+[? if pl_agreement_tension_display : Agreement tension: [+ pl_agreement_tension_display +]. ?]
+
+[? if pl_agreement_notices : [+ pl_agreement_notices +] ?]
 
 @cabinet
 call: polish_opening_state
@@ -126,9 +135,9 @@ go-to: menu
 
 = Cabinet portfolios (read-only)
 
-These are ten stable Polish gameplay categories, not an exact historical ministry roster. Public Works / Communications combines several historical departments. Individual ministers are not simulated; inspecting this page grants no policy or appointment powers.
+These are nine stable Polish gameplay categories, not an exact historical ministry roster. Individual ministers are not simulated; inspecting this page grants no policy or appointment powers.
 
-[? if not polish_opening_government_active : Later portfolio allocation remains incomplete. Any ownership below comes from the temporary government framework, not a researched Polish cabinet. ?]
+[? if not polish_opening_government_active : Portfolios follow the appointed cabinet. PPS holds the portfolios of its accepted offer, partners hold their preferred portfolios and the rest go to non-party experts. This allocation is a gameplay simplification, not a researched Polish cabinet. ?]
 
 Praca i Opieka Społeczna (Labour): [+ labor_portfolio_display +]
 
@@ -148,9 +157,7 @@ Sprawy Wojskowe (Military Affairs): [+ reichswehr_portfolio_display +]
 
 Wyznania Religijne i Oświecenie Publiczne (Education): [+ education_portfolio_display +]
 
-Roboty Publiczne i Komunikacja (Public Works / Communications): [+ public_works_portfolio_display +]
-
-Education and Public Works are represented as portfolios only; new policy actions and a Polish ministry-allocation system are not implemented.
+Public works belong to Labour, not to a separate portfolio. Holding a portfolio does not yet unlock Polish policy actions; they come with a later stage.
 
 
 @demographics
@@ -178,6 +185,8 @@ The implemented January 1922 gameplay model uses five main classes whose shares 
 @public_opinion
 on-arrival: {!
 Q.pro_republic_disp = Math.round(Q.pro_republic);
+// Stage 7: the Polish game reads its own attachment to democracy (15.2), not the German support for the Republic.
+Q.pl_democracy_disp = Q.polish_politics_rules && Q.S && Q.S.politics ? Math.round(Q.S.politics.democracy) : 0;
 Q.nationalism_disp = Math.round(Q.nationalism);
 Q.socialism_disp = Math.round(Q.socialism);
 !}
@@ -191,7 +200,7 @@ set-jump: election_projections
 
 #Support for Nationalism: [+ nationalism +]%
 
-Support for the Republic: [+ pro_republic_disp +]%
+[? if not polish_politics_rules : Support for the Republic: [+ pro_republic_disp +]% ?][? if polish_politics_rules : Attachment to democracy: [+ pl_democracy_disp +] of 100 ?]
 
 
 @election_projections
@@ -411,7 +420,7 @@ if (typeof d3 !== 'undefined' && typeof window !== 'undefined') {
     history.selectAll('*').remove();
     for (var election of Q.sejm_history) {
         history.append('h3').text(election.date + ' — ' + election.total + ' MPs' +
-            (election.kind === 'legacy_continuation' ? ' (temporary continuation)' : ''));
+            (election.kind === 'next_legal_election' ? ' (next lawful election)' : ''));
         var table = history.append('table');
         table.append('caption').text('Recorded votes and seats; Inne aggregates separate small lists');
         table.append('thead').append('tr').selectAll('th')
@@ -437,7 +446,7 @@ if (typeof d3 !== 'undefined' && typeof window !== 'undefined') {
     var maxUnemployment = d3.max(Q.economic_records, d => d.unemployment);
     var lines_3 = d3.linegraph(true, true, ['inflation', 'unemployment'],
             {'inflation': '#0000FF', 'unemployment': '#FF0000'},
-            {'inflation': 'Inflation', 'unemployment': 'Unemployment'},
+            {'inflation': Q.polish_economy_system ? 'Inflation (% a month)' : 'Inflation', 'unemployment': 'Unemployment (%)'},
             maxUnemployment + 5, minInflation - 5, 21);
     lines_3.width(width).height(300);
     d3.select("#economic_history").datum(Q.economic_records).call(lines_3);
@@ -478,6 +487,8 @@ if (typeof d3 !== 'undefined' && typeof window !== 'undefined') {
 {!<svg id="party_support_history" style="width: 500px; height: 400px;"> </svg>!}
 
 = Economic history
+
+[? if polish_economy_system : Monthly inflation and unemployment of the Polish economy (economy_simple_v1), recorded once per settled month. The numbers are the game's working balance, not historical statistics. ?]
 
 {!<svg id="economic_history" style="width: 500px; height: 300px;"> </svg>!}
 # TODO: maybe add textual histories too? some accessibility stuff as well...

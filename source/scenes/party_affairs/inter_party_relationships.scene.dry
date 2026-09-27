@@ -1,57 +1,134 @@
-title: Relacje międzypartyjne
+title: Talks with Other Parties
 new-page: true
-view-if: inter_party_relationships_timer <= 0
+view-if: {! return !!Q.S && PolishGovernment.outreachAvailable(Q) !}
 tags: party_affairs
 is-card: true
-on-arrival: month_actions += 1; inter_party_relationships_timer = 6;
 card-image: img/weimar_coalition_2.jpg
-max-visits: 12
+on-arrival: {!
+// Card party.outreach (technical reference 8.1, 17.2; card catalogue 6.1). One talk with one
+// partner costs the month's action and no resources; opening and closing the card are free.
+PolishGovernment.syncRelations(Q);
+for (var id of PolishGovernment.PARTNERS) {
+    var status = PolishGovernment.outreachStatus(Q, id);
+    Q['pl_out_' + id + '_reason'] = status.reason;
+    Q['pl_out_' + id + '_relation'] = Math.round(PolishGovernment.relation(Q.S, id));
+    Q['pl_out_' + id + '_gain'] = PolishGovernment.relation(Q.S, id) >= 70 ? 2 : 4;
+}
+Q.pl_out_kpp_contact_reason = PolishGovernment.kppContactStatus(Q).reason;
+!}
 
-= Relacje międzypartyjne
+= Talks with other parties
 
-PPS nie ma samodzielnej większości. Utrzymywanie kontaktów z innymi ugrupowaniami może otworzyć drogę do koalicji albo zewnętrznej tolerancji rządu. Ten zaimplementowany wycinek obejmuje tylko relacje potrzebne dla początkowego modelu partii i pierwszego cyklu wyborczego.
+PPS has no majority of its own. Regular talks with one party improve our relation with it: +4, or +2 once the relation is 70 or more. A talk costs this month's action but no party resources, and the same party can be approached again after three months. Talks alone create no votes, list agreements or cabinet posts; those are agreed in the parliamentary cards.
 
-- @left_partners: Wzmocnij relacje z PSL Wyzwolenie i Blokiem Mniejszości Narodowych.
-- @center_left_partners: Wzmocnij relacje z PSL Piast, NPR i PSChD.
-- @kpp: Spróbuj poprawić relacje z KPP.
-- @zln: Otwórz ostrożne rozmowy z ZLN.
-- @pps_alone: Na razie PPS będzie działać samodzielnie.
+- @psl_wyzwolenie
+- @psl_piast
+- @npr
+- @pschd
+- @zln
+- @jewish_rep
+- @other_minorities_rep
+- @kpp
+- @kpp_contact
 - @easy_discard
 
-@left_partners
-subtitle: -1 resources
-choose-if: resources >= 1
-unavailable-subtitle: Not enough resources.
-on-arrival: resources -= 1; psl_wyzwolenie_relation += 4*(1-dissent); minorities_bloc_relation += 4*(1-dissent)
+@psl_wyzwolenie
+title: Talk to PSL Wyzwolenie
+subtitle: Relation [+ pl_out_psl_wyzwolenie_relation +]; +[+ pl_out_psl_wyzwolenie_gain +].
+choose-if: {! return PolishGovernment.outreachStatus(Q, 'psl_wyzwolenie').available !}
+unavailable-subtitle: [+ pl_out_psl_wyzwolenie_reason +]
+on-arrival: {!
+PolishGovernment.outreach(Q, 'psl_wyzwolenie');
+!}
 
-PPS rozwija robocze kontakty z PSL Wyzwolenie oraz przedstawicielami Bloku Mniejszości Narodowych. Szczegółowe spory programowe pozostają do opracowania w późniejszym etapie.
+PPS and PSL Wyzwolenie compare their programmes for the countryside and the workplace.
 
-@center_left_partners
-subtitle: -1 resources
-choose-if: resources >= 1
-unavailable-subtitle: Not enough resources.
-on-arrival: resources -= 1; psl_piast_relation += 3*(1-dissent); npr_relation += 3*(1-dissent); pschd_relation += 2*(1-dissent)
+@psl_piast
+title: Talk to PSL Piast
+subtitle: Relation [+ pl_out_psl_piast_relation +]; +[+ pl_out_psl_piast_gain +].
+choose-if: {! return PolishGovernment.outreachStatus(Q, 'psl_piast').available !}
+unavailable-subtitle: [+ pl_out_psl_piast_reason +]
+on-arrival: {!
+PolishGovernment.outreach(Q, 'psl_piast');
+!}
 
-PPS próbuje budować szersze porozumienie parlamentarne z PSL Piast, NPR i PSChD. Ta akcja nie przesądza jeszcze o składzie przyszłej koalicji.
+PPS opens a working channel to PSL Piast.
 
-@kpp
-subtitle: -1 resources
-choose-if: resources >= 1
-unavailable-subtitle: Not enough resources.
-on-arrival: resources -= 1; kpp_relation += 5*(1-dissent); reformist_dissent += 2
+@npr
+title: Talk to NPR
+subtitle: Relation [+ pl_out_npr_relation +]; +[+ pl_out_npr_gain +].
+choose-if: {! return PolishGovernment.outreachStatus(Q, 'npr').available !}
+unavailable-subtitle: [+ pl_out_npr_reason +]
+on-arrival: {!
+PolishGovernment.outreach(Q, 'npr');
+!}
 
-Kontakty z KPP poprawiają się nieznacznie, ale wywołują niepokój bardziej umiarkowanych działaczy PPS. Zjednoczony Front pozostaje planowanym, trudnym scenariuszem alternatywnym i nie jest jeszcze dostępny.
+PPS and NPR discuss labour protection and the independence of trade unions.
+
+@pschd
+title: Talk to PSChD
+subtitle: Relation [+ pl_out_pschd_relation +]; +[+ pl_out_pschd_gain +].
+choose-if: {! return PolishGovernment.outreachStatus(Q, 'pschd').available !}
+unavailable-subtitle: [+ pl_out_pschd_reason +]
+on-arrival: {!
+PolishGovernment.outreach(Q, 'pschd');
+!}
+
+PPS holds careful talks with the Christian democrats.
 
 @zln
-subtitle: -1 resources
-choose-if: resources >= 1
-unavailable-subtitle: Not enough resources.
-on-arrival: resources -= 1; zln_relation += 4*(1-dissent); left_dissent += 2
+title: Talk to ZLN
+subtitle: Relation [+ pl_out_zln_relation +]; +[+ pl_out_zln_gain +].
+choose-if: {! return PolishGovernment.outreachStatus(Q, 'zln').available !}
+unavailable-subtitle: [+ pl_out_zln_reason +]
+on-arrival: {!
+PolishGovernment.outreach(Q, 'zln');
+!}
 
-PPS podejmuje ograniczone rozmowy parlamentarne z ZLN. Nie tworzy to koalicji, a część lewicy PPS sprzeciwia się takiemu zbliżeniu.
+PPS holds limited parliamentary talks with the national democrats. They create no coalition.
 
-@pps_alone
+@jewish_rep
+title: Talk to the Jewish representation
+subtitle: Relation [+ pl_out_jewish_rep_relation +]; +[+ pl_out_jewish_rep_gain +].
+choose-if: {! return PolishGovernment.outreachStatus(Q, 'jewish_rep').available !}
+unavailable-subtitle: [+ pl_out_jewish_rep_reason +]
+on-arrival: {!
+PolishGovernment.outreach(Q, 'jewish_rep');
+!}
 
-PPS nie podejmuje w tym miesiącu dodatkowych działań wobec innych partii.
+PPS meets the Jewish deputies of the minority bloc.
 
-- @return: Continue...
+@other_minorities_rep
+title: Talk to the other national minorities
+subtitle: Relation [+ pl_out_other_minorities_rep_relation +]; +[+ pl_out_other_minorities_rep_gain +].
+choose-if: {! return PolishGovernment.outreachStatus(Q, 'other_minorities_rep').available !}
+unavailable-subtitle: [+ pl_out_other_minorities_rep_reason +]
+on-arrival: {!
+PolishGovernment.outreach(Q, 'other_minorities_rep');
+!}
+
+PPS meets the other national-minority deputies of the minority bloc.
+
+@kpp
+title: Talk to the KPP
+subtitle: Relation [+ pl_out_kpp_relation +]; +[+ pl_out_kpp_gain +].
+view-if: {! return !!Q.S && Q.S.actors.kpp_channel.contact_open !}
+choose-if: {! return PolishGovernment.outreachStatus(Q, 'kpp').available !}
+unavailable-subtitle: [+ pl_out_kpp_reason +]
+on-arrival: {!
+PolishGovernment.outreach(Q, 'kpp');
+!}
+
+PPS uses the open channel for a working contact with the communists.
+
+@kpp_contact
+title: Open a contact with the KPP
+subtitle: Needs relation 10 with the KPP; talks with it become possible from next month.
+view-if: {! return !!Q.S && !Q.S.actors.kpp_channel.contact_open !}
+choose-if: {! return PolishGovernment.kppContactStatus(Q).available !}
+unavailable-subtitle: [+ pl_out_kpp_contact_reason +]
+on-arrival: {!
+PolishGovernment.kppContact(Q);
+!}
+
+A first, careful contact with the communists is made. Further cooperation needs separate steps.

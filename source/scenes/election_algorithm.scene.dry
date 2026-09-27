@@ -1,8 +1,15 @@
 title: Election
 on-arrival: {!
+// Since stage 5 the cells of the electorate own the preferences and the votes (technical reference 5.2):
+// inherited row changes are taken over by the cells, the rows are written back from them, and the
+// national result below is the votes of the cells with their turnout.
+if (Q.polish_party_rules) {
+    PolishElectorate.absorbRowEdits(Q);
+}
 // Transfer changes made by inherited German cards into the approved semantic
 // Polish IDs without making the German IDs active election parties.
 for (var legacy_party in Q.legacy_party_map) {
+    if (Q.polish_party_rules) break;
     var polish_party = Q.legacy_party_map[legacy_party];
     for (var population_group of Q.classes) {
         var legacy_key = population_group + '_' + legacy_party;
@@ -17,7 +24,7 @@ for (var legacy_party in Q.legacy_party_map) {
     }
 }
 var catholic_delta = Q.catholics_spd - Q.catholics_spd_compat_base;
-if (Number.isFinite(catholic_delta) && catholic_delta != 0) {
+if (!Q.polish_party_rules && Number.isFinite(catholic_delta) && catholic_delta != 0) {
     Q.national_minorities_pps += catholic_delta;
 }
 Q.catholics_spd = Q.national_minorities_pps;
@@ -39,7 +46,12 @@ for (var c of Q.classes) {
 
 // 1. calculate support for each of the parties
 var total_support = 0;
+var cell_votes = Q.polish_party_rules ? PolishElectorate.writeNationalQualities(Q) : null;
 for (var party of Q.parties) {
+    if (cell_votes) {
+        total_support += Q[party + '_support'];
+        continue;
+    }
     var party_support = 0;
     for (var c of Q.classes) {
         // but this version is somewhat more entertaining and allows for wilder swings in votes.

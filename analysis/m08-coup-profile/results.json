@@ -1,0 +1,1856 @@
+{
+  "scope": "Exact enumeration of 81 synthetic allegiance outcomes for coup_f_v1 (technical reference 16.8). Not a campaign run, not historical forces.",
+  "hashes": {
+    "docs/POLISH_TECHNICAL_REFERENCE.md": "8aba6f238f43c61b53eecb1e52c13903a7661bf426453fe6033fc633da68aaa4",
+    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "2402955a7669c2ad1bfd208ba3e4b704ab79574304554f4b51576fcf2195b42e",
+    "docs/POLISH_MECHANICS_AUDIT.md": "070de0c9d624d01594c387dd4b43a0db3edf873a194d390266d56acf6c469fa0"
+  },
+  "offers": [
+    {
+      "id": "coup.offer.military_function",
+      "acceptability": {
+        "pils": 50,
+        "legal": 90
+      }
+    },
+    {
+      "id": "coup.offer.inspectorate_law",
+      "acceptability": {
+        "pils": 56.25,
+        "legal": 80
+      }
+    },
+    {
+      "id": "coup.offer.cabinet_change",
+      "acceptability": {
+        "pils": 90.625,
+        "legal": 25
+      }
+    }
+  ],
+  "capacity": {
+    "synthetic_test_v1": 36.231,
+    "synthetic_test_v2": 38.093
+  },
+  "workedExample": {
+    "sides": [
+      "legal",
+      "pils",
+      "pils",
+      "legal"
+    ],
+    "noStrike": {
+      "outcome": "constitutional_compromise",
+      "round": 4,
+      "offer": "coup.offer.inspectorate_law",
+      "f9": null,
+      "log": [
+        {
+          "round": 1,
+          "pils": 39.7375,
+          "legal": 28.8,
+          "streak": {
+            "pils": 1,
+            "legal": 0
+          }
+        },
+        {
+          "round": 2,
+          "pils": 50.65165903702353,
+          "legal": 27.46415903702353,
+          "streak": {
+            "pils": 0,
+            "legal": 0
+          }
+        },
+        {
+          "round": 3,
+          "pils": 49.22699985420526,
+          "legal": 43.189499854205266,
+          "streak": {
+            "pils": 0,
+            "legal": 0
+          }
+        }
+      ]
+    },
+    "oneDelay": {
+      "outcome": "pils_victory",
+      "round": 2,
+      "crushing": false,
+      "f9": null,
+      "log": [
+        {
+          "round": 1,
+          "pils": 39.7375,
+          "legal": 28.8,
+          "streak": {
+            "pils": 1,
+            "legal": 0
+          }
+        },
+        {
+          "round": 2,
+          "pils": 50.65165903702353,
+          "legal": 27.46415903702353,
+          "streak": {
+            "pils": 2,
+            "legal": 0
+          }
+        }
+      ]
+    },
+    "twoDelays": {
+      "outcome": "pils_victory",
+      "round": 2,
+      "crushing": false,
+      "f9": null,
+      "log": [
+        {
+          "round": 1,
+          "pils": 39.7375,
+          "legal": 28.8,
+          "streak": {
+            "pils": 1,
+            "legal": 0
+          }
+        },
+        {
+          "round": 2,
+          "pils": 50.65165903702353,
+          "legal": 27.46415903702353,
+          "streak": {
+            "pils": 2,
+            "legal": 0
+          }
+        }
+      ]
+    },
+    "lowTrust": {
+      "outcome": "prolonged_conflict",
+      "round": 4,
+      "f9": null,
+      "log": [
+        {
+          "round": 1,
+          "pils": 39.7375,
+          "legal": 28.8,
+          "streak": {
+            "pils": 1,
+            "legal": 0
+          }
+        },
+        {
+          "round": 2,
+          "pils": 50.65165903702353,
+          "legal": 27.46415903702353,
+          "streak": {
+            "pils": 0,
+            "legal": 0
+          }
+        },
+        {
+          "round": 3,
+          "pils": 49.22699985420526,
+          "legal": 43.189499854205266,
+          "streak": {
+            "pils": 0,
+            "legal": 0
+          }
+        },
+        {
+          "round": 4,
+          "pils": 47.38655836617285,
+          "legal": 41.34905836617286,
+          "streak": {
+            "pils": 0,
+            "legal": 0
+          }
+        }
+      ]
+    },
+    "crushing": {
+      "outcome": "pils_victory",
+      "round": 1,
+      "crushing": true,
+      "f9": null,
+      "log": [
+        {
+          "round": 1,
+          "pils": 39.7375,
+          "legal": 0,
+          "streak": {
+            "pils": 1,
+            "legal": 0
+          }
+        }
+      ]
+    }
+  },
+  "summary": {
+    "synthetic_test_v1|passive|30": {
+      "accept": {
+        "pils": "29.4%",
+        "legal": "29.5%",
+        "compromise": "0.0%",
+        "prolonged": "41.2%",
+        "f9": "0.0%",
+        "meanRounds": 3.12,
+        "victoriesWithin2Rounds": "34.5%",
+        "victories": "58.8%",
+        "supportedWins": "0.0%",
+        "decisiveWins": "0.0%"
+      },
+      "reject": {
+        "pils": "29.4%",
+        "legal": "29.5%",
+        "compromise": "0.0%",
+        "prolonged": "41.2%",
+        "f9": "0.0%",
+        "meanRounds": 3.12,
+        "victoriesWithin2Rounds": "34.5%",
+        "victories": "58.8%",
+        "supportedWins": "0.0%",
+        "decisiveWins": "0.0%"
+      }
+    },
+    "synthetic_test_v1|passive|45": {
+      "accept": {
+        "pils": "29.4%",
+        "legal": "29.5%",
+        "compromise": "11.3%",
+        "prolonged": "29.8%",
+        "f9": "0.0%",
+        "meanRounds": 3.12,
+        "victoriesWithin2Rounds": "34.5%",
+        "victories": "58.8%",
+        "supportedWins": "0.0%",
+        "decisiveWins": "0.0%"
+      },
+      "reject": {
+        "pils": "29.4%",
+        "legal": "29.5%",
+        "compromise": "11.3%",
+        "prolonged": "29.8%",
+        "f9": "0.0%",
+        "meanRounds": 3.12,
+        "victoriesWithin2Rounds": "34.5%",
+        "victories": "58.8%",
+        "supportedWins": "0.0%",
+        "decisiveWins": "0.0%"
+      }
+    },
+    "synthetic_test_v1|passive|60": {
+      "accept": {
+        "pils": "29.4%",
+        "legal": "29.5%",
+        "compromise": "41.2%",
+        "prolonged": "0.0%",
+        "f9": "0.0%",
+        "meanRounds": 3.12,
+        "victoriesWithin2Rounds": "34.5%",
+        "victories": "58.8%",
+        "supportedWins": "0.0%",
+        "decisiveWins": "0.0%"
+      },
+      "reject": {
+        "pils": "29.4%",
+        "legal": "29.5%",
+        "compromise": "41.2%",
+        "prolonged": "0.0%",
+        "f9": "0.0%",
+        "meanRounds": 3.12,
+        "victoriesWithin2Rounds": "34.5%",
+        "victories": "58.8%",
+        "supportedWins": "0.0%",
+        "decisiveWins": "0.0%"
+      }
+    },
+    "synthetic_test_v1|passive|75": {
+      "accept": {
+        "pils": "29.4%",
+        "legal": "29.5%",
+        "compromise": "41.2%",
+        "prolonged": "0.0%",
+        "f9": "0.0%",
+        "meanRounds": 3.12,
+        "victoriesWithin2Rounds": "34.5%",
+        "victories": "58.8%",
+        "supportedWins": "0.0%",
+        "decisiveWins": "0.0%"
+      },
+      "reject": {
+        "pils": "29.4%",
+        "legal": "29.5%",
+        "compromise": "41.2%",
+        "prolonged": "0.0%",
+        "f9": "0.0%",
+        "meanRounds": 3.12,
+        "victoriesWithin2Rounds": "34.5%",
+        "victories": "58.8%",
+        "supportedWins": "0.0%",
+        "decisiveWins": "0.0%"
+      }
+    },
+    "synthetic_test_v1|neutral_protection|30": {
+      "accept": {
+        "pils": "29.4%",
+        "legal": "29.5%",
+        "compromise": "0.0%",
+        "prolonged": "41.2%",
+        "f9": "0.0%",
+        "meanRounds": 3.12,
+        "victoriesWithin2Rounds": "34.5%",
+        "victories": "58.8%",
+        "supportedWins": "0.0%",
+        "decisiveWins": "0.0%"
+      },
+      "reject": {
+        "pils": "29.4%",
+        "legal": "29.5%",
+        "compromise": "0.0%",
+        "prolonged": "41.2%",
+        "f9": "0.0%",
+        "meanRounds": 3.12,
+        "victoriesWithin2Rounds": "34.5%",
+        "victories": "58.8%",
+        "supportedWins": "0.0%",
+        "decisiveWins": "0.0%"
+      }
+    },
+    "synthetic_test_v1|neutral_protection|45": {
+      "accept": {
+        "pils": "29.4%",
+        "legal": "29.5%",
+        "compromise": "11.3%",
+        "prolonged": "29.8%",
+        "f9": "0.0%",
+        "meanRounds": 3.12,
+        "victoriesWithin2Rounds": "34.5%",
+        "victories": "58.8%",
+        "supportedWins": "0.0%",
+        "decisiveWins": "0.0%"
+      },
+      "reject": {
+        "pils": "29.4%",
+        "legal": "29.5%",
+        "compromise": "11.3%",
+        "prolonged": "29.8%",
+        "f9": "0.0%",
+        "meanRounds": 3.12,
+        "victoriesWithin2Rounds": "34.5%",
+        "victories": "58.8%",
+        "supportedWins": "0.0%",
+        "decisiveWins": "0.0%"
+      }
+    },
+    "synthetic_test_v1|neutral_protection|60": {
+      "accept": {
+        "pils": "29.4%",
+        "legal": "29.5%",
+        "compromise": "41.2%",
+        "prolonged": "0.0%",
+        "f9": "0.0%",
+        "meanRounds": 3.12,
+        "victoriesWithin2Rounds": "34.5%",
+        "victories": "58.8%",
+        "supportedWins": "0.0%",
+        "decisiveWins": "0.0%"
+      },
+      "reject": {
+        "pils": "29.4%",
+        "legal": "29.5%",
+        "compromise": "41.2%",
+        "prolonged": "0.0%",
+        "f9": "0.0%",
+        "meanRounds": 3.12,
+        "victoriesWithin2Rounds": "34.5%",
+        "victories": "58.8%",
+        "supportedWins": "0.0%",
+        "decisiveWins": "0.0%"
+      }
+    },
+    "synthetic_test_v1|neutral_protection|75": {
+      "accept": {
+        "pils": "29.4%",
+        "legal": "29.5%",
+        "compromise": "41.2%",
+        "prolonged": "0.0%",
+        "f9": "0.0%",
+        "meanRounds": 3.12,
+        "victoriesWithin2Rounds": "34.5%",
+        "victories": "58.8%",
+        "supportedWins": "0.0%",
+        "decisiveWins": "0.0%"
+      },
+      "reject": {
+        "pils": "29.4%",
+        "legal": "29.5%",
+        "compromise": "41.2%",
+        "prolonged": "0.0%",
+        "f9": "0.0%",
+        "meanRounds": 3.12,
+        "victoriesWithin2Rounds": "34.5%",
+        "victories": "58.8%",
+        "supportedWins": "0.0%",
+        "decisiveWins": "0.0%"
+      }
+    },
+    "synthetic_test_v1|support_rail|30": {
+      "accept": {
+        "pils": "66.3%",
+        "legal": "9.4%",
+        "compromise": "0.0%",
+        "prolonged": "24.3%",
+        "f9": "0.0%",
+        "meanRounds": 2.39,
+        "victoriesWithin2Rounds": "71.5%",
+        "victories": "75.7%",
+        "supportedWins": "66.3%",
+        "decisiveWins": "36.9%"
+      },
+      "reject": {
+        "pils": "66.3%",
+        "legal": "9.4%",
+        "compromise": "0.0%",
+        "prolonged": "24.3%",
+        "f9": "0.0%",
+        "meanRounds": 2.39,
+        "victoriesWithin2Rounds": "71.5%",
+        "victories": "75.7%",
+        "supportedWins": "66.3%",
+        "decisiveWins": "36.9%"
+      }
+    },
+    "synthetic_test_v1|support_rail|45": {
+      "accept": {
+        "pils": "66.3%",
+        "legal": "9.4%",
+        "compromise": "0.0%",
+        "prolonged": "24.3%",
+        "f9": "0.0%",
+        "meanRounds": 2.39,
+        "victoriesWithin2Rounds": "71.5%",
+        "victories": "75.7%",
+        "supportedWins": "66.3%",
+        "decisiveWins": "36.9%"
+      },
+      "reject": {
+        "pils": "66.3%",
+        "legal": "9.4%",
+        "compromise": "0.0%",
+        "prolonged": "24.3%",
+        "f9": "0.0%",
+        "meanRounds": 2.39,
+        "victoriesWithin2Rounds": "71.5%",
+        "victories": "75.7%",
+        "supportedWins": "66.3%",
+        "decisiveWins": "36.9%"
+      }
+    },
+    "synthetic_test_v1|support_rail|60": {
+      "accept": {
+        "pils": "66.3%",
+        "legal": "9.4%",
+        "compromise": "24.3%",
+        "prolonged": "0.0%",
+        "f9": "20.0%",
+        "meanRounds": 2.39,
+        "victoriesWithin2Rounds": "71.5%",
+        "victories": "75.7%",
+        "supportedWins": "66.3%",
+        "decisiveWins": "36.9%"
+      },
+      "reject": {
+        "pils": "66.3%",
+        "legal": "9.4%",
+        "compromise": "4.3%",
+        "prolonged": "20.0%",
+        "f9": "20.0%",
+        "meanRounds": 2.39,
+        "victoriesWithin2Rounds": "71.5%",
+        "victories": "75.7%",
+        "supportedWins": "66.3%",
+        "decisiveWins": "36.9%"
+      }
+    },
+    "synthetic_test_v1|support_rail|75": {
+      "accept": {
+        "pils": "66.3%",
+        "legal": "9.4%",
+        "compromise": "24.3%",
+        "prolonged": "0.0%",
+        "f9": "20.0%",
+        "meanRounds": 2.39,
+        "victoriesWithin2Rounds": "71.5%",
+        "victories": "75.7%",
+        "supportedWins": "66.3%",
+        "decisiveWins": "36.9%"
+      },
+      "reject": {
+        "pils": "66.3%",
+        "legal": "9.4%",
+        "compromise": "4.3%",
+        "prolonged": "20.0%",
+        "f9": "20.0%",
+        "meanRounds": 2.39,
+        "victoriesWithin2Rounds": "71.5%",
+        "victories": "75.7%",
+        "supportedWins": "66.3%",
+        "decisiveWins": "36.9%"
+      }
+    },
+    "synthetic_test_v1|support_rail_weak|30": {
+      "accept": {
+        "pils": "66.3%",
+        "legal": "9.5%",
+        "compromise": "0.0%",
+        "prolonged": "24.2%",
+        "f9": "0.0%",
+        "meanRounds": 2.39,
+        "victoriesWithin2Rounds": "71.5%",
+        "victories": "75.8%",
+        "supportedWins": "66.3%",
+        "decisiveWins": "36.9%"
+      },
+      "reject": {
+        "pils": "66.3%",
+        "legal": "9.5%",
+        "compromise": "0.0%",
+        "prolonged": "24.2%",
+        "f9": "0.0%",
+        "meanRounds": 2.39,
+        "victoriesWithin2Rounds": "71.5%",
+        "victories": "75.8%",
+        "supportedWins": "66.3%",
+        "decisiveWins": "36.9%"
+      }
+    },
+    "synthetic_test_v1|support_rail_weak|45": {
+      "accept": {
+        "pils": "66.3%",
+        "legal": "9.5%",
+        "compromise": "19.9%",
+        "prolonged": "4.3%",
+        "f9": "19.9%",
+        "meanRounds": 2.39,
+        "victoriesWithin2Rounds": "71.5%",
+        "victories": "75.8%",
+        "supportedWins": "66.3%",
+        "decisiveWins": "36.9%"
+      },
+      "reject": {
+        "pils": "66.3%",
+        "legal": "9.5%",
+        "compromise": "0.0%",
+        "prolonged": "24.2%",
+        "f9": "19.9%",
+        "meanRounds": 2.39,
+        "victoriesWithin2Rounds": "71.5%",
+        "victories": "75.8%",
+        "supportedWins": "66.3%",
+        "decisiveWins": "36.9%"
+      }
+    },
+    "synthetic_test_v1|support_rail_weak|60": {
+      "accept": {
+        "pils": "66.3%",
+        "legal": "9.5%",
+        "compromise": "24.2%",
+        "prolonged": "0.0%",
+        "f9": "19.9%",
+        "meanRounds": 2.39,
+        "victoriesWithin2Rounds": "71.5%",
+        "victories": "75.8%",
+        "supportedWins": "66.3%",
+        "decisiveWins": "36.9%"
+      },
+      "reject": {
+        "pils": "66.3%",
+        "legal": "9.5%",
+        "compromise": "4.3%",
+        "prolonged": "19.9%",
+        "f9": "19.9%",
+        "meanRounds": 2.39,
+        "victoriesWithin2Rounds": "71.5%",
+        "victories": "75.8%",
+        "supportedWins": "66.3%",
+        "decisiveWins": "36.9%"
+      }
+    },
+    "synthetic_test_v1|support_rail_weak|75": {
+      "accept": {
+        "pils": "66.3%",
+        "legal": "9.5%",
+        "compromise": "24.2%",
+        "prolonged": "0.0%",
+        "f9": "19.9%",
+        "meanRounds": 2.39,
+        "victoriesWithin2Rounds": "71.5%",
+        "victories": "75.8%",
+        "supportedWins": "66.3%",
+        "decisiveWins": "36.9%"
+      },
+      "reject": {
+        "pils": "66.3%",
+        "legal": "9.5%",
+        "compromise": "4.3%",
+        "prolonged": "19.9%",
+        "f9": "19.9%",
+        "meanRounds": 2.39,
+        "victoriesWithin2Rounds": "71.5%",
+        "victories": "75.8%",
+        "supportedWins": "66.3%",
+        "decisiveWins": "36.9%"
+      }
+    },
+    "synthetic_test_v1|support_militia|30": {
+      "accept": {
+        "pils": "55.3%",
+        "legal": "29.1%",
+        "compromise": "0.0%",
+        "prolonged": "15.6%",
+        "f9": "0.0%",
+        "meanRounds": 2.64,
+        "victoriesWithin2Rounds": "59.7%",
+        "victories": "84.4%",
+        "supportedWins": "55.3%",
+        "decisiveWins": "26.0%"
+      },
+      "reject": {
+        "pils": "55.3%",
+        "legal": "29.1%",
+        "compromise": "0.0%",
+        "prolonged": "15.6%",
+        "f9": "0.0%",
+        "meanRounds": 2.64,
+        "victoriesWithin2Rounds": "59.7%",
+        "victories": "84.4%",
+        "supportedWins": "55.3%",
+        "decisiveWins": "26.0%"
+      }
+    },
+    "synthetic_test_v1|support_militia|45": {
+      "accept": {
+        "pils": "55.3%",
+        "legal": "29.1%",
+        "compromise": "0.0%",
+        "prolonged": "15.6%",
+        "f9": "0.0%",
+        "meanRounds": 2.64,
+        "victoriesWithin2Rounds": "59.7%",
+        "victories": "84.4%",
+        "supportedWins": "55.3%",
+        "decisiveWins": "26.0%"
+      },
+      "reject": {
+        "pils": "55.3%",
+        "legal": "29.1%",
+        "compromise": "0.0%",
+        "prolonged": "15.6%",
+        "f9": "0.0%",
+        "meanRounds": 2.64,
+        "victoriesWithin2Rounds": "59.7%",
+        "victories": "84.4%",
+        "supportedWins": "55.3%",
+        "decisiveWins": "26.0%"
+      }
+    },
+    "synthetic_test_v1|support_militia|60": {
+      "accept": {
+        "pils": "55.3%",
+        "legal": "29.1%",
+        "compromise": "15.6%",
+        "prolonged": "0.0%",
+        "f9": "15.6%",
+        "meanRounds": 2.64,
+        "victoriesWithin2Rounds": "59.7%",
+        "victories": "84.4%",
+        "supportedWins": "55.3%",
+        "decisiveWins": "26.0%"
+      },
+      "reject": {
+        "pils": "55.3%",
+        "legal": "29.1%",
+        "compromise": "0.0%",
+        "prolonged": "15.6%",
+        "f9": "15.6%",
+        "meanRounds": 2.64,
+        "victoriesWithin2Rounds": "59.7%",
+        "victories": "84.4%",
+        "supportedWins": "55.3%",
+        "decisiveWins": "26.0%"
+      }
+    },
+    "synthetic_test_v1|support_militia|75": {
+      "accept": {
+        "pils": "55.3%",
+        "legal": "29.1%",
+        "compromise": "15.6%",
+        "prolonged": "0.0%",
+        "f9": "15.6%",
+        "meanRounds": 2.64,
+        "victoriesWithin2Rounds": "59.7%",
+        "victories": "84.4%",
+        "supportedWins": "55.3%",
+        "decisiveWins": "26.0%"
+      },
+      "reject": {
+        "pils": "55.3%",
+        "legal": "29.1%",
+        "compromise": "0.0%",
+        "prolonged": "15.6%",
+        "f9": "15.6%",
+        "meanRounds": 2.64,
+        "victoriesWithin2Rounds": "59.7%",
+        "victories": "84.4%",
+        "supportedWins": "55.3%",
+        "decisiveWins": "26.0%"
+      }
+    },
+    "synthetic_test_v1|defend_militia_small|30": {
+      "accept": {
+        "pils": "29.3%",
+        "legal": "29.5%",
+        "compromise": "0.0%",
+        "prolonged": "41.1%",
+        "f9": "0.0%",
+        "meanRounds": 3.12,
+        "victoriesWithin2Rounds": "34.6%",
+        "victories": "58.9%",
+        "supportedWins": "29.5%",
+        "decisiveWins": "0.0%"
+      },
+      "reject": {
+        "pils": "29.3%",
+        "legal": "29.5%",
+        "compromise": "0.0%",
+        "prolonged": "41.1%",
+        "f9": "0.0%",
+        "meanRounds": 3.12,
+        "victoriesWithin2Rounds": "34.6%",
+        "victories": "58.9%",
+        "supportedWins": "29.5%",
+        "decisiveWins": "0.0%"
+      }
+    },
+    "synthetic_test_v1|defend_militia_small|45": {
+      "accept": {
+        "pils": "29.3%",
+        "legal": "29.5%",
+        "compromise": "11.3%",
+        "prolonged": "29.8%",
+        "f9": "0.0%",
+        "meanRounds": 3.12,
+        "victoriesWithin2Rounds": "34.6%",
+        "victories": "58.9%",
+        "supportedWins": "29.5%",
+        "decisiveWins": "0.0%"
+      },
+      "reject": {
+        "pils": "29.3%",
+        "legal": "29.5%",
+        "compromise": "11.3%",
+        "prolonged": "29.8%",
+        "f9": "0.0%",
+        "meanRounds": 3.12,
+        "victoriesWithin2Rounds": "34.6%",
+        "victories": "58.9%",
+        "supportedWins": "29.5%",
+        "decisiveWins": "0.0%"
+      }
+    },
+    "synthetic_test_v1|defend_militia_small|60": {
+      "accept": {
+        "pils": "29.3%",
+        "legal": "29.5%",
+        "compromise": "41.1%",
+        "prolonged": "0.0%",
+        "f9": "0.0%",
+        "meanRounds": 3.12,
+        "victoriesWithin2Rounds": "34.6%",
+        "victories": "58.9%",
+        "supportedWins": "29.5%",
+        "decisiveWins": "0.0%"
+      },
+      "reject": {
+        "pils": "29.3%",
+        "legal": "29.5%",
+        "compromise": "41.1%",
+        "prolonged": "0.0%",
+        "f9": "0.0%",
+        "meanRounds": 3.12,
+        "victoriesWithin2Rounds": "34.6%",
+        "victories": "58.9%",
+        "supportedWins": "29.5%",
+        "decisiveWins": "0.0%"
+      }
+    },
+    "synthetic_test_v1|defend_militia_small|75": {
+      "accept": {
+        "pils": "29.3%",
+        "legal": "29.5%",
+        "compromise": "41.1%",
+        "prolonged": "0.0%",
+        "f9": "0.0%",
+        "meanRounds": 3.12,
+        "victoriesWithin2Rounds": "34.6%",
+        "victories": "58.9%",
+        "supportedWins": "29.5%",
+        "decisiveWins": "0.0%"
+      },
+      "reject": {
+        "pils": "29.3%",
+        "legal": "29.5%",
+        "compromise": "41.1%",
+        "prolonged": "0.0%",
+        "f9": "0.0%",
+        "meanRounds": 3.12,
+        "victoriesWithin2Rounds": "34.6%",
+        "victories": "58.9%",
+        "supportedWins": "29.5%",
+        "decisiveWins": "0.0%"
+      }
+    },
+    "synthetic_test_v1|defend_as|30": {
+      "accept": {
+        "pils": "26.9%",
+        "legal": "45.2%",
+        "compromise": "0.0%",
+        "prolonged": "28.0%",
+        "f9": "0.0%",
+        "meanRounds": 3.33,
+        "victoriesWithin2Rounds": "18.7%",
+        "victories": "72.0%",
+        "supportedWins": "45.2%",
+        "decisiveWins": "15.7%"
+      },
+      "reject": {
+        "pils": "26.9%",
+        "legal": "45.2%",
+        "compromise": "0.0%",
+        "prolonged": "28.0%",
+        "f9": "0.0%",
+        "meanRounds": 3.33,
+        "victoriesWithin2Rounds": "18.7%",
+        "victories": "72.0%",
+        "supportedWins": "45.2%",
+        "decisiveWins": "15.7%"
+      }
+    },
+    "synthetic_test_v1|defend_as|45": {
+      "accept": {
+        "pils": "26.9%",
+        "legal": "45.2%",
+        "compromise": "0.0%",
+        "prolonged": "28.0%",
+        "f9": "0.0%",
+        "meanRounds": 3.33,
+        "victoriesWithin2Rounds": "18.7%",
+        "victories": "72.0%",
+        "supportedWins": "45.2%",
+        "decisiveWins": "15.7%"
+      },
+      "reject": {
+        "pils": "26.9%",
+        "legal": "45.2%",
+        "compromise": "0.0%",
+        "prolonged": "28.0%",
+        "f9": "0.0%",
+        "meanRounds": 3.33,
+        "victoriesWithin2Rounds": "18.7%",
+        "victories": "72.0%",
+        "supportedWins": "45.2%",
+        "decisiveWins": "15.7%"
+      }
+    },
+    "synthetic_test_v1|defend_as|60": {
+      "accept": {
+        "pils": "26.9%",
+        "legal": "45.2%",
+        "compromise": "28.0%",
+        "prolonged": "0.0%",
+        "f9": "28.0%",
+        "meanRounds": 3.33,
+        "victoriesWithin2Rounds": "18.7%",
+        "victories": "72.0%",
+        "supportedWins": "45.2%",
+        "decisiveWins": "15.7%"
+      },
+      "reject": {
+        "pils": "26.9%",
+        "legal": "45.2%",
+        "compromise": "0.0%",
+        "prolonged": "28.0%",
+        "f9": "28.0%",
+        "meanRounds": 3.33,
+        "victoriesWithin2Rounds": "18.7%",
+        "victories": "72.0%",
+        "supportedWins": "45.2%",
+        "decisiveWins": "15.7%"
+      }
+    },
+    "synthetic_test_v1|defend_as|75": {
+      "accept": {
+        "pils": "26.9%",
+        "legal": "45.2%",
+        "compromise": "28.0%",
+        "prolonged": "0.0%",
+        "f9": "28.0%",
+        "meanRounds": 3.33,
+        "victoriesWithin2Rounds": "18.7%",
+        "victories": "72.0%",
+        "supportedWins": "45.2%",
+        "decisiveWins": "15.7%"
+      },
+      "reject": {
+        "pils": "26.9%",
+        "legal": "45.2%",
+        "compromise": "0.0%",
+        "prolonged": "28.0%",
+        "f9": "28.0%",
+        "meanRounds": 3.33,
+        "victoriesWithin2Rounds": "18.7%",
+        "victories": "72.0%",
+        "supportedWins": "45.2%",
+        "decisiveWins": "15.7%"
+      }
+    },
+    "synthetic_test_v1|defend_rail|30": {
+      "accept": {
+        "pils": "25.1%",
+        "legal": "29.5%",
+        "compromise": "0.0%",
+        "prolonged": "45.4%",
+        "f9": "0.0%",
+        "meanRounds": 3.12,
+        "victoriesWithin2Rounds": "34.6%",
+        "victories": "54.6%",
+        "supportedWins": "29.5%",
+        "decisiveWins": "0.0%"
+      },
+      "reject": {
+        "pils": "25.1%",
+        "legal": "29.5%",
+        "compromise": "0.0%",
+        "prolonged": "45.4%",
+        "f9": "0.0%",
+        "meanRounds": 3.12,
+        "victoriesWithin2Rounds": "34.6%",
+        "victories": "54.6%",
+        "supportedWins": "29.5%",
+        "decisiveWins": "0.0%"
+      }
+    },
+    "synthetic_test_v1|defend_rail|45": {
+      "accept": {
+        "pils": "25.1%",
+        "legal": "29.5%",
+        "compromise": "11.3%",
+        "prolonged": "34.1%",
+        "f9": "0.0%",
+        "meanRounds": 3.12,
+        "victoriesWithin2Rounds": "34.6%",
+        "victories": "54.6%",
+        "supportedWins": "29.5%",
+        "decisiveWins": "0.0%"
+      },
+      "reject": {
+        "pils": "25.1%",
+        "legal": "29.5%",
+        "compromise": "11.3%",
+        "prolonged": "34.1%",
+        "f9": "0.0%",
+        "meanRounds": 3.12,
+        "victoriesWithin2Rounds": "34.6%",
+        "victories": "54.6%",
+        "supportedWins": "29.5%",
+        "decisiveWins": "0.0%"
+      }
+    },
+    "synthetic_test_v1|defend_rail|60": {
+      "accept": {
+        "pils": "25.1%",
+        "legal": "29.5%",
+        "compromise": "45.4%",
+        "prolonged": "0.0%",
+        "f9": "4.3%",
+        "meanRounds": 3.12,
+        "victoriesWithin2Rounds": "34.6%",
+        "victories": "54.6%",
+        "supportedWins": "29.5%",
+        "decisiveWins": "0.0%"
+      },
+      "reject": {
+        "pils": "25.1%",
+        "legal": "29.5%",
+        "compromise": "41.1%",
+        "prolonged": "4.3%",
+        "f9": "4.3%",
+        "meanRounds": 3.12,
+        "victoriesWithin2Rounds": "34.6%",
+        "victories": "54.6%",
+        "supportedWins": "29.5%",
+        "decisiveWins": "0.0%"
+      }
+    },
+    "synthetic_test_v1|defend_rail|75": {
+      "accept": {
+        "pils": "25.1%",
+        "legal": "29.5%",
+        "compromise": "45.4%",
+        "prolonged": "0.0%",
+        "f9": "4.3%",
+        "meanRounds": 3.12,
+        "victoriesWithin2Rounds": "34.6%",
+        "victories": "54.6%",
+        "supportedWins": "29.5%",
+        "decisiveWins": "0.0%"
+      },
+      "reject": {
+        "pils": "25.1%",
+        "legal": "29.5%",
+        "compromise": "41.1%",
+        "prolonged": "4.3%",
+        "f9": "4.3%",
+        "meanRounds": 3.12,
+        "victoriesWithin2Rounds": "34.6%",
+        "victories": "54.6%",
+        "supportedWins": "29.5%",
+        "decisiveWins": "0.0%"
+      }
+    },
+    "synthetic_test_v2|passive|30": {
+      "accept": {
+        "pils": "43.8%",
+        "legal": "21.7%",
+        "compromise": "0.0%",
+        "prolonged": "34.5%",
+        "f9": "0.0%",
+        "meanRounds": 2.87,
+        "victoriesWithin2Rounds": "47.1%",
+        "victories": "65.5%",
+        "supportedWins": "0.0%",
+        "decisiveWins": "0.0%"
+      },
+      "reject": {
+        "pils": "43.8%",
+        "legal": "21.7%",
+        "compromise": "0.0%",
+        "prolonged": "34.5%",
+        "f9": "0.0%",
+        "meanRounds": 2.87,
+        "victoriesWithin2Rounds": "47.1%",
+        "victories": "65.5%",
+        "supportedWins": "0.0%",
+        "decisiveWins": "0.0%"
+      }
+    },
+    "synthetic_test_v2|passive|45": {
+      "accept": {
+        "pils": "43.8%",
+        "legal": "21.7%",
+        "compromise": "8.1%",
+        "prolonged": "26.4%",
+        "f9": "0.0%",
+        "meanRounds": 2.87,
+        "victoriesWithin2Rounds": "47.1%",
+        "victories": "65.5%",
+        "supportedWins": "0.0%",
+        "decisiveWins": "0.0%"
+      },
+      "reject": {
+        "pils": "43.8%",
+        "legal": "21.7%",
+        "compromise": "8.1%",
+        "prolonged": "26.4%",
+        "f9": "0.0%",
+        "meanRounds": 2.87,
+        "victoriesWithin2Rounds": "47.1%",
+        "victories": "65.5%",
+        "supportedWins": "0.0%",
+        "decisiveWins": "0.0%"
+      }
+    },
+    "synthetic_test_v2|passive|60": {
+      "accept": {
+        "pils": "43.8%",
+        "legal": "21.7%",
+        "compromise": "34.5%",
+        "prolonged": "0.0%",
+        "f9": "0.0%",
+        "meanRounds": 2.87,
+        "victoriesWithin2Rounds": "47.1%",
+        "victories": "65.5%",
+        "supportedWins": "0.0%",
+        "decisiveWins": "0.0%"
+      },
+      "reject": {
+        "pils": "43.8%",
+        "legal": "21.7%",
+        "compromise": "34.5%",
+        "prolonged": "0.0%",
+        "f9": "0.0%",
+        "meanRounds": 2.87,
+        "victoriesWithin2Rounds": "47.1%",
+        "victories": "65.5%",
+        "supportedWins": "0.0%",
+        "decisiveWins": "0.0%"
+      }
+    },
+    "synthetic_test_v2|passive|75": {
+      "accept": {
+        "pils": "43.8%",
+        "legal": "21.7%",
+        "compromise": "34.5%",
+        "prolonged": "0.0%",
+        "f9": "0.0%",
+        "meanRounds": 2.87,
+        "victoriesWithin2Rounds": "47.1%",
+        "victories": "65.5%",
+        "supportedWins": "0.0%",
+        "decisiveWins": "0.0%"
+      },
+      "reject": {
+        "pils": "43.8%",
+        "legal": "21.7%",
+        "compromise": "34.5%",
+        "prolonged": "0.0%",
+        "f9": "0.0%",
+        "meanRounds": 2.87,
+        "victoriesWithin2Rounds": "47.1%",
+        "victories": "65.5%",
+        "supportedWins": "0.0%",
+        "decisiveWins": "0.0%"
+      }
+    },
+    "synthetic_test_v2|neutral_protection|30": {
+      "accept": {
+        "pils": "43.8%",
+        "legal": "21.7%",
+        "compromise": "0.0%",
+        "prolonged": "34.5%",
+        "f9": "0.0%",
+        "meanRounds": 2.87,
+        "victoriesWithin2Rounds": "47.1%",
+        "victories": "65.5%",
+        "supportedWins": "0.0%",
+        "decisiveWins": "0.0%"
+      },
+      "reject": {
+        "pils": "43.8%",
+        "legal": "21.7%",
+        "compromise": "0.0%",
+        "prolonged": "34.5%",
+        "f9": "0.0%",
+        "meanRounds": 2.87,
+        "victoriesWithin2Rounds": "47.1%",
+        "victories": "65.5%",
+        "supportedWins": "0.0%",
+        "decisiveWins": "0.0%"
+      }
+    },
+    "synthetic_test_v2|neutral_protection|45": {
+      "accept": {
+        "pils": "43.8%",
+        "legal": "21.7%",
+        "compromise": "8.1%",
+        "prolonged": "26.4%",
+        "f9": "0.0%",
+        "meanRounds": 2.87,
+        "victoriesWithin2Rounds": "47.1%",
+        "victories": "65.5%",
+        "supportedWins": "0.0%",
+        "decisiveWins": "0.0%"
+      },
+      "reject": {
+        "pils": "43.8%",
+        "legal": "21.7%",
+        "compromise": "8.1%",
+        "prolonged": "26.4%",
+        "f9": "0.0%",
+        "meanRounds": 2.87,
+        "victoriesWithin2Rounds": "47.1%",
+        "victories": "65.5%",
+        "supportedWins": "0.0%",
+        "decisiveWins": "0.0%"
+      }
+    },
+    "synthetic_test_v2|neutral_protection|60": {
+      "accept": {
+        "pils": "43.8%",
+        "legal": "21.7%",
+        "compromise": "34.5%",
+        "prolonged": "0.0%",
+        "f9": "0.0%",
+        "meanRounds": 2.87,
+        "victoriesWithin2Rounds": "47.1%",
+        "victories": "65.5%",
+        "supportedWins": "0.0%",
+        "decisiveWins": "0.0%"
+      },
+      "reject": {
+        "pils": "43.8%",
+        "legal": "21.7%",
+        "compromise": "34.5%",
+        "prolonged": "0.0%",
+        "f9": "0.0%",
+        "meanRounds": 2.87,
+        "victoriesWithin2Rounds": "47.1%",
+        "victories": "65.5%",
+        "supportedWins": "0.0%",
+        "decisiveWins": "0.0%"
+      }
+    },
+    "synthetic_test_v2|neutral_protection|75": {
+      "accept": {
+        "pils": "43.8%",
+        "legal": "21.7%",
+        "compromise": "34.5%",
+        "prolonged": "0.0%",
+        "f9": "0.0%",
+        "meanRounds": 2.87,
+        "victoriesWithin2Rounds": "47.1%",
+        "victories": "65.5%",
+        "supportedWins": "0.0%",
+        "decisiveWins": "0.0%"
+      },
+      "reject": {
+        "pils": "43.8%",
+        "legal": "21.7%",
+        "compromise": "34.5%",
+        "prolonged": "0.0%",
+        "f9": "0.0%",
+        "meanRounds": 2.87,
+        "victoriesWithin2Rounds": "47.1%",
+        "victories": "65.5%",
+        "supportedWins": "0.0%",
+        "decisiveWins": "0.0%"
+      }
+    },
+    "synthetic_test_v2|support_rail|30": {
+      "accept": {
+        "pils": "72.2%",
+        "legal": "9.4%",
+        "compromise": "0.0%",
+        "prolonged": "18.4%",
+        "f9": "0.0%",
+        "meanRounds": 2.31,
+        "victoriesWithin2Rounds": "75.5%",
+        "victories": "81.6%",
+        "supportedWins": "72.2%",
+        "decisiveWins": "28.4%"
+      },
+      "reject": {
+        "pils": "72.2%",
+        "legal": "9.4%",
+        "compromise": "0.0%",
+        "prolonged": "18.4%",
+        "f9": "0.0%",
+        "meanRounds": 2.31,
+        "victoriesWithin2Rounds": "75.5%",
+        "victories": "81.6%",
+        "supportedWins": "72.2%",
+        "decisiveWins": "28.4%"
+      }
+    },
+    "synthetic_test_v2|support_rail|45": {
+      "accept": {
+        "pils": "72.2%",
+        "legal": "9.4%",
+        "compromise": "0.0%",
+        "prolonged": "18.4%",
+        "f9": "0.0%",
+        "meanRounds": 2.31,
+        "victoriesWithin2Rounds": "75.5%",
+        "victories": "81.6%",
+        "supportedWins": "72.2%",
+        "decisiveWins": "28.4%"
+      },
+      "reject": {
+        "pils": "72.2%",
+        "legal": "9.4%",
+        "compromise": "0.0%",
+        "prolonged": "18.4%",
+        "f9": "0.0%",
+        "meanRounds": 2.31,
+        "victoriesWithin2Rounds": "75.5%",
+        "victories": "81.6%",
+        "supportedWins": "72.2%",
+        "decisiveWins": "28.4%"
+      }
+    },
+    "synthetic_test_v2|support_rail|60": {
+      "accept": {
+        "pils": "72.2%",
+        "legal": "9.4%",
+        "compromise": "18.4%",
+        "prolonged": "0.0%",
+        "f9": "12.2%",
+        "meanRounds": 2.31,
+        "victoriesWithin2Rounds": "75.5%",
+        "victories": "81.6%",
+        "supportedWins": "72.2%",
+        "decisiveWins": "28.4%"
+      },
+      "reject": {
+        "pils": "72.2%",
+        "legal": "9.4%",
+        "compromise": "6.2%",
+        "prolonged": "12.2%",
+        "f9": "12.2%",
+        "meanRounds": 2.31,
+        "victoriesWithin2Rounds": "75.5%",
+        "victories": "81.6%",
+        "supportedWins": "72.2%",
+        "decisiveWins": "28.4%"
+      }
+    },
+    "synthetic_test_v2|support_rail|75": {
+      "accept": {
+        "pils": "72.2%",
+        "legal": "9.4%",
+        "compromise": "18.4%",
+        "prolonged": "0.0%",
+        "f9": "12.2%",
+        "meanRounds": 2.31,
+        "victoriesWithin2Rounds": "75.5%",
+        "victories": "81.6%",
+        "supportedWins": "72.2%",
+        "decisiveWins": "28.4%"
+      },
+      "reject": {
+        "pils": "72.2%",
+        "legal": "9.4%",
+        "compromise": "6.2%",
+        "prolonged": "12.2%",
+        "f9": "12.2%",
+        "meanRounds": 2.31,
+        "victoriesWithin2Rounds": "75.5%",
+        "victories": "81.6%",
+        "supportedWins": "72.2%",
+        "decisiveWins": "28.4%"
+      }
+    },
+    "synthetic_test_v2|support_rail_weak|30": {
+      "accept": {
+        "pils": "72.2%",
+        "legal": "9.4%",
+        "compromise": "0.0%",
+        "prolonged": "18.4%",
+        "f9": "0.0%",
+        "meanRounds": 2.31,
+        "victoriesWithin2Rounds": "75.5%",
+        "victories": "81.6%",
+        "supportedWins": "72.2%",
+        "decisiveWins": "28.4%"
+      },
+      "reject": {
+        "pils": "72.2%",
+        "legal": "9.4%",
+        "compromise": "0.0%",
+        "prolonged": "18.4%",
+        "f9": "0.0%",
+        "meanRounds": 2.31,
+        "victoriesWithin2Rounds": "75.5%",
+        "victories": "81.6%",
+        "supportedWins": "72.2%",
+        "decisiveWins": "28.4%"
+      }
+    },
+    "synthetic_test_v2|support_rail_weak|45": {
+      "accept": {
+        "pils": "72.2%",
+        "legal": "9.4%",
+        "compromise": "12.2%",
+        "prolonged": "6.2%",
+        "f9": "12.2%",
+        "meanRounds": 2.31,
+        "victoriesWithin2Rounds": "75.5%",
+        "victories": "81.6%",
+        "supportedWins": "72.2%",
+        "decisiveWins": "28.4%"
+      },
+      "reject": {
+        "pils": "72.2%",
+        "legal": "9.4%",
+        "compromise": "0.0%",
+        "prolonged": "18.4%",
+        "f9": "12.2%",
+        "meanRounds": 2.31,
+        "victoriesWithin2Rounds": "75.5%",
+        "victories": "81.6%",
+        "supportedWins": "72.2%",
+        "decisiveWins": "28.4%"
+      }
+    },
+    "synthetic_test_v2|support_rail_weak|60": {
+      "accept": {
+        "pils": "72.2%",
+        "legal": "9.4%",
+        "compromise": "18.4%",
+        "prolonged": "0.0%",
+        "f9": "12.2%",
+        "meanRounds": 2.31,
+        "victoriesWithin2Rounds": "75.5%",
+        "victories": "81.6%",
+        "supportedWins": "72.2%",
+        "decisiveWins": "28.4%"
+      },
+      "reject": {
+        "pils": "72.2%",
+        "legal": "9.4%",
+        "compromise": "6.2%",
+        "prolonged": "12.2%",
+        "f9": "12.2%",
+        "meanRounds": 2.31,
+        "victoriesWithin2Rounds": "75.5%",
+        "victories": "81.6%",
+        "supportedWins": "72.2%",
+        "decisiveWins": "28.4%"
+      }
+    },
+    "synthetic_test_v2|support_rail_weak|75": {
+      "accept": {
+        "pils": "72.2%",
+        "legal": "9.4%",
+        "compromise": "18.4%",
+        "prolonged": "0.0%",
+        "f9": "12.2%",
+        "meanRounds": 2.31,
+        "victoriesWithin2Rounds": "75.5%",
+        "victories": "81.6%",
+        "supportedWins": "72.2%",
+        "decisiveWins": "28.4%"
+      },
+      "reject": {
+        "pils": "72.2%",
+        "legal": "9.4%",
+        "compromise": "6.2%",
+        "prolonged": "12.2%",
+        "f9": "12.2%",
+        "meanRounds": 2.31,
+        "victoriesWithin2Rounds": "75.5%",
+        "victories": "81.6%",
+        "supportedWins": "72.2%",
+        "decisiveWins": "28.4%"
+      }
+    },
+    "synthetic_test_v2|support_militia|30": {
+      "accept": {
+        "pils": "64.8%",
+        "legal": "21.0%",
+        "compromise": "0.0%",
+        "prolonged": "14.2%",
+        "f9": "0.0%",
+        "meanRounds": 2.5,
+        "victoriesWithin2Rounds": "66.8%",
+        "victories": "85.8%",
+        "supportedWins": "64.8%",
+        "decisiveWins": "21.0%"
+      },
+      "reject": {
+        "pils": "64.8%",
+        "legal": "21.0%",
+        "compromise": "0.0%",
+        "prolonged": "14.2%",
+        "f9": "0.0%",
+        "meanRounds": 2.5,
+        "victoriesWithin2Rounds": "66.8%",
+        "victories": "85.8%",
+        "supportedWins": "64.8%",
+        "decisiveWins": "21.0%"
+      }
+    },
+    "synthetic_test_v2|support_militia|45": {
+      "accept": {
+        "pils": "64.8%",
+        "legal": "21.0%",
+        "compromise": "0.0%",
+        "prolonged": "14.2%",
+        "f9": "0.0%",
+        "meanRounds": 2.5,
+        "victoriesWithin2Rounds": "66.8%",
+        "victories": "85.8%",
+        "supportedWins": "64.8%",
+        "decisiveWins": "21.0%"
+      },
+      "reject": {
+        "pils": "64.8%",
+        "legal": "21.0%",
+        "compromise": "0.0%",
+        "prolonged": "14.2%",
+        "f9": "0.0%",
+        "meanRounds": 2.5,
+        "victoriesWithin2Rounds": "66.8%",
+        "victories": "85.8%",
+        "supportedWins": "64.8%",
+        "decisiveWins": "21.0%"
+      }
+    },
+    "synthetic_test_v2|support_militia|60": {
+      "accept": {
+        "pils": "64.8%",
+        "legal": "21.0%",
+        "compromise": "14.2%",
+        "prolonged": "0.0%",
+        "f9": "14.2%",
+        "meanRounds": 2.5,
+        "victoriesWithin2Rounds": "66.8%",
+        "victories": "85.8%",
+        "supportedWins": "64.8%",
+        "decisiveWins": "21.0%"
+      },
+      "reject": {
+        "pils": "64.8%",
+        "legal": "21.0%",
+        "compromise": "0.0%",
+        "prolonged": "14.2%",
+        "f9": "14.2%",
+        "meanRounds": 2.5,
+        "victoriesWithin2Rounds": "66.8%",
+        "victories": "85.8%",
+        "supportedWins": "64.8%",
+        "decisiveWins": "21.0%"
+      }
+    },
+    "synthetic_test_v2|support_militia|75": {
+      "accept": {
+        "pils": "64.8%",
+        "legal": "21.0%",
+        "compromise": "14.2%",
+        "prolonged": "0.0%",
+        "f9": "14.2%",
+        "meanRounds": 2.5,
+        "victoriesWithin2Rounds": "66.8%",
+        "victories": "85.8%",
+        "supportedWins": "64.8%",
+        "decisiveWins": "21.0%"
+      },
+      "reject": {
+        "pils": "64.8%",
+        "legal": "21.0%",
+        "compromise": "0.0%",
+        "prolonged": "14.2%",
+        "f9": "14.2%",
+        "meanRounds": 2.5,
+        "victoriesWithin2Rounds": "66.8%",
+        "victories": "85.8%",
+        "supportedWins": "64.8%",
+        "decisiveWins": "21.0%"
+      }
+    },
+    "synthetic_test_v2|defend_militia_small|30": {
+      "accept": {
+        "pils": "43.8%",
+        "legal": "21.7%",
+        "compromise": "0.0%",
+        "prolonged": "34.5%",
+        "f9": "0.0%",
+        "meanRounds": 2.87,
+        "victoriesWithin2Rounds": "47.1%",
+        "victories": "65.5%",
+        "supportedWins": "21.7%",
+        "decisiveWins": "0.0%"
+      },
+      "reject": {
+        "pils": "43.8%",
+        "legal": "21.7%",
+        "compromise": "0.0%",
+        "prolonged": "34.5%",
+        "f9": "0.0%",
+        "meanRounds": 2.87,
+        "victoriesWithin2Rounds": "47.1%",
+        "victories": "65.5%",
+        "supportedWins": "21.7%",
+        "decisiveWins": "0.0%"
+      }
+    },
+    "synthetic_test_v2|defend_militia_small|45": {
+      "accept": {
+        "pils": "43.8%",
+        "legal": "21.7%",
+        "compromise": "8.1%",
+        "prolonged": "26.4%",
+        "f9": "0.0%",
+        "meanRounds": 2.87,
+        "victoriesWithin2Rounds": "47.1%",
+        "victories": "65.5%",
+        "supportedWins": "21.7%",
+        "decisiveWins": "0.0%"
+      },
+      "reject": {
+        "pils": "43.8%",
+        "legal": "21.7%",
+        "compromise": "8.1%",
+        "prolonged": "26.4%",
+        "f9": "0.0%",
+        "meanRounds": 2.87,
+        "victoriesWithin2Rounds": "47.1%",
+        "victories": "65.5%",
+        "supportedWins": "21.7%",
+        "decisiveWins": "0.0%"
+      }
+    },
+    "synthetic_test_v2|defend_militia_small|60": {
+      "accept": {
+        "pils": "43.8%",
+        "legal": "21.7%",
+        "compromise": "34.5%",
+        "prolonged": "0.0%",
+        "f9": "0.0%",
+        "meanRounds": 2.87,
+        "victoriesWithin2Rounds": "47.1%",
+        "victories": "65.5%",
+        "supportedWins": "21.7%",
+        "decisiveWins": "0.0%"
+      },
+      "reject": {
+        "pils": "43.8%",
+        "legal": "21.7%",
+        "compromise": "34.5%",
+        "prolonged": "0.0%",
+        "f9": "0.0%",
+        "meanRounds": 2.87,
+        "victoriesWithin2Rounds": "47.1%",
+        "victories": "65.5%",
+        "supportedWins": "21.7%",
+        "decisiveWins": "0.0%"
+      }
+    },
+    "synthetic_test_v2|defend_militia_small|75": {
+      "accept": {
+        "pils": "43.8%",
+        "legal": "21.7%",
+        "compromise": "34.5%",
+        "prolonged": "0.0%",
+        "f9": "0.0%",
+        "meanRounds": 2.87,
+        "victoriesWithin2Rounds": "47.1%",
+        "victories": "65.5%",
+        "supportedWins": "21.7%",
+        "decisiveWins": "0.0%"
+      },
+      "reject": {
+        "pils": "43.8%",
+        "legal": "21.7%",
+        "compromise": "34.5%",
+        "prolonged": "0.0%",
+        "f9": "0.0%",
+        "meanRounds": 2.87,
+        "victoriesWithin2Rounds": "47.1%",
+        "victories": "65.5%",
+        "supportedWins": "21.7%",
+        "decisiveWins": "0.0%"
+      }
+    },
+    "synthetic_test_v2|defend_as|30": {
+      "accept": {
+        "pils": "39.7%",
+        "legal": "36.0%",
+        "compromise": "0.0%",
+        "prolonged": "24.3%",
+        "f9": "0.0%",
+        "meanRounds": 3.24,
+        "victoriesWithin2Rounds": "18.8%",
+        "victories": "75.7%",
+        "supportedWins": "36.0%",
+        "decisiveWins": "14.3%"
+      },
+      "reject": {
+        "pils": "39.7%",
+        "legal": "36.0%",
+        "compromise": "0.0%",
+        "prolonged": "24.3%",
+        "f9": "0.0%",
+        "meanRounds": 3.24,
+        "victoriesWithin2Rounds": "18.8%",
+        "victories": "75.7%",
+        "supportedWins": "36.0%",
+        "decisiveWins": "14.3%"
+      }
+    },
+    "synthetic_test_v2|defend_as|45": {
+      "accept": {
+        "pils": "39.7%",
+        "legal": "36.0%",
+        "compromise": "0.0%",
+        "prolonged": "24.3%",
+        "f9": "0.0%",
+        "meanRounds": 3.24,
+        "victoriesWithin2Rounds": "18.8%",
+        "victories": "75.7%",
+        "supportedWins": "36.0%",
+        "decisiveWins": "14.3%"
+      },
+      "reject": {
+        "pils": "39.7%",
+        "legal": "36.0%",
+        "compromise": "0.0%",
+        "prolonged": "24.3%",
+        "f9": "0.0%",
+        "meanRounds": 3.24,
+        "victoriesWithin2Rounds": "18.8%",
+        "victories": "75.7%",
+        "supportedWins": "36.0%",
+        "decisiveWins": "14.3%"
+      }
+    },
+    "synthetic_test_v2|defend_as|60": {
+      "accept": {
+        "pils": "39.7%",
+        "legal": "36.0%",
+        "compromise": "24.3%",
+        "prolonged": "0.0%",
+        "f9": "24.3%",
+        "meanRounds": 3.24,
+        "victoriesWithin2Rounds": "18.8%",
+        "victories": "75.7%",
+        "supportedWins": "36.0%",
+        "decisiveWins": "14.3%"
+      },
+      "reject": {
+        "pils": "39.7%",
+        "legal": "36.0%",
+        "compromise": "0.0%",
+        "prolonged": "24.3%",
+        "f9": "24.3%",
+        "meanRounds": 3.24,
+        "victoriesWithin2Rounds": "18.8%",
+        "victories": "75.7%",
+        "supportedWins": "36.0%",
+        "decisiveWins": "14.3%"
+      }
+    },
+    "synthetic_test_v2|defend_as|75": {
+      "accept": {
+        "pils": "39.7%",
+        "legal": "36.0%",
+        "compromise": "24.3%",
+        "prolonged": "0.0%",
+        "f9": "24.3%",
+        "meanRounds": 3.24,
+        "victoriesWithin2Rounds": "18.8%",
+        "victories": "75.7%",
+        "supportedWins": "36.0%",
+        "decisiveWins": "14.3%"
+      },
+      "reject": {
+        "pils": "39.7%",
+        "legal": "36.0%",
+        "compromise": "0.0%",
+        "prolonged": "24.3%",
+        "f9": "24.3%",
+        "meanRounds": 3.24,
+        "victoriesWithin2Rounds": "18.8%",
+        "victories": "75.7%",
+        "supportedWins": "36.0%",
+        "decisiveWins": "14.3%"
+      }
+    },
+    "synthetic_test_v2|defend_rail|30": {
+      "accept": {
+        "pils": "37.7%",
+        "legal": "21.7%",
+        "compromise": "0.0%",
+        "prolonged": "40.6%",
+        "f9": "0.0%",
+        "meanRounds": 2.87,
+        "victoriesWithin2Rounds": "47.1%",
+        "victories": "59.4%",
+        "supportedWins": "21.7%",
+        "decisiveWins": "0.1%"
+      },
+      "reject": {
+        "pils": "37.7%",
+        "legal": "21.7%",
+        "compromise": "0.0%",
+        "prolonged": "40.6%",
+        "f9": "0.0%",
+        "meanRounds": 2.87,
+        "victoriesWithin2Rounds": "47.1%",
+        "victories": "59.4%",
+        "supportedWins": "21.7%",
+        "decisiveWins": "0.1%"
+      }
+    },
+    "synthetic_test_v2|defend_rail|45": {
+      "accept": {
+        "pils": "37.7%",
+        "legal": "21.7%",
+        "compromise": "8.1%",
+        "prolonged": "32.5%",
+        "f9": "0.0%",
+        "meanRounds": 2.87,
+        "victoriesWithin2Rounds": "47.1%",
+        "victories": "59.4%",
+        "supportedWins": "21.7%",
+        "decisiveWins": "0.1%"
+      },
+      "reject": {
+        "pils": "37.7%",
+        "legal": "21.7%",
+        "compromise": "8.1%",
+        "prolonged": "32.5%",
+        "f9": "0.0%",
+        "meanRounds": 2.87,
+        "victoriesWithin2Rounds": "47.1%",
+        "victories": "59.4%",
+        "supportedWins": "21.7%",
+        "decisiveWins": "0.1%"
+      }
+    },
+    "synthetic_test_v2|defend_rail|60": {
+      "accept": {
+        "pils": "37.7%",
+        "legal": "21.7%",
+        "compromise": "40.6%",
+        "prolonged": "0.0%",
+        "f9": "6.1%",
+        "meanRounds": 2.87,
+        "victoriesWithin2Rounds": "47.1%",
+        "victories": "59.4%",
+        "supportedWins": "21.7%",
+        "decisiveWins": "0.1%"
+      },
+      "reject": {
+        "pils": "37.7%",
+        "legal": "21.7%",
+        "compromise": "34.5%",
+        "prolonged": "6.1%",
+        "f9": "6.1%",
+        "meanRounds": 2.87,
+        "victoriesWithin2Rounds": "47.1%",
+        "victories": "59.4%",
+        "supportedWins": "21.7%",
+        "decisiveWins": "0.1%"
+      }
+    },
+    "synthetic_test_v2|defend_rail|75": {
+      "accept": {
+        "pils": "37.7%",
+        "legal": "21.7%",
+        "compromise": "40.6%",
+        "prolonged": "0.0%",
+        "f9": "6.1%",
+        "meanRounds": 2.87,
+        "victoriesWithin2Rounds": "47.1%",
+        "victories": "59.4%",
+        "supportedWins": "21.7%",
+        "decisiveWins": "0.1%"
+      },
+      "reject": {
+        "pils": "37.7%",
+        "legal": "21.7%",
+        "compromise": "34.5%",
+        "prolonged": "6.1%",
+        "f9": "6.1%",
+        "meanRounds": 2.87,
+        "victoriesWithin2Rounds": "47.1%",
+        "victories": "59.4%",
+        "supportedWins": "21.7%",
+        "decisiveWins": "0.1%"
+      }
+    }
+  }
+}

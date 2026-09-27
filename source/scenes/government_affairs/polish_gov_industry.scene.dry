@@ -1,0 +1,118 @@
+title: Industrial Policy
+subtitle: Industry and Trade: credit, orders, public control, representation.
+new-page: true
+is-card: true
+tags: govt_affairs
+card-image: img/arbeiterbew.jpg
+view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'industrial_policy') !}
+on-arrival: {!
+// Card government.industrial_policy (technical reference 17.11–17.12; card catalogue 8.6). Opening and closing
+// the card are free; a confirmed option costs this month's action, or the one free step of an adviser
+// who opened the card. The rescue, public control and representation act on the plant records of stage 6.
+PolishProjects.cardView(Q, 'industrial_policy');
+!}
+
+= Industrial policy
+
+Industry and Trade can prepare the credit instrument or run one package of public orders. It can also act on a recorded plant of industry or a railway workshop: rescue it by a conditional credit, take it under public control, or give its workers a representation once it is public. No intervention causes no arbitrary bankruptcy.
+
+[+ pl_gc_budget +]
+
+[+ pl_gc_projects +]
+
+[+ pl_gc_plants +]
+
+- @credit
+- @rescue
+- @orders
+- @public_control
+- @worker_representation
+- @easy_discard
+- @cancel_advisor_action
+
+@credit
+title: Conditional credit for the market
+subtitle: Prepares the credit instrument (public fund): +5 to the credit target while it works.
+choose-if: {! return PolishProjects.optionStatus(Q, 'industrial_policy', 'credit').available !}
+unavailable-subtitle: [+ pl_industrial_policy_credit_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'industrial_policy', 'credit');
+!}
+go-to: result
+
+@rescue
+title: Conditional credit to rescue a named plant
+subtitle: Prepares the rescue of the oldest recorded plant that lost capacity: 2 B a month for two months, then 1 B; restores its capacity. Launched from the agenda.
+choose-if: {! return PolishProjects.optionStatus(Q, 'industrial_policy', 'rescue').available !}
+unavailable-subtitle: [+ pl_industrial_policy_rescue_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'industrial_policy', 'rescue');
+!}
+go-to: result
+
+@orders
+title: Public orders
+subtitle: One contract for three settlements: 1 B a month, +0.30 pp to output × execution.
+choose-if: {! return PolishProjects.optionStatus(Q, 'industrial_policy', 'orders').available !}
+unavailable-subtitle: [+ pl_industrial_policy_orders_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'industrial_policy', 'orders');
+!}
+go-to: result
+
+@public_control
+title: Take an enterprise under public control
+subtitle: An act of public control of the oldest recorded private plant, voted now; business pressure +15 when it takes effect. A public board manages it.
+choose-if: {! return PolishProjects.optionStatus(Q, 'industrial_policy', 'public_control').available !}
+unavailable-subtitle: [+ pl_industrial_policy_public_control_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'industrial_policy', 'public_control');
+!}
+go-to: result
+
+@worker_representation
+title: Workers’ representation in an enterprise
+subtitle: Consultation or co-decision in a public plant; the representative is the branch's union, not PPS.
+choose-if: {! return PolishProjects.optionStatus(Q, 'industrial_policy', 'worker_representation').available !}
+unavailable-subtitle: [+ pl_industrial_policy_worker_representation_why +]
+go-to: representation_menu
+
+@representation_menu
+new-page: true
+
+= Workers' representation
+
+The representation of the workers of a public plant uses one record. Consultation informs them and hears them before any change of their conditions, without a veto. Co-decision needs their consent to mass dismissals and to changes of the wage rules; it needs its own law. Moving from consultation to co-decision gives only the missing relief.
+
+- @rep_consultative
+- @rep_decision_rights
+- @polish_gov_industry: Back to the card.
+
+@rep_consultative
+title: Information and consultation
+subtitle: 1 T, 0 B, by the act of the public owner; the workers' grievance −2 (stage 7).
+choose-if: {! return PolishProjects.optionStatus(Q, 'industrial_policy', 'worker_representation', {variant: 'consultative'}).available !}
+unavailable-subtitle: [+ pl_rep_consultative_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'industrial_policy', 'worker_representation', {variant: 'consultative'});
+!}
+go-to: result
+
+@rep_decision_rights
+title: Co-decision on mass dismissals and the wage rules
+subtitle: Prepared now (1 T); its law and launch in the agenda (1 T), then 1 B a month for two months; grievance −4, or the missing −2 after consultation (stage 7).
+choose-if: {! return PolishProjects.optionStatus(Q, 'industrial_policy', 'worker_representation', {variant: 'decision_rights'}).available !}
+unavailable-subtitle: [+ pl_rep_decision_rights_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'industrial_policy', 'worker_representation', {variant: 'decision_rights'});
+!}
+go-to: result
+
+@result
+new-page: true
+
+= Industrial policy
+
+[+ pl_gc_result +]
+
+- @root: Continue.

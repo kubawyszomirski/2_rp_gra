@@ -3,6 +3,11 @@ is-pinned-card: true
 tags: advisor
 view-if: arciszewski_advisor = 1
 new-page: true
+on-arrival: {!
+// Adviser actions of technical reference 10.4.3 (card catalogue 6.6): 0 T, their own R, one shared cooldown of
+// six months for all advisers (4.4); the effects are the approved P numbers, applied by PolishParty.
+PolishParty.advisorView(Q, 'arciszewski');
+!}
 
 = Tomasz Arciszewski
 
@@ -10,22 +15,73 @@ Arciszewski represents Centrum PPS while maintaining strong connections to worke
 
 - @organize_workers
 - @labour_programme
+- @welfare_programme
 - @root: Return to main
 
 @organize_workers
-title: Organize Workers
-choose-if: advisor_action_timer = 0
-unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?]
-on-arrival: advisor_action_timer = 6; workers_pps += 4*(1-dissent); labor_strength += 2; labor_dissent -= 3
+title: Organize the Workers
+subtitle: 1 R; one union branch +8 reach; PPS gains among the workers it covers (+3 base).
+choose-if: {! return PolishParty.advisorActionStatus(Q, 'arciszewski', 'organize_workers').available !}
+unavailable-subtitle: [+ pl_advact_organize_workers_why +]
+go-to: organize_menu
 
-The party and affiliated unions expand workplace organization. Union members are not added to militia manpower.
+@organize_menu
+new-page: true
+
+= Organize the workers: which branch?
+
+- @organize_industry
+- @organize_rail
+- @organize_farm_labour
+- @arciszewski: Back.
+
+@organize_industry
+title: Industry
+call: polish_advisor_commit
+on-arrival: {!
+PolishParty.advisorAction(Q, 'arciszewski', 'organize_workers', 'industry');
+!}
+
+[+ pl_party_result +]
+
+- @root: Continue.
+
+@organize_rail
+title: Railways
+call: polish_advisor_commit
+on-arrival: {!
+PolishParty.advisorAction(Q, 'arciszewski', 'organize_workers', 'rail');
+!}
+
+[+ pl_party_result +]
+
+- @root: Continue.
+
+@organize_farm_labour
+title: Agricultural labour
+call: polish_advisor_commit
+on-arrival: {!
+PolishParty.advisorAction(Q, 'arciszewski', 'organize_workers', 'farm_labour');
+!}
+
+[+ pl_party_result +]
+
+- @root: Continue.
 
 @labour_programme
-title: Labour Programme
-subtitle: Use government access to advance labour legislation.
-choose-if: advisor_action_timer = 0 and spd_in_government = 1
-unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?][? if spd_in_government = 0 : The PPS is not in government. ?]
-on-arrival: advisor_action_timer = 6; labor_rights_timer = 0; last_advisor_action = 1
-go-to: labor_rights
+title: Labour Programme: workers’ rights
+subtitle: Opens the Workers’ Rights card; its one step costs no month (the ordinary B costs and the law remain).
+choose-if: {! return Q.advisor_action_timer <= 0 && !!Q.S && PolishProjects.cardAvailable(Q, 'labor_rights') !}
+unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?][? if advisor_action_timer <= 0 : Needs PPS in the cabinet with Labour. ?]
+call: polish_advisor_commit
+on-arrival: advisor_action_timer = 6; last_advisor_action = 1
+go-to: polish_gov_labor_rights
 
-The detailed labour-policy card remains inherited baseline content pending its Polish replacement.
+@welfare_programme
+title: Labour Programme: benefits for the unemployed
+subtitle: Opens the Benefits card; its one step costs no month (the ordinary B costs remain).
+choose-if: {! return Q.advisor_action_timer <= 0 && !!Q.S && PolishProjects.cardAvailable(Q, 'social_welfare') !}
+unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?][? if advisor_action_timer <= 0 : Needs PPS in the cabinet with Labour. ?]
+call: polish_advisor_commit
+on-arrival: advisor_action_timer = 6; last_advisor_action = 1
+go-to: polish_gov_social_welfare

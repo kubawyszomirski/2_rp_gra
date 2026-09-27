@@ -1,0 +1,91 @@
+title: Electoral Agreement
+subtitle: A joint list for the coming Sejm election, while the lists are open.
+new-page: true
+is-card: true
+tags: parliament_affairs
+card-image: img/poster_2.jpg
+view-if: {! return !!Q.S && PolishGovernment.listAgreementAvailable(Q) !}
+on-arrival: {!
+// Card parliament.list_agreement (technical reference 6.2, 6.5; card catalogue 7.7). One choice; the
+// confirmation spends this month's action even when the partners refuse; looking is free.
+for (var id of PolishGovernment.LIST_ORDER) {
+    Q['pl_list_' + id + '_reason'] = PolishGovernment.listStatus(Q, id).reason;
+}
+!}
+
+= A joint list?
+
+The lists for the coming Sejm election are open until the end of the month before the vote. Without an agreement PPS stands alone with its full programme and all its own candidates; refusing an alliance brings no bonus.
+
+A joint list counts the votes of its parties together in the seat method, and shares its seats in proportion to their votes. Each party keeps its own club after the election and may vote differently; a list gives no ministry and binds nobody to a later cabinet. Each partner answers once, by the same evaluation as a cabinet offer. PPS can agree at most one list for this election.
+
+- @left_peasant
+- @labour
+- @centrolew_early
+- @peasant
+- @easy_discard
+
+@left_peasant
+title: A joint list of PPS and PSL Wyzwolenie
+subtitle: Land reform with equal access and protection of labour; seats shared in proportion to votes.
+choose-if: {! return PolishGovernment.listStatus(Q, 'left_peasant').available !}
+unavailable-subtitle: [+ pl_list_left_peasant_reason +]
+on-arrival: {!
+var record = PolishGovernment.proposeList(Q, 'left_peasant');
+Q.pl_list_accepted = record.accepted ? 1 : 0;
+Q.pl_list_answers = PolishGovernment.describeAnswers(record);
+Q.pl_list_name = PolishGovernment.LIST_OPTIONS.left_peasant.name;
+!}
+go-to: result
+
+@labour
+title: A joint list of PPS and NPR
+subtitle: The eight-hour day, protection of the unemployed and religious freedom.
+choose-if: {! return PolishGovernment.listStatus(Q, 'labour').available !}
+unavailable-subtitle: [+ pl_list_labour_reason +]
+on-arrival: {!
+var record = PolishGovernment.proposeList(Q, 'labour');
+Q.pl_list_accepted = record.accepted ? 1 : 0;
+Q.pl_list_answers = PolishGovernment.describeAnswers(record);
+Q.pl_list_name = PolishGovernment.LIST_OPTIONS.labour.name;
+!}
+go-to: result
+
+@centrolew_early
+title: An early Centre-Left of PPS, both peasant parties and NPR
+subtitle: A lawful change of government, a social minimum and a land and religious compromise. The Lewica opposes giving up points of the workers' programme.
+choose-if: {! return PolishGovernment.listStatus(Q, 'centrolew_early').available !}
+unavailable-subtitle: [+ pl_list_centrolew_early_reason +]
+on-arrival: {!
+var record = PolishGovernment.proposeList(Q, 'centrolew_early');
+Q.pl_list_accepted = record.accepted ? 1 : 0;
+Q.pl_list_answers = PolishGovernment.describeAnswers(record);
+Q.pl_list_name = PolishGovernment.LIST_OPTIONS.centrolew_early.name;
+!}
+go-to: result
+
+@peasant
+title: Support a peasant bloc of PSL Wyzwolenie and PSL Piast
+subtitle: Agriculture and credit. PPS brokers the agreement but is not on the list, and faces a stronger rival in the countryside.
+choose-if: {! return PolishGovernment.listStatus(Q, 'peasant').available !}
+unavailable-subtitle: [+ pl_list_peasant_reason +]
+on-arrival: {!
+var record = PolishGovernment.proposeList(Q, 'peasant');
+Q.pl_list_accepted = record.accepted ? 1 : 0;
+Q.pl_list_answers = PolishGovernment.describeAnswers(record);
+Q.pl_list_name = PolishGovernment.LIST_OPTIONS.peasant.name;
+!}
+go-to: result
+
+@result
+new-page: true
+
+= The answer
+
+[+ pl_list_answers +]
+
+[? if pl_list_accepted : **[+ pl_list_name +] will stand as one list** at the coming election. ?]
+
+[? if not pl_list_accepted : **No joint list.** PPS keeps its own list. ?]
+
+- @root: Continue.

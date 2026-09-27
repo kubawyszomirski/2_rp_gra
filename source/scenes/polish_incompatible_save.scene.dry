@@ -1,0 +1,8 @@
+title: Incompatible save
+new-page: true
+
+= This save cannot be continued
+
+This save comes from an older version of the game. The Polish chapter now keeps its state in a new format, and older saves are not converted (technical reference 19.3).
+
+Reload the page to start a new game. Your save slots are not deleted.

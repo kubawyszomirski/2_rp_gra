@@ -1,0 +1,71 @@
+title: Slavic Minorities: Autonomy
+subtitle: The programme of PPS for the Ukrainian and Belarusian question.
+new-page: true
+is-card: true
+tags: party_affairs
+card-image: img/map_2.jpg
+view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.stanceAvailable(Q, 'slavic_autonomy') !}
+on-arrival: {!
+// Card party.slavic_autonomy (catalogue 4.6; technical reference 10.8): 1 T, 0 R, the card then waits 6 months. The present line is shown and cannot be
+// chosen again; closing the card is free (Z — 0.32).
+PolishParty.stanceView(Q, 'slavic_autonomy');
+!}
+
+= Slavic Minorities: Autonomy
+
+The present line: **[+ pl_stance_current +]**. A new declaration costs this month's action; it changes no law in force and gives no reform by itself.
+
+- @federation
+- @regional_autonomy
+- @cultural_rights
+- @polonisation
+- @easy_discard
+
+@federation
+title: Federation
+subtitle: The programme of a federal state; axis +2. Only compatible steps can be carried out in this chapter.
+choose-if: {! return PolishParty.stanceStatus(Q, 'slavic_autonomy', 'federation').available !}
+unavailable-subtitle: [+ pl_stance_federation_why +]
+on-arrival: {!
+PolishParty.stanceChoose(Q, 'slavic_autonomy', 'federation');
+!}
+go-to: result
+
+@regional_autonomy
+title: Autonomy of the voivodeships
+subtitle: A unitary state with devolved powers; axis +1.
+choose-if: {! return PolishParty.stanceStatus(Q, 'slavic_autonomy', 'regional_autonomy').available !}
+unavailable-subtitle: [+ pl_stance_regional_autonomy_why +]
+on-arrival: {!
+PolishParty.stanceChoose(Q, 'slavic_autonomy', 'regional_autonomy');
+!}
+go-to: result
+
+@cultural_rights
+title: Freedom of language, schools and organisations without autonomy
+subtitle: Axis 0.
+choose-if: {! return PolishParty.stanceStatus(Q, 'slavic_autonomy', 'cultural_rights').available !}
+unavailable-subtitle: [+ pl_stance_cultural_rights_why +]
+on-arrival: {!
+PolishParty.stanceChoose(Q, 'slavic_autonomy', 'cultural_rights');
+!}
+go-to: result
+
+@polonisation
+title: Polonisation
+subtitle: No separate autonomy or national institutions; axis −2.
+choose-if: {! return PolishParty.stanceStatus(Q, 'slavic_autonomy', 'polonisation').available !}
+unavailable-subtitle: [+ pl_stance_polonisation_why +]
+on-arrival: {!
+PolishParty.stanceChoose(Q, 'slavic_autonomy', 'polonisation');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= Slavic Minorities: Autonomy
+
+[+ pl_party_result +]
+
+- @root: Continue.

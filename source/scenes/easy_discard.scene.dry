@@ -1,20 +1,10 @@
-title: Return card to hand.
+title: Close card
+subtitle: Leave without acting. Opening and closing a card is free; a card from your hand goes back to it.
 view-if: last_advisor_action = 0 and last_cabinet_action = 0
 go-to: root
 on-arrival: {!
-if (Q.month_actions > 0) {
-    Q.month_actions -= 1;
-}
-// return card to hand
-var card = this.state.lastPlayedCard;
-card.image = card.cardImage;
-this.state.currentHands['main'].push(card);
-// reset the timer...
-if (Q[card.id + "_timer"]) {
-    Q[card.id + "_timer"] = 0;
-}
-// reduce visit count
-if (this.state.visits[card.id]) {
-    this.state.visits[card.id] -= 1;
-}
+// Viewing and closing a card is free (technical reference 4.3): undo exactly what the card
+// recorded when it opened, and return it to the hand if it came from there. After an option has
+// been chosen, closing is only navigation and refunds nothing.
+PolishRules.closeCard(Q, this.state);
 !}

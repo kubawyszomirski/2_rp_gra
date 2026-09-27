@@ -1,0 +1,216 @@
+title: Support for the Government
+subtitle: End our support, or make a demand with or without a threat.
+new-page: true
+is-card: true
+tags: parliament_affairs
+card-image: img/reichstag_2.jpg
+view-if: {! return !!Q.S && PolishGovernment.supportCardAvailable(Q) !}
+on-arrival: {!
+// Card parliament.government_support (technical reference 9.8; card catalogue 7.6). An ordinary use
+// costs this month's action once an option is confirmed and starts a 3-month renewal for this
+// cabinet; opening and closing the card are free. Answers to a partner's warning or ultimatum use the
+// pinned card polish_government_response for 0 T.
+Q.pl_sup_mode = 'ordinary';
+Q.pl_sup_member = PolishGovernment.ppsStance(Q.S) === 'member' ? 1 : 0;
+Q.pl_sup_withdraw_reason = PolishGovernment.supportOptionStatus(Q, 'withdraw', 'ordinary').reason;
+Q.pl_sup_demand_reason = PolishGovernment.supportOptionStatus(Q, 'bargain', 'ordinary').reason;
+!}
+
+= Our relation to the government
+
+Prime minister: [+ prime_minister_display +]. PPS position: [+ pps_government_position +].
+
+[? if pl_cabinet_support_display : Declared support: [+ pl_cabinet_support_display +]. ?]
+
+**End our support** takes effect at once; in the same sequence PPS decides whether to support a motion to dismiss the cabinet. **A threat** makes our demand a condition of further support: if the government refuses, we must either carry the threat out or back down. **Persuasion** asks without a threat and costs no relations.
+
+- @withdraw
+- @bargain
+- @persuade
+- @easy_discard
+
+@withdraw
+title: [? if pl_sup_member : Leave the cabinet with our ministers ?][? if not pl_sup_member : End our support of the cabinet ?]
+subtitle: Our agreements with the cabinet end. The cabinet continues as a minority government unless the Sejm dismisses it.
+choose-if: {! return PolishGovernment.supportOptionStatus(Q, 'withdraw', Q.pl_sup_mode).available !}
+unavailable-subtitle: [+ pl_sup_withdraw_reason +]
+on-arrival: {!
+var left = PolishGovernment.withdrawSupport(Q, Q.pl_sup_mode);
+Q.pl_sup_fell = left.fell ? 1 : 0;
+!}
+go-to: motion if not pl_sup_fell; fallen if pl_sup_fell
+
+@bargain
+title: Demand financed worker protection, or we end our support
+subtitle: The government weighs how much it needs us. Parties that give in under a threat think less of us (relation −3).
+choose-if: {! return PolishGovernment.supportOptionStatus(Q, 'bargain', Q.pl_sup_mode).available !}
+unavailable-subtitle: [+ pl_sup_demand_reason +]
+on-arrival: {!
+var record = PolishGovernment.supportDemand(Q, 'bargain', 'worker_protection', Q.pl_sup_mode);
+Q.pl_sup_accepted = record.accepted ? 1 : 0;
+Q.pl_sup_answers = PolishGovernment.describeAnswers(record);
+!}
+go-to: demand_result if pl_sup_accepted; threat if not pl_sup_accepted
+
+@persuade
+title: Ask for financed worker protection, without a threat
+subtitle: No threat, no relation change either way; if refused, our support stays as it is.
+choose-if: {! return PolishGovernment.supportOptionStatus(Q, 'persuade', Q.pl_sup_mode).available !}
+unavailable-subtitle: [+ pl_sup_demand_reason +]
+on-arrival: {!
+var record = PolishGovernment.supportDemand(Q, 'persuade', 'worker_protection', Q.pl_sup_mode);
+Q.pl_sup_accepted = record.accepted ? 1 : 0;
+Q.pl_sup_answers = PolishGovernment.describeAnswers(record);
+!}
+go-to: demand_result
+
+@maintain
+title: Keep our support as it is
+subtitle: [? if pl_resp_kind = "review" : The toleration goes on to the end of its six months. ?][? if pl_resp_kind = "renewal" : The toleration is renewed for six months, with a new review after three. ?][? if pl_resp_kind != "review" and pl_resp_kind != "renewal" : No new condition. The broken promise stays broken; the partner's case remains open. ?]
+choose-if: {! return PolishGovernment.supportOptionStatus(Q, 'maintain', Q.pl_sup_mode).available !}
+unavailable-subtitle: Only as an answer to a partner's warning or ultimatum.
+on-arrival: {!
+PolishGovernment.maintainSupport(Q);
+!}
+go-to: maintained
+
+@extension
+title: Ask the partner for three more months
+subtitle: One standard extension of the overdue promise, if the partner accepts; it records the new date, not progress.
+choose-if: {! return PolishGovernment.supportOptionStatus(Q, 'extension', Q.pl_sup_mode).available !}
+unavailable-subtitle: [+ pl_sup_extension_reason +]
+on-arrival: {!
+var record = PolishGovernment.requestExtension(Q);
+Q.pl_sup_accepted = record.accepted ? 1 : 0;
+Q.pl_sup_answers = PolishGovernment.describeAnswers(record);
+!}
+go-to: extension_result
+
+@threat
+new-page: true
+
+= The government refuses
+
+[+ pl_sup_answers +]
+
+A threat must be real. We decide now, without spending another month.
+
+- @carry_out
+- @back_down
+
+@carry_out
+title: Carry out the threat: end our support
+subtitle: The ordinary effects of ending our support, including the decision on a motion to dismiss the cabinet.
+on-arrival: {!
+var result = PolishGovernment.answerThreat(Q, 'carry_out');
+Q.pl_sup_fell = result.fell ? 1 : 0;
+!}
+go-to: motion if not pl_sup_fell; fallen if pl_sup_fell
+
+@back_down
+title: Back down
+subtitle: Our reputation for keeping our word falls by 5; later threats against this cabinet count only as persuasion.
+on-arrival: {!
+PolishGovernment.answerThreat(Q, 'back_down');
+!}
+go-to: backed_down
+
+@backed_down
+new-page: true
+
+= We back down
+
+PPS keeps supporting the cabinet without the concession. The government will not take our next threat seriously while this cabinet lasts.
+
+- @root: Continue.
+
+@demand_result
+new-page: true
+
+= The answer
+
+[+ pl_sup_answers +]
+
+[? if pl_sup_accepted : **The government accepts.** Financed worker protection enters our agreement with the cabinet. It is carried out by the programmes of a later stage, so the promise has no due date yet. ?]
+
+[? if not pl_sup_accepted : **The government refuses.** Our support stays as it was. ?]
+
+- @root: Continue.
+
+@extension_result
+new-page: true
+
+= The answer
+
+[+ pl_sup_answers +]
+
+[? if pl_sup_accepted : **The partner accepts three more months.** The promise keeps its content; its new date is recorded, and the ultimatum ends if nothing else is overdue. ?]
+
+[? if not pl_sup_accepted : **The partner refuses.** The ultimatum stands. ?]
+
+- @root: Continue.
+
+@maintained
+new-page: true
+
+= We keep our support
+
+[? if pl_resp_kind = "review" : Our toleration goes on as agreed until the end of its six months. ?][? if pl_resp_kind = "renewal" : Our toleration is renewed for six months; its next review comes after three. ?][? if pl_resp_kind != "review" and pl_resp_kind != "renewal" : Nothing changes in our agreement. The partner still waits for the promise. ?]
+
+- @root: Continue.
+
+@motion
+new-page: true
+call: polish_opening_state
+on-arrival: {!
+Q.pl_sup_motion_reason = PolishGovernment.dismissalSupportStatus(Q).reason;
+!}
+
+= Our support has ended
+
+[+ pl_cabinet_support_display +]. Without us the cabinet governs as a minority unless the Sejm dismisses it. A motion to dismiss the cabinet is now possible; the votes of the clubs decide it.
+
+- @own_motion_support
+- @own_motion_refuse
+
+@own_motion_support
+title: Support the motion to dismiss the cabinet
+subtitle: The motion passes if more MPs vote for it than against, with at least 148 present.
+choose-if: {! return PolishGovernment.dismissalSupportStatus(Q).available !}
+unavailable-subtitle: [+ pl_sup_motion_reason +]
+on-arrival: {!
+PolishGovernment.decideDismissal(Q, 'support');
+!}
+go-to: vote_result
+
+@own_motion_refuse
+title: Do not take part in bringing the cabinet down
+subtitle: PPS abstains; the motion is still voted on.
+on-arrival: {!
+PolishGovernment.decideDismissal(Q, 'refuse');
+!}
+go-to: vote_result
+
+@vote_result
+new-page: true
+call: polish_opening_state
+
+= The vote
+
+[+ pl_last_dismissal_display +]
+
+[? if pl_last_dismissal_passed : **The cabinet is dismissed.** It stays as caretaker until the head of state appoints a new one; the formation of a new cabinet follows. No election is called. ?]
+
+[? if not pl_last_dismissal_passed : **The cabinet survives** as a minority government. ?]
+
+- @root: Continue.
+
+@fallen
+new-page: true
+call: polish_opening_state
+
+= The cabinet resigns
+
+The prime minister's own party has left the cabinet, so the cabinet resigns. It stays as caretaker until the head of state appoints a new one; the formation of a new cabinet follows. No election is called.
+
+- @root: Continue.

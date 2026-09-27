@@ -2,7 +2,7 @@ title: PPS Self-Defence
 new-page: true
 is-card: true
 tags: party_affairs
-view-if: polish_party_system and pps_militia_timer <= 0
+view-if: not polish_party_rules and polish_party_system and pps_militia_timer <= 0
 card-image: img/protest.jpg
 on-arrival: month_actions += 1; pps_militia_timer += 6; pps_militia_training_cost = 2 if pps_militia_militancy > 0.1 else pps_militia_training_cost = 1; pps_militia_training_cost = 3 if pps_militia_militancy > 0.25
 max-visits: 6

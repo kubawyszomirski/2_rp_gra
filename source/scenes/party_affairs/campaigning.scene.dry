@@ -6,6 +6,7 @@ is-card: true
 card-image: img/flags.jpg
 frequency: 100
 tags: party_affairs
+view-if: not polish_party_rules
 
 = Campaigning
 

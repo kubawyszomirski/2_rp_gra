@@ -1,0 +1,139 @@
+title: Trade Unions
+subtitle: The steps of a union dispute: the demands, the line, mediation, a strike and its end.
+is-pinned-card: true
+card-image: img/union_2.jpg
+view-if: {! return !!Q.S && !!Q.polish_union_rules && PolishUnions.agendaAvailable(Q) !}
+new-page: true
+on-arrival: {!
+// The agenda of a branch or a dispute (technical reference 14.1–14.5; card catalogue 5.10). Each step costs this
+// month's action (1 T, 0 R). The character of a protest in a crisis is chosen by its event, not here, and an offer of
+// the government is answered in the answer of the Sejm (17.5.1), for no month (14.3).
+PolishUnions.agendaView(Q);
+!}
+
+= The trade unions
+
+[+ pl_un_summary +]
+
+- @industry
+- @rail
+- @farm_labour
+- @later
+
+@industry
+title: Industry
+subtitle: [+ pl_un_industry_line +]
+on-arrival: {!
+PolishUnions.branchView(Q, 'industry');
+!}
+go-to: branch
+
+@rail
+title: Railways
+subtitle: [+ pl_un_rail_line +]
+on-arrival: {!
+PolishUnions.branchView(Q, 'rail');
+!}
+go-to: branch
+
+@farm_labour
+title: Agricultural labour
+subtitle: [+ pl_un_farm_labour_line +]
+on-arrival: {!
+PolishUnions.branchView(Q, 'farm_labour');
+!}
+go-to: branch
+
+@later
+title: Not now
+subtitle: Nothing is spent.
+go-to: main
+
+@branch
+new-page: true
+on-arrival: {!
+PolishUnions.branchView(Q, Q.pl_union_branch);
+!}
+
+= [+ pl_un_branch_name +]
+
+[+ pl_un_branch_text +]
+
+[? if pl_un_offer : [+ pl_un_offer +] PPS answers it in the Sejm. ?]
+
+- @prepare_limited
+- @prepare_broad
+- @align_strike
+- @align_end
+- @mediate
+- @start
+- @polish_union_agenda: Back to the unions.
+
+@prepare_limited
+title: Agree the demands: wages and the return to work
+subtitle: 1 T; readiness +15; one demand (threshold 40) with a plan to end the action; waits 2 months.
+choose-if: {! return PolishUnions.prepareStatus(Q, Q.pl_union_branch).available !}
+unavailable-subtitle: [+ pl_un_prepare_why +]
+on-arrival: {!
+PolishUnions.prepare(Q, Q.pl_union_branch, 'limited');
+!}
+go-to: result
+
+@prepare_broad
+title: Agree the demands: wages and working conditions
+subtitle: 1 T; readiness +15; a broader package (threshold 60) with a plan to end the action; waits 2 months.
+choose-if: {! return PolishUnions.prepareStatus(Q, Q.pl_union_branch).available !}
+unavailable-subtitle: [+ pl_un_prepare_why +]
+on-arrival: {!
+PolishUnions.prepare(Q, Q.pl_union_branch, 'broad');
+!}
+go-to: result
+
+@align_strike
+title: A joint meeting on the strike
+subtitle: 1 T; the branch's alignment with a strike call +15, which raises compliance.
+choose-if: {! return PolishUnions.alignStatus(Q, Q.pl_union_branch, 'strike').available !}
+unavailable-subtitle: [+ pl_un_align_strike_why +]
+on-arrival: {!
+PolishUnions.align(Q, Q.pl_union_branch, 'strike');
+!}
+go-to: result
+
+@align_end
+title: A joint meeting on the agreed end
+subtitle: 1 T; the branch's alignment with a call to end on agreed terms +15.
+choose-if: {! return PolishUnions.alignStatus(Q, Q.pl_union_branch, 'agreed_end').available !}
+unavailable-subtitle: [+ pl_un_align_end_why +]
+on-arrival: {!
+PolishUnions.align(Q, Q.pl_union_branch, 'agreed_end');
+!}
+go-to: result
+
+@mediate
+title: Mediate the dispute with the leadership
+subtitle: 1 T; the branch's dissent −8 over a concrete change.
+choose-if: {! return PolishUnions.mediateStatus(Q, Q.pl_union_branch).available !}
+unavailable-subtitle: [+ pl_un_mediate_why +]
+on-arrival: {!
+PolishUnions.mediate(Q, Q.pl_union_branch);
+!}
+go-to: result
+
+@start
+title: Start the protest
+subtitle: 1 T; a strike for the agreed demands; every active month draws on the branch fund.
+choose-if: {! return PolishUnions.strikeStatus(Q, Q.pl_union_branch).available !}
+unavailable-subtitle: [+ pl_un_strike_why +]
+on-arrival: {!
+PolishUnions.startStrike(Q, Q.pl_union_branch);
+!}
+go-to: polish_strike_steps
+
+@result
+new-page: true
+
+= The trade unions
+
+[+ pl_union_result +]
+
+- @root: Continue.

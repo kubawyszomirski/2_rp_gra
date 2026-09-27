@@ -1,0 +1,60 @@
+title: Cooperation with Jewish Organisations
+subtitle: The range of agreements, above all with the Bund.
+new-page: true
+is-card: true
+tags: party_affairs
+card-image: img/flags.jpg
+view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.stanceAvailable(Q, 'jewish_cooperation') !}
+on-arrival: {!
+// Card party.jewish_cooperation (catalogue 4.7; technical reference 10.8): 1 T, 0 R, the card then waits 6 months. The present line is shown and cannot be
+// chosen again; closing the card is free (Z — 0.32).
+PolishParty.stanceView(Q, 'jewish_cooperation');
+!}
+
+= Cooperation with Jewish Organisations
+
+The present line: **[+ pl_stance_current +]**. A new declaration costs this month's action; it changes no law in force and gives no reform by itself.
+
+- @broad
+- @labour_only
+- @none
+- @easy_discard
+
+@broad
+title: Broad cooperation and rights in the programme
+subtitle: Agreements on rights and joint actions; axis +2.
+choose-if: {! return PolishParty.stanceStatus(Q, 'jewish_cooperation', 'broad').available !}
+unavailable-subtitle: [+ pl_stance_broad_why +]
+on-arrival: {!
+PolishParty.stanceChoose(Q, 'jewish_cooperation', 'broad');
+!}
+go-to: result
+
+@labour_only
+title: Cooperation of workers’ organisations
+subtitle: Agreements of labour, above all with the Bund; axis 0.
+choose-if: {! return PolishParty.stanceStatus(Q, 'jewish_cooperation', 'labour_only').available !}
+unavailable-subtitle: [+ pl_stance_labour_only_why +]
+on-arrival: {!
+PolishParty.stanceChoose(Q, 'jewish_cooperation', 'labour_only');
+!}
+go-to: result
+
+@none
+title: No cooperation
+subtitle: No new joint actions; existing rights of citizens stay; axis −2.
+choose-if: {! return PolishParty.stanceStatus(Q, 'jewish_cooperation', 'none').available !}
+unavailable-subtitle: [+ pl_stance_none_why +]
+on-arrival: {!
+PolishParty.stanceChoose(Q, 'jewish_cooperation', 'none');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= Cooperation with Jewish Organisations
+
+[+ pl_party_result +]
+
+- @root: Continue.

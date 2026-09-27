@@ -1,0 +1,58 @@
+title: Party Dues
+subtitle: Raise or lower the members’ dues.
+new-page: true
+is-card: true
+tags: party_affairs
+card-image: img/map_3.jpg
+view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.duesAvailable(Q) !}
+on-arrival: {!
+// Card party.dues (technical reference 13.1; card catalogue 5.4): raise or lower, 1 T, cd 6 M. The present
+// level is shown as present and cannot be chosen again; closing the card is free.
+PolishParty.partyDisplay(Q);
+Q.pl_dues_keep_why = PolishParty.duesStatus(Q, 'keep').reason;
+Q.pl_dues_raise_why = PolishParty.duesStatus(Q, 'raise').reason;
+Q.pl_dues_lower_why = PolishParty.duesStatus(Q, 'lower').reason;
+!}
+
+= Party dues
+
+Dues are [+ dues +] (from 1 to 4). Monthly income: [+ pl_party_ledger +].
+
+- @keep
+- @raise
+- @lower
+- @easy_discard
+
+@keep
+title: Keep the present dues
+choose-if: {! return false !}
+unavailable-subtitle: [+ pl_dues_keep_why +]
+
+@raise
+title: Raise the dues by 1
+subtitle: More income per member; the membership falls ×0.98 at once, ×0.95 when real wages are below 90 or unemployment is 8% or more. The target of membership falls 5% for every level above 2.
+choose-if: {! return PolishParty.duesStatus(Q, 'raise').available !}
+unavailable-subtitle: [+ pl_dues_raise_why +]
+on-arrival: {!
+PolishParty.duesChoose(Q, 'raise');
+!}
+go-to: result
+
+@lower
+title: Lower the dues by 1
+subtitle: Less income per member; membership +2 at once, and the target of membership rises 5% at level 1.
+choose-if: {! return PolishParty.duesStatus(Q, 'lower').available !}
+unavailable-subtitle: [+ pl_dues_lower_why +]
+on-arrival: {!
+PolishParty.duesChoose(Q, 'lower');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= Party dues
+
+[+ pl_party_result +]
+
+- @root: Continue.

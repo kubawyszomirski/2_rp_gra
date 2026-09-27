@@ -1,0 +1,66 @@
+title: Language Rights and Minority Schools
+subtitle: Education: one language rule for minority schools.
+new-page: true
+is-card: true
+tags: govt_affairs
+card-image: img/international.jpg
+view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'minority_school_rights') !}
+on-arrival: {!
+// Card government.minority_school_rights (technical reference 17.11–17.12; card catalogue 8.11). Opening and closing
+// the card are free; a confirmed option costs this month's action, or the one free step of an adviser
+// who opened the card. Options that need a system of a later stage are shown with their reason.
+PolishProjects.cardView(Q, 'minority_school_rights');
+!}
+
+= Language rights and minority schools
+
+One language rule, carried out by a large school project (1 B for 4 months, then 1 B). A carried-out agreement with a minority representation raises that club’s relation by 4; a declaration alone gives nothing.
+
+[+ pl_gc_budget +]
+
+[+ pl_gc_projects +]
+
+- @own_language
+- @agreed_bilingual
+- @polish_dominance
+- @easy_discard
+- @cancel_advisor_action
+
+@own_language
+title: Teaching in the own language
+subtitle: Carries out the adopted rights in schools; trust of the minorities covered +4 (stage 5).
+choose-if: {! return PolishProjects.optionStatus(Q, 'minority_school_rights', 'own_language').available !}
+unavailable-subtitle: [+ pl_minority_school_rights_own_language_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'minority_school_rights', 'own_language');
+!}
+go-to: result
+
+@agreed_bilingual
+title: Agreed bilingualism
+subtitle: Needs a voluntarily accepted agreement; it settles that agreement.
+choose-if: {! return PolishProjects.optionStatus(Q, 'minority_school_rights', 'agreed_bilingual').available !}
+unavailable-subtitle: [+ pl_minority_school_rights_agreed_bilingual_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'minority_school_rights', 'agreed_bilingual');
+!}
+go-to: result
+
+@polish_dominance
+title: Dominance of the Polish language
+subtitle: Imposed assimilation: trust of the minorities −6 (stage 5) and a conflict with their agreements.
+choose-if: {! return PolishProjects.optionStatus(Q, 'minority_school_rights', 'polish_dominance').available !}
+unavailable-subtitle: [+ pl_minority_school_rights_polish_dominance_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'minority_school_rights', 'polish_dominance');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= Language rights and minority schools
+
+[+ pl_gc_result +]
+
+- @root: Continue.

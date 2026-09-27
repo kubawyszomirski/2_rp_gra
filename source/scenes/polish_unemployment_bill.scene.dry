@@ -1,0 +1,111 @@
+title: Protection of the Unemployed
+subtitle: One initiative of PPS in the chapter: D1, then D2.
+is-pinned-card: true
+card-image: img/Kollwitz_Arbeitslosigkeit.jpg
+view-if: {! return !!Q.S && (PolishProjects.billD1Available(Q) || PolishProjects.billD2Available(Q)) !}
+new-page: true
+on-arrival: {!
+// Card parliament.legislative_program (technical reference 17.15; card catalogue 7.2): the guaranteed
+// agenda after the 1922 election, only outside the cabinet. D1 costs this month's action (1 T); D2 comes
+// after the settlement of D1's month, costs 0 T and puts the chosen variant to the Sejm at once; the
+// Senate procedure then follows its dates without another decision.
+Q.pl_bill_d2 = PolishProjects.billD2Available(Q) ? 1 : 0;
+var view = PolishProjects.billView(Q);
+Q.pl_bill_full_forecast = view.full_forecast;
+Q.pl_bill_limited_forecast = view.limited_forecast;
+Q.pl_bill_compromise = view.compromise;
+Q.pl_bill_budget = view.budget;
+Q.pl_bill_start_why = PolishRules.mainActionAvailable(Q) ? '' : 'This month’s action has already been used.';
+Q.pl_bill_limited_why = PolishProjects.billD2Status(Q, 'limited').reason;
+Q.pl_bill_withdraw_why = PolishProjects.billD2Status(Q, 'withdraw').reason;
+!}
+
+= The protection of the unemployed
+
+[? if not pl_bill_d2 : **D1.** PPS can start its own bill for the protection of the unemployed: a ready project with its cost, its financing and its executor, Labour's administration. It is one initiative in the chapter; refusing closes the offer without a bonus. ?]
+
+[? if pl_bill_d2 : **D2.** The bill is ready. The full variant costs 2 B a month once it is in force; the limited variant covers the same people with a lower benefit for 1 B. The Sejm votes at once; the Senate has 30 days to object and 30 more to return the bill. ?]
+
+[? if pl_bill_d2 : Forecast of the full variant: [+ pl_bill_full_forecast +]. Of the limited variant: [+ pl_bill_limited_forecast +]. [? if pl_bill_compromise : Ready to support the limited variant: [+ pl_bill_compromise +]. ?] ?]
+
+[+ pl_bill_budget +].
+
+- @start
+- @decline
+- @full
+- @limited
+- @withdraw
+- @later
+
+@start
+title: D1: Start the legislative initiative of PPS
+subtitle: 1 T; a full project with cost, financing and executor. D2 comes next month.
+view-if: not pl_bill_d2
+choose-if: {! return PolishRules.mainActionAvailable(Q) !}
+unavailable-subtitle: [+ pl_bill_start_why +]
+on-arrival: {!
+PolishProjects.billD1Choose(Q, 'start');
+Q.pl_bill_result = 'The bill is ready. Its decision — the full or the limited variant — comes after this month is settled.';
+!}
+go-to: result
+
+@decline
+title: D1: Do not take up the initiative
+subtitle: 0 T; the offer closes for the chapter, without a bonus.
+view-if: not pl_bill_d2
+on-arrival: {!
+PolishProjects.billD1Choose(Q, 'decline');
+Q.pl_bill_result = 'PPS does not take up its own bill in this chapter.';
+!}
+go-to: result
+
+@full
+title: D2: Keep the full project of PPS
+subtitle: 0 T; the Sejm votes now. Full variant: 2 B a month once in force. It may fall.
+view-if: pl_bill_d2
+choose-if: {! return PolishProjects.billD2Status(Q, 'full').available !}
+on-arrival: {!
+var out = PolishProjects.billD2Choose(Q, 'full');
+Q.pl_bill_result = out.law.status === 'rejected' ? 'The Sejm rejects the full bill: ' + out.law.reason + '. The initiative ends.' :
+    'The Sejm passes the full bill. The Senate decides by ' + out.law.senate_notice_due + '; no payment is made before the law is in force.';
+!}
+go-to: result
+
+@limited
+title: D2: Accept the limited variant for wider support
+subtitle: 0 T; the same recipients, a lower benefit: 1 B a month.
+view-if: pl_bill_d2
+choose-if: {! return PolishProjects.billD2Status(Q, 'limited').available !}
+unavailable-subtitle: [+ pl_bill_limited_why +]
+on-arrival: {!
+var out = PolishProjects.billD2Choose(Q, 'limited');
+Q.pl_bill_result = out.law.status === 'rejected' ? 'The Sejm rejects the limited bill: ' + out.law.reason + '. The initiative ends.' :
+    'The Sejm passes the limited bill. The Senate decides by ' + out.law.senate_notice_due + '.';
+!}
+go-to: result
+
+@withdraw
+title: D2: Withdraw the bill
+subtitle: The initiative ends; offered only when no compromise exists.
+view-if: pl_bill_d2
+choose-if: {! return PolishProjects.billD2Status(Q, 'withdraw').available !}
+unavailable-subtitle: [+ pl_bill_withdraw_why +]
+on-arrival: {!
+PolishProjects.billD2Choose(Q, 'withdraw');
+Q.pl_bill_result = 'PPS withdraws its bill. The initiative is closed for the chapter.';
+!}
+go-to: result
+
+@later
+title: Not now
+subtitle: The decision waits; ordinary actions continue.
+go-to: main
+
+@result
+new-page: true
+
+= The protection of the unemployed
+
+[+ pl_bill_result +]
+
+- @root: Continue.

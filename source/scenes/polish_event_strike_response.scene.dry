@@ -1,0 +1,53 @@
+title: The Strike and the Sejm
+subtitle: A protest with repression or a real offer: PPS answers in the Sejm.
+new-page: true
+tags: pl_event
+card-image: img/reichstag_3.jpg
+view-if: {! return !!Q.S && !!Q.polish_union_rules && PolishUnions.responseDue(Q) !}
+on-arrival: {!
+// Event parliament.strike_response, B11+B12 (technical reference 17.5.1; card catalogue 7.10): the one answer in this
+// phase of the dispute, also in opposition; 0 T and 0 R for the position. It reads the earlier choices: the partner,
+// the strike and the protection are not chosen again.
+PolishUnions.responseView(Q);
+!}
+
+= The strike and the Sejm
+
+[+ pl_resp_text +]
+
+- @demands
+- @settlement
+- @order
+
+@demands
+title: Demand the end of repression and concessions for the workers
+subtitle: [? if pl_resp_offer : The offer lapses; the next round asks for the fuller package. ?][? if not pl_resp_offer : The demands are put to the government now. ?] The thresholds and the executor's consent still apply.
+on-arrival: {!
+PolishUnions.responseChoose(Q, 'demands');
+!}
+go-to: result
+
+@settlement
+title: Seek a settlement and end the strike on agreed terms
+subtitle: [? if pl_resp_offer : PPS accepts the offer and calls for the agreed end. ?][? if not pl_resp_offer : PPS puts one limited package; if it is accepted, the agreed end follows. ?] No second acceptance.
+on-arrival: {!
+PolishUnions.responseChoose(Q, 'settlement');
+!}
+go-to: result
+
+@order
+title: Back the restoration of order and call for the end of the strike
+subtitle: PPS withdraws its support without new concessions: the union +10 dissent and −8 trust once. The call does not end the protest and is no order to the police.
+on-arrival: {!
+PolishUnions.responseChoose(Q, 'order');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= The strike and the Sejm
+
+[+ pl_union_result +]
+
+- @root: Continue.

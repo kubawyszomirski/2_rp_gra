@@ -1,0 +1,40 @@
+{
+  "scope": "M13: KPP compliance in a joint strike from relation and goal fit; PPS internal acceptance acting only on PPS (technical 9.5-9.6). Unit checks; the archived M02 engine has no communist cooperation, so the approved scenario is unaffected.",
+  "rule": {
+    "complianceBounds": [
+      0.1,
+      0.9
+    ],
+    "fitByLevelsBelow": [
+      100,
+      50,
+      0
+    ],
+    "consentThreshold": 60,
+    "compromiseGain": 15,
+    "breachLoss": 15,
+    "centreDissent": {
+      "full": 5,
+      "limited": 2
+    }
+  },
+  "hashes": {
+    "docs/POLISH_TECHNICAL_REFERENCE.md": "8aba6f238f43c61b53eecb1e52c13903a7661bf426453fe6033fc633da68aaa4",
+    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "2402955a7669c2ad1bfd208ba3e4b704ab79574304554f4b51576fcf2195b42e",
+    "docs/POLISH_MECHANICS_AUDIT.md": "070de0c9d624d01594c387dd4b43a0db3edf873a194d390266d56acf6c469fa0",
+    "analysis/m02-robustness/engine.cjs": "e0b544d65a4381ed7698f3f649fd54e41714a3a1027852a7ea455d0ad49b43cd"
+  },
+  "examples": {
+    "relation30_goalBroad": {
+      "broad": 0.65,
+      "limited": 0.4,
+      "structural": 0.65
+    },
+    "acceptance": {
+      "start": 50,
+      "afterCompromise": 65,
+      "afterBreach": 50
+    }
+  },
+  "m02HasCommunists": false
+}

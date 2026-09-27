@@ -2,9 +2,22 @@ title: Next month
 set-bg: img/map_2.jpg
 is-hand: true
 call: polish_opening_state
-go-to: sejm_election if sejm_election_due or sejm_election_in_progress; polish_presidential_sequence if not sejm_election_due and not sejm_election_in_progress and (polish_presidential_due or polish_presidential_in_progress)
+go-to: polish_incompatible_save if pl_route = "incompatible"; polish_chapter_report if pl_route = "report"; sejm_election if pl_route = "sejm"; polish_speaker_election if pl_route = "speaker"; polish_presidential_sequence if pl_route = "presidency"; polish_cabinet_formation if pl_route = "cabinet"
 on-arrival: {!
+// Save compatibility (technical reference 19.3, Z — 0.40): a save without the current
+// state schema stops here instead of continuing with old state.
+if (typeof PolishRules === 'undefined' || !PolishRules.isSaveCompatible(Q)) {
+    Q.polish_save_incompatible = 1;
+    return;
+}
+// Events are routed by post_event only; main offers the ordinary turn or a mandatory sequence.
+Q.has_event = 0;
+// Displays of dated cooldowns (technical reference 4.4).
+PolishRules.refreshMirrors(Q);
 Q.polish_government_actions_available = this._compileChoices(this.game.scenes['main.govt'])
+    .some(function(choice) { return choice.canChoose && this.game.scenes[choice.id].isCard; }, this);
+// The Parliament deck (stage 3) is shown only when one of its cards can be played.
+Q.polish_parliament_actions_available = this._compileChoices(this.game.scenes['main.parliament'])
     .some(function(choice) { return choice.canChoose && this.game.scenes[choice.id].isCard; }, this);
 if (Q.advisor_action_timer <= 0) {
     Q.pinnedCardsDescription = 'Advisors - an action is available.';
@@ -18,17 +31,29 @@ max-cards: 3
 
 #Here, the main deck will be displayed. Clicking on the deck draws a card into your hand. Clicking on a card activates that card.
 
-[? if year = 1928 and month = 2 and not polish_opening_government_active : The current bourgeois-right government has fallen. The next elections are slated for May of this year. ?]
+[? if pl_agreement_notices : **Agreements:** [+ pl_agreement_notices +] ?]
 
-[? if polish_opening_government_active and time >= 6 : PPS tolerates the government but holds no ministries. Government Affairs has no available executive actions in this opening slice. You can inspect all ten portfolios in the Library and continue using Party Affairs and advisers. ?]
+[? if pl_economy_notices : **Economy:** [+ pl_economy_notices +] ?]
 
-[? if sejm_first_election_completed and not polish_presidential_sequence_completed : Development notice: the November election and Polish government choices are implemented. The mandatory December presidential sequence is next. Successor cabinets and later election chronology remain temporary. ?]
+[? if sejm_first_election_completed and not pl_chapter_ended and year = 1928 and month = 1 : The Sejm's five-year term is ending. Under the game's default legal calendar the next election is held on 19 February 1928; its certified result ends this chapter. ?]
 
-[? if polish_presidential_sequence_completed : Development notice: the November Sejm election and December presidential succession are implemented. Successor cabinets, later presidential elections and later parliamentary chronology remain temporary. Prussian executive powers and German confidence/toleration routes remain unavailable; generic welfare and the broader monthly simulation retain legacy mechanics. ?]
+[? if polish_opening_government_active and time >= 6 : PPS tolerates the government but holds no ministries. Government Affairs has no available executive actions in this opening slice. You can inspect all nine portfolios in the Library and continue using Party Affairs and advisers. ?]
+
+[? if sejm_first_election_completed and not polish_presidential_sequence_completed : Development notice: the November election and the negotiated cabinet formation are implemented. The mandatory December elections of the Marshal and the President are next. ?]
+
+[? if polish_presidential_sequence_completed : Development notice: the November Sejm election, the negotiated cabinet formation, the December Marshal and presidential elections, the legal calendar to the next election, the Polish economy, budget, projects and state cards are implemented. Party organisations, unions and strikes, democracy, state forces and the coup belong to later stages. ?]
 
 - @party
 - @govt
+- @parliament
 - #advisor
+- @polish_government_response
+- @polish_party_agenda
+- @polish_union_agenda
+- @polish_agenda
+- @polish_unemployment_bill
+- @polish_budget_package
+- @polish_discard
 
 
 @party
@@ -45,3 +70,11 @@ card-image: img/reichstag_2.jpg
 is-deck: true
 
 - #govt_affairs
+
+@parliament
+title: Parliament
+view-if: polish_parliament_actions_available
+card-image: img/reichstag_1.jpg
+is-deck: true
+
+- #parliament_affairs

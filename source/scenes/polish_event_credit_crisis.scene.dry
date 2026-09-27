@@ -1,0 +1,68 @@
+title: Credit Crisis
+subtitle: Credit dries up; firms cut work.
+new-page: true
+tags: pl_event
+view-if: {! return !!Q.S && PolishProjects.creditEventDue(Q) !}
+on-arrival: {!
+// Event economy.credit_crisis (technical reference 17.13 B16, 17.16.2; card catalogue 9.12): shown only
+// with executive access of PPS. The first answer is free; the intervention has its ordinary costs.
+for (var option of ['credit', 'orders', 'protection']) {
+    Q['pl_ev_' + option + '_why'] = PolishProjects.eventStatus(Q, 'credit', option).reason;
+}
+!}
+
+= A credit crisis
+
+Credit has fallen below 35 for two months, or the scenario's credit shock of 1925 has begun. Credit and output fall; firms cut work. PPS can use the portfolios it holds.
+
+- @credit
+- @orders
+- @protection
+- @none
+
+@credit
+title: A conditional credit for threatened activity
+subtitle: Prepares the credit instrument of Treasury or Industry; its launch waits in the agenda.
+choose-if: {! return PolishProjects.eventStatus(Q, 'credit', 'credit').available !}
+unavailable-subtitle: [+ pl_ev_credit_why +]
+on-arrival: {!
+PolishProjects.eventChoose(Q, 'credit', 'credit');
+!}
+go-to: result
+
+@orders
+title: Keep up employment through orders or prepared works
+subtitle: One package of public orders, or the launch of prepared public works.
+choose-if: {! return PolishProjects.eventStatus(Q, 'credit', 'orders').available !}
+unavailable-subtitle: [+ pl_ev_orders_why +]
+on-arrival: {!
+PolishProjects.eventChoose(Q, 'credit', 'orders');
+!}
+go-to: result
+
+@protection
+title: Concentrate the means on protection for those losing work
+subtitle: The protection for the unemployed; no automatic fall of unemployment.
+choose-if: {! return PolishProjects.eventStatus(Q, 'credit', 'protection').available !}
+unavailable-subtitle: [+ pl_ev_protection_why +]
+on-arrival: {!
+PolishProjects.eventChoose(Q, 'credit', 'protection');
+!}
+go-to: result
+
+@none
+title: No new intervention
+subtitle: No expense and no bonus.
+on-arrival: {!
+PolishProjects.eventChoose(Q, 'credit', 'none');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= A credit crisis
+
+[+ pl_gc_result +]
+
+- @root: Continue.

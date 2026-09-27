@@ -19,16 +19,23 @@ if (Q.economic_growth) {
 
 [+ month : month +] [+ year +]
 
-Resources available: [+ resources +]
+[? if not polish_party_rules : Resources available: [+ resources +] ?]
+
+[? if polish_party_rules : Party money: [+ pl_party_cash +]; [+ pl_party_ledger +]. ?][? if pl_party_arrears : [+ pl_party_arrears +] ?]
 
 PPS position: [+ pps_government_position +].
-[? if in_polish_left_coalition and spd_in_government: Koalicja Lewicy ?][? if in_polish_center_left_coalition and spd_in_government: koalicja centrolewicowa ?][? if in_spd_majority and spd_in_government: PPS majority ?][? if in_minority_government and spd_in_government: minority government [? if minorities_toleration: with Minorities Bloc toleration ?] ?][? if in_chjeno_piast: opposition to Chjeno-Piast ?]
 
-[? if spd_in_government and not in_spd_majority and not in_left_front : Coalition dissent: [+ coalition_dissent : coalition_dissent +] ?]
+Internal dissent: [+ dissent_percent : dissent +][? if polish_party_rules : ; cohesion [+ pl_party_cohesion +] of 100 ?]
 
-[? if spd_in_government and (in_left_front or in_popular_front): KPD coalition dissent: [+ kpd_coalition_dissent : coalition_dissent +] ?]
+[? if polish_party_rules : Organisations: press [+ pl_party_press +]; TUR [+ pl_party_tur +]; cooperatives [+ pl_party_coops +]. Milicja: [+ pl_party_militia +]. ?]
 
-Internal dissent: [+ dissent_percent : dissent +]
+[? if polish_party_rules : Trade-union branches: [+ pl_party_unions +]. ?]
+
+[? if pl_un_strikes : Strikes: [+ pl_un_strikes +]. ?]
+
+[? if polish_politics_rules : Politics: [+ pl_politics_line +] ?]
+
+[? if pl_security_line : Forces of the state: [+ pl_security_line +] ?]
 
 = Government
 
@@ -36,9 +43,23 @@ Head of state: [+ head_of_state_display +]
 
 Prime minister: [+ prime_minister_display +]
 
+[? if pl_cabinet_support_display : Cabinet support: [+ pl_cabinet_support_display +]. ?]
+
+[? if pl_cabinet_crisis_display : [+ pl_cabinet_crisis_display +] ?]
+
+[? if pl_agreement_tension_display : Agreement tension: [+ pl_agreement_tension_display +]. ?]
+
+[? if pl_agreement_notices : [+ pl_agreement_notices +] ?]
+
 [? if polish_opening_government_active : March Constitution with transitional arrangements: the Sejm Ustawodawczy and Naczelnik Państwa remain in office. No operating Senate or presidential officeholder is simulated at the opening. ?]
 
 [? if polish_presidential_in_progress : The December 1922 presidential succession is in progress. It does not spend another monthly action. ?]
+
+[? if sejm_first_election_completed : Marshal of the Sejm: [+ pl_speaker_display +] ?]
+
+[? if sejm_first_election_completed : Senate: [+ pl_senate_display +] ?]
+
+[? if pl_chapter_ended : The first chapter has ended with the certified result of the next lawful Sejm election. The chapter report describes the final state. ?]
 
 [? if polish_presidential_sequence_completed : March Constitution: the President is elected by the Sejm and Senate together as the National Assembly. Government acts require countersignature. The German direct-popular presidency and its legacy powers are not active. ?]
 
@@ -68,25 +89,37 @@ PSL Piast: [+ psl_piast_sejm_display +]
 
 Inne: [+ other_sejm_display +]
 
-[? if spd_in_government = 1 : Budget: [+ budget +] ?]
+[? if not polish_economy_system and spd_in_government = 1 : Budget: [+ budget +] ?]
 
-Next Sejm election: [+ next_election_month : month +] [+ next_election_year +]
+Next Sejm election: [+ pl_next_election_display +]
 
 [? if not sejm_first_election_completed : The first Sejm election is in November 1922. It allocates 444 MPs from voting intentions; ChZJN combines ZLN and PSChD on the ballot. ?]
 
-[? if sejm_first_election_completed and not polish_presidential_sequence_completed : The November election is implemented. The December 1922 presidential sequence follows after the next monthly action. ?]
+[? if sejm_first_election_completed and not polish_presidential_sequence_completed : The November election is implemented. In December the Sejm elects its Marshal and the National Assembly elects the President, without another monthly action. ?]
 
-[? if polish_presidential_sequence_completed : The November election and December presidential succession are implemented. The 111-seat Senate existed only as a proportional National Assembly snapshot; a general Senate mechanic is not implemented. May 1928 remains a temporary parliamentary continuation date, not researched Polish chronology. ?]
+[? if polish_presidential_sequence_completed : The November election and the December Marshal and presidential elections are implemented. The 111-seat Senate is derived once from the Sejm result (a simplification); it has no separate campaign. There are no early elections without a lawful act, so the next election follows the default legal calendar. ?]
 
 Majority required: [+ sejm_majority_required +] of [+ sejm_total_seats +] MPs. Recorded votes and election history are available in the Library; polling below is not the sitting parliament.
 
 = Economics
 
-Inflation: [+ inflation_2 +]%
+[? if polish_economy_system : Budget: [+ pl_eco_budget +]. ?]
 
-[? if black_thursday_seen = 1 : Unemployment: [+ unemployed_2 +]% ?]
+[? if polish_economy_system : Currency: [+ pl_eco_currency +]. Inflation: [+ pl_eco_inflation +]. Real wages (index, 100 at the opening): [+ pl_eco_wage +]. ?]
 
-Economic growth: [+ economic_growth_2 +]%
+[? if polish_economy_system : Output (index): [+ pl_eco_output +]. Credit (0–100): [+ pl_eco_credit +]. Unemployment: [+ pl_eco_unemployment +]. Agrarian pressure (0–100): [+ pl_eco_agrarian +]. Business: [+ pl_eco_business +]. ?]
+
+[? if polish_economy_system : The numbers are the game's working balance (economy_simple_v1), not historical statistics. ?]
+
+[? if pl_eco_projects : Projects: [+ pl_eco_projects +] ?]
+
+[? if pl_eco_laws : Laws in procedure: [+ pl_eco_laws +] ?]
+
+[? if not polish_economy_system : Inflation: [+ inflation_2 +]% ?]
+
+[? if not polish_economy_system and black_thursday_seen = 1 : Unemployment: [+ unemployed_2 +]% ?]
+
+[? if not polish_economy_system : Economic growth: [+ economic_growth_2 +]% ?]
 
 
 
@@ -112,7 +145,7 @@ ZLN: [+ zln_relation : relationships +]
 
 = Factions in the PPS
 
-These three currents are gameplay abstractions rather than formal organizations. Inherited German cards feed them through a temporary compatibility bridge until each card receives a researched Polish response.
+These three currents are gameplay abstractions rather than formal organizations. [? if not polish_party_rules : Inherited German cards feed them through a temporary compatibility bridge until each card receives a researched Polish response. ?][? if polish_party_rules : Their strengths add up to 100; the party's dissent is their dissent weighted by strength. ?]
 
 {!<span class="tooltip-text" title="The parliamentary mainstream: democratic socialism, reform, workers' rights, defence of democracy and Polish independence.">Centrum PPS</span>!} strength: [+ centrum_strength : strength +], dissent: [+ centrum_dissent : dissent +]
 
@@ -120,11 +153,7 @@ These three currents are gameplay abstractions rather than formal organizations.
 
 {!<span class="tooltip-text" title="The independence and Piłsudski-oriented current: a strong state, anti-communism and state-led social reform.">Piłsudczycy</span>!} strength: [+ pilsudczycy_strength : strength +], dissent: [+ pilsudczycy_dissent : dissent +]
 
-= Affiliated trade unions
-
-Labor strength: [+ labor_strength : strength +], dissent: [+ labor_dissent : dissent +]
-
-Labor remains a temporary inherited measure for the affiliated trade-union power centre. It is not normalized as a PPS faction and does not directly enter overall party dissent.
+[? if not polish_party_rules : Affiliated trade unions — labor strength: [+ labor_strength : strength +], dissent: [+ labor_dissent : dissent +]. Labor remains a temporary inherited measure for the affiliated trade-union power centre. It is not normalized as a PPS faction and does not directly enter overall party dissent. ?]
 
 
 @paramilitaries
@@ -151,7 +180,7 @@ Militancy: [+ pps_militia_militancy : militancy +]
 
 Legal status: legal and not repressed
 
-Trade-union cooperation: [? if pps_militia_union_cooperation : established; union members remain outside the militia's manpower total ?][? if not pps_militia_union_cooperation : not yet established ?]
+[? if not polish_party_rules : Trade-union cooperation: ?][? if not polish_party_rules and pps_militia_union_cooperation : established; union members remain outside the militia's manpower total ?][? if not polish_party_rules and not pps_militia_union_cooperation : not yet established ?]
 
 Communist militias (temporary RFB values) — strength: [+ rfb_strength_2 +] thousand
 
@@ -180,6 +209,8 @@ State-police loyalty: [+ prussian_police_loyalty : loyalty +]
 @polls
 on-arrival: {!
 Q.pro_republic_disp = Math.round(Q.pro_republic);
+// Stage 7: the Polish game reads its own attachment to democracy (15.2), not the German support for the Republic.
+Q.pl_democracy_disp = Q.polish_politics_rules && Q.S && Q.S.politics ? Math.round(Q.S.politics.democracy) : 0;
 Q.nationalism_disp = Math.round(Q.nationalism);
 Q.socialism_disp = Math.round(Q.socialism);
 !}
@@ -222,4 +253,4 @@ Bezrobotni: KPP [+ unemployed_kpp_display +]%, PPS [+ unemployed_pps_display +]%
 
 Mniejszości Narodowe: KPP [+ national_minorities_kpp_display +]%, PPS [+ national_minorities_pps_display +]%, NPR [+ national_minorities_npr_display +]%, PSL-W [+ national_minorities_psl_wyzwolenie_display +]%, PSL-P [+ national_minorities_psl_piast_display +]%, PSChD [+ national_minorities_pschd_display +]%, ZLN [+ national_minorities_zln_display +]%, Mniejszości [+ national_minorities_minorities_bloc_display +]%, Inne [+ national_minorities_other_display +]%
 
-Support for the Republic: [+ pro_republic_disp +]%
+[? if not polish_politics_rules : Support for the Republic: [+ pro_republic_disp +]% ?][? if polish_politics_rules : Attachment to democracy: [+ pl_democracy_disp +] of 100 ?]

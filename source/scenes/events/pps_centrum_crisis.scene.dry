@@ -2,7 +2,7 @@ title: Collapse of Centrum PPS leadership
 subtitle: The parliamentary leadership loses control of the party.
 new-page: true
 tags: event
-view-if: polish_faction_system and centrum_dissent >= 60 and not centrum_resigned
+view-if: not polish_party_rules and (polish_faction_system and centrum_dissent >= 60 and not centrum_resigned)
 on-arrival: {!
 Q.centrum_resigned = 1;
 Q.centrum_strength *= 0.3;

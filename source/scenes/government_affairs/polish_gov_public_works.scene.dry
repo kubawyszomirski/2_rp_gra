@@ -1,0 +1,66 @@
+title: Public Works
+subtitle: Labour: employment, infrastructure or workers’ housing.
+new-page: true
+is-card: true
+tags: govt_affairs
+card-image: img/union_2.jpg
+view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'public_works') !}
+on-arrival: {!
+// Card government.public_works (technical reference 17.11–17.12; card catalogue 8.7). Opening and closing
+// the card are free; a confirmed option costs this month's action, or the one free step of an adviser
+// who opened the card. Options that need a system of a later stage are shown with their reason.
+PolishProjects.cardView(Q, 'public_works');
+!}
+
+= Public works
+
+Public works belong to Labour; the Treasury alone gives no access. Each programme is large: its preparation (1 T) now, its launch (1 T) in the agenda. Working programmes add public jobs, at most 8 units in the country.
+
+[+ pl_gc_budget +]
+
+[+ pl_gc_projects +]
+
+- @employment
+- @infrastructure
+- @housing
+- @easy_discard
+- @cancel_advisor_action
+
+@employment
+title: Quick employment of the unemployed
+subtitle: 2 B for 3 months, then 1 B and 2 units: 0.15 pp of output a unit and public jobs.
+choose-if: {! return PolishProjects.optionStatus(Q, 'public_works', 'employment').available !}
+unavailable-subtitle: [+ pl_public_works_employment_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'public_works', 'employment');
+!}
+go-to: result
+
+@infrastructure
+title: Transport and infrastructure
+subtitle: 2 B for 4 months, then 1 B and 2 units: 0.25 pp of output a unit.
+choose-if: {! return PolishProjects.optionStatus(Q, 'public_works', 'infrastructure').available !}
+unavailable-subtitle: [+ pl_public_works_infrastructure_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'public_works', 'infrastructure');
+!}
+go-to: result
+
+@housing
+title: Workers’ housing
+subtitle: 2 B for 4 months, then 1 B; relief for the recipients, no employment units.
+choose-if: {! return PolishProjects.optionStatus(Q, 'public_works', 'housing').available !}
+unavailable-subtitle: [+ pl_public_works_housing_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'public_works', 'housing');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= Public works
+
+[+ pl_gc_result +]
+
+- @root: Continue.

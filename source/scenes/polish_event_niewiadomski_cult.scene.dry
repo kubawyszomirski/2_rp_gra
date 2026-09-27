@@ -1,0 +1,60 @@
+title: The Cult of the Assassin
+subtitle: A public commemoration of Eligiusz Niewiadomski; PPS decides how it answers.
+new-page: true
+tags: pl_event
+card-image: img/poster_2.jpg
+view-if: {! return !!Q.S && !!Q.polish_politics_rules && PolishPolitics.cultDue(Q) !}
+on-arrival: {!
+// Event society.niewiadomski_cult, B5 (technical reference 17.7, 17.4, 15.2; card catalogue 9.6): one named public
+// commemoration of the assassin, only in the historical branch of the assassination of Narutowicz; three answers,
+// 0 T. The existence of the cult is historical; the place, the service and its participants in this event are a
+// synthetic profile of the game (TBD — historical research required). The mass is an alternative of the game.
+PolishPolitics.cultView(Q);
+!}
+
+= A commemoration of the assassin
+
+Admirers of Eligiusz Niewiadomski, who killed President Narutowicz, announce a public service in his honour. The details of this service are a synthetic event of the game, not a reconstruction of a particular commemoration. PPS must decide how its members and organisations answer. Opposing the cult of a murderer is not a position on religion or on the Church.
+
+- @condemn
+- @democracy_mass
+- @stay_out
+
+@condemn
+title: Condemn the cult and order our members not to disturb the service
+subtitle: 0 R; a clear instruction to the Milicja. The Centrum approves under the line of parliamentarism; the Christian Democrats join the condemnation only if they are close enough to us.
+choose-if: {! return PolishPolitics.cultStatus(Q, 'condemn').available !}
+unavailable-subtitle: [+ pl_b5_condemn_why +]
+on-arrival: {!
+PolishPolitics.cultChoose(Q, 'condemn');
+!}
+go-to: result
+
+@democracy_mass
+title: Organise a mass for the defence of democracy
+subtitle: 1 R, if a clergyman and a host agree; a campaign on the defence of democracy and, once held, democracy +2. No alliance with the Christian Democrats and no change of our programme on the Church.
+choose-if: {! return PolishPolitics.cultStatus(Q, 'democracy_mass').available !}
+unavailable-subtitle: [+ pl_b5_democracy_mass_why +]
+on-arrival: {!
+PolishPolitics.cultChoose(Q, 'democracy_mass');
+!}
+go-to: result
+
+@stay_out
+title: Do not engage our organisations
+subtitle: 0 R; no campaign and no cost. The Left objects only if a public answer had been promised.
+choose-if: {! return PolishPolitics.cultStatus(Q, 'stay_out').available !}
+unavailable-subtitle: [+ pl_b5_stay_out_why +]
+on-arrival: {!
+PolishPolitics.cultChoose(Q, 'stay_out');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= A commemoration of the assassin
+
+[+ pl_b5_result +]
+
+- @root: Continue.

@@ -8,17 +8,14 @@ new-page: true
 
 Moraczewski represents the Piłsudczyk current and emphasizes state-directed social reform.
 
-**Planned, not implemented:** Cooperate with Sanacja will remain unavailable until the Sanacja political system exists.
-
 - @public_works
 - @root: Return to main
 
 @public_works
 title: Public Works Programme
-subtitle: Use government access to open the economic-policy card.
-choose-if: advisor_action_timer = 0 and spd_in_government = 1
-unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?][? if spd_in_government = 0 : The PPS is not in government. ?]
-on-arrival: advisor_action_timer = 6; economic_policy_timer = 0; last_advisor_action = 1
-go-to: economic_policy
-
-The detailed economic choices remain inherited baseline content pending the Polish economic-policy replacement.
+subtitle: Opens the Public Works card; its one step costs no month (the ordinary B costs remain).
+choose-if: {! return Q.advisor_action_timer <= 0 && !!Q.S && PolishProjects.cardAvailable(Q, 'public_works') !}
+unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?][? if advisor_action_timer <= 0 : Needs PPS in the cabinet with Labour. ?]
+call: polish_advisor_commit
+on-arrival: advisor_action_timer = 6; last_advisor_action = 1
+go-to: polish_gov_public_works

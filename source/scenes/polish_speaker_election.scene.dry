@@ -1,0 +1,103 @@
+title: Election of the Marshal of the Sejm
+new-page: true
+call: polish_opening_state
+on-arrival: {!
+// Mandatory sequence after the 1922 election and before the presidency (technical reference 7.5;
+// card 7.8). The PPS stance costs no month; the vote follows at once from the clubs. Re-entry
+// resumes the saved phase, so a save and load never repeats the vote or its effects.
+Q.pl_speaker_phase = '';
+if (Q.S && !Q.polish_save_incompatible && Q.S.chapter.status !== 'ended' &&
+        (PolishInstitutions.speakerInProgress(Q.S) || PolishInstitutions.speakerDue(Q))) {
+    var run = PolishInstitutions.beginSpeakerElection(Q);
+    Q.pl_speaker_phase = run.phase;
+    Q.pl_speaker_vacancy = run.instance === 'vacancy' ? 1 : 0;
+    var options = PolishInstitutions.speakerOptions(Q);
+    Q.pl_speaker_rataj_reason = options.rataj.reason;
+    Q.pl_speaker_daszynski_reason = options.daszynski.reason;
+    if (run.phase === 'result') {
+        var ballot = run.final_ballot;
+        Q.pl_speaker_result_lines = ballot ? ballot.candidates.map(function(row) {
+            return row.candidate_name + ' — ' + row.votes + ' votes';
+        }).join('; ') + '; abstentions — ' + ballot.abstain : '';
+        Q.pl_speaker_winner = run.winner_name || '';
+        Q.pl_speaker_status = run.status;
+        Q.pl_speaker_tie = run.tie_break ? 1 : 0;
+        Q.pl_speaker_rounds = run.rounds.length;
+        Q.pl_speaker_acting = run.acting_holder ? run.acting_holder.name : '';
+    }
+}
+!}
+go-to: choice if pl_speaker_phase = "choice"; result if pl_speaker_phase = "result"; main if pl_speaker_phase = ""
+
+@choice
+new-page: true
+
+= The Marshal of the Sejm — December 1922
+
+[? if not pl_speaker_vacancy : The newly elected Sejm must choose its Marshal before the National Assembly meets to elect the President. The Marshal chairs the Sejm and substitutes for the President when the office is vacant. ?]
+
+[? if pl_speaker_vacancy : The Marshal of the Sejm has become President of the Republic and has left both the office and the Sejm. The Sejm must elect a new Marshal before ordinary business resumes. His seat passes to the next candidate on the same list, so the club keeps its number of MPs. ?]
+
+All clubs attend. Every club votes for its preferred candidate still standing; if nobody has more than half of the valid votes, the two strongest meet in a run-off and the larger vote wins. A tie between two finalists is decided by a recorded lot. The clubs' preferences are an approved test profile, not a reconstruction of the historical vote.
+
+Our stance costs no monthly action. Talks with other parties beforehand are ordinary actions.
+
+- @smiarowski
+- @rataj
+- @daszynski
+
+@smiarowski
+title: Support Eugeniusz Śmiarowski
+subtitle: Cooperation with PSL Wyzwolenie: relation +4. He takes office only if he wins the vote.
+on-arrival: {!
+PolishInstitutions.chooseSpeakerStance(Q, 'smiarowski');
+!}
+go-to: polish_speaker_election
+
+@rataj
+title: Agree to support Maciej Rataj
+subtitle: A package with PSL Piast: defence of the standing orders and PPS work in the committees. PSL Piast relation +4.
+choose-if: {! return PolishInstitutions.speakerOptions(Q).rataj.available !}
+unavailable-subtitle: [+ pl_speaker_rataj_reason +]
+on-arrival: {!
+PolishInstitutions.chooseSpeakerStance(Q, 'rataj');
+// The package becomes an agreement with PSL Piast (7.5; stage 3).
+PolishGovernment.recordSpeakerOutcome(Q);
+!}
+go-to: polish_speaker_election
+
+@daszynski
+title: Nominate Ignacy Daszyński
+subtitle: PSL Wyzwolenie signs the nomination and backs him instead of its own candidate. No bonus for the nomination itself.
+view-if: {! return !Q.pl_speaker_vacancy !}
+choose-if: {! return PolishInstitutions.speakerOptions(Q).daszynski.available !}
+unavailable-subtitle: [+ pl_speaker_daszynski_reason +]
+on-arrival: {!
+PolishInstitutions.chooseSpeakerStance(Q, 'daszynski');
+// A victory gives PPS reputation +5 (7.5; stage 3).
+PolishGovernment.recordSpeakerOutcome(Q);
+!}
+go-to: polish_speaker_election
+
+@result
+new-page: true
+
+= The vote for Marshal
+
+[? if pl_speaker_status = "elected" : **[+ pl_speaker_winner +] is elected Marshal of the Sejm.** ?]
+
+[? if pl_speaker_status = "elected" : Final ballot: [+ pl_speaker_result_lines +]. ?]
+
+[? if pl_speaker_tie : The two finalists received the same number of votes; the office was decided by a recorded lot. ?]
+
+[? if pl_speaker_status = "no_election" : The vote did not produce a Marshal. [+ pl_speaker_acting +] presides until a new vote next month; ordinary business continues meanwhile. ?]
+
+The result, the votes and any lot are recorded once; returning to this screen or loading a save does not repeat the vote.
+
+- @finish: Continue.
+
+@finish
+on-arrival: {!
+PolishInstitutions.finishSpeakerElection(Q);
+!}
+go-to: root
