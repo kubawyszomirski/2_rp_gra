@@ -1,6 +1,7 @@
 title: Kazimierz Czapiński
 is-pinned-card: true
 tags: advisor
+card-image: img/polish/czapinski.jpg
 view-if: czapinski_advisor = 1
 new-page: true
 on-arrival: {!

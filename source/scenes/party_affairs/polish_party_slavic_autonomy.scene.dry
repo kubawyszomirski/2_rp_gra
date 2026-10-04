@@ -3,6 +3,7 @@ subtitle: The programme of PPS for the Ukrainian and Belarusian question.
 new-page: true
 is-card: true
 tags: party_affairs
+card-image: img/polish/polish_party_slavic_autonomy.jpg
 view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.stanceAvailable(Q, 'slavic_autonomy') !}
 on-arrival: {!
 // Card party.slavic_autonomy (catalogue 4.6; technical reference 10.8): 1 T, 0 R, the card then waits 6 months. Z — 0.51: the present line can be

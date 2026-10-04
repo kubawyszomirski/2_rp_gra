@@ -3,6 +3,7 @@ subtitle: Agriculture: how land is divided and who has access to it.
 new-page: true
 is-card: true
 tags: govt_affairs
+card-image: img/polish/polish_gov_land.jpg
 view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'land_program') !}
 on-arrival: {!
 // Card government.land_program (technical reference 12.6, 17.11–17.12; card catalogue 8.8). One way of

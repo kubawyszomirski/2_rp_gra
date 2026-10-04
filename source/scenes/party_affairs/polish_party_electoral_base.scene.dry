@@ -3,6 +3,7 @@ subtitle: Where PPS builds its reach.
 new-page: true
 is-card: true
 tags: party_affairs
+card-image: img/polish/polish_party_electoral_base.jpg
 view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.stanceAvailable(Q, 'electoral_base') !}
 on-arrival: {!
 // Card party.electoral_base (catalogue 4.5; technical reference 10.6): 1 T, 0 R, the card then waits 6 months. Z — 0.51: the present line can be

@@ -3,6 +3,7 @@ subtitle: The final composition of its three seats, in one decision.
 new-page: true
 is-card: true
 tags: party_affairs
+card-image: img/polish/polish_party_advisers.jpg
 view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.advisersAvailable(Q) !}
 on-arrival: {!
 // Card party.advisers (technical reference 10.4.2; card catalogue 6.5; Z — 0.35: a separate card): 1 T,

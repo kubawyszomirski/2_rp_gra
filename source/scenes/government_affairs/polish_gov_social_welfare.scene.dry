@@ -3,7 +3,7 @@ subtitle: Labour: one protection programme for the unemployed.
 new-page: true
 is-card: true
 tags: govt_affairs
-card-image: img/Kollwitz_Arbeitslosigkeit.jpg
+card-image: img/polish/polish_gov_social_welfare.jpg
 view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'social_welfare') !}
 on-arrival: {!
 // Card government.social_welfare (technical reference 17.11–17.12; card catalogue 8.2). Opening and closing

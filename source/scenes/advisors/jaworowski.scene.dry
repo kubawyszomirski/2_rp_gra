@@ -1,6 +1,7 @@
 title: Rajmund Jaworowski
 is-pinned-card: true
 tags: advisor
+card-image: img/polish/jaworowski.jpg
 view-if: jaworowski_advisor = 1
 new-page: true
 on-arrival: {!

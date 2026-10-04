@@ -2,6 +2,7 @@ title: The Coup
 subtitle: An armed attempt against the government; PPS decides its stance and the part of its organisations.
 new-page: true
 tags: pl_event
+face-image: img/polish/polish_event_coup.jpg
 view-if: {! return !!Q.S && !!Q.polish_security_rules && PolishSecurity.coupDue(Q) !}
 on-arrival: {!
 // Event coup.attempt (technical reference 16.4–16.8, 19.1; card catalogue 9.15; profile coup_f_v1 of M08): the

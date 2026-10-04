@@ -2,6 +2,7 @@ title: The Cabinet Crisis of 1922
 subtitle: Ponikowski resigns after his dispute with the Naczelnik; PPS chooses how it enters the formation of a new cabinet.
 new-page: true
 tags: pl_event
+face-image: img/polish/polish_event_cabinet_1922.jpg
 view-if: {! return !!Q.S && !!Q.polish_politics_rules && PolishPolitics.cabinet1922Due(Q) !}
 on-arrival: {!
 // Event opening.cabinet_1922, B1 (technical reference 8.7, 8.8, 17.13, 17.16.3; card catalogue 9.1; decision 1A of

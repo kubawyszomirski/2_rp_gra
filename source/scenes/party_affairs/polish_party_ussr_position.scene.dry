@@ -3,7 +3,7 @@ subtitle: The line of PPS towards the Soviet model of power.
 new-page: true
 is-card: true
 tags: party_affairs
-card-image: img/international.jpg
+card-image: img/polish/polish_party_ussr_position.jpg
 view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.stanceAvailable(Q, 'ussr_position') !}
 on-arrival: {!
 // Card party.ussr_position (catalogue 4.8; technical reference 10.10): 1 T, 0 R, the card then waits 12 months. Z — 0.51: the present line can be

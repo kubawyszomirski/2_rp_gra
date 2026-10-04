@@ -3,6 +3,7 @@ subtitle: End our support, or make a demand with or without a threat.
 new-page: true
 is-card: true
 tags: parliament_affairs
+card-image: img/polish/polish_government_support.jpg
 view-if: {! return !!Q.S && PolishGovernment.supportCardAvailable(Q) !}
 on-arrival: {!
 // Card parliament.government_support (technical reference 9.8; card catalogue 7.6). An ordinary use

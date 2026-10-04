@@ -1,6 +1,7 @@
 title: Marian Malinowski
 is-pinned-card: true
 tags: advisor
+card-image: img/polish/malinowski.jpg
 view-if: malinowski_advisor = 1
 new-page: true
 on-arrival: {!

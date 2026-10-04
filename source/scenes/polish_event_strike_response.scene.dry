@@ -2,6 +2,7 @@ title: The Strike and the Sejm
 subtitle: A protest with repression or a real offer: PPS answers in the Sejm.
 new-page: true
 tags: pl_event
+face-image: img/polish/polish_event_strike_response.jpg
 view-if: {! return !!Q.S && !!Q.polish_union_rules && PolishUnions.responseDue(Q) !}
 on-arrival: {!
 // Event parliament.strike_response, B11+B12 (technical reference 17.5.1; card catalogue 7.10): the one answer in this

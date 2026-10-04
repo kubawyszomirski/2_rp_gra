@@ -1,6 +1,7 @@
 title: Zygmunt Zaremba
 is-pinned-card: true
 tags: advisor
+card-image: img/polish/zaremba.jpg
 view-if: zaremba_advisor = 1
 new-page: true
 on-arrival: {!

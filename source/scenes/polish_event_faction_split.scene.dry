@@ -2,6 +2,7 @@ title: Part of a Faction Threatens to Leave
 subtitle: A faction's dissent has reached 60 over a concrete demand.
 new-page: true
 tags: pl_event
+face-image: img/polish/polish_event_faction_split.jpg
 view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.factionSplitDue(Q) !}
 on-arrival: {!
 // Event party.faction_split, E3 (technical reference 10.2, 17.15; card catalogue 9.10; Z — 0.38): one

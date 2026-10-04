@@ -3,7 +3,7 @@ subtitle: Education: one language rule for minority schools.
 new-page: true
 is-card: true
 tags: govt_affairs
-card-image: img/international.jpg
+card-image: img/polish/polish_gov_minority_schools.jpg
 view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'minority_school_rights') !}
 on-arrival: {!
 // Card government.minority_school_rights (technical reference 17.11–17.12; card catalogue 8.11). Opening and closing

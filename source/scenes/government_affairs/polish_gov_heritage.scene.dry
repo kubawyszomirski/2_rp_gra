@@ -3,6 +3,8 @@ subtitle: Education: conservation work on one of two buildings.
 new-page: true
 is-card: true
 tags: govt_affairs
+face-image: img/polish/polish_gov_heritage_zamek_krolewski.jpg
+card-image: img/polish/polish_gov_heritage_wawel.jpg
 view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'heritage_restoration') !}
 on-arrival: {!
 // Card government.heritage_restoration (technical reference 17.11–17.12; card catalogue 8.16). Opening and closing

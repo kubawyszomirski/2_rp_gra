@@ -1,6 +1,7 @@
 title: Tomasz Arciszewski
 is-pinned-card: true
 tags: advisor
+card-image: img/polish/arciszewski.jpg
 view-if: arciszewski_advisor = 1
 new-page: true
 on-arrival: {!

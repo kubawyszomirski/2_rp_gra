@@ -3,6 +3,7 @@ subtitle: One offer: the cabinet, its prime minister, the role of PPS and its po
 new-page: true
 is-card: true
 tags: parliament_affairs
+card-image: img/polish/polish_cabinet_formation.jpg
 view-if: {! return !!Q.S && PolishGovernment.formationVisible(Q) !}
 on-arrival: {!
 // Card parliament.cabinet_formation (technical reference 8.3, 8.4, 8.7, 8.8; card catalogue 7.1).

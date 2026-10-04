@@ -1,6 +1,7 @@
 title: Bronisław Ziemięcki
 is-pinned-card: true
 tags: advisor
+card-image: img/polish/ziemiecki.jpg
 view-if: ziemiecki_advisor = 1
 new-page: true
 on-arrival: {!

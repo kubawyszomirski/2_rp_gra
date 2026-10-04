@@ -3,6 +3,7 @@ subtitle: Treasury or Industry: how the credit instrument is financed.
 new-page: true
 is-card: true
 tags: govt_affairs
+card-image: img/polish/polish_gov_investment.jpg
 view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'investment_fund') !}
 on-arrival: {!
 // Card government.investment_fund (technical reference 17.11–17.12; card catalogue 8.5). Opening and closing

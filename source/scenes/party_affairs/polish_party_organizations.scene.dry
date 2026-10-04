@@ -3,6 +3,7 @@ subtitle: Up to two investments in one action: unions, press, TUR, Milicja or co
 new-page: true
 is-card: true
 tags: party_affairs
+card-image: img/polish/polish_party_organizations.jpg
 view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.organizationsAvailable(Q) !}
 on-arrival: {!
 // Card party.organizations (technical reference 13.5; card catalogue 5.1): one or two different

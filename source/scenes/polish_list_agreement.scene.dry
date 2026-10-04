@@ -3,6 +3,7 @@ subtitle: A joint list for the coming Sejm election, while the lists are open.
 new-page: true
 is-card: true
 tags: parliament_affairs
+card-image: img/polish/polish_list_agreement.jpg
 view-if: {! return !!Q.S && PolishGovernment.listAgreementAvailable(Q) !}
 on-arrival: {!
 // Card parliament.list_agreement (technical reference 6.2, 6.5; card catalogue 7.7). One choice; the

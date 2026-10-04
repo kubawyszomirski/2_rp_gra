@@ -3,6 +3,7 @@ subtitle: Labour: working time, collective agreements, derogations.
 new-page: true
 is-card: true
 tags: govt_affairs
+card-image: img/polish/polish_gov_labor_rights.jpg
 view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'labor_rights') !}
 on-arrival: {!
 // Card government.labor_rights (technical reference 17.11–17.12; card catalogue 8.1). Opening and closing

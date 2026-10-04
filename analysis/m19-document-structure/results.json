@@ -5,10 +5,10 @@
     "docs/POLISH_DESCRIPTIVE_GUIDE.md": "4983cf392446ded83e625401933980ba31c7167745f135b2d671d8b336475c30",
     "docs/POLISH_MECHANICS_AUDIT.md": "16ab967b32379da08021caaf63532f1774288e16d184874bd0467c78fbdd9727",
     "HISTORICAL_SOURCES.md": "59c7a968a50aaf3d5988d93cafdd39d35838d36a1f83da801ba365730aba9538",
-    "PLAN.md": "bec2a21df6e0e68b277d919eb55e24026c52d1dd07d0c96144cf8739a078f7d8",
-    "MECHANICS_MAP.md": "c2b1142dc3a8d8a0618b3741987ba3805126a846d97a23f201c664835b8d01df",
-    "STATE_VARIABLES.md": "15184483df24d82ba453529e1a9fb7418512fd714eb97cc3c1972382f0c3a38e",
-    "TRANSITION_MATRIX.md": "c658b6715b8985f84e8bb058f77ce038c8173bc16a986583bdfb05b583bf94dc"
+    "PLAN.md": "7c27a065da0aebd7d3079bc577ede34c843493472501f76a2d9d375c032cbdb2",
+    "MECHANICS_MAP.md": "3b7ad6f59c15e02b0466026d30ee46c5196a503c841b42994946c8af0e09c873",
+    "STATE_VARIABLES.md": "2eb623ce5e2e0235c0c3f928c34c8fe3f97fde075dba1d0dcadd9c1c23998237",
+    "TRANSITION_MATRIX.md": "9719fc65fb4b40378b94b6158b4878719e7fff874e366d71b798deafe5096a60"
   },
   "structure": {
     "indexSubsectionsChecked": 97,
@@ -26,19 +26,19 @@
     "registers": {
       "PLAN.md": {
         "areas": 18,
-        "archiveStartsAtLine": 55
+        "archiveStartsAtLine": 56
       },
       "MECHANICS_MAP.md": {
         "areas": 18,
-        "archiveStartsAtLine": 55
+        "archiveStartsAtLine": 56
       },
       "STATE_VARIABLES.md": {
         "areas": 18,
-        "archiveStartsAtLine": 64
+        "archiveStartsAtLine": 65
       },
       "TRANSITION_MATRIX.md": {
         "areas": 18,
-        "archiveStartsAtLine": 56
+        "archiveStartsAtLine": 57
       }
     }
   },

@@ -165,3 +165,123 @@ StegerwaldAdam.jpg: Verlag, Herder. Deutsch:  Adam Stegerwald, Preußischer Mini
 LeipartTheodor.jpg: Portrait Theodor Leipart 1926. Die Arbeit (1924 - 1933)- Zeitschrift Für Gewerkschaftspolitik Und Wirtschaftskunde : Online-Edition Der Bibliothek Der Friedrich-Ebert-Stiftung. https://library.fes.de/arbeit/bild-leipart2.html. Accessed 6 Apr. 2024. Public Domain
 
 WoytinskyWladimir.jpg: author, Unknown authorUnknown. Español:  Socialistas En Irkutsk, En El Exilio Interior. Entre Ellos, de Izquierda a Derecha: Fiódor Dan, Irakli Tsereteli, Voitinski y Abraham Gots, 1914-1915. Scanned from ISBN 069105567X   Ziva Galili: The Menshevik Leaders in the Russian Revolution: Social Realities and Political Strategies Princeton, N.J. : Princeton University Press, 1989, after page 142. Galili’s source is en:Hoover Institution., Wikimedia Commons, https://commons.wikimedia.org/wiki/File:SocialistasEnIrkutskDanTsereteliVoitinskiDan19141915.png. Public Domain
+
+= Images (Polish version):
+
+The images in img/polish/ were added on 4 Oct. 2026. Their sources and licences are not yet recorded; each entry below must be completed before the images are published further.
+
+polish/arciszewski.jpg: Portrait on the card of Tomasz Arciszewski (the Central Executive Committee cards of the game). Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/czapinski.jpg: Portrait on the card of Kazimierz Czapiński (the Central Executive Committee cards of the game). Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/daszynski.jpg: Portrait on the card of Ignacy Daszyński (the Central Executive Committee cards of the game). Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/jaworowski.jpg: Portrait on the card of Rajmund Jaworowski (the Central Executive Committee cards of the game). Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/malinowski.jpg: Portrait on the card of Marian Malinowski (the Central Executive Committee cards of the game). Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/moraczewski.jpg: Portrait on the card of Jędrzej Moraczewski (the Central Executive Committee cards of the game). Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/niedzialkowski.jpg: Portrait on the card of Mieczysław Niedziałkowski (the Central Executive Committee cards of the game). Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/perl.jpg: Portrait on the card of Feliks Perl (the Central Executive Committee cards of the game). Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_cabinet_formation.jpg: Image on the card “Cabinet Formation”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_constitution_project.jpg: Image on the card “Constitutional Reform”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_event_assassination_response.jpg: Image of the event “After the Assassination”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_event_austerity_1926.jpg: Image of the event “Review of the Protection”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_event_cabinet_1922.jpg: Image of the event “The Cabinet Crisis of 1922”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_event_coup.jpg: Image of the event “The Coup”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_event_faction_split.jpg: Image of the event “Part of a Faction Threatens to Leave”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_event_niewiadomski_cult.jpg: Image of the event “The Cult of the Assassin”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_event_pils_criticism.jpg: Image of the event “Piłsudski Criticises Parliament”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_event_stabilization.jpg: Image of the event “Stabilisation”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_event_strike_1923.jpg: Image of the event “Wage Demands and Strikes”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_event_strike_rejection.jpg: Image of the event “The Strikers Reject the Settlement”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_event_strike_response.jpg: Image of the event “The Strike and the Sejm”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_gov_agriculture.jpg: Image on the card “Modernisation of Agriculture”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_gov_currency.jpg: Image on the card “Currency Stabilisation”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_gov_education.jpg: Image on the card “Education Policy”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_gov_finance.jpg: Image on the card “Fiscal Policy”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_gov_heritage_wawel.jpg: Image of the Wawel on the card “Wawel or the Royal Castle”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_gov_heritage_zamek_krolewski.jpg: Image of the Royal Castle on the page of the card “Wawel or the Royal Castle”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_gov_industry.jpg: Image on the card “Industrial Policy”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_gov_interior.jpg: Image on the card “Police and Internal Security”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_gov_investment.jpg: Image on the card “Capital for Investment”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_gov_justice.jpg: Image on the card “The Judiciary”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_gov_labor_rights.jpg: Image on the card “Workers’ Rights”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_gov_land.jpg: Image on the card “Execution of the Land Reform”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_gov_minority_schools.jpg: Image on the card “Language Rights and Minority Schools”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_gov_pils_agreement.jpg: Image on the card “Agreement with Piłsudski”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_gov_public_works.jpg: Image on the card “Public Works”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_gov_social_welfare.jpg: Image on the card “Benefits and Aid for the Unemployed”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_government_support.jpg: Image on the card “Support for the Government”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_list_agreement.jpg: Image on the card “Electoral Agreement”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_parliament_army_oversight.jpg: Image on the card “Parliamentary Control of the Army”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_party_advisers.jpg: Image on the card “Change the Central Executive Committee”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_party_direction.jpg: Image on the card “Political Direction”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_party_dues.jpg: Image on the card “Party Dues”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_party_economic_program.jpg: Image on the card “Economic Programme”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_party_electoral_base.jpg: Image on the card “Character of the Party”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_party_form_of_power.jpg: Image on the card “What Power Do We Want”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_party_jewish_cooperation.jpg: Image on the card “Cooperation with Jewish Organisations”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_party_main_opponent.jpg: Image on the card “Main Opponent”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_party_media.jpg: Image on the card “Media and Campaigns”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_party_militia.jpg: Image on the card “Milicja PPS”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_party_organizations.jpg: Image on the card “Organisations of PPS”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_party_pils_influence.jpg: Image on the card “Piłsudski’s Influence”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_party_slavic_autonomy.jpg: Image on the card “Slavic Minorities: Autonomy”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_party_unity.jpg: Image on the card “Unity and Leadership”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/polish_party_ussr_position.jpg: Image on the card “PPS and the Soviet Model”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/puzak.jpg: Portrait on the card of Kazimierz Pużak (the Central Executive Committee cards of the game). Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/zaremba.jpg: Portrait on the card of Zygmunt Zaremba (the Central Executive Committee cards of the game). Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+
+polish/ziemiecki.jpg: Portrait on the card of Bronisław Ziemięcki (the Central Executive Committee cards of the game). Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.

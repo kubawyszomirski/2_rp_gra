@@ -3,6 +3,7 @@ subtitle: Education: village schools, adult education, a secular school.
 new-page: true
 is-card: true
 tags: govt_affairs
+card-image: img/polish/polish_gov_education.jpg
 view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'education_program') !}
 on-arrival: {!
 // Card government.education_program (technical reference 17.11–17.12; card catalogue 8.10). Opening and closing

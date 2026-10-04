@@ -2,6 +2,7 @@ title: Stabilisation
 subtitle: The budget or the currency is in crisis.
 new-page: true
 tags: pl_event
+face-image: img/polish/polish_event_stabilization.jpg
 view-if: {! return !!Q.S && PolishProjects.stabilizationEventDue(Q) !}
 on-arrival: {!
 // Event economy.stabilization (technical reference 17.3, 17.13 B14, 11.9; card catalogue 9.11): a

@@ -3,6 +3,7 @@ subtitle: Treasury: taxes, loans, cuts, emission and collection.
 new-page: true
 is-card: true
 tags: govt_affairs
+card-image: img/polish/polish_gov_finance.jpg
 view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'finance_package') !}
 on-arrival: {!
 // Card government.finance_package (technical reference 17.11–17.12; card catalogue 8.3). Opening and closing

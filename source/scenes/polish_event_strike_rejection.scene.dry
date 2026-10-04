@@ -2,6 +2,7 @@ title: The Strikers Reject the Settlement
 subtitle: PPS accepted a settlement, but part of the strikers will not end the action.
 new-page: true
 tags: pl_event
+face-image: img/polish/polish_event_strike_rejection.jpg
 view-if: {! return !!Q.S && !!Q.polish_union_rules && PolishUnions.rejectionDue(Q) !}
 on-arrival: {!
 // Event society.strike_settlement_rejection, E6 (technical reference 14.5, 17.15; card catalogue 9.9; Z — 0.38): only

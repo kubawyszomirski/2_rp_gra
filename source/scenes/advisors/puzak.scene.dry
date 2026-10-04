@@ -1,6 +1,7 @@
 title: Kazimierz Pużak
 is-pinned-card: true
 tags: advisor
+card-image: img/polish/puzak.jpg
 view-if: puzak_advisor = 1
 new-page: true
 on-arrival: {!

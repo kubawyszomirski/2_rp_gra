@@ -3,6 +3,7 @@ subtitle: The range of agreements, above all with the Bund.
 new-page: true
 is-card: true
 tags: party_affairs
+card-image: img/polish/polish_party_jewish_cooperation.jpg
 view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.stanceAvailable(Q, 'jewish_cooperation') !}
 on-arrival: {!
 // Card party.jewish_cooperation (catalogue 4.7; technical reference 10.8): 1 T, 0 R, the card then waits 6 months. Z — 0.51: the present line can be

@@ -2,6 +2,7 @@ title: Review of the Protection
 subtitle: The cabinet's partners want to cut the benefit.
 new-page: true
 tags: pl_event
+face-image: img/polish/polish_event_austerity_1926.jpg
 view-if: {! return !!Q.S && PolishProjects.austerityEventDue(Q) !}
 on-arrival: {!
 // Event cabinet.austerity_1926 (technical reference 17.13 B19, 17.16.4; card catalogue 9.13): once, in

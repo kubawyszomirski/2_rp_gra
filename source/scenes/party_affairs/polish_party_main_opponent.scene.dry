@@ -3,6 +3,7 @@ subtitle: Whom our polemics address.
 new-page: true
 is-card: true
 tags: party_affairs
+card-image: img/polish/polish_party_main_opponent.jpg
 view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.stanceAvailable(Q, 'main_opponent') !}
 on-arrival: {!
 // Card party.main_opponent (catalogue 4.2; technical reference 10.6): 1 T, 0 R, the card then waits 6 months. Z — 0.51: the present line can be

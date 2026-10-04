@@ -3,6 +3,7 @@ subtitle: Treasury: one currency reform, prepared then launched.
 new-page: true
 is-card: true
 tags: govt_affairs
+card-image: img/polish/polish_gov_currency.jpg
 view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'currency_stabilisation') !}
 on-arrival: {!
 // Card government.currency_stabilisation (technical reference 17.11–17.12; card catalogue 8.4). Opening and closing

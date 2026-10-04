@@ -1,6 +1,7 @@
 title: Feliks Perl
 is-pinned-card: true
 tags: advisor
+card-image: img/polish/perl.jpg
 view-if: perl_advisor = 1
 new-page: true
 on-arrival: {!

@@ -3,6 +3,7 @@ subtitle: A concession, a common line on the communists, a postponement, or a pu
 new-page: true
 is-card: true
 tags: party_affairs
+card-image: img/polish/polish_party_unity.jpg
 view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.unityAvailable(Q) !}
 on-arrival: {!
 // Card party.unity (technical reference 10.2, 10.5, 10.9, 9.5; card catalogue 6.3–6.4): in the pool only

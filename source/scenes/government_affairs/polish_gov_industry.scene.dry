@@ -3,6 +3,7 @@ subtitle: Industry and Trade: credit, orders, public control, representation.
 new-page: true
 is-card: true
 tags: govt_affairs
+card-image: img/polish/polish_gov_industry.jpg
 view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'industrial_policy') !}
 on-arrival: {!
 // Card government.industrial_policy (technical reference 17.11–17.12; card catalogue 8.6). Opening and closing

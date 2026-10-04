@@ -3,6 +3,7 @@ subtitle: Recruit, militarise, or reorganise the self-defence as Akcja Socjalist
 new-page: true
 is-card: true
 tags: party_affairs
+card-image: img/polish/polish_party_militia.jpg
 view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.militiaAvailable(Q) !}
 on-arrival: {!
 // Card party.militia (technical reference 13.3–13.4; card catalogue 5.2): two basic steps and a

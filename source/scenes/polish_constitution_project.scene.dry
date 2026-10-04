@@ -3,6 +3,7 @@ subtitle: Three separate projects, each with its own act.
 new-page: true
 is-card: true
 tags: parliament_affairs
+card-image: img/polish/polish_constitution_project.jpg
 view-if: {! return !!Q.S && PolishProjects.constitutionCardAvailable(Q) !}
 on-arrival: {!
 // Card parliament.constitution_project (technical reference 7.6, 17.10; card catalogue 7.4). Preparing a

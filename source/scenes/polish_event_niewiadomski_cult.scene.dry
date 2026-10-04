@@ -2,6 +2,7 @@ title: The Cult of the Assassin
 subtitle: A public commemoration of Eligiusz Niewiadomski; PPS decides how it answers.
 new-page: true
 tags: pl_event
+face-image: img/polish/polish_event_niewiadomski_cult.jpg
 view-if: {! return !!Q.S && !!Q.polish_politics_rules && PolishPolitics.cultDue(Q) !}
 on-arrival: {!
 // Event society.niewiadomski_cult, B5 (technical reference 17.7, 17.4, 15.2; card catalogue 9.6): one named public

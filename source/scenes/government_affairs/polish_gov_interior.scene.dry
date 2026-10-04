@@ -3,6 +3,7 @@ subtitle: The Interior: the police, the investigation of named violence, protect
 new-page: true
 is-card: true
 tags: govt_affairs
+card-image: img/polish/polish_gov_interior.jpg
 view-if: {! return !!Q.S && !!Q.polish_security_rules && PolishProjects.cardAvailable(Q, 'internal_security') !}
 on-arrival: {!
 // Card government.internal_security (technical reference 16.3, 17.12.2, 17.12.6; card catalogue 8.12). Opening and

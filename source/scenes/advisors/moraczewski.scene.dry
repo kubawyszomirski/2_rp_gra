@@ -1,6 +1,7 @@
 title: Jędrzej Moraczewski
 is-pinned-card: true
 tags: advisor
+card-image: img/polish/moraczewski.jpg
 view-if: moraczewski_advisor = 1
 new-page: true
 

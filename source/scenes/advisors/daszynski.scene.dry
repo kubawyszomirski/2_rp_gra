@@ -1,6 +1,7 @@
 title: Ignacy Daszyński
 is-pinned-card: true
 tags: advisor
+card-image: img/polish/daszynski.jpg
 view-if: daszynski_advisor = 1
 new-page: true
 on-arrival: {!
