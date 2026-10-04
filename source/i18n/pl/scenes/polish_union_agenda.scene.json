@@ -1,0 +1,29 @@
+{
+ "source": "scenes/polish_union_agenda.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Trade Unions": "title: Związki zawodowe",
+  "subtitle: The steps of a union dispute: the demands, the line, mediation, a strike and its end.": "subtitle: Kroki sporu związkowego: postulaty, linia, mediacja, strajk i jego zakończenie.",
+  "= The trade unions": "= Związki zawodowe",
+  "title: Industry": "title: Przemysł",
+  "title: Railways": "title: Kolej",
+  "title: Agricultural labour": "title: Robotnicy rolni",
+  "title: Not now": "title: Nie teraz",
+  "subtitle: Nothing is spent.": "subtitle: Nic nie zostaje wydane.",
+  "[? if pl_un_offer : [+ pl_un_offer +] PPS answers it in the Sejm. ?]": "[? if pl_un_offer : [+ pl_un_offer +] PPS odpowiada na nią w Sejmie. ?]",
+  "- @polish_union_agenda: Back to the unions.": "- @polish_union_agenda: Wróć do związków.",
+  "title: Agree the demands: wages and the return to work": "title: Uzgodnij postulaty: płace i powrót do pracy",
+  "subtitle: 1 T; readiness +15; one demand (threshold 40) with a plan to end the action; waits 2 months.": "subtitle: 1 T; gotowość +15; jeden postulat (próg 40) z planem zakończenia akcji; odnowienie: 2 miesiące.",
+  "title: Agree the demands: wages and working conditions": "title: Uzgodnij postulaty: płace i warunki pracy",
+  "subtitle: 1 T; readiness +15; a broader package (threshold 60) with a plan to end the action; waits 2 months.": "subtitle: 1 T; gotowość +15; szerszy pakiet (próg 60) z planem zakończenia akcji; odnowienie: 2 miesiące.",
+  "title: A joint meeting on the strike": "title: Wspólne zebranie w sprawie strajku",
+  "subtitle: 1 T; the branch's alignment with a strike call +15, which raises compliance.": "subtitle: 1 T; zgodność branży z wezwaniem do strajku +15, co zwiększa posłuch.",
+  "title: A joint meeting on the agreed end": "title: Wspólne zebranie w sprawie uzgodnionego zakończenia",
+  "subtitle: 1 T; the branch's alignment with a call to end on agreed terms +15.": "subtitle: 1 T; zgodność branży z wezwaniem do zakończenia na uzgodnionych warunkach +15.",
+  "title: Mediate the dispute with the leadership": "title: Mediacja w sporze z kierownictwem",
+  "subtitle: 1 T; the branch's dissent −8 over a concrete change.": "subtitle: 1 T; sprzeciw branży w sporze o konkretną zmianę −8.",
+  "title: Start the protest": "title: Rozpocznij protest",
+  "subtitle: 1 T; a strike for the agreed demands; every active month draws on the branch fund.": "subtitle: 1 T; strajk o uzgodnione postulaty; każdy miesiąc strajku obciąża fundusz branży.",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

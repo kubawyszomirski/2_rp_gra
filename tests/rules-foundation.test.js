@@ -176,7 +176,8 @@ test('the page and the engine tests load the same built copy of the rules', () =
   assert.ok(at('polish_projects.js') < at('polish_party.js'), 'the party module needs the projects and the electorate first');
   assert.ok(at('polish_party.js') < at('polish_unions.js'), 'the unions module reads the party’s compliance and cohesion');
   const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
-  assert.ok(pkg.scripts.build.endsWith('&& cp source/rules/*.js out/html/'));
+  // Since the Polish version (decision 1A) the build ends with the Polish game, built after the rules are copied.
+  assert.ok(pkg.scripts.build.endsWith('&& cp source/rules/*.js out/html/ && node tools/i18n/build.cjs'));
 });
 
 test('the rules modules never draw their own random numbers', () => {

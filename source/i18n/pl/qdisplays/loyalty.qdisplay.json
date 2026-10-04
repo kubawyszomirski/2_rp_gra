@@ -1,0 +1,14 @@
+{
+ "source": "qdisplays/loyalty.qdisplay.dry",
+ "status": "complete",
+ "lines": {
+  "(..0.06) completely disloyal": "(..0.06) całkowicie nielojalna",
+  "(0.06..0.19) very disloyal": "(0.06..0.19) bardzo nielojalna",
+  "(0.19..0.31) generally disloyal": "(0.19..0.31) na ogół nielojalna",
+  "(0.31..0.41) mostly disloyal": "(0.31..0.41) raczej nielojalna",
+  "(0.41..0.54) divided": "(0.41..0.54) podzielona",
+  "(0.54..0.71) mostly loyal": "(0.54..0.71) raczej lojalna",
+  "(0.71..0.95) generally loyal": "(0.71..0.95) na ogół lojalna",
+  "(0.95..) completely loyal": "(0.95..) całkowicie lojalna"
+ }
+}

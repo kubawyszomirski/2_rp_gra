@@ -24,6 +24,8 @@
   const copy = value => (value === undefined ? undefined : JSON.parse(JSON.stringify(value)));
   const clip = (value, low, high) => Math.max(low, Math.min(high, value));
   const compareId = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
+  // Polish version (decision 2A): the texts of this module are written in both languages and L picks the current one.
+  const L = rules.L;
 
   // ---- Actors and their test profiles (8.1, 8.6, 5.5) ---------------------------------------------
 
@@ -412,18 +414,21 @@
 
   function outreachStatus(Q, actorId) {
     const S = Q.S;
-    if (PARTNERS.indexOf(actorId) < 0) return {available: false, reason: 'Not a partner for talks.'};
-    if (seatsOf(S, actorId) <= 0) return {available: false, reason: 'Not in the current parliament.'};
-    if (actorId === 'kpp' && !kppChannelOpen(S, Q.time)) return {available: false, reason: 'No open channel to the KPP yet.'};
+    if (PARTNERS.indexOf(actorId) < 0) return {available: false, reason: L('Not a partner for talks.', 'To nie jest partner do rozmów.')};
+    if (seatsOf(S, actorId) <= 0) return {available: false, reason: L('Not in the current parliament.', 'Nie ma tej partii w obecnym Sejmie.')};
+    if (actorId === 'kpp' && !kppChannelOpen(S, Q.time)) return {available: false, reason: L('No open channel to the KPP yet.', 'Nie ma jeszcze otwartego kanału do KPP.')};
     const wait = rules.cooldownRemaining(Q, 'outreach.' + actorId);
-    if (wait > 0) return {available: false, reason: 'Talked recently: ' + wait + (wait === 1 ? ' month' : ' months') + ' before the next talk.'};
+    if (wait > 0) {
+      return {available: false, reason: L('Talked recently: ' + wait + (wait === 1 ? ' month' : ' months') + ' before the next talk.',
+        'Niedawna rozmowa: następna za ' + wait + ' ' + rules.plural(wait, 'miesiąc', 'miesiące', 'miesięcy') + '.')};
+    }
     return {available: true, reason: ''};
   }
 
   function kppContactStatus(Q) {
     const S = Q.S;
-    if (S.actors.kpp_channel.contact_open) return {available: false, reason: 'The channel to the KPP is already open.'};
-    if (relation(S, 'kpp') < 10) return {available: false, reason: 'Relation with the KPP is below 10.'};
+    if (S.actors.kpp_channel.contact_open) return {available: false, reason: L('The channel to the KPP is already open.', 'Kanał do KPP jest już otwarty.')};
+    if (relation(S, 'kpp') < 10) return {available: false, reason: L('Relation with the KPP is below 10.', 'Relacja z KPP jest niższa niż 10.')};
     return {available: true, reason: ''};
   }
 
@@ -468,6 +473,32 @@
   });
   const PORTFOLIO_SHORT = Object.freeze({labor: 'Labour', interior: 'Interior', finance: 'Treasury', economic: 'Industry and Trade',
     justice: 'Justice', agriculture: 'Agriculture', reichswehr: 'Military Affairs', education: 'Education', foreign: 'Foreign Affairs'});
+  const PORTFOLIO_NAMES_PL = Object.freeze({
+    labor: 'Praca i Opieka Społeczna (w tym roboty publiczne)',
+    interior: 'Sprawy Wewnętrzne',
+    finance: 'Skarb',
+    economic: 'Przemysł i Handel',
+    justice: 'Sprawiedliwość',
+    agriculture: 'Rolnictwo i Dobra Państwowe',
+    reichswehr: 'Sprawy Wojskowe',
+    education: 'Wyznania Religijne i Oświecenie Publiczne',
+    foreign: 'Sprawy Zagraniczne',
+  });
+  const PORTFOLIO_SHORT_PL = Object.freeze({labor: 'Praca', interior: 'Sprawy Wewnętrzne', finance: 'Skarb', economic: 'Przemysł i Handel',
+    justice: 'Sprawiedliwość', agriculture: 'Rolnictwo', reichswehr: 'Sprawy Wojskowe', education: 'Oświata', foreign: 'Sprawy Zagraniczne'});
+  const portfolioName = key => L(PORTFOLIO_NAMES[key], PORTFOLIO_NAMES_PL[key]);
+  const portfolioShort = key => L(PORTFOLIO_SHORT[key], PORTFOLIO_SHORT_PL[key]);
+  // The position of PPS as the chapter report stores it (English, decision 5A) and its Polish display.
+  const POSITIONS_PL = Object.freeze({'Opposition': 'opozycja', 'Government formation pending': 'trwa tworzenie rządu',
+    'Supports the cabinet from outside; no PPS ministries': 'poparcie gabinetu z zewnątrz; bez ministerstw PPS',
+    'External toleration of Ponikowski; outside the cabinet; no PPS ministries': 'tolerowanie Ponikowskiego z zewnątrz; poza gabinetem; bez ministerstw PPS'});
+  rules.registerStoredText(text => {
+    if (POSITIONS_PL[text]) return POSITIONS_PL[text];
+    const m = /^In the cabinet(: (.+))?$/.exec(text);
+    if (!m) return undefined;
+    const keys = Object.keys(PORTFOLIO_SHORT);
+    return 'w gabinecie' + (m[2] ? ': ' + m[2].split(', ').map(name => PORTFOLIO_SHORT_PL[keys.filter(k => PORTFOLIO_SHORT[k] === name)[0]] || name).join(', ') : '');
+  });
   // Public works stay a programme topic; they are part of Labour, not a tenth portfolio (8.5, 20.1.1).
   const PROGRAMME_ONLY_TOPICS = Object.freeze(['public_works']);
   const MINORITY_TERMS = Object.freeze(['language_rights', 'school_rights', 'legal_equality']);
@@ -477,6 +508,11 @@
 
   // Configurations of 8.6 with the fixed minimum programmes of decision 4 (P): land / fiscal /
   // institution positions on the scale −2..2; only the topics listed enter the agreement.
+  const CONFIGURATION_NAMES_PL = Object.freeze({pps_majority: 'Rząd większościowy PPS', left_minority: 'PPS i PSL Wyzwolenie',
+    left_labour: 'PPS, PSL Wyzwolenie i NPR', centre_left: 'Centrolew', broad_centre: 'Szerokie centrum',
+    skrzynski_broad: 'Szeroki gabinet Skrzyńskiego', national_unity: 'Jedność narodowa', united_left: 'Zjednoczona lewica z komunistami',
+    workers_front: 'Front robotniczy z komunistami', expert: 'Gabinet fachowców', chjeno_piast: 'Chjeno-Piast'});
+  const configName = id => (CONFIGURATIONS[id] ? L(CONFIGURATIONS[id].name, CONFIGURATION_NAMES_PL[id]) : L('Cabinet', 'Gabinet'));
   const CONFIGURATIONS = Object.freeze({
     pps_majority: {name: 'PPS majority government', members: ['pps'], programme: {land: 1, fiscal: 2, institution: 2},
       gates: [], majority_alone: true, minority_support: false},
@@ -571,9 +607,13 @@
 
   function daszynskiUnavailable(Q) {
     const S = Q.S;
-    if (Q.daszynski_left_adviser_pool) return 'Ignacy Daszyński has left PPS.';
-    if (Q.polish_presidency && Q.polish_presidency.current && Q.polish_presidency.current.holder_id === 'ignacy_daszynski') return 'Ignacy Daszyński is President.';
-    if (S.parliament.speaker && S.parliament.speaker.person_id === 'ignacy_daszynski') return 'Ignacy Daszyński is Marshal of the Sejm.';
+    if (Q.daszynski_left_adviser_pool) return L('Ignacy Daszyński has left PPS.', 'Ignacy Daszyński odszedł z PPS.');
+    if (Q.polish_presidency && Q.polish_presidency.current && Q.polish_presidency.current.holder_id === 'ignacy_daszynski') {
+      return L('Ignacy Daszyński is President.', 'Ignacy Daszyński jest prezydentem.');
+    }
+    if (S.parliament.speaker && S.parliament.speaker.person_id === 'ignacy_daszynski') {
+      return L('Ignacy Daszyński is Marshal of the Sejm.', 'Ignacy Daszyński jest marszałkiem Sejmu.');
+    }
     return '';
   }
 
@@ -599,29 +639,40 @@
   function candidateStatus(Q, candidateId, draft) {
     const S = Q.S, candidate = CANDIDATES[candidateId];
     const config = CONFIGURATIONS[draft.configuration_id];
-    if (!candidate) return {available: false, reason: 'Unknown candidate.'};
-    if (config.candidate && config.candidate !== candidateId) return {available: false, reason: 'This cabinet is led by ' + CANDIDATES[config.candidate].name + '.'};
+    if (!candidate) return {available: false, reason: L('Unknown candidate.', 'Nieznany kandydat.')};
+    if (config.candidate && config.candidate !== candidateId) {
+      return {available: false, reason: L('This cabinet is led by ' + CANDIDATES[config.candidate].name + '.',
+        'Na czele tego gabinetu stoi ' + CANDIDATES[config.candidate].name + '.')};
+    }
     if (candidateId === 'pilsudski') {
-      if (!pilsudskiPremierAgreed(S)) return {available: false, reason: 'Only after an agreed premiership with Piłsudski (16.7).'};
-      if ((S.actors.relations.pilsudski || 0) < 65) return {available: false, reason: 'Needs a relation of 65 with Piłsudski: without it he withdraws his consent.'};
+      if (!pilsudskiPremierAgreed(S)) {
+        return {available: false, reason: L('Only after an agreed premiership with Piłsudski (16.7).', 'Tylko po uzgodnieniu premierostwa z Piłsudskim (16.7).')};
+      }
+      if ((S.actors.relations.pilsudski || 0) < 65) {
+        return {available: false, reason: L('Needs a relation of 65 with Piłsudski: without it he withdraws his consent.',
+          'Wymaga relacji 65 z Piłsudskim: bez niej wycofuje on zgodę.')};
+      }
     }
     if (!candidate.party) {
-      if (expertFallen(S, candidateId)) return {available: false, reason: 'His cabinet has fallen.'};
+      if (expertFallen(S, candidateId)) return {available: false, reason: L('His cabinet has fallen.', 'Jego gabinet upadł.')};
       return {available: true, reason: ''};
     }
-    if (config.expert) return {available: false, reason: 'A cabinet of experts has a non-party prime minister.'};
+    if (config.expert) return {available: false, reason: L('A cabinet of experts has a non-party prime minister.', 'Gabinet fachowców ma bezpartyjnego premiera.')};
     const offer = buildCabinetOffer(Q, Object.assign({}, draft, {candidate_id: candidateId}), {});
-    if (offer.members.indexOf(candidate.party) < 0) return {available: false, reason: 'His party is not in this cabinet.'};
-    if (seatsOf(S, candidate.party) <= 0) return {available: false, reason: 'His party has no MPs.'};
+    if (offer.members.indexOf(candidate.party) < 0) return {available: false, reason: L('His party is not in this cabinet.', 'Jego partii nie ma w tym gabinecie.')};
+    if (seatsOf(S, candidate.party) <= 0) return {available: false, reason: L('His party has no MPs.', 'Jego partia nie ma posłów.')};
     if (candidateId === 'daszynski') {
       const blocked = daszynskiUnavailable(Q);
       if (blocked) return {available: false, reason: blocked};
       const largest = offer.members.every(m => seatsOf(S, m) <= seatsOf(S, 'pps'));
-      if (!largest) return {available: false, reason: 'PPS is not the largest club of this cabinet.'};
-      if (!config.majority_alone && partnersOf(offer).length < 2) return {available: false, reason: 'Needs at least two partners who accept him.'};
+      if (!largest) return {available: false, reason: L('PPS is not the largest club of this cabinet.', 'PPS nie jest największym klubem tego gabinetu.')};
+      if (!config.majority_alone && partnersOf(offer).length < 2) {
+        return {available: false, reason: L('Needs at least two partners who accept him.', 'Wymaga co najmniej dwóch partnerów, którzy go zaakceptują.')};
+      }
     }
     if (candidateId === 'thugutt' && (relation(S, 'psl_wyzwolenie') < 60 || relation(S, 'psl_piast') < 55)) {
-      return {available: false, reason: 'Needs relations of 60 with PSL Wyzwolenie and 55 with PSL Piast.'};
+      return {available: false, reason: L('Needs relations of 60 with PSL Wyzwolenie and 55 with PSL Piast.',
+        'Wymaga relacji 60 z PSL Wyzwolenie i 55 z PSL Piast.')};
     }
     return {available: true, reason: ''};
   }
@@ -734,28 +785,44 @@
 
   function configurationStatus(Q, configId, context) {
     const S = Q.S, config = CONFIGURATIONS[configId];
-    if (!config) return {available: false, reason: 'Unknown cabinet.'};
-    if (config.npc) return {available: false, reason: 'Formed by other parties.'};
+    if (!config) return {available: false, reason: L('Unknown cabinet.', 'Nieznany gabinet.')};
+    if (config.npc) return {available: false, reason: L('Formed by other parties.', 'Tworzą go inne partie.')};
     if (config.requires === 'kpp_preparation' && !kppFrontPrepared(S)) {
-      return {available: false, reason: 'Needs the broader agreement with the KPP: its rules on the legal vote, no forced merger and an agreed end of strikes (party agenda).'};
+      return {available: false, reason: L('Needs the broader agreement with the KPP: its rules on the legal vote, no forced merger and an agreed end of strikes (party agenda).',
+        'Wymaga szerszego porozumienia z KPP: zasad legalnego głosowania, braku przymusowego połączenia i uzgodnionego kończenia strajków (agenda partii).')};
     }
     if (config.crisis) {
       const crisis = crisisState(Q, context);
-      if (!crisis.allowed) return {available: false, reason: 'Only in a real crisis: two cabinet falls within six months, a currency crisis or a credit crisis.'};
-      if (config.crisis === 'severe' && !crisis.severe) return {available: false, reason: 'Only in a severe crisis: three cabinet falls within six months.'};
+      if (!crisis.allowed) {
+        return {available: false, reason: L('Only in a real crisis: two cabinet falls within six months, a currency crisis or a credit crisis.',
+          'Tylko w prawdziwym kryzysie: dwa upadki gabinetu w ciągu sześciu miesięcy, kryzys walutowy albo kredytowy.')};
+      }
+      if (config.crisis === 'severe' && !crisis.severe) {
+        return {available: false, reason: L('Only in a severe crisis: three cabinet falls within six months.',
+          'Tylko w ciężkim kryzysie: trzy upadki gabinetu w ciągu sześciu miesięcy.')};
+      }
     }
     for (const gate of config.gates) {
-      if (relation(S, gate.actor) < gate.min) return {available: false, reason: 'Relation with ' + ACTOR_PROFILES[gate.actor].name + ' is below ' + gate.min + '.'};
+      if (relation(S, gate.actor) < gate.min) {
+        return {available: false, reason: L('Relation with ' + ACTOR_PROFILES[gate.actor].name + ' is below ' + gate.min + '.',
+          'Relacja z ' + actorName(gate.actor) + ' jest niższa niż ' + gate.min + '.')};
+      }
     }
     for (const member of config.members) {
-      if (member !== 'pps' && seatsOf(S, member) <= 0) return {available: false, reason: ACTOR_PROFILES[member].name + ' has no MPs.'};
+      if (member !== 'pps' && seatsOf(S, member) <= 0) {
+        return {available: false, reason: L(ACTOR_PROFILES[member].name + ' has no MPs.', actorName(member) + ' nie ma posłów.')};
+      }
     }
-    if (config.majority_alone && seatsOf(S, 'pps') < majorityRequired(S)) return {available: false, reason: 'PPS has no majority of its own.'};
+    if (config.majority_alone && seatsOf(S, 'pps') < majorityRequired(S)) {
+      return {available: false, reason: L('PPS has no majority of its own.', 'PPS nie ma własnej większości.')};
+    }
     if (!config.expert) {
       // A realistic chance of support: the members, with the minority representations where allowed.
       const best = buildCabinetOffer(Q, {configuration_id: configId, candidate_id: 'nowak', pps_mode: 'member',
         seek_minority_support: config.minority_support, portfolio_claim: ['labor']}, context);
-      if (!forecast(Q, best, best.members.concat(best.supporters)).viable) return {available: false, reason: 'No realistic parliamentary support.'};
+      if (!forecast(Q, best, best.members.concat(best.supporters)).viable) {
+        return {available: false, reason: L('No realistic parliamentary support.', 'Brak realnego poparcia w Sejmie.')};
+      }
     }
     return {available: true, reason: ''};
   }
@@ -953,16 +1020,17 @@
 
   function stabilisationTermsStatus(terms, Q) {
     if (terms === 'loan' || terms === 'none') return {available: true, reason: ''};
-    if (terms !== 'protections') return {available: false, reason: 'Unknown terms.'};
+    if (terms !== 'protections') return {available: false, reason: L('Unknown terms.', 'Nieznane warunki.')};
     const S = Q && Q.S;
     const apparatus = S && S.party_orgs ? S.party_orgs.apparatus.level : 0;
     const reach = S && S.unions ? Math.max.apply(null, Object.keys(S.unions).map(id => S.unions[id].reach || 0)) : 0;
     const rel = S && S.actors ? relation(S, 'grabski') : 0;
     const missing = [];
-    if (apparatus < PROTECTION_TALKS.apparatus) missing.push('party apparatus level 2 (now ' + apparatus + ')');
-    if (reach < PROTECTION_TALKS.reach) missing.push('a union branch with reach 40 (now ' + Math.floor(reach) + ')');
-    if (rel < PROTECTION_TALKS.relation) missing.push('a relation of 40 with Grabski (now ' + Math.floor(rel) + ')');
-    return missing.length ? {available: false, reason: 'Negotiating protections needs ' + missing.join(', ') + '.'} : {available: true, reason: ''};
+    if (apparatus < PROTECTION_TALKS.apparatus) missing.push(L('party apparatus level 2 (now ' + apparatus + ')', 'aparatu partii na poziomie 2 (teraz ' + apparatus + ')'));
+    if (reach < PROTECTION_TALKS.reach) missing.push(L('a union branch with reach 40 (now ' + Math.floor(reach) + ')', 'branży związkowej z zasięgiem 40 (teraz ' + Math.floor(reach) + ')'));
+    if (rel < PROTECTION_TALKS.relation) missing.push(L('a relation of 40 with Grabski (now ' + Math.floor(rel) + ')', 'relacji 40 z Grabskim (teraz ' + Math.floor(rel) + ')'));
+    return missing.length ? {available: false, reason: L('Negotiating protections needs ' + missing.join(', ') + '.', 'Negocjowanie osłon wymaga ' + missing.join(', ') + '.')} :
+      {available: true, reason: ''};
   }
 
   // The protection of the terms is financed when one already operates, or by the new burden on wealth of the
@@ -1010,35 +1078,89 @@
     if (kind === 'configuration') return configurationStatus(Q, value, neg.context);
     if (kind === 'candidate') return candidateStatus(Q, value, draft);
     if (kind === 'mode') {
-      if (value === 'member' && CONFIGURATIONS[draft.configuration_id].expert) return {available: false, reason: 'A cabinet of experts has no party ministers.'};
+      if (value === 'member' && CONFIGURATIONS[draft.configuration_id].expert) {
+        return {available: false, reason: L('A cabinet of experts has no party ministers.', 'Gabinet fachowców nie ma ministrów partyjnych.')};
+      }
       return {available: true, reason: ''};
     }
     return {available: true, reason: ''};
   }
 
   const MODE_NAMES = Object.freeze({member: 'in the cabinet', external_support: 'supports it from outside', opposition: 'in opposition'});
+  const MODE_NAMES_PL = Object.freeze({member: 'w gabinecie', external_support: 'poparcie z zewnątrz', opposition: 'w opozycji'});
   // Display names of the programme topics and of the positions that 8.1 names (P); other positions
   // are shown only as numbers.
   const TOPIC_NAMES = Object.freeze({land: 'land reform', fiscal: 'fiscal burden', institution: 'institutions', army: 'army',
     church: 'church', autonomy: 'autonomy'});
+  const TOPIC_NAMES_PL = Object.freeze({land: 'reforma rolna', fiscal: 'obciążenia fiskalne', institution: 'instytucje', army: 'wojsko',
+    church: 'Kościół', autonomy: 'autonomia'});
   const POSITION_NAMES = Object.freeze({
     land: {'-2': 'market sale', '0': 'with compensation', '1': 'accelerated', '2': 'without compensation'},
     fiscal: {'-2': 'cuts', '0': 'burden shared', '2': 'burden on wealth'},
     institution: {'-2': 'strong president', '0': 'cabinet rules', '2': 'democratisation'},
     army: {'-2': 'command autonomy', '0': 'compromise', '2': 'civilian oversight'},
   });
+  const POSITION_NAMES_PL = Object.freeze({
+    land: {'-2': 'sprzedaż rynkowa', '0': 'z odszkodowaniem', '1': 'przyspieszona', '2': 'bez odszkodowania'},
+    fiscal: {'-2': 'cięcia', '0': 'wspólne obciążenie', '2': 'obciążenie majątku'},
+    institution: {'-2': 'silny prezydent', '0': 'rządy gabinetu', '2': 'demokratyzacja'},
+    army: {'-2': 'autonomia dowództwa', '0': 'kompromis', '2': 'cywilna kontrola'},
+  });
 
   function describeProgramme(programme) {
     return Object.keys(programme || {}).map(topic => {
       const position = programme[topic];
-      const label = (POSITION_NAMES[topic] || {})[String(position)];
-      return (TOPIC_NAMES[topic] || topic) + ' ' + (position > 0 ? '+' : '') + position + (label ? ' (' + label + ')' : '');
+      const label = L((POSITION_NAMES[topic] || {})[String(position)], (POSITION_NAMES_PL[topic] || {})[String(position)]);
+      return L(TOPIC_NAMES[topic] || topic, TOPIC_NAMES_PL[topic] || topic) + ' ' + (position > 0 ? '+' : '') + position + (label ? ' (' + label + ')' : '');
     }).join(', ');
   }
 
+  // Reasons and notes stored in the records of S stay in English (decision 5A of the Polish version); these
+  // functions translate them for the screen.
+  const RED_LINE_NAMES_PL = Object.freeze({discriminatory_land_access: 'dyskryminacyjny dostęp do ziemi',
+    end_parliamentary_control: 'koniec kontroli parlamentarnej', land_confiscation: 'konfiskata ziemi',
+    smallholder_burden: 'obciążenie drobnych gospodarzy', violent_takeover: 'przejęcie władzy siłą', religious_confrontation: 'konflikt religijny',
+    end_union_autonomy: 'koniec autonomii związków', territorial_autonomy: 'autonomia terytorialna', communists_in_cabinet: 'komuniści w gabinecie',
+    give_up_own_organisation: 'rezygnacja z własnej organizacji', legal_discrimination: 'dyskryminacja prawna',
+    equating_with_bund: 'utożsamianie z Bundem', breaking_signed_land_agreement: 'zerwanie podpisanego porozumienia rolnego'});
+  const RED_LINE_BY_ENGLISH = Object.freeze(Object.fromEntries(Object.keys(RED_LINE_NAMES_PL).map(id => [id.replace(/_/g, ' '), RED_LINE_NAMES_PL[id]])));
+  const redLineText = text => L(text, text.split(', ').map(part => RED_LINE_BY_ENGLISH[part] || part).join(', '));
+  const STORED_REASONS_PL = Object.freeze({
+    'a cabinet partner refused': 'odmówił partner gabinetu',
+    'fewer than two partners accept Daszyński': 'mniej niż dwóch partnerów akceptuje Daszyńskiego',
+    'too few votes for the budget and against dismissal': 'za mało głosów za budżetem i przeciw odwołaniu',
+    'no signed support': 'brak podpisanego poparcia',
+    'no club signs support for the expert': 'żaden klub nie podpisuje poparcia dla fachowca',
+    'Grabski has a working support without PPS and refuses its demands': 'Grabski ma działające poparcie bez PPS i odrzuca jej żądania',
+    'no minister of Labour would carry out the protection': 'żaden minister Pracy nie wykonałby osłony',
+    'no money for the protection: the wealth tax is already in force, so the terms bring no new burden on wealth':
+      'brak pieniędzy na osłonę: podatek majątkowy już obowiązuje, więc warunki nie dają nowego obciążenia majątku',
+    'no money for the protection: the forecast budget would stay below −2 B': 'brak pieniędzy na osłonę: prognozowany budżet pozostałby poniżej −2 B',
+    'Land reform without compensation needs a prior change of the property guarantees, which this chapter does not offer.':
+      'Reforma rolna bez odszkodowania wymaga wcześniejszej zmiany gwarancji własności, której ten rozdział nie przewiduje.',
+    'Army and autonomy points are not part of cabinet programmes in this chapter.':
+      'Punkty o wojsku i autonomii nie wchodzą w tym rozdziale do programów gabinetów.',
+  });
+  function reasonText(text) {
+    if (rules.getLanguage() !== 'pl' || !text) return text;
+    if (STORED_REASONS_PL[text]) return STORED_REASONS_PL[text];
+    let m = text.match(/^red line: (.+)$/);
+    if (m) return 'czerwona linia: ' + redLineText(m[1]);
+    m = text.match(/^relation below (\d+)$/);
+    if (m) return 'relacja poniżej ' + m[1];
+    m = text.match(/^score ([\d.]+) is below 60$/);
+    if (m) return 'ocena ' + rules.num(+m[1], 1) + ' poniżej 60';
+    m = text.match(/^Grabski refuses the protections: (.+)$/);
+    if (m) return 'Grabski odrzuca osłony: ' + m[1].split(', ').map(reasonText).join(', ');
+    return text;
+  }
+
+  const ACTOR_NAMES_PL = Object.freeze({jewish_rep: 'Reprezentacja żydowska', other_minorities_rep: 'Pozostałe mniejszości narodowe'});
+  const actorName = id => L(ACTOR_PROFILES[id].name, ACTOR_NAMES_PL[id] || ACTOR_PROFILES[id].name);
+
   function describeParty(id) {
-    if (id === 'expert') return 'non-party expert';
-    if (ACTOR_PROFILES[id]) return ACTOR_PROFILES[id].name;
+    if (id === 'expert') return L('non-party expert', 'bezpartyjny fachowiec');
+    if (ACTOR_PROFILES[id]) return actorName(id);
     return CANDIDATES[id] ? CANDIDATES[id].name : id;
   }
 
@@ -1052,32 +1174,39 @@
     const offer = buildCabinetOffer(Q, draft, neg.context);
     const partnerLines = partnersOf(offer).map(id => {
       const profile = ACTOR_PROFILES[id];
-      const bits = [profile.name + ' (relation ' + Math.round(relation(S, id)) + ')'];
+      const bits = [actorName(id) + L(' (relation ', ' (relacja ') + Math.round(relation(S, id)) + ')'];
       const gate = (config.gates || []).filter(g => g.actor === id)[0];
-      if (gate) bits.push(relation(S, id) >= gate.min ? 'gate ' + gate.min + ' met' : 'gate ' + gate.min + ' NOT met');
+      if (gate) {
+        bits.push(relation(S, id) >= gate.min ? L('gate ' + gate.min + ' met', 'próg ' + gate.min + ' spełniony') :
+          L('gate ' + gate.min + ' NOT met', 'próg ' + gate.min + ' NIESPEŁNIONY'));
+      }
       if (offer.members.indexOf(id) >= 0) {
         const wanted = profile.preferred_portfolios;
         const got = wanted.some(key => offer.portfolios[key] === id);
-        bits.push('wants ' + wanted.map(key => PORTFOLIO_SHORT[key]).join(' or ') + (got ? ' — offered' : ' — NOT offered'));
+        bits.push(L('wants ' + wanted.map(key => PORTFOLIO_SHORT[key]).join(' or ') + (got ? ' — offered' : ' — NOT offered'),
+          'chce: ' + wanted.map(portfolioShort).join(' lub ') + (got ? ' — w ofercie' : ' — BRAK w ofercie')));
       } else if (profile.minority) {
-        bits.push('asks for minority rights — offered');
+        bits.push(L('asks for minority rights — offered', 'chce praw mniejszości — w ofercie'));
       }
       const lines = redLineViolations(id, offer);
-      bits.push(lines.length ? 'red line crossed: ' + lines.join(', ').replace(/_/g, ' ') : 'no red line crossed');
+      bits.push(lines.length ? L('red line crossed: ', 'przekroczona czerwona linia: ') + redLineText(lines.join(', ').replace(/_/g, ' ')) :
+        L('no red line crossed', 'bez przekroczonych czerwonych linii'));
       return bits.join('; ');
     });
     const own = PORTFOLIOS.filter(key => offer.portfolios[key] === 'pps');
     const fc = forecast(Q, offer, offer.members.concat(offer.supporters));
     return {
       mandatory: neg.mandatory, cost_t: formationCost(Q, neg), reason: neg.context.reason,
-      configuration: config.name, candidate: (CANDIDATES[draft.candidate_id] || {}).name || '—',
-      mode: MODE_NAMES[offer.pps_mode], minorities: offer.minority_terms.length ? 'requested' : 'not requested',
+      configuration: configName(draft.configuration_id), candidate: (CANDIDATES[draft.candidate_id] || {}).name || '—',
+      mode: L(MODE_NAMES[offer.pps_mode], MODE_NAMES_PL[offer.pps_mode]),
+      minorities: offer.minority_terms.length ? L('requested', 'zabiegamy o nie') : L('not requested', 'nie zabiegamy'),
       stabilisation_open: stabilisationTermsOpen(draft),
-      stabilisation: {none: 'no terms', loan: 'a loan and limited cuts', protections: 'protections and a heavier burden on wealth'}[offer.stabilisation_terms] || 'no terms',
+      stabilisation: L({none: 'no terms', loan: 'a loan and limited cuts', protections: 'protections and a heavier burden on wealth'}[offer.stabilisation_terms] || 'no terms',
+        {none: 'bez warunków', loan: 'pożyczka i ograniczone cięcia', protections: 'osłony i większe obciążenie majątku'}[offer.stabilisation_terms] || 'bez warunków'),
       minority_allowed: !!config.minority_support,
-      portfolios: offer.pps_mode === 'member' ? (own.length ? own.map(key => PORTFOLIO_SHORT[key]).join(', ') : 'none') : 'none (outside the cabinet)',
-      allocation: PORTFOLIOS.map(key => PORTFOLIO_SHORT[key] + ': ' + describeParty(offer.portfolios[key])).join('; '),
-      partners: partnerLines.length ? partnerLines.join(' | ') : 'none',
+      portfolios: offer.pps_mode === 'member' ? (own.length ? own.map(portfolioShort).join(', ') : L('none', 'brak')) : L('none (outside the cabinet)', 'brak (poza gabinetem)'),
+      allocation: PORTFOLIOS.map(key => portfolioShort(key) + ': ' + describeParty(offer.portfolios[key])).join('; '),
+      partners: partnerLines.length ? partnerLines.join(' | ') : L('none', 'brak'),
       members_seats: seatsOfList(S, offer.members), requested_seats: fc.yes, majority: majorityRequired(S),
       programme: describeProgramme(offer.programme),
     };
@@ -1374,8 +1503,10 @@
   // changed situation (8.3, C2).
   function submitStatus(Q) {
     const S = Q.S, neg = S.negotiation, crisis = S.cabinet_crisis;
-    if (!neg || neg.phase !== 'draft') return {available: false, reason: 'No offer is being prepared.'};
-    if (formationCost(Q, neg) && (Q.month_actions || 0) >= 1) return {available: false, reason: 'This month’s action has already been used.'};
+    if (!neg || neg.phase !== 'draft') return {available: false, reason: L('No offer is being prepared.', 'Nie przygotowujemy żadnej oferty.')};
+    if (formationCost(Q, neg) && (Q.month_actions || 0) >= 1) {
+      return {available: false, reason: L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.')};
+    }
     const draft = neg.draft;
     if (draft.pps_mode !== 'opposition') {
       const config = configurationStatus(Q, draft.configuration_id, neg.context);
@@ -1384,7 +1515,7 @@
       if (!candidate.available) return {available: false, reason: candidate.reason};
     }
     if (crisis && crisis.last_pps_draft && JSON.stringify(crisis.last_pps_draft) === JSON.stringify(draft) && !situationChanged(Q)) {
-      return {available: false, reason: 'The same offer was refused and nothing has changed since.'};
+      return {available: false, reason: L('The same offer was refused and nothing has changed since.', 'Ta sama oferta została odrzucona i od tego czasu nic się nie zmieniło.')};
     }
     return {available: true, reason: ''};
   }
@@ -1432,7 +1563,10 @@
   // The stabilisation event (9.11, B14) leads to this same formation card: the toleration offer to Grabski, when PPS
   // can make an offer now — a mandatory formation or its own initiative in an open crisis (stage 6).
   function tolerationOfferStatus(Q) {
-    if (!formationVisible(Q)) return {available: false, reason: 'A toleration offer needs an open cabinet crisis in which PPS can make an offer.'};
+    if (!formationVisible(Q)) {
+      return {available: false, reason: L('A toleration offer needs an open cabinet crisis in which PPS can make an offer.',
+        'Oferta tolerowania wymaga otwartego kryzysu gabinetowego, w którym PPS może złożyć ofertę.')};
+    }
     return candidateStatus(Q, 'grabski', {configuration_id: 'expert', pps_mode: 'external_support'});
   }
 
@@ -1466,19 +1600,27 @@
     const lines = [];
     if (r.pps_offer) {
       for (const e of r.pps_offer.evaluations) {
-        lines.push(ACTOR_PROFILES[e.actor].name + ': ' + (e.accept ? 'accepts (' + e.score.toFixed(1) + ')' : 'refuses — ' + e.reasons.join('; ')));
+        lines.push(actorName(e.actor) + ': ' + (e.accept ? L('accepts (', 'akceptuje (') + rules.num(e.score, 1) + ')' :
+          L('refuses — ', 'odmawia — ') + e.reasons.map(reasonText).join('; ')));
       }
     }
     const crisis = S.cabinet_crisis;
     return {
-      offer: r.pps_offer ? (CONFIGURATIONS[r.pps_offer.configuration_id].name + ' with ' + CANDIDATES[r.pps_offer.candidate_id].name +
-        (r.pps_offer.accepted ? ': accepted' : ': not accepted (' + r.pps_offer.reason + ')')) : 'PPS stays in opposition',
-      forecast: r.pps_offer ? r.pps_offer.forecast.yes + ' MPs for, ' + r.pps_offer.forecast.no + ' against, ' + r.pps_offer.forecast.abstain + ' abstaining' : '',
+      offer: r.pps_offer ? (L(CONFIGURATIONS[r.pps_offer.configuration_id].name + ' with ' + CANDIDATES[r.pps_offer.candidate_id].name,
+        configName(r.pps_offer.configuration_id) + ', premier ' + CANDIDATES[r.pps_offer.candidate_id].name) +
+        (r.pps_offer.accepted ? L(': accepted', ': przyjęta') : L(': not accepted (', ': nieprzyjęta (') + reasonText(r.pps_offer.reason) + ')')) :
+        L('PPS stays in opposition', 'PPS pozostaje w opozycji'),
+      forecast: r.pps_offer ? L(r.pps_offer.forecast.yes + ' MPs for, ' + r.pps_offer.forecast.no + ' against, ' + r.pps_offer.forecast.abstain + ' abstaining',
+        r.pps_offer.forecast.yes + ' posłów za, ' + r.pps_offer.forecast.no + ' przeciw, ' + r.pps_offer.forecast.abstain + ' wstrzymujących się') : '',
       answers: lines.join(' | '),
-      appointed: r.appointed ? r.appointed.pm_name + ' — ' + CONFIGURATIONS[r.appointed.configuration_id].name + ', ' + r.appointed.support_seats +
-        ' MPs declared for it' + (r.appointed.majority ? ' (majority)' : ' (minority)') + (r.appointed.by === 'npc' ? '; formed without PPS' : '') : '',
-      failed: r.appointed ? '' : (crisis && crisis.status === 'impasse' ? 'No cabinet could be appointed. After three failed proposals the crisis is an impasse: the caretaker cabinet governs.' :
-        'No cabinet could be appointed. The caretaker cabinet governs; the crisis stays open.'),
+      appointed: r.appointed ? r.appointed.pm_name + ' — ' + configName(r.appointed.configuration_id) + ', ' + r.appointed.support_seats +
+        L(' MPs declared for it', ' posłów zadeklarowało poparcie') + (r.appointed.majority ? L(' (majority)', ' (większość)') : L(' (minority)', ' (mniejszość)')) +
+        (r.appointed.by === 'npc' ? L('; formed without PPS', '; utworzony bez PPS') : '') : '',
+      failed: r.appointed ? '' : (crisis && crisis.status === 'impasse' ?
+        L('No cabinet could be appointed. After three failed proposals the crisis is an impasse: the caretaker cabinet governs.',
+          'Nie udało się powołać gabinetu. Po trzech nieudanych propozycjach kryzys przeszedł w impas: rządzi gabinet tymczasowy.') :
+        L('No cabinet could be appointed. The caretaker cabinet governs; the crisis stays open.',
+          'Nie udało się powołać gabinetu. Rządzi gabinet tymczasowy; kryzys trwa.')),
     };
   }
 
@@ -1522,25 +1664,34 @@
   function governmentDisplay(Q) {
     const S = Q.S, cabinet = S.cabinet, crisis = S.cabinet_crisis;
     if (!cabinet) return null;
-    const config = CONFIGURATIONS[cabinet.configuration_id] || {name: 'Cabinet'};
     const opening = cabinet.id === 'ponikowski_1';
-    const pm = cabinet.pm_name + (opening ? '' : cabinet.party ? ' (' + ACTOR_PROFILES[cabinet.party].name + ')' : ' (non-party)');
-    const status = cabinet.status === 'caretaker' ? ' — caretaker cabinet' : '';
-    const own = PORTFOLIOS.filter(key => cabinet.portfolios[key] === 'pps').map(key => PORTFOLIO_SHORT[key]);
+    const pm = cabinet.pm_name + (opening ? '' : cabinet.party ? ' (' + actorName(cabinet.party) + ')' : L(' (non-party)', ' (bezpartyjny)'));
+    const status = cabinet.status === 'caretaker' ? L(' — caretaker cabinet', ' — gabinet tymczasowy') : '';
+    const own = PORTFOLIOS.filter(key => cabinet.portfolios[key] === 'pps').map(portfolioShort);
     // The opening keeps its careful wording (2.4): a predominantly expert cabinet, toleration TBD.
-    const position = cabinet.pps_mode === 'member' ? 'In the cabinet' + (own.length ? ': ' + own.join(', ') : '') :
-      cabinet.pps_mode === 'external_support' ? (opening ? 'External toleration of Ponikowski; outside the cabinet; no PPS ministries' :
-        'Supports the cabinet from outside; no PPS ministries') : 'Opposition';
+    const positionText = () => cabinet.pps_mode === 'member' ? L('In the cabinet', 'w gabinecie') +
+      (own.length ? ': ' + PORTFOLIOS.filter(key => cabinet.portfolios[key] === 'pps').map(portfolioShort).join(', ') : '') :
+      cabinet.pps_mode === 'external_support' ? (opening ? L('External toleration of Ponikowski; outside the cabinet; no PPS ministries',
+        'tolerowanie Ponikowskiego z zewnątrz; poza gabinetem; bez ministerstw PPS') :
+        L('Supports the cabinet from outside; no PPS ministries', 'poparcie gabinetu z zewnątrz; bez ministerstw PPS')) : L('Opposition', 'opozycja');
+    const position = positionText();
     return {
-      prime_minister: pm + ' — ' + (opening ? 'predominantly expert cabinet' : config.name) + status,
+      prime_minister: pm + ' — ' + (opening ? L('predominantly expert cabinet', 'gabinet złożony głównie z fachowców') :
+        configName(cabinet.configuration_id)) + status,
       pps_position: position,
+      // The chapter report keeps the English text (decision 5A); the Polish report translates it with storedText.
+      pps_position_en: rules.inLanguage('en', positionText),
       // The opening cabinet records no declared support until a withdrawal recounts it (9.4).
-      support: cabinet.support_seats === undefined ? 'Opening cabinet; support not recorded' :
-        cabinet.support_seats + ' MPs declared for the cabinet' + (cabinet.majority ? ' (majority)' : ' (minority)'),
-      crisis: crisis ? (crisis.status === 'impasse' ? 'Impasse: the caretaker cabinet governs; a new formation needs a new candidate or a real change of support.' :
-        'Cabinet crisis: the caretaker cabinet governs until a new cabinet is appointed.') : '',
-      portfolios: PORTFOLIOS.map(key => ({key: key, name: PORTFOLIO_NAMES[key],
-        owner: cabinet.id === 'ponikowski_1' ? 'Cabinet-administered; outside PPS control' : describeParty(cabinet.portfolios[key])})),
+      support: cabinet.support_seats === undefined ? L('Opening cabinet; support not recorded', 'gabinet z początku gry; poparcie nie jest zapisane') :
+        cabinet.support_seats + L(' MPs declared for the cabinet', ' posłów zadeklarowało poparcie dla gabinetu') +
+        (cabinet.majority ? L(' (majority)', ' (większość)') : L(' (minority)', ' (mniejszość)')),
+      crisis: crisis ? (crisis.status === 'impasse' ? L('Impasse: the caretaker cabinet governs; a new formation needs a new candidate or a real change of support.',
+        'Impas: rządzi gabinet tymczasowy; nowe formowanie wymaga nowego kandydata albo rzeczywistej zmiany poparcia.') :
+        L('Cabinet crisis: the caretaker cabinet governs until a new cabinet is appointed.',
+          'Kryzys gabinetowy: gabinet tymczasowy rządzi do powołania nowego gabinetu.')) : '',
+      portfolios: PORTFOLIOS.map(key => ({key: key, name: portfolioName(key),
+        owner: cabinet.id === 'ponikowski_1' ? L('Cabinet-administered; outside PPS control', 'W gestii gabinetu; poza kontrolą PPS') :
+          describeParty(cabinet.portfolios[key])})),
     };
   }
 
@@ -1925,10 +2076,11 @@
 
   function dismissalSupportStatus(Q) {
     const S = Q.S, motion = S.cabinet && S.cabinet.dismissal_motion;
-    if (!motion || motion.status !== 'open') return {available: false, reason: 'No motion to dismiss the cabinet is open.'};
-    if (ppsBound(S)) return {available: false, reason: 'PPS is bound to this cabinet by its agreement.'};
+    if (!motion || motion.status !== 'open') return {available: false, reason: L('No motion to dismiss the cabinet is open.', 'Nie ma otwartego wniosku o odwołanie gabinetu.')};
+    if (ppsBound(S)) return {available: false, reason: L('PPS is bound to this cabinet by its agreement.', 'PPS jest związana z tym gabinetem porozumieniem.')};
     if (constructiveVoteRequired(S, Q) && !motion.successor) {
-      return {available: false, reason: 'After the constructive-vote reform a dismissal needs an agreed successor with 223 votes.'};
+      return {available: false, reason: L('After the constructive-vote reform a dismissal needs an agreed successor with 223 votes.',
+        'Po reformie konstruktywnego wotum odwołanie wymaga uzgodnionego następcy z 223 głosami.')};
     }
     return {available: true, reason: ''};
   }
@@ -2062,20 +2214,24 @@
 
   function postulateStatus(Q, postulateId) {
     const S = Q.S, cabinet = S.cabinet, postulate = POSTULATES[postulateId];
-    if (!postulate) return {available: false, reason: 'Unknown demand.'};
+    if (!postulate) return {available: false, reason: L('Unknown demand.', 'Nieznane żądanie.')};
     if (postulate.required_military) {
       const military = S.politics && S.politics.cases ? Object.keys(S.politics.cases).map(id => S.politics.cases[id])
         .filter(c => c.kind === 'military' && c.status === 'open')[0] : null;
-      if (!military) return {available: false, reason: 'No military case is open.'};
+      if (!military) return {available: false, reason: L('No military case is open.', 'Nie ma otwartej sprawy wojskowej.')};
       const current = S.actors.pilsudski && S.actors.pilsudski.agreement_id ? S.agreements[S.actors.pilsudski.agreement_id] : null;
-      if (current && current.status === 'active') return {available: false, reason: 'An agreement with Piłsudski already exists.'};
-      if (cabinet.portfolios.reichswehr === 'pps') return {available: false, reason: 'PPS holds Military Affairs: it offers the concessions itself.'};
-      if (cabinet.pm === 'pilsudski') return {available: false, reason: 'Piłsudski heads this cabinet.'};
+      if (current && current.status === 'active') return {available: false, reason: L('An agreement with Piłsudski already exists.', 'Porozumienie z Piłsudskim już istnieje.')};
+      if (cabinet.portfolios.reichswehr === 'pps') {
+        return {available: false, reason: L('PPS holds Military Affairs: it offers the concessions itself.', 'PPS kieruje resortem Spraw Wojskowych: sama proponuje ustępstwa.')};
+      }
+      if (cabinet.pm === 'pilsudski') return {available: false, reason: L('Piłsudski heads this cabinet.', 'Piłsudski stoi na czele tego gabinetu.')};
     }
-    if (cabinet.accepted_postulates.indexOf(postulateId) >= 0) return {available: false, reason: 'This cabinet has already accepted it.'};
+    if (cabinet.accepted_postulates.indexOf(postulateId) >= 0) return {available: false, reason: L('This cabinet has already accepted it.', 'Ten gabinet już to przyjął.')};
     const same = Object.keys(postulate.programme).every(topic => cabinet.programme[topic] === postulate.programme[topic]);
-    if (same) return {available: false, reason: 'The cabinet programme already contains it.'};
-    if (!(postulate.required_military ? executorEvaluators(S) : demandEvaluators(S)).length) return {available: false, reason: 'Nobody in the cabinet can answer this demand.'};
+    if (same) return {available: false, reason: L('The cabinet programme already contains it.', 'Program gabinetu już to zawiera.')};
+    if (!(postulate.required_military ? executorEvaluators(S) : demandEvaluators(S)).length) {
+      return {available: false, reason: L('Nobody in the cabinet can answer this demand.', 'Nikt w gabinecie nie może odpowiedzieć na to żądanie.')};
+    }
     return {available: true, reason: ''};
   }
 
@@ -2098,27 +2254,30 @@
   function supportOptionStatus(Q, action, mode, postulateId) {
     const S = Q.S, stance = ppsStance(S);
     const open = mode === 'response' ? responseCase(Q) : null;
-    if (mode === 'response' && !open) return {available: false, reason: 'There is no open case to answer.'};
-    if (mode !== 'response' && (Q.month_actions || 0) >= 1) return {available: false, reason: 'This month’s action has already been used.'};
+    if (mode === 'response' && !open) return {available: false, reason: L('There is no open case to answer.', 'Nie ma otwartej sprawy, na którą trzeba odpowiedzieć.')};
+    if (mode !== 'response' && (Q.month_actions || 0) >= 1) return {available: false, reason: L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.')};
     if (action === 'withdraw') {
-      if (stance !== 'member' && stance !== 'supporter') return {available: false, reason: 'PPS does not support this cabinet.'};
+      if (stance !== 'member' && stance !== 'supporter') return {available: false, reason: L('PPS does not support this cabinet.', 'PPS nie popiera tego gabinetu.')};
       return {available: true, reason: ''};
     }
     if (action === 'maintain') {
-      if (!open || open.kind === 'motion') return {available: false, reason: 'Only as an answer to a partner’s warning or ultimatum.'};
+      if (!open || open.kind === 'motion') {
+        return {available: false, reason: L('Only as an answer to a partner’s warning or ultimatum.', 'Tylko jako odpowiedź na ostrzeżenie albo ultimatum partnera.')};
+      }
       return {available: true, reason: ''};
     }
     if (action === 'bargain' || action === 'persuade') {
-      if (stance !== 'member' && stance !== 'supporter') return {available: false, reason: 'PPS does not support this cabinet.'};
+      if (stance !== 'member' && stance !== 'supporter') return {available: false, reason: L('PPS does not support this cabinet.', 'PPS nie popiera tego gabinetu.')};
       return postulateStatus(Q, postulateId || 'worker_protection');
     }
     if (action === 'extension') return extensionStatus(Q);
     if (action === 'support_dismissal') return dismissalSupportStatus(Q);
     if (action === 'refuse_dismissal') {
       const motion = S.cabinet && S.cabinet.dismissal_motion;
-      return motion && motion.status === 'open' && !ppsBound(S) ? {available: true, reason: ''} : {available: false, reason: 'No motion to answer.'};
+      return motion && motion.status === 'open' && !ppsBound(S) ? {available: true, reason: ''} :
+        {available: false, reason: L('No motion to answer.', 'Nie ma wniosku, na który trzeba odpowiedzieć.')};
     }
-    return {available: false, reason: 'Unknown option.'};
+    return {available: false, reason: L('Unknown option.', 'Nieznana opcja.')};
   }
 
   // bargain: the demand is a condition of further support, with the cabinet's need of PPS (8.3); an
@@ -2232,12 +2391,15 @@
 
   function extensionStatus(Q) {
     const S = Q.S, target = extensionTarget(Q);
-    if (!target) return {available: false, reason: 'No open obligation to extend.'};
+    if (!target) return {available: false, reason: L('No open obligation to extend.', 'Nie ma otwartego zobowiązania do przedłużenia.')};
     const agreement = target.agreement;
-    if (relation(S, target.partner) < 50) return {available: false, reason: 'Needs a relation of 50 with ' + ACTOR_PROFILES[target.partner].name + '.'};
-    if (weightedFulfillment(agreement) < 0.5) return {available: false, reason: 'Less than half of the obligations are met.'};
-    if (agreement.extensions_used > 0) return {available: false, reason: 'The one standard extension has been used.'};
-    if (agreement.history.some(h => h.kind === 'red_line_breach')) return {available: false, reason: 'A red line is still open.'};
+    if (relation(S, target.partner) < 50) {
+      return {available: false, reason: L('Needs a relation of 50 with ' + ACTOR_PROFILES[target.partner].name + '.',
+        'Wymaga relacji 50 z partnerem (' + actorName(target.partner) + ').')};
+    }
+    if (weightedFulfillment(agreement) < 0.5) return {available: false, reason: L('Less than half of the obligations are met.', 'Spełniono mniej niż połowę zobowiązań.')};
+    if (agreement.extensions_used > 0) return {available: false, reason: L('The one standard extension has been used.', 'Jedyne standardowe przedłużenie zostało już wykorzystane.')};
+    if (agreement.history.some(h => h.kind === 'red_line_breach')) return {available: false, reason: L('A red line is still open.', 'Czerwona linia wciąż jest przekroczona.')};
     return {available: true, reason: ''};
   }
 
@@ -2295,9 +2457,10 @@
       const agreements = S.cabinet.agreement_ids.map(id => S.agreements[id])
         .filter(a => a && a.kind === 'cabinet' && (a.status === 'active' || a.status === 'breached'));
       if (agreements.some(a => a.tension > 0)) return {available: true, mode: 'tension', reason: ''};
-      return {available: false, mode: null, reason: 'No cabinet agreement is under tension.'};
+      return {available: false, mode: null, reason: L('No cabinet agreement is under tension.', 'Żadne porozumienie gabinetowe nie jest pod napięciem.')};
     }
-    return {available: false, mode: null, reason: 'Needs PPS in a coalition or a broad cabinet offer in preparation.'};
+    return {available: false, mode: null, reason: L('Needs PPS in a coalition or a broad cabinet offer in preparation.',
+      'Wymaga PPS w koalicji albo przygotowywanej oferty szerokiego gabinetu.')};
   }
 
   function brokerCoalition(Q) {
@@ -2337,6 +2500,12 @@
       programme: {land: 0}, profile: 'Agriculture and credit; two separate clubs after the election. PPS supports the rapprochement but is not on the list.'},
   });
   const LIST_ORDER = Object.freeze(['left_peasant', 'labour', 'centrolew_early', 'peasant']);
+  // The names of joint lists are stored in English in the records of S (decision 5A of the Polish version); the
+  // displays translate them here.
+  const LIST_NAMES_PL = Object.freeze({left_peasant: 'PPS i PSL Wyzwolenie', labour: 'PPS i NPR', centrolew_early: 'Wczesny Centrolew',
+    peasant: 'Blok ludowy (PSL Wyzwolenie i PSL Piast)'});
+  const LIST_NAME_BY_ENGLISH = Object.freeze(Object.fromEntries(Object.keys(LIST_OPTIONS).map(id => [LIST_OPTIONS[id].name, LIST_NAMES_PL[id]])));
+  const listNameText = name => L(name, LIST_NAME_BY_ENGLISH[name] || name);
 
   // The window: the two full months before the month of the vote (decision 7).
   function listWindow(Q) {
@@ -2355,11 +2524,15 @@
     const left = next.time - Q.time;
     if (left < 0 || left > 3) return '';
     const parts = String(next.vote_date || '').split('-').map(Number);
-    const date = parts.length === 3 ? parts[2] + ' ' + MONTH_NAMES[parts[1] - 1] + ' ' + parts[0] : rules.yearOf(next.time) + '';
-    const when = left === 0 ? 'this month' : left === 1 ? 'next month' : 'in ' + left + ' months';
+    const date = parts.length === 3 ? L(parts[2] + ' ' + MONTH_NAMES[parts[1] - 1] + ' ' + parts[0], rules.dateText(next.vote_date)) :
+      rules.yearOf(next.time) + '';
+    const when = left === 0 ? L('this month', 'w tym miesiącu') : left === 1 ? L('next month', 'w przyszłym miesiącu') :
+      L('in ' + left + ' months', 'za ' + left + ' ' + rules.plural(left, 'miesiąc', 'miesiące', 'miesięcy'));
     const list = alliancesFor(S, next.id).filter(a => a.members.indexOf('pps') >= 0)[0];
-    return 'The Sejm election is held on ' + date + ' (' + when + '). ' + (list ? 'PPS stands on the joint list ' + list.name + '.' :
-      'PPS stands on its own list' + (listWindow(Q).open ? '; a joint list can still be agreed until the lists close.' : '.'));
+    return L('The Sejm election is held on ' + date + ' (' + when + '). ', 'Wybory do Sejmu odbędą się ' + date + ' (' + when + '). ') +
+      (list ? L('PPS stands on the joint list ' + list.name + '.', 'PPS startuje ze wspólnej listy ' + listNameText(list.name) + '.') :
+        L('PPS stands on its own list', 'PPS startuje z własnej listy') + (listWindow(Q).open ? L('; a joint list can still be agreed until the lists close.',
+          '; wspólną listę można jeszcze uzgodnić do zamknięcia list.') : '.'));
   }
 
   function alliancesFor(S, electionId) {
@@ -2405,26 +2578,35 @@
 
   function listStatus(Q, optionId) {
     const S = Q.S, option = LIST_OPTIONS[optionId], window = listWindow(Q);
-    if (!option) return {available: false, reason: 'Unknown list.'};
-    if (!window.open) return {available: false, reason: 'The list window is closed.'};
-    if ((Q.month_actions || 0) >= 1) return {available: false, reason: 'This month’s action has already been used.'};
+    if (!option) return {available: false, reason: L('Unknown list.', 'Nieznana lista.')};
+    if (!window.open) return {available: false, reason: L('The list window is closed.', 'Okres zgłaszania list jest zamknięty.')};
+    if ((Q.month_actions || 0) >= 1) return {available: false, reason: L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.')};
     const own = S.history.negotiations.filter(n => n.kind === 'electoral_list' && n.election_id === window.election_id && n.accepted);
-    if (own.length) return {available: false, reason: 'PPS already has its list agreement for this election.'};
+    if (own.length) return {available: false, reason: L('PPS already has its list agreement for this election.', 'PPS ma już porozumienie listowe na te wybory.')};
     const taken = alliancesFor(S, window.election_id).concat(window.election_id === 'first_election_1922' ? [institutions.CHZJN] : []);
     for (const member of option.members) {
-      if (taken.some(a => a.members.indexOf(member) >= 0)) return {available: false, reason: ACTOR_PROFILES[member].name + ' is on another list.'};
-      if (member !== 'pps' && seatsOf(S, member) <= 0 && !(Q[member + '_normalized'] > 0)) return {available: false, reason: ACTOR_PROFILES[member].name + ' has no support.'};
+      if (taken.some(a => a.members.indexOf(member) >= 0)) {
+        return {available: false, reason: L(ACTOR_PROFILES[member].name + ' is on another list.', actorName(member) + ' jest na innej liście.')};
+      }
+      if (member !== 'pps' && seatsOf(S, member) <= 0 && !(Q[member + '_normalized'] > 0)) {
+        return {available: false, reason: L(ACTOR_PROFILES[member].name + ' has no support.', actorName(member) + ' nie ma poparcia.')};
+      }
     }
     for (const gate of option.gates) {
-      if (relation(S, gate.actor) < gate.min) return {available: false, reason: 'Relation with ' + ACTOR_PROFILES[gate.actor].name + ' is below ' + gate.min + '.'};
+      if (relation(S, gate.actor) < gate.min) {
+        return {available: false, reason: L('Relation with ' + ACTOR_PROFILES[gate.actor].name + ' is below ' + gate.min + '.',
+          'Relacja z ' + actorName(gate.actor) + ' jest niższa niż ' + gate.min + '.')};
+      }
     }
     if (option.fulfilled_needed && fulfilledJointObligations(S, option.members.filter(m => m !== 'pps')) < option.fulfilled_needed) {
-      return {available: false, reason: 'Needs ' + option.fulfilled_needed + ' fulfilled joint obligations with PPS.'};
+      return {available: false, reason: L('Needs ' + option.fulfilled_needed + ' fulfilled joint obligations with PPS.',
+        'Wymaga ' + option.fulfilled_needed + ' spełnionych wspólnych zobowiązań z PPS.')};
     }
     const refused = S.history.negotiations.filter(n => n.kind === 'electoral_list' && n.election_id === window.election_id &&
       n.option_id === optionId && !n.accepted).slice(-1)[0];
     if (refused && refused.snapshot === listSnapshot(Q, optionId)) {
-      return {available: false, reason: 'The same proposal was refused and nothing has changed since.'};
+      return {available: false, reason: L('The same proposal was refused and nothing has changed since.',
+        'Ta sama propozycja została odrzucona i od tego czasu nic się nie zmieniło.')};
     }
     return {available: true, reason: ''};
   }
@@ -2502,8 +2684,9 @@
   function describeAnswers(record) {
     return record.evaluations.map(e => {
       const profile = profileOf(e.actor);
-      return (profile ? profile.name : e.actor) + ': ' + (e.accept ? 'accepts (' + e.score.toFixed(1) + ')' : 'refuses — ' + e.reasons.join('; '));
-    }).join(' | ') || 'Nobody could answer.';
+      return (profile ? (ACTOR_PROFILES[e.actor] ? actorName(e.actor) : profile.name) : e.actor) + ': ' + (e.accept ? L('accepts (', 'akceptuje (') +
+        rules.num(e.score, 1) + ')' : L('refuses — ', 'odmawia — ') + e.reasons.map(reasonText).join('; '));
+    }).join(' | ') || L('Nobody could answer.', 'Nikt nie mógł odpowiedzieć.');
   }
 
   // Display of the agreements for Status, Library and the main screen.
@@ -2514,17 +2697,23 @@
       const agreement = S.agreements[id];
       if (!highest || agreement.tension > highest.tension) highest = agreement;
       if (agreement.ultimatum && agreement.ultimatum.status === 'open') {
-        lines.push('Ultimatum from ' + describeParty(agreement.ultimatum.by) + ': support ends at the settlement of ' +
-          rules.monthOf(agreement.ultimatum.due_at) + '/' + rules.yearOf(agreement.ultimatum.due_at) + ' unless the broken promise is met or extended.');
+        lines.push(L('Ultimatum from ' + describeParty(agreement.ultimatum.by) + ': support ends at the settlement of ' +
+          rules.monthOf(agreement.ultimatum.due_at) + '/' + rules.yearOf(agreement.ultimatum.due_at) + ' unless the broken promise is met or extended.',
+          'Ultimatum (' + describeParty(agreement.ultimatum.by) + '): poparcie wygaśnie przy rozliczeniu ' +
+          rules.monthYear(agreement.ultimatum.due_at, 'gen') + ', chyba że złamana obietnica zostanie spełniona albo przedłużona.'));
       } else if (agreement.response && !agreement.response.used && agreement.response.kind === 'warning') {
-        lines.push('Warning from ' + describeParty(agreement.response.by) + ': a promise of the agreement is overdue.');
+        lines.push(L('Warning from ' + describeParty(agreement.response.by) + ': a promise of the agreement is overdue.',
+          'Ostrzeżenie (' + describeParty(agreement.response.by) + '): minął termin obietnicy z porozumienia.'));
       }
     }
     const motion = S.cabinet && S.cabinet.dismissal_motion;
-    if (motion && motion.status === 'open') lines.push('A motion to dismiss the cabinet is open after ' + describeParty(motion.after_withdrawal_of) + ' withdrew its support.');
+    if (motion && motion.status === 'open') {
+      lines.push(L('A motion to dismiss the cabinet is open after ' + describeParty(motion.after_withdrawal_of) + ' withdrew its support.',
+        'Wniosek o odwołanie gabinetu czeka na głosowanie po wycofaniu poparcia (' + describeParty(motion.after_withdrawal_of) + ').'));
+    }
     return {
       // Shown only once a promise has raised it; the opening toleration has no partner or programme.
-      tension: highest && highest.tension > 0 ? Math.round(highest.tension) + ' (highest, agreement with ' +
+      tension: highest && highest.tension > 0 ? Math.round(highest.tension) + L(' (highest, agreement with ', ' (najwyższe; porozumienie: ') +
         highest.parties.filter(p => p !== 'pps').map(describeParty).join(', ') + ')' : '',
       notices: lines.join(' '),
     };
@@ -2537,6 +2726,7 @@
     TEST_PROGRAMME: TEST_PROGRAMME,
     LIST_OPTIONS: LIST_OPTIONS,
     LIST_ORDER: LIST_ORDER,
+    listNameText: listNameText,
     LIST_PROFILE_ID: LIST_PROFILE_ID,
     BROAD_CONFIGURATIONS: BROAD_CONFIGURATIONS,
     profileOf: profileOf,
@@ -2597,6 +2787,7 @@
     describeAnswers: describeAnswers,
     recordSpeakerOutcome: recordSpeakerOutcome,
     describeParty: describeParty,
+    reasonText: reasonText,
     PORTFOLIOS: PORTFOLIOS,
     PORTFOLIO_NAMES: PORTFOLIO_NAMES,
     PORTFOLIO_SHORT: PORTFOLIO_SHORT,

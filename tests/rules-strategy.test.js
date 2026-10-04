@@ -20,13 +20,22 @@ function free(Q) {
 }
 const dissent = (Q, id) => Q.S.actors.pps.factions[id].dissent;
 
-test('Obecna linia (rules): the present line is blocked with its reason; a new line costs one month and waits six months', () => {
+// Z — 0.51 (it replaces Z — 0.32): the present line can be confirmed; it costs the month and the usual wait, nothing else.
+test('Obecna linia (rules): confirming the present line costs one month and the usual wait and changes nothing else; a new line costs one month and waits six months', () => {
   const Q = game();
   for (const card of PolishParty.STANCE_ORDER) {
     const field = PolishParty.STANCES[card].field;
     const present = Q.S.actors.pps.strategy[field];
-    if (PolishParty.STANCES[card].values[present]) assert.match(PolishParty.stanceStatus(Q, card, present).reason, /present line/);
+    if (PolishParty.STANCES[card].values[present]) assert.equal(PolishParty.stanceStatus(Q, card, present).available, true, card);
   }
+  const snapshot = () => JSON.stringify([Q.S.actors.pps.strategy, Q.S.actors.pps.strategy_history, Q.S.actors.pps.factions, Q.S.actors.relations]);
+  const before = snapshot();
+  PolishParty.stanceChoose(Q, 'pils_influence', 'conditional');
+  assert.equal(Q.month_actions, 1, 'confirming costs the month');
+  assert.equal(Q.S.cooldowns['party.pils_influence'], Q.time + 6, 'and the usual wait of the card');
+  assert.equal(snapshot(), before, 'the line, its history, the factions and the relations do not change');
+  assert.match(Q.pl_party_result, /confirms its present line/);
+  free(Q);
   PolishParty.stanceChoose(Q, 'direction', 'class_independence');
   assert.equal(Q.month_actions, 1);
   assert.equal(Q.S.cooldowns['party.direction'], Q.time + 6);
@@ -49,7 +58,7 @@ test('Profil frakcji v1: conditional → support gives Centrum +3 and Piłsudski
   assert.equal(dissent(R, 'centrum'), 0);
 });
 
-test('Sowiecki model B13: an ordinary card of the party; all three stances at first, then the present one blocked; 1 T and 12 months; no repeated bonus', () => {
+test('Sowiecki model B13: an ordinary card of the party; all three stances at first, then the present one only confirmed; 1 T and 12 months; no repeated bonus', () => {
   const Q = game();
   assert.equal(Q.S.actors.pps.strategy.ussr_stance, 'uncommitted');
   for (const value of ['sympathetic', 'independent', 'critical']) assert.equal(PolishParty.stanceStatus(Q, 'ussr_position', value).available, true, value);
@@ -57,7 +66,12 @@ test('Sowiecki model B13: an ordinary card of the party; all three stances at fi
   assert.equal(Q.S.cooldowns['party.ussr_position'], Q.time + 12);
   free(Q);
   delete Q.S.cooldowns['party.ussr_position'];
-  assert.match(PolishParty.stanceStatus(Q, 'ussr_position', 'sympathetic').reason, /present line/);
+  const relation = Q.S.actors.relations.kpp, centrum = dissent(Q, 'centrum');
+  PolishParty.stanceChoose(Q, 'ussr_position', 'sympathetic');
+  assert.deepEqual([Q.S.actors.relations.kpp, dissent(Q, 'centrum')], [relation, centrum], 'confirming gives no bonus and no reaction');
+  assert.equal(Q.S.cooldowns['party.ussr_position'], Q.time + 12, 'confirming waits 12 months too');
+  free(Q);
+  delete Q.S.cooldowns['party.ussr_position'];
   PolishParty.stanceChoose(Q, 'ussr_position', 'independent');
   free(Q);
   delete Q.S.cooldowns['party.ussr_position'];
@@ -188,10 +202,10 @@ test('Oś autonomii: an offer with cultural rights (0) and one with the autonomy
   for (const [party, fit] of [['pps', 100], ['psl_wyzwolenie', 100], ['psl_piast', 50], ['pschd', 50], ['npr', 75]]) {
     assert.ok(Math.abs(PolishGovernment.programFit(party, autonomy.programme) - fit) < 1e-9, party);
   }
-  // The opening line of PPS is the territorial autonomy of its bill of October 1921; it cannot be declared again.
+  // The opening line of PPS is the territorial autonomy of its bill of October 1921; choosing it again only confirms it (Z — 0.51).
   const Q = game();
   assert.equal(Q.S.actors.pps.strategy.slavic_autonomy, 'regional_autonomy');
-  assert.match(PolishParty.stanceStatus(Q, 'slavic_autonomy', 'regional_autonomy').reason, /present line/);
+  assert.equal(PolishParty.stanceStatus(Q, 'slavic_autonomy', 'regional_autonomy').available, true);
   PolishParty.stanceChoose(Q, 'slavic_autonomy', 'cultural_rights');
   assert.equal(Q.S.actors.pps.program.slavic_autonomy, 0);
 });
@@ -277,9 +291,9 @@ test('Adresat polemiki: capital and land address PSChD and ZLN; violence against
   assert.match(PolishParty.campaignStatus(Q, 'polemic').reason, /No addressee/);
 });
 
-test('Program gospodarczy and Program bez zmiany: three priorities in one month; a fourth and the same set are refused; no reform by itself', () => {
+test('Program gospodarczy and Program bez zmiany: three priorities in one month; a fourth is refused; the same set is only confirmed; no reform by itself', () => {
   const Q = game();
-  assert.match(PolishParty.programmeStatus(Q, []).reason, /present programme/);
+  assert.equal(PolishParty.programmeStatus(Q, []).available, true, 'the present (empty) programme can be confirmed');
   const three = ['public_works', 'stabilisation_with_protection', 'wealth_and_investment'];
   assert.match(PolishParty.programmeStatus(Q, three.concat(['socialisation'])).reason, /At most three/);
   PolishParty.programmeChoose(Q, three);
@@ -288,5 +302,10 @@ test('Program gospodarczy and Program bez zmiany: three priorities in one month;
   assert.deepEqual(Object.keys(Q.S.projects), [], 'no programme is prepared by the declaration');
   free(Q);
   delete Q.S.cooldowns['party.economic_program'];
-  assert.match(PolishParty.programmeStatus(Q, three).reason, /present programme/);
+  const history = Q.S.actors.pps.strategy_history.length;
+  PolishParty.programmeChoose(Q, three);
+  assert.equal(Q.month_actions, 1, 'confirming the same set costs the month');
+  assert.equal(Q.S.cooldowns['party.economic_program'], Q.time + 6, 'and the usual wait');
+  assert.deepEqual([Q.S.actors.pps.strategy.economic_priorities, Q.S.actors.pps.strategy_history.length], [three.slice().sort(), history], 'nothing else changes');
+  assert.match(Q.pl_party_result, /confirms its present economic programme/);
 });

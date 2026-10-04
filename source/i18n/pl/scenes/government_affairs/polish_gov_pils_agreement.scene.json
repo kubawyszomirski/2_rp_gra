@@ -1,0 +1,19 @@
+{
+ "source": "scenes/government_affairs/polish_gov_pils_agreement.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Agreement with Piłsudski": "title: Porozumienie z Piłsudskim",
+  "subtitle: A concrete concession under a legal procedure, or a refusal and a civilian cabinet.": "subtitle: Konkretne ustępstwo w legalnej procedurze albo odmowa i gabinet cywilny.",
+  "= Agreement with Piłsudski": "= Porozumienie z Piłsudskim",
+  "Piłsudski judges an offer by its programme, the real function it gives him and the credibility of PPS; the minimal relation is only a gate. The dispute about the organisation of the supreme military authorities is the historical background; an early inspectorate and the premiership on these terms are alternatives of the game.": "Piłsudski ocenia ofertę według jej programu, rzeczywistej funkcji, jaką mu daje, i wiarygodności PPS; minimalna relacja jest tylko progiem. Spór o organizację naczelnych władz wojskowych jest tłem historycznym; wczesny inspektorat i premierostwo na tych warunkach to alternatywy gry.",
+  "title: A military function under civilian control": "title: Funkcja wojskowa pod kontrolą cywilną",
+  "subtitle: Relation 40; once executed: pressure −12, relation +4, Piłsudczycy −5 dissent; nominations up to +0.05 of loyalty to him in the group under him.": "subtitle: Relacja 40; po wykonaniu: presja −12, relacja +4, Piłsudczycy: sprzeciw −5; nominacje do +0,05 lojalności wobec niego w podległym mu zgrupowaniu.",
+  "title: An independent inspectorate with freer nominations": "title: Niezależny inspektorat z większą swobodą nominacji",
+  "subtitle: Relation 60 and a change of the law, filed now; once in force: pressure −25, relation +4, Piłsudczycy −8, Centrum +8 dissent unless it shares this line; up to +0.10 of loyalty.": "subtitle: Relacja 60 i zmiana ustawy, złożona od razu; gdy wejdzie w życie: presja −25, relacja +4, Piłsudczycy: sprzeciw −8, Centrum: sprzeciw +8, chyba że podziela tę linię; do +0,10 lojalności.",
+  "title: Piłsudski as prime minister of a legal cabinet": "title: Piłsudski jako premier legalnego gabinetu",
+  "subtitle: Relation 65; he becomes a candidate of the next formation of a cabinet. After his real appointment: pressure −20, relation +4, Piłsudczycy −5.": "subtitle: Relacja 65; staje się kandydatem przy następnym formowaniu gabinetu. Po jego rzeczywistym powołaniu: presja −20, relacja +4, Piłsudczycy: sprzeciw −5.",
+  "title: Refuse concessions and offer a civilian cabinet": "title: Odmów ustępstw i zaproponuj gabinet cywilny",
+  "subtitle: No free relief of pressure; the first new civil obligation fulfilled may lower it once.": "subtitle: Bez darmowego zmniejszenia presji; pierwsze spełnione nowe zobowiązanie cywilne może ją raz obniżyć.",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

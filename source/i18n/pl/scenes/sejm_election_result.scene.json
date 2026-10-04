@@ -1,0 +1,7 @@
+{
+ "source": "scenes/sejm_election_result.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Record a Sejm election": "title: Zapis wyborów do Sejmu"
+ }
+}

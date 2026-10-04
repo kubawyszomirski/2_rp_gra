@@ -1,0 +1,11 @@
+{
+ "source": "scenes/advisors/drobner.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Bolesław Drobner": "title: Bolesław Drobner",
+  "= Bolesław Drobner": "= Bolesław Drobner",
+  "Drobner belongs to the cast of the continuation (from January 1928 in chapter 2). He represents Lewica PPS and focuses on political negotiation with the KPP.": "Drobner należy do obsady kontynuacji (od stycznia 1928 roku, w rozdziale 2). Reprezentuje Lewicę PPS i skupia się na negocjacjach politycznych z KPP.",
+  "His actions are recorded for chapter 2 (Z — 0.29, M17); in this chapter he cannot be appointed.": "Jego akcje są zapisane dla rozdziału 2 (Z — 0.29, M17); w tym rozdziale nie można go powołać.",
+  "- @root: Return to main": "- @root: Wróć do głównego ekranu"
+ }
+}

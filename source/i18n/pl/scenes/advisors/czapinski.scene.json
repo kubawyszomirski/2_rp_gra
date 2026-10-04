@@ -1,0 +1,22 @@
+{
+ "source": "scenes/advisors/czapinski.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Kazimierz Czapiński": "title: Kazimierz Czapiński",
+  "= Kazimierz Czapiński": "= Kazimierz Czapiński",
+  "Czapiński represents Lewica PPS and concentrates on socialist education and economic doctrine.": "Czapiński reprezentuje Lewicę PPS i skupia się na edukacji socjalistycznej oraz doktrynie ekonomicznej.",
+  "- @root: Return to main": "- @root: Wróć do głównego ekranu",
+  "title: Socialist Economic Programme: progressive and wealth taxes": "title: Socjalistyczny program gospodarczy: podatki progresywne i majątkowe",
+  "subtitle: Opens the Treasury card; its one step costs no month (the law, the money and the executor remain).": "subtitle: Otwiera kartę skarbową („Polityka fiskalna”); jej jeden krok nie kosztuje miesiąca (ustawa, pieniądze i wykonawca pozostają).",
+  "unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?][? if advisor_action_timer <= 0 : Needs PPS in the cabinet with the Treasury. ?]": "unavailable-subtitle: [? if advisor_action_timer > 0 : Do następnej akcji doradcy: [+ advisor_action_timer +] mies. ?][? if advisor_action_timer <= 0 : Wymaga PPS w gabinecie z resortem Skarbu. ?]",
+  "title: Socialist Economic Programme: public ownership": "title: Socjalistyczny program gospodarczy: własność publiczna",
+  "subtitle: Opens the Industry card for the public control of a recorded plant; its one step costs no month (the act and the vote remain).": "subtitle: Otwiera kartę „Polityka przemysłowa” dla publicznej kontroli zapisanego zakładu; jej jeden krok nie kosztuje miesiąca (akt i głosowanie pozostają).",
+  "unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?][? if advisor_action_timer <= 0 : [+ pl_czap_public_control_why +] ?]": "unavailable-subtitle: [? if advisor_action_timer > 0 : Do następnej akcji doradcy: [+ advisor_action_timer +] mies. ?][? if advisor_action_timer <= 0 : [+ pl_czap_public_control_why +] ?]",
+  "title: Socialist Economic Programme: workers’ representation in management": "title: Socjalistyczny program gospodarczy: przedstawicielstwo robotników w zarządzie",
+  "subtitle: Opens the Industry card for the workers' representation in a public plant; its one step costs no month (a law for co-decision remains).": "subtitle: Otwiera kartę „Polityka przemysłowa” dla przedstawicielstwa robotników w zakładzie publicznym; jej jeden krok nie kosztuje miesiąca (ustawa o współdecydowaniu nadal jest potrzebna).",
+  "unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?][? if advisor_action_timer <= 0 : [+ pl_czap_representation_why +] ?]": "unavailable-subtitle: [? if advisor_action_timer > 0 : Do następnej akcji doradcy: [+ advisor_action_timer +] mies. ?][? if advisor_action_timer <= 0 : [+ pl_czap_representation_why +] ?]",
+  "title: Socialist Education": "title: Edukacja socjalistyczna",
+  "subtitle: 1 R and a working TUR; Lewica +6 strength and −5 dissent; for six months the flow of workers from PPS to the KPP is halved.": "subtitle: 1 R i działający TUR; Lewica: siła +6, sprzeciw −5; przez sześć miesięcy odpływ robotników z PPS do KPP jest o połowę mniejszy.",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

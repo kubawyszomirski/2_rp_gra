@@ -1,0 +1,11 @@
+{
+ "source": "qdisplays/coalition_dissent.qdisplay.dry",
+ "status": "complete",
+ "lines": {
+  "(..0) very low": "(..0) bardzo niski",
+  "(1..1) low": "(1..1) niski",
+  "(2..2) medium": "(2..2) średni",
+  "(3..3) high": "(3..3) wysoki",
+  "(4..) very high": "(4..) bardzo wysoki"
+ }
+}

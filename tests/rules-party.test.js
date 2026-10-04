@@ -75,7 +75,7 @@ test('Składki: a rise at real wages 89 or 91 multiplies membership by 0.95 or 0
     assert.equal(Q.S.party_orgs.dues, 3);
     close(Q.S.party_orgs.apparatus.member_index, 100 * factor);
     assert.equal(Q.S.party_orgs.cash, cash, 'no extra income at once');
-    assert.equal(PolishParty.duesStatus(Q, 'keep').available, false, 'the present level is shown as present');
+    assert.equal(PolishParty.duesStatus(Q, 'keep').available, false, 'after a change the month is used, so the level cannot be confirmed now');
     free(Q);
     assert.match(PolishParty.duesStatus(Q, 'lower').reason, /Available again in 6 months/);
   }

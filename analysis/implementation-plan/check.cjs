@@ -20,19 +20,23 @@ const section = (text, from, to) => { const a = text.indexOf(from); assert.ok(a 
 const lineAfter = (text, label) => { const l = text.split('\n').find(x => x.startsWith(label)); assert.ok(l, `line ${label}`); return l.slice(label.length).trim(); };
 
 // ---- Header and approved decisions.
-assert.match(plan.split('\n')[2], /^\*\*Stan — referencja 0\.4\d, \d{1,2} \S+ \d{4}\./, 'plan state line');
+assert.match(plan.split('\n')[2], /^\*\*Stan — referencja 0\.[45]\d, \d{1,2} \S+ \d{4}\./, 'plan state line');
 const decisions = section(plan, '## 2. Zatwierdzone decyzje (Z — 0.40)', '## 3. ');
 for (const t of ['**Kod reguł w osobnym module.**', '**Na razie tylko angielski.**', '**Stare zapisy gry wymagają nowej gry.**']) assert.ok(decisions.includes(t), `decision ${t}`);
 const trRules = [
   ['### 19.3. ', '## 20. ', '**Z — 0.40:** zapis bez zgodnej wersji schematu, w tym każdy zapis sprzed przebudowy, nie jest migrowany.'],
   ['### 20.1. ', '### 20.1.1. ', '**Z — 0.40: miejsce kodu reguł.** Obliczenia reguł trafiają do osobnego pliku zwykłego JavaScriptu w `source/rules/`'],
-  ['### 20.1. ', '### 20.1.1. ', '**Z — 0.40: język.** Teksty dla gracza powstają na razie tylko po angielsku'],
+  // 0.50 (the Polish language version) replaced the 0.40 decision on the language; 23.23 records the change.
+  ['### 20.1. ', '### 20.1.1. ', '**Z — 0.50: język.** Gra ma dwie wersje językowe: angielską (domyślną) i polską.'],
+  ['### 23.23. ', null, '**1A:** tłumaczenia scen w plikach linia po linii'],
   ['### 20.3. ', '## 21. ', '[POLISH_IMPLEMENTATION_PLAN.md](POLISH_IMPLEMENTATION_PLAN.md)'],
 ];
 for (const [from, to, text] of trRules) assert.ok(section(tr, from, to).includes(text), `reference ${from.trim()} records the 0.40 decision`);
-assert.ok(/^\*\*Wersja 0\.4\d — /m.test(tr), 'reference version 0.40 or later');
+assert.ok(/^\*\*Wersja 0\.[45]\d — /m.test(tr), 'reference version 0.40 or later');
+assert.ok(section(tr, '### 20.1. ', '### 20.1.1. ').includes('Decyzja zastępuje Z — 0.40'), 'reference 20.1 names the replaced 0.40 decision');
+assert.ok(plan.includes('## 19. Polska wersja językowa (po planie, 0.50)'), 'plan chapter 19: the Polish language version');
 for (const f of ['PLAN.md', 'MECHANICS_MAP.md', 'STATE_VARIABLES.md', 'TRANSITION_MATRIX.md']) {
-  const text = read(f), head = text.match(/^## Current state — reference 0\.4\d, .*$/m);
+  const text = read(f), head = text.match(/^## Current state — reference 0\.[45]\d, .*$/m);
   assert.ok(head, `${f} has a current state for reference 0.40 or later`);
   const state = section(text, head[0], '## Archive of entries');
   assert.ok(state.includes('`docs/POLISH_IMPLEMENTATION_PLAN.md`') && state.includes('**Implementation plan (Z, 0.40):**'), `${f} points to the plan`);
@@ -175,7 +179,8 @@ assert.ok(decisions.includes('Decyzje etapu 0 (Z — 0.41):'), 'stage 0 decision
 assert.ok(plan.includes('## 10. Ustalenia z etapu 0') && plan.includes('## Dodatek E. '), 'stage 0 findings and full lists');
 assert.ok(/^### 23\.14\. Etap 0 wdrożony/m.test(tr), 'reference 23.14 records stage 0');
 const pkg = JSON.parse(read('package.json'));
-assert.ok(pkg.scripts.build.endsWith('&& cp source/rules/*.js out/html/'), 'the build copies the rules module');
+// The Polish version of the game (4 X 2026) adds its own step after the copy of the rules.
+assert.ok(/&& cp source\/rules\/\*\.js out\/html\/( && node tools\/i18n\/build\.cjs)?$/.test(pkg.scripts.build), 'the build copies the rules module');
 assert.ok(read('out/html/index.html').includes('<script src="polish_rules.js"></script>'), 'the page loads the rules module');
 // Appendix E: every listed file contains the named variable as a whole word.
 const appE = section(plan, '## Dodatek E. ').split('\n').filter(l => /^- \*\*`[^`]+`\*\* — \d+ plików/.test(l));

@@ -1,0 +1,17 @@
+{
+ "source": "scenes/government_affairs/polish_gov_investment.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Capital for Investment": "title: Kapitał na inwestycje",
+  "subtitle: Treasury or Industry: how the credit instrument is financed.": "subtitle: Resort Skarbu albo Przemysłu: jak finansować instrument kredytowy.",
+  "= Capital for investment": "= Kapitał na inwestycje",
+  "The credit instrument is a large project: 2 B of building for 2 months, then 1 B to run, and +5 to the credit target while it works. The variants differ in who pays and who must agree: one financing, one cost, one effect.": "Instrument kredytowy to duży projekt: 2 B na budowę przez 2 miesiące, potem 1 B na utrzymanie i +5 do docelowego kredytu, dopóki działa. Warianty różnią się tym, kto płaci i kto musi się zgodzić: jedno finansowanie, jeden koszt, jeden skutek.",
+  "title: Public fund": "title: Fundusz publiczny",
+  "subtitle: The state pays everything: 2 B of building, 1 B to run.": "subtitle: Państwo płaci za wszystko: 2 B na budowę, 1 B na utrzymanie.",
+  "title: Agreement with banks and industry": "title: Porozumienie z bankami i przemysłem",
+  "subtitle: The state pays half of the building: 1 B, then 1 B; business pressure −8. Needs credit of at least 40.": "subtitle: Państwo płaci połowę budowy: 1 B, potem 1 B; presja przedsiębiorców −8. Wymaga kredytu co najmniej 40.",
+  "title: Cooperative financing": "title: Finansowanie spółdzielcze",
+  "subtitle: Credit for farms and small workshops through cooperatives; needs an operating PPS cooperative.": "subtitle: Kredyt dla gospodarstw i małych warsztatów przez spółdzielnie; wymaga działającej spółdzielni PPS.",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

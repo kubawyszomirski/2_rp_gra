@@ -1,0 +1,28 @@
+{
+ "source": "scenes/polish_speaker_election.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Election of the Marshal of the Sejm": "title: Wybór marszałka Sejmu",
+  "return row.candidate_name + ' — ' + row.votes + ' votes';": "return row.candidate_name + ' — ' + row.votes + ' ' + PolishRules.plural(row.votes, 'głos', 'głosy', 'głosów');",
+  "}).join('; ') + '; abstentions — ' + ballot.abstain : '';": "}).join('; ') + '; wstrzymało się — ' + ballot.abstain : '';",
+  "Q.pl_speaker_acting = run.acting_holder ? run.acting_holder.name : '';": "Q.pl_speaker_acting = run.acting_holder ? PolishInstitutions.personNameText(run.acting_holder.name) : '';",
+  "= The Marshal of the Sejm — December 1922": "= Marszałek Sejmu — grudzień 1922",
+  "[? if not pl_speaker_vacancy : The newly elected Sejm must choose its Marshal before the National Assembly meets to elect the President. The Marshal chairs the Sejm and substitutes for the President when the office is vacant. ?]": "[? if not pl_speaker_vacancy : Nowo wybrany Sejm musi wybrać marszałka, zanim Zgromadzenie Narodowe zbierze się, by wybrać prezydenta. Marszałek przewodniczy Sejmowi i zastępuje prezydenta, gdy urząd jest nieobsadzony. ?]",
+  "[? if pl_speaker_vacancy : The Marshal of the Sejm has become President of the Republic and has left both the office and the Sejm. The Sejm must elect a new Marshal before ordinary business resumes. His seat passes to the next candidate on the same list, so the club keeps its number of MPs. ?]": "[? if pl_speaker_vacancy : Marszałek Sejmu został prezydentem Rzeczypospolitej i opuścił zarówno urząd, jak i Sejm. Sejm musi wybrać nowego marszałka, zanim wróci do zwykłych prac. Jego mandat przechodzi na następnego kandydata z tej samej listy, więc klub zachowuje liczbę posłów. ?]",
+  "All clubs attend. Every club votes for its preferred candidate still standing; if nobody has more than half of the valid votes, the two strongest meet in a run-off and the larger vote wins. A tie between two finalists is decided by a recorded lot. The clubs' preferences are an approved test profile, not a reconstruction of the historical vote.": "Obecne są wszystkie kluby. Każdy klub głosuje na najbardziej preferowanego kandydata, który pozostał w grze; jeśli nikt nie ma ponad połowy ważnych głosów, dwaj najsilniejsi przechodzą do drugiej tury i wygrywa ten, kto dostanie więcej głosów. Remis między finalistami rozstrzyga zapisane losowanie. Preferencje klubów to zatwierdzony profil testowy, a nie odtworzenie historycznego głosowania.",
+  "Our stance costs no monthly action. Talks with other parties beforehand are ordinary actions.": "Nasze stanowisko nie zużywa akcji miesiąca. Wcześniejsze rozmowy z innymi partiami są zwykłymi akcjami.",
+  "title: Support Eugeniusz Śmiarowski": "title: Popieramy Eugeniusza Śmiarowskiego",
+  "subtitle: Cooperation with PSL Wyzwolenie: relation +4. He takes office only if he wins the vote.": "subtitle: Współpraca z PSL Wyzwolenie: relacja +4. Obejmie urząd tylko wtedy, gdy wygra głosowanie.",
+  "title: Agree to support Maciej Rataj": "title: Zgadzamy się poprzeć Macieja Rataja",
+  "subtitle: A package with PSL Piast: defence of the standing orders and PPS work in the committees. PSL Piast relation +4.": "subtitle: Pakiet z PSL Piast: obrona regulaminu Sejmu i praca PPS w komisjach. Relacja z PSL Piast +4.",
+  "title: Nominate Ignacy Daszyński": "title: Zgłaszamy Ignacego Daszyńskiego",
+  "subtitle: PSL Wyzwolenie signs the nomination and backs him instead of its own candidate. No bonus for the nomination itself.": "subtitle: PSL Wyzwolenie podpisuje zgłoszenie i popiera go zamiast własnego kandydata. Samo zgłoszenie nie daje premii.",
+  "= The vote for Marshal": "= Głosowanie nad wyborem marszałka",
+  "[? if pl_speaker_status = \"elected\" : **[+ pl_speaker_winner +] is elected Marshal of the Sejm.** ?]": "[? if pl_speaker_status = \"elected\" : **[+ pl_speaker_winner +] zostaje wybrany marszałkiem Sejmu.** ?]",
+  "[? if pl_speaker_status = \"elected\" : Final ballot: [+ pl_speaker_result_lines +]. ?]": "[? if pl_speaker_status = \"elected\" : Ostatnie głosowanie: [+ pl_speaker_result_lines +]. ?]",
+  "[? if pl_speaker_tie : The two finalists received the same number of votes; the office was decided by a recorded lot. ?]": "[? if pl_speaker_tie : Obaj finaliści otrzymali tyle samo głosów; o urzędzie rozstrzygnęło zapisane losowanie. ?]",
+  "[? if pl_speaker_status = \"no_election\" : The vote did not produce a Marshal. [+ pl_speaker_acting +] presides until a new vote next month; ordinary business continues meanwhile. ?]": "[? if pl_speaker_status = \"no_election\" : Głosowanie nie wyłoniło marszałka. [+ pl_speaker_acting +] przewodniczy do nowego głosowania w przyszłym miesiącu; zwykłe prace toczą się w tym czasie dalej. ?]",
+  "The result, the votes and any lot are recorded once; returning to this screen or loading a save does not repeat the vote.": "Wynik, głosy i ewentualne losowanie zapisuje się raz; powrót do tego ekranu ani wczytanie zapisu nie powtarzają głosowania.",
+  "- @finish: Continue.": "- @finish: Dalej."
+ }
+}

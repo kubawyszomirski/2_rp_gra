@@ -1,0 +1,17 @@
+{
+ "source": "scenes/government_affairs/polish_gov_military.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Military Affairs": "title: Sprawy wojskowe",
+  "subtitle: Civilian control of the army: oversight, lawful changes of personnel, or a limited reform.": "subtitle: Cywilna kontrola nad wojskiem: nadzór, legalne zmiany personalne albo ograniczona reforma.",
+  "= Military affairs": "= Sprawy wojskowe",
+  "The post and its scope are a marked synthetic function over one group of the army; the historical appointments are not reconstructed. A compromise that gives Piłsudski personal powers goes through the agreement with him, not through this card.": "Stanowisko i jego zakres to oznaczona syntetyczna funkcja nad jednym zgrupowaniem wojska; historyczne nominacje nie są odtwarzane. Kompromis dający Piłsudskiemu osobiste uprawnienia przechodzi przez porozumienie z nim, a nie przez tę kartę.",
+  "title: Prepare full civilian oversight": "title: Przygotuj pełny nadzór cywilny",
+  "subtitle: A law with army +2, then 1 B for three months; after it the group gains +0.05 of loyalty to the legal authorities.": "subtitle: Ustawa z osią wojska +2, potem 1 B przez trzy miesiące; następnie zgrupowanie zyskuje +0,05 lojalności wobec legalnych władz.",
+  "title: Prepare lawful changes of personnel": "title: Przygotuj legalne zmiany personalne",
+  "subtitle: The same project with a named nomination: +0.05 legal loyalty, the group's readiness −0.05 for two months, and a real conflict raises the pressure.": "subtitle: Ten sam projekt z wymienioną nominacją: +0,05 lojalności wobec legalnych władz, gotowość zgrupowania −0,05 przez dwa miesiące, a rzeczywisty konflikt podnosi presję.",
+  "title: Prepare an organisational compromise limiting the reform": "title: Przygotuj kompromis organizacyjny ograniczający reformę",
+  "subtitle: A law with army 0, then 1 B for two months; the group gains +0.025 of legal loyalty.": "subtitle: Ustawa z osią wojska 0, potem 1 B przez dwa miesiące; zgrupowanie zyskuje +0,025 lojalności wobec legalnych władz.",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

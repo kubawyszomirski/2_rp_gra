@@ -1,0 +1,17 @@
+{
+ "source": "scenes/government_affairs/polish_gov_education.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Education Policy": "title: Polityka oświatowa",
+  "subtitle: Education: village schools, adult education, a secular school.": "subtitle: Resort Oświaty: szkoły wiejskie, oświata dorosłych, szkoła świecka.",
+  "= Education policy": "= Polityka oświatowa",
+  "A school programme is large: 1 B for 4 months of building, then 1 B to run, in up to three separate tranches. The same scope of schools is never financed twice.": "Program szkolny jest duży: 1 B przez 4 miesiące budowy, potem 1 B na utrzymanie, w najwyżej trzech osobnych transzach. Ten sam zakres szkół nigdy nie jest finansowany dwa razy.",
+  "title: Village schools": "title: Szkoły wiejskie",
+  "subtitle: Schools for the villages covered; trust of the recipients +4 when they work.": "subtitle: Szkoły dla objętych wsi; zaufanie odbiorców +4, gdy działają.",
+  "title: Education of the poor and adults in workers’ centres": "title: Oświata ubogich i dorosłych w ośrodkach robotniczych",
+  "subtitle: Trust of the recipients +4; it does not replace TUR.": "subtitle: Zaufanie odbiorców +4; nie zastępuje TUR.",
+  "title: A secular school with religious freedom": "title: Szkoła świecka z wolnością religijną",
+  "subtitle: Needs its law; PSChD judges the content by its programme. Against an agreed religious compromise it breaks that agreement.": "subtitle: Wymaga własnej ustawy; PSChD ocenia jej treść według swojego programu. Wbrew uzgodnionemu kompromisowi religijnemu łamie to porozumienie.",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

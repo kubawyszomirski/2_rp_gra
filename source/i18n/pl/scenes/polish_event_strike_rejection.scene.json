@@ -1,0 +1,14 @@
+{
+ "source": "scenes/polish_event_strike_rejection.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: The Strikers Reject the Settlement": "title: Strajkujący odrzucają ugodę",
+  "subtitle: PPS accepted a settlement, but part of the strikers will not end the action.": "subtitle: PPS przyjęła ugodę, ale część strajkujących nie chce zakończyć akcji.",
+  "= The strikers reject the settlement": "= Strajkujący odrzucają ugodę",
+  "title: Uphold the settlement and call for the end of the strike": "title: Podtrzymaj ugodę i wezwij do zakończenia strajku",
+  "subtitle: The obligation stands; part of the strikers may go on without PPS, and the branches that refused have the end imposed (dissent +10, trust −8).": "subtitle: Zobowiązanie obowiązuje; część strajkujących może kontynuować bez PPS, a branżom, które odmówiły, zakończenie zostaje narzucone (sprzeciw +10, zaufanie −8).",
+  "title: Support the further strike": "title: Poprzyj dalszy strajk",
+  "subtitle: The mobilisation and its costs go on, and PPS breaks the settlement it accepted (credibility −5). It forces no better offer.": "subtitle: Mobilizacja i jej koszty trwają, a PPS zrywa przyjętą przez siebie ugodę (wiarygodność −5). Nie wymusza to lepszej oferty.",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

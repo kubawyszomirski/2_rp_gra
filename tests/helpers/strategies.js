@@ -419,11 +419,11 @@ function playMonth(engine, strat, used) {
 
 // ---- A whole campaign.
 // Options: setup(engine) changes the new game before the first month (a calibration fixture); stopWhen(Q) ends the
-// run early, e.g. after the election of 1922.
-function runCampaign(strategyId, seed, { maxSteps = 30000, monthSteps = 400, setup = null, stopWhen = null, onMonth = null } = {}) {
+// run early, e.g. after the election of 1922; lang 'pl' plays the Polish version of the game.
+function runCampaign(strategyId, seed, { maxSteps = 30000, monthSteps = 400, setup = null, stopWhen = null, onMonth = null, lang = 'en' } = {}) {
   const strat = STRATEGIES[strategyId];
   if (!strat) throw new Error('unknown strategy ' + strategyId);
-  const engine = dendry.startGame(seed);
+  const engine = dendry.startGame(seed, lang);
   if (setup) setup(engine);
   const Q = engine.state.qualities, S = Q.S;
   const months = [];

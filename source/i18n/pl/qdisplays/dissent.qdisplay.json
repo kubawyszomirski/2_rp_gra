@@ -1,0 +1,11 @@
+{
+ "source": "qdisplays/dissent.qdisplay.dry",
+ "status": "complete",
+ "lines": {
+  "(..4.999) very low": "(..4.999) bardzo niski",
+  "(4.999..14.999) low": "(4.999..14.999) niski",
+  "(14.999..30.999) medium": "(14.999..30.999) średni",
+  "(30.999..49.999) high": "(30.999..49.999) wysoki",
+  "(49.999..) very high": "(49.999..) bardzo wysoki"
+ }
+}

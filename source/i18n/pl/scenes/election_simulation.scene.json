@@ -1,0 +1,22 @@
+{
+ "source": "scenes/election_simulation.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Election Simulation": "title: Symulacja wyborów",
+  "The implemented simulator covers the approved January 1922 Polish opening model. The inherited German 1928, 1930 and 1932 scenarios have been retired from the active Polish party system.": "Symulator obejmuje zatwierdzony polski model otwarcia ze stycznia 1922 roku. Odziedziczone niemieckie scenariusze z lat 1928, 1930 i 1932 zostały wycofane z polskiego systemu partyjnego.",
+  "- @opening: January 1922 Polish opening model": "- @opening: Polski model otwarcia, styczeń 1922",
+  "Q.party_names = {'kpp':'KPP','pps':'PPS','npr':'NPR','psl_wyzwolenie':'PSL Wyzwolenie','psl_piast':'PSL Piast','pschd':'PSChD','zln':'ZLN','minorities_bloc':'Blok Mniejszości Narodowych','other':'Inne'};": "Q.party_names = {'kpp':'KPP','pps':'PPS','npr':'NPR','psl_wyzwolenie':'PSL Wyzwolenie','psl_piast':'PSL Piast','pschd':'PSChD','zln':'ZLN','minorities_bloc':'Blok Mniejszości Narodowych','other':'Inne'};",
+  "= January 1922 voting intentions (not parliamentary seats)": "= Preferencje wyborcze w styczniu 1922 (nie mandaty)",
+  "KPP: [+ kpp_votes_disp +]%": "KPP: [+ kpp_votes_disp +]%",
+  "PPS: [+ pps_votes_disp +]%": "PPS: [+ pps_votes_disp +]%",
+  "NPR: [+ npr_votes_disp +]%": "NPR: [+ npr_votes_disp +]%",
+  "PSL Wyzwolenie: [+ psl_wyzwolenie_votes_disp +]%": "PSL Wyzwolenie: [+ psl_wyzwolenie_votes_disp +]%",
+  "PSL Piast: [+ psl_piast_votes_disp +]%": "PSL Piast: [+ psl_piast_votes_disp +]%",
+  "PSChD: [+ pschd_votes_disp +]%": "PSChD: [+ pschd_votes_disp +]%",
+  "ZLN: [+ zln_votes_disp +]%": "ZLN: [+ zln_votes_disp +]%",
+  "Blok Mniejszości Narodowych: [+ minorities_bloc_votes_disp +]%": "Blok Mniejszości Narodowych: [+ minorities_bloc_votes_disp +]%",
+  "Inne: [+ other_votes_disp +]%": "Inne: [+ other_votes_disp +]%",
+  "Highest voting intention: [+ simulation_largest_party +]. This preview does not allocate seats or change a sitting parliament.": "Najwyższe poparcie: [+ simulation_largest_party +]. Ten podgląd nie dzieli mandatów i nie zmienia obecnego Sejmu.",
+  "- @root.start_menu: Return to main menu": "- @root.start_menu: Wróć do menu głównego"
+ }
+}

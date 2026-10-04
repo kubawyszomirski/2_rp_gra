@@ -1,0 +1,11 @@
+{
+ "source": "scenes/advisors/dubois.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Stanisław Dubois": "title: Stanisław Dubois",
+  "= Stanisław Dubois": "= Stanisław Dubois",
+  "Dubois keeps his place in the pool of the continuation from 1930. He represents Lewica PPS and concentrates on socialist youth and workers’ self-defence.": "Dubois zachowuje miejsce w puli kontynuacji od 1930 roku. Reprezentuje Lewicę PPS i skupia się na młodzieży socjalistycznej oraz robotniczej samoobronie.",
+  "His actions are recorded for chapter 2 (Z — 0.29, M17); in this chapter he cannot be appointed.": "Jego akcje są zapisane dla rozdziału 2 (Z — 0.29, M17); w tym rozdziale nie można go powołać.",
+  "- @root: Return to main": "- @root: Wróć do głównego ekranu"
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "source": "scenes/party_affairs/polish_party_ussr_position.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: PPS and the Soviet Model": "title: PPS wobec modelu sowieckiego",
+  "subtitle: The line of PPS towards the Soviet model of power.": "subtitle: Linia PPS wobec sowieckiego modelu władzy.",
+  "= PPS and the Soviet Model": "= PPS wobec modelu sowieckiego",
+  "The present line: **[+ pl_stance_current +]**. A new declaration costs this month's action; it changes no law in force and gives no reform by itself.": "Obecna linia: **[+ pl_stance_current +]**. Nowa deklaracja kosztuje akcję tego miesiąca; nie zmienia żadnej obowiązującej ustawy i sama nie daje żadnej reformy.",
+  "title: Solidarity with the Soviet state as an attempt to build socialism": "title: Solidarność z państwem sowieckim jako próbą budowy socjalizmu",
+  "subtitle: [? if pl_stance_sympathetic_present = 1 : This is the present line. Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_sympathetic_present = 0 : Relation with the KPP +5 once in the chapter; Centrum dissent +5. ?]": "subtitle: [? if pl_stance_sympathetic_present = 1 : To obecna linia. Jej potwierdzenie kosztuje akcję tego miesiąca, a karta czeka jak po zmianie; nic więcej się nie zmienia. ?][? if pl_stance_sympathetic_present = 0 : Relacja z KPP +5 raz w rozdziale; Centrum: sprzeciw +5. ?]",
+  "title: Independence: workers’ cooperation without the Soviet model": "title: Niezależność: współpraca robotnicza bez modelu sowieckiego",
+  "subtitle: [? if pl_stance_independent_present = 1 : This is the present line. Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_independent_present = 0 : No change of relations or dissent. ?]": "subtitle: [? if pl_stance_independent_present = 1 : To obecna linia. Jej potwierdzenie kosztuje akcję tego miesiąca, a karta czeka jak po zmianie; nic więcej się nie zmienia. ?][? if pl_stance_independent_present = 0 : Bez zmian relacji i sprzeciwu. ?]",
+  "title: Condemn Soviet authoritarianism and the subordination of the labour movement": "title: Potępienie sowieckiego autorytaryzmu i podporządkowania ruchu robotniczego",
+  "subtitle: [? if pl_stance_critical_present = 1 : This is the present line. Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_critical_present = 0 : Relation with the KPP −5; no faction reaction. ?]": "subtitle: [? if pl_stance_critical_present = 1 : To obecna linia. Jej potwierdzenie kosztuje akcję tego miesiąca, a karta czeka jak po zmianie; nic więcej się nie zmienia. ?][? if pl_stance_critical_present = 0 : Relacja z KPP −5; bez reakcji frakcji. ?]",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

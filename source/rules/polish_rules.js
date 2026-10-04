@@ -771,6 +771,89 @@
     if (Q.S && Q.S.events.active) Q.S.events.active.phase = 'entered';
   }
 
+  // ---- Language of the player-facing text (Polish version of 4 October 2026, decisions 2A, 3A, 5A and 6A).
+  // The page sets it from the player's choice (out/html/game.js); it is a setting of the browser, not part of a save.
+  // English is the default, so the rules and the tests behave as before.
+  let language = 'en';
+  function setLanguage(lang) {
+    language = lang === 'pl' ? 'pl' : 'en';
+    return language;
+  }
+  function getLanguage() {
+    return language;
+  }
+  // Runs fn with the texts of one language and restores the current one: a record of S that keeps a displayed text
+  // keeps its English form (decision 5A).
+  function inLanguage(lang, fn) {
+    const previous = language;
+    setLanguage(lang);
+    try {
+      return fn();
+    } finally {
+      language = previous;
+    }
+  }
+  // The text in the current language: the English text, or the Polish text written next to it (decision 2A).
+  function L(en, pl) {
+    return language === 'pl' && typeof pl === 'string' ? pl : en;
+  }
+  // Texts stored in the records of S stay in English (decision 5A). A module registers how to translate the texts it
+  // stores; storedText() applies the first translation that matches, in the current language, when a text is shown.
+  const storedTranslators = [];
+  function registerStoredText(translate) {
+    storedTranslators.push(translate);
+  }
+  function storedText(text) {
+    if (language !== 'pl' || typeof text !== 'string' || !text) return text;
+    for (const translate of storedTranslators) {
+      const out = translate(text);
+      if (typeof out === 'string' && out !== text) return out;
+    }
+    return text;
+  }
+  // The Polish noun form after a number: 1 miesiąc, 2–4 miesiące (but 12–14 miesięcy), 5 and more miesięcy; a
+  // fraction takes the genitive singular (1,5 miesiąca), which is `fraction` or else `few`.
+  function plural(n, one, few, many, fraction) {
+    const a = Math.abs(n);
+    if (!Number.isInteger(a)) return fraction !== undefined ? fraction : few;
+    if (a === 1) return one;
+    const d = a % 10, h = a % 100;
+    return d >= 2 && d <= 4 && !(h >= 12 && h <= 14) ? few : many;
+  }
+  // A number for display (decision 6A): fixed digits, with a decimal comma in Polish.
+  function num(value, digits) {
+    const text = typeof digits === 'number' ? Number(value).toFixed(digits) : String(value);
+    return language === 'pl' ? text.replace('.', ',') : text;
+  }
+  const MONTHS_EN = Object.freeze(['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September',
+    'October', 'November', 'December']);
+  const MONTHS_PL = Object.freeze(['styczeń', 'luty', 'marzec', 'kwiecień', 'maj', 'czerwiec', 'lipiec', 'sierpień', 'wrzesień',
+    'październik', 'listopad', 'grudzień']);
+  const MONTHS_PL_GENITIVE = Object.freeze(['stycznia', 'lutego', 'marca', 'kwietnia', 'maja', 'czerwca', 'lipca', 'sierpnia',
+    'września', 'października', 'listopada', 'grudnia']);
+  const MONTHS_PL_LOCATIVE = Object.freeze(['styczniu', 'lutym', 'marcu', 'kwietniu', 'maju', 'czerwcu', 'lipcu', 'sierpniu',
+    'wrześniu', 'październiku', 'listopadzie', 'grudniu']);
+  // 'March 1926' for a game time; in Polish the case the sentence needs: 'nom' marzec 1926 (the default), 'gen' (od)
+  // marca 1926, 'loc' (w) marcu 1926.
+  function monthYear(t, form) {
+    const m = monthOf(t);
+    if (language !== 'pl') return MONTHS_EN[m - 1] + ' ' + yearOf(t);
+    const names = form === 'gen' ? MONTHS_PL_GENITIVE : form === 'loc' ? MONTHS_PL_LOCATIVE : MONTHS_PL;
+    return names[m - 1] + ' ' + yearOf(t);
+  }
+  // 'November 1922' or 'listopad 1922' for an ISO month or day (YYYY-MM or YYYY-MM-DD); other text is returned unchanged.
+  function monthText(iso) {
+    const parts = String(iso || '').split('-').map(Number);
+    if (parts.length < 2 || parts.slice(0, 2).some(x => !Number.isFinite(x))) return String(iso || '');
+    return (language === 'pl' ? MONTHS_PL : MONTHS_EN)[parts[1] - 1] + ' ' + parts[0];
+  }
+  // '19 February 1928' or '19 lutego 1928' for an ISO date (YYYY-MM-DD); other text is returned unchanged.
+  function dateText(iso) {
+    const parts = String(iso || '').split('-').map(Number);
+    if (parts.length !== 3 || parts.some(x => !Number.isFinite(x))) return String(iso || '');
+    return parts[2] + ' ' + (language === 'pl' ? MONTHS_PL_GENITIVE : MONTHS_EN)[parts[1] - 1] + ' ' + parts[0];
+  }
+
   return Object.freeze({
     SCHEMA_VERSION: SCHEMA_VERSION,
     BALANCE_ID: BALANCE_ID,
@@ -818,5 +901,20 @@
     agendaItems: agendaItems,
     nextEvent: nextEvent,
     markEventEntered: markEventEntered,
+    setLanguage: setLanguage,
+    inLanguage: inLanguage,
+    getLanguage: getLanguage,
+    L: L,
+    registerStoredText: registerStoredText,
+    storedText: storedText,
+    plural: plural,
+    num: num,
+    monthYear: monthYear,
+    dateText: dateText,
+    monthText: monthText,
+    MONTHS_EN: MONTHS_EN,
+    MONTHS_PL: MONTHS_PL,
+    MONTHS_PL_GENITIVE: MONTHS_PL_GENITIVE,
+    MONTHS_PL_LOCATIVE: MONTHS_PL_LOCATIVE,
   });
 }));

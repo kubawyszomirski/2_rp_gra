@@ -1,6 +1,6 @@
 # Plan implementacji rozdziału 1
 
-**Stan — referencja 0.49, 4 października 2026. Wszystkie etapy 0–8 wykonane; etap 8 był ostatni, a pierwszy rozdział jest wdrożony w całości (rozdział 18).** Plan opisuje, w jakiej kolejności i jakimi zmianami w kodzie wdrożono pierwszy rozdział gry. Reguły gry podaje [referencja techniczna](POLISH_TECHNICAL_REFERENCE.md), a karty — [katalog kart](POLISH_CARD_CATALOGUE.md). Plan nie tworzy reguł: przy rozbieżności obowiązuje referencja. Sam plan niczego jeszcze nie zmienia w grze. Każdy etap zaczyna się dopiero po zatwierdzeniu jego szczegółowego planu.
+**Stan — referencja 0.51, 4 października 2026. Wszystkie etapy 0–8 wykonane; etap 8 był ostatni, a pierwszy rozdział jest wdrożony w całości (rozdział 18). Po planie gra dostała polską wersję językową (rozdział 19) i potwierdzanie obecnej linii (rozdział 20).** Plan opisuje, w jakiej kolejności i jakimi zmianami w kodzie wdrożono pierwszy rozdział gry. Reguły gry podaje [referencja techniczna](POLISH_TECHNICAL_REFERENCE.md), a karty — [katalog kart](POLISH_CARD_CATALOGUE.md). Plan nie tworzy reguł: przy rozbieżności obowiązuje referencja. Sam plan niczego jeszcze nie zmienia w grze. Każdy etap zaczyna się dopiero po zatwierdzeniu jego szczegółowego planu.
 
 ## 1. Jak czytać plan
 
@@ -30,7 +30,7 @@
    - Sceny Dendry wywołują go w skryptach i w warunkach `{! … !}`.
    - Wymaga to zmiany skryptu `build` w `package.json` i pliku `out/html/index.html`. Użytkownik zgodził się na obie zmiany; wprowadza je dopiero etap 0.
    - Silnik, język programowania i interfejs pozostają bez zmian (20.1).
-2. **Na razie tylko angielski.** Wszystkie nowe teksty dla gracza — tytuły, opisy, opcje i komunikaty — powstają po angielsku, jak obecne sceny.
+2. **Na razie tylko angielski.** Wszystkie nowe teksty dla gracza — tytuły, opisy, opcje i komunikaty — powstają po angielsku, jak obecne sceny. *Zastąpione w 0.50: gra ma też wersję polską (rozdział 19).*
    - Polskie nazwy własne osób, partii i instytucji zostają.
    - Identyfikatory w kodzie są w ASCII, jak w referencji.
    - Dokumentacja projektu pozostaje po polsku. Tłumaczenie gry to osobna decyzja na później.
@@ -1107,6 +1107,30 @@ Kartę 9.1 przeniesiono z etapu 3 (decyzja etapu 3): spór Naczelnika z Ponikows
 - **identyfikator `awaiting_later_stage`:** zostaje jako wewnętrzny status zobowiązania w zapisie gry; nie jest tekstem dla gracza.
 
 **Koniec planu:** etap 8 był ostatni (decyzja użytkownika z 4 X 2026). Plan nie ma dalszych etapów. Schemat stanu 8 bez zmian, więc zapisy z etapu 7 nadal się wczytują.
+
+## 19. Polska wersja językowa (po planie, 0.50)
+
+To osobne zadanie po zakończeniu planu, nie etap 9. 4 X 2026 użytkownik poprosił o polską wersję gry z możliwością zmiany języka i zatwierdził decyzje 1A–7A (referencja 20.1 i 23.23). Gra pozostaje jedną grą w dwóch językach: logika, sceny i stan są wspólne, a różnią się tylko teksty.
+
+- **Jak działa:** domyślny jest angielski. Gracz zmienia język w Opcjach albo odnośnikiem w nagłówku, także w trakcie gry; wybór pamięta przeglądarka, a zapis gry wczytuje się w obu językach.
+- **Sceny:** tłumaczenia linia po linii w `source/i18n/pl/` (opis formatu i słownik: `source/i18n/pl/README.md`). `npm run build` buduje z nich `out/html/game_pl.json`.
+- **Reguły:** każdy tekst modułów `source/rules/` ma polski odpowiednik (`L(en, pl)`); teksty zapisywane w `S` zostają po angielsku i tłumaczy je wyświetlanie (`PolishRules.storedText`).
+- **Wyniki:** 100 plików tłumaczeń kompletnych, bez brakujących linii. Wszystkie 13 strategii gra po polsku do końca rozdziału bez angielskich tekstów i z identycznym stanem gry jak po angielsku (test „Ta sama rozgrywka w obu językach”). `npm test`: 444 z 444.
+- **Ograniczenia:**
+  - wartości policzone przed zmianą języka w trakcie gry zostają w poprzednim języku do następnej strony;
+  - Credits tłumaczą tylko nagłówki, listy źródeł zostają w oryginale;
+  - nazwa gry w `info.dry` zostaje angielska, bo jest kluczem zapisów w przeglądarce;
+  - nieosiągalne sceny niemieckie i teksty techniczne (walidacja zapisu, błędy dla programisty) zostają po angielsku.
+
+## 20. Potwierdzenie obecnej linii (po planie, 0.51)
+
+To druga zmiana po zakończeniu planu, nie etap 9. 4 X 2026 użytkownik poprosił, by w kartach stanowisk dało się wybrać także obecną linię, a wyjście z karty nazywało się jak odłożenie na rękę (referencja 10.5, 13.1 i 23.24).
+
+- **Reguła:** potwierdzenie obecnej linii kosztuje akcję miesiąca i zwykłe odnowienie karty; nic więcej się nie zmienia. Zastępuje regułę 0.32, według której obecnej linii nie dało się wybrać.
+- **Zakres:** osiem kart stanowisk, Składki („utrzymać”) i Program gospodarczy (ten sam zestaw). Inne karty bez zmian.
+- **Nazwa:** „Close card” to teraz „Return to hand”, po polsku „Odłóż na rękę”; wyjście z karty otwartej przez doradcę zostaje „Close card”.
+- **Pliki:** `source/rules/polish_party.js`, sceny tych dziesięciu kart i `easy_discard` z ich polskimi tłumaczeniami, trzy pliki testów.
+- **Wyniki:** `npm test` 444 z 444; 18 kontroli analitycznych przechodzi; schemat stanu 8 bez zmian. Zautomatyzowane strategie nie używają tych kart, więc wyniki kampanii etapu 8 się nie zmieniają (156 kampanii bez potwierdzenia).
 
 ## Dodatek A. Karty katalogu według etapów
 

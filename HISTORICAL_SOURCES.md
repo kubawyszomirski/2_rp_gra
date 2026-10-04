@@ -1,5 +1,21 @@
 # Historical Source Register
 
+## PL-I18N-POLISH-VERSION-2026-10-04 — Polish language version of the game
+
+- **Authority:** on 4 October 2026 the user asked for a Polish version of the
+  game with a language switch and approved decisions 1A–7A (technical
+  reference 0.50, sections 20.1 and 23.23; chapter 19 of the implementation
+  plan).
+- **Historical content:** none added. The Polish texts translate the existing
+  English texts and rules; every name, date and event they mention was
+  already in the game and is recorded in the entries below (for example
+  `PL-NIEWIADOMSKI-CULT-1923`, `PL-MAY-COUP-1926-COURSE` and
+  `PL-MILITARY-CASE-1923-1926`). Polish forms of institutions and offices
+  (Naczelnik Państwa, Zgromadzenie Narodowe, marszałek Sejmu, Milicja PPS,
+  Akcja Socjalistyczna) follow the terminology already used in the Polish
+  documentation.
+- **Classification:** gameplay presentation, not historical evidence.
+
 ## PL-STAGE8-NORMAL-SCENARIO-2026-10-04 — stage 8 of the implementation plan implemented (the last stage)
 
 - **Authority:** the user approved the detailed stage 8 plan and its six

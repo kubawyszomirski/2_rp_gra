@@ -1,0 +1,15 @@
+{
+ "source": "scenes/advisors/zaremba.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Zygmunt Zaremba": "title: Zygmunt Zaremba",
+  "= Zygmunt Zaremba": "= Zygmunt Zaremba",
+  "Zaremba represents Lewica PPS and emphasizes class campaigning and a future worker–peasant strategy.": "Zaremba reprezentuje Lewicę PPS i stawia na kampanie klasowe oraz przyszłą strategię robotniczo-chłopską.",
+  "- @root: Return to main": "- @root: Wróć do głównego ekranu",
+  "title: Worker-Peasant Front": "title: Front robotniczo-chłopski",
+  "subtitle: Relation with PSL Wyzwolenie +8. No list is formed by the name of the front.": "subtitle: Relacja z PSL Wyzwolenie +8. Sama nazwa frontu nie tworzy żadnej listy.",
+  "- @root: Continue.": "- @root: Dalej.",
+  "title: Class Campaign": "title: Kampania klasowa",
+  "subtitle: 1 R; PPS gains among employed workers (+4 base) and the unemployed (+3), loses among the petty bourgeoisie (−2); Lewica +4 strength, dissent −5.": "subtitle: 1 R; PPS zyskuje wśród zatrudnionych robotników (baza +4) i bezrobotnych (+3), traci wśród drobnomieszczaństwa (−2); Lewica: siła +4, sprzeciw −5."
+ }
+}

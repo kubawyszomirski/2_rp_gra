@@ -36,9 +36,9 @@
 
         <div class="overlay_top">
         <div class="music_player">
-            <h3>Music</h3>
-            <p>Currently playing: <span id="currently_playing"></span></p>
-            <p><label for="volume">Volume:</label><input style="vertical-align:-0.25em;" type="range" min="0" max="100" value="100" id="volume" name="volume" oninput="window.setVolume(this.value);"></p>
+            <h3 data-i18n="music">Music</h3>
+            <p><span data-i18n="currently_playing">Currently playing: </span><span id="currently_playing"></span></p>
+            <p><label for="volume" data-i18n="volume">Volume:</label><input style="vertical-align:-0.25em;" type="range" min="0" max="100" value="100" id="volume" name="volume" oninput="window.setVolume(this.value);"></p>
 
             <!-- icon sources: https://icons.getbootstrap.com/ -->
             <p style="text-align: center;">
@@ -51,23 +51,43 @@
             <button class="icon-button" onclick="window.shuffle();"><span class="button-image"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-skip-forward-fill" viewBox="0 0 16 16">
   <path d="M15.5 3.5a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V8.753l-6.267 3.636c-.54.313-1.233-.066-1.233-.697v-2.94l-6.267 3.636C.693 12.703 0 12.324 0 11.693V4.308c0-.63.693-1.01 1.233-.696L7.5 7.248v-2.94c0-.63.693-1.01 1.233-.696L15 7.248V4a.5.5 0 0 1 .5-.5"/>
         </svg></span>
-        <span>Next song</span></button>
+        <span data-i18n="next_song">Next song</span></button>
             </p>
         </div>
-            <h3>Settings</h3>
+            <h3 data-i18n="settings">Settings</h3>
             <table>
                 <tr>
                     <td>
-                        Backgrounds:
+                        <span data-i18n="language">Language:</span>
                     </td>
                     <td>
-                        <label for="backgrounds_yes">On</label>
+                        <label for="language_en">English</label>
+                    </td>
+                    <td>
+                        <input type="radio" id="language_en" name="language" value="en" onclick="window.setLanguage('en');">
+                    </td>
+                    <td>
+                        <label for="language_pl">Polski</label>
+                    </td>
+                    <td>
+                        <input type="radio" id="language_pl" name="language" value="pl" onclick="window.setLanguage('pl');">
+                    </td>
+                </tr>
+                <tr>
+                    <td> <hr> </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span data-i18n="backgrounds">Backgrounds:</span>
+                    </td>
+                    <td>
+                        <label for="backgrounds_yes" data-i18n="on">On</label>
                     </td>
                     <td>
                         <input type="radio" id="backgrounds_yes" name="backgrounds" value="1" onclick="window.enableBg();">
                     </td>
                     <td>
-                        <label for="backgrounds_no">Off</label>
+                        <label for="backgrounds_no" data-i18n="off">Off</label>
                     </td>
                     <td>
                         <input type="radio" id="backgrounds_no" name="backgrounds" value="0" onclick="window.disableBg();">
@@ -78,15 +98,15 @@
                 </tr>
                 <tr>
                     <td>
-                        Event images:
+                        <span data-i18n="event_images">Event images:</span>
                     <td>
-                        <label for="images_yes">On</label>
+                        <label for="images_yes" data-i18n="on">On</label>
                     </td>
                     <td>
                         <input type="radio" id="images_yes" name="images" value="1" onclick="window.enableImages();">
                     </td>
                     <td>
-                        <label for="images_no">Off</label>
+                        <label for="images_no" data-i18n="off">Off</label>
                     </td>
                     <td>
                         <input type="radio" id="images_no" name="images" value="0" onclick="window.disableImages();">
@@ -98,16 +118,16 @@
  
                 <tr>
                     <td>
-                        Animations:
+                        <span data-i18n="animations">Animations:</span>
                     </td>
                     <td>
-                        <label for="animate_yes">On</label>
+                        <label for="animate_yes" data-i18n="on">On</label>
                     </td>
                     <td>
                         <input type="radio" id="animate_yes" name="animate" value="1" onclick="window.enableAnimate();">
                     </td>
                     <td>
-                        <label for="animate_no">Off</label>
+                        <label for="animate_no" data-i18n="off">Off</label>
                     </td>
                     <td>
                         <input type="radio" id="animate_no" name="animate" value="0" onclick="window.disableAnimate();">
@@ -118,16 +138,16 @@
                 </tr>
                 <tr>
                     <td>
-                        Music:
+                        <span data-i18n="music_setting">Music:</span>
                     </td>
                     <td>
-                        <label for="audio_yes">On</label>
+                        <label for="audio_yes" data-i18n="on">On</label>
                     </td>
                     <td>
                         <input type="radio" id="audio_yes" name="audio" value="1" onclick="window.enableAudio();">
                     </td>
                     <td>
-                        <label for="audio_no">Off</label>
+                        <label for="audio_no" data-i18n="off">Off</label>
                     </td>
                     <td>
                         <input type="radio" id="audio_no" name="audio" value="0" onclick="window.disableAudio();">
@@ -138,16 +158,16 @@
                 </tr>
                 <tr>
                     <td>
-                        Color scheme:
+                        <span data-i18n="color_scheme">Color scheme:</span>
                     </td>
                     <td>
-                        <label for="light_mode">Light mode</label>
+                        <label for="light_mode" data-i18n="light_mode">Light mode</label>
                     </td>
                     <td>
                         <input type="radio" id="light_mode" name="ld_mode" value="1" onclick="window.enableLightMode();">
                     </td>
                     <td>
-                        <label for="dark_mode">Dark mode</label>
+                        <label for="dark_mode" data-i18n="dark_mode">Dark mode</label>
                     </td>
                     <td>
                         <input type="radio" id="dark_mode" name="ld_mode" value="0" onclick="window.enableDarkMode();">
@@ -158,14 +178,14 @@
                 </tr>
                 <tr>
                     <td>
-                        Font size:
+                        <span data-i18n="font_size">Font size:</span>
                     </td>
 
                     <td colspan=2>
-                        <button onclick="window.decreaseFontSize();"><b>-</b> Decrease font size</button>
+                        <button onclick="window.decreaseFontSize();"><b>-</b> <span data-i18n="decrease_font">Decrease font size</span></button>
                     </td>
                     <td colspan=2>
-                        <button onclick="window.increaseFontSize();"><b>+</b> Increase font size</button>
+                        <button onclick="window.increaseFontSize();"><b>+</b> <span data-i18n="increase_font">Increase font size</span></button>
                     </td>
                     <td>
                         <span id="font_size_value"></span>
@@ -176,14 +196,14 @@
                 </tr>
                 <tr>
                     <td>
-                        <button onclick="window.hideOptions();">Close</button>
+                        <button onclick="window.hideOptions();" data-i18n="close">Close</button>
                     </td>
                     <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
                    <td>
-                        <button onclick="window.showMods();">Mods</button>
+                        <button onclick="window.showMods();" data-i18n="mods">Mods</button>
                     </td>
 
                 </tr>
@@ -326,12 +346,12 @@
             </tr>
             <tr>
                 <td colspan="5">
-                    <label for="import_save">Import save file:</label> <input type="file" id="import_save" onchange="dendryUI.importSave('import_save');"></input>
+                    <label for="import_save" data-i18n="import_save">Import save file:</label> <input type="file" id="import_save" onchange="dendryUI.importSave('import_save');"></input>
                 </td>
             </tr> 
             <tr>
                 <td>
-                    <button onclick="dendryUI.hideSaveSlots();">Close</button>
+                    <button onclick="dendryUI.hideSaveSlots();" data-i18n="close">Close</button>
                 </td>
             </tr>
         </table>
@@ -349,22 +369,23 @@
     <div id='page'>
         <div id="mid_panel">
             <header>
-                <h1 id="game-title">PPS: An Alternate History</h1>
+                <h1 id="game-title" data-i18n="game_title">PPS: An Alternate History</h1>
                 <h2 id="game-author">Autumn Chen</h2>
 
                 <div id="header-links">
-                    <a id="stats-link" onclick="window.showStats();" href="#">Library</a>
-                    <a onclick="dendryUI.showSaveSlots();" href="#">Save/Load</a>
-                    <a onclick="window.showOptions();" href="#">Options</a>
+                    <a id="stats-link" onclick="window.showStats();" href="#" data-i18n="library">Library</a>
+                    <a onclick="dendryUI.showSaveSlots();" href="#" data-i18n="save_load">Save/Load</a>
+                    <a onclick="window.showOptions();" href="#" data-i18n="options">Options</a>
+                    <a id="language-link" onclick="window.toggleLanguage(); return false;" href="#" lang="pl" data-i18n="other_language">Polski</a>
                 </div>
             </header>
             <div id="tools_wrapper">
                 <div id='stats_sidebar' class='tools left'>
                     <div class="tab_container">
-                        <button class="tab_button active" id="main_tab" onclick="window.changeTab('status', 'main_tab');">Main</button>
-                        <button class="tab_button" id="politics_tab" onclick="window.changeTab('status.politics', 'politics_tab');">Politics</button>
-                        <button class="tab_button" id="paramilitary_tab" onclick="window.changeTab('status.paramilitaries', 'paramilitary_tab');">Defense</button>
-                        <button class="tab_button" id="poll_tab" onclick="window.changeTab('status.polls', 'poll_tab');">Polls</button>
+                        <button class="tab_button active" id="main_tab" onclick="window.changeTab('status', 'main_tab');" data-i18n="tab_main">Main</button>
+                        <button class="tab_button" id="politics_tab" onclick="window.changeTab('status.politics', 'politics_tab');" data-i18n="tab_politics">Politics</button>
+                        <button class="tab_button" id="paramilitary_tab" onclick="window.changeTab('status.paramilitaries', 'paramilitary_tab');" data-i18n="tab_defense">Defense</button>
+                        <button class="tab_button" id="poll_tab" onclick="window.changeTab('status.polls', 'poll_tab');" data-i18n="tab_polls">Polls</button>
                     </div>
                     <div id="qualities">
                     </div>

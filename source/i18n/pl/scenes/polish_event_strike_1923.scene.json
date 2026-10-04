@@ -1,0 +1,16 @@
+{
+ "source": "scenes/polish_event_strike_1923.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Wage Demands and Strikes": "title: Postulaty płacowe i strajki",
+  "subtitle: Real wages have stayed below 80 for three months; the workers demand a rise.": "subtitle: Płace realne od trzech miesięcy są poniżej 80; robotnicy żądają podwyżki.",
+  "= Wage demands and strikes": "= Postulaty płacowe i strajki",
+  "title: Negotiate before the protest spreads": "title: Negocjuj, zanim protest się rozszerzy",
+  "subtitle: A limited wage offer (threshold 40); the government answers now. No strike spares the fund but weakens the pressure; a refusal is no concession.": "subtitle: Ograniczona propozycja płacowa (próg 40); rząd odpowiada od razu. Rezygnacja ze strajku oszczędza fundusz, ale osłabia nacisk; odmowa rządu nie jest ustępstwem.",
+  "title: A limited strike for wages and working conditions": "title: Ograniczony strajk o płace i warunki pracy",
+  "subtitle: The covered branches strike for the agreed demands (threshold 40); the union funds pay every active month.": "subtitle: Objęte sporem branże strajkują o uzgodnione postulaty (próg 40); fundusze związkowe płacą za każdy miesiąc strajku.",
+  "title: Join the strike to a demand that the cabinet resign": "title: Połącz strajk z postulatem dymisji gabinetu",
+  "subtitle: A political goal (threshold 80): the Left −3 dissent under the class line, the Centre +8 without it. A resignation needs a real departure or a vote.": "subtitle: Cel polityczny (próg 80): przy linii klasowej Lewica: sprzeciw −3, bez niej Centrum: sprzeciw +8. Dymisja wymaga rzeczywistego odejścia gabinetu albo głosowania.",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

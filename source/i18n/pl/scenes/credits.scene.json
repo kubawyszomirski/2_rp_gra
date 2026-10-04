@@ -1,0 +1,20 @@
+{
+ "source": "scenes/credits.scene.dry",
+ "status": "complete",
+ "keep_original": true,
+ "lines": {
+  "title: Credits": "title: Twórcy i licencje",
+  "Many works were referenced in the making of this game.": "Przy tworzeniu tej gry korzystano z wielu prac.",
+  "- @books: Books": "- @books: Książki",
+  "- @articles: Articles": "- @articles: Artykuły",
+  "- @images: Image sources": "- @images: Źródła obrazów",
+  "- @music: Music sources": "- @music: Źródła muzyki",
+  "- @root: Back": "- @root: Wróć",
+  "= Books": "= Książki",
+  "(bolded sources were heavily referenced)": "(z pogrubionych źródeł korzystano najczęściej)",
+  "- @credits: Back": "- @credits: Wróć",
+  "**People**": "**Osoby**",
+  "**Posters**": "**Plakaty**",
+  "**Other**": "**Inne**"
+ }
+}

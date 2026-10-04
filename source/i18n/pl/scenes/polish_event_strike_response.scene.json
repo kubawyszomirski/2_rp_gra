@@ -1,0 +1,16 @@
+{
+ "source": "scenes/polish_event_strike_response.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: The Strike and the Sejm": "title: Strajk i Sejm",
+  "subtitle: A protest with repression or a real offer: PPS answers in the Sejm.": "subtitle: Protest z represjami albo z rzeczywistą ofertą: PPS odpowiada w Sejmie.",
+  "= The strike and the Sejm": "= Strajk i Sejm",
+  "title: Demand the end of repression and concessions for the workers": "title: Żądaj końca represji i ustępstw dla robotników",
+  "subtitle: [? if pl_resp_offer : The offer lapses; the next round asks for the fuller package. ?][? if not pl_resp_offer : The demands are put to the government now. ?] The thresholds and the executor's consent still apply.": "subtitle: [? if pl_resp_offer : Oferta wygasa; następna runda żąda pełniejszego pakietu. ?][? if not pl_resp_offer : Postulaty trafiają do rządu od razu. ?] Progi i zgoda wykonawcy nadal obowiązują.",
+  "title: Seek a settlement and end the strike on agreed terms": "title: Dąż do ugody i zakończ strajk na uzgodnionych warunkach",
+  "subtitle: [? if pl_resp_offer : PPS accepts the offer and calls for the agreed end. ?][? if not pl_resp_offer : PPS puts one limited package; if it is accepted, the agreed end follows. ?] No second acceptance.": "subtitle: [? if pl_resp_offer : PPS przyjmuje ofertę i wzywa do uzgodnionego zakończenia. ?][? if not pl_resp_offer : PPS przedstawia jeden ograniczony pakiet; jeśli zostanie przyjęty, następuje uzgodnione zakończenie. ?] Nie ma drugiego przyjęcia.",
+  "title: Back the restoration of order and call for the end of the strike": "title: Poprzyj przywrócenie porządku i wezwij do zakończenia strajku",
+  "subtitle: PPS withdraws its support without new concessions: the union +10 dissent and −8 trust once. The call does not end the protest and is no order to the police.": "subtitle: PPS wycofuje poparcie bez nowych ustępstw: w związku jednorazowo sprzeciw +10 i zaufanie −8. Wezwanie nie kończy protestu i nie jest poleceniem dla policji.",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

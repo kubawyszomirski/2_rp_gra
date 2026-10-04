@@ -1,0 +1,15 @@
+{
+ "source": "scenes/advisors/puzak.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Kazimierz Pużak": "title: Kazimierz Pużak",
+  "= Kazimierz Pużak": "= Kazimierz Pużak",
+  "Pużak represents Centrum PPS and concentrates on discipline and party organization.": "Pużak reprezentuje Centrum PPS i skupia się na dyscyplinie i organizacji partii.",
+  "- @root: Return to main": "- @root: Wróć do głównego ekranu",
+  "title: Party Discipline": "title: Dyscyplina partyjna",
+  "subtitle: Dissent −12 in each of the three factions. It removes no cause of later growth.": "subtitle: Sprzeciw −12 w każdej z trzech frakcji. Nie usuwa żadnej przyczyny jego późniejszego wzrostu.",
+  "- @root: Continue.": "- @root: Dalej.",
+  "title: Mobilize the Organization": "title: Mobilizacja organizacji",
+  "subtitle: 1 R; the base reach of PPS among the workers +10; campaigns among workers ×1.20 for six months.": "subtitle: 1 R; bazowy zasięg PPS wśród robotników +10; kampanie wśród robotników ×1,20 przez sześć miesięcy."
+ }
+}

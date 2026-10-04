@@ -25,3 +25,6 @@ out/html/polish_unions.js
 out/html/polish_politics.js
 out/html/polish_security.js
 out/html/polish_engine_hooks.js
+# The Polish version: generated scenes and compiled game (tools/i18n/build.cjs, run by npm run build).
+out/i18n/
+out/html/game_pl.json

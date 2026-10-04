@@ -1,0 +1,24 @@
+{
+ "source": "scenes/party_affairs/polish_party_unity.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Unity and Leadership": "title: Jedność i kierownictwo",
+  "subtitle: A concession, a common line on the communists, a postponement, or a purge.": "subtitle: Ustępstwo, wspólna linia wobec komunistów, odroczenie albo czystka.",
+  "= Unity and leadership": "= Jedność i kierownictwo",
+  "title: A concession to Centrum PPS": "title: Ustępstwo wobec frakcji Centrum PPS",
+  "subtitle: 1 R; its dissent −8. Waits 3 months for this faction.": "subtitle: 1 R; sprzeciw frakcji −8. Odnowienie dla tej frakcji: 3 miesiące.",
+  "title: A concession to Lewica PPS": "title: Ustępstwo wobec frakcji Lewica PPS",
+  "title: A concession to Piłsudczycy": "title: Ustępstwo wobec frakcji Piłsudczycy",
+  "title: Agree on the line of cooperation with the communists": "title: Uzgodnij linię współpracy z komunistami",
+  "subtitle: No money; acceptance of the cooperation +15 in each faction. Waits 6 months.": "subtitle: Bez pieniędzy; akceptacja współpracy +15 w każdej frakcji. Odnowienie: 6 miesięcy.",
+  "title: Persuade Centrum PPS to wait": "title: Przekonaj frakcję Centrum PPS, by poczekała",
+  "subtitle: Its case cannot lead to a split for 3 months; its dissent does not change. Once per case.": "subtitle: Przez 3 miesiące jej sprawa nie może doprowadzić do rozłamu; jej sprzeciw się nie zmienia. Raz na sprawę.",
+  "title: Persuade Lewica PPS to wait": "title: Przekonaj frakcję Lewica PPS, by poczekała",
+  "title: Persuade Piłsudczycy to wait": "title: Przekonaj frakcję Piłsudczycy, by poczekała",
+  "title: Expel part of Centrum PPS": "title: Usuń część frakcji Centrum PPS",
+  "subtitle: 1 R; 25% of its base leaves with voters and MPs; its dissent −15. Every purge waits 12 months.": "subtitle: 1 R; 25% jej bazy odchodzi z wyborcami i posłami; jej sprzeciw −15. Po każdej czystce odnowienie: 12 miesięcy.",
+  "title: Expel part of Lewica PPS": "title: Usuń część frakcji Lewica PPS",
+  "title: Expel part of Piłsudczycy": "title: Usuń część frakcji Piłsudczycy",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

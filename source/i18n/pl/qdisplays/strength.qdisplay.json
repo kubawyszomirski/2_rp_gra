@@ -1,0 +1,11 @@
+{
+ "source": "qdisplays/strength.qdisplay.dry",
+ "status": "complete",
+ "lines": {
+  "(0..10) weak": "(0..10) słaba",
+  "(10..25) moderate": "(10..25) umiarkowana",
+  "(25..40) strong": "(25..40) silna",
+  "(40..60) very strong": "(40..60) bardzo silna",
+  "(60..) dominant": "(60..) dominująca"
+ }
+}

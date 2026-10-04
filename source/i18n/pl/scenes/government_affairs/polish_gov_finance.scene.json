@@ -1,0 +1,31 @@
+{
+ "source": "scenes/government_affairs/polish_gov_finance.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Fiscal Policy": "title: Polityka fiskalna",
+  "subtitle: Treasury: taxes, loans, cuts, emission and collection.": "subtitle: Resort Skarbu: podatki, pożyczki, cięcia, emisja i pobór.",
+  "= Fiscal policy": "= Polityka fiskalna",
+  "The Treasury chooses one instrument per decision (11.9). The vote of the Sejm happens in the same decision; the Senate reviews the law in its dated procedure. One active instrument of each kind; a temporary revenue disappears when it expires.": "Resort Skarbu wybiera jeden instrument na decyzję (11.9). Głosowanie w Sejmie odbywa się w tej samej decyzji; Senat rozpatruje ustawę w swojej procedurze z terminami. Naraz działa jeden instrument każdego rodzaju; dochód tymczasowy znika, gdy wygasa.",
+  "title: Tax high incomes and wealth: a progressive tax": "title: Opodatkuj wysokie dochody i majątek: podatek progresywny",
+  "subtitle: Tax level +1, i.e. +1 B; business pressure +4; Lewica −3 dissent.": "subtitle: Poziom podatków +1, czyli +1 B; presja przedsiębiorców +4; Lewica: sprzeciw −3.",
+  "title: Tax high incomes and wealth: an extraordinary wealth tax": "title: Opodatkuj wysokie dochody i majątek: nadzwyczajny podatek majątkowy",
+  "subtitle: +2 B for 6 months; business pressure +8.": "subtitle: +2 B przez 6 miesięcy; presja przedsiębiorców +8.",
+  "title: Tax broad groups: indirect taxes": "title: Opodatkuj szerokie grupy: podatki pośrednie",
+  "subtitle: Tax level +1, i.e. +1 B; discontent of poor recipients +3; Lewica +3 dissent.": "subtitle: Poziom podatków +1, czyli +1 B; niezadowolenie ubogich odbiorców +3; Lewica: sprzeciw +3.",
+  "title: Tax broad groups: a broader tax base": "title: Opodatkuj szerokie grupy: szersza podstawa opodatkowania",
+  "subtitle: Tax level +1, i.e. +1 B; business pressure +4; discontent of the middle class covered +3.": "subtitle: Poziom podatków +1, czyli +1 B; presja przedsiębiorców +4; niezadowolenie objętej klasy średniej +3.",
+  "title: Tax broad groups: fiscal customs duties": "title: Opodatkuj szerokie grupy: cła fiskalne",
+  "subtitle: +1 B for 6 months; prices +1 pp for 2 months and a credit shock +3 for 6 months.": "subtitle: +1 B przez 6 miesięcy; ceny +1 pkt proc. przez 2 miesiące i szok kredytowy +3 przez 6 miesięcy.",
+  "title: Domestic loan": "title: Pożyczka wewnętrzna",
+  "subtitle: +3 B for 6 months, then −1 B for 12 months. Needs credit of at least 40.": "subtitle: +3 B przez 6 miesięcy, potem −1 B przez 12 miesięcy. Wymaga kredytu co najmniej 40.",
+  "title: Savings in named administrative spending": "title: Oszczędności w wymienionych wydatkach administracyjnych",
+  "subtitle: +1 B for 6 months; discontent of the public employees named +4.": "subtitle: +1 B przez 6 miesięcy; niezadowolenie wymienionych pracowników publicznych +4.",
+  "title: Savings: cut the unemployment benefit": "title: Oszczędności: cięcie zasiłku dla bezrobotnych",
+  "subtitle: Only the difference of the real cost, 2 → 1 B, and a change of the law; Lewica +8 dissent.": "subtitle: Tylko różnica rzeczywistego kosztu, 2 → 1 B, i zmiana ustawy; Lewica: sprzeciw +8.",
+  "title: Emission financing": "title: Finansowanie emisją",
+  "subtitle: Before the złoty: printing within an authorised limit of 1–3 points; after it: transitional coinage, 1 point for 3 months.": "subtitle: Przed złotym: druk pieniądza w zatwierdzonym limicie 1–3 punktów; po nim: przejściowa emisja bilonu, 1 punkt przez 3 miesiące.",
+  "title: Improve tax collection": "title: Usprawnij pobór podatków",
+  "subtitle: 1 B for 2 months, then +1 B for good; once in the chapter.": "subtitle: 1 B przez 2 miesiące, potem trwale +1 B; raz w rozdziale.",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

@@ -1,0 +1,15 @@
+{
+ "source": "scenes/government_affairs/polish_gov_justice.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: The Judiciary": "title: Sądownictwo",
+  "subtitle: Justice: the joint democratic guarantees, or the review of one abuse.": "subtitle: Resort Sprawiedliwości: wspólne gwarancje demokratyczne albo rewizja jednego nadużycia.",
+  "= The judiciary": "= Sądownictwo",
+  "The minister does not annul another authority’s judgement by naming a policy. The broad variant leads to the one project of democratic guarantees, with its own constitutional procedure.": "Minister nie unieważnia rozstrzygnięcia innego organu przez samo ogłoszenie polityki. Szeroki wariant prowadzi do jedynego projektu gwarancji demokratycznych, z jego własną procedurą konstytucyjną.",
+  "title: A joint project of democratic guarantees": "title: Wspólny projekt gwarancji demokratycznych",
+  "subtitle: The one democratic_guarantees reform: two main actions, two thirds in both chambers, then 1 B for a month.": "subtitle: Jedyna reforma gwarancji demokratycznych: dwie główne akcje, dwie trzecie w obu izbach, potem 1 B przez miesiąc.",
+  "title: Review of a named abuse": "title: Rewizja wymienionego nadużycia",
+  "subtitle: 1 B for a month; needs an active restriction of a named case. A confirmed unlawful act lifts only that restriction; without grounds the review ends without relief.": "subtitle: 1 B przez miesiąc; wymaga aktywnego ograniczenia w wymienionej sprawie. Potwierdzony bezprawny akt znosi tylko to ograniczenie; bez podstaw rewizja kończy się bez ulgi.",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

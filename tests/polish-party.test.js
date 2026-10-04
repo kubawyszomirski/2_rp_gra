@@ -55,7 +55,7 @@ test('Dwie organizacje in the game: two different organisations in one month; no
   assert.equal(Q.time, 2, 'one month');
 });
 
-test('Bez płatnego braku wyboru: the organisations card closed without a choice costs nothing; the present dues are blocked with a reason', () => {
+test('Bez płatnego braku wyboru: the organisations card returned to the hand costs nothing; keeping the present dues is a decision for the month (Z — 0.51)', () => {
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
   playFromHand(engine, 'polish_party_organizations');
@@ -63,10 +63,16 @@ test('Bez płatnego braku wyboru: the organisations card closed without a choice
   assert.deepEqual([Q.time, Q.month_actions, Q.S.cooldowns['party.organizations']], [1, 0, undefined]);
   assert.deepEqual(engine.state.currentHands.main.map(c => c.id), ['polish_party_organizations'], 'the card goes back to the hand');
   playFromHand(engine, 'polish_party_dues');
-  assert.equal(choice(engine, 'polish_party_dues.keep').canChoose, false);
-  assert.match(String(choice(engine, 'polish_party_dues.keep').subtitle), /present level of dues \(2\)/);
+  assert.equal(choice(engine, 'polish_party_dues.keep').canChoose, true);
+  assert.match([].concat(choice(engine, 'polish_party_dues.keep').subtitle).join(''), /the dues stay at 2 and the card waits 6 months/);
+  assert.equal([].concat(choice(engine, 'easy_discard').title).join(''), 'Return to hand');
   choose(engine, 'easy_discard');
   assert.equal(Q.time, 1);
+  engine.playCard('polish_party_dues');
+  choose(engine, 'polish_party_dues.keep');
+  assert.match(content(engine), /Dues stay at 2/);
+  choose(engine, 'root');
+  assert.deepEqual([Q.time, Q.S.party_orgs.dues, Q.S.cooldowns['party.dues']], [2, 2, 7], 'one month, the same dues, the usual wait');
 });
 
 test('Brak gotówki in the game: with an empty cash box the party agenda still offers organisational work, which spends the month and no money', () => {
@@ -148,15 +154,16 @@ test('Konfiskata in the game: a restricted press weakens the press campaign; the
   assert.equal(Q.time, 2);
 });
 
-test('Obecna linia in the game: the present line is shown blocked with its reason; closing the card costs nothing and keeps it in the hand', () => {
+test('Obecna linia in the game: the present line can be confirmed for the month; returning the card costs nothing and keeps it in the hand', () => {
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
   for (const id of ['polish_party_direction', 'polish_party_main_opponent', 'polish_party_pils_influence', 'polish_party_form_of_power',
     'polish_party_electoral_base', 'polish_party_slavic_autonomy', 'polish_party_jewish_cooperation', 'polish_party_ussr_position',
     'polish_party_economic_program']) assert.ok(deck(engine).includes(id), id);
   playFromHand(engine, 'polish_party_pils_influence');
-  assert.equal(choice(engine, 'polish_party_pils_influence.conditional').canChoose, false);
-  assert.match(String(choice(engine, 'polish_party_pils_influence.conditional').subtitle), /present line/);
+  assert.equal(choice(engine, 'polish_party_pils_influence.conditional').canChoose, true);
+  assert.match(String(choice(engine, 'polish_party_pils_influence.conditional').subtitle), /This is the present line\. Confirming it costs this month's action/);
+  assert.doesNotMatch(String(choice(engine, 'polish_party_pils_influence.support').subtitle), /present line/);
   choose(engine, 'easy_discard');
   assert.deepEqual([Q.time, Q.month_actions, Q.S.cooldowns['party.pils_influence']], [1, 0, undefined]);
   assert.deepEqual(engine.state.currentHands.main.map(c => c.id), ['polish_party_pils_influence']);
@@ -168,15 +175,17 @@ test('Obecna linia in the game: the present line is shown blocked with its reaso
   assert.ok(!deck(engine).includes('polish_party_pils_influence'), 'the card waits six months');
 });
 
-test('Program bez zmiany in the game: the same set cannot be confirmed; closing is free; a new set costs the month', () => {
+test('Program bez zmiany in the game: the same set can be confirmed for the month; returning the card is free; a new set costs the month', () => {
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
   playFromHand(engine, 'polish_party_economic_program');
   choose(engine, 'polish_party_economic_program.edit');
-  assert.equal(choice(engine, 'polish_party_economic_program.confirm').canChoose, false, 'the empty set is the present one');
+  assert.equal(choice(engine, 'polish_party_economic_program.confirm').canChoose, true, 'the empty set is the present one and can be confirmed');
+  assert.match(String(choice(engine, 'polish_party_economic_program.confirm').subtitle), /This is the present programme/);
   choose(engine, 'polish_party_economic_program.toggle_public_works');
+  assert.match(String(choice(engine, 'polish_party_economic_program.confirm').subtitle), /^1 T; the card then waits 6 months\.$/);
   choose(engine, 'polish_party_economic_program.toggle_public_works');
-  assert.equal(choice(engine, 'polish_party_economic_program.confirm').canChoose, false);
+  assert.equal(choice(engine, 'polish_party_economic_program.confirm').canChoose, true);
   choose(engine, 'polish_party_economic_program');
   choose(engine, 'easy_discard');
   assert.deepEqual([Q.time, Q.month_actions], [1, 0]);

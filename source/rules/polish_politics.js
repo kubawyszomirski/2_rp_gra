@@ -26,7 +26,13 @@
   const clip = (value, low, high) => Math.max(low, Math.min(high, value));
   const pos = value => Math.max(0, value);
   const round = (value, digits) => Math.round(value * Math.pow(10, digits)) / Math.pow(10, digits);
-  const fmt = value => (Math.abs(value) < 0.005 ? '0' : value.toFixed(2).replace(/\.?0+$/, ''));
+  // Polish version (decision 2A): the texts of this module are written in both languages and L picks the current
+  // one; numbers get a decimal comma in Polish (decision 6A).
+  const L = rules.L;
+  const fmt = value => {
+    const text = Math.abs(value) < 0.005 ? '0' : value.toFixed(2).replace(/\.?0+$/, '');
+    return rules.getLanguage() === 'pl' ? text.replace('.', ',') : text;
+  };
   const T = rules.timeOf;
   const OK = Object.freeze({available: true, reason: ''});
   const no = reason => ({available: false, reason: reason});
@@ -56,6 +62,37 @@
   // 17.16.8 (P, stage 8; the M02 runs): the synthetic departure of ten test MPs of Piast from a cabinet with the right.
   const PIAST_SPLIT_SEATS = 10;
   const MILITARY_CASE_SUBJECT = 'the organisation of the supreme military authorities';
+  // The journal of cases stores its subjects in English (decision 5A of the Polish version); the Polish display translates
+  // them here. Registered with PolishRules.storedText, so every module shows a subject the same way.
+  const SUBJECTS_PL = Object.freeze({
+    [MILITARY_CASE_SUBJECT]: 'organizacja naczelnych władz wojskowych',
+    'the dispute of the Naczelnik with the cabinet of Ponikowski': 'spór Naczelnika Państwa z gabinetem Ponikowskiego',
+    'a clash at the gathering in defence of the republic': 'starcie podczas zgromadzenia w obronie Rzeczypospolitej',
+    'a retaliatory confrontation of Milicja PPS after the assassination': 'odwetowe starcie Milicji PPS po zamachu',
+    'an uncontrolled confrontation at the commemoration of the assassin': 'niekontrolowane starcie podczas uroczystości ku czci zamachowca',
+    'the broken agreement with Piłsudski': 'zerwane porozumienie z Piłsudskim',
+    'the militia ban against Milicja PPS': 'zakaz działalności Milicji PPS',
+    'the press confiscation against the press of PPS': 'konfiskata prasy PPS',
+    // The topics of the recorded speeches of Piłsudski (card B2) and the recorded public military pressure.
+    'the right to appoint the cabinet': 'prawo do powoływania gabinetu',
+    'the Sejm and the organisation of the army’s command': 'Sejm i organizacja dowództwa wojska',
+    'a public demand of Piłsudski on the army, with the support of intervening officers': 'publiczne żądanie Piłsudskiego w sprawie wojska, poparte przez interweniujących oficerów',
+    'Warsaw, the Powązki cemetery: the funeral of Eligiusz Niewiadomski on 6 February 1923': 'Warszawa, cmentarz Powązkowski: pogrzeb Eligiusza Niewiadomskiego 6 lutego 1923 roku',
+  });
+  const PRESIDENT_GENITIVE_PL = Object.freeze({'Gabriel Narutowicz': 'Gabriela Narutowicza'});
+  function subjectText(text) {
+    if (SUBJECTS_PL[text]) return SUBJECTS_PL[text];
+    let m = /^a clash with Milicja PPS in the strike (.+)$/.exec(text);
+    if (m) return 'starcie z udziałem Milicji PPS w strajku ' + m[1];
+    m = /^a clash in the strike (.+)$/.exec(text);
+    if (m) return 'starcie w strajku ' + m[1];
+    m = /^the assassination of President (.+)$/.exec(text);
+    if (m) return 'zabójstwo prezydenta ' + (PRESIDENT_GENITIVE_PL[m[1]] || m[1]);
+    m = /^the strike repression against the strikers of (.+)$/.exec(text);
+    if (m) return 'represje wobec strajkujących (' + m[1].split(' and ').map(id => (party.BRANCH_NAMES_PL[id] || id).toLowerCase()).join(', ') + ')';
+    return text;
+  }
+  rules.registerStoredText(subjectText);
   // 10.7 (P): the recorded speeches of Piłsudski that open the card B2; synthetic, without quotations. The topic of 1922
   // follows the sources (stage 8, 8f): after the resignation of Ponikowski the dispute was over who appoints the cabinet.
   const SPEECHES = Object.freeze([
@@ -634,8 +671,9 @@
     const S = Q.S, crisis = S && S.cabinet_crisis;
     if (!crisis || !S.politics) return '';
     const episode = S.politics.episodes.filter(e => e.id === 'grabski_resignation_1925' && e.cabinet_id === crisis.fallen_cabinet_id)[0];
-    return episode ? 'Władysław Grabski has resigned: the ' + (episode.cause === 'currency_crisis' ? 'currency' : 'credit') +
-      ' crisis of autumn 1925 has broken his stabilisation.' : '';
+    return episode ? L('Władysław Grabski has resigned: the ' + (episode.cause === 'currency_crisis' ? 'currency' : 'credit') +
+      ' crisis of autumn 1925 has broken his stabilisation.', 'Władysław Grabski podał się do dymisji: jesienny kryzys ' +
+      (episode.cause === 'currency_crisis' ? 'walutowy' : 'kredytowy') + ' 1925 roku przekreślił jego stabilizację.') : '';
   }
 
   const CABINET_1922 = Object.freeze({
@@ -658,15 +696,15 @@
   // candidate is available while his own cabinet has not fallen.
   function cabinet1922Status(Q, choice) {
     const S = Q.S, spec = CABINET_1922[choice];
-    if (!spec) return no('Unknown answer.');
+    if (!spec) return no(L('Unknown answer.', 'Nieznana odpowiedź.'));
     if (!cabinet1922Due(Q)) return no('');
     if (choice === 'pils_candidate') {
       const head = Q.polish_presidency && Q.polish_presidency.current;
-      if (head && head.holder_id !== 'jozef_pilsudski') return no('The Naczelnik is no longer in office; his candidate does not stand.');
-      if (!government.inWindow('sliwinski', Q.time)) return no('Śliwiński stands only in June and July 1922.');
+      if (head && head.holder_id !== 'jozef_pilsudski') return no(L('The Naczelnik is no longer in office; his candidate does not stand.', 'Naczelnik Państwa nie sprawuje już urzędu; jego kandydat nie startuje.'));
+      if (!government.inWindow('sliwinski', Q.time)) return no(L('Śliwiński stands only in June and July 1922.', 'Śliwiński kandyduje tylko w czerwcu i lipcu 1922 roku.'));
     }
     if (spec.candidate && !government.candidateStatus(Q, spec.candidate, {configuration_id: 'expert', pps_mode: 'external_support'}).available) {
-      return no('This candidate is not available.');
+      return no(L('This candidate is not available.', 'Ten kandydat jest niedostępny.'));
     }
     return OK;
   }
@@ -800,18 +838,18 @@
 
   function responseStatus(Q, choice, protect) {
     const S = Q.S;
-    if (RESPONSES.indexOf(choice) < 0) return no('Unknown answer.');
+    if (RESPONSES.indexOf(choice) < 0) return no(L('Unknown answer.', 'Nieznana odpowiedź.'));
     if (!responseDue(Q)) return no('');
     if (choice === 'defend') {
-      if (!unionLineAgreed(S) && !pressWorks(S)) return no('Needs an agreed line of a union branch or a working press.');
+      if (!unionLineAgreed(S) && !pressWorks(S)) return no(L('Needs an agreed line of a union branch or a working press.', 'Wymaga uzgodnionej linii branży związkowej albo działającej prasy.'));
       const cost = 1 + (protect ? 0.5 : 0);
-      if (S.party_orgs.cash + 1e-9 < cost) return no('Needs ' + fmt(cost) + ' R.');
-      if (protect && !militiaFree(S)) return no('The Milicja is banned, has no members or already protects another matter.');
+      if (S.party_orgs.cash + 1e-9 < cost) return no(L('Needs ' + fmt(cost) + ' R.', 'Wymaga ' + fmt(cost) + ' R.'));
+      if (protect && !militiaFree(S)) return no(L('The Milicja is banned, has no members or already protects another matter.', 'Milicja jest objęta zakazem, nie ma członków albo już chroni inną sprawę.'));
       return OK;
     }
     if (choice === 'retaliation') {
-      if (!militiaFree(S)) return no('Needs able members of the Milicja assigned to it: it is banned, empty or busy elsewhere.');
-      if (S.party_orgs.cash + 1e-9 < 0.5) return no('Needs 0.5 R.');
+      if (!militiaFree(S)) return no(L('Needs able members of the Milicja assigned to it: it is banned, empty or busy elsewhere.', 'Wymaga zdolnych do działania członków Milicji przydzielonych do tego zadania: Milicja jest objęta zakazem, pusta albo zajęta gdzie indziej.'));
+      if (S.party_orgs.cash + 1e-9 < 0.5) return no(L('Needs 0.5 R.', 'Wymaga 0,5 R.'));
     }
     return OK;
   }
@@ -844,27 +882,29 @@
       if (!record.clash || !record.clash.clash) {
         democracyEffect(Q, 'presidency.assassination_response:' + key, 2, 'B4');
         record.democracy_effect = 2;
-        lines.push('The gathering passes peacefully: democracy +2 once. It does not authorise a general strike.');
+        lines.push(L('The gathering passes peacefully: democracy +2 once. It does not authorise a general strike.', 'Zgromadzenie przebiega spokojnie: jednorazowo demokracja +2. Nie upoważnia do strajku generalnego.'));
       } else {
-        lines.push('The gathering ends in a clash: one serious episode of violence and a case of responsibility; no gain for democracy.');
+        lines.push(L('The gathering ends in a clash: one serious episode of violence and a case of responsibility; no gain for democracy.', 'Zgromadzenie kończy się starciem: jeden poważny przypadek przemocy i sprawa odpowiedzialności; bez zysku dla demokracji.'));
       }
     } else if (choice === 'restraint') {
       if (publicPromise(S, t)) {
         government.factionReaction(Q, 'lewica', {dissent: 3}, {id: 'b4_restraint:' + key, kind: 'broken_promise', reverse: null});
-        lines.push('The Left had been promised a public mobilisation: its dissent +3.');
+        lines.push(L('The Left had been promised a public mobilisation: its dissent +3.', 'Lewicy obiecano publiczną mobilizację: jej sprzeciw +3.'));
       }
-      lines.push('PPS concentrates on the lawful succession: no free mass campaign.');
+      lines.push(L('PPS concentrates on the lawful succession: no free mass campaign.', 'PPS skupia się na legalnej sukcesji: bez darmowej kampanii masowej.'));
     } else {
       record.cost_R = 0.5;
       S.party_orgs.cash = Math.max(0, round(S.party_orgs.cash - 0.5, 6));
       record.organisations = ['militia'];
       government.factionReaction(Q, 'centrum', {dissent: 8}, {id: 'b4_retaliation:' + key, kind: 'retaliation', reverse: null});
-      lines.push('Without an internal agreement the Centrum objects: dissent +8.');
+      lines.push(L('Without an internal agreement the Centrum objects: dissent +8.', 'Bez wewnętrznego porozumienia Centrum protestuje: sprzeciw +8.'));
       record.clash = gatheringClash(Q, {id: 'b4:' + key, uncontrolled: uncontrolledPressure(S, 0), repressive: repressive, authorised: true,
         compliance: militiaCompliance(S), militia_people: S.militia.strength, audience: 'workers',
         subject: 'a retaliatory confrontation of Milicja PPS after the assassination'});
-      lines.push(record.clash.clash ? 'The Milicja clashes with its opponents: executed unlawful violence, a case against the PPS organisations and a reaction of the authorities.' :
-        'The authorised confrontation does not take place: the declaration creates no victims and no case.');
+      lines.push(record.clash.clash ? L('The Milicja clashes with its opponents: executed unlawful violence, a case against the PPS organisations and a reaction of the authorities.',
+        'Milicja ściera się z przeciwnikami: dokonana bezprawna przemoc, sprawa przeciw organizacjom PPS i reakcja władz.') :
+        L('The authorised confrontation does not take place: the declaration creates no victims and no case.',
+          'Zatwierdzona konfrontacja nie dochodzi do skutku: deklaracja nie powoduje ofiar ani sprawy.'));
     }
     P.episodes.push(record);
     // The decision is also kept in the record of the presidency (stage 2), as before.
@@ -921,12 +961,13 @@
 
   function cultStatus(Q, choice) {
     const S = Q.S;
-    if (CULT_ANSWERS.indexOf(choice) < 0) return no('Unknown answer.');
+    if (CULT_ANSWERS.indexOf(choice) < 0) return no(L('Unknown answer.', 'Nieznana odpowiedź.'));
     if (!cultDue(Q)) return no('');
     if (choice === 'democracy_mass') {
-      if (!hostConsents(S)) return no('No clergyman or host agrees to hold it (relation with the Christian Democrats below ' + HOST_RELATION + ').');
-      if (!(S.party_orgs.apparatus.level >= 1)) return no('Needs a working organisation of PPS.');
-      if (S.party_orgs.cash + 1e-9 < 1) return no('Needs 1 R.');
+      if (!hostConsents(S)) return no(L('No clergyman or host agrees to hold it (relation with the Christian Democrats below ' + HOST_RELATION + ').',
+        'Żaden duchowny ani gospodarz nie zgadza się jej odprawić (relacja z chadecją poniżej ' + HOST_RELATION + ').'));
+      if (!(S.party_orgs.apparatus.level >= 1)) return no(L('Needs a working organisation of PPS.', 'Wymaga działającej organizacji PPS.'));
+      if (S.party_orgs.cash + 1e-9 < 1) return no(L('Needs 1 R.', 'Wymaga 1 R.'));
     }
     return OK;
   }
@@ -942,26 +983,26 @@
     if (choice === 'condemn') {
       if (S.actors.pps.strategy.form_of_power === 'parliamentarism') {
         government.factionReaction(Q, 'centrum', {dissent: -3}, {id: 'b5_condemn:' + key, kind: 'agreed_line', reverse: null});
-        lines.push('The line agreed with the Centrum: its dissent −3.');
+        lines.push(L('The line agreed with the Centrum: its dissent −3.', 'Linia uzgodniona z Centrum: jego sprzeciw −3.'));
       }
       if (hostConsents(S)) {
         government.changeRelation(Q, 'pschd', 2, 'b5_joint_condemnation:' + key);
-        lines.push('The Christian Democrats join the condemnation of violence: relation +2.');
+        lines.push(L('The Christian Democrats join the condemnation of violence: relation +2.', 'Chadecja przyłącza się do potępienia przemocy: relacja +2.'));
       }
-      lines.push('PPS condemns the cult of the assassin and orders its members not to disturb the service.');
+      lines.push(L('PPS condemns the cult of the assassin and orders its members not to disturb the service.', 'PPS potępia kult zamachowca i nakazuje członkom nie zakłócać nabożeństwa.'));
     } else if (choice === 'democracy_mass') {
       record.cost_R = 1;
       S.party_orgs.cash = Math.max(0, round(S.party_orgs.cash - 1, 6));
       lines.push(party.campaignEffect(Q, pressWorks(S) ? 'press' : 'unions', 'democracy', 'workers').text);
       democracyEffect(Q, 'society.niewiadomski_cult:' + key, 2, 'B5');
       record.democracy_effect = 2;
-      lines.push('The mass for the defence of democracy is held once: democracy +2. No alliance with the Christian Democrats follows from it.');
+      lines.push(L('The mass for the defence of democracy is held once: democracy +2. No alliance with the Christian Democrats follows from it.', 'Msza w obronie demokracji zostaje odprawiona raz: demokracja +2. Nie wynika z niej żaden sojusz z chadecją.'));
     } else {
       if (publicPromise(S, t)) {
         government.factionReaction(Q, 'lewica', {dissent: 3}, {id: 'b5_stay_out:' + key, kind: 'broken_promise', reverse: null});
-        lines.push('A public answer had been promised: the Left’s dissent +3.');
+        lines.push(L('A public answer had been promised: the Left’s dissent +3.', 'Obiecano publiczną odpowiedź: sprzeciw Lewicy +3.'));
       }
-      lines.push('PPS does not engage its organisations.');
+      lines.push(L('PPS does not engage its organisations.', 'PPS nie angażuje swoich organizacji.'));
     }
     // 17.7: uncontrolled behaviour only from the existing unrest (17.4); an instruction of restraint reaches the
     // members of PPS, not everyone present. Without it no clash is drawn.
@@ -969,7 +1010,8 @@
     if (unrest > 0) {
       record.clash = gatheringClash(Q, {id: 'b5:' + key, uncontrolled: unrest, repressive: false, authorised: false,
         compliance: choice === 'stay_out' ? 0 : militiaCompliance(S), subject: 'an uncontrolled confrontation at the commemoration of the assassin'});
-      if (record.clash.clash) lines.push('People outside the control of PPS clash at the commemoration: one serious episode of violence.');
+      if (record.clash.clash) lines.push(L('People outside the control of PPS clash at the commemoration: one serious episode of violence.',
+        'Ludzie spoza kontroli PPS ścierają się podczas uroczystości: jeden poważny przypadek przemocy.'));
     }
     P.episodes.push(record);
     if (S.events.active && S.events.active.definition_id === 'society.niewiadomski_cult') S.events.active.payload = {choice: choice};
@@ -1098,17 +1140,20 @@
     if (spec.log) addLogEntry(S, spec.log, speech.id, Q.time);
     S.history.actions.push({t: Q.time, action_id: 'politics.pils_parliament_criticism.' + choice, speech_id: speech.id, cost_t: 0});
     party.writeMirrors(Q);
-    Q.pl_crit_result = {support: 'PPS supports the criticism of parliamentarism. The relation with Piłsudski improves; the Centre objects.',
-      defend: 'PPS defends parliament and the lawful change of governments. The relation with Piłsudski worsens; the Piłsudczycy object.',
-      reform: 'PPS says parliament should be reformed to work better. This supports the line of reform; it creates no project and wins no votes.'}[choice];
+    Q.pl_crit_result = rules.getLanguage() === 'pl' ? {support: 'PPS popiera krytykę parlamentaryzmu. Relacja z Piłsudskim się poprawia; Centrum protestuje.',
+      defend: 'PPS broni parlamentu i legalnej zmiany rządów. Relacja z Piłsudskim się pogarsza; piłsudczycy protestują.',
+      reform: 'PPS mówi, że parlament trzeba zreformować, by działał lepiej. To wspiera linię reformy; nie tworzy projektu i nie zdobywa głosów.'}[choice] :
+      {support: 'PPS supports the criticism of parliamentarism. The relation with Piłsudski improves; the Centre objects.',
+        defend: 'PPS defends parliament and the lawful change of governments. The relation with Piłsudski worsens; the Piłsudczycy object.',
+        reform: 'PPS says parliament should be reformed to work better. This supports the line of reform; it creates no project and wins no votes.'}[choice];
     return speech;
   }
 
   function criticismView(Q) {
     const S = Q.S, speech = speechDue(S);
-    Q.pl_crit_topic = speech ? speech.topic : '';
+    Q.pl_crit_topic = speech ? rules.storedText(speech.topic) : '';
     Q.pl_crit_warning = criticismContradicts(S, 'support') ?
-      'This contradicts our line of parliamentarism: the Centre objects once more (+3).' : '';
+      L('This contradicts our line of parliamentarism: the Centre objects once more (+3).', 'To sprzeczne z naszą linią parlamentaryzmu: Centrum protestuje jeszcze raz (+3).') : '';
     return speech;
   }
 
@@ -1116,9 +1161,12 @@
 
   function statusLine(Q) {
     const S = Q.S, P = S.politics;
-    return 'Democracy ' + fmt(P.democracy) + ', authority of the Sejm ' + fmt(P.parliament_authority) + ', grievance ' +
+    return L('Democracy ' + fmt(P.democracy) + ', authority of the Sejm ' + fmt(P.parliament_authority) + ', grievance ' +
       fmt(P.national_grievance) + ', violence ' + fmt(P.violence) + '; pressure towards a coup ' + fmt(S.coup.pressure) +
-      (openMilitaryCase(S) ? ' (an open military case)' : '') + '.';
+      (openMilitaryCase(S) ? ' (an open military case)' : '') + '.',
+      'demokracja ' + fmt(P.democracy) + ', autorytet Sejmu ' + fmt(P.parliament_authority) + ', niezadowolenie ' +
+      fmt(P.national_grievance) + ', przemoc ' + fmt(P.violence) + '; presja na zamach ' + fmt(S.coup.pressure) +
+      (openMilitaryCase(S) ? ' (otwarta sprawa wojskowa)' : '') + '.');
   }
 
   return Object.freeze({

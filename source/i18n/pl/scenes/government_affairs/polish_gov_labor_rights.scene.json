@@ -1,0 +1,25 @@
+{
+ "source": "scenes/government_affairs/polish_gov_labor_rights.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Workers’ Rights": "title: Prawa robotnicze",
+  "subtitle: Labour: working time, collective agreements, derogations.": "subtitle: Resort Pracy: czas pracy, układy zbiorowe, odstępstwa.",
+  "= Workers’ rights": "= Prawa robotnicze",
+  "Labour enforces the law on working time and oversees agreements between employers and unions. An inspection is a small reform: one decision, 1 B for two months of building, then 1 B to run. Its law goes to the Sejm and the Senate in the same decision. A collective agreement and a derogation cost the budget nothing.": "Resort Pracy egzekwuje ustawę o czasie pracy i nadzoruje porozumienia między pracodawcami a związkami. Inspekcja to mała reforma: jedna decyzja, 1 B przez dwa miesiące budowy, potem 1 B na utrzymanie. Jej ustawa trafia do Sejmu i Senatu w tej samej decyzji. Układ zbiorowy i odstępstwo nic nie kosztują budżetu.",
+  "title: Inspection and enforcement of working time": "title: Inspekcja i egzekwowanie czasu pracy",
+  "subtitle: Protection +1 level once it works; 1 B for 2 months, then 1 B a month. Needs the law.": "subtitle: Ochrona o 1 poziom wyższa, gdy inspekcja działa; 1 B przez 2 miesiące, potem 1 B miesięcznie. Wymaga ustawy.",
+  "title: Collective agreements": "title: Układy zbiorowe",
+  "subtitle: 1 T, 0 B: the employers who sign pay. Wages rise once through the economy, with no reaction of business.": "subtitle: 1 T, 0 B: płacą pracodawcy, którzy podpisują. Płace rosną jednorazowo przez gospodarkę, bez reakcji przedsiębiorców.",
+  "= Collective agreements": "= Układy zbiorowe",
+  "A collective agreement of one branch records its employers, the union, the covered workers, the wage conditions and a term of twelve months. Its wage effect is that of a settled wage clause: +2 pp times the branch's scope, for two months. A branch in an open dispute settles its wages there instead.": "Układ zbiorowy jednej branży zapisuje jej pracodawców, związek, objętych nim pracowników, warunki płacowe i dwunastomiesięczny okres obowiązywania. Jego skutek płacowy jest taki jak skutek uzgodnionej klauzuli płacowej: +2 pkt proc. razy zakres branży, przez dwa miesiące. Branża w otwartym sporze ustala płace w tym sporze.",
+  "- @polish_gov_labor_rights: Back to the card.": "- @polish_gov_labor_rights: Wróć do karty.",
+  "title: Industry": "title: Przemysł",
+  "subtitle: Wages +1.2 pp for two months (scope 0.6).": "subtitle: Płace +1,2 pkt proc. przez dwa miesiące (zakres 0,6).",
+  "title: Railways": "title: Kolej",
+  "subtitle: Wages +0.4 pp for two months (scope 0.2).": "subtitle: Płace +0,4 pkt proc. przez dwa miesiące (zakres 0,2).",
+  "title: Agricultural labour": "title: Robotnicy rolni",
+  "title: Limited derogations in threatened plants": "title: Ograniczone odstępstwa w zagrożonych zakładach",
+  "subtitle: 1 T, 0 B, for the oldest recorded plant in difficulty, six months: business pressure −4; its workers' grievance +3. Needs the law on working time.": "subtitle: 1 T, 0 B, dla najstarszego zapisanego zakładu w trudnościach, na sześć miesięcy: presja przedsiębiorców −4; niezadowolenie jego robotników +3. Wymaga ustawy o czasie pracy.",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

@@ -1,0 +1,33 @@
+{
+ "source": "scenes/polish_unemployment_bill.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Protection of the Unemployed": "title: Ochrona bezrobotnych",
+  "subtitle: One initiative of PPS in the chapter: D1, then D2.": "subtitle: Jedna inicjatywa PPS w rozdziale: D1, potem D2.",
+  "Q.pl_bill_start_why = PolishRules.mainActionAvailable(Q) ? '' : 'This month’s action has already been used.';": "Q.pl_bill_start_why = PolishRules.mainActionAvailable(Q) ? '' : 'Akcja tego miesiąca została już wykorzystana.';",
+  "= The protection of the unemployed": "= Ochrona bezrobotnych",
+  "[? if not pl_bill_d2 : **D1.** PPS can start its own bill for the protection of the unemployed: a ready project with its cost, its financing and its executor, Labour's administration. It is one initiative in the chapter; refusing closes the offer without a bonus. ?]": "[? if not pl_bill_d2 : **D1.** PPS może wnieść własny projekt ustawy o ochronie bezrobotnych: gotowy projekt z kosztem, finansowaniem i wykonawcą — administracją resortu Pracy. To jedna inicjatywa w rozdziale; odmowa zamyka ofertę bez premii. ?]",
+  "[? if pl_bill_d2 : **D2.** The bill is ready. The full variant costs 2 B a month once it is in force; the limited variant covers the same people with a lower benefit for 1 B. The Sejm votes at once; the Senate has 30 days to object and 30 more to return the bill. ?]": "[? if pl_bill_d2 : **D2.** Projekt jest gotowy. Pełny wariant kosztuje 2 B miesięcznie, gdy wejdzie w życie; wariant ograniczony obejmuje tych samych ludzi niższym zasiłkiem za 1 B. Sejm głosuje od razu; Senat ma 30 dni na sprzeciw i kolejne 30 na zwrot ustawy. ?]",
+  "[? if pl_bill_d2 : Forecast of the full variant: [+ pl_bill_full_forecast +]. Of the limited variant: [+ pl_bill_limited_forecast +]. [? if pl_bill_compromise : Ready to support the limited variant: [+ pl_bill_compromise +]. ?] ?]": "[? if pl_bill_d2 : Prognoza dla pełnego wariantu: [+ pl_bill_full_forecast +]. Dla ograniczonego: [+ pl_bill_limited_forecast +]. [? if pl_bill_compromise : Gotowi poprzeć wariant ograniczony: [+ pl_bill_compromise +]. ?] ?]",
+  "title: D1: Start the legislative initiative of PPS": "title: D1: Rozpocznij inicjatywę ustawodawczą PPS",
+  "subtitle: 1 T; a full project with cost, financing and executor. D2 comes next month.": "subtitle: 1 T; pełny projekt z kosztem, finansowaniem i wykonawcą. D2 przyjdzie w następnym miesiącu.",
+  "Q.pl_bill_result = 'The bill is ready. Its decision — the full or the limited variant — comes after this month is settled.';": "Q.pl_bill_result = 'Projekt jest gotowy. Decyzja o nim — pełny albo ograniczony wariant — zapadnie po rozliczeniu tego miesiąca.';",
+  "title: D1: Do not take up the initiative": "title: D1: Nie podejmuj inicjatywy",
+  "subtitle: 0 T; the offer closes for the chapter, without a bonus.": "subtitle: 0 T; oferta zamyka się na cały rozdział, bez premii.",
+  "Q.pl_bill_result = 'PPS does not take up its own bill in this chapter.';": "Q.pl_bill_result = 'PPS nie podejmuje w tym rozdziale własnego projektu ustawy.';",
+  "title: D2: Keep the full project of PPS": "title: D2: Zachowaj pełny projekt PPS",
+  "subtitle: 0 T; the Sejm votes now. Full variant: 2 B a month once in force. It may fall.": "subtitle: 0 T; Sejm głosuje teraz. Pełny wariant: 2 B miesięcznie po wejściu w życie. Może upaść.",
+  "Q.pl_bill_result = out.law.status === 'rejected' ? 'The Sejm rejects the full bill: ' + out.law.reason + '. The initiative ends.' :": "Q.pl_bill_result = out.law.status === 'rejected' ? 'Sejm odrzuca pełny projekt: ' + PolishRules.storedText(out.law.reason) + '. Inicjatywa się kończy.' :",
+  "'The Sejm passes the full bill. The Senate decides by ' + out.law.senate_notice_due + '; no payment is made before the law is in force.';": "'Sejm uchwala pełny projekt. Senat decyduje do ' + PolishRules.dateText(out.law.senate_notice_due) + '; przed wejściem ustawy w życie nie ma żadnych wypłat.';",
+  "title: D2: Accept the limited variant for wider support": "title: D2: Przyjmij wariant ograniczony dla szerszego poparcia",
+  "subtitle: 0 T; the same recipients, a lower benefit: 1 B a month.": "subtitle: 0 T; ci sami odbiorcy, niższy zasiłek: 1 B miesięcznie.",
+  "Q.pl_bill_result = out.law.status === 'rejected' ? 'The Sejm rejects the limited bill: ' + out.law.reason + '. The initiative ends.' :": "Q.pl_bill_result = out.law.status === 'rejected' ? 'Sejm odrzuca ograniczony projekt: ' + PolishRules.storedText(out.law.reason) + '. Inicjatywa się kończy.' :",
+  "'The Sejm passes the limited bill. The Senate decides by ' + out.law.senate_notice_due + '.';": "'Sejm uchwala ograniczony projekt. Senat decyduje do ' + PolishRules.dateText(out.law.senate_notice_due) + '.';",
+  "title: D2: Withdraw the bill": "title: D2: Wycofaj projekt",
+  "subtitle: The initiative ends; offered only when no compromise exists.": "subtitle: Inicjatywa się kończy; możliwe tylko wtedy, gdy nie ma kompromisu.",
+  "Q.pl_bill_result = 'PPS withdraws its bill. The initiative is closed for the chapter.';": "Q.pl_bill_result = 'PPS wycofuje swój projekt. Inicjatywa jest zamknięta do końca rozdziału.';",
+  "title: Not now": "title: Nie teraz",
+  "subtitle: The decision waits; ordinary actions continue.": "subtitle: Decyzja czeka; zwykłe działania trwają.",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

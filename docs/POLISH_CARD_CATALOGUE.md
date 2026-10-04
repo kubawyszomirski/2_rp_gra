@@ -1,6 +1,6 @@
 # Polska wersja: katalog kart do kodowania
 
-**Stan — referencja 0.49, 4 października 2026. Wszystkie partie przejrzane; brak otwartych pytań; wszystkie karty wdrożone (etapy 0–8 planu implementacji).** Katalog zbiera w jednym miejscu to, co [referencja techniczna](POLISH_TECHNICAL_REFERENCE.md) mówi o każdej karcie i wydarzeniu pierwszego rozdziału. Jest ściągą do kodowania: jedna tabela na kartę. Katalog powstał w całości w wersji 0.32. Wszystkie sześć partii użytkownik przejrzał w 0.33–0.38. Rozstrzygnięte pytania pogrupowano w rozdziale 10.
+**Stan — referencja 0.51, 4 października 2026. Wszystkie partie przejrzane; brak otwartych pytań; wszystkie karty wdrożone (etapy 0–8 planu implementacji); teksty kart mają też wersję polską (referencja 23.23); obecną linię kart stanowisk, Składek i Programu gospodarczego można potwierdzić (referencja 23.24).** Katalog zbiera w jednym miejscu to, co [referencja techniczna](POLISH_TECHNICAL_REFERENCE.md) mówi o każdej karcie i wydarzeniu pierwszego rozdziału. Jest ściągą do kodowania: jedna tabela na kartę. Katalog powstał w całości w wersji 0.32. Wszystkie sześć partii użytkownik przejrzał w 0.33–0.38. Rozstrzygnięte pytania pogrupowano w rozdziale 10.
 
 ## 1. Jak czytać katalog
 
@@ -32,7 +32,7 @@ Z 4.3, 4.4 i 17.1 referencji; dotyczą każdej karty poniżej i nie są powtarza
 - **Doradca** może zastąpić koszt czasu jednego wskazanego kroku (0 T i wspólne odnowienie doradców). Nie płaci R ani B i nie zastępuje prawa ani wykonawcy.
 - **Podakcje z 17.2** nie są osobnymi kartami do losowania. Mają jedno ID, jeden koszt i jedno odnowienie niezależnie od drogi wejścia.
 - **Pula, agenda, wydarzenie:** „pula” to zwykły dobór, „agenda” daje gwarantowany dostęp po otwarciu sprawy, „wydarzenie” pojawia się po wyzwalaczu.
-- **Stanowiska (Z — 0.32):** obecnej linii nie wybiera się ponownie. Opcja jest widoczna i zablokowana z powodem „obecna linia”, a zamknięcie karty nic nie kosztuje. Od 0.34–0.37 tak samo działają karty Organizacje, Składki, Program gospodarczy, Jedność, Stosunek do rządu, Kontrola wojska i karty rządowe: nie ma płatnych opcji bez skutku.
+- **Stanowiska (Z — 0.51, zastępuje Z — 0.32):** obecną linię można potwierdzić. Kosztuje to akcję miesiąca (1 T) i zwykłe odnowienie karty, ale nic więcej nie zmienia: bez premii, reakcji frakcji i wpisu w historii linii. Tak samo działają „Utrzymać” w Składkach i ten sam zestaw w Programie gospodarczym. Wyjście z karty bez działania nazywa się „Odłóż na rękę” (ang. „Return to hand”, dawniej „Close card”) i nic nie kosztuje. Karty Organizacje, Jedność, Stosunek do rządu, Kontrola wojska i karty rządowe od 0.34–0.37 nie mają płatnych opcji bez skutku.
 - **Praca organizacyjna:** zawsze dostępne działanie `party.organize_without_funds` (5.7 katalogu) chroni przed utknięciem bez pieniędzy.
 - **Wdrożenie (K, etap 1, 0.42):** dobieranie i odnowienia doradców działają już według tych zasad. Odziedziczone karty pobierają koszt przy otwarciu, ale zamknięcie z pierwszej strony cofa go w całości; darmowe odrzucenie daje karta „Discard a card”. Nowe karty z tego katalogu dostaną pełną transakcję.
 - **Wdrożenie (K, etap 2, 0.43):** wybór marszałka (7.8), wybór prezydenta (7.9), wybory 1922 (9.3) i następne wybory (9.16) działają w kodzie. Karta 7.7 przeszła do etapu 3, bo zgoda partnerów wymaga oceny oferty i umów z tego etapu.
@@ -141,15 +141,15 @@ Osiem kart, którymi PPS ogłasza trwałą linię (10.5–10.10). Mają wspólny
 | Zapisuje | `S.actors.pps.strategy.direction`; na starcie `parliamentary_socialism` | P |
 | Odczytują | `strategyFactor` kampanii (5.3, 10.6); nastawienie organizacji przez kampanie zgodne z linią (10.3: kampania danej linii +8). Oferty partnerzy oceniają po treści, nie po deklaracji (10.5) | Z / P |
 | Co zostaje po karcie | Nic w agendzie; po odnowieniu karta wraca do puli | P |
-| Obecny kod | `source/scenes/party_affairs/polish_party_direction.scene.dry` (etap 5, 0.46): cztery kierunki, obecny zablokowany z powodem, 1 T i odnowienie 6 M; reakcje frakcji z profilu `faction_stance_profile_v1` zapisują przyczynę, którą może cofnąć E3. Reguły w `source/rules/polish_party.js`. Odziedziczona `source/scenes/party_affairs/ideology.scene.dry` („Questions of Ideology”) ma warunek `not polish_party_rules` | K |
+| Obecny kod | `source/scenes/party_affairs/polish_party_direction.scene.dry` (etap 5, 0.46): cztery kierunki, obecny można potwierdzić bez skutków (0.51), 1 T i odnowienie 6 M; reakcje frakcji z profilu `faction_stance_profile_v1` zapisują przyczynę, którą może cofnąć E3. Reguły w `source/rules/polish_party.js`. Odziedziczona `source/scenes/party_affairs/ideology.scene.dry` („Questions of Ideology”) ma warunek `not polish_party_rules` | K |
 | Źródła i testy | 10.5, 10.6, 17.2; test „Demokracja zależna od sytuacji” w 21.1 | — |
 
 | Opcja (ID) | Zablokowana, gdy | Skutek od razu | Skutek później | Status |
 |---|---|---|---|---|
-| Socjalizm parlamentarny (`parliamentary_socialism`) | to obecna linia | Zapis linii, bez premii | Kampania o temacie parlamentarnym: `strategyFactor` 1,10, gdy istnieje adresat i żądanie | Z / P |
-| Samodzielna polityka klasowa (`class_independence`) | to obecna linia | Zapis linii | Kampania klasowa 1,10. Sojusze są dozwolone, ale wspólna lista sprzeczna z publiczną obietnicą wymaga renegocjacji | Z / P |
-| Obrona zdobyczy robotniczych (`workers_gains`) | to obecna linia | Zapis linii | Kampania obrony zdobyczy 1,10, a 1,15, gdy w agendzie jest ograniczenie tej zdobyczy | Z / P |
-| Szeroki ruch demokratyczny (`democratic_movement`) | to obecna linia | Zapis linii | Kampania demokratyczna 1,00 bez zagrożenia i 1,15 przy `democraticThreat`, czyli presji ≥40 albo aktywnej sprawie przemocy antykonstytucyjnej | Z / P |
+| Socjalizm parlamentarny (`parliamentary_socialism`) | — (obecna linia: potwierdzenie za 1 T, bez skutków) | Zapis linii, bez premii | Kampania o temacie parlamentarnym: `strategyFactor` 1,10, gdy istnieje adresat i żądanie | Z / P |
+| Samodzielna polityka klasowa (`class_independence`) | — (obecna linia: potwierdzenie za 1 T, bez skutków) | Zapis linii | Kampania klasowa 1,10. Sojusze są dozwolone, ale wspólna lista sprzeczna z publiczną obietnicą wymaga renegocjacji | Z / P |
+| Obrona zdobyczy robotniczych (`workers_gains`) | — (obecna linia: potwierdzenie za 1 T, bez skutków) | Zapis linii | Kampania obrony zdobyczy 1,10, a 1,15, gdy w agendzie jest ograniczenie tej zdobyczy | Z / P |
+| Szeroki ruch demokratyczny (`democratic_movement`) | — (obecna linia: potwierdzenie za 1 T, bez skutków) | Zapis linii | Kampania demokratyczna 1,00 bez zagrożenia i 1,15 przy `democraticThreat`, czyli presji ≥40 albo aktywnej sprawie przemocy antykonstytucyjnej | Z / P |
 | Reakcja frakcji na zmianę | — | Brak w profilu `faction_stance_profile_v1` | — | P; historycznie B |
 
 **Otwarte pytania:** brak.
@@ -167,15 +167,15 @@ Osiem kart, którymi PPS ogłasza trwałą linię (10.5–10.10). Mają wspólny
 | Zapisuje | `S.actors.pps.strategy.main_opponent`; na starcie `nationalist_right` | P |
 | Odczytują | Cel kampanii polemicznej (5.3, 10.6); relacja zaatakowanego adresata. Bez adresata linię można przyjąć, ale kampania polemiczna jest zablokowana z powodem „brak adresata” | Z / P |
 | Co zostaje po karcie | Nic w agendzie; sam wybór nie obala gabinetu ani nie zrywa umowy | P |
-| Obecny kod | `source/scenes/party_affairs/polish_party_main_opponent.scene.dry` (etap 5, 0.46): cztery stanowiska, obecne zablokowane; adresaci polemiki w karcie Media (5.3 katalogu); przy linii „przemoc antykonstytucyjna” adresatem jest od etapu 7 (0.48) partia, której potwierdzone śledztwo MSW przypisało otwartą sprawę przemocy (nigdy sama PPS). Odziedziczona `source/scenes/party_affairs/enemies.scene.dry` ma warunek `not polish_party_rules` | K |
+| Obecny kod | `source/scenes/party_affairs/polish_party_main_opponent.scene.dry` (etap 5, 0.46): cztery stanowiska, obecne można potwierdzić bez skutków (0.51); adresaci polemiki w karcie Media (5.3 katalogu); przy linii „przemoc antykonstytucyjna” adresatem jest od etapu 7 (0.48) partia, której potwierdzone śledztwo MSW przypisało otwartą sprawę przemocy (nigdy sama PPS). Odziedziczona `source/scenes/party_affairs/enemies.scene.dry` ma warunek `not polish_party_rules` | K |
 | Źródła i testy | 10.5, 10.6, 5.3, 9.5, 17.2; testy „Preferencje”, „Wrogość a kanał” w 21.1 | — |
 
 | Opcja (ID) | Zablokowana, gdy | Skutek od razu | Skutek później | Status |
 |---|---|---|---|---|
-| Prawica narodowa (`nationalist_right`) | to obecna linia | Zapis celu; adresat: ZLN | Kampania polemiczna przenosi głosy do PPS tylko z puli adresata w komórce, z limitem jej wielkości; adresat −2 relacji raz na kampanię | Z / P |
-| Komuniści (`communists`) | to obecna linia | Zapis celu; adresat: KPP | Jak wyżej wobec KPP; kampanie po −2 mogą zbić relację z KPP poniżej 10 i zamknąć drogę do kontaktu (9.5) | Z / P |
-| Obrońcy kapitału i ziemiaństwa (`capital_land`) | to obecna linia | Zapis celu; adresaci: partie z ideałem `fiscal` ≤ −1 i `land` ≤ −1 w aktualnym profilu 8.6 (test: PSChD i ZLN) | Zmiana profilu partii zmienia listę adresatów | Z / P |
-| Przemoc przeciw konstytucji, niezależnie od strony (`unconstitutional_force`) | to obecna linia | Zapis celu; adresat: partia z otwartą sprawą przemocy antykonstytucyjnej w dzienniku 15.2 | Bez takiej sprawy kampania polemiczna jest zablokowana | Z / P |
+| Prawica narodowa (`nationalist_right`) | — (obecna linia: potwierdzenie za 1 T, bez skutków) | Zapis celu; adresat: ZLN | Kampania polemiczna przenosi głosy do PPS tylko z puli adresata w komórce, z limitem jej wielkości; adresat −2 relacji raz na kampanię | Z / P |
+| Komuniści (`communists`) | — (obecna linia: potwierdzenie za 1 T, bez skutków) | Zapis celu; adresat: KPP | Jak wyżej wobec KPP; kampanie po −2 mogą zbić relację z KPP poniżej 10 i zamknąć drogę do kontaktu (9.5) | Z / P |
+| Obrońcy kapitału i ziemiaństwa (`capital_land`) | — (obecna linia: potwierdzenie za 1 T, bez skutków) | Zapis celu; adresaci: partie z ideałem `fiscal` ≤ −1 i `land` ≤ −1 w aktualnym profilu 8.6 (test: PSChD i ZLN) | Zmiana profilu partii zmienia listę adresatów | Z / P |
+| Przemoc przeciw konstytucji, niezależnie od strony (`unconstitutional_force`) | — (obecna linia: potwierdzenie za 1 T, bez skutków) | Zapis celu; adresat: partia z otwartą sprawą przemocy antykonstytucyjnej w dzienniku 15.2 | Bez takiej sprawy kampania polemiczna jest zablokowana | Z / P |
 | Reakcja frakcji na zmianę | — | Brak w profilu `faction_stance_profile_v1` | — | P; historycznie B |
 
 PSChD nie należy do puli prawicy narodowej, choć w grze tworzy z ZLN listę `chzjn` (6.5). Przypisanie adresatów to reguła gry (P).
@@ -200,9 +200,9 @@ PSChD nie należy do puli prawicy narodowej, choć w grze tworzy z ZLN listę `c
 
 | Opcja (ID) | Zablokowana, gdy | Skutek od razu | Skutek później | Status |
 |---|---|---|---|---|
-| Popierać wpływ (`support`) | to obecna linia | Relacja z Piłsudskim +4, bez powtórki przy powrocie do tej linii w ciągu 12 M; Centrum +3 sprzeciwu | Wszystkie ustępstwa z 16.7 dostępne, przy ich relacji i zgodach. W F4 poparcie Piłsudskiego kosztuje Centrum +3 zamiast +8 | Z / P |
-| Popierać warunkowo (`conditional`) | to obecna linia | Relacja bez zmian | Ustępstwa z 16.7 z gwarancją: funkcja pod kontrolą cywilną i premierostwo legalnego gabinetu spełniają ją z definicji, a inspektorat wymaga zapisu o odpowiedzialności przed Sejmem. Linia z gwarancjami zapisuje warunki PPS przed zamachem (16.8.7) | Z / P |
-| Sprzeciwiać się ingerencji wojska (`oppose_military_interference`) | to obecna linia | Relacja −4; Piłsudczycy +3 sprzeciwu | Do jawnej zmiany linii blokuje samodzielny inspektorat, czyli władzę wojskową niezależną od rządu. Pozostałe ustępstwa, rozmowy i poparcie legalnego premiera zostają dostępne | Z / P |
+| Popierać wpływ (`support`) | — (obecna linia: potwierdzenie za 1 T, bez skutków) | Relacja z Piłsudskim +4, bez powtórki przy powrocie do tej linii w ciągu 12 M; Centrum +3 sprzeciwu | Wszystkie ustępstwa z 16.7 dostępne, przy ich relacji i zgodach. W F4 poparcie Piłsudskiego kosztuje Centrum +3 zamiast +8 | Z / P |
+| Popierać warunkowo (`conditional`) | — (obecna linia: potwierdzenie za 1 T, bez skutków) | Relacja bez zmian | Ustępstwa z 16.7 z gwarancją: funkcja pod kontrolą cywilną i premierostwo legalnego gabinetu spełniają ją z definicji, a inspektorat wymaga zapisu o odpowiedzialności przed Sejmem. Linia z gwarancjami zapisuje warunki PPS przed zamachem (16.8.7) | Z / P |
+| Sprzeciwiać się ingerencji wojska (`oppose_military_interference`) | — (obecna linia: potwierdzenie za 1 T, bez skutków) | Relacja −4; Piłsudczycy +3 sprzeciwu | Do jawnej zmiany linii blokuje samodzielny inspektorat, czyli władzę wojskową niezależną od rządu. Pozostałe ustępstwa, rozmowy i poparcie legalnego premiera zostają dostępne | Z / P |
 
 Linia nie jest warunkiem karty 16.7, tylko ogranicza dostępne ustępstwa (10.7).
 
@@ -226,9 +226,9 @@ Linia nie jest warunkiem karty 16.7, tylko ogranicza dostępne ustępstwa (10.7)
 
 | Opcja (ID) | Zablokowana, gdy | Skutek od razu | Skutek później | Status |
 |---|---|---|---|---|
-| Parlamentaryzm (`parliamentarism`) | to obecna linia | Zapis linii; oś ustrojowa +2 | Zachowuje drogę większości, odpowiedzialności gabinetu i demokratyzacji | Z / P |
-| Silniejsza prezydentura (`strong_presidency`) | to obecna linia | Zapis linii; oś 0 | Tylko przy tej linii PPS może przygotować arbitraż prezydenta (7.4 katalogu); późniejsza zmiana linii nie kasuje projektu. Legalna reforma prezydentury nie jest ingerencją wojska | Z / P |
-| Rady robotnicze (`workers_councils`) | to obecna linia | Oś −2. Przy pierwszym przyjęciu w rozdziale: Lewica +4 surowej siły, potem jedna normalizacja; Centrum +3 sprzeciwu zamiast reakcji ogólnej | Powrót do tej linii nie daje ponownie siły. Nie daje głosów KPP, reprezentacji pracowniczej ani wyborców. Państwo rad należy do kontynuacji | Z / P |
+| Parlamentaryzm (`parliamentarism`) | — (obecna linia: potwierdzenie za 1 T, bez skutków) | Zapis linii; oś ustrojowa +2 | Zachowuje drogę większości, odpowiedzialności gabinetu i demokratyzacji | Z / P |
+| Silniejsza prezydentura (`strong_presidency`) | — (obecna linia: potwierdzenie za 1 T, bez skutków) | Zapis linii; oś 0 | Tylko przy tej linii PPS może przygotować arbitraż prezydenta (7.4 katalogu); późniejsza zmiana linii nie kasuje projektu. Legalna reforma prezydentury nie jest ingerencją wojska | Z / P |
+| Rady robotnicze (`workers_councils`) | — (obecna linia: potwierdzenie za 1 T, bez skutków) | Oś −2. Przy pierwszym przyjęciu w rozdziale: Lewica +4 surowej siły, potem jedna normalizacja; Centrum +3 sprzeciwu zamiast reakcji ogólnej | Powrót do tej linii nie daje ponownie siły. Nie daje głosów KPP, reprezentacji pracowniczej ani wyborców. Państwo rad należy do kontynuacji | Z / P |
 
 **Otwarte pytania:** brak.
 
@@ -250,10 +250,10 @@ Linia nie jest warunkiem karty 16.7, tylko ogranicza dostępne ustępstwa (10.7)
 
 | Opcja (ID) | Zablokowana, gdy | Skutek od razu | Skutek później | Status |
 |---|---|---|---|---|
-| Partia robotnicza (`workers`) | to obecna linia | Zapis linii | +0,10 do mnożnika rozbudowy: trzy branże związkowe i komórki robotników, w tym robotników rolnych | Z / P |
-| Partia robotniczo-chłopska (`workers_peasants`) | to obecna linia | Zapis linii | Jak wyżej oraz komórki chłopów | Z / P |
-| Szeroka partia demokratyczna (`broad_democratic`) | to obecna linia | Zapis linii | +0,10 w komórkach inteligencji i drobnomieszczaństwa | Z / P |
-| Własny profil i docieranie przez sojusze (`allied_reach`) | to obecna linia | Zapis linii | Zasięg partnera dopiero po jego zgodzie, bez liczenia tych samych odbiorców dwa razy | Z / P |
+| Partia robotnicza (`workers`) | — (obecna linia: potwierdzenie za 1 T, bez skutków) | Zapis linii | +0,10 do mnożnika rozbudowy: trzy branże związkowe i komórki robotników, w tym robotników rolnych | Z / P |
+| Partia robotniczo-chłopska (`workers_peasants`) | — (obecna linia: potwierdzenie za 1 T, bez skutków) | Zapis linii | Jak wyżej oraz komórki chłopów | Z / P |
+| Szeroka partia demokratyczna (`broad_democratic`) | — (obecna linia: potwierdzenie za 1 T, bez skutków) | Zapis linii | +0,10 w komórkach inteligencji i drobnomieszczaństwa | Z / P |
+| Własny profil i docieranie przez sojusze (`allied_reach`) | — (obecna linia: potwierdzenie za 1 T, bez skutków) | Zapis linii | Zasięg partnera dopiero po jego zgodzie, bez liczenia tych samych odbiorców dwa razy | Z / P |
 | Reakcja frakcji na zmianę | — | Brak w profilu `faction_stance_profile_v1` | — | P; historycznie B |
 
 Rozbudową zasięgu jest każde podniesienie zasięgu branży związkowej albo `base_reach_pps` komórek docelowego środowiska: rozbudowa branży (5.1 katalogu), praca organizacyjna (5.7 katalogu) i akcje Pużaka, Arciszewskiego i Ziemięckiego (6.6 katalogu). Zasięg prasy się nie liczy. Łączny mnożnik rozbudowy z TUR jest ograniczony testowo do 1,30; nasycenie kampanii obowiązuje nadal.
@@ -278,10 +278,10 @@ Rozbudową zasięgu jest każde podniesienie zasięgu branży związkowej albo `
 
 | Opcja (ID) | Zablokowana, gdy | Skutek od razu | Skutek później | Status |
 |---|---|---|---|---|
-| Federacja (`federation`) | to obecna linia | Zapis linii; oś +2 | Program krajowej przebudowy z członami ukraińskim i białoruskim; wykonanie w kontynuacji. Dozwolone zgodne kroki pośrednie | Z / P |
-| Autonomia wojewódzka (`regional_autonomy`) | to obecna linia | Zapis linii; oś +1 | Państwo jednolite z przekazanymi kompetencjami. W rozdziale 1 wykonalna jest tylko ograniczona autonomia z 17.12.6 | Z / P |
-| Swobody języka, szkół i organizacji bez autonomii (`cultural_rights`) | to obecna linia | Zapis linii; oś 0 | Prawa językowe, szkolne i organizacyjne bez autonomii politycznej | Z / P |
-| Polonizacja (`polonisation`) | to obecna linia | Zapis linii; oś −2 | Odrzuca odrębną autonomię i instytucje narodowe | Z / P |
+| Federacja (`federation`) | — (obecna linia: potwierdzenie za 1 T, bez skutków) | Zapis linii; oś +2 | Program krajowej przebudowy z członami ukraińskim i białoruskim; wykonanie w kontynuacji. Dozwolone zgodne kroki pośrednie | Z / P |
+| Autonomia wojewódzka (`regional_autonomy`) | — (obecna linia: potwierdzenie za 1 T, bez skutków) | Zapis linii; oś +1 | Państwo jednolite z przekazanymi kompetencjami. W rozdziale 1 wykonalna jest tylko ograniczona autonomia z 17.12.6 | Z / P |
+| Swobody języka, szkół i organizacji bez autonomii (`cultural_rights`) | — (obecna linia: potwierdzenie za 1 T, bez skutków) | Zapis linii; oś 0 | Prawa językowe, szkolne i organizacyjne bez autonomii politycznej | Z / P |
+| Polonizacja (`polonisation`) | — (obecna linia: potwierdzenie za 1 T, bez skutków) | Zapis linii; oś −2 | Odrzuca odrębną autonomię i instytucje narodowe | Z / P |
 | Reakcja frakcji na zmianę | — | Brak w profilu `faction_stance_profile_v1` | — | P; historycznie B |
 
 Żadna deklaracja nie daje od razu poparcia agregatu `other_minorities`. Temat słowiański nie oznacza, że każdy wyborca tego agregatu jest Ukraińcem albo Białorusinem (10.8).
@@ -308,9 +308,9 @@ Skutek dla gracza: linia za autonomią pomaga w rozmowach z reprezentacją mniej
 
 | Opcja (ID) | Zablokowana, gdy | Skutek od razu | Skutek później | Status |
 |---|---|---|---|---|
-| Szeroka współpraca i prawa w programie (`broad`) | to obecna linia | Zapis linii; oś +2 | Dopuszcza porozumienie o prawach i wspólne działania | Z / P |
-| Współpraca pracownicza (`labour_only`) | to obecna linia | Zapis linii; oś 0 | Dopuszcza porozumienia pracy, zwłaszcza z Bundem | Z / P |
-| Brak współpracy (`none`) | to obecna linia | Zapis linii; oś −2 | Blokuje inicjowanie nowych wspólnych działań. Nie cofa już obowiązujących praw obywateli | Z / P |
+| Szeroka współpraca i prawa w programie (`broad`) | — (obecna linia: potwierdzenie za 1 T, bez skutków) | Zapis linii; oś +2 | Dopuszcza porozumienie o prawach i wspólne działania | Z / P |
+| Współpraca pracownicza (`labour_only`) | — (obecna linia: potwierdzenie za 1 T, bez skutków) | Zapis linii; oś 0 | Dopuszcza porozumienia pracy, zwłaszcza z Bundem | Z / P |
+| Brak współpracy (`none`) | — (obecna linia: potwierdzenie za 1 T, bez skutków) | Zapis linii; oś −2 | Blokuje inicjowanie nowych wspólnych działań. Nie cofa już obowiązujących praw obywateli | Z / P |
 | Reakcja frakcji na zmianę | — | Brak w profilu `faction_stance_profile_v1` | — | P; historycznie B |
 
 Bund nie jest partią (5.5): nie ma go na liście partii i relacji, na listach wyborczych ani w Sejmie. Jest organizacją robotniczą, partnerem wspólnych akcji pracowniczych. Jego zaufanie zaczyna od 50 i zmienia się tylko przez wykonane wspólne akcje.
@@ -335,9 +335,9 @@ Bund nie jest partią (5.5): nie ma go na liście partii i relacji, na listach w
 
 | Opcja (ID) | Zablokowana, gdy | Skutek od razu | Skutek później | Status |
 |---|---|---|---|---|
-| Solidaryzować się z państwem sowieckim jako próbą budowy socjalizmu (`sympathetic`) | to obecna linia | Relacja KPRP/KPP +5, jednorazowo w rozdziale; Centrum +5 sprzeciwu | Łatwiejsze rozmowy z komunistami; trudniejsza wiarygodność tam, gdzie oferta wymaga potępienia autorytaryzmu | Z / P |
-| Zachować niezależność (`independent`) | to obecna linia | Bez zmiany relacji i sprzeciwu | Możliwa ograniczona współpraca na konkretnych warunkach | Z / P |
-| Potępić sowiecki autorytaryzm (`critical`) | to obecna linia | Relacja KPRP/KPP −5; bez reakcji frakcji | Większa zgodność ofert obrony pluralizmu. Relacja poniżej 10 zamyka drogę do kontaktu (9.5) | Z / P |
+| Solidaryzować się z państwem sowieckim jako próbą budowy socjalizmu (`sympathetic`) | — (obecna linia: potwierdzenie za 1 T, bez skutków) | Relacja KPRP/KPP +5, jednorazowo w rozdziale; Centrum +5 sprzeciwu | Łatwiejsze rozmowy z komunistami; trudniejsza wiarygodność tam, gdzie oferta wymaga potępienia autorytaryzmu | Z / P |
+| Zachować niezależność (`independent`) | — (obecna linia: potwierdzenie za 1 T, bez skutków) | Bez zmiany relacji i sprzeciwu | Możliwa ograniczona współpraca na konkretnych warunkach | Z / P |
+| Potępić sowiecki autorytaryzm (`critical`) | — (obecna linia: potwierdzenie za 1 T, bez skutków) | Relacja KPRP/KPP −5; bez reakcji frakcji | Większa zgodność ofert obrony pluralizmu. Relacja poniżej 10 zamyka drogę do kontaktu (9.5) | Z / P |
 
 Reakcję frakcji przy potępieniu usunięto w 0.33: dokumentacja nie wskazuje frakcji popierającej model sowiecki.
 
@@ -448,15 +448,16 @@ Kampania mobilizacyjna i śledztwo prasowe należą do tej karty (Z — 0.34). �
 | Zapisuje | `dues` w granicach 1–4, na starcie 2; `apparatus.member_index` | P |
 | Odczytują | Miesięczne wpływy i cel członkostwa (13.1) | P |
 | Co zostaje po karcie | Nic w agendzie; podgląd pokazuje przed zatwierdzeniem nowe wpływy i koszty utrzymania | P |
-| Obecny kod | `source/scenes/party_affairs/polish_party_dues.scene.dry` (etap 5, 0.46): składki 1–4, obecna wysokość zablokowana z powodem; skutek dla członkostwa i wpływów w miesięcznej księdze partii (`source/rules/polish_party.js`) | K |
+| Obecny kod | `source/scenes/party_affairs/polish_party_dues.scene.dry` (etap 5, 0.46): składki 1–4; od 0.51 „utrzymać” za 1 T i odnowienie, bez skutków; skutek dla członkostwa i wpływów w miesięcznej księdze partii (`source/rules/polish_party.js`) | K |
 | Źródła i testy | 13.1, 10.5, 17.2; testy „Składki”, „Cel członkostwa” w 21.1 | — |
 
 | Opcja (ID) | Zablokowana, gdy | Skutek od razu | Skutek później | Status |
 |---|---|---|---|---|
 | Podwyższyć | składki na poziomie 4 | Indeks członkostwa ×0,95, gdy płace realne <90 albo bezrobocie ≥8, a w innych warunkach ×0,98 | Wyższe wpływy; cel członkostwa −5% za każdy poziom powyżej 2 | Z / P |
 | Obniżyć | składki na poziomie 1 | Indeks członkostwa +2 punkty, najwyżej 150 | Niższe wpływy; cel członkostwa +5% przy poziomie 1 | Z / P |
+| Utrzymać (`keep`) | — | Składki, członkostwo i wpływy bez zmian | Karta czeka 6 M jak po zmianie | Z |
 
-Nie ma płatnej opcji „Utrzymać”: obecny poziom jest widoczny jako obecny, a zamknięcie karty bez zmiany jest bezpłatne (Z — 0.34). Strata członków nie przechodzi automatycznie na preferencje wyborcze (13.1).
+„Utrzymać” to potwierdzenie obecnego poziomu: kosztuje akcję miesiąca i odnowienie 6 M, ale niczego nie zmienia; odłożenie karty na rękę bez wyboru jest bezpłatne (Z — 0.51, zastępuje bezpłatne pozostawienie z 0.34). Strata członków nie przechodzi automatycznie na preferencje wyborcze (13.1).
 
 **Otwarte pytania:** brak.
 
@@ -647,7 +648,7 @@ Karty talii partyjnej, które budują kontakty, program gospodarczy i spójnoś�
 | Zapisuje | `S.actors.pps.strategy.economic_priorities`, zbiór; na starcie pusty | P |
 | Odczytują | Agenda przygotowania projektów (12.2); oceny ofert i obietnice | P |
 | Co zostaje po karcie | Przyjęte priorytety trafiają do agendy jako dostępne przygotowanie, każde z kosztami 12.2 | P |
-| Obecny kod | `source/scenes/party_affairs/polish_party_economic_program.scene.dry` (etap 5, 0.46): do trzech z pięciu priorytetów, ten sam zestaw zablokowany; nie wprowadza reformy. Odziedziczona `source/scenes/party_affairs/crisis_program.scene.dry` zależy od niemieckich pól i nie pojawia się w polskiej talii | K |
+| Obecny kod | `source/scenes/party_affairs/polish_party_economic_program.scene.dry` (etap 5, 0.46): do trzech z pięciu priorytetów; od 0.51 ten sam zestaw można potwierdzić za 1 T bez skutków; nie wprowadza reformy. Odziedziczona `source/scenes/party_affairs/crisis_program.scene.dry` zależy od niemieckich pól i nie pojawia się w polskiej talii | K |
 | Źródła i testy | 10.5, 12.2, 17.2; test „Program gospodarczy” w 21.1 | — |
 
 | Opcja (ID) | Zablokowana, gdy | Skutek od razu | Skutek później | Status |
@@ -657,9 +658,9 @@ Karty talii partyjnej, które budują kontakty, program gospodarczy i spójnoś�
 | Podatki majątkowe i kapitał na inwestycje (`wealth_and_investment`) | czwarty element zestawu | Zapis priorytetu | Wybór instrumentu z 11.9; deklaracja nie dodaje B | Z / P |
 | Uspołecznienie wybranych przedsiębiorstw (`socialisation`) | czwarty element zestawu | Zapis priorytetu | Przygotowanie zakresu przejęć, rekompensat i zarządzania | Z / P |
 | Program agrarno-robotniczy (`agrarian_labour`) | czwarty element zestawu | Zapis priorytetu | Wariant parcelacji, modernizacji albo ochrony pracy rolnej (12.6) | Z / P |
-| Pusty zestaw | obecny zestaw jest już pusty | Świadome wycofanie priorytetów, bez nagrody | Nie kasuje ukończonej ustawy, wydatku ani podpisanej obietnicy | Z |
+| Pusty zestaw | — (przy pustym obecnym zestawie: potwierdzenie za 1 T, bez skutków) | Świadome wycofanie priorytetów, bez nagrody | Nie kasuje ukończonej ustawy, wydatku ani podpisanej obietnicy | Z |
 
-Zatwierdzić można tylko zestaw różny od obecnego; zamknięcie karty bez zmiany jest bezpłatne (Z — 0.35). Ponowne wybranie istniejącego priorytetu nie daje postępu projektu. Zestaw może łączyć stabilizację i roboty publiczne; o zgodności decydują finansowanie i zakres oferty.
+Zatwierdzić można także zestaw równy obecnemu: to potwierdzenie za 1 T i odnowienie 6 M, bez innych skutków; odłożenie karty na rękę bez zatwierdzenia jest bezpłatne (Z — 0.51, zastępuje Z — 0.35). Ponowne wybranie istniejącego priorytetu nie daje postępu projektu. Zestaw może łączyć stabilizację i roboty publiczne; o zgodności decydują finansowanie i zakres oferty.
 
 **Otwarte pytania:** brak.
 
@@ -2000,7 +2001,7 @@ G2, G3 i G5 nie są osobnymi ekranami.
 
 Pytania przy kartach układały się w kilka rodzajów; jedno pytanie mogło należeć do dwóch. Wszystkie rozstrzygnięto w 0.33–0.38.
 
-1. **Płatne opcje bez skutku.** Rozstrzygnięte: od 0.32–0.37 takie opcje zastępuje bezpłatne zamknięcie karty w kartach stanowisk, Organizacje, Składki, Program gospodarczy, Jedność, Stosunek do rządu, Kontrola wojska i w kartach rządowych. Brak otwartych pytań tego rodzaju.
+1. **Płatne opcje bez skutku.** Rozstrzygnięte: od 0.32–0.37 takie opcje zastępuje bezpłatne zamknięcie karty w kartach stanowisk, Organizacje, Składki, Program gospodarczy, Jedność, Stosunek do rządu, Kontrola wojska i w kartach rządowych. W 0.51 użytkownik przywrócił płatne potwierdzenie obecnej linii w kartach stanowisk, Składkach i Programie gospodarczym (1 T i zwykłe odnowienie, bez innych skutków; referencja 23.24); odłożenie karty na rękę dalej nic nie kosztuje. Brak otwartych pytań tego rodzaju.
 2. **Reakcje frakcji bez profilu.** Referencja każe frakcji reagować, ale nie mówi której. Rozstrzygnięte w 0.33–0.38. Brak otwartych pytań tego rodzaju.
 3. **Brak ID albo karty.** Działanie ma koszt, ale nie ma identyfikatora albo miejsca w talii. Rozstrzygnięte w 0.33–0.38; ostatnie ID dostały karty E3 i E6. Brak otwartych pytań tego rodzaju.
 4. **Brakujące liczby albo skutki.** Opcja jest zatwierdzona, ale bez kosztu B albo skutku. Rozstrzygnięte w 0.33–0.37. Brak otwartych pytań tego rodzaju.

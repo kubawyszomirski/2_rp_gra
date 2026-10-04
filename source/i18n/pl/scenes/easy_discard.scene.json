@@ -1,0 +1,8 @@
+{
+ "source": "scenes/easy_discard.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Return to hand": "title: Odłóż na rękę",
+  "subtitle: Leave without acting; the card goes back to your hand. Opening a card and returning it cost nothing.": "subtitle: Odejdź bez działania; karta wraca na rękę. Otwarcie karty i odłożenie jej nic nie kosztuje."
+ }
+}

@@ -1,0 +1,19 @@
+{
+ "source": "scenes/polish_event_credit_crisis.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Credit Crisis": "title: Kryzys kredytowy",
+  "subtitle: Credit dries up; firms cut work.": "subtitle: Kredyt wysycha; firmy ograniczają pracę.",
+  "= A credit crisis": "= Kryzys kredytowy",
+  "Credit has fallen below 35 for two months, or the scenario's credit shock of 1925 has begun. Credit and output fall; firms cut work. PPS can use the portfolios it holds.": "Kredyt od dwóch miesięcy jest poniżej 35 albo zaczął się przewidziany w scenariuszu szok kredytowy 1925 roku. Kredyt i produkcja spadają; firmy ograniczają pracę. PPS może użyć resortów, które ma.",
+  "title: A conditional credit for threatened activity": "title: Warunkowy kredyt dla zagrożonej działalności",
+  "subtitle: Prepares the credit instrument of Treasury or Industry; its launch waits in the agenda.": "subtitle: Przygotowuje instrument kredytowy resortu Skarbu albo Przemysłu; jego uruchomienie czeka w agendzie.",
+  "title: Keep up employment through orders or prepared works": "title: Podtrzymaj zatrudnienie zamówieniami albo przygotowanymi robotami",
+  "subtitle: One package of public orders, or the launch of prepared public works.": "subtitle: Jeden pakiet zamówień publicznych albo uruchomienie przygotowanych robót publicznych.",
+  "title: Concentrate the means on protection for those losing work": "title: Skup środki na osłonie dla tracących pracę",
+  "subtitle: The protection for the unemployed; no automatic fall of unemployment.": "subtitle: Osłona dla bezrobotnych; bez automatycznego spadku bezrobocia.",
+  "title: No new intervention": "title: Bez nowej interwencji",
+  "subtitle: No expense and no bonus.": "subtitle: Bez wydatków i bez premii.",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

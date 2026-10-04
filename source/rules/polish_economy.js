@@ -23,6 +23,8 @@
   const copy = value => (value === undefined ? undefined : JSON.parse(JSON.stringify(value)));
   const clip = (value, low, high) => Math.max(low, Math.min(high, value));
   const T = rules.timeOf;
+  // Polish version (decision 2A): the texts of this module are written in both languages and L picks the current one.
+  const L = rules.L;
 
   const ECONOMY_PROFILE_ID = 'economy_simple_v1';
   // The electoral weight of the "unemployed" row stays at its opening value until the cells of stage 5
@@ -434,7 +436,7 @@
   const round = (value, digits) => Math.round(value * Math.pow(10, digits)) / Math.pow(10, digits);
   const signed = (value, digits) => {
     const text = Math.abs(value).toFixed(digits);
-    return (value > 0 && +text !== 0 ? '+' : value < 0 && +text !== 0 ? '−' : '') + text;
+    return (value > 0 && +text !== 0 ? '+' : value < 0 && +text !== 0 ? '−' : '') + rules.num(+text, digits);
   };
 
   // Fields that inherited scenes and displays read, written only from S.economy (leak 1 of 20.2):
@@ -452,30 +454,33 @@
   }
 
   const REGIME_NAMES = Object.freeze({marka: 'Polish mark', stabilizing: 'Polish mark, currency reform in progress', zloty: 'złoty'});
+  const REGIME_NAMES_PL = Object.freeze({marka: 'marka polska', stabilizing: 'marka polska, trwa reforma walutowa', zloty: 'złoty'});
   const BUSINESS_NAMES = Object.freeze({quiet: 'calm', warning: 'warning', active: 'active resistance (credit and output penalties)'});
+  const BUSINESS_NAMES_PL = Object.freeze({quiet: 'spokój', warning: 'ostrzeżenie', active: 'aktywny opór (kary dla kredytu i produkcji)'});
 
   function economyDisplay(Q) {
     const S = Q.S, E = S.economy;
     const forecast = budgetAt(S, Q.time);
     const delivery = fiscalDelivery(forecast.budget);
-    const deliveryText = delivery === 1 ? 'programmes run in full' : delivery === 0.5 ? 'programmes run at half strength' : 'programmes are stopped';
-    const parts = ['base ' + signed(E.budget_base, 0), 'taxes ' + signed(forecast.tax_level, 0)];
-    if (Math.abs(forecast.cycle) >= 0.005) parts.push('business cycle ' + signed(forecast.cycle, 2));
-    if (forecast.inflation_burden) parts.push('inflation −' + forecast.inflation_burden);
-    if (Math.abs(forecast.policy_budget) > 1e-9) parts.push('instruments ' + signed(forecast.policy_budget, 0));
-    if (Math.abs(forecast.project_charges) > 1e-9) parts.push('programmes −' + round(forecast.project_charges, 2));
-    if (forecast.emission_used >= 0.005) parts.push('emission ' + signed(forecast.emission_used, 2));
+    const deliveryText = delivery === 1 ? L('programmes run in full', 'programy działają w pełni') :
+      delivery === 0.5 ? L('programmes run at half strength', 'programy działają w połowie') : L('programmes are stopped', 'programy są wstrzymane');
+    const parts = [L('base ', 'podstawa ') + signed(E.budget_base, 0), L('taxes ', 'podatki ') + signed(forecast.tax_level, 0)];
+    if (Math.abs(forecast.cycle) >= 0.005) parts.push(L('business cycle ', 'koniunktura ') + signed(forecast.cycle, 2));
+    if (forecast.inflation_burden) parts.push(L('inflation −', 'inflacja −') + rules.num(forecast.inflation_burden));
+    if (Math.abs(forecast.policy_budget) > 1e-9) parts.push(L('instruments ', 'instrumenty ') + signed(forecast.policy_budget, 0));
+    if (Math.abs(forecast.project_charges) > 1e-9) parts.push(L('programmes −', 'programy −') + rules.num(round(forecast.project_charges, 2)));
+    if (forecast.emission_used >= 0.005) parts.push(L('emission ', 'emisja ') + signed(forecast.emission_used, 2));
     return {
-      budget: signed(round(forecast.budget, 2), 2) + ' B this month (' + parts.join(', ') + '); ' + deliveryText,
-      inflation: round(E.inflation_m, 1).toFixed(1) + '% a month',
-      real_wage: round(E.real_wage, 1).toFixed(1),
-      output: round(E.output, 1).toFixed(1) + ' (last month ' + signed(round(E.last_growth, 2), 2) + '%)',
-      credit: round(E.credit, 1).toFixed(1),
-      unemployment: round(E.unemployment, 2).toFixed(2) + '%' + (E.market_unemployment - E.unemployment > 1e-9 ?
-        ' (' + round(E.market_unemployment, 2).toFixed(2) + '% without public works)' : ''),
-      agrarian: round(S.society.agrarian_pressure, 1).toFixed(1),
-      business: BUSINESS_NAMES[E.business_state] + ', pressure ' + round(E.business_pressure, 0),
-      currency: REGIME_NAMES[E.currency_regime] || E.currency_regime,
+      budget: signed(round(forecast.budget, 2), 2) + L(' B this month (', ' B w tym miesiącu (') + parts.join(', ') + '); ' + deliveryText,
+      inflation: rules.num(round(E.inflation_m, 1), 1) + L('% a month', '% miesięcznie'),
+      real_wage: rules.num(round(E.real_wage, 1), 1),
+      output: rules.num(round(E.output, 1), 1) + L(' (last month ', ' (w poprzednim miesiącu ') + signed(round(E.last_growth, 2), 2) + '%)',
+      credit: rules.num(round(E.credit, 1), 1),
+      unemployment: rules.num(round(E.unemployment, 2), 2) + '%' + (E.market_unemployment - E.unemployment > 1e-9 ?
+        ' (' + rules.num(round(E.market_unemployment, 2), 2) + L('% without public works)', '% bez robót publicznych)') : ''),
+      agrarian: rules.num(round(S.society.agrarian_pressure, 1), 1),
+      business: L(BUSINESS_NAMES[E.business_state], BUSINESS_NAMES_PL[E.business_state]) + L(', pressure ', ', presja ') + round(E.business_pressure, 0),
+      currency: L(REGIME_NAMES[E.currency_regime], REGIME_NAMES_PL[E.currency_regime]) || E.currency_regime,
       forecast: forecast,
     };
   }

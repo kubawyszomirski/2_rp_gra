@@ -5,7 +5,7 @@
   "main": "out/html/index.html",
   "scripts": {
     "dendrynexus": "dendrynexus",
-    "build": "dendrynexus make-html && cp node_modules/d3/dist/d3.min.js out/html/d3.v7.min.js && cp -R assets/img out/html/ && cp source/rules/*.js out/html/",
+    "build": "dendrynexus make-html && cp node_modules/d3/dist/d3.min.js out/html/d3.v7.min.js && cp -R assets/img out/html/ && cp source/rules/*.js out/html/ && node tools/i18n/build.cjs",
     "serve": "python3 -m http.server 8000 --directory out/html",
     "test": "node --test tests/*.test.js"
   },

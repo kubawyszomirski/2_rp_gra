@@ -6,7 +6,7 @@ tags: party_affairs
 view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.programmeAvailable(Q) !}
 on-arrival: {!
 // Card party.economic_program (technical reference 10.5; card catalogue 6.2): the whole set of 0–3
-// priorities in one transaction, 1 T, cd 6 M; only a set different from the present one can be confirmed.
+// priorities in one transaction, 1 T, cd 6 M; the present set can be confirmed too (Z — 0.51).
 Q.pl_prog_draft = Q.S.actors.pps.strategy.economic_priorities.join(',');
 PolishParty.programmeView(Q);
 !}
@@ -82,6 +82,7 @@ go-to: menu
 
 @confirm
 title: Confirm the programme
+subtitle: [? if pl_prog_confirm_same = 1 : This is the present programme. Confirming it costs this month's action and the card waits 6 months; nothing else changes. ?][? if pl_prog_confirm_same = 0 : 1 T; the card then waits 6 months. ?]
 choose-if: {! return PolishParty.programmeStatus(Q, String(Q.pl_prog_draft || '').split(',').filter(Boolean)).available !}
 unavailable-subtitle: [+ pl_prog_confirm_why +]
 on-arrival: {!

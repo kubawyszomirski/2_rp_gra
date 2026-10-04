@@ -50,13 +50,16 @@ d3.linegraph = function(noTicks, noDots, parties, partyColors, partyNames, dataM
       const minDate = d3.min(dates);
       const xScale = d3.scaleUtc([minDate, addMonths(maxDate, additionalMonths)], [marginLeft, width - marginRight]);
 
+      // Polish version (decision 6A): month labels in the language of the page.
+      const POLISH_MONTHS = ['sty', 'lut', 'mar', 'kwi', 'maj', 'cze', 'lip', 'sie', 'wrz', 'paź', 'lis', 'gru'];
+      const monthLabel = window.currentLanguage === 'pl' ? (d => POLISH_MONTHS[d.getMonth()] + ' ' + d.getFullYear()) : d3.timeFormat('%b %Y');
       var xaxis = d3.axisBottom()
-        .tickFormat(d3.timeFormat('%b %Y'))
+        .tickFormat(monthLabel)
         .tickValues(dates)
         .scale(xScale);
       if (noTicks) {
         xaxis = d3.axisBottom()
-        .tickFormat(d3.timeFormat('%b %Y'))
+        .tickFormat(monthLabel)
         .ticks(10)
         .scale(xScale);
       }

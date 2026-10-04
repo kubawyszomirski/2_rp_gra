@@ -1,0 +1,17 @@
+{
+ "source": "scenes/government_affairs/polish_gov_minority_schools.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Language Rights and Minority Schools": "title: Prawa językowe i szkoły mniejszości",
+  "subtitle: Education: one language rule for minority schools.": "subtitle: Resort Oświaty: jedna zasada językowa dla szkół mniejszości.",
+  "= Language rights and minority schools": "= Prawa językowe i szkoły mniejszości",
+  "One language rule, carried out by a large school project (1 B for 4 months, then 1 B). A carried-out agreement with a minority representation raises that club’s relation by 4; a declaration alone gives nothing.": "Jedna zasada językowa, realizowana przez duży projekt szkolny (1 B przez 4 miesiące, potem 1 B). Wykonane porozumienie z reprezentacją mniejszości podnosi relację z jej klubem o 4; sama deklaracja nic nie daje.",
+  "title: Teaching in the own language": "title: Nauczanie we własnym języku",
+  "subtitle: Carries out the adopted rights in schools; trust of the minorities covered +4.": "subtitle: Wprowadza przyjęte prawa w szkołach; zaufanie objętych mniejszości +4.",
+  "title: Agreed bilingualism": "title: Uzgodniona dwujęzyczność",
+  "subtitle: Needs a voluntarily accepted agreement; it settles that agreement.": "subtitle: Wymaga dobrowolnie przyjętego porozumienia; wykonuje to porozumienie.",
+  "title: Dominance of the Polish language": "title: Dominacja języka polskiego",
+  "subtitle: Imposed assimilation: trust of the minorities −6 and a conflict with their agreements.": "subtitle: Narzucona asymilacja: zaufanie mniejszości −6 i konflikt z ich porozumieniami.",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

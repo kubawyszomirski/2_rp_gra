@@ -1,0 +1,18 @@
+{
+ "source": "qdisplays/month.qdisplay.dry",
+ "status": "complete",
+ "lines": {
+  "(1..1) January": "(1..1) Styczeń",
+  "(2..2) February": "(2..2) Luty",
+  "(3..3) March": "(3..3) Marzec",
+  "(4..4) April": "(4..4) Kwiecień",
+  "(5..5) May": "(5..5) Maj",
+  "(6..6) June": "(6..6) Czerwiec",
+  "(7..7) July": "(7..7) Lipiec",
+  "(8..8) August": "(8..8) Sierpień",
+  "(9..9) September": "(9..9) Wrzesień",
+  "(10..10) October": "(10..10) Październik",
+  "(11..11) November": "(11..11) Listopad",
+  "(12..12) December": "(12..12) Grudzień"
+ }
+}

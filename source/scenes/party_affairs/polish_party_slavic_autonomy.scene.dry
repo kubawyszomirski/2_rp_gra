@@ -5,8 +5,8 @@ is-card: true
 tags: party_affairs
 view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.stanceAvailable(Q, 'slavic_autonomy') !}
 on-arrival: {!
-// Card party.slavic_autonomy (catalogue 4.6; technical reference 10.8): 1 T, 0 R, the card then waits 6 months. The present line is shown and cannot be
-// chosen again; closing the card is free (Z — 0.32).
+// Card party.slavic_autonomy (catalogue 4.6; technical reference 10.8): 1 T, 0 R, the card then waits 6 months. Z — 0.51: the present line can be
+// confirmed for 1 T and the usual wait; returning the card to the hand is free.
 PolishParty.stanceView(Q, 'slavic_autonomy');
 !}
 
@@ -22,7 +22,7 @@ The present line: **[+ pl_stance_current +]**. A new declaration costs this mont
 
 @federation
 title: Federation
-subtitle: The programme of a federal state; axis +2. Only compatible steps can be carried out in this chapter.
+subtitle: [? if pl_stance_federation_present = 1 : This is the present line. Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_federation_present = 0 : The programme of a federal state; axis +2. Only compatible steps can be carried out in this chapter. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'slavic_autonomy', 'federation').available !}
 unavailable-subtitle: [+ pl_stance_federation_why +]
 on-arrival: {!
@@ -32,7 +32,7 @@ go-to: result
 
 @regional_autonomy
 title: Autonomy of the voivodeships
-subtitle: A unitary state with devolved powers; axis +1.
+subtitle: [? if pl_stance_regional_autonomy_present = 1 : This is the present line. Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_regional_autonomy_present = 0 : A unitary state with devolved powers; axis +1. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'slavic_autonomy', 'regional_autonomy').available !}
 unavailable-subtitle: [+ pl_stance_regional_autonomy_why +]
 on-arrival: {!
@@ -42,7 +42,7 @@ go-to: result
 
 @cultural_rights
 title: Freedom of language, schools and organisations without autonomy
-subtitle: Axis 0.
+subtitle: [? if pl_stance_cultural_rights_present = 1 : This is the present line. Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_cultural_rights_present = 0 : Axis 0. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'slavic_autonomy', 'cultural_rights').available !}
 unavailable-subtitle: [+ pl_stance_cultural_rights_why +]
 on-arrival: {!
@@ -52,7 +52,7 @@ go-to: result
 
 @polonisation
 title: Polonisation
-subtitle: No separate autonomy or national institutions; axis −2.
+subtitle: [? if pl_stance_polonisation_present = 1 : This is the present line. Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_polonisation_present = 0 : No separate autonomy or national institutions; axis −2. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'slavic_autonomy', 'polonisation').available !}
 unavailable-subtitle: [+ pl_stance_polonisation_why +]
 on-arrival: {!

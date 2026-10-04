@@ -121,17 +121,18 @@ for (const l of section(tr, '### 17.2. ', '### 17.3. ').split('\n').filter(x => 
   }
 }
 
-// ---- Stance cards: the current line is blocked in every option; the approved faction profile is written.
+// ---- Stance cards: the present line can be confirmed in every option (Z — 0.51, replacing the 0.32 block); the
+// approved faction profile is written.
 for (const e of entries.filter(x => x.num.startsWith('4.'))) {
-  for (const r of e.options.filter(r => !r[0].startsWith('Reakcja frakcji'))) assert.equal(r[1], 'to obecna linia', `${e.num}: current line blocked in ${r[0]}`);
+  for (const r of e.options.filter(r => !r[0].startsWith('Reakcja frakcji'))) assert.equal(r[1], '— (obecna linia: potwierdzenie za 1 T, bez skutków)', `${e.num}: present line confirmable in ${r[0]}`);
 }
 const profile = ['Piłsudczycy odrzucają `pils_influence=oppose_military_interference`', 'Centrum odrzuca `pils_influence=support`'];
 for (const p of profile) { assert.ok(cat.includes(p), `catalogue: ${p}`); }
 const s105 = section(tr, '### 10.5. ', '### 10.6. ');
-assert.ok(s105.includes('**Z — 0.32: obecnej linii nie wybiera się ponownie.**'));
+assert.ok(s105.includes('**Z — 0.51: obecną linię można potwierdzić (zastępuje Z — 0.32).**'));
 assert.ok(s105.includes('`faction_stance_profile_v1`') && s105.includes('Piłsudczycy odrzucają `pils_influence=oppose_military_interference`, a Centrum `pils_influence=support`'));
-assert.ok(!s105.includes('Może zamknąć turę jako świadome podtrzymanie'), 'paid confirmation removed');
-assert.ok(section(tr, '### 10.10. ', '## 11. ').includes('Obecnego stanowiska nie wybiera się ponownie (10.5, Z — 0.32)'));
+assert.ok(!s105.includes('Może zamknąć turę jako świadome podtrzymanie'), 'the pre-0.32 wording of the confirmation is gone');
+assert.ok(section(tr, '### 10.10. ', '## 11. ').includes('Obecne stanowisko można potwierdzić za 1 T i odnowienie 12 M, bez żadnej reakcji (10.5, Z — 0.51)'));
 for (const t of ['Obecna linia', 'Profil frakcji v1']) assert.ok(tests.has(t), `21.1 test ${t}`);
 
 // ---- Batch 1 answers (0.33): the rules are written in the reference and the catalogue agrees.
@@ -167,10 +168,10 @@ const batch1 = { capitalLand, autonomyDistances: { zlnCultural: 2, minoritiesCul
 const batch2Rules = [
   ['### 4.4. ', '### 4.5. ', '**Z — 0.34:** dodaje 2 zasięgu jednej branży związkowej albo 2 do `base_reach_pps` w komórkach jednej wybranej klasy'],
   ['### 10.5. ', '### 10.6. ', 'bez płatnego „zachować środki”'],
-  ['### 10.5. ', '### 10.6. ', '| Składki / `party.dues` | Podwyższyć albo obniżyć;'],
+  ['### 10.5. ', '### 10.6. ', '| Składki / `party.dues` | Podwyższyć, obniżyć albo utrzymać;'], // 0.51: a paid confirmation again
   ['### 10.5. ', '### 10.6. ', 'kampanię mobilizacyjną (`party.turnout`) i śledztwo prasowe (`party.press_investigation`'],
   ['### 12.4. ', '### 12.5. ', '**Z — 0.34:** liczba spółdzielni nie ma osobnego limitu'],
-  ['### 13.1. ', '### 13.2. ', 'od 0.34 bez płatnego „utrzymać”'],
+  ['### 13.1. ', '### 13.2. ', 'od 0.51 „utrzymać” to płatne potwierdzenie bez skutków'],
   ['### 13.3. ', '### 13.4. ', '**Z — 0.34:** tym środowiskiem jest Centrum'],
   ['### 13.5. ', '## 14. ', '**Z — 0.34:** nie ma płatnej opcji „zachować środki”'],
   ['### 13.5. ', '## 14. ', '`ActionTxn.selected_options` zawiera 1–2 unikalne organizacje'],
@@ -178,7 +179,8 @@ const batch2Rules = [
   ['### 17.2. ', '### 17.3. ', '`union.organize/prepare/fund/mediate/align`'],
 ];
 for (const [from, to, text] of batch2Rules) assert.ok(section(tr, from, to).includes(text), `reference ${from.trim()} has the 0.34 rule: ${text.slice(0, 50)}`);
-assert.ok(!section(tr, '### 13.1. ', '### 13.2. ').includes('Utrzymanie nie zmienia stanu i nie daje premii.'), 'paid dues maintenance removed');
+assert.ok(!section(tr, '### 13.1. ', '### 13.2. ').includes('Utrzymanie nie zmienia stanu i nie daje premii.'), 'the pre-0.34 wording is gone');
+assert.ok(section(tr, '### 13.1. ', '### 13.2. ').includes('„Utrzymać” kosztuje 1 T i odnowienie 6 M; poziom składek, członkostwo i wpływy zostają bez zmian'), 'dues keep is a paid confirmation (0.51)');
 for (const name of ['Bez płatnego braku wyboru', 'Militaryzacja a frakcje', 'Praca organizacyjna w komórkach', 'Media bez odnowienia karty']) assert.ok(tests.has(name), `21.1 test ${name}`);
 const organizingGain = Math.round(2 * (1 + 0.10) * 10) / 10;
 assert.equal(organizingGain, 2.2);
@@ -187,7 +189,8 @@ const militiaScene = read('source/scenes/party_affairs/reichsbanner.scene.dry');
 assert.match(militiaScene.slice(militiaScene.indexOf('@militant\n')), /^on-arrival: .*centrum_dissent \+= \d+/m, 'the existing Milicja card raises the Centre dissent on militarisation (K)');
 assert.ok(section(cat, '## 5. ', '## 6. ').includes('**Status partii:** przejrzana przez użytkownika'), 'batch 2 marked as reviewed');
 assert.equal(entries.filter(e => e.num.startsWith('5.')).reduce((n, e) => n + e.questions.length, 0), 0, 'batch 2 has no open questions');
-for (const [num, label] of [['5.1', 'Zachować środki'], ['5.4', 'Utrzymać']]) assert.ok(!entries.find(e => e.num === num).options.some(r => r[0] === label), `${num}: paid no-effect option ${label} removed`);
+assert.ok(entries.find(e => e.num === '5.4').options.some(r => r[0] === 'Utrzymać (`keep`)' && r[1] === '—'), '5.4: keep is a paid confirmation (0.51)');
+for (const [num, label] of [['5.1', 'Zachować środki']]) assert.ok(!entries.find(e => e.num === num).options.some(r => r[0] === label), `${num}: paid no-effect option ${label} removed`);
 const batch2 = { rulesChecked: batch2Rules.length + 1, organizingGain, militiaCodeCentreReaction: true };
 
 // ---- Batch 3 answers (0.35): relations, programme, unity and advisers.
@@ -199,7 +202,7 @@ const batch3Rules = [
   ['### 10.5. ', '### 10.6. ', '| Zmiana doradców / `party.advisors` |'],
   ['### 10.5. ', '### 10.6. ', 'karta jest w puli tylko przy sprzeciwie którejś frakcji ≥30 albo przy otwartym kanale z KPP'],
   ['### 10.5. ', '### 10.6. ', 'ustępstwo dla jednej frakcji (1 T, 1 R, cd 3 M; jej sprzeciw −8) albo uzgodnienie linii współpracy z komunistami (1 T, 0 R, cd 6 M'],
-  ['### 10.5. ', '### 10.6. ', '**Z — 0.35:** zatwierdzić można tylko zestaw różny od obecnego'],
+  ['### 10.5. ', '### 10.6. ', '**Z — 0.51 (zastępuje Z — 0.35):** zatwierdzić można także zestaw równy obecnemu'],
   ['#### 16.8.1. ', '#### 16.8.2. ', 'jest stałym działaniem agendy, zawsze dostępnym za 1 T i 1 R, z odnowieniem 3 M (Z — 0.35)'],
   ['### 17.2. ', '### 17.3. ', '| `kpp.trial/rules/agreement` / agenda Współpraca z KPP |'],
 ];

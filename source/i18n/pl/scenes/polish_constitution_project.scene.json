@@ -1,0 +1,18 @@
+{
+ "source": "scenes/polish_constitution_project.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Constitutional Reform": "title: Reforma konstytucyjna",
+  "subtitle: Three separate projects, each with its own act.": "subtitle: Trzy osobne projekty, każdy z własną ustawą.",
+  "= Constitutional reform": "= Reforma konstytucyjna",
+  "Each project is a separate alternative with its own act. After its promulgation and one month of implementation it costs 1 B once and changes the rules it names; no declaration alone changes the constitution.": "Każdy projekt to osobna alternatywa z własną ustawą. Po ogłoszeniu i miesiącu wdrażania kosztuje jednorazowo 1 B i zmienia wymienione w nim zasady; żadna sama deklaracja nie zmienia konstytucji.",
+  "title: Democratic guarantees": "title: Gwarancje demokratyczne",
+  "subtitle: Protection of associations, equal rights and self-government; relations with Wyzwolenie and both minority representations +4; ZLN is against.": "subtitle: Ochrona stowarzyszeń, równych praw i samorządu; relacje z Wyzwoleniem i obiema reprezentacjami mniejszości +4; ZLN jest przeciw.",
+  "title: Constructive vote of no confidence": "title: Konstruktywne wotum nieufności",
+  "subtitle: Dismissing a cabinet needs 223 votes for an agreed successor at the same time. It protects cabinets PPS does not want too.": "subtitle: Odwołanie gabinetu wymaga 223 głosów oddanych jednocześnie za uzgodnionym następcą. Chroni też gabinety, których PPS nie chce.",
+  "title: Presidential arbitration": "title: Arbitraż prezydencki",
+  "subtitle: After two failed formations in 3 months the President may dissolve the Sejm; Lewica +8 dissent.": "subtitle: Po dwóch nieudanych próbach utworzenia gabinetu w ciągu 3 miesięcy prezydent może rozwiązać Sejm; Lewica: sprzeciw +8.",
+  "The text is prepared. Filing the motion — the second main action — waits in the agenda.": "Tekst jest przygotowany. Złożenie wniosku — druga główna akcja — czeka w agendzie.",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

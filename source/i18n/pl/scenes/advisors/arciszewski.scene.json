@@ -1,0 +1,23 @@
+{
+ "source": "scenes/advisors/arciszewski.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Tomasz Arciszewski": "title: Tomasz Arciszewski",
+  "= Tomasz Arciszewski": "= Tomasz Arciszewski",
+  "Arciszewski represents Centrum PPS while maintaining strong connections to workers and the affiliated trade-union movement.": "Arciszewski reprezentuje Centrum PPS i utrzymuje silne więzi z robotnikami oraz ze związanym z partią ruchem zawodowym.",
+  "- @root: Return to main": "- @root: Wróć do głównego ekranu",
+  "title: Organize the Workers": "title: Organizowanie robotników",
+  "subtitle: 1 R; one union branch +8 reach; PPS gains among the workers it covers (+3 base).": "subtitle: 1 R; zasięg jednej branży związkowej +8; PPS zyskuje wśród objętych nią robotników (baza +3).",
+  "= Organize the workers: which branch?": "= Organizowanie robotników: która branża?",
+  "- @arciszewski: Back.": "- @arciszewski: Wróć.",
+  "title: Industry": "title: Przemysł",
+  "- @root: Continue.": "- @root: Dalej.",
+  "title: Railways": "title: Kolej",
+  "title: Agricultural labour": "title: Robotnicy rolni",
+  "title: Labour Programme: workers’ rights": "title: Program pracy: prawa robotnicze",
+  "subtitle: Opens the Workers’ Rights card; its one step costs no month (the ordinary B costs and the law remain).": "subtitle: Otwiera kartę „Prawa robotnicze”; jej jeden krok nie kosztuje miesiąca (zwykłe koszty B i ustawa pozostają).",
+  "unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?][? if advisor_action_timer <= 0 : Needs PPS in the cabinet with Labour. ?]": "unavailable-subtitle: [? if advisor_action_timer > 0 : Do następnej akcji doradcy: [+ advisor_action_timer +] mies. ?][? if advisor_action_timer <= 0 : Wymaga PPS w gabinecie z resortem Pracy. ?]",
+  "title: Labour Programme: benefits for the unemployed": "title: Program pracy: zasiłki dla bezrobotnych",
+  "subtitle: Opens the Benefits card; its one step costs no month (the ordinary B costs remain).": "subtitle: Otwiera kartę „Zasiłki i pomoc dla bezrobotnych”; jej jeden krok nie kosztuje miesiąca (zwykłe koszty B pozostają)."
+ }
+}

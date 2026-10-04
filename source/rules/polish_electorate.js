@@ -25,6 +25,11 @@
   const MAIN_CLASSES = Object.freeze(['workers', 'old_middle', 'new_middle', 'rural', 'bourgeois_landowners']);
   const CLASS_NAMES = Object.freeze({workers: 'the workers', old_middle: 'the petty bourgeoisie', new_middle: 'the intelligentsia',
     rural: 'the peasants', bourgeois_landowners: 'the bourgeoisie and landowners'});
+  // Polish version (decision 2A): the names in the two cases the texts need, nominative and genitive ('wśród robotników').
+  const CLASS_NAMES_PL = Object.freeze({workers: 'robotnicy', old_middle: 'drobnomieszczaństwo', new_middle: 'inteligencja', rural: 'chłopi',
+    bourgeois_landowners: 'burżuazja i ziemiaństwo'});
+  const CLASS_NAMES_PL_GENITIVE = Object.freeze({workers: 'robotników', old_middle: 'drobnomieszczaństwa', new_middle: 'inteligencji',
+    rural: 'chłopów', bourgeois_landowners: 'burżuazji i ziemiaństwa'});
   // 5.1 (P): the test distribution of identities, independent of class; not a demographic reconstruction.
   const IDENTITIES = Object.freeze({polish: 0.70, jewish: 0.10, other_minorities: 0.20});
   // 5.1 (P): the share of each class in the modelled urban labour force; unemployment divides only this pool.
@@ -483,6 +488,12 @@
     jewish: {name: 'Jewish voters', filter: cell => cell.identity_id === 'jewish'},
     other_minorities: {name: 'voters of the other minorities', filter: cell => cell.identity_id === 'other_minorities'},
   });
+  const AUDIENCE_NAMES_PL = Object.freeze({workers: 'robotnicy', employed_workers: 'zatrudnieni robotnicy', unemployed: 'bezrobotni',
+    old_middle: 'drobnomieszczaństwo', new_middle: 'inteligencja', rural: 'chłopi', bourgeois_landowners: 'burżuazja i ziemiaństwo',
+    major_cities: 'wielkie miasta', jewish: 'wyborcy żydowscy', other_minorities: 'wyborcy pozostałych mniejszości'});
+  const AUDIENCE_NAMES_PL_GENITIVE = Object.freeze({workers: 'robotników', employed_workers: 'zatrudnionych robotników', unemployed: 'bezrobotnych',
+    old_middle: 'drobnomieszczaństwa', new_middle: 'inteligencji', rural: 'chłopów', bourgeois_landowners: 'burżuazji i ziemiaństwa',
+    major_cities: 'wyborców wielkich miast', jewish: 'wyborców żydowskich', other_minorities: 'wyborców pozostałych mniejszości'});
 
   // Recipients named by projects and agreements, as cells (P): a class, the unemployed, the minorities.
   function beneficiaryFilter(label) {
@@ -526,10 +537,14 @@
     CELL_PROFILE_ID: CELL_PROFILE_ID,
     MAIN_CLASSES: MAIN_CLASSES,
     CLASS_NAMES: CLASS_NAMES,
+    CLASS_NAMES_PL: CLASS_NAMES_PL,
+    CLASS_NAMES_PL_GENITIVE: CLASS_NAMES_PL_GENITIVE,
     IDENTITIES: IDENTITIES,
     LABOUR_FORCE: LABOUR_FORCE,
     MAJOR_CITY_SHARE: MAJOR_CITY_SHARE,
     AUDIENCES: AUDIENCES,
+    AUDIENCE_NAMES_PL: AUDIENCE_NAMES_PL,
+    AUDIENCE_NAMES_PL_GENITIVE: AUDIENCE_NAMES_PL_GENITIVE,
     TURNOUT_CAP: TURNOUT_CAP,
     hasCells: hasCells,
     cellFrames: cellFrames,

@@ -1,0 +1,23 @@
+{
+ "source": "scenes/polish_event_stabilization.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Stabilisation": "title: Stabilizacja",
+  "subtitle: The budget or the currency is in crisis.": "subtitle: Budżet albo waluta jest w kryzysie.",
+  "= A financial crisis": "= Kryzys finansowy",
+  "The budget has stayed below −2 B, or inflation at 20% a month or more, for two settlements. A currency reform is now possible: one project, prepared and then launched with the currency law and its financing.": "Budżet od dwóch rozliczeń jest poniżej −2 B albo inflacja wynosi 20% miesięcznie lub więcej. Reforma walutowa jest teraz możliwa: jeden projekt, najpierw przygotowany, a potem uruchomiony wraz z ustawą walutową i finansowaniem.",
+  "[? if pl_ev_treasury : PPS holds the Treasury and chooses the variant now. The launch waits in the agenda. ?]": "[? if pl_ev_treasury : PPS ma resort Skarbu i wybiera wariant teraz. Uruchomienie czeka w agendzie. ?]",
+  "[? if not pl_ev_treasury : PPS does not hold the Treasury. The cabinet may prepare the reform itself; its package will come before the Sejm, where PPS can answer it with the Budget card if it sits in the cabinet or supports it. ?]": "[? if not pl_ev_treasury : PPS nie ma resortu Skarbu. Gabinet może sam przygotować reformę; jego pakiet trafi do Sejmu, gdzie PPS może na niego odpowiedzieć kartą „Budżet”, jeśli zasiada w gabinecie albo go popiera. ?]",
+  "title: Rapid stabilisation with savings": "title: Szybka stabilizacja z oszczędnościami",
+  "subtitle: 2 B for 3 months; needs cuts of at least 1 B; a credit shock +10 for 3 months.": "subtitle: 2 B przez 3 miesiące; wymaga cięć co najmniej 1 B; szok kredytowy +10 przez 3 miesiące.",
+  "title: Stabilisation with protections and a burden on wealth": "title: Stabilizacja z osłonami i obciążeniem majątku",
+  "subtitle: 2 B for 3 months; needs a protection for the unemployed and its financing.": "subtitle: 2 B przez 3 miesiące; wymaga osłony dla bezrobotnych i jej finansowania.",
+  "title: Gradual limitation of emission": "title: Stopniowe ograniczanie emisji",
+  "subtitle: 1 B for 5 months; a credit shock +5 for 5 months; the marka pressure lasts longer.": "subtitle: 1 B przez 5 miesięcy; szok kredytowy +5 przez 5 miesięcy; presja marki trwa dłużej.",
+  "title: Offer toleration for protections and a burden on wealth": "title: Zaproponuj tolerowanie w zamian za osłony i obciążenie majątku",
+  "subtitle: Opens the formation card with Grabski tolerated by PPS; the terms, their conditions and the usual cost of the offer apply there.": "subtitle: Otwiera kartę formowania gabinetu z Grabskim tolerowanym przez PPS; obowiązują tam warunki, ich wymagania i zwykły koszt oferty.",
+  "title: Leave the reform to the cabinet": "title: Zostaw reformę gabinetowi",
+  "subtitle: PPS answers the cabinet's package when it comes.": "subtitle: PPS odpowie na pakiet gabinetu, gdy się pojawi.",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

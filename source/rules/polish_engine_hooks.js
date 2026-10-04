@@ -6,7 +6,8 @@
 //   roll, so the result does not depend on the order of scenes in out/game.json;
 // - checking whether a deck can be drawn from no longer uses up a random number;
 // - playing a card from the hand records what the card changes when it opens, so that "Close card"
-//   can undo exactly that.
+//   can undo exactly that;
+// - in the Polish version, a number inserted into the text gets a decimal comma (Polish version, decision 6A).
 (function (root, factory) {
   'use strict';
   const hooks = factory();
@@ -51,6 +52,29 @@
       hand.push(card);
       this.ui.displayHand(hand, scene.maxCards);
       return card;
+    };
+
+    // The engine turns an inserted value into text with toString(). In Polish a number is written with a decimal
+    // comma (rules.num); quality displays and other values are evaluated exactly as the engine does. English keeps
+    // the engine's own evaluation.
+    const evaluateStateDependencies = proto._evaluateStateDependencies;
+    proto._evaluateStateDependencies = function (defs) {
+      if (rules.getLanguage() !== 'pl') return evaluateStateDependencies.call(this, defs);
+      const result = [];
+      for (let i = 0; i < defs.length; ++i) {
+        const def = defs[i];
+        let value;
+        if (def.type === 'insert') {
+          value = this._runExpression(def.fn);
+          if (def.qdisplay) value = this._getQDisplay(value, def.qdisplay);
+          else value = typeof value === 'number' ? rules.num(value) : value.toString();
+        } else {
+          value = this._runPredicate(def.fn);
+        }
+        if (value.stateDependencies !== undefined) value = this._makeDisplayContent(value, false);
+        result.push(value);
+      }
+      return result;
     };
 
     proto.playCard = function (cardId) {

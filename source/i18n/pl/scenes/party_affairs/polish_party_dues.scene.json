@@ -1,0 +1,17 @@
+{
+ "source": "scenes/party_affairs/polish_party_dues.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Party Dues": "title: Składki partyjne",
+  "subtitle: Raise or lower the members’ dues.": "subtitle: Podnieś albo obniż składki członkowskie.",
+  "= Party dues": "= Składki partyjne",
+  "Dues are [+ dues +] (from 1 to 4). Monthly income: [+ pl_party_ledger +].": "Składki wynoszą [+ dues +] (od 1 do 4). Miesięczny dochód: [+ pl_party_ledger +].",
+  "title: Keep the present dues": "title: Zachowaj obecne składki",
+  "subtitle: 1 T; the dues stay at [+ dues +] and the card waits 6 months; nothing else changes.": "subtitle: 1 T; składki pozostają na poziomie [+ dues +], a karta czeka 6 miesięcy; nic więcej się nie zmienia.",
+  "title: Raise the dues by 1": "title: Podnieś składki o 1",
+  "subtitle: More income per member; the membership falls ×0.98 at once, ×0.95 when real wages are below 90 or unemployment is 8% or more. The target of membership falls 5% for every level above 2.": "subtitle: Większy dochód od członka; członkostwo spada od razu ×0,98, a ×0,95, gdy płace realne są poniżej 90 albo bezrobocie wynosi 8% lub więcej. Docelowe członkostwo spada o 5% za każdy poziom powyżej 2.",
+  "title: Lower the dues by 1": "title: Obniż składki o 1",
+  "subtitle: Less income per member; membership +2 at once, and the target of membership rises 5% at level 1.": "subtitle: Mniejszy dochód od członka; członkostwo od razu +2, a na poziomie 1 docelowe członkostwo rośnie o 5%.",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

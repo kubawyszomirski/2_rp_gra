@@ -1,0 +1,17 @@
+{
+ "source": "scenes/party_affairs/polish_party_pils_influence.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Piłsudski’s Influence": "title: Wpływ Piłsudskiego",
+  "subtitle: The lasting line of PPS towards Piłsudski.": "subtitle: Trwała linia PPS wobec Piłsudskiego.",
+  "= Piłsudski’s Influence": "= Wpływ Piłsudskiego",
+  "The present line: **[+ pl_stance_current +]**. A new declaration costs this month's action; it changes no law in force and gives no reform by itself.": "Obecna linia: **[+ pl_stance_current +]**. Nowa deklaracja kosztuje akcję tego miesiąca; nie zmienia żadnej obowiązującej ustawy i sama nie daje żadnej reformy.",
+  "title: Support his influence": "title: Poparcie dla jego wpływu",
+  "subtitle: [? if pl_stance_support_present = 1 : This is the present line. Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_support_present = 0 : Relation with Piłsudski +4 (not again within 12 months); Centrum dissent +3. ?]": "subtitle: [? if pl_stance_support_present = 1 : To obecna linia. Jej potwierdzenie kosztuje akcję tego miesiąca, a karta czeka jak po zmianie; nic więcej się nie zmienia. ?][? if pl_stance_support_present = 0 : Relacja z Piłsudskim +4 (nie częściej niż raz na 12 miesięcy); Centrum: sprzeciw +3. ?]",
+  "title: Support it on conditions": "title: Poparcie pod warunkami",
+  "subtitle: [? if pl_stance_conditional_present = 1 : This is the present line. Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_conditional_present = 0 : Concessions only with civilian control or responsibility before the Sejm. ?]": "subtitle: [? if pl_stance_conditional_present = 1 : To obecna linia. Jej potwierdzenie kosztuje akcję tego miesiąca, a karta czeka jak po zmianie; nic więcej się nie zmienia. ?][? if pl_stance_conditional_present = 0 : Ustępstwa tylko przy cywilnej kontroli albo odpowiedzialności przed Sejmem. ?]",
+  "title: Oppose the army’s interference": "title: Sprzeciw wobec ingerencji wojska",
+  "subtitle: [? if pl_stance_oppose_military_interference_present = 1 : This is the present line. Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_oppose_military_interference_present = 0 : Relation −4; Piłsudczycy dissent +3; no autonomous military power until the line changes. ?]": "subtitle: [? if pl_stance_oppose_military_interference_present = 1 : To obecna linia. Jej potwierdzenie kosztuje akcję tego miesiąca, a karta czeka jak po zmianie; nic więcej się nie zmienia. ?][? if pl_stance_oppose_military_interference_present = 0 : Relacja −4; Piłsudczycy: sprzeciw +3; brak autonomicznej władzy wojskowej, dopóki linia się nie zmieni. ?]",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

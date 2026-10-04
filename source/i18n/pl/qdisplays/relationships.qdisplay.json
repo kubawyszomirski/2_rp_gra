@@ -1,0 +1,14 @@
+{
+ "source": "qdisplays/relationships.qdisplay.dry",
+ "status": "complete",
+ "lines": {
+  "(..5) hostile": "(..5) wrogie",
+  "(5..14.9) frigid": "(5..14.9) lodowate",
+  "(14.9..29.9) cold": "(14.9..29.9) chłodne",
+  "(29.9..39.9) cool": "(29.9..39.9) chłodnawe",
+  "(39.9..54.9) neutral": "(39.9..54.9) neutralne",
+  "(54.9..64.9) warm": "(54.9..64.9) ciepłe",
+  "(64.9..74.9) friendly": "(64.9..74.9) przyjazne",
+  "(74.9..) very friendly": "(74.9..) bardzo przyjazne"
+ }
+}

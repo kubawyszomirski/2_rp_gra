@@ -5,8 +5,8 @@ is-card: true
 tags: party_affairs
 view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.stanceAvailable(Q, 'electoral_base') !}
 on-arrival: {!
-// Card party.electoral_base (catalogue 4.5; technical reference 10.6): 1 T, 0 R, the card then waits 6 months. The present line is shown and cannot be
-// chosen again; closing the card is free (Z — 0.32).
+// Card party.electoral_base (catalogue 4.5; technical reference 10.6): 1 T, 0 R, the card then waits 6 months. Z — 0.51: the present line can be
+// confirmed for 1 T and the usual wait; returning the card to the hand is free.
 PolishParty.stanceView(Q, 'electoral_base');
 !}
 
@@ -22,7 +22,7 @@ The present line: **[+ pl_stance_current +]**. A new declaration costs this mont
 
 @workers
 title: A workers’ party
-subtitle: +0.10 to the growth of reach in the three union branches and the workers’ cells.
+subtitle: [? if pl_stance_workers_present = 1 : This is the present line. Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_workers_present = 0 : +0.10 to the growth of reach in the three union branches and the workers’ cells. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'electoral_base', 'workers').available !}
 unavailable-subtitle: [+ pl_stance_workers_why +]
 on-arrival: {!
@@ -32,7 +32,7 @@ go-to: result
 
 @workers_peasants
 title: A party of workers and peasants
-subtitle: The same, and in the peasants’ cells.
+subtitle: [? if pl_stance_workers_peasants_present = 1 : This is the present line. Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_workers_peasants_present = 0 : The same, and in the peasants’ cells. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'electoral_base', 'workers_peasants').available !}
 unavailable-subtitle: [+ pl_stance_workers_peasants_why +]
 on-arrival: {!
@@ -42,7 +42,7 @@ go-to: result
 
 @broad_democratic
 title: A broad democratic party
-subtitle: +0.10 in the cells of the intelligentsia and the petty bourgeoisie.
+subtitle: [? if pl_stance_broad_democratic_present = 1 : This is the present line. Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_broad_democratic_present = 0 : +0.10 in the cells of the intelligentsia and the petty bourgeoisie. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'electoral_base', 'broad_democratic').available !}
 unavailable-subtitle: [+ pl_stance_broad_democratic_why +]
 on-arrival: {!
@@ -52,7 +52,7 @@ go-to: result
 
 @allied_reach
 title: Our own profile, and reach through allies
-subtitle: A partner’s reach only with its consent; no multiplier.
+subtitle: [? if pl_stance_allied_reach_present = 1 : This is the present line. Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_allied_reach_present = 0 : A partner’s reach only with its consent; no multiplier. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'electoral_base', 'allied_reach').available !}
 unavailable-subtitle: [+ pl_stance_allied_reach_why +]
 on-arrival: {!

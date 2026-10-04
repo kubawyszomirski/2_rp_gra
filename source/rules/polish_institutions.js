@@ -18,6 +18,8 @@
   'use strict';
 
   if (!rules) throw new Error('PolishInstitutions needs the rules module (polish_rules.js) first');
+  // Polish version (decision 2A): the texts of this module are written in both languages and L picks the current one.
+  const L = rules.L;
 
   const SEJM_SEATS = 444;
   const SENATE_SEATS = 111;
@@ -422,6 +424,9 @@
     marszalek_senior: 'the senior member (marszałek senior)',
     jozef_pilsudski: 'Józef Piłsudski',
   });
+  // Names are stored in the records of S as written above (decision 5A); the displays translate the one English name.
+  const PEOPLE_PL = Object.freeze({'the senior member (marszałek senior)': 'marszałek senior'});
+  const personNameText = name => L(name, PEOPLE_PL[name] || name);
 
   function candidate(id, party) {
     return {id: id, name: PEOPLE[id], party: party};
@@ -654,9 +659,10 @@
     return {
       smiarowski: {available: true, reason: ''},
       rataj: {available: (Q.psl_piast_relation || 0) >= 45,
-        reason: 'PSL Piast will not accept the package below relation 45.'},
+        reason: L('PSL Piast will not accept the package below relation 45.', 'PSL Piast nie przyjmie pakietu przy relacji niższej niż 45.')},
       daszynski: {available: daszynskiAvailable && (Q.psl_wyzwolenie_relation || 0) >= 60,
-        reason: !daszynskiAvailable ? 'Ignacy Daszyński is not available.' : 'PSL Wyzwolenie will not sign the nomination below relation 60.'},
+        reason: !daszynskiAvailable ? L('Ignacy Daszyński is not available.', 'Ignacy Daszyński jest niedostępny.') :
+          L('PSL Wyzwolenie will not sign the nomination below relation 60.', 'PSL Wyzwolenie nie podpisze zgłoszenia przy relacji niższej niż 60.')},
     };
   }
 
@@ -809,6 +815,22 @@
   const NOT_MODELLED = Object.freeze([
     'What follows the chapter — a new government after the election or the coup — is not part of this game',
   ]);
+  // The report keeps these texts in English (decision 5A of the Polish version); the Polish report shows them translated.
+  const REPORT_TEXTS_PL = Object.freeze({
+    'What follows the chapter — a new government after the election or the coup — is not part of this game':
+      'To, co następuje po rozdziale — nowy rząd po wyborach albo po zamachu — nie jest częścią tej gry',
+    'Office elections use the test profile office_profiles_1922_v1 (P).': 'Wybory na urzędy korzystają z profilu testowego office_profiles_1922_v1 (P).',
+    'The 1928 date is the game calendar of 7.4, not the historical election date.': 'Data z 1928 roku pochodzi z kalendarza gry (7.4), a nie z historycznej daty wyborów.',
+    'The Senate is the sejm_proxy_v1 simplification.': 'Senat jest uproszczeniem sejm_proxy_v1.',
+    'The army groups are the synthetic profile synthetic_test_v2 and the coup follows coup_f_v1 (P); they follow the pattern of May 1926, not its units and numbers.':
+      'Zgrupowania wojska to syntetyczny profil synthetic_test_v2, a zamach przebiega według coup_f_v1 (P); naśladują wzorzec maja 1926 roku, a nie jego jednostki i liczby.',
+    ['The dated inputs of the Normal scenario use historical dates: the dispute of the Naczelnik with the cabinet (VI 1922), the funeral of the assassin ' +
+      '(II 1923), the military case from Piłsudski’s resignation of 2 VII 1923 and the officers’ demonstration (from XI 1925); what follows them depends on the game.']:
+      'Datowane wydarzenia scenariusza Normalnego mają daty historyczne: spór Naczelnika Państwa z gabinetem (VI 1922), pogrzeb zamachowca (II 1923), ' +
+      'sprawę wojskową od dymisji Piłsudskiego 2 VII 1923 i demonstrację oficerów (od XI 1925); to, co następuje potem, zależy od gry.',
+    'Government formation after the 1928 election belongs to the continuation.': 'Utworzenie rządu po wyborach 1928 roku należy do kontynuacji.',
+  });
+  rules.registerStoredText(text => REPORT_TEXTS_PL[text]);
 
   const mean = (cells, field) => {
     const mass = cells.reduce((n, c) => n + c.mass, 0);
@@ -947,7 +969,7 @@
           sejm: {id: latest.id, total_seats: latest.total_seats, clubs: copy(S.parliament.clubs)},
           senate: copy(S.senate)},
         // The cabinet record of stage 3 (8.4, 8.5): the mirrors name the premier and the PPS position.
-        government: {prime_minister: Q.chancellor || '', pps_position: Q.pps_government_position || '',
+        government: {prime_minister: Q.chancellor || '', pps_position: Q.pps_government_position_en || Q.pps_government_position || '',
           cabinet: S.cabinet ? copy({id: S.cabinet.id, configuration_id: S.cabinet.configuration_id, status: S.cabinet.status,
             pps_mode: S.cabinet.pps_mode, portfolios: S.cabinet.portfolios, partner_ids: S.cabinet.partner_ids,
             supporter_ids: S.cabinet.supporter_ids, support_seats: S.cabinet.support_seats === undefined ? null : S.cabinet.support_seats}) : null,
@@ -988,6 +1010,7 @@
   }
 
   return Object.freeze({
+    personNameText: personNameText,
     CHZJN: CHZJN,
     SEJM_SEATS: SEJM_SEATS,
     SENATE_SEATS: SENATE_SEATS,

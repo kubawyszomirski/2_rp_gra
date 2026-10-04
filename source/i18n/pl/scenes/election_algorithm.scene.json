@@ -1,0 +1,8 @@
+{
+ "source": "scenes/election_algorithm.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Election": "title: Wybory",
+  "Q[party + '_votes_disp'] = Q[party+'_votes_dec'].toFixed(1);": "Q[party + '_votes_disp'] = PolishRules.num(Q[party+'_votes_dec'], 1);"
+ }
+}

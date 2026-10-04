@@ -1,0 +1,15 @@
+{
+ "source": "scenes/polish_parliament_army_oversight.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Parliamentary Control of the Army": "title: Parlamentarna kontrola nad wojskiem",
+  "subtitle: At a prepared project or a concrete military case: full civilian oversight or a limited reform.": "subtitle: Przy przygotowanym projekcie albo konkretnej sprawie wojskowej: pełny nadzór cywilny albo ograniczona reforma.",
+  "= Parliamentary control of the army": "= Parlamentarna kontrola nad wojskiem",
+  "There are no paid \"explanations of the minister\" and no postponement; closing the card is free.": "Nie ma płatnych „wyjaśnień ministra” ani odroczenia; zamknięcie karty nic nie kosztuje.",
+  "title: Fuller civilian oversight": "title: Pełniejszy nadzór cywilny",
+  "subtitle: In the offer army +2; after the law 1 B for three months; then the group +0.05 of legal loyalty.": "subtitle: W ofercie oś wojska +2; po ustawie 1 B przez trzy miesiące; potem zgrupowanie +0,05 lojalności wobec legalnych władz.",
+  "title: A limited reform": "title: Ograniczona reforma",
+  "subtitle: In the offer army 0, which Piast, NPR and the Christian Democrats accept more easily; 1 B for two months; then +0.025.": "subtitle: W ofercie oś wojska 0, którą Piast, NPR i chadecja przyjmują łatwiej; 1 B przez dwa miesiące; potem +0,025.",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

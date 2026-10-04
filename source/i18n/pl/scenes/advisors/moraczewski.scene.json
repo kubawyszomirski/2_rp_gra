@@ -1,0 +1,13 @@
+{
+ "source": "scenes/advisors/moraczewski.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Jędrzej Moraczewski": "title: Jędrzej Moraczewski",
+  "= Jędrzej Moraczewski": "= Jędrzej Moraczewski",
+  "Moraczewski represents the Piłsudczyk current and emphasizes state-directed social reform.": "Moraczewski reprezentuje nurt piłsudczykowski i stawia na reformy społeczne prowadzone przez państwo.",
+  "- @root: Return to main": "- @root: Wróć do głównego ekranu",
+  "title: Public Works Programme": "title: Program robót publicznych",
+  "subtitle: Opens the Public Works card; its one step costs no month (the ordinary B costs remain).": "subtitle: Otwiera kartę „Roboty publiczne”; jej jeden krok nie kosztuje miesiąca (zwykłe koszty B pozostają).",
+  "unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?][? if advisor_action_timer <= 0 : Needs PPS in the cabinet with Labour. ?]": "unavailable-subtitle: [? if advisor_action_timer > 0 : Do następnej akcji doradcy: [+ advisor_action_timer +] mies. ?][? if advisor_action_timer <= 0 : Wymaga PPS w gabinecie z resortem Pracy. ?]"
+ }
+}

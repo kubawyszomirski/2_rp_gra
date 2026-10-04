@@ -1,0 +1,17 @@
+{
+ "source": "scenes/party_affairs/polish_party_form_of_power.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: What Power Do We Want": "title: Jakiej władzy chcemy",
+  "subtitle: The system of government PPS stands for.": "subtitle: Ustrój, za którym opowiada się PPS.",
+  "= What Power Do We Want": "= Jakiej władzy chcemy",
+  "The present line: **[+ pl_stance_current +]**. A new declaration costs this month's action; it changes no law in force and gives no reform by itself.": "Obecna linia: **[+ pl_stance_current +]**. Nowa deklaracja kosztuje akcję tego miesiąca; nie zmienia żadnej obowiązującej ustawy i sama nie daje żadnej reformy.",
+  "title: Parliamentarism": "title: Parlamentaryzm",
+  "subtitle: [? if pl_stance_parliamentarism_present = 1 : This is the present line. Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_parliamentarism_present = 0 : The way of majorities, cabinet responsibility and democratisation. ?]": "subtitle: [? if pl_stance_parliamentarism_present = 1 : To obecna linia. Jej potwierdzenie kosztuje akcję tego miesiąca, a karta czeka jak po zmianie; nic więcej się nie zmienia. ?][? if pl_stance_parliamentarism_present = 0 : Droga większości, odpowiedzialności gabinetu i demokratyzacji. ?]",
+  "title: A stronger presidency": "title: Silniejsza prezydentura",
+  "subtitle: [? if pl_stance_strong_presidency_present = 1 : This is the present line. Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_strong_presidency_present = 0 : Only with this line PPS can prepare the reform of presidential arbitration; a later change keeps a prepared project. ?]": "subtitle: [? if pl_stance_strong_presidency_present = 1 : To obecna linia. Jej potwierdzenie kosztuje akcję tego miesiąca, a karta czeka jak po zmianie; nic więcej się nie zmienia. ?][? if pl_stance_strong_presidency_present = 0 : Tylko z tą linią PPS może przygotować reformę arbitrażu prezydenckiego; późniejsza zmiana linii nie odbiera przygotowanego projektu. ?]",
+  "title: Workers’ councils": "title: Rady robotnicze",
+  "subtitle: [? if pl_stance_workers_councils_present = 1 : This is the present line. Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_workers_councils_present = 0 : The first time: Lewica +4 strength, Centrum dissent +3. No KPP votes, no workers’ representation and no voters by itself. ?]": "subtitle: [? if pl_stance_workers_councils_present = 1 : To obecna linia. Jej potwierdzenie kosztuje akcję tego miesiąca, a karta czeka jak po zmianie; nic więcej się nie zmienia. ?][? if pl_stance_workers_councils_present = 0 : Za pierwszym razem: Lewica: siła +4; Centrum: sprzeciw +3. Sama linia nie daje głosów KPP, przedstawicielstwa robotniczego ani wyborców. ?]",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

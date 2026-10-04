@@ -23,10 +23,13 @@ const SECURITY_FILE = path.join(ROOT, 'out', 'html', 'polish_security.js');
 const HOOKS_FILE = path.join(ROOT, 'out', 'html', 'polish_engine_hooks.js');
 const clone = value => JSON.parse(JSON.stringify(value));
 
-let gameJSON = null;
-function compiledGameJSON() {
-  if (gameJSON === null) gameJSON = fs.readFileSync(path.join(ROOT, 'out', 'game.json'), 'utf8');
-  return gameJSON;
+// The English game is out/game.json; the Polish version is out/html/game_pl.json, built by tools/i18n/build.cjs
+// from the same scenes with translated lines (Polish version, decision 1A).
+const GAME_FILES = { en: path.join(ROOT, 'out', 'game.json'), pl: path.join(ROOT, 'out', 'html', 'game_pl.json') };
+const gameJSON = {};
+function compiledGameJSON(lang = 'en') {
+  if (!gameJSON[lang]) gameJSON[lang] = fs.readFileSync(GAME_FILES[lang], 'utf8');
+  return gameJSON[lang];
 }
 
 // The page loads out/html/polish_rules.js as window.PolishRules and out/html/polish_institutions.js as
@@ -62,11 +65,12 @@ function createUI() {
   return ui;
 }
 
-// A fresh compiled game for every engine: scenes are mutable objects during play.
-function createEngine(seed = 1922) {
-  loadRules();
+// A fresh compiled game for every engine: scenes are mutable objects during play. The language of the rules' texts
+// follows the game: English unless a test asks for the Polish version.
+function createEngine(seed = 1922, lang = 'en') {
+  loadRules().setLanguage(lang);
   let game;
-  convertJSONToGame(compiledGameJSON(), (error, result) => { if (error) throw error; game = result; });
+  convertJSONToGame(compiledGameJSON(lang), (error, result) => { if (error) throw error; game = result; });
   const engine = new DendryEngine(createUI(), game);
   installBrowserStubs(engine);
   engine.beginGame([seed]);
@@ -121,18 +125,18 @@ function setClassRows(Q, values) {
   }
 }
 
-function startGame(seed = 1922) {
-  const engine = createEngine(seed);
+function startGame(seed = 1922, lang = 'en') {
+  const engine = createEngine(seed, lang);
   choose(engine, 'root.start');
   choose(engine, 'root.1928_main');
   return engine;
 }
 
 // Loads a saved state into a new engine, as the page does: JSON of the exportable state and setState.
-function restoreState(saved) {
-  loadRules();
+function restoreState(saved, lang = globalThis.PolishRules ? globalThis.PolishRules.getLanguage() : 'en') {
+  loadRules().setLanguage(lang);
   let game;
-  convertJSONToGame(compiledGameJSON(), (error, result) => { if (error) throw error; game = result; });
+  convertJSONToGame(compiledGameJSON(lang), (error, result) => { if (error) throw error; game = result; });
   const restored = new DendryEngine(createUI(), game);
   installBrowserStubs(restored);
   restored.setState(clone(saved));

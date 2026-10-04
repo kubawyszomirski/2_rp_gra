@@ -87,6 +87,9 @@ Q.prime_minister_display = government ? government.prime_minister : (Q.polish_op
     Q.chancellor + ' (' + Q.chancellor_party + '; temporary government framework)');
 Q.pps_government_position = government ? government.pps_position : (Q.pps_external_toleration ?
     'External toleration of Ponikowski; outside the cabinet; no PPS ministries' : 'Opposition');
+// The chapter report keeps the position in English in both languages (decision 5A of the Polish version).
+Q.pps_government_position_en = government ? government.pps_position_en :
+    (Q.pps_external_toleration ? 'External toleration of Ponikowski; outside the cabinet; no PPS ministries' : 'Opposition');
 Q.pl_cabinet_support_display = government ? government.support : '';
 Q.pl_cabinet_crisis_display = government ? government.crisis : '';
 // Agreements (9.1–9.4) replace the German coalition-dissent counter in Status and Library (leak 2).
@@ -259,6 +262,7 @@ if (Q.polish_election_system && Q.sejm_parliament) {
         'None in this chapter';
     if (Q.sejm_forming_government) {
         Q.pps_government_position = 'Government formation pending';
+        Q.pps_government_position_en = 'Government formation pending';
     }
 }
 // Marshal, Senate and the end of the chapter for Status, Library and the menus (7.5, 6.4, 19.1).

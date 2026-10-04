@@ -1,0 +1,15 @@
+{
+ "source": "qdisplays/taxation.qdisplay.dry",
+ "status": "complete",
+ "lines": {
+  "(..-6) extremely low": "(..-6) skrajnie niskie",
+  "(-5..-4) very low": "(-5..-4) bardzo niskie",
+  "(-3..-2) low": "(-3..-2) niskie",
+  "(-1..-1) below baseline": "(-1..-1) poniżej poziomu wyjściowego",
+  "(0..0) moderate": "(0..0) umiarkowane",
+  "(1..1) above baseline": "(1..1) powyżej poziomu wyjściowego",
+  "(2..3) high": "(2..3) wysokie",
+  "(4..5) very high": "(4..5) bardzo wysokie",
+  "(6..) extremely high": "(6..) skrajnie wysokie"
+ }
+}

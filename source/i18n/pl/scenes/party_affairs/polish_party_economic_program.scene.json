@@ -1,0 +1,27 @@
+{
+ "source": "scenes/party_affairs/polish_party_economic_program.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Economic Programme": "title: Program gospodarczy",
+  "subtitle: Up to three priorities of PPS for the economy.": "subtitle: Do trzech priorytetów PPS dla gospodarki.",
+  "= Economic programme": "= Program gospodarczy",
+  "The present programme: [+ pl_prog_current +]. Choose up to three priorities, then confirm the set. The priorities prepare nothing by themselves; each programme still needs its card, its law, its money and its executor.": "Obecny program: [+ pl_prog_current +]. Wybierz do trzech priorytetów, a potem zatwierdź zestaw. Priorytety same niczego nie przygotowują; każdy program nadal potrzebuje swojej karty, ustawy, pieniędzy i wykonawcy.",
+  "title: Compose the programme": "title: Ułóż program",
+  "= The new programme": "= Nowy program",
+  "Chosen: [+ pl_prog_draft_text +]. Nothing is spent until you confirm.": "Wybrane: [+ pl_prog_draft_text +]. Nic nie zostaje wydane, dopóki nie zatwierdzisz wyboru.",
+  "- @polish_party_economic_program: Start again.": "- @polish_party_economic_program: Zacznij od nowa.",
+  "title: Stabilisation with protections": "title: Stabilizacja z osłonami",
+  "subtitle: [? if pl_prog_stabilisation_with_protection_in = 1 : Chosen — remove it from the set. ?][? if pl_prog_stabilisation_with_protection_in = 0 : Add it to the set. ?]": "subtitle: [? if pl_prog_stabilisation_with_protection_in = 1 : Wybrany — usuń go z zestawu. ?][? if pl_prog_stabilisation_with_protection_in = 0 : Dodaj go do zestawu. ?]",
+  "title: Public works and employment": "title: Roboty publiczne i zatrudnienie",
+  "subtitle: [? if pl_prog_public_works_in = 1 : Chosen — remove it from the set. ?][? if pl_prog_public_works_in = 0 : Add it to the set. ?]": "subtitle: [? if pl_prog_public_works_in = 1 : Wybrany — usuń go z zestawu. ?][? if pl_prog_public_works_in = 0 : Dodaj go do zestawu. ?]",
+  "title: Wealth taxes and capital for investment": "title: Podatki majątkowe i kapitał na inwestycje",
+  "subtitle: [? if pl_prog_wealth_and_investment_in = 1 : Chosen — remove it from the set. ?][? if pl_prog_wealth_and_investment_in = 0 : Add it to the set. ?]": "subtitle: [? if pl_prog_wealth_and_investment_in = 1 : Wybrany — usuń go z zestawu. ?][? if pl_prog_wealth_and_investment_in = 0 : Dodaj go do zestawu. ?]",
+  "title: Socialisation of selected enterprises": "title: Uspołecznienie wybranych przedsiębiorstw",
+  "subtitle: [? if pl_prog_socialisation_in = 1 : Chosen — remove it from the set. ?][? if pl_prog_socialisation_in = 0 : Add it to the set. ?]": "subtitle: [? if pl_prog_socialisation_in = 1 : Wybrany — usuń go z zestawu. ?][? if pl_prog_socialisation_in = 0 : Dodaj go do zestawu. ?]",
+  "title: An agrarian and workers’ programme": "title: Program rolny i robotniczy",
+  "subtitle: [? if pl_prog_agrarian_labour_in = 1 : Chosen — remove it from the set. ?][? if pl_prog_agrarian_labour_in = 0 : Add it to the set. ?]": "subtitle: [? if pl_prog_agrarian_labour_in = 1 : Wybrany — usuń go z zestawu. ?][? if pl_prog_agrarian_labour_in = 0 : Dodaj go do zestawu. ?]",
+  "title: Confirm the programme": "title: Zatwierdź program",
+  "subtitle: [? if pl_prog_confirm_same = 1 : This is the present programme. Confirming it costs this month's action and the card waits 6 months; nothing else changes. ?][? if pl_prog_confirm_same = 0 : 1 T; the card then waits 6 months. ?]": "subtitle: [? if pl_prog_confirm_same = 1 : To obecny program. Jego potwierdzenie kosztuje akcję tego miesiąca, a karta czeka 6 miesięcy; nic więcej się nie zmienia. ?][? if pl_prog_confirm_same = 0 : 1 T; potem karta czeka 6 miesięcy. ?]",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

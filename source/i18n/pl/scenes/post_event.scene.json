@@ -1,0 +1,9 @@
+{
+ "source": "scenes/post_event.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Post Event": "title: Po wydarzeniu",
+  "console.log('new dissent: ' + Q.dissent);": "console.log('new dissent: ' + Q.dissent);",
+  "return choice.canChoose !== false && choice.title != \"Continue...\";": "return choice.canChoose !== false && choice.title != \"Continue...\";"
+ }
+}

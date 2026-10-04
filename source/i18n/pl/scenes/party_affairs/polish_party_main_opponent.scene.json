@@ -1,0 +1,19 @@
+{
+ "source": "scenes/party_affairs/polish_party_main_opponent.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Main Opponent": "title: Główny przeciwnik",
+  "subtitle: Whom our polemics address.": "subtitle: Do kogo kierujemy nasze polemiki.",
+  "= Main Opponent": "= Główny przeciwnik",
+  "The present line: **[+ pl_stance_current +]**. A new declaration costs this month's action; it changes no law in force and gives no reform by itself.": "Obecna linia: **[+ pl_stance_current +]**. Nowa deklaracja kosztuje akcję tego miesiąca; nie zmienia żadnej obowiązującej ustawy i sama nie daje żadnej reformy.",
+  "title: The national right": "title: Prawica narodowa",
+  "subtitle: [? if pl_stance_nationalist_right_present = 1 : This is the present line. Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_nationalist_right_present = 0 : The addressee of polemics: ZLN. ?]": "subtitle: [? if pl_stance_nationalist_right_present = 1 : To obecna linia. Jej potwierdzenie kosztuje akcję tego miesiąca, a karta czeka jak po zmianie; nic więcej się nie zmienia. ?][? if pl_stance_nationalist_right_present = 0 : Adresat polemik: ZLN. ?]",
+  "title: The communists": "title: Komuniści",
+  "subtitle: [? if pl_stance_communists_present = 1 : This is the present line. Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_communists_present = 0 : The addressee: the KPP. Polemics cost −2 relation each and can close the way to contact. ?]": "subtitle: [? if pl_stance_communists_present = 1 : To obecna linia. Jej potwierdzenie kosztuje akcję tego miesiąca, a karta czeka jak po zmianie; nic więcej się nie zmienia. ?][? if pl_stance_communists_present = 0 : Adresat: KPP. Każda polemika kosztuje −2 relacji i może zamknąć drogę do kontaktu. ?]",
+  "title: The defenders of capital and landed estates": "title: Obrońcy kapitału i wielkiej własności ziemskiej",
+  "subtitle: [? if pl_stance_capital_land_present = 1 : This is the present line. Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_capital_land_present = 0 : The addressees: the parties with land and fiscal ideals of −1 or less (in the test profile PSChD and ZLN). ?]": "subtitle: [? if pl_stance_capital_land_present = 1 : To obecna linia. Jej potwierdzenie kosztuje akcję tego miesiąca, a karta czeka jak po zmianie; nic więcej się nie zmienia. ?][? if pl_stance_capital_land_present = 0 : Adresaci: partie, których ideały w sprawie ziemi i podatków wynoszą −1 lub mniej (w profilu testowym PSChD i ZLN). ?]",
+  "title: Violence against the constitution, from any side": "title: Przemoc wymierzona w konstytucję, z każdej strony",
+  "subtitle: [? if pl_stance_unconstitutional_force_present = 1 : This is the present line. Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_unconstitutional_force_present = 0 : The addressee: a party with an open case of unconstitutional violence; without one, polemics are blocked. ?]": "subtitle: [? if pl_stance_unconstitutional_force_present = 1 : To obecna linia. Jej potwierdzenie kosztuje akcję tego miesiąca, a karta czeka jak po zmianie; nic więcej się nie zmienia. ?][? if pl_stance_unconstitutional_force_present = 0 : Adresat: partia z otwartą sprawą przemocy wymierzonej w konstytucję; bez takiej sprawy polemiki są zablokowane. ?]",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

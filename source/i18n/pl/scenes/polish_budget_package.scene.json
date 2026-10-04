@@ -1,0 +1,31 @@
+{
+ "source": "scenes/polish_budget_package.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Budget and the Costs of the Crisis": "title: Budżet i koszty kryzysu",
+  "subtitle: Answer the cabinet's package before the Sejm votes on it.": "subtitle: Odpowiedz na pakiet gabinetu, zanim Sejm nad nim zagłosuje.",
+  "= The cabinet's package": "= Pakiet gabinetu",
+  "Because [+ pl_bud_reason +], the cabinet proposes: [+ pl_bud_package +][? if pl_bud_project : , with [+ pl_bud_project +] ?]. The Sejm votes at the settlement of [+ pl_bud_vote +]. Budget: [+ pl_bud_forecast +].": "Powód: [+ pl_bud_reason +]. Gabinet proponuje: [+ pl_bud_package +][? if pl_bud_project : , wraz z: [+ pl_bud_project +] ?]. Sejm głosuje przy rozliczeniu [+ pl_bud_vote +]. Budżet: [+ pl_bud_forecast +].",
+  "[? if pl_bud_necessary : The premier treats this package as necessary: if it is refused, he presents one revision, and resigns if that fails too. ?]": "[? if pl_bud_necessary : Premier uważa ten pakiet za konieczny: jeśli zostanie odrzucony, przedstawi jedną poprawioną wersję, a gdy i ona upadnie, poda się do dymisji. ?]",
+  "A condition of PPS is judged by the cabinet's partners. If they refuse it, PPS votes against the package; if PPS votes were needed, the package falls.": "Warunek PPS oceniają partnerzy gabinetu. Jeśli go odrzucą, PPS głosuje przeciw pakietowi; jeśli głosy PPS były potrzebne, pakiet upada.",
+  "title: Support the package as proposed": "title: Poprzyj pakiet w proponowanej formie",
+  "subtitle: PPS shares the responsibility for the policy it supports.": "subtitle: PPS współodpowiada za politykę, którą popiera.",
+  "Q.pl_bud_result = 'PPS will vote for the package.';": "Q.pl_bud_result = 'PPS zagłosuje za pakietem.';",
+  "title: Protect workers' spending": "title: Chroń wydatki na robotników",
+  "subtitle: The package without the cut of benefits; the budget loses that saving.": "subtitle: Pakiet bez cięcia zasiłków; budżet traci tę oszczędność.",
+  "Q.pl_bud_result = (answer.accepted ? 'The partners accept: the cut of benefits leaves the package, and PPS will vote for it.' :": "Q.pl_bud_result = (answer.accepted ? 'Partnerzy się zgadzają: cięcie zasiłków znika z pakietu, a PPS zagłosuje za nim.' :",
+  "'The partners refuse; PPS will vote against the package.') + ' ' + PolishGovernment.describeAnswers({evaluations: answer.evaluations});": "'Partnerzy odmawiają; PPS zagłosuje przeciw pakietowi.') + ' ' + PolishGovernment.describeAnswers({evaluations: answer.evaluations});",
+  "title: Shift the burden to wealth": "title: Przenieś obciążenie na majątek",
+  "subtitle: A progressive tax or the extraordinary wealth tax instead of burdens on broad groups; business pressure +4 or +8.": "subtitle: Podatek progresywny albo nadzwyczajny podatek majątkowy zamiast obciążeń szerokich grup; presja przedsiębiorców +4 albo +8.",
+  "Q.pl_bud_result = (answer.accepted ? 'The partners accept the tax on wealth instead; PPS will vote for the package.' :": "Q.pl_bud_result = (answer.accepted ? 'Partnerzy przyjmują w zamian podatek od majątku; PPS zagłosuje za pakietem.' :",
+  "title: Propose a loan instead of cuts": "title: Zaproponuj pożyczkę zamiast cięć",
+  "subtitle: A domestic loan: +3 B for 6 months, then −1 B for 12 months. Needs credit of at least 40.": "subtitle: Pożyczka wewnętrzna: +3 B przez 6 miesięcy, potem −1 B przez 12 miesięcy. Wymaga kredytu co najmniej 40.",
+  "Q.pl_bud_result = (answer.accepted ? 'The partners accept the loan instead of the cuts; PPS will vote for the package.' :": "Q.pl_bud_result = (answer.accepted ? 'Partnerzy przyjmują pożyczkę zamiast cięć; PPS zagłosuje za pakietem.' :",
+  "title: Refuse": "title: Odmów",
+  "subtitle: PPS does not support the package.": "subtitle: PPS nie popiera pakietu.",
+  "Q.pl_bud_result = 'PPS will vote against the package.';": "Q.pl_bud_result = 'PPS zagłosuje przeciw pakietowi.';",
+  "title: Not now": "title: Nie teraz",
+  "subtitle: Without an answer PPS votes as its role binds it.": "subtitle: Bez odpowiedzi PPS głosuje tak, jak wiąże ją jej rola.",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

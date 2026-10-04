@@ -27,7 +27,13 @@
   const T = rules.timeOf;
   const OK = Object.freeze({available: true, reason: ''});
   const no = reason => ({available: false, reason: reason});
-  const fmt = value => (Math.abs(value) < 0.005 ? '0' : value.toFixed(2).replace(/\.?0+$/, ''));
+  // Polish version (decision 2A): the texts of this module are written in both languages and L picks the current
+  // one; numbers get a decimal comma in Polish (decision 6A).
+  const L = rules.L;
+  const fmt = value => {
+    const text = Math.abs(value) < 0.005 ? '0' : value.toFixed(2).replace(/\.?0+$/, '');
+    return rules.getLanguage() === 'pl' ? text.replace('.', ',') : text;
+  };
 
   // ---- Profiles and opening values (3.2, 13.1–13.3, 14.1) ---------------------------------------------
 
@@ -36,6 +42,11 @@
   const FACTION_NAMES = Object.freeze({centrum: 'Centrum PPS', lewica: 'Lewica PPS', pilsudczycy: 'Piłsudczycy'});
   const BRANCHES = Object.freeze(['industry', 'rail', 'farm_labour']);
   const BRANCH_NAMES = Object.freeze({industry: 'Industry', rail: 'Railways', farm_labour: 'Agricultural labour'});
+  const BRANCH_NAMES_PL = Object.freeze({industry: 'Przemysł', rail: 'Kolej', farm_labour: 'Robotnicy rolni'});
+  const branchName = id => L(BRANCH_NAMES[id], BRANCH_NAMES_PL[id]);
+  // 'branży przemysłowej' and 'branżę przemysłową': the genitive or locative and the accusative of a branch in Polish.
+  const BRANCH_PL_GENITIVE = Object.freeze({industry: 'przemysłowej', rail: 'kolejowej', farm_labour: 'robotników rolnych'});
+  const BRANCH_PL_ACCUSATIVE = Object.freeze({industry: 'przemysłową', rail: 'kolejową', farm_labour: 'robotników rolnych'});
   const BRANCH_FUNDS = Object.freeze({industry: 0.50, rail: 0.25, farm_labour: 0.25});
   const DUES_MIN = 1;
   const DUES_MAX = 4;
@@ -47,6 +58,8 @@
   const REACH_MULTIPLIER_CAP = 1.30; // 10.6: character of the party and TUR together
   const COOPERATIVE_CLASSES = Object.freeze(['workers', 'rural']);
   const COOPERATIVE_NAMES = Object.freeze({workers: 'a workers’ consumer cooperative', rural: 'a village cooperative of smallholders'});
+  const COOPERATIVE_NAMES_PL = Object.freeze({workers: 'robotnicza spółdzielnia spożywców', rural: 'wiejska spółdzielnia drobnych gospodarzy'});
+  const COOPERATIVE_NAMES_PL_ACCUSATIVE = Object.freeze({workers: 'robotniczą spółdzielnię spożywców', rural: 'wiejską spółdzielnię drobnych gospodarzy'});
   const RELIEF_CAP = 6; // 13.2: the current relief in one cell
 
   // 10.5: the synthetic opening line of PPS, not a reconstruction of its programme of January 1922. Stage 8 (8f): the
@@ -416,6 +429,7 @@
   });
   const PACKAGE_ORDER = Object.freeze(Object.keys(PACKAGES));
   const ORG_NAMES = Object.freeze({unions: 'trade unions', press: 'the press', tur: 'TUR', militia: 'Milicja', cooperatives: 'cooperatives'});
+  const ORG_NAMES_PL_ACCUSATIVE = Object.freeze({unions: 'związki zawodowe', press: 'prasę', tur: 'TUR', militia: 'Milicję', cooperatives: 'spółdzielnie'});
   const ORGANIZATIONS_COOLDOWN = 2;
   const SUBACTION_COOLDOWNS = Object.freeze({organize: 2, distribution: 2, recruit: 2, militarize: 3});
 
@@ -430,14 +444,18 @@
 
   function waitReason(Q, key) {
     const wait = key ? rules.cooldownRemaining(Q, key) : 0;
-    return wait > 0 ? 'Available again in ' + wait + (wait === 1 ? ' month.' : ' months.') : '';
+    return wait > 0 ? L('Available again in ' + wait + (wait === 1 ? ' month.' : ' months.'),
+      'Znów dostępne za ' + wait + ' ' + rules.plural(wait, 'miesiąc', 'miesiące', 'miesięcy') + '.') : '';
   }
 
   // The reserve for Milicja (13.3): the cost and three months of the upkeep it will have, with no arrears.
   function militiaReserveProblem(S, cashAfter, strength, stage) {
-    if (S.militia.arrears > 0) return 'Milicja has unpaid upkeep.';
+    if (S.militia.arrears > 0) return L('Milicja has unpaid upkeep.', 'Milicja ma niezapłacone utrzymanie.');
     const reserve = 3 * militiaUpkeep(S.militia, strength, stage);
-    if (cashAfter + 1e-9 < reserve) return 'Needs a reserve of ' + fmt(reserve) + ' R for three months of Milicja upkeep.';
+    if (cashAfter + 1e-9 < reserve) {
+      return L('Needs a reserve of ' + fmt(reserve) + ' R for three months of Milicja upkeep.',
+        'Wymaga rezerwy ' + fmt(reserve) + ' R na trzy miesiące utrzymania Milicji.');
+    }
     return '';
   }
 
@@ -445,28 +463,28 @@
   // costs, so the reserve of Milicja is checked after all one-off expenses (13.5).
   function packageStatus(Q, id, spent) {
     const S = Q.S, p = PACKAGES[id];
-    if (!p) return no('Unknown package.');
+    if (!p) return no(L('Unknown package.', 'Nieznany pakiet.'));
     const cash = S.party_orgs.cash - (spent || 0);
     const wait = waitReason(Q, packageCooldownKey(id));
     if (wait) return no(wait);
-    if (cash + 1e-9 < p.cost) return no('Needs ' + p.cost + ' R.');
+    if (cash + 1e-9 < p.cost) return no(L('Needs ' + p.cost + ' R.', 'Wymaga ' + p.cost + ' R.'));
     if (p.org === 'tur') {
       const tur = S.party_orgs.tur;
-      if (Q.time < tur.available_from) return no('TUR is founded in January 1923.');
-      if (tur.level >= TUR_MAX) return no('TUR has its full national coordination.');
-      if (tur.active_build) return no('A stage of TUR is already being built.');
+      if (Q.time < tur.available_from) return no(L('TUR is founded in January 1923.', 'TUR powstaje w styczniu 1923 roku.'));
+      if (tur.level >= TUR_MAX) return no(L('TUR has its full national coordination.', 'TUR ma już pełną koordynację ogólnokrajową.'));
+      if (tur.active_build) return no(L('A stage of TUR is already being built.', 'Jeden etap TUR jest już w budowie.'));
     }
     if (p.org === 'militia') {
       const m = S.militia;
-      if (m.banned) return no('Milicja is banned.');
-      if (p.kind === 'militarize' && m.militancy >= 0.70 - 1e-9) return no('Its efficiency has reached 0.70.');
+      if (m.banned) return no(L('Milicja is banned.', 'Milicja jest zakazana.'));
+      if (p.kind === 'militarize' && m.militancy >= 0.70 - 1e-9) return no(L('Its efficiency has reached 0.70.', 'Jej sprawność osiągnęła 0,70.'));
       const strength = p.kind === 'recruit' ? m.strength + 100 : m.strength;
       const problem = militiaReserveProblem(S, cash - p.cost, strength, m.stage);
       if (problem) return no(problem);
     }
     if (p.org === 'cooperatives') {
       if (S.party_orgs.cooperatives.projects.some(c => c.class_id === p.class_id && c.status === 'prepared')) {
-        return no('A cooperative for these recipients is already prepared; launch it from the party agenda.');
+        return no(L('A cooperative for these recipients is already prepared; launch it from the party agenda.', 'Spółdzielnia dla tych odbiorców jest już przygotowana; uruchom ją z agendy partii.'));
       }
     }
     return OK;
@@ -480,11 +498,13 @@
 
   function selectionStatus(Q, ids) {
     const S = Q.S;
-    if (!ids.length || ids.length > 2) return no('Choose one or two organisations.');
-    if (ids.length === 2 && PACKAGES[ids[0]].org === PACKAGES[ids[1]].org) return no('The two packages must be for different organisations.');
-    if (!rules.mainActionAvailable(Q)) return no('This month’s action has already been used.');
+    if (!ids.length || ids.length > 2) return no(L('Choose one or two organisations.', 'Wybierz jedną albo dwie organizacje.'));
+    if (ids.length === 2 && PACKAGES[ids[0]].org === PACKAGES[ids[1]].org) return no(L('The two packages must be for different organisations.', 'Oba pakiety muszą dotyczyć różnych organizacji.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
     const total = ids.reduce((n, id) => n + PACKAGES[id].cost, 0);
-    if (S.party_orgs.cash + 1e-9 < total) return no('The package costs ' + total + ' R; PPS has ' + fmt(S.party_orgs.cash) + ' R.');
+    if (S.party_orgs.cash + 1e-9 < total) {
+      return no(L('The package costs ' + total + ' R; PPS has ' + fmt(S.party_orgs.cash) + ' R.', 'Pakiet kosztuje ' + total + ' R; PPS ma ' + fmt(S.party_orgs.cash) + ' R.'));
+    }
     for (let i = 0; i < ids.length; i++) {
       const spent = ids.filter((other, j) => j !== i).reduce((n, other) => n + PACKAGES[other].cost, 0);
       const status = packageStatus(Q, ids[i], spent);
@@ -498,12 +518,22 @@
     S.party_orgs.cash = Math.max(0, S.party_orgs.cash - p.cost);
     const key = packageCooldownKey(id);
     if (key) S.cooldowns[key] = t + SUBACTION_COOLDOWNS[p.kind];
-    if (p.kind === 'organize') return 'the ' + BRANCH_NAMES[p.branch].toLowerCase() + ' branch gains ' + fmt(expandBranch(S, p.branch, 15)) + ' reach';
-    if (p.kind === 'fund') { S.unions[p.branch].fund += 1; return 'the ' + BRANCH_NAMES[p.branch].toLowerCase() + ' fund gains 1 R'; }
-    if (p.kind === 'distribution') { S.party_orgs.press.reach = Math.min(100, S.party_orgs.press.reach + 10); return 'the press gains 10 reach'; }
+    if (p.kind === 'organize') {
+      const gain = fmt(expandBranch(S, p.branch, 15));
+      return L('the ' + BRANCH_NAMES[p.branch].toLowerCase() + ' branch gains ' + gain + ' reach', 'zasięg branży ' + BRANCH_PL_GENITIVE[p.branch] + ' rośnie o ' + gain);
+    }
+    if (p.kind === 'fund') {
+      S.unions[p.branch].fund += 1;
+      return L('the ' + BRANCH_NAMES[p.branch].toLowerCase() + ' fund gains 1 R', 'fundusz branży ' + BRANCH_PL_GENITIVE[p.branch] + ' rośnie o 1 R');
+    }
+    if (p.kind === 'distribution') {
+      S.party_orgs.press.reach = Math.min(100, S.party_orgs.press.reach + 10);
+      return L('the press gains 10 reach', 'zasięg prasy rośnie o 10');
+    }
     if (p.kind === 'build') {
       S.party_orgs.tur.active_build = {target_level: S.party_orgs.tur.level + 1, started_at: t, paid_months: 0};
-      return 'TUR starts building level ' + (S.party_orgs.tur.level + 1) + ' (two financed months)';
+      return L('TUR starts building level ' + (S.party_orgs.tur.level + 1) + ' (two financed months)',
+        'TUR zaczyna budowę poziomu ' + (S.party_orgs.tur.level + 1) + ' (dwa finansowane miesiące)');
     }
     if (p.kind === 'recruit') return recruit(Q);
     if (p.kind === 'militarize') return militarize(Q);
@@ -511,7 +541,8 @@
       const project = {id: 'coop-' + (S.party_orgs.cooperatives.projects.length + 1) + '-' + p.class_id + '-t' + t, class_id: p.class_id,
         status: 'prepared', prepared_at: t, launched_at: null, relief: 1, paid_last: false};
       S.party_orgs.cooperatives.projects.push(project);
-      return COOPERATIVE_NAMES[p.class_id] + ' is prepared; its launch waits in the party agenda';
+      return L(COOPERATIVE_NAMES[p.class_id] + ' is prepared; its launch waits in the party agenda',
+        'przygotowano: ' + COOPERATIVE_NAMES_PL[p.class_id] + '; jej uruchomienie czeka w agendzie partii');
     }
     throw new Error('applyPackage: unknown package ' + id);
   }
@@ -526,14 +557,15 @@
     const results = ids.map(id => applyPackage(Q, id));
     Q.S.cooldowns['party.organizations'] = Q.time + ORGANIZATIONS_COOLDOWN;
     writeMirrors(Q);
-    return result(Q, 'PPS invests in ' + ids.map(id => ORG_NAMES[PACKAGES[id].org]).join(' and ') + ': ' + results.join('; ') + '.');
+    return result(Q, L('PPS invests in ' + ids.map(id => ORG_NAMES[PACKAGES[id].org]).join(' and ') + ': ',
+      'PPS inwestuje w ' + ids.map(id => ORG_NAMES_PL_ACCUSATIVE[PACKAGES[id].org]).join(' i ') + ': ') + results.join('; ') + '.');
   }
 
   // ---- Milicja PPS and AS (13.3–13.4; card 5.2) --------------------------------------------------------
 
   function recruit(Q) {
     Q.S.militia.strength += 100;
-    return 'Milicja gains 100 members';
+    return L('Milicja gains 100 members', 'Milicja zyskuje 100 członków');
   }
 
   function militarize(Q) {
@@ -545,7 +577,7 @@
       // Z — 0.34: the Centre fears an uncontrolled militarisation; the Left gets no bonus (13.3).
       factionReaction(Q, 'centrum', {dissent: 3}, {id: 'militia.militarize', kind: 'militarization', reverse: null});
     }
-    return 'Milicja trains and disciplines its members: efficiency ' + fmt(m.militancy);
+    return L('Milicja trains and disciplines its members: efficiency ', 'Milicja szkoli i dyscyplinuje członków: sprawność ') + fmt(m.militancy);
   }
 
   function canFormAS(S) {
@@ -556,21 +588,21 @@
 
   function militiaStatus(Q, option) {
     const S = Q.S, m = S.militia;
-    if (!rules.mainActionAvailable(Q)) return no('This month’s action has already been used.');
-    if (m.banned) return no('Milicja is banned.');
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
+    if (m.banned) return no(L('Milicja is banned.', 'Milicja jest zakazana.'));
     if (option === 'recruit') return packageStatus(Q, 'militia_recruit', 0);
     if (option === 'militarize') return packageStatus(Q, 'militia_militarize', 0);
     if (option === 'as') {
-      if (m.stage === 2) return no('Akcja Socjalistyczna is already formed.');
-      if (!m.militarized) return no('Needs a militarised Milicja.');
-      if (m.strength < 500) return no('Needs at least 500 members; Milicja has ' + m.strength + '.');
-      if (m.repressed) return no('Milicja is under repression.');
-      if (m.arrears > 0) return no('Milicja has unpaid upkeep.');
+      if (m.stage === 2) return no(L('Akcja Socjalistyczna is already formed.', 'Akcja Socjalistyczna już istnieje.'));
+      if (!m.militarized) return no(L('Needs a militarised Milicja.', 'Wymaga zmilitaryzowanej Milicji.'));
+      if (m.strength < 500) return no(L('Needs at least 500 members; Milicja has ' + m.strength + '.', 'Wymaga co najmniej 500 członków; Milicja ma ' + m.strength + '.'));
+      if (m.repressed) return no(L('Milicja is under repression.', 'Milicja podlega represjom.'));
+      if (m.arrears > 0) return no(L('Milicja has unpaid upkeep.', 'Milicja ma niezapłacone utrzymanie.'));
       const need = 2 + 3 * militiaUpkeep(m, m.strength, 2);
-      if (S.party_orgs.cash + 1e-9 < need) return no('Needs ' + fmt(need) + ' R: 2 R and three months of the upkeep of AS.');
+      if (S.party_orgs.cash + 1e-9 < need) return no(L('Needs ' + fmt(need) + ' R: 2 R and three months of the upkeep of AS.', 'Wymaga ' + fmt(need) + ' R: 2 R i trzech miesięcy utrzymania AS.'));
       return OK;
     }
-    return no('Unknown option.');
+    return no(L('Unknown option.', 'Nieznana opcja.'));
   }
 
   function militiaAvailable(Q) {
@@ -587,7 +619,8 @@
       rules.commitMainAction(Q, 'militia.as', {resource_cost: {R: 2}});
       S.party_orgs.cash = Math.max(0, S.party_orgs.cash - 2);
       S.militia.stage = 2;
-      text = 'Milicja is reorganised as Akcja Socjalistyczna: its members follow a call better (+0.15) and it can cover up to three cases at once before a coup.';
+      text = L('Milicja is reorganised as Akcja Socjalistyczna: its members follow a call better (+0.15) and it can cover up to three cases at once before a coup.',
+        'Milicja zostaje przekształcona w Akcję Socjalistyczną: jej członkowie lepiej odpowiadają na wezwanie (+0,15) i przed zamachem może obsługiwać do trzech spraw naraz.');
     } else {
       const id = option === 'recruit' ? 'militia_recruit' : 'militia_militarize';
       rules.commitMainAction(Q, 'militia.' + option, {resource_cost: {R: PACKAGES[id].cost}});
@@ -632,13 +665,14 @@
 
   function duesStatus(Q, option) {
     const S = Q.S, dues = S.party_orgs.dues;
-    if (option === 'keep') return no('This is the present level of dues (' + dues + ').');
-    if (!rules.mainActionAvailable(Q)) return no('This month’s action has already been used.');
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
     const wait = waitReason(Q, 'party.dues');
     if (wait) return no(wait);
-    if (option === 'raise' && dues >= DUES_MAX) return no('Dues are at their highest level, 4.');
-    if (option === 'lower' && dues <= DUES_MIN) return no('Dues are at their lowest level, 1.');
-    return option === 'raise' || option === 'lower' ? OK : no('Unknown option.');
+    // Z — 0.51: keeping the present level is a decision too, for this month's action and the usual wait.
+    if (option === 'keep') return OK;
+    if (option === 'raise' && dues >= DUES_MAX) return no(L('Dues are at their highest level, 4.', 'Składki są na najwyższym poziomie, 4.'));
+    if (option === 'lower' && dues <= DUES_MIN) return no(L('Dues are at their lowest level, 1.', 'Składki są na najniższym poziomie, 1.'));
+    return option === 'raise' || option === 'lower' ? OK : no(L('Unknown option.', 'Nieznana opcja.'));
   }
 
   function duesAvailable(Q) {
@@ -654,23 +688,29 @@
     const S = Q.S, orgs = S.party_orgs, E = S.economy;
     rules.commitMainAction(Q, 'party.dues', {option: option});
     let text;
+    if (option === 'keep') {
+      S.cooldowns['party.dues'] = Q.time + 6;
+      writeMirrors(Q);
+      return result(Q, L('Dues stay at ' + orgs.dues + '; nothing else changes.', 'Składki pozostają na poziomie ' + orgs.dues + '; nic więcej się nie zmienia.'));
+    }
     if (option === 'raise') {
       const hard = E.real_wage < 90 || E.unemployment >= 8;
       orgs.dues += 1;
       orgs.apparatus.member_index *= hard ? 0.95 : 0.98;
-      text = 'Dues rise to ' + orgs.dues + '; some members leave (membership ×' + (hard ? '0.95' : '0.98') + ').';
+      text = L('Dues rise to ' + orgs.dues + '; some members leave (membership ×' + (hard ? '0.95' : '0.98') + ').',
+        'Składki rosną do ' + orgs.dues + '; część członków odchodzi (członkostwo ×' + (hard ? '0,95' : '0,98') + ').');
     } else {
       orgs.dues -= 1;
       orgs.apparatus.member_index = Math.min(150, orgs.apparatus.member_index + 2);
-      text = 'Dues fall to ' + orgs.dues + '; membership +2.';
+      text = L('Dues fall to ' + orgs.dues + '; membership +2.', 'Składki spadają do ' + orgs.dues + '; członkostwo +2.');
     }
     S.cooldowns['party.dues'] = Q.time + 6;
     writeMirrors(Q);
-    return result(Q, text + ' The new income appears in the monthly settlement.');
+    return result(Q, text + L(' The new income appears in the monthly settlement.', ' Nowe wpływy pojawią się w miesięcznym rozliczeniu.'));
   }
 
   function fundraiseStatus(Q) {
-    if (!rules.mainActionAvailable(Q)) return no('This month’s action has already been used.');
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
     const wait = waitReason(Q, 'party.fundraise');
     return wait ? no(wait) : OK;
   }
@@ -687,14 +727,14 @@
     orgs.cash += gain;
     S.cooldowns['party.fundraise'] = Q.time + 3;
     writeMirrors(Q);
-    return result(Q, 'The extraordinary collection brings ' + fmt(gain) + ' R.');
+    return result(Q, L('The extraordinary collection brings ', 'Zbiórka nadzwyczajna przynosi ') + fmt(gain) + ' R.');
   }
 
   function apparatusStatus(Q) {
     const S = Q.S;
-    if (S.party_orgs.apparatus.level >= APPARATUS_MAX) return no('The apparatus has its highest level, 4.');
-    if (!rules.mainActionAvailable(Q)) return no('This month’s action has already been used.');
-    if (S.party_orgs.cash + 1e-9 < 2) return no('Needs 2 R.');
+    if (S.party_orgs.apparatus.level >= APPARATUS_MAX) return no(L('The apparatus has its highest level, 4.', 'Aparat ma najwyższy poziom, 4.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
+    if (S.party_orgs.cash + 1e-9 < 2) return no(L('Needs 2 R.', 'Wymaga 2 R.'));
     return OK;
   }
 
@@ -707,7 +747,8 @@
     orgs.cash = Math.max(0, orgs.cash - 2);
     orgs.apparatus.level += 1;
     writeMirrors(Q);
-    return result(Q, 'The party apparatus reaches level ' + orgs.apparatus.level + ': income +0.15 R × membership/100 a month, upkeep +0.10 R.');
+    return result(Q, L('The party apparatus reaches level ' + orgs.apparatus.level + ': income +0.15 R × membership/100 a month, upkeep +0.10 R.',
+      'Aparat partii osiąga poziom ' + orgs.apparatus.level + ': wpływy +0,15 R × członkostwo/100 miesięcznie, utrzymanie +0,10 R.'));
   }
 
   // ---- Organisational work without money (4.4; card 5.7) ---------------------------------------------
@@ -716,11 +757,11 @@
 
   function organizeStatus(Q, target) {
     const isBranch = target.indexOf('branch:') === 0, isClass = target.indexOf('class:') === 0;
-    if (!isBranch && !isClass) return no('Organisational work reaches a union branch or the cells of one class, not the press or TUR.');
-    if (isBranch && BRANCHES.indexOf(target.slice(7)) < 0) return no('Unknown branch.');
-    if (isClass && ORGANIZE_CLASSES.indexOf(target.slice(6)) < 0) return no('Unknown class.');
-    if (isClass && !electorate.hasCells(Q.S)) return no('The cells of the electorate are not recorded.');
-    if (!rules.mainActionAvailable(Q)) return no('This month’s action has already been used.');
+    if (!isBranch && !isClass) return no(L('Organisational work reaches a union branch or the cells of one class, not the press or TUR.', 'Praca organizacyjna obejmuje branżę związkową albo grupy wyborców jednej klasy, a nie prasę ani TUR.'));
+    if (isBranch && BRANCHES.indexOf(target.slice(7)) < 0) return no(L('Unknown branch.', 'Nieznana branża.'));
+    if (isClass && ORGANIZE_CLASSES.indexOf(target.slice(6)) < 0) return no(L('Unknown class.', 'Nieznana klasa.'));
+    if (isClass && !electorate.hasCells(Q.S)) return no(L('The cells of the electorate are not recorded.', 'Grupy wyborców nie są zapisane.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
     return OK;
   }
 
@@ -735,12 +776,15 @@
     let text;
     if (target.indexOf('branch:') === 0) {
       const id = target.slice(7);
-      text = 'Organisers work in the ' + BRANCH_NAMES[id].toLowerCase() + ' branch: reach +' + fmt(expandBranch(S, id, 2)) + '.';
+      const gain = fmt(expandBranch(S, id, 2));
+      text = L('Organisers work in the ' + BRANCH_NAMES[id].toLowerCase() + ' branch: reach +' + gain + '.',
+        'Organizatorzy pracują w branży ' + BRANCH_PL_GENITIVE[id] + ': zasięg +' + gain + '.');
     } else {
       const classId = target.slice(6);
       const gain = 2 * expansionMultiplier(S, {kind: 'class', class_id: classId});
       electorate.addBaseReach(S, cell => cell.class_id === classId, gain);
-      text = 'Organisers work among ' + electorate.CLASS_NAMES[classId] + ': the base reach of PPS there +' + fmt(gain) + '.';
+      text = L('Organisers work among ' + electorate.CLASS_NAMES[classId] + ': the base reach of PPS there +' + fmt(gain) + '.',
+        'Organizatorzy pracują wśród ' + electorate.CLASS_NAMES_PL_GENITIVE[classId] + ': bazowy zasięg PPS w tej grupie +' + fmt(gain) + '.');
     }
     writeMirrors(Q);
     return result(Q, text);
@@ -754,6 +798,9 @@
     social_reform: {level: 2, name: 'Preparation of a social reform', audience: 'project'},
     national_education: {level: 3, name: 'A national education campaign', audience: 'classes'},
   });
+  const COURSE_NAMES_PL = Object.freeze({civil_rights: 'Prawa obywatelskie i praktyka demokracji', union_cadres: 'Kadry związkowe i linia PPS',
+    social_reform: 'Przygotowanie reformy społecznej', national_education: 'Ogólnokrajowa kampania oświatowa'});
+  const courseName = id => L(COURSES[id].name, COURSE_NAMES_PL[id]);
   const REFORM_TYPES = Object.freeze(['public_works', 'education_program', 'credit_instrument', 'minority_schools']);
 
   function reformProjects(S) {
@@ -763,17 +810,17 @@
 
   function courseStatus(Q, courseId, target) {
     const S = Q.S, tur = S.party_orgs.tur, course = COURSES[courseId];
-    if (!course) return no('Unknown course.');
-    if (tur.level < course.level) return no('Needs TUR level ' + course.level + '.');
-    if (tur.active_course) return no('A course is already running.');
-    if (!rules.mainActionAvailable(Q)) return no('This month’s action has already been used.');
+    if (!course) return no(L('Unknown course.', 'Nieznany kurs.'));
+    if (tur.level < course.level) return no(L('Needs TUR level ' + course.level + '.', 'Wymaga TUR na poziomie ' + course.level + '.'));
+    if (tur.active_course) return no(L('A course is already running.', 'Kurs już trwa.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
     const wait = waitReason(Q, 'party.tur_course');
     if (wait) return no(wait);
-    if (S.party_orgs.cash + 1e-9 < 1) return no('Needs 1 R.');
+    if (S.party_orgs.cash + 1e-9 < 1) return no(L('Needs 1 R.', 'Wymaga 1 R.'));
     if (course.audience === 'project' && !reformProjects(S).length) {
-      return no('Needs a large labour, education, housing or cooperative project that has not been launched.');
+      return no(L('Needs a large labour, education, housing or cooperative project that has not been launched.', 'Wymaga dużego projektu pracy, oświaty, mieszkalnictwa albo spółdzielczości, który nie został jeszcze uruchomiony.'));
     }
-    if (target !== undefined && course.audience === 'branch' && BRANCHES.indexOf(target) < 0) return no('Choose a union branch.');
+    if (target !== undefined && course.audience === 'branch' && BRANCHES.indexOf(target) < 0) return no(L('Choose a union branch.', 'Wybierz branżę związkową.'));
     return OK;
   }
 
@@ -789,7 +836,7 @@
     tur.active_course = {course: courseId, target: chosen, started_at: t, paid_months: 0, effect_id: 'tur:' + courseId + ':t' + t};
     S.cooldowns['party.tur_course'] = t + 4;
     writeMirrors(Q);
-    return result(Q, COURSES[courseId].name + ': the course runs for two financed months.');
+    return result(Q, courseName(courseId) + L(': the course runs for two financed months.', ': kurs trwa dwa finansowane miesiące.'));
   }
 
   // Its effect only after two financed months; a course interrupted by a shortfall waits (13.2).
@@ -832,9 +879,9 @@
 
   function cooperativeStatus(Q, projectId) {
     const S = Q.S, project = S.party_orgs.cooperatives.projects.find(p => p.id === projectId);
-    if (!project || project.status !== 'prepared') return no('No prepared cooperative.');
-    if (!rules.mainActionAvailable(Q)) return no('This month’s action has already been used.');
-    if (S.party_orgs.cash + 1e-9 < 2) return no('Needs 2 R.');
+    if (!project || project.status !== 'prepared') return no(L('No prepared cooperative.', 'Brak przygotowanej spółdzielni.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
+    if (S.party_orgs.cash + 1e-9 < 2) return no(L('Needs 2 R.', 'Wymaga 2 R.'));
     return OK;
   }
 
@@ -849,8 +896,9 @@
     project.launched_at = Q.time;
     project.paid_last = true;
     writeMirrors(Q);
-    return result(Q, COOPERATIVE_NAMES[project.class_id].charAt(0).toUpperCase() + COOPERATIVE_NAMES[project.class_id].slice(1) +
-      ' starts work: relief +1 for its recipients while its upkeep of 0.10 R a month is paid.');
+    const coopName = L(COOPERATIVE_NAMES[project.class_id], COOPERATIVE_NAMES_PL[project.class_id]);
+    return result(Q, coopName.charAt(0).toUpperCase() + coopName.slice(1) + L(' starts work: relief +1 for its recipients while its upkeep of 0.10 R a month is paid.',
+      ' zaczyna działać: ulga +1 dla jej odbiorców, dopóki płacone jest utrzymanie 0,10 R miesięcznie.'));
   }
 
   // A cooperative executor for the cooperative variants of the government cards (8.5, 8.9).
@@ -868,10 +916,10 @@
 
   function pressFormatStatus(Q) {
     const S = Q.S;
-    if (!rules.mainActionAvailable(Q)) return no('This month’s action has already been used.');
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
     const wait = waitReason(Q, 'party.press_format');
     if (wait) return no(wait);
-    if (S.party_orgs.cash + 1e-9 < 1) return no('Needs 1 R.');
+    if (S.party_orgs.cash + 1e-9 < 1) return no(L('Needs 1 R.', 'Wymaga 1 R.'));
     return OK;
   }
 
@@ -893,8 +941,9 @@
         reverse: {kind: 'press_format', value: 'party_journal'}});
     }
     writeMirrors(Q);
-    return result(Q, next === 'popular' ? 'The party press takes a popular format: effective reach +10, credibility −5.'
-      : 'The party press returns to the party journal format.');
+    return result(Q, next === 'popular' ? L('The party press takes a popular format: effective reach +10, credibility −5.',
+      'Prasa partyjna przyjmuje format popularny: efektywny zasięg +10, wiarygodność −5.')
+      : L('The party press returns to the party journal format.', 'Prasa partyjna wraca do formatu pisma partyjnego.'));
   }
 
   // A restriction of the press is tied to one act of a competent authority in an event (13.2): recorded once
@@ -940,6 +989,27 @@
         independent: 'Independence: workers’ cooperation without the Soviet model',
         critical: 'Condemn Soviet authoritarianism and the subordination of the labour movement'}},
   });
+  const STANCES_PL = Object.freeze({
+    direction: {name: 'Kierunek polityczny', values: {parliamentary_socialism: 'Socjalizm parlamentarny', class_independence: 'Niezależna polityka klasowa',
+      workers_gains: 'Obrona zdobyczy robotniczych', democratic_movement: 'Szeroki ruch demokratyczny'}},
+    main_opponent: {name: 'Główny przeciwnik', values: {nationalist_right: 'Prawica narodowa', communists: 'Komuniści',
+      capital_land: 'Obrońcy kapitału i wielkiej własności ziemskiej', unconstitutional_force: 'Przemoc wymierzona w konstytucję, z każdej strony'}},
+    pils_influence: {name: 'Wpływ Piłsudskiego', values: {support: 'Poparcie dla jego wpływu', conditional: 'Poparcie pod warunkami',
+      oppose_military_interference: 'Sprzeciw wobec ingerencji wojska'}},
+    form_of_power: {name: 'Jakiej władzy chcemy', values: {parliamentarism: 'Parlamentaryzm', strong_presidency: 'Silniejsza prezydentura',
+      workers_councils: 'Rady robotnicze'}},
+    electoral_base: {name: 'Charakter partii', values: {workers: 'Partia robotnicza', workers_peasants: 'Partia robotników i chłopów',
+      broad_democratic: 'Szeroka partia demokratyczna', allied_reach: 'Własny profil i zasięg przez sojuszników'}},
+    slavic_autonomy: {name: 'Mniejszości słowiańskie: autonomia', values: {federation: 'Federacja', regional_autonomy: 'Autonomia województw',
+      cultural_rights: 'Swoboda języka, szkół i organizacji bez autonomii', polonisation: 'Polonizacja'}},
+    jewish_cooperation: {name: 'Współpraca z organizacjami żydowskimi', values: {broad: 'Szeroka współpraca i prawa w programie',
+      labour_only: 'Współpraca organizacji robotniczych', none: 'Bez współpracy'}},
+    ussr_position: {name: 'PPS wobec modelu sowieckiego', values: {sympathetic: 'Solidarność z państwem sowieckim jako próbą budowy socjalizmu',
+      independent: 'Niezależność: współpraca robotnicza bez modelu sowieckiego',
+      critical: 'Potępienie sowieckiego autorytaryzmu i podporządkowania ruchu robotniczego'}},
+  });
+  const stanceName = cardId => L(STANCES[cardId].name, STANCES_PL[cardId].name);
+  const stanceValue = (cardId, value) => L(STANCES[cardId].values[value], STANCES_PL[cardId].values[value]);
   const STANCE_ORDER = Object.freeze(Object.keys(STANCES));
   // Z — 0.32, the test profile faction_stance_profile_v1: the rejected lines of the factions (10.5).
   const FACTION_STANCE_PROFILE_ID = 'faction_stance_profile_v1';
@@ -966,11 +1036,12 @@
     return partyReady(Q) && !!STANCES[cardId] && Q.S.chapter.status !== 'ended' && rules.cooldownRemaining(Q, stanceCooldownKey(cardId)) === 0;
   }
 
+  // Z — 0.51 (the user, 4 X 2026; it replaces Z — 0.32): the present line can be chosen again. Confirming it costs this
+  // month's action and the card's usual wait, like a change, and changes nothing else.
   function stanceStatus(Q, cardId, value) {
     const card = STANCES[cardId];
-    if (!card || !card.values[value]) return no('Unknown line.');
-    if (strategyOf(Q.S)[card.field] === value) return no('This is the present line.');
-    if (!rules.mainActionAvailable(Q)) return no('This month’s action has already been used.');
+    if (!card || !card.values[value]) return no(L('Unknown line.', 'Nieznana linia.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
     const wait = waitReason(Q, stanceCooldownKey(cardId));
     if (wait) return no(wait);
     return OK;
@@ -994,6 +1065,14 @@
     if (!status.available) throw new Error('stanceChoose: ' + status.reason);
     const S = Q.S, t = Q.time, card = STANCES[cardId], strategy = strategyOf(S);
     const previous = strategy[card.field];
+    if (previous === value) {
+      // The confirmed present line: the month and the wait of the card, no record of a change, no reaction (Z — 0.51).
+      rules.commitMainAction(Q, card.action, {from: previous, to: value, kept: true});
+      S.cooldowns[stanceCooldownKey(cardId)] = t + card.cooldown;
+      writeMirrors(Q);
+      return result(Q, stanceName(cardId) + ': ' + stanceValue(cardId, value) + L('. PPS confirms its present line; nothing else changes.',
+        '. PPS potwierdza swoją obecną linię; nic więcej się nie zmienia.'));
+    }
     rules.commitMainAction(Q, card.action, {from: previous, to: value});
     strategy[card.field] = value;
     S.actors.pps.strategy_history.push({t: t, field: card.field, from: previous, to: value});
@@ -1003,48 +1082,56 @@
     for (const rule of REJECTED) {
       if (rule.field === card.field && rule.value === value) {
         factionReaction(Q, rule.faction, {dissent: 3}, {id: card.action + ':' + value + ':t' + t, kind: 'stance', reverse: reverse});
-        lines.push(FACTION_NAMES[rule.faction] + ' dissent +3');
+        lines.push(FACTION_NAMES[rule.faction] + L(' dissent +3', ': sprzeciw +3'));
       }
     }
     if (cardId === 'pils_influence') {
       if (value === 'support') {
         const recent = S.actors.pps.strategy_history.some(h => h.field === 'pils_influence' && h.to === 'support' && h.t !== t && t - h.t < 12);
-        if (!recent) { government.changeRelation(Q, 'pilsudski', 4, 'party.pils_influence:support'); lines.push('relation with Piłsudski +4'); }
+        if (!recent) {
+          government.changeRelation(Q, 'pilsudski', 4, 'party.pils_influence:support');
+          lines.push(L('relation with Piłsudski +4', 'relacja z Piłsudskim +4'));
+        }
       } else if (value === 'oppose_military_interference') {
         government.changeRelation(Q, 'pilsudski', -4, 'party.pils_influence:oppose');
-        lines.push('relation with Piłsudski −4');
+        lines.push(L('relation with Piłsudski −4', 'relacja z Piłsudskim −4'));
       }
     }
     if (cardId === 'form_of_power' && value === 'workers_councils' && !S.actors.pps.councils_adopted) {
       S.actors.pps.councils_adopted = true;
       factionReaction(Q, 'lewica', {strength: 4}, {id: 'party.form_of_power:workers_councils:strength', kind: 'stance_strength', reverse: null});
       factionReaction(Q, 'centrum', {dissent: 3}, {id: 'party.form_of_power:workers_councils', kind: 'stance', reverse: reverse});
-      lines.push('Lewica +4 strength, Centrum dissent +3');
+      lines.push(L('Lewica +4 strength, Centrum dissent +3', 'Lewica: siła +4; Centrum: sprzeciw +3'));
     }
     if (cardId === 'ussr_position') {
       if (value === 'sympathetic') {
         if (!S.actors.pps.ussr_bonus_used) {
           S.actors.pps.ussr_bonus_used = true;
           government.changeRelation(Q, 'kpp', 5, 'party.ussr_position:sympathetic');
-          lines.push('relation with the KPP +5');
+          lines.push(L('relation with the KPP +5', 'relacja z KPP +5'));
         }
         factionReaction(Q, 'centrum', {dissent: 5}, {id: 'party.ussr_position:sympathetic:t' + t, kind: 'stance', reverse: reverse});
-        lines.push('Centrum dissent +5');
+        lines.push(L('Centrum dissent +5', 'Centrum: sprzeciw +5'));
       } else if (value === 'critical') {
         government.changeRelation(Q, 'kpp', -5, 'party.ussr_position:critical:t' + t);
-        lines.push('relation with the KPP −5');
+        lines.push(L('relation with the KPP −5', 'relacja z KPP −5'));
       }
     }
     writeProgramme(S);
     writeMirrors(Q);
-    return result(Q, card.name + ': ' + card.values[value] + '.' + (lines.length ? ' ' + lines.join('; ') + '.' : ' No immediate reaction.'));
+    return result(Q, stanceName(cardId) + ': ' + stanceValue(cardId, value) + '.' + (lines.length ? ' ' + lines.join('; ') + '.' :
+      L(' No immediate reaction.', ' Bez natychmiastowej reakcji.')));
   }
 
   function stanceView(Q, cardId) {
     syncMirrors(Q);
     const card = STANCES[cardId];
-    for (const value of Object.keys(card.values)) Q['pl_stance_' + value + '_why'] = stanceStatus(Q, cardId, value).reason;
-    Q.pl_stance_current = card.values[strategyOf(Q.S)[card.field]] || 'not declared';
+    const current = strategyOf(Q.S)[card.field];
+    for (const value of Object.keys(card.values)) {
+      Q['pl_stance_' + value + '_why'] = stanceStatus(Q, cardId, value).reason;
+      Q['pl_stance_' + value + '_present'] = value === current ? 1 : 0;
+    }
+    Q.pl_stance_current = card.values[current] ? stanceValue(cardId, current) : L('not declared', 'nie zadeklarowano');
   }
 
   // ---- Economic programme: up to three priorities (10.5; card 6.2) --------------------------------------
@@ -1054,6 +1141,10 @@
     wealth_and_investment: 'Wealth taxes and capital for investment', socialisation: 'Socialisation of selected enterprises',
     agrarian_labour: 'An agrarian and workers’ programme',
   });
+  const PRIORITIES_PL = Object.freeze({stabilisation_with_protection: 'Stabilizacja z osłonami', public_works: 'Roboty publiczne i zatrudnienie',
+    wealth_and_investment: 'Podatki majątkowe i kapitał na inwestycje', socialisation: 'Uspołecznienie wybranych przedsiębiorstw',
+    agrarian_labour: 'Program rolny i robotniczy'});
+  const priorityName = id => L(PRIORITIES[id], PRIORITIES_PL[id]);
 
   const sameSet = (a, b) => a.length === b.length && a.every(x => b.indexOf(x) >= 0);
 
@@ -1063,10 +1154,9 @@
 
   function programmeStatus(Q, set) {
     const S = Q.S;
-    if (!Array.isArray(set) || set.some(id => !PRIORITIES[id]) || new Set(set).size !== set.length) return no('Unknown priorities.');
-    if (set.length > 3) return no('At most three priorities.');
-    if (sameSet(set, strategyOf(S).economic_priorities)) return no('This is the present programme.');
-    if (!rules.mainActionAvailable(Q)) return no('This month’s action has already been used.');
+    if (!Array.isArray(set) || set.some(id => !PRIORITIES[id]) || new Set(set).size !== set.length) return no(L('Unknown priorities.', 'Nieznane priorytety.'));
+    if (set.length > 3) return no(L('At most three priorities.', 'Najwyżej trzy priorytety.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
     const wait = waitReason(Q, 'party.economic_program');
     if (wait) return no(wait);
     return OK;
@@ -1080,23 +1170,34 @@
     if (!status.available) throw new Error('programmeChoose: ' + status.reason);
     const S = Q.S, t = Q.time, strategy = strategyOf(S);
     const previous = strategy.economic_priorities.slice();
+    if (sameSet(set, previous)) {
+      // The confirmed present programme (Z — 0.51): the month and the wait of the card, nothing else.
+      rules.commitMainAction(Q, 'party.economic_program', {from: previous, to: set.slice(), kept: true});
+      S.cooldowns['party.economic_program'] = t + 6;
+      writeMirrors(Q);
+      return result(Q, L('PPS confirms its present economic programme: ', 'PPS potwierdza swój obecny program gospodarczy: ') +
+        (previous.length ? previous.map(priorityName).join('; ') : L('no priorities', 'bez priorytetów')) +
+        L('. Nothing else changes.', '. Nic więcej się nie zmienia.'));
+    }
     rules.commitMainAction(Q, 'party.economic_program', {from: previous, to: set.slice()});
     strategy.economic_priorities = set.slice().sort();
     S.actors.pps.strategy_history.push({t: t, field: 'economic_priorities', from: previous, to: strategy.economic_priorities.slice()});
     S.cooldowns['party.economic_program'] = t + 6;
     writeMirrors(Q);
-    return result(Q, set.length ? 'The economic programme of PPS: ' + strategy.economic_priorities.map(id => PRIORITIES[id]).join('; ') +
-      '. The priorities prepare nothing by themselves; each programme still needs its card, law, money and executor.'
-      : 'PPS withdraws its economic priorities.');
+    return result(Q, set.length ? L('The economic programme of PPS: ', 'Program gospodarczy PPS: ') + strategy.economic_priorities.map(priorityName).join('; ') +
+      L('. The priorities prepare nothing by themselves; each programme still needs its card, law, money and executor.',
+        '. Priorytety same niczego nie przygotowują; każdy program nadal potrzebuje swojej karty, ustawy, pieniędzy i wykonawcy.')
+      : L('PPS withdraws its economic priorities.', 'PPS wycofuje swoje priorytety gospodarcze.'));
   }
 
   function programmeView(Q) {
     syncMirrors(Q);
     const draft = String(Q.pl_prog_draft || '').split(',').filter(Boolean);
     for (const id of Object.keys(PRIORITIES)) Q['pl_prog_' + id + '_in'] = draft.indexOf(id) >= 0 ? 1 : 0;
-    Q.pl_prog_current = strategyOf(Q.S).economic_priorities.map(id => PRIORITIES[id]).join('; ') || 'none';
-    Q.pl_prog_draft_text = draft.map(id => PRIORITIES[id]).join('; ') || 'none';
+    Q.pl_prog_current = strategyOf(Q.S).economic_priorities.map(priorityName).join('; ') || L('none', 'brak');
+    Q.pl_prog_draft_text = draft.map(priorityName).join('; ') || L('none', 'brak');
     Q.pl_prog_confirm_why = programmeStatus(Q, draft).reason;
+    Q.pl_prog_confirm_same = sameSet(draft, strategyOf(Q.S).economic_priorities) ? 1 : 0;
   }
 
   function programmeToggle(Q, id) {
@@ -1179,28 +1280,28 @@
 
   function kppStepStatus(Q, step) {
     const S = Q.S, cc = S.actors.communist_cooperation, relation = S.actors.relations.kpp;
-    if (!channelOpen(S)) return no('No open channel to the KPP.');
-    if (!rules.mainActionAvailable(Q)) return no('This month’s action has already been used.');
+    if (!channelOpen(S)) return no(L('No open channel to the KPP.', 'Brak otwartego kanału do KPP.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
     if (step === 'trial') {
-      if (relation < 30) return no('Needs a relation of 30 with the KPP; it is ' + fmt(relation) + '.');
-      if (!openDemands(S).length) return no('Needs an existing joint demand; in this chapter a trial is agreed in a strike, in its step of cooperation with the communists.');
+      if (relation < 30) return no(L('Needs a relation of 30 with the KPP; it is ' + fmt(relation) + '.', 'Wymaga relacji 30 z KPP; obecnie ' + fmt(relation) + '.'));
+      if (!openDemands(S).length) return no(L('Needs an existing joint demand; in this chapter a trial is agreed in a strike, in its step of cooperation with the communists.', 'Wymaga istniejącego wspólnego postulatu; w tym rozdziale próbę uzgadnia się w strajku, w kroku współpracy z komunistami.'));
       return OK;
     }
     if (step === 'rules') {
       const done = successfulTrials(S);
       if (done.length < 2 || !done.some(r => r.mode === 'full') || new Set(done.map(r => r.action_id)).size < 2) {
-        return no('Needs two different successful joint actions, one of them full cooperation.');
+        return no(L('Needs two different successful joint actions, one of them full cooperation.', 'Wymaga dwóch różnych udanych wspólnych akcji, w tym jednej pełnej współpracy.'));
       }
-      if (relation < 50) return no('Needs a relation of 50 with the KPP.');
+      if (relation < 50) return no(L('Needs a relation of 50 with the KPP.', 'Wymaga relacji 50 z KPP.'));
       return OK;
     }
     if (step === 'agreement') {
-      if (!cc.rules_agreed) return no('Needs rules accepted by both sides.');
-      if (internalAcceptance(S) < 60) return no('Needs the acceptance of 60 inside PPS.');
-      if (S.party_orgs.cash + 1e-9 < 1) return no('Needs 1 R.');
+      if (!cc.rules_agreed) return no(L('Needs rules accepted by both sides.', 'Wymaga zasad przyjętych przez obie strony.'));
+      if (internalAcceptance(S) < 60) return no(L('Needs the acceptance of 60 inside PPS.', 'Wymaga akceptacji 60 wewnątrz PPS.'));
+      if (S.party_orgs.cash + 1e-9 < 1) return no(L('Needs 1 R.', 'Wymaga 1 R.'));
       return OK;
     }
-    return no('Unknown step.');
+    return no(L('Unknown step.', 'Nieznany krok.'));
   }
 
   function kppAgendaAvailable(Q) {
@@ -1218,17 +1319,19 @@
       const demand = openDemands(S)[0];
       demand.status = 'agreed';
       recordTrial(S, {action_id: demand.id, kind: demand.kind || 'strike', mode: 'agreed', terms: {level: demand.level || 'broad'}, result: 'pending'});
-      return result(Q, 'PPS and the KPP agree on a trial of joint action for ' + (demand.name || 'the joint demand') + '.');
+      return result(Q, L('PPS and the KPP agree on a trial of joint action for ' + (demand.name || 'the joint demand') + '.',
+        'PPS i KPP uzgadniają próbę wspólnej akcji (' + (demand.name || 'wspólny postulat') + ').'));
     }
     if (step === 'rules') {
       cc.rules = {legal_vote: true, no_forced_merger: true, agreed_strike_end: true};
       cc.rules_agreed = true;
-      return result(Q, 'The rules of a broader cooperation are agreed: legality, no violence and the independence of PPS.');
+      return result(Q, L('The rules of a broader cooperation are agreed: legality, no violence and the independence of PPS.',
+        'Uzgodniono zasady szerszej współpracy: legalność, wyrzeczenie się przemocy i niezależność PPS.'));
     }
     S.party_orgs.cash = Math.max(0, S.party_orgs.cash - 1);
     cc.active_agreement = {agreed_at: t, goal: 'joint_workers_action'};
     writeMirrors(Q);
-    return result(Q, 'PPS and the KPP conclude a broader agreement for joint workers’ action.');
+    return result(Q, L('PPS and the KPP conclude a broader agreement for joint workers’ action.', 'PPS i KPP zawierają szersze porozumienie o wspólnej akcji robotniczej.'));
   }
 
   // The Bund is an organisation, not a party (5.5): its trust changes only by an executed joint action,
@@ -1253,6 +1356,9 @@
     parliamentary: 'parliamentary socialism', class: 'independent class politics', workers_gains: 'the defence of workers’ gains',
     democracy: 'the defence of democracy',
   });
+  const TOPICS_PL = Object.freeze({parliamentary: 'socjalizm parlamentarny', class: 'niezależna polityka klasowa',
+    workers_gains: 'obrona zdobyczy robotniczych', democracy: 'obrona demokracji'});
+  const topicName = id => L(TOPICS[id], TOPICS_PL[id]);
   const CAMPAIGN_KINDS = Object.freeze(['press', 'unions', 'polemic', 'turnout']);
 
   // The addressees of a polemic from the present line (10.6, Z — 0.33): ZLN for the national right, the KPP
@@ -1335,20 +1441,20 @@
 
   function campaignStatus(Q, kind, topic, audience) {
     const S = Q.S;
-    if (CAMPAIGN_KINDS.indexOf(kind) < 0) return no('Unknown campaign.');
-    if (!rules.mainActionAvailable(Q)) return no('This month’s action has already been used.');
-    if (S.party_orgs.cash + 1e-9 < 1) return no('Needs 1 R.');
-    if (!electorate.hasCells(S)) return no('The cells of the electorate are not recorded.');
-    if ((kind === 'press' || kind === 'unions') && topic !== undefined && !TOPICS[topic]) return no('Choose a topic.');
+    if (CAMPAIGN_KINDS.indexOf(kind) < 0) return no(L('Unknown campaign.', 'Nieznana kampania.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
+    if (S.party_orgs.cash + 1e-9 < 1) return no(L('Needs 1 R.', 'Wymaga 1 R.'));
+    if (!electorate.hasCells(S)) return no(L('The cells of the electorate are not recorded.', 'Grupy wyborców nie są zapisane.'));
+    if ((kind === 'press' || kind === 'unions') && topic !== undefined && !TOPICS[topic]) return no(L('Choose a topic.', 'Wybierz temat.'));
     if (kind === 'polemic') {
       const addressees = polemicAddressees(Q);
-      if (!addressees.length) return no('No addressee: the present main opponent has no party to answer for it.');
+      if (!addressees.length) return no(L('No addressee: the present main opponent has no party to answer for it.', 'Brak adresata: obecny główny przeciwnik nie ma partii, która by za niego odpowiadała.'));
       if (audience !== undefined) {
         const pool = S.society.cells.filter(audienceFilter(audience)).reduce((n, cell) => n + addressees.reduce((m, p) => m + cell.propensity[p], 0), 0);
-        if (!(pool > 0)) return no('The addressee has no voters among them.');
+        if (!(pool > 0)) return no(L('The addressee has no voters among them.', 'Adresat nie ma wśród nich wyborców.'));
       }
     }
-    if (audience !== undefined && !S.society.cells.some(audienceFilter(audience))) return no('No such voters are modelled.');
+    if (audience !== undefined && !S.society.cells.some(audienceFilter(audience))) return no(L('No such voters are modelled.', 'Gra nie modeluje takich wyborców.'));
     return OK;
   }
 
@@ -1367,7 +1473,8 @@
     let text;
     if (kind === 'turnout') {
       electorate.addTurnout(S, filter, 0.04);
-      text = 'The mobilisation campaign raises the turnout of ' + electorate.AUDIENCES[audience].name + ' by 0.04 until the next election.';
+      text = L('The mobilisation campaign raises the turnout of ' + electorate.AUDIENCES[audience].name + ' by 0.04 until the next election.',
+        'Kampania mobilizacyjna podnosi frekwencję ' + electorate.AUDIENCE_NAMES_PL_GENITIVE[audience] + ' o 0,04 do następnych wyborów.');
     } else {
       text = campaignEffect(Q, kind, topic, audience).text;
     }
@@ -1401,9 +1508,13 @@
     if (kind === 'polemic') for (const id of sources) government.changeRelation(Q, id, -2, 'polemic:' + id + ':t' + t);
     const after = electorate.aggregate(S, filter, 'pps');
     const name = audience ? electorate.AUDIENCES[audience].name : 'the voters it reaches';
-    const text = 'The ' + (kind === 'polemic' ? 'polemic' : kind === 'unions' ? 'campaign through the unions and meetings' : 'press campaign') +
+    const text = L('The ' + (kind === 'polemic' ? 'polemic' : kind === 'unions' ? 'campaign through the unions and meetings' : 'press campaign') +
       (topic && kind !== 'polemic' ? ' on ' + TOPICS[topic] : '') + ' reaches ' + name + ': PPS ' +
-      fmt(before) + '% → ' + fmt(after) + '% among them.' + (kind === 'polemic' ? ' The addressee’s relation with PPS −2.' : '');
+      fmt(before) + '% → ' + fmt(after) + '% among them.' + (kind === 'polemic' ? ' The addressee’s relation with PPS −2.' : ''),
+      (kind === 'polemic' ? 'Polemika' : kind === 'unions' ? 'Kampania przez związki i zebrania' : 'Kampania prasowa') +
+      (topic && kind !== 'polemic' ? ' (temat: ' + topicName(topic) + ')' : '') + ' dociera do ' +
+      (audience ? electorate.AUDIENCE_NAMES_PL_GENITIVE[audience] : 'wyborców w swoim zasięgu') + ': PPS ' +
+      fmt(before) + '% → ' + fmt(after) + '% w tej grupie.' + (kind === 'polemic' ? ' Relacja adresata z PPS −2.' : ''));
     S.history.reasons.push({t: t, kind: 'campaign', campaign: kind, topic: key, audience: audience || 'reached', moved: moved});
     electorate.writeClassMirrors(Q);
     return {moved: moved, before: before, after: after, text: text};
@@ -1412,7 +1523,7 @@
   function pressDistributionStatus(Q) {
     const status = packageStatus(Q, 'press_distribution', 0);
     if (!status.available) return status;
-    return rules.mainActionAvailable(Q) ? OK : no('This month’s action has already been used.');
+    return rules.mainActionAvailable(Q) ? OK : no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
   }
 
   function pressDistribution(Q) {
@@ -1442,9 +1553,9 @@
 
   function pressInvestigationStatus(Q) {
     const S = Q.S;
-    if (!pressInvestigationTarget(S)) return no('Needs an open case with evidence: a recorded case of violence or an unlawful restriction not yet revealed.');
-    if (!rules.mainActionAvailable(Q)) return no('This month’s action has already been used.');
-    if (S.party_orgs.cash + 1e-9 < 1) return no('Needs 1 R.');
+    if (!pressInvestigationTarget(S)) return no(L('Needs an open case with evidence: a recorded case of violence or an unlawful restriction not yet revealed.', 'Wymaga otwartej sprawy z dowodami: zapisanego przypadku przemocy albo bezprawnego ograniczenia, którego jeszcze nie ujawniono.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
+    if (S.party_orgs.cash + 1e-9 < 1) return no(L('Needs 1 R.', 'Wymaga 1 R.'));
     return OK;
   }
 
@@ -1461,7 +1572,8 @@
     record.press_revealed_at = t;
     S.history.reasons.push({t: t, kind: 'press_investigation', target_kind: target.kind, target_id: target.id});
     writeMirrors(Q);
-    return result(Q, 'The party press documents ' + target.subject + ': credibility +4. The fact is recorded once; nothing is invented.');
+    return result(Q, L('The party press documents ' + target.subject + ': credibility +4. The fact is recorded once; nothing is invented.',
+      'Prasa partyjna dokumentuje sprawę: ' + rules.storedText(target.subject) + '. Wiarygodność +4. Fakt zostaje zapisany raz; nic nie jest zmyślone.'));
   }
 
   function mediaView(Q) {
@@ -1469,14 +1581,14 @@
     partyDisplay(Q);
     Q.pl_media_distribution_why = pressDistributionStatus(Q).reason;
     Q.pl_media_format_why = pressFormatStatus(Q).reason;
-    Q.pl_media_format_next = Q.S.party_orgs.press.format === 'popular' ? 'the party journal' : 'a popular format';
+    Q.pl_media_format_next = Q.S.party_orgs.press.format === 'popular' ? L('the party journal', 'pismo partyjne') : L('a popular format', 'format popularny');
     Q.pl_media_campaign_why = campaignStatus(Q, 'press').reason;
     Q.pl_media_unions_why = campaignStatus(Q, 'unions').reason;
     Q.pl_media_polemic_why = campaignStatus(Q, 'polemic').reason;
     Q.pl_media_turnout_why = campaignStatus(Q, 'turnout').reason;
     Q.pl_media_investigation_why = pressInvestigationStatus(Q).reason;
     const addressees = polemicAddressees(Q);
-    Q.pl_media_addressees = addressees.length ? addressees.map(id => government.ACTOR_PROFILES[id].name).join(' and ') : 'no one';
+    Q.pl_media_addressees = addressees.length ? addressees.map(id => government.ACTOR_PROFILES[id].name).join(L(' and ', ' i ')) : L('no one', 'brak');
   }
 
   function audienceView(Q, kind, topic) {
@@ -1660,17 +1772,21 @@
     return list.length ? list[0] : null;
   }
 
+  // In Polish the demand is a noun phrase ('powrót do linii …'); the scenes and results put it after a colon.
   function describeDemand(Q, demand) {
     const r = demand.reverse;
     if (r.kind === 'strategy') {
-      const card = STANCE_ORDER.map(id => STANCES[id]).find(c => c.field === r.field);
-      return 'return to the line “' + (card ? card.values[r.value] : r.value) + '” (' + (card ? card.name : r.field) + ')';
+      const cardId = STANCE_ORDER.find(id => STANCES[id].field === r.field), card = cardId ? STANCES[cardId] : null;
+      return L('return to the line “' + (card ? card.values[r.value] : r.value) + '” (' + (card ? card.name : r.field) + ')',
+        'powrót do linii „' + (card && card.values[r.value] ? stanceValue(cardId, r.value) : r.value) + '” (' + (card ? stanceName(cardId) : r.field) + ')');
     }
-    if (r.kind === 'press_format') return 'return the party press to the party journal';
-    if (r.kind === 'leave_cabinet') return 'end PPS’s participation in, or support for, the present cabinet';
-    if (r.kind === 'kpp_agreement') return 'end the agreement with the KPP';
-    return 'change the line';
+    if (r.kind === 'press_format') return L('return the party press to the party journal', 'powrót prasy partyjnej do formuły pisma partyjnego');
+    if (r.kind === 'leave_cabinet') return L('end PPS’s participation in, or support for, the present cabinet',
+      'zakończenie udziału PPS w obecnym gabinecie albo poparcia dla niego');
+    if (r.kind === 'kpp_agreement') return L('end the agreement with the KPP', 'zerwanie porozumienia z KPP');
+    return L('change the line', 'zmiana linii');
   }
+  const mpsText = n => L(n + (n === 1 ? ' MP' : ' MPs'), n + ' ' + rules.plural(n, 'poseł', 'posłów', 'posłów'));
 
   // Once a month (and when the queue looks for an event): a faction with dissent of 60 or more and a concrete
   // demand gets one case; a postponed case returns after its three months; a case whose cause is gone lapses.
@@ -1739,7 +1855,8 @@
     government.factionReaction(Q, c.faction, {dissent: -5}, {id: 'e3:' + c.id + ':accepted', kind: 'demand_met', reverse: null});
     c.status = 'accepted'; c.resolution = 'accepted'; c.resolved_at = Q.time;
     writeMirrors(Q);
-    return result(Q, FACTION_NAMES[c.faction] + ' stays: PPS will ' + describeDemand(Q, c.demand) + '. Its dissent −5.');
+    return result(Q, L(FACTION_NAMES[c.faction] + ' stays: PPS will ' + describeDemand(Q, c.demand) + '. Its dissent −5.',
+      FACTION_NAMES[c.faction] + ' zostaje. PPS spełnia żądanie: ' + describeDemand(Q, c.demand) + '. Sprzeciw frakcji −5.'));
   }
 
   // Keep the line and accept the split: 40% of the faction's base leaves (M16), with its voters and MPs.
@@ -1751,8 +1868,10 @@
     closeReactions(S, c.faction, c.demand.reverse);
     const manifest = applyDeparture(Q, c.faction, 0.40, 20, 'split', c.id);
     c.status = 'split'; c.resolution = 'split'; c.resolved_at = Q.time; c.manifest_id = manifest.id;
-    return result(Q, 'Part of ' + FACTION_NAMES[c.faction] + ' leaves PPS: ' + fmt(100 * manifest.removed_share) + '% of the party’s base, ' +
-      manifest.mps + (manifest.mps === 1 ? ' MP' : ' MPs') + ' to a separate club. PPS keeps its line.');
+    return result(Q, L('Part of ' + FACTION_NAMES[c.faction] + ' leaves PPS: ' + fmt(100 * manifest.removed_share) + '% of the party’s base, ' +
+      manifest.mps + (manifest.mps === 1 ? ' MP' : ' MPs') + ' to a separate club. PPS keeps its line.',
+      'Część frakcji ' + FACTION_NAMES[c.faction] + ' odchodzi z PPS: ' + fmt(100 * manifest.removed_share) + '% bazy partii; do osobnego klubu przechodzi ' +
+      mpsText(manifest.mps) + '. PPS utrzymuje swoją linię.'));
   }
 
   function factionSplitView(Q) {
@@ -1762,9 +1881,12 @@
     Q.pl_e3_faction = FACTION_NAMES[c.faction];
     Q.pl_e3_dissent = fmt(factionsOf(S)[c.faction].dissent);
     Q.pl_e3_demand = describeDemand(Q, c.demand);
-    Q.pl_e3_preview = fmt(100 * preview.removed_share) + '% of the party’s base leaves; PPS support ' + fmt(preview.pps_before) + '% → ' +
+    Q.pl_e3_preview = L(fmt(100 * preview.removed_share) + '% of the party’s base leaves; PPS support ' + fmt(preview.pps_before) + '% → ' +
       fmt(preview.pps_after) + '%; membership ×' + fmt(1 - preview.removed_share) + '; ' + preview.mps + (preview.mps === 1 ? ' MP' : ' MPs') +
-      ' to a separate club; its voters go to ' + (preview.recipient === 'kpp' ? 'the KPP' : 'other lists') + '. No adviser leaves.';
+      ' to a separate club; its voters go to ' + (preview.recipient === 'kpp' ? 'the KPP' : 'other lists') + '. No adviser leaves.',
+      fmt(100 * preview.removed_share) + '% bazy partii odchodzi; poparcie PPS ' + fmt(preview.pps_before) + '% → ' + fmt(preview.pps_after) +
+      '%; członkostwo ×' + fmt(1 - preview.removed_share) + '; do osobnego klubu przechodzi ' + mpsText(preview.mps) + '; jej wyborcy przechodzą do ' +
+      (preview.recipient === 'kpp' ? 'KPP' : 'innych list') + '. Żaden doradca nie odchodzi.');
   }
 
   // ---- The unity card (10.5, 10.9; cards 6.3–6.4) ---------------------------------------------------------
@@ -1777,35 +1899,36 @@
 
   function unityStatus(Q, option, factionId) {
     const S = Q.S, f = factionsOf(S);
-    if (!rules.mainActionAvailable(Q)) return no('This month’s action has already been used.');
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
     if (option === 'concession') {
-      if (f[factionId].dissent < 30) return no('A concession is for a faction with dissent of 30 or more.');
+      if (f[factionId].dissent < 30) return no(L('A concession is for a faction with dissent of 30 or more.', 'Ustępstwo przysługuje frakcji ze sprzeciwem co najmniej 30.'));
       const wait = waitReason(Q, 'party.faction_conference.' + factionId);
       if (wait) return no(wait);
-      return S.party_orgs.cash + 1e-9 >= 1 ? OK : no('Needs 1 R.');
+      return S.party_orgs.cash + 1e-9 >= 1 ? OK : no(L('Needs 1 R.', 'Wymaga 1 R.'));
     }
     if (option === 'kpp_line') {
-      if (!channelOpen(S)) return no('The channel to the KPP is closed.');
+      if (!channelOpen(S)) return no(L('The channel to the KPP is closed.', 'Kanał kontaktu z KPP jest zamknięty.'));
       const wait = waitReason(Q, 'party.unity.kpp_line');
       return wait ? no(wait) : OK;
     }
     if (option === 'postpone') {
       const current = activeCase(S, factionId);
       const demand = current ? current.demand : factionDemand(Q, factionId);
-      if (!demand) return no('The faction has no concrete demand.');
-      if (f[factionId].dissent < 45) return no('Needs dissent of 45 or more.');
-      if (current && current.postponed_once) return no('This case has been postponed once already.');
+      if (!demand) return no(L('The faction has no concrete demand.', 'Frakcja nie ma konkretnego żądania.'));
+      if (f[factionId].dissent < 45) return no(L('Needs dissent of 45 or more.', 'Wymaga sprzeciwu co najmniej 45.'));
+      if (current && current.postponed_once) return no(L('This case has been postponed once already.', 'Tę sprawę już raz odroczono.'));
       return OK;
     }
     if (option === 'expel') {
-      if (!(f[factionId].strength > 0)) return no('The faction has no strength.');
+      if (!(f[factionId].strength > 0)) return no(L('The faction has no strength.', 'Frakcja nie ma siły.'));
       const gate = Math.max(30, 100 * partyDissent(S));
-      if (f[factionId].dissent < gate) return no('Needs dissent of ' + fmt(gate) + ' or more in this faction.');
+      if (f[factionId].dissent < gate) return no(L('Needs dissent of ' + fmt(gate) + ' or more in this faction.',
+        'Wymaga sprzeciwu co najmniej ' + fmt(gate) + ' w tej frakcji.'));
       const wait = waitReason(Q, 'party.faction_expulsion');
       if (wait) return no(wait);
-      return S.party_orgs.cash + 1e-9 >= 1 ? OK : no('Needs 1 R.');
+      return S.party_orgs.cash + 1e-9 >= 1 ? OK : no(L('Needs 1 R.', 'Wymaga 1 R.'));
     }
-    return no('Unknown option.');
+    return no(L('Unknown option.', 'Nieznana opcja.'));
   }
 
   function unityChoose(Q, option, factionId) {
@@ -1819,7 +1942,8 @@
       S.cooldowns['party.faction_conference.' + factionId] = t + 3;
       government.factionReaction(Q, factionId, {dissent: -8}, {id: 'party.faction_conference:' + factionId + ':t' + t, kind: 'concession', reverse: null});
       writeMirrors(Q);
-      return result(Q, 'A concession to ' + FACTION_NAMES[factionId] + ': its dissent −8.');
+      return result(Q, L('A concession to ' + FACTION_NAMES[factionId] + ': its dissent −8.',
+        'Ustępstwo wobec frakcji ' + FACTION_NAMES[factionId] + ': jej sprzeciw −8.'));
     }
     if (option === 'kpp_line') {
       rules.commitMainAction(Q, 'party.unity.kpp_line', {});
@@ -1827,7 +1951,8 @@
       for (const id of FACTIONS) acceptance[id] = Math.min(100, acceptance[id] + 15);
       S.cooldowns['party.unity.kpp_line'] = t + 6;
       writeMirrors(Q);
-      return result(Q, 'PPS agrees on the line of cooperation with the communists: acceptance +15 in each faction (' + fmt(internalAcceptance(S)) + ').');
+      return result(Q, L('PPS agrees on the line of cooperation with the communists: acceptance +15 in each faction (' + fmt(internalAcceptance(S)) + ').',
+        'PPS uzgadnia linię współpracy z komunistami: akceptacja +15 w każdej frakcji (' + fmt(internalAcceptance(S)) + ').'));
     }
     if (option === 'postpone') {
       rules.commitMainAction(Q, 'party.unity.postpone', {faction: factionId});
@@ -1842,7 +1967,8 @@
       current.postponed_until = t + 3;
       current.postponed_once = true;
       writeMirrors(Q);
-      return result(Q, FACTION_NAMES[factionId] + ' agrees to wait: its case is postponed for three months. Its dissent does not change.');
+      return result(Q, L(FACTION_NAMES[factionId] + ' agrees to wait: its case is postponed for three months. Its dissent does not change.',
+        FACTION_NAMES[factionId] + ' zgadza się poczekać: jej sprawa zostaje odroczona o trzy miesiące. Jej sprzeciw się nie zmienia.'));
     }
     // A purge (10.9): 25% of the faction's base, dissent −15, a shared cooldown of 12 months.
     rules.commitMainAction(Q, 'party.faction_expulsion', {faction: factionId, resource_cost: {R: 1}});
@@ -1851,8 +1977,10 @@
     const current = activeCase(S, factionId);
     const manifest = applyDeparture(Q, factionId, 0.25, 15, 'expulsion', current ? current.id : null);
     if (current) { current.status = 'closed'; current.resolution = 'expulsion'; current.resolved_at = t; current.manifest_id = manifest.id; }
-    return result(Q, 'PPS expels part of ' + FACTION_NAMES[factionId] + ': ' + fmt(100 * manifest.removed_share) + '% of the party’s base, ' +
-      manifest.mps + (manifest.mps === 1 ? ' MP' : ' MPs') + ' leave the club.');
+    return result(Q, L('PPS expels part of ' + FACTION_NAMES[factionId] + ': ' + fmt(100 * manifest.removed_share) + '% of the party’s base, ' +
+      manifest.mps + (manifest.mps === 1 ? ' MP' : ' MPs') + ' leave the club.',
+      'PPS usuwa część frakcji ' + FACTION_NAMES[factionId] + ': ' + fmt(100 * manifest.removed_share) + '% bazy partii; klub opuszcza ' +
+      mpsText(manifest.mps) + '.'));
   }
 
   // A broken rule of the cooperation with the communists costs 15 of acceptance in each faction (9.5).
@@ -1866,8 +1994,9 @@
     const S = Q.S;
     for (const id of FACTIONS) {
       for (const option of ['concession', 'postpone', 'expel']) Q['pl_unity_' + option + '_' + id + '_why'] = unityStatus(Q, option, id).reason;
-      Q['pl_unity_' + id + '_line'] = FACTION_NAMES[id] + ': strength ' + fmt(factionsOf(S)[id].strength) + ', dissent ' + fmt(factionsOf(S)[id].dissent) +
-        (activeCase(S, id) ? '; its demand: ' + describeDemand(Q, activeCase(S, id).demand) : factionDemand(Q, id) ? '; it could demand: ' + describeDemand(Q, factionDemand(Q, id)) : '');
+      Q['pl_unity_' + id + '_line'] = FACTION_NAMES[id] + L(': strength ', ': siła ') + fmt(factionsOf(S)[id].strength) + L(', dissent ', ', sprzeciw ') +
+        fmt(factionsOf(S)[id].dissent) + (activeCase(S, id) ? L('; its demand: ', '; jej żądanie: ') + describeDemand(Q, activeCase(S, id).demand) :
+          factionDemand(Q, id) ? L('; it could demand: ', '; możliwe żądanie: ') + describeDemand(Q, factionDemand(Q, id)) : '');
     }
     Q.pl_unity_kpp_line_why = unityStatus(Q, 'kpp_line').reason;
   }
@@ -1912,10 +2041,10 @@
 
   function advisersStatus(Q, draft) {
     const current = activeAdvisers(Q);
-    if (draft.length > TEAM_SIZE) return no('Three places at most.');
-    if (draft.some(id => current.indexOf(id) < 0 && !adviserInPool(Q, id))) return no('Someone in the team is not available.');
-    if (sameSet(draft, current)) return no('This is the present team.');
-    if (!rules.mainActionAvailable(Q)) return no('This month’s action has already been used.');
+    if (draft.length > TEAM_SIZE) return no(L('Three places at most.', 'Najwyżej trzy miejsca.'));
+    if (draft.some(id => current.indexOf(id) < 0 && !adviserInPool(Q, id))) return no(L('Someone in the team is not available.', 'Ktoś z zespołu jest niedostępny.'));
+    if (sameSet(draft, current)) return no(L('This is the present team.', 'To obecny zespół.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
     const wait = waitReason(Q, 'party.advisers');
     return wait ? no(wait) : OK;
   }
@@ -1934,7 +2063,8 @@
       if (draft.indexOf(id) >= 0) continue;
       Q[id + '_advisor'] = 0;
       government.factionReaction(Q, ADVISERS[id].faction, {dissent: 5}, {id: 'adviser.dismissed:' + id + ':t' + t, kind: 'dismissal', reverse: null});
-      lines.push(ADVISERS[id].name + ' leaves the team (' + FACTION_NAMES[ADVISERS[id].faction] + ' dissent +5)');
+      lines.push(ADVISERS[id].name + L(' leaves the team (' + FACTION_NAMES[ADVISERS[id].faction] + ' dissent +5)',
+        ' odchodzi z zespołu (' + FACTION_NAMES[ADVISERS[id].faction] + ': sprzeciw +5)'));
     }
     for (const id of draft) {
       if (current.indexOf(id) >= 0) continue;
@@ -1942,9 +2072,10 @@
       if (!Q[id + '_appointed_once']) {
         Q[id + '_appointed_once'] = 1;
         government.factionReaction(Q, ADVISERS[id].faction, {strength: 5, dissent: -5}, {id: 'adviser.appointed:' + id, kind: 'appointment', reverse: null});
-        lines.push(ADVISERS[id].name + ' joins the team (' + FACTION_NAMES[ADVISERS[id].faction] + ' +5 strength, dissent −5)');
+        lines.push(ADVISERS[id].name + L(' joins the team (' + FACTION_NAMES[ADVISERS[id].faction] + ' +5 strength, dissent −5)',
+          ' wchodzi do zespołu (' + FACTION_NAMES[ADVISERS[id].faction] + ': siła +5, sprzeciw −5)'));
       } else {
-        lines.push(ADVISERS[id].name + ' returns to the team');
+        lines.push(ADVISERS[id].name + L(' returns to the team', ' wraca do zespołu'));
       }
     }
     Q.n_advisors = activeAdvisers(Q).length;
@@ -1958,10 +2089,11 @@
     for (const id of ADVISER_ORDER) {
       Q['pl_adv_' + id + '_in'] = draft.indexOf(id) >= 0 ? 1 : 0;
       Q['pl_adv_' + id + '_can_add'] = draft.indexOf(id) < 0 && draft.length < TEAM_SIZE && (current.indexOf(id) >= 0 || adviserInPool(Q, id)) ? 1 : 0;
-      Q['pl_adv_' + id + '_why'] = ADVISERS[id].continuation ? 'Belongs to the continuation (from 1928 in chapter 2).' :
-        !adviserInPool(Q, id) && current.indexOf(id) < 0 ? 'No longer available.' : draft.length >= TEAM_SIZE ? 'The three places are taken.' : '';
+      Q['pl_adv_' + id + '_why'] = ADVISERS[id].continuation ? L('Belongs to the continuation (from 1928 in chapter 2).',
+        'Należy do kontynuacji (od 1928 roku, w rozdziale 2).') : !adviserInPool(Q, id) && current.indexOf(id) < 0 ? L('No longer available.', 'Już niedostępny.') :
+        draft.length >= TEAM_SIZE ? L('The three places are taken.', 'Trzy miejsca są zajęte.') : '';
     }
-    Q.pl_adv_draft_text = draft.map(id => ADVISERS[id].name).join(', ') || 'nobody';
+    Q.pl_adv_draft_text = draft.map(id => ADVISERS[id].name).join(', ') || L('nobody', 'nikt');
     Q.pl_adv_confirm_why = advisersStatus(Q, draft).reason;
   }
 
@@ -1994,19 +2126,23 @@
 
   function advisorActionStatus(Q, advisorId, actionId) {
     const S = Q.S;
-    if (Q[advisorId + '_advisor'] !== 1) return no('Not in the team.');
-    if (!rules.isAdvisorAvailable(Q)) return no(rules.cooldownRemaining(Q, 'advisor') + ' months before the next adviser action.');
+    if (Q[advisorId + '_advisor'] !== 1) return no(L('Not in the team.', 'Nie należy do zespołu.'));
+    if (!rules.isAdvisorAvailable(Q)) {
+      const wait = rules.cooldownRemaining(Q, 'advisor');
+      return no(L(wait + ' months before the next adviser action.',
+        'Do następnej akcji doradcy: ' + wait + ' ' + rules.plural(wait, 'miesiąc', 'miesiące', 'miesięcy') + '.'));
+    }
     const cost = ACTION_COSTS[actionId] || 0;
-    if (cost && S.party_orgs.cash + 1e-9 < cost) return no('Needs ' + cost + ' R.');
-    if (advisorId === 'perl' && Q.time > ADVISERS.perl.last_time) return no('Perl is no longer active.');
-    if (actionId === 'direct_party_press' && (S.party_orgs.press.unpaid_months >= 2 || S.party_orgs.press.reach <= 0)) return no('Needs a working party press.');
+    if (cost && S.party_orgs.cash + 1e-9 < cost) return no(L('Needs ' + cost + ' R.', 'Wymaga ' + fmt(cost) + ' R.'));
+    if (advisorId === 'perl' && Q.time > ADVISERS.perl.last_time) return no(L('Perl is no longer active.', 'Perl nie jest już aktywny.'));
+    if (actionId === 'direct_party_press' && (S.party_orgs.press.unpaid_months >= 2 || S.party_orgs.press.reach <= 0)) return no(L('Needs a working party press.', 'Wymaga działającej prasy partyjnej.'));
     if (actionId === 'broker_coalition') return government.brokerStatus(Q);
-    if (actionId === 'socialist_education' && S.party_orgs.tur.level < 1) return no('Needs a working TUR.');
+    if (actionId === 'socialist_education' && S.party_orgs.tur.level < 1) return no(L('Needs a working TUR.', 'Wymaga działającego TUR.'));
     // Decision 5A of stage 8: the profile pilsudski_aligned of A10 belongs to the cabinets of Śliwiński and Piłsudski.
     if (actionId === 'conditional_toleration') {
-      if (government.ppsStance(S) !== 'supporter') return no('Needs external support of a cabinet with a pilsudski_aligned profile and an agreement; full membership does not qualify.');
-      if (!government.pilsudskiAligned(S)) return no('Needs a minority cabinet with a pilsudski_aligned profile: premier Śliwiński or Piłsudski.');
-      if (!government.ppsSupportAgreement(S)) return no('Needs an agreement on our external support.');
+      if (government.ppsStance(S) !== 'supporter') return no(L('Needs external support of a cabinet with a pilsudski_aligned profile and an agreement; full membership does not qualify.', 'Wymaga poparcia z zewnątrz i porozumienia z gabinetem o profilu bliskim Piłsudskiemu (pilsudski_aligned); pełny udział w gabinecie się nie liczy.'));
+      if (!government.pilsudskiAligned(S)) return no(L('Needs a minority cabinet with a pilsudski_aligned profile: premier Śliwiński or Piłsudski.', 'Wymaga gabinetu mniejszościowego o profilu bliskim Piłsudskiemu (pilsudski_aligned): premier Śliwiński albo Piłsudski.'));
+      if (!government.ppsSupportAgreement(S)) return no(L('Needs an agreement on our external support.', 'Wymaga porozumienia o naszym poparciu z zewnątrz.'));
     }
     return OK;
   }
@@ -2024,74 +2160,76 @@
     let text = '';
     if (key === 'advisor.daszynski.parliamentary_compromise') {
       relation('psl_piast', 5); relation('npr', 5); relation('pschd', 4);
-      text = 'Relations: PSL Piast +5, NPR +5, PSChD +4.';
+      text = L('Relations: PSL Piast +5, NPR +5, PSChD +4.', 'Relacje: PSL Piast +5, NPR +5, PSChD +4.');
     } else if (key === 'advisor.daszynski.broker_coalition') {
       government.brokerCoalition(Q);
-      text = 'Daszyński brokers the coalition.';
+      text = L('Daszyński brokers the coalition.', 'Daszyński pośredniczy w tworzeniu koalicji.');
     } else if (key === 'advisor.puzak.party_discipline') {
       for (const id of FACTIONS) react(id, {dissent: -12});
-      text = 'Every faction’s dissent −12.';
+      text = L('Every faction’s dissent −12.', 'Sprzeciw każdej frakcji −12.');
     } else if (key === 'advisor.puzak.mobilize_organization') {
       const gain = 10 * expansionMultiplier(S, {kind: 'class', class_id: 'workers'});
       electorate.addBaseReach(S, cell => cell.class_id === 'workers', gain);
       addEffect(S, key, 'workers_campaign_multiplier', 1.20, t);
-      text = 'The base reach of PPS among the workers +' + fmt(gain) + '; campaigns among workers ×1.20 for six months.';
+      text = L('The base reach of PPS among the workers +' + fmt(gain) + '; campaigns among workers ×1.20 for six months.',
+        'Bazowy zasięg PPS wśród robotników +' + fmt(gain) + '; kampanie wśród robotników ×1,20 przez sześć miesięcy.');
     } else if (key === 'advisor.perl.define_party_line') {
       government.factionReactions(Q, [{faction: 'centrum', strength: 8, dissent: -8}, {faction: 'pilsudczycy', strength: -4}],
         {id: key + ':t' + t, kind: 'adviser', reverse: null});
       impulse(Q, cell => cell.class_id === 'workers', 1, ['kpp']);
-      text = 'Centrum +8 strength and −8 dissent, Piłsudczycy −4; workers move from the KPP to PPS.';
+      text = L('Centrum +8 strength and −8 dissent, Piłsudczycy −4; workers move from the KPP to PPS.', 'Centrum: siła +8, sprzeciw −8; Piłsudczycy: siła −4; robotnicy przechodzą od KPP do PPS.');
     } else if (key === 'advisor.perl.direct_party_press') {
       S.party_orgs.press.credibility = Math.min(100, S.party_orgs.press.credibility + 5);
       addEffect(S, key, 'press_campaign_multiplier', 1.25, t);
-      text = 'Press credibility +5; press campaigns ×1.25 for six months.';
+      text = L('Press credibility +5; press campaigns ×1.25 for six months.', 'Wiarygodność prasy +5; kampanie prasowe ×1,25 przez sześć miesięcy.');
     } else if (key === 'advisor.ziemiecki.conditional_toleration') {
       government.factionReactions(Q, [{faction: 'centrum', dissent: -10}, {faction: 'lewica', dissent: -8}],
         {id: key + ':t' + t, kind: 'adviser', reverse: null});
-      text = 'Our toleration stays conditional: Centrum −10 and Lewica −8 dissent. The kind of our support does not change.';
+      text = L('Our toleration stays conditional: Centrum −10 and Lewica −8 dissent. The kind of our support does not change.', 'Nasze tolerowanie pozostaje warunkowe: Centrum: sprzeciw −10; Lewica: sprzeciw −8. Rodzaj naszego poparcia się nie zmienia.');
     } else if (key === 'advisor.niedzialkowski.build_centrolew') {
       for (const id of ['psl_piast', 'psl_wyzwolenie', 'npr', 'pschd']) relation(id, 3);
-      text = 'Relations with Piast, Wyzwolenie, NPR and PSChD +3.';
+      text = L('Relations with Piast, Wyzwolenie, NPR and PSChD +3.', 'Relacje z Piastem, Wyzwoleniem, NPR i PSChD +3.');
     } else if (key === 'advisor.niedzialkowski.defend_democracy') {
       // The +5 to democracy is applied by PolishPolitics at the next settlement (decision 4 of stage 4; leak 10: no pro_republic).
       (S.actors.pps.pending_effects = S.actors.pps.pending_effects || []).push({id: key + ':t' + t, system: 'democracy', stage: 7, value: 5});
       S.militia.alignment.legal_institutions = Math.min(100, (S.militia.alignment.legal_institutions || 50) + 5);
       for (const id of BRANCHES) S.unions[id].alignment.legal_institutions = Math.min(100, (S.unions[id].alignment.legal_institutions || 50) + 5);
       addEffect(S, key, 'authoritarian_support_penalty', 5, t);
-      text = 'The organisations of PPS stand closer to the legal institutions (+5); attachment to democracy +5 at the next monthly settlement.';
+      text = L('The organisations of PPS stand closer to the legal institutions (+5); attachment to democracy +5 at the next monthly settlement.', 'Organizacje PPS zbliżają się do legalnych instytucji (+5); przywiązanie do demokracji +5 przy następnym miesięcznym rozliczeniu.');
     } else if (key === 'advisor.arciszewski.organize_workers') {
       const branch = option || 'industry';
       const gain = expandBranch(S, branch, 8);
       impulse(Q, cell => cell.class_id === 'workers', 3);
-      text = 'The ' + BRANCH_NAMES[branch].toLowerCase() + ' branch +' + fmt(gain) + ' reach; PPS gains among its workers.';
+      text = L('The ' + BRANCH_NAMES[branch].toLowerCase() + ' branch +' + fmt(gain) + ' reach; PPS gains among its workers.',
+        'Zasięg branży ' + BRANCH_PL_GENITIVE[branch] + ' +' + fmt(gain) + '; PPS zyskuje wśród jej robotników.');
     } else if (key === 'advisor.zaremba.worker_peasant_front') {
       relation('psl_wyzwolenie', 8);
-      text = 'Relation with PSL Wyzwolenie +8.';
+      text = L('Relation with PSL Wyzwolenie +8.', 'Relacja z PSL Wyzwolenie +8.');
     } else if (key === 'advisor.zaremba.class_campaign') {
       impulse(Q, cell => cell.class_id === 'workers' && cell.employment === 'employed', 4);
       impulse(Q, cell => cell.employment === 'unemployed', 3);
       for (const cell of S.society.cells.filter(c => c.class_id === 'old_middle')) electorate.lossForPps(cell, Math.min(cell.propensity.pps, 2), S.society.parties);
       react('lewica', {strength: 4, dissent: -5});
-      text = 'A class campaign: gains among employed and unemployed workers, a loss among the petty bourgeoisie; Lewica +4 strength, dissent −5.';
+      text = L('A class campaign: gains among employed and unemployed workers, a loss among the petty bourgeoisie; Lewica +4 strength, dissent −5.', 'Kampania klasowa: zyski wśród zatrudnionych i bezrobotnych robotników, strata wśród drobnomieszczaństwa; Lewica: siła +4, sprzeciw −5.');
     } else if (key === 'advisor.czapinski.socialist_education') {
       react('lewica', {strength: 6, dissent: -5});
       addEffect(S, key, 'kpp_outflow_protection', 0.50, t);
-      text = 'Lewica +6 strength and −5 dissent; for six months the flow of workers from PPS to the KPP is halved.';
+      text = L('Lewica +6 strength and −5 dissent; for six months the flow of workers from PPS to the KPP is halved.', 'Lewica: siła +6, sprzeciw −5; przez sześć miesięcy odpływ robotników z PPS do KPP jest o połowę mniejszy.');
     } else if (key === 'advisor.jaworowski.back_pilsudski') {
       relation('pilsudski', 8);
       government.factionReactions(Q, [{faction: 'pilsudczycy', strength: 5}, {faction: 'centrum', dissent: 3}, {faction: 'lewica', dissent: 3}],
         {id: key + ':t' + t, kind: 'adviser', reverse: null});
-      text = 'Relation with Piłsudski +8; Piłsudczycy +5 strength; Centrum and Lewica dissent +3.';
+      text = L('Relation with Piłsudski +8; Piłsudczycy +5 strength; Centrum and Lewica dissent +3.', 'Relacja z Piłsudskim +8; Piłsudczycy: siła +5; Centrum i Lewica: sprzeciw +3.');
     } else if (key === 'advisor.ziemiecki.municipal_socialism') {
       const city = cell => cell.settlement === 'major_city' && ['workers', 'new_middle', 'old_middle'].indexOf(cell.class_id) >= 0;
       for (const c of ['workers', 'new_middle', 'old_middle']) {
         electorate.addBaseReach(S, cell => city(cell) && cell.class_id === c, 8 * expansionMultiplier(S, {kind: 'class', class_id: c}));
       }
       impulse(Q, city, 2);
-      text = 'Municipal socialism in the large cities: base reach +8 and a gain for PPS there.';
+      text = L('Municipal socialism in the large cities: base reach +8 and a gain for PPS there.', 'Socjalizm municypalny w wielkich miastach: bazowy zasięg +8 i zysk PPS w tych miastach.');
     } else if (key === 'advisor.malinowski.organize_pilsudczyks') {
       react('pilsudczycy', {strength: 8, dissent: -10});
-      text = 'Piłsudczycy +8 strength, dissent −10.';
+      text = L('Piłsudczycy +8 strength, dissent −10.', 'Piłsudczycy: siła +8, sprzeciw −10.');
     } else {
       throw new Error('advisorAction: unknown action ' + key);
     }
@@ -2124,7 +2262,15 @@
 
   function packageLine(Q, id) {
     const p = PACKAGES[id];
-    const names = {
+    const names = rules.getLanguage() === 'pl' ? {
+      organize: 'Zorganizuj branżę ' + (p.branch ? BRANCH_PL_ACCUSATIVE[p.branch] : '') + ' (+15 zasięgu z modyfikatorami)',
+      fund: 'Wesprzyj fundusz związkowy branży ' + (p.branch ? BRANCH_PL_GENITIVE[p.branch] : '') + ' (+1 R dla związku)',
+      distribution: 'Poszerz kolportaż prasy (+10 zasięgu)',
+      build: 'Rozpocznij kolejny etap TUR (dwa finansowane miesiące)',
+      recruit: 'Werbunek do Milicji (+100 członków)',
+      militarize: 'Militaryzacja Milicji (sprawność +0,10, najwyżej 0,70)',
+      prepare: 'Przygotuj ' + (p.class_id ? COOPERATIVE_NAMES_PL_ACCUSATIVE[p.class_id] : ''),
+    } : {
       organize: 'Organise the ' + (p.branch ? BRANCH_NAMES[p.branch].toLowerCase() : '') + ' branch (+15 reach with modifiers)',
       fund: 'Support the ' + (p.branch ? BRANCH_NAMES[p.branch].toLowerCase() : '') + ' union fund (+1 R to the union)',
       distribution: 'Extend the distribution of the press (+10 reach)',
@@ -2133,7 +2279,7 @@
       militarize: 'Militarise Milicja (efficiency +0.10, up to 0.70)',
       prepare: 'Prepare ' + (p.class_id ? COOPERATIVE_NAMES[p.class_id] : ''),
     };
-    return names[p.kind] + ' — ' + p.cost + ' R';
+    return names[p.kind] + ' — ' + L(String(p.cost), fmt(p.cost)) + ' R';
   }
 
   function organizationsView(Q) {
@@ -2149,13 +2295,15 @@
     for (const id of PACKAGE_ORDER) {
       const same = PACKAGES[id].org === PACKAGES[first].org;
       Q['pl_org2_' + id + '_ok'] = same ? 0 : (selectionStatus(Q, [first, id]).available ? 1 : 0);
-      Q['pl_org2_' + id + '_why'] = same ? 'The second package must be for another organisation.' : selectionStatus(Q, [first, id]).reason;
+      Q['pl_org2_' + id + '_why'] = same ? L('The second package must be for another organisation.', 'Drugi pakiet musi dotyczyć innej organizacji.') :
+        selectionStatus(Q, [first, id]).reason;
     }
   }
 
   function selectionSummary(Q, ids) {
     const total = ids.reduce((n, id) => n + PACKAGES[id].cost, 0);
-    Q.pl_org_summary = ids.map(id => packageLine(Q, id)).join('; ') + '. Together ' + total + ' R and this month’s action.';
+    Q.pl_org_summary = ids.map(id => packageLine(Q, id)).join('; ') + L('. Together ' + total + ' R and this month’s action.',
+      '. Razem ' + fmt(total) + ' R i akcja tego miesiąca.');
     Q.pl_org_confirm_why = selectionStatus(Q, ids).reason;
     return selectionStatus(Q, ids).available;
   }
@@ -2166,21 +2314,31 @@
     const costs = monthlyCosts(S).reduce((n, item) => n + item.cost, 0);
     const income = monthlyIncome(S);
     Q.pl_party_cash = fmt(orgs.cash) + ' R';
-    Q.pl_party_ledger = 'income ' + fmt(income.total) + ' R a month (dues ' + orgs.dues + ', membership ' + fmt(orgs.apparatus.member_index) +
-      ', apparatus level ' + orgs.apparatus.level + (income.sales ? ', press sales ' + fmt(income.sales) : '') + '); fixed costs ' + fmt(costs) + ' R';
+    Q.pl_party_ledger = L('income ' + fmt(income.total) + ' R a month (dues ' + orgs.dues + ', membership ' + fmt(orgs.apparatus.member_index) +
+      ', apparatus level ' + orgs.apparatus.level + (income.sales ? ', press sales ' + fmt(income.sales) : '') + '); fixed costs ' + fmt(costs) + ' R',
+      'wpływy ' + fmt(income.total) + ' R miesięcznie (składki ' + orgs.dues + ', członkostwo ' + fmt(orgs.apparatus.member_index) +
+      ', poziom aparatu ' + orgs.apparatus.level + (income.sales ? ', sprzedaż prasy ' + fmt(income.sales) : '') + '); stałe koszty ' + fmt(costs) + ' R');
     const arrears = Object.keys(orgs.arrears).reduce((n, k) => n + orgs.arrears[k], 0) + m.arrears;
-    Q.pl_party_arrears = arrears > 0 ? 'Unpaid upkeep: ' + fmt(arrears) + ' R.' : '';
-    Q.pl_party_press = 'reach ' + fmt(press.reach) + ', credibility ' + fmt(press.credibility) + ' (' + (orgs.press.format === 'popular' ? 'popular format' : 'party journal') + ')' +
-      (press.penalty ? '; restricted −' + fmt(press.penalty) : '');
+    Q.pl_party_arrears = arrears > 0 ? L('Unpaid upkeep: ', 'Niezapłacone utrzymanie: ') + fmt(arrears) + ' R.' : '';
+    Q.pl_party_press = L('reach ', 'zasięg ') + fmt(press.reach) + L(', credibility ', ', wiarygodność ') + fmt(press.credibility) + ' (' +
+      (orgs.press.format === 'popular' ? L('popular format', 'format popularny') : L('party journal', 'pismo partyjne')) + ')' +
+      (press.penalty ? L('; restricted −', '; ograniczenia −') + fmt(press.penalty) : '');
     const tur = orgs.tur;
-    Q.pl_party_tur = Q.time < tur.available_from ? 'not yet founded (January 1923)' :
-      'level ' + tur.level + ', cadres ' + tur.cadres + (tur.active_build ? '; building level ' + tur.active_build.target_level + ' (' + tur.active_build.paid_months + '/2 months)' : '') +
-      (tur.active_course ? '; course: ' + COURSES[tur.active_course.course].name + ' (' + tur.active_course.paid_months + '/2 months)' : '');
+    Q.pl_party_tur = Q.time < tur.available_from ? L('not yet founded (January 1923)', 'jeszcze nie założony (styczeń 1923)') :
+      L('level ', 'poziom ') + tur.level + L(', cadres ', ', kadry ') + tur.cadres + (tur.active_build ? L('; building level ', '; budowa poziomu ') +
+        tur.active_build.target_level + ' (' + tur.active_build.paid_months + L('/2 months)', '/2 mies.)') : '') +
+      (tur.active_course ? L('; course: ', '; kurs: ') + courseName(tur.active_course.course) + ' (' + tur.active_course.paid_months +
+        L('/2 months)', '/2 mies.)') : '');
     const coops = operatingCooperatives(S).length, prepared = preparedCooperatives(S).length;
-    Q.pl_party_coops = coops + ' operating' + (prepared ? ', ' + prepared + ' prepared' : '');
-    Q.pl_party_militia = m.strength + ' members, efficiency ' + fmt(m.militancy) + (m.fatigue ? ', fatigue ' + m.fatigue : '') +
-      (m.militarized ? ', militarised' : '') + (m.stage === 2 ? '; Akcja Socjalistyczna' : '');
-    Q.pl_party_unions = BRANCHES.map(id => BRANCH_NAMES[id] + ' reach ' + fmt(S.unions[id].reach) + ', fund ' + fmt(S.unions[id].fund) + ' R').join('; ');
+    Q.pl_party_coops = L(coops + ' operating' + (prepared ? ', ' + prepared + ' prepared' : ''),
+      coops + ' ' + rules.plural(coops, 'działająca', 'działające', 'działających') +
+      (prepared ? ', ' + prepared + ' ' + rules.plural(prepared, 'przygotowana', 'przygotowane', 'przygotowanych') : ''));
+    Q.pl_party_militia = L(m.strength + ' members, efficiency ' + fmt(m.militancy) + (m.fatigue ? ', fatigue ' + m.fatigue : '') +
+      (m.militarized ? ', militarised' : '') + (m.stage === 2 ? '; Akcja Socjalistyczna' : ''),
+      m.strength + ' ' + rules.plural(m.strength, 'członek', 'członków', 'członków') + ', sprawność ' + fmt(m.militancy) +
+      (m.fatigue ? ', zmęczenie ' + m.fatigue : '') + (m.militarized ? ', zmilitaryzowana' : '') + (m.stage === 2 ? '; Akcja Socjalistyczna' : ''));
+    Q.pl_party_unions = BRANCHES.map(id => branchName(id) + L(' reach ', ': zasięg ') + fmt(S.unions[id].reach) + L(', fund ', ', fundusz ') +
+      fmt(S.unions[id].fund) + ' R').join('; ');
     Q.pl_party_cohesion = fmt(cohesion(S));
   }
 
@@ -2202,11 +2360,11 @@
     const prepared = preparedCooperatives(S);
     Q.pl_pa_coop_count = prepared.length;
     Q.pl_pa_coop_id = prepared.length ? prepared[0].id : '';
-    Q.pl_pa_coop_name = prepared.length ? COOPERATIVE_NAMES[prepared[0].class_id] : '';
+    Q.pl_pa_coop_name = prepared.length ? L(COOPERATIVE_NAMES[prepared[0].class_id], COOPERATIVE_NAMES_PL[prepared[0].class_id]) : '';
     Q.pl_pa_coop_why = prepared.length ? cooperativeStatus(Q, prepared[0].id).reason : '';
     Q.pl_pa_kpp_open = channelOpen(S) ? 1 : 0;
     if (channelOpen(S)) kppView(Q);
-    Q.pl_pa_priorities = strategyOf(S).economic_priorities.map(id => PRIORITIES[id]).join('; ');
+    Q.pl_pa_priorities = strategyOf(S).economic_priorities.map(priorityName).join('; ');
     partyDisplay(Q);
   }
 
@@ -2216,6 +2374,7 @@
     FACTION_NAMES: FACTION_NAMES,
     BRANCHES: BRANCHES,
     BRANCH_NAMES: BRANCH_NAMES,
+    BRANCH_NAMES_PL: BRANCH_NAMES_PL,
     PACKAGES: PACKAGES,
     PACKAGE_ORDER: PACKAGE_ORDER,
     COURSES: COURSES,

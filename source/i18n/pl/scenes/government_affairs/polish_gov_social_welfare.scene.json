@@ -1,0 +1,17 @@
+{
+ "source": "scenes/government_affairs/polish_gov_social_welfare.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Benefits and Aid for the Unemployed": "title: Zasiłki i pomoc dla bezrobotnych",
+  "subtitle: Labour: one protection programme for the unemployed.": "subtitle: Resort Pracy: jeden program osłony dla bezrobotnych.",
+  "= Benefits and aid for the unemployed": "= Zasiłki i pomoc dla bezrobotnych",
+  "There is one protection programme for these recipients. It pays from the month it starts, even under a caretaker cabinet. Each level of scope costs 2 B a month; a benefit does not lower unemployment itself.": "Dla tych odbiorców istnieje jeden program osłony. Wypłaca od miesiąca, w którym rusza, także pod gabinetem tymczasowym. Każdy poziom zakresu kosztuje 2 B miesięcznie; zasiłek sam nie obniża bezrobocia.",
+  "title: Extend the protection": "title: Rozszerz osłonę",
+  "subtitle: Start the protection (2 B a month), or extend it by one level of scope (+2 B), up to 3.": "subtitle: Uruchom osłonę (2 B miesięcznie) albo rozszerz ją o jeden poziom zakresu (+2 B), najwyżej do 3.",
+  "title: Focus the aid on the most needy": "title: Skup pomoc na najbardziej potrzebujących",
+  "subtitle: Half of the recipients, the most needy, with the full relief: 1 B instead of 2.": "subtitle: Połowa odbiorców, najbardziej potrzebujących, z pełną ulgą: 1 B zamiast 2.",
+  "title: Limit the benefits": "title: Ogranicz zasiłki",
+  "subtitle: A legal change of the benefit: only the difference, e.g. 2 → 1 B. Breaks the guarantee; Lewica +8 dissent.": "subtitle: Ustawowa zmiana zasiłku: tylko różnica, np. 2 → 1 B. Łamie gwarancję; Lewica: sprzeciw +8.",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

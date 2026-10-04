@@ -1,5 +1,5 @@
-title: Close card
-subtitle: Leave without acting. Opening and closing a card is free; a card from your hand goes back to it.
+title: Return to hand
+subtitle: Leave without acting; the card goes back to your hand. Opening a card and returning it cost nothing.
 view-if: last_advisor_action = 0 and last_cabinet_action = 0
 go-to: root
 on-arrival: {!

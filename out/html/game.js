@@ -21,8 +21,15 @@
     proto.setState = function(state) {
       var result = setState.call(this, state);
       var rules = window.PolishRules;
+      // A change of language moves the running game to the other language's scenes; it is not a loaded save.
+      if (window.polishLanguageSwitch) {
+        return result;
+      }
       if (!rules || !rules.isSaveCompatible(this.state.qualities)) {
-        var message = 'This save comes from an older version of the game and cannot be continued. ' +
+        var message = window.currentLanguage === 'pl' ?
+            'Ten zapis pochodzi ze starszej wersji gry i nie da się go kontynuować. ' +
+            'Starsze zapisy nie są przenoszone.\n\nRozpocząć teraz nową grę?' :
+            'This save comes from an older version of the game and cannot be continued. ' +
             'Older saves are not converted.\n\nStart a new game now?';
         if (window.confirm(message)) {
           this.beginGame();
@@ -36,6 +43,269 @@
     proto.polishSaveGuard = true;
   };
 
+  // ---- Language (Polish version of 4 October 2026, decisions 3A and 4A). The English game is compiled into core.js;
+  // `npm run build` also writes the Polish game to game_pl.json. The choice is a setting of this browser, not part of a
+  // save, so one save continues in either language. English is the default.
+  var LANGUAGE_KEY = 'pps_language';
+  var gameTexts = {};
+  // The scenes shown on the current page since its first scene, to redraw the page in another language.
+  var pageScenes = null;
+  window.currentLanguage = 'en';
+
+  var storedLanguage = function() {
+    try {
+      return window.localStorage.getItem(LANGUAGE_KEY) === 'pl' ? 'pl' : 'en';
+    } catch (e) {
+      return 'en';
+    }
+  };
+  var storeLanguage = function(lang) {
+    try {
+      window.localStorage.setItem(LANGUAGE_KEY, lang);
+    } catch (e) {
+    }
+  };
+
+  // Texts of the page itself (index.html) and of the inherited interface code.
+  var UI_TEXT = {
+    game_title: {en: 'PPS: An Alternate History', pl: 'PPS: historia alternatywna'},
+    page_title: {en: 'PPS: An Alternate History - Autumn Chen', pl: 'PPS: historia alternatywna - Autumn Chen'},
+    library: {en: 'Library', pl: 'Biblioteka'},
+    save_load: {en: 'Save/Load', pl: 'Zapis i odczyt'},
+    options: {en: 'Options', pl: 'Opcje'},
+    other_language: {en: 'Polski', pl: 'English'},
+    tab_main: {en: 'Main', pl: 'Ogólne'},
+    tab_politics: {en: 'Politics', pl: 'Polityka'},
+    tab_defense: {en: 'Defense', pl: 'Obrona'},
+    tab_polls: {en: 'Polls', pl: 'Sondaże'},
+    music: {en: 'Music', pl: 'Muzyka'},
+    currently_playing: {en: 'Currently playing: ', pl: 'Teraz gra: '},
+    volume: {en: 'Volume:', pl: 'Głośność:'},
+    pause: {en: 'Pause', pl: 'Pauza'},
+    play: {en: 'Play', pl: 'Graj'},
+    next_song: {en: 'Next song', pl: 'Następny utwór'},
+    settings: {en: 'Settings', pl: 'Ustawienia'},
+    language: {en: 'Language:', pl: 'Język:'},
+    backgrounds: {en: 'Backgrounds:', pl: 'Tła:'},
+    event_images: {en: 'Event images:', pl: 'Obrazy wydarzeń:'},
+    animations: {en: 'Animations:', pl: 'Animacje:'},
+    music_setting: {en: 'Music:', pl: 'Muzyka:'},
+    color_scheme: {en: 'Color scheme:', pl: 'Kolory:'},
+    on: {en: 'On', pl: 'Wł.'},
+    off: {en: 'Off', pl: 'Wył.'},
+    light_mode: {en: 'Light mode', pl: 'Jasne'},
+    dark_mode: {en: 'Dark mode', pl: 'Ciemne'},
+    font_size: {en: 'Font size:', pl: 'Rozmiar czcionki:'},
+    decrease_font: {en: 'Decrease font size', pl: 'Zmniejsz czcionkę'},
+    increase_font: {en: 'Increase font size', pl: 'Zwiększ czcionkę'},
+    close: {en: 'Close', pl: 'Zamknij'},
+    mods: {en: 'Mods', pl: 'Mody'},
+    import_save: {en: 'Import save file:', pl: 'Wczytaj plik zapisu:'},
+    save: {en: 'Save', pl: 'Zapisz'},
+    load: {en: 'Load', pl: 'Wczytaj'},
+    delete: {en: 'Delete', pl: 'Usuń'},
+    export: {en: 'Export', pl: 'Eksportuj'},
+    empty: {en: 'Empty', pl: 'Pusty'},
+    hand: {en: 'Hand - click a card to play.', pl: 'Ręka — kliknij kartę, aby ją zagrać.'},
+    decks: {en: 'Decks - click a deck to draw a card.', pl: 'Talie — kliknij talię, aby dobrać kartę.'},
+    pinned: {en: 'Advisor cards - actions are only usable once per 6 months.', pl: 'Karty doradców — każda akcja raz na 6 miesięcy.'},
+    continue_choice: {en: 'Continue...', pl: 'Dalej…'},
+    load_failed: {en: 'The Polish version could not be loaded; the game continues in English.',
+      pl: 'Nie udało się wczytać polskiej wersji; gra toczy się dalej po angielsku.'}
+  };
+  var uiText = function(key) {
+    var entry = UI_TEXT[key];
+    return entry ? (entry[window.currentLanguage] || entry.en) : key;
+  };
+  // Messages of the inherited interface code (core.js), shown with window.alert.
+  var ALERT_TEXT = {
+    'Saved.': 'Zapisano.',
+    'Loaded.': 'Wczytano.',
+    'No save available.': 'Brak zapisu.',
+    'Saving and loading is currently disabled.': 'Zapisywanie i wczytywanie jest teraz wyłączone.'
+  };
+  var nativeAlert = window.alert;
+  window.alert = function(message) {
+    if (window.currentLanguage === 'pl' && Object.prototype.hasOwnProperty.call(ALERT_TEXT, message)) {
+      message = ALERT_TEXT[message];
+    }
+    return nativeAlert.call(window, message);
+  };
+
+  // The save slots: core.js writes Save, Load and Empty when it fills them in.
+  var translateSaveSlots = function() {
+    if (typeof $ === 'undefined') {
+      return;
+    }
+    var map = {Save: 'save', Load: 'load', Empty: 'empty', Zapisz: 'save', Wczytaj: 'load', Pusty: 'empty'};
+    $('#saves_table .save_button, #saves_table .save_info').each(function() {
+      var key = map[this.textContent];
+      if (key) {
+        this.textContent = uiText(key);
+      }
+    });
+    $('#saves_table .delete_button').text(uiText('delete'));
+    $('#saves_table .export_button').text(uiText('export'));
+  };
+
+  var applyLanguage = function(lang) {
+    window.currentLanguage = lang === 'pl' ? 'pl' : 'en';
+    if (window.PolishRules) {
+      window.PolishRules.setLanguage(window.currentLanguage);
+    }
+    window.handDescription = uiText('hand');
+    window.deckDescription = uiText('decks');
+    window.pinnedCardsDescription = uiText('pinned');
+    // Outside a page (the Node test of the save check) there is nothing more to translate.
+    if (typeof document === 'undefined' || typeof $ === 'undefined') {
+      return;
+    }
+    document.documentElement.lang = window.currentLanguage;
+    document.title = uiText('page_title');
+    $('[data-i18n]').each(function() {
+      this.textContent = uiText(this.getAttribute('data-i18n'));
+    });
+    var paused = window.dendryUI && window.dendryUI.currentAudio && window.dendryUI.currentAudio.paused;
+    $('#pause-button-text').text(uiText(paused ? 'play' : 'pause'));
+    translateSaveSlots();
+    $('#language_' + window.currentLanguage).prop('checked', true);
+    $('#language-link').attr('lang', window.currentLanguage === 'pl' ? 'en' : 'pl');
+  };
+
+  // A compiled game from its JSON text, as the Dendry engine does it: scripts become functions.
+  var reviveGame = function(text) {
+    return JSON.parse(text, function(key, value) {
+      if (value && typeof value === 'object' && value.$code !== undefined) {
+        var source = String(value.$code).trim();
+        /*jshint -W054 */
+        var fn = new Function('state', 'Q', source);
+        /*jshint +W054 */
+        fn.source = source;
+        return fn;
+      }
+      return value;
+    });
+  };
+  var loadGameText = function(lang) {
+    if (lang === 'en') {
+      return Promise.resolve(window.game.compiled);
+    }
+    if (gameTexts[lang]) {
+      return Promise.resolve(gameTexts[lang]);
+    }
+    return fetch('game_' + lang + '.json', {cache: 'no-cache'}).then(function(response) {
+      if (!response.ok) {
+        throw new Error('game_' + lang + '.json: ' + response.status);
+      }
+      return response.text();
+    }).then(function(text) {
+      gameTexts[lang] = text;
+      return text;
+    });
+  };
+
+  // Redraws the current page from the scenes of the new language, without running their scripts. Values that the
+  // scripts of this page computed before the change keep their language until the next page (decision 3A).
+  var redrawPage = function(engine, scenes) {
+    var current = engine.state.sceneId;
+    if (!scenes || !scenes.length || scenes[scenes.length - 1] !== current) {
+      var scene = engine.game.scenes[current];
+      scenes = scene && scene.newPage ? [current] : null;
+    }
+    if (!scenes) {
+      return false;
+    }
+    var content = [];
+    for (var i = 0; i < scenes.length; i++) {
+      var s = engine.game.scenes[scenes[i]];
+      if (s && s.content !== undefined) {
+        content = content.concat(engine._makeDisplayContent(s.content, true));
+      }
+    }
+    engine.state.currentContent = content;
+    return true;
+  };
+
+  // Runs the game in the given compiled data: a new game, or the state of the running one in the other language.
+  var startEngine = function(dendryUI, compiled, state, scenes) {
+    var Engine = Object.getPrototypeOf(dendryUI.dendryEngine).constructor;
+    dendryUI.game = compiled;
+    dendryUI.dendryEngine = new Engine(dendryUI, compiled);
+    ui = dendryUI;
+    game = compiled;
+    if (!state) {
+      dendryUI.dendryEngine.beginGame();
+      return;
+    }
+    window.polishLanguageSwitch = true;
+    try {
+      var engine = dendryUI.dendryEngine;
+      engine.setState(state);
+      // The displayed values of Status and the month page are recomputed in the new language by the same scripts that
+      // compute them whenever the month page opens; they only rewrite display and mirror fields.
+      var Q = engine.state.qualities;
+      if (Q.S && Q.polish_portfolios && compiled.scenes.polish_opening_state) {
+        engine._runActions(compiled.scenes.polish_opening_state.onArrival);
+        if (engine.state.sceneId === 'main' && compiled.scenes.main.onArrival) {
+          engine._runActions(compiled.scenes.main.onArrival);
+        }
+      }
+      if (redrawPage(engine, scenes)) {
+        engine.setState(engine.state);
+      }
+    } finally {
+      window.polishLanguageSwitch = false;
+    }
+    pageScenes = scenes;
+  };
+
+  // Keeps the list of scenes on the current page (see redrawPage).
+  var trackPages = function(proto) {
+    if (proto.polishPageTracker) {
+      return;
+    }
+    var displaySceneContent = proto.displaySceneContent;
+    proto.displaySceneContent = function(restorePage) {
+      var scene = this.getCurrentScene();
+      if (restorePage) {
+        pageScenes = null;
+      } else if (scene && scene.newPage) {
+        pageScenes = [this.state.sceneId];
+      } else if (pageScenes) {
+        pageScenes.push(this.state.sceneId);
+      }
+      return displaySceneContent.call(this, restorePage);
+    };
+    var setState = proto.setState;
+    proto.setState = function(state) {
+      pageScenes = null;
+      return setState.call(this, state);
+    };
+    proto.polishPageTracker = true;
+  };
+
+  window.setLanguage = function(lang) {
+    lang = lang === 'pl' ? 'pl' : 'en';
+    if (lang === window.currentLanguage) {
+      return;
+    }
+    var dendryUI = window.dendryUI;
+    var state = JSON.parse(JSON.stringify(dendryUI.dendryEngine.getExportableState()));
+    var scenes = pageScenes ? pageScenes.slice() : null;
+    loadGameText(lang).then(function(text) {
+      storeLanguage(lang);
+      applyLanguage(lang);
+      startEngine(dendryUI, reviveGame(text), state, scenes);
+    }).catch(function(error) {
+      console.error(error);
+      window.alert(uiText('load_failed'));
+      $('#language_' + window.currentLanguage).prop('checked', true);
+    });
+  };
+  window.toggleLanguage = function() {
+    window.setLanguage(window.currentLanguage === 'pl' ? 'en' : 'pl');
+  };
+
   var main = function(dendryUI) {
     ui = dendryUI;
     game = ui.game;
@@ -44,6 +314,45 @@
     guardLoadedSaves(dendryUI);
     // Card draws, deck checks and card opening follow the Polish rules (implementation plan, stage 1).
     window.PolishEngineHooks.install(Object.getPrototypeOf(dendryUI.dendryEngine), window.PolishRules);
+    trackPages(Object.getPrototypeOf(dendryUI.dendryEngine));
+    // The engine adds an English 'Continue...' choice to a page without options; scripts compare that title, so it
+    // is translated only on the screen.
+    var displayChoices = dendryUI.displayChoices;
+    if (typeof displayChoices === 'function') {
+      dendryUI.displayChoices = function(choices) {
+        if (window.currentLanguage !== 'en' && choices) {
+          choices = choices.map(function(choice) {
+            return choice && choice.title === 'Continue...' ? Object.assign({}, choice, {title: uiText('continue_choice')}) : choice;
+          });
+        }
+        return displayChoices.call(this, choices);
+      };
+    }
+    var populateSaveSlots = dendryUI.populateSaveSlots;
+    if (typeof populateSaveSlots === 'function') {
+      dendryUI.populateSaveSlots = function() {
+        var result = populateSaveSlots.apply(this, arguments);
+        translateSaveSlots();
+        return result;
+      };
+    }
+    var lang = storedLanguage();
+    applyLanguage('en');
+    if (lang === 'en') {
+      return false;
+    }
+    // The chosen language begins the game when its data has loaded; on a failure the game begins in English.
+    loadGameText(lang).then(function(text) {
+      applyLanguage(lang);
+      startEngine(dendryUI, reviveGame(text), null, null);
+    }).catch(function(error) {
+      console.error(error);
+      storeLanguage('en');
+      applyLanguage('en');
+      dendryUI.dendryEngine.beginGame();
+      window.alert(uiText('load_failed'));
+    });
+    return true;
   };
 
   var TITLE = "Social Democracy: An Alternate History" + '_' + "Autumn Chen";
@@ -108,12 +417,12 @@
             document.getElementById('pause-button-image').style.display = "inline";
             document.getElementById('play-button-image').style.display = "none";
             document.getElementById('pause-button');
-            document.getElementById('pause-button-text').textContent = "Pause";
+            document.getElementById('pause-button-text').textContent = uiText('pause');
           } else {
             window.dendryUI.currentAudio.pause();
             document.getElementById('play-button-image').style.display = "inline";
             document.getElementById('pause-button-image').style.display = "none";
-            document.getElementById('pause-button-text').textContent = "Play";
+            document.getElementById('pause-button-text').textContent = uiText('play');
           }
       }
   };
@@ -232,6 +541,7 @@
     } else {
         $('#light_mode')[0].checked = true;
     }
+    $('#language_' + window.currentLanguage).prop('checked', true);
   };
 
   
@@ -357,7 +667,7 @@
         document.getElementById("stats_sidebar").setAttribute("style", "font-size: " + sidebar_fs + "em;");
     }
     document.getElementById('font_size_value').textContent = window.dendryUI.font_size.toFixed(1) + "em";
-    window.pinnedCardsDescription = "Advisor cards - actions are only usable once per 6 months.";
+    window.pinnedCardsDescription = uiText('pinned');
   };
 
 }());

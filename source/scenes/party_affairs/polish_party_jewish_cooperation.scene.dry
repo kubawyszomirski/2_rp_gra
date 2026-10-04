@@ -5,8 +5,8 @@ is-card: true
 tags: party_affairs
 view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.stanceAvailable(Q, 'jewish_cooperation') !}
 on-arrival: {!
-// Card party.jewish_cooperation (catalogue 4.7; technical reference 10.8): 1 T, 0 R, the card then waits 6 months. The present line is shown and cannot be
-// chosen again; closing the card is free (Z — 0.32).
+// Card party.jewish_cooperation (catalogue 4.7; technical reference 10.8): 1 T, 0 R, the card then waits 6 months. Z — 0.51: the present line can be
+// confirmed for 1 T and the usual wait; returning the card to the hand is free.
 PolishParty.stanceView(Q, 'jewish_cooperation');
 !}
 
@@ -21,7 +21,7 @@ The present line: **[+ pl_stance_current +]**. A new declaration costs this mont
 
 @broad
 title: Broad cooperation and rights in the programme
-subtitle: Agreements on rights and joint actions; axis +2.
+subtitle: [? if pl_stance_broad_present = 1 : This is the present line. Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_broad_present = 0 : Agreements on rights and joint actions; axis +2. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'jewish_cooperation', 'broad').available !}
 unavailable-subtitle: [+ pl_stance_broad_why +]
 on-arrival: {!
@@ -31,7 +31,7 @@ go-to: result
 
 @labour_only
 title: Cooperation of workers’ organisations
-subtitle: Agreements of labour, above all with the Bund; axis 0.
+subtitle: [? if pl_stance_labour_only_present = 1 : This is the present line. Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_labour_only_present = 0 : Agreements of labour, above all with the Bund; axis 0. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'jewish_cooperation', 'labour_only').available !}
 unavailable-subtitle: [+ pl_stance_labour_only_why +]
 on-arrival: {!
@@ -41,7 +41,7 @@ go-to: result
 
 @none
 title: No cooperation
-subtitle: No new joint actions; existing rights of citizens stay; axis −2.
+subtitle: [? if pl_stance_none_present = 1 : This is the present line. Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_none_present = 0 : No new joint actions; existing rights of citizens stay; axis −2. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'jewish_cooperation', 'none').available !}
 unavailable-subtitle: [+ pl_stance_none_why +]
 on-arrival: {!

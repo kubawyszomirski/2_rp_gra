@@ -29,8 +29,17 @@
   const clip = (value, low, high) => Math.max(low, Math.min(high, value));
   const round = (value, digits) => Math.round(value * Math.pow(10, digits)) / Math.pow(10, digits);
   const copy = value => JSON.parse(JSON.stringify(value));
-  const fmt = value => (Math.abs(value) < 0.005 ? '0' : value.toFixed(2).replace(/\.?0+$/, ''));
+  // Polish version (decision 2A): the texts of this module are written in both languages and L picks the current
+  // one; numbers get a decimal comma in Polish (decision 6A).
+  const L = rules.L;
+  const fmt = value => {
+    const text = Math.abs(value) < 0.005 ? '0' : value.toFixed(2).replace(/\.?0+$/, '');
+    return rules.getLanguage() === 'pl' ? text.replace('.', ',') : text;
+  };
   const dateOf = t => rules.monthOf(t) + '/' + rules.yearOf(t);
+  // A number inside a text the records of S keep: always the English format (decision 5A).
+  const fmtEn = value => (Math.abs(value) < 0.005 ? '0' : value.toFixed(2).replace(/\.?0+$/, ''));
+  const PL = () => rules.getLanguage() === 'pl';
   const OK = Object.freeze({available: true, reason: ''});
   const VIOLENCE_SERIOUS = 10; // 15.2: a serious episode of violence
   const no = reason => ({available: false, reason: reason});
@@ -123,11 +132,12 @@
   function assessStatus(Q) {
     const S = Q.S;
     if (!ready(Q) || S.chapter.status === 'ended') return no('');
-    if (S.security.forces.every(f => S.security.known[f.id].radius <= KNOWN_FLOOR)) return no('The assessment is already as precise as it can be (±5 pp).');
-    if (!rules.mainActionAvailable(Q)) return no('This month’s action has already been used.');
+    if (S.security.forces.every(f => S.security.known[f.id].radius <= KNOWN_FLOOR)) return no(L('The assessment is already as precise as it can be (±5 pp).', 'Ocena jest już tak dokładna, jak to możliwe (±5 pkt proc.).'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
     const wait = rules.cooldownRemaining(Q, 'security.assess');
-    if (wait > 0) return no('Assessed recently: ' + wait + (wait === 1 ? ' month' : ' months') + ' before the next assessment.');
-    if (S.party_orgs.cash + 1e-9 < ASSESS_COST_R) return no('Needs 1 R.');
+    if (wait > 0) return no(L('Assessed recently: ' + wait + (wait === 1 ? ' month' : ' months') + ' before the next assessment.',
+      'Ocena była niedawno: do następnej ' + wait + ' ' + rules.plural(wait, 'miesiąc', 'miesiące', 'miesięcy') + '.'));
+    if (S.party_orgs.cash + 1e-9 < ASSESS_COST_R) return no(L('Needs 1 R.', 'Wymaga 1 R.'));
     return OK;
   }
 
@@ -148,8 +158,9 @@
     }
     S.security.assessments.push({n: n, t: t, radius: S.security.known[S.security.forces[0].id].radius});
     party.writeMirrors(Q);
-    Q.pl_security_result = 'The assessment of the forces narrows the interval of their loyalty to ±' + S.security.known[S.security.forces[0].id].radius +
-      ' pp; the loyalties themselves do not change.';
+    Q.pl_security_result = L('The assessment of the forces narrows the interval of their loyalty to ±' + S.security.known[S.security.forces[0].id].radius +
+      ' pp; the loyalties themselves do not change.', 'Ocena sił zawęża przedział ich lojalności do ±' + S.security.known[S.security.forces[0].id].radius +
+      ' pkt proc.; sama lojalność się nie zmienia.');
     return S.security.known;
   }
 
@@ -237,6 +248,9 @@
     pils_premier: {name: 'Piłsudski as prime minister of a legal cabinet', relation: 65, relief: 20, pilsudczycy: -5, loyalty_limit: 0,
       programme: {army: 0, institution: 0}, law: false},
   });
+  const CONCESSION_NAMES_PL = Object.freeze({military_function: 'funkcja wojskowa pod kontrolą cywilną',
+    inspectorate: 'niezależny inspektorat ze swobodniejszymi nominacjami', pils_premier: 'Piłsudski jako premier legalnego gabinetu'});
+  const concessionName = variant => L(CONCESSIONS[variant].name, CONCESSION_NAMES_PL[variant]);
   const REVIEW_MONTHS = 6;
 
   // Piłsudski's score of an offer (8.3 with his profile): 0.25 relation + 0.35 fit + 0.20 demands met + 0.10 PPS
@@ -270,21 +284,22 @@
 
   function concessionStatus(Q, variant) {
     const S = Q.S, spec = CONCESSIONS[variant], line = S.actors.pps.strategy.pils_influence;
-    if (!pilsCardAvailable(Q)) return no('Needs PPS in the cabinet with Military Affairs; toleration or a party line are not enough.');
+    if (!pilsCardAvailable(Q)) return no(L('Needs PPS in the cabinet with Military Affairs; toleration or a party line are not enough.', 'Wymaga PPS w gabinecie z resortem Spraw Wojskowych; tolerowanie ani linia partii nie wystarczą.'));
     if (variant === 'refuse') return OK;
-    if (!spec) return no('Unknown concession.');
-    if (!inCrisis(S) && !rules.mainActionAvailable(Q)) return no('This month’s action has already been used.');
+    if (!spec) return no(L('Unknown concession.', 'Nieznane ustępstwo.'));
+    if (!inCrisis(S) && !rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
     const current = pilsAgreement(S);
-    if (current && current.status === 'active' && current.variant === variant) return no('This concession is already agreed.');
-    if ((S.actors.relations.pilsudski || 0) < spec.relation) return no('Needs a relation of ' + spec.relation + ' with Piłsudski.');
+    if (current && current.status === 'active' && current.variant === variant) return no(L('This concession is already agreed.', 'To ustępstwo jest już uzgodnione.'));
+    if ((S.actors.relations.pilsudski || 0) < spec.relation) return no(L('Needs a relation of ' + spec.relation + ' with Piłsudski.',
+      'Wymaga relacji z Piłsudskim co najmniej ' + spec.relation + '.'));
     // 10.7 (Z — 0.33): the line limits the concessions, it does not gate the card.
-    if (variant === 'inspectorate' && line === 'oppose_military_interference') return no('Our line opposes military interference: no autonomous military power.');
+    if (variant === 'inspectorate' && line === 'oppose_military_interference') return no(L('Our line opposes military interference: no autonomous military power.', 'Nasza linia sprzeciwia się ingerencji wojska: bez autonomicznej władzy wojskowej.'));
     if (variant === 'pils_premier' && current && current.status === 'active' && current.execution_started_at !== null) {
-      return no('An agreement with Piłsudski is being executed; the premiership would be a second relief of the same crisis.');
+      return no(L('An agreement with Piłsudski is being executed; the premiership would be a second relief of the same crisis.', 'Porozumienie z Piłsudskim jest wykonywane; premierostwo byłoby drugim złagodzeniem tego samego kryzysu.'));
     }
     // The premiership too needs his score ≥60: a compromise despite a different constitutional ideal (16.7).
     const score = pilsScore(S, offerProgramme(S, variant), true);
-    return score >= 60 ? OK : no('Piłsudski does not accept this concession (score ' + fmt(score) + ').');
+    return score >= 60 ? OK : no(L('Piłsudski does not accept this concession (score ' + fmt(score) + ').', 'Piłsudski nie przyjmuje tego ustępstwa (ocena ' + fmt(score) + ').'));
   }
 
   // Under the conditional line the inspectorate carries a clause of responsibility before the Sejm (P: institution +1).
@@ -307,7 +322,8 @@
     else S.history.actions.push({t: t, action_id: 'government.pils_agreement.' + variant, cost_t: 0});
     if (variant === 'refuse') {
       S.actors.pilsudski.history.push({t: t, kind: 'refused'});
-      Q.pl_pils_result = 'PPS refuses concessions and offers a civilian cabinet. There is no free relief of pressure; a first new civil obligation may lower it once.';
+      Q.pl_pils_result = L('PPS refuses concessions and offers a civilian cabinet. There is no free relief of pressure; a first new civil obligation may lower it once.',
+        'PPS odmawia ustępstw i proponuje gabinet cywilny. Nie ma darmowego zmniejszenia presji; pierwsze nowe zobowiązanie cywilne może ją raz obniżyć.');
       return null;
     }
     const spec = CONCESSIONS[variant];
@@ -330,8 +346,10 @@
     else if (variant === 'inspectorate') fileInspectorate(Q, agreement, t);
     else if (variant === 'pils_premier') {
       agreement.law_id = null;
-      Q.pl_pils_result = 'Piłsudski accepts the premiership on the programme of a legal cabinet. He becomes a candidate of the next formation of a ' +
-        'cabinet (8.8), which costs no second action; the relief comes only after his real appointment.';
+      Q.pl_pils_result = L('Piłsudski accepts the premiership on the programme of a legal cabinet. He becomes a candidate of the next formation of a ' +
+        'cabinet (8.8), which costs no second action; the relief comes only after his real appointment.', 'Piłsudski przyjmuje premierostwo na programie ' +
+        'legalnego gabinetu. Staje się kandydatem przy następnym formowaniu gabinetu (8.8), które nie kosztuje drugiej akcji; złagodzenie przychodzi dopiero ' +
+        'po jego rzeczywistym powołaniu.');
     }
     party.writeMirrors(Q);
     return agreement;
@@ -354,7 +372,7 @@
     if (current && current.status === 'active') return refuse('an agreement with Piłsudski already exists');
     if ((S.actors.relations.pilsudski || 0) < spec.relation) return refuse('Piłsudski’s relation is below ' + spec.relation);
     const score = pilsScore(S, offerProgramme(S, variant), true);
-    if (score < 60) return refuse('Piłsudski does not accept the compromise (score ' + fmt(score) + ')');
+    if (score < 60) return refuse('Piłsudski does not accept the compromise (score ' + fmtEn(score) + ')');
     party.syncMirrors(Q);
     const id = 'agr-pilsudski-' + (S.actors.pilsudski.history.length + 1) + '-t' + t;
     const agreement = {id: id, kind: 'pilsudski', parties: ['pps', 'pilsudski'], cabinet_id: S.cabinet.id, signed_at: t, status: 'active',
@@ -383,7 +401,8 @@
     agreement.history.push({t: t, kind: 'law_filed', law_id: bill.id});
     if (bill.status === 'enacted') executeAgreement(Q, agreement, t);
     else if (bill.status === 'rejected') lawFailed(agreement, bill, t, Q);
-    else Q.pl_pils_result = 'The law on the inspectorate passed the Sejm and goes to the Senate; its effects come when it takes effect.';
+    else Q.pl_pils_result = L('The law on the inspectorate passed the Sejm and goes to the Senate; its effects come when it takes effect.',
+      'Ustawa o inspektoracie przeszła przez Sejm i trafia do Senatu; jej skutki nastąpią, gdy wejdzie w życie.');
     return bill;
   }
 
@@ -391,7 +410,8 @@
     agreement.status = 'failed';
     agreement.ended_at = t;
     agreement.history.push({t: t, kind: 'law_failed', law_id: bill.id, reason: bill.reason});
-    if (Q) Q.pl_pils_result = 'The Sejm refused the law on the inspectorate (' + bill.reason + '): the offer ends without relief and without a new conflict.';
+    if (Q) Q.pl_pils_result = L('The Sejm refused the law on the inspectorate (' + bill.reason + '): the offer ends without relief and without a new conflict.',
+      'Sejm odrzucił ustawę o inspektoracie (' + rules.storedText(bill.reason) + '): oferta kończy się bez złagodzenia i bez nowego konfliktu.');
   }
 
   // The start of execution (16.7): the relief of pressure once per agreement and once per crisis (the open military
@@ -427,7 +447,8 @@
     }
     if (open) politics.closeCase(Q, open.id, 'pils_agreement:' + agreement.id);
     agreement.history.push({t: t, kind: 'executed', variant: agreement.variant});
-    Q.pl_pils_result = 'The agreement with Piłsudski is being executed: ' + spec.name + '. It is reviewed after six months.';
+    Q.pl_pils_result = L('The agreement with Piłsudski is being executed: ' + spec.name + '. It is reviewed after six months.',
+      'Porozumienie z Piłsudskim jest wykonywane: ' + concessionName(agreement.variant) + '. Przegląd nastąpi po sześciu miesiącach.');
   }
 
   // The review after six months (16.8.1): an extension on unchanged terms scored ≥60 by Piłsudski, with the competent
@@ -777,7 +798,7 @@
 
   function coupStanceStatus(Q, stance) {
     const S = Q.S;
-    if (!STANCE_SIDE[stance]) return no('Unknown stance.');
+    if (!STANCE_SIDE[stance]) return no(L('Unknown stance.', 'Nieznane stanowisko.'));
     if (!coupDue(Q) || S.coup.phase !== 'pps_stance') return no('');
     return OK;
   }
@@ -849,11 +870,11 @@
 
   function coupCommitStatus(Q, commitment) {
     const S = Q.S, C = S.coup;
-    if (COMMITMENTS.indexOf(commitment) < 0) return no('Unknown commitment.');
+    if (COMMITMENTS.indexOf(commitment) < 0) return no(L('Unknown commitment.', 'Nieznane zaangażowanie.'));
     if (!coupDue(Q) || C.phase !== 'organization_commitment') return no('');
-    if (C.stance === 'mediate' && (commitment === 'rail' || commitment === 'both')) return no('A neutral PPS does not block transports for one side.');
+    if (C.stance === 'mediate' && (commitment === 'rail' || commitment === 'both')) return no(L('A neutral PPS does not block transports for one side.', 'Neutralna PPS nie blokuje transportów jednej ze stron.'));
     if ((commitment === 'militia' || commitment === 'both') && militiaPeopleFree(S) <= 0) {
-      return no('The Milicja has no free people: it is banned, empty or already assigned to another matter.');
+      return no(L('The Milicja has no free people: it is banned, empty or already assigned to another matter.', 'Milicja nie ma wolnych ludzi: jest objęta zakazem, pusta albo już przydzielona do innej sprawy.'));
     }
     return OK;
   }
@@ -1073,6 +1094,45 @@
     'coup.offer.cabinet_change': 'the dismissal of the attacked cabinet and a premier accepted by Piłsudski’s camp'});
   const FORCE_NAMES = Object.freeze({capital_legal: 'the capital garrison loyal to the government', capital_pils: 'the capital units close to Piłsudski',
     near_reserve: 'the near reserve', remote_reserve: 'the remote reserve (by rail)'});
+  const FORCE_NAMES_PL = Object.freeze({capital_legal: 'stołeczny garnizon wierny rządowi', capital_pils: 'oddziały stołeczne bliskie Piłsudskiemu',
+    near_reserve: 'bliski odwód', remote_reserve: 'daleki odwód (koleją)'});
+  const forceName = id => L(FORCE_NAMES[id], FORCE_NAMES_PL[id]);
+  const OUTCOME_NAMES_PL = Object.freeze({pils_victory: 'Piłsudski zwycięża', legal_victory: 'Legalny rząd utrzymuje się',
+    constitutional_compromise: 'Kompromis konstytucyjny', prolonged_conflict: 'Przewlekły konflikt bez zwycięzcy'});
+  const OFFER_NAMES_PL = Object.freeze({'coup.offer.military_function': 'funkcja wojskowa dla Piłsudskiego pod kontrolą cywilną; gabinet zostaje',
+    'coup.offer.inspectorate_law': 'niezależny inspektorat na mocy ustawy; gabinet zostaje',
+    'coup.offer.cabinet_change': 'dymisja zaatakowanego gabinetu i premier akceptowany przez obóz Piłsudskiego'});
+  const CONTRIBUTION_PL = Object.freeze({decisive: 'rozstrzygający', adverse: 'niekorzystny', accelerating: 'przyspieszający', none: 'żaden'});
+  const FACTION_SHORT_PL = Object.freeze({centrum: 'Centrum', lewica: 'Lewica', pilsudczycy: 'Piłsudczycy'});
+  const SIDES_PL = Object.freeze({legal: 'po stronie rządu', pils: 'po stronie Piłsudskiego', neutral: 'neutralne'});
+  const TASKS_PL = Object.freeze({protection: 'ochrona', confrontation: 'konfrontacja'});
+  const people = n => n + ' ' + rules.plural(n, 'osoba', 'osoby', 'osób');
+  const STORED_PL = Object.freeze({
+    'The competences of an independent inspectorate of the army': 'Kompetencje niezależnego inspektoratu wojska',
+    'only a military function under civilian control': 'tylko funkcja wojskowa pod kontrolą cywilną',
+    'an agreement with Piłsudski already exists': 'porozumienie z Piłsudskim już istnieje',
+    'civilian control of the army and the responsibility of the government before the Sejm': 'cywilna kontrola nad wojskiem i odpowiedzialność rządu przed Sejmem',
+    'concessions_to_pps: the winner owes the recorded conditions of PPS': 'concessions_to_pps: zwycięzca jest winien PPS zapisane warunki',
+    'cabinet_formation: a prime minister accepted by the camp of Piłsudski, appointed by the procedure of 8.8':
+      'cabinet_formation: premier akceptowany przez obóz Piłsudskiego, powołany w procedurze 8.8',
+  });
+  rules.registerStoredText(text => {
+    if (STORED_PL[text]) return STORED_PL[text];
+    const concession = Object.keys(CONCESSIONS).filter(id => CONCESSIONS[id].name === text)[0];
+    if (concession) return CONCESSION_NAMES_PL[concession];
+    let m = /^Piłsudski’s relation is below (\d+)$/.exec(text);
+    if (m) return 'relacja z Piłsudskim jest poniżej ' + m[1];
+    m = /^Piłsudski does not accept the compromise \(score ([\d.]+)\)$/.exec(text);
+    if (m) return 'Piłsudski nie przyjmuje kompromisu (ocena ' + m[1].replace('.', ',') + ')';
+    m = /^the obligations of the agreement (.+)$/.exec(text);
+    if (m) return 'zobowiązania porozumienia ' + m[1];
+    m = /^inspectorate_law: the law on the competences of an independent inspectorate, due by (\d+)\/(\d+) \(P\)$/.exec(text);
+    if (m) return 'inspectorate_law: ustawa o kompetencjach niezależnego inspektoratu, w terminie do ' + rules.monthYear(rules.timeOf(+m[2], +m[1]), 'gen') + ' (P)';
+    m = /^settlement_clauses: the troops return to their garrisons; amnesty and no repression of the participants; the Sejm and the calendar of elections are kept(; the mobilisation of PPS ends)?$/.exec(text);
+    if (m) return 'settlement_clauses: wojska wracają do garnizonów; amnestia i brak represji wobec uczestników; Sejm i kalendarz wyborczy zostają zachowane' +
+      (m[1] ? '; mobilizacja PPS się kończy' : '');
+    return undefined;
+  });
 
   // The page of the sequence: F6+F7 once after F5, then F9 when it waits, else F10+F11.
   function coupStep(S) {
@@ -1096,6 +1156,7 @@
     if (!A) return;
     Q.pl_coup_phase = C.phase;
     Q.pl_coup_step = coupStep(S);
+    if (PL()) return coupViewPl(Q);
     Q.pl_coup_known = knownView(S).map(v => FORCE_NAMES[v.id] + ' ' + Math.round(100 * v.low) + '–' + Math.round(100 * v.high) + '%').join('; ');
     Q.pl_coup_democracy = fmt(A.democracy);
     for (const stance of Object.keys(STANCE_SIDE)) {
@@ -1127,6 +1188,42 @@
       (e.relations.length ? '; relations: ' + e.relations.map(r => r.actor + ' ' + (r.delta > 0 ? '+' : '') + r.delta).join(', ') : '') +
       (e.militia_lost ? '; Milicja lost ' + e.militia_lost + ' people' : '') + (e.rail_fund_used ? '; railway fund used ' + fmt(e.rail_fund_used) + ' R' : '') +
       (C.concessions_to_pps.length ? '; the winner owes the conditions of PPS' : '') : '';
+  }
+
+  // The same fields in Polish (decision 2A): what PPS knows, the call of its organisations, the course and the outcome.
+  function coupViewPl(Q) {
+    const S = Q.S, C = S.coup, A = C.attempt;
+    Q.pl_coup_known = knownView(S).map(v => forceName(v.id) + ' ' + Math.round(100 * v.low) + '–' + Math.round(100 * v.high) + '%').join('; ');
+    Q.pl_coup_democracy = fmt(A.democracy);
+    for (const stance of Object.keys(STANCE_SIDE)) {
+      const p = stancePreview(S, stance);
+      Q['pl_coup_' + stance + '_preview'] = p.reactions.map(r => (FACTION_SHORT_PL[r.faction] || r.faction) + ' ' + (r.dissent > 0 ? '+' : '') + r.dissent).join(', ') +
+        (p.split_risk.length ? '; ryzyko rozłamu: ' + p.split_risk.map(f => FACTION_SHORT_PL[f] || f).join(', ') : '');
+    }
+    for (const c of COMMITMENTS) Q['pl_coup_' + c + '_why'] = coupCommitStatus(Q, c).reason;
+    const militia = militiaCall(S, C.stance || 'defend_legal');
+    Q.pl_coup_militia_forecast = 'wolni ludzie: ' + militia.available + ', odpowiedziałoby około ' + militia.executing + ' (' + fmt(militia.force) + ' F)';
+    const rail = railCall(S, C.stance || 'defend_legal');
+    Q.pl_coup_rail_forecast = 'aktywny udział kolejarzy około ' + fmt(rail.base) + ', gotowość branży ' + fmt(rail.readiness) +
+      ', fundusz ' + fmt(rail.fund_before) + ' R (' + fmt(rail.round_cost) + ' R na rundę)';
+    const res = A.resolution;
+    Q.pl_coup_sides = A.sides ? Object.keys(A.sides).map(id => forceName(id) + ': ' + SIDES_PL[A.sides[id]]).join('; ') : '';
+    Q.pl_coup_called = A.organisations ? [A.organisations.militia ? 'Milicja: ' + people(A.organisations.militia.executing) + ' (' +
+      fmt(A.organisations.militia.force) + ' F, ' + (TASKS_PL[A.organisations.militia_task] || A.organisations.militia_task) + ')' : '',
+    A.organisations.rail ? 'kolejarze: aktywny udział ' + A.organisations.rail.by_round.map(fmt).join(' / ') + ' w kolejnych rundach' : '']
+      .filter(Boolean).join('; ') || 'żadna organizacja PPS' : '';
+    Q.pl_coup_arrivals = res ? res.groups.filter(g => g.side !== 'neutral').map(g => forceName(g.id) + ' runda ' + (g.phase + 1) +
+      (g.arrival !== g.phase ? ' → ' + (g.arrival <= 3 ? 'runda ' + (g.arrival + 1) : 'za późno') + ' (strajk)' : '')).join('; ') : '';
+    Q.pl_coup_rounds = res ? res.log.map(l => 'Runda ' + l.round + ': Piłsudski ' + fmt(l.pils) + ' F, rząd ' + fmt(l.legal) + ' F').join('. ') : '';
+    Q.pl_coup_f9 = res && res.pending ? OFFER_NAMES_PL[res.pending.offer] : '';
+    Q.pl_coup_outcome = C.outcome ? OUTCOME_NAMES_PL[C.outcome] + (C.settlement ? ': ' + OFFER_NAMES_PL[C.settlement] : '') : '';
+    Q.pl_coup_contribution = C.pps_contribution ? CONTRIBUTION_PL[C.pps_contribution] || C.pps_contribution : '';
+    const e = A.effects;
+    Q.pl_coup_effects = e ? 'Demokracja ' + (e.institutions.democracy > 0 ? '+' : '') + e.institutions.democracy + ', przemoc +' + e.institutions.violence +
+      '; produkcja ' + fmt(e.production.percent) + '%' + (e.splits.length ? '; rozłamy: ' + e.splits.map(s => FACTION_SHORT_PL[s.faction] || s.faction).join(', ') : '') +
+      (e.relations.length ? '; relacje: ' + e.relations.map(r => government.describeParty(r.actor) + ' ' + (r.delta > 0 ? '+' : '') + r.delta).join(', ') : '') +
+      (e.militia_lost ? '; Milicja straciła ' + people(e.militia_lost) : '') + (e.rail_fund_used ? '; wykorzystany fundusz kolejarzy ' + fmt(e.rail_fund_used) + ' R' : '') +
+      (C.concessions_to_pps.length ? '; zwycięzca jest winien PPS jej warunki' : '') : '';
   }
 
   // ---- One month (4.2 step 6, after politics) --------------------------------------------------------------
@@ -1168,8 +1265,10 @@
   // The police of 16.3 as the Interior sees it; the capacity of protection at the current command and compliance.
   function policeLine(Q) {
     const S = Q.S, police = S.security.police;
-    return 'Police: capacity ' + fmt(police.capacity) + ', command ' + fmt(police.command) + ', lawful compliance ' + fmt(police.lawful_compliance) +
-      '; protection of one gathering ' + fmt(protectionCapacity(S, null, Q.time)) + ' of 100.';
+    return L('Police: capacity ' + fmt(police.capacity) + ', command ' + fmt(police.command) + ', lawful compliance ' + fmt(police.lawful_compliance) +
+      '; protection of one gathering ' + fmt(protectionCapacity(S, null, Q.time)) + ' of 100.',
+      'Policja: potencjał ' + fmt(police.capacity) + ', dowodzenie ' + fmt(police.command) + ', praworządność ' + fmt(police.lawful_compliance) +
+      '; ochrona jednego zgromadzenia ' + fmt(protectionCapacity(S, null, Q.time)) + ' na 100.');
   }
 
   const PILS_OPTIONS = Object.freeze(['military_function', 'inspectorate', 'pils_premier', 'refuse']);
@@ -1177,10 +1276,14 @@
   function pilsView(Q) {
     const S = Q.S, a = pilsAgreement(S);
     for (const variant of PILS_OPTIONS) Q['pl_pils_' + variant + '_why'] = concessionStatus(Q, variant).reason;
-    Q.pl_pils_line = 'Relation with Piłsudski ' + fmt(S.actors.relations.pilsudski || 0) + '. ' +
-      (a && a.status === 'active' ? 'Current agreement: ' + CONCESSIONS[a.variant].name + (a.execution_started_at === null ? ', not yet executed.' :
+    Q.pl_pils_line = L('Relation with Piłsudski ' + fmt(S.actors.relations.pilsudski || 0) + '. ' +
+      (a && a.status === 'active' ? 'Current agreement: ' + concessionName(a.variant) + (a.execution_started_at === null ? ', not yet executed.' :
         ', executed since ' + dateOf(a.execution_started_at) + ', review ' + dateOf(a.review_at) + '.') : 'No agreement in force.') +
-      (inCrisis(S) ? ' The coup is in its political crisis: an answer now costs no action.' : '');
+      (inCrisis(S) ? ' The coup is in its political crisis: an answer now costs no action.' : ''),
+      'Relacja z Piłsudskim ' + fmt(S.actors.relations.pilsudski || 0) + '. ' +
+      (a && a.status === 'active' ? 'Obecne porozumienie: ' + concessionName(a.variant) + (a.execution_started_at === null ? ', jeszcze niewykonane.' :
+        ', wykonywane od ' + rules.monthYear(a.execution_started_at, 'gen') + ', przegląd w ' + rules.monthYear(a.review_at, 'loc') + '.') :
+        'Brak obowiązującego porozumienia.') + (inCrisis(S) ? ' Zamach jest w fazie kryzysu politycznego: odpowiedź nie kosztuje teraz akcji.' : ''));
     Q.pl_pils_result = '';
   }
 
@@ -1199,32 +1302,47 @@
     const S = Q.S, m = S.militia, P = S.politics;
     const ban = Object.keys(P.restrictions || {}).map(id => P.restrictions[id]).filter(r => r.kind === 'militia_ban' && r.status === 'active')[0];
     Q.pl_def_militia_name = m.stage === 2 ? 'Akcja Socjalistyczna' : 'Milicja PPS';
-    Q.pl_def_militia = m.strength + ' organised members; efficiency ' + fmt(m.militancy) + (m.militarized ? '; militarised' : '') +
-      (m.fatigue ? '; fatigue ' + fmt(m.fatigue) : '') + '.';
-    Q.pl_def_legal = ban ? 'banned by the cabinet since ' + dateOf(ban.imposed_at) + (ban.lawful ? ' (a lawful restriction after proven violence)' :
-      ' (an unlawful restriction; the Justice review can lift it)') : 'legal';
-    Q.pl_def_alignment = 'Attachment of the organisation to the legal institutions: ' + fmt(m.alignment.legal_institutions === undefined ? 50 : m.alignment.legal_institutions) + ' of 100.';
+    Q.pl_def_militia = L(m.strength + ' organised members; efficiency ' + fmt(m.militancy) + (m.militarized ? '; militarised' : '') +
+      (m.fatigue ? '; fatigue ' + fmt(m.fatigue) : '') + '.',
+      m.strength + ' zorganizowanych członków; sprawność ' + fmt(m.militancy) + (m.militarized ? '; zmilitaryzowana' : '') +
+      (m.fatigue ? '; zmęczenie ' + fmt(m.fatigue) : '') + '.');
+    Q.pl_def_legal = ban ? L('banned by the cabinet since ' + dateOf(ban.imposed_at) + (ban.lawful ? ' (a lawful restriction after proven violence)' :
+      ' (an unlawful restriction; the Justice review can lift it)'), 'zakazana przez gabinet od ' + rules.monthYear(ban.imposed_at, 'gen') +
+      (ban.lawful ? ' (legalne ograniczenie po udowodnionej przemocy)' : ' (bezprawne ograniczenie; może je uchylić przegląd w resorcie Sprawiedliwości)')) :
+      L('legal', 'legalna');
+    Q.pl_def_alignment = L('Attachment of the organisation to the legal institutions: ', 'Przywiązanie organizacji do legalnych instytucji: ') +
+      fmt(m.alignment.legal_institutions === undefined ? 50 : m.alignment.legal_institutions) + L(' of 100.', ' na 100.');
     Q.pl_def_police = policeLine(Q);
-    Q.pl_def_forces = knownView(S).map(v => FORCE_NAMES[v.id].charAt(0).toUpperCase() + FORCE_NAMES[v.id].slice(1) + ': loyalty to Piłsudski known as ' +
+    Q.pl_def_forces = knownView(S).map(v => forceName(v.id).charAt(0).toUpperCase() + forceName(v.id).slice(1) +
+      L(': loyalty to Piłsudski known as ', ': lojalność wobec Piłsudskiego znana w przedziale ') +
       Math.round(100 * v.low) + '–' + Math.round(100 * v.high) + '%').join('. ') + '.';
-    Q.pl_def_note = 'The four groups are the synthetic test profile ' + S.security.profile_id + ', not the historical army of 1926. The intervals narrow with ' +
-      'the assessment of the forces on the Party agenda; the loyalties themselves do not change by looking.';
+    Q.pl_def_note = L('The four groups are the synthetic test profile ' + S.security.profile_id + ', not the historical army of 1926. The intervals narrow with ' +
+      'the assessment of the forces on the Party agenda; the loyalties themselves do not change by looking.',
+      'Cztery zgrupowania to syntetyczny profil testowy ' + S.security.profile_id + ', a nie historyczna armia z 1926 roku. Przedziały zawężają się ' +
+      'dzięki ocenie sił w agendzie partii; samo przyglądanie się nie zmienia lojalności.');
     const a = pilsAgreement(S);
-    Q.pl_def_agreement = a && a.status === 'active' ? 'Agreement with Piłsudski: ' + CONCESSIONS[a.variant].name +
-      (a.execution_started_at === null ? ' (not yet executed).' : ', review ' + dateOf(a.review_at) + '.') : '';
-    Q.pl_def_crisis = S.coup.phase === 'political_crisis' ? 'Political crisis: preparations for a coup are reported.' : '';
+    Q.pl_def_agreement = a && a.status === 'active' ? L('Agreement with Piłsudski: ' + concessionName(a.variant) +
+      (a.execution_started_at === null ? ' (not yet executed).' : ', review ' + dateOf(a.review_at) + '.'), 'Porozumienie z Piłsudskim: ' +
+      concessionName(a.variant) + (a.execution_started_at === null ? ' (jeszcze niewykonane).' : ', przegląd w ' + rules.monthYear(a.review_at, 'loc') + '.')) : '';
+    Q.pl_def_crisis = S.coup.phase === 'political_crisis' ? L('Political crisis: preparations for a coup are reported.',
+      'Kryzys polityczny: napływają doniesienia o przygotowaniach do zamachu.') : '';
   }
 
   function statusLine(Q) {
     const S = Q.S, police = S.security.police;
-    const warning = S.coup.phase === 'political_crisis' ? 'Political crisis: preparations for a coup are reported. ' : '';
+    const warning = S.coup.phase === 'political_crisis' ? L('Political crisis: preparations for a coup are reported. ',
+      'Kryzys polityczny: napływają doniesienia o przygotowaniach do zamachu. ') : '';
     const view = knownView(S);
     const range = view.map(v => Math.round(100 * v.low) + '–' + Math.round(100 * v.high) + '%').join(', ');
     const a = pilsAgreement(S);
-    return warning + 'the loyalty of the four army groups to Piłsudski is known only as ' + range + ' (±' + view[0].radius + ' pp). Police: command ' +
+    return warning + L('the loyalty of the four army groups to Piłsudski is known only as ' + range + ' (±' + view[0].radius + ' pp). Police: command ' +
       fmt(police.command) + ', lawful compliance ' + fmt(police.lawful_compliance) + '.' +
-      (a && a.status === 'active' ? ' Agreement with Piłsudski: ' + CONCESSIONS[a.variant].name + (a.execution_started_at === null ? ' (not yet executed).' :
-        ', review ' + dateOf(a.review_at) + '.') : '');
+      (a && a.status === 'active' ? ' Agreement with Piłsudski: ' + concessionName(a.variant) + (a.execution_started_at === null ? ' (not yet executed).' :
+        ', review ' + dateOf(a.review_at) + '.') : ''),
+      'lojalność czterech zgrupowań wojska wobec Piłsudskiego jest znana tylko w przedziałach ' + range + ' (±' + view[0].radius +
+      ' pkt proc.). Policja: dowodzenie ' + fmt(police.command) + ', praworządność ' + fmt(police.lawful_compliance) + '.' +
+      (a && a.status === 'active' ? ' Porozumienie z Piłsudskim: ' + concessionName(a.variant) + (a.execution_started_at === null ?
+        ' (jeszcze niewykonane).' : ', przegląd w ' + rules.monthYear(a.review_at, 'loc') + '.') : ''));
   }
 
   return Object.freeze({
@@ -1232,6 +1350,7 @@
     FORCES: FORCES,
     LOGISTICS: LOGISTICS,
     OVERSIGHT_FORCE: OVERSIGHT_FORCE,
+    forceName: forceName,
     CONCESSIONS: CONCESSIONS,
     REVIEW_MONTHS: REVIEW_MONTHS,
     ready: ready,
