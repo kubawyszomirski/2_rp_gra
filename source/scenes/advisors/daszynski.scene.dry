@@ -35,7 +35,7 @@ PolishParty.advisorAction(Q, 'daszynski', 'parliamentary_compromise');
 title: Broker a Coalition
 subtitle: In a coalition, reduce the tension of each cabinet agreement by 10; or add 5 to the partners' evaluation of one broad cabinet offer in preparation.
 choose-if: {! return Q.advisor_action_timer <= 0 && PolishGovernment.brokerStatus(Q).available !}
-unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?][? if advisor_action_timer <= 0 : Needs PPS in a coalition with a cabinet agreement under tension, or a broad cabinet offer in preparation. ?]
+unavailable-subtitle: [? if advisor_action_timer = 1 : 1 month before the next Committee action. ?][? if advisor_action_timer > 1 : [+ advisor_action_timer +] months before the next Committee action. ?][? if advisor_action_timer <= 0 : Needs PPS in a coalition with a cabinet agreement under tension, or a broad cabinet offer in preparation. ?]
 call: polish_advisor_commit
 on-arrival: {!
 // Technical reference 10.4.3: one mode, no free relation change and no bypass of the crisis gate.

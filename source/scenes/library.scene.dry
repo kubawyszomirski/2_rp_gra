@@ -6,7 +6,7 @@ go-to: menu
 
 = The Library
 
-The Library explains the rules and the present state of the game: the constitutional order of 1922 and the presidency, a short timeline of 1919–1922, the government and its portfolios, the electorate and the parties, public opinion, the organisations of PPS and the forces of the state, the factions, the advisers, and the charts of the campaign. Numbers called gameplay values are the game's working balance, not historical statistics.
+The Library explains the rules and the present state of the game: the constitutional order of 1922 and the presidency, a short timeline of 1919–1922, the government and its portfolios, the electorate and the parties, public opinion, the organisations of PPS and the forces of the state, the factions, the Central Executive Committee, and the charts of the campaign. Numbers called gameplay values are the game's working balance, not historical statistics.
 
 @menu
 
@@ -19,7 +19,7 @@ The Library explains the rules and the present state of the game: the constituti
 - @public_opinion: Public opinion (voting intentions, not seats)
 - @paramilitaries: Paramilitary groups
 - @factions: Internal factions
-- @advisers: PPS advisers
+- @advisers: Central Executive Committee
 - @figures: Figures and charts
 - @backSpecialScene: Exit library.
 
@@ -32,7 +32,7 @@ The March Constitution has been adopted, but its transitional arrangements prese
 
 **Antoni Ponikowski** leads a predominantly expert/administrative cabinet. This does not mean every minister was personally non-party. In this approved gameplay opening, PPS tolerates the cabinet from outside and holds no ministries. The exact historical basis for January PPS toleration remains **TBD — historical research required**.
 
-Toleration is not executive control. You can organize PPS, campaign, use advisers and develop Milicja PPS, but cannot direct government taxation, appoint ministers or command the police through inherited Prussian powers. Cabinet portfolios can be inspected without joining the government. Adviser appointments do not appoint ministers.
+Toleration is not executive control. You can organize PPS, campaign, act through the Central Executive Committee and develop Milicja PPS, but cannot direct government taxation, appoint ministers or command the police through inherited Prussian powers. Cabinet portfolios can be inspected without joining the government. A seat on the Central Executive Committee is a party post, not a ministry.
 
 The opening **444-MP** parliament is an approved simplification: rounded August 1922 club percentages are normalized and allocated as whole seats, not asserted to be the historical January roster. Existing party IDs stand for simplified parliamentary categories. Minority deputies are an aggregate, not a claim that a single minority electoral bloc already existed in January. Campaigning changes public support, not sitting MPs.
 
@@ -389,21 +389,21 @@ Dissent: [+ pilsudczycy_dissent : dissent +]
 
 [? if polish_party_rules : **Trade unions close to PPS.** They are not a faction: three branches with their own reach and strike fund. [+ pl_party_unions +]. ?]
 
-[? if polish_party_rules : Faction strength and dissent change with the decisions of PPS, its line on the stance cards and the advisers' actions. A faction with dissent of 60 and a live cause opens a case: PPS accepts its demand or accepts a split. ?]
+[? if polish_party_rules : Faction strength and dissent change with the decisions of PPS, its line on the stance cards and the actions of the Central Executive Committee. A faction with dissent of 60 and a live cause opens a case: PPS accepts its demand or accepts a split. ?]
 
 [? if not polish_party_rules : **Affiliated trade unions — temporary compatibility model** ?]
 
 [? if not polish_party_rules : The inherited Labor values temporarily represent the trade-union power centre. Strength: [+ labor_strength : strength +]; dissent: [+ labor_dissent : dissent +]. ?]
 
 @advisers
-title: PPS Advisers
+title: Central Executive Committee
 go-to: menu
 
-= PPS advisers
+= Central Executive Committee
 
-The PPS has three active adviser slots and a fourteen-person Polish adviser pool. Using any adviser action starts one shared six-month cooldown. Dismissing an adviser adds five dissent to their faction. A person's first appointment adds five faction strength; reappointing the same person does not repeat that bonus.
+The Central Executive Committee (CKW) was the executive body of PPS. In the game it has three active seats and fourteen candidates; this is a gameplay simplification, not the historical membership of the committee. Using any Committee action starts one shared six-month cooldown. Dismissing a member adds five dissent to their faction. A person's first appointment adds five faction strength; reappointing the same person does not repeat that bonus.
 
-The January 1922 active team is **Ignacy Daszyński**, **Kazimierz Pużak**, and **Feliks Perl**.
+In January 1922 the three active seats are held by **Ignacy Daszyński**, **Kazimierz Pużak**, and **Feliks Perl**.
 
 **Centrum PPS:** Daszyński, Pużak, Perl, Mieczysław Niedziałkowski and Tomasz Arciszewski.
 
@@ -415,7 +415,7 @@ Próchnik and Drobner enter the pool in 1928; Dubois enters in 1930. Perl leaves
 
 Faction splits use named departures. A split only removes a person whose entry date has already arrived. Consequently, a Lewica split before 1930 does not prevent Dubois from entering in 1930.
 
-Every adviser action shows its conditions and costs; when one is not available, its card says why.
+Every Committee action shows its conditions and costs; when one is not available, its card says why.
 
 
 @figures

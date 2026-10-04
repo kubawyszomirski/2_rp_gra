@@ -1,6 +1,6 @@
 # Plan implementacji rozdziału 1
 
-**Stan — referencja 0.51, 4 października 2026. Wszystkie etapy 0–8 wykonane; etap 8 był ostatni, a pierwszy rozdział jest wdrożony w całości (rozdział 18). Po planie gra dostała polską wersję językową (rozdział 19) i potwierdzanie obecnej linii (rozdział 20).** Plan opisuje, w jakiej kolejności i jakimi zmianami w kodzie wdrożono pierwszy rozdział gry. Reguły gry podaje [referencja techniczna](POLISH_TECHNICAL_REFERENCE.md), a karty — [katalog kart](POLISH_CARD_CATALOGUE.md). Plan nie tworzy reguł: przy rozbieżności obowiązuje referencja. Sam plan niczego jeszcze nie zmienia w grze. Każdy etap zaczyna się dopiero po zatwierdzeniu jego szczegółowego planu.
+**Stan — referencja 0.52, 4 października 2026. Wszystkie etapy 0–8 wykonane; etap 8 był ostatni, a pierwszy rozdział jest wdrożony w całości (rozdział 18). Po planie gra dostała polską wersję językową (rozdział 19), potwierdzanie obecnej linii (rozdział 20) i nazwę Centralnego Komitetu Wykonawczego dla doradców (rozdział 21).** Plan opisuje, w jakiej kolejności i jakimi zmianami w kodzie wdrożono pierwszy rozdział gry. Reguły gry podaje [referencja techniczna](POLISH_TECHNICAL_REFERENCE.md), a karty — [katalog kart](POLISH_CARD_CATALOGUE.md). Plan nie tworzy reguł: przy rozbieżności obowiązuje referencja. Sam plan niczego jeszcze nie zmienia w grze. Każdy etap zaczyna się dopiero po zatwierdzeniu jego szczegółowego planu.
 
 ## 1. Jak czytać plan
 
@@ -1131,6 +1131,15 @@ To druga zmiana po zakończeniu planu, nie etap 9. 4 X 2026 użytkownik poprosi�
 - **Nazwa:** „Close card” to teraz „Return to hand”, po polsku „Odłóż na rękę”; wyjście z karty otwartej przez doradcę zostaje „Close card”.
 - **Pliki:** `source/rules/polish_party.js`, sceny tych dziesięciu kart i `easy_discard` z ich polskimi tłumaczeniami, trzy pliki testów.
 - **Wyniki:** `npm test` 444 z 444; 18 kontroli analitycznych przechodzi; schemat stanu 8 bez zmian. Zautomatyzowane strategie nie używają tych kart, więc wyniki kampanii etapu 8 się nie zmieniają (156 kampanii bez potwierdzenia).
+
+## 21. Nazwa Centralnego Komitetu Wykonawczego (po planie, 0.52)
+
+Trzecia zmiana po zakończeniu planu, nie etap 9. 4 X 2026 użytkownik poprosił, by doradcy nazywali się w grze „Centralny Komitet Wykonawczy”, a po angielsku „Central Executive Committee” (referencja 10.4 i 23.25).
+
+- **Zakres:** tylko teksty dla gracza, w obu językach. Reguły, identyfikatory w kodzie i zapisy gry bez zmian; dokumentacja zachowuje termin techniczny „doradca”.
+- **Historia:** nazwa CKW jest faktem udokumentowanym; trzy miejsca to uproszczenie gry (`HISTORICAL_SOURCES.md`, wpis `PL-PPS-CKW-NAME-2026-10-04`).
+- **Pliki:** sceny `main`, `root`, `library`, `polish_party_advisers`, `polish_advisor_commit`, `cancel_advisor_action` i cztery karty doradców z polskimi tłumaczeniami; `source/rules/polish_party.js`; `out/html/game.js`; dwa pliki testów. Napis o odnowieniu akcji CKW ma pełną odmianę liczebnika w obu językach.
+- **Wyniki:** `npm test` 445 z 445; tłumaczenia kompletne; 18 kontroli analitycznych przechodzi; test w przeglądarce w obu językach bez błędów.
 
 ## Dodatek A. Karty katalogu według etapów
 

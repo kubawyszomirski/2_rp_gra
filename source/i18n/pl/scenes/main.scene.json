@@ -3,9 +3,9 @@
  "status": "complete",
  "lines": {
   "title: Next month": "title: Następny miesiąc",
-  "Q.pinnedCardsDescription = 'Advisors - an action is available.';": "Q.pinnedCardsDescription = 'Doradcy — akcja jest dostępna.';",
-  "Q.pinnedCardsDescription = 'Advisors - next action available in 1 month.';": "Q.pinnedCardsDescription = 'Doradcy — następna akcja za 1 miesiąc.';",
-  "Q.pinnedCardsDescription = 'Advisors - next action available in ' + Q.advisor_action_timer + ' months.';": "Q.pinnedCardsDescription = 'Doradcy — następna akcja za ' + Q.advisor_action_timer + ' ' + PolishRules.plural(Q.advisor_action_timer, 'miesiąc', 'miesiące', 'miesięcy') + '.';",
+  "Q.pinnedCardsDescription = 'Central Executive Committee - an action is available.';": "Q.pinnedCardsDescription = 'Centralny Komitet Wykonawczy — akcja jest dostępna.';",
+  "Q.pinnedCardsDescription = 'Central Executive Committee - next action available in 1 month.';": "Q.pinnedCardsDescription = 'Centralny Komitet Wykonawczy — następna akcja za 1 miesiąc.';",
+  "Q.pinnedCardsDescription = 'Central Executive Committee - next action available in ' + Q.advisor_action_timer + ' months.';": "Q.pinnedCardsDescription = 'Centralny Komitet Wykonawczy — następna akcja za ' + Q.advisor_action_timer + ' ' + PolishRules.plural(Q.advisor_action_timer, 'miesiąc', 'miesiące', 'miesięcy') + '.';",
   "[? if pl_agreement_notices : **Agreements:** [+ pl_agreement_notices +] ?]": "[? if pl_agreement_notices : **Porozumienia:** [+ pl_agreement_notices +] ?]",
   "[? if pl_economy_notices : **Economy:** [+ pl_economy_notices +] ?]": "[? if pl_economy_notices : **Gospodarka:** [+ pl_economy_notices +] ?]",
   "[? if pl_election_reminder : **Elections approaching.** [+ pl_election_reminder +] [? if sejm_first_election_completed : The certified result of this election ends the chapter. ?] ?]": "[? if pl_election_reminder : **Zbliżają się wybory.** [+ pl_election_reminder +] [? if sejm_first_election_completed : Zatwierdzony wynik tych wyborów zakończy rozdział. ?] ?]",

@@ -108,7 +108,7 @@
     empty: {en: 'Empty', pl: 'Pusty'},
     hand: {en: 'Hand - click a card to play.', pl: 'Ręka — kliknij kartę, aby ją zagrać.'},
     decks: {en: 'Decks - click a deck to draw a card.', pl: 'Talie — kliknij talię, aby dobrać kartę.'},
-    pinned: {en: 'Advisor cards - actions are only usable once per 6 months.', pl: 'Karty doradców — każda akcja raz na 6 miesięcy.'},
+    pinned: {en: 'Central Executive Committee - actions are only usable once per 6 months.', pl: 'Centralny Komitet Wykonawczy — każda akcja raz na 6 miesięcy.'},
     continue_choice: {en: 'Continue...', pl: 'Dalej…'},
     load_failed: {en: 'The Polish version could not be loaded; the game continues in English.',
       pl: 'Nie udało się wczytać polskiej wersji; gra toczy się dalej po angielsku.'}

@@ -108,7 +108,8 @@ Test „Ta sama rozgrywka w obu językach” gra każdą z 13 strategii do końc
 | agrarian pressure, business pressure | presja agrarna, presja przedsiębiorców |
 | Polish mark, złoty | marka polska, złoty |
 | workers, peasants, intelligentsia, petty bourgeoisie, bourgeoisie and landowners | robotnicy, chłopi, inteligencja, drobnomieszczaństwo, burżuazja i ziemiaństwo |
-| Library, deck, hand, card, agenda, advisers | Biblioteka, talia, ręka, karta, agenda, doradcy |
+| Library, deck, hand, card, agenda | Biblioteka, talia, ręka, karta, agenda |
+| Central Executive Committee, the Committee, a member of the Committee (the advisers of the code) | Centralny Komitet Wykonawczy, CKW, członek CKW |
 | Party Affairs, Government Affairs, Parliament | Sprawy partii, Sprawy rządu, Parlament |
 | main action of the month | główna akcja miesiąca |
 | cooldown | odnowienie |

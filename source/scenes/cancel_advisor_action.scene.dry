@@ -1,5 +1,5 @@
 title: Close card
-subtitle: The adviser action stays used; closing the card costs nothing more.
+subtitle: The Committee action stays used; closing the card costs nothing more.
 view-if: last_advisor_action = 1 or last_cabinet_action = 1
 go-to: root
 on-arrival: {!

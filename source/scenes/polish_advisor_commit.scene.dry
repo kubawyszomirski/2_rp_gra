@@ -1,4 +1,4 @@
-title: Adviser action
+title: Committee action
 on-arrival: {!
 // Called with call: by every Polish adviser action. Records one adviser transaction: all advisers
 // wait until t+6, and an action that opens a card makes that one step cost no month (technical

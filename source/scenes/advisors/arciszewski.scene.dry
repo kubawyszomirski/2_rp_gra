@@ -72,7 +72,7 @@ PolishParty.advisorAction(Q, 'arciszewski', 'organize_workers', 'farm_labour');
 title: Labour Programme: workers’ rights
 subtitle: Opens the Workers’ Rights card; its one step costs no month (the ordinary B costs and the law remain).
 choose-if: {! return Q.advisor_action_timer <= 0 && !!Q.S && PolishProjects.cardAvailable(Q, 'labor_rights') !}
-unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?][? if advisor_action_timer <= 0 : Needs PPS in the cabinet with Labour. ?]
+unavailable-subtitle: [? if advisor_action_timer = 1 : 1 month before the next Committee action. ?][? if advisor_action_timer > 1 : [+ advisor_action_timer +] months before the next Committee action. ?][? if advisor_action_timer <= 0 : Needs PPS in the cabinet with Labour. ?]
 call: polish_advisor_commit
 on-arrival: advisor_action_timer = 6; last_advisor_action = 1
 go-to: polish_gov_labor_rights
@@ -81,7 +81,7 @@ go-to: polish_gov_labor_rights
 title: Labour Programme: benefits for the unemployed
 subtitle: Opens the Benefits card; its one step costs no month (the ordinary B costs remain).
 choose-if: {! return Q.advisor_action_timer <= 0 && !!Q.S && PolishProjects.cardAvailable(Q, 'social_welfare') !}
-unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?][? if advisor_action_timer <= 0 : Needs PPS in the cabinet with Labour. ?]
+unavailable-subtitle: [? if advisor_action_timer = 1 : 1 month before the next Committee action. ?][? if advisor_action_timer > 1 : [+ advisor_action_timer +] months before the next Committee action. ?][? if advisor_action_timer <= 0 : Needs PPS in the cabinet with Labour. ?]
 call: polish_advisor_commit
 on-arrival: advisor_action_timer = 6; last_advisor_action = 1
 go-to: polish_gov_social_welfare

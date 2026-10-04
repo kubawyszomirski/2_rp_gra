@@ -1,9 +1,9 @@
 {
   "scope": "Exact enumeration of 81 synthetic allegiance outcomes for coup_f_v1 (technical reference 16.8). Not a campaign run, not historical forces.",
   "hashes": {
-    "docs/POLISH_TECHNICAL_REFERENCE.md": "60b89d03e869ae6f3e5c00864d5d13eadac3bde7259b0e83bcf304d7fd8d2cfe",
-    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "abb237afc1ed46188860d8e3406ee0e03b82354132f7169b70c1289ad7d1300a",
-    "docs/POLISH_MECHANICS_AUDIT.md": "2bb0ba760d23ace75dec6ab03e2717c05b773ce2e7c2e511c95e92d838f39ce6"
+    "docs/POLISH_TECHNICAL_REFERENCE.md": "87c7d9c2cac3a3515bfe014f2f8ef960df8556fb733017c9d1ae88b6fde0f66b",
+    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "4983cf392446ded83e625401933980ba31c7167745f135b2d671d8b336475c30",
+    "docs/POLISH_MECHANICS_AUDIT.md": "16ab967b32379da08021caaf63532f1774288e16d184874bd0467c78fbdd9727"
   },
   "offers": [
     {

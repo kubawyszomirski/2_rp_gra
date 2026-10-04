@@ -1,6 +1,6 @@
 # Polska wersja: przewodnik po mechanice, decyzjach i ścieżkach rozgrywki
 
-**Stan — referencja 0.51, 4 października 2026.** Przewodnik opisuje rozgrywkę pierwszego rozdziału w jednej aktualnej wersji. Gra ma wersję angielską i polską; język zmienia się w Opcjach albo odnośnikiem w nagłówku strony, także w trakcie gry. Rozdział jest wdrożony w kodzie gry w całości; jego ograniczenia wymienia rozdział 18 [planu implementacji](POLISH_IMPLEMENTATION_PLAN.md). Liczby, wzory i kontrakty podaje [referencja techniczna](POLISH_TECHNICAL_REFERENCE.md); gdy przewodnik i referencja się różnią, obowiązuje referencja. Osoba kodująca znajdzie każdą kartę w jednej tabeli w [katalogu kart](POLISH_CARD_CATALOGUE.md). Wszystkie punkty audytu mechanik są zamknięte w dokumentacji. Liczby robocze sprawdzono w pełnych kampaniach etapu 8; liczby oznaczone P pozostają robocze. Historia kolejnych poprawek jest w dodatku na końcu i nie opisuje aktualnych reguł.
+**Stan — referencja 0.52, 4 października 2026.** Przewodnik opisuje rozgrywkę pierwszego rozdziału w jednej aktualnej wersji. Gra ma wersję angielską i polską; język zmienia się w Opcjach albo odnośnikiem w nagłówku strony, także w trakcie gry. Rozdział jest wdrożony w kodzie gry w całości; jego ograniczenia wymienia rozdział 18 [planu implementacji](POLISH_IMPLEMENTATION_PLAN.md). Liczby, wzory i kontrakty podaje [referencja techniczna](POLISH_TECHNICAL_REFERENCE.md); gdy przewodnik i referencja się różnią, obowiązuje referencja. Osoba kodująca znajdzie każdą kartę w jednej tabeli w [katalogu kart](POLISH_CARD_CATALOGUE.md). Wszystkie punkty audytu mechanik są zamknięte w dokumentacji. Liczby robocze sprawdzono w pełnych kampaniach etapu 8; liczby oznaczone P pozostają robocze. Historia kolejnych poprawek jest w dodatku na końcu i nie opisuje aktualnych reguł.
 
 Gracz prowadzi kierownictwo PPS od stycznia 1922 do rozstrzygnięcia próby zamachu albo następnych legalnych wyborów parlamentarnych po 1922, jeśli do próby nie dochodzi. Głównym punktem zwrotnym jest kryzys majowy. Zakres obejmuje sprawy wewnętrzne. Raport końca rozdziału zachowuje stan do kontynuacji aż do 1939.
 
@@ -387,6 +387,8 @@ Wykluczenie członków jest świadomą alternatywą wobec kompromisu lub czekani
 Posłowie, którzy opuszczą partię, zachowują mandaty i przechodzą do innego klubu albo pozostają niezrzeszeni. Czystka może przez to odebrać większość własnemu gabinetowi. Usunięty doradca nie jest już dostępny; związki i Milicja tracą tylko konkretnie wskazanych ludzi lub struktury, bez wielokrotnego odejmowania tych samych odejść. Nadal obowiązują wcześniejsze umowy i skutki polityki. Jest to wykluczenie z partii, nie przemoc fizyczna.
 
 ### Doradcy: liczby, frakcje i dostęp do kart
+
+W grze doradcy występują jako **Centralny Komitet Wykonawczy PPS (CKW)**, po angielsku *Central Executive Committee*. Tak nazywa się nagłówek ich kart na stronie głównej, karta zmiany składu i strona Biblioteki, a ich działania to akcje CKW. CKW był organem wykonawczym PPS; trzy miejsca i pula czternastu osób to uproszczenie gry, a nie historyczny skład komitetu.
 
 Każdy doradca ma jedną lub dwie konkretne akcje. Zastępują wcześniejsze ogólne „uzgadnianie stanowiska”. Doradcy bezpośrednio poprawiają relacje, zmniejszają dissent, zmieniają siłę frakcji, zdobywają poparcie albo otwierają wskazane polityki. Poniższy katalog rozwija uwagi użytkownika; dokładne parametry są robocze i znajdują się w 10.4 referencji 0.7.
 
@@ -1709,6 +1711,8 @@ Pełny rejestr i linki znajdują się w [HISTORICAL_SOURCES.md](../HISTORICAL_SO
 ## Dodatek: historia zmian przewodnika
 
 Poniższe notki opisują kolejne poprawki, od najnowszej. Są historią, nie instrukcją: obowiązuje tekst rozdziałów 1–19. Przeniesiono je tu bez zmian w porządkowaniu M19 (referencja 0.31).
+
+**Centralny Komitet Wykonawczy, referencja 0.52:** doradcy występują w grze jako Centralny Komitet Wykonawczy PPS (CKW; ang. Central Executive Committee), a jedna osoba jako członek CKW. Zmieniły się tylko nazwy; reguły, koszty i odnowienia są takie same. Trzy miejsca to uproszczenie gry, a nie historyczny skład komitetu.
 
 **Potwierdzenie obecnej linii, referencja 0.51:** obecną linię w kartach stanowisk, poziom składek i ten sam program gospodarczy można potwierdzić. Potwierdzenie kosztuje akcję miesiąca, a karta czeka jak po zmianie; nic więcej się nie zmienia. Wyjście z karty bez działania nazywa się „Odłóż na rękę” (ang. „Return to hand”) i nadal nic nie kosztuje.
 

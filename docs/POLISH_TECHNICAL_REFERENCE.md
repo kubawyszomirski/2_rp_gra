@@ -1,6 +1,6 @@
 # Polska wersja: techniczna referencja mechanik, stanu i przejść
 
-**Wersja 0.51 — 4 października 2026.** Specyfikacja pierwszego rozdziału na podstawie [POLISH_DESCRIPTIVE_GUIDE.md](POLISH_DESCRIPTIVE_GUIDE.md). Obejmuje stan, jednostki, wzory, warunki kart, kolejność rozliczeń, głosowania, umowy, gospodarkę, organizacje, zamach i zapis kampanii. **To jedna aktualna wersja do kodowania: obowiązuje tekst rozdziałów 1–22.** Karty zbiera w jednym miejscu [katalog kart do kodowania](POLISH_CARD_CATALOGUE.md): jedna tabela na kartę, szkic z 0.32; wszystkie sześć partii użytkownik przejrzał w 0.33–0.38 i katalog nie ma otwartych pytań. Katalog nie tworzy reguł; przy rozbieżności obowiązuje ta referencja. Historia decyzji jest w rozdziale 23 i nie jest instrukcją wdrożenia. Trafiły tam dawny opis wersji, akapity rewizji 0.13–0.30 i zapisy zatwierdzeń. Oznaczenia K/Z/P/H/B objaśnia rozdział 1. Wszystkie punkty audytu mechanik są zamknięte w dokumentacji. **Etap 8 planu wdrożenia był ostatni: pierwszy rozdział jest wdrożony w całości** (23.22). Liczby P skalibrowano na pełnych kampaniach etapu 8 ([pomiar](../analysis/stage8-campaigns/REPORT.md)); ograniczenia gotowego rozdziału wymienia rozdział 18 [planu wdrożenia](POLISH_IMPLEMENTATION_PLAN.md). **Wersja 0.50 dodała polską wersję językową gry** (decyzja w 20.1, zapis wdrożenia w 23.23). **Wersja 0.51 pozwala potwierdzić obecną linię** w kartach stanowisk, Składkach i Programie gospodarczym (10.5, 13.1; zapis w 23.24). Dokument nie zmienia działającej gry.
+**Wersja 0.52 — 4 października 2026.** Specyfikacja pierwszego rozdziału na podstawie [POLISH_DESCRIPTIVE_GUIDE.md](POLISH_DESCRIPTIVE_GUIDE.md). Obejmuje stan, jednostki, wzory, warunki kart, kolejność rozliczeń, głosowania, umowy, gospodarkę, organizacje, zamach i zapis kampanii. **To jedna aktualna wersja do kodowania: obowiązuje tekst rozdziałów 1–22.** Karty zbiera w jednym miejscu [katalog kart do kodowania](POLISH_CARD_CATALOGUE.md): jedna tabela na kartę, szkic z 0.32; wszystkie sześć partii użytkownik przejrzał w 0.33–0.38 i katalog nie ma otwartych pytań. Katalog nie tworzy reguł; przy rozbieżności obowiązuje ta referencja. Historia decyzji jest w rozdziale 23 i nie jest instrukcją wdrożenia. Trafiły tam dawny opis wersji, akapity rewizji 0.13–0.30 i zapisy zatwierdzeń. Oznaczenia K/Z/P/H/B objaśnia rozdział 1. Wszystkie punkty audytu mechanik są zamknięte w dokumentacji. **Etap 8 planu wdrożenia był ostatni: pierwszy rozdział jest wdrożony w całości** (23.22). Liczby P skalibrowano na pełnych kampaniach etapu 8 ([pomiar](../analysis/stage8-campaigns/REPORT.md)); ograniczenia gotowego rozdziału wymienia rozdział 18 [planu wdrożenia](POLISH_IMPLEMENTATION_PLAN.md). **Wersja 0.50 dodała polską wersję językową gry** (decyzja w 20.1, zapis wdrożenia w 23.23). **Wersja 0.51 pozwoliła potwierdzić obecną linię** w kartach stanowisk, Składkach i Programie gospodarczym (10.5, 13.1; zapis w 23.24). **Wersja 0.52 pokazuje doradców w grze jako Centralny Komitet Wykonawczy PPS** (10.4; zapis w 23.25). Dokument nie zmienia działającej gry.
 
 **Gdzie jest aktualna reguła.** Tabela wskazuje kanoniczne miejsce każdego tematu i ostatnie zatwierdzone zmiany. Oznaczenia „Z — 0.xx (Mxx)” w tekście mówią, która decyzja ustaliła daną regułę.
 
@@ -15,7 +15,7 @@
 | Instytucje, głosowania, prezydent i marszałek | 7 | M06 (7.3, 7.5), arbitraż prezydenta a linia PPS (7.6), etap 2 (7.1–7.5), etap 4 (7.2, 7.6), etap 5 (7.6), etap 8 (7.6) |
 | Relacje, rozmowy, oferty, gabinety | 8 | M11 (8.3), M17 (8.1), oś autonomii (8.6), impas formowania (8.7), etap 4 (8.5, 8.6), etap 5 (8.6), etap 7 (8.7), etap 8 (8.6, 8.9) |
 | Umowy, stosunek do rządu, współpraca z komunistami | 9 | M11 (9.8), M13 (9.5–9.6), M17 (9.5), agenda współpracy z KPP (9.5), utrzymanie poparcia tylko w kryzysie (9.8), etap 4 (9.1, 9.7), etap 5 (9.5, 9.8), etap 6 (9.6–9.8), etap 8 (9.6) |
-| Frakcje, posłuch, doradcy, karty strategiczne | 10 | M10 (10.7), M16 (10.2), M17 (10.4.3), katalog kart (10.2, 10.4.2, 10.5–10.10), etap 5 (10.1–10.10), etap 6 (10.4.3), etap 7 (10.7), etap 8 (10.5), potwierdzenie obecnej linii (10.5, 10.10) |
+| Frakcje, posłuch, doradcy, karty strategiczne | 10 | M10 (10.7), M16 (10.2), M17 (10.4.3), katalog kart (10.2, 10.4.2, 10.5–10.10), etap 5 (10.1–10.10), etap 6 (10.4.3), etap 7 (10.7), etap 8 (10.5), potwierdzenie obecnej linii (10.5, 10.10), nazwa CKW (10.4) |
 | Gospodarka i finanse państwa | 11 | M01 (0.11), karta Budżet (11.9), etap 4 (11.1, 11.3, 11.9), etap 6 (11.4, 11.7) |
 | Projekty i wykonanie | 12 | M07 (17.12), katalog kart (12.7, 12.8), etap 4 (12.2), etap 6 (12.4) |
 | Organizacje PPS, finanse partii, Milicja i AS | 13 | M18 (13.1), M15 (13.3–13.4), katalog kart (13.1–13.5), etap 5 (13.1–13.5), etap 6 (13.1), etap 7 (13.4), potwierdzenie składek (13.1) |
@@ -28,7 +28,7 @@
 | Integracja z Dendry i odziedziczonym kodem | 20 | M09, M10 (20.2), moduł reguł, język i etap 0 (20.1), plan wdrożenia (20.3), etap 2 (20.1, 20.2), etap 4 (20.2), etap 5 (20.2), etap 6 (20.2), etap 7 (20.2) |
 | Kryteria weryfikacji i testy | 21 | wszystkie powyższe (21.1), etap 8 (21.2) |
 | Granice pewności i źródła | 22 | — |
-| Archiwum decyzji | 23 | M19, katalog kart, etapy 0–8 (23.14–23.22), wersja polska (23.23), potwierdzenie obecnej linii (23.24) |
+| Archiwum decyzji | 23 | M19, katalog kart, etapy 0–8 (23.14–23.22), wersja polska (23.23), potwierdzenie obecnej linii (23.24), nazwa CKW (23.25) |
 
 ## 1. Status reguł i granica audytu
 
@@ -1288,6 +1288,8 @@ Poprzednie deklaracje zmieniają `alignment` powoli: kampania danej linii +8, pr
 ### 10.4. Doradcy — konkretne akcje i wpływ na frakcje
 
 **Rewizja Z, 10 września 2026:** użytkownik zastąpił ogólne opisy konkretnymi politycznymi działaniami. Poniżej jest 13 profili A1–A13 i 22 akcje; jedna lub dwie na osobę. Dubois zachowuje miejsce w puli kontynuacji od 1930, bez dopisywania wcześniejszej akcji. **Z — 0.29 (M17):** Próchnik (A12) i Drobner (A13) także należą do obsady kontynuacji. Ich akcje i daty zapisujemy dla rozdziału 2; w rozdziale 1 nie są dostępni. Imiona, przynależności i daty pozostają przyjętymi profilami gry, nie nowymi twierdzeniami historycznymi. Koszty i liczby są P. „KKP” z uwag odczytujemy jako KPRP/KPP; nie tworzymy odrębnej partii.
+
+**Z — 0.52: nazwa w grze.** Gracz widzi doradców jako **Centralny Komitet Wykonawczy PPS (CKW)**, po angielsku *Central Executive Committee*. Pełna nazwa stoi w nagłówkach i tytułach: nad kartami przypiętymi na stronie głównej, na karcie zmiany składu (10.4.2), na stronie Biblioteki i w tekstach otwarcia. W krótszych tekstach jest „CKW” po polsku i „the Committee” po angielsku. Jedna osoba to „członek CKW”, dawny „zespół” to „skład CKW”, a „akcja doradcy” to „akcja CKW”. Reguły, koszty i odnowienia się nie zmieniają. Termin techniczny „doradca” zostaje w dokumentacji, a identyfikatory w kodzie i w zapisie gry (`advisor`, `party.advisers`, `*_advisor`, `S.cooldowns.advisor_action`) bez zmian. Historia: nazwa CKW jest faktem udokumentowanym (`PL-PPS-CKW-NAME-2026-10-04`); trzy aktywne miejsca i pula czternastu osób to uproszczenie gry, a nie historyczny skład komitetu. Członkostwo poszczególnych osób w CKW w danym miesiącu gry: `TBD — historical research required`.
 
 #### 10.4.1. Co wynika z niemieckich doradców
 
@@ -4460,3 +4462,23 @@ Sprawdzenie:
 - 18 kontroli analitycznych przechodzi (`analysis/*/check.cjs`).
 - Zautomatyzowane strategie nie zagrywają żadnej z tych dziesięciu kart: 13 strategii na 12 wspólnych ziarnach etapu 8 (156 kampanii) nie ma ani jednego potwierdzenia, więc wyniki kampanii się nie zmieniają.
 - Test w przeglądarce: w karcie „Główny przeciwnik” obecna linia jest do wyboru z opisem potwierdzenia. „Odłóż na rękę” zostawia ten sam miesiąc i kartę na ręce. Potwierdzenie przesuwa miesiąc i zdejmuje kartę z ręki; odnowienie trwa do miesiąca 7, a linia i historia linii są bez zmian. Po angielsku wyjście z karty nazywa się „Return to hand”. W konsoli nie ma błędów gry.
+
+### 23.25. Centralny Komitet Wykonawczy zamiast „doradców” — 4 X 2026
+
+4 X 2026 użytkownik poprosił, by doradcy nazywali się w grze „Centralny Komitet Wykonawczy”, a po angielsku „Central Executive Committee”. Zmiana dotyczy tylko tekstów, które widzi gracz:
+- **Nazwy:** pełna nazwa w nagłówkach i tytułach; w krótszych tekstach „CKW” po polsku i „the Committee” po angielsku. Jedna osoba to „członek CKW”, dawny „zespół” to „skład CKW”, a „akcja doradcy” to „akcja CKW”. Karta `party.advisers` nazywa się „Zmiana składu Centralnego Komitetu Wykonawczego” („Change the Central Executive Committee”).
+- **Bez zmian:** reguły, koszty i odnowienia; identyfikatory w kodzie i w zapisie gry; termin techniczny „doradca” w dokumentacji. Sceny niemieckie i trzy stare wydarzenia frakcji (`pps_lewica_split`, `pps_pilsudczycy_split`, `pps_centrum_crisis`), których polska gra nie pokazuje (warunek `not polish_party_rules`), zostają bez zmian.
+- **Historia:** nazwa CKW jest faktem udokumentowanym (`PL-PPS-CKW-NAME-2026-10-04`); trzy aktywne miejsca i pula czternastu osób to uproszczenie gry. Źródła potwierdzają Daszyńskiego w CKW w latach 1919–1924 i 1926–1928 oraz Perla jako przewodniczącego CKW w latach 1924–1926. O funkcji Pużaka źródła się różnią: według IPN był sekretarzem generalnym Rady Naczelnej, według Wikipedii — CKW. Członkostwo pozostałych osób w danym miesiącu gry: `TBD — historical research required`.
+
+Co się zmieniło:
+- Sceny: `main` (nagłówek kart przypiętych), `root` (teksty otwarcia), `library` (strona CKW i wzmianki), `polish_party_advisers` (karta zmiany składu), `polish_advisor_commit`, `cancel_advisor_action` oraz karty doradców Arciszewskiego, Czapińskiego, Daszyńskiego i Moraczewskiego (napis o odnowieniu), razem z polskimi plikami tłumaczeń; słowniczek w `source/i18n/pl/README.md`.
+- `source/rules/polish_party.js`: komunikaty karty zmiany składu, akcji CKW i podglądu rozłamu E3.
+- `out/html/game.js`: domyślny podpis kart przypiętych.
+- Napis o odnowieniu akcji CKW ma pełną odmianę w obu językach, w scenach i w regułach jednakowo: „1 miesiąc”, „3 miesiące”, „6 miesięcy” zamiast skrótu „mies.” oraz „1 month” zamiast „1 months”.
+- Testy: `tests/rules-factions.test.js` (podgląd rozłamu E3) i nowy test w `tests/i18n.test.js` („Centralny Komitet Wykonawczy: nagłówek i odnowienie akcji z pełną odmianą w obu językach”).
+
+Sprawdzenie:
+- `npm test`: 445 z 445. Budowa: 100 plików tłumaczeń kompletnych, bez brakujących i nieaktualnych linii.
+- W tekstach polskiej wersji nie ma już słów „doradca” ani „zespół”; w angielskiej zostały tylko w scenach, których polska gra nie pokazuje.
+- 18 kontroli analitycznych przechodzi.
+- Test w przeglądarce, w obu językach: nagłówek na stronie głównej („Central Executive Committee - an action is available.”; po akcji Pużaka „Centralny Komitet Wykonawczy — następna akcja za 6 miesięcy.”), napis o odnowieniu na karcie Daszyńskiego, tekst otwarcia i strona Biblioteki; bez błędów w konsoli.

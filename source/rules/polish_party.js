@@ -1883,10 +1883,10 @@
     Q.pl_e3_demand = describeDemand(Q, c.demand);
     Q.pl_e3_preview = L(fmt(100 * preview.removed_share) + '% of the party’s base leaves; PPS support ' + fmt(preview.pps_before) + '% → ' +
       fmt(preview.pps_after) + '%; membership ×' + fmt(1 - preview.removed_share) + '; ' + preview.mps + (preview.mps === 1 ? ' MP' : ' MPs') +
-      ' to a separate club; its voters go to ' + (preview.recipient === 'kpp' ? 'the KPP' : 'other lists') + '. No adviser leaves.',
+      ' to a separate club; its voters go to ' + (preview.recipient === 'kpp' ? 'the KPP' : 'other lists') + '. No member of the Central Executive Committee leaves.',
       fmt(100 * preview.removed_share) + '% bazy partii odchodzi; poparcie PPS ' + fmt(preview.pps_before) + '% → ' + fmt(preview.pps_after) +
       '%; członkostwo ×' + fmt(1 - preview.removed_share) + '; do osobnego klubu przechodzi ' + mpsText(preview.mps) + '; jej wyborcy przechodzą do ' +
-      (preview.recipient === 'kpp' ? 'KPP' : 'innych list') + '. Żaden doradca nie odchodzi.');
+      (preview.recipient === 'kpp' ? 'KPP' : 'innych list') + '. Żaden członek CKW nie odchodzi.');
   }
 
   // ---- The unity card (10.5, 10.9; cards 6.3–6.4) ---------------------------------------------------------
@@ -2041,9 +2041,9 @@
 
   function advisersStatus(Q, draft) {
     const current = activeAdvisers(Q);
-    if (draft.length > TEAM_SIZE) return no(L('Three places at most.', 'Najwyżej trzy miejsca.'));
-    if (draft.some(id => current.indexOf(id) < 0 && !adviserInPool(Q, id))) return no(L('Someone in the team is not available.', 'Ktoś z zespołu jest niedostępny.'));
-    if (sameSet(draft, current)) return no(L('This is the present team.', 'To obecny zespół.'));
+    if (draft.length > TEAM_SIZE) return no(L('Three seats at most.', 'Najwyżej trzy miejsca.'));
+    if (draft.some(id => current.indexOf(id) < 0 && !adviserInPool(Q, id))) return no(L('Someone in this Committee is not available.', 'Ktoś z tego składu CKW jest niedostępny.'));
+    if (sameSet(draft, current)) return no(L('This is the present Committee.', 'To obecny skład CKW.'));
     if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
     const wait = waitReason(Q, 'party.advisers');
     return wait ? no(wait) : OK;
@@ -2063,8 +2063,8 @@
       if (draft.indexOf(id) >= 0) continue;
       Q[id + '_advisor'] = 0;
       government.factionReaction(Q, ADVISERS[id].faction, {dissent: 5}, {id: 'adviser.dismissed:' + id + ':t' + t, kind: 'dismissal', reverse: null});
-      lines.push(ADVISERS[id].name + L(' leaves the team (' + FACTION_NAMES[ADVISERS[id].faction] + ' dissent +5)',
-        ' odchodzi z zespołu (' + FACTION_NAMES[ADVISERS[id].faction] + ': sprzeciw +5)'));
+      lines.push(ADVISERS[id].name + L(' leaves the Committee (' + FACTION_NAMES[ADVISERS[id].faction] + ' dissent +5)',
+        ' odchodzi z CKW (' + FACTION_NAMES[ADVISERS[id].faction] + ': sprzeciw +5)'));
     }
     for (const id of draft) {
       if (current.indexOf(id) >= 0) continue;
@@ -2072,10 +2072,10 @@
       if (!Q[id + '_appointed_once']) {
         Q[id + '_appointed_once'] = 1;
         government.factionReaction(Q, ADVISERS[id].faction, {strength: 5, dissent: -5}, {id: 'adviser.appointed:' + id, kind: 'appointment', reverse: null});
-        lines.push(ADVISERS[id].name + L(' joins the team (' + FACTION_NAMES[ADVISERS[id].faction] + ' +5 strength, dissent −5)',
-          ' wchodzi do zespołu (' + FACTION_NAMES[ADVISERS[id].faction] + ': siła +5, sprzeciw −5)'));
+        lines.push(ADVISERS[id].name + L(' joins the Committee (' + FACTION_NAMES[ADVISERS[id].faction] + ' +5 strength, dissent −5)',
+          ' wchodzi do CKW (' + FACTION_NAMES[ADVISERS[id].faction] + ': siła +5, sprzeciw −5)'));
       } else {
-        lines.push(ADVISERS[id].name + L(' returns to the team', ' wraca do zespołu'));
+        lines.push(ADVISERS[id].name + L(' returns to the Committee', ' wraca do CKW'));
       }
     }
     Q.n_advisors = activeAdvisers(Q).length;
@@ -2091,7 +2091,7 @@
       Q['pl_adv_' + id + '_can_add'] = draft.indexOf(id) < 0 && draft.length < TEAM_SIZE && (current.indexOf(id) >= 0 || adviserInPool(Q, id)) ? 1 : 0;
       Q['pl_adv_' + id + '_why'] = ADVISERS[id].continuation ? L('Belongs to the continuation (from 1928 in chapter 2).',
         'Należy do kontynuacji (od 1928 roku, w rozdziale 2).') : !adviserInPool(Q, id) && current.indexOf(id) < 0 ? L('No longer available.', 'Już niedostępny.') :
-        draft.length >= TEAM_SIZE ? L('The three places are taken.', 'Trzy miejsca są zajęte.') : '';
+        draft.length >= TEAM_SIZE ? L('The three seats are taken.', 'Trzy miejsca są zajęte.') : '';
     }
     Q.pl_adv_draft_text = draft.map(id => ADVISERS[id].name).join(', ') || L('nobody', 'nikt');
     Q.pl_adv_confirm_why = advisersStatus(Q, draft).reason;
@@ -2126,11 +2126,11 @@
 
   function advisorActionStatus(Q, advisorId, actionId) {
     const S = Q.S;
-    if (Q[advisorId + '_advisor'] !== 1) return no(L('Not in the team.', 'Nie należy do zespołu.'));
+    if (Q[advisorId + '_advisor'] !== 1) return no(L('Not on the Committee.', 'Nie zasiada w CKW.'));
     if (!rules.isAdvisorAvailable(Q)) {
       const wait = rules.cooldownRemaining(Q, 'advisor');
-      return no(L(wait + ' months before the next adviser action.',
-        'Do następnej akcji doradcy: ' + wait + ' ' + rules.plural(wait, 'miesiąc', 'miesiące', 'miesięcy') + '.'));
+      return no(L(wait + (wait === 1 ? ' month' : ' months') + ' before the next Committee action.',
+        'Do następnej akcji CKW: ' + wait + ' ' + rules.plural(wait, 'miesiąc', 'miesiące', 'miesięcy') + '.'));
     }
     const cost = ACTION_COSTS[actionId] || 0;
     if (cost && S.party_orgs.cash + 1e-9 < cost) return no(L('Needs ' + cost + ' R.', 'Wymaga ' + fmt(cost) + ' R.'));

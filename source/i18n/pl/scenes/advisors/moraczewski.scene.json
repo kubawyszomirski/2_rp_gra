@@ -8,6 +8,6 @@
   "- @root: Return to main": "- @root: Wróć do głównego ekranu",
   "title: Public Works Programme": "title: Program robót publicznych",
   "subtitle: Opens the Public Works card; its one step costs no month (the ordinary B costs remain).": "subtitle: Otwiera kartę „Roboty publiczne”; jej jeden krok nie kosztuje miesiąca (zwykłe koszty B pozostają).",
-  "unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?][? if advisor_action_timer <= 0 : Needs PPS in the cabinet with Labour. ?]": "unavailable-subtitle: [? if advisor_action_timer > 0 : Do następnej akcji doradcy: [+ advisor_action_timer +] mies. ?][? if advisor_action_timer <= 0 : Wymaga PPS w gabinecie z resortem Pracy. ?]"
+  "unavailable-subtitle: [? if advisor_action_timer = 1 : 1 month before the next Committee action. ?][? if advisor_action_timer > 1 : [+ advisor_action_timer +] months before the next Committee action. ?][? if advisor_action_timer <= 0 : Needs PPS in the cabinet with Labour. ?]": "unavailable-subtitle: [? if advisor_action_timer = 1 : Do następnej akcji CKW: 1 miesiąc. ?][? if advisor_action_timer >= 2 and advisor_action_timer <= 4 : Do następnej akcji CKW: [+ advisor_action_timer +] miesiące. ?][? if advisor_action_timer >= 5 : Do następnej akcji CKW: [+ advisor_action_timer +] miesięcy. ?][? if advisor_action_timer <= 0 : Wymaga PPS w gabinecie z resortem Pracy. ?]"
  }
 }

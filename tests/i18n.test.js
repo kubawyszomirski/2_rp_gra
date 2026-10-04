@@ -134,6 +134,32 @@ test('Pilotaż: ekran tytułowy, strona miesiąca i pasek boczny po polsku', () 
   assert.deepEqual(errors, []);
 });
 
+// Z — 0.52: the advisers are shown as the Central Executive Committee (CKW). The wait before its next action is
+// written in full in both languages, from the scenes and from the rules alike (Daszyński has one option of each).
+test('Centralny Komitet Wykonawczy: nagłówek i odnowienie akcji z pełną odmianą w obu językach', () => {
+  const errors = dendry.watchEngineErrors();
+  const header = {en: 'Central Executive Committee - an action is available.', pl: 'Centralny Komitet Wykonawczy — akcja jest dostępna.'};
+  const wait = {
+    en: n => `${n} ${n === 1 ? 'month' : 'months'} before the next Committee action.`,
+    pl: n => `Do następnej akcji CKW: ${n} ${n === 1 ? 'miesiąc' : n <= 4 ? 'miesiące' : 'miesięcy'}.`,
+  };
+  for (const lang of ['en', 'pl']) {
+    const engine = dendry.startGame(1922, lang);
+    const Q = engine.state.qualities;
+    assert.equal(Q.pinnedCardsDescription, header[lang], `${lang}: the header of the pinned cards`);
+    for (const n of [1, 3, 6]) {
+      Q.S.cooldowns.advisor = Q.time + n;
+      globalThis.PolishRules.refreshMirrors(Q);
+      engine.goToScene('daszynski');
+      const texts = ['daszynski.parliamentary_compromise', 'daszynski.broker_coalition']
+        .map(id => flat(engine.getCurrentChoices().find(c => c.id === id).subtitle).trim());
+      assert.deepEqual(texts, [wait[lang](n), wait[lang](n)], `${lang}: ${n} months`);
+    }
+  }
+  globalThis.PolishRules.setLanguage('en');
+  assert.deepEqual(errors, []);
+});
+
 test('Ta sama rozgrywka w obu językach: strategia N-C do grudnia 1923 daje identyczny stan gry', () => {
   const run = lang => strategies.runCampaign('N_C', 8001, { lang, stopWhen: Q => Q.time >= 24 });
   const en = run('en');

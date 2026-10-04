@@ -1,6 +1,6 @@
 # Polska wersja: katalog kart do kodowania
 
-**Stan — referencja 0.51, 4 października 2026. Wszystkie partie przejrzane; brak otwartych pytań; wszystkie karty wdrożone (etapy 0–8 planu implementacji); teksty kart mają też wersję polską (referencja 23.23); obecną linię kart stanowisk, Składek i Programu gospodarczego można potwierdzić (referencja 23.24).** Katalog zbiera w jednym miejscu to, co [referencja techniczna](POLISH_TECHNICAL_REFERENCE.md) mówi o każdej karcie i wydarzeniu pierwszego rozdziału. Jest ściągą do kodowania: jedna tabela na kartę. Katalog powstał w całości w wersji 0.32. Wszystkie sześć partii użytkownik przejrzał w 0.33–0.38. Rozstrzygnięte pytania pogrupowano w rozdziale 10.
+**Stan — referencja 0.52, 4 października 2026. Wszystkie partie przejrzane; brak otwartych pytań; wszystkie karty wdrożone (etapy 0–8 planu implementacji); teksty kart mają też wersję polską (referencja 23.23); obecną linię kart stanowisk, Składek i Programu gospodarczego można potwierdzić (referencja 23.24); doradcy występują w grze jako Centralny Komitet Wykonawczy (referencja 23.25).** Katalog zbiera w jednym miejscu to, co [referencja techniczna](POLISH_TECHNICAL_REFERENCE.md) mówi o każdej karcie i wydarzeniu pierwszego rozdziału. Jest ściągą do kodowania: jedna tabela na kartę. Katalog powstał w całości w wersji 0.32. Wszystkie sześć partii użytkownik przejrzał w 0.33–0.38. Rozstrzygnięte pytania pogrupowano w rozdziale 10.
 
 ## 1. Jak czytać katalog
 
@@ -30,6 +30,7 @@ Z 4.3, 4.4 i 17.1 referencji; dotyczą każdej karty poniżej i nie są powtarza
 - **Odnowienie** zapisujemy jako datę: `available_at = t + cd`. Nie zmniejszamy go przy każdym wejściu do `post_event`.
 - **Poza ręką:** projekty i obowiązkowe odpowiedzi są w agendzie. Ich wykonanie kosztuje akcję, chyba że są odpowiedzią w trwającym wydarzeniu (0 T). Kroki projektu to `project.prepare` i `project.launch` (12.2): mała reforma 1 T wdrożenia, duża 1 T przygotowania i 1 T wdrożenia. Głosowania ustaw rozlicza wewnętrzne `parliament.bill` (7.2), bez osobnego menu.
 - **Doradca** może zastąpić koszt czasu jednego wskazanego kroku (0 T i wspólne odnowienie doradców). Nie płaci R ani B i nie zastępuje prawa ani wykonawcy.
+- **Nazwa doradców w grze (Z — 0.52):** gracz widzi ich jako Centralny Komitet Wykonawczy PPS (CKW; ang. Central Executive Committee), a jedną osobę jako członka CKW. Katalog zachowuje termin techniczny „doradca”.
 - **Podakcje z 17.2** nie są osobnymi kartami do losowania. Mają jedno ID, jeden koszt i jedno odnowienie niezależnie od drogi wejścia.
 - **Pula, agenda, wydarzenie:** „pula” to zwykły dobór, „agenda” daje gwarantowany dostęp po otwarciu sprawy, „wydarzenie” pojawia się po wyzwalaczu.
 - **Stanowiska (Z — 0.51, zastępuje Z — 0.32):** obecną linię można potwierdzić. Kosztuje to akcję miesiąca (1 T) i zwykłe odnowienie karty, ale nic więcej nie zmienia: bez premii, reakcji frakcji i wpisu w historii linii. Tak samo działają „Utrzymać” w Składkach i ten sam zestaw w Programie gospodarczym. Wyjście z karty bez działania nazywa się „Odłóż na rękę” (ang. „Return to hand”, dawniej „Close card”) i nic nie kosztuje. Karty Organizacje, Jedność, Stosunek do rządu, Kontrola wojska i karty rządowe od 0.34–0.37 nie mają płatnych opcji bez skutku.
@@ -728,7 +729,7 @@ Przykład z 10.9: frakcja o sile 20 ma potem ok. 15,79 siły; PPS traci 5% popar
 | Zapisuje | Aktywne miejsca, `appointed_once`, siły i sprzeciw frakcji | P |
 | Odczytują | Akcje doradców (6.6 katalogu), spójność (10.1) | P |
 | Co zostaje po karcie | Nic w agendzie | P |
-| Obecny kod | `source/scenes/party_affairs/polish_party_advisers.scene.dry` (etap 5, 0.46): jedna końcowa obsada do trzech osób, 1 T, odnowienie 6 M, bez resetu odnowienia akcji; w rozdziale 1 bez Próchnika, Drobnera i Dubois. Odziedziczona `source/scenes/party_affairs/shuffle_leadership.scene.dry` ma warunek `not polish_party_rules`; `source/scenes/advisors/shuffle_leadership_pinned.scene.dry` jest niewidoczna | K |
+| Obecny kod | `source/scenes/party_affairs/polish_party_advisers.scene.dry` (etap 5, 0.46): jedna końcowa obsada do trzech osób, 1 T, odnowienie 6 M, bez resetu odnowienia akcji; od 0.52 karta nazywa się „Zmiana składu Centralnego Komitetu Wykonawczego” (ang. „Change the Central Executive Committee”); w rozdziale 1 bez Próchnika, Drobnera i Dubois. Odziedziczona `source/scenes/party_affairs/shuffle_leadership.scene.dry` ma warunek `not polish_party_rules`; `source/scenes/advisors/shuffle_leadership_pinned.scene.dry` jest niewidoczna | K |
 | Źródła i testy | 10.4.2, 10.5, 17.2; testy „Nowe powołanie”, „Start i odwołanie” w 21.1 | — |
 
 | Opcja (ID) | Zablokowana, gdy | Skutek od razu | Skutek później | Status |

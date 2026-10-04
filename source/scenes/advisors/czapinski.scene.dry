@@ -26,7 +26,7 @@ Czapiński represents Lewica PPS and concentrates on socialist education and eco
 title: Socialist Economic Programme: progressive and wealth taxes
 subtitle: Opens the Treasury card; its one step costs no month (the law, the money and the executor remain).
 choose-if: {! return Q.advisor_action_timer <= 0 && !!Q.S && PolishProjects.cardAvailable(Q, 'finance_package') !}
-unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?][? if advisor_action_timer <= 0 : Needs PPS in the cabinet with the Treasury. ?]
+unavailable-subtitle: [? if advisor_action_timer = 1 : 1 month before the next Committee action. ?][? if advisor_action_timer > 1 : [+ advisor_action_timer +] months before the next Committee action. ?][? if advisor_action_timer <= 0 : Needs PPS in the cabinet with the Treasury. ?]
 call: polish_advisor_commit
 on-arrival: advisor_action_timer = 6; last_advisor_action = 1
 go-to: polish_gov_finance
@@ -35,7 +35,7 @@ go-to: polish_gov_finance
 title: Socialist Economic Programme: public ownership
 subtitle: Opens the Industry card for the public control of a recorded plant; its one step costs no month (the act and the vote remain).
 choose-if: {! return Q.advisor_action_timer <= 0 && !!Q.S && PolishProjects.optionStatus(Q, 'industrial_policy', 'public_control', {adviser: true}).available !}
-unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?][? if advisor_action_timer <= 0 : [+ pl_czap_public_control_why +] ?]
+unavailable-subtitle: [? if advisor_action_timer = 1 : 1 month before the next Committee action. ?][? if advisor_action_timer > 1 : [+ advisor_action_timer +] months before the next Committee action. ?][? if advisor_action_timer <= 0 : [+ pl_czap_public_control_why +] ?]
 call: polish_advisor_commit
 on-arrival: advisor_action_timer = 6; last_advisor_action = 1
 go-to: polish_gov_industry
@@ -44,7 +44,7 @@ go-to: polish_gov_industry
 title: Socialist Economic Programme: workers’ representation in management
 subtitle: Opens the Industry card for the workers' representation in a public plant; its one step costs no month (a law for co-decision remains).
 choose-if: {! return Q.advisor_action_timer <= 0 && !!Q.S && PolishProjects.optionStatus(Q, 'industrial_policy', 'worker_representation', {adviser: true}).available !}
-unavailable-subtitle: [? if advisor_action_timer > 0 : [+ advisor_action_timer +] months before the next adviser action. ?][? if advisor_action_timer <= 0 : [+ pl_czap_representation_why +] ?]
+unavailable-subtitle: [? if advisor_action_timer = 1 : 1 month before the next Committee action. ?][? if advisor_action_timer > 1 : [+ advisor_action_timer +] months before the next Committee action. ?][? if advisor_action_timer <= 0 : [+ pl_czap_representation_why +] ?]
 call: polish_advisor_commit
 on-arrival: advisor_action_timer = 6; last_advisor_action = 1
 go-to: polish_gov_industry

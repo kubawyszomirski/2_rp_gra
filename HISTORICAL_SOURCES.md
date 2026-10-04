@@ -1,5 +1,39 @@
 # Historical Source Register
 
+## PL-PPS-CKW-NAME-2026-10-04 — the advisers shown as the Central Executive Committee of PPS
+
+- **Authority:** on 4 October 2026 the user asked that the advisers be called
+  "Centralny Komitet Wykonawczy" in Polish and "Central Executive Committee"
+  in English (technical reference 0.52, sections 10.4 and 23.25; chapter 21
+  of the implementation plan).
+- **Sources (accessed 4 October 2026):** M. Żuczkowski,
+  ["Kazimierz Pużak"](https://ipn.gov.pl/pl/historia-z-ipn/96546,Maciej-Zuczkowski-Kazimierz-Puzak.html),
+  Instytut Pamięci Narodowej, "Historia z IPN"; PAP,
+  ["75 lat temu zmarł Ignacy Daszyński"](https://dzieje.pl/node/9280),
+  dzieje.pl; the tertiary entries
+  ["Feliks Perl"](https://pl.wikipedia.org/wiki/Feliks_Perl) (Polish
+  Wikipedia) and ["Kazimierz Pużak"](https://en.wikipedia.org/wiki/Kazimierz_Pu%C5%BCak)
+  (English Wikipedia).
+- **Evidence and confidence:**
+  - PPS had a Centralny Komitet Wykonawczy (CKW) in this period: in summer
+    1920 Pużak became deputy chairman of its Military Department (IPN), and
+    Daszyński sat in it in 1919–1924 and 1926–1928 (PAP). High for the name;
+    medium for the dates (one source each).
+  - Perl chaired the CKW in 1924–1926 and sat in the supreme authorities of
+    PPS from 1919 (Polish Wikipedia; medium).
+  - Pużak's post is disputed: IPN names him secretary general in the Rada
+    Naczelna until 1939, English Wikipedia Secretary General of the Central
+    Executive Committee from 1921 (unresolved).
+- **Game use:** the player-facing name of the adviser group, of its card and
+  of its actions; one person is a member of the Committee ("członek CKW").
+  The code and the saves keep the identifier "advisor".
+- **Classification / boundary:** the name is a documented fact. The three
+  active seats, the pool of fourteen people and their effects are a gameplay
+  simplification, not the historical membership of the committee. The
+  membership of each person in the CKW in a given month of the game, Perl in
+  January 1922 included, and Pużak's exact post are TBD — historical research
+  required. The game does not model the Rada Naczelna.
+
 ## PL-I18N-POLISH-VERSION-2026-10-04 — Polish language version of the game
 
 - **Authority:** on 4 October 2026 the user asked for a Polish version of the
