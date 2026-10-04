@@ -3,7 +3,6 @@ subtitle: Labour: working time, collective agreements, derogations.
 new-page: true
 is-card: true
 tags: govt_affairs
-card-image: img/workers.jpg
 view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'labor_rights') !}
 on-arrival: {!
 // Card government.labor_rights (technical reference 17.11–17.12; card catalogue 8.1). Opening and closing
@@ -90,7 +89,7 @@ go-to: result
 
 @derogation
 title: Limited derogations in threatened plants
-subtitle: 1 T, 0 B, for the oldest recorded plant in difficulty, six months: business pressure −4; its workers' grievance +3 (stage 7). Needs the law on working time.
+subtitle: 1 T, 0 B, for the oldest recorded plant in difficulty, six months: business pressure −4; its workers' grievance +3. Needs the law on working time.
 choose-if: {! return PolishProjects.optionStatus(Q, 'labor_rights', 'derogation').available !}
 unavailable-subtitle: [+ pl_labor_rights_derogation_why +]
 on-arrival: {!

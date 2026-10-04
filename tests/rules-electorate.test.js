@@ -23,12 +23,13 @@ test('decision 1A: 54 disjoint cells reproduce the national result of the openin
   assert.equal(S.society.seed_method, 'calibrated');
   close(massOf(S.society.cells), 1);
   const votes = PolishElectorate.votes(S);
-  const expected = {kpp: 6.005, pps: 13.287, npr: 6.330, psl_wyzwolenie: 12.751, psl_piast: 13.145, pschd: 6.589, zln: 11.848,
-    minorities_bloc: 20.451, other: 9.594};
+  // Stage 8, decision 2A: the national result of the calibrated opening (analysis/stage8-campaigns/calibration.json).
+  const expected = {kpp: 1.793, pps: 10.074, npr: 5.346, psl_wyzwolenie: 11.241, psl_piast: 15.299, pschd: 11.395, zln: 18.956,
+    minorities_bloc: 19.679, other: 6.218};
   for (const [party, value] of Object.entries(expected)) close(100 * votes[party], value, 0.001);
   // Polish cells hold no share of the minority bloc; the minority cells vote much like the old minority row.
   for (const cell of S.society.cells.filter(c => c.identity_id === 'polish')) assert.equal(cell.propensity.minorities_bloc, 0);
-  close(Q.national_minorities_minorities_bloc, 68.2, 0.1);
+  close(Q.national_minorities_minorities_bloc, 65.6, 0.1);
   for (const c of PolishElectorate.MAIN_CLASSES) close(Q.parties.reduce((n, p) => n + Q[`${c}_${p}`], 0), 100);
   assert.deepEqual(PolishElectorate.validateCells(S), []);
   assert.deepEqual([...new Set(S.society.cells.map(c => c.turnout_base))], [0.70]);

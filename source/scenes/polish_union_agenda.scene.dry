@@ -1,7 +1,6 @@
 title: Trade Unions
 subtitle: The steps of a union dispute: the demands, the line, mediation, a strike and its end.
 is-pinned-card: true
-card-image: img/union_2.jpg
 view-if: {! return !!Q.S && !!Q.polish_union_rules && PolishUnions.agendaAvailable(Q) !}
 new-page: true
 on-arrival: {!

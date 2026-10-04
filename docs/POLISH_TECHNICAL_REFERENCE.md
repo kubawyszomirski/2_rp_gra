@@ -1,6 +1,6 @@
 # Polska wersja: techniczna referencja mechanik, stanu i przejść
 
-**Wersja 0.48 — 27 września 2026.** Specyfikacja pierwszego rozdziału na podstawie [POLISH_DESCRIPTIVE_GUIDE.md](POLISH_DESCRIPTIVE_GUIDE.md). Obejmuje stan, jednostki, wzory, warunki kart, kolejność rozliczeń, głosowania, umowy, gospodarkę, organizacje, zamach i zapis kampanii. **To jedna aktualna wersja do kodowania: obowiązuje tekst rozdziałów 1–22.** Karty zbiera w jednym miejscu [katalog kart do kodowania](POLISH_CARD_CATALOGUE.md): jedna tabela na kartę, szkic z 0.32; wszystkie sześć partii użytkownik przejrzał w 0.33–0.38 i katalog nie ma otwartych pytań. Katalog nie tworzy reguł; przy rozbieżności obowiązuje ta referencja. Historia decyzji jest w rozdziale 23 i nie jest instrukcją wdrożenia. Trafiły tam dawny opis wersji, akapity rewizji 0.13–0.30 i zapisy zatwierdzeń. Oznaczenia K/Z/P/H/B objaśnia rozdział 1. Wszystkie punkty audytu mechanik są zamknięte w dokumentacji; liczby P czekają na grywalny prototyp. Dokument nie zmienia działającej gry.
+**Wersja 0.49 — 4 października 2026.** Specyfikacja pierwszego rozdziału na podstawie [POLISH_DESCRIPTIVE_GUIDE.md](POLISH_DESCRIPTIVE_GUIDE.md). Obejmuje stan, jednostki, wzory, warunki kart, kolejność rozliczeń, głosowania, umowy, gospodarkę, organizacje, zamach i zapis kampanii. **To jedna aktualna wersja do kodowania: obowiązuje tekst rozdziałów 1–22.** Karty zbiera w jednym miejscu [katalog kart do kodowania](POLISH_CARD_CATALOGUE.md): jedna tabela na kartę, szkic z 0.32; wszystkie sześć partii użytkownik przejrzał w 0.33–0.38 i katalog nie ma otwartych pytań. Katalog nie tworzy reguł; przy rozbieżności obowiązuje ta referencja. Historia decyzji jest w rozdziale 23 i nie jest instrukcją wdrożenia. Trafiły tam dawny opis wersji, akapity rewizji 0.13–0.30 i zapisy zatwierdzeń. Oznaczenia K/Z/P/H/B objaśnia rozdział 1. Wszystkie punkty audytu mechanik są zamknięte w dokumentacji. **Etap 8 planu wdrożenia był ostatni: pierwszy rozdział jest wdrożony w całości** (23.22). Liczby P skalibrowano na pełnych kampaniach etapu 8 ([pomiar](../analysis/stage8-campaigns/REPORT.md)); ograniczenia gotowego rozdziału wymienia rozdział 18 [planu wdrożenia](POLISH_IMPLEMENTATION_PLAN.md). Dokument nie zmienia działającej gry.
 
 **Gdzie jest aktualna reguła.** Tabela wskazuje kanoniczne miejsce każdego tematu i ostatnie zatwierdzone zmiany. Oznaczenia „Z — 0.xx (Mxx)” w tekście mówią, która decyzja ustaliła daną regułę.
 
@@ -10,25 +10,25 @@
 | Własność stanu, jednostki, wskaźniki, rejestr domen | 2 | etap 0: `Q.S` (2.4), etap 2 (2.4), etap 4 (2.4), etap 5 (2.4), etap 6 (2.4), etap 7 (2.4) |
 | Stan początkowy i konfiguracja testowa | 3 | — |
 | Czas, karty, kolejność rozliczeń, kolejka wydarzeń | 4 | M06 (4.5), praca organizacyjna (4.4), kategorie kolejki wydarzeń (4.5), etap 1 (4.1–4.6), etap 4 (4.2, 4.5), etap 5 (4.2, 4.4, 4.5), etap 6 (4.2, 4.5), etap 7 (4.2, 4.5) |
-| Elektorat, kampanie, przepływy poparcia | 5 | M09 (5.6), Bund nie jest partią (5.5), etap 4 (5.4, 5.6), etap 5 (5.1–5.6), etap 6 (5.5) |
+| Elektorat, kampanie, przepływy poparcia | 5 | M09 (5.6), Bund nie jest partią (5.5), etap 4 (5.4, 5.6), etap 5 (5.1–5.6), etap 6 (5.5), etap 8 (5.2) |
 | Wybory i zapis parlamentu | 6 | kompromis listowy (6.5), etap 2 (6.1, 6.3–6.5) |
-| Instytucje, głosowania, prezydent i marszałek | 7 | M06 (7.3, 7.5), arbitraż prezydenta a linia PPS (7.6), etap 2 (7.1–7.5), etap 4 (7.2, 7.6), etap 5 (7.6) |
-| Relacje, rozmowy, oferty, gabinety | 8 | M11 (8.3), M17 (8.1), oś autonomii (8.6), impas formowania (8.7), etap 4 (8.5, 8.6), etap 5 (8.6), etap 7 (8.7) |
-| Umowy, stosunek do rządu, współpraca z komunistami | 9 | M11 (9.8), M13 (9.5–9.6), M17 (9.5), agenda współpracy z KPP (9.5), utrzymanie poparcia tylko w kryzysie (9.8), etap 4 (9.1, 9.7), etap 5 (9.5, 9.8), etap 6 (9.6–9.8) |
-| Frakcje, posłuch, doradcy, karty strategiczne | 10 | M10 (10.7), M16 (10.2), M17 (10.4.3), katalog kart (10.2, 10.4.2, 10.5–10.10), etap 5 (10.1–10.10), etap 6 (10.4.3), etap 7 (10.7) |
+| Instytucje, głosowania, prezydent i marszałek | 7 | M06 (7.3, 7.5), arbitraż prezydenta a linia PPS (7.6), etap 2 (7.1–7.5), etap 4 (7.2, 7.6), etap 5 (7.6), etap 8 (7.6) |
+| Relacje, rozmowy, oferty, gabinety | 8 | M11 (8.3), M17 (8.1), oś autonomii (8.6), impas formowania (8.7), etap 4 (8.5, 8.6), etap 5 (8.6), etap 7 (8.7), etap 8 (8.6, 8.9) |
+| Umowy, stosunek do rządu, współpraca z komunistami | 9 | M11 (9.8), M13 (9.5–9.6), M17 (9.5), agenda współpracy z KPP (9.5), utrzymanie poparcia tylko w kryzysie (9.8), etap 4 (9.1, 9.7), etap 5 (9.5, 9.8), etap 6 (9.6–9.8), etap 8 (9.6) |
+| Frakcje, posłuch, doradcy, karty strategiczne | 10 | M10 (10.7), M16 (10.2), M17 (10.4.3), katalog kart (10.2, 10.4.2, 10.5–10.10), etap 5 (10.1–10.10), etap 6 (10.4.3), etap 7 (10.7), etap 8 (10.5) |
 | Gospodarka i finanse państwa | 11 | M01 (0.11), karta Budżet (11.9), etap 4 (11.1, 11.3, 11.9), etap 6 (11.4, 11.7) |
 | Projekty i wykonanie | 12 | M07 (17.12), katalog kart (12.7, 12.8), etap 4 (12.2), etap 6 (12.4) |
 | Organizacje PPS, finanse partii, Milicja i AS | 13 | M18 (13.1), M15 (13.3–13.4), katalog kart (13.1–13.5), etap 5 (13.1–13.5), etap 6 (13.1), etap 7 (13.4) |
 | Związki, strajki, ugody | 14 | M12 (14.4–14.5), `union.align` (14.1), ID karty E6 (14.5), etap 5 (14.1), etap 6 (14.1–14.5) |
-| Niezadowolenie, demokracja, presja na zamach | 15 | M10 (15.2–15.3), etap 7 (15.1–15.3) |
-| Policja, wojsko, zamach | 16 | M08 (16.8), M10 (16.1), M15 (16.8.3), rozpoznanie sił (16.8.1), ograniczona reforma kontroli (16.3), etap 6 (16.5), etap 7 (16.1–16.8) |
-| Karty, wydarzenia, scenariusz Normalny | 17 | M02 (17.16), M05 (17.15), M07 (17.12), M12 (17.4), katalog kart (17.2, 17.3, 17.10, 17.11, 17.12, 17.15), etap 4 (17.4, 17.10, 17.11, 17.15, 17.16.2, 17.16.4), etap 5 (17.4), etap 6 (17.4, 17.5, 17.5.1, 17.11, 17.12, 17.12.5, 17.16.5), etap 7 (17.5–17.7, 17.10–17.13, 17.16.3) |
+| Niezadowolenie, demokracja, presja na zamach | 15 | M10 (15.2–15.3), etap 7 (15.1–15.3), etap 8 (15.3) |
+| Policja, wojsko, zamach | 16 | M08 (16.8), M10 (16.1), M15 (16.8.3), rozpoznanie sił (16.8.1), ograniczona reforma kontroli (16.3), etap 6 (16.5), etap 7 (16.1–16.8), etap 8 (16.1, 16.8, 16.8.1, 16.8.5) |
+| Karty, wydarzenia, scenariusz Normalny | 17 | M02 (17.16), M05 (17.15), M07 (17.12), M12 (17.4), katalog kart (17.2, 17.3, 17.10, 17.11, 17.12, 17.15), etap 4 (17.4, 17.10, 17.11, 17.15, 17.16.2, 17.16.4), etap 5 (17.4), etap 6 (17.4, 17.5, 17.5.1, 17.11, 17.12, 17.12.5, 17.16.5), etap 7 (17.5–17.7, 17.10–17.13, 17.16.3), etap 8 (17.7, 17.10, 17.12.4, 17.16.3, 17.16.6, 17.16.11) |
 | Ścieżki jako zestawy warunków | 18 | — |
-| Granica rozdziału, raport i zapis | 19 | M08 (19.1), stare zapisy i etap 0 (19.3), etap 2 (19.1–19.2), etap 7 (19.1–19.2) |
+| Granica rozdziału, raport i zapis | 19 | M08 (19.1), stare zapisy i etap 0 (19.3), etap 2 (19.1–19.2), etap 7 (19.1–19.2), etap 8 (19.2) |
 | Integracja z Dendry i odziedziczonym kodem | 20 | M09, M10 (20.2), moduł reguł, język i etap 0 (20.1), plan wdrożenia (20.3), etap 2 (20.1, 20.2), etap 4 (20.2), etap 5 (20.2), etap 6 (20.2), etap 7 (20.2) |
-| Kryteria weryfikacji i testy | 21 | wszystkie powyższe (21.1) |
+| Kryteria weryfikacji i testy | 21 | wszystkie powyższe (21.1), etap 8 (21.2) |
 | Granice pewności i źródła | 22 | — |
-| Archiwum decyzji | 23 | M19, katalog kart, etapy 0–7 (23.14–23.21) |
+| Archiwum decyzji | 23 | M19, katalog kart, etapy 0–8 (23.14–23.22) |
 
 ## 1. Status reguł i granica audytu
 
@@ -405,6 +405,8 @@ Następuje normalizacja. Obie kategorie mniejszości zaczynają od tego samego t
 
 **K — etap 5 (0.46):** decyzja 1A etapu 5: preferencje komórek pochodzą z wierszy klas (komórki polskie z wiersza swojej klasy bez bloku mniejszości, komórki mniejszości z wiersza mniejszości przechylonego ku klasie), a jedno skalowanie proporcjonalne (raking) doprowadza je do dotychczasowego wyniku krajowego. Sondaż otwarcia jest więc taki sam jak przed etapem 5; wzoru z pierwiastkowym mnożnikiem nie stosujemy, bo zmieniłby wynik otwarcia i wybory 1922. Blok mniejszości ma w komórkach mniejszości ok. 68% (wiersz: 70%). Sondaż i głosy (`poll`, `votes`) liczymy z komórek; wynik krajowy zaokrąglamy do 10⁻¹², żeby szum obliczeń nie przesuwał mandatów. Wiersze klas są średnimi komórek klasy, łącznie z mniejszościami tej klasy (np. PPS wśród robotników 32,6% zamiast 38,6%); zmiany zapisane w nich przez odziedziczone karty `absorbRowEdits` przenosi raz na komórki.
 
+**K — etap 8 (0.49), decyzja 2A:** wiersze klas otwarcia mnoży jeden współczynnik na partię (wspólny dla wszystkich klas; wiersz zachowuje sumę), tak by bierna PPS dostała w XI 1922 bazowy Sejm M02 z dokładnością ±5 mandatów na klub: KPP 2, PPS 43, NPR 19, Wyzwolenie 48, Piast 70, PSChD 59, ZLN 99, mniejszości 90, Inne 14. Krzywa mandatów, frekwencja i wielkości klas bez zmian. Kalibracja: [`analysis/stage8-campaigns/calibration.json`](../analysis/stage8-campaigns/calibration.json). Skutek: KPP ma na starcie 3,2% wśród robotników, poniżej progu 5% wspólnego strajku (9.6).
+
 ### 5.3. Kampania z malejącą skutecznością
 
 Kampania wybiera zbiór komórek i temat. Zmiana udziału PPS wewnątrz komórki:
@@ -749,6 +751,8 @@ Każdy projekt jest alternatywą ustrojową P, przechodzi tryb zmiany konstytucj
 
 Domyślnie wszystkie trzy pola są false. Równoległy legacy `constructive_vonc` staje się tylko adapterem przy wdrożeniu; predykat głosowania czyta ten sam rekord obowiązującego prawa. Wybory według `presidential_arbitration` mają własne `legal_basis`, testowo te same terminy ogłoszenia/głosowania co legalne wcześniejsze wybory; nie stosuje się do nich ponownie wymogu 67 senatorów. Prezydent może przyjąć propozycję, gdy istnieje wakat/impas i kontrasygnata; nie omija aktualnego działającego gabinetu.
 
+**K — etap 8 (0.49):** reforma `presidential_arbitration` jest zapisywana w obowiązującym prawie, ale rozwiązanie Sejmu przez prezydenta po dwóch nieudanych powołaniach nie jest wdrożone. Legalne wcześniejsze wybory nie są więc w grze osiągalne; to ograniczenie gotowego rozdziału (plan wdrożenia, rozdz. 18), które zgodnie z decyzją użytkownika z 4 X 2026 zostaje.
+
 Wzmocnienie prezydenta hamuje presję zamachową przez zakończenie rzeczywistego impasu lub przyjęty kompromis, a nie przez bezwarunkowe −X co miesiąc. Wykorzystać je może każdy przyszły posiadacz urzędu. Gwarancje demokratyczne mogą współistnieć z obiema pozostałymi reformami; zgodność programu i większości musi być wynegocjowana osobno. Powtarzalna pozorna odmowa tej samej oferty nie dopisuje kolejnej nieudanej próby gabinetowej.
 
 Cywilny nadzór nad wojskiem jest czwartym, odrębnym projektem wykonawczym z 12.4 i 16.3. Nie wymaga automatycznie zmiany konstytucji, gdy dana zmiana mieści się w istniejącym prawie; zakres wskazuje rekord projektu. Szeroki wariant wymiaru sprawiedliwości prowadzi do istniejącego `democratic_guarantees`, bez dodatkowego projektu. Ograniczona autonomia z 17.12.6 jest projektem ustawowym w swoim dopuszczonym zakresie; federacja, pełna autonomia polityczna i państwo rad nie są dodatkowymi wdrożeniami konstytucyjnymi pierwszego rozdziału.
@@ -912,6 +916,8 @@ P — profile ofert używają czterech dodatkowo nazwanych tematów w istniejąc
 
 To **syntetyczne profile P**, nie historyczne deklaracje wszystkich tych partii przez całą kadencję. Zmiana historycznego lidera lub stanowiska wymaga jawnego profilu datowanego. Temat `church` opisuje treść konkretnej oferty oświatowej z 12.7; nie jest osobną kartą partyjną: NPR i PSChD odrzucają przymusową konfrontację; nie otrzymują weta wobec dowolnej dyskusji o świeckości. Pozostałe nieopisane tematy mają pozycję 0 i wagę 1 w testach, z jawną etykietą danych syntetycznych. **Z — 0.33, temat `autonomy`** (oś praw i autonomii z 10.8): ZLN −2, reprezentacja pozostałych mniejszości +1, pozostali aktorzy 0; waga 1. To wartości testowe P; historyczne stanowiska: `TBD — historical research required`. Dla samodzielnych ofert przeciwników profil przechowuje ich wzajemną relację, nie używa relacji z PPS: syntetycznie Piast–Wyzwolenie 50, Piast–PSChD 60, Piast–ZLN 60, PSChD–ZLN 70; pozostałe jawnie neutralne pary 50. Zmiana wymaga zapisanej reakcji lub nowego profilu, nie zależy od samego kliknięcia PPS.
 
+**K — etap 8 (0.49):** profil `actor_profiles_v2` datuje temat `autonomy` dla lat 1922–1926 według badań 8f (`PL-MINORITY-AUTONOMY-1922-1926`): PPS +1 (projekty autonomii z 1921 i 1925), Wyzwolenie +1 (deklaracje bez wniosku), Piast i PSChD −1 (pakt lanckoroński), NPR 0 (autonomia kulturalna), ZLN −2, pozostałe mniejszości +1; reprezentacja żydowska i KPP 0, bo brak danych o ich stosunku do autonomii ziem słowiańskich. Pozostałe tematy profili pozostają syntetyczne (P). Skutek: w Sejmie 1922 ustawa o ograniczonej autonomii nie ma już poparcia Piasta i chadecji.
+
 **Resorty:** PPS składa ofertę, nie otrzymuje ich za nazwę koalicji. Preferencją PPS jest `labor`, obejmujący teraz również roboty publiczne; kolejne żądanie wybiera spośród istniejących dziewięciu portfeli według programu. Nie zamieniamy mechanicznie drugiej dawnej preferencji `public_works` na drugi egzemplarz `labor`. P — Piast preferuje `agriculture`, NPR `labor`, PSChD `education` lub `justice`, ZLN `education` lub `finance`, Wyzwolenie `agriculture` lub `interior`. Każda kategoria ma jednego formalnego właściciela. Minimum jednego resortu może być warunkiem wejścia; uzgodnione wykonanie programu nie jest dodatkowym stanowiskiem. Wariant bez uzgodnionego resortu wymaga świadomego wyboru zewnętrznego poparcia.
 
 **K — etap 3 (0.44):** układy mają stałe programy minimum (decyzja etapu 3), w kolejności ziemia / finanse / instytucje: `pps_majority` +1/+2/+2, `left_minority` +1/+1/+2, `left_labour` +1/+1/+1, `centre_left` 0/0/+1, `chjeno_piast` 0/−1/—; gabinet fachowców ma finanse 0 (Grabski +1). Szerokie i stabilizacyjne układy wymagają dwóch upadków rządu w 6 miesiącach, jedność narodowa trzech. `united_left` i `workers_front` są wyszarzone do etapu 5.
@@ -993,6 +999,8 @@ crisisCooperation = crisisOfferAllowed && isCrisisConfiguration
 **P — konkretne uzupełnienia profili do testów:** Grabski ma ideał `fiscal=+1`, bezpośrednią relację z PPS 50 i mandat do rozmowy o finansowanej stabilizacji; Skrzyński `fiscal=0`, relację 50 i wymóg udziału PPS oraz pełnego finansowanego minimum. To jawne dane próbne, nie ustalenia historyczne ani relacje wyprowadzone ze znajomości PPS z dowolną partią. Wariant Grabskiego z ideałem 0 daje 58,44 i odmowę, więc wybór profilu wymaga świadomej kalibracji. Nie zakładamy pełnego historycznego odtworzenia tych osób.
 
 **P — konkretna alternatywa resortowa NPR w `skrzynski_broad`:** `labor` albo `economic` przy zapisanej pełnej osłonie i zachowaniu samodzielności związków. W przetestowanej obsadzie PPS otrzymuje Pracę, NPR Gospodarkę, Piast Rolnictwo, PSChD Sprawiedliwość, ZLN Skarb. To warunkowa propozycja uzupełniająca preferencję z 8.6, nie zgoda NPR na dowolny resort ani drugi minister Pracy. Bez tego uzupełnienia literalne wymaganie Pracy przez PPS i NPR blokuje badaną ofertę.
+
+**K — etap 8 (0.49), A2:** alternatywa wdrożona (`PolishGovernment.PORTFOLIO_ALTERNATIVES`): w `skrzynski_broad` NPR uznaje za swój resort także Przemysł i Handel. Bez niej NPR odrzucała każdy gabinet z PPS w Pracy, a PPS nie wchodziła do rządu w żadnej kampanii.
 
 Kontakty i akcję doradcy trzeba rzeczywiście wykonać w dostępnym czasie. Bonus przygotowania dotyczy jednej oferty formowania, nie jej późniejszego przeglądu. Odmowa zatrzymuje skutki tej gałęzi; późniejszych rezultatów archiwalnego przebiegu nie wolno zachować, jeśli nie powstał jego gabinet albo finansowanie. Połączone przebiegi i końcową korektę opisują 17.16.10–11; dalszy balans sprawdzamy w grywalnym prototypie.
 
@@ -1132,6 +1140,8 @@ partnerCompliance = clip((relation + goalFit) / 200, 0.10, 0.90);
 
 Poziomy żądań to `limited`, `broad` i `structural`, jak progi 40/60/80 z 14.4. Profil wydarzenia zapisuje `partner_goal`; testowo `broad`, a historyczne cele KPP w konkretnych strajkach pozostają **TBD — historical research required**. Przykład: relacja 30 przy celu szerokim daje 65% dla wspólnych żądań szerokich i 40% dla ograniczonych. Wcześniejszy składnik `pps_internal_acceptance` usunięto: przekonanie frakcji PPS nie zmienia zachowania KPP. Diagnostyka: [analysis/m13-communist-discipline/REPORT.md](../analysis/m13-communist-discipline/REPORT.md). Wynik mówi o dotrzymaniu umowy, nie skuteczności żądania wobec rządu. W udanej próbie finansowany udział objęty porozumieniem dodaje się raz do nacisku `crediblePressure`, maksymalnie do 100. Przy nieposłuszeństwie traci ten wkład w nacisk na **uzgodnione żądanie** i przechodzi do rozłącznego `uncontrolled_participation`. Udział niezwiązany porozumieniem zwiększa nacisk na żądanie PPS tylko jeśli partner niezależnie podtrzymuje to samo żądanie; do niekontrolowanego udziału trafia tylko po faktycznej odmowie uzgodnionego ograniczenia lub końca.
 
+**K — etap 8 (0.49):** cel KPP to `structural` (profil `kpp_goal_1922_1926`; `PL-KPRP-GOALS-1923`: w 1923 r. KPRP chciała strajkiem powszechnym obalić gabinet i utworzyć rząd robotniczo-chłopski). Pełny komitet z KPP wymaga więc żądania szerokiego albo politycznego; przy relacji 30 szansa dotrzymania zasad wynosi 40% przy żądaniu szerokim i 65% przy politycznym. Przykład powyżej opisuje dawny cel testowy `broad`. Nazwa KPP obejmuje cały rozdział, choć do 1925 r. partia nazywała się KPRP (uproszczenie gry).
+
 Brutalizacja wynika następnie z niekontrolowanego udziału, zachowania władz i zezwolenia na konfrontację według 17.5. Przy pełnej, przestrzeganej umowie kontrola może być lepsza niż przy rywalizujących wezwaniach. Przy zerwaniu wspólnego końca większa wspólna mobilizacja zwiększa zakres kryzysu. Samo słowo „komuniści” nie dodaje stałego prawdopodobieństwa przemocy.
 
 Na końcu zapisujemy `TrialRecord{id,action_id,kind,strike_id,mode,terms,partner_response,ended_as_agreed,result}`, dla tej sceny `kind=strike`, `action_id=strike_id`; inne rodzaje rzeczywistej akcji opisuje 10.4.5. Wykonana próba `full` daje relację +5, `limited` +2; naruszenie zasad przez którąkolwiek stronę daje −5 i wynik nieudany; brak współpracy nie jest nieudaną próbą. Są to jedyne efekty relacji za próbę — zastępują ogólny przyrost z 9.5. Sukces znaczy dotrzymanie uzgodnień między partnerami, nawet jeśli pracodawca odmówił postulatów. Ponowne otwarcie wydarzenia, ochrona i zakończenie tego samego strajku nie tworzą kolejnych sukcesów.
@@ -1139,6 +1149,8 @@ Na końcu zapisujemy `TrialRecord{id,action_id,kind,strike_id,mode,terms,partner
 **Powtarzane przygotowanie:** co najmniej dwa udane współdziałania w dwóch różnych rzeczywistych akcjach, w tym przynajmniej jedno pełne, pozwalają przy relacji ≥50 negocjować zasady szerszego układu z 9.5. Dwie lekkie koordynacje to za mało. **Trwały front** wymaga dodatkowo relacji ≥65, `pps_internal_acceptance>=60` oraz przyjęcia samodzielności PPS i zasad zakończenia akcji. Można pozostać przy działaniach doraźnych, zawrzeć porozumienie pracownicze albo przygotować układ parlamentarny. Przygotowanie umowy kosztuje 1 T i 1 R, bez ponownej opłaty pod inną nazwą.
 
 Układ parlamentarny wymaga osobnej zgody legalnych reprezentantów na `rules.legal_vote`, `rules.no_forced_merger` i `rules.agreed_strike_end`; odblokowuje ofertę `united_left` lub `workers_front`, która nadal podlega 8.6. NPR nie musi przyjąć tej samej oferty. Pierwszy trwały front daje Centrum +8 sprzeciwu bez uprzedniej akceptacji jego warunków. Pozycja wobec ZSRR z 10.10 modyfikuje relacje i treść rozmów, ale nie zastępuje wykonanych prób.
+
+**K — etap 8 (0.49):** szersze porozumienie z KPP na trzech zasadach (`rules_agreed` i `active_agreement`) odblokowuje oferty `united_left` i `workers_front`; dalej obowiązują progi relacji, zgody partnerów i głosy 8.6, a KPP w takim gabinecie nie żąda resortu. Do etapu 8 obie oferty były zawsze zamknięte. Próbę wspólnego działania uzgadnia krok współpracy w strajku (14.3); osobnej pozycji próby nie ma już w agendzie partii.
 
 Ten kontrakt zastępuje trzy osobne losowe karty prób `joint_wage_committee`, `joint_protest_protection`, `joint_civil_rights` z poprzedniego szkicu. Komitet, ochrona i obrona praw mogą być treścią konkretnego wydarzenia; nie są trzema dodatkowymi przyciskami zbierania punktów koalicji.
 
@@ -1408,7 +1420,11 @@ Zwykła deklaracja: 1 T, 0 R, odnowienie 6 M na kartę, chyba że wskazano wyją
 
 Zmiana zwiększająca odległość od znanego profilu frakcji daje jej +3 sprzeciwu raz na decyzję, najwyżej +8 przy wieloelementowej zmianie. Profil musi jawnie określać odrzucone warianty; brak danych oznacza neutralny profil testowy, a historycznie **B**. **Z — 0.32, profil testowy `faction_stance_profile_v1`:** Piłsudczycy odrzucają `pils_influence=oppose_military_interference`, a Centrum `pils_influence=support`. Karty `form_of_power` i `ussr_position` mają tylko reakcje szczególne z 10.8 i 10.10. Pozostałe karty stanowisk nie mają w tym profilu odrzucanych wariantów. Profil zbudowano wyłącznie z opisu frakcji w przewodniku (rozdział 5) i reakcji zapisanych już w 10.7. Historyczne stanowiska frakcji: `TBD — historical research required`. Reakcja szczególna w tabeli wydarzenia zastępuje ten sam rodzaj reakcji ogólnej. Podpisana czerwona linia uruchamia jedną sprawę naruszenia umowy. Odrębne skutki — relacja, sprzeciw, utrata głosów — mają nazwane przyczyny, a nie powieloną karę za każdą podscenę.
 
+**K — etap 8 (0.49):** badania 8f (`PL-PPS-CURRENTS-1922-1926`) dają mocne oparcie regule piłsudczyków i częściowe regule Centrum; stanowiska Lewicy przed 1926 r. pozostają `TBD — historical research required`. Profil `faction_stance_profile_v1` bez zmian.
+
 Początek P: `direction=parliamentary_socialism`, `main_opponent=nationalist_right`, `pils_influence=conditional`, `form_of_power=parliamentarism`, `electoral_base=workers`, `economic_priorities=[]`, `slavic_autonomy=cultural_rights`, `jewish_cooperation=labour_only`, `ussr_stance=uncommitted`. To syntetyczne ustawienia do gry, nie pełna rekonstrukcja programu PPS ze stycznia 1922.
+
+**K — etap 8 (0.49):** linia startowa `slavic_autonomy=regional_autonomy`, jak projekt autonomii Niedziałkowskiego z X 1921 (`PL-MINORITY-AUTONOMY-1922-1926`); pozostałe linie startowe bez zmian.
 
 **Program gospodarczy — do trzech aktywnych priorytetów.** `economic_priorities` jest zbiorem, nie licznikiem ani jedną niemiecką wartością `economic_plan`:
 
@@ -2223,6 +2239,8 @@ Próba wymaga wszystkich bramek z rozdziału 16. P — presja 40 daje ostrzeżen
 
 **K — etap 7 (0.48):** presja rośnie co miesiąc: +3 bez działającego gabinetu, +2 przy autorytecie poniżej 40, +2 przy niezadowoleniu ≥60, +2 przy otwartej sprawie wojskowej, −2 za pierwszy nowy wykonany obowiązek cywilny oraz clip(0,01 × (60 − demokracja), ±0,5). Impulsy raz na ID: publiczny epizod nacisku wojska +8 w pierwszym kryzysie gabinetowym przy otwartej sprawie wojskowej (wejście 1A), powrót Chjeno-Piasta +20, konflikt nominacyjny +8 i złamanie umowy z Piłsudskim +8. Ulgi umowy (−12/−25/−20) działają raz na umowę i kryzys.
 
+**K — etap 8 (0.49):** presja startowa wynosi 0 (P; w I 1922 Piłsudski jest jeszcze Naczelnikiem Państwa). Publiczny epizod nacisku wojska (+8) przypada na pierwszy kryzys gabinetowy od XI 1925 przy otwartej sprawie, a sprawa wojskowa otwiera się w VII 1923 (17.16.3). +2/M i próg 65 bez zmian.
+
 ## 16. Policja, wojsko i rozstrzygnięcie zamachu
 
 ### 16.1. Jednostki i rozpoznanie
@@ -2254,6 +2272,8 @@ effective = s >= 0
 ```
 
 Zapisane lojalności zgrupowań, ze skutkami nominacji i reformy kadrowej, pozostają bez zmian; przesunięcie jest pochodną bieżącej demokracji. Wyższa demokracja przesuwa część gotowych do udziału do neutralności, niższa — z neutralności do Piłsudskiego. Strona legalna się nie zmienia. Losowanie po F5 czyta demokrację z chwili ogłoszenia próby i zapisuje wynik raz. Przy demokracji 60 profil `synthetic_test_v2` jest dokładnie taki jak w M08. Przy biernej PPS Piłsudski wygrywa 46,4% prób przy demokracji 45, 43,8% przy 60 i 41,1% przy 75 ([diagnostyka](../analysis/m10-authority-democracy/REPORT.md)). To uproszczenie gry, nie teza o postawie oficerów w 1926 r.; historyczny związek pozostaje **TBD — historical research required**.
+
+**K — etap 8 (0.49):** historycy różnią się w ocenie lojalności korpusu oficerskiego w 1926 r. (`PL-MAY-COUP-1926-COURSE`); związek z demokracją pozostaje uproszczeniem gry.
 
 `S.security.known` przechowuje oszacowania, zakres niepewności i datę informacji. Rozpoznanie zawęża przedział, nie zwiększa faktycznej lojalności. Interfejs używa rozpoznanych danych do prognoz; nie ujawnia ukrytych prawdziwych wejść przez pozornie dokładne procenty.
 
@@ -2399,6 +2419,8 @@ H — spór o organizację naczelnych władz wojskowych jest historycznym tłem.
 
 **Z — zatwierdzone 24 IX 2026.** Ten podrozdział jest jednym kontraktem zamachu od bramek próby do raportu. Gdy 16.1–16.7, 17.15 lub 19.1 mówią inaczej, pierwszeństwo ma 16.8. Struktura i osiem zasad są Z; liczby, profile stron i skutki pozostają P do kalibracji w prototypie. Zgrupowania są syntetyczne. Historyczne jednostki, trasy, lojalności i przebieg mediacji w maju 1926: `TBD — historical research required`. Źródło decyzji: `PL-M08-COUP-PROFILE-2026-09-24`; diagnostyka: [analysis/m08-coup-profile/REPORT.md](../analysis/m08-coup-profile/REPORT.md).
 
+**K — etap 8 (0.49):** badania 8f (`PL-MAY-COUP-1926-COURSE`) opisują siły, transporty, blokadę kolejową i mediacje maja 1926. Profil `synthetic_test_v2` zostaje: jego cztery grupy odpowiadają układowi z 1926 r. (podzielony garnizon stolicy, bliskie odwody, dalekie odwody dowożone koleją), ale nie jednostkom i liczbom, które źródła podają rozbieżnie.
+
 | Zasada Z | Treść |
 |---|---|
 | 1. Start | Próba zaczyna się dopiero po spełnieniu wszystkich bramek 16.2 |
@@ -2433,6 +2455,8 @@ nextAttemptAllowed = time >= S.coup.next_attempt_available_at;
 ```
 
 `credibleStandDownAgreement` i `credibleCompromiseOperating` z 16.7 to jedna wartość. W dniu przeglądu silnik ocenia przedłużenie na niezmienionych warunkach według 8.3 (≥60) i przy właściwej kompetencji wykonawcy. Przyjęte daje `review_at += 6` bez nowej ulgi presji; odrzucone — `expired`, bez +8 i bez wznowienia zamkniętej sprawy. W danych syntetycznych `initialStrikeForce` jest zawsze spełnione; znaczenia nabiera w profilu historycznym.
+
+**K — etap 8 (0.49), A3:** dla kompromisu wykonywanego przez gabinet (postulat `military_compromise`, etap 8c) kompetentnym wykonawcą jest ten sam gabinet, dopóki rządzi. Wcześniej taka umowa zawsze wygasała przy pierwszym przeglądzie, bo przegląd sprawdzał tylko resort Spraw Wojskowych w rękach PPS.
 
 Fazy `S.coup.phase`: `dormant → political_crisis → attempt_declared → pps_stance → organization_commitment → execution_and_transport → resolved`. Przy presji ≥55 („poważne zagrożenie” z 15.3) rekord przechodzi do `political_crisis`, widocznej jako ostrzeżenie. Jeżeli potem zacznie działać ugoda chroniąca albo presja spadnie poniżej 40, przygotowania zostają politycznie odwołane. Faza wraca wtedy do `dormant`, a `S.coup.next_attempt_available_at = t + 3` (początkowo 1). Skok presji w jednym sprawdzianie przechodzi przez `political_crisis` do `attempt_declared` bez dodatkowej sceny.
 
@@ -2504,6 +2528,8 @@ Akceptowalność to dopasowanie 8.1, w którym żądanie spełnione ma odległo�
 - zachowanie Sejmu i kalendarza wyborów.
 
 Przy istotnym udziale PPS dochodzi klauzula końca mobilizacji PPS. Spośród wykonalnych ofert, którym każda wymagana strona daje co najmniej 60, wybieramy tę o najwyższej najniższej ocenie; remis rozstrzyga kolejność tabeli. Ofertę przedstawia marszałek Sejmu jako mediator instytucjonalny (P). Przebieg historycznych prób mediacji: `TBD — historical research required`.
+
+**K — etap 8 (0.49):** mediacja marszałka Sejmu ma oparcie historyczne: 12 V 1926 wieczorem pośredniczył Maciej Rataj. Odpowiednikiem `coup.offer.cabinet_change` jest rząd Kazimierza Bartla z 15 V 1926 (`PL-MAY-COUP-1926-COURSE`); tekst dla gracza nie ma już dopisku o kandydacie TBD.
 
 #### 16.8.6. Głos PPS, odrzucenie i brak zwycięzcy
 
@@ -2781,6 +2807,8 @@ Msza jest alternatywą rozgrywki zaproponowaną przez użytkownika, nie twierdze
 
 **K — etap 7 (0.48):** B5 `polish_event_niewiadomski_cult` pojawia się raz od I 1923 w gałęzi zabójstwa Narutowicza przez Niewiadomskiego; miejsce uroczystości: TBD — historical research required. Potępienie: Centrum −3 przy linii parlamentaryzmu, PSChD +2 przy relacji ≥40. Msza tylko przy zgodzie gospodarza (relacja z PSChD ≥40, P) i działającym aparacie: 1 R, kampania o demokracji, +2 raz, bez zmiany relacji z chadecją. Brak zaangażowania: Lewica +3 przy wcześniejszej obietnicy. Niekontrolowane starcie losujemy tylko przy niepokoju z 17.4 większym od zera.
 
+**K — etap 8 (0.49):** B5 pojawia się od II 1923, po egzekucji 31 I 1923. Nazwaną uroczystością jest pogrzeb na Powązkach 6 II 1923 z mszą żałobną i ok. 10 tys. uczestników (`PL-NIEWIADOMSKI-CULT-1923`); tekst wydarzenia mówi o nim i o lutowych nabożeństwach. Odpowiedzi PPS bez zmian.
+
 ### 17.8. Wycofana scena Żyrardowa
 
 Z — B15 usunięto z bieżącego katalogu. `press.zyrardow` nie jest losowane ani wywoływane jako wydarzenie; nie ma wyboru nagłośnienia, premii wiarygodności czy kary partnera z dawnej sceny. Istniejące materiały historyczne pozostają w rejestrze źródeł. Ewentualne ogólne sprawy odpowiedzialności rozlicza właściwa instytucja, bez odtwarzania usuniętej minigry.
@@ -2804,7 +2832,7 @@ Szczególne efekty z tabel zastępują ogólny efekt tego samego rodzaju, zamias
 
 ### 17.10. Aktualny manifest 10 kart parlamentarnych
 
-**Z — rodziny wyborów, nie dziesięć kart losowanych w każdej sytuacji.** Zwykła inicjatywa zużywa jedną główną akcję (P: 1 T); obowiązkowa odpowiedź na rzeczywiste wydarzenie 0 T. **Z — 0.36:** karty 3–5 nie mają odnowienia: każda dotyczy konkretnej sprawy, każda próba kosztuje 1 T, a odrzuconej oferty nie ponawia się bez zmiany oferty albo sytuacji (8.3). Podmenu tej samej oferty nie dolicza czasu. Koszt przygotowania lub wykonania osobnego projektu pozostaje według 12.2; ponowne otwarcie istniejącej agendy nie pobiera go drugi raz. „Pula” oznacza dostępność w zwykłym doborze; „agenda” gwarantuje dostęp po otwarciu sprawy; „wydarzenie” pojawia się po wyzwalaczu. Poniższy manifest ma pierwszeństwo przed dawnymi roboczymi podziałami kart.
+**Z — rodziny wyborów, nie dziesięć kart losowanych w każdej sytuacji.** Zwykła inicjatywa zużywa jedną główną akcję (P: 1 T); obowiązkowa odpowiedź na rzeczywiste wydarzenie 0 T. **Z — 0.36:** karty 3–5 nie mają odnowienia: każda dotyczy konkretnej sprawy, każda próba kosztuje 1 T (karta 3, Budżet, jest odpowiedzią na konkretny pakiet za 0 T — decyzja etapu 4, potwierdzona w 0.49), a odrzuconej oferty nie ponawia się bez zmiany oferty albo sytuacji (8.3). Podmenu tej samej oferty nie dolicza czasu. Koszt przygotowania lub wykonania osobnego projektu pozostaje według 12.2; ponowne otwarcie istniejącej agendy nie pobiera go drugi raz. „Pula” oznacza dostępność w zwykłym doborze; „agenda” gwarantuje dostęp po otwarciu sprawy; „wydarzenie” pojawia się po wyzwalaczu. Poniższy manifest ma pierwszeństwo przed dawnymi roboczymi podziałami kart.
 
 | Nr / rodzina i ID P | Dostępność | Wybory gracza Z i wynik |
 |---|---|---|
@@ -2837,6 +2865,8 @@ Nazwane wydarzenia `parliament.speaker_1922` i `presidency.election_1922` z 17.3
 **K — etap 4 (0.45):** `canUseBudgetCard` wymaga oczekującego pakietu tego gabinetu (decyzja etapu 4); odpowiedź kosztuje 0 T, raz na pakiet. Warunki PPS partnerzy oceniają według 8.3; odmowa oznacza głos PPS przeciw pakietowi. Opozycja głosuje w obowiązkowym głosowaniu bez karty.
 
 **K — etap 7 (0.48):** talia parlamentarna ma wszystkie 10 rodzin; doszła karta kontroli wojska `polish_parliament_army_oversight` z dwiema opcjami. Karty 3–5 nie mają odnowienia: odrzuconej ustawy kontroli ani wniosku konstytucyjnego nie wnosi się bez zmiany prognozy, a odpowiedź na pakiet budżetowy jest raz na pakiet (0 T, decyzja etapu 4).
+
+**K — etap 8 (0.49):** karta Budżet pozostaje odpowiedzią na pakiet za 0 T, raz na pakiet (ograniczenie zapisane przy domknięciu planu).
 
 ### 17.11. Aktualny manifest kart rządowych — 16 rodzin
 
@@ -2934,6 +2964,8 @@ Bez decyzji system i faktyczne restrykcje zostają, a zamknięcie karty nic nie 
 **Z — wykonalny mechanizm w ograniczonym zakresie.** `personnel_changes` wskazuje konkretną nominację w istniejącym projekcie kontroli cywilnej: przygotowanie 1 T, wdrożenie 1 T, 1 B przez 3 M pełnego wykonania, potem 0. `civilian_oversight` i jego wariant kadrowy nie są dwoma pakietami bonusów dla tej samej reformy. `organizational_compromise` wykonuje tylko uzgodniony zakres; jeśli nadaje Piłsudskiemu osobiste uprawnienia, korzysta z jednej umowy 16.7. Bez decyzji siły i presja się nie zmieniają; od 0.37 nie ma płatnego `retain`.
 
 Profil nominacji musi wskazać `position_id`, `candidate_id`, dostępność/zgodę osoby, organ powołujący, podstawę i wymagane upoważnienie, `force_ids` oraz konkretny ewentualny konflikt. Wybór nie daje prawa do dowolnego stanowiska. Brak zgody, upoważnienia lub ważnej osoby zatrzymuje wykonanie i pokazuje przyczynę. Historyczne nazwiska i kompetencje: **TBD — historical research required**. Kontrola prototypowa może użyć oznaczonej syntetycznej funkcji nadzoru nad `near_reserve`, bez podszywania się pod rzeczywisty urząd lub oficera.
+
+**K — etap 8 (0.49):** obsady i kompetencje stanowisk wojskowych 1922–1926 zapisuje `PL-ARMY-POSTS-1922-1926` (dokumentacja). Gabinety gry różnią się od historycznych, więc profil nominacji pozostaje syntetyczny (P), bez historycznych nazwisk.
 
 Przy wykonaniu aktu: `delta=min(0.05,1-loyalty_legal)` dla wskazanej grupy; odejmujemy delta proporcjonalnie od pozostałych udziałów, zachowując sumę 1. Gotowość tej grupy ma −0,05 przez dwa miesiące od aktu, z dolną granicą 0; usunięcie modyfikatora nie nadpisuje innych zmian. Efekty są raz na zakres reformy; ponowienie nominacji lub przekierowanie przez inną kartę nie dodaje kolejnego +0,05. Siłę i zdolność przelicza 16.2, więc zmiana nie jest automatycznym zwycięstwem rządu.
 
@@ -3183,6 +3215,8 @@ Historyczna chronologia nie jest dodatkową karą za niestabilność: pojedyncza
 
 **K — etap 7 (0.48):** wejście 1A: spór Naczelnika z Ponikowskim w VI 1922 zapisuje jedną sprawę i wystąpienie B2. Karty kompromisu nie ma (P), więc urzędujący gabinet Ponikowskiego podaje się do dymisji, a B1 otwiera obowiązkowe formowanie. Sprawa wojskowa otwiera się w I 1925 (wejście testowe; historyczna data: TBD — historical research required) i zamyka ją dopiero wykonana umowa z Piłsudskim.
 
+**K — etap 8 (0.49):** wejścia scenariusza po badaniach 8f i decyzjach etapu 8: spór Naczelnika w VI 1922 (temat wystąpienia: prawo powoływania rządu); oferta Chjeno-Piasta V–XII 1923; odejście 10 posłów Piasta XII 1923 (P z M02); sprawa wojskowa od VII 1923 (2 VII 1923); jeden publiczny epizod nacisku wojska w kryzysie gabinetowym od XI 1925; dymisja Grabskiego od XI 1925, gdy rządzi w kryzysie kredytowym albo walutowym (A1, `grabski_resignation_1925`; karta formowania podaje przyczynę). W kampaniach etapu 8 gabinety następują po sobie: Ponikowski → Śliwiński → Nowak → Witos → Grabski → Skrzyński ([pomiar](../analysis/stage8-campaigns/REPORT.md)).
+
 #### 17.16.4. Krótkie profile samodzielnych działań gabinetów
 
 **Z:** najwyżej jedna nowa inicjatywa rządowa na miesiąc poza resortami kontrolowanymi przez PPS. To wspólny limit gabinetu, nie po jednej akcji na każdego ministra. Automatyczne wykonanie przyjętych programów nie zużywa go. Nie pobiera R ani głównej akcji PPS; korzysta z tych samych projektów, kosztów B, prawa i wykonawców. Gabinet ustępujący zachowuje tylko obowiązki dozwolone w 8.5. Brak wykonalnej inicjatywy daje zapis przyczyny, nie fikcyjny sukces.
@@ -3239,6 +3273,8 @@ Jednorazowe efekty mają klucze `case_id + rejected_wage_demand` i `case_id + ra
 #### 17.16.6. Presja na zamach i dalsza kampania
 
 Z — w pierwszym scenariuszu sposobność wojskowa jest wyłączona przed wiosną 1926. P — techniczny początek okna to **1 III 1926**; nie jest twierdzeniem o historycznym terminie decyzji o przewrocie. Potem `operationalWindow` wymaga dostępnych w fazach kryzysu sił i logistyki według profilu 16; sama data nie wystarcza. Próba nadal wymaga presji ≥65, zdolności ≥30, braku wykonywanego porozumienia o odstąpieniu i zachowania odnowienia. Rozstrzygnięcie walki, ugody i przedłużonego konfliktu określa 16.8 (M08, 0.20); historyczny profil wojsk pozostaje `TBD — historical research required`.
+
+**K — etap 8 (0.49):** w kampaniach etapu 8 presja przekracza 65 w XII 1925, więc próbę wyznacza okno od III 1926; wykonane porozumienie wojskowe z Piłsudskim zapobiega próbie (cel 1A spełniony).
 
 Przed tym oknem spory o wojsko i krytyka parlamentu mogą wpływać na istniejące relacje, umowy, presję i lojalności. Nie ma automatycznego miesięcznego impulsu za niepowierzenie Piłsudskiemu władzy. `personalConflictImpulse` wymaga konkretnego zdarzenia: zerwania przyjętej obietnicy, konfliktu nominacyjnego lub publicznego nacisku wojskowego z 17.16.9; używa istniejącego +8 z 15.3, bez ponownego naliczania tej samej odmowy. Kwalifikujący się powrót Chjeno-Piasta daje +20 raz niezależnie od miesiąca, według 17.16.11. Rachunek presji oraz połączone przebiegi opisują 17.16.9–11. Scenariusz nie ustawia presji na 65, aby naprawić brak eskalacji.
 
@@ -3340,6 +3376,8 @@ Historia powołań, profil poprzednika i otwarty `EventRun` wystarczają do ocen
 
 **Status M02: scenariusz gotowy do implementacji.** Końcowe sprawdzenie używa raz tego samego zestawu 144 + 216 + 36 przebiegów: [wyniki i różnice](../analysis/m02-robustness/REPORT.md). Balans dat, pełny dobór kart i historyczny profil sił wymagają grywalnego prototypu; M06 zamknięto w dokumentacji w 0.28 (7.3–7.5), M08 w 0.20 (16.8), M09 w 0.21 (5.6), a M10 w 0.22 (15.2–16.1). Mały składnik demokracji w presji z 0.22 opóźnia każdą z 96 prób o 1–3 M, bez utraty żadnej; to zatwierdzony skutek, nie nowe dopasowanie. Kruchość z poparcia i sporów z 0.24 (M12) zmienia miesiąc ugody strajkowej w 10 przebiegach i przyspiesza jeden termin próby o miesiąc, bez zmiany kolejności gabinetów. Nie rozpoczynamy kolejnej rundy dopasowywania dat w dokumentacji.
 
+**K — etap 8 (0.49):** datowanie spraw wojskowych rozstrzygnęły badania 8f: sprawa otwiera się w VII 1923 (`PL-MILITARY-CASE-1923-1926`), a publiczny epizod nacisku przypada na kryzys od XI 1925. Strojenie etapu 8 nie zmieniło +2/M ani progu 65; presja startowa wynosi 0 (P). Wzorzec 1A: N-A i N-H mają próbę w III 1926, N-B i N-C nie mają próby dzięki wykonanemu porozumieniu ([pomiar](../analysis/stage8-campaigns/REPORT.md)).
+
 ## 18. Ścieżki jako zestawy warunków, a nie osobne tryby
 
 ### 18.1. Osiem zgodnych z przewodnikiem strategii
@@ -3428,6 +3466,8 @@ Wynik prezentowany graczowi może wskazać konkretną porażkę: utratę partner
 **K — etap 2 (0.43):** raport jest głęboką kopią w `S.chapter.report`. Zawiera punkt zwrotny z wynikami obu wyborów, PPS (mandaty, udział głosów, frakcje), ustrój (prezydent, marszałek poprzedniej kadencji, Sejm, Senat), rząd w obecnej prostej postaci, podsumowanie zapisów i niepewności. Obszary z późniejszych etapów są wymienione jako jeszcze nie modelowane, a nie wymyślone. Scena `polish_chapter_report` pokazuje raport po angielsku. Po końcu rozdziału `main`, `post_event` i `root` prowadzą tylko do raportu i nie rozliczają nowych miesięcy. Nową grę zaczyna przeładowanie strony.
 
 **K — etap 7 (0.48):** raport ma też społeczeństwo (komórki, klasy, legitymizacja), politykę (demokracja, autorytet, przemoc, presja, sprawy i restrykcje), siły państwa (zgrupowania, strony, straty, rozpoznanie, policja, umowa z Piłsudskim), niedokończone sprawy i pamięć działań. Punkt zwrotny zamachu zapisuje wynik, ofertę, F9, rundy, strony, rzuty, wkład PPS, skutki i `continuation_requirements`. Lista `NOT_MODELLED` wymienia tylko treść i kalibrację etapu 8 oraz kontynuację.
+
+**K — etap 8 (0.49):** lista `NOT_MODELLED` ma jedną pozycję: to, co następuje po rozdziale (nowy rząd po wyborach albo po zamachu), nie jest częścią gry; scena pokazuje ją pod nagłówkiem „Beyond this chapter”. Ustrój w raporcie zapisuje też marszałka obradującego Sejmu (`constitution.speaker`). Raport po zamachu pokazuje go jako marszałka Sejmu, a raport po wyborach pokazuje marszałka ustępującego Sejmu. Wcześniej raport po zamachu pokazywał w tym miejscu „Vacant”.
 
 ### 19.3. Odporność zapisu w środku wydarzenia
 
@@ -3836,6 +3876,8 @@ Weryfikacja liczb i ograniczeń: `analysis/m02-revision-13/check.cjs`. Zgody w k
 | Pełne N-A/N-B/N-C | Wspólne scenariusze i ziarna, prawdziwe koszty każdej akcji; porównać zdolność zapobieżenia kryzysom, nie narzucić oczekiwanej kolejności premierów |
 
 Powyższa tabela to kryteria przyszłych testów. Kontrola dokumentów lub przeliczenie pojedynczego kanału nie potwierdza pełnych przebiegów, poprawności bieżącego silnika ani finalnego balansu.
+
+**K — etap 8 (0.49):** pełne kampanie 13 strategii na 12 ziarnach, wyniki i przypisanie kontroli 21.2, 21.2a–c do testów: [`analysis/stage8-campaigns/REPORT.md`](../analysis/stage8-campaigns/REPORT.md). Niespełniona kontrola wykonalności: legalne wcześniejsze wybory (rozwiązanie z 7.6 nie jest wdrożone).
 
 ### 21.3. Obowiązki przy implementacji
 
@@ -4337,3 +4379,29 @@ Użytkownik zatwierdził trzy decyzje etapu 7:
 Etap miał pięć części: 7a (polityka i społeczeństwo), 7b (siły państwa i Piłsudski), 7c (rok 1922 i prezydentura), 7d (zamach F) i 7e (raport, talie i izolacja). Silnik zamachu jest silnikiem M08; przeliczenie 81 układów stron odtwarza 16.8.8, M10 i M15.
 
 Wdrożenie oznaczono jako K w 2.4, 4.2, 4.5, 8.7, 10.7, 13.4, 15.1–15.3, 16.1–16.7, 16.8.8, 17.5–17.7, 17.10–17.12, 17.12.2–17.12.4, 17.12.6, 17.13, 17.16.3, 19.1, 19.2 i 20.2. `npm test`: 417 z 417. Wyniki, uproszczenia P i luki: rozdział 17 [planu implementacji](POLISH_IMPLEMENTATION_PLAN.md). Źródło: `PL-STAGE7-DEMOCRACY-COUP-2026-09-27`. Zależności i metadane scenariusza bez zmian.
+
+### 23.22. Etap 8 wdrożony — 4 X 2026 (ostatni etap)
+
+Użytkownik zatwierdził sześć decyzji planu etapu 8:
+- **1A:** cel kalibracji to wzorzec M02 na wspólnych ziarnach.
+  - N-A i N-H: próba w co najmniej 2/3 ziaren, z medianą III–VIII 1926.
+  - N-B i N-C z wykonaną umową wojskową: bez próby do wyborów 1928 w co najmniej 2/3 ziaren.
+  - Do tego kontrole wykonalności 21.2. Maja nie wymuszamy.
+- **2A:** elektorat otwarcia skalibrowany do bazowego Sejmu M02, z dokładnością ±5 mandatów na klub.
+- **3A:** na ekranach tylko polskie dane:
+  - zakładka Defense;
+  - wykresy Biblioteki od I 1922;
+  - oś czasu 1918–1922 z faktów zapisanych w `HISTORICAL_SOURCES.md` (wdrożona oś zaczyna się od pierwszego zapisanego faktu, 20 II 1919);
+  - bez niemieckich zdjęć na polskich kartach.
+- **4A:** funkcjonalne teksty angielskie z ekranami G1 i G4, bez notatek roboczych i bez nowej narracji historycznej.
+- **5A:** `pilsudski_aligned` to gabinety Śliwińskiego i Piłsudskiego; gabinet mniejszościowy to taki, którego partie nie mają własnej większości (gabinet fachowców się liczy).
+- **6B:** badania punktów TBD w części 8f. Każde ustalenie trafia do rejestru i do gry dopiero po zgodzie użytkownika.
+
+4 X 2026 użytkownik:
+- przyjął wszystkie dziewięć propozycji raportu badań 8f (w punkcie 9 także A2) i polecił dostroić presję zamachową na wiosnę 1926;
+- zatwierdził decyzje A1–A4: dymisja Grabskiego od XI 1925, reguła 8.9 dla NPR, przegląd porozumienia wykonywanego przez gabinet i poprawki automatów strategii;
+- zatwierdził poprawki 1–5 i opis ograniczeń 6–12;
+- zdecydował, że etap 8 jest ostatnim etapem planu;
+- zdecydował, że rozwiązania Sejmu z 7.6 nie wdrażamy, więc legalne wcześniejsze wybory pozostają ograniczeniem rozdziału.
+
+Wdrożenie oznaczono jako K w 5.2, 7.6, 8.6, 8.9, 9.6, 10.5, 15.3, 16.1, 16.8, 16.8.1, 16.8.5, 17.7, 17.10, 17.12.4, 17.16.3, 17.16.6, 17.16.11, 19.2 i 21.2. `npm test`: 438 z 438. Pomiar: [`analysis/stage8-campaigns/REPORT.md`](../analysis/stage8-campaigns/REPORT.md); badania: [`analysis/stage8-research/REPORT.md`](../analysis/stage8-research/REPORT.md). Wyniki, uproszczenia P i ograniczenia gotowego rozdziału: rozdział 18 [planu implementacji](POLISH_IMPLEMENTATION_PLAN.md). Źródła: `PL-STAGE8-NORMAL-SCENARIO-2026-10-04` i osiem wpisów badań 8f w `HISTORICAL_SOURCES.md`. Zależności bez zmian; schemat stanu 8 bez zmian.

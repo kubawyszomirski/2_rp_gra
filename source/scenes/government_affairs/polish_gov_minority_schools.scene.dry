@@ -28,7 +28,7 @@ One language rule, carried out by a large school project (1 B for 4 months, then
 
 @own_language
 title: Teaching in the own language
-subtitle: Carries out the adopted rights in schools; trust of the minorities covered +4 (stage 5).
+subtitle: Carries out the adopted rights in schools; trust of the minorities covered +4.
 choose-if: {! return PolishProjects.optionStatus(Q, 'minority_school_rights', 'own_language').available !}
 unavailable-subtitle: [+ pl_minority_school_rights_own_language_why +]
 on-arrival: {!
@@ -48,7 +48,7 @@ go-to: result
 
 @polish_dominance
 title: Dominance of the Polish language
-subtitle: Imposed assimilation: trust of the minorities −6 (stage 5) and a conflict with their agreements.
+subtitle: Imposed assimilation: trust of the minorities −6 and a conflict with their agreements.
 choose-if: {! return PolishProjects.optionStatus(Q, 'minority_school_rights', 'polish_dominance').available !}
 unavailable-subtitle: [+ pl_minority_school_rights_polish_dominance_why +]
 on-arrival: {!

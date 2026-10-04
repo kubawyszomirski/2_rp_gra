@@ -3,7 +3,6 @@ subtitle: Where PPS builds its reach.
 new-page: true
 is-card: true
 tags: party_affairs
-card-image: img/workers.jpg
 view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.stanceAvailable(Q, 'electoral_base') !}
 on-arrival: {!
 // Card party.electoral_base (catalogue 4.5; technical reference 10.6): 1 T, 0 R, the card then waits 6 months. The present line is shown and cannot be

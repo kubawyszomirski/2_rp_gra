@@ -49,10 +49,12 @@
   const COOPERATIVE_NAMES = Object.freeze({workers: 'a workers’ consumer cooperative', rural: 'a village cooperative of smallholders'});
   const RELIEF_CAP = 6; // 13.2: the current relief in one cell
 
-  // 10.5: the synthetic opening line of PPS, not a reconstruction of its programme of January 1922.
+  // 10.5: the synthetic opening line of PPS, not a reconstruction of its programme of January 1922. Stage 8 (8f): the
+  // line on the Slavic minorities is territorial autonomy, as in the PPS bill of Niedziałkowski of October 1921
+  // (HISTORICAL_SOURCES.md).
   const OPENING_STRATEGY = Object.freeze({direction: 'parliamentary_socialism', main_opponent: 'nationalist_right',
     pils_influence: 'conditional', form_of_power: 'parliamentarism', electoral_base: 'workers', economic_priorities: [],
-    slavic_autonomy: 'cultural_rights', jewish_cooperation: 'labour_only', ussr_stance: 'uncommitted'});
+    slavic_autonomy: 'regional_autonomy', jewish_cooperation: 'labour_only', ussr_stance: 'uncommitted'});
 
   function createPartyState(Q) {
     const unions = {};
@@ -1181,7 +1183,7 @@
     if (!rules.mainActionAvailable(Q)) return no('This month’s action has already been used.');
     if (step === 'trial') {
       if (relation < 30) return no('Needs a relation of 30 with the KPP; it is ' + fmt(relation) + '.');
-      if (!openDemands(S).length) return no('Needs an existing joint demand: a strike, a demonstration or a protective action (stage 6).');
+      if (!openDemands(S).length) return no('Needs an existing joint demand; in this chapter a trial is agreed in a strike, in its step of cooperation with the communists.');
       return OK;
     }
     if (step === 'rules') {
@@ -2000,7 +2002,12 @@
     if (actionId === 'direct_party_press' && (S.party_orgs.press.unpaid_months >= 2 || S.party_orgs.press.reach <= 0)) return no('Needs a working party press.');
     if (actionId === 'broker_coalition') return government.brokerStatus(Q);
     if (actionId === 'socialist_education' && S.party_orgs.tur.level < 1) return no('Needs a working TUR.');
-    if (actionId === 'conditional_toleration') return no('Needs external support of a cabinet with a pilsudski_aligned profile and an agreement; no cabinet has that profile in this version.');
+    // Decision 5A of stage 8: the profile pilsudski_aligned of A10 belongs to the cabinets of Śliwiński and Piłsudski.
+    if (actionId === 'conditional_toleration') {
+      if (government.ppsStance(S) !== 'supporter') return no('Needs external support of a cabinet with a pilsudski_aligned profile and an agreement; full membership does not qualify.');
+      if (!government.pilsudskiAligned(S)) return no('Needs a minority cabinet with a pilsudski_aligned profile: premier Śliwiński or Piłsudski.');
+      if (!government.ppsSupportAgreement(S)) return no('Needs an agreement on our external support.');
+    }
     return OK;
   }
 
@@ -2038,6 +2045,10 @@
       S.party_orgs.press.credibility = Math.min(100, S.party_orgs.press.credibility + 5);
       addEffect(S, key, 'press_campaign_multiplier', 1.25, t);
       text = 'Press credibility +5; press campaigns ×1.25 for six months.';
+    } else if (key === 'advisor.ziemiecki.conditional_toleration') {
+      government.factionReactions(Q, [{faction: 'centrum', dissent: -10}, {faction: 'lewica', dissent: -8}],
+        {id: key + ':t' + t, kind: 'adviser', reverse: null});
+      text = 'Our toleration stays conditional: Centrum −10 and Lewica −8 dissent. The kind of our support does not change.';
     } else if (key === 'advisor.niedzialkowski.build_centrolew') {
       for (const id of ['psl_piast', 'psl_wyzwolenie', 'npr', 'pschd']) relation(id, 3);
       text = 'Relations with Piast, Wyzwolenie, NPR and PSChD +3.';

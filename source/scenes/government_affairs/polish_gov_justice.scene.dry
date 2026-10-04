@@ -3,7 +3,6 @@ subtitle: Justice: the joint democratic guarantees, or the review of one abuse.
 new-page: true
 is-card: true
 tags: govt_affairs
-card-image: img/reichstag_3.jpg
 view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'justice_policy') !}
 on-arrival: {!
 // Card government.justice_policy (technical reference 17.11–17.12; card catalogue 8.13). Opening and closing

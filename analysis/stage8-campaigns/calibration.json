@@ -1,0 +1,801 @@
+{
+ "scope": "Decision 2A of stage 8: opening class rows calibrated to the M02 base Sejm for a passive PPS (N-A, seed 8001).",
+ "target": {
+  "kpp": 2,
+  "pps": 41,
+  "npr": 18,
+  "psl_wyzwolenie": 49,
+  "psl_piast": 70,
+  "pschd": 60,
+  "zln": 100,
+  "minorities_bloc": 90,
+  "other": 14
+ },
+ "tolerance": 5,
+ "achieved": {
+  "kpp": 2,
+  "pps": 43,
+  "npr": 19,
+  "psl_wyzwolenie": 48,
+  "psl_piast": 70,
+  "pschd": 59,
+  "zln": 99,
+  "jewish_rep": 30,
+  "other_minorities_rep": 60,
+  "other": 14,
+  "minorities_bloc": 90
+ },
+ "worst_miss": 2,
+ "speaker": null,
+ "factors": {
+  "kpp": 0.23098367978870843,
+  "pps": 0.6272692227119991,
+  "npr": 0.7387761513269668,
+  "psl_wyzwolenie": 0.9408955392368902,
+  "psl_piast": 1.2661111994846055,
+  "pschd": 1.7103953840504595,
+  "zln": 1.6839450563073222,
+  "minorities_bloc": 0.7272642455597487,
+  "other": 0.605214166441101
+ },
+ "rows": {
+  "workers": {
+   "kpp": 3.21,
+   "pps": 30.45,
+   "npr": 17.08,
+   "psl_wyzwolenie": 2.18,
+   "psl_piast": 1.46,
+   "pschd": 19.77,
+   "zln": 15.57,
+   "minorities_bloc": 4.2,
+   "other": 6.08
+  },
+  "old_middle": {
+   "kpp": 0.35,
+   "pps": 4.81,
+   "npr": 7.92,
+   "psl_wyzwolenie": 2.88,
+   "psl_piast": 5.82,
+   "pschd": 26.21,
+   "zln": 41.29,
+   "minorities_bloc": 6.69,
+   "other": 4.03
+  },
+  "new_middle": {
+   "kpp": 0.8,
+   "pps": 13.1,
+   "npr": 3.22,
+   "psl_wyzwolenie": 7.37,
+   "psl_piast": 5.51,
+   "pschd": 14.89,
+   "zln": 41.04,
+   "minorities_bloc": 9.49,
+   "other": 4.58
+  },
+  "rural": {
+   "kpp": 0.37,
+   "pps": 2.01,
+   "npr": 1.18,
+   "psl_wyzwolenie": 24.08,
+   "psl_piast": 34.43,
+   "pschd": 8.21,
+   "zln": 20.21,
+   "minorities_bloc": 2.91,
+   "other": 6.6
+  },
+  "bourgeois_landowners": {
+   "kpp": 0.0,
+   "pps": 0.85,
+   "npr": 2.01,
+   "psl_wyzwolenie": 0.64,
+   "psl_piast": 6.02,
+   "pschd": 17.42,
+   "zln": 60.6,
+   "minorities_bloc": 8.89,
+   "other": 3.57
+  },
+  "unemployed": {
+   "kpp": 10.85,
+   "pps": 34.97,
+   "npr": 13.01,
+   "psl_wyzwolenie": 2.76,
+   "psl_piast": 1.86,
+   "pschd": 12.55,
+   "zln": 9.88,
+   "minorities_bloc": 6.4,
+   "other": 7.72
+  },
+  "national_minorities": {
+   "kpp": 3.03,
+   "pps": 5.76,
+   "npr": 0.97,
+   "psl_wyzwolenie": 2.47,
+   "psl_piast": 1.66,
+   "pschd": 2.24,
+   "zln": 4.42,
+   "minorities_bloc": 72.54,
+   "other": 6.91
+  }
+ },
+ "base_rows": {
+  "workers": {
+   "kpp": 11.04,
+   "pps": 38.64,
+   "npr": 18.4,
+   "psl_wyzwolenie": 1.84,
+   "psl_piast": 0.92,
+   "pschd": 9.2,
+   "zln": 7.36,
+   "minorities_bloc": 4.6,
+   "other": 8
+  },
+  "old_middle": {
+   "kpp": 1.84,
+   "pps": 9.2,
+   "npr": 12.88,
+   "psl_wyzwolenie": 3.68,
+   "psl_piast": 5.52,
+   "pschd": 18.4,
+   "zln": 29.44,
+   "minorities_bloc": 11.04,
+   "other": 8
+  },
+  "new_middle": {
+   "kpp": 3.68,
+   "pps": 22.08,
+   "npr": 4.6,
+   "psl_wyzwolenie": 8.28,
+   "psl_piast": 4.6,
+   "pschd": 9.2,
+   "zln": 25.76,
+   "minorities_bloc": 13.8,
+   "other": 8
+  },
+  "rural": {
+   "kpp": 1.76,
+   "pps": 3.52,
+   "npr": 1.76,
+   "psl_wyzwolenie": 28.16,
+   "psl_piast": 29.92,
+   "pschd": 5.28,
+   "zln": 13.2,
+   "minorities_bloc": 4.4,
+   "other": 12
+  },
+  "bourgeois_landowners": {
+   "kpp": 0,
+   "pps": 1.84,
+   "npr": 3.68,
+   "psl_wyzwolenie": 0.92,
+   "psl_piast": 6.44,
+   "pschd": 13.8,
+   "zln": 48.76,
+   "minorities_bloc": 16.56,
+   "other": 8
+  },
+  "unemployed": {
+   "kpp": 29.44,
+   "pps": 34.96,
+   "npr": 11.04,
+   "psl_wyzwolenie": 1.84,
+   "psl_piast": 0.92,
+   "pschd": 4.6,
+   "zln": 3.68,
+   "minorities_bloc": 5.52,
+   "other": 8
+  },
+  "national_minorities": {
+   "kpp": 9.2,
+   "pps": 6.44,
+   "npr": 0.92,
+   "psl_wyzwolenie": 1.84,
+   "psl_piast": 0.92,
+   "pschd": 0.92,
+   "zln": 1.84,
+   "minorities_bloc": 69.92,
+   "other": 8
+  }
+ },
+ "trace": [
+  {
+   "iteration": 0,
+   "worst": 42,
+   "seats": [
+    23,
+    62,
+    24,
+    59,
+    61,
+    33,
+    58,
+    102,
+    22
+   ]
+  },
+  {
+   "iteration": 1,
+   "worst": 13,
+   "seats": [
+    2,
+    52,
+    21,
+    50,
+    62,
+    52,
+    87,
+    101,
+    17
+   ]
+  },
+  {
+   "iteration": 2,
+   "worst": 9,
+   "seats": [
+    2,
+    47,
+    20,
+    48,
+    64,
+    56,
+    93,
+    99,
+    15
+   ]
+  },
+  {
+   "iteration": 3,
+   "worst": 5,
+   "seats": [
+    2,
+    43,
+    19,
+    47,
+    70,
+    58,
+    95,
+    95,
+    15
+   ]
+  },
+  {
+   "iteration": 4,
+   "worst": 5,
+   "seats": [
+    2,
+    36,
+    19,
+    48,
+    71,
+    60,
+    98,
+    95,
+    15
+   ]
+  },
+  {
+   "iteration": 5,
+   "worst": 7,
+   "seats": [
+    2,
+    46,
+    11,
+    49,
+    70,
+    59,
+    99,
+    93,
+    15
+   ]
+  },
+  {
+   "iteration": 6,
+   "worst": 6,
+   "seats": [
+    2,
+    35,
+    24,
+    50,
+    66,
+    60,
+    100,
+    95,
+    12
+   ]
+  },
+  {
+   "iteration": 7,
+   "worst": 5,
+   "seats": [
+    2,
+    46,
+    19,
+    47,
+    70,
+    58,
+    97,
+    90,
+    15
+   ]
+  },
+  {
+   "iteration": 8,
+   "worst": 2,
+   "seats": [
+    2,
+    43,
+    19,
+    48,
+    70,
+    59,
+    99,
+    90,
+    14
+   ]
+  },
+  {
+   "iteration": 9,
+   "worst": 6,
+   "seats": [
+    2,
+    35,
+    19,
+    49,
+    71,
+    61,
+    101,
+    92,
+    14
+   ]
+  },
+  {
+   "iteration": 10,
+   "worst": 6,
+   "seats": [
+    2,
+    46,
+    12,
+    49,
+    70,
+    60,
+    100,
+    90,
+    15
+   ]
+  },
+  {
+   "iteration": 11,
+   "worst": 5,
+   "seats": [
+    2,
+    36,
+    22,
+    49,
+    70,
+    60,
+    99,
+    91,
+    15
+   ]
+  },
+  {
+   "iteration": 12,
+   "worst": 5,
+   "seats": [
+    2,
+    46,
+    20,
+    49,
+    70,
+    59,
+    99,
+    89,
+    10
+   ]
+  },
+  {
+   "iteration": 13,
+   "worst": 5,
+   "seats": [
+    2,
+    44,
+    19,
+    49,
+    65,
+    60,
+    100,
+    90,
+    15
+   ]
+  },
+  {
+   "iteration": 14,
+   "worst": 6,
+   "seats": [
+    2,
+    35,
+    19,
+    48,
+    72,
+    61,
+    100,
+    91,
+    16
+   ]
+  },
+  {
+   "iteration": 15,
+   "worst": 7,
+   "seats": [
+    2,
+    46,
+    11,
+    49,
+    71,
+    60,
+    100,
+    90,
+    15
+   ]
+  },
+  {
+   "iteration": 16,
+   "worst": 6,
+   "seats": [
+    2,
+    35,
+    23,
+    50,
+    71,
+    59,
+    101,
+    91,
+    12
+   ]
+  },
+  {
+   "iteration": 17,
+   "worst": 5,
+   "seats": [
+    2,
+    46,
+    20,
+    48,
+    69,
+    59,
+    97,
+    88,
+    15
+   ]
+  },
+  {
+   "iteration": 18,
+   "worst": 2,
+   "seats": [
+    2,
+    43,
+    19,
+    48,
+    69,
+    60,
+    99,
+    89,
+    15
+   ]
+  },
+  {
+   "iteration": 19,
+   "worst": 5,
+   "seats": [
+    2,
+    36,
+    19,
+    49,
+    71,
+    61,
+    101,
+    91,
+    14
+   ]
+  },
+  {
+   "iteration": 20,
+   "worst": 4,
+   "seats": [
+    2,
+    45,
+    18,
+    49,
+    69,
+    59,
+    99,
+    89,
+    14
+   ]
+  },
+  {
+   "iteration": 21,
+   "worst": 2,
+   "seats": [
+    2,
+    43,
+    18,
+    49,
+    70,
+    59,
+    100,
+    89,
+    14
+   ]
+  },
+  {
+   "iteration": 22,
+   "worst": 6,
+   "seats": [
+    2,
+    35,
+    18,
+    49,
+    71,
+    61,
+    102,
+    91,
+    15
+   ]
+  },
+  {
+   "iteration": 23,
+   "worst": 5,
+   "seats": [
+    2,
+    46,
+    18,
+    49,
+    70,
+    60,
+    99,
+    90,
+    10
+   ]
+  },
+  {
+   "iteration": 24,
+   "worst": 2,
+   "seats": [
+    2,
+    43,
+    18,
+    49,
+    69,
+    60,
+    99,
+    89,
+    15
+   ]
+  },
+  {
+   "iteration": 25,
+   "worst": 6,
+   "seats": [
+    2,
+    35,
+    18,
+    49,
+    71,
+    61,
+    101,
+    91,
+    16
+   ]
+  },
+  {
+   "iteration": 26,
+   "worst": 6,
+   "seats": [
+    2,
+    46,
+    12,
+    49,
+    70,
+    60,
+    100,
+    90,
+    15
+   ]
+  },
+  {
+   "iteration": 27,
+   "worst": 6,
+   "seats": [
+    2,
+    35,
+    23,
+    50,
+    71,
+    59,
+    101,
+    91,
+    12
+   ]
+  },
+  {
+   "iteration": 28,
+   "worst": 5,
+   "seats": [
+    2,
+    46,
+    19,
+    48,
+    69,
+    59,
+    98,
+    88,
+    15
+   ]
+  },
+  {
+   "iteration": 29,
+   "worst": 2,
+   "seats": [
+    2,
+    43,
+    19,
+    49,
+    69,
+    60,
+    99,
+    89,
+    14
+   ]
+  },
+  {
+   "iteration": 30,
+   "worst": 5,
+   "seats": [
+    2,
+    36,
+    19,
+    49,
+    70,
+    61,
+    101,
+    91,
+    15
+   ]
+  },
+  {
+   "iteration": 31,
+   "worst": 7,
+   "seats": [
+    2,
+    46,
+    11,
+    49,
+    71,
+    60,
+    100,
+    90,
+    15
+   ]
+  },
+  {
+   "iteration": 32,
+   "worst": 6,
+   "seats": [
+    2,
+    35,
+    23,
+    50,
+    71,
+    59,
+    101,
+    91,
+    12
+   ]
+  },
+  {
+   "iteration": 33,
+   "worst": 5,
+   "seats": [
+    2,
+    46,
+    20,
+    48,
+    65,
+    60,
+    99,
+    89,
+    15
+   ]
+  },
+  {
+   "iteration": 34,
+   "worst": 2,
+   "seats": [
+    2,
+    43,
+    19,
+    48,
+    71,
+    59,
+    99,
+    89,
+    14
+   ]
+  },
+  {
+   "iteration": 35,
+   "worst": 5,
+   "seats": [
+    2,
+    36,
+    19,
+    49,
+    71,
+    61,
+    101,
+    91,
+    14
+   ]
+  },
+  {
+   "iteration": 36,
+   "worst": 5,
+   "seats": [
+    2,
+    46,
+    18,
+    49,
+    70,
+    59,
+    99,
+    89,
+    12
+   ]
+  },
+  {
+   "iteration": 37,
+   "worst": 2,
+   "seats": [
+    2,
+    43,
+    18,
+    49,
+    69,
+    60,
+    99,
+    89,
+    15
+   ]
+  },
+  {
+   "iteration": 38,
+   "worst": 6,
+   "seats": [
+    2,
+    35,
+    18,
+    49,
+    71,
+    61,
+    102,
+    91,
+    15
+   ]
+  },
+  {
+   "iteration": 39,
+   "worst": 4,
+   "seats": [
+    2,
+    45,
+    18,
+    49,
+    70,
+    59,
+    99,
+    89,
+    13
+   ]
+  }
+ ]
+}

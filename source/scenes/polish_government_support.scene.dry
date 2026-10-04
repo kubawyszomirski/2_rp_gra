@@ -3,7 +3,6 @@ subtitle: End our support, or make a demand with or without a threat.
 new-page: true
 is-card: true
 tags: parliament_affairs
-card-image: img/reichstag_2.jpg
 view-if: {! return !!Q.S && PolishGovernment.supportCardAvailable(Q) !}
 on-arrival: {!
 // Card parliament.government_support (technical reference 9.8; card catalogue 7.6). An ordinary use
@@ -14,6 +13,7 @@ Q.pl_sup_mode = 'ordinary';
 Q.pl_sup_member = PolishGovernment.ppsStance(Q.S) === 'member' ? 1 : 0;
 Q.pl_sup_withdraw_reason = PolishGovernment.supportOptionStatus(Q, 'withdraw', 'ordinary').reason;
 Q.pl_sup_demand_reason = PolishGovernment.supportOptionStatus(Q, 'bargain', 'ordinary').reason;
+Q.pl_sup_military_reason = PolishGovernment.supportOptionStatus(Q, 'bargain', 'ordinary', 'military_compromise').reason;
 !}
 
 = Our relation to the government
@@ -27,6 +27,8 @@ Prime minister: [+ prime_minister_display +]. PPS position: [+ pps_government_po
 - @withdraw
 - @bargain
 - @persuade
+- @bargain_military
+- @persuade_military
 - @easy_discard
 
 @withdraw
@@ -46,6 +48,7 @@ subtitle: The government weighs how much it needs us. Parties that give in under
 choose-if: {! return PolishGovernment.supportOptionStatus(Q, 'bargain', Q.pl_sup_mode).available !}
 unavailable-subtitle: [+ pl_sup_demand_reason +]
 on-arrival: {!
+Q.pl_sup_postulate = 'worker_protection';
 var record = PolishGovernment.supportDemand(Q, 'bargain', 'worker_protection', Q.pl_sup_mode);
 Q.pl_sup_accepted = record.accepted ? 1 : 0;
 Q.pl_sup_answers = PolishGovernment.describeAnswers(record);
@@ -58,7 +61,36 @@ subtitle: No threat, no relation change either way; if refused, our support stay
 choose-if: {! return PolishGovernment.supportOptionStatus(Q, 'persuade', Q.pl_sup_mode).available !}
 unavailable-subtitle: [+ pl_sup_demand_reason +]
 on-arrival: {!
+Q.pl_sup_postulate = 'worker_protection';
 var record = PolishGovernment.supportDemand(Q, 'persuade', 'worker_protection', Q.pl_sup_mode);
+Q.pl_sup_accepted = record.accepted ? 1 : 0;
+Q.pl_sup_answers = PolishGovernment.describeAnswers(record);
+!}
+go-to: demand_result
+
+@bargain_military
+view-if: {! return PolishGovernment.militaryCaseOpen(Q) !}
+title: Demand a compromise with Piłsudski under civilian control, or we end our support
+subtitle: The cabinet carries it out itself at its next review, if Piłsudski accepts a military function under civilian control. Parties that give in under a threat think less of us (relation −3).
+choose-if: {! return PolishGovernment.supportOptionStatus(Q, 'bargain', Q.pl_sup_mode, 'military_compromise').available !}
+unavailable-subtitle: [+ pl_sup_military_reason +]
+on-arrival: {!
+Q.pl_sup_postulate = 'military_compromise';
+var record = PolishGovernment.supportDemand(Q, 'bargain', 'military_compromise', Q.pl_sup_mode);
+Q.pl_sup_accepted = record.accepted ? 1 : 0;
+Q.pl_sup_answers = PolishGovernment.describeAnswers(record);
+!}
+go-to: demand_result if pl_sup_accepted; threat if not pl_sup_accepted
+
+@persuade_military
+view-if: {! return PolishGovernment.militaryCaseOpen(Q) !}
+title: Ask the cabinet for a compromise with Piłsudski, without a threat
+subtitle: The cabinet carries it out itself at its next review, if Piłsudski accepts. No threat and no relation change either way.
+choose-if: {! return PolishGovernment.supportOptionStatus(Q, 'persuade', Q.pl_sup_mode, 'military_compromise').available !}
+unavailable-subtitle: [+ pl_sup_military_reason +]
+on-arrival: {!
+Q.pl_sup_postulate = 'military_compromise';
+var record = PolishGovernment.supportDemand(Q, 'persuade', 'military_compromise', Q.pl_sup_mode);
 Q.pl_sup_accepted = record.accepted ? 1 : 0;
 Q.pl_sup_answers = PolishGovernment.describeAnswers(record);
 !}
@@ -131,7 +163,9 @@ new-page: true
 
 [+ pl_sup_answers +]
 
-[? if pl_sup_accepted : **The government accepts.** Financed worker protection enters our agreement with the cabinet. It is carried out by the programmes of a later stage, so the promise has no due date yet. ?]
+[? if pl_sup_accepted and pl_sup_postulate = "worker_protection" : **The government accepts.** Financed worker protection enters our agreement with the cabinet, due within four months. ?]
+
+[? if pl_sup_accepted and pl_sup_postulate = "military_compromise" : **The government accepts.** The compromise enters our agreement with the cabinet. The cabinet offers Piłsudski a military function under civilian control at its next review; if he refuses, the promise lapses without a breach. ?]
 
 [? if not pl_sup_accepted : **The government refuses.** Our support stays as it was. ?]
 

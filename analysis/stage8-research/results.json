@@ -1,0 +1,1109 @@
+{
+ "scope": "Stage 8, part 8f: measured effects of the researched values; the game is not changed.",
+ "seeds": [
+  8001,
+  8002,
+  8003,
+  8004,
+  8005,
+  8006,
+  8007,
+  8008,
+  8009,
+  8010,
+  8011,
+  8012
+ ],
+ "variants": {
+  "present": {
+   "label": "case I 1925, episode in the first crisis with an open case (the present game)",
+   "strategies": {
+    "N_A": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1927-04",
+     "attempt_range": [
+      "1927-04",
+      "1927-04"
+     ],
+     "outcomes": {
+      "constitutional_compromise": 2,
+      "pils_victory": 7,
+      "legal_victory": 3
+     },
+     "pressure_65_first_median": "1927-04",
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 0,
+     "stuck": 0
+    },
+    "N_B": {
+     "attempts": 0,
+     "runs": 12,
+     "attempt_median": null,
+     "attempt_range": null,
+     "outcomes": {
+      "none": 12
+     },
+     "pressure_65_first_median": null,
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 12,
+     "stuck": 0
+    },
+    "N_C": {
+     "attempts": 0,
+     "runs": 12,
+     "attempt_median": null,
+     "attempt_range": null,
+     "outcomes": {
+      "none": 12
+     },
+     "pressure_65_first_median": null,
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 12,
+     "stuck": 0
+    },
+    "N_H": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1927-06",
+     "attempt_range": [
+      "1927-06",
+      "1927-06"
+     ],
+     "outcomes": {
+      "legal_victory": 6,
+      "pils_victory": 4,
+      "constitutional_compromise": 2
+     },
+     "pressure_65_first_median": "1927-06",
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 0,
+     "stuck": 0
+    },
+    "passive_opening": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1927-05",
+     "attempt_range": [
+      "1927-05",
+      "1927-05"
+     ],
+     "outcomes": {
+      "pils_victory": 7,
+      "constitutional_compromise": 5
+     },
+     "pressure_65_first_median": "1927-05",
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 0,
+     "stuck": 0
+    },
+    "election_campaign": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1927-08",
+     "attempt_range": [
+      "1927-08",
+      "1927-08"
+     ],
+     "outcomes": {
+      "constitutional_compromise": 4,
+      "pils_victory": 4,
+      "legal_victory": 4
+     },
+     "pressure_65_first_median": "1927-08",
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 0,
+     "stuck": 0
+    },
+    "permanent_opposition": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1927-06",
+     "attempt_range": [
+      "1927-06",
+      "1927-06"
+     ],
+     "outcomes": {
+      "legal_victory": 6,
+      "pils_victory": 4,
+      "constitutional_compromise": 2
+     },
+     "pressure_65_first_median": "1927-06",
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 0,
+     "stuck": 0
+    },
+    "formal_coalition": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1927-06",
+     "attempt_range": [
+      "1927-06",
+      "1927-06"
+     ],
+     "outcomes": {
+      "legal_victory": 6,
+      "pils_victory": 4,
+      "constitutional_compromise": 2
+     },
+     "pressure_65_first_median": "1927-06",
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 0,
+     "stuck": 0
+    },
+    "stabilization_protections": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1927-08",
+     "attempt_range": [
+      "1927-08",
+      "1927-08"
+     ],
+     "outcomes": {
+      "constitutional_compromise": 4,
+      "pils_victory": 4,
+      "legal_victory": 4
+     },
+     "pressure_65_first_median": "1927-08",
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 0,
+     "stuck": 0
+    },
+    "active_employment": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1927-06",
+     "attempt_range": [
+      "1927-06",
+      "1927-06"
+     ],
+     "outcomes": {
+      "legal_victory": 6,
+      "pils_victory": 4,
+      "constitutional_compromise": 2
+     },
+     "pressure_65_first_median": "1927-06",
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 0,
+     "stuck": 0
+    },
+    "mass_organizations": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1927-06",
+     "attempt_range": [
+      "1927-06",
+      "1927-06"
+     ],
+     "outcomes": {
+      "legal_victory": 6,
+      "pils_victory": 4,
+      "constitutional_compromise": 2
+     },
+     "pressure_65_first_median": "1927-06",
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 0,
+     "stuck": 0
+    },
+    "prepared_mediation": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1927-06",
+     "attempt_range": [
+      "1927-06",
+      "1927-06"
+     ],
+     "outcomes": {
+      "legal_victory": 6,
+      "pils_victory": 4,
+      "constitutional_compromise": 2
+     },
+     "pressure_65_first_median": "1927-06",
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 0,
+     "stuck": 0
+    },
+    "constitutional_defense": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1927-07",
+     "attempt_range": [
+      "1927-07",
+      "1927-07"
+     ],
+     "outcomes": {
+      "constitutional_compromise": 2,
+      "legal_victory": 2,
+      "pils_victory": 8
+     },
+     "pressure_65_first_median": "1927-07",
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 0,
+     "stuck": 0
+    }
+   }
+  },
+  "case_1923_07": {
+   "label": "case VII 1923, episode unchanged",
+   "strategies": {
+    "N_A": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1926-03",
+     "attempt_range": [
+      "1926-03",
+      "1926-03"
+     ],
+     "outcomes": {
+      "legal_victory": 2,
+      "constitutional_compromise": 3,
+      "pils_victory": 7
+     },
+     "pressure_65_first_median": "1925-05",
+     "public_episode_median": "1923-12",
+     "public_episodes": 12,
+     "pils_agreements": 0,
+     "stuck": 0
+    },
+    "N_B": {
+     "attempts": 0,
+     "runs": 12,
+     "attempt_median": null,
+     "attempt_range": null,
+     "outcomes": {
+      "none": 12
+     },
+     "pressure_65_first_median": null,
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 12,
+     "stuck": 0
+    },
+    "N_C": {
+     "attempts": 0,
+     "runs": 12,
+     "attempt_median": null,
+     "attempt_range": null,
+     "outcomes": {
+      "none": 12
+     },
+     "pressure_65_first_median": null,
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 12,
+     "stuck": 0
+    },
+    "N_H": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1926-03",
+     "attempt_range": [
+      "1926-03",
+      "1926-03"
+     ],
+     "outcomes": {
+      "legal_victory": 2,
+      "constitutional_compromise": 3,
+      "pils_victory": 7
+     },
+     "pressure_65_first_median": "1925-12",
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 0,
+     "stuck": 0
+    },
+    "passive_opening": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1926-03",
+     "attempt_range": [
+      "1926-03",
+      "1926-03"
+     ],
+     "outcomes": {
+      "legal_victory": 2,
+      "constitutional_compromise": 3,
+      "pils_victory": 7
+     },
+     "pressure_65_first_median": "1925-10",
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 0,
+     "stuck": 0
+    },
+    "election_campaign": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1926-03",
+     "attempt_range": [
+      "1926-03",
+      "1926-03"
+     ],
+     "outcomes": {
+      "legal_victory": 2,
+      "constitutional_compromise": 3,
+      "pils_victory": 7
+     },
+     "pressure_65_first_median": "1926-01",
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 0,
+     "stuck": 0
+    },
+    "permanent_opposition": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1926-03",
+     "attempt_range": [
+      "1926-03",
+      "1926-03"
+     ],
+     "outcomes": {
+      "legal_victory": 2,
+      "constitutional_compromise": 3,
+      "pils_victory": 7
+     },
+     "pressure_65_first_median": "1925-06",
+     "public_episode_median": "1923-12",
+     "public_episodes": 12,
+     "pils_agreements": 0,
+     "stuck": 0
+    },
+    "formal_coalition": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1926-03",
+     "attempt_range": [
+      "1926-03",
+      "1926-03"
+     ],
+     "outcomes": {
+      "legal_victory": 2,
+      "constitutional_compromise": 3,
+      "pils_victory": 7
+     },
+     "pressure_65_first_median": "1925-06",
+     "public_episode_median": "1923-12",
+     "public_episodes": 12,
+     "pils_agreements": 0,
+     "stuck": 0
+    },
+    "stabilization_protections": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1926-03",
+     "attempt_range": [
+      "1926-03",
+      "1926-03"
+     ],
+     "outcomes": {
+      "legal_victory": 2,
+      "constitutional_compromise": 3,
+      "pils_victory": 7
+     },
+     "pressure_65_first_median": "1926-01",
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 0,
+     "stuck": 0
+    },
+    "active_employment": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1926-03",
+     "attempt_range": [
+      "1926-03",
+      "1926-03"
+     ],
+     "outcomes": {
+      "legal_victory": 2,
+      "constitutional_compromise": 3,
+      "pils_victory": 7
+     },
+     "pressure_65_first_median": "1925-06",
+     "public_episode_median": "1923-12",
+     "public_episodes": 12,
+     "pils_agreements": 0,
+     "stuck": 0
+    },
+    "mass_organizations": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1926-03",
+     "attempt_range": [
+      "1926-03",
+      "1926-03"
+     ],
+     "outcomes": {
+      "legal_victory": 3,
+      "pils_victory": 7,
+      "constitutional_compromise": 2
+     },
+     "pressure_65_first_median": "1925-12",
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 0,
+     "stuck": 0
+    },
+    "prepared_mediation": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1926-03",
+     "attempt_range": [
+      "1926-03",
+      "1926-03"
+     ],
+     "outcomes": {
+      "legal_victory": 2,
+      "constitutional_compromise": 3,
+      "pils_victory": 7
+     },
+     "pressure_65_first_median": "1925-12",
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 0,
+     "stuck": 0
+    },
+    "constitutional_defense": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1926-03",
+     "attempt_range": [
+      "1926-03",
+      "1926-03"
+     ],
+     "outcomes": {
+      "legal_victory": 3,
+      "pils_victory": 6,
+      "constitutional_compromise": 3
+     },
+     "pressure_65_first_median": "1925-12",
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 0,
+     "stuck": 0
+    }
+   }
+  },
+  "case_1923_07_episode_1925_11": {
+   "label": "case VII 1923, episode from XI 1925",
+   "strategies": {
+    "N_A": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1926-03",
+     "attempt_range": [
+      "1926-03",
+      "1926-03"
+     ],
+     "outcomes": {
+      "legal_victory": 2,
+      "constitutional_compromise": 3,
+      "pils_victory": 7
+     },
+     "pressure_65_first_median": "1925-09",
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 0,
+     "stuck": 0
+    },
+    "N_B": {
+     "attempts": 0,
+     "runs": 12,
+     "attempt_median": null,
+     "attempt_range": null,
+     "outcomes": {
+      "none": 12
+     },
+     "pressure_65_first_median": null,
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 12,
+     "stuck": 0
+    },
+    "N_C": {
+     "attempts": 0,
+     "runs": 12,
+     "attempt_median": null,
+     "attempt_range": null,
+     "outcomes": {
+      "none": 12
+     },
+     "pressure_65_first_median": null,
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 12,
+     "stuck": 0
+    },
+    "N_H": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1926-03",
+     "attempt_range": [
+      "1926-03",
+      "1926-03"
+     ],
+     "outcomes": {
+      "legal_victory": 2,
+      "constitutional_compromise": 3,
+      "pils_victory": 7
+     },
+     "pressure_65_first_median": "1925-12",
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 0,
+     "stuck": 0
+    },
+    "passive_opening": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1926-03",
+     "attempt_range": [
+      "1926-03",
+      "1926-03"
+     ],
+     "outcomes": {
+      "legal_victory": 2,
+      "constitutional_compromise": 3,
+      "pils_victory": 7
+     },
+     "pressure_65_first_median": "1925-10",
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 0,
+     "stuck": 0
+    },
+    "election_campaign": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1926-03",
+     "attempt_range": [
+      "1926-03",
+      "1926-03"
+     ],
+     "outcomes": {
+      "legal_victory": 2,
+      "constitutional_compromise": 3,
+      "pils_victory": 7
+     },
+     "pressure_65_first_median": "1926-01",
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 0,
+     "stuck": 0
+    },
+    "permanent_opposition": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1926-03",
+     "attempt_range": [
+      "1926-03",
+      "1926-03"
+     ],
+     "outcomes": {
+      "legal_victory": 2,
+      "constitutional_compromise": 3,
+      "pils_victory": 7
+     },
+     "pressure_65_first_median": "1925-10",
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 0,
+     "stuck": 0
+    },
+    "formal_coalition": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1926-03",
+     "attempt_range": [
+      "1926-03",
+      "1926-03"
+     ],
+     "outcomes": {
+      "legal_victory": 2,
+      "constitutional_compromise": 3,
+      "pils_victory": 7
+     },
+     "pressure_65_first_median": "1925-10",
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 0,
+     "stuck": 0
+    },
+    "stabilization_protections": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1926-03",
+     "attempt_range": [
+      "1926-03",
+      "1926-03"
+     ],
+     "outcomes": {
+      "legal_victory": 2,
+      "constitutional_compromise": 3,
+      "pils_victory": 7
+     },
+     "pressure_65_first_median": "1926-01",
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 0,
+     "stuck": 0
+    },
+    "active_employment": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1926-03",
+     "attempt_range": [
+      "1926-03",
+      "1926-03"
+     ],
+     "outcomes": {
+      "legal_victory": 2,
+      "constitutional_compromise": 3,
+      "pils_victory": 7
+     },
+     "pressure_65_first_median": "1925-10",
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 0,
+     "stuck": 0
+    },
+    "mass_organizations": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1926-03",
+     "attempt_range": [
+      "1926-03",
+      "1926-03"
+     ],
+     "outcomes": {
+      "legal_victory": 3,
+      "pils_victory": 7,
+      "constitutional_compromise": 2
+     },
+     "pressure_65_first_median": "1925-12",
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 0,
+     "stuck": 0
+    },
+    "prepared_mediation": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1926-03",
+     "attempt_range": [
+      "1926-03",
+      "1926-03"
+     ],
+     "outcomes": {
+      "legal_victory": 2,
+      "constitutional_compromise": 3,
+      "pils_victory": 7
+     },
+     "pressure_65_first_median": "1925-12",
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 0,
+     "stuck": 0
+    },
+    "constitutional_defense": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1926-03",
+     "attempt_range": [
+      "1926-03",
+      "1926-03"
+     ],
+     "outcomes": {
+      "legal_victory": 3,
+      "pils_victory": 6,
+      "constitutional_compromise": 3
+     },
+     "pressure_65_first_median": "1925-12",
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 0,
+     "stuck": 0
+    }
+   }
+  },
+  "cult_1923_02": {
+   "label": "the event of the cult from II 1923 (case and episode as in the present game)",
+   "strategies": {
+    "N_A": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1927-04",
+     "attempt_range": [
+      "1927-04",
+      "1927-04"
+     ],
+     "outcomes": {
+      "constitutional_compromise": 2,
+      "pils_victory": 7,
+      "legal_victory": 3
+     },
+     "pressure_65_first_median": "1927-04",
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 0,
+     "stuck": 0
+    },
+    "N_B": {
+     "attempts": 0,
+     "runs": 12,
+     "attempt_median": null,
+     "attempt_range": null,
+     "outcomes": {
+      "none": 12
+     },
+     "pressure_65_first_median": null,
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 12,
+     "stuck": 0
+    },
+    "N_C": {
+     "attempts": 0,
+     "runs": 12,
+     "attempt_median": null,
+     "attempt_range": null,
+     "outcomes": {
+      "none": 12
+     },
+     "pressure_65_first_median": null,
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 12,
+     "stuck": 0
+    },
+    "N_H": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1927-06",
+     "attempt_range": [
+      "1927-06",
+      "1927-06"
+     ],
+     "outcomes": {
+      "legal_victory": 6,
+      "pils_victory": 4,
+      "constitutional_compromise": 2
+     },
+     "pressure_65_first_median": "1927-06",
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 0,
+     "stuck": 0
+    },
+    "passive_opening": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1927-05",
+     "attempt_range": [
+      "1927-05",
+      "1927-05"
+     ],
+     "outcomes": {
+      "pils_victory": 7,
+      "constitutional_compromise": 5
+     },
+     "pressure_65_first_median": "1927-05",
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 0,
+     "stuck": 0
+    },
+    "election_campaign": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1927-08",
+     "attempt_range": [
+      "1927-08",
+      "1927-08"
+     ],
+     "outcomes": {
+      "constitutional_compromise": 4,
+      "pils_victory": 4,
+      "legal_victory": 4
+     },
+     "pressure_65_first_median": "1927-08",
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 0,
+     "stuck": 0
+    },
+    "permanent_opposition": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1927-06",
+     "attempt_range": [
+      "1927-06",
+      "1927-06"
+     ],
+     "outcomes": {
+      "legal_victory": 6,
+      "pils_victory": 4,
+      "constitutional_compromise": 2
+     },
+     "pressure_65_first_median": "1927-06",
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 0,
+     "stuck": 0
+    },
+    "formal_coalition": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1927-06",
+     "attempt_range": [
+      "1927-06",
+      "1927-06"
+     ],
+     "outcomes": {
+      "legal_victory": 6,
+      "pils_victory": 4,
+      "constitutional_compromise": 2
+     },
+     "pressure_65_first_median": "1927-06",
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 0,
+     "stuck": 0
+    },
+    "stabilization_protections": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1927-08",
+     "attempt_range": [
+      "1927-08",
+      "1927-08"
+     ],
+     "outcomes": {
+      "constitutional_compromise": 4,
+      "pils_victory": 4,
+      "legal_victory": 4
+     },
+     "pressure_65_first_median": "1927-08",
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 0,
+     "stuck": 0
+    },
+    "active_employment": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1927-06",
+     "attempt_range": [
+      "1927-06",
+      "1927-06"
+     ],
+     "outcomes": {
+      "legal_victory": 6,
+      "pils_victory": 4,
+      "constitutional_compromise": 2
+     },
+     "pressure_65_first_median": "1927-06",
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 0,
+     "stuck": 0
+    },
+    "mass_organizations": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1927-06",
+     "attempt_range": [
+      "1927-06",
+      "1927-06"
+     ],
+     "outcomes": {
+      "legal_victory": 6,
+      "pils_victory": 4,
+      "constitutional_compromise": 2
+     },
+     "pressure_65_first_median": "1927-06",
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 0,
+     "stuck": 0
+    },
+    "prepared_mediation": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1927-06",
+     "attempt_range": [
+      "1927-06",
+      "1927-06"
+     ],
+     "outcomes": {
+      "legal_victory": 6,
+      "pils_victory": 4,
+      "constitutional_compromise": 2
+     },
+     "pressure_65_first_median": "1927-06",
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 0,
+     "stuck": 0
+    },
+    "constitutional_defense": {
+     "attempts": 12,
+     "runs": 12,
+     "attempt_median": "1927-07",
+     "attempt_range": [
+      "1927-07",
+      "1927-07"
+     ],
+     "outcomes": {
+      "constitutional_compromise": 2,
+      "legal_victory": 2,
+      "pils_victory": 8
+     },
+     "pressure_65_first_median": "1927-07",
+     "public_episode_median": null,
+     "public_episodes": 0,
+     "pils_agreements": 0,
+     "stuck": 0
+    }
+   }
+  }
+ },
+ "autonomy_vote": {
+  "at": "1922-12",
+  "relations": {
+   "psl_wyzwolenie": 65,
+   "psl_piast": 45,
+   "npr": 50,
+   "pschd": 30,
+   "zln": 5,
+   "kpp": 10,
+   "jewish_rep": 50,
+   "other_minorities_rep": 50,
+   "pilsudski": 56
+  },
+  "proposed_ideals": {
+   "psl_piast": -1,
+   "pschd": -1,
+   "psl_wyzwolenie": 1
+  },
+  "present": {
+   "yes": 286,
+   "no": 99,
+   "abstain": 16,
+   "pps_seats": 43,
+   "clubs": {
+    "kpp": {
+     "vote": "abstain",
+     "seats": 2
+    },
+    "pps": {
+     "vote": "as decided",
+     "seats": 43
+    },
+    "npr": {
+     "vote": "yes",
+     "seats": 19
+    },
+    "psl_wyzwolenie": {
+     "vote": "yes",
+     "seats": 48
+    },
+    "psl_piast": {
+     "vote": "yes",
+     "seats": 70
+    },
+    "pschd": {
+     "vote": "yes",
+     "seats": 59
+    },
+    "zln": {
+     "vote": "no",
+     "seats": 99
+    },
+    "jewish_rep": {
+     "vote": "yes",
+     "seats": 30
+    },
+    "other_minorities_rep": {
+     "vote": "yes",
+     "seats": 60
+    },
+    "other": {
+     "vote": "abstain",
+     "seats": 14
+    }
+   }
+  },
+  "proposed": {
+   "yes": 157,
+   "no": 99,
+   "abstain": 145,
+   "pps_seats": 43,
+   "clubs": {
+    "kpp": {
+     "vote": "abstain",
+     "seats": 2
+    },
+    "pps": {
+     "vote": "as decided",
+     "seats": 43
+    },
+    "npr": {
+     "vote": "yes",
+     "seats": 19
+    },
+    "psl_wyzwolenie": {
+     "vote": "yes",
+     "seats": 48
+    },
+    "psl_piast": {
+     "vote": "abstain",
+     "seats": 70
+    },
+    "pschd": {
+     "vote": "abstain",
+     "seats": 59
+    },
+    "zln": {
+     "vote": "no",
+     "seats": 99
+    },
+    "jewish_rep": {
+     "vote": "yes",
+     "seats": 30
+    },
+    "other_minorities_rep": {
+     "vote": "yes",
+     "seats": 60
+    },
+    "other": {
+     "vote": "abstain",
+     "seats": 14
+    }
+   }
+  }
+ },
+ "kpp_presence": {
+  "runs": 156,
+  "runs_with_kpp_present": 108,
+  "months": 10512,
+  "months_with_kpp_present": 3263,
+  "max_share_among_workers": 5.88,
+  "strike_records": 272,
+  "strikes_with_kpp_cooperation": 0
+ }
+}

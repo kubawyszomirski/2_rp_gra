@@ -3,7 +3,6 @@ subtitle: Education: village schools, adult education, a secular school.
 new-page: true
 is-card: true
 tags: govt_affairs
-card-image: img/Der_wahre_Jacob.jpg
 view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'education_program') !}
 on-arrival: {!
 // Card government.education_program (technical reference 17.11–17.12; card catalogue 8.10). Opening and closing
@@ -28,7 +27,7 @@ A school programme is large: 1 B for 4 months of building, then 1 B to run, in u
 
 @rural_access
 title: Village schools
-subtitle: Schools for the villages covered; trust of the recipients +4 when they work (stage 5).
+subtitle: Schools for the villages covered; trust of the recipients +4 when they work.
 choose-if: {! return PolishProjects.optionStatus(Q, 'education_program', 'rural_access').available !}
 unavailable-subtitle: [+ pl_education_program_rural_access_why +]
 on-arrival: {!

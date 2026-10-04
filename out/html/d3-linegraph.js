@@ -38,13 +38,17 @@ d3.linegraph = function(noTicks, noDots, parties, partyColors, partyNames, dataM
 
     function linegraph(dataset) {
      dataset.each(function (data) {
+      // Stage 8: nothing to draw before the first settled month (an empty record would draw NaN paths).
+      if (!data || !data.length) return;
       const dates = data.map(d => new Date(d.date));
       // Map the data to an array of arrays of {x, y} tuples.
       const series = parties.map(party => data.map(d => ({'x': new Date(d.date), 'y': d[party], 'series': party})));
 
       // Declare the x (horizontal position) scale.
       const maxDate = d3.max(dates);
-      const xScale = d3.scaleUtc([new Date(1928, 0), addMonths(maxDate, additionalMonths)], [marginLeft, width - marginRight]);
+      // Stage 8: the axis starts at the first recorded month (January 1922 in the Polish game), not at a fixed 1928.
+      const minDate = d3.min(dates);
+      const xScale = d3.scaleUtc([minDate, addMonths(maxDate, additionalMonths)], [marginLeft, width - marginRight]);
 
       var xaxis = d3.axisBottom()
         .tickFormat(d3.timeFormat('%b %Y'))
@@ -59,9 +63,8 @@ d3.linegraph = function(noTicks, noDots, parties, partyColors, partyNames, dataM
 
       // Declare the y (vertical position) scale.
       if (!dataMax) {
-          const maxSPD = d3.max(data, d => d.spd);
-          const maxNSDAP = d3.max(data, d => d.nsdap);
-          dataMax = maxSPD >= maxNSDAP ? maxSPD + 10 : maxNSDAP + 10;
+          // Stage 8: the scale reads the parties actually drawn (the Polish parties), not fixed German keys.
+          dataMax = d3.max(data, d => d3.max(parties, party => Number(d[party]) || 0)) + 10;
           dataMin = 0;
       }
       const yScale = d3.scaleLinear([dataMin, dataMax], [height - marginBottom, marginTop]);

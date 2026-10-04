@@ -71,9 +71,11 @@
   const WAGE_CASE_MONTHS = 3;
   const CASE_COOLDOWN = 3;          // 17.16.5: a new case at the earliest 3 months after the last one closed
   // 9.6 (P): the communists' own contribution in points of participation, their goal and the share of the workers'
-  // vote from which they act in a strike of industry or the railways.
+  // vote from which they act in a strike of industry or the railways. Stage 8 (8f, profile kpp_goal_1922_1926): the
+  // goal is political (structural); in 1923 the KPRP sought to overthrow the cabinet by a general strike and to form a
+  // workers' and peasants' government (HISTORICAL_SOURCES.md). The game keeps the name KPP for the whole chapter.
   const PARTNER_CONTRIBUTION = 10;
-  const PARTNER_GOAL = 'broad';
+  const PARTNER_GOAL = 'structural';
   const PARTNER_PRESENCE = 5;
   const PARTNER_BRANCHES = Object.freeze(['industry', 'rail']);
   const E6_THRESHOLD = 10;          // P: the smallest refusing group that opens the card E6
@@ -1268,7 +1270,8 @@
     Q.pl_st_title = 'The strike of ' + rec.branches.map(b => BRANCH_NAMES[b].toLowerCase()).join(' and ');
     Q.pl_st_text = Q.pl_st_stage === 'cooperation' ?
       'The communists act in this strike (the KPP has ' + fmt(electorate.aggregate(S, c => c.class_id === 'workers', 'kpp')) +
-        '% among the workers). Their contribution is ' + PARTNER_CONTRIBUTION + ' points of participation; their goal is a broad demand. Relation ' +
+        '% among the workers). Their contribution is ' + PARTNER_CONTRIBUTION + ' points of participation; their goal is political: to bring down ' +
+        'the cabinet by a general strike. Relation ' +
         fmt(S.actors.relations.kpp) + '.' :
       'Milicja PPS can protect the strikers: ' + S.militia.strength + ' people, 0.5 R. Protection lowers the exposure of the people it covers; it ' +
         'does not stop a clash.';

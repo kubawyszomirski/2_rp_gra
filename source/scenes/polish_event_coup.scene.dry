@@ -2,13 +2,12 @@ title: The Coup
 subtitle: An armed attempt against the government; PPS decides its stance and the part of its organisations.
 new-page: true
 tags: pl_event
-card-image: img/map_3.jpg
 view-if: {! return !!Q.S && !!Q.polish_security_rules && PolishSecurity.coupDue(Q) !}
 on-arrival: {!
 // Event coup.attempt (technical reference 16.4–16.8, 19.1; card catalogue 9.15; profile coup_f_v1 of M08): the
 // sequence F3, F4, F5, F6+F7, F9 only with a significant share of PPS, and F10+F11. No month is spent; the four
-// rounds are computed by the engine, without menus of routes, units or tasks. The army groups are synthetic; the
-// historical units, routes and loyalties of May 1926 are TBD — historical research required.
+// rounds are computed by the engine, without menus of routes, units or tasks. The army groups are synthetic; they
+// follow the pattern of May 1926 recorded in HISTORICAL_SOURCES.md, not its units and numbers (stage 8, 8f).
 PolishSecurity.coupView(Q);
 !}
 go-to: f3 if pl_coup_step = "f3"; f4 if pl_coup_step = "f4"; f5 if pl_coup_step = "f5"; f67 if pl_coup_step = "f67"; f9 if pl_coup_step = "f9"; f10 if pl_coup_step = "f10"

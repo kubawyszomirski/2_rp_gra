@@ -3,7 +3,6 @@ subtitle: At a prepared project or a concrete military case: full civilian overs
 new-page: true
 is-card: true
 tags: parliament_affairs
-card-image: img/reichstag_3.jpg
 view-if: {! return !!Q.S && !!Q.polish_security_rules && PolishProjects.armyOversightAvailable(Q) !}
 on-arrival: {!
 // Card parliament.army_oversight (technical reference 16.3, 17.10, 17.12.4; card catalogue 7.5): 1 T; it prepares

@@ -27,20 +27,25 @@
 
   // ---- Actors and their test profiles (8.1, 8.6, 5.5) ---------------------------------------------
 
-  const ACTOR_PROFILE_ID = 'actor_profiles_v1';
+  const ACTOR_PROFILE_ID = 'actor_profiles_v2';
   const TOPICS = Object.freeze(['land', 'fiscal', 'institution', 'army', 'church', 'autonomy']);
 
   // Synthetic P profiles of 8.6: positions −2..2 per topic (unlisted topics 0), hard red lines and
-  // preferred portfolios. They are test data, not the historical positions of these parties.
+  // preferred portfolios. They are test data, not the historical positions of these parties, except the topic
+  // autonomy (the autonomy of the Slavic minorities: −2 polonisation, 0 cultural rights, +1 territorial autonomy,
+  // +2 federation). Stage 8 (8f, actor_profiles_v2) dates it for 1922–1926 from HISTORICAL_SOURCES.md: PPS +1 (its
+  // autonomy bills of 1921 and 1925), Wyzwolenie +1 (declared, without a bill), Piast and PSChD −1 (the Lanckorona
+  // pact of 1923), NPR 0 (cultural autonomy), ZLN −2 (cultural autonomy only, assimilation), the other minorities +1;
+  // the Jewish representation and the KPP stay 0 (no data on the autonomy of the Slavic lands).
   const ACTOR_PROFILES = Object.freeze({
-    pps: {name: 'PPS', ideals: {land: 1, fiscal: 2, institution: 2, army: 0}, red_lines: [], preferred_portfolios: ['labor']},
-    psl_wyzwolenie: {name: 'PSL Wyzwolenie', ideals: {land: 1, fiscal: 2, institution: 2, army: 1},
+    pps: {name: 'PPS', ideals: {land: 1, fiscal: 2, institution: 2, army: 0, autonomy: 1}, red_lines: [], preferred_portfolios: ['labor']},
+    psl_wyzwolenie: {name: 'PSL Wyzwolenie', ideals: {land: 1, fiscal: 2, institution: 2, army: 1, autonomy: 1},
       red_lines: ['discriminatory_land_access', 'end_parliamentary_control'], preferred_portfolios: ['agriculture', 'interior']},
-    psl_piast: {name: 'PSL Piast', ideals: {land: 0, fiscal: 0, institution: 0, army: 0},
+    psl_piast: {name: 'PSL Piast', ideals: {land: 0, fiscal: 0, institution: 0, army: 0, autonomy: -1},
       red_lines: ['land_confiscation', 'smallholder_burden'], preferred_portfolios: ['agriculture']},
     npr: {name: 'NPR', ideals: {land: 0, fiscal: 0, institution: 0, army: 0},
       red_lines: ['violent_takeover', 'religious_confrontation', 'end_union_autonomy'], preferred_portfolios: ['labor']},
-    pschd: {name: 'PSChD', ideals: {land: -1, fiscal: -1, institution: -1, army: 0},
+    pschd: {name: 'PSChD', ideals: {land: -1, fiscal: -1, institution: -1, army: 0, autonomy: -1},
       red_lines: ['religious_confrontation', 'land_confiscation'], preferred_portfolios: ['education', 'justice']},
     zln: {name: 'ZLN', ideals: {land: -1, fiscal: -1, institution: -1, army: 1, autonomy: -2},
       red_lines: ['territorial_autonomy', 'communists_in_cabinet'], preferred_portfolios: ['education', 'finance']},
@@ -305,14 +310,22 @@
   // Share of the partner's demands that the offer meets (8.3): a cabinet member demands one of its
   // preferred portfolios (weight 2); an external minority supporter demands its minority terms
   // (weight 2); an explicit absence of demands gives 100.
+  // 8.9 (P): in the broad cabinet of Skrzyński NPR accepts Industry and Trade as well as Labour, because its joint minimum
+  // records the full worker protection and keeps the unions independent; without it PPS and NPR would both need Labour.
+  // Implemented in stage 8 (decision A2).
+  const PORTFOLIO_ALTERNATIVES = Object.freeze({skrzynski_broad: Object.freeze({npr: Object.freeze(['economic'])})});
+
   function portfolioFit(actorId, offer) {
     const profile = profileOf(actorId);
     // In a list offer the proportional split of candidates is accepted; it is never a ministry (6.5).
     if (offer.kind === 'electoral_list') return 100;
     const demands = [];
-    if ((offer.members || []).indexOf(actorId) >= 0) {
+    // 9.6: the KPP in a front with PPS asks for no ministry; its conditions are the legal programme and its rules.
+    if ((offer.members || []).indexOf(actorId) >= 0 && actorId !== 'kpp') {
       if (!profile.preferred_portfolios.length) throw new Error('portfolioFit: ' + actorId + ' has no portfolio profile');
-      demands.push({weight: 2, met: profile.preferred_portfolios.some(key => offer.portfolios && offer.portfolios[key] === actorId)});
+      const alternatives = (PORTFOLIO_ALTERNATIVES[offer.configuration_id] || {})[actorId] || [];
+      const preferred = profile.preferred_portfolios.concat(alternatives);
+      demands.push({weight: 2, met: preferred.some(key => offer.portfolios && offer.portfolios[key] === actorId)});
     } else if (profile.minority) {
       demands.push({weight: 2, met: (offer.minority_terms || []).length > 0});
     }
@@ -675,10 +688,19 @@
     return clip((0.25 * offerRelation(S, clubId, offer) + 0.35 * programFit(clubId, offer.programme)) / 0.60, 0, 100);
   }
 
+  // 17.16.8 (P, stage 8): the ten test MPs of Piast who left a cabinet with the right in XII 1923 keep their
+  // declaration inside the 70 seats of their club: they vote against an offer or a cabinet with ZLN until a land
+  // guarantee is carried out (the episode piast_split_1923 of S.politics).
+  function piastDissidents(S) {
+    const episode = S.politics && S.politics.episodes ? S.politics.episodes.filter(e => e.id === 'piast_split_1923' && e.status === 'split')[0] : null;
+    return episode && episode.restored_at === null ? episode.seats : 0;
+  }
+
   function forecast(Q, offer, supporting, against) {
     const S = Q.S;
     const lines = [];
     let yes = 0, no = 0, abstain = 0;
+    const dissidents = offer.members.indexOf('zln') >= 0 ? piastDissidents(S) : 0;
     for (const club of S.parliament.clubs) {
       let vote;
       if (supporting.indexOf(club.id) >= 0) vote = 'yes';
@@ -690,6 +712,11 @@
         const stance = programmeStance(S, club.id, offer);
         vote = stance !== null && stance < 40 ? 'no' : 'abstain';
       }
+      if (club.id === 'psl_piast' && vote === 'yes' && dissidents > 0) {
+        yes += club.seats - dissidents; no += dissidents;
+        lines.push({club: club.id, seats: club.seats - dissidents, vote: vote}, {club: 'psl_piast_dissidents', seats: dissidents, vote: 'no'});
+        continue;
+      }
       if (vote === 'yes') yes += club.seats; else if (vote === 'no') no += club.seats; else abstain += club.seats;
       lines.push({club: club.id, seats: club.seats, vote: vote});
     }
@@ -697,11 +724,21 @@
     return {yes: yes, no: no, abstain: abstain, majority: majority, viable: majority || yes > no, lines: lines};
   }
 
+  // 9.6: the broader agreement with the KPP, on its three rules (legal vote, no forced merger, agreed end of strikes),
+  // unlocks the offers united_left and workers_front; they still need the gates, the partners and the votes of 8.6
+  // (stage 8, fix 1: until then the two offers were never available).
+  function kppFrontPrepared(S) {
+    const cc = S.actors && S.actors.communist_cooperation;
+    return !!(cc && cc.rules_agreed && cc.active_agreement);
+  }
+
   function configurationStatus(Q, configId, context) {
     const S = Q.S, config = CONFIGURATIONS[configId];
     if (!config) return {available: false, reason: 'Unknown cabinet.'};
     if (config.npc) return {available: false, reason: 'Formed by other parties.'};
-    if (config.requires === 'kpp_preparation') return {available: false, reason: 'Needs a prepared cooperation with the communists, not yet possible.'};
+    if (config.requires === 'kpp_preparation' && !kppFrontPrepared(S)) {
+      return {available: false, reason: 'Needs the broader agreement with the KPP: its rules on the legal vote, no forced merger and an agreed end of strikes (party agenda).'};
+    }
     if (config.crisis) {
       const crisis = crisisState(Q, context);
       if (!crisis.allowed) return {available: false, reason: 'Only in a real crisis: two cabinet falls within six months, a currency crisis or a credit crisis.'};
@@ -1183,7 +1220,8 @@
   // the parcelation by t+6 (17.16.4); fiscal +1 or +2 in a party cabinet the financed worker protection
   // operating in full by t+4 (9.1), and every fiscal point a rule against contrary packages; church a
   // rule for the school programme; institutions the matching constitutional project, without a date
-  // because it needs two thirds of both chambers. Army and autonomy points are not yet linked to the projects of stage 7 (a recorded gap).
+  // because it needs two thirds of both chambers. No offer of this chapter has army or autonomy points (stage 8, decision of
+  // 8c); the last branch only keeps such a point inert if a programme ever carried one.
   function programmeObligations(offer, agreementId, beneficiaries, t) {
     const config = CONFIGURATIONS[offer.configuration_id];
     const partyCabinet = !config || !config.expert;
@@ -1198,7 +1236,7 @@
           list.push(base('land', {required_project: 'land_program', required_variants: position === 1 ? ['accelerated'] : ['compensated', 'accelerated'],
             required_stage: 'completed', portfolio: 'agriculture', due_at: t + 6}));
         } else if (position >= 2) {
-          list.push(base('land', {status: 'awaiting_later_stage', note: 'Land reform without compensation needs a prior change of the property guarantees; no card of the catalogue creates it (gap, 12.6).'}));
+          list.push(base('land', {status: 'awaiting_later_stage', note: 'Land reform without compensation needs a prior change of the property guarantees, which this chapter does not offer.'}));
         } else {
           list.push(base('land', {kind: 'constraint', portfolio: 'agriculture', fulfillment: 1}));
         }
@@ -1214,7 +1252,7 @@
       } else if (topic === 'church') {
         list.push(base('church', {kind: 'constraint', portfolio: 'education', fulfillment: 1}));
       } else {
-        list.push(base(topic, {status: 'awaiting_later_stage', note: 'Not yet linked to the army control or autonomy projects (a gap recorded in stage 7).'}));
+        list.push(base(topic, {status: 'awaiting_later_stage', note: 'Army and autonomy points are not part of cabinet programmes in this chapter.'}));
       }
     }
     return list;
@@ -1532,6 +1570,11 @@
     worker_protection: Object.freeze({id: 'worker_protection', name: 'Financed worker protection',
       programme: Object.freeze({fiscal: 2}), required_project: 'worker_protection', required_variants: Object.freeze(['full']),
       required_stage: 'operating', portfolio: 'labor', weight: 2, months: 4}),
+    // Stage 8 (P; 16.7 "an accepted cabinet executor", the B run of M02): a compromise with Piłsudski under civilian
+    // control that the cabinet carries out as its own initiative; the full card of concessions stays with PPS holding
+    // Military Affairs (21.1 "Pula ustępstw wojskowych").
+    military_compromise: Object.freeze({id: 'military_compromise', name: 'A compromise with Piłsudski under civilian control',
+      programme: Object.freeze({army: 0}), required_military: 'military_function', weight: 1, months: 2}),
   });
   const TEST_PROGRAMME = POSTULATES.worker_protection;
 
@@ -1578,6 +1621,7 @@
       required_variants: spec.required_variants ? spec.required_variants.slice() : null, required_stage: spec.required_stage || null,
       portfolio: spec.portfolio || null, weight: spec.weight, due_at: live ? Q.time + spec.months : null,
       status: live ? 'active' : 'awaiting_later_stage', fulfillment: 0, last_checked: null};
+    if (spec.required_military) obligation.required_military = spec.required_military;
     if (findObligation(agreement, obligation.id)) throw new Error('addObligation: ' + obligation.id + ' already exists');
     agreement.obligations.push(obligation);
     agreement.history.push({t: Q.time, kind: 'obligation_added', obligation_id: obligation.id});
@@ -1780,6 +1824,93 @@
     if (left.motion && ppsBound(S)) decideDismissal(Q, 'bound');
   }
 
+  // 17.16.3 (P, stage 8): from V 1923 Piast and the right present a competing land and cabinet compromise, evaluated
+  // once for the new situation. The date never dismisses the sitting cabinet: the clubs of the offer must accept it
+  // and it must be able to govern (8.6 forecast); then they leave the sitting cabinet's basis (9.4) and move its
+  // dismissal, which the ordinary vote decides (7.1). PPS answers the motion as usual and may offer a better
+  // alternative in the formation that follows a fall.
+  function competingOffer(Q, configId, candidateId) {
+    const S = Q.S, cabinet = S.cabinet, t = Q.time;
+    const record = {t: t, configuration_id: configId, candidate_id: candidateId, status: null};
+    if (!cabinet || cabinet.status !== 'active' || formationPending(Q)) { record.status = 'no_active_cabinet'; return record; }
+    if (cabinet.configuration_id === configId) { record.status = 'already_governing'; return record; }
+    if (cabinet.dismissal_motion && cabinet.dismissal_motion.status === 'open') { record.status = 'motion_open'; return record; }
+    const offer = npcOffer(Q, configId, candidateId);
+    if (!offer.members.every(m => seatsOf(S, m) > 0)) { record.status = 'members_missing'; return record; }
+    const evaluations = evaluateOffer(Q, offer, {});
+    const bound = cabinet.partner_ids.concat(cabinet.supporter_ids).filter(id => offer.members.indexOf(id) < 0);
+    const fc = forecast(Q, offer, offer.members, bound);
+    record.evaluations = evaluations.map(e => ({actor: e.actor, accept: e.accept, score: e.score}));
+    record.forecast = {yes: fc.yes, no: fc.no, majority: fc.majority, viable: fc.viable};
+    if (!evaluations.length || !evaluations.every(e => e.accept) || !fc.viable) { record.status = 'not_viable'; return record; }
+    for (const member of offer.members) {
+      if (S.cabinet.status === 'active' && (cabinet.partner_ids.indexOf(member) >= 0 || cabinet.supporter_ids.indexOf(member) >= 0)) {
+        leaveCabinet(Q, member, 'competing_offer:' + configId);
+      }
+    }
+    if (cabinet.status !== 'active') { record.status = 'cabinet_resigned'; return record; }
+    if (!cabinet.dismissal_motion || cabinet.dismissal_motion.status !== 'open') {
+      cabinet.dismissal_motion = {id: 'motion-' + cabinet.id + '-t' + t + '-' + configId, opened_at: t, after_withdrawal_of: null,
+        status: 'open', pps_vote: null, ballot_id: null, successor: null};
+    }
+    cabinet.dismissal_motion.movers = offer.members.slice();
+    cabinet.dismissal_motion.competing_offer = configId;
+    S.history.reasons.push({t: t, kind: 'competing_offer', configuration_id: configId, cabinet_id: cabinet.id, motion_id: cabinet.dismissal_motion.id});
+    record.status = 'motion';
+    record.motion_id = cabinet.dismissal_motion.id;
+    if (ppsBound(S)) decideDismissal(Q, 'bound');
+    writeGovernmentMirrors(Q);
+    return record;
+  }
+
+  // Stage 8: the demand of a military compromise is shown while a military case is open (16.7).
+  function militaryCaseOpen(Q) {
+    const S = Q.S;
+    return !!(S && S.politics && S.politics.cases && Object.keys(S.politics.cases).some(id => S.politics.cases[id].kind === 'military' &&
+      S.politics.cases[id].status === 'open'));
+  }
+
+  // 17.16.8 (P, stage 8; the M02 runs): in XII 1923 ten test MPs of Piast withdraw their support from a cabinet with
+  // the right. When its remaining declared support has no majority, the motion against it carries and it falls (7.1);
+  // otherwise it survives. Their declaration stays inside the club (piastDissidents).
+  function piastSplit(Q, seats) {
+    const S = Q.S, cabinet = S.cabinet, t = Q.time;
+    const record = {t: t, seats: seats, status: null, restored_at: null};
+    if (!cabinet || cabinet.status !== 'active' || formationPending(Q)) { record.status = 'no_active_cabinet'; return record; }
+    const bound = cabinet.partner_ids.concat(cabinet.supporter_ids);
+    if (bound.indexOf('psl_piast') < 0 || bound.indexOf('zln') < 0) { record.status = 'no_right_cabinet'; return record; }
+    record.status = 'split';
+    const remaining = seatsOfList(S, bound) - seats;
+    record.remaining_support = remaining;
+    cabinet.support_seats = remaining;
+    cabinet.majority = remaining >= majorityRequired(S);
+    S.history.reasons.push({t: t, kind: 'support_withdrawn', party: 'psl_piast', seats: seats, cabinet_id: cabinet.id, reason: 'piast_split_1923', support_seats: remaining});
+    if (remaining <= S.parliament.clubs.reduce((n, club) => n + club.seats, 0) - remaining) {
+      record.cabinet_fell = cabinet.id;
+      cabinetFalls(Q, 'lost_majority');
+    }
+    writeGovernmentMirrors(Q);
+    return record;
+  }
+
+  // Decision 5A of stage 8: the profile pilsudski_aligned (10.4.3, A10) belongs to a cabinet whose premier is
+  // Piłsudski's candidate (Śliwiński, 8.7) or Piłsudski himself; it is a minority cabinet when its own parties have
+  // no majority — a cabinet of experts always is.
+  const PILSUDSKI_ALIGNED = Object.freeze(['sliwinski', 'pilsudski']);
+  function pilsudskiAligned(S) {
+    const cabinet = S.cabinet;
+    return !!cabinet && cabinet.status === 'active' && PILSUDSKI_ALIGNED.indexOf(cabinet.pm) >= 0 &&
+      seatsOfList(S, cabinet.partner_ids) < majorityRequired(S);
+  }
+
+  // The support agreement that binds PPS to the cabinet it supports from outside (8.8, 9.1).
+  function ppsSupportAgreement(S) {
+    const cabinet = S.cabinet;
+    if (!cabinet || cabinet.supporter_ids.indexOf('pps') < 0) return null;
+    return cabinet.agreement_ids.map(id => S.agreements[id]).filter(a => a && a.parties.indexOf('pps') >= 0 &&
+      (a.status === 'active' || a.status === 'breached'))[0] || null;
+  }
+
   function ppsBound(S) {
     const cabinet = S.cabinet;
     return !!cabinet && (cabinet.partner_ids.indexOf('pps') >= 0 || cabinet.supporter_ids.indexOf('pps') >= 0);
@@ -1815,10 +1946,14 @@
       let vote;
       if (club.id === 'pps') vote = ppsVote;
       else if (bound.indexOf(club.id) >= 0) vote = 'no';
+      else if ((motion.movers || []).indexOf(club.id) >= 0) vote = 'yes';
       else if (club.id === 'kpp' || !ACTOR_PROFILES[club.id]) vote = 'abstain';
       else vote = programmeStance(S, club.id, offer) < 40 ? 'yes' : 'abstain';
-      clubVotes[club.id] = {vote: vote, seats: club.seats};
-      if (vote === 'yes') yes += club.seats; else if (vote === 'no') no += club.seats; else abstain += club.seats;
+      const dissidents = club.id === 'psl_piast' && vote === 'no' && cabinet.partner_ids.concat(cabinet.supporter_ids).indexOf('zln') >= 0 ? piastDissidents(S) : 0;
+      clubVotes[club.id] = {vote: vote, seats: club.seats - dissidents};
+      if (dissidents) clubVotes.psl_piast_dissidents = {vote: 'yes', seats: dissidents};
+      if (vote === 'yes') yes += club.seats; else if (vote === 'no') no += club.seats - dissidents; else abstain += club.seats;
+      yes += dissidents;
     }
     const total = S.parliament.clubs.reduce((n, club) => n + club.seats, 0);
     return institutions.resolveBallot('cabinet_dismissal', {id: 'ballot-' + motion.id, issue_id: motion.id, yes: yes, no: no,
@@ -1873,7 +2008,8 @@
     }
     const motion = S.cabinet.dismissal_motion;
     if (motion && motion.status === 'open' && !ppsBound(S) && motion.after_withdrawal_of !== 'pps') {
-      return {kind: 'motion', motion_id: motion.id, by: motion.after_withdrawal_of, case_id: motion.id};
+      return {kind: 'motion', motion_id: motion.id, by: motion.after_withdrawal_of || (motion.movers || [])[0] || null, case_id: motion.id,
+        competing: motion.competing_offer || null};
     }
     return null;
   }
@@ -1892,6 +2028,17 @@
     const cabinet = S.cabinet;
     const ids = cabinet.partner_ids.concat(cabinet.supporter_ids).filter(id => id !== 'pps' && profileOf(id));
     if (!cabinet.party && profileOf(cabinet.pm) && ids.indexOf(cabinet.pm) < 0) ids.push(cabinet.pm);
+    return ids;
+  }
+
+  // 16.7 (stage 8): the executor of a compromise with Piłsudski is the cabinet's premier (his party, or himself as a
+  // non-party premier) and the holder of Military Affairs; they, not every supporter, answer that demand.
+  function executorEvaluators(S) {
+    const cabinet = S.cabinet, ids = [];
+    if (cabinet.party && cabinet.party !== 'pps' && profileOf(cabinet.party)) ids.push(cabinet.party);
+    else if (!cabinet.party && profileOf(cabinet.pm)) ids.push(cabinet.pm);
+    const holder = cabinet.portfolios.reichswehr;
+    if (holder && holder !== 'expert' && holder !== 'pps' && profileOf(holder) && ids.indexOf(holder) < 0) ids.push(holder);
     return ids;
   }
 
@@ -1916,10 +2063,19 @@
   function postulateStatus(Q, postulateId) {
     const S = Q.S, cabinet = S.cabinet, postulate = POSTULATES[postulateId];
     if (!postulate) return {available: false, reason: 'Unknown demand.'};
+    if (postulate.required_military) {
+      const military = S.politics && S.politics.cases ? Object.keys(S.politics.cases).map(id => S.politics.cases[id])
+        .filter(c => c.kind === 'military' && c.status === 'open')[0] : null;
+      if (!military) return {available: false, reason: 'No military case is open.'};
+      const current = S.actors.pilsudski && S.actors.pilsudski.agreement_id ? S.agreements[S.actors.pilsudski.agreement_id] : null;
+      if (current && current.status === 'active') return {available: false, reason: 'An agreement with Piłsudski already exists.'};
+      if (cabinet.portfolios.reichswehr === 'pps') return {available: false, reason: 'PPS holds Military Affairs: it offers the concessions itself.'};
+      if (cabinet.pm === 'pilsudski') return {available: false, reason: 'Piłsudski heads this cabinet.'};
+    }
     if (cabinet.accepted_postulates.indexOf(postulateId) >= 0) return {available: false, reason: 'This cabinet has already accepted it.'};
     const same = Object.keys(postulate.programme).every(topic => cabinet.programme[topic] === postulate.programme[topic]);
     if (same) return {available: false, reason: 'The cabinet programme already contains it.'};
-    if (!demandEvaluators(S).length) return {available: false, reason: 'Nobody in the cabinet can answer this demand.'};
+    if (!(postulate.required_military ? executorEvaluators(S) : demandEvaluators(S)).length) return {available: false, reason: 'Nobody in the cabinet can answer this demand.'};
     return {available: true, reason: ''};
   }
 
@@ -1939,7 +2095,7 @@
     return null;
   }
 
-  function supportOptionStatus(Q, action, mode) {
+  function supportOptionStatus(Q, action, mode, postulateId) {
     const S = Q.S, stance = ppsStance(S);
     const open = mode === 'response' ? responseCase(Q) : null;
     if (mode === 'response' && !open) return {available: false, reason: 'There is no open case to answer.'};
@@ -1954,7 +2110,7 @@
     }
     if (action === 'bargain' || action === 'persuade') {
       if (stance !== 'member' && stance !== 'supporter') return {available: false, reason: 'PPS does not support this cabinet.'};
-      return postulateStatus(Q, 'worker_protection');
+      return postulateStatus(Q, postulateId || 'worker_protection');
     }
     if (action === 'extension') return extensionStatus(Q);
     if (action === 'support_dismissal') return dismissalSupportStatus(Q);
@@ -1971,13 +2127,14 @@
   function supportDemand(Q, kind, postulateId, mode) {
     const S = Q.S, cabinet = S.cabinet, t = Q.time;
     if (kind !== 'bargain' && kind !== 'persuade') throw new Error('supportDemand: unknown kind ' + kind);
-    const status = supportOptionStatus(Q, kind, mode);
+    const status = supportOptionStatus(Q, kind, mode, postulateId);
     if (!status.available) throw new Error('supportDemand: ' + status.reason);
     syncRelations(Q);
     const postulate = POSTULATES[postulateId];
     const offer = demandOffer(S, postulate);
     const discounted = kind === 'bargain' && cabinet.pps_threat_discounted;
-    const evaluations = demandEvaluators(S).map(id =>
+    const evaluators = postulate.required_military ? executorEvaluators(S) : demandEvaluators(S);
+    const evaluations = evaluators.map(id =>
       evaluatePartner(S, id, offer, kind === 'bargain' && !discounted ? governmentNeed(Q, id, offer) : 0));
     const accepted = evaluations.length > 0 && evaluations.every(e => e.accept);
     commitSupport(Q, mode, kind);
@@ -2000,7 +2157,8 @@
         }
         addObligation(Q, id, {id: postulate.id, topic: postulate.id, weight: postulate.weight, months: postulate.months,
           required_project: postulate.required_project, required_variants: postulate.required_variants,
-          required_stage: postulate.required_stage, portfolio: postulate.portfolio, beneficiaries: ['pps']});
+          required_stage: postulate.required_stage, portfolio: postulate.portfolio, beneficiaries: ['pps'],
+          required_military: postulate.required_military});
       }
       if (kind === 'bargain') {
         for (const e of evaluations) if (S.actors.relations[e.actor] !== undefined) changeRelation(Q, e.actor, FORCED_CONCESSION_RELATION, 'forced_concession:' + negotiationId);
@@ -2187,6 +2345,23 @@
     return {open: Q.time >= next.time - 2 && Q.time <= next.time - 1, election_id: next.id, vote_time: next.time};
   }
 
+  // G4 (card catalogue 9.17; 17.15, stage 8): a reminder of the coming Sejm election — its lawful date and the list on
+  // which PPS stands — in the three months before it. Information only: no free action or bonus.
+  const MONTH_NAMES = Object.freeze(['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October',
+    'November', 'December']);
+  function electionReminder(Q) {
+    const S = Q.S, next = S && S.parliament && S.parliament.next_election;
+    if (!next || S.chapter.status === 'ended') return '';
+    const left = next.time - Q.time;
+    if (left < 0 || left > 3) return '';
+    const parts = String(next.vote_date || '').split('-').map(Number);
+    const date = parts.length === 3 ? parts[2] + ' ' + MONTH_NAMES[parts[1] - 1] + ' ' + parts[0] : rules.yearOf(next.time) + '';
+    const when = left === 0 ? 'this month' : left === 1 ? 'next month' : 'in ' + left + ' months';
+    const list = alliancesFor(S, next.id).filter(a => a.members.indexOf('pps') >= 0)[0];
+    return 'The Sejm election is held on ' + date + ' (' + when + '). ' + (list ? 'PPS stands on the joint list ' + list.name + '.' :
+      'PPS stands on its own list' + (listWindow(Q).open ? '; a joint list can still be agreed until the lists close.' : '.'));
+  }
+
   function alliancesFor(S, electionId) {
     return (S.parliament.alliances || []).filter(a => a.election_id === electionId && a.status === 'accepted');
   }
@@ -2357,6 +2532,7 @@
 
   return Object.freeze({
     ACTOR_PROFILE_ID: ACTOR_PROFILE_ID,
+    PORTFOLIO_ALTERNATIVES: PORTFOLIO_ALTERNATIVES,
     POSTULATES: POSTULATES,
     TEST_PROGRAMME: TEST_PROGRAMME,
     LIST_OPTIONS: LIST_OPTIONS,
@@ -2369,6 +2545,13 @@
     weightedFulfillment: weightedFulfillment,
     settleAgreements: settleAgreements,
     leaveCabinet: leaveCabinet,
+    competingOffer: competingOffer,
+    electionReminder: electionReminder,
+    piastSplit: piastSplit,
+    piastDissidents: piastDissidents,
+    militaryCaseOpen: militaryCaseOpen,
+    pilsudskiAligned: pilsudskiAligned,
+    ppsSupportAgreement: ppsSupportAgreement,
     cabinetFalls: cabinetFalls,
     constructiveVoteRequired: constructiveVoteRequired,
     programmeObligations: programmeObligations,

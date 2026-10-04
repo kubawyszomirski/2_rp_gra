@@ -1,7 +1,6 @@
 title: Answer to a Partner
 subtitle: [+ pl_resp_subtitle +]
 is-pinned-card: true
-card-image: img/muller_cabinet.jpg
 view-if: {! return !!Q.S && !!PolishGovernment.responseCase(Q) !}
 new-page: true
 on-arrival: {!
@@ -12,6 +11,7 @@ Q.pl_sup_mode = 'response';
 var open = PolishGovernment.responseCase(Q);
 Q.pl_resp_kind = open ? open.kind : '';
 Q.pl_resp_by = open ? PolishGovernment.describeParty(open.by) : '';
+Q.pl_resp_competing = open && open.competing ? 1 : 0;
 Q.pl_sup_member = PolishGovernment.ppsStance(Q.S) === 'member' ? 1 : 0;
 Q.pl_sup_withdraw_reason = PolishGovernment.supportOptionStatus(Q, 'withdraw', 'response').reason;
 Q.pl_sup_demand_reason = PolishGovernment.supportOptionStatus(Q, 'bargain', 'response').reason;
@@ -25,7 +25,9 @@ Q.pl_sup_motion_reason = PolishGovernment.dismissalSupportStatus(Q).reason;
 
 [? if pl_resp_kind = "ultimatum" : The tension has passed 60. Unless the broken promise is met or extended, [+ pl_resp_by +] ends its support at the settlement two months after the ultimatum. ?]
 
-[? if pl_resp_kind = "motion" : [+ pl_resp_by +] has withdrawn its support from the cabinet, and a motion to dismiss it is before the Sejm. Without our answer PPS abstains when it is voted at the next settlement. ?]
+[? if pl_resp_kind = "motion" and not pl_resp_competing : [+ pl_resp_by +] has withdrawn its support from the cabinet, and a motion to dismiss it is before the Sejm. Without our answer PPS abstains when it is voted at the next settlement. ?]
+
+[? if pl_resp_kind = "motion" and pl_resp_competing : PSL Piast, PSChD and ZLN present their own land and cabinet compromise and move to dismiss the government; the motion is before the Sejm. Without our answer PPS abstains when it is voted at the next settlement. If the government falls, PPS makes its own offer in the formation. ?]
 
 [? if pl_resp_kind = "review" : Our toleration of [+ pl_resp_by +] is an agreement for six months, and three of them have passed. We can keep our support, bargain or persuade for a new demand, or end our support. ?]
 

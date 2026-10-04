@@ -1,5 +1,73 @@
 # Historical Source Register
 
+## PL-STAGE8-NORMAL-SCENARIO-2026-10-04 — stage 8 of the implementation plan implemented (the last stage)
+
+- **Authority:** the user approved the detailed stage 8 plan and its six
+  decisions: 1A — the calibration target is the M02 pattern on shared seeds
+  (N-A and N-H attempt a coup in at least two thirds of the seeds, with a
+  median in March–August 1926; N-B and N-C with a carried-out military
+  agreement have no attempt before the 1928 election in at least two thirds),
+  plus the feasibility checks of 21.2, without forcing May; 2A — the opening
+  electorate is tuned so that a passive PPS gets the M02 baseline Sejm within
+  ±5 seats per club; 3A — the screens show only Polish data; 4A — functional
+  English texts for the G1 and G4 screens, without working notes and without
+  new historical narrative; 5A — `pilsudski_aligned` means the cabinets of
+  Śliwiński and Piłsudski, and a minority cabinet is one whose parties lack
+  their own majority, an expert cabinet included; 6B — research of the TBD
+  items in part 8f, each finding entering this register and the game only
+  after the user's consent. On 4 October 2026 the user accepted all nine
+  proposals of the 8f research report and asked to tune the coup pressure to
+  spring 1926; approved A1–A4 (the resignation of Grabski from November 1925
+  when he governs in a credit or currency crisis, rule 8.9 for the NPR, the
+  review of an agreement carried out by the cabinet, fixes of the strategy
+  automata); approved the closing fixes 1–5 and the description of the
+  limitations 6–12; decided that stage 8 is the last stage of the plan; and
+  decided not to implement the presidential dissolution of 7.6, so a lawful
+  early election stays unreachable.
+- **Contract:** technical reference 0.49, sections 5.2, 7.6, 8.6, 8.9, 9.6,
+  10.5, 15.3, 16.1, 16.8, 16.8.1, 16.8.5, 17.7, 17.10, 17.12.4, 17.16.3,
+  17.16.6, 17.16.11, 19.2, 21.2 and 23.22;
+  `docs/POLISH_IMPLEMENTATION_PLAN.md`, chapter 18;
+  `docs/POLISH_CARD_CATALOGUE.md`, entry 9.17, with the code rows of 4.6,
+  6.6, 6.7, 7.1, 7.6, 8.5, 8.6, 9.2, 9.6, 9.7 and 9.15 updated.
+- **Classification:** implementation (K) of approved rules. The per-party
+  factors of the opening calibration
+  (`analysis/stage8-campaigns/calibration.json`), the coup pressure of 0 at
+  the start, the ten Piast MPs who leave a cabinet with the right in December
+  1923 (a working value from M02), the window of the Chjeno-Piast offer (May–
+  December 1923), the earliest month of the Grabski resignation (November
+  1925) and the plans of the thirteen strategy automata are gameplay test
+  values (P), not measured historical quantities.
+- **Historical boundary:** the dates and texts taken from part 8f follow the
+  entries of the section "Stage 8 historical research (part 8f)" below: the
+  military case from July 1923 and the public pressure of the officers from
+  November 1925 (`PL-MILITARY-CASE-1923-1926`), the topic of the 1922 speech
+  (`PL-1922-CABINET-CRISIS`), the funeral at Powązki on 6 February 1923
+  (`PL-NIEWIADOMSKI-CULT-1923`), the goal of the communists in strikes
+  (`PL-KPRP-GOALS-1923`), the autonomy positions of the parties
+  (`PL-MINORITY-AUTONOMY-1922-1926`) and the coup texts without TBD notes
+  (`PL-MAY-COUP-1926-COURSE`). The sequence of cabinets in the automated
+  campaigns (Ponikowski, Śliwiński, Nowak, Witos, Grabski, Skrzyński) is an
+  outcome of the rules, not a forced chronology. An attempted coup in March
+  1926 is a gameplay outcome of the opportunity window (P, 17.16.6), not a
+  claim about the historical coup of May 1926. The army groupings stay
+  synthetic. The procedure for replacing an MP, the senior Marshal, the
+  positions of the Left before 1926 and the loyalty of the officer corps
+  remain **TBD — historical research required**. No historical fact, person,
+  organisation or citation is introduced beyond the 8f entries.
+- **Evidence:** `tests/polish-campaign.test.js` (2 tests),
+  `tests/polish-scenario.test.js` (18) and thirteen adapted test files;
+  `npm test` 438 of 438; `analysis/stage8-campaigns/REPORT.md` (13
+  strategies on 12 shared seeds; 156 of 156 campaigns reach a report; the 1A
+  targets met); `analysis/stage8-research/REPORT.md`;
+  `analysis/implementation-plan/check.cjs`,
+  `analysis/card-catalogue/check.cjs` and the other analysis checks; a
+  browser smoke test of the built game.
+- **Status:** implemented; the last stage of the implementation plan. Schema
+  8 is unchanged, so saves of stage 7 still load. No dependency or scenario
+  metadata changed. The limitations of the finished chapter, including the
+  unreachable lawful early election, are listed in chapter 18 of the plan.
+
 ## PL-STAGE7-DEMOCRACY-COUP-2026-09-27 — stage 7 of the implementation plan implemented
 
 - **Authority:** the user approved the detailed stage 7 plan and its three
@@ -2304,6 +2372,15 @@ Add one row whenever an entry above is assigned a stable Source ID.
 | PL-STAGE5-PARTY-2026-09-27 | Implementation | Stage 5: 54 electorate cells with the opening result unchanged, the party ledger, organisations, Milicja and AS, three union branches, eight stance cards and the economic programme, the Media card, the KPP agenda and the Bund, faction cases and the card E3 with the M16 split, the unity card with the purge, the adviser card and the adviser actions of 10.4.3; inherited party cards and faction crises switched off, leak 10 closed | Implemented | Implemented, 27 September 2026 |
 | PL-STAGE6-UNIONS-2026-09-27 | Implementation | Stage 6: unions and strikes in `S.strikes` (the steps of a dispute, a strike month, one recorded round of talks, the union's consent, settlements and their execution, E6), the 1923 wage case and Kraków, the authorities by cabinet profile, the communists and the Milicja in a strike, the Sejm response, synthetic plants in `S.enterprises`, collective agreements, derogations, the rescue, public control and representation, Grabski's protections and the six-month toleration; the German strike events switched off | Implemented | Implemented, 27 September 2026 |
 | PL-STAGE7-DEMOCRACY-COUP-2026-09-27 | Implementation | Stage 7: democracy, violence, cases and restrictions with a legal profile, grievance and coup pressure in `S.politics`; synthetic army groupings, the force assessment, police, army control and the agreement with Piłsudski in `S.security`; the coup engine `coup_f_v1` in `S.coup` with the M08 profile; the 1922 cabinet crisis, Piłsudski's criticism, the assassination of Narutowicz with the response and the Niewiadomski ceremony; the fuller chapter report; 26 German scenes guarded | Implemented | Implemented, 27 September 2026 |
+| PL-MILITARY-CASE-1923-1926 | Army command dispute / legislation | The military case opens with Piłsudski’s resignation of 2 VII 1923; officers’ demonstration 15 XI 1925 | Researched and approved; implemented as dated inputs | Stage 8, part 8f, 4 October 2026 |
+| PL-ARMY-POSTS-1922-1926 | Army / constitution | Ministers of Military Affairs, Chiefs of the General Staff and their competences | Researched and approved; documentation only | Stage 8, part 8f, 4 October 2026 |
+| PL-1922-CABINET-CRISIS | Cabinet chronology / constitution | The dispute of June 1922 over who appoints the cabinet; Śliwiński, Korfanty and Nowak | Researched and approved; speech topic implemented, July sequence not modelled | Stage 8, part 8f, 4 October 2026 |
+| PL-NIEWIADOMSKI-CULT-1923 | Political violence / Church | The funeral at Powązki on 6 II 1923 and the services of February 1923 | Researched and approved; implemented in event B5 | Stage 8, part 8f, 4 October 2026 |
+| PL-MAY-COUP-1926-COURSE | Coup / transport / mediation | Forces, the railway blockade, Rataj’s mediation and the cabinet of Bartel | Researched and approved; synthetic forces kept | Stage 8, part 8f, 4 October 2026 |
+| PL-KPRP-GOALS-1923 | Communists / strikes | Political goal of the KPRP in 1923: overthrow of the cabinet by a general strike | Researched and approved; implemented as the KPP goal | Stage 8, part 8f, 4 October 2026 |
+| PL-PPS-CURRENTS-1922-1926 | PPS factions | Support for the stance rules of the Piłsudczycy (strong) and the Centrum (partial) | Researched and approved; documentation only | Stage 8, part 8f, 4 October 2026 |
+| PL-MINORITY-AUTONOMY-1922-1926 | Minorities / party programmes | Party positions on territorial autonomy; PPS autonomy bills of 1921 and 1925 | Researched and approved; implemented in `actor_profiles_v2` | Stage 8, part 8f, 4 October 2026 |
+| PL-STAGE8-NORMAL-SCENARIO-2026-10-04 | Implementation | Stage 8, the last stage: the Normal scenario with the dated inputs of 17.16 and of the 8f research, the opening calibrated to the M02 Sejm, rule 8.9 for the NPR, the military compromise carried out by the cabinet, Polish-only screens, thirteen strategy automata playing full campaigns, and the closing fixes | Implemented | Implemented, 4 October 2026 |
 | TBD | TBD | TBD | TBD | TBD |
 
 ### Source entry PL-PARTY-CARDS-REVIEW-2026-09-10
@@ -2447,3 +2524,74 @@ Add one row whenever an entry above is assigned a stable Source ID.
 - **New gameplay parameters P:** first six-month broad-cabinet review during an active credit crisis; proposed full-benefit cost 2→1 B; full-benefit compromise using existing financing and draft relationship gates ZLN 25 / PSChD 45; one tax-funded Grabski credit revision; wage recovery up to 3; first actual settlement benefit -4 grievance to recipients; military resolution no earlier than phase 2. Political preferences and this timing are simplifications, not claims about historical decisions on those exact terms.
 - **Evidence:** `analysis/m02-four-runs/REPORT.md` and `analysis/m02-revision-13/REPORT.md`. The old four-run report corrects an overinterpretation of the rail test: its remote reserve drew Piłsudski, so a separate explicitly fixed-loyalty comparison is needed to isolate enemy transport.
 - **Limits:** controlled mandates, actor consents, party cohesion and synthetic forces remain explicit inputs. The historical-intention fixture reaches the cabinet dispute and replacement but a December 1926 coup; historical calibration remains open. No new historical facts or external citations have been inferred from simulation output.
+
+## Stage 8 historical research (part 8f) — 4 October 2026
+
+- **Authorization:** decision 6B of stage 8 (research the TBD points now; each result enters this register and the game only after approval). The user approved all nine proposals of [analysis/stage8-research/REPORT.md](analysis/stage8-research/REPORT.md) on 4 October 2026.
+- **Method:** four research passes over scholarly works, legal acts and period press, all accessed 4 October 2026. Their working notes are in `analysis/stage8-research/notes/`; they are model output and a list of leads, not sources. The claims marked *verified* below were checked directly in the cited source. Measured game effects: `analysis/stage8-research/whatif.cjs` and `results.json`.
+- **Boundary:** the dated inputs below start scenario processes; what follows them depends on the game (alternate history). No quotation beyond short phrases is reproduced.
+
+### Source entry PL-MILITARY-CASE-1923-1926
+
+- **Category / period:** the dispute over the supreme military authorities, 1921–1926.
+- **Primary sources:** [Konstytucja z 17 III 1921](https://api.sejm.gov.pl/eli/acts/DU/1921/267/text.html), Dz.U. 1921 nr 44 poz. 267, art. 44–46 and 50; [Dekret Prezydenta z 6 VIII 1926](https://eli.gov.pl/eli/DU/1926/445/ogl), Dz.U. 1926 nr 79 poz. 445 (the General Inspector of the Armed Forces).
+- **Scholarly and institutional sources:** Z. Cutter, [“Kontrowersje (spór) w zakresie organizacji naczelnych władz wojskowych w latach 1923–1926”](https://bg.uwb.edu.pl/pcr/ZNMW/files/ZNMW_2007_20_014.pdf), *Zeszyt Naukowy Muzeum Wojska* 20 (2007); P. Stawecki, [protocol of the first meeting of the Komitet Obrony Państwa](https://rcin.org.pl/Content/23461), *Kwartalnik Historyczny* 1988 nr 3; W. Suleja, [“Zamach majowy”](https://przystanekhistoria.pl/pa2/teksty/100884,Zamach-majowy.html), Przystanek Historia (IPN), 2023; Muzeum Historii Polski / PAP, [“Józef Piłsudski”](https://dzieje.pl/postacie/jozef-pilsudski), dzieje.pl.
+- **Evidence and confidence:**
+  - Szeptycki’s bill on the supreme military authorities went to the Council of Ministers on 18 VI 1923 and to the Sejm on 27 VI 1923 (medium: one scholarly source each).
+  - On 2 VII 1923 Piłsudski resigned the chairmanship of the Ścisła Rada Wojenna, his last military function, and stayed out of active service until 15 V 1926 (high; four sources; *verified* in dzieje.pl). He had resigned as Chief of the General Staff at the end of May 1923, effective in June.
+  - Later phases: Sosnkowski’s compromise attempt (XII 1923 – II 1924); Sikorski’s bill in the Sejm from 14 III 1924, withdrawn from committee around 10 II 1926; the officers’ demonstration in Sulejówek on 15 XI 1925, after the resignation of Grabski’s cabinet on 13 XI; Żeligowski’s bill of 4 V 1926; the decree of 6 VIII 1926 (high for the dates of the acts, medium for the committee dates).
+  - Historians disagree whether the officers’ meetings of 1925–1926 amounted to a conspiracy.
+- **Game use (approved):** the military case of `normal_chapter1_v1` opens in VII 1923 (anchor 2 VII 1923); the one public episode of military pressure (+8) comes in the first cabinet crisis from XI 1925 while the case is open. The subject “the organisation of the supreme military authorities” matches the sources.
+- **Status / boundary:** implemented in stage 8. The +2/M pressure of an open case, the threshold 65 and the opportunity window from III 1926 are game design (17.16.11), not findings of these sources.
+
+### Source entry PL-ARMY-POSTS-1922-1926
+
+- **Category / period:** holders and competences of the main army posts, 1922–1926.
+- **Sources:** the March Constitution and Cutter (above); T. Kmiecik, [“Problemy organizacji najwyższych władz wojskowych w okresie międzywojennym”](https://bazhum.muzhp.pl/media/texts/supskie-studia-historyczne/2003-tom-10/slupskie_studia_historyczne-r2003-t10-s283-292.pdf), *Słupskie Studia Historyczne* 10 (2003); J. Ryba, [“Gen. Stanisław Haller”](https://przystanekhistoria.pl/pa2/teksty/101700,Gen-Stanislaw-Haller-1872-1940.html), Przystanek Historia (IPN), 2024; further sources in `analysis/stage8-research/notes/military-case.md`.
+- **Evidence:** Ministers of Military Affairs: Sosnkowski (to V 1923), Osiński as acting head (28 V – 13 VI 1923, medium), Szeptycki (13 VI – 5 XII 1923), Sosnkowski (19 XII 1923 – II 1924), Sikorski (17 II 1924 – 14 XI 1925), Żeligowski (27 XI 1925 – 10 V 1926), Malczewski (10–15 V 1926), Piłsudski (from 15 V 1926). Chiefs of the General Staff: Sikorski (to 16 XII 1922), Piłsudski (XII 1922 – VI 1923), S. Haller (VI 1923 – V 1926; Kessler acting from XII 1925). Under art. 46 the President was the supreme head of the armed forces but could not command in war; the commander-in-chief was appointed only for a war. In 1922–1926 every Minister of Military Affairs was a general.
+- **Game use (approved):** documentation only. Cabinets in the game differ from history, so historical names are not shown; the nomination profile stays synthetic (P). A party, PPS included, may hold Military Affairs in the game: a gameplay simplification.
+- **Status / boundary:** the vacancy of the Ścisła Rada Wojenna chairmanship after 2 VII 1923 and several exact days of appointment remain TBD — historical research required.
+
+### Source entry PL-1922-CABINET-CRISIS
+
+- **Category / period:** the cabinet crisis of June–July 1922.
+- **Sources:** J. Faryś, [“Józef Piłsudski w systemie polskiej demokracji 1922 r.”](https://czasopisma.ipn.gov.pl/index.php/pis/article/download/1035/811/845), *Pamięć i Sprawiedliwość* 2(38)/2021; K.M. Szudarek, [“Józef Piłsudski kontra Sejm Ustawodawczy”](https://dlibra.umcs.lublin.pl/Content/48220/download), *Res Historica* 56 (2023); M. Zarychta, [“Manifestacje, strajki, zamieszki…”](https://czasopisma.ipn.gov.pl/index.php/pis/article/download/2250/2137), *Pamięć i Sprawiedliwość* 40(2)/2022; “Naprzód” (PPS, Kraków) 1922, [no. 157 of 16 VII](https://jbc.bj.uj.edu.pl/Content/376752/PDF/NDIGCZAS014415_1922_157.pdf) and [no. 170 of 31 VII](https://jbc.bj.uj.edu.pl/Content/376765/PDF/NDIGCZAS014415_1922_170.pdf).
+- **Evidence:** on 2 VI 1922 the Naczelnik asked the Council of Ministers whether the state was in danger; the cabinet of Ponikowski resigned and he accepted the resignation on 6 VI (*verified*, Faryś). Faryś interprets the aim as removing the ministers Skirmunt and Michalski; dzieje.pl names a dispute over army credits. The dispute then turned to who appoints the cabinet: on 16 VI the Sejm interpreted the Small Constitution (initiative “as a rule” with the Naczelnik, otherwise designation by a Sejm organ). Śliwiński was appointed on 28 VI and refused confidence on 7 VII by 201:195 with 3 abstentions (*verified*). On 14 VII the Main Commission designated Korfanty by 219:206 (*verified*); Piłsudski did not sign the decrees and warned he would resign. PPS held a demonstrative strike in Warsaw on 18 VII (attendance 8,000–50,000 by source). On 26 VII the Sejm rejected a no-confidence motion against the Naczelnik; on 29 VII Korfanty’s designation was withdrawn and Nowak accepted; his cabinet was appointed on 31 VII.
+- **Game use (approved):** the dispute stays in VI 1922; the topic of Piłsudski’s B2 speech is “the right to appoint the cabinet”. The July sequence is not modelled: in the game Śliwiński governs until the election (simplification). The Korfanty episode with the PPS strike is a candidate for later content.
+- **Status / boundary:** several vote counts differ between sources; Faryś and the stenographic record are preferred.
+
+### Source entry PL-NIEWIADOMSKI-CULT-1923
+
+- **Category / period:** the public cult of the assassin of President Narutowicz, February 1923.
+- **Sources:** A. Piber, [entry “Eligiusz Józef Niewiadomski”](https://www.ipsb.nina.gov.pl/a/biografia/eligiusz-jozef-niewiadomski-1869-1923-malarz-historyk-krytyk), *Polski Słownik Biograficzny* t. 23 (iPSB); “Naprzód” 1923, [no. 39 of 11 II](https://jbc.bj.uj.edu.pl/Content/396101/PDF/NDIGCZAS014415_1923_039.pdf); “Gazeta Bydgoska” 1923, [no. 122 of 31 V](https://jbc.bj.uj.edu.pl/Content/1000040/NDIGCZAS102892_1923_122.pdf); P. Gołdyn, [“Łomżyński spór o nabożeństwo…”](https://bg.uwb.edu.pl/pcr/SL/files/SL_2015_25_009.pdf), *Studia Łomżyńskie* 25 (2015); [stenographic report of the 16th sitting of the Sejm, 16 II 1923](https://dlibra.umcs.lublin.pl/Content/9716/download/).
+- **Evidence:** Niewiadomski was executed on 31 I 1923; on 6 II he was buried at Powązki after a requiem mass, with about 10,000 people (*verified*, PSB). Services in his honour followed in February in Warsaw, Kraków (10 II at the Franciscans, followed that evening by a PPS march of several thousand with broken windows and a clash), Łomża (15 II), Zakopane (20 II), Lwów, Poznań and Toruń (date TBD). Around 10 II the bishops condemned the misuse of services for demonstrations (*verified*, PSB). On 16 II the Sejm accepted the urgency of a PSL “Wyzwolenie” motion against glorifying the crime; PSB speaks of a special resolution, the stenographic record of a referral to committee (TBD).
+- **Game use (approved):** the event B5 comes from II 1923; its named commemoration is the funeral at Powązki on 6 II 1923, stated in the event text. The answers of PPS and the mass for democracy remain alternatives of the game.
+
+### Source entry PL-MAY-COUP-1926-COURSE
+
+- **Category / period:** forces, transport and mediation in the May Coup, 12–15 V 1926.
+- **Sources:** W. Suleja, [“Przewrót majowy – co się wydarzyło w Warszawie”](https://przystanekhistoria.pl/pa2/tematy/jozef-pilsudski/32716,Przewrot-majowy-co-sie-wydarzylo-w-Warszawie-w-dniach-1215-maja-1926-r.html), Przystanek Historia (IPN), 2019, and [“Majowy przypadek”](https://ipn.gov.pl/pl/historia-z-ipn/241963,Wlodzimierz-Suleja-Majowy-przypadek.html), *Biuletyn IPN* 5/2026; J. Halbersztadt, [*Przegląd Historyczny* 74/4 (1983), pp. 677–724](https://bazhum.muzhp.pl/media/texts/przeglad-historyczny/1983-tom-74-numer-4/przeglad_historyczny-r1983-t74-n4-s677-724.pdf); PAP, [“100 lat temu zamach majowy podzielił Polskę…”](https://dzieje.pl/node/168431), dzieje.pl, 12 V 2026; W. Kowalski (see `PPS-MAY-1926-ROLE`); further sources in `analysis/stage8-research/notes/may-coup-1926.md`.
+- **Evidence (numbers conflict between sources; medium or low confidence):** in Warsaw about 3,400–3,500 soldiers on Piłsudski’s side against about 1,700 on the government’s on 12 V; about 8,500 and some 800 members of the Związek Strzelecki against about 2,000–2,200 on 14 V. Government reinforcements from Wielkopolska and Pomerania were held near Ożarów, those from Kraków stopped on the way; Piłsudski’s reinforcements from Wilno and the Lublin region arrived by rail on 14 V. On 13 V the railway workers’ union called for stopping transports of troops coming to the government’s aid, and the PPS Central Executive Committee called a general strike from 14 V. Mediation: the President and Piłsudski met on the Poniatowski Bridge on 12 V without agreement; that evening the Marshal of the Sejm, Rataj, mediated and the President refused talks; generals mediated on 13 V without result; on 14 V in Wilanów the cabinet and the President resigned; on 15 V Rataj, acting as President, entrusted the cabinet to Kazimierz Bartel, with Piłsudski as Minister of Military Affairs. The Żeligowski commission counted 379 dead, 164 of them civilians, and about 920 wounded; other estimates differ. Historians disagree on the loyalty of the officer corps.
+- **Game use (approved):** the synthetic force profile `synthetic_test_v2` stays (its four groups follow this pattern, not its units or numbers). The marshal of the Sejm as mediator has a historical basis; the settlement “change of cabinet” corresponds to the cabinet of Bartel. The development note on the candidate was removed from the player text. The link between democracy and officer loyalty stays a gameplay simplification.
+
+### Source entry PL-KPRP-GOALS-1923
+
+- **Category / period:** the aims of the Communist Workers’ Party of Poland in the strikes of 1923.
+- **Sources:** A. Pilch, [“Wydarzenia krakowskie roku 1923 z perspektywy 60-lecia”](https://journals.akademicka.pl/krzysztofory/article/download/6928/6529/9515), *Krzysztofory* 10 (1983), pp. 84–88; A. Friszke, [“KPP 1926–1937 – stan organizacji”](https://przegladhistoryczny.uw.edu.pl/wp-content/uploads/sites/213/2025/09/PH_2025_2_Friszke.pdf), *Przegląd Historyczny* 116 (2025); further sources in `analysis/stage8-research/notes/pps-currents-autonomy-kprp.md`.
+- **Evidence:** the II Congress of the KPRP (IX–X 1923) and “Nowy Przegląd” called for overthrowing the Chjeno-Piast cabinet and forming a workers’ and peasants’ government as a step to the dictatorship of the proletariat, by a general strike or mass demonstrations rather than parliament (*verified*, Pilch p. 85). In Kraków in November 1923 the KPRP called for continuing the strike until victory but did not lead the movement; PPS had the decisive influence (*verified*, Pilch p. 87). PPS and the trade-union leadership rejected the KPRP’s united-front offers of 1922 and 1923. Pilch is a work of the 1980s with a Marxist framework.
+- **Game use (approved):** the KPP partner goal in strikes is structural (political), profile `kpp_goal_1922_1926`. The game keeps the name KPP for the whole chapter, although the party was called KPRP until 1925 (simplification).
+
+### Source entry PL-PPS-CURRENTS-1922-1926
+
+- **Category / period:** informal currents inside PPS, 1922–1926.
+- **Sources:** J. Gołota, [“Jędrzej Moraczewski w latach 1919–1926”](https://rcin.org.pl/Content/51662/PDF/WA303_70506_A507-DN-R-25-2_Golota.pdf), *Dzieje Najnowsze* 25 (1993); W. Kowalski, [“Stanowisko PPS wobec zamachu majowego”](https://czasopisma.uwr.edu.pl/sfzh/article/download/1342/1313/), 2018; Pilch (above); further sources in the notes.
+- **Evidence:** the Piłsudski-oriented members did not form one compact faction. Moraczewski tied the participation of PPS in Skrzyński’s cabinet to Piłsudski’s return to the army (7 I 1926), and the April 1926 manifesto asked for Piłsudski at the head of the army (high). Perl said at the 1923/24 congress that Piłsudski was not “our man”, and in I 1924 the Central Executive Committee barred members from other organisations, legionary ones included, without its consent; Daszyński, however, published a laudatory brochure on Piłsudski in 1925 (medium). The left before 1926 is poorly documented; in 1923 Czapiński combined attacks on Chjeno-Piast with praise of Piłsudski (*verified*, Pilch p. 85). The PPS-Lewica split came after the coup, in VI 1926.
+- **Game use (approved):** no change. In `faction_stance_profile_v1` the rule of the Piłsudczycy has strong support, the rule of the Centrum partial support, and the positions of the Lewica before 1926 remain TBD — historical research required; the assignment of Czapiński to the Lewica is uncertain.
+
+### Source entry PL-MINORITY-AUTONOMY-1922-1926
+
+- **Category / period:** the positions of the parties on the autonomy of the Slavic minorities, 1921–1926.
+- **Sources:** M. Szumiło, [“Ukraińskie koncepcje autonomii terytorialnej w ramach Drugiej Rzeczypospolitej”](https://bazhum.muzhp.pl/media/texts/rocznik-lubelski/2011-tom-37/rocznik_lubelski-r2011-t37-s106-121.pdf), *Rocznik Lubelski* 37 (2011); J. Szeliga, [“Sprawa ukraińska w międzywojennej polskiej myśli politycznej”](https://apcz.umk.pl/HiP/article/download/HiP.2005.018/15991/44205), *Historia i Polityka* 3 (2005); E. Podgajna, [*Wschód Europy* 7 (2021)](https://journals.umcs.pl/we/article/download/12883/pdf); A. Czubiński, [“Stanowisko NPR wobec narodu…”](https://www.wbc.poznan.pl/Content/158979/PDF/16.%20Stanowisko%20NPR%20wobec%20narodu,%20klasy%20spo%C5%82ecznej%20i%20pa%C5%84stwa%20narodowego.pdf) (1999); Muzeum Historii Polski, [the Lanckorona pact](https://muzhp.pl/kalendarium/podpisanie-paktu-lanckoronskiego); [Ustawa z 26 IX 1922](https://api.sejm.gov.pl/eli/acts/DU/1922/829/text.html), Dz.U. 1922 nr 90 poz. 829; [the school law of 31 VII 1924](https://api.sejm.gov.pl/eli/acts/DU/1924/766/text.html), Dz.U. 1924 poz. 766.
+- **Evidence:** only PPS introduced autonomy bills: Niedziałkowski’s bill of X 1921 on broad autonomy of Eastern Galicia with its own regional Sejm, and a bill of 1924 introduced in I 1925 (*verified*, Szumiło p. 114; high). PSL “Wyzwolenie” declared territorial autonomy but never moved a bill (*verified*, ibid.). Piast and the Christian Democrats signed with ZLN the Lanckorona pact (17 V 1923): a “Polish majority”, a cabinet of Poles only, numerus clausus, settlement in the east (medium). NPR accepted cultural autonomy but called Poland a national, not a nationality state (medium-high). ZLN accepted only cultural autonomy and aimed at assimilation (high). In V 1923 the Ukrainian Parliamentary Representation adopted territorial autonomy of all Ukrainian lands and rejected voivodeship autonomy as insufficient (*verified*, Szumiło pp. 111–112); most of its members left that programme within a year. The 1922 law on the three south-eastern voivodeships never took effect; the language and school laws of 31 VII 1924 passed with the votes of the Polish parties.
+- **Game use (approved):** the topic `autonomy` of `actor_profiles_v2`: PPS +1, Wyzwolenie +1, Piast −1, PSChD −1, NPR 0, ZLN −2, the other minorities +1; the Jewish representation and the KPP stay 0 (no data on the autonomy of the Slavic lands). The opening line of PPS on the Slavic minorities is `regional_autonomy`.
+- **Status / boundary:** the scale −2..+2 and the vote rules are game design; the positions of the German deputies and the full programme of the minorities’ bloc remain TBD — historical research required.

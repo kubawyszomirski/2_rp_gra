@@ -2,7 +2,6 @@ title: Piłsudski Criticises Parliament
 subtitle: A recorded speech of Piłsudski against the Sejm; PPS must answer it this month.
 new-page: true
 tags: pl_event
-card-image: img/reichstag_2.jpg
 view-if: {! return !!Q.S && !!Q.polish_politics_rules && PolishPolitics.criticismDue(Q) !}
 on-arrival: {!
 // Event politics.pils_parliament_criticism, B2 (technical reference 10.7, 15.2; card catalogue 9.2; Z — 0.38): one

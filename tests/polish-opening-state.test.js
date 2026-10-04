@@ -265,7 +265,7 @@ test('Government Affairs remains inaccessible at its relative-month unlock witho
     assert.ok(engine.getCurrentChoices().some((c) => c.id === 'main.party'));
     assert.ok(!engine._compileChoices(engine.game.scenes['main.govt']).some((c) =>
       c.canChoose && engine.game.scenes[c.id].isCard));
-    if (month >= 6) assert.match(content(engine), /no available executive actions/);
+    if (month >= 6) assert.match(content(engine), /Government Affairs deck is closed/);
   }
 });
 
@@ -278,7 +278,7 @@ test('November election is scheduled without creating a Senate or president', ()
     engine.goToScene('status');
     assert.equal(condition(engine, 'election_1928'), false);
     assert.match(content(engine), /The first Sejm election is in November 1922/);
-    assert.match(content(engine), /Later cabinet chronology has not been implemented/);
+    assert.doesNotMatch(content(engine), /Development notice/, 'stage 8: no development notices in the Polish game');
     assert.equal(Q.head_of_state_office, 'naczelnik_panstwa');
     assert.equal(Q.president, '');
     assert.deepEqual([Q.next_election_year, Q.next_election_month, Q.next_election_time], [1922, 11, 11]);

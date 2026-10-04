@@ -33,7 +33,11 @@ if (report) {
         'Piłsudczycy ' + Math.round(f.pilsudczycy.strength) + '% (dissent ' + Math.round(f.pilsudczycy.dissent) + (f.pilsudczycy.split ? ', split' : '') + ')';
     var president = state.constitution.president;
     Q.pl_report_president = president ? president.holder_name + (president.status === 'acting' ? ' (acting)' : '') : 'None recorded';
-    Q.pl_report_speaker = state.constitution.outgoing_speaker ? state.constitution.outgoing_speaker.name : 'Vacant';
+    // Stage 8: after a coup the Sejm still sits, so the report names its Marshal; after the election, the outgoing one.
+    var coupEnd = report.reason === 'coup' && state.constitution.speaker !== undefined;
+    var marshal = coupEnd ? state.constitution.speaker : state.constitution.outgoing_speaker;
+    Q.pl_report_speaker = marshal ? marshal.name : 'Vacant';
+    Q.pl_report_speaker_label = coupEnd ? 'Marshal of the Sejm' : 'Marshal of the outgoing Sejm';
     Q.pl_report_senate = state.constitution.senate.total + ' senators (' + state.constitution.senate.method + ')';
     Q.pl_report_government = state.government.prime_minister + '; PPS: ' + state.government.pps_position;
     Q.pl_report_not_modelled = report.not_modelled.join('; ');
@@ -80,7 +84,7 @@ if (report) {
 
 [? if pl_report_ready : **PPS.** [+ pl_report_pps +]. Factions: [+ pl_report_factions +]. ?]
 
-[? if pl_report_ready : **Institutions.** President: [+ pl_report_president +]. Marshal of the Sejm (outgoing Sejm): [+ pl_report_speaker +]. Senate: [+ pl_report_senate +]. ?]
+[? if pl_report_ready : **Institutions.** President: [+ pl_report_president +]. [+ pl_report_speaker_label +]: [+ pl_report_speaker +]. Senate: [+ pl_report_senate +]. ?]
 
 [? if pl_report_ready : **Government at the end of the chapter.** [+ pl_report_government +]. ?]
 
@@ -92,7 +96,7 @@ if (report) {
 
 [? if pl_report_ready : **Unfinished matters.** [+ pl_report_unfinished +]. ?]
 
-[? if pl_report_ready : **Not yet modelled in this version.** [+ pl_report_not_modelled +]. ?]
+[? if pl_report_ready : **Beyond this chapter.** [+ pl_report_not_modelled +]. ?]
 
 [? if pl_report_ready : **Uncertainties.** [+ pl_report_uncertainties +] ?]
 

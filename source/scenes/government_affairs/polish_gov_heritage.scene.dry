@@ -3,7 +3,6 @@ subtitle: Education: conservation work on one of two buildings.
 new-page: true
 is-card: true
 tags: govt_affairs
-card-image: img/poster_1.png
 view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'heritage_restoration') !}
 on-arrival: {!
 // Card government.heritage_restoration (technical reference 17.11–17.12; card catalogue 8.16). Opening and closing
@@ -39,7 +38,7 @@ go-to: result
 
 @wawel_restoration
 title: Wawel: wider restoration and public access
-subtitle: 2 B for 4 months; reputation +2; trust of the intelligentsia +3 (stage 5). Extends a running conservation.
+subtitle: 2 B for 4 months; reputation +2; trust of the intelligentsia +3. Extends a running conservation.
 choose-if: {! return PolishProjects.optionStatus(Q, 'heritage_restoration', 'wawel_restoration').available !}
 unavailable-subtitle: [+ pl_heritage_restoration_wawel_restoration_why +]
 on-arrival: {!
@@ -59,7 +58,7 @@ go-to: result
 
 @zamek_restoration
 title: Royal Castle: wider restoration and public access
-subtitle: 2 B for 4 months; reputation +2; trust of the intelligentsia +3 (stage 5). Extends a running conservation.
+subtitle: 2 B for 4 months; reputation +2; trust of the intelligentsia +3. Extends a running conservation.
 choose-if: {! return PolishProjects.optionStatus(Q, 'heritage_restoration', 'zamek_restoration').available !}
 unavailable-subtitle: [+ pl_heritage_restoration_zamek_restoration_why +]
 on-arrival: {!

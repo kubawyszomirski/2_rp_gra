@@ -3,7 +3,6 @@ subtitle: The system of government PPS stands for.
 new-page: true
 is-card: true
 tags: party_affairs
-card-image: img/reichstag_3.jpg
 view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.stanceAvailable(Q, 'form_of_power') !}
 on-arrival: {!
 // Card party.form_of_power (catalogue 4.4; technical reference 10.8): 1 T, 0 R, the card then waits 6 months. The present line is shown and cannot be

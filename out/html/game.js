@@ -346,6 +346,10 @@
     if (window.dendryUI.dark_mode) {
         document.body.classList.add('dark-mode');
     }
+    // Stage 8: a browser without saved settings has no font size yet; the default is 1.1em.
+    if (typeof window.dendryUI.font_size !== 'number') {
+        window.dendryUI.font_size = 1.1;
+    }
     if (window.dendryUI.font_size != 1.1) {
         var fs = window.dendryUI.font_size;
         var sidebar_fs = fs - 0.1;

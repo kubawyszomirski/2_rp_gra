@@ -1,6 +1,6 @@
 # Plan implementacji rozdziału 1
 
-**Stan — referencja 0.48, 27 września 2026. Etapy 0, 1, 2, 3, 4, 5, 6 i 7 wykonane.** Plan opisuje, w jakiej kolejności i jakimi zmianami w kodzie wdrożyć pierwszy rozdział gry. Reguły gry podaje [referencja techniczna](POLISH_TECHNICAL_REFERENCE.md), a karty — [katalog kart](POLISH_CARD_CATALOGUE.md). Plan nie tworzy reguł: przy rozbieżności obowiązuje referencja. Sam plan niczego jeszcze nie zmienia w grze. Każdy etap zaczyna się dopiero po zatwierdzeniu jego szczegółowego planu.
+**Stan — referencja 0.49, 4 października 2026. Wszystkie etapy 0–8 wykonane; etap 8 był ostatni, a pierwszy rozdział jest wdrożony w całości (rozdział 18).** Plan opisuje, w jakiej kolejności i jakimi zmianami w kodzie wdrożono pierwszy rozdział gry. Reguły gry podaje [referencja techniczna](POLISH_TECHNICAL_REFERENCE.md), a karty — [katalog kart](POLISH_CARD_CATALOGUE.md). Plan nie tworzy reguł: przy rozbieżności obowiązuje referencja. Sam plan niczego jeszcze nie zmienia w grze. Każdy etap zaczyna się dopiero po zatwierdzeniu jego szczegółowego planu.
 
 ## 1. Jak czytać plan
 
@@ -95,6 +95,28 @@ Decyzje etapu 7 (Z — 0.48):
 - trzy datowane wejścia scenariusza jako profil testowy `normal_chapter1_v1`: spór Naczelnika z Ponikowskim w VI 1922 (B1 i wystąpienie B2); sprawa wojskowa od I 1925 (wejście testowe, historyczna data: TBD — historical research required), zamykana dopiero wykonaną umową z Piłsudskim; jeden publiczny epizod nacisku wojska (+8) w pierwszym kryzysie gabinetowym przy otwartej sprawie; powrót Chjeno-Piasta (+20) wynika z gry, a reszta osi 17.16.3 zostaje w etapie 8;
 - historyczna gałąź prezydentury: wybór Narutowicza zawsze kończy się zabójstwem; ochrony prezydenta rozdział 1 nie modeluje, a B4 następuje tylko po potwierdzonej śmierci;
 - restrykcje wynikają z istniejących działań: represji strajku (bezprawnej wobec legalnego strajku), konfiskaty prasy i reakcji władz na wykonaną bezprawną przemoc organizacji PPS (odwet B4, starcie z udziałem Milicji); gabinet represyjny zakazuje Milicji (restrykcja legalna), inne gabinety otwierają sprawę bez zakazu; każda restrykcja ma profil prawny, a przegląd w Sprawiedliwości uchyla tylko bezprawne, z demokracją +1 raz.
+
+Decyzje etapu 8 (Z — 0.49):
+- **1A:** cel kalibracji to wzorzec M02 na wspólnych ziarnach, plus kontrole wykonalności 21.2. Maja nie wymuszamy.
+  - N-A i N-H: próba w co najmniej 2/3 ziaren, mediana III–VIII 1926.
+  - N-B i N-C z wykonaną umową wojskową: bez próby do wyborów 1928 w co najmniej 2/3 ziaren.
+- **2A:** strojenie preferencji i frekwencji komórek otwarcia, a nie krzywej mandatów. Bierna PPS ma dostać bazowy Sejm M02 z dokładnością ±5 mandatów na klub.
+- **3A:** na ekranach tylko polskie dane:
+  - zakładka Defense: Milicja, AS, policja i znane przedziały wojska;
+  - wykresy Biblioteki od I 1922;
+  - polska oś czasu 1918–1922, tylko z faktów zapisanych w `HISTORICAL_SOURCES.md` (wdrożona oś zaczyna się od pierwszego zapisanego faktu, 20 II 1919);
+  - bez niemieckich zdjęć na polskich kartach; pliki zostają, nowych obrazów nie dodajemy.
+- **4A:** funkcjonalne teksty angielskie: ekrany G1 i G4, bez dopisków „(stage N)”, „temporary” i „in transition”, bez nowej narracji historycznej.
+- **5A:** `pilsudski_aligned` to gabinety Śliwińskiego i Piłsudskiego. Gabinet mniejszościowy to taki, którego partie nie mają własnej większości; gabinet fachowców też się liczy.
+- **6B:** badania punktów TBD w części 8f. Każde ustalenie trafia do rejestru i do gry dopiero po zgodzie użytkownika.
+- **4 X 2026, wyniki 8f:** użytkownik przyjął wszystkie dziewięć propozycji badań (w punkcie 9 także A2) i polecił dostroić presję zamachową na wiosnę 1926.
+- **4 X 2026, decyzje A1–A4:**
+  - A1: dymisja Grabskiego od XI 1925, gdy rządzi w kryzysie kredytowym lub walutowym (datowane wejście);
+  - A2: reguła 8.9 dla NPR;
+  - A3: przedłużanie porozumienia wykonywanego przez gabinet;
+  - A4: poprawki automatów strategii.
+- **4 X 2026, domknięcie:** poprawki 1–5 i opis ograniczeń 6–12 (rozdział 18). Etap 8 jest ostatnim etapem planu.
+- **4 X 2026, wcześniejsze wybory:** rozwiązania Sejmu z 7.6 nie wdrażamy; legalne wcześniejsze wybory pozostają nieosiągalne (ograniczenie z rozdziału 18).
 
 ## 3. Stan wyjściowy kodu (K, 26 IX 2026)
 
@@ -565,6 +587,8 @@ Kartę 9.1 przeniesiono z etapu 3 (decyzja etapu 3): spór Naczelnika z Ponikows
 
 *Wielkość: bardzo duża. Punkt 7 z 20.3.*
 
+**Stan:** wykonany 4 X 2026 (K) jako ostatni etap planu. Wynik, poprawki i ograniczenia gotowego rozdziału są w rozdziale 18.
+
 **Cel:** pełna, zbalansowana kampania z kompletną treścią po angielsku.
 
 **Zakres w referencji:** 17.13, 17.14, 17.16, 21.2, 21.2a, 21.2b, 21.2c, 22.
@@ -971,6 +995,119 @@ Kartę 9.1 przeniesiono z etapu 3 (decyzja etapu 3): spór Naczelnika z Ponikows
 - Etap 8: treść scen i scenariusza, kalibracja liczb P (presja, demokracja, zdolność, restrykcje, B4–B5), profile historyczne punktów TBD i pełne kontrole kampanii z 21.2; decyzje o profilu `pilsudski_aligned` i o punktach programu dotyczących wojska i autonomii.
 - Zapisy ze schematu 7 wymagają nowej gry.
 
+## 18. Ustalenia z etapu 8
+
+**Wynik etapu (K):**
+
+*Nowe pliki:*
+- `tests/helpers/strategies.js`: 13 automatów strategii PPS do pełnych kampanii — cztery przebiegi referencyjne 17.16.7 i dziewięć strategii 21.2;
+- testy `tests/polish-campaign.test.js` (2) i `tests/polish-scenario.test.js` (18);
+- `analysis/stage8-campaigns/` (pomiar, kalibracja 2A, [raport](../analysis/stage8-campaigns/REPORT.md));
+- `analysis/stage8-research/` (raport badań 8f, notatki, pomiar sprzed decyzji).
+
+*Zmienione pliki reguł:*
+- `source/rules/polish_government.js`:
+  - kompromis wojskowy jako postulat poparcia (`military_compromise`, wykonawca: gabinet);
+  - konkurencyjna oferta Chjeno-Piasta, dysydenci Piasta;
+  - `pilsudskiAligned`, `ppsSupportAgreement`, `militaryCaseOpen`, przypomnienie G4 przed wyborami;
+  - profil `actor_profiles_v2` z historycznym tematem `autonomy`;
+  - reguła 8.9 dla NPR, front z KPP po porozumieniu 9.6, neutralne notki zobowiązań.
+- `source/rules/polish_politics.js`:
+  - wejścia `chjeno_piast_1923`, `piast_split_1923`, `military_escalation` i `grabski_resignation_1925`;
+  - daty z badań: sprawa wojskowa VII 1923, uroczystość B5 II 1923;
+  - temat wystąpienia z 1922 r.; presja startowa 0; przyczyna kryzysu na karcie formowania.
+- `source/rules/polish_security.js`: kompromis wykonywany przez gabinet, widok zakładki Defense, przegląd porozumienia gabinetu (A3), teksty bez TBD.
+- `source/rules/polish_projects.js`: przegląd gabinetu wykonuje obietnicę wojskową; tekst kredytu przygotowanego przez rząd.
+- `source/rules/polish_party.js`: tolerowanie warunkowe Ziemięckiego, linia startowa `regional_autonomy`, tekst próby z KPP.
+- `source/rules/polish_unions.js`: cel KPP `structural`.
+- `source/rules/polish_rules.js`: presja startowa 0, nowe wejścia scenariusza.
+- `source/rules/polish_institutions.js`: raport (marszałek obradującego Sejmu po zamachu, sekcja „Beyond this chapter”, daty wejść) i lista `NOT_MODELLED`.
+
+*Zmienione sceny i pliki strony:*
+- `root`: wiersze klas otwarcia według decyzji 2A, ekran tytułowy, bez niemieckiej muzyki;
+- `election_simulation`, `main` (G4, bez notatek roboczych) i `status` (polska zakładka Defense);
+- `library`: wstęp, polska oś czasu 1919–1922 (od pierwszego faktu zapisanego w `HISTORICAL_SOURCES.md`, 20 II 1919), strony;
+- `polish_government_support`, `polish_government_response`;
+- `polish_presidential_sequence`: Zgromadzenie liczy obecne kluby;
+- `polish_cabinet_formation` (przyczyna kryzysu), `polish_party_agenda` (bez martwej próby z KPP);
+- `polish_event_niewiadomski_cult`, `polish_event_coup` (komentarz), `polish_chapter_report`, `advisors/ziemiecki`;
+- niemieckie zdjęcia usunięte z 49 polskich scen; pliki obrazów zostają;
+- `out/html/d3-linegraph.js` (polskie wykresy od I 1922, puste dane bez błędu) i `out/html/game.js` (domyślny rozmiar czcionki).
+
+*Pozostałe zmiany:*
+- dotychczasowe testy dostosowane do wartości 2A, presji 0, dat 8f, celu KPP i linii autonomii;
+- `analysis/implementation-plan/check.cjs` (asercje etapu 8);
+- osiem wpisów badań 8f w `HISTORICAL_SOURCES.md`.
+
+*Weryfikacja:*
+- **Testy:** 438 z 438.
+- **Pomiar:** cel 1A spełniony.
+  - N-A i N-H: próba w 12/12 ziaren, w III 1926.
+  - N-B i N-C: bez próby w 12/12, z wykonanym porozumieniem wojskowym.
+  - Gabinety we wszystkich strategiach: Ponikowski → Śliwiński → Nowak → Witos → Grabski → Skrzyński.
+  - PPS wchodzi do gabinetu Skrzyńskiego przy strategiach współrządzącej, „jak w historii”, koalicyjnej i zatrudnieniowej.
+  - Sejm 1922 przy biernej PPS mieści się w ±5 mandatów od bazowego Sejmu M02.
+- **Przeglądarka** (port 8000, ręcznie w panelu przeglądarki; skrypt `tests/sejm-browser-smoke.cjs` wymaga Playwrighta, którego projekt nie instaluje, i zostaje bez zmian):
+  - nowa gra bez błędów konsoli i bez niemieckiej muzyki;
+  - polska zakładka Defense;
+  - Biblioteka z wykresami od I 1922;
+  - z zapisów kampanii wczytanych w stronie: karta formowania z przyczyną kryzysu XII 1925, cały zamach z dwiema postawami PPS (obrona rządu i neutralność), raport po zamachu z marszałkiem obradującego Sejmu i raport po wyborach 1928 z marszałkiem ustępującego Sejmu.
+
+**Uzupełnienia przy wdrożeniu (P):**
+- presja startowa 0 zamiast 10;
+- wejścia scenariusza:
+  - oferta Chjeno-Piasta V–XII 1923;
+  - odejście 10 posłów Piasta w XII 1923 (z M02);
+  - dymisja Grabskiego od XI 1925 (A1);
+  - publiczny epizod nacisku wojska od XI 1925;
+- automaty strategii:
+  - tolerują tylko premiera w jego oknie;
+  - przed koalicją prowadzą rozmowy z partiami, jak przebieg C w M02;
+  - tworzą AS, gdy tylko jest osiągalna;
+  - odpowiadają na wydarzenia po zakończeniu miesiąca;
+- kalibracja 2A: jeden mnożnik na partię we wszystkich wierszach klas ([`calibration.json`](../analysis/stage8-campaigns/calibration.json)).
+
+**Poprawione przy wdrożeniu:**
+- obliczony Sejm 1922 zamrażał oś gabinetów (decyzja 2A);
+- NPR odrzucała każdy gabinet z PPS w resorcie Pracy, bo reguła 8.9 nie była wdrożona; PPS nie wchodziła do rządu w żadnej kampanii;
+- porozumienie wykonywane przez gabinet wygasało przy pierwszym przeglądzie (A3);
+- rządy z komunistami były zawsze zamknięte, wbrew 9.6;
+- pozycja próby z KPP w agendzie nigdy nie była dostępna;
+- tekst kredytu rządu odsyłał do agendy PPS;
+- notatki etapów zostały w tekstach dla gracza;
+- strona próbowała odtwarzać brakującą niemiecką muzykę (404);
+- raport po zamachu pokazywał marszałka poprzedniego Sejmu jako „Vacant”;
+- nazwa wyniku zamachu na ekranie F10 zaczynała zdanie małą literą (znalezione w końcowym teście przeglądarki; `source/rules/polish_security.js`).
+
+**Sprawy odłożone przez wcześniejsze etapy:**
+
+*Rozwiązane:*
+- kontrola „bierna PPS → historyczni zwycięzcy” (etap 2): marszałek Rataj; prezydent Narutowicz, po zamachu Wojciechowski;
+- oś polityczna 17.16.3 i profile gabinetów (etap 4);
+- wykresy Biblioteki i liczenie posłów w Zgromadzeniu Narodowym (etap 5);
+- przygotowanie układów z KPP (etap 5, 9.6);
+- cele KPP w strajkach i tekst kredytu (etap 6);
+- profil `pilsudski_aligned` i punkty programu o wojsku i autonomii (etap 7);
+- daty i punkty TBD objęte badaniami 8f;
+- zamachy jesienią 1927 w przejściach etapu 7.
+
+*Ograniczenia gotowego rozdziału* (decyzja użytkownika z 4 X 2026: opisane, bez zmian w grze):
+- **karta Budżet:** odpowiedź na pakiet kosztuje 0 T (decyzja etapu 4); referencja 17.10 poprawiona;
+- **reakcje frakcji na wycofanie poparcia rządu:** mechanizm działa, ale profil liczb jest pusty (P);
+- **gospodarka słabo różnicuje strategie,** bo PPS rządzi najwyżej kilka miesięcy przed zamachem;
+- **termin próby:** wszystkie strategie bez porozumienia z Piłsudskim mają próbę w III 1926, bo presja przekracza 65 w XII 1925, a okno otwiera się w III 1926;
+- **koniec rozdziału:** rozdział kończy się raportem; dalsze skutki (ustępstwa zwycięzcy, nowy gabinet po ugodzie) są tylko zapisane jako wymagania kontynuacji, której nie będzie;
+- **profile robocze P i punkty TBD:**
+  - liczbami roboczymi P pozostają zakłady i liczby strajków, czerwone linie i proporcje komórek;
+  - jako TBD pozostają punkty, których badania 8f nie objęły: procedura zastąpienia posła, marszałek senior, stanowiska Lewicy przed 1926 r. i lojalność oficerów;
+- **serwer:** `npm run serve` używa stałego portu 8000;
+- **legalne wcześniejsze wybory:** nie są w grze osiągalne.
+  - Rozwiązanie Sejmu przy reformie arbitrażu (7.6) nie jest wdrożone, a karty wcześniejszych wyborów nie ma (manifest 17.10).
+  - Kontrola wykonalności 21.2 jest pod tym względem niespełniona. Użytkownik zdecydował 4 X 2026, że rozwiązania Sejmu z 7.6 nie wdrażamy; ograniczenie zostaje.
+- **identyfikator `awaiting_later_stage`:** zostaje jako wewnętrzny status zobowiązania w zapisie gry; nie jest tekstem dla gracza.
+
+**Koniec planu:** etap 8 był ostatni (decyzja użytkownika z 4 X 2026). Plan nie ma dalszych etapów. Schemat stanu 8 bez zmian, więc zapisy z etapu 7 nadal się wczytują.
+
 ## Dodatek A. Karty katalogu według etapów
 
 | Etap | Pozycje katalogu | Liczba |
@@ -1000,7 +1137,7 @@ Test przypisujemy do pierwszego etapu, po którym da się go uruchomić w pełne
 - **Etap 5 (67):** „Nowe powołanie”, „Start i odwołanie”, „Pużak”, „Jedno przekierowanie”, „Brak resortu”, „Piłsudczycy”, „Miasta i klasy”, „Efekty czasowe”, „KPP i Lewica”, „Droga do KPP”, „Wrogość a kanał”, „Późni doradcy”, „Dyscyplina KPP”, „Akceptacja a KPP”, „Program bez zmiany”, „Odroczenie sprawy frakcji”, „Dwa warianty kompromisu”, „Dostęp karty Jedność”, „Zmiana doradców osobno”, „Kontakt i agenda KPP”, „Kompromis w PPS”, „Granice dyscypliny”, „Rozmowa a akcja”, „Brak gotówki”, „Dwie kategorie mniejszości”, „Zmiana formatu prasy”, „Cel członkostwa”, „Zbliżanie członkostwa”, „Zwrot aparatu”, „Konfiskata”, „Preferencje”, „Nasycenie”, „AS”, „Posłuch AS”, „Jedna akcja Milicji”, „Mała AS i czwarta sprawa”, „Rozłam E3”, „Zamrożeni posłowie”, „Rozłam i czystka”, „Zamrożony wynik”, „Jedna karta E3”, „Czystka”, „TUR”, „Program gospodarczy”, „Bez płatnego braku wyboru”, „Militaryzacja a frakcje”, „Praca organizacyjna w komórkach”, „Media bez odnowienia karty”, „Dwie organizacje”, „Podmenu i doradcy”, „Demokracja zależna od sytuacji”, „Trzy ustroje”, „Cztery stanowiska autonomii”, „Składki”, „ZSRR”, „Potępienie modelu sowieckiego”, „Adresat polemiki”, „Arbitraż i linia”, „Oś autonomii”, „Bund”, „Sowiecki model B13”, „Obecna linia”, „Profil frakcji v1”, „Cele ustrojowe”, „Populacja”, „Warianty funduszu inwestycyjnego”, „Szkoły”.
 - **Etap 6 (18):** „Kolej”, „Zgoda na ugodę”, „Zgoda a fundusz”, „Pełna oferta i czerwona linia”, „Kruchość gabinetu”, „Komuniści”, „Współpraca i eskalacja”, „Kraków”, „Państwo a PPS w strajku”, „Strajk i Sejm”, „B8+B10 i B11+B12”, „Klucz sprawy E6”, „Układ zbiorowy i odstępstwo”, „Otwarcia finansowe”, „Zasięg i charakter partii”, „Tolerowanie B14”, „Ratunek zakładu”, „Wspólna karta gabinetowa”.
 - **Etap 7 (53):** „Autorytet z dziennika”, „Bez bezpośredniego zapisu”, „Demokracja w zwykłym Sejmie”, „Zdarzenia demokracji”, „Demokracja w presji”, „AS w zamachu”, „Podwójny przydział”, „Zamach”, „Zero sił”, „Gotowość wojska”, „Zdolność a demokracja”, „Losowanie po F5”, „Wczytanie zamachu”, „Szybkie zwycięstwo”, „Nadchodząca rezerwa”, „Pomiar strajku”, „Istotny udział”, „Ugoda w rundzie 1”, „Przewaga nie negocjuje”, „Odrzucone F9”, „Brak zwycięzcy”, „Wkład kontrfaktyczny”, „Kryzys i przerwa”, „Przegląd ugody chroniącej”, „Policja”, „Nominacja”, „Śledztwo i adresat polemiki”, „Ustępstwo Piłsudskiemu”, „Pula ustępstw wojskowych”, „Ustępstwa a linia”, „Rozpoznanie w agendzie”, „Mobilizacja i kult”, „B3/B4”, „Msza B5”, „B1/B2”, „Obowiązkowa odpowiedź B2”, „Sprzeczność odpowiedzi B2”, „Dwie decyzje Piłsudskiego”, „Kontrola wojska bez pustych opcji”, „Ograniczona reforma wojska”, „Karty 3–5 bez odnowienia”, „Karty rządowe bez pustych opcji”, „B18/B19/B21”, „Kolejność kategorii wydarzeń”, „Manifest parlamentu”, „Katalog rządowy”, „Sceny wycofane B”, „Izolacja Polski”, „Kolejność i zakres”, „Reprezentacja”, „Autonomia”, „Sprawiedliwość”, „Rozszerzyć i skupić osłony”.
-- **Etap 8 (0):** kontrole pełnych kampanii z 21.2, 21.2a, 21.2b i 21.2c.
+- **Etap 8 (0):** kontrole pełnych kampanii z 21.2, 21.2a, 21.2b i 21.2c. Wdrożone jako testy `tests/polish-campaign.test.js` i `tests/polish-scenario.test.js` oraz pomiar [`analysis/stage8-campaigns/`](../analysis/stage8-campaigns/REPORT.md).
 
 Razem: 216 testów z 21.1.
 
@@ -1032,7 +1169,7 @@ Kolumny odpowiadają wpisowi z 20.2. Nazwy scen bez ścieżki oznaczają pliki w
 | `party_factions` | 5 | `S.party_orgs`, `S.militia`, `S.unions` (trzy branże), `S.faction_cases`, `S.advisors`, `S.society.cells`, `S.actors.pps.strategy`, `S.actors.pps.factions` | `pro_republic` w `advisors/niedzialkowski` i `advisors/prochnik` (usunięte, przeciek 10); automatyczne sceny `events/pps_lewica_split`, `events/pps_pilsudczycy_split`, `events/pps_centrum_crisis` (poza kolejką); niemieckie mosty wierszy poparcia i pięciu frakcji w `post_event`; odziedziczone karty partyjne (warunek `not polish_party_rules`) | `qdisplays/dissent`, `qdisplays/strength`, `qdisplays/loyalty`, `qdisplays/militancy` (czytają kopie, bez zmian) | Wypełnienie z pól otwarcia przy nowej grze; zapisy ze schematu 5 wymagają nowej gry | Etap 5 | wykonane |
 | `unions_strikes` | 6 | `S.unions` (trzy branże od etapu 5; linie strajkowe i układy od etapu 6), `S.strikes` (strajki, ugody, sprawy), `S.enterprises` (syntetyczne zakłady) | `events/labor_unrest`, `events/unions_declare_independence` (warunek `not polish_union_rules`, poza polską kolejką) | karty związkowe w `party_affairs` (zablokowane od etapu 5); `status` czyta kopie | Brak; zapisy ze schematu 6 wymagają nowej gry | Etap 6 | wykonane |
 | `democracy_coup` | 7 | `S.politics`, `S.security`, `S.coup`, `S.actors.pilsudski` | `coup_progress` (19 plików) i pozostałe zapisy `pro_republic` (dodatek E): 26 scen z warunkiem `not polish_security_rules`, pliki zostają (przeciek 3) | `status` i `library` czytają przywiązanie do demokracji; `game_over` nie jest osiągalne po polskim raporcie | Brak; zapisy ze schematu 7 wymagają nowej gry | Etap 7 | wykonane |
-| `scenario_content` | 8 | `S.scenario` | Pozostałe niemieckie karty i wydarzenia bez polskiego odpowiednika | — | Brak | 21.2 | planowane |
+| `scenario_content` | 8 | `S.scenario` | Pozostałe niemieckie karty i wydarzenia bez polskiego odpowiednika | — | Brak | 21.2 | wykonane |
 
 ## Dodatek E. Pełne listy starych zapisów (etap 0)
 

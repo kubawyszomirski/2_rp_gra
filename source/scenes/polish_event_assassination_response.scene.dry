@@ -2,7 +2,6 @@ title: After the Assassination
 subtitle: The President has been killed; PPS decides how its organisations answer.
 new-page: true
 tags: pl_event
-card-image: img/protest.jpg
 view-if: {! return !!Q.S && !!Q.polish_politics_rules && PolishPolitics.responseDue(Q) !}
 on-arrival: {!
 // Event presidency.assassination_response, B4 (technical reference 17.6, 17.5, 15.2, 13.4; card catalogue 9.5;

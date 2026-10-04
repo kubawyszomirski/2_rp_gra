@@ -357,8 +357,9 @@ for (const [id, category] of [['politics.pils_parliament_criticism', 6], ['openi
   assert.ok(new RegExp(`definition_id: '${id.replace('.', '\\.')}', category: ${category}`).test(rulesSource), `${id} is one definition of the queue with category ${category}`);
 }
 const politicsSource = read('source/rules/polish_politics.js'), securitySource = read('source/rules/polish_security.js');
-assert.ok(/const SCENARIO_INPUTS = Object\.freeze\(\{profile_id: 'normal_chapter1_v1', dispute_1922: T\(1922, 6\), military_case: T\(1925, 1\),/.test(politicsSource) &&
-  rulesSource.includes('inputs: {dispute_1922: true, military_case: true, niewiadomski_cult: true}'), 'decision 1A: three dated scenario inputs of normal_chapter1_v1');
+// The dates themselves were researched in stage 8 (part 8f): the military case from VII 1923 instead of the test input I 1925.
+assert.ok(/const SCENARIO_INPUTS = Object\.freeze\(\{profile_id: 'normal_chapter1_v1', dispute_1922: T\(1922, 6\), military_case: T\(1923, 7\),/.test(politicsSource) &&
+  rulesSource.includes('inputs: {dispute_1922: true, military_case: true, niewiadomski_cult: true'), 'decision 1A: three dated scenario inputs of normal_chapter1_v1');
 assert.ok(read('source/scenes/polish_presidential_sequence.scene.dry').includes("pending.phase = election.winner_id === 'gabriel_narutowicz' ? 'assassination' : 'complete';"),
   'decision 2B: the election of Narutowicz, and only it, ends in the assassination');
 assert.ok(politicsSource.includes("kind: 'strike_repression'") && politicsSource.includes("kind: 'press_confiscation'") &&
@@ -376,6 +377,34 @@ assert.equal(guarded7.length, 26, 'twenty-six German scenes');
 for (const scene of guarded7) {
   assert.ok(/^view-if: not polish_security_rules and \(/m.test(read(`source/scenes/${scene}.scene.dry`)), `${scene} stays in the files, outside the Polish game`);
 }
+
+// ---- Stage 8 (0.49): done and the last stage of the plan; its files exist, its decisions and findings are recorded; the
+// researched dates of 8f and the dated resignation of Grabski (A1), the zero start pressure, the NPR alternative of rule
+// 8.9 (A2), the KPP goal and front of 9.6 (fix 1), the agenda without the dead KPP trial (fix 2), no German music (fix 5).
+assert.ok(stages[8].text.includes('**Stan:** wykonany'), 'stage 8 is marked as done');
+const stage8Files = ['tests/helpers/strategies.js', 'tests/polish-campaign.test.js', 'tests/polish-scenario.test.js',
+  'analysis/stage8-campaigns/run.cjs', 'analysis/stage8-campaigns/REPORT.md', 'analysis/stage8-campaigns/calibration.json',
+  'analysis/stage8-research/REPORT.md', 'analysis/stage8-research/whatif.cjs'];
+for (const f of stage8Files) assert.ok(fs.existsSync(path.join(root, f)), `stage 8 file ${f} exists`);
+assert.ok(decisions.includes('Decyzje etapu 8 (Z — 0.49):'), 'stage 8 decisions recorded');
+assert.ok(plan.includes('## 18. Ustalenia z etapu 8') && plan.includes('**Koniec planu:** etap 8 był ostatni'), 'stage 8 findings and the end of the plan');
+assert.ok(/^### 23\.22\. Etap 8 wdrożony/m.test(tr), 'reference 23.22 records stage 8');
+assert.equal((tr.match(/\*\*K — etap 8 \(0\.49\)[^*]*\*\*/g) || []).length, 21, 'twenty-one K notes of stage 8');
+assert.equal(byStageB[8].length, 0, 'stage 8 has no tests of 21.1; its checks are the full campaigns of 21.2');
+assert.ok(read('tests/polish-campaign.test.js').includes("require('./helpers/strategies.js')"), 'the campaign test plays the strategies of the helpers');
+assert.ok(/military_case: T\(1923, 7\),\s*military_escalation: T\(1925, 11\), niewiadomski_cult: T\(1923, 2\), chjeno_piast_1923: T\(1923, 5\),/.test(politicsSource) &&
+  politicsSource.includes('grabski_resignation_1925: T(1925, 11)}') && politicsSource.includes('function scanGrabskiResignation(Q)'),
+  'stage 8: the dates of 8f and the dated resignation of Grabski (A1)');
+assert.ok(politicsSource.includes('pressure: 0,') && rulesSource.includes("coup: {pressure: 0, phase: 'dormant'") && rulesSource.includes('grabski_resignation_1925: true'),
+  'stage 8: the coup pressure starts at 0 and the scenario has the Grabski input');
+const governmentSource = read('source/rules/polish_government.js');
+assert.ok(governmentSource.includes("const ACTOR_PROFILE_ID = 'actor_profiles_v2';") &&
+  governmentSource.includes("const PORTFOLIO_ALTERNATIVES = Object.freeze({skrzynski_broad: Object.freeze({npr: Object.freeze(['economic'])})});") &&
+  governmentSource.includes('function kppFrontPrepared(S)'), 'stage 8: actor profile v2, rule 8.9 for the NPR (A2) and the KPP front after 9.6 (fix 1)');
+assert.ok(read('source/rules/polish_unions.js').includes("const PARTNER_GOAL = 'structural';"), 'stage 8: the KPP goal of 8f');
+assert.ok(!/^- @kpp_trial/m.test(read('source/scenes/polish_party_agenda.scene.dry')), 'fix 2: the agenda no longer lists the KPP trial');
+assert.ok(!/^audio:/m.test(section(read('source/scenes/root.scene.dry'), '@1928_main', '= January 1922')), 'fix 5: the title screen plays no German music');
+for (const f of ['credits_images.txt', 'credits_music.txt']) assert.ok(fs.existsSync(path.join(root, f)), `${f} is kept`);
 
 // ---- Results.
 const docs = [PLAN, TR, CAT];
@@ -396,6 +425,8 @@ fs.writeFileSync(path.join(__dirname, 'results.json'), JSON.stringify({
   stage6: { done: true, files: stage6Files.length, testsImplemented: byStageB[6].length, kNotes: 26, plantProfile: 'synthetic_plants_v1', stateProfile: 'strike_state_profiles_v1' },
   stage7: { done: true, files: stage7Files.length, testsImplemented: byStageB[7].length, kNotes: 32, scenarioProfile: 'normal_chapter1_v1',
     forceProfile: 'synthetic_test_v2', coupProfile: 'coup_f_v1', guardedGermanScenes: guarded7.length, leakClosed: 3 },
+  stage8: { done: true, lastStage: true, files: stage8Files.length, kNotes: 21, testsOf21_1: byStageB[8].length, actorProfile: 'actor_profiles_v2',
+    newScenarioInputs: ['military_escalation', 'chjeno_piast_1923', 'piast_split_1923', 'grabski_resignation_1925'], startPressure: 0, kppGoal: 'structural' },
 }, null, 2) + '\n');
 console.log(`PASS: ${stages.length} stages; ${assignedCards.length} catalogue entries, ${assignedTests.length} tests from 21.1 and 10 leaks from 20.2 each assigned once; ${files.existing} named files exist, ${files.planned.length} marked new; ${links.length} links resolve; decisions recorded in 19.3, 20.1, 20.3 and the registers.`);
 for (const s of stages) console.log(`stage ${s.n}: ${byStageA[s.n].length} catalogue entries, ${byStageB[s.n].length} tests, leaks ${s.leaks.join(', ') || '—'}`);

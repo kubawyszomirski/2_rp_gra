@@ -1,7 +1,6 @@
 title: Party Agenda
 subtitle: Organisational work, collections, the apparatus, TUR courses and cooperatives.
 is-pinned-card: true
-card-image: img/flags.jpg
 view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.agendaAvailable(Q) !}
 new-page: true
 on-arrival: {!
@@ -25,7 +24,6 @@ TUR: [+ pl_party_tur +]. Cooperatives: [+ pl_party_coops +].
 - @apparatus
 - @courses
 - @launch_cooperative
-- @kpp_trial
 - @kpp_rules
 - @kpp_agreement
 - @assess_forces
@@ -295,6 +293,8 @@ PolishParty.launchCooperative(Q, Q.pl_pa_coop_id);
 !}
 go-to: result
 
+# Stage 8 (fix 2): trials of joint action with the KPP are agreed in a strike, in its step of cooperation with the
+# communists (14.3, 9.6), so this option is not on the agenda's list; the scene stays for the rule PolishParty.kppStep.
 @kpp_trial
 title: Cooperation with the KPP: agree on a trial
 subtitle: 1 T; a trial of joint action for an existing demand, at a relation of 30 or more. Relation now [+ pl_kpp_relation +].

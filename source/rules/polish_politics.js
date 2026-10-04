@@ -33,21 +33,33 @@
 
   // ---- Profiles (P) ---------------------------------------------------------------------------------------
 
-  // 2.3 and 2.4: democracy 60, authority 55, violence 10, coup pressure 10; the cells start at grievance 35.
-  const START = Object.freeze({democracy: 60, authority: 55, violence: 10, pressure: 10, grievance: 35});
+  // 2.3 and 2.4: democracy 60, authority 55, violence 10; the cells start at grievance 35. Stage 8 (P, the calibration
+  // of 8d): the coup pressure starts at 0, because in I 1922 Piłsudski is still the Naczelnik Państwa.
+  const START = Object.freeze({democracy: 60, authority: 55, violence: 10, pressure: 0, grievance: 35});
   // 15.2: a serious episode of violence +10, a local one +4, a month without new violence −2.
   const VIOLENCE = Object.freeze({serious: 10, local: 4, calm: -2});
-  // Decision 1A of stage 7 (P, normal_chapter1_v1): the dated inputs of the Normal scenario that feed the pressure.
-  // The dispute of the Naczelnik with Ponikowski in VI 1922 (17.16.3); the military case opens in I 1925, the test
-  // input of 17.16.9 — its historical dating is TBD — historical research required; one public episode of military
-  // pressure in the first real cabinet crisis while the case is open (17.16.9). They are test inputs, not dates.
-  // The public commemoration of the assassin opens its test window in I 1923 (17.7, P).
-  const SCENARIO_INPUTS = Object.freeze({profile_id: 'normal_chapter1_v1', dispute_1922: T(1922, 6), military_case: T(1925, 1),
-    niewiadomski_cult: T(1923, 1)});
+  // The dated inputs of the Normal scenario (normal_chapter1_v1) that feed the pressure; stage 8 (part 8f) dates them
+  // from the sources recorded in HISTORICAL_SOURCES.md:
+  // - the dispute of the Naczelnik with the cabinet of Ponikowski, VI 1922 (the cabinet resigned on 2 VI, accepted 6 VI);
+  // - the military case opens in VII 1923: on 2 VII 1923 Piłsudski resigned his last military function after the bill
+  //   of Szeptycki on the supreme military authorities (17.16.9);
+  // - the one public episode of military pressure comes in the first real cabinet crisis from XI 1925 while the case is
+  //   open: the officers in Sulejówek on 15 XI 1925, after the resignation of Grabski (17.16.9);
+  // - the public commemoration of the assassin comes from II 1923: his funeral at Powązki on 6 II 1923 (17.7);
+  // - the currency crisis of autumn 1925 ends the cabinet of Grabski: from XI 1925, if he still governs during a credit
+  //   or currency crisis, he resigns (13 XI 1925; stage 8, decision A1; 17.16.8).
+  // What follows each input depends on the game. Stage 8 (17.16.3, P): from V 1923 Piast and the right present a
+  // competing compromise, evaluated once while Witos has his window (V–XII 1923).
+  const SCENARIO_INPUTS = Object.freeze({profile_id: 'normal_chapter1_v1', dispute_1922: T(1922, 6), military_case: T(1923, 7),
+    military_escalation: T(1925, 11), niewiadomski_cult: T(1923, 2), chjeno_piast_1923: T(1923, 5), chjeno_piast_1923_end: T(1923, 12),
+    piast_split_1923: T(1923, 12), grabski_resignation_1925: T(1925, 11)});
+  // 17.16.8 (P, stage 8; the M02 runs): the synthetic departure of ten test MPs of Piast from a cabinet with the right.
+  const PIAST_SPLIT_SEATS = 10;
   const MILITARY_CASE_SUBJECT = 'the organisation of the supreme military authorities';
-  // 10.7 (P): the recorded speeches of Piłsudski that open the card B2; synthetic, without quotations.
+  // 10.7 (P): the recorded speeches of Piłsudski that open the card B2; synthetic, without quotations. The topic of 1922
+  // follows the sources (stage 8, 8f): after the resignation of Ponikowski the dispute was over who appoints the cabinet.
   const SPEECHES = Object.freeze([
-    {id: 'speech_1922_dispute', dispute: 'dispute_1922', topic: 'the Sejm’s treatment of the cabinet of Ponikowski', institution: 'the Sejm'},
+    {id: 'speech_1922_dispute', dispute: 'dispute_1922', topic: 'the right to appoint the cabinet', institution: 'the Sejm'},
     {id: 'speech_military_case', dispute: 'military_case', topic: 'the Sejm and the organisation of the army’s command', institution: 'the Sejm'},
   ]);
   // 15.3: impulses applied once per ID of their effect.
@@ -499,11 +511,12 @@
   }
 
   // The impulses at the approval of an event, once per ID of their effect (15.3): the public episode of military
-  // pressure (decision 1A) and the return of Chjeno-Piast (17.16.11).
+  // pressure (decision 1A of stage 7; from XI 1925 since stage 8, 8f) and the return of Chjeno-Piast (17.16.11).
   function scanImpulses(Q) {
     const S = Q.S, P = S.politics;
     const open = openMilitaryCase(S);
-    if (open && S.cabinet_crisis && !protectiveAgreement(S) && !P.episodes.some(e => e.id === 'public_military_pressure')) {
+    if (open && Q.time >= SCENARIO_INPUTS.military_escalation && S.cabinet_crisis && !protectiveAgreement(S) &&
+      !P.episodes.some(e => e.id === 'public_military_pressure')) {
       P.episodes.push({id: 'public_military_pressure', t: Q.time, crisis_id: S.cabinet_crisis.id, case_id: open.id,
         demand: 'a public demand of Piłsudski on the army, with the support of intervening officers', profile_id: SCENARIO_INPUTS.profile_id});
       applyImpulse(Q, 'public_military_pressure', IMPULSES.personal_conflict, 'personal_conflict');
@@ -547,6 +560,39 @@
   // With another or a kept cabinet the sequence is not replayed.
   const OPENING_CABINET = 'ponikowski_1';
 
+  // 17.16.3 (P, stage 8): the competing compromise of Piast and the right (Chjeno-Piast) is evaluated once for the new
+  // situation; it waits only while no cabinet is in office or another motion is open. The record is an episode.
+  function scanCompeting(Q) {
+    const S = Q.S, P = S.politics;
+    if (!inputOn(S, 'chjeno_piast_1923') || Q.time < SCENARIO_INPUTS.chjeno_piast_1923 || Q.time > SCENARIO_INPUTS.chjeno_piast_1923_end) return null;
+    const done = P.episodes.filter(e => e.id === 'competing_1923')[0];
+    if (done && done.status !== 'no_active_cabinet' && done.status !== 'motion_open') return null;
+    const record = Object.assign({id: 'competing_1923', kind: 'competing_offer', profile_id: SCENARIO_INPUTS.profile_id},
+      government.competingOffer(Q, 'chjeno_piast', 'witos'));
+    if (done) P.episodes[P.episodes.indexOf(done)] = record;
+    else P.episodes.push(record);
+    return record;
+  }
+
+  // 17.16.8 (P, stage 8): once, from XII 1923, ten test MPs of Piast leave a cabinet with the right; a carried-out land
+  // guarantee (a land programme in operation after the split) brings their declaration back.
+  function scanPiastSplit(Q) {
+    const S = Q.S, P = S.politics;
+    if (!inputOn(S, 'piast_split_1923') || Q.time < SCENARIO_INPUTS.piast_split_1923) return null;
+    const done = P.episodes.filter(e => e.id === 'piast_split_1923')[0];
+    if (done) {
+      if (done.status === 'split' && done.restored_at === null && Object.keys(S.projects).some(id => S.projects[id].type === 'land_program' &&
+        ['operating', 'completed'].indexOf(S.projects[id].status) >= 0 && (S.projects[id].launched_at || 0) >= done.t)) {
+        done.restored_at = Q.time;
+      }
+      return done;
+    }
+    const record = Object.assign({id: 'piast_split_1923', kind: 'support_withdrawn', profile_id: SCENARIO_INPUTS.profile_id},
+      government.piastSplit(Q, PIAST_SPLIT_SEATS));
+    P.episodes.push(record);
+    return record;
+  }
+
   function scanDispute(Q) {
     const S = Q.S, P = S.politics;
     if (!inputOn(S, 'dispute_1922') || Q.time < SCENARIO_INPUTS.dispute_1922 || Q.time >= T(1922, 11) || P.cases.dispute_1922) return null;
@@ -561,6 +607,35 @@
     }
     closeCase(Q, c.id, cabinet && cabinet.id === OPENING_CABINET ? 'ponikowski_resigned' : 'no_opening_cabinet');
     return c;
+  }
+
+  // Stage 8, decision A1 (17.16.8): the currency crisis of autumn 1925 ends the stabilisation cabinet of Grabski. From
+  // XI 1925, the first settlement in which his cabinet governs during a credit or currency crisis records his resignation,
+  // once per chapter; the mandatory formation of 8.8 follows. With another cabinet, an open crisis or without the economic
+  // crisis nothing happens: the input does not replay history. The refusals of 17.16.8 can still end his cabinet earlier.
+  function scanGrabskiResignation(Q) {
+    const S = Q.S, P = S.politics, cabinet = S.cabinet;
+    if (!inputOn(S, 'grabski_resignation_1925') || Q.time < SCENARIO_INPUTS.grabski_resignation_1925) return null;
+    if (P.episodes.some(e => e.id === 'grabski_resignation_1925')) return null;
+    if (!cabinet || cabinet.pm !== 'grabski' || cabinet.status !== 'active' || S.cabinet_crisis) return null;
+    const currency = economy.currencyCrisis(S.economy), credit = economy.creditCrisis(S.economy, Q.time);
+    if (!currency && !credit) return null;
+    const episode = {id: 'grabski_resignation_1925', kind: 'cabinet_resignation', t: Q.time, cabinet_id: cabinet.id,
+      cause: currency ? 'currency_crisis' : 'credit_crisis', profile_id: SCENARIO_INPUTS.profile_id};
+    P.episodes.push(episode);
+    S.history.reasons.push({t: Q.time, kind: 'scenario_resignation', episode_id: episode.id, cabinet_id: cabinet.id, cause: episode.cause});
+    government.cabinetFalls(Q, 'resignation');
+    government.writeGovernmentMirrors(Q);
+    return episode;
+  }
+
+  // The line of the formation card that names the cause of a crisis opened by a dated input (stage 8, A1).
+  function crisisNote(Q) {
+    const S = Q.S, crisis = S && S.cabinet_crisis;
+    if (!crisis || !S.politics) return '';
+    const episode = S.politics.episodes.filter(e => e.id === 'grabski_resignation_1925' && e.cabinet_id === crisis.fallen_cabinet_id)[0];
+    return episode ? 'Władysław Grabski has resigned: the ' + (episode.cause === 'currency_crisis' ? 'currency' : 'credit') +
+      ' crisis of autumn 1925 has broken his stabilisation.' : '';
   }
 
   const CABINET_1922 = Object.freeze({
@@ -811,9 +886,12 @@
   }
 
   // B5 (society.niewiadomski_cult; 17.7): one named public commemoration of the assassin, only in the historical
-  // branch of the assassination of Narutowicz by Niewiadomski; the test window from I 1923 (P). Its place, service and
-  // participants are TBD — historical research required. An ordinary service is no trigger.
+  // branch of the assassination of Narutowicz by Niewiadomski. Stage 8 (8f): from II 1923, after his execution on 31 I
+  // 1923; the named commemoration is his funeral at Powązki on 6 II 1923, with a requiem mass and about 10,000 people
+  // (HISTORICAL_SOURCES.md). The answers of PPS and the mass for democracy remain a game event. An ordinary service is
+  // no trigger.
   const CULT_ANSWERS = Object.freeze(['condemn', 'democracy_mass', 'stay_out']);
+  const CULT_PLACE = 'Warsaw, the Powązki cemetery: the funeral of Eligiusz Niewiadomski on 6 February 1923';
   const HOST_RELATION = 40; // P: the relation with PSChD at which a clergyman or host agrees, and PSChD joins a condemnation
 
   function scanCult(Q) {
@@ -824,7 +902,7 @@
       e.perpetrator === 'Eligiusz Niewiadomski')[0];
     if (!death) return null;
     const episode = {id: 'niewiadomski_commemoration', kind: 'assassin_commemoration', t: Q.time, crisis_id: death.id,
-      place: 'TBD — historical research required', profile_id: SCENARIO_INPUTS.profile_id};
+      place: CULT_PLACE, profile_id: SCENARIO_INPUTS.profile_id};
     P.episodes.push(episode);
     P.due.polish_event_niewiadomski_cult = episode.id;
     return episode;
@@ -935,6 +1013,9 @@
     try {
       scenarioInputs(Q, t);
       scanDispute(Q);
+      scanGrabskiResignation(Q);
+      scanCompeting(Q);
+      scanPiastSplit(Q);
       scanSpeeches(Q);
       scanCult(Q);
       scanRestrictions(Q);
@@ -1082,6 +1163,8 @@
     scanJournal: scanJournal,
     authority: authority,
     openCase: openCase,
+    scanGrabskiResignation: scanGrabskiResignation,
+    crisisNote: crisisNote,
     closeCase: closeCase,
     activeInstitutionalEmergency: activeInstitutionalEmergency,
     addRestriction: addRestriction,

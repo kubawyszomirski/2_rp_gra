@@ -183,9 +183,17 @@ test('Oś autonomii: an offer with cultural rights (0) and one with the autonomy
   assert.deepEqual(PolishGovernment.redLineViolations('zln', culture), []);
   assert.deepEqual(PolishGovernment.redLineViolations('zln', autonomy), ['territorial_autonomy']);
   close(PolishGovernment.programFit('other_minorities_rep', autonomy.programme), 100);
+  // Stage 8 (8f, actor_profiles_v2): the dated positions on autonomy — PPS and Wyzwolenie +1, Piast and PSChD −1, NPR 0.
+  assert.equal(PolishGovernment.ACTOR_PROFILE_ID, 'actor_profiles_v2');
+  for (const [party, fit] of [['pps', 100], ['psl_wyzwolenie', 100], ['psl_piast', 50], ['pschd', 50], ['npr', 75]]) {
+    assert.ok(Math.abs(PolishGovernment.programFit(party, autonomy.programme) - fit) < 1e-9, party);
+  }
+  // The opening line of PPS is the territorial autonomy of its bill of October 1921; it cannot be declared again.
   const Q = game();
-  PolishParty.stanceChoose(Q, 'slavic_autonomy', 'regional_autonomy');
-  assert.equal(Q.S.actors.pps.program.slavic_autonomy, 1);
+  assert.equal(Q.S.actors.pps.strategy.slavic_autonomy, 'regional_autonomy');
+  assert.match(PolishParty.stanceStatus(Q, 'slavic_autonomy', 'regional_autonomy').reason, /present line/);
+  PolishParty.stanceChoose(Q, 'slavic_autonomy', 'cultural_rights');
+  assert.equal(Q.S.actors.pps.program.slavic_autonomy, 0);
 });
 
 test('Arbitraż i linia: blocked with its reason under parliamentarism, prepared under a stronger presidency; a later change keeps the project', () => {

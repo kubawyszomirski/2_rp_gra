@@ -3,7 +3,6 @@ subtitle: The lasting line of PPS towards Piłsudski.
 new-page: true
 is-card: true
 tags: party_affairs
-card-image: img/map_3.jpg
 view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.stanceAvailable(Q, 'pils_influence') !}
 on-arrival: {!
 // Card party.pils_influence (catalogue 4.3; technical reference 10.7): 1 T, 0 R, the card then waits 6 months. The present line is shown and cannot be

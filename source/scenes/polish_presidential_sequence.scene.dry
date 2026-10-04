@@ -12,9 +12,19 @@ if (Q.polish_presidential_system && Q.polish_presidential_due &&
     var S = Q.S;
     var sejm = Q.sejm_parliament;
     var senateSeats = copy(S.senate.club_seats);
+    // Stage 8 (a gap of stage 5): the Assembly counts the Sejm clubs as they sit in December, so MPs who left PPS
+    // with a faction before it met no longer count as PPS; their technical splinter club has no presidential profile.
+    var sejmSeats = {};
+    var clubs = S.parliament && S.parliament.clubs ? S.parliament.clubs : null;
+    for (var party of Q.parties) {
+        if (!clubs) { sejmSeats[party] = sejm.party_seats[party] || 0; continue; }
+        var ids = party === 'minorities_bloc' ? ['jewish_rep', 'other_minorities_rep', 'minorities_bloc'] : [party];
+        sejmSeats[party] = clubs.filter(function (club) { return ids.indexOf(club.id) >= 0; })
+            .reduce(function (n, club) { return n + club.seats; }, 0);
+    }
     var assemblySeats = {};
     for (var party of Q.parties) {
-        assemblySeats[party] = (sejm.party_seats[party] || 0) + (senateSeats[party] || 0);
+        assemblySeats[party] = (sejmSeats[party] || 0) + (senateSeats[party] || 0);
     }
     var assembly = {
         id: 'national_assembly_1922_12',
@@ -23,7 +33,7 @@ if (Q.polish_presidential_system && Q.polish_presidential_due &&
         sejm_total: sejm.total_seats,
         senate_total: S.senate.total,
         total_members: sejm.total_seats + S.senate.total,
-        sejm_seats: copy(sejm.party_seats),
+        sejm_seats: copy(sejmSeats),
         senate_seats: senateSeats,
         party_seats: assemblySeats,
         party_names: copy(Q.party_names)

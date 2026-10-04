@@ -804,11 +804,10 @@
     return S.chapter;
   }
 
-  // Stage 7 models discontent, democracy, the forces of the state and the coup; what remains is the content and the
-  // calibration of stage 8 and the continuation after the chapter.
+  // Stage 8 completes the content, the researched dates and the calibration of the Normal scenario; what remains is the
+  // continuation after the chapter.
   const NOT_MODELLED = Object.freeze([
-    'The full texts, the historical profiles of the TBD points and the calibration of the numbers of the Normal scenario (stage 8)',
-    'The continuation after the chapter: a new government after the election or the coup (chapter 2)',
+    'What follows the chapter — a new government after the election or the coup — is not part of this game',
   ]);
 
   const mean = (cells, field) => {
@@ -944,6 +943,7 @@
         reforms: Q.polish_presidency && Q.polish_presidency.constitution ? copy(Q.polish_presidency.constitution.reforms || null) : null,
         constitution: {president: copy(presidency.current || null), presidential_elections: copy(presidency.elections || []),
           outgoing_speaker: copy(S.parliament.previous_term ? S.parliament.previous_term.speaker : null),
+          speaker: copy(S.parliament.speaker || null),
           sejm: {id: latest.id, total_seats: latest.total_seats, clubs: copy(S.parliament.clubs)},
           senate: copy(S.senate)},
         // The cabinet record of stage 3 (8.4, 8.5): the mirrors name the premier and the PPS position.
@@ -959,8 +959,9 @@
       uncertainties: ['Office elections use the test profile office_profiles_1922_v1 (P).',
         'The 1928 date is the game calendar of 7.4, not the historical election date.',
         'The Senate is the sejm_proxy_v1 simplification.',
-        'The army groups are the synthetic profile synthetic_test_v2 and the coup follows coup_f_v1 (P); the historical units, routes, loyalties and dates are TBD — historical research required.',
-        'The dated inputs of the Normal scenario (the dispute of 1922, the military case of 1925, the commemoration of 1923) are test inputs of normal_chapter1_v1.'],
+        'The army groups are the synthetic profile synthetic_test_v2 and the coup follows coup_f_v1 (P); they follow the pattern of May 1926, not its units and numbers.',
+        'The dated inputs of the Normal scenario use historical dates: the dispute of the Naczelnik with the cabinet (VI 1922), the funeral of the assassin ' +
+          '(II 1923), the military case from Piłsudski’s resignation of 2 VII 1923 and the officers’ demonstration (from XI 1925); what follows them depends on the game.'],
       not_modelled: NOT_MODELLED.slice(),
       continuation_requirements: coup ? copy((coup.attempt && coup.attempt.continuation_requirements) || []) :
         ['Government formation after the 1928 election belongs to the continuation.'],

@@ -202,8 +202,9 @@
     return Math.max(0, Math.min(100, value));
   }
 
-  // Politics, the forces of the state and the coup start from 2.3–2.4: democracy 60, authority 55, violence 10,
-  // coup pressure 10 and a dormant coup; the forces of the synthetic profile are attached by PolishSecurity.
+  // Politics, the forces of the state and the coup start from 2.3–2.4: democracy 60, authority 55, violence 10 and a
+  // dormant coup; the coup pressure starts at 0 (stage 8, P: in I 1922 Piłsudski is still the Naczelnik Państwa). The
+  // forces of the synthetic profile are attached by PolishSecurity.
   function emptyPolitics() {
     return {
       politics: {profile_id: 'politics_v1', started: false, democracy: 60, parliament_authority: AUTHORITY_BASE, authority_at: 0, violence: 10,
@@ -211,7 +212,7 @@
         violence_episodes: [], civil_rewarded: [], cabinets_seen: [], due: {}, settled_t: null, history: []},
       security: {profile_id: null, forces: [], logistics: 0.8, police: {capacity: 50, command: 50, lawful_compliance: 50, public_trust: 50},
         army_control: {projects: []}, threats: [], known: {}, assessments: []},
-      coup: {pressure: 10, phase: 'dormant', attempt_id: null, stance: null, commitments: [], round: 0, outcome: null, history: [],
+      coup: {pressure: 0, phase: 'dormant', attempt_id: null, stance: null, commitments: [], round: 0, outcome: null, history: [],
         next_attempt_available_at: 1, f9: null, settlement: null, pps_contribution: null, concessions_to_pps: [], impulses: [],
         effects_complete: false},
     };
@@ -245,7 +246,8 @@
       history: {months: [], actions: [], reasons: [], negotiations: [], cabinets: []},
       chapter: {status: 'active', reason: null, trigger_id: null, report: null, unemployment_bill: null},
       // Stage 7 (decision 1A): the dated inputs of the Normal scenario; a test of another system may switch one off.
-      scenario: {profile_id: SCENARIO_ID, version: 1, npc_reviewed_time: null, inputs: {dispute_1922: true, military_case: true, niewiadomski_cult: true}},
+      scenario: {profile_id: SCENARIO_ID, version: 1, npc_reviewed_time: null, inputs: {dispute_1922: true, military_case: true, niewiadomski_cult: true, chjeno_piast_1923: true, piast_split_1923: true,
+        grabski_resignation_1925: true}},
       parliament: institutions.parliament,
       senate: institutions.senate,
       ballots: institutions.ballots,

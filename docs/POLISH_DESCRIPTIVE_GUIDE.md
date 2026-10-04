@@ -1,6 +1,6 @@
 # Polska wersja: przewodnik po mechanice, decyzjach i ścieżkach rozgrywki
 
-**Stan — referencja 0.48, 27 września 2026.** Przewodnik opisuje docelową rozgrywkę w jednej aktualnej wersji; nie wszystko jest już wdrożone w kodzie gry. Liczby, wzory i kontrakty podaje [referencja techniczna](POLISH_TECHNICAL_REFERENCE.md); gdy przewodnik i referencja się różnią, obowiązuje referencja. Osoba kodująca znajdzie każdą kartę w jednej tabeli w [katalogu kart](POLISH_CARD_CATALOGUE.md). Wszystkie punkty audytu mechanik są zamknięte w dokumentacji, a liczby robocze czekają na sprawdzenie w grywalnym prototypie. Historia kolejnych poprawek jest w dodatku na końcu i nie opisuje aktualnych reguł.
+**Stan — referencja 0.49, 4 października 2026.** Przewodnik opisuje rozgrywkę pierwszego rozdziału w jednej aktualnej wersji. Rozdział jest wdrożony w kodzie gry w całości; jego ograniczenia wymienia rozdział 18 [planu implementacji](POLISH_IMPLEMENTATION_PLAN.md). Liczby, wzory i kontrakty podaje [referencja techniczna](POLISH_TECHNICAL_REFERENCE.md); gdy przewodnik i referencja się różnią, obowiązuje referencja. Osoba kodująca znajdzie każdą kartę w jednej tabeli w [katalogu kart](POLISH_CARD_CATALOGUE.md). Wszystkie punkty audytu mechanik są zamknięte w dokumentacji. Liczby robocze sprawdzono w pełnych kampaniach etapu 8; liczby oznaczone P pozostają robocze. Historia kolejnych poprawek jest w dodatku na końcu i nie opisuje aktualnych reguł.
 
 Gracz prowadzi kierownictwo PPS od stycznia 1922 do rozstrzygnięcia próby zamachu albo następnych legalnych wyborów parlamentarnych po 1922, jeśli do próby nie dochodzi. Głównym punktem zwrotnym jest kryzys majowy. Zakres obejmuje sprawy wewnętrzne. Raport końca rozdziału zachowuje stan do kontynuacji aż do 1939.
 
@@ -1068,7 +1068,7 @@ Takie wydarzenie wymaga rzeczywistego zabójstwa w danym przebiegu. Gra nie zabi
 
 ### Kult Niewiadomskiego: sprzeciw wobec kultu i granice działania Milicji
 
-W historycznej gałęzi śmierci Narutowicza pojawia się temat publicznego kultu sprawcy. Konkretna karta dotyczy uroczystości upamiętniającej Niewiadomskiego, a nie dowolnego nabożeństwa.
+W historycznej gałęzi śmierci Narutowicza pojawia się temat publicznego kultu sprawcy. Konkretna karta dotyczy uroczystości upamiętniającej Niewiadomskiego, a nie dowolnego nabożeństwa. W grze jest nią jego pogrzeb na Powązkach 6 lutego 1923 roku, po egzekucji 31 stycznia; tekst wspomina też lutowe nabożeństwa w innych miastach.
 
 PPS ma trzy odpowiedzi: **potępić kult i nakazać Milicji niezakłócanie nabożeństwa**, **zorganizować mszę w intencji obrony demokracji** albo **nie angażować organizacji**. Usunięto osobną kampanię republikańską i zgodę na zakłócanie uroczystości.
 
@@ -1557,7 +1557,7 @@ Wszystkie używają tego samego otwarcia i tła gospodarczego. To sposoby sprawd
 
 **Czwarty przebieg — historyczne zamiary PPS:** polityczny protest 1923, poparcie stabilizacji, wejście do szerokiego gabinetu, odmowa cięć i poparcie Piłsudskiego koleją w razie próby. Nie wymuszamy pomyślnych negocjacji dla tej etykiety. Po korekcie 0.13 może dojść do sporu o osłony w IV 1926 i przyjętego przez inne partie następcy w V. W archiwalnym teście 0.13 próba występowała dopiero w XII 1926. Bieżące wyniki i różnice względem 0.15 opisuje [końcowe sprawdzenie](../analysis/m02-robustness/REPORT.md); nie dopasowujemy ich do obowiązkowego maja.
 
-**Stan weryfikacji:** cztery kontrolowane przebiegi policzono przed i po korekcie; wyniki w [raporcie 0.13](../analysis/m02-revision-13/REPORT.md). Wariant współrządzący zachowuje osłony dzięki kompromisowi, historyczny może je odrzucić i wyjść. Zgody pozostałych aktorów oraz wynik początkowych wyborów są jawnymi wejściami testu. Później wykonano połączone przebiegi i końcową korektę 0.16. M02 jest gotowe do implementacji; pełne losowanie kart, wybory i balans sprawdzimy w prototypie. To nadal diagnostyka dokumentacji, nie cztery już działające kampanie w silniku gry.
+**Stan weryfikacji:** cztery kontrolowane przebiegi policzono przed i po korekcie; wyniki w [raporcie 0.13](../analysis/m02-revision-13/REPORT.md). Wariant współrządzący zachowuje osłony dzięki kompromisowi, historyczny może je odrzucić i wyjść. Zgody pozostałych aktorów oraz wynik początkowych wyborów są jawnymi wejściami testu. Później wykonano połączone przebiegi i końcową korektę 0.16. M02 jest gotowe do implementacji; pełne losowanie kart, wybory i balans sprawdzimy w prototypie. To nadal diagnostyka dokumentacji, nie cztery już działające kampanie w silniku gry. W etapie 8 te cztery przebiegi i dziewięć strategii 21.2 zagrano jako pełne kampanie w silniku gry ([raport etapu 8](../analysis/stage8-campaigns/REPORT.md)).
 
 **Dalsze sprawdzenie — negocjacje, 21 IX:** [rachunek czterech porozumień](../analysis/m02-negotiations/REPORT.md) pokazuje, że tych zgód nie można jeszcze uznać za wynik reguł. Grabski może przyjąć osłony, ale potrzebne jest osobne poparcie dla ich finansowania. W szerokim gabinecie PPS i NPR konkurują o Pracę; przetestowana propozycja daje NPR Gospodarkę wraz z gwarancjami pracowniczymi. Przy dostępnej alternatywie Witosa dotychczasowe relacje mogą nie wystarczyć do wejścia albo zachowania osłon; pomagają rzeczywiste kontakty i istniejąca akcja koalicyjna doradcy. Wyjście PPS nie daje Witosowi głosów posłów, którzy wcześniej opuścili jego zaplecze. Są to konkretne warunki dalszego scenariusza, bez nowych kart i walut; starsze wyniki pozostają warunkowymi testami, nie dowodem udanej całej kampanii.
 
@@ -1650,14 +1650,15 @@ Dla wdrożenia ważna jest ta sama kolejność zależności, którą widzi gracz
 
 Ten przewodnik opisuje projekt polskiej rozgrywki. [Niemiecki przewodnik](GERMAN_ORIGINAL_DESCRIPTIVE_GUIDE.md) jest wzorem opisywania przyczyn, ścieżek i skutków, a [niemiecka referencja techniczna](GERMAN_ORIGINAL_TECHNICAL_REFERENCE.md) — źródłem wiedzy o odziedziczonej implementacji.
 
-W polskim kodzie istnieją już fragmenty otwarcia, wyborów i organizacji. Nie oznacza to wdrożenia całego powyższego modelu. Szczególnie istotne różnice obejmują dynamiczną prezydenturę, trwałe umowy gabinetowe, parlamentarną pulę działań, polską gospodarkę, etapową AS i obliczanie zamachu po decyzjach.
+Polski kod wdraża cały pierwszy rozdział opisany powyżej, od otwarcia w styczniu 1922 do raportu (etapy 0–8 planu implementacji). Reguły liczą moduły w `source/rules/`, a sceny Dendry pokazują karty i wydarzenia. Ograniczenia gotowego rozdziału wymienia rozdział 18 [planu implementacji](POLISH_IMPLEMENTATION_PLAN.md). Najważniejsze z nich: legalne wcześniejsze wybory nie są osiągalne, a liczby oznaczone P pozostają robocze.
 
 Mapowanie kodu znajduje się w [MECHANICS_MAP.md](../MECHANICS_MAP.md) oraz [STATE_VARIABLES.md](../STATE_VARIABLES.md). Punkty wejścia do przyszłych zmian to między innymi:
 
 - `source/scenes/root.scene.dry`, `source/scenes/main.scene.dry` i `source/scenes/post_event.scene.dry` — stan, karty i czas;
 - `source/scenes/polish_opening_state.scene.dry` — stan polskiego otwarcia i uprawnienia;
 - `source/scenes/sejm_election.scene.dry` oraz `source/scenes/sejm_election_result.scene.dry` — wybory i mandaty;
-- `source/scenes/polish_presidential_sequence.scene.dry` — istniejąca stała sekwencja wymagająca adaptacji do wariantu dynamicznego;
+- `source/scenes/polish_presidential_sequence.scene.dry` — wybór marszałka i prezydenta z głosów klubów;
+- `source/rules/` — moduły reguł: stan gry, rozliczenie miesiąca, gospodarka, partia, rząd, związki, polityka, siły państwa i zamach;
 - `source/scenes/party_affairs/`, `source/scenes/advisors/` i `source/scenes/government_affairs/` — działania, doradcy i wykonanie;
 - `source/scenes/events/`, `source/scenes/status.scene.dry`, `source/scenes/library.scene.dry` oraz `source/qdisplays/` — kryzysy i prezentacja informacji.
 
@@ -1671,17 +1672,17 @@ Trzy frakcje i dziewięć pozycji wyborczych upraszczają liczbę aktorów. Przy
 
 Przekrojowy model mniejszości używa wyłącznie kategorii żydowskiej i pozostałych mniejszości, obok polskiej większości; ich liczebności wymagają kalibracji. Wybory prezydenckie mają jeden wybór nominacyjny i ekran ostatniego wyniku. Około 15% PPS w 1922 to punkt odniesienia, nie zatwierdzony twardy limit. Szczegółowe karty, wartości i czas wykonania są specyfikacją rozwijającą zatwierdzone kierunki, nie twierdzeniem, że wszystkie rozstrzygnięcia balansu już zapadły.
 
-### Co pozostaje do rozstrzygnięcia przed implementacją
+### Co pozostaje otwarte po wdrożeniu rozdziału
 
 | Kategoria | Otwarte zadanie |
 |---|---|
-| Balans | Koszty, progi, wartości początkowe, tempo wykonania, siła nasycenia kampanii i zakres losowości; pełne przebiegi N-A/N-B/N-C scenariusza Normalnego |
-| Koniec rozdziału | Normalny zachowuje roboczy kalendarz 19 II 1928; przetestować inne legalne terminy. Przedłużony konflikt kończy rozdział raportem (zatwierdzone w M08). Wcześniejsze legalne wybory po 1922 kończą rozdział |
+| Balans | Liczby oznaczone P pozostają robocze: koszty, progi, wartości początkowe, tempo wykonania, siła nasycenia kampanii i zakres losowości. Pełne przebiegi N-A/N-B/N-C i dziewięciu strategii 21.2 zagrano w etapie 8; automaty nie zastępują gry człowieka |
+| Koniec rozdziału | Normalny zachowuje roboczy kalendarz 19 II 1928; przetestować inne legalne terminy. Przedłużony konflikt kończy rozdział raportem (zatwierdzone w M08). Wcześniejsze legalne wybory po 1922 kończyłyby rozdział, ale nie są w grze osiągalne: rozwiązanie Sejmu przy reformie arbitrażu prezydenta nie jest wdrożone |
 | Prezydentura | Profile preferencji i automatycznych transferów prowadzących do końcowego wyniku, bez interaktywnych tur wyborczych; pierwszy rozdział nie modeluje ochrony prezydenta |
-| Instytucje | Prawne procedury konkretnych reform, zakresy resortów oraz wykonanie nadzoru nad wojskiem |
-| Partnerzy | Profile programowe w poszczególnych latach, skład „Innych” i warunki współpracy z konkretnymi reprezentantami mniejszości |
+| Instytucje | Prawne procedury konkretnych reform, zakresy resortów oraz wykonanie nadzoru nad wojskiem; obsady stanowisk wojskowych 1922–1926 zebrały badania etapu 8, ale profil nominacji w grze pozostaje syntetyczny |
+| Partnerzy | Profile programowe w poszczególnych latach (badania etapu 8 datowały temat autonomii), skład „Innych” i warunki współpracy z konkretnymi reprezentantami mniejszości |
 | Dane społeczne | Porównywalne wskaźniki gospodarcze, klasyfikacja elektoratu i skala poszczególnych organizacji |
-| Sceny kryzysowe | Historyczna kalibracja wyborów Krakowa, mobilizacji i kultu; Żyrardów usunięto z katalogu; źródłowe przypisanie odpowiedzialności, zgrupowań i ich dostępności |
+| Sceny kryzysowe | Historyczna kalibracja wyborów Krakowa i mobilizacji; Żyrardów usunięto z katalogu; źródłowe przypisanie odpowiedzialności. Uroczystość kultu i przebieg sił w maju 1926 opisały badania etapu 8; zgrupowania w grze pozostają syntetyczne, a lojalność korpusu oficerskiego historycy oceniają różnie |
 
 Niepotwierdzony szczegół historyczny ma status **TBD — historical research required**. Nieustalona wartość mechaniki ma status **TBD — kalibracja projektu**. Ich brak nie oznacza, że cały opisany ciąg jest nieokreślony: wiadomo, które warunki trzeba sprawdzić, co jest kosztem i gdzie występuje skutek.
 
@@ -1708,6 +1709,8 @@ Pełny rejestr i linki znajdują się w [HISTORICAL_SOURCES.md](../HISTORICAL_SO
 ## Dodatek: historia zmian przewodnika
 
 Poniższe notki opisują kolejne poprawki, od najnowszej. Są historią, nie instrukcją: obowiązuje tekst rozdziałów 1–19. Przeniesiono je tu bez zmian w porządkowaniu M19 (referencja 0.31).
+
+**Etap 8 wdrożony — ostatni etap, referencja 0.49:** pierwszy rozdział jest kompletną polską grą. Kampania od stycznia 1922 przechodzi przez gabinety Ponikowskiego, Śliwińskiego, Nowaka, Witosa, Grabskiego i Skrzyńskiego. W 1923 roku Piast i prawica mogą zawrzeć własny kompromis (Chjeno-Piast), a w grudniu dziesięciu posłów Piasta odchodzi od gabinetu z prawicą. Grabski ustępuje jesienią 1925 roku, jeśli rządzi w kryzysie kredytowym albo walutowym; karta formowania rządu podaje wtedy przyczynę. Sprawa wojskowa zaczyna się w lipcu 1923, a presja na zamach rośnie od zera; bez porozumienia z Piłsudskim próba przychodzi w kampaniach testowych w marcu 1926. Tolerując rząd, PPS może żądać kompromisu z Piłsudskim pod kontrolą cywilną, a gabinet wykonuje go sam. Uroczystością kultu Niewiadomskiego jest jego pogrzeb na Powązkach 6 lutego 1923. Komuniści chcą przez strajk obalić rząd, więc pełna współpraca z nimi wymaga co najmniej szerokich żądań; po szerszym porozumieniu z KPP można proponować rządy z jej udziałem. Linią startową PPS w sprawie mniejszości słowiańskich jest autonomia województw. Ekrany pokazują tylko polskie dane: zakładkę Defense z Milicją, AS, policją i znanymi przedziałami wojska, wykresy Biblioteki od stycznia 1922 i polską oś czasu 1919–1922. Z polskich kart zniknęły niemieckie zdjęcia, a gra nie odtwarza niemieckiej muzyki. Raport po zamachu podaje marszałka obradującego Sejmu. Ograniczenia gotowego rozdziału, w tym brak drogi do legalnych wcześniejszych wyborów, wymienia rozdział 18 [planu implementacji](POLISH_IMPLEMENTATION_PLAN.md).
 
 **Etap 7 wdrożony, referencja 0.48:** gra liczy demokrację, przemoc i siły państwa. Co miesiąc zmieniają się przywiązanie do demokracji, autorytet Sejmu wynikający z zapisanych zdarzeń, poziom przemocy, niezadowolenie i radykalizacja wyborców oraz presja w stronę zamachu; Status i Biblioteka pokazują przywiązanie do demokracji zamiast niemieckiego poparcia dla republiki. W czerwcu 1922 spór Naczelnika z Ponikowskim kończy się dymisją gabinetu: PPS wybiera jedną z trzech odpowiedzi, a potem odbywa się formowanie nowego rządu, w którym kandydatem może być Śliwiński. Na wystąpienie Piłsudskiego przeciw parlamentowi PPS musi odpowiedzieć. Wybór Narutowicza kończy się jego zabójstwem, bo ochrony prezydenta ten rozdział nie modeluje; przed drugim głosowaniem Zgromadzenia Narodowego PPS wybiera odpowiedź na zabójstwo, a od stycznia 1923 może wystąpić wobec kultu Niewiadomskiego. Restrykcje, na przykład konfiskata prasy albo zakaz Milicji wydany przez rząd represyjny, mają profil prawny, a przegląd w wymiarze sprawiedliwości uchyla tylko bezprawne. Nowe karty to kontrola wojska w Sejmie, sprawy wewnętrzne, sprawy wojskowe i porozumienie z Piłsudskim; agenda partii ma ocenę sił państwa, która zawęża znany przedział ich lojalności. Wojsko składa się z umownych zgrupowań bez historycznych nazw. Od marca 1926 może dojść do próby zamachu: PPS wybiera stanowisko, przydziela kolejarzy i Milicję, a przy ofercie ugody przyjmuje ją albo odrzuca. Rozstrzygnięcie kończy pierwszy rozdział raportem, który podaje też, co musi uwzględnić kontynuacja. Zapisu z poprzedniej wersji nie da się kontynuować; potrzebna jest nowa gra.
 

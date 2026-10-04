@@ -14,6 +14,9 @@ afterEach(() => assert.deepEqual(errors, [], 'Dendry must not swallow script or 
 const sum = object => Object.values(object).reduce((total, value) => total + value, 0);
 // Close to the 1922 shares: the historical winners follow from it (Rataj, Narutowicz, Wojciechowski).
 const HISTORICAL_LIKE = { zln: 22, pschd: 10, psl_piast: 13, psl_wyzwolenie: 11, pps: 10, npr: 5, minorities_bloc: 16, kpp: 1.5, other: 11.5 };
+// The national result of the opening before the calibration of stage 8 (decision 2A): PPS is slightly larger than
+// PSL Wyzwolenie, so a Daszyński nomination eliminates Narutowicz first (a fixture for the branch without him).
+const PPS_AHEAD = { kpp: 6.005, pps: 13.287, npr: 6.33, psl_wyzwolenie: 12.751, psl_piast: 13.145, pschd: 6.589, zln: 11.848, minorities_bloc: 20.451, other: 9.594 };
 
 function choice(engine, id) {
   return engine.getCurrentChoices().find(item => item.id === id);
@@ -218,9 +221,9 @@ test('counted ballots, supporters and office transitions are recorded once; cabi
 });
 
 test('the threat branch follows only the election of Narutowicz', () => {
-  // With the default 1922 result PPS is slightly larger than PSL Wyzwolenie, so a Daszyński
-  // nomination eliminates Narutowicz first and another President is elected.
-  const { engine, Q } = december({ values: null });
+  // With PPS slightly larger than PSL Wyzwolenie (PPS_AHEAD), a Daszyński nomination eliminates Narutowicz
+  // first and another President is elected.
+  const { engine, Q } = december({ values: PPS_AHEAD });
   electSpeaker(engine);
   choose(engine, 'polish_presidential_sequence.confirm_daszynski');
   const first = Q.polish_presidency.elections[0];

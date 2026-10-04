@@ -3,7 +3,6 @@ subtitle: Industry and Trade: credit, orders, public control, representation.
 new-page: true
 is-card: true
 tags: govt_affairs
-card-image: img/arbeiterbew.jpg
 view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'industrial_policy') !}
 on-arrival: {!
 // Card government.industrial_policy (technical reference 17.11–17.12; card catalogue 8.6). Opening and closing
@@ -90,7 +89,7 @@ The representation of the workers of a public plant uses one record. Consultatio
 
 @rep_consultative
 title: Information and consultation
-subtitle: 1 T, 0 B, by the act of the public owner; the workers' grievance −2 (stage 7).
+subtitle: 1 T, 0 B, by the act of the public owner; the workers' grievance −2.
 choose-if: {! return PolishProjects.optionStatus(Q, 'industrial_policy', 'worker_representation', {variant: 'consultative'}).available !}
 unavailable-subtitle: [+ pl_rep_consultative_why +]
 on-arrival: {!
@@ -100,7 +99,7 @@ go-to: result
 
 @rep_decision_rights
 title: Co-decision on mass dismissals and the wage rules
-subtitle: Prepared now (1 T); its law and launch in the agenda (1 T), then 1 B a month for two months; grievance −4, or the missing −2 after consultation (stage 7).
+subtitle: Prepared now (1 T); its law and launch in the agenda (1 T), then 1 B a month for two months; grievance −4, or the missing −2 after consultation.
 choose-if: {! return PolishProjects.optionStatus(Q, 'industrial_policy', 'worker_representation', {variant: 'decision_rights'}).available !}
 unavailable-subtitle: [+ pl_rep_decision_rights_why +]
 on-arrival: {!

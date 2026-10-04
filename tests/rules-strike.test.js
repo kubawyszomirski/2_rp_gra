@@ -26,6 +26,15 @@ function month(Q, t) {
   PolishUnions.endMonth(Q, { t });
 }
 
+// Stage 8 (decision 2A) calibrated the opening so that the KPP has 3.2% among the workers; the communist steps of a
+// strike need 5% (14.4). These tests of the communist steps use the earlier opening row of the workers as a fixture.
+function kppAmongWorkers(Q) {
+  const old = { kpp: 11.04, pps: 38.64, npr: 18.4, psl_wyzwolenie: 1.84, psl_piast: 0.92, pschd: 9.2, zln: 7.36, minorities_bloc: 4.6, other: 8 };
+  for (const party of Q.parties) Q['workers_' + party] = old[party];
+  PolishElectorate.seedCells(Q);
+  PolishElectorate.writeClassMirrors(Q);
+}
+
 test('a new game has three branches with the lines of a strike call and no strike (schema 7)', () => {
   const Q = game();
   const S = Q.S;
@@ -359,6 +368,7 @@ test('Kraków: the rise is paid, the repression is not withdrawn: one clause exe
 
 test('Komuniści: one strike opened three times gives one trial; two different successful trials, one of them full, open the further preparation', () => {
   const Q = game();
+  kppAmongWorkers(Q);
   const S = Q.S;
   PolishGovernment.kppContact(Q);
   free(Q);
@@ -366,7 +376,8 @@ test('Komuniści: one strike opened three times gives one trial; two different s
   strongBranches(S);
   assert.ok(PolishUnions.communistsActive(S, { branches: ['industry'] }), 'the KPP has at least 5% among the workers');
   const strike = (branch, mode) => {
-    PolishUnions.prepare(Q, branch, 'limited'); free(Q);
+    // Stage 8 (8f): the KPP, with its political goal, joins a full committee only for a broad or a political demand.
+    PolishUnions.prepare(Q, branch, mode === 'full' ? 'broad' : 'limited'); free(Q);
     PolishUnions.startStrike(Q, branch); free(Q);
     const rec = PolishUnions.branchRecord(S, branch);
     for (let i = 0; i < 3; i++) PolishUnions.stepsView(Q); // the step is opened three times
@@ -393,14 +404,15 @@ test('Komuniści: one strike opened three times gives one trial; two different s
   assert.equal(PolishParty.kppStepStatus(Q, 'rules').available, true);
 });
 
-test('Współpraca i eskalacja: full cooperation with a limited demand and a partner who keeps the end add agreed pressure, no violence and no radical demand', () => {
+test('Współpraca i eskalacja: full cooperation with a broad demand and a partner who keeps the end add agreed pressure, no violence and no radical demand', () => {
   const Q = game();
+  kppAmongWorkers(Q);
   const S = Q.S;
   PolishGovernment.kppContact(Q);
   free(Q);
   PolishGovernment.changeRelation(Q, 'kpp', 40 - S.actors.relations.kpp, 'fixture');
   strongBranches(S);
-  PolishUnions.prepare(Q, 'industry', 'limited'); free(Q);
+  PolishUnions.prepare(Q, 'industry', 'broad'); free(Q);
   PolishUnions.startStrike(Q, 'industry'); free(Q);
   const rec = PolishUnions.branchRecord(S, 'industry');
   S.rng.rolls[`kpp_discipline:${rec.id}`] = 0.01;
@@ -417,7 +429,24 @@ test('Współpraca i eskalacja: full cooperation with a limited demand and a par
   assert.ok(withPartner.chance > alone.chance);
   S.rng.rolls[`strike:${rec.id}:round:1`] = 0.99;
   PolishUnions.endMonth(Q, { t });
-  assert.deepEqual([rec.clashes.length, rec.level, rec.demands.map(d => d.kind), rec.uncontrolled_participation], [0, 'limited', ['wages'], 0]);
+  assert.deepEqual([rec.clashes.length, rec.level, rec.demands.map(d => d.kind), rec.uncontrolled_participation], [0, 'broad', ['wages', 'conditions'], 0]);
+});
+
+test('Cel KPP (etap 8, 8f): with its political goal the KPP refuses a full committee for one wage demand; at relation 30 a broad demand keeps the rules with 40%, a political one with 65%', () => {
+  const Q = game();
+  kppAmongWorkers(Q);
+  const S = Q.S;
+  PolishGovernment.kppContact(Q);
+  free(Q);
+  PolishGovernment.changeRelation(Q, 'kpp', 30 - S.actors.relations.kpp, 'fixture');
+  strongBranches(S);
+  PolishUnions.prepare(Q, 'industry', 'limited'); free(Q);
+  PolishUnions.startStrike(Q, 'industry'); free(Q);
+  assert.match(PolishUnions.cooperationStatus(Q, 'full').reason, /does not accept/);
+  assert.equal(PolishUnions.cooperationStatus(Q, 'limited').available, true, 'limited coordination stays possible');
+  assert.deepEqual(['limited', 'broad', 'structural'].map(level => PolishParty.goalFit(level, 'structural')), [0, 50, 100]);
+  close(PolishParty.partnerCompliance(30, PolishParty.goalFit('broad', 'structural')), 0.40);
+  close(PolishParty.partnerCompliance(30, PolishParty.goalFit('structural', 'structural')), 0.65);
 });
 
 test('Strajk i Sejm: the answers read the earlier choices; no new partner, no second strike and no double penalty for withdrawing support', () => {

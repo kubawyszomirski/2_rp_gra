@@ -3,7 +3,6 @@ subtitle: Labour: employment, infrastructure or workers’ housing.
 new-page: true
 is-card: true
 tags: govt_affairs
-card-image: img/union_2.jpg
 view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'public_works') !}
 on-arrival: {!
 // Card government.public_works (technical reference 17.11–17.12; card catalogue 8.7). Opening and closing

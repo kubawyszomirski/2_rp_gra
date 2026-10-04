@@ -42,14 +42,16 @@ const expectedParties = [
   'other',
 ];
 
+// Stage 8, decision 2A: the opening rows calibrated so that a passive PPS gets a Sejm of 1922 near the M02 base Sejm
+// (analysis/stage8-campaigns/calibration.json).
 const openingRows = {
-  workers: [11.04, 38.64, 18.4, 1.84, 0.92, 9.2, 7.36, 4.6, 8],
-  old_middle: [1.84, 9.2, 12.88, 3.68, 5.52, 18.4, 29.44, 11.04, 8],
-  new_middle: [3.68, 22.08, 4.6, 8.28, 4.6, 9.2, 25.76, 13.8, 8],
-  rural: [1.76, 3.52, 1.76, 28.16, 29.92, 5.28, 13.2, 4.4, 12],
-  bourgeois_landowners: [0, 1.84, 3.68, 0.92, 6.44, 13.8, 48.76, 16.56, 8],
-  unemployed: [29.44, 34.96, 11.04, 1.84, 0.92, 4.6, 3.68, 5.52, 8],
-  national_minorities: [9.2, 6.44, 0.92, 1.84, 0.92, 0.92, 1.84, 69.92, 8],
+  workers: [3.21, 30.45, 17.08, 2.18, 1.46, 19.77, 15.57, 4.2, 6.08],
+  old_middle: [0.35, 4.81, 7.92, 2.88, 5.82, 26.21, 41.29, 6.69, 4.03],
+  new_middle: [0.8, 13.1, 3.22, 7.37, 5.51, 14.89, 41.04, 9.49, 4.58],
+  rural: [0.37, 2.01, 1.18, 24.08, 34.43, 8.21, 20.21, 2.91, 6.6],
+  bourgeois_landowners: [0, 0.85, 2.01, 0.64, 6.02, 17.42, 60.6, 8.89, 3.57],
+  unemployed: [10.85, 34.97, 13.01, 2.76, 1.86, 12.55, 9.88, 6.4, 7.72],
+  national_minorities: [3.03, 5.76, 0.97, 2.47, 1.66, 2.24, 4.42, 72.54, 6.91],
 };
 
 function codeFor(sceneId, field = 'onArrival') {
@@ -179,7 +181,7 @@ test('the affiliated Labor power centre is excluded from PPS dissent', () => {
   assert.ok(!highLabor.factions.includes('labor'));
 });
 
-test('every opening support row totals 100 with the approved Other allocation', () => {
+test('every opening support row totals 100 with the calibrated Other allocation of stage 8', () => {
   const Q = newGameState();
 
   // Stage 5 (decision 1A): the approved opening rows are the input the cells are built from; the class rows
@@ -188,7 +190,6 @@ test('every opening support row totals 100 with the approved Other allocation', 
     const input = Array.from(Q.S.society.seed_rows[populationGroup]); // an array of the VM context
     assert.deepEqual(input, openingRows[populationGroup], populationGroup);
     closeTo(input.reduce((sum, value) => sum + value, 0), 100);
-    assert.equal(input[expectedParties.indexOf('other')], populationGroup === 'rural' ? 12 : 8);
     closeTo(expectedParties.reduce((sum, party) => sum + Q[`${populationGroup}_${party}`], 0), 100);
   }
 });
@@ -196,15 +197,15 @@ test('every opening support row totals 100 with the approved Other allocation', 
 test('opening national projection is deterministic under retained overlapping minority weighting', () => {
   const Q = runElection(newGameState());
   const expected = {
-    kpp: 6.005,
-    pps: 13.287,
-    npr: 6.330,
-    psl_wyzwolenie: 12.751,
-    psl_piast: 13.145,
-    pschd: 6.589,
-    zln: 11.848,
-    minorities_bloc: 20.451,
-    other: 9.594,
+    kpp: 1.793,
+    pps: 10.074,
+    npr: 5.346,
+    psl_wyzwolenie: 11.241,
+    psl_piast: 15.299,
+    pschd: 11.395,
+    zln: 18.956,
+    minorities_bloc: 19.679,
+    other: 6.218,
   };
 
   closeTo(expectedParties.reduce((sum, party) => sum + Q[`${party}_normalized`], 0), 1);
@@ -213,10 +214,10 @@ test('opening national projection is deterministic under retained overlapping mi
     assert.ok(Number.isFinite(Q[`${party}_votes_dec`]));
   }
   // Stage 5: the class rows are mirrors of the cells and include the minorities of each class; the national
-  // result above is unchanged (decision 1A).
-  assert.equal(Q.workers_pps_display, 33);
-  assert.equal(Q.rural_other_display, 11);
-  assert.equal(Q.national_minorities_minorities_bloc_display, 68);
+  // result above is the calibrated opening of stage 8 (decision 2A).
+  assert.equal(Q.workers_pps_display, 27);
+  assert.equal(Q.rural_other_display, 7);
+  assert.equal(Q.national_minorities_minorities_bloc_display, 66);
 });
 
 test('legacy card changes transfer only through approved direct mappings', () => {
@@ -300,7 +301,7 @@ test('first-election processing records all parties and computes only the implem
   for (const party of expectedParties) {
     closeTo(Q[`${party}_r`], 100 * Q.sejm_results[0].party_seats[party] / 444);
   }
-  assert.equal(Q.largest_party_id, 'minorities_bloc');
+  assert.equal(Q.largest_party_id, 'zln');
   closeTo(Q.polish_left_coalition, Q.pps_r + Q.psl_wyzwolenie_r + Q.minorities_bloc_r);
   closeTo(Q.polish_center_left_coalition, Q.pps_r + Q.psl_wyzwolenie_r + Q.psl_piast_r + Q.npr_r);
   closeTo(Q.chjeno_piast_coalition, Q.zln_r + Q.pschd_r + Q.psl_piast_r);
@@ -378,7 +379,7 @@ test('the election simulator uses the same Polish opening matrix', () => {
 
   assert.deepEqual(Array.from(Q.parties), expectedParties);
   assert.equal(Q.simulation_largest_party_id, 'minorities_bloc');
-  assert.equal(Q.rural_other_display, 12);
+  assert.equal(Q.rural_other_display, 7);
   for (const party of expectedParties) {
     assert.ok(Number.isFinite(Q[`${party}_normalized`]));
     assert.equal(Q[`${party}_r`], undefined, 'preview must not allocate parliamentary shares');
@@ -394,7 +395,7 @@ test('later Polish parties and coalitions remain explicitly planned rather than 
   assert.equal(Q.ozn_formed, 0);
   assert.equal(Q.sl_formed, 0);
   const partiesText = JSON.stringify(game.scenes['library.parties'].content);
-  assert.ok(partiesText.includes('Planned, not implemented'));
+  assert.ok(partiesText.includes('are not part of the first chapter'), 'stage 8: the Library names the later parties as outside the chapter');
   assert.ok(partiesText.includes('Socjaldemokratyczna Partia Pracy'));
 });
 
@@ -465,6 +466,7 @@ test('the six approved starting-adviser actions follow 10.4.3 and write only the
   coalition.sejm_pending = {id: 'fixture', year: 1922, month: 11, first: true, phase: 'pending'};
   runScene('sejm_election_result', coalition);
   PolishGovernment.setDraft(coalition, 'configuration_id', 'left_minority');
+  PolishGovernment.setDraft(coalition, 'seek_minority_support', true);
   PolishGovernment.submitFormation(coalition);
   const agreements = coalition.S.cabinet.agreement_ids.map(id => coalition.S.agreements[id]).filter(a => a.kind === 'cabinet');
   assert.ok(agreements.length > 0);

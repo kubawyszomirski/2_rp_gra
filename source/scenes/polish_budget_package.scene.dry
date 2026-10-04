@@ -1,7 +1,6 @@
 title: Budget and the Costs of the Crisis
 subtitle: Answer the cabinet's package before the Sejm votes on it.
 is-pinned-card: true
-card-image: img/reichstag_2.jpg
 view-if: {! return !!Q.S && PolishProjects.budgetCardAvailable(Q) !}
 new-page: true
 on-arrival: {!

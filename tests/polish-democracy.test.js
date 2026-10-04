@@ -104,6 +104,9 @@ test('B1/B2: the dispute of June 1922 brings three answers of B1 into one free f
 
 // ---- December 1922 and the presidency (17.6–17.7) ----
 const HISTORICAL_LIKE = { zln: 22, pschd: 10, psl_piast: 13, psl_wyzwolenie: 11, pps: 10, npr: 5, minorities_bloc: 16, kpp: 1.5, other: 11.5 };
+// The national result of the opening before the calibration of stage 8 (decision 2A): PPS is slightly larger than
+// PSL Wyzwolenie, so a Daszyński nomination eliminates Narutowicz first (a fixture for the branch without him).
+const PPS_AHEAD = { kpp: 6.005, pps: 13.287, npr: 6.33, psl_wyzwolenie: 12.751, psl_piast: 13.145, pschd: 6.589, zln: 11.848, minorities_bloc: 20.451, other: 9.594 };
 function december({ values = HISTORICAL_LIKE } = {}) {
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
@@ -156,8 +159,8 @@ test('B3/B4: the threat settles without a menu; only a confirmed death, after th
   assert.equal(PolishPolitics.responseDue(restored.state.qualities), false, 'answered once, also after loading');
   choose(restored, 'polish_presidential_sequence.do_not_run_daszynski_second');
   assert.equal(restored.state.qualities.S.politics.cases[death.case_id].closed_by, 'lawful_succession');
-  // No death, no B4: with the Daszyński nomination another President is elected (the default 1922 result).
-  const other = december({ values: null });
+  // No death, no B4: with the Daszyński nomination another President is elected (PPS_AHEAD).
+  const other = december({ values: PPS_AHEAD });
   choose(other, 'polish_presidential_sequence.confirm_daszynski');
   assert.notEqual(other.state.qualities.polish_presidency.elections[0].winner_id, 'gabriel_narutowicz');
   choose(other, 'polish_presidential_sequence.first_transfer');
@@ -208,10 +211,14 @@ test('Msza B5: three answers; without a host the mass is blocked at no cost; wit
   S.party_orgs.cash = 5;
   spendMonth(engine);
   assert.deepEqual([Q.year, Q.month], [1923, 1]);
+  assert.equal(engine.state.sceneId, 'main', 'stage 8 (8f): the commemoration comes after the execution of 31 I 1923');
+  spendMonth(engine);
+  assert.deepEqual([Q.year, Q.month], [1923, 2]);
   assert.equal(engine.state.sceneId, 'polish_event_niewiadomski_cult');
   assert.deepEqual(ids(engine), ['polish_event_niewiadomski_cult.condemn', 'polish_event_niewiadomski_cult.democracy_mass',
     'polish_event_niewiadomski_cult.stay_out']);
-  assert.equal(S.politics.episodes.find(e => e.kind === 'assassin_commemoration').place, 'TBD — historical research required');
+  assert.equal(S.politics.episodes.find(e => e.kind === 'assassin_commemoration').place,
+    'Warsaw, the Powązki cemetery: the funeral of Eligiusz Niewiadomski on 6 February 1923');
   const mass = () => (engine.getCurrentChoices() || []).find(c => c.id === 'polish_event_niewiadomski_cult.democracy_mass');
   const cash = S.party_orgs.cash;
   assert.equal(S.actors.relations.pschd, 30);

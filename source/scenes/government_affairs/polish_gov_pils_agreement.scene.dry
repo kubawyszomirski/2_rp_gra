@@ -3,7 +3,6 @@ subtitle: A concrete concession under a legal procedure, or a refusal and a civi
 new-page: true
 is-card: true
 tags: govt_affairs
-card-image: img/reichstag_2.jpg
 view-if: {! return !!Q.S && !!Q.polish_security_rules && PolishSecurity.pilsCardAvailable(Q) !}
 on-arrival: {!
 // Card government.pils_agreement (technical reference 16.7, 16.8.1; card catalogue 8.15): the card opens an offer,

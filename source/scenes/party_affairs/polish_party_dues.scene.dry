@@ -3,7 +3,6 @@ subtitle: Raise or lower the members’ dues.
 new-page: true
 is-card: true
 tags: party_affairs
-card-image: img/map_3.jpg
 view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.duesAvailable(Q) !}
 on-arrival: {!
 // Card party.dues (technical reference 13.1; card catalogue 5.4): raise or lower, 1 T, cd 6 M. The present

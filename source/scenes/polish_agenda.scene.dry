@@ -1,7 +1,6 @@
 title: Agenda
 subtitle: Prepared reforms wait here for their launch.
 is-pinned-card: true
-card-image: img/reichstag_1.jpg
 view-if: {! return !!Q.S && PolishProjects.agendaAvailable(Q) !}
 new-page: true
 on-arrival: {!

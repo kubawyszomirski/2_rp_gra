@@ -3,7 +3,6 @@ subtitle: Agriculture: how land is divided and who has access to it.
 new-page: true
 is-card: true
 tags: govt_affairs
-card-image: img/map_3.jpg
 view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'land_program') !}
 on-arrival: {!
 // Card government.land_program (technical reference 12.6, 17.11–17.12; card catalogue 8.8). One way of
@@ -82,7 +81,7 @@ go-to: result
 
 @polish_majority
 title: A preference for the Polish majority
-subtitle: Trust of the excluded cells −6 (stage 5); a breach of the legal equality promised to minority partners.
+subtitle: Trust of the excluded groups −6; a breach of the legal equality promised to minority partners.
 choose-if: {! return PolishProjects.landAccessStatus(Q, 'polish_majority').available !}
 unavailable-subtitle: [+ pl_land_majority_why +]
 on-arrival: {!

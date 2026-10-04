@@ -1,6 +1,6 @@
 # Polska wersja: katalog kart do kodowania
 
-**Stan — referencja 0.47, 27 września 2026. Wszystkie partie przejrzane; brak otwartych pytań.** Katalog zbiera w jednym miejscu to, co [referencja techniczna](POLISH_TECHNICAL_REFERENCE.md) mówi o każdej karcie i wydarzeniu pierwszego rozdziału. Jest ściągą do kodowania: jedna tabela na kartę. Katalog powstał w całości w wersji 0.32. Wszystkie sześć partii użytkownik przejrzał w 0.33–0.38. Rozstrzygnięte pytania pogrupowano w rozdziale 10.
+**Stan — referencja 0.49, 4 października 2026. Wszystkie partie przejrzane; brak otwartych pytań; wszystkie karty wdrożone (etapy 0–8 planu implementacji).** Katalog zbiera w jednym miejscu to, co [referencja techniczna](POLISH_TECHNICAL_REFERENCE.md) mówi o każdej karcie i wydarzeniu pierwszego rozdziału. Jest ściągą do kodowania: jedna tabela na kartę. Katalog powstał w całości w wersji 0.32. Wszystkie sześć partii użytkownik przejrzał w 0.33–0.38. Rozstrzygnięte pytania pogrupowano w rozdziale 10.
 
 ## 1. Jak czytać katalog
 
@@ -124,7 +124,7 @@ Osiem kart, którymi PPS ogłasza trwałą linię (10.5–10.10). Mają wspólny
 - Piłsudczycy odrzucają `pils_influence=oppose_military_interference`;
 - Centrum odrzuca `pils_influence=support`;
 - karty „Jakiej władzy chcemy” i „PPS wobec modelu sowieckiego” mają tylko swoje reakcje szczególne z 10.8 i 10.10;
-- pozostałe pięć kart nie ma odrzucanych wariantów. Historyczne stanowiska frakcji: `TBD — historical research required`.
+- pozostałe pięć kart nie ma odrzucanych wariantów. Historyczne stanowiska frakcji: badania 8f (`PL-PPS-CURRENTS-1922-1926`) dają mocne oparcie regule piłsudczyków i częściowe regule Centrum; stanowiska Lewicy przed 1926 r.: `TBD — historical research required`.
 
 **Status partii:** przejrzana przez użytkownika 26 IX 2026; wszystkie pytania rozstrzygnięte w 0.33 (referencja 23.6).
 
@@ -273,7 +273,7 @@ Rozbudową zasięgu jest każde podniesienie zasięgu branży związkowej albo `
 | Zapisuje | `S.actors.pps.strategy.slavic_autonomy`; na starcie `cultural_rights` | P |
 | Odczytują | Oś praw i autonomii w ocenie ofert (10.8, 8.3), temat `autonomy`; ideały testowe z 8.6: ZLN −2, reprezentacja pozostałych mniejszości +1, reszta 0. Treść żądań ustrojowych i praw mniejszości; raport jako program | Z / P |
 | Co zostaje po karcie | Nic w agendzie. Brak przycisku wdrożenia, negocjacji zagranicznych i zmiany granic | Z |
-| Obecny kod | `source/scenes/party_affairs/polish_party_slavic_autonomy.scene.dry` (etap 5, 0.46): federacja, autonomia województw, prawa kulturalne i polonizacja (oś +2…−2); ideał PPS `autonomy` w ofertach; autonomia od +1 przekracza czerwoną linię ZLN. Bez nowej populacji i praw | K |
+| Obecny kod | `source/scenes/party_affairs/polish_party_slavic_autonomy.scene.dry` (etap 5, 0.46): federacja, autonomia województw, prawa kulturalne i polonizacja (oś +2…−2); ideał PPS `autonomy` w ofertach; autonomia od +1 przekracza czerwoną linię ZLN. Bez nowej populacji i praw. Od etapu 8 (0.49) linią startową PPS jest autonomia województw (`regional_autonomy`), jak projekt Niedziałkowskiego z X 1921, a ideały `autonomy` partii są datowane według badań 8f (`actor_profiles_v2`) | K |
 | Źródła i testy | 10.5, 10.8, 17.12.6, 17.12.7; testy „Cztery stanowiska autonomii”, „Cele ustrojowe” w 21.1 | — |
 
 | Opcja (ID) | Zablokowana, gdy | Skutek od razu | Skutek później | Status |
@@ -286,7 +286,7 @@ Rozbudową zasięgu jest każde podniesienie zasięgu branży związkowej albo `
 
 Żadna deklaracja nie daje od razu poparcia agregatu `other_minorities`. Temat słowiański nie oznacza, że każdy wyborca tego agregatu jest Ukraińcem albo Białorusinem (10.8).
 
-Skutek dla gracza: linia za autonomią pomaga w rozmowach z reprezentacją mniejszości, a szkodzi w rozmowach z ZLN. Historyczne stanowiska partii: `TBD — historical research required`.
+Skutek dla gracza: linia za autonomią pomaga w rozmowach z reprezentacją mniejszości, a szkodzi w rozmowach z ZLN. Historyczne stanowiska partii w latach 1922–1926 zapisuje od etapu 8 (0.49) profil `actor_profiles_v2` według badań 8f (`PL-MINORITY-AUTONOMY-1922-1926`).
 
 **Otwarte pytania:** brak.
 
@@ -753,7 +753,7 @@ Początkowi doradcy Daszyński, Pużak i Perl są oznaczeni jako już powołani,
 | Zapisuje | Według akcji; czasowe modyfikatory w `S.advisors.effects` | P |
 | Odczytują | — | — |
 | Co zostaje po karcie | Efekty na 6 M wygasają; zamknięcie podglądu nic nie pobiera; odmowa z braku środków nie zużywa doradcy | P |
-| Obecny kod | Pliki osób w `source/scenes/advisors/` (etap 5, 0.46): akcje z 10.4.3 przez `PolishParty.advisorAction` w `source/rules/polish_party.js`, 0 T, własne R, wspólne odnowienie 6 M. Arciszewski, Moraczewski i Czapiński otwierają karty rządowe z jednym krokiem za 0 T (Czapiński: Skarb, a od etapu 6, 0.47, także Przemysł dla własności publicznej i reprezentacji, gdy dana opcja jest wykonalna); karta otwarta przez doradcę ma zamknięcie w trybie doradcy. Próchnik, Drobner i Dubois mają tylko powrót (kontynuacja). Żadna scena doradcy nie zapisuje `pro_republic` | K |
+| Obecny kod | Pliki osób w `source/scenes/advisors/` (etap 5, 0.46): akcje z 10.4.3 przez `PolishParty.advisorAction` w `source/rules/polish_party.js`, 0 T, własne R, wspólne odnowienie 6 M. Arciszewski, Moraczewski i Czapiński otwierają karty rządowe z jednym krokiem za 0 T (Czapiński: Skarb, a od etapu 6, 0.47, także Przemysł dla własności publicznej i reprezentacji, gdy dana opcja jest wykonalna); karta otwarta przez doradcę ma zamknięcie w trybie doradcy. Próchnik, Drobner i Dubois mają tylko powrót (kontynuacja). Żadna scena doradcy nie zapisuje `pro_republic`. Od etapu 8 (0.49, decyzja 5A) warunkowe tolerowanie Ziemięckiego jest dostępne przy poparciu z zewnątrz, na podstawie umowy, mniejszościowego gabinetu Śliwińskiego albo Piłsudskiego; wcześniej żaden gabinet nie miał tego profilu | K |
 | Źródła i testy | 10.4.2, 10.4.3, 10.4.4, 10.4.5; testy „Pużak”, „Jedno przekierowanie”, „Brak resortu”, „Piłsudczycy”, „Miasta i klasy”, „Efekty czasowe”, „KPP i Lewica”, „Późni doradcy”, „Doradca” w 21.1 | — |
 
 | Opcja (ID) | Zablokowana, gdy | Skutek od razu | Skutek później | Status |
@@ -796,7 +796,7 @@ Transfery poparcia używają wzoru z 10.4.4 i jednej migawki sprzed akcji. Duboi
 | Zapisuje | `S.actors.communist_cooperation`: `contact_open`, `trial_records`, `rules`, `pps_internal_acceptance`, `active_agreement` | P |
 | Odczytują | Dyscyplina KPP (9.6); oferty `united_left` i `workers_front` (8.6) | P |
 | Co zostaje po karcie | Rekordy prób i przyjęte zasady | P |
-| Obecny kod | Pozycje stałej karty `source/scenes/polish_party_agenda.scene.dry` (etap 5, 0.46) przy otwartym kanale z KPP: próba (relacja 30 i wspólne żądanie z etapu 6), reguły i szerszy układ. Reguły w `source/rules/polish_party.js` | K |
+| Obecny kod | Pozycje stałej karty `source/scenes/polish_party_agenda.scene.dry` (etap 5, 0.46) przy otwartym kanale z KPP: próba (relacja 30 i wspólne żądanie z etapu 6), reguły i szerszy układ. Reguły w `source/rules/polish_party.js`. Od etapu 8 (0.49) agenda nie pokazuje próby, bo nigdy nie była osiągalna: w tym rozdziale próbę uzgadnia się w strajku, w kroku współpracy z komunistami (9.7 katalogu); scena próby zostaje w pliku. Szerszy układ (reguły i porozumienie) otwiera oferty gabinetów z KPP | K |
 | Źródła i testy | 9.5, 9.6, 8.6, 17.2; testy „Droga do KPP”, „Komuniści”, „Kompromis w PPS”, „Kontakt i agenda KPP” w 21.1 | — |
 
 | Opcja (ID) | Zablokowana, gdy | Skutek od razu | Skutek później | Status |
@@ -852,7 +852,7 @@ Dziesięć rodzin z manifestu 17.10. Są to rodziny wyborów, nie dziesięć kar
 | Zapisuje | `Negotiation` (`kind=cabinet`, `context`, `configuration_id`, `candidate_id`, `programme_profile`, `pps_mode_proposed`, `seek_minority_support`, `minority_terms`, `availability_snapshot`, `phase`); `Agreement`; `Cabinet` (`status`, `pps_mode`, resorty) | P |
 | Odczytują | Ocena ofert (8.3), wykonanie resortów (8.5), odpowiedzialność za rząd (5.6), kruchość rządu (14.4) | P |
 | Co zostaje po karcie | Umowy z obowiązkami (9.1) i miesięcznym napięciem (9.2). Po odmowie PPS pozostali tworzą wykonalny gabinet (8.7) albo zostaje gabinet pełniący obowiązki i otwarty kryzys. Po trzech nieudanych propozycjach: impas (8.7) | Z |
-| Obecny kod | `source/scenes/polish_cabinet_formation.scene.dry` (etap 3, 0.44): jedna oferta C1, obowiązkowa po wyborach 1922 i po upadku rządu, własna inicjatywa w talii „Parliament”. Reguły w `source/rules/polish_government.js`; otwarcie z Ponikowskim w `source/scenes/polish_opening_state.scene.dry`. Od etapu 6 (0.47) warunki osłon Grabskiego otwierają aparat 2, zasięg 40 i relacja 40; Grabski odpowiada w tym samym zatwierdzeniu, a tolerowanie go jest umową na 6 M z przeglądem po 3 M. Od etapu 7 (0.48) kandydatami są też Artur Śliwiński (okno VI–VII 1922) i Piłsudski po uzgodnionym premierostwie z 8.15 katalogu; formowanie po kryzysie 1922 (9.1 katalogu) jest obowiązkowe i bezpłatne. Odziedziczona `source/scenes/government_affairs/coalition_affairs.scene.dry` jest zablokowana | K |
+| Obecny kod | `source/scenes/polish_cabinet_formation.scene.dry` (etap 3, 0.44): jedna oferta C1, obowiązkowa po wyborach 1922 i po upadku rządu, własna inicjatywa w talii „Parliament”. Reguły w `source/rules/polish_government.js`; otwarcie z Ponikowskim w `source/scenes/polish_opening_state.scene.dry`. Od etapu 6 (0.47) warunki osłon Grabskiego otwierają aparat 2, zasięg 40 i relacja 40; Grabski odpowiada w tym samym zatwierdzeniu, a tolerowanie go jest umową na 6 M z przeglądem po 3 M. Od etapu 7 (0.48) kandydatami są też Artur Śliwiński (okno VI–VII 1922) i Piłsudski po uzgodnionym premierostwie z 8.15 katalogu; formowanie po kryzysie 1922 (9.1 katalogu) jest obowiązkowe i bezpłatne. Odziedziczona `source/scenes/government_affairs/coalition_affairs.scene.dry` jest zablokowana. Od etapu 8 (0.49): karta podaje przyczynę kryzysu otwartego datowanym wejściem (dymisja Grabskiego, A1); partie Chjeno-Piasta porównują ofertę PPS także z własnym kompromisem; od XII 1923 dziesięciu posłów Piasta głosuje przeciw gabinetowi z prawicą; w szerokim gabinecie Skrzyńskiego NPR przyjmuje Przemysł i Handel zamiast Pracy (8.9 referencji); oferty z KPP wymagają szerszego porozumienia z KPP, a KPP nie żąda w nich resortu | K |
 | Źródła i testy | 8.3, 8.4, 8.6, 8.7, 8.8, 9.7, 17.10, 17.14; testy „Wspólna karta gabinetowa”, „Gabinet po wyborach”, „Poparcie mniejszości”, „Narastanie kryzysu”, „Wykonalność jedności narodowej”, „Premier ekspercki”, „C1”, „C2/C3” w 21.1 | — |
 
 | Opcja (ID) | Zablokowana, gdy | Skutek od razu | Skutek później | Status |
@@ -989,7 +989,7 @@ Nie ma płatnych „wyjaśnień ministra” ani „odłożenia”; zamknięcie k
 | Zapisuje | `Negotiation` z jedną ofertą i odpowiedzią tak/nie; `Agreement` (zakres, termin); `S.cabinet.pps_threat_discounted`; wiarygodność PPS; relacje | P |
 | Odczytują | Ocena ofert (8.3), umowy i napięcie (9.1–9.4), odwołanie (7.1), odpowiedzialność (5.6) | P |
 | Co zostaje po karcie | Umowy i napięcie według 9.1–9.4; przyjęty postulat wykonuje zwykły wykonawca | P |
-| Obecny kod | `source/scenes/polish_government_support.scene.dry` (1 T w talii „Parliament”) i stała karta odpowiedzi `source/scenes/polish_government_response.scene.dry` (0 T), etap 3, 0.44. Żądaniem w grze jest osłona pracownicza z 9.1; od etapu 4 przyjęta staje się obietnicą osłony w pełnym wariancie z terminem. Wzór menu: odziedziczona `source/scenes/government_affairs/dealing_with_toleration.scene.dry`. Niemieckiego automatycznego zarządzenia wyborów nie przenosimy (9.8) | K |
+| Obecny kod | `source/scenes/polish_government_support.scene.dry` (1 T w talii „Parliament”) i stała karta odpowiedzi `source/scenes/polish_government_response.scene.dry` (0 T), etap 3, 0.44. Żądaniem w grze jest osłona pracownicza z 9.1; od etapu 4 przyjęta staje się obietnicą osłony w pełnym wariancie z terminem. Wzór menu: odziedziczona `source/scenes/government_affairs/dealing_with_toleration.scene.dry`. Niemieckiego automatycznego zarządzenia wyborów nie przenosimy (9.8). Od etapu 8 (0.49) przy otwartej sprawie wojskowej żądaniem może być też kompromis z Piłsudskim pod kontrolą cywilną (`military_compromise`), z groźbą albo bez niej; gabinet wykonuje go sam przy najbliższym przeglądzie, a umowa obowiązuje, dopóki ten gabinet rządzi (A3) | K |
 | Źródła i testy | 9.8, 9.1, 9.2, 9.3, 9.4, 8.3, 17.4, 17.10, 17.14; testy „Groźba przyjęta”, „Groźba odrzucona”, „Groźba po cofnięciu”, „Perswazja”, „Rząd bez potrzeby PPS”, „Poparcie gabinetu”, „Utrata partnera”, „C5–C7” w 21.1 | — |
 
 | Opcja (ID) | Zablokowana, gdy | Skutek od razu | Skutek później | Status |
@@ -1245,7 +1245,7 @@ Podakcje tej rodziny: `government.tax` (zmiana `tax_level` o 1 w granicach −3.
 | Zapisuje | Instrument finansowania powiązany z projektem; `creditSupport` | P |
 | Odczytują | Kredyt (11.5), przypisanie zasługi (5.4) | P |
 | Co zostaje po karcie | Jedno finansowanie, jeden koszt, jeden efekt | P |
-| Obecny kod | `source/scenes/government_affairs/polish_gov_investment.scene.dry` (etap 4, 0.45): fundusz publiczny i porozumienie z bankami (od kredytu 40); wariant spółdzielczy zablokowany do etapu 5. Dostęp przez Skarb albo Przemysł i Handel PPS | K |
+| Obecny kod | `source/scenes/government_affairs/polish_gov_investment.scene.dry` (etap 4, 0.45): fundusz publiczny i porozumienie z bankami (od kredytu 40); wariant spółdzielczy zablokowany do etapu 5. Dostęp przez Skarb albo Przemysł i Handel PPS. Od etapu 8 (0.49) instrument kredytowy przygotowany przez gabinet uruchamia sam gabinet przy przeglądzie; karta mówi to graczowi zamiast odsyłać do agendy PPS | K |
 | Źródła i testy | 17.11, 17.12, 11.9, 12.4; test „Kapitał” w 21.1 | — |
 
 | Opcja (ID) | Zablokowana, gdy | Skutek od razu | Skutek później | Status |
@@ -1271,7 +1271,7 @@ Warianty różnią się tym, kto płaci i kto musi się zgodzić (Z — 0.37).
 | Zapisuje | Projekt z wariantem, problemem i odbiorcami; `Project.policy_choices.worker_representation` | P |
 | Odczytują | Kredyt i produkcja (11.5), reakcja kapitału (11.7), niezadowolenie (15.1) | P |
 | Co zostaje po karcie | Kontrakt albo projekt z terminem; brak interwencji nie wywołuje arbitralnego bankructwa | P |
-| Obecny kod | `source/scenes/government_affairs/polish_gov_industry.scene.dry` (etap 4, 0.45; etap 6, 0.47): warunkowy kredyt i zamówienia; ratunek zakładu (duży projekt w agendzie), przejęcie ustawą i reprezentacja w podmenu (konsultacje albo współdecydowanie z ustawą) na zakładach przemysłu i warsztatach kolejowych z `source/rules/polish_unions.js`. Dostęp przez Przemysł i Handel PPS. Odziedziczona `source/scenes/government_affairs/economic_democracy.scene.dry` jest zablokowana warunkiem `not polish_economy_system` | K |
+| Obecny kod | `source/scenes/government_affairs/polish_gov_industry.scene.dry` (etap 4, 0.45; etap 6, 0.47): warunkowy kredyt i zamówienia; ratunek zakładu (duży projekt w agendzie), przejęcie ustawą i reprezentacja w podmenu (konsultacje albo współdecydowanie z ustawą) na zakładach przemysłu i warsztatach kolejowych z `source/rules/polish_unions.js`. Dostęp przez Przemysł i Handel PPS. Odziedziczona `source/scenes/government_affairs/economic_democracy.scene.dry` jest zablokowana warunkiem `not polish_economy_system`. Od etapu 8 (0.49) instrument kredytowy przygotowany przez gabinet uruchamia sam gabinet przy przeglądzie; karta mówi to graczowi zamiast odsyłać do agendy PPS | K |
 | Źródła i testy | 17.11, 17.12, 17.12.1, 17.12.5, 12.4, 11.7; testy „Zamówienia”, „Reprezentacja”, „Konflikt kapitału” w 21.1 | — |
 
 | Opcja (ID) | Zablokowana, gdy | Skutek od razu | Skutek później | Status |
@@ -1485,7 +1485,7 @@ Przy początkowych 50/50/50 zdolność ochrony wynosi 12,5, po profesjonalizacji
 | Legalne zmiany kadrowe (`personnel_changes`) | brak zgody osoby, upoważnienia albo ważnego profilu | Nominacja w projekcie kontroli | +0,05 lojalności legalnej grupy; jej gotowość −0,05 przez 2 M; +8 presji tylko przy rzeczywistym konflikcie nominacyjnym | Z / P |
 | Kompromis organizacyjny ograniczający reformę (`organizational_compromise`) | — | Wykonanie tylko uzgodnionego zakresu | — | Z / P |
 
-Historyczne obsady i zakresy stanowisk: `TBD — historical research required`. Prototyp może użyć oznaczonej syntetycznej funkcji nadzoru nad `near_reserve`.
+Historyczne obsady i zakresy stanowisk 1922–1926 zapisuje od etapu 8 (0.49) `PL-ARMY-POSTS-1922-1926` (badania 8f). Gabinety gry różnią się od historycznych, więc gra nadal używa oznaczonej syntetycznej funkcji nadzoru nad `near_reserve` (P).
 
 **Otwarte pytania:** brak.
 
@@ -1588,7 +1588,7 @@ H: oś gabinetów Ponikowski — próba Śliwińskiego — Nowak według `PL-192
 | Zapisuje | `response` w wydarzeniu; wpis dziennika instytucjonalnego 15.2 (`stance_criticism` albo `stance_defense`) | Z |
 | Odczytują | Autorytet Sejmu (15.2), frakcje (10.1), relacja z Piłsudskim | P |
 | Co zostaje po karcie | Wpis dziennika na 12 M; nie nadpisuje `pils_influence` ani `form_of_power` | Z |
-| Obecny kod | `source/scenes/polish_event_pils_criticism.scene.dry` i `source/rules/polish_politics.js` (etap 7, 0.48): jedna obowiązkowa odpowiedź na zapisane wystąpienie (spór 1922, sprawa wojskowa 1925), wpis dziennika 15.2 | K |
+| Obecny kod | `source/scenes/polish_event_pils_criticism.scene.dry` i `source/rules/polish_politics.js` (etap 7, 0.48): jedna obowiązkowa odpowiedź na zapisane wystąpienie (spór 1922, sprawa wojskowa 1925), wpis dziennika 15.2. Od etapu 8 (0.49) sprawa wojskowa otwiera się w VII 1923 (badania 8f), a wystąpienie z 1922 r. dotyczy prawa powoływania rządu | K |
 | Źródła i testy | 10.7, 15.2, 17.3, 17.13; testy „Dwie decyzje Piłsudskiego”, „Autorytet z dziennika”, „Bez bezpośredniego zapisu”, „B1/B2”, „Obowiązkowa odpowiedź B2”, „Sprzeczność odpowiedzi B2” w 21.1 | — |
 
 | Opcja (ID) | Zablokowana, gdy | Skutek od razu | Skutek później | Status |
@@ -1681,8 +1681,8 @@ Ta sama Milicja nie chroni kilku miejsc przed etapem AS; AS chroni do trzech (13
 | Pole | Treść | Status |
 |---|---|---|
 | Rodzaj | Jedno nazwane wydarzenie (B5) | Z |
-| Wyzwalacz | Historyczna gałąź zabójstwa Narutowicza przez Niewiadomskiego i konkretne publiczne wydarzenie upamiętniające sprawcę; zwykłe nabożeństwo nie wystarcza | H / B |
-| Okno | Od I 1923 (test) | P |
+| Wyzwalacz | Historyczna gałąź zabójstwa Narutowicza przez Niewiadomskiego i konkretne publiczne wydarzenie upamiętniające sprawcę; zwykłe nabożeństwo nie wystarcza. Od etapu 8 (0.49) jest nim pogrzeb na Powązkach 6 II 1923 (`PL-NIEWIADOMSKI-CULT-1923`) | H |
+| Okno | Od II 1923, po egzekucji 31 I 1923 (etap 8, badania 8f) | H |
 | Kolejka | Kategoria 6 z 4.5: tło (Z — 0.39) | Z |
 | Powtarzalność | Jednorazowe, bez corocznego powtarzania | Z |
 | Koszt odpowiedzi | 0 T | P |
@@ -1690,7 +1690,7 @@ Ta sama Milicja nie chroni kilku miejsc przed etapem AS; AS chroni do trzech (13
 | Zapisuje | Stanowisko w `EventRun.payload` | P |
 | Odczytują | Kampania (5.3), demokracja (15.2), `uncontrolledPressure` (17.4) | P |
 | Co zostaje po karcie | Ewentualna kampania albo spór o posłuch | P |
-| Obecny kod | `source/scenes/polish_event_niewiadomski_cult.scene.dry` i `source/rules/polish_politics.js` (etap 7, 0.48): jedna uroczystość od I 1923 w gałęzi zabójstwa Narutowicza; miejsce: TBD — historical research required; msza tylko przy zgodzie gospodarza | K |
+| Obecny kod | `source/scenes/polish_event_niewiadomski_cult.scene.dry` i `source/rules/polish_politics.js` (etap 7, 0.48; etap 8, 0.49): jedna uroczystość od II 1923 w gałęzi zabójstwa Narutowicza: pogrzeb na Powązkach 6 II 1923 (badania 8f); msza tylko przy zgodzie gospodarza | K |
 | Źródła i testy | 17.7, 17.13, 17.4; testy „Msza B5”, „Mobilizacja i kult” w 21.1 | — |
 
 | Opcja (ID) | Zablokowana, gdy | Skutek od razu | Skutek później | Status |
@@ -1717,7 +1717,7 @@ H: istnienie kultu; konkretna miejscowość, nabożeństwo i uczestnicy wymagaj�
 | Zapisuje | `Strike.communist_cooperation`; `TrialRecord` (`mode`, `terms`, `partner_response`, `ended_as_agreed`, `result`) | P |
 | Odczytują | Dyscyplina KPP, nacisk `crediblePressure`, niekontrolowany udział | P |
 | Co zostaje po karcie | Rekord próby: pełna +5, lekka +2, naruszenie −5; brak współpracy nie jest nieudaną próbą | P |
-| Obecny kod | Krok współpracy w `source/scenes/polish_strike_steps.scene.dry` (etap 6, 0.47): pełna współpraca, ograniczona koordynacja albo brak; jeden zapisany rzut dyscypliny i jeden `TrialRecord`, wynik próby przy końcu strajku. Reguły w `source/rules/polish_unions.js` i `source/rules/polish_party.js` | K |
+| Obecny kod | Krok współpracy w `source/scenes/polish_strike_steps.scene.dry` (etap 6, 0.47): pełna współpraca, ograniczona koordynacja albo brak; jeden zapisany rzut dyscypliny i jeden `TrialRecord`, wynik próby przy końcu strajku. Reguły w `source/rules/polish_unions.js` i `source/rules/polish_party.js`. Od etapu 8 (0.49) cel KPP to `structural`, więc pełna współpraca wymaga żądań szerokich albo politycznych | K |
 | Źródła i testy | 9.6, 9.5, 17.5; testy „Dyscyplina KPP”, „Akceptacja a KPP”, „Granice dyscypliny”, „Komuniści”, „Współpraca i eskalacja” w 21.1 | — |
 
 | Opcja (ID) | Zablokowana, gdy | Skutek od razu | Skutek później | Status |
@@ -1726,7 +1726,7 @@ H: istnienie kultu; konkretna miejscowość, nabożeństwo i uczestnicy wymagaj�
 | Lekka koordynacja (`limited`) | relacja <20; brak wspólnego ograniczonego żądania | Porozumienie wiąże połowę wkładu partnera | Centrum +2, gdy akceptacja <60; Lewica +3 tylko przy wcześniejszej obietnicy pełnej współpracy | Z / P |
 | Brak współpracy (`none`) | — | PPS zachowuje własne żądania i kierownictwo protestu | Złamana wcześniejsza obietnica współdziałania: zwykły konflikt | Z / P |
 
-Cel partnera zapisuje profil wydarzenia (test: `broad`); historyczne cele KPP w strajkach: `TBD — historical research required`.
+Cel partnera zapisuje profil wydarzenia. Od etapu 8 (0.49) jest nim `structural` (profil `kpp_goal_1922_1926`; badania 8f, `PL-KPRP-GOALS-1923`), wcześniej wartość testowa `broad`.
 
 **Otwarte pytania:** brak.
 
@@ -1922,7 +1922,7 @@ Od 0.38 wiersz 17.3 też podaje cztery odpowiedzi karty 9.8. Dawne odpowiedzi si
 | Zapisuje | `S.coup`: `attempt_id`, `phase`, `f9`, `pps_contribution`, `concessions_to_pps`; zapisane rzuty; raport | P |
 | Odczytują | Raport końca rozdziału (19.1–19.2) | P |
 | Co zostaje po karcie | Koniec rozdziału, raport i `continuation_requirements` | Z |
-| Obecny kod | `source/scenes/polish_event_coup.scene.dry` i `source/rules/polish_security.js` (etap 7, 0.48): F3–F11 bez zużycia miesiąca, silnik M08, koniec rozdziału po rozstrzygnięciu. Odziedziczone `source/scenes/events/prussian_coup.scene.dry` (warunek `not polish_security_rules`) i `source/scenes/events/civil_war.scene.dry` są poza polską kolejką | K |
+| Obecny kod | `source/scenes/polish_event_coup.scene.dry` i `source/rules/polish_security.js` (etap 7, 0.48): F3–F11 bez zużycia miesiąca, silnik M08, koniec rozdziału po rozstrzygnięciu. Odziedziczone `source/scenes/events/prussian_coup.scene.dry` (warunek `not polish_security_rules`) i `source/scenes/events/civil_war.scene.dry` są poza polską kolejką. Od etapu 8 (0.49) teksty mediacji marszałka i zmiany gabinetu nie mają dopisku TBD (mediacja Rataja 12 V 1926; rząd Bartla z 15 V 1926), a raport po zamachu podaje marszałka obradującego Sejmu | K |
 | Źródła i testy | 16.8, 16.2, 16.4, 16.6, 17.15, 19.1; testy „Zamach”, „Zero sił”, „Losowanie po F5”, „Wczytanie zamachu”, „Szybkie zwycięstwo”, „Nadchodząca rezerwa”, „Pomiar strajku”, „Istotny udział”, „Ugoda w rundzie 1”, „Przewaga nie negocjuje”, „Odrzucone F9”, „Brak zwycięzcy”, „Wkład kontrfaktyczny”, „Kryzys i przerwa”, „AS w zamachu” w 21.1 | — |
 
 | Opcja (ID) | Zablokowana, gdy | Skutek od razu | Skutek później | Status |
@@ -1937,7 +1937,7 @@ Od 0.38 wiersz 17.3 też podaje cztery odpowiedzi karty 9.8. Dawne odpowiedzi si
 | F9: Poprzeć przedstawiony kompromis | brak istotnego udziału PPS albo oferty ocenianej na ≥60 przez pozostałe strony | Ugoda w tej rundzie; wynik `constitutional_compromise` | Klauzula końca mobilizacji PPS | Z / P |
 | F9: Odrzucić i utrzymać zaangażowanie | jak wyżej | Do końca próby nie ma już ugody | Rundy biegną dalej; odrzucenie nie narusza umowy | Z / P |
 
-Frakcja, której sprzeciw po F4 osiąga ≥60, traci w F10+F11 domyślny manifest E3 bez decyzji. W raporcie instytucje: przemoc +10, demokracja −2 za próbę i kolejne −2 przy `pils_victory` albo `prolonged_conflict`, +1, gdy legalny gabinet przetrwał. Historyczne zgrupowania, trasy i lojalności: `TBD — historical research required`.
+Frakcja, której sprzeciw po F4 osiąga ≥60, traci w F10+F11 domyślny manifest E3 bez decyzji. W raporcie instytucje: przemoc +10, demokracja −2 za próbę i kolejne −2 przy `pils_victory` albo `prolonged_conflict`, +1, gdy legalny gabinet przetrwał. Siły, transporty, blokadę kolejową i mediacje maja 1926 opisuje od etapu 8 (0.49) `PL-MAY-COUP-1926-COURSE` (badania 8f); profil `synthetic_test_v2` zostaje, bo jego cztery grupy odpowiadają układowi z 1926 r. Lojalność korpusu oficerskiego historycy oceniają różnie: `TBD — historical research required`.
 
 **Otwarte pytania:** brak.
 
@@ -1980,7 +1980,7 @@ Frakcja, której sprzeciw po F4 osiąga ≥60, traci w F10+F11 domyślny manifes
 | Zapisuje | — | — |
 | Odczytują | — | — |
 | Co zostaje po karcie | — | — |
-| Obecny kod | Start: `source/scenes/root.scene.dry`; zakończenie: `source/scenes/game_over.scene.dry` (odziedziczone) | K |
+| Obecny kod | G1: `source/scenes/root.scene.dry` (ekran tytułowy i styczeń 1922; od etapu 8, 0.49, bez niemieckiej muzyki); G4: przypomnienie w `source/scenes/main.scene.dry` w trzech miesiącach przed głosowaniem (etap 8); G8: `source/scenes/polish_chapter_report.scene.dry` (od etapu 8 sekcja „Beyond this chapter” i marszałek obradującego Sejmu po zamachu). Ekrany stanu z etapu 8: polska zakładka Defense w `source/scenes/status.scene.dry` oraz oś czasu 1919–1922 i wykresy od I 1922 w `source/scenes/library.scene.dry`. Zakończenie: `source/scenes/game_over.scene.dry` (odziedziczone) | K |
 | Źródła i testy | 17.15, 19.2, 19.3; testy „Raport”, „Jedna trudność” w 21.1 | — |
 
 | Opcja (ID) | Zablokowana, gdy | Skutek od razu | Skutek później | Status |

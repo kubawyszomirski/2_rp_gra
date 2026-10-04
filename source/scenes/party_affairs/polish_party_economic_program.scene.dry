@@ -3,7 +3,6 @@ subtitle: Up to three priorities of PPS for the economy.
 new-page: true
 is-card: true
 tags: party_affairs
-card-image: img/arbeiterbew.jpg
 view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.programmeAvailable(Q) !}
 on-arrival: {!
 // Card party.economic_program (technical reference 10.5; card catalogue 6.2): the whole set of 0–3

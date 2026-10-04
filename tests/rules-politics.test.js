@@ -50,12 +50,13 @@ const dissent = (S, id) => S.actors.pps.factions[id].dissent;
 const unemployedCells = S => S.society.cells.filter(c => c.employment === 'unemployed');
 const mean = (cells, field) => cells.reduce((n, c) => n + c.mass * c[field], 0) / cells.reduce((n, c) => n + c.mass, 0);
 
-test('a new game starts politics at democracy 60, authority 55, violence 10, pressure 10 and the cells at grievance 35 (schema 8)', () => {
+test('a new game starts politics at democracy 60, authority 55, violence 10, pressure 0 (stage 8) and the cells at grievance 35 (schema 8)', () => {
   const Q = game();
   const S = Q.S;
   assert.equal(Q.polish_politics_rules, 1);
   assert.deepEqual([S.politics.democracy, S.politics.parliament_authority, S.politics.violence, S.coup.pressure, S.coup.phase],
-    [60, 55, 10, 10, 'dormant']);
+    [60, 55, 10, 0, 'dormant']);
+  assert.equal(PolishPolitics.START.pressure, S.coup.pressure, 'the documented start and the new game agree');
   assert.ok(S.society.cells.every(c => c.grievance === 35 && c.radicalization === 0));
   close(S.politics.national_grievance, 35);
   assert.deepEqual(PolishRules.validateState(S), []);
@@ -304,7 +305,8 @@ test('Reprezentacja: consultation −2, then co-decision only the missing −2, 
 test('Mobilizacja i kult: a living President opens neither B4 nor B5; without the concrete commemoration of the assassin, and at an ordinary service, the cult does not appear', () => {
   const Q = quiet();
   const S = Q.S;
-  Q.time = PolishRules.timeOf(1923, 1); Q.year = 1923; Q.month = 1;
+  // Stage 8 (8f): the commemoration of the assassin comes from II 1923, after his execution on 31 I 1923.
+  Q.time = PolishRules.timeOf(1923, 2); Q.year = 1923; Q.month = 2;
   PolishPolitics.afterEvents(Q);
   assert.deepEqual([PolishPolitics.responseDue(Q), PolishPolitics.cultDue(Q)], [false, false], 'the President lives');
   assert.equal(S.politics.episodes.filter(e => e.kind === 'assassin_commemoration').length, 0);
@@ -322,7 +324,7 @@ test('Mobilizacja i kult: a living President opens neither B4 nor B5; without th
   assert.equal(PolishPolitics.cultDue(Q), false, 'no concrete commemoration');
   S.scenario.inputs.niewiadomski_cult = true;
   PolishPolitics.afterEvents(Q);
-  assert.equal(PolishPolitics.cultDue(Q), true, 'the named commemoration of I 1923');
+  assert.equal(PolishPolitics.cultDue(Q), true, 'the named commemoration of II 1923');
   PolishPolitics.afterEvents(Q);
   assert.equal(S.politics.episodes.filter(e => e.kind === 'assassin_commemoration').length, 1, 'one named event, no yearly repetition');
 });

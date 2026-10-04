@@ -3,7 +3,6 @@ subtitle: One offer: the cabinet, its prime minister, the role of PPS and its po
 new-page: true
 is-card: true
 tags: parliament_affairs
-card-image: img/reichstag_3.jpg
 view-if: {! return !!Q.S && PolishGovernment.formationVisible(Q) !}
 on-arrival: {!
 // Card parliament.cabinet_formation (technical reference 8.3, 8.4, 8.7, 8.8; card catalogue 7.1).
@@ -35,11 +34,16 @@ Q.pl_form_submit_reason = submit.reason;
 Q.pl_form_terms_open = view.stabilisation_open ? 1 : 0;
 Q.pl_form_terms = view.stabilisation;
 Q.pl_form_terms_protections_why = PolishGovernment.stabilisationTermsStatus('protections', Q).reason;
+// Stage 8 (A1): the cause of a crisis opened by a dated input of the scenario.
+Q.pl_form_cause = typeof PolishPolitics !== 'undefined' && PolishPolitics.crisisNote ? PolishPolitics.crisisNote(Q) : '';
+Q.pl_form_cause_on = Q.pl_form_cause ? 1 : 0;
 !}
 
 = Forming a cabinet
 
 [? if pl_form_post_election : The certified election result opens the formation of a new cabinet. This mandatory formation costs no month. ?]
+
+[? if pl_form_cause_on : [+ pl_form_cause +] ?]
 
 [? if pl_form_mandatory and not pl_form_post_election : A cabinet crisis is open. The caretaker cabinet governs until the head of state appoints a new one. This mandatory formation costs no month. ?]
 

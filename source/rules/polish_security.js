@@ -5,8 +5,10 @@
 //
 // Plain JavaScript without dependencies, like polish_rules.js. `npm run build` copies it to out/html/; the page
 // loads it after polish_politics.js as `window.PolishSecurity`, and Node tests load it with require(). The force
-// profile `synthetic_test_v2` is a test calibration (Z — M08), not a reconstruction of the army of 1926; the
-// historical units, routes, loyalties and dates are TBD — historical research required.
+// profile `synthetic_test_v2` is a test calibration (Z — M08), not a reconstruction of the army of 1926. Stage 8 (8f)
+// kept it: its four groups follow the pattern of May 1926 recorded in HISTORICAL_SOURCES.md (a divided garrison of the
+// capital, near reserves, remote reserves by rail and a selective railway blockade), but the sources disagree on the
+// numbers.
 (function (root, factory) {
   'use strict';
   if (typeof module === 'object' && module.exports) {
@@ -335,6 +337,41 @@
     return agreement;
   }
 
+  // Stage 8 (P; 16.7 "an accepted cabinet executor", the B run of M02): a cabinet that accepted PPS's demand for a
+  // compromise with Piłsudski carries it out as its own initiative of 17.16.4. It is the military function under
+  // civilian control only; Piłsudski must accept it as on the card, and the relief, the review after 6 M and the
+  // loyalty limit are the card's. A refusal voids the promise with its reason, without a breach.
+  function cabinetConcession(Q, t, obligation, variant) {
+    const S = Q.S, spec = CONCESSIONS[variant];
+    const refuse = reason => {
+      obligation.status = 'void';
+      obligation.void_reason = reason;
+      S.actors.pilsudski.history.push({t: t, kind: 'cabinet_compromise_refused', obligation_id: obligation.id, reason: reason});
+      return {executed: false, reason: reason};
+    };
+    if (!spec || variant !== 'military_function') return refuse('only a military function under civilian control');
+    const current = pilsAgreement(S);
+    if (current && current.status === 'active') return refuse('an agreement with Piłsudski already exists');
+    if ((S.actors.relations.pilsudski || 0) < spec.relation) return refuse('Piłsudski’s relation is below ' + spec.relation);
+    const score = pilsScore(S, offerProgramme(S, variant), true);
+    if (score < 60) return refuse('Piłsudski does not accept the compromise (score ' + fmt(score) + ')');
+    party.syncMirrors(Q);
+    const id = 'agr-pilsudski-' + (S.actors.pilsudski.history.length + 1) + '-t' + t;
+    const agreement = {id: id, kind: 'pilsudski', parties: ['pps', 'pilsudski'], cabinet_id: S.cabinet.id, signed_at: t, status: 'active',
+      variant: variant, force_ids: spec.loyalty_limit > 0 ? [OVERSIGHT_FORCE] : [], obligations: [], execution_started_at: null,
+      review_at: null, open_breach: false, loyalty_moved: 0, tension: 0, warning_issued: false, ultimatum: null, extensions_used: 0,
+      responsibility: {pps: 0.5}, response: null, executor: 'cabinet', obligation_id: obligation.id,
+      history: [{t: t, kind: 'signed', variant: variant, by: 'cabinet'}]};
+    S.agreements[id] = agreement;
+    S.actors.pilsudski.agreement_id = id;
+    S.actors.pilsudski.history.push({t: t, kind: 'agreed', variant: variant, agreement_id: id, by: 'cabinet'});
+    executeAgreement(Q, agreement, t);
+    obligation.fulfillment = 1;
+    obligation.last_checked = t;
+    party.writeMirrors(Q);
+    return {executed: true, agreement_id: id};
+  }
+
   // The inspectorate needs the change of the law that sets its competences (16.7): PPS files it at once through
   // the procedure of 7.2; its execution starts when the law takes effect. A refused law ends the offer without
   // relief and without +8 — no culpable break.
@@ -399,8 +436,10 @@
   function reviewAgreements(Q, t) {
     const S = Q.S, agreement = pilsAgreement(S);
     if (!agreement || agreement.status !== 'active' || agreement.review_at === null || t + 1 < agreement.review_at) return null;
-    // The competent executor: PPS in the cabinet with Military Affairs; for the premiership, his own active cabinet.
-    const competent = agreement.variant === 'pils_premier' ? !!S.cabinet && S.cabinet.pm === 'pilsudski' && S.cabinet.status === 'active' :
+    // The competent executor: PPS in the cabinet with Military Affairs; for the premiership, his own active cabinet; for
+    // the compromise carried out by the cabinet (stage 8, 16.7), that same cabinet while it governs (decision A3).
+    const competent = agreement.executor === 'cabinet' ? !!S.cabinet && S.cabinet.status === 'active' && S.cabinet.id === agreement.cabinet_id :
+      agreement.variant === 'pils_premier' ? !!S.cabinet && S.cabinet.pm === 'pilsudski' && S.cabinet.status === 'active' :
       !!S.cabinet && S.cabinet.status === 'active' && S.cabinet.partner_ids.indexOf('pps') >= 0 && S.cabinet.portfolios.reichswehr === 'pps';
     const score = pilsScore(S, offerProgramme(S, agreement.variant), true);
     if (competent && score >= 60) {
@@ -436,10 +475,10 @@
 
   // ---- The coup F, profile coup_f_v1 (16.4–16.8, the approved solution of M08; card catalogue 9.15) -------------
 
-  // The numbers are P of the approved structure (16.8, Z — 24 IX 2026); the army groups are synthetic, and the
-  // historical units, routes, loyalties and the course of the mediation of May 1926 are TBD — historical research
-  // required. The resolution below is the engine of analysis/m08-coup-profile/check.cjs (`resolve`), made resumable
-  // at the one decision F9.
+  // The numbers are P of the approved structure (16.8, Z — 24 IX 2026); the army groups are synthetic. The mediator of
+  // the game, the marshal of the Sejm, has a historical basis: Rataj mediated on the evening of 12 V 1926; the change of
+  // cabinet corresponds to the cabinet of Bartel of 15 V 1926 (stage 8, 8f; HISTORICAL_SOURCES.md). The resolution below
+  // is the engine of analysis/m08-coup-profile/check.cjs (`resolve`), made resumable at the one decision F9.
   const COUP_PROFILE_ID = 'coup_f_v1';
   const COUP_WINDOW_FROM = rules.timeOf(1926, 3); // 16.8.1 (P): the Normal scenario opens the window on 1 III 1926
   const COUP_GATES = Object.freeze({crisis: 55, cancel: 40, attempt: 65, capacity: 30, cooldown: 3});
@@ -1019,16 +1058,16 @@
         dateOf(t + REVIEW_MONTHS) + ' (P)');
     } else if (offerId === 'coup.offer.cabinet_change') {
       if (S.cabinet && S.cabinet.status === 'active') government.cabinetFalls(Q, 'coup_settlement');
-      A.continuation_requirements.push('cabinet_formation: a prime minister accepted by the camp of Piłsudski, appointed by the procedure of 8.8 ' +
-        '(the candidate is TBD — historical research required)');
+      A.continuation_requirements.push('cabinet_formation: a prime minister accepted by the camp of Piłsudski, appointed by the procedure of 8.8');
     }
     A.continuation_requirements.push('settlement_clauses: the troops return to their garrisons; amnesty and no repression of the participants; ' +
       'the Sejm and the calendar of elections are kept' + (A.resolution.f9 ? '; the mobilisation of PPS ends' : ''));
   }
 
   // The display of F3–F11: what PPS can know before the sides are drawn (16.8.1), then the recorded course.
-  const OUTCOME_NAMES = Object.freeze({pils_victory: 'Piłsudski wins', legal_victory: 'the legal government prevails',
-    constitutional_compromise: 'a constitutional compromise', prolonged_conflict: 'a prolonged conflict without a winner'});
+  // Stage 8: the name opens the sentence of the F10 screen, so it starts with a capital letter.
+  const OUTCOME_NAMES = Object.freeze({pils_victory: 'Piłsudski wins', legal_victory: 'The legal government prevails',
+    constitutional_compromise: 'A constitutional compromise', prolonged_conflict: 'A prolonged conflict without a winner'});
   const OFFER_NAMES = Object.freeze({'coup.offer.military_function': 'a military function for Piłsudski under civilian control; the cabinet stays',
     'coup.offer.inspectorate_law': 'an independent inspectorate by a law; the cabinet stays',
     'coup.offer.cabinet_change': 'the dismissal of the attacked cabinet and a premier accepted by Piłsudski’s camp'});
@@ -1153,6 +1192,29 @@
   }
 
   // Only what PPS can know (16.8.1): the recognised interval, never the true loyalty or the capacity it gives.
+  // Stage 8 (decision 3A): the Defense page of the Status shows what the Polish game counts, and of the army only what
+  // PPS knows: Milicja PPS or the AS with its legal status, the police, and the four groups with the known interval of
+  // their loyalty to Piłsudski. The German militias and forces of the inherited page are not shown.
+  function defenseView(Q) {
+    const S = Q.S, m = S.militia, P = S.politics;
+    const ban = Object.keys(P.restrictions || {}).map(id => P.restrictions[id]).filter(r => r.kind === 'militia_ban' && r.status === 'active')[0];
+    Q.pl_def_militia_name = m.stage === 2 ? 'Akcja Socjalistyczna' : 'Milicja PPS';
+    Q.pl_def_militia = m.strength + ' organised members; efficiency ' + fmt(m.militancy) + (m.militarized ? '; militarised' : '') +
+      (m.fatigue ? '; fatigue ' + fmt(m.fatigue) : '') + '.';
+    Q.pl_def_legal = ban ? 'banned by the cabinet since ' + dateOf(ban.imposed_at) + (ban.lawful ? ' (a lawful restriction after proven violence)' :
+      ' (an unlawful restriction; the Justice review can lift it)') : 'legal';
+    Q.pl_def_alignment = 'Attachment of the organisation to the legal institutions: ' + fmt(m.alignment.legal_institutions === undefined ? 50 : m.alignment.legal_institutions) + ' of 100.';
+    Q.pl_def_police = policeLine(Q);
+    Q.pl_def_forces = knownView(S).map(v => FORCE_NAMES[v.id].charAt(0).toUpperCase() + FORCE_NAMES[v.id].slice(1) + ': loyalty to Piłsudski known as ' +
+      Math.round(100 * v.low) + '–' + Math.round(100 * v.high) + '%').join('. ') + '.';
+    Q.pl_def_note = 'The four groups are the synthetic test profile ' + S.security.profile_id + ', not the historical army of 1926. The intervals narrow with ' +
+      'the assessment of the forces on the Party agenda; the loyalties themselves do not change by looking.';
+    const a = pilsAgreement(S);
+    Q.pl_def_agreement = a && a.status === 'active' ? 'Agreement with Piłsudski: ' + CONCESSIONS[a.variant].name +
+      (a.execution_started_at === null ? ' (not yet executed).' : ', review ' + dateOf(a.review_at) + '.') : '';
+    Q.pl_def_crisis = S.coup.phase === 'political_crisis' ? 'Political crisis: preparations for a coup are reported.' : '';
+  }
+
   function statusLine(Q) {
     const S = Q.S, police = S.security.police;
     const warning = S.coup.phase === 'political_crisis' ? 'Political crisis: preparations for a coup are reported. ' : '';
@@ -1179,6 +1241,7 @@
     readinessOf: readinessOf,
     capacity: capacity,
     knownView: knownView,
+    defenseView: defenseView,
     assessStatus: assessStatus,
     assess: assess,
     protectionCapacity: protectionCapacity,
@@ -1192,6 +1255,7 @@
     pilsCardAvailable: pilsCardAvailable,
     concessionStatus: concessionStatus,
     concessionChoose: concessionChoose,
+    cabinetConcession: cabinetConcession,
     executeAgreement: executeAgreement,
     reviewAgreements: reviewAgreements,
     breakAgreement: breakAgreement,

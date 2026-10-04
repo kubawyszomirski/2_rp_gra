@@ -6,13 +6,13 @@ go-to: menu
 
 = The Library
 
-This library is in transition. The Polish January 1922 opening government and simplified parliament, November 1922 election with exact seats, December 1922 Marshal and presidential elections, the legal calendar to the next election and the chapter report, negotiated cabinets with their nine portfolios, agreements, support for the government and electoral lists, the Polish economy with its budget, projects, laws and state cards, player party, population model, PPS factions, advisers and self-defence organization are implemented. Party organisations, unions and strikes, democracy, state forces, most other cards and dated events remain an unfinished, mixed baseline.
+The Library explains the rules and the present state of the game: the constitutional order of 1922 and the presidency, a short timeline of 1919–1922, the government and its portfolios, the electorate and the parties, public opinion, the organisations of PPS and the forces of the state, the factions, the advisers, and the charts of the campaign. Numbers called gameplay values are the game's working balance, not historical statistics.
 
 @menu
 
 - @government: Poland's opening constitutional arrangements
 - @presidency: Presidential office and December 1922 elections
-- @weimar_timeline: Timeline of the Weimar Republic before 1928
+- @polish_timeline: Poland 1919–1922: from the Legislative Sejm to the first President
 - @curr_gov: Current government and cabinet portfolios
 - @demographics: Demographics
 - @parties: Parties
@@ -36,13 +36,13 @@ Toleration is not executive control. You can organize PPS, campaign, use adviser
 
 The opening **444-MP** parliament is an approved simplification: rounded August 1922 club percentages are normalized and allocated as whole seats, not asserted to be the historical January roster. Existing party IDs stand for simplified parliamentary categories. Minority deputies are an aggregate, not a claim that a single minority electoral bloc already existed in January. Campaigning changes public support, not sitting MPs.
 
-**Implemented parliamentary election:** November 1922, 444 Sejm MPs, a 223-MP majority and the approved national seat heuristic. ChZJN combines ZLN and PSChD votes and seats for display, while its constituent parties remain separate. Voting and government formation take place within one monthly sequence.
+**The parliamentary election:** November 1922, 444 Sejm MPs, a 223-MP majority and the approved national seat heuristic. ChZJN combines ZLN and PSChD votes and seats for display, while its constituent parties remain separate. Voting and government formation take place within one monthly sequence.
 
-**Implemented December offices:** the new Sejm elects its Marshal, then the National Assembly elects the President under the March Constitution's procedure. The clubs' votes decide both offices, using an approved test profile of each club's acceptable candidates; only the final ballot is shown and an exact tie between two finalists is decided by a recorded lot. The historical threat branch — the assassination of Narutowicz — happens only if Narutowicz is elected; the Marshal then substitutes for the President. The Senate's 111 seats are derived once from the Sejm result (sejm_proxy_v1, a simplification). See the dedicated presidency page.
+**The December offices:** the new Sejm elects its Marshal, then the National Assembly elects the President under the March Constitution's procedure. The clubs' votes decide both offices, using an approved test profile of each club's acceptable candidates; only the final ballot is shown and an exact tie between two finalists is decided by a recorded lot. The historical threat branch — the assassination of Narutowicz — happens only if Narutowicz is elected; the Marshal then substitutes for the President. The Senate's 111 seats are derived once from the Sejm result (sejm_proxy_v1, a simplification). See the dedicated presidency page.
 
 **Legal calendar and the end of the chapter:** there are no early elections without a lawful act. The Sejm's five-year term runs from 28 November 1922; in the game's default calendar the next election is on Sunday 19 February 1928 (not the historical election date). It uses the same seat calculation without German thresholds or bans, and its certified result ends the chapter with a report, before a new government is formed.
 
-**Planned, not implemented:** electoral alliances beyond the first ChZJN list, historical cabinets and later presidential elections.
+**Within this chapter** electoral lists can be agreed with partners before an election, and cabinets are formed by negotiation, with the historical premiers available in their windows. The next presidential election falls after the end of the chapter.
 
 **Approved election design:** the national vote-to-seat multipliers are 0.25 below 2%, 0.55 from 2%, 0.85 from 5%, 1.025 from 10%, 1.10 from 15%, and 1.25 from 25%. Weighted totals are normalized before whole seats are allocated by largest remainders. The user supplied/confirmed this calibration. These are gameplay rules, not the historical district law. There is no geographic model. Inne is split into 2% anonymous lists plus any smaller remainder, not counted as one electoral alliance. ChZJN seats are attributed to ZLN and PSChD proportionally to their support at the election.
 
@@ -74,7 +74,30 @@ Under the March Constitution, the Sejm and Senate elect the President together a
 
 **Historical note (documented fact, not a game result):** on 9 December 1922 the National Assembly elected Gabriel Narutowicz by 289 votes to 227 for Maurycy Zamoyski, with 29 blank ballots; Narutowicz took the oath on 11 December, received the transfer of authority from Józef Piłsudski on 14 December and was assassinated on 16 December. Marshal Maciej Rataj briefly exercised the President's duties. On 20 December Stanisław Wojciechowski was elected by 298 votes to 221 for Kazimierz Morawski.
 
-Later Polish presidential elections and their cabinet consequences remain planned. The inherited German direct-popular election and Hindenburg succession routes are unavailable under the Polish system.
+The next presidential election falls after the end of this chapter.
+
+@polish_timeline
+go-to: menu
+
+= Poland 1919–1922
+
+Documented facts only, each recorded in the register of historical sources (HISTORICAL_SOURCES.md, entry in brackets); the game starts in January 1922.
+
+**20 February 1919**: the Legislative Sejm entrusts Józef Piłsudski with the office of Naczelnik Państwa (OPENING-CONSTITUTION-1922).
+
+**17 March 1921**: the March Constitution: the President is elected for seven years by the Sejm and Senate sitting together as the National Assembly, and government acts need the countersignature of a minister (PRESIDENCY-1922-SEQUENCE).
+
+**18 May 1921**: the transitional act keeps the Legislative Sejm and the Naczelnik in office until the new institutions take over (OPENING-CONSTITUTION-1922).
+
+**19 September 1921 – 5 March 1922**: the first cabinet of Antoni Ponikowski (PONIKOWSKI-FIRST-CABINET).
+
+**28 July 1922**: the electoral law: 444 MPs, 372 from district lists and 72 from national lists (SEJM-1922-ELECTION-DESIGN).
+
+**17 August 1922**: representatives of the national minorities agree on a joint electoral committee (BMN-1922-ELECTORAL-ALLIANCE).
+
+**5 and 12 November 1922**: elections to the Sejm and the Senate; the first Senate has 111 members (SEJM-1922-ELECTION-DESIGN, PRESIDENCY-1922-SEQUENCE).
+
+**9–20 December 1922**: the National Assembly elects Gabriel Narutowicz, 289 votes to 227 for Maurycy Zamoyski; he takes the oath on 11 December, receives authority from Piłsudski on 14 December and is assassinated on 16 December. Marshal Maciej Rataj briefly exercises the President's duties; on 20 December Stanisław Wojciechowski is elected, 298 votes to 221 (PRESIDENCY-1922-SEQUENCE).
 
 @weimar_timeline
 go-to: menu
@@ -114,8 +137,6 @@ go-to: cabinet
 Head of state: [+ head_of_state_display +]
 
 Prime minister: [+ prime_minister_display +]
-
-[? if polish_opening_government_active and (year > 1922 or month > 2) : Development notice: the January cabinet snapshot is still in use. Later cabinet chronology has not been implemented. ?]
 
 [+ parliament_heading +]. See Figures and charts for the parliamentary breakdown, separately from Public opinion.
 
@@ -157,7 +178,7 @@ Sprawy Wojskowe (Military Affairs): [+ reichswehr_portfolio_display +]
 
 Wyznania Religijne i Oświecenie Publiczne (Education): [+ education_portfolio_display +]
 
-Public works belong to Labour, not to a separate portfolio. Holding a portfolio does not yet unlock Polish policy actions; they come with a later stage.
+Public works belong to Labour, not to a separate portfolio. A portfolio held by PPS opens its cards in the Government Affairs deck.
 
 
 @demographics
@@ -165,7 +186,7 @@ go-to: menu
 
 **Demographic Groups**
 
-The implemented January 1922 gameplay model uses five main classes whose shares total 100%. The figures are approved design values; historical sourcing remains **TBD — historical research required**.
+The game uses five main classes whose shares total 100%. The figures are approved design values; historical sourcing remains **TBD — historical research required**.
 
 **Chłopi**: 53% in January 1922. Their share declines linearly to exactly 50% in December 1939.
 
@@ -179,7 +200,7 @@ The implemented January 1922 gameplay model uses five main classes whose shares 
 
 **Bezrobotni**: starts at 3%. Unemployment is an overlapping economic condition rather than a sixth main class, and retains the existing crisis-era mechanics.
 
-**Mniejszości Narodowe**: 30% of the population and overlapping with the five main classes. The provisional internal composition is approximately 60% Chłopi, 17% Robotnicy, 19% Drobnomieszczaństwo, 3% Inteligencja, and 2% Burżuazja i Ziemiaństwo. These approximate figures do not yet drive a separate intersection calculation. The implemented party-support row is independent; inherited Catholic-targeting PPS effects enter only through a compatibility bridge.
+**Mniejszości Narodowe**: 30% of the population, counted inside the five main classes: every class has Polish (70%), Jewish (10%) and other-minority (20%) groups of voters, each with its own preferences and turnout. These shares are gameplay values; their historical sourcing remains **TBD — historical research required**.
 
 
 @public_opinion
@@ -246,11 +267,11 @@ Mniejszości Narodowe: KPP [+ national_minorities_kpp_display +]%, PPS [+ nation
 @parties
 go-to: menu
 
-**Implemented opening party model**
+**The parties**
 
-The following parties are active in elections, polling and the first implemented government-formation cycle. Their numerical support profiles and gameplay descriptions are approved design inputs. Historical sourcing remains incomplete unless separately recorded in the historical-sources document.
+The following parties take part in elections, polling and the formation of cabinets. Their support profiles are gameplay values; historical sourcing is recorded separately in the register of sources where it exists.
 
-**PPS — Polska Partia Socjalistyczna:** the player party. It depends heavily on Robotnicy while retaining smaller bases among other groups. Its adviser pool is Polish; most action-card narratives and several institutions remain temporary German-baseline content.
+**PPS — Polska Partia Socjalistyczna:** the player party. It depends heavily on Robotnicy while retaining smaller bases among other groups.
 
 **KPP — Komunistyczna Partia Polski:** communist opposition. Current relations: [+ kpp_relation : relationships +]
 
@@ -262,68 +283,81 @@ The following parties are active in elections, polling and the first implemented
 
 **PSChD:** a Christian-democratic party with stronger support among Drobnomieszczaństwo and Burżuazja i Ziemiaństwo. Current relations: [+ pschd_relation : relationships +]
 
-**ZLN — Związek Ludowo-Narodowy:** the principal opening nationalist party. Its planned transition to SN is not implemented. Current relations: [+ zln_relation : relationships +]
+**ZLN — Związek Ludowo-Narodowy:** the principal nationalist party of this chapter. Current relations: [+ zln_relation : relationships +]
 
-**Blok Mniejszości Narodowych:** represents the cross-class national-minority electoral dimension. In the implemented demographic model this 30% identity dimension overlaps the five main social classes. Current relations: [+ minorities_bloc_relation : relationships +]
+**Blok Mniejszości Narodowych:** the electoral list of the national minorities across all classes; after the election its seats sit as the Jewish representation and the other minorities. Current relations: [+ minorities_bloc_relation : relationships +]
 
-**Inne partie:** an aggregate of smaller parties. It receives 8% of every opening within-group row except Chłopi, where it receives 12%.
+**Inne partie:** an aggregate of smaller parties, counted as 2% lists at the election.
 
-**Planned, not implemented:** BBWR, OZN, SL, PPS-L, PPS–dawna Frakcja Rewolucyjna and Socjaldemokratyczna Partia Pracy; Centrolew, Sanacja, the United Left and the broad-democratic or broad-coalition systems.
+Parties and blocs formed after this chapter — BBWR, OZN, SL, PPS-L, PPS–dawna Frakcja Rewolucyjna, Socjaldemokratyczna Partia Pracy, the later Centrolew and Sanacja — are not part of the first chapter.
 
 @paramilitaries
 on-arrival: {!
 Q.pps_militia_strength = Math.round(Q.pps_militia_strength);
 Q.sh_strength = Math.round(Q.sh_strength);
 Q.sa_strength = Math.round(Q.sa_strength); 
+if (Q.polish_security_rules && Q.S && typeof PolishSecurity !== 'undefined' && PolishSecurity.ready(Q)) {
+    PolishSecurity.defenseView(Q);
+}
 !}
 go-to: menu
 
-**Paramilitary groups:**
+[? if polish_security_rules : **Organisations and forces of the state** ?]
 
-**[+ pps_militia_name +]**: the PPS self-defence organization. It protects meetings, offices, demonstrations and strikes against nationalist militias, communist militias and hostile state police. It begins as Milicja PPS and can be reorganized into Akcja Socjalistyczna. Historical details remain **TBD — historical research required**.
+[? if polish_security_rules : **[+ pl_def_militia_name +]**: the self-defence organisation of PPS. It protects meetings, offices, demonstrations and strikes, and in a coup it can be committed with the railway workers. It begins as Milicja PPS and can be reorganised into Akcja Socjalistyczna (AS). [+ pl_def_militia +] Legal status: [+ pl_def_legal +]. Historical details remain **TBD — historical research required**. ?]
 
-Active organized members: [+ pps_militia_strength +]
+[? if polish_security_rules : **Police**: [+ pl_def_police +] ?]
 
-Militancy: [+ pps_militia_militancy : militancy +]
+[? if polish_security_rules : **Army groups**: [+ pl_def_forces +] [+ pl_def_note +] ?]
 
-It is legal and not initially repressed. Trade-union cooperation improves coordination but never automatically adds union members to its strength.
+[? if polish_security_rules : Communist and nationalist militias are not separate forces in this chapter: acts of violence enter the record of violence, cases and restrictions. ?]
 
-**Temporary opponent model:** The following German formations still supply inherited numerical values. In the approved Polish design they represent communist militias, nationalist militias and state forces until their dedicated replacements are researched.
+[? if not polish_security_rules : **Paramilitary groups:** ?]
 
-**Communist militias**: currently use the inherited RFB numerical model.
+[? if not polish_security_rules : **[+ pps_militia_name +]**: the PPS self-defence organization. It protects meetings, offices, demonstrations and strikes against nationalist militias, communist militias and hostile state police. It begins as Milicja PPS and can be reorganized into Akcja Socjalistyczna. Historical details remain **TBD — historical research required**. ?]
 
-Strength: [+ rfb_strength +] thousand
+[? if not polish_security_rules : Active organized members: [+ pps_militia_strength +] ?]
 
-Militarization: [+ rfb_militancy : militancy +]
+[? if not polish_security_rules : Militancy: [+ pps_militia_militancy : militancy +] ?]
 
-**Nationalist militias — veteran formations**: currently use the inherited Stahlhelm numerical model.
+[? if not polish_security_rules : It is legal and not initially repressed. Trade-union cooperation improves coordination but never automatically adds union members to its strength. ?]
 
-Strength: [+ sh_strength +] thousand
+[? if not polish_security_rules : **Temporary opponent model:** The following German formations still supply inherited numerical values. In the approved Polish design they represent communist militias, nationalist militias and state forces until their dedicated replacements are researched. ?]
 
-Militarization: [+ sh_militancy : militancy +]
+[? if not polish_security_rules : **Communist militias**: currently use the inherited RFB numerical model. ?]
 
-**Nationalist militias — mass formations**: currently use the inherited SA numerical model.
+[? if not polish_security_rules : Strength: [+ rfb_strength +] thousand ?]
 
-Strength: [+ sa_strength +] thousand
+[? if not polish_security_rules : Militarization: [+ rfb_militancy : militancy +] ?]
 
-Militarization: [+ sa_militancy : militancy +]
+[? if not polish_security_rules : **Nationalist militias — veteran formations**: currently use the inherited Stahlhelm numerical model. ?]
 
-**Temporary state-force model:**
+[? if not polish_security_rules : Strength: [+ sh_strength +] thousand ?]
 
-**State military**: [+ reichswehr_strength +] thousand troops in the inherited numerical model.
+[? if not polish_security_rules : Militarization: [+ sh_militancy : militancy +] ?]
 
-Loyalty: [+ reichswehr_loyalty : loyalty +]
+[? if not polish_security_rules : **Nationalist militias — mass formations**: currently use the inherited SA numerical model. ?]
 
-**State police**: [+ prussian_police_strength +] thousand members in the inherited numerical model.
+[? if not polish_security_rules : Strength: [+ sa_strength +] thousand ?]
 
-Loyalty: [+ prussian_police_loyalty : loyalty +]
+[? if not polish_security_rules : Militarization: [+ sa_militancy : militancy +] ?]
+
+[? if not polish_security_rules : **Temporary state-force model:** ?]
+
+[? if not polish_security_rules : **State military**: [+ reichswehr_strength +] thousand troops in the inherited numerical model. ?]
+
+[? if not polish_security_rules : Loyalty: [+ reichswehr_loyalty : loyalty +] ?]
+
+[? if not polish_security_rules : **State police**: [+ prussian_police_strength +] thousand members in the inherited numerical model. ?]
+
+[? if not polish_security_rules : Loyalty: [+ prussian_police_loyalty : loyalty +] ?]
 
 
 
 @factions
 go-to: menu
 
-**Implemented PPS faction model**
+**The PPS factions**
 
 The three currents below are gameplay abstractions. Their historical boundaries, memberships and opening proportions remain **TBD — historical research required**.
 
@@ -353,15 +387,13 @@ Strength: [+ pilsudczycy_strength : strength +]
 
 Dissent: [+ pilsudczycy_dissent : dissent +]
 
-**Affiliated trade unions — temporary compatibility model**
+[? if polish_party_rules : **Trade unions close to PPS.** They are not a faction: three branches with their own reach and strike fund. [+ pl_party_unions +]. ?]
 
-The inherited Labor values temporarily represent the trade-union power centre. It is separate from the three PPS factions and is excluded from their normalization and from overall party dissent. A researched ZSZ replacement remains planned.
+[? if polish_party_rules : Faction strength and dissent change with the decisions of PPS, its line on the stance cards and the advisers' actions. A faction with dissent of 60 and a live cause opens a case: PPS accepts its demand or accepts a split. ?]
 
-Strength: [+ labor_strength : strength +]
+[? if not polish_party_rules : **Affiliated trade unions — temporary compatibility model** ?]
 
-Dissent: [+ labor_dissent : dissent +]
-
-Inherited German card effects are transferred to the three active currents through a temporary compatibility bridge. The active advisers now use the semantic PPS faction fields directly. The remaining bridge is a gameplay device, not a claim that German and Polish factions were historically equivalent.
+[? if not polish_party_rules : The inherited Labor values temporarily represent the trade-union power centre. Strength: [+ labor_strength : strength +]; dissent: [+ labor_dissent : dissent +]. ?]
 
 @advisers
 title: PPS Advisers
@@ -383,7 +415,7 @@ Próchnik and Drobner enter the pool in 1928; Dubois enters in 1930. Perl leaves
 
 Faction splits use named departures. A split only removes a person whose entry date has already arrived. Consequently, a Lewica split before 1930 does not prevent Dubois from entering in 1930.
 
-Some approved adviser actions remain visibly marked as planned because Centrolew, Sanacja, municipal government, a Polish socialist economic programme, and formal PPS–KPP joint action do not yet have dedicated mechanics.
+Every adviser action shows its conditions and costs; when one is not available, its card says why.
 
 
 @figures

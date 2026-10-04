@@ -61,9 +61,7 @@ Prime minister: [+ prime_minister_display +]
 
 [? if pl_chapter_ended : The first chapter has ended with the certified result of the next lawful Sejm election. The chapter report describes the final state. ?]
 
-[? if polish_presidential_sequence_completed : March Constitution: the President is elected by the Sejm and Senate together as the National Assembly. Government acts require countersignature. The German direct-popular presidency and its legacy powers are not active. ?]
-
-[? if polish_opening_government_active and (year > 1922 or month > 2) : Development notice: the January cabinet snapshot is still in use. Later cabinet chronology has not been implemented. ?]
+[? if polish_presidential_sequence_completed : March Constitution: the President is elected by the Sejm and Senate together as the National Assembly. Government acts require countersignature. ?]
 
 = [+ parliament_heading +]
 
@@ -95,9 +93,9 @@ Next Sejm election: [+ pl_next_election_display +]
 
 [? if not sejm_first_election_completed : The first Sejm election is in November 1922. It allocates 444 MPs from voting intentions; ChZJN combines ZLN and PSChD on the ballot. ?]
 
-[? if sejm_first_election_completed and not polish_presidential_sequence_completed : The November election is implemented. In December the Sejm elects its Marshal and the National Assembly elects the President, without another monthly action. ?]
+[? if sejm_first_election_completed and not polish_presidential_sequence_completed : In December the Sejm elects its Marshal and the National Assembly elects the President, without another monthly action. ?]
 
-[? if polish_presidential_sequence_completed : The November election and the December Marshal and presidential elections are implemented. The 111-seat Senate is derived once from the Sejm result (a simplification); it has no separate campaign. There are no early elections without a lawful act, so the next election follows the default legal calendar. ?]
+[? if polish_presidential_sequence_completed : The 111-seat Senate is derived once from the Sejm result (a simplification); it has no separate campaign. There are no early elections without a lawful act, so the next election follows the default legal calendar. ?]
 
 Majority required: [+ sejm_majority_required +] of [+ sejm_total_seats +] MPs. Recorded votes and election history are available in the Library; polling below is not the sitting parliament.
 
@@ -158,6 +156,9 @@ These three currents are gameplay abstractions rather than formal organizations.
 
 @paramilitaries
 on-arrival: {!
+if (Q.polish_security_rules && Q.S && typeof PolishSecurity !== 'undefined' && PolishSecurity.ready(Q)) {
+    PolishSecurity.defenseView(Q);
+}
 if (Q.pps_militia_strength) {
     Q.pps_militia_strength_2 = Q.pps_militia_strength.toFixed(0);
 }
@@ -172,39 +173,53 @@ if (Q.sa_strength) {
 }
 !}
 
-= Paramilitaries
+= Organisations and forces of the state
 
-[+ pps_militia_name +] — active organized members: [+ pps_militia_strength_2 +]
+[? if polish_security_rules : **[+ pl_def_militia_name +].** [+ pl_def_militia +] Legal status: [+ pl_def_legal +]. [+ pl_def_alignment +] ?]
 
-Militancy: [+ pps_militia_militancy : militancy +]
+[? if polish_security_rules and pl_def_crisis : **[+ pl_def_crisis +]** ?]
 
-Legal status: legal and not repressed
+[? if polish_security_rules : **Police.** [+ pl_def_police +] ?]
+
+[? if polish_security_rules : **Army groups.** [+ pl_def_forces +] ?]
+
+[? if polish_security_rules and pl_def_agreement : [+ pl_def_agreement +] ?]
+
+[? if polish_security_rules : [+ pl_def_note +] ?]
+
+[? if not polish_security_rules : **Paramilitaries** ?]
+
+[? if not polish_security_rules : [+ pps_militia_name +] — active organized members: [+ pps_militia_strength_2 +] ?]
+
+[? if not polish_security_rules : Militancy: [+ pps_militia_militancy : militancy +] ?]
+
+[? if not polish_security_rules : Legal status: legal and not repressed ?]
 
 [? if not polish_party_rules : Trade-union cooperation: ?][? if not polish_party_rules and pps_militia_union_cooperation : established; union members remain outside the militia's manpower total ?][? if not polish_party_rules and not pps_militia_union_cooperation : not yet established ?]
 
-Communist militias (temporary RFB values) — strength: [+ rfb_strength_2 +] thousand
+[? if not polish_security_rules : Communist militias (temporary RFB values) — strength: [+ rfb_strength_2 +] thousand ?]
 
-Communist-militia militancy: [+ rfb_militancy : militancy +]
+[? if not polish_security_rules : Communist-militia militancy: [+ rfb_militancy : militancy +] ?]
 
-Nationalist militias, veteran formations (temporary Stahlhelm values) — strength: [+ sh_strength_2 +] thousand
+[? if not polish_security_rules : Nationalist militias, veteran formations (temporary Stahlhelm values) — strength: [+ sh_strength_2 +] thousand ?]
 
-Veteran-militia militancy: [+ sh_militancy : militancy +]
+[? if not polish_security_rules : Veteran-militia militancy: [+ sh_militancy : militancy +] ?]
 
-Nationalist militias, mass formations (temporary SA values) — strength: [+ sa_strength_2 +] thousand
+[? if not polish_security_rules : Nationalist militias, mass formations (temporary SA values) — strength: [+ sa_strength_2 +] thousand ?]
 
-Mass-militia militancy: [+ sa_militancy : militancy +]
+[? if not polish_security_rules : Mass-militia militancy: [+ sa_militancy : militancy +] ?]
 
-= Temporary state forces
+[? if not polish_security_rules : **Temporary state forces** ?]
 
-State military (temporary Reichswehr values): [+ reichswehr_strength +] thousand troops.
+[? if not polish_security_rules : State military (temporary Reichswehr values): [+ reichswehr_strength +] thousand troops. ?]
 
-State-military loyalty: [+ reichswehr_loyalty : loyalty +]
+[? if not polish_security_rules : State-military loyalty: [+ reichswehr_loyalty : loyalty +] ?]
 
-State police (temporary Prussian values): [+ prussian_police_strength +] thousand members.
+[? if not polish_security_rules : State police (temporary Prussian values): [+ prussian_police_strength +] thousand members. ?]
 
-State-police loyalty: [+ prussian_police_loyalty : loyalty +]
+[? if not polish_security_rules : State-police loyalty: [+ prussian_police_loyalty : loyalty +] ?]
 
-[? if spd_in_government : Interior police loyalty: [+ interior_police_loyalty : loyalty +] ?]
+[? if not polish_security_rules and spd_in_government : Interior police loyalty: [+ interior_police_loyalty : loyalty +] ?]
 
 @polls
 on-arrival: {!

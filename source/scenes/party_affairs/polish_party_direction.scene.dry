@@ -3,7 +3,6 @@ subtitle: How PPS builds its influence.
 new-page: true
 is-card: true
 tags: party_affairs
-card-image: img/poster_2.jpg
 view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.stanceAvailable(Q, 'direction') !}
 on-arrival: {!
 // Card party.direction (catalogue 4.1; technical reference 10.5–10.6): 1 T, 0 R, the card then waits 6 months. The present line is shown and cannot be

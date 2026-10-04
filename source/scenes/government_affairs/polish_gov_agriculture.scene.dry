@@ -3,7 +3,6 @@ subtitle: Agriculture: advice, consolidation, cooperative processing.
 new-page: true
 is-card: true
 tags: govt_affairs
-card-image: img/flags.jpg
 view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'agriculture_development') !}
 on-arrival: {!
 // Card government.agriculture_development (technical reference 17.11–17.12; card catalogue 8.9). Opening and closing
@@ -48,7 +47,7 @@ go-to: result
 
 @cooperative_processing_sales
 title: Cooperative processing and sales
-subtitle: Needs a cooperative executor; the cooperatives of PPS come with stage 5.
+subtitle: Needs a cooperative executor: an operating PPS cooperative.
 choose-if: {! return PolishProjects.optionStatus(Q, 'agriculture_development', 'cooperative_processing_sales').available !}
 unavailable-subtitle: [+ pl_agriculture_development_cooperative_processing_sales_why +]
 on-arrival: {!

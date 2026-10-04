@@ -1,9 +1,9 @@
 {
   "scope": "Implementation plan 0.40: stages 0-8, catalogue entries, 21.1 tests and 20.2 leaks each assigned once; scope sections, files and links exist; approved decisions recorded.",
   "hashes": {
-    "docs/POLISH_IMPLEMENTATION_PLAN.md": "cc314eecb199032bfdbe3fb75921c66b3c1a43388c75ce346f3ecb6a4ae1daa6",
-    "docs/POLISH_TECHNICAL_REFERENCE.md": "8aba6f238f43c61b53eecb1e52c13903a7661bf426453fe6033fc633da68aaa4",
-    "docs/POLISH_CARD_CATALOGUE.md": "d78c3f50e6d47b3b6315354dc1379dd3ffd63ef13906bac2b68fb93e7e0bd62f"
+    "docs/POLISH_IMPLEMENTATION_PLAN.md": "bd06e354fbdff1a0196f995f32817857dd565319ba7e4eff59f154fd77072301",
+    "docs/POLISH_TECHNICAL_REFERENCE.md": "18f224b01d7ed107357070fddc5d0502a193a80f134ceba64330216fc9e69668",
+    "docs/POLISH_CARD_CATALOGUE.md": "92eb497f9825ec40eacdc2687e02709c1fd02eaced3fcacac153be0d92819df5"
   },
   "stages": 9,
   "cardsByStage": {
@@ -58,10 +58,10 @@
   },
   "manifestRows": 8,
   "files": {
-    "existingChecked": 285,
+    "existingChecked": 291,
     "plannedNewFiles": []
   },
-  "links": 6,
+  "links": 9,
   "stage0": {
     "done": true,
     "files": [
@@ -164,5 +164,21 @@
     "coupProfile": "coup_f_v1",
     "guardedGermanScenes": 26,
     "leakClosed": 3
+  },
+  "stage8": {
+    "done": true,
+    "lastStage": true,
+    "files": 8,
+    "kNotes": 21,
+    "testsOf21_1": 0,
+    "actorProfile": "actor_profiles_v2",
+    "newScenarioInputs": [
+      "military_escalation",
+      "chjeno_piast_1923",
+      "piast_split_1923",
+      "grabski_resignation_1925"
+    ],
+    "startPressure": 0,
+    "kppGoal": "structural"
   }
 }

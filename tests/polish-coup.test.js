@@ -231,6 +231,10 @@ test('Brak zwycięzcy: a stalemate after four rounds at democracy 30 without an 
   assert.equal(report.state.last_election.sequence_after_opening, 1, 'the Sejm of 1922 stays in the report');
   choose(engine, 'polish_chapter_report');
   assert.match(JSON.stringify(engine.ui.paragraphs), /the conflict continues without a winner/);
+  // Stage 8: after a coup the Sejm still sits; the report names its Marshal, and the last section is "Beyond this chapter".
+  assert.deepEqual([engine.state.qualities.pl_report_speaker_label, engine.state.qualities.pl_report_speaker],
+    ['Marshal of the Sejm', S.parliament.speaker ? S.parliament.speaker.name : 'Vacant']);
+  assert.match(JSON.stringify(engine.ui.paragraphs), /Beyond this chapter/);
   engine.goToScene('main');
   assert.equal(engine.state.sceneId, 'polish_chapter_report', 'no month after the end of the chapter');
 });

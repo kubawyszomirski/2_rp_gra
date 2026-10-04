@@ -51,6 +51,15 @@ function unionStep(engine, branch, step) {
   toMain(engine);
 }
 
+// Stage 8 (decision 2A) calibrated the opening so that the KPP has 3.2% among the workers; the communist steps of a
+// strike need 5% (14.4). These tests of the communist steps use the earlier opening row of the workers as a fixture.
+function kppAmongWorkers(Q) {
+  const old = { kpp: 11.04, pps: 38.64, npr: 18.4, psl_wyzwolenie: 1.84, psl_piast: 0.92, pschd: 9.2, zln: 7.36, minorities_bloc: 4.6, other: 8 };
+  for (const party of Q.parties) Q['workers_' + party] = old[party];
+  PolishElectorate.seedCells(Q);
+  PolishElectorate.writeClassMirrors(Q);
+}
+
 test('the Trade Unions card: agreeing the demands and starting a strike each take the month; the month draws on the fund once', () => {
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
@@ -127,6 +136,7 @@ test('B8+B10 i B11+B12: one case with the communists, an offer and coercion: thr
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
   const S = Q.S;
+  kppAmongWorkers(Q);
   PolishGovernment.kppContact(Q);
   freeMonth(Q);
   PolishGovernment.changeRelation(Q, 'kpp', 30 - S.actors.relations.kpp, 'fixture');
@@ -171,11 +181,14 @@ test('Klucz sprawy E6: strike S and settlement U1 refused by part of the striker
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
   const S = Q.S;
+  kppAmongWorkers(Q);
   PolishGovernment.kppContact(Q);
   freeMonth(Q);
   PolishGovernment.changeRelation(Q, 'kpp', 40 - S.actors.relations.kpp, 'fixture');
   S.unions.industry.reach = 60; S.unions.industry.readiness = 60; S.unions.industry.fund = 3;
-  unionStep(engine, 'industry', 'prepare_limited');
+  // A package of demands: since stage 8 (8f) the KPP, with its political goal, joins a full committee only for a broad
+  // or a political demand.
+  unionStep(engine, 'industry', 'prepare_broad');
   engine.goToScene('main');
   choose(engine, 'polish_union_agenda');
   choose(engine, 'polish_union_agenda.industry');

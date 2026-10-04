@@ -3,7 +3,6 @@ subtitle: Treasury or Industry: how the credit instrument is financed.
 new-page: true
 is-card: true
 tags: govt_affairs
-card-image: img/Mann_der_Arbeit.jpg
 view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'investment_fund') !}
 on-arrival: {!
 // Card government.investment_fund (technical reference 17.11–17.12; card catalogue 8.5). Opening and closing
@@ -48,7 +47,7 @@ go-to: result
 
 @cooperative
 title: Cooperative financing
-subtitle: Credit for farms and small workshops through cooperatives. The cooperatives of PPS come with stage 5.
+subtitle: Credit for farms and small workshops through cooperatives; needs an operating PPS cooperative.
 choose-if: {! return PolishProjects.optionStatus(Q, 'investment_fund', 'cooperative').available !}
 unavailable-subtitle: [+ pl_investment_fund_cooperative_why +]
 on-arrival: {!

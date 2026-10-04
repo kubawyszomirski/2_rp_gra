@@ -75,21 +75,35 @@ function november(engine, values) {
   const Q = engine.state.qualities;
   Q.year = 1922; Q.month = 11; Q.time = 11;
   if (values) {
-    for (const group of Q.classes) for (const party of Q.parties) Q[`${group}_${party}`] = values[party] || 0;
-    if (Object.values(values).some(v => v > 0)) { PolishElectorate.seedCells(Q); PolishElectorate.writeClassMirrors(Q); }
+    // Either one row for every class, or one row per class (LEFT_SEJM_ROWS).
+    for (const group of Q.classes) for (const party of Q.parties) Q[`${group}_${party}`] = (values[group] || values)[party] || 0;
+    const flat = Object.values(values).flatMap(v => (typeof v === 'object' ? Object.values(v) : [v]));
+    if (flat.some(v => v > 0)) { PolishElectorate.seedCells(Q); PolishElectorate.writeClassMirrors(Q); }
   }
   engine._runActions(engine.game.scenes.polish_opening_state.onArrival);
   engine.goToScene('post_event');
   choose(engine, 'sejm_election.calculate');
   assert.equal(engine.state.sceneId, 'sejm_election.government');
 }
+// The opening rows before the calibration of stage 8: a Sejm in which PPS is the largest club of the left, so that the
+// formation screen can be tested with Daszyński as premier (a fixture, not the calibrated opening).
+const OLD_ROW = values => Object.fromEntries(['kpp', 'pps', 'npr', 'psl_wyzwolenie', 'psl_piast', 'pschd', 'zln', 'minorities_bloc', 'other'].map((p, i) => [p, values[i]]));
+const LEFT_SEJM_ROWS = {
+  workers: OLD_ROW([11.04, 38.64, 18.4, 1.84, 0.92, 9.2, 7.36, 4.6, 8]),
+  old_middle: OLD_ROW([1.84, 9.2, 12.88, 3.68, 5.52, 18.4, 29.44, 11.04, 8]),
+  new_middle: OLD_ROW([3.68, 22.08, 4.6, 8.28, 4.6, 9.2, 25.76, 13.8, 8]),
+  rural: OLD_ROW([1.76, 3.52, 1.76, 28.16, 29.92, 5.28, 13.2, 4.4, 12]),
+  bourgeois_landowners: OLD_ROW([0, 1.84, 3.68, 0.92, 6.44, 13.8, 48.76, 16.56, 8]),
+  unemployed: OLD_ROW([29.44, 34.96, 11.04, 1.84, 0.92, 4.6, 3.68, 5.52, 8]),
+  national_minorities: OLD_ROW([9.2, 6.44, 0.92, 1.84, 0.92, 0.92, 1.84, 69.92, 8]),
+};
 // Only PPS, KPP and small lists win seats: no cabinet can be formed (a crisis fixture).
 const NO_PARTNERS = { kpp: 60, pps: 20, other: 20 };
 
 test('C1: one screen; every setting is free and returns to it; one commit, then the result; no second menu', () => {
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
-  november(engine);
+  november(engine, LEFT_SEJM_ROWS);
   choose(engine, 'polish_cabinet_formation');
   const before = { t: Q.time, actions: Q.month_actions, cabinet: clone(Q.S.cabinet), negotiations: Q.S.history.negotiations.length };
   assert.deepEqual(ids(engine).sort(), ['polish_cabinet_formation.candidates', 'polish_cabinet_formation.configurations',
@@ -206,7 +220,7 @@ test('Starszy gabinet: a save from before the nine portfolios stops; Labour and 
 test('Status and Library show the prime minister, support and the nine portfolios from the cabinet record', () => {
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
-  november(engine);
+  november(engine, LEFT_SEJM_ROWS);
   dendry.formCabinet(engine, { configuration: 'left_minority', mode: 'member' });
   choose(engine, 'root');
   engine.goToScene('status');
@@ -419,7 +433,7 @@ test('leak 2: the German coalition counter and votes of no confidence have no ef
 test('save and load in the middle of the formation keeps the offer; the restored game submits it once', () => {
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
-  november(engine);
+  november(engine, LEFT_SEJM_ROWS);
   choose(engine, 'polish_cabinet_formation');
   choose(engine, 'polish_cabinet_formation.minorities_on');
   choose(engine, 'polish_cabinet_formation.candidates');

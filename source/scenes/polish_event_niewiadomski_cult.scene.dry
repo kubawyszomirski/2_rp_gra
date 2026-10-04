@@ -2,19 +2,18 @@ title: The Cult of the Assassin
 subtitle: A public commemoration of Eligiusz Niewiadomski; PPS decides how it answers.
 new-page: true
 tags: pl_event
-card-image: img/poster_2.jpg
 view-if: {! return !!Q.S && !!Q.polish_politics_rules && PolishPolitics.cultDue(Q) !}
 on-arrival: {!
 // Event society.niewiadomski_cult, B5 (technical reference 17.7, 17.4, 15.2; card catalogue 9.6): one named public
 // commemoration of the assassin, only in the historical branch of the assassination of Narutowicz; three answers,
-// 0 T. The existence of the cult is historical; the place, the service and its participants in this event are a
-// synthetic profile of the game (TBD — historical research required). The mass is an alternative of the game.
+// 0 T. Stage 8 (8f): the commemoration is the funeral at Powązki on 6 II 1923 and the services of February 1923
+// (HISTORICAL_SOURCES.md); the answers of PPS and the mass for democracy are alternatives of the game.
 PolishPolitics.cultView(Q);
 !}
 
 = A commemoration of the assassin
 
-Admirers of Eligiusz Niewiadomski, who killed President Narutowicz, announce a public service in his honour. The details of this service are a synthetic event of the game, not a reconstruction of a particular commemoration. PPS must decide how its members and organisations answer. Opposing the cult of a murderer is not a position on religion or on the Church.
+Eligiusz Niewiadomski, who killed President Narutowicz, was executed on 31 January 1923. On 6 February about ten thousand people follow his funeral at the Powązki cemetery in Warsaw, with a requiem mass, and services in his honour are announced in churches in other towns. PPS must decide how its members and organisations answer. Opposing the cult of a murderer is not a position on religion or on the Church.
 
 - @condemn
 - @democracy_mass

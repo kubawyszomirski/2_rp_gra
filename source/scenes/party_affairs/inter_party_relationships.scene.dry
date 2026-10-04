@@ -3,7 +3,6 @@ new-page: true
 view-if: {! return !!Q.S && PolishGovernment.outreachAvailable(Q) !}
 tags: party_affairs
 is-card: true
-card-image: img/weimar_coalition_2.jpg
 on-arrival: {!
 // Card party.outreach (technical reference 8.1, 17.2; card catalogue 6.1). One talk with one
 // partner costs the month's action and no resources; opening and closing the card are free.

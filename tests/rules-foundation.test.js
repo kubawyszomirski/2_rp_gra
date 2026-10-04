@@ -38,7 +38,8 @@ test('the new-game state follows the domain register in 2.4', () => {
     rng: { rolls: {} },
     history: { months: [], actions: [], reasons: [], negotiations: [], cabinets: [] },
     chapter: { status: 'active', reason: null, trigger_id: null, report: null, unemployment_bill: null },
-    scenario: { profile_id: 'normal_chapter1_v1', version: 1, npc_reviewed_time: null, inputs: { dispute_1922: true, military_case: true, niewiadomski_cult: true } },
+    scenario: { profile_id: 'normal_chapter1_v1', version: 1, npc_reviewed_time: null, inputs: { dispute_1922: true, military_case: true, niewiadomski_cult: true, chjeno_piast_1923: true, piast_split_1923: true,
+      grabski_resignation_1925: true } },
     // Without the opening parliament the institution domains start empty; a new game passes them in.
     parliament: { chamber_id: null, clubs: [], transfers: [], replacements: [], speaker: null, speaker_elections: [],
       term: { sequence_after_opening: 0, opened_at: null, result_id: null }, previous_term: null, next_election: null, alliances: [],
@@ -68,13 +69,13 @@ test('the new-game state follows the domain register in 2.4', () => {
     // Stage 6: no strike and no plant is recorded in a new game (14.3, 17.12).
     strikes: { seq: 0, records: {}, due: {}, wage_watch: { months_below: 0, last_case_at: null, last_checked: 0 }, inputs: null, pending_effects: [] },
     enterprises: { seq: 0, records: {} },
-    // Stage 7: democracy 60, authority 55 (the reading of an empty journal), violence 10, pressure 10 (2.3–2.4).
+    // Stage 7: democracy 60, authority 55 (the reading of an empty journal), violence 10 (2.3–2.4); stage 8: pressure 0.
     politics: { profile_id: 'politics_v1', started: false, democracy: 60, parliament_authority: 55, authority_at: 0, violence: 10,
       national_grievance: 0, institutional_log: [], cases: {}, restrictions: {}, speeches: [], episodes: [], democracy_effects: [],
       violence_episodes: [], civil_rewarded: [], cabinets_seen: [], due: {}, settled_t: null, history: [] },
     security: { profile_id: null, forces: [], logistics: 0.8, police: { capacity: 50, command: 50, lawful_compliance: 50, public_trust: 50 },
       army_control: { projects: [] }, threats: [], known: {}, assessments: [] },
-    coup: { pressure: 10, phase: 'dormant', attempt_id: null, stance: null, commitments: [], round: 0, outcome: null, history: [],
+    coup: { pressure: 0, phase: 'dormant', attempt_id: null, stance: null, commitments: [], round: 0, outcome: null, history: [],
       next_attempt_available_at: 1, f9: null, settlement: null, pps_contribution: null, concessions_to_pps: [], impulses: [],
       effects_complete: false },
   });

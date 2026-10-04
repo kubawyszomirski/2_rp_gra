@@ -1,7 +1,6 @@
 title: Discard a card
 subtitle: Once a month, free of charge.
 is-pinned-card: true
-card-image: img/poster_3.jpg
 view-if: {! return PolishRules.discardAvailable(Q) !}
 new-page: true
 on-arrival: {!

@@ -3,7 +3,6 @@ subtitle: The party press, its format, and one campaign to chosen voters.
 new-page: true
 is-card: true
 tags: party_affairs
-card-image: img/poster_0.jpg
 view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.partyReady(Q) && Q.S.chapter.status !== 'ended' !}
 on-arrival: {!
 // Card party.media (technical reference 5.3, 10.6, 13.2; card catalogue 5.3): one variant, 1 T and 1 R each;

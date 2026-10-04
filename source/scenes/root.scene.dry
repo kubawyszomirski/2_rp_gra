@@ -8,7 +8,7 @@ go-to: start_menu_2
 
 = PPS: An Alternate History
 
-**Playable-slice notice:** You play as the **PPS (Polska Partia Socjalistyczna)**. The January 1922 opening, November 1922 Sejm election, negotiated cabinet formation, December 1922 Marshal and presidential elections, electoral parties, support model, factions, advisers and PPS self-defence organization are implemented Polish slices. Most action cards and dated events remain an unfinished German-baseline simulation. The chapter ends with the next lawful Sejm election, on 19 February 1928 in the game's default legal calendar (not the historical election date), followed by a chapter report.
+You play as the **PPS (Polska Partia Socjalistyczna)** in the first chapter of the Second Republic, from January 1922. The chapter ends when an attempted coup is resolved or with the next lawful Sejm election — on 19 February 1928 in the game's default legal calendar, not the historical election date — followed by a chapter report. Numbers are the game's working balance, not historical statistics.
 
 @start_menu_2
 
@@ -323,78 +323,79 @@ Q.party_colors = {
 // TODO: add 'sapd' later on
 Q.sapd_formed = 0;
 
-// Approved opening within-group support. The eight named parties were scaled
-// proportionally to reserve exactly 8% for Other in every row except Chłopi,
-// where Other receives 12%. Every row therefore totals 100.
-Q.workers_kpp = 11.04;
-Q.workers_pps = 38.64;
-Q.workers_npr = 18.40;
-Q.workers_psl_wyzwolenie = 1.84;
-Q.workers_psl_piast = 0.92;
-Q.workers_pschd = 9.20;
-Q.workers_zln = 7.36;
-Q.workers_minorities_bloc = 4.60;
-Q.workers_other = 8;
+// Opening within-group support. Stage 8, decision 2A (P): each party's support of the earlier approved rows is
+// multiplied by one factor in every class (analysis/stage8-campaigns/calibration.json), so that a passive PPS gets a
+// Sejm of 1922 within five seats per club of the synthetic M02 base Sejm (17.16.10); every row keeps its total of 100.
+// The same table is in election_simulation.scene.dry.
+Q.workers_kpp = 3.21;
+Q.workers_pps = 30.45;
+Q.workers_npr = 17.08;
+Q.workers_psl_wyzwolenie = 2.18;
+Q.workers_psl_piast = 1.46;
+Q.workers_pschd = 19.77;
+Q.workers_zln = 15.57;
+Q.workers_minorities_bloc = 4.20;
+Q.workers_other = 6.08;
 
-Q.old_middle_kpp = 1.84;
-Q.old_middle_pps = 9.20;
-Q.old_middle_npr = 12.88;
-Q.old_middle_psl_wyzwolenie = 3.68;
-Q.old_middle_psl_piast = 5.52;
-Q.old_middle_pschd = 18.40;
-Q.old_middle_zln = 29.44;
-Q.old_middle_minorities_bloc = 11.04;
-Q.old_middle_other = 8;
+Q.old_middle_kpp = 0.35;
+Q.old_middle_pps = 4.81;
+Q.old_middle_npr = 7.92;
+Q.old_middle_psl_wyzwolenie = 2.88;
+Q.old_middle_psl_piast = 5.82;
+Q.old_middle_pschd = 26.21;
+Q.old_middle_zln = 41.29;
+Q.old_middle_minorities_bloc = 6.69;
+Q.old_middle_other = 4.03;
 
-Q.new_middle_kpp = 3.68;
-Q.new_middle_pps = 22.08;
-Q.new_middle_npr = 4.60;
-Q.new_middle_psl_wyzwolenie = 8.28;
-Q.new_middle_psl_piast = 4.60;
-Q.new_middle_pschd = 9.20;
-Q.new_middle_zln = 25.76;
-Q.new_middle_minorities_bloc = 13.80;
-Q.new_middle_other = 8;
+Q.new_middle_kpp = 0.80;
+Q.new_middle_pps = 13.10;
+Q.new_middle_npr = 3.22;
+Q.new_middle_psl_wyzwolenie = 7.37;
+Q.new_middle_psl_piast = 5.51;
+Q.new_middle_pschd = 14.89;
+Q.new_middle_zln = 41.04;
+Q.new_middle_minorities_bloc = 9.49;
+Q.new_middle_other = 4.58;
 
-Q.rural_kpp = 1.76;
-Q.rural_pps = 3.52;
-Q.rural_npr = 1.76;
-Q.rural_psl_wyzwolenie = 28.16;
-Q.rural_psl_piast = 29.92;
-Q.rural_pschd = 5.28;
-Q.rural_zln = 13.20;
-Q.rural_minorities_bloc = 4.40;
-Q.rural_other = 12;
+Q.rural_kpp = 0.37;
+Q.rural_pps = 2.01;
+Q.rural_npr = 1.18;
+Q.rural_psl_wyzwolenie = 24.08;
+Q.rural_psl_piast = 34.43;
+Q.rural_pschd = 8.21;
+Q.rural_zln = 20.21;
+Q.rural_minorities_bloc = 2.91;
+Q.rural_other = 6.60;
 
-Q.bourgeois_landowners_kpp = 0;
-Q.bourgeois_landowners_pps = 1.84;
-Q.bourgeois_landowners_npr = 3.68;
-Q.bourgeois_landowners_psl_wyzwolenie = 0.92;
-Q.bourgeois_landowners_psl_piast = 6.44;
-Q.bourgeois_landowners_pschd = 13.80;
-Q.bourgeois_landowners_zln = 48.76;
-Q.bourgeois_landowners_minorities_bloc = 16.56;
-Q.bourgeois_landowners_other = 8;
+Q.bourgeois_landowners_kpp = 0.00;
+Q.bourgeois_landowners_pps = 0.85;
+Q.bourgeois_landowners_npr = 2.01;
+Q.bourgeois_landowners_psl_wyzwolenie = 0.64;
+Q.bourgeois_landowners_psl_piast = 6.02;
+Q.bourgeois_landowners_pschd = 17.42;
+Q.bourgeois_landowners_zln = 60.60;
+Q.bourgeois_landowners_minorities_bloc = 8.89;
+Q.bourgeois_landowners_other = 3.57;
 
-Q.unemployed_kpp = 29.44;
-Q.unemployed_pps = 34.96;
-Q.unemployed_npr = 11.04;
-Q.unemployed_psl_wyzwolenie = 1.84;
-Q.unemployed_psl_piast = 0.92;
-Q.unemployed_pschd = 4.60;
-Q.unemployed_zln = 3.68;
-Q.unemployed_minorities_bloc = 5.52;
-Q.unemployed_other = 8;
+Q.unemployed_kpp = 10.85;
+Q.unemployed_pps = 34.97;
+Q.unemployed_npr = 13.01;
+Q.unemployed_psl_wyzwolenie = 2.76;
+Q.unemployed_psl_piast = 1.86;
+Q.unemployed_pschd = 12.55;
+Q.unemployed_zln = 9.88;
+Q.unemployed_minorities_bloc = 6.40;
+Q.unemployed_other = 7.72;
 
-Q.national_minorities_kpp = 9.20;
-Q.national_minorities_pps = 6.44;
-Q.national_minorities_npr = 0.92;
-Q.national_minorities_psl_wyzwolenie = 1.84;
-Q.national_minorities_psl_piast = 0.92;
-Q.national_minorities_pschd = 0.92;
-Q.national_minorities_zln = 1.84;
-Q.national_minorities_minorities_bloc = 69.92;
-Q.national_minorities_other = 8;
+Q.national_minorities_kpp = 3.03;
+Q.national_minorities_pps = 5.76;
+Q.national_minorities_npr = 0.97;
+Q.national_minorities_psl_wyzwolenie = 2.47;
+Q.national_minorities_psl_piast = 1.66;
+Q.national_minorities_pschd = 2.24;
+Q.national_minorities_zln = 4.42;
+Q.national_minorities_minorities_bloc = 72.54;
+Q.national_minorities_other = 6.91;
 
 // Narrow compatibility bridge for inherited cards. Only the explicitly
 // approved direct mappings feed back into active Polish party support.
@@ -880,7 +881,6 @@ Q.polish_politics_rules = 1;
 PolishSecurity.attachSecurityState(Q);
 Q.polish_security_rules = 1;
 !}
-set-bg: img/map_2.jpg
 new-page: true
 
 = Poland, January 1922
@@ -891,12 +891,13 @@ Józef Piłsudski is **Naczelnik Państwa**, not President of the Republic. **An
 
 The opening uses an approved **444-MP gameplay approximation**, calculated from rounded August 1922 club shares, not an exact January roster. Parliamentary representation is separate from changing public support.
 
-Read the Library for the opening institutions and cabinet portfolios. **The first Sejm election is in November 1922: 444 MPs, with 223 needed for a majority.** The cabinet that follows is negotiated in the same sequence and consumes no extra monthly action. In December, the new Sejm elects its Marshal and the National Assembly elects the President without another action; the clubs' votes decide both offices. The next Sejm election follows the game's legal calendar on 19 February 1928, and its certified result ends this chapter with a report. Most dated events remain unfinished. This is not a complete Polish campaign.
+Read the Library for the opening institutions and cabinet portfolios. **The first Sejm election is in November 1922: 444 MPs, with 223 needed for a majority.** The cabinet that follows is negotiated in the same sequence and consumes no extra monthly action. In December, the new Sejm elects its Marshal and the National Assembly elects the President without another action; the clubs' votes decide both offices. The chapter ends with a report: when an attempted coup is resolved, or with the certified result of the next lawful Sejm election, on 19 February 1928 in the game's legal calendar.
 
 - @1928_main: Begin
 
 @1928_main
-audio: shuffle music/1928_1930/FruhlingsliedMendelssohn.mp3 music/1928_1930/AUF_HOHEN_BERGEN_noise_reduced.mp3 music/1928_1930/MarekWeber.mp3 music/1928_1930/BAUERNKAPELLE.mp3 music/1928_1933/DERLINDENBAUM_normalized.mp3 music/1928_1933/ZurSonne_zurFreiheit.mp3 music/1928_1933/arbeiter_marseille.mp3 music/1928_1933/Wann_wir_schreiten_Seit_an_Seit.mp3 music/1930_1933/Internationale-de_normalized.ogg music/1928_1930/LiedDerPompadour.mp3 music/1928_1933/SozialistenMarsch.mp3
+# Stage 8 (fix 5): the German music files of the original game are not in this project; the Polish chapter plays no
+# music until Polish recordings with known licences are added (credits_music.txt is kept).
 new-page: true
 go-to: main
 
@@ -906,4 +907,4 @@ The campaign begins in January 1922.
 
 Naczelnik Państwa: **Józef Piłsudski**. Prime minister: **Antoni Ponikowski**. Legislature: **Sejm Ustawodawczy**.
 
-PPS provides external toleration, without cabinet membership or ministry control. The opening, November 1922 Sejm election and December presidential succession are implemented. The next Sejm election follows the game's legal calendar on 19 February 1928, and its certified result ends this chapter; later presidential chronology and unconverted mechanics remain unfinished.
+PPS tolerates the cabinet from outside, without ministries. Each month PPS takes one main action from its cards and agendas; the advisers can act in between. The first Sejm election is in November 1922.

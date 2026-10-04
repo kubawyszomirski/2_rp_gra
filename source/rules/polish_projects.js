@@ -1441,6 +1441,11 @@
       const agreement = S.agreements[id];
       if (!agreement || (agreement.status !== 'active' && agreement.status !== 'breached')) continue;
       for (const o of agreement.obligations) {
+        // Stage 8: an accepted compromise with Piłsudski is the cabinet's own initiative (16.7 accepted executor).
+        if (o.required_military && government.liveObligation(o) && (o.fulfillment || 0) < 1 && o.status !== 'void') {
+          candidates.push(o);
+          continue;
+        }
         if (!o.required_project || o.required_project === 'constitution' || !government.liveObligation(o) || (o.fulfillment || 0) >= 1) continue;
         if (o.portfolio && !npcHolds(S, o.portfolio)) continue;
         candidates.push(o);
@@ -1448,6 +1453,7 @@
     }
     candidates.sort((a, b) => a.due_at - b.due_at || compareId(a.id, b.id));
     for (const o of candidates) {
+      if (o.required_military) return {obligation: o, military: o.required_military};
       const variants = o.required_variants || Object.keys(PROJECT_TYPES[o.required_project].variants);
       const running = projectsOf(S, o.required_project, p => variants.indexOf(p.variant) >= 0 && (liveProject(p) || p.status === 'completed'));
       if (running.length) continue;
@@ -1500,6 +1506,13 @@
     }
     // 1b. A due promise of this cabinet in a portfolio of its own.
     const step = dueObligationStep(Q, t);
+    if (step && step.military) {
+      const security = securityModule();
+      const done = security ? security.cabinetConcession(Q, t, step.obligation, step.military) : {executed: false, reason: 'no forces of the state'};
+      cabinetTxn(Q, t, done.executed ? 'military_compromise' : 'military_compromise_refused', {obligation_id: step.obligation.id, reason: done.reason || null});
+      return reviewReason(Q, t, {result: done.executed ? 'military_compromise' : 'military_compromise_refused', obligation_id: step.obligation.id,
+        agreement_id: done.agreement_id || null, reason: done.reason || null});
+    }
     if (step) {
       const result = obligationInitiative(Q, t, step);
       if (result) return result;
@@ -1638,6 +1651,13 @@
       const agreement = S.agreements[id];
       if (agreement.status !== 'active' && agreement.status !== 'breached') continue;
       for (const o of agreement.obligations) {
+        if (o.required_military && (o.status === 'active' || o.status === 'breached')) {
+          // Met while the agreement with Piłsudski that the cabinet concluded for it is being executed.
+          const pils = S.actors.pilsudski && S.actors.pilsudski.agreement_id ? S.agreements[S.actors.pilsudski.agreement_id] : null;
+          o.fulfillment = pils && pils.status === 'active' && pils.execution_started_at !== null && pils.obligation_id === o.id ? 1 : 0;
+          o.last_checked = t;
+          continue;
+        }
         if (!o.required_project || o.status === 'fulfilled' || o.status === 'awaiting_later_stage') continue;
         const met = obligationMet(Q, o, t);
         if (o.status === 'open') {
@@ -2109,7 +2129,11 @@
         const instrument = projectsOf(S, 'credit_instrument')[0];
         if (instrument && !preparedProject(instrument)) return no('The credit instrument is already running: one financing, one cost, one effect.');
         const financing = option === 'credit' ? 'public' : option;
-        if (instrument && instrument.variant === financing) return no('This financing is already prepared; launch it from the agenda.');
+        // Stage 8 (fix 3): an instrument prepared by the cabinet is not on the agenda of PPS; the cabinet launches it itself.
+        if (instrument && instrument.variant === financing) {
+          return no(instrument.sponsor === 'cabinet' ? 'The cabinet has prepared this financing; it launches it at one of its next reviews.' :
+            'This financing is already prepared; launch it from the agenda.');
+        }
         if (financing === 'banks' && E.credit < 40) return no('Credit is below 40: the banks do not agree.');
         return OK;
       }

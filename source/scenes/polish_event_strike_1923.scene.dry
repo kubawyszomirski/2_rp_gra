@@ -2,7 +2,6 @@ title: Wage Demands and Strikes
 subtitle: Real wages have stayed below 80 for three months; the workers demand a rise.
 new-page: true
 tags: pl_event
-card-image: img/generalstrike.jpg
 view-if: {! return !!Q.S && !!Q.polish_union_rules && PolishUnions.caseDue(Q) !}
 on-arrival: {!
 // Event society.strike_1923, B8+B10 (technical reference 17.5, 17.16.5; card catalogue 9.8): one answer of PPS for

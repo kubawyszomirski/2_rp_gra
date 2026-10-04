@@ -259,7 +259,7 @@ test('Granica: the 1922 result continues the game; the next lawful result ends t
   historicalDecember(engine);
   toJanuary1928(engine);
   assert.equal(Q.S.chapter.status, 'active');
-  assert.match(content(engine), /next election is held on 19 February 1928/);
+  assert.match(content(engine), /Sejm election is held on 19 February 1928/, 'G4: the reminder of the coming election (stage 8)');
   spendMonth(engine);
   assert.deepEqual([Q.year, Q.month, Q.time], [1928, 2, 74]);
   assert.equal(engine.state.sceneId, 'sejm_election');

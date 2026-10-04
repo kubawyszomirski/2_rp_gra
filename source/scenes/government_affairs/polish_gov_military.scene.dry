@@ -3,7 +3,6 @@ subtitle: Civilian control of the army: oversight, lawful changes of personnel, 
 new-page: true
 is-card: true
 tags: govt_affairs
-card-image: img/map_3.jpg
 view-if: {! return !!Q.S && !!Q.polish_security_rules && PolishProjects.cardAvailable(Q, 'military_policy') !}
 on-arrival: {!
 // Card government.military_policy (technical reference 16.3, 17.12.4; card catalogue 8.14): one project of civilian
