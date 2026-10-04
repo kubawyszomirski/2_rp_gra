@@ -7,18 +7,18 @@
   "= Execution of the land reform": "= Wykonanie reformy rolnej",
   "Holding Agriculture does not change ownership by itself: the reform needs its law, its financing and one of three tranches of the country. Each executed tranche lowers the agrarian pressure by 3 once; it gives PPS no seats.": "Samo objęcie resortu Rolnictwa nie zmienia własności: reforma wymaga swojej ustawy, finansowania i jednej z trzech transz kraju. Każda wykonana transza jednorazowo obniża presję agrarną o 3; nie daje PPS mandatów.",
   "title: Parcelation with compensation": "title: Parcelacja z odszkodowaniem",
-  "subtitle: 2 B for 4 months; one unit of reform. Business pressure +8 when the law passes; the easiest basis of an agreement with Piast.": "subtitle: 2 B przez 4 miesiące; jedna jednostka reformy. Presja przedsiębiorców +8 po uchwaleniu ustawy; najłatwiejsza podstawa porozumienia z Piastem.",
+  "subtitle: Costs the budget 2 units a month for four months; one unit of reform. Business pressure grows when the law passes (+8); the easiest basis of an agreement with Piast.": "subtitle: Obciąża budżet: 2 jednostki miesięcznie przez cztery miesiące; jedna jednostka reformy. Presja przedsiębiorców rośnie po uchwaleniu ustawy (+8); najłatwiejsza podstawa porozumienia z Piastem.",
   "title: Accelerated parcelation with compensation": "title: Przyspieszona parcelacja z odszkodowaniem",
-  "subtitle: The same unit faster, a bigger bill: 3 B for 3 months; business pressure +12.": "subtitle: Ta sama jednostka szybciej, za większe pieniądze: 3 B przez 3 miesiące; presja przedsiębiorców +12.",
+  "subtitle: The same unit faster, a bigger bill: costs the budget 3 units a month for three months; business pressure grows more (+12).": "subtitle: Ta sama jednostka szybciej, za większe pieniądze: obciąża budżet: 3 jednostki miesięcznie przez trzy miesiące; presja przedsiębiorców rośnie mocniej (+12).",
   "title: Expropriation without compensation": "title: Wywłaszczenie bez odszkodowania",
-  "subtitle: 1 B for 4 months; business pressure +25 once.": "subtitle: 1 B przez 4 miesiące; jednorazowo presja przedsiębiorców +25.",
+  "subtitle: Costs the budget 1 unit a month for four months; business pressure jumps once (+25).": "subtitle: Obciąża budżet: 1 jednostka miesięcznie przez cztery miesiące; presja przedsiębiorców jednorazowo mocno rośnie (+25).",
   "= Access to the land": "= Dostęp do ziemi",
   "The same law sets who may receive land. Nothing is spent until you choose.": "Ta sama ustawa określa, kto może otrzymać ziemię. Nic nie zostaje wydane, dopóki nie wybierzesz.",
   "- @polish_gov_land: Choose another way of dividing the land.": "- @polish_gov_land: Wybierz inny sposób podziału ziemi.",
   "title: Equal criteria of need and farm size": "title: Równe kryteria potrzeb i wielkości gospodarstwa",
   "subtitle: The rule of the same law; no national preference.": "subtitle: Zasada tej samej ustawy; bez preferencji narodowej.",
   "title: A preference for the Polish majority": "title: Pierwszeństwo dla polskiej większości",
-  "subtitle: Trust of the excluded groups −6; a breach of the legal equality promised to minority partners.": "subtitle: Zaufanie wykluczonych grup −6; naruszenie równości prawnej obiecanej partnerom z mniejszości.",
+  "subtitle: The trust of the excluded groups falls (−6); a breach of the legal equality promised to minority partners.": "subtitle: Zaufanie wykluczonych grup spada (−6); naruszenie równości prawnej obiecanej partnerom z mniejszości.",
   "- @root: Continue.": "- @root: Dalej."
  }
 }

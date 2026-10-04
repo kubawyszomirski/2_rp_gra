@@ -45,7 +45,7 @@ go-to: motion if not pl_sup_fell; fallen if pl_sup_fell
 
 @bargain
 title: Demand financed worker protection, or we end our support
-subtitle: The government weighs how much it needs us. Parties that give in under a threat think less of us (relation −3).
+subtitle: The government weighs how much it needs us. Parties that give in under a threat think less of us (−3 relation).
 choose-if: {! return PolishGovernment.supportOptionStatus(Q, 'bargain', Q.pl_sup_mode).available !}
 unavailable-subtitle: [+ pl_sup_demand_reason +]
 on-arrival: {!
@@ -72,7 +72,7 @@ go-to: demand_result
 @bargain_military
 view-if: {! return PolishGovernment.militaryCaseOpen(Q) !}
 title: Demand a compromise with Piłsudski under civilian control, or we end our support
-subtitle: The cabinet carries it out itself at its next review, if Piłsudski accepts a military function under civilian control. Parties that give in under a threat think less of us (relation −3).
+subtitle: The cabinet carries it out itself at its next review, if Piłsudski accepts a military function under civilian control. Parties that give in under a threat think less of us (−3 relation).
 choose-if: {! return PolishGovernment.supportOptionStatus(Q, 'bargain', Q.pl_sup_mode, 'military_compromise').available !}
 unavailable-subtitle: [+ pl_sup_military_reason +]
 on-arrival: {!
@@ -142,7 +142,7 @@ go-to: motion if not pl_sup_fell; fallen if pl_sup_fell
 
 @back_down
 title: Back down
-subtitle: Our reputation for keeping our word falls by 5; later threats against this cabinet count only as persuasion.
+subtitle: Our reputation for keeping our word falls (−5); later threats against this cabinet count only as persuasion.
 on-arrival: {!
 PolishGovernment.answerThreat(Q, 'back_down');
 !}

@@ -7,14 +7,14 @@
   "= Police and internal security": "= Policja i bezpieczeństwo wewnętrzne",
   "An investigation names a recorded case; its label points to the case, not to a proof of guilt. The autonomy delegates schools, the official language and cultural institutions of one area to its self-government; it is an alternative of the game.": "Śledztwo dotyczy zapisanej sprawy; jego etykieta wskazuje sprawę, a nie dowód winy. Autonomia przekazuje szkoły, język urzędowy i instytucje kultury jednego obszaru jego samorządowi; to alternatywa gry.",
   "title: Professionalise the police and subordinate it to lawful authorities": "title: Sprofesjonalizuj policję i podporządkuj ją legalnym władzom",
-  "subtitle: 1 B for three months; then command and lawful compliance +10, once in the chapter.": "subtitle: 1 B przez trzy miesiące; potem dowodzenie i praworządność +10, raz w rozdziale.",
+  "subtitle: Costs the budget 1 unit a month for three months; then command and lawful compliance improve (+10, once in the chapter).": "subtitle: Obciąża budżet: 1 jednostka miesięcznie przez trzy miesiące; potem poprawia się dowodzenie i praworządność (+10, raz w rozdziale).",
   "title: Investigate the named violence of the far right": "title: Zbadaj wymienioną przemoc skrajnej prawicy",
-  "subtitle: 1 B for one month; needs a recorded case. A confirmed investigation assigns the case to a party.": "subtitle: 1 B przez jeden miesiąc; wymaga zapisanej sprawy. Potwierdzone śledztwo przypisuje sprawę partii.",
+  "subtitle: Costs the budget 1 unit for one month; needs a recorded case. A confirmed investigation assigns the case to a party.": "subtitle: Obciąża budżet: 1 jednostka przez jeden miesiąc; wymaga zapisanej sprawy. Potwierdzone śledztwo przypisuje sprawę partii.",
   "title: Investigate the named violence of the communists": "title: Zbadaj wymienioną przemoc komunistów",
   "title: Protect a named gathering or institution": "title: Chroń wymienione zgromadzenie albo instytucję",
-  "subtitle: 1 B for one month; the capacity of protection of this case +10 times its execution, this month.": "subtitle: 1 B przez jeden miesiąc; zdolność ochrony w tej sprawie +10 razy stopień wykonania, w tym miesiącu.",
+  "subtitle: Costs the budget 1 unit for one month; the protection in this case grows this month (+10 times its execution).": "subtitle: Obciąża budżet: 1 jednostka przez jeden miesiąc; zdolność ochrony w tej sprawie rośnie w tym miesiącu (+10 razy stopień wykonania).",
   "title: Prepare a limited autonomy of one area": "title: Przygotuj ograniczoną autonomię jednego obszaru",
-  "subtitle: Needs an agreed point with the representation of the other minorities; a law, then 1 B for three months.": "subtitle: Wymaga uzgodnionego punktu z reprezentacją pozostałych mniejszości; ustawa, potem 1 B przez trzy miesiące.",
+  "subtitle: Needs an agreed point with the representation of the other minorities; a law, then costs the budget 1 unit a month for three months.": "subtitle: Wymaga uzgodnionego punktu z reprezentacją pozostałych mniejszości; ustawa, potem obciąża budżet: 1 jednostka miesięcznie przez trzy miesiące.",
   "- @root: Continue.": "- @root: Dalej."
  }
 }

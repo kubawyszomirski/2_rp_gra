@@ -31,7 +31,7 @@ Labour enforces the law on working time and oversees agreements between employer
 
 @inspection
 title: Inspection and enforcement of working time
-subtitle: Protection +1 level once it works; 1 B for 2 months, then 1 B a month. Needs the law.
+subtitle: Protection rises one level once it works; costs the budget 1 unit a month for two months, then 1 unit a month. Needs the law.
 choose-if: {! return PolishProjects.optionStatus(Q, 'labor_rights', 'inspection').available !}
 unavailable-subtitle: [+ pl_labor_rights_inspection_why +]
 on-arrival: {!
@@ -41,7 +41,7 @@ go-to: result
 
 @collective
 title: Collective agreements
-subtitle: 1 T, 0 B: the employers who sign pay. Wages rise once through the economy, with no reaction of business.
+subtitle: This month's action, nothing from the budget: the employers who sign pay. Wages rise once through the economy, with no reaction of business.
 choose-if: {! return PolishProjects.optionStatus(Q, 'labor_rights', 'collective').available !}
 unavailable-subtitle: [+ pl_labor_rights_collective_why +]
 go-to: collective_menu
@@ -60,7 +60,7 @@ A collective agreement of one branch records its employers, the union, the cover
 
 @collective_industry
 title: Industry
-subtitle: Wages +1.2 pp for two months (scope 0.6).
+subtitle: Wages rise for two months (+1.2 percentage points; scope 0.6).
 choose-if: {! return PolishProjects.optionStatus(Q, 'labor_rights', 'collective', {branch: 'industry'}).available !}
 unavailable-subtitle: [+ pl_collective_industry_why +]
 on-arrival: {!
@@ -70,7 +70,7 @@ go-to: result
 
 @collective_rail
 title: Railways
-subtitle: Wages +0.4 pp for two months (scope 0.2).
+subtitle: Wages rise a little for two months (+0.4 percentage points; scope 0.2).
 choose-if: {! return PolishProjects.optionStatus(Q, 'labor_rights', 'collective', {branch: 'rail'}).available !}
 unavailable-subtitle: [+ pl_collective_rail_why +]
 on-arrival: {!
@@ -80,7 +80,7 @@ go-to: result
 
 @collective_farm_labour
 title: Agricultural labour
-subtitle: Wages +0.4 pp for two months (scope 0.2).
+subtitle: Wages rise a little for two months (+0.4 percentage points; scope 0.2).
 choose-if: {! return PolishProjects.optionStatus(Q, 'labor_rights', 'collective', {branch: 'farm_labour'}).available !}
 unavailable-subtitle: [+ pl_collective_farm_labour_why +]
 on-arrival: {!
@@ -90,7 +90,7 @@ go-to: result
 
 @derogation
 title: Limited derogations in threatened plants
-subtitle: 1 T, 0 B, for the oldest recorded plant in difficulty, six months: business pressure −4; its workers' grievance +3. Needs the law on working time.
+subtitle: This month's action, nothing from the budget, for the oldest recorded plant in difficulty, six months: business pressure falls (−4) and its workers' grievance rises (+3). Needs the law on working time.
 choose-if: {! return PolishProjects.optionStatus(Q, 'labor_rights', 'derogation').available !}
 unavailable-subtitle: [+ pl_labor_rights_derogation_why +]
 on-arrival: {!

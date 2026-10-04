@@ -28,7 +28,7 @@ There is one protection programme for these recipients. It pays from the month i
 
 @expand
 title: Extend the protection
-subtitle: Start the protection (2 B a month), or extend it by one level of scope (+2 B), up to 3.
+subtitle: Start the protection (2 budget units a month), or extend it by one level of scope for 2 more units a month, up to level 3.
 choose-if: {! return PolishProjects.optionStatus(Q, 'social_welfare', 'expand').available !}
 unavailable-subtitle: [+ pl_social_welfare_expand_why +]
 on-arrival: {!
@@ -38,7 +38,7 @@ go-to: result
 
 @focus
 title: Focus the aid on the most needy
-subtitle: Half of the recipients, the most needy, with the full relief: 1 B instead of 2.
+subtitle: Half of the recipients, the most needy, with the full relief: 1 budget unit instead of 2.
 choose-if: {! return PolishProjects.optionStatus(Q, 'social_welfare', 'focus').available !}
 unavailable-subtitle: [+ pl_social_welfare_focus_why +]
 on-arrival: {!
@@ -48,7 +48,7 @@ go-to: result
 
 @limit
 title: Limit the benefits
-subtitle: A legal change of the benefit: only the difference, e.g. 2 → 1 B. Breaks the guarantee; Lewica +8 dissent.
+subtitle: A legal change of the benefit: only the difference, e.g. from 2 to 1 budget unit. Breaks the guarantee; Lewica dissent rises (+8).
 choose-if: {! return PolishProjects.optionStatus(Q, 'social_welfare', 'limit').available !}
 unavailable-subtitle: [+ pl_social_welfare_limit_why +]
 on-arrival: {!

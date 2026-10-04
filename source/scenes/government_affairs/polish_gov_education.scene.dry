@@ -28,7 +28,7 @@ A school programme is large: 1 B for 4 months of building, then 1 B to run, in u
 
 @rural_access
 title: Village schools
-subtitle: Schools for the villages covered; trust of the recipients +4 when they work.
+subtitle: Schools for the villages covered; the trust of the recipients grows when the schools work (+4).
 choose-if: {! return PolishProjects.optionStatus(Q, 'education_program', 'rural_access').available !}
 unavailable-subtitle: [+ pl_education_program_rural_access_why +]
 on-arrival: {!
@@ -38,7 +38,7 @@ go-to: result
 
 @urban_worker_adult_access
 title: Education of the poor and adults in workers’ centres
-subtitle: Trust of the recipients +4; it does not replace TUR.
+subtitle: The trust of the recipients grows (+4); it does not replace TUR.
 choose-if: {! return PolishProjects.optionStatus(Q, 'education_program', 'urban_worker_adult_access').available !}
 unavailable-subtitle: [+ pl_education_program_urban_worker_adult_access_why +]
 on-arrival: {!

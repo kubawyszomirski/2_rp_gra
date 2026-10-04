@@ -7,11 +7,11 @@
   "= Public works": "= Roboty publiczne",
   "Public works belong to Labour; the Treasury alone gives no access. Each programme is large: its preparation (1 T) now, its launch (1 T) in the agenda. Working programmes add public jobs, at most 8 units in the country.": "Roboty publiczne należą do resortu Pracy; sam resort Skarbu nie daje do nich dostępu. Każdy program jest duży: jego przygotowanie (1 T) teraz, uruchomienie (1 T) w agendzie. Działające programy dodają publiczne miejsca pracy, najwyżej 8 jednostek w kraju.",
   "title: Quick employment of the unemployed": "title: Szybkie zatrudnienie bezrobotnych",
-  "subtitle: 2 B for 3 months, then 1 B and 2 units: 0.15 pp of output a unit and public jobs.": "subtitle: 2 B przez 3 miesiące, potem 1 B i 2 jednostki: 0,15 pkt proc. produkcji na jednostkę i publiczne miejsca pracy.",
+  "subtitle: Costs the budget 2 units a month for three months, then 1; two employment units raise output and give public jobs (+0.15 percentage points of output a unit).": "subtitle: Obciąża budżet: 2 jednostki miesięcznie przez trzy miesiące, potem 1; dwie jednostki zatrudnienia podnoszą produkcję i dają publiczne miejsca pracy (+0,15 punktu procentowego produkcji na jednostkę).",
   "title: Transport and infrastructure": "title: Transport i infrastruktura",
-  "subtitle: 2 B for 4 months, then 1 B and 2 units: 0.25 pp of output a unit.": "subtitle: 2 B przez 4 miesiące, potem 1 B i 2 jednostki: 0,25 pkt proc. produkcji na jednostkę.",
+  "subtitle: Costs the budget 2 units a month for four months, then 1; two employment units raise output more (+0.25 percentage points of output a unit).": "subtitle: Obciąża budżet: 2 jednostki miesięcznie przez cztery miesiące, potem 1; dwie jednostki zatrudnienia mocniej podnoszą produkcję (+0,25 punktu procentowego produkcji na jednostkę).",
   "title: Workers’ housing": "title: Mieszkania robotnicze",
-  "subtitle: 2 B for 4 months, then 1 B; relief for the recipients, no employment units.": "subtitle: 2 B przez 4 miesiące, potem 1 B; ulga dla odbiorców, bez jednostek zatrudnienia.",
+  "subtitle: Costs the budget 2 units a month for four months, then 1; relief for the recipients, no employment units.": "subtitle: Obciąża budżet: 2 jednostki miesięcznie przez cztery miesiące, potem 1; ulga dla odbiorców, bez jednostek zatrudnienia.",
   "- @root: Continue.": "- @root: Dalej."
  }
 }

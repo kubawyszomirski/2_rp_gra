@@ -7,9 +7,9 @@
   "Zaremba represents Lewica PPS and emphasizes class campaigning and a future worker–peasant strategy.": "Zaremba reprezentuje Lewicę PPS i stawia na kampanie klasowe oraz przyszłą strategię robotniczo-chłopską.",
   "- @root: Return to main": "- @root: Wróć do głównego ekranu",
   "title: Worker-Peasant Front": "title: Front robotniczo-chłopski",
-  "subtitle: Relation with PSL Wyzwolenie +8. No list is formed by the name of the front.": "subtitle: Relacja z PSL Wyzwolenie +8. Sama nazwa frontu nie tworzy żadnej listy.",
+  "subtitle: The relation with PSL Wyzwolenie improves (+8). No list is formed by the name of the front.": "subtitle: Relacja z PSL Wyzwolenie się poprawia (+8). Sama nazwa frontu nie tworzy żadnej listy.",
   "- @root: Continue.": "- @root: Dalej.",
   "title: Class Campaign": "title: Kampania klasowa",
-  "subtitle: 1 R; PPS gains among employed workers (+4 base) and the unemployed (+3), loses among the petty bourgeoisie (−2); Lewica +4 strength, dissent −5.": "subtitle: 1 R; PPS zyskuje wśród zatrudnionych robotników (baza +4) i bezrobotnych (+3), traci wśród drobnomieszczaństwa (−2); Lewica: siła +4, sprzeciw −5."
+  "subtitle: 1 resource; PPS gains among employed workers (+4 base reach) and the unemployed (+3), loses among the petty bourgeoisie (−2); Lewica grows stronger (+4) and its dissent falls (−5).": "subtitle: 1 jednostka środków; PPS zyskuje wśród zatrudnionych robotników (+4 zasięgu bazowego) i bezrobotnych (+3), traci wśród drobnomieszczaństwa (−2); Lewica rośnie w siłę (+4), a jej sprzeciw spada (−5)."
  }
 }

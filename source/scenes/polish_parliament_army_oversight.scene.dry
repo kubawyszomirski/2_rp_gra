@@ -25,7 +25,7 @@ There are no paid "explanations of the minister" and no postponement; closing th
 
 @civilian_oversight
 title: Fuller civilian oversight
-subtitle: In the offer army +2; after the law 1 B for three months; then the group +0.05 of legal loyalty.
+subtitle: In the offer full civilian oversight (+2 on the army scale from −2 to +2); after the law costs the budget 1 unit a month for three months; then the group grows more loyal to the legal authorities (+0.05).
 choose-if: {! return PolishProjects.armyOversightStatus(Q, 'civilian_oversight').available !}
 unavailable-subtitle: [+ pl_ao_civilian_oversight_why +]
 on-arrival: {!
@@ -35,7 +35,7 @@ go-to: result
 
 @limited_reform
 title: A limited reform
-subtitle: In the offer army 0, which Piast, NPR and the Christian Democrats accept more easily; 1 B for two months; then +0.025.
+subtitle: In the offer a compromise on the army (the middle of the scale), which Piast, NPR and the Christian Democrats accept more easily; costs the budget 1 unit a month for two months; then the group grows a little more loyal (+0.025).
 choose-if: {! return PolishProjects.armyOversightStatus(Q, 'limited_reform').available !}
 unavailable-subtitle: [+ pl_ao_limited_reform_why +]
 on-arrival: {!

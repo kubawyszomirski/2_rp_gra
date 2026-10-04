@@ -137,7 +137,7 @@
     const wait = rules.cooldownRemaining(Q, 'security.assess');
     if (wait > 0) return no(L('Assessed recently: ' + wait + (wait === 1 ? ' month' : ' months') + ' before the next assessment.',
       'Ocena była niedawno: do następnej ' + wait + ' ' + rules.plural(wait, 'miesiąc', 'miesiące', 'miesięcy') + '.'));
-    if (S.party_orgs.cash + 1e-9 < ASSESS_COST_R) return no(L('Needs 1 R.', 'Wymaga 1 R.'));
+    if (S.party_orgs.cash + 1e-9 < ASSESS_COST_R) return no(L('Needs 1 resource.', 'Wymaga 1 jednostki środków.'));
     return OK;
   }
 
@@ -1104,6 +1104,14 @@
     'coup.offer.cabinet_change': 'dymisja zaatakowanego gabinetu i premier akceptowany przez obóz Piłsudskiego'});
   const CONTRIBUTION_PL = Object.freeze({decisive: 'rozstrzygający', adverse: 'niekorzystny', accelerating: 'przyspieszający', none: 'żaden'});
   const FACTION_SHORT_PL = Object.freeze({centrum: 'Centrum', lewica: 'Lewica', pilsudczycy: 'Piłsudczycy'});
+  // The faction reactions of a coup stance for its description: the change in words, its size in parentheses (Z — 0.53).
+  const FACTION_SHORT_EN = Object.freeze({centrum: 'Centrum', lewica: 'Lewica', pilsudczycy: 'Piłsudczycy'});
+  const FACTION_GENITIVE_PL = Object.freeze({centrum: 'Centrum', lewica: 'Lewicy', pilsudczycy: 'Piłsudczyków'});
+  const reactionText = r => {
+    const size = r.dissent > 0 ? ' (+' + r.dissent + ')' : r.dissent < 0 ? ' (−' + Math.abs(r.dissent) + ')' : '';
+    return PL() ? 'sprzeciw ' + (FACTION_GENITIVE_PL[r.faction] || r.faction) + (r.dissent > 0 ? ' rośnie' : r.dissent < 0 ? ' spada' : ' się nie zmienia') + size
+      : (FACTION_SHORT_EN[r.faction] || r.faction) + ' dissent ' + (r.dissent > 0 ? 'rises' : r.dissent < 0 ? 'falls' : 'stays') + size;
+  };
   const SIDES_PL = Object.freeze({legal: 'po stronie rządu', pils: 'po stronie Piłsudskiego', neutral: 'neutralne'});
   const TASKS_PL = Object.freeze({protection: 'ochrona', confrontation: 'konfrontacja'});
   const people = n => n + ' ' + rules.plural(n, 'osoba', 'osoby', 'osób');
@@ -1161,8 +1169,8 @@
     Q.pl_coup_democracy = fmt(A.democracy);
     for (const stance of Object.keys(STANCE_SIDE)) {
       const p = stancePreview(S, stance);
-      Q['pl_coup_' + stance + '_preview'] = p.reactions.map(r => r.faction + ' ' + (r.dissent > 0 ? '+' : '') + r.dissent).join(', ') +
-        (p.split_risk.length ? '; split risk: ' + p.split_risk.join(', ') : '');
+      Q['pl_coup_' + stance + '_preview'] = p.reactions.map(reactionText).join(', ') +
+        (p.split_risk.length ? '; split risk: ' + p.split_risk.map(f => FACTION_SHORT_EN[f] || f).join(', ') : '');
     }
     for (const c of COMMITMENTS) Q['pl_coup_' + c + '_why'] = coupCommitStatus(Q, c).reason;
     const militia = militiaCall(S, C.stance || 'defend_legal');
@@ -1197,7 +1205,7 @@
     Q.pl_coup_democracy = fmt(A.democracy);
     for (const stance of Object.keys(STANCE_SIDE)) {
       const p = stancePreview(S, stance);
-      Q['pl_coup_' + stance + '_preview'] = p.reactions.map(r => (FACTION_SHORT_PL[r.faction] || r.faction) + ' ' + (r.dissent > 0 ? '+' : '') + r.dissent).join(', ') +
+      Q['pl_coup_' + stance + '_preview'] = p.reactions.map(reactionText).join(', ') +
         (p.split_risk.length ? '; ryzyko rozłamu: ' + p.split_risk.map(f => FACTION_SHORT_PL[f] || f).join(', ') : '');
     }
     for (const c of COMMITMENTS) Q['pl_coup_' + c + '_why'] = coupCommitStatus(Q, c).reason;

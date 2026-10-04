@@ -30,7 +30,7 @@ Holding Agriculture does not change ownership by itself: the reform needs its la
 
 @compensated
 title: Parcelation with compensation
-subtitle: 2 B for 4 months; one unit of reform. Business pressure +8 when the law passes; the easiest basis of an agreement with Piast.
+subtitle: Costs the budget 2 units a month for four months; one unit of reform. Business pressure grows when the law passes (+8); the easiest basis of an agreement with Piast.
 choose-if: {! return PolishProjects.optionStatus(Q, 'land_program', 'compensated').available !}
 unavailable-subtitle: [+ pl_land_program_compensated_why +]
 on-arrival: {!
@@ -40,7 +40,7 @@ go-to: access
 
 @accelerated
 title: Accelerated parcelation with compensation
-subtitle: The same unit faster, a bigger bill: 3 B for 3 months; business pressure +12.
+subtitle: The same unit faster, a bigger bill: costs the budget 3 units a month for three months; business pressure grows more (+12).
 choose-if: {! return PolishProjects.optionStatus(Q, 'land_program', 'accelerated').available !}
 unavailable-subtitle: [+ pl_land_program_accelerated_why +]
 on-arrival: {!
@@ -50,7 +50,7 @@ go-to: access
 
 @expropriation
 title: Expropriation without compensation
-subtitle: 1 B for 4 months; business pressure +25 once.
+subtitle: Costs the budget 1 unit a month for four months; business pressure jumps once (+25).
 choose-if: {! return PolishProjects.optionStatus(Q, 'land_program', 'expropriation').available !}
 unavailable-subtitle: [+ pl_land_program_expropriation_why +]
 on-arrival: {!
@@ -82,7 +82,7 @@ go-to: result
 
 @polish_majority
 title: A preference for the Polish majority
-subtitle: Trust of the excluded groups −6; a breach of the legal equality promised to minority partners.
+subtitle: The trust of the excluded groups falls (−6); a breach of the legal equality promised to minority partners.
 choose-if: {! return PolishProjects.landAccessStatus(Q, 'polish_majority').available !}
 unavailable-subtitle: [+ pl_land_majority_why +]
 on-arrival: {!

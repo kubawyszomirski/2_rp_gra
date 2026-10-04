@@ -7,9 +7,9 @@
   "= Wawel or the Royal Castle": "= Wawel czy Zamek Królewski",
   "Works in existing buildings, within the existing competences and the budget. Limited conservation is a small reform (1 T, 1 B for 2 months); a wider restoration with public access is a large one (2 B for 4 months). One project for each building; a completed one is not started again.": "Prace w istniejących budynkach, w ramach istniejących kompetencji i budżetu. Ograniczona konserwacja to mała reforma (1 T, 1 B przez 2 miesiące); szersza restauracja z dostępem publicznym to duża reforma (2 B przez 4 miesiące). Jeden projekt dla każdego budynku; zakończonego nie rozpoczyna się ponownie.",
   "title: Wawel: limited conservation": "title: Wawel: ograniczona konserwacja",
-  "subtitle: 1 B for 2 months; PPS reputation +1 when it was the open sponsor.": "subtitle: 1 B przez 2 miesiące; wiarygodność PPS +1, jeśli była jawnym inicjatorem.",
+  "subtitle: Costs the budget 1 unit a month for two months; the reputation of PPS grows if it was the open sponsor (+1).": "subtitle: Obciąża budżet: 1 jednostka miesięcznie przez dwa miesiące; wiarygodność PPS rośnie, jeśli była jawnym inicjatorem (+1).",
   "title: Wawel: wider restoration and public access": "title: Wawel: szersza restauracja i dostęp publiczny",
-  "subtitle: 2 B for 4 months; reputation +2; trust of the intelligentsia +3. Extends a running conservation.": "subtitle: 2 B przez 4 miesiące; wiarygodność +2; zaufanie inteligencji +3. Rozszerza trwającą konserwację.",
+  "subtitle: Costs the budget 2 units a month for four months; the reputation of PPS (+2) and the trust of the intelligentsia (+3) grow. Extends a running conservation.": "subtitle: Obciąża budżet: 2 jednostki miesięcznie przez cztery miesiące; rośnie wiarygodność PPS (+2) i zaufanie inteligencji (+3). Rozszerza trwającą konserwację.",
   "title: Royal Castle: limited conservation": "title: Zamek Królewski: ograniczona konserwacja",
   "title: Royal Castle: wider restoration and public access": "title: Zamek Królewski: szersza restauracja i dostęp publiczny",
   "- @root: Continue.": "- @root: Dalej."

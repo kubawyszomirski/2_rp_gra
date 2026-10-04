@@ -793,6 +793,17 @@
       language = previous;
     }
   }
+  // Effect numbers in the descriptions of choices (Z — 0.53). A description names an effect in words and gives its
+  // size in a parenthesis that opens with a sign or ×, right after the word: "the relation improves (+5)". The page
+  // wraps such parentheses so that the Options setting "Numbers in choices" can hide them (hidden by default). Costs
+  // (resources, budget, the month's action) and requirements are written outside them and always stay visible.
+  const EFFECT_NUMBERS = /\s*\([+\-−±×][^()]*\)/g;
+  function markEffectNumbers(text) {
+    return typeof text === 'string' ? text.replace(EFFECT_NUMBERS, m => '<span class="pl-fx">' + m + '</span>') : text;
+  }
+  function withoutEffectNumbers(text) {
+    return typeof text === 'string' ? text.replace(EFFECT_NUMBERS, '') : text;
+  }
   // The text in the current language: the English text, or the Polish text written next to it (decision 2A).
   function L(en, pl) {
     return language === 'pl' && typeof pl === 'string' ? pl : en;
@@ -819,6 +830,20 @@
     if (a === 1) return one;
     const d = a % 10, h = a % 100;
     return d >= 2 && d <= 4 && !(h >= 12 && h <= 14) ? few : many;
+  }
+  // Costs in words in the descriptions of choices (Z — 0.53): party resources and budget units without the
+  // abbreviations R and B. form: 'nom' (2 jednostki), 'acc' (kosztuje 1 jednostkę) or 'gen' (wymaga 2 jednostek); a
+  // fraction takes the genitive singular (0,5 jednostki). English: 1 resource, 2 resources; 1 budget unit.
+  function units(n, kind, form) {
+    const value = Math.round(Number(n) * 100) / 100;
+    const text = num(value);
+    if (language !== 'pl') return text + (kind === 'budget' ? ' budget unit' : ' resource') + (value === 1 ? '' : 's');
+    let word;
+    if (!Number.isInteger(value)) word = 'jednostki';
+    else if (form === 'gen') word = Math.abs(value) === 1 ? 'jednostki' : 'jednostek';
+    else if (Math.abs(value) === 1) word = form === 'acc' ? 'jednostkę' : 'jednostka';
+    else word = plural(value, 'jednostka', 'jednostki', 'jednostek');
+    return text + ' ' + word + (kind === 'budget' ? ' budżetu' : ' środków');
   }
   // A number for display (decision 6A): fixed digits, with a decimal comma in Polish.
   function num(value, digits) {
@@ -905,10 +930,13 @@
     inLanguage: inLanguage,
     getLanguage: getLanguage,
     L: L,
+    markEffectNumbers: markEffectNumbers,
+    withoutEffectNumbers: withoutEffectNumbers,
     registerStoredText: registerStoredText,
     storedText: storedText,
     plural: plural,
     num: num,
+    units: units,
     monthYear: monthYear,
     dateText: dateText,
     monthText: monthText,

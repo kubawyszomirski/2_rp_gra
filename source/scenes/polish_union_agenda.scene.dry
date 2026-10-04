@@ -70,7 +70,7 @@ PolishUnions.branchView(Q, Q.pl_union_branch);
 
 @prepare_limited
 title: Agree the demands: wages and the return to work
-subtitle: 1 T; readiness +15; one demand (threshold 40) with a plan to end the action; waits 2 months.
+subtitle: This month's action; readiness grows (+15); one demand (threshold 40) with a plan to end the action; waits two months.
 choose-if: {! return PolishUnions.prepareStatus(Q, Q.pl_union_branch).available !}
 unavailable-subtitle: [+ pl_un_prepare_why +]
 on-arrival: {!
@@ -80,7 +80,7 @@ go-to: result
 
 @prepare_broad
 title: Agree the demands: wages and working conditions
-subtitle: 1 T; readiness +15; a broader package (threshold 60) with a plan to end the action; waits 2 months.
+subtitle: This month's action; readiness grows (+15); a broader package (threshold 60) with a plan to end the action; waits two months.
 choose-if: {! return PolishUnions.prepareStatus(Q, Q.pl_union_branch).available !}
 unavailable-subtitle: [+ pl_un_prepare_why +]
 on-arrival: {!
@@ -90,7 +90,7 @@ go-to: result
 
 @align_strike
 title: A joint meeting on the strike
-subtitle: 1 T; the branch's alignment with a strike call +15, which raises compliance.
+subtitle: This month's action; the branch aligns more with a strike call (+15), which raises compliance.
 choose-if: {! return PolishUnions.alignStatus(Q, Q.pl_union_branch, 'strike').available !}
 unavailable-subtitle: [+ pl_un_align_strike_why +]
 on-arrival: {!
@@ -100,7 +100,7 @@ go-to: result
 
 @align_end
 title: A joint meeting on the agreed end
-subtitle: 1 T; the branch's alignment with a call to end on agreed terms +15.
+subtitle: This month's action; the branch aligns more with a call to end on agreed terms (+15).
 choose-if: {! return PolishUnions.alignStatus(Q, Q.pl_union_branch, 'agreed_end').available !}
 unavailable-subtitle: [+ pl_un_align_end_why +]
 on-arrival: {!
@@ -110,7 +110,7 @@ go-to: result
 
 @mediate
 title: Mediate the dispute with the leadership
-subtitle: 1 T; the branch's dissent −8 over a concrete change.
+subtitle: This month's action; the branch's dissent over a concrete change falls (−8).
 choose-if: {! return PolishUnions.mediateStatus(Q, Q.pl_union_branch).available !}
 unavailable-subtitle: [+ pl_un_mediate_why +]
 on-arrival: {!
@@ -120,7 +120,7 @@ go-to: result
 
 @start
 title: Start the protest
-subtitle: 1 T; a strike for the agreed demands; every active month draws on the branch fund.
+subtitle: This month's action; a strike for the agreed demands; every active month draws on the branch fund.
 choose-if: {! return PolishUnions.strikeStatus(Q, Q.pl_union_branch).available !}
 unavailable-subtitle: [+ pl_un_strike_why +]
 on-arrival: {!

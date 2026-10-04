@@ -1,6 +1,6 @@
 # Polska wersja: przewodnik po mechanice, decyzjach i ścieżkach rozgrywki
 
-**Stan — referencja 0.52, 4 października 2026.** Przewodnik opisuje rozgrywkę pierwszego rozdziału w jednej aktualnej wersji. Gra ma wersję angielską i polską; język zmienia się w Opcjach albo odnośnikiem w nagłówku strony, także w trakcie gry. Rozdział jest wdrożony w kodzie gry w całości; jego ograniczenia wymienia rozdział 18 [planu implementacji](POLISH_IMPLEMENTATION_PLAN.md). Liczby, wzory i kontrakty podaje [referencja techniczna](POLISH_TECHNICAL_REFERENCE.md); gdy przewodnik i referencja się różnią, obowiązuje referencja. Osoba kodująca znajdzie każdą kartę w jednej tabeli w [katalogu kart](POLISH_CARD_CATALOGUE.md). Wszystkie punkty audytu mechanik są zamknięte w dokumentacji. Liczby robocze sprawdzono w pełnych kampaniach etapu 8; liczby oznaczone P pozostają robocze. Historia kolejnych poprawek jest w dodatku na końcu i nie opisuje aktualnych reguł.
+**Stan — referencja 0.53, 4 października 2026.** Przewodnik opisuje rozgrywkę pierwszego rozdziału w jednej aktualnej wersji. Gra ma wersję angielską i polską; język zmienia się w Opcjach albo odnośnikiem w nagłówku strony, także w trakcie gry. Opisy wyborów podają skutki słowami; ich wielkość w nawiasach pokazuje ustawienie „Liczby w opisach wyborów” w Opcjach. Rozdział jest wdrożony w kodzie gry w całości; jego ograniczenia wymienia rozdział 18 [planu implementacji](POLISH_IMPLEMENTATION_PLAN.md). Liczby, wzory i kontrakty podaje [referencja techniczna](POLISH_TECHNICAL_REFERENCE.md); gdy przewodnik i referencja się różnią, obowiązuje referencja. Osoba kodująca znajdzie każdą kartę w jednej tabeli w [katalogu kart](POLISH_CARD_CATALOGUE.md). Wszystkie punkty audytu mechanik są zamknięte w dokumentacji. Liczby robocze sprawdzono w pełnych kampaniach etapu 8; liczby oznaczone P pozostają robocze. Historia kolejnych poprawek jest w dodatku na końcu i nie opisuje aktualnych reguł.
 
 Gracz prowadzi kierownictwo PPS od stycznia 1922 do rozstrzygnięcia próby zamachu albo następnych legalnych wyborów parlamentarnych po 1922, jeśli do próby nie dochodzi. Głównym punktem zwrotnym jest kryzys majowy. Zakres obejmuje sprawy wewnętrzne. Raport końca rozdziału zachowuje stan do kontynuacji aż do 1939.
 
@@ -1711,6 +1711,8 @@ Pełny rejestr i linki znajdują się w [HISTORICAL_SOURCES.md](../HISTORICAL_SO
 ## Dodatek: historia zmian przewodnika
 
 Poniższe notki opisują kolejne poprawki, od najnowszej. Są historią, nie instrukcją: obowiązuje tekst rozdziałów 1–19. Przeniesiono je tu bez zmian w porządkowaniu M19 (referencja 0.31).
+
+**Opisy wyborów, referencja 0.53:** obecny wybór kart stanowisk ma pogrubioną etykietę „Obecna linia” w osobnym wierszu. Opisy podają skutki słowami, a ich wielkość w nawiasach pokazuje na życzenie ustawienie „Liczby w opisach wyborów” w Opcjach (domyślnie wyłączone). Koszty są pisane słowami, bez skrótów R, B i T; skróty, które zostały w pasku bocznym i wynikach, objaśnia legenda w Bibliotece.
 
 **Centralny Komitet Wykonawczy, referencja 0.52:** doradcy występują w grze jako Centralny Komitet Wykonawczy PPS (CKW; ang. Central Executive Committee), a jedna osoba jako członek CKW. Zmieniły się tylko nazwy; reguły, koszty i odnowienia są takie same. Trzy miejsca to uproszczenie gry, a nie historyczny skład komitetu.
 

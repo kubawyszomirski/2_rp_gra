@@ -26,7 +26,7 @@ Each project is a separate alternative with its own act. After its promulgation 
 
 @democratic_guarantees
 title: Democratic guarantees
-subtitle: Protection of associations, equal rights and self-government; relations with Wyzwolenie and both minority representations +4; ZLN is against.
+subtitle: Protection of associations, equal rights and self-government; relations with Wyzwolenie and both minority representations improve (+4); ZLN is against.
 choose-if: {! return PolishProjects.constitutionStatus(Q, 'democratic_guarantees').available !}
 unavailable-subtitle: [+ pl_con_democratic_guarantees_why +]
 on-arrival: {!
@@ -46,7 +46,7 @@ go-to: result
 
 @presidential_arbitration
 title: Presidential arbitration
-subtitle: After two failed formations in 3 months the President may dissolve the Sejm; Lewica +8 dissent.
+subtitle: After two failed formations in three months the President may dissolve the Sejm; Lewica dissent rises (+8).
 choose-if: {! return PolishProjects.constitutionStatus(Q, 'presidential_arbitration').available !}
 unavailable-subtitle: [+ pl_con_presidential_arbitration_why +]
 on-arrival: {!

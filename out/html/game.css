@@ -155,6 +155,15 @@ ul.choices li div.subtitle {
   margin-left: 2em;
   font-style: italic;
 }
+/* Numbers in choices (Options): the effect parentheses of choice descriptions are hidden unless shown. */
+body.pl-hide-numbers ul.choices .pl-fx {
+  display: none;
+}
+/* A bold label that opens a choice description ("Present line") stands on its own line. */
+ul.choices li div.subtitle > strong:first-child {
+  display: block;
+  font-style: normal;
+}
 ul.choices li.unavailable {
   color: var(--unavailable-color);
   background-color: var(--unavailable-bg-color) !important;

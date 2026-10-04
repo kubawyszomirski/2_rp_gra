@@ -1,5 +1,5 @@
 title: Protection of the Unemployed
-subtitle: One initiative of PPS in the chapter: D1, then D2.
+subtitle: One initiative of PPS in the chapter: first the project, then the vote.
 is-pinned-card: true
 card-image: img/Kollwitz_Arbeitslosigkeit.jpg
 view-if: {! return !!Q.S && (PolishProjects.billD1Available(Q) || PolishProjects.billD2Available(Q)) !}
@@ -39,7 +39,7 @@ Q.pl_bill_withdraw_why = PolishProjects.billD2Status(Q, 'withdraw').reason;
 
 @start
 title: D1: Start the legislative initiative of PPS
-subtitle: 1 T; a full project with cost, financing and executor. D2 comes next month.
+subtitle: This month's action; a full project with cost, financing and executor. The vote comes next month.
 view-if: not pl_bill_d2
 choose-if: {! return PolishRules.mainActionAvailable(Q) !}
 unavailable-subtitle: [+ pl_bill_start_why +]
@@ -51,7 +51,7 @@ go-to: result
 
 @decline
 title: D1: Do not take up the initiative
-subtitle: 0 T; the offer closes for the chapter, without a bonus.
+subtitle: No month's action; the offer closes for the chapter, without a bonus.
 view-if: not pl_bill_d2
 on-arrival: {!
 PolishProjects.billD1Choose(Q, 'decline');
@@ -61,7 +61,7 @@ go-to: result
 
 @full
 title: D2: Keep the full project of PPS
-subtitle: 0 T; the Sejm votes now. Full variant: 2 B a month once in force. It may fall.
+subtitle: No month's action; the Sejm votes now. Full variant: costs the budget 2 units a month once in force. It may fall.
 view-if: pl_bill_d2
 choose-if: {! return PolishProjects.billD2Status(Q, 'full').available !}
 on-arrival: {!
@@ -73,7 +73,7 @@ go-to: result
 
 @limited
 title: D2: Accept the limited variant for wider support
-subtitle: 0 T; the same recipients, a lower benefit: 1 B a month.
+subtitle: No month's action; the same recipients, a lower benefit: costs the budget 1 unit a month.
 view-if: pl_bill_d2
 choose-if: {! return PolishProjects.billD2Status(Q, 'limited').available !}
 unavailable-subtitle: [+ pl_bill_limited_why +]

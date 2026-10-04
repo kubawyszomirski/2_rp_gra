@@ -66,6 +66,34 @@
     }
   };
 
+  // ---- Numbers in the descriptions of choices (Z — 0.53): a setting of this browser, like the language; hidden by
+  // default. The body class pl-hide-numbers hides the effect parentheses that window.displayText wraps (game.css).
+  var NUMBERS_KEY = 'pps_effect_numbers';
+  var storedShowNumbers = function() {
+    try {
+      return window.localStorage.getItem(NUMBERS_KEY) === 'show';
+    } catch (e) {
+      return false;
+    }
+  };
+  var applyShowNumbers = function(show) {
+    if (typeof document === 'undefined' || !document.body) {
+      return;
+    }
+    document.body.classList.toggle('pl-hide-numbers', !show);
+    var radio = document.getElementById(show ? 'numbers_show' : 'numbers_hide');
+    if (radio) {
+      radio.checked = true;
+    }
+  };
+  window.setShowNumbers = function(show) {
+    try {
+      window.localStorage.setItem(NUMBERS_KEY, show ? 'show' : 'hide');
+    } catch (e) {
+    }
+    applyShowNumbers(!!show);
+  };
+
   // Texts of the page itself (index.html) and of the inherited interface code.
   var UI_TEXT = {
     game_title: {en: 'PPS: An Alternate History', pl: 'PPS: historia alternatywna'},
@@ -86,6 +114,7 @@
     next_song: {en: 'Next song', pl: 'Następny utwór'},
     settings: {en: 'Settings', pl: 'Ustawienia'},
     language: {en: 'Language:', pl: 'Język:'},
+    effect_numbers: {en: 'Numbers in choices:', pl: 'Liczby w opisach wyborów:'},
     backgrounds: {en: 'Backgrounds:', pl: 'Tła:'},
     event_images: {en: 'Event images:', pl: 'Obrazy wydarzeń:'},
     animations: {en: 'Animations:', pl: 'Animacje:'},
@@ -542,13 +571,14 @@
         $('#light_mode')[0].checked = true;
     }
     $('#language_' + window.currentLanguage).prop('checked', true);
+    applyShowNumbers(storedShowNumbers());
   };
 
   
   // This function allows you to modify the text before it's displayed.
-  // E.g. wrapping chat-like messages in spans.
+  // The effect numbers of choice descriptions are wrapped so that the Options setting can hide them (Z — 0.53).
   window.displayText = function(text) {
-      return text;
+      return window.PolishRules && window.PolishRules.markEffectNumbers ? window.PolishRules.markEffectNumbers(text) : text;
   };
 
   // This function allows you to do something in response to signals.
@@ -668,6 +698,7 @@
     }
     document.getElementById('font_size_value').textContent = window.dendryUI.font_size.toFixed(1) + "em";
     window.pinnedCardsDescription = uiText('pinned');
+    applyShowNumbers(storedShowNumbers());
   };
 
 }());

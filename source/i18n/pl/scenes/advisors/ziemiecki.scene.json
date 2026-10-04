@@ -7,9 +7,9 @@
   "Ziemięcki represents the Piłsudczyk current while favoring conditional parliamentary cooperation.": "Ziemięcki reprezentuje nurt piłsudczykowski, ale opowiada się za warunkową współpracą parlamentarną.",
   "- @root: Return to main": "- @root: Wróć do głównego ekranu",
   "title: Conditional Toleration": "title: Warunkowe tolerowanie",
-  "subtitle: When PPS supports a minority cabinet of Śliwiński or Piłsudski from outside, by an agreement: Centrum −10 and Lewica −8 dissent. The kind of support does not change.": "subtitle: Gdy PPS na mocy porozumienia popiera z zewnątrz mniejszościowy gabinet Śliwińskiego albo Piłsudskiego: Centrum: sprzeciw −10; Lewica: sprzeciw −8. Rodzaj poparcia się nie zmienia.",
+  "subtitle: When PPS supports a minority cabinet of Śliwiński or Piłsudski from outside, by an agreement: dissent falls in Centrum (−10) and Lewica (−8). The kind of support does not change.": "subtitle: Gdy PPS na mocy porozumienia popiera z zewnątrz mniejszościowy gabinet Śliwińskiego albo Piłsudskiego: sprzeciw spada w Centrum (−10) i w Lewicy (−8). Rodzaj poparcia się nie zmienia.",
   "- @root: Continue.": "- @root: Dalej.",
   "title: Municipal Socialism": "title: Socjalizm municypalny",
-  "subtitle: 1 R; in the large cities the base reach of PPS +8 and a gain among workers, intelligentsia and petty bourgeoisie. No town hall or city budget.": "subtitle: 1 R; w wielkich miastach bazowy zasięg PPS +8 i zysk wśród robotników, inteligencji i drobnomieszczaństwa. Bez ratusza ani budżetu miasta."
+  "subtitle: 1 resource; in the large cities the base reach of PPS grows (+8) and PPS gains among workers, intelligentsia and petty bourgeoisie. No town hall or city budget.": "subtitle: 1 jednostka środków; w wielkich miastach bazowy zasięg PPS rośnie (+8), a PPS zyskuje wśród robotników, inteligencji i drobnomieszczaństwa. Bez ratusza ani budżetu miasta."
  }
 }

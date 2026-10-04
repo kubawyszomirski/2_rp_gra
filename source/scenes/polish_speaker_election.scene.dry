@@ -48,7 +48,7 @@ Our stance costs no monthly action. Talks with other parties beforehand are ordi
 
 @smiarowski
 title: Support Eugeniusz Śmiarowski
-subtitle: Cooperation with PSL Wyzwolenie: relation +4. He takes office only if he wins the vote.
+subtitle: Cooperation with PSL Wyzwolenie: the relation improves (+4). He takes office only if he wins the vote.
 on-arrival: {!
 PolishInstitutions.chooseSpeakerStance(Q, 'smiarowski');
 !}
@@ -56,7 +56,7 @@ go-to: polish_speaker_election
 
 @rataj
 title: Agree to support Maciej Rataj
-subtitle: A package with PSL Piast: defence of the standing orders and PPS work in the committees. PSL Piast relation +4.
+subtitle: A package with PSL Piast: defence of the standing orders and PPS work in the committees. The relation with PSL Piast improves (+4).
 choose-if: {! return PolishInstitutions.speakerOptions(Q).rataj.available !}
 unavailable-subtitle: [+ pl_speaker_rataj_reason +]
 on-arrival: {!

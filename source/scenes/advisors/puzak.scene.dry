@@ -20,7 +20,7 @@ Pużak represents Centrum PPS and concentrates on discipline and party organizat
 
 @party_discipline
 title: Party Discipline
-subtitle: Dissent −12 in each of the three factions. It removes no cause of later growth.
+subtitle: Dissent falls in each of the three factions (−12). It removes no cause of later growth.
 choose-if: {! return PolishParty.advisorActionStatus(Q, 'puzak', 'party_discipline').available !}
 unavailable-subtitle: [+ pl_advact_party_discipline_why +]
 call: polish_advisor_commit
@@ -34,7 +34,7 @@ PolishParty.advisorAction(Q, 'puzak', 'party_discipline');
 
 @mobilize_organization
 title: Mobilize the Organization
-subtitle: 1 R; the base reach of PPS among the workers +10; campaigns among workers ×1.20 for six months.
+subtitle: 1 resource; the base reach of PPS among the workers grows (+10), and campaigns among workers work better for six months (×1.20).
 choose-if: {! return PolishParty.advisorActionStatus(Q, 'puzak', 'mobilize_organization').available !}
 unavailable-subtitle: [+ pl_advact_mobilize_organization_why +]
 call: polish_advisor_commit

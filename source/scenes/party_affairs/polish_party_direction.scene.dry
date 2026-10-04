@@ -23,7 +23,7 @@ The present line: **[+ pl_stance_current +]**. A new declaration costs this mont
 
 @parliamentary_socialism
 title: Parliamentary socialism
-subtitle: [? if pl_stance_parliamentary_socialism_present = 1 : This is the present line. Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_parliamentary_socialism_present = 0 : A parliamentary campaign gains ×1.10 while a PPS bill is before the chambers. ?]
+subtitle: [? if pl_stance_parliamentary_socialism_present = 1 : **Present line** Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_parliamentary_socialism_present = 0 : Parliamentary campaigns work better (×1.10) while a PPS bill is before the chambers. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'direction', 'parliamentary_socialism').available !}
 unavailable-subtitle: [+ pl_stance_parliamentary_socialism_why +]
 on-arrival: {!
@@ -33,7 +33,7 @@ go-to: result
 
 @class_independence
 title: Independent class politics
-subtitle: [? if pl_stance_class_independence_present = 1 : This is the present line. Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_class_independence_present = 0 : A class campaign gains ×1.10. Alliances stay possible, but a joint list against a public promise needs renegotiation. ?]
+subtitle: [? if pl_stance_class_independence_present = 1 : **Present line** Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_class_independence_present = 0 : Class campaigns work better (×1.10). Alliances stay possible, but a joint list against a public promise needs renegotiation. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'direction', 'class_independence').available !}
 unavailable-subtitle: [+ pl_stance_class_independence_why +]
 on-arrival: {!
@@ -43,7 +43,7 @@ go-to: result
 
 @workers_gains
 title: Defend the workers’ gains
-subtitle: [? if pl_stance_workers_gains_present = 1 : This is the present line. Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_workers_gains_present = 0 : A campaign for the workers’ gains ×1.10 while a protection or the inspection works, ×1.15 when a cut is on the table. ?]
+subtitle: [? if pl_stance_workers_gains_present = 1 : **Present line** Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_workers_gains_present = 0 : Campaigns for the workers’ gains work better while a protection or the inspection works (×1.10), and even better when a cut is on the table (×1.15). ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'direction', 'workers_gains').available !}
 unavailable-subtitle: [+ pl_stance_workers_gains_why +]
 on-arrival: {!
@@ -53,7 +53,7 @@ go-to: result
 
 @democratic_movement
 title: A broad democratic movement
-subtitle: [? if pl_stance_democratic_movement_present = 1 : This is the present line. Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_democratic_movement_present = 0 : A democracy campaign ×1.00 without a threat, ×1.15 under a threat to democracy. ?]
+subtitle: [? if pl_stance_democratic_movement_present = 1 : **Present line** Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_democratic_movement_present = 0 : Campaigns for democracy work better under a threat to democracy (×1.15; without a threat ×1.00). ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'direction', 'democratic_movement').available !}
 unavailable-subtitle: [+ pl_stance_democratic_movement_why +]
 on-arrival: {!

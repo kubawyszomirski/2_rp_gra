@@ -30,7 +30,7 @@ The budget has stayed below −2 B, or inflation at 20% a month or more, for two
 
 @rapid_cuts
 title: Rapid stabilisation with savings
-subtitle: 2 B for 3 months; needs cuts of at least 1 B; a credit shock +10 for 3 months.
+subtitle: Costs the budget 2 units a month for three months; needs cuts of at least 1 budget unit; the credit shock grows for three months (+10).
 view-if: pl_ev_treasury
 choose-if: {! return PolishProjects.eventStatus(Q, 'stabilization', 'rapid_cuts').available !}
 on-arrival: {!
@@ -40,7 +40,7 @@ go-to: result
 
 @protected
 title: Stabilisation with protections and a burden on wealth
-subtitle: 2 B for 3 months; needs a protection for the unemployed and its financing.
+subtitle: Costs the budget 2 units a month for three months; needs a protection for the unemployed and its financing.
 view-if: pl_ev_treasury
 choose-if: {! return PolishProjects.eventStatus(Q, 'stabilization', 'protected').available !}
 unavailable-subtitle: [+ pl_ev_protected_why +]
@@ -51,7 +51,7 @@ go-to: result
 
 @gradual
 title: Gradual limitation of emission
-subtitle: 1 B for 5 months; a credit shock +5 for 5 months; the marka pressure lasts longer.
+subtitle: Costs the budget 1 unit a month for five months; the credit shock grows for five months (+5); the pressure on the marka lasts longer.
 view-if: pl_ev_treasury
 choose-if: {! return PolishProjects.eventStatus(Q, 'stabilization', 'gradual').available !}
 on-arrival: {!

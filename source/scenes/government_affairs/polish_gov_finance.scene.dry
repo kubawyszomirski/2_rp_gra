@@ -35,7 +35,7 @@ The Treasury chooses one instrument per decision (11.9). The vote of the Sejm ha
 
 @progressive
 title: Tax high incomes and wealth: a progressive tax
-subtitle: Tax level +1, i.e. +1 B; business pressure +4; Lewica −3 dissent.
+subtitle: Taxes rise one level, which brings the budget 1 unit a month; business pressure grows (+4); Lewica dissent falls (−3).
 choose-if: {! return PolishProjects.optionStatus(Q, 'finance_package', 'progressive').available !}
 unavailable-subtitle: [+ pl_finance_package_progressive_why +]
 on-arrival: {!
@@ -45,7 +45,7 @@ go-to: result
 
 @wealth_tax
 title: Tax high incomes and wealth: an extraordinary wealth tax
-subtitle: +2 B for 6 months; business pressure +8.
+subtitle: Brings the budget 2 units a month for six months; business pressure grows (+8).
 choose-if: {! return PolishProjects.optionStatus(Q, 'finance_package', 'wealth_tax').available !}
 unavailable-subtitle: [+ pl_finance_package_wealth_tax_why +]
 on-arrival: {!
@@ -55,7 +55,7 @@ go-to: result
 
 @indirect
 title: Tax broad groups: indirect taxes
-subtitle: Tax level +1, i.e. +1 B; discontent of poor recipients +3; Lewica +3 dissent.
+subtitle: Taxes rise one level, which brings the budget 1 unit a month; the discontent of poor recipients grows (+3); Lewica dissent rises (+3).
 choose-if: {! return PolishProjects.optionStatus(Q, 'finance_package', 'indirect').available !}
 unavailable-subtitle: [+ pl_finance_package_indirect_why +]
 on-arrival: {!
@@ -65,7 +65,7 @@ go-to: result
 
 @broad
 title: Tax broad groups: a broader tax base
-subtitle: Tax level +1, i.e. +1 B; business pressure +4; discontent of the middle class covered +3.
+subtitle: Taxes rise one level, which brings the budget 1 unit a month; business pressure grows (+4); the discontent of the middle class covered grows (+3).
 choose-if: {! return PolishProjects.optionStatus(Q, 'finance_package', 'broad').available !}
 unavailable-subtitle: [+ pl_finance_package_broad_why +]
 on-arrival: {!
@@ -75,7 +75,7 @@ go-to: result
 
 @customs
 title: Tax broad groups: fiscal customs duties
-subtitle: +1 B for 6 months; prices +1 pp for 2 months and a credit shock +3 for 6 months.
+subtitle: Brings the budget 1 unit a month for six months; prices rise for two months (+1 percentage point) and the credit shock grows for six months (+3).
 choose-if: {! return PolishProjects.optionStatus(Q, 'finance_package', 'customs').available !}
 unavailable-subtitle: [+ pl_finance_package_customs_why +]
 on-arrival: {!
@@ -85,7 +85,7 @@ go-to: result
 
 @loan
 title: Domestic loan
-subtitle: +3 B for 6 months, then −1 B for 12 months. Needs credit of at least 40.
+subtitle: Brings the budget 3 units a month for six months, then costs it 1 unit a month for twelve months. Needs credit of at least 40.
 choose-if: {! return PolishProjects.optionStatus(Q, 'finance_package', 'loan').available !}
 unavailable-subtitle: [+ pl_finance_package_loan_why +]
 on-arrival: {!
@@ -95,7 +95,7 @@ go-to: result
 
 @admin_cuts
 title: Savings in named administrative spending
-subtitle: +1 B for 6 months; discontent of the public employees named +4.
+subtitle: Brings the budget 1 unit a month for six months; the discontent of the public employees named grows (+4).
 choose-if: {! return PolishProjects.optionStatus(Q, 'finance_package', 'admin_cuts').available !}
 unavailable-subtitle: [+ pl_finance_package_admin_cuts_why +]
 on-arrival: {!
@@ -105,7 +105,7 @@ go-to: result
 
 @benefit_cut
 title: Savings: cut the unemployment benefit
-subtitle: Only the difference of the real cost, 2 → 1 B, and a change of the law; Lewica +8 dissent.
+subtitle: Only the difference of the real cost, from 2 to 1 budget unit, and a change of the law; Lewica dissent rises (+8).
 choose-if: {! return PolishProjects.optionStatus(Q, 'finance_package', 'benefit_cut').available !}
 unavailable-subtitle: [+ pl_finance_package_benefit_cut_why +]
 on-arrival: {!
@@ -115,7 +115,7 @@ go-to: result
 
 @emission
 title: Emission financing
-subtitle: Before the złoty: printing within an authorised limit of 1–3 points; after it: transitional coinage, 1 point for 3 months.
+subtitle: Before the złoty: printing within an authorised limit of 1–3 points; after it: transitional coinage, 1 point for three months.
 choose-if: {! return PolishProjects.optionStatus(Q, 'finance_package', 'emission').available !}
 unavailable-subtitle: [+ pl_finance_package_emission_why +]
 on-arrival: {!
@@ -125,7 +125,7 @@ go-to: result
 
 @collection
 title: Improve tax collection
-subtitle: 1 B for 2 months, then +1 B for good; once in the chapter.
+subtitle: Costs the budget 1 unit a month for two months, then brings it 1 unit a month for good; once in the chapter.
 choose-if: {! return PolishProjects.optionStatus(Q, 'finance_package', 'collection').available !}
 unavailable-subtitle: [+ pl_finance_package_collection_why +]
 on-arrival: {!

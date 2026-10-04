@@ -6,7 +6,8 @@
     <meta prefix="ifiction: http://babel.ifarchive.org/protocol/iFiction/"
         property="ifiction:ifid" content="7FCDF039-2B77-4179-B795-CBAFA65253AA">
     <title>PPS: An Alternate History - Autumn Chen</title>
-    <link rel="stylesheet" type="text/css" href="game.css">
+    <!-- The version makes the browser fetch a changed stylesheet instead of a cached copy (Z — 0.53). -->
+    <link rel="stylesheet" type="text/css" href="game.css?v=0.53">
     <script src="jquery-1.11.1.min.js"></script>
     <script src="d3.v7.min.js"></script>
     <script src="d3-parliament.js"></script>
@@ -25,7 +26,7 @@
     <script src="core.js"></script>
     <script src="game.js"></script>
   </head>
-  <body>
+  <body class="pl-hide-numbers">
     <div class="background" id="bg2">
     </div>
 
@@ -71,6 +72,26 @@
                     </td>
                     <td>
                         <input type="radio" id="language_pl" name="language" value="pl" onclick="window.setLanguage('pl');">
+                    </td>
+                </tr>
+                <tr>
+                    <td> <hr> </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span data-i18n="effect_numbers">Numbers in choices:</span>
+                    </td>
+                    <td>
+                        <label for="numbers_show" data-i18n="on">On</label>
+                    </td>
+                    <td>
+                        <input type="radio" id="numbers_show" name="effect_numbers" value="show" onclick="window.setShowNumbers(true);">
+                    </td>
+                    <td>
+                        <label for="numbers_hide" data-i18n="off">Off</label>
+                    </td>
+                    <td>
+                        <input type="radio" id="numbers_hide" name="effect_numbers" value="hide" onclick="window.setShowNumbers(false);">
                     </td>
                 </tr>
                 <tr>

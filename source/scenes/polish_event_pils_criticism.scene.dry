@@ -21,7 +21,7 @@ In this game Józef Piłsudski speaks publicly against the Sejm over [+ pl_crit_
 
 @support
 title: Support the criticism of parliamentarism
-subtitle: Relation with Piłsudski +4; Piłsudczycy dissent −3, Centre +5. The authority of the Sejm −2 for twelve months. [+ pl_crit_warning +]
+subtitle: The relation with Piłsudski improves (+4); Piłsudczycy dissent falls (−3) and Centre dissent rises (+5). The authority of the Sejm falls for twelve months (−2). [+ pl_crit_warning +]
 on-arrival: {!
 PolishPolitics.criticismChoose(Q, 'support');
 !}
@@ -29,7 +29,7 @@ go-to: result
 
 @defend
 title: Defend parliament and the lawful change of governments
-subtitle: Relation with Piłsudski −4; Piłsudczycy dissent +5, Centre −3. The authority of the Sejm +1 for twelve months.
+subtitle: The relation with Piłsudski worsens (−4); Piłsudczycy dissent rises (+5) and Centre dissent falls (−3). The authority of the Sejm grows for twelve months (+1).
 on-arrival: {!
 PolishPolitics.criticismChoose(Q, 'defend');
 !}
@@ -37,7 +37,7 @@ go-to: result
 
 @reform
 title: Parliament should be reformed to work better
-subtitle: No change of relation; Centre dissent −2. It supports the line of reform but creates no project, path or votes.
+subtitle: No change of relation; Centre dissent falls (−2). It supports the line of reform but creates no project, path or votes.
 on-arrival: {!
 PolishPolitics.criticismChoose(Q, 'reform');
 !}

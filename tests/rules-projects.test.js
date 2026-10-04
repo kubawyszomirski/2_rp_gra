@@ -444,7 +444,7 @@ test('Roboty pod Pracą and Wariant robót: Labour and financing / Treasury only
   assert.equal(proj.PROJECT_TYPES.public_works.variants.housing.units, 0, 'no employment units for housing');
   freeAction(Q);
   Q.S.economy.budget_base = -1; // the launch would put the forecast at −3
-  assert.match(proj.agendaStatus(Q, 'public_works').reason, /−2 B/);
+  assert.match(proj.agendaStatus(Q, 'public_works').reason, /deficit stays at 2 budget units or less/);
   Q.S.economy.budget_base = 2;
   assert.equal(proj.agendaStatus(Q, 'public_works').available, true);
   proj.agendaChoose(Q, 'public_works');
@@ -665,7 +665,7 @@ test('P: the currency reform answering a financial crisis may start below −2 B
   proj.chooseOption(Q, 'public_works', 'employment');
   freeAction(Q);
   Q.S.economy.budget_base = -3;
-  assert.match(proj.agendaStatus(Q, 'public_works').reason, /−2 B/);
+  assert.match(proj.agendaStatus(Q, 'public_works').reason, /deficit stays at 2 budget units or less/);
   assert.equal(proj.agendaStatus(Q, 'currency_reform').available, true);
   proj.agendaChoose(Q, 'currency_reform');
   const reform = proj.currencyProject(Q.S);

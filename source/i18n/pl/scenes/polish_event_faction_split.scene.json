@@ -7,9 +7,9 @@
   "= Part of [+ pl_e3_faction +] threatens to leave": "= Część frakcji [+ pl_e3_faction +] grozi odejściem",
   "The dissent of [+ pl_e3_faction +] is [+ pl_e3_dissent +]. Its leaders demand that PPS [+ pl_e3_demand +]. If PPS keeps its line: [+ pl_e3_preview +]": "Sprzeciw frakcji [+ pl_e3_faction +] wynosi [+ pl_e3_dissent +]. Jej przywódcy stawiają PPS żądanie: [+ pl_e3_demand +]. Jeśli PPS utrzyma swoją linię: [+ pl_e3_preview +]",
   "title: Accept the demand and keep unity": "title: Przyjmij żądanie i zachowaj jedność",
-  "subtitle: PPS makes the change at once, without cost; the faction's dissent −5. Partners react to the changed policy itself.": "subtitle: PPS wprowadza zmianę od razu, bez kosztów; sprzeciw frakcji −5. Partnerzy reagują na samą zmienioną politykę.",
+  "subtitle: PPS makes the change at once, without cost; the faction's dissent falls (−5). Partners react to the changed policy itself.": "subtitle: PPS wprowadza zmianę od razu, bez kosztów; sprzeciw frakcji spada (−5). Partnerzy reagują na samą zmienioną politykę.",
   "title: Keep the line of PPS and accept the split": "title: Utrzymaj linię PPS i pogódź się z rozłamem",
-  "subtitle: 40% of the faction's base leaves with its voters and MPs; the rest of the faction's dissent −20.": "subtitle: 40% bazy frakcji odchodzi z jej wyborcami i posłami; sprzeciw pozostałej części frakcji −20.",
+  "subtitle: A large part of the faction's base leaves with its voters and MPs (−40% of its base); the dissent of the rest falls (−20).": "subtitle: Duża część bazy frakcji odchodzi z jej wyborcami i posłami (−40% bazy); sprzeciw pozostałej części frakcji spada (−20).",
   "= The faction's answer": "= Odpowiedź frakcji",
   "- @root: Continue.": "- @root: Dalej."
  }

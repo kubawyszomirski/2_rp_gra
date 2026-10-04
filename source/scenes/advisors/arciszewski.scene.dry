@@ -21,7 +21,7 @@ Arciszewski represents Centrum PPS while maintaining strong connections to worke
 
 @organize_workers
 title: Organize the Workers
-subtitle: 1 R; one union branch +8 reach; PPS gains among the workers it covers (+3 base).
+subtitle: 1 resource; one union branch reaches more workers (+8), and PPS gains among the workers it covers (+3 base reach).
 choose-if: {! return PolishParty.advisorActionStatus(Q, 'arciszewski', 'organize_workers').available !}
 unavailable-subtitle: [+ pl_advact_organize_workers_why +]
 go-to: organize_menu

@@ -33,7 +33,7 @@ An investigation names a recorded case; its label points to the case, not to a p
 
 @professionalization
 title: Professionalise the police and subordinate it to lawful authorities
-subtitle: 1 B for three months; then command and lawful compliance +10, once in the chapter.
+subtitle: Costs the budget 1 unit a month for three months; then command and lawful compliance improve (+10, once in the chapter).
 choose-if: {! return PolishProjects.optionStatus(Q, 'internal_security', 'professionalization').available !}
 unavailable-subtitle: [+ pl_internal_security_professionalization_why +]
 on-arrival: {!
@@ -43,7 +43,7 @@ go-to: result
 
 @investigate_far_right
 title: Investigate the named violence of the far right
-subtitle: 1 B for one month; needs a recorded case. A confirmed investigation assigns the case to a party.
+subtitle: Costs the budget 1 unit for one month; needs a recorded case. A confirmed investigation assigns the case to a party.
 choose-if: {! return PolishProjects.optionStatus(Q, 'internal_security', 'investigate_far_right').available !}
 unavailable-subtitle: [+ pl_internal_security_investigate_far_right_why +]
 on-arrival: {!
@@ -53,7 +53,7 @@ go-to: result
 
 @investigate_communist
 title: Investigate the named violence of the communists
-subtitle: 1 B for one month; needs a recorded case. A confirmed investigation assigns the case to a party.
+subtitle: Costs the budget 1 unit for one month; needs a recorded case. A confirmed investigation assigns the case to a party.
 choose-if: {! return PolishProjects.optionStatus(Q, 'internal_security', 'investigate_communist').available !}
 unavailable-subtitle: [+ pl_internal_security_investigate_communist_why +]
 on-arrival: {!
@@ -63,7 +63,7 @@ go-to: result
 
 @police_protection
 title: Protect a named gathering or institution
-subtitle: 1 B for one month; the capacity of protection of this case +10 times its execution, this month.
+subtitle: Costs the budget 1 unit for one month; the protection in this case grows this month (+10 times its execution).
 choose-if: {! return PolishProjects.optionStatus(Q, 'internal_security', 'police_protection').available !}
 unavailable-subtitle: [+ pl_internal_security_police_protection_why +]
 on-arrival: {!
@@ -73,7 +73,7 @@ go-to: result
 
 @limited_autonomy
 title: Prepare a limited autonomy of one area
-subtitle: Needs an agreed point with the representation of the other minorities; a law, then 1 B for three months.
+subtitle: Needs an agreed point with the representation of the other minorities; a law, then costs the budget 1 unit a month for three months.
 choose-if: {! return PolishProjects.optionStatus(Q, 'internal_security', 'limited_autonomy').available !}
 unavailable-subtitle: [+ pl_internal_security_limited_autonomy_why +]
 on-arrival: {!

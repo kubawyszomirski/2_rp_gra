@@ -2144,8 +2144,9 @@
     return economy.budgetAt(Q.S, Q.time, extra).budget;
   }
 
-  const FORECAST_BLOCK = 'A new programme starts only when the forecast budget stays at −2 B or above (11.3).';
-  const forecastBlock = () => L(FORECAST_BLOCK, 'Nowy program rusza tylko wtedy, gdy prognozowany budżet pozostaje na poziomie −2 B lub wyższym (11.3).');
+  // The rule of 11.3 for new programmes, in words (Z — 0.53): a forecast budget of −2 B or more.
+  const FORECAST_BLOCK = 'A new programme starts only when the forecast budget deficit stays at 2 budget units or less.';
+  const forecastBlock = () => L(FORECAST_BLOCK, 'Nowy program rusza tylko wtedy, gdy prognozowany deficyt budżetu nie przekracza 2 jednostek.');
 
   function nextTranche(S, typeId, variantId) {
     const type = PROJECT_TYPES[typeId];

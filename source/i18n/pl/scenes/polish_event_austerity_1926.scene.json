@@ -7,7 +7,7 @@
   "= The review of the protection": "= Przegląd osłony",
   "The partners on the right propose to limit the protection for the unemployed from 2 B to 1 B a month — a programme demand, also while the budget can pay. The one compromise keeps 2 B with the existing or a lawfully improved financing. A cut needs a change of the law and gives only +1 B.": "Partnerzy z prawicy proponują ograniczyć osłonę dla bezrobotnych z 2 B do 1 B miesięcznie — to żądanie programowe, także wtedy, gdy budżet może płacić. Jedyny kompromis utrzymuje 2 B przy obecnym albo zgodnie z prawem poprawionym finansowaniu. Cięcie wymaga zmiany ustawy i daje tylko +1 B.",
   "title: Demand the full protection, or we end our support": "title: Żądaj pełnej osłony albo wycofamy poparcie",
-  "subtitle: The partners weigh how much they need PPS; those who give in think less of us (relation −3).": "subtitle: Partnerzy ważą, jak bardzo potrzebują PPS; ci, którzy ustąpią, gorzej o nas myślą (relacja −3).",
+  "subtitle: The partners weigh how much they need PPS; those who give in think less of us (−3 relation).": "subtitle: Partnerzy ważą, jak bardzo potrzebują PPS; ci, którzy ustąpią, gorzej o nas myślą (−3 relacji).",
   "Q.pl_aus_result = (out.accepted ? 'The partners accept: the protection stays at 2 B.' : 'The partners refuse.') + ' ' +": "Q.pl_aus_result = (out.accepted ? 'Partnerzy się zgadzają: osłona zostaje na poziomie 2 B.' : 'Partnerzy odmawiają.') + ' ' +",
   "title: Persuade them without a threat": "title: Przekonuj bez groźby",
   "subtitle: The same offer; no relation change either way. If refused, the cut goes to the vote.": "subtitle: Ta sama oferta; relacje się nie zmieniają. W razie odmowy cięcie idzie pod głosowanie.",
@@ -24,7 +24,7 @@
   "title: Carry out the threat: end our support": "title: Spełnij groźbę: wycofaj poparcie",
   "Q.pl_aus_result = out.fell ? 'PPS leaves and the cabinet resigns.' : 'PPS leaves the cabinet.';": "Q.pl_aus_result = out.fell ? 'PPS odchodzi, a gabinet podaje się do dymisji.' : 'PPS odchodzi z gabinetu.';",
   "title: Back down": "title: Wycofaj się",
-  "subtitle: Reputation −5; the cut goes to the vote; later threats against this cabinet count only as persuasion.": "subtitle: Wiarygodność −5; cięcie idzie pod głosowanie; późniejsze groźby wobec tego gabinetu liczą się tylko jako perswazja.",
+  "subtitle: Our reputation falls (−5); the cut goes to the vote; later threats against this cabinet count only as persuasion.": "subtitle: Nasza wiarygodność spada (−5); cięcie idzie pod głosowanie; późniejsze groźby wobec tego gabinetu liczą się tylko jako perswazja.",
   "Q.pl_aus_result = out.cut.status === 'rejected' ? 'We back down. The cut finds no majority; the protection stays.' : 'We back down. The Sejm adopts the cut: the protection falls to 1 B.';": "Q.pl_aus_result = out.cut.status === 'rejected' ? 'Wycofujemy się. Cięcie nie znajduje większości; osłona zostaje.' : 'Wycofujemy się. Sejm przyjmuje cięcie: osłona spada do 1 B.';",
   "- @root: Continue.": "- @root: Dalej."
  }

@@ -10,7 +10,7 @@
   "title: Seek a settlement and end the strike on agreed terms": "title: Dąż do ugody i zakończ strajk na uzgodnionych warunkach",
   "subtitle: [? if pl_resp_offer : PPS accepts the offer and calls for the agreed end. ?][? if not pl_resp_offer : PPS puts one limited package; if it is accepted, the agreed end follows. ?] No second acceptance.": "subtitle: [? if pl_resp_offer : PPS przyjmuje ofertę i wzywa do uzgodnionego zakończenia. ?][? if not pl_resp_offer : PPS przedstawia jeden ograniczony pakiet; jeśli zostanie przyjęty, następuje uzgodnione zakończenie. ?] Nie ma drugiego przyjęcia.",
   "title: Back the restoration of order and call for the end of the strike": "title: Poprzyj przywrócenie porządku i wezwij do zakończenia strajku",
-  "subtitle: PPS withdraws its support without new concessions: the union +10 dissent and −8 trust once. The call does not end the protest and is no order to the police.": "subtitle: PPS wycofuje poparcie bez nowych ustępstw: w związku jednorazowo sprzeciw +10 i zaufanie −8. Wezwanie nie kończy protestu i nie jest poleceniem dla policji.",
+  "subtitle: PPS withdraws its support without new concessions: the union's dissent rises (+10) and its trust falls (−8), once. The call does not end the protest and is no order to the police.": "subtitle: PPS wycofuje poparcie bez nowych ustępstw: w związku jednorazowo rośnie sprzeciw (+10) i spada zaufanie (−8). Wezwanie nie kończy protestu i nie jest poleceniem dla policji.",
   "- @root: Continue.": "- @root: Dalej."
  }
 }

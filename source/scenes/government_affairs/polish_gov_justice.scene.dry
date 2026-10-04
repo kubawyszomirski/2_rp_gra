@@ -27,7 +27,7 @@ The minister does not annul another authority’s judgement by naming a policy. 
 
 @broad_safeguards
 title: A joint project of democratic guarantees
-subtitle: The one democratic_guarantees reform: two main actions, two thirds in both chambers, then 1 B for a month.
+subtitle: The one reform of democratic guarantees: two main actions, two thirds in both chambers, then costs the budget 1 unit for a month.
 choose-if: {! return PolishProjects.optionStatus(Q, 'justice_policy', 'broad_safeguards').available !}
 unavailable-subtitle: [+ pl_justice_policy_broad_safeguards_why +]
 on-arrival: {!
@@ -37,7 +37,7 @@ go-to: result
 
 @limited_redress
 title: Review of a named abuse
-subtitle: 1 B for a month; needs an active restriction of a named case. A confirmed unlawful act lifts only that restriction; without grounds the review ends without relief.
+subtitle: Costs the budget 1 unit for a month; needs an active restriction of a named case. A confirmed unlawful act lifts only that restriction; without grounds the review ends without relief.
 choose-if: {! return PolishProjects.optionStatus(Q, 'justice_policy', 'limited_redress').available !}
 unavailable-subtitle: [+ pl_justice_policy_limited_redress_why +]
 on-arrival: {!

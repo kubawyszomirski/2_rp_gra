@@ -22,7 +22,7 @@ The present line: **[+ pl_stance_current +]**. A new declaration costs this mont
 
 @parliamentarism
 title: Parliamentarism
-subtitle: [? if pl_stance_parliamentarism_present = 1 : This is the present line. Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_parliamentarism_present = 0 : The way of majorities, cabinet responsibility and democratisation. ?]
+subtitle: [? if pl_stance_parliamentarism_present = 1 : **Present line** Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_parliamentarism_present = 0 : The way of majorities, cabinet responsibility and democratisation. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'form_of_power', 'parliamentarism').available !}
 unavailable-subtitle: [+ pl_stance_parliamentarism_why +]
 on-arrival: {!
@@ -32,7 +32,7 @@ go-to: result
 
 @strong_presidency
 title: A stronger presidency
-subtitle: [? if pl_stance_strong_presidency_present = 1 : This is the present line. Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_strong_presidency_present = 0 : Only with this line PPS can prepare the reform of presidential arbitration; a later change keeps a prepared project. ?]
+subtitle: [? if pl_stance_strong_presidency_present = 1 : **Present line** Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_strong_presidency_present = 0 : Only with this line PPS can prepare the reform of presidential arbitration; a later change keeps a prepared project. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'form_of_power', 'strong_presidency').available !}
 unavailable-subtitle: [+ pl_stance_strong_presidency_why +]
 on-arrival: {!
@@ -42,7 +42,7 @@ go-to: result
 
 @workers_councils
 title: Workers’ councils
-subtitle: [? if pl_stance_workers_councils_present = 1 : This is the present line. Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_workers_councils_present = 0 : The first time: Lewica +4 strength, Centrum dissent +3. No KPP votes, no workers’ representation and no voters by itself. ?]
+subtitle: [? if pl_stance_workers_councils_present = 1 : **Present line** Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_workers_councils_present = 0 : The first time Lewica grows stronger (+4) and Centrum dissent rises (+3). The line alone brings no KPP votes, no workers’ representation and no voters. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'form_of_power', 'workers_councils').available !}
 unavailable-subtitle: [+ pl_stance_workers_councils_why +]
 on-arrival: {!

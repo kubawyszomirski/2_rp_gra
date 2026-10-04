@@ -28,7 +28,7 @@ Party press: [+ pl_party_press +]. Party money: [+ pl_party_cash +]. A campaign 
 
 @distribution
 title: Extend the distribution of the press
-subtitle: 1 R; press reach +10, up to 100. Waits 2 months.
+subtitle: 1 resource; the press reaches more readers (+10, up to 100). Waits two months.
 choose-if: {! return PolishParty.pressDistributionStatus(Q).available !}
 unavailable-subtitle: [+ pl_media_distribution_why +]
 on-arrival: {!
@@ -38,7 +38,7 @@ go-to: result
 
 @format
 title: Change the format of the press to [+ pl_media_format_next +]
-subtitle: 1 R. A popular format: effective reach +10, credibility −5 and, at reach 50 or more, 0.10 R of sales a month; its first adoption gives Centrum +3 dissent. Waits 6 months.
+subtitle: 1 resource. A popular format: the press reaches more people (+10) but loses credibility (−5), and with a wide reach it earns from sales (0.10 resources a month at reach 50 or more); the first adoption raises Centrum dissent (+3). Waits six months.
 choose-if: {! return PolishParty.pressFormatStatus(Q).available !}
 unavailable-subtitle: [+ pl_media_format_why +]
 on-arrival: {!
@@ -48,7 +48,7 @@ go-to: result
 
 @campaign
 title: A press campaign on a topic
-subtitle: 1 R; reach from the unions, the press and the party's own base; the credibility of the press multiplies it.
+subtitle: 1 resource; reach from the unions, the press and the party's own base; the credibility of the press multiplies it.
 choose-if: {! return PolishParty.campaignStatus(Q, 'press').available !}
 unavailable-subtitle: [+ pl_media_campaign_why +]
 on-arrival: {!
@@ -58,7 +58,7 @@ go-to: topics
 
 @unions_campaign
 title: A campaign through the unions and meetings
-subtitle: 1 R; the reach of the matching union branch, no press bonus. Useful when the press is weak or restricted.
+subtitle: 1 resource; the reach of the matching union branch, no press bonus. Useful when the press is weak or restricted.
 choose-if: {! return PolishParty.campaignStatus(Q, 'unions').available !}
 unavailable-subtitle: [+ pl_media_unions_why +]
 on-arrival: {!
@@ -68,7 +68,7 @@ go-to: topics
 
 @polemic
 title: A polemic against our main opponent
-subtitle: 1 R; votes come only from [+ pl_media_addressees +]; the addressee's relation with PPS −2.
+subtitle: 1 resource; votes come only from [+ pl_media_addressees +]; the addressee's relation with PPS worsens (−2).
 choose-if: {! return PolishParty.campaignStatus(Q, 'polemic').available !}
 unavailable-subtitle: [+ pl_media_polemic_why +]
 on-arrival: {!
@@ -79,7 +79,7 @@ go-to: audiences
 
 @turnout
 title: A mobilisation campaign
-subtitle: 1 R; the turnout of the chosen voters +0.04, up to 0.90, until the next election.
+subtitle: 1 resource; more of the chosen voters turn out (+0.04, up to 0.90) until the next election.
 choose-if: {! return PolishParty.campaignStatus(Q, 'turnout').available !}
 unavailable-subtitle: [+ pl_media_turnout_why +]
 on-arrival: {!
@@ -90,7 +90,7 @@ go-to: audiences
 
 @investigation
 title: A press investigation
-subtitle: 1 R; credibility +4 and the revealed fact recorded once. No invented scandal.
+subtitle: 1 resource; the credibility of the press rises (+4) and the revealed fact is recorded once. No invented scandal.
 choose-if: {! return PolishParty.pressInvestigationStatus(Q).available !}
 unavailable-subtitle: [+ pl_media_investigation_why +]
 on-arrival: {!

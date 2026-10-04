@@ -20,7 +20,7 @@ PolishUnions.rejectionView(Q);
 
 @uphold
 title: Uphold the settlement and call for the end of the strike
-subtitle: The obligation stands; part of the strikers may go on without PPS, and the branches that refused have the end imposed (dissent +10, trust −8).
+subtitle: The obligation stands; part of the strikers may go on without PPS, and the branches that refused have the end imposed, so their dissent rises (+10) and their trust falls (−8).
 on-arrival: {!
 PolishUnions.rejectionChoose(Q, 'uphold');
 !}
@@ -28,7 +28,7 @@ go-to: result
 
 @support
 title: Support the further strike
-subtitle: The mobilisation and its costs go on, and PPS breaks the settlement it accepted (credibility −5). It forces no better offer.
+subtitle: The mobilisation and its costs go on, and PPS breaks the settlement it accepted, so its credibility falls (−5). It forces no better offer.
 on-arrival: {!
 PolishUnions.rejectionChoose(Q, 'support');
 !}

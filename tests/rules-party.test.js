@@ -126,8 +126,8 @@ test('Dwie organizacje: press and TUR cost 3 R and one month; with 2 R nothing i
   const Q = game();
   at(Q, 1923, 1);
   Q.S.party_orgs.cash = 2;
-  assert.match(PolishParty.selectionStatus(Q, ['press_distribution', 'tur']).reason, /costs 3 R/);
-  assert.throws(() => PolishParty.organizationsChoose(Q, ['press_distribution', 'tur']), /costs 3 R/);
+  assert.match(PolishParty.selectionStatus(Q, ['press_distribution', 'tur']).reason, /costs 3 resources/);
+  assert.throws(() => PolishParty.organizationsChoose(Q, ['press_distribution', 'tur']), /costs 3 resources/);
   assert.equal(Q.S.party_orgs.cash, 2, 'no half of the package');
   Q.S.party_orgs.cash = 3;
   PolishParty.organizationsChoose(Q, ['press_distribution', 'tur']);
@@ -224,7 +224,7 @@ test('AS: 499 or 500 members, with and without militarisation: AS only from 500 
   assert.equal(PolishParty.canFormAS(Q.S), true);
   assert.equal(Q.S.militia.stage, 1, 'the threshold does not reorganise by itself');
   Q.S.party_orgs.cash = 3.1;
-  assert.match(PolishParty.militiaStatus(Q, 'as').reason, /Needs 3\.2 R/);
+  assert.match(PolishParty.militiaStatus(Q, 'as').reason, /Needs 3\.2 resources/);
   Q.S.party_orgs.cash = 10;
   Q.S.militia.arrears = 0.1;
   assert.match(PolishParty.militiaStatus(Q, 'as').reason, /unpaid upkeep/);

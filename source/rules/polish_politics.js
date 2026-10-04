@@ -843,13 +843,13 @@
     if (choice === 'defend') {
       if (!unionLineAgreed(S) && !pressWorks(S)) return no(L('Needs an agreed line of a union branch or a working press.', 'Wymaga uzgodnionej linii branży związkowej albo działającej prasy.'));
       const cost = 1 + (protect ? 0.5 : 0);
-      if (S.party_orgs.cash + 1e-9 < cost) return no(L('Needs ' + fmt(cost) + ' R.', 'Wymaga ' + fmt(cost) + ' R.'));
+      if (S.party_orgs.cash + 1e-9 < cost) return no(L('Needs ' + rules.units(cost) + '.', 'Wymaga ' + rules.units(cost, 'resources', 'gen') + '.'));
       if (protect && !militiaFree(S)) return no(L('The Milicja is banned, has no members or already protects another matter.', 'Milicja jest objęta zakazem, nie ma członków albo już chroni inną sprawę.'));
       return OK;
     }
     if (choice === 'retaliation') {
       if (!militiaFree(S)) return no(L('Needs able members of the Milicja assigned to it: it is banned, empty or busy elsewhere.', 'Wymaga zdolnych do działania członków Milicji przydzielonych do tego zadania: Milicja jest objęta zakazem, pusta albo zajęta gdzie indziej.'));
-      if (S.party_orgs.cash + 1e-9 < 0.5) return no(L('Needs 0.5 R.', 'Wymaga 0,5 R.'));
+      if (S.party_orgs.cash + 1e-9 < 0.5) return no(L('Needs 0.5 resources.', 'Wymaga 0,5 jednostki środków.'));
     }
     return OK;
   }
@@ -967,7 +967,7 @@
       if (!hostConsents(S)) return no(L('No clergyman or host agrees to hold it (relation with the Christian Democrats below ' + HOST_RELATION + ').',
         'Żaden duchowny ani gospodarz nie zgadza się jej odprawić (relacja z chadecją poniżej ' + HOST_RELATION + ').'));
       if (!(S.party_orgs.apparatus.level >= 1)) return no(L('Needs a working organisation of PPS.', 'Wymaga działającej organizacji PPS.'));
-      if (S.party_orgs.cash + 1e-9 < 1) return no(L('Needs 1 R.', 'Wymaga 1 R.'));
+      if (S.party_orgs.cash + 1e-9 < 1) return no(L('Needs 1 resource.', 'Wymaga 1 jednostki środków.'));
     }
     return OK;
   }

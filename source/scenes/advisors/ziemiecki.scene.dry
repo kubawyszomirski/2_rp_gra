@@ -20,7 +20,7 @@ Ziemięcki represents the Piłsudczyk current while favoring conditional parliam
 
 @conditional_toleration
 title: Conditional Toleration
-subtitle: When PPS supports a minority cabinet of Śliwiński or Piłsudski from outside, by an agreement: Centrum −10 and Lewica −8 dissent. The kind of support does not change.
+subtitle: When PPS supports a minority cabinet of Śliwiński or Piłsudski from outside, by an agreement: dissent falls in Centrum (−10) and Lewica (−8). The kind of support does not change.
 choose-if: {! return PolishParty.advisorActionStatus(Q, 'ziemiecki', 'conditional_toleration').available !}
 unavailable-subtitle: [+ pl_advact_conditional_toleration_why +]
 call: polish_advisor_commit
@@ -34,7 +34,7 @@ PolishParty.advisorAction(Q, 'ziemiecki', 'conditional_toleration');
 
 @municipal_socialism
 title: Municipal Socialism
-subtitle: 1 R; in the large cities the base reach of PPS +8 and a gain among workers, intelligentsia and petty bourgeoisie. No town hall or city budget.
+subtitle: 1 resource; in the large cities the base reach of PPS grows (+8) and PPS gains among workers, intelligentsia and petty bourgeoisie. No town hall or city budget.
 choose-if: {! return PolishParty.advisorActionStatus(Q, 'ziemiecki', 'municipal_socialism').available !}
 unavailable-subtitle: [+ pl_advact_municipal_socialism_why +]
 call: polish_advisor_commit

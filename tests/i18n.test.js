@@ -160,6 +160,23 @@ test('Centralny Komitet Wykonawczy: nagłówek i odnowienie akcji z pełną odmi
   assert.deepEqual(errors, []);
 });
 
+// Z — 0.53: the present choice of a stance card opens its description with a bold label, in both languages.
+test('Obecna linia: opis obecnego wyboru zaczyna się od pogrubionej etykiety w obu językach', () => {
+  const errors = dendry.watchEngineErrors();
+  const labels = {en: 'Present line', pl: 'Obecna linia'};
+  const strong = c => (c == null || typeof c === 'string' ? [] : Array.isArray(c) ? c.flatMap(strong) : c.type === 'emphasis-2' ? [flat(c.content)] : strong(c.content));
+  for (const lang of ['en', 'pl']) {
+    const engine = dendry.startGame(1922, lang);
+    engine.state.currentHands.main = [{id: 'polish_party_pils_influence', title: 'polish_party_pils_influence'}];
+    engine.playCard('polish_party_pils_influence');
+    const choices = engine.getCurrentChoices();
+    assert.deepEqual(strong(choices.find(c => c.id === 'polish_party_pils_influence.conditional').subtitle), [labels[lang]], `${lang}: the present line`);
+    assert.deepEqual(strong(choices.find(c => c.id === 'polish_party_pils_influence.support').subtitle), [], `${lang}: another line has no label`);
+  }
+  globalThis.PolishRules.setLanguage('en');
+  assert.deepEqual(errors, []);
+});
+
 test('Ta sama rozgrywka w obu językach: strategia N-C do grudnia 1923 daje identyczny stan gry', () => {
   const run = lang => strategies.runCampaign('N_C', 8001, { lang, stopWhen: Q => Q.time >= 24 });
   const en = run('en');

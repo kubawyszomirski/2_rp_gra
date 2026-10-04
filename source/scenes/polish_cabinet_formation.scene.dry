@@ -214,7 +214,7 @@ Each cabinet has a fixed minimum programme; it enters the agreement with the par
 
 @cfg_left_minority
 title: PPS and PSL Wyzwolenie
-subtitle: PPS and PSL Wyzwolenie. Minimum programme: land reform +1, fiscal burden +1, institutions +2.
+subtitle: PPS and PSL Wyzwolenie. Minimum programme: accelerated land reform (+1), a fiscal burden leaning on wealth (+1) and the democratisation of institutions (+2).
 choose-if: {! return PolishGovernment.draftChoiceStatus(Q, 'configuration', 'left_minority').available !}
 unavailable-subtitle: [+ pl_cfg_left_minority_reason +]
 on-arrival: {!
@@ -224,7 +224,7 @@ go-to: polish_cabinet_formation
 
 @cfg_centre_left
 title: Centre-left
-subtitle: PPS, PSL Wyzwolenie, PSL Piast and NPR. Minimum programme: land reform 0, fiscal burden 0, institutions +1.
+subtitle: PPS, PSL Wyzwolenie, PSL Piast and NPR. Minimum programme: land reform with compensation, a shared fiscal burden and a moderate democratisation of institutions (+1).
 choose-if: {! return PolishGovernment.draftChoiceStatus(Q, 'configuration', 'centre_left').available !}
 unavailable-subtitle: [+ pl_cfg_centre_left_reason +]
 on-arrival: {!
@@ -234,7 +234,7 @@ go-to: polish_cabinet_formation
 
 @cfg_left_labour
 title: PPS, PSL Wyzwolenie and NPR
-subtitle: Minimum programme: land reform +1, fiscal burden +1, institutions +1.
+subtitle: Minimum programme: accelerated land reform (+1), a fiscal burden leaning on wealth (+1) and a moderate democratisation of institutions (+1).
 choose-if: {! return PolishGovernment.draftChoiceStatus(Q, 'configuration', 'left_labour').available !}
 unavailable-subtitle: [+ pl_cfg_left_labour_reason +]
 on-arrival: {!
@@ -244,7 +244,7 @@ go-to: polish_cabinet_formation
 
 @cfg_pps_majority
 title: PPS majority government
-subtitle: PPS alone with its own majority. Programme: land reform +1, fiscal burden +2, institutions +2.
+subtitle: PPS alone with its own majority. Programme: accelerated land reform (+1), the burden on wealth (+2) and the democratisation of institutions (+2).
 choose-if: {! return PolishGovernment.draftChoiceStatus(Q, 'configuration', 'pps_majority').available !}
 unavailable-subtitle: [+ pl_cfg_pps_majority_reason +]
 on-arrival: {!
@@ -254,7 +254,7 @@ go-to: polish_cabinet_formation
 
 @cfg_broad_centre
 title: Broad centre
-subtitle: PPS, both peasant parties, NPR and PSChD; only in a real crisis. Programme: land reform 0, fiscal burden 0, church 0.
+subtitle: PPS, both peasant parties, NPR and PSChD; only in a real crisis. Programme: land reform with compensation, a shared fiscal burden and the middle position on the Church.
 choose-if: {! return PolishGovernment.draftChoiceStatus(Q, 'configuration', 'broad_centre').available !}
 unavailable-subtitle: [+ pl_cfg_broad_centre_reason +]
 on-arrival: {!
@@ -264,7 +264,7 @@ go-to: polish_cabinet_formation
 
 @cfg_skrzynski_broad
 title: Broad cabinet of Skrzyński
-subtitle: PPS, PSL Piast, NPR, PSChD and ZLN under Skrzyński; only in a real crisis. Programme: fiscal burden 0.
+subtitle: PPS, PSL Piast, NPR, PSChD and ZLN under Skrzyński; only in a real crisis. Programme: a shared fiscal burden.
 choose-if: {! return PolishGovernment.draftChoiceStatus(Q, 'configuration', 'skrzynski_broad').available !}
 unavailable-subtitle: [+ pl_cfg_skrzynski_broad_reason +]
 on-arrival: {!
@@ -274,7 +274,7 @@ go-to: polish_cabinet_formation
 
 @cfg_national_unity
 title: National unity
-subtitle: All parties except the communists; only in a severe crisis. Programme: fiscal burden 0.
+subtitle: All parties except the communists; only in a severe crisis. Programme: a shared fiscal burden.
 choose-if: {! return PolishGovernment.draftChoiceStatus(Q, 'configuration', 'national_unity').available !}
 unavailable-subtitle: [+ pl_cfg_national_unity_reason +]
 on-arrival: {!

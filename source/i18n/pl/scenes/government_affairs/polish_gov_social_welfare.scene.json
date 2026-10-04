@@ -7,11 +7,11 @@
   "= Benefits and aid for the unemployed": "= Zasiłki i pomoc dla bezrobotnych",
   "There is one protection programme for these recipients. It pays from the month it starts, even under a caretaker cabinet. Each level of scope costs 2 B a month; a benefit does not lower unemployment itself.": "Dla tych odbiorców istnieje jeden program osłony. Wypłaca od miesiąca, w którym rusza, także pod gabinetem tymczasowym. Każdy poziom zakresu kosztuje 2 B miesięcznie; zasiłek sam nie obniża bezrobocia.",
   "title: Extend the protection": "title: Rozszerz osłonę",
-  "subtitle: Start the protection (2 B a month), or extend it by one level of scope (+2 B), up to 3.": "subtitle: Uruchom osłonę (2 B miesięcznie) albo rozszerz ją o jeden poziom zakresu (+2 B), najwyżej do 3.",
+  "subtitle: Start the protection (2 budget units a month), or extend it by one level of scope for 2 more units a month, up to level 3.": "subtitle: Uruchom osłonę (2 jednostki budżetu miesięcznie) albo rozszerz ją o jeden poziom zakresu za kolejne 2 jednostki miesięcznie, najwyżej do poziomu 3.",
   "title: Focus the aid on the most needy": "title: Skup pomoc na najbardziej potrzebujących",
-  "subtitle: Half of the recipients, the most needy, with the full relief: 1 B instead of 2.": "subtitle: Połowa odbiorców, najbardziej potrzebujących, z pełną ulgą: 1 B zamiast 2.",
+  "subtitle: Half of the recipients, the most needy, with the full relief: 1 budget unit instead of 2.": "subtitle: Połowa odbiorców, najbardziej potrzebujących, z pełną ulgą: 1 jednostka budżetu zamiast 2.",
   "title: Limit the benefits": "title: Ogranicz zasiłki",
-  "subtitle: A legal change of the benefit: only the difference, e.g. 2 → 1 B. Breaks the guarantee; Lewica +8 dissent.": "subtitle: Ustawowa zmiana zasiłku: tylko różnica, np. 2 → 1 B. Łamie gwarancję; Lewica: sprzeciw +8.",
+  "subtitle: A legal change of the benefit: only the difference, e.g. from 2 to 1 budget unit. Breaks the guarantee; Lewica dissent rises (+8).": "subtitle: Ustawowa zmiana zasiłku: tylko różnica, np. z 2 do 1 jednostki budżetu. Łamie gwarancję; sprzeciw Lewicy rośnie (+8).",
   "- @root: Continue.": "- @root: Dalej."
  }
 }

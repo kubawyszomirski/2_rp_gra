@@ -7,9 +7,9 @@
   "Perl represents Centrum PPS and concentrates on the party line and socialist press.": "Perl reprezentuje Centrum PPS i skupia się na linii partii oraz prasie socjalistycznej.",
   "- @root: Return to main": "- @root: Wróć do głównego ekranu",
   "title: Define the Party Line": "title: Określenie linii partii",
-  "subtitle: Centrum +8 strength and −8 dissent, Piłsudczycy −4; among the workers votes move from the KPP to PPS.": "subtitle: Centrum: siła +8, sprzeciw −8; Piłsudczycy: siła −4; wśród robotników głosy przechodzą od KPP do PPS.",
+  "subtitle: Centrum grows stronger (+8) and its dissent falls (−8), the Piłsudczycy grow weaker (−4); among the workers votes move from the KPP to PPS.": "subtitle: Centrum rośnie w siłę (+8), a jego sprzeciw spada (−8); Piłsudczycy słabną (−4); wśród robotników głosy przechodzą od KPP do PPS.",
   "- @root: Continue.": "- @root: Dalej.",
   "title: Direct the Party Press": "title: Kierowanie prasą partyjną",
-  "subtitle: 1 R; press credibility +5; press campaigns ×1.25 for six months. Needs a working press.": "subtitle: 1 R; wiarygodność prasy +5; kampanie prasowe ×1,25 przez sześć miesięcy. Wymaga działającej prasy."
+  "subtitle: 1 resource; the credibility of the press rises (+5) and press campaigns work better for six months (×1.25). Needs a working press.": "subtitle: 1 jednostka środków; wiarygodność prasy rośnie (+5), a kampanie prasowe przez sześć miesięcy działają mocniej (×1,25). Wymaga działającej prasy."
  }
 }

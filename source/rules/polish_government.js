@@ -1107,12 +1107,21 @@
     army: {'-2': 'autonomia dowództwa', '0': 'kompromis', '2': 'cywilna kontrola'},
   });
 
+  // A programme in words for the screen (Z — 0.53): the name of each position, its place on the scale −2..+2 in
+  // parentheses; a position without a name of its own (±1) lies between the middle and the end of its side.
   function describeProgramme(programme) {
+    const pl = rules.getLanguage() === 'pl';
     return Object.keys(programme || {}).map(topic => {
       const position = programme[topic];
-      const label = L((POSITION_NAMES[topic] || {})[String(position)], (POSITION_NAMES_PL[topic] || {})[String(position)]);
-      return L(TOPIC_NAMES[topic] || topic, TOPIC_NAMES_PL[topic] || topic) + ' ' + (position > 0 ? '+' : '') + position + (label ? ' (' + label + ')' : '');
-    }).join(', ');
+      const names = (pl ? POSITION_NAMES_PL : POSITION_NAMES)[topic] || {};
+      let label = names[String(position)];
+      if (!label && Math.abs(position) === 1 && names['0'] && names[String(2 * position)]) {
+        label = pl ? 'między „' + names['0'] + '” a „' + names[String(2 * position)] + '”' : 'between ' + names['0'] + ' and ' + names[String(2 * position)];
+      }
+      if (!label && position === 0) label = pl ? 'pozycja środkowa' : 'the middle position';
+      const size = position === 0 ? '' : ' (' + (position > 0 ? '+' : '−') + Math.abs(position) + ')';
+      return L(TOPIC_NAMES[topic] || topic, TOPIC_NAMES_PL[topic] || topic) + (label ? ': ' + label : '') + size;
+    }).join('; ');
   }
 
   // Reasons and notes stored in the records of S stay in English (decision 5A of the Polish version); these

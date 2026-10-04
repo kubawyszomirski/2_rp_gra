@@ -16,7 +16,7 @@
   "subtitle: Opens the Industry card for the workers' representation in a public plant; its one step costs no month (a law for co-decision remains).": "subtitle: Otwiera kartę „Polityka przemysłowa” dla przedstawicielstwa robotników w zakładzie publicznym; jej jeden krok nie kosztuje miesiąca (ustawa o współdecydowaniu nadal jest potrzebna).",
   "unavailable-subtitle: [? if advisor_action_timer = 1 : 1 month before the next Committee action. ?][? if advisor_action_timer > 1 : [+ advisor_action_timer +] months before the next Committee action. ?][? if advisor_action_timer <= 0 : [+ pl_czap_representation_why +] ?]": "unavailable-subtitle: [? if advisor_action_timer = 1 : Do następnej akcji CKW: 1 miesiąc. ?][? if advisor_action_timer >= 2 and advisor_action_timer <= 4 : Do następnej akcji CKW: [+ advisor_action_timer +] miesiące. ?][? if advisor_action_timer >= 5 : Do następnej akcji CKW: [+ advisor_action_timer +] miesięcy. ?][? if advisor_action_timer <= 0 : [+ pl_czap_representation_why +] ?]",
   "title: Socialist Education": "title: Edukacja socjalistyczna",
-  "subtitle: 1 R and a working TUR; Lewica +6 strength and −5 dissent; for six months the flow of workers from PPS to the KPP is halved.": "subtitle: 1 R i działający TUR; Lewica: siła +6, sprzeciw −5; przez sześć miesięcy odpływ robotników z PPS do KPP jest o połowę mniejszy.",
+  "subtitle: 1 resource and a working TUR; Lewica grows stronger (+6) and its dissent falls (−5); for six months the flow of workers from PPS to the KPP is halved.": "subtitle: 1 jednostka środków i działający TUR; Lewica rośnie w siłę (+6), a jej sprzeciw spada (−5); przez sześć miesięcy odpływ robotników z PPS do KPP jest o połowę mniejszy.",
   "- @root: Continue.": "- @root: Dalej."
  }
 }

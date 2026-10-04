@@ -22,7 +22,7 @@ Eligiusz Niewiadomski, who killed President Narutowicz, was executed on 31 Janua
 
 @condemn
 title: Condemn the cult and order our members not to disturb the service
-subtitle: 0 R; a clear instruction to the Milicja. The Centrum approves under the line of parliamentarism; the Christian Democrats join the condemnation only if they are close enough to us.
+subtitle: No resources; a clear instruction to the Milicja. The Centrum approves under the line of parliamentarism; the Christian Democrats join the condemnation only if they are close enough to us.
 choose-if: {! return PolishPolitics.cultStatus(Q, 'condemn').available !}
 unavailable-subtitle: [+ pl_b5_condemn_why +]
 on-arrival: {!
@@ -32,7 +32,7 @@ go-to: result
 
 @democracy_mass
 title: Organise a mass for the defence of democracy
-subtitle: 1 R, if a clergyman and a host agree; a campaign on the defence of democracy and, once held, democracy +2. No alliance with the Christian Democrats and no change of our programme on the Church.
+subtitle: 1 resource, if a clergyman and a host agree; a campaign on the defence of democracy, and once the mass is held democracy grows stronger (+2). No alliance with the Christian Democrats and no change of our programme on the Church.
 choose-if: {! return PolishPolitics.cultStatus(Q, 'democracy_mass').available !}
 unavailable-subtitle: [+ pl_b5_democracy_mass_why +]
 on-arrival: {!
@@ -42,7 +42,7 @@ go-to: result
 
 @stay_out
 title: Do not engage our organisations
-subtitle: 0 R; no campaign and no cost. The Left objects only if a public answer had been promised.
+subtitle: No resources; no campaign and no cost. The Left objects only if a public answer had been promised.
 choose-if: {! return PolishPolitics.cultStatus(Q, 'stay_out').available !}
 unavailable-subtitle: [+ pl_b5_stay_out_why +]
 on-arrival: {!

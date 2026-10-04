@@ -20,7 +20,7 @@ PolishUnions.stepsView(Q);
 
 @full
 title: Full cooperation with the communists
-subtitle: A joint committee for the whole action; it binds their whole contribution. The Centre +5 dissent while the acceptance inside PPS is below 60.
+subtitle: A joint committee for the whole action; it binds their whole contribution. Centrum dissent rises (+5) while the acceptance inside PPS is below 60.
 view-if: pl_st_stage = "cooperation"
 choose-if: {! return PolishUnions.cooperationStatus(Q, 'full').available !}
 unavailable-subtitle: [+ pl_st_full_why +]
@@ -31,7 +31,7 @@ go-to: polish_strike_steps
 
 @limited
 title: Limited coordination with the communists
-subtitle: A joint limited demand and the timing and safety of the action; separate leaderships. The Centre +2 while the acceptance is below 60.
+subtitle: A joint limited demand and the timing and safety of the action; separate leaderships. Centrum dissent rises a little (+2) while the acceptance is below 60.
 view-if: pl_st_stage = "cooperation"
 choose-if: {! return PolishUnions.cooperationStatus(Q, 'limited').available !}
 unavailable-subtitle: [+ pl_st_limited_why +]
@@ -51,7 +51,7 @@ go-to: polish_strike_steps
 
 @protect
 title: Protect the strikers with Milicja PPS
-subtitle: 0.5 R and the people of the Milicja; it lowers the exposure of the covered people, not the risk of a clash, and it can lose people.
+subtitle: 0.5 resources and the people of the Milicja; it lowers the exposure of the covered people, not the risk of a clash, and it can lose people.
 view-if: pl_st_stage = "protection"
 choose-if: {! return PolishUnions.protectionStatus(Q, 'protect').available !}
 unavailable-subtitle: [+ pl_st_protect_why +]

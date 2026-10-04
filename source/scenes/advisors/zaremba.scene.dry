@@ -20,7 +20,7 @@ Zaremba represents Lewica PPS and emphasizes class campaigning and a future work
 
 @worker_peasant_front
 title: Worker-Peasant Front
-subtitle: Relation with PSL Wyzwolenie +8. No list is formed by the name of the front.
+subtitle: The relation with PSL Wyzwolenie improves (+8). No list is formed by the name of the front.
 choose-if: {! return PolishParty.advisorActionStatus(Q, 'zaremba', 'worker_peasant_front').available !}
 unavailable-subtitle: [+ pl_advact_worker_peasant_front_why +]
 call: polish_advisor_commit
@@ -34,7 +34,7 @@ PolishParty.advisorAction(Q, 'zaremba', 'worker_peasant_front');
 
 @class_campaign
 title: Class Campaign
-subtitle: 1 R; PPS gains among employed workers (+4 base) and the unemployed (+3), loses among the petty bourgeoisie (−2); Lewica +4 strength, dissent −5.
+subtitle: 1 resource; PPS gains among employed workers (+4 base reach) and the unemployed (+3), loses among the petty bourgeoisie (−2); Lewica grows stronger (+4) and its dissent falls (−5).
 choose-if: {! return PolishParty.advisorActionStatus(Q, 'zaremba', 'class_campaign').available !}
 unavailable-subtitle: [+ pl_advact_class_campaign_why +]
 call: polish_advisor_commit

@@ -31,7 +31,7 @@ TUR: [+ pl_party_tur +]. Cooperatives: [+ pl_party_coops +].
 
 @fundraise
 title: An extraordinary collection
-subtitle: +[+ pl_pa_fundraise_gain +] R (dues × membership / 100); waits 3 months.
+subtitle: Brings [+ pl_pa_fundraise_gain +] resources (dues × membership / 100); waits three months.
 choose-if: {! return PolishParty.fundraiseStatus(Q).available !}
 unavailable-subtitle: [+ pl_pa_fundraise_why +]
 on-arrival: {!
@@ -41,7 +41,7 @@ go-to: result
 
 @apparatus
 title: Build up the party apparatus
-subtitle: 2 R; one level more (up to 4): income +0.15 R × membership/100 and upkeep +0.10 R a month.
+subtitle: 2 resources; one level more (up to 4): more income (+0.15 resources × membership/100 a month) and more upkeep (+0.10 resources a month).
 choose-if: {! return PolishParty.apparatusStatus(Q).available !}
 unavailable-subtitle: [+ pl_pa_apparatus_why +]
 on-arrival: {!
@@ -51,7 +51,7 @@ go-to: result
 
 @organize
 title: Organisational work
-subtitle: No money; +2 reach of one union branch or +2 base reach of PPS among one class.
+subtitle: No money; the reach of one union branch grows (+2), or the base reach of PPS among one class (+2).
 go-to: organize_menu
 
 @organize_menu
@@ -73,7 +73,7 @@ Organisers work without money. The gain is multiplied by the character of the pa
 
 @branch_industry
 title: Work in the industrial branch
-subtitle: Reach of the branch +2.
+subtitle: The branch’s reach grows (+2).
 choose-if: {! return PolishParty.organizeStatus(Q, 'branch:industry').available !}
 unavailable-subtitle: [+ pl_pa_branch_industry_why +]
 on-arrival: {!
@@ -83,7 +83,7 @@ go-to: result
 
 @branch_rail
 title: Work in the railway branch
-subtitle: Reach of the branch +2.
+subtitle: The branch’s reach grows (+2).
 choose-if: {! return PolishParty.organizeStatus(Q, 'branch:rail').available !}
 unavailable-subtitle: [+ pl_pa_branch_rail_why +]
 on-arrival: {!
@@ -93,7 +93,7 @@ go-to: result
 
 @branch_farm_labour
 title: Work in agricultural labour
-subtitle: Reach of the branch +2.
+subtitle: The branch’s reach grows (+2).
 choose-if: {! return PolishParty.organizeStatus(Q, 'branch:farm_labour').available !}
 unavailable-subtitle: [+ pl_pa_branch_farm_labour_why +]
 on-arrival: {!
@@ -103,7 +103,7 @@ go-to: result
 
 @class_workers
 title: Work among the workers
-subtitle: Base reach of PPS in their cells +2.
+subtitle: The base reach of PPS among them grows (+2).
 choose-if: {! return PolishParty.organizeStatus(Q, 'class:workers').available !}
 unavailable-subtitle: [+ pl_pa_class_workers_why +]
 on-arrival: {!
@@ -113,7 +113,7 @@ go-to: result
 
 @class_rural
 title: Work among the peasants
-subtitle: Base reach of PPS in their cells +2.
+subtitle: The base reach of PPS among them grows (+2).
 choose-if: {! return PolishParty.organizeStatus(Q, 'class:rural').available !}
 unavailable-subtitle: [+ pl_pa_class_rural_why +]
 on-arrival: {!
@@ -123,7 +123,7 @@ go-to: result
 
 @class_new_middle
 title: Work among the intelligentsia
-subtitle: Base reach of PPS in their cells +2.
+subtitle: The base reach of PPS among them grows (+2).
 choose-if: {! return PolishParty.organizeStatus(Q, 'class:new_middle').available !}
 unavailable-subtitle: [+ pl_pa_class_new_middle_why +]
 on-arrival: {!
@@ -133,7 +133,7 @@ go-to: result
 
 @class_old_middle
 title: Work among the petty bourgeoisie
-subtitle: Base reach of PPS in their cells +2.
+subtitle: The base reach of PPS among them grows (+2).
 choose-if: {! return PolishParty.organizeStatus(Q, 'class:old_middle').available !}
 unavailable-subtitle: [+ pl_pa_class_old_middle_why +]
 on-arrival: {!
@@ -143,7 +143,7 @@ go-to: result
 
 @class_bourgeois_landowners
 title: Work among the bourgeoisie and landowners
-subtitle: Base reach of PPS in their cells +2.
+subtitle: The base reach of PPS among them grows (+2).
 choose-if: {! return PolishParty.organizeStatus(Q, 'class:bourgeois_landowners').available !}
 unavailable-subtitle: [+ pl_pa_class_bourgeois_landowners_why +]
 on-arrival: {!
@@ -153,7 +153,7 @@ go-to: result
 
 @courses
 title: A TUR course
-subtitle: 1 T, 1 R; two financed months; one course at a time, then 4 months before the next.
+subtitle: This month's action and 1 resource; two financed months; one course at a time, then four months before the next.
 view-if: {! return Q.S.party_orgs.tur.level >= 1 !}
 go-to: courses_menu
 
@@ -172,7 +172,7 @@ A course gives its result only after two financed months of TUR. An unfinanced m
 
 @course_civil_rights
 title: Civil rights and the practice of democracy (level 1)
-subtitle: Among one class: radicalisation −3; its next democracy campaign within 6 months gains +0.10, once.
+subtitle: Among one class: radicalisation falls (−3), and its next democracy campaign within six months works better (+0.10, once).
 choose-if: {! return PolishParty.courseStatus(Q, 'civil_rights').available !}
 unavailable-subtitle: [+ pl_pa_course_civil_rights_why +]
 go-to: civil_rights_menu
@@ -226,7 +226,7 @@ go-to: result
 
 @course_union_cadres
 title: Union cadres and the line of PPS (level 2)
-subtitle: One branch: trust +3, dissent −4; it does not order the union to follow another line.
+subtitle: One branch: trust rises (+3) and dissent falls (−4); it does not order the union to follow another line.
 choose-if: {! return PolishParty.courseStatus(Q, 'union_cadres').available !}
 unavailable-subtitle: [+ pl_pa_course_union_cadres_why +]
 go-to: cadres_menu
@@ -284,7 +284,7 @@ go-to: result
 
 @launch_cooperative
 title: Launch the prepared cooperative
-subtitle: 1 T, 2 R: [+ pl_pa_coop_name +] starts work; upkeep 0.10 R a month.
+subtitle: This month's action and 2 resources: [+ pl_pa_coop_name +] starts work; upkeep 0.10 resources a month.
 view-if: pl_pa_coop_count > 0
 choose-if: {! return PolishParty.cooperativeStatus(Q, Q.pl_pa_coop_id).available !}
 unavailable-subtitle: [+ pl_pa_coop_why +]
@@ -297,7 +297,7 @@ go-to: result
 # communists (14.3, 9.6), so this option is not on the agenda's list; the scene stays for the rule PolishParty.kppStep.
 @kpp_trial
 title: Cooperation with the KPP: agree on a trial
-subtitle: 1 T; a trial of joint action for an existing demand, at a relation of 30 or more. Relation now [+ pl_kpp_relation +].
+subtitle: This month's action; a trial of joint action for an existing demand, at a relation of 30 or more. Relation now [+ pl_kpp_relation +].
 view-if: pl_pa_kpp_open = 1
 choose-if: {! return PolishParty.kppStepStatus(Q, 'trial').available !}
 unavailable-subtitle: [+ pl_kpp_trial_why +]
@@ -308,7 +308,7 @@ go-to: result
 
 @kpp_rules
 title: Cooperation with the KPP: agree on the rules
-subtitle: 1 T; after two different successful joint actions, one of them full, at a relation of 50 or more.
+subtitle: This month's action; after two different successful joint actions, one of them full, at a relation of 50 or more.
 view-if: pl_pa_kpp_open = 1
 choose-if: {! return PolishParty.kppStepStatus(Q, 'rules').available !}
 unavailable-subtitle: [+ pl_kpp_rules_why +]
@@ -319,7 +319,7 @@ go-to: result
 
 @kpp_agreement
 title: Cooperation with the KPP: a broader agreement
-subtitle: 1 T, 1 R; needs rules accepted by both sides and the acceptance of 60 inside PPS (now [+ pl_kpp_acceptance +]).
+subtitle: This month's action and 1 resource; needs rules accepted by both sides and the acceptance of 60 inside PPS (now [+ pl_kpp_acceptance +]).
 view-if: pl_pa_kpp_open = 1
 choose-if: {! return PolishParty.kppStepStatus(Q, 'agreement').available !}
 unavailable-subtitle: [+ pl_kpp_agreement_why +]
@@ -330,7 +330,7 @@ go-to: result
 
 @assess_forces
 title: Assess the forces of the state
-subtitle: 1 R; the interval of the known loyalty of the army groups narrows by 10 pp, to ±5 at best; waits 3 months. The loyalties themselves do not change.
+subtitle: 1 resource; the known loyalty of the army groups becomes more precise (−10 percentage points of the interval, down to ±5); waits three months. The loyalties themselves do not change.
 view-if: {! return !!Q.polish_security_rules && PolishSecurity.ready(Q) !}
 choose-if: {! return PolishSecurity.assessStatus(Q).available !}
 unavailable-subtitle: [+ pl_pa_assess_why +]

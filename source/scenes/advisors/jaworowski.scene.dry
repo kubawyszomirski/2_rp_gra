@@ -19,7 +19,7 @@ Jaworowski represents the Piłsudczyk current inside the PPS.
 
 @back_pilsudski
 title: Back Piłsudski
-subtitle: Relation with Piłsudski +8; Piłsudczycy +5 strength; Centrum and Lewica dissent +3. No posts or cabinet cooperation by itself.
+subtitle: The relation with Piłsudski improves (+8) and the Piłsudczycy grow stronger (+5); Centrum and Lewica dissent rises (+3). No posts or cabinet cooperation by itself.
 choose-if: {! return PolishParty.advisorActionStatus(Q, 'jaworowski', 'back_pilsudski').available !}
 unavailable-subtitle: [+ pl_advact_back_pilsudski_why +]
 call: polish_advisor_commit

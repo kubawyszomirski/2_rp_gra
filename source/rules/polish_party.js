@@ -453,8 +453,8 @@
     if (S.militia.arrears > 0) return L('Milicja has unpaid upkeep.', 'Milicja ma niezapłacone utrzymanie.');
     const reserve = 3 * militiaUpkeep(S.militia, strength, stage);
     if (cashAfter + 1e-9 < reserve) {
-      return L('Needs a reserve of ' + fmt(reserve) + ' R for three months of Milicja upkeep.',
-        'Wymaga rezerwy ' + fmt(reserve) + ' R na trzy miesiące utrzymania Milicji.');
+      return L('Needs a reserve of ' + rules.units(reserve) + ' for three months of Milicja upkeep.',
+        'Wymaga rezerwy ' + rules.units(reserve, 'resources', 'gen') + ' na trzy miesiące utrzymania Milicji.');
     }
     return '';
   }
@@ -467,7 +467,7 @@
     const cash = S.party_orgs.cash - (spent || 0);
     const wait = waitReason(Q, packageCooldownKey(id));
     if (wait) return no(wait);
-    if (cash + 1e-9 < p.cost) return no(L('Needs ' + p.cost + ' R.', 'Wymaga ' + p.cost + ' R.'));
+    if (cash + 1e-9 < p.cost) return no(L('Needs ' + rules.units(p.cost) + '.', 'Wymaga ' + rules.units(p.cost, 'resources', 'gen') + '.'));
     if (p.org === 'tur') {
       const tur = S.party_orgs.tur;
       if (Q.time < tur.available_from) return no(L('TUR is founded in January 1923.', 'TUR powstaje w styczniu 1923 roku.'));
@@ -503,7 +503,8 @@
     if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
     const total = ids.reduce((n, id) => n + PACKAGES[id].cost, 0);
     if (S.party_orgs.cash + 1e-9 < total) {
-      return no(L('The package costs ' + total + ' R; PPS has ' + fmt(S.party_orgs.cash) + ' R.', 'Pakiet kosztuje ' + total + ' R; PPS ma ' + fmt(S.party_orgs.cash) + ' R.'));
+      return no(L('The package costs ' + rules.units(total) + '; PPS has only ' + fmt(S.party_orgs.cash) + '.',
+        'Pakiet kosztuje ' + rules.units(total, 'resources', 'acc') + '; PPS ma tylko ' + fmt(S.party_orgs.cash) + '.'));
     }
     for (let i = 0; i < ids.length; i++) {
       const spent = ids.filter((other, j) => j !== i).reduce((n, other) => n + PACKAGES[other].cost, 0);
@@ -599,7 +600,8 @@
       if (m.repressed) return no(L('Milicja is under repression.', 'Milicja podlega represjom.'));
       if (m.arrears > 0) return no(L('Milicja has unpaid upkeep.', 'Milicja ma niezapłacone utrzymanie.'));
       const need = 2 + 3 * militiaUpkeep(m, m.strength, 2);
-      if (S.party_orgs.cash + 1e-9 < need) return no(L('Needs ' + fmt(need) + ' R: 2 R and three months of the upkeep of AS.', 'Wymaga ' + fmt(need) + ' R: 2 R i trzech miesięcy utrzymania AS.'));
+      if (S.party_orgs.cash + 1e-9 < need) return no(L('Needs ' + rules.units(need) + ' (2 for the change and a reserve for three months of the upkeep of AS).',
+        'Wymaga ' + rules.units(need, 'resources', 'gen') + ' (2 na przekształcenie i zapas na trzy miesiące utrzymania AS).'));
       return OK;
     }
     return no(L('Unknown option.', 'Nieznana opcja.'));
@@ -734,7 +736,7 @@
     const S = Q.S;
     if (S.party_orgs.apparatus.level >= APPARATUS_MAX) return no(L('The apparatus has its highest level, 4.', 'Aparat ma najwyższy poziom, 4.'));
     if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
-    if (S.party_orgs.cash + 1e-9 < 2) return no(L('Needs 2 R.', 'Wymaga 2 R.'));
+    if (S.party_orgs.cash + 1e-9 < 2) return no(L('Needs 2 resources.', 'Wymaga 2 jednostek środków.'));
     return OK;
   }
 
@@ -816,7 +818,7 @@
     if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
     const wait = waitReason(Q, 'party.tur_course');
     if (wait) return no(wait);
-    if (S.party_orgs.cash + 1e-9 < 1) return no(L('Needs 1 R.', 'Wymaga 1 R.'));
+    if (S.party_orgs.cash + 1e-9 < 1) return no(L('Needs 1 resource.', 'Wymaga 1 jednostki środków.'));
     if (course.audience === 'project' && !reformProjects(S).length) {
       return no(L('Needs a large labour, education, housing or cooperative project that has not been launched.', 'Wymaga dużego projektu pracy, oświaty, mieszkalnictwa albo spółdzielczości, który nie został jeszcze uruchomiony.'));
     }
@@ -881,7 +883,7 @@
     const S = Q.S, project = S.party_orgs.cooperatives.projects.find(p => p.id === projectId);
     if (!project || project.status !== 'prepared') return no(L('No prepared cooperative.', 'Brak przygotowanej spółdzielni.'));
     if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
-    if (S.party_orgs.cash + 1e-9 < 2) return no(L('Needs 2 R.', 'Wymaga 2 R.'));
+    if (S.party_orgs.cash + 1e-9 < 2) return no(L('Needs 2 resources.', 'Wymaga 2 jednostek środków.'));
     return OK;
   }
 
@@ -919,7 +921,7 @@
     if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
     const wait = waitReason(Q, 'party.press_format');
     if (wait) return no(wait);
-    if (S.party_orgs.cash + 1e-9 < 1) return no(L('Needs 1 R.', 'Wymaga 1 R.'));
+    if (S.party_orgs.cash + 1e-9 < 1) return no(L('Needs 1 resource.', 'Wymaga 1 jednostki środków.'));
     return OK;
   }
 
@@ -1298,7 +1300,7 @@
     if (step === 'agreement') {
       if (!cc.rules_agreed) return no(L('Needs rules accepted by both sides.', 'Wymaga zasad przyjętych przez obie strony.'));
       if (internalAcceptance(S) < 60) return no(L('Needs the acceptance of 60 inside PPS.', 'Wymaga akceptacji 60 wewnątrz PPS.'));
-      if (S.party_orgs.cash + 1e-9 < 1) return no(L('Needs 1 R.', 'Wymaga 1 R.'));
+      if (S.party_orgs.cash + 1e-9 < 1) return no(L('Needs 1 resource.', 'Wymaga 1 jednostki środków.'));
       return OK;
     }
     return no(L('Unknown step.', 'Nieznany krok.'));
@@ -1443,7 +1445,7 @@
     const S = Q.S;
     if (CAMPAIGN_KINDS.indexOf(kind) < 0) return no(L('Unknown campaign.', 'Nieznana kampania.'));
     if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
-    if (S.party_orgs.cash + 1e-9 < 1) return no(L('Needs 1 R.', 'Wymaga 1 R.'));
+    if (S.party_orgs.cash + 1e-9 < 1) return no(L('Needs 1 resource.', 'Wymaga 1 jednostki środków.'));
     if (!electorate.hasCells(S)) return no(L('The cells of the electorate are not recorded.', 'Grupy wyborców nie są zapisane.'));
     if ((kind === 'press' || kind === 'unions') && topic !== undefined && !TOPICS[topic]) return no(L('Choose a topic.', 'Wybierz temat.'));
     if (kind === 'polemic') {
@@ -1555,7 +1557,7 @@
     const S = Q.S;
     if (!pressInvestigationTarget(S)) return no(L('Needs an open case with evidence: a recorded case of violence or an unlawful restriction not yet revealed.', 'Wymaga otwartej sprawy z dowodami: zapisanego przypadku przemocy albo bezprawnego ograniczenia, którego jeszcze nie ujawniono.'));
     if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
-    if (S.party_orgs.cash + 1e-9 < 1) return no(L('Needs 1 R.', 'Wymaga 1 R.'));
+    if (S.party_orgs.cash + 1e-9 < 1) return no(L('Needs 1 resource.', 'Wymaga 1 jednostki środków.'));
     return OK;
   }
 
@@ -1904,7 +1906,7 @@
       if (f[factionId].dissent < 30) return no(L('A concession is for a faction with dissent of 30 or more.', 'Ustępstwo przysługuje frakcji ze sprzeciwem co najmniej 30.'));
       const wait = waitReason(Q, 'party.faction_conference.' + factionId);
       if (wait) return no(wait);
-      return S.party_orgs.cash + 1e-9 >= 1 ? OK : no(L('Needs 1 R.', 'Wymaga 1 R.'));
+      return S.party_orgs.cash + 1e-9 >= 1 ? OK : no(L('Needs 1 resource.', 'Wymaga 1 jednostki środków.'));
     }
     if (option === 'kpp_line') {
       if (!channelOpen(S)) return no(L('The channel to the KPP is closed.', 'Kanał kontaktu z KPP jest zamknięty.'));
@@ -1926,7 +1928,7 @@
         'Wymaga sprzeciwu co najmniej ' + fmt(gate) + ' w tej frakcji.'));
       const wait = waitReason(Q, 'party.faction_expulsion');
       if (wait) return no(wait);
-      return S.party_orgs.cash + 1e-9 >= 1 ? OK : no(L('Needs 1 R.', 'Wymaga 1 R.'));
+      return S.party_orgs.cash + 1e-9 >= 1 ? OK : no(L('Needs 1 resource.', 'Wymaga 1 jednostki środków.'));
     }
     return no(L('Unknown option.', 'Nieznana opcja.'));
   }
@@ -2133,7 +2135,7 @@
         'Do następnej akcji CKW: ' + wait + ' ' + rules.plural(wait, 'miesiąc', 'miesiące', 'miesięcy') + '.'));
     }
     const cost = ACTION_COSTS[actionId] || 0;
-    if (cost && S.party_orgs.cash + 1e-9 < cost) return no(L('Needs ' + cost + ' R.', 'Wymaga ' + fmt(cost) + ' R.'));
+    if (cost && S.party_orgs.cash + 1e-9 < cost) return no(L('Needs ' + rules.units(cost) + '.', 'Wymaga ' + rules.units(cost, 'resources', 'gen') + '.'));
     if (advisorId === 'perl' && Q.time > ADVISERS.perl.last_time) return no(L('Perl is no longer active.', 'Perl nie jest już aktywny.'));
     if (actionId === 'direct_party_press' && (S.party_orgs.press.unpaid_months >= 2 || S.party_orgs.press.reach <= 0)) return no(L('Needs a working party press.', 'Wymaga działającej prasy partyjnej.'));
     if (actionId === 'broker_coalition') return government.brokerStatus(Q);

@@ -52,7 +52,7 @@ go-to: polish_gov_industry
 
 @socialist_education
 title: Socialist Education
-subtitle: 1 R and a working TUR; Lewica +6 strength and −5 dissent; for six months the flow of workers from PPS to the KPP is halved.
+subtitle: 1 resource and a working TUR; Lewica grows stronger (+6) and its dissent falls (−5); for six months the flow of workers from PPS to the KPP is halved.
 choose-if: {! return PolishParty.advisorActionStatus(Q, 'czapinski', 'socialist_education').available !}
 unavailable-subtitle: [+ pl_advact_socialist_education_why +]
 call: polish_advisor_commit

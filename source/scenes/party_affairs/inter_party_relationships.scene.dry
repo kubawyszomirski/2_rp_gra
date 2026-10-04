@@ -33,7 +33,7 @@ PPS has no majority of its own. Regular talks with one party improve our relatio
 
 @psl_wyzwolenie
 title: Talk to PSL Wyzwolenie
-subtitle: Relation [+ pl_out_psl_wyzwolenie_relation +]; +[+ pl_out_psl_wyzwolenie_gain +].
+subtitle: Relation now [+ pl_out_psl_wyzwolenie_relation +]; it improves (+[+ pl_out_psl_wyzwolenie_gain +]).
 choose-if: {! return PolishGovernment.outreachStatus(Q, 'psl_wyzwolenie').available !}
 unavailable-subtitle: [+ pl_out_psl_wyzwolenie_reason +]
 on-arrival: {!
@@ -44,7 +44,7 @@ PPS and PSL Wyzwolenie compare their programmes for the countryside and the work
 
 @psl_piast
 title: Talk to PSL Piast
-subtitle: Relation [+ pl_out_psl_piast_relation +]; +[+ pl_out_psl_piast_gain +].
+subtitle: Relation now [+ pl_out_psl_piast_relation +]; it improves (+[+ pl_out_psl_piast_gain +]).
 choose-if: {! return PolishGovernment.outreachStatus(Q, 'psl_piast').available !}
 unavailable-subtitle: [+ pl_out_psl_piast_reason +]
 on-arrival: {!
@@ -55,7 +55,7 @@ PPS opens a working channel to PSL Piast.
 
 @npr
 title: Talk to NPR
-subtitle: Relation [+ pl_out_npr_relation +]; +[+ pl_out_npr_gain +].
+subtitle: Relation now [+ pl_out_npr_relation +]; it improves (+[+ pl_out_npr_gain +]).
 choose-if: {! return PolishGovernment.outreachStatus(Q, 'npr').available !}
 unavailable-subtitle: [+ pl_out_npr_reason +]
 on-arrival: {!
@@ -66,7 +66,7 @@ PPS and NPR discuss labour protection and the independence of trade unions.
 
 @pschd
 title: Talk to PSChD
-subtitle: Relation [+ pl_out_pschd_relation +]; +[+ pl_out_pschd_gain +].
+subtitle: Relation now [+ pl_out_pschd_relation +]; it improves (+[+ pl_out_pschd_gain +]).
 choose-if: {! return PolishGovernment.outreachStatus(Q, 'pschd').available !}
 unavailable-subtitle: [+ pl_out_pschd_reason +]
 on-arrival: {!
@@ -77,7 +77,7 @@ PPS holds careful talks with the Christian democrats.
 
 @zln
 title: Talk to ZLN
-subtitle: Relation [+ pl_out_zln_relation +]; +[+ pl_out_zln_gain +].
+subtitle: Relation now [+ pl_out_zln_relation +]; it improves (+[+ pl_out_zln_gain +]).
 choose-if: {! return PolishGovernment.outreachStatus(Q, 'zln').available !}
 unavailable-subtitle: [+ pl_out_zln_reason +]
 on-arrival: {!
@@ -88,7 +88,7 @@ PPS holds limited parliamentary talks with the national democrats. They create n
 
 @jewish_rep
 title: Talk to the Jewish representation
-subtitle: Relation [+ pl_out_jewish_rep_relation +]; +[+ pl_out_jewish_rep_gain +].
+subtitle: Relation now [+ pl_out_jewish_rep_relation +]; it improves (+[+ pl_out_jewish_rep_gain +]).
 choose-if: {! return PolishGovernment.outreachStatus(Q, 'jewish_rep').available !}
 unavailable-subtitle: [+ pl_out_jewish_rep_reason +]
 on-arrival: {!
@@ -99,7 +99,7 @@ PPS meets the Jewish deputies of the minority bloc.
 
 @other_minorities_rep
 title: Talk to the other national minorities
-subtitle: Relation [+ pl_out_other_minorities_rep_relation +]; +[+ pl_out_other_minorities_rep_gain +].
+subtitle: Relation now [+ pl_out_other_minorities_rep_relation +]; it improves (+[+ pl_out_other_minorities_rep_gain +]).
 choose-if: {! return PolishGovernment.outreachStatus(Q, 'other_minorities_rep').available !}
 unavailable-subtitle: [+ pl_out_other_minorities_rep_reason +]
 on-arrival: {!
@@ -110,7 +110,7 @@ PPS meets the other national-minority deputies of the minority bloc.
 
 @kpp
 title: Talk to the KPP
-subtitle: Relation [+ pl_out_kpp_relation +]; +[+ pl_out_kpp_gain +].
+subtitle: Relation now [+ pl_out_kpp_relation +]; it improves (+[+ pl_out_kpp_gain +]).
 view-if: {! return !!Q.S && Q.S.actors.kpp_channel.contact_open !}
 choose-if: {! return PolishGovernment.outreachStatus(Q, 'kpp').available !}
 unavailable-subtitle: [+ pl_out_kpp_reason +]

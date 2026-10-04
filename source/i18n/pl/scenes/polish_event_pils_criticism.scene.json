@@ -7,11 +7,11 @@
   "= Piłsudski criticises parliament": "= Piłsudski krytykuje parlament",
   "In this game Józef Piłsudski speaks publicly against the Sejm over [+ pl_crit_topic +]. The wording is a synthetic game event, not a historical quotation. PPS must answer this month; the answer is recorded in the journal of institutions and does not change our lasting line on Piłsudski or on the form of power.": "W tej grze Józef Piłsudski występuje publicznie przeciw Sejmowi w sprawie: [+ pl_crit_topic +]. Sformułowanie jest syntetycznym wydarzeniem gry, a nie historycznym cytatem. PPS musi odpowiedzieć w tym miesiącu; odpowiedź trafia do dziennika instytucji i nie zmienia naszej trwałej linii wobec Piłsudskiego ani w sprawie ustroju.",
   "title: Support the criticism of parliamentarism": "title: Poprzyj krytykę parlamentaryzmu",
-  "subtitle: Relation with Piłsudski +4; Piłsudczycy dissent −3, Centre +5. The authority of the Sejm −2 for twelve months. [+ pl_crit_warning +]": "subtitle: Relacja z Piłsudskim +4; Piłsudczycy: sprzeciw −3, Centrum: sprzeciw +5. Autorytet Sejmu −2 przez dwanaście miesięcy. [+ pl_crit_warning +]",
+  "subtitle: The relation with Piłsudski improves (+4); Piłsudczycy dissent falls (−3) and Centre dissent rises (+5). The authority of the Sejm falls for twelve months (−2). [+ pl_crit_warning +]": "subtitle: Relacja z Piłsudskim się poprawia (+4); sprzeciw Piłsudczyków spada (−3), a sprzeciw Centrum rośnie (+5). Autorytet Sejmu spada przez dwanaście miesięcy (−2). [+ pl_crit_warning +]",
   "title: Defend parliament and the lawful change of governments": "title: Broń parlamentu i legalnej zmiany rządów",
-  "subtitle: Relation with Piłsudski −4; Piłsudczycy dissent +5, Centre −3. The authority of the Sejm +1 for twelve months.": "subtitle: Relacja z Piłsudskim −4; Piłsudczycy: sprzeciw +5, Centrum: sprzeciw −3. Autorytet Sejmu +1 przez dwanaście miesięcy.",
+  "subtitle: The relation with Piłsudski worsens (−4); Piłsudczycy dissent rises (+5) and Centre dissent falls (−3). The authority of the Sejm grows for twelve months (+1).": "subtitle: Relacja z Piłsudskim się pogarsza (−4); sprzeciw Piłsudczyków rośnie (+5), a sprzeciw Centrum spada (−3). Autorytet Sejmu rośnie przez dwanaście miesięcy (+1).",
   "title: Parliament should be reformed to work better": "title: Parlament trzeba zreformować, by działał lepiej",
-  "subtitle: No change of relation; Centre dissent −2. It supports the line of reform but creates no project, path or votes.": "subtitle: Bez zmiany relacji; Centrum: sprzeciw −2. Wspiera linię reformy, ale nie tworzy projektu, ścieżki ani głosów.",
+  "subtitle: No change of relation; Centre dissent falls (−2). It supports the line of reform but creates no project, path or votes.": "subtitle: Bez zmiany relacji; sprzeciw Centrum spada (−2). Wspiera linię reformy, ale nie tworzy projektu, ścieżki ani głosów.",
   "- @root: Continue.": "- @root: Dalej."
  }
 }

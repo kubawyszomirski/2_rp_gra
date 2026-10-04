@@ -934,7 +934,7 @@
     if (choice === 'none') return OK;
     if (S.militia.banned) return no(L('Milicja PPS is banned.', 'Milicja PPS jest objęta zakazem działalności.'));
     if (!(S.militia.strength > 0)) return no(L('Milicja PPS has no members.', 'Milicja PPS nie ma członków.'));
-    return S.party_orgs.cash + 1e-9 >= PROTECTION_COST ? OK : no(L('Needs 0.5 R.', 'Wymaga 0,5 R.'));
+    return S.party_orgs.cash + 1e-9 >= PROTECTION_COST ? OK : no(L('Needs 0.5 resources.', 'Wymaga 0,5 jednostki środków.'));
   }
 
   // 17.5, 16.5: the Milicja protects the strikers with the people it assigns and 0.5 R; the protection cuts the
@@ -1286,9 +1286,9 @@
   function branchLine(S, id) {
     const branch = S.unions[id];
     return L(BRANCH_NAMES[id] + ': reach ' + fmt(branch.reach) + ', readiness ' + fmt(branch.readiness) + ', fatigue ' + fmt(branch.fatigue) +
-      ', trust ' + fmt(branch.trust) + ', dissent ' + fmt(branch.dissent) + ', fund ' + fmt(branch.fund) + ' R; ',
+      ', trust ' + fmt(branch.trust) + ', dissent ' + fmt(branch.dissent) + ', fund ' + rules.units(branch.fund) + '; ',
       branchName(id) + ': zasięg ' + fmt(branch.reach) + ', gotowość ' + fmt(branch.readiness) + ', zmęczenie ' + fmt(branch.fatigue) +
-      ', zaufanie ' + fmt(branch.trust) + ', sprzeciw ' + fmt(branch.dissent) + ', fundusz ' + fmt(branch.fund) + ' R; ') + statusText(S, branchRecord(S, id));
+      ', zaufanie ' + fmt(branch.trust) + ', sprzeciw ' + fmt(branch.dissent) + ', fundusz ' + rules.units(branch.fund) + '; ') + statusText(S, branchRecord(S, id));
   }
 
   function offerText(S, rec) {

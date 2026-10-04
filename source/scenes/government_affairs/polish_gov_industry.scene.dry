@@ -32,7 +32,7 @@ Industry and Trade can prepare the credit instrument or run one package of publi
 
 @credit
 title: Conditional credit for the market
-subtitle: Prepares the credit instrument (public fund): +5 to the credit target while it works.
+subtitle: Prepares the credit instrument (public fund): the credit target rises while it works (+5).
 choose-if: {! return PolishProjects.optionStatus(Q, 'industrial_policy', 'credit').available !}
 unavailable-subtitle: [+ pl_industrial_policy_credit_why +]
 on-arrival: {!
@@ -42,7 +42,7 @@ go-to: result
 
 @rescue
 title: Conditional credit to rescue a named plant
-subtitle: Prepares the rescue of the oldest recorded plant that lost capacity: 2 B a month for two months, then 1 B; restores its capacity. Launched from the agenda.
+subtitle: Prepares the rescue of the oldest recorded plant that lost capacity: costs the budget 2 units a month for two months, then 1 unit; restores its capacity. Launched from the agenda.
 choose-if: {! return PolishProjects.optionStatus(Q, 'industrial_policy', 'rescue').available !}
 unavailable-subtitle: [+ pl_industrial_policy_rescue_why +]
 on-arrival: {!
@@ -52,7 +52,7 @@ go-to: result
 
 @orders
 title: Public orders
-subtitle: One contract for three settlements: 1 B a month, +0.30 pp to output × execution.
+subtitle: One contract for three settlements: costs the budget 1 unit a month; output grows (+0.30 percentage points × execution).
 choose-if: {! return PolishProjects.optionStatus(Q, 'industrial_policy', 'orders').available !}
 unavailable-subtitle: [+ pl_industrial_policy_orders_why +]
 on-arrival: {!
@@ -62,7 +62,7 @@ go-to: result
 
 @public_control
 title: Take an enterprise under public control
-subtitle: An act of public control of the oldest recorded private plant, voted now; business pressure +15 when it takes effect. A public board manages it.
+subtitle: An act of public control of the oldest recorded private plant, voted now; business pressure grows when it takes effect (+15). A public board manages it.
 choose-if: {! return PolishProjects.optionStatus(Q, 'industrial_policy', 'public_control').available !}
 unavailable-subtitle: [+ pl_industrial_policy_public_control_why +]
 on-arrival: {!
@@ -90,7 +90,7 @@ The representation of the workers of a public plant uses one record. Consultatio
 
 @rep_consultative
 title: Information and consultation
-subtitle: 1 T, 0 B, by the act of the public owner; the workers' grievance −2.
+subtitle: This month's action, nothing from the budget, by the act of the public owner; the workers' grievance falls (−2).
 choose-if: {! return PolishProjects.optionStatus(Q, 'industrial_policy', 'worker_representation', {variant: 'consultative'}).available !}
 unavailable-subtitle: [+ pl_rep_consultative_why +]
 on-arrival: {!
@@ -100,7 +100,7 @@ go-to: result
 
 @rep_decision_rights
 title: Co-decision on mass dismissals and the wage rules
-subtitle: Prepared now (1 T); its law and launch in the agenda (1 T), then 1 B a month for two months; grievance −4, or the missing −2 after consultation.
+subtitle: Prepared now (this month's action); its law and launch in the agenda (another month's action), then costs the budget 1 unit a month for two months; grievance falls (−4, or the missing −2 after consultation).
 choose-if: {! return PolishProjects.optionStatus(Q, 'industrial_policy', 'worker_representation', {variant: 'decision_rights'}).available !}
 unavailable-subtitle: [+ pl_rep_decision_rights_why +]
 on-arrival: {!

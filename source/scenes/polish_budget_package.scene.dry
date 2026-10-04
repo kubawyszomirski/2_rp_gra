@@ -57,7 +57,7 @@ go-to: result
 
 @wealth
 title: Shift the burden to wealth
-subtitle: A progressive tax or the extraordinary wealth tax instead of burdens on broad groups; business pressure +4 or +8.
+subtitle: A progressive tax or the extraordinary wealth tax instead of burdens on broad groups; business pressure grows (+4 or +8).
 choose-if: {! return PolishProjects.budgetOptionStatus(Q, 'wealth').available !}
 unavailable-subtitle: [+ pl_bud_wealth_why +]
 on-arrival: {!
@@ -69,7 +69,7 @@ go-to: result
 
 @loan
 title: Propose a loan instead of cuts
-subtitle: A domestic loan: +3 B for 6 months, then −1 B for 12 months. Needs credit of at least 40.
+subtitle: A domestic loan: brings the budget 3 units a month for six months, then costs it 1 unit a month for twelve months. Needs credit of at least 40.
 choose-if: {! return PolishProjects.budgetOptionStatus(Q, 'loan').available !}
 unavailable-subtitle: [+ pl_bud_loan_why +]
 on-arrival: {!

@@ -25,7 +25,7 @@ Q.pl_mil_as_why = PolishParty.militiaStatus(Q, 'as').reason;
 
 @recruit
 title: Recruit
-subtitle: 1 R; +100 members, no efficiency bonus. Waits 2 months.
+subtitle: 1 resource; Milicja gains members (+100), with no gain in efficiency. Waits two months.
 choose-if: {! return PolishParty.militiaStatus(Q, 'recruit').available !}
 unavailable-subtitle: [+ pl_mil_recruit_why +]
 on-arrival: {!
@@ -35,7 +35,7 @@ go-to: result
 
 @militarize
 title: Militarise
-subtitle: 2 R; training and discipline: efficiency +0.10, up to 0.70. The first time, Centrum dissent +3. Waits 3 months.
+subtitle: 2 resources; training and discipline raise efficiency (+0.10, up to 0.70). The first time Centrum dissent rises (+3). Waits three months.
 choose-if: {! return PolishParty.militiaStatus(Q, 'militarize').available !}
 unavailable-subtitle: [+ pl_mil_militarize_why +]
 on-arrival: {!
@@ -45,7 +45,7 @@ go-to: result
 
 @form_as
 title: Reorganise as Akcja Socjalistyczna
-subtitle: 2 R, once; needs a militarised Milicja of at least 500, legality, no arrears and a reserve. Members follow a call better (+0.15); up to three cases at once before a coup.
+subtitle: 2 resources, once; needs a militarised Milicja of at least 500, legality, no arrears and a reserve. Members follow a call better (+0.15); up to three cases at once before a coup.
 choose-if: {! return PolishParty.militiaStatus(Q, 'as').available !}
 unavailable-subtitle: [+ pl_mil_as_why +]
 on-arrival: {!

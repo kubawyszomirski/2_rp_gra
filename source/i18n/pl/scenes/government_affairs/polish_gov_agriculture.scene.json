@@ -7,9 +7,9 @@
   "= Modernisation of agriculture": "= Modernizacja rolnictwa",
   "Each project covers one of three tranches of the countryside and costs 1 B for 4 months, nothing after. The same area does not get the same improvement twice; land reform and modernisation may cover the same people.": "Każdy projekt obejmuje jedną z trzech transz wsi i kosztuje 1 B przez 4 miesiące, potem nic. Ten sam obszar nie dostaje dwa razy tej samej poprawy; reforma rolna i modernizacja mogą objąć tych samych ludzi.",
   "title: Advice, tools and cooperative modernisation": "title: Doradztwo, narzędzia i modernizacja spółdzielcza",
-  "subtitle: Agrarian pressure −2; better conditions of the farms covered.": "subtitle: Presja agrarna −2; lepsze warunki objętych gospodarstw.",
+  "subtitle: Agrarian pressure falls (−2); better conditions of the farms covered.": "subtitle: Presja agrarna spada (−2); lepsze warunki objętych gospodarstw.",
   "title: Voluntary consolidation of land": "title: Dobrowolna komasacja gruntów",
-  "subtitle: Agrarian pressure −2; needs its law; a dispute over borders halts it.": "subtitle: Presja agrarna −2; wymaga własnej ustawy; spór o granice ją wstrzymuje.",
+  "subtitle: Agrarian pressure falls (−2); needs its law; a dispute over borders halts it.": "subtitle: Presja agrarna spada (−2); wymaga własnej ustawy; spór o granice ją wstrzymuje.",
   "title: Cooperative processing and sales": "title: Spółdzielcze przetwórstwo i sprzedaż",
   "subtitle: Needs a cooperative executor: an operating PPS cooperative.": "subtitle: Wymaga wykonawcy spółdzielczego: działającej spółdzielni PPS.",
   "- @root: Continue.": "- @root: Dalej."

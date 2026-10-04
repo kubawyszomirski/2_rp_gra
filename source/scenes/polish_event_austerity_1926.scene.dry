@@ -22,7 +22,7 @@ The partners on the right propose to limit the protection for the unemployed fro
 
 @bargain
 title: Demand the full protection, or we end our support
-subtitle: The partners weigh how much they need PPS; those who give in think less of us (relation −3).
+subtitle: The partners weigh how much they need PPS; those who give in think less of us (−3 relation).
 on-arrival: {!
 var out = PolishProjects.austerityChoose(Q, 'bargain');
 Q.pl_aus_threat = out.threat ? 1 : 0;
@@ -81,7 +81,7 @@ go-to: result
 
 @back_down
 title: Back down
-subtitle: Reputation −5; the cut goes to the vote; later threats against this cabinet count only as persuasion.
+subtitle: Our reputation falls (−5); the cut goes to the vote; later threats against this cabinet count only as persuasion.
 on-arrival: {!
 var out = PolishProjects.austerityThreat(Q, 'back_down');
 Q.pl_aus_result = out.cut.status === 'rejected' ? 'We back down. The cut finds no majority; the protection stays.' : 'We back down. The Sejm adopts the cut: the protection falls to 1 B.';

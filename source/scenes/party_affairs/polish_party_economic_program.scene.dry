@@ -83,7 +83,7 @@ go-to: menu
 
 @confirm
 title: Confirm the programme
-subtitle: [? if pl_prog_confirm_same = 1 : This is the present programme. Confirming it costs this month's action and the card waits 6 months; nothing else changes. ?][? if pl_prog_confirm_same = 0 : 1 T; the card then waits 6 months. ?]
+subtitle: [? if pl_prog_confirm_same = 1 : **Present programme** Confirming it costs this month's action and the card waits six months; nothing else changes. ?][? if pl_prog_confirm_same = 0 : Costs this month's action; the card then waits six months. ?]
 choose-if: {! return PolishParty.programmeStatus(Q, String(Q.pl_prog_draft || '').split(',').filter(Boolean)).available !}
 unavailable-subtitle: [+ pl_prog_confirm_why +]
 on-arrival: {!

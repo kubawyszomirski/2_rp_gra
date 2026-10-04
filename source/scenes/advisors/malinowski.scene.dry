@@ -19,7 +19,7 @@ Malinowski represents the organizational base of the Piłsudczyk current.
 
 @organize_pilsudczyks
 title: Organize the Piłsudczyks
-subtitle: Piłsudczycy +8 strength and −10 dissent. No change of the relation with Piłsudski or of the army.
+subtitle: The Piłsudczycy grow stronger (+8) and their dissent falls (−10). No change of the relation with Piłsudski or of the army.
 choose-if: {! return PolishParty.advisorActionStatus(Q, 'malinowski', 'organize_pilsudczyks').available !}
 unavailable-subtitle: [+ pl_advact_organize_pilsudczyks_why +]
 call: polish_advisor_commit

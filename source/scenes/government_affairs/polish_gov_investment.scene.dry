@@ -28,7 +28,7 @@ The credit instrument is a large project: 2 B of building for 2 months, then 1 B
 
 @public
 title: Public fund
-subtitle: The state pays everything: 2 B of building, 1 B to run.
+subtitle: The state pays everything: 2 budget units for the building and 1 to run it.
 choose-if: {! return PolishProjects.optionStatus(Q, 'investment_fund', 'public').available !}
 unavailable-subtitle: [+ pl_investment_fund_public_why +]
 on-arrival: {!
@@ -38,7 +38,7 @@ go-to: result
 
 @banks
 title: Agreement with banks and industry
-subtitle: The state pays half of the building: 1 B, then 1 B; business pressure −8. Needs credit of at least 40.
+subtitle: The state pays half of the building: 1 budget unit, then 1 more; business pressure falls (−8). Needs credit of at least 40.
 choose-if: {! return PolishProjects.optionStatus(Q, 'investment_fund', 'banks').available !}
 unavailable-subtitle: [+ pl_investment_fund_banks_why +]
 on-arrival: {!

@@ -28,7 +28,7 @@ Public works belong to Labour; the Treasury alone gives no access. Each programm
 
 @employment
 title: Quick employment of the unemployed
-subtitle: 2 B for 3 months, then 1 B and 2 units: 0.15 pp of output a unit and public jobs.
+subtitle: Costs the budget 2 units a month for three months, then 1; two employment units raise output and give public jobs (+0.15 percentage points of output a unit).
 choose-if: {! return PolishProjects.optionStatus(Q, 'public_works', 'employment').available !}
 unavailable-subtitle: [+ pl_public_works_employment_why +]
 on-arrival: {!
@@ -38,7 +38,7 @@ go-to: result
 
 @infrastructure
 title: Transport and infrastructure
-subtitle: 2 B for 4 months, then 1 B and 2 units: 0.25 pp of output a unit.
+subtitle: Costs the budget 2 units a month for four months, then 1; two employment units raise output more (+0.25 percentage points of output a unit).
 choose-if: {! return PolishProjects.optionStatus(Q, 'public_works', 'infrastructure').available !}
 unavailable-subtitle: [+ pl_public_works_infrastructure_why +]
 on-arrival: {!
@@ -48,7 +48,7 @@ go-to: result
 
 @housing
 title: Workers’ housing
-subtitle: 2 B for 4 months, then 1 B; relief for the recipients, no employment units.
+subtitle: Costs the budget 2 units a month for four months, then 1; relief for the recipients, no employment units.
 choose-if: {! return PolishProjects.optionStatus(Q, 'public_works', 'housing').available !}
 unavailable-subtitle: [+ pl_public_works_housing_why +]
 on-arrival: {!

@@ -19,6 +19,9 @@ function choice(engine, id) {
 function content(engine) {
   return JSON.stringify(engine.ui.paragraphs);
 }
+// Plain text and bold parts of a displayed subtitle: the present choice opens with a bold label (Z — 0.53).
+const plain = c => (c == null ? '' : typeof c === 'string' ? c : Array.isArray(c) ? c.map(plain).join('') : plain(c.content));
+const bold = c => (c == null || typeof c === 'string' ? [] : Array.isArray(c) ? c.flatMap(bold) : c.type === 'emphasis-2' ? [plain(c.content)] : bold(c.content));
 function playFromHand(engine, cardId) {
   engine.state.currentHands.main = [{ id: cardId, title: cardId }];
   engine.playCard(cardId);
@@ -64,7 +67,8 @@ test('Bez płatnego braku wyboru: the organisations card returned to the hand co
   assert.deepEqual(engine.state.currentHands.main.map(c => c.id), ['polish_party_organizations'], 'the card goes back to the hand');
   playFromHand(engine, 'polish_party_dues');
   assert.equal(choice(engine, 'polish_party_dues.keep').canChoose, true);
-  assert.match([].concat(choice(engine, 'polish_party_dues.keep').subtitle).join(''), /the dues stay at 2 and the card waits 6 months/);
+  assert.match(plain(choice(engine, 'polish_party_dues.keep').subtitle), /^Present level Costs this month's action; the dues stay at 2 and the card waits six months/);
+  assert.deepEqual(bold(choice(engine, 'polish_party_dues.keep').subtitle), ['Present level']);
   assert.equal([].concat(choice(engine, 'easy_discard').title).join(''), 'Return to hand');
   choose(engine, 'easy_discard');
   assert.equal(Q.time, 1);
@@ -162,8 +166,9 @@ test('Obecna linia in the game: the present line can be confirmed for the month;
     'polish_party_economic_program']) assert.ok(deck(engine).includes(id), id);
   playFromHand(engine, 'polish_party_pils_influence');
   assert.equal(choice(engine, 'polish_party_pils_influence.conditional').canChoose, true);
-  assert.match(String(choice(engine, 'polish_party_pils_influence.conditional').subtitle), /This is the present line\. Confirming it costs this month's action/);
-  assert.doesNotMatch(String(choice(engine, 'polish_party_pils_influence.support').subtitle), /present line/);
+  assert.match(plain(choice(engine, 'polish_party_pils_influence.conditional').subtitle), /^Present line Confirming it costs this month's action/);
+  assert.deepEqual(bold(choice(engine, 'polish_party_pils_influence.conditional').subtitle), ['Present line'], 'the label is bold');
+  assert.doesNotMatch(plain(choice(engine, 'polish_party_pils_influence.support').subtitle), /present line/i);
   choose(engine, 'easy_discard');
   assert.deepEqual([Q.time, Q.month_actions, Q.S.cooldowns['party.pils_influence']], [1, 0, undefined]);
   assert.deepEqual(engine.state.currentHands.main.map(c => c.id), ['polish_party_pils_influence']);
@@ -181,9 +186,10 @@ test('Program bez zmiany in the game: the same set can be confirmed for the mont
   playFromHand(engine, 'polish_party_economic_program');
   choose(engine, 'polish_party_economic_program.edit');
   assert.equal(choice(engine, 'polish_party_economic_program.confirm').canChoose, true, 'the empty set is the present one and can be confirmed');
-  assert.match(String(choice(engine, 'polish_party_economic_program.confirm').subtitle), /This is the present programme/);
+  assert.match(plain(choice(engine, 'polish_party_economic_program.confirm').subtitle), /^Present programme Confirming it costs/);
+  assert.deepEqual(bold(choice(engine, 'polish_party_economic_program.confirm').subtitle), ['Present programme']);
   choose(engine, 'polish_party_economic_program.toggle_public_works');
-  assert.match(String(choice(engine, 'polish_party_economic_program.confirm').subtitle), /^1 T; the card then waits 6 months\.$/);
+  assert.match(plain(choice(engine, 'polish_party_economic_program.confirm').subtitle), /^Costs this month's action; the card then waits six months\.$/);
   choose(engine, 'polish_party_economic_program.toggle_public_works');
   assert.equal(choice(engine, 'polish_party_economic_program.confirm').canChoose, true);
   choose(engine, 'polish_party_economic_program');

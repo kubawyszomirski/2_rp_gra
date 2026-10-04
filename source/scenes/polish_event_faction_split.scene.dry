@@ -20,7 +20,7 @@ The dissent of [+ pl_e3_faction +] is [+ pl_e3_dissent +]. Its leaders demand th
 
 @accept
 title: Accept the demand and keep unity
-subtitle: PPS makes the change at once, without cost; the faction's dissent −5. Partners react to the changed policy itself.
+subtitle: PPS makes the change at once, without cost; the faction's dissent falls (−5). Partners react to the changed policy itself.
 on-arrival: {!
 PolishParty.factionSplitAccept(Q);
 !}
@@ -28,7 +28,7 @@ go-to: result
 
 @refuse
 title: Keep the line of PPS and accept the split
-subtitle: 40% of the faction's base leaves with its voters and MPs; the rest of the faction's dissent −20.
+subtitle: A large part of the faction's base leaves with its voters and MPs (−40% of its base); the dissent of the rest falls (−20).
 on-arrival: {!
 PolishParty.factionSplitRefuse(Q);
 !}

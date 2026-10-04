@@ -43,7 +43,7 @@ The factions react to the stance as soon as it is confirmed; a faction whose dis
 
 @support_pils
 title: Support Piłsudski
-subtitle: Factions: [+ pl_coup_support_pils_preview +]. Relation with Piłsudski +4 at the end and +4 more for an executed share; the parties of the attacked cabinet the opposite.
+subtitle: Factions: [+ pl_coup_support_pils_preview +]. The relation with Piłsudski improves at the end (+4, and +4 more for an executed share); the parties of the attacked cabinet the opposite.
 choose-if: {! return PolishSecurity.coupStanceStatus(Q, 'support_pils').available !}
 on-arrival: {!
 PolishSecurity.coupStance(Q, 'support_pils');
@@ -52,7 +52,7 @@ go-to: polish_event_coup
 
 @defend_legal
 title: Defend the legal government
-subtitle: Factions: [+ pl_coup_defend_legal_preview +]. Relation with Piłsudski −4 at the end and −4 more for an executed share; the parties of the attacked cabinet the opposite.
+subtitle: Factions: [+ pl_coup_defend_legal_preview +]. The relation with Piłsudski worsens at the end (−4, and −4 more for an executed share); the parties of the attacked cabinet the opposite.
 choose-if: {! return PolishSecurity.coupStanceStatus(Q, 'defend_legal').available !}
 on-arrival: {!
 PolishSecurity.coupStance(Q, 'defend_legal');

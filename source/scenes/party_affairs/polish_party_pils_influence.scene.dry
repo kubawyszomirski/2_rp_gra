@@ -22,7 +22,7 @@ The present line: **[+ pl_stance_current +]**. A new declaration costs this mont
 
 @support
 title: Support his influence
-subtitle: [? if pl_stance_support_present = 1 : This is the present line. Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_support_present = 0 : Relation with Piłsudski +4 (not again within 12 months); Centrum dissent +3. ?]
+subtitle: [? if pl_stance_support_present = 1 : **Present line** Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_support_present = 0 : The relation with Piłsudski improves (+4; not again within 12 months); Centrum dissent rises (+3). ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'pils_influence', 'support').available !}
 unavailable-subtitle: [+ pl_stance_support_why +]
 on-arrival: {!
@@ -32,7 +32,7 @@ go-to: result
 
 @conditional
 title: Support it on conditions
-subtitle: [? if pl_stance_conditional_present = 1 : This is the present line. Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_conditional_present = 0 : Concessions only with civilian control or responsibility before the Sejm. ?]
+subtitle: [? if pl_stance_conditional_present = 1 : **Present line** Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_conditional_present = 0 : Concessions only with civilian control or responsibility before the Sejm. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'pils_influence', 'conditional').available !}
 unavailable-subtitle: [+ pl_stance_conditional_why +]
 on-arrival: {!
@@ -42,7 +42,7 @@ go-to: result
 
 @oppose_military_interference
 title: Oppose the army’s interference
-subtitle: [? if pl_stance_oppose_military_interference_present = 1 : This is the present line. Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_oppose_military_interference_present = 0 : Relation −4; Piłsudczycy dissent +3; no autonomous military power until the line changes. ?]
+subtitle: [? if pl_stance_oppose_military_interference_present = 1 : **Present line** Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_oppose_military_interference_present = 0 : The relation with Piłsudski worsens (−4); Piłsudczycy dissent rises (+3); no autonomous military power until the line changes. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'pils_influence', 'oppose_military_interference').available !}
 unavailable-subtitle: [+ pl_stance_oppose_military_interference_why +]
 on-arrival: {!

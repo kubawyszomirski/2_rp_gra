@@ -27,7 +27,7 @@ Piłsudski judges an offer by its programme, the real function it gives him and 
 
 @military_function
 title: A military function under civilian control
-subtitle: Relation 40; once executed: pressure −12, relation +4, Piłsudczycy −5 dissent; nominations up to +0.05 of loyalty to him in the group under him.
+subtitle: Needs a relation of at least 40; once carried out: the coup pressure falls (−12), the relation improves (+4) and Piłsudczycy dissent falls (−5); nominations raise loyalty to him in the group under him (+0.05 at most).
 choose-if: {! return PolishSecurity.concessionStatus(Q, 'military_function').available !}
 unavailable-subtitle: [+ pl_pils_military_function_why +]
 on-arrival: {!
@@ -37,7 +37,7 @@ go-to: result
 
 @inspectorate
 title: An independent inspectorate with freer nominations
-subtitle: Relation 60 and a change of the law, filed now; once in force: pressure −25, relation +4, Piłsudczycy −8, Centrum +8 dissent unless it shares this line; up to +0.10 of loyalty.
+subtitle: Needs a relation of at least 60 and a change of the law, filed now; once in force: the coup pressure falls (−25), the relation improves (+4), Piłsudczycy dissent falls (−8) and Centrum dissent rises unless it shares this line (+8); loyalty to him grows (+0.10 at most).
 choose-if: {! return PolishSecurity.concessionStatus(Q, 'inspectorate').available !}
 unavailable-subtitle: [+ pl_pils_inspectorate_why +]
 on-arrival: {!
@@ -47,7 +47,7 @@ go-to: result
 
 @pils_premier
 title: Piłsudski as prime minister of a legal cabinet
-subtitle: Relation 65; he becomes a candidate of the next formation of a cabinet. After his real appointment: pressure −20, relation +4, Piłsudczycy −5.
+subtitle: Needs a relation of at least 65; he becomes a candidate of the next formation of a cabinet. After his real appointment: the coup pressure falls (−20), the relation improves (+4) and Piłsudczycy dissent falls (−5).
 choose-if: {! return PolishSecurity.concessionStatus(Q, 'pils_premier').available !}
 unavailable-subtitle: [+ pl_pils_pils_premier_why +]
 on-arrival: {!

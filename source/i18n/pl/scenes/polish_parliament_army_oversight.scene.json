@@ -7,9 +7,9 @@
   "= Parliamentary control of the army": "= Parlamentarna kontrola nad wojskiem",
   "There are no paid \"explanations of the minister\" and no postponement; closing the card is free.": "Nie ma płatnych „wyjaśnień ministra” ani odroczenia; zamknięcie karty nic nie kosztuje.",
   "title: Fuller civilian oversight": "title: Pełniejszy nadzór cywilny",
-  "subtitle: In the offer army +2; after the law 1 B for three months; then the group +0.05 of legal loyalty.": "subtitle: W ofercie oś wojska +2; po ustawie 1 B przez trzy miesiące; potem zgrupowanie +0,05 lojalności wobec legalnych władz.",
+  "subtitle: In the offer full civilian oversight (+2 on the army scale from −2 to +2); after the law costs the budget 1 unit a month for three months; then the group grows more loyal to the legal authorities (+0.05).": "subtitle: W ofercie pełny nadzór cywilny (+2 na skali spraw wojska od −2 do +2); po ustawie obciąża budżet: 1 jednostka miesięcznie przez trzy miesiące; potem zgrupowanie staje się bardziej lojalne wobec legalnych władz (+0,05).",
   "title: A limited reform": "title: Ograniczona reforma",
-  "subtitle: In the offer army 0, which Piast, NPR and the Christian Democrats accept more easily; 1 B for two months; then +0.025.": "subtitle: W ofercie oś wojska 0, którą Piast, NPR i chadecja przyjmują łatwiej; 1 B przez dwa miesiące; potem +0,025.",
+  "subtitle: In the offer a compromise on the army (the middle of the scale), which Piast, NPR and the Christian Democrats accept more easily; costs the budget 1 unit a month for two months; then the group grows a little more loyal (+0.025).": "subtitle: W ofercie kompromis w sprawach wojska (środek skali), który Piast, NPR i chadecja przyjmują łatwiej; obciąża budżet: 1 jednostka miesięcznie przez dwa miesiące; potem zgrupowanie staje się nieco bardziej lojalne (+0,025).",
   "- @root: Continue.": "- @root: Dalej."
  }
 }

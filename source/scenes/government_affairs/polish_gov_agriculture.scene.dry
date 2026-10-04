@@ -28,7 +28,7 @@ Each project covers one of three tranches of the countryside and costs 1 B for 4
 
 @advisory
 title: Advice, tools and cooperative modernisation
-subtitle: Agrarian pressure −2; better conditions of the farms covered.
+subtitle: Agrarian pressure falls (−2); better conditions of the farms covered.
 choose-if: {! return PolishProjects.optionStatus(Q, 'agriculture_development', 'advisory').available !}
 unavailable-subtitle: [+ pl_agriculture_development_advisory_why +]
 on-arrival: {!
@@ -38,7 +38,7 @@ go-to: result
 
 @consolidation
 title: Voluntary consolidation of land
-subtitle: Agrarian pressure −2; needs its law; a dispute over borders halts it.
+subtitle: Agrarian pressure falls (−2); needs its law; a dispute over borders halts it.
 choose-if: {! return PolishProjects.optionStatus(Q, 'agriculture_development', 'consolidation').available !}
 unavailable-subtitle: [+ pl_agriculture_development_consolidation_why +]
 on-arrival: {!

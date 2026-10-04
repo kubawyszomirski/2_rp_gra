@@ -30,7 +30,7 @@ Works in existing buildings, within the existing competences and the budget. Lim
 
 @wawel_conservation
 title: Wawel: limited conservation
-subtitle: 1 B for 2 months; PPS reputation +1 when it was the open sponsor.
+subtitle: Costs the budget 1 unit a month for two months; the reputation of PPS grows if it was the open sponsor (+1).
 choose-if: {! return PolishProjects.optionStatus(Q, 'heritage_restoration', 'wawel_conservation').available !}
 unavailable-subtitle: [+ pl_heritage_restoration_wawel_conservation_why +]
 on-arrival: {!
@@ -40,7 +40,7 @@ go-to: result
 
 @wawel_restoration
 title: Wawel: wider restoration and public access
-subtitle: 2 B for 4 months; reputation +2; trust of the intelligentsia +3. Extends a running conservation.
+subtitle: Costs the budget 2 units a month for four months; the reputation of PPS (+2) and the trust of the intelligentsia (+3) grow. Extends a running conservation.
 choose-if: {! return PolishProjects.optionStatus(Q, 'heritage_restoration', 'wawel_restoration').available !}
 unavailable-subtitle: [+ pl_heritage_restoration_wawel_restoration_why +]
 on-arrival: {!
@@ -50,7 +50,7 @@ go-to: result
 
 @zamek_conservation
 title: Royal Castle: limited conservation
-subtitle: 1 B for 2 months; PPS reputation +1 when it was the open sponsor.
+subtitle: Costs the budget 1 unit a month for two months; the reputation of PPS grows if it was the open sponsor (+1).
 choose-if: {! return PolishProjects.optionStatus(Q, 'heritage_restoration', 'zamek_conservation').available !}
 unavailable-subtitle: [+ pl_heritage_restoration_zamek_conservation_why +]
 on-arrival: {!
@@ -60,7 +60,7 @@ go-to: result
 
 @zamek_restoration
 title: Royal Castle: wider restoration and public access
-subtitle: 2 B for 4 months; reputation +2; trust of the intelligentsia +3. Extends a running conservation.
+subtitle: Costs the budget 2 units a month for four months; the reputation of PPS (+2) and the trust of the intelligentsia (+3) grow. Extends a running conservation.
 choose-if: {! return PolishProjects.optionStatus(Q, 'heritage_restoration', 'zamek_restoration').available !}
 unavailable-subtitle: [+ pl_heritage_restoration_zamek_restoration_why +]
 on-arrival: {!

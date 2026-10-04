@@ -1,6 +1,6 @@
 # Plan implementacji rozdziału 1
 
-**Stan — referencja 0.52, 4 października 2026. Wszystkie etapy 0–8 wykonane; etap 8 był ostatni, a pierwszy rozdział jest wdrożony w całości (rozdział 18). Po planie gra dostała polską wersję językową (rozdział 19), potwierdzanie obecnej linii (rozdział 20) i nazwę Centralnego Komitetu Wykonawczego dla doradców (rozdział 21).** Plan opisuje, w jakiej kolejności i jakimi zmianami w kodzie wdrożono pierwszy rozdział gry. Reguły gry podaje [referencja techniczna](POLISH_TECHNICAL_REFERENCE.md), a karty — [katalog kart](POLISH_CARD_CATALOGUE.md). Plan nie tworzy reguł: przy rozbieżności obowiązuje referencja. Sam plan niczego jeszcze nie zmienia w grze. Każdy etap zaczyna się dopiero po zatwierdzeniu jego szczegółowego planu.
+**Stan — referencja 0.53, 4 października 2026. Wszystkie etapy 0–8 wykonane; etap 8 był ostatni, a pierwszy rozdział jest wdrożony w całości (rozdział 18). Po planie gra dostała polską wersję językową (rozdział 19), potwierdzanie obecnej linii (rozdział 20) nazwę Centralnego Komitetu Wykonawczego dla doradców (rozdział 21) i nowe opisy wyborów (rozdział 22).** Plan opisuje, w jakiej kolejności i jakimi zmianami w kodzie wdrożono pierwszy rozdział gry. Reguły gry podaje [referencja techniczna](POLISH_TECHNICAL_REFERENCE.md), a karty — [katalog kart](POLISH_CARD_CATALOGUE.md). Plan nie tworzy reguł: przy rozbieżności obowiązuje referencja. Sam plan niczego jeszcze nie zmienia w grze. Każdy etap zaczyna się dopiero po zatwierdzeniu jego szczegółowego planu.
 
 ## 1. Jak czytać plan
 
@@ -1140,6 +1140,15 @@ Trzecia zmiana po zakończeniu planu, nie etap 9. 4 X 2026 użytkownik poprosił
 - **Historia:** nazwa CKW jest faktem udokumentowanym; trzy miejsca to uproszczenie gry (`HISTORICAL_SOURCES.md`, wpis `PL-PPS-CKW-NAME-2026-10-04`).
 - **Pliki:** sceny `main`, `root`, `library`, `polish_party_advisers`, `polish_advisor_commit`, `cancel_advisor_action` i cztery karty doradców z polskimi tłumaczeniami; `source/rules/polish_party.js`; `out/html/game.js`; dwa pliki testów. Napis o odnowieniu akcji CKW ma pełną odmianę liczebnika w obu językach.
 - **Wyniki:** `npm test` 445 z 445; tłumaczenia kompletne; 18 kontroli analitycznych przechodzi; test w przeglądarce w obu językach bez błędów.
+
+## 22. Opisy wyborów i liczby (po planie, 0.53)
+
+Czwarta zmiana po zakończeniu planu, nie etap 9. 4 X 2026 użytkownik poprosił o wyraźne oznaczenie obecnej linii i o wybór w Opcjach, czy opisy wyborów pokazują liczby skutków (referencja 20.1 i 23.26).
+
+- **Obecna linia:** pogrubiona etykieta w osobnym wierszu w dziesięciu kartach.
+- **Liczby:** skutki słowami, ich wielkość w nawiasie; ustawienie „Liczby w opisach wyborów”, domyślnie wyłączone. Koszty słowami, bez skrótów T, R i B; legenda jednostek w Bibliotece.
+- **Pliki:** opisy 61 scen z polskimi tłumaczeniami i legenda jednostek w Bibliotece; moduły reguł (`polish_rules`, `polish_party`, `polish_politics`, `polish_unions`, `polish_security`, `polish_projects`, `polish_government`); `out/html/index.html`, `game.js` i `game.css`; nowy test `tests/choice-descriptions.test.js`.
+- **Wyniki:** `npm test` 451 z 451; 2234 różne opisy z 13 strategii w obu językach bez liczb skutków po ich ukryciu; test w przeglądarce bez błędów.
 
 ## Dodatek A. Karty katalogu według etapów
 
