@@ -310,3 +310,59 @@ test('Program gospodarczy and Program bez zmiany: three priorities in one month;
   assert.deepEqual([Q.S.actors.pps.strategy.economic_priorities, Q.S.actors.pps.strategy_history.length], [three.slice().sort(), history], 'nothing else changes');
   assert.match(Q.pl_party_result, /confirms its present economic programme/);
 });
+
+// Z — 0.57 (item 5 of the play notes of 5 X 2026, "campaigns and voters' reactions"): the programme strengthens campaigns
+// among the groups it serves; a matching measure taking effect while PPS governs or supports the cabinet wins them +1 pp
+// for PPS; a contrary measure taking effect with the votes of PPS loses −1 pp; once per measure and priority.
+test('Program w praktyce (Z — 0.57): campaigns +10% among the groups served; +1 for a matching measure under a cabinet PPS supports; −1 for a contrary one PPS votes for', () => {
+  const A = game(), B = game();
+  B.S.actors.pps.strategy.economic_priorities = ['agrarian_labour'];
+  const plain = PolishParty.campaignEffect(A, 'press', 'class', 'rural');
+  const served = PolishParty.campaignEffect(B, 'press', 'class', 'rural');
+  close(served.moved / plain.moved, 1.10, 1e-9);
+  assert.doesNotMatch(plain.text, /programme/);
+  assert.match(served.text, /The economic programme of PPS makes it 10% stronger among the peasants\.$/);
+  const C = game();
+  C.S.actors.pps.strategy.economic_priorities = ['agrarian_labour'];
+  const other = PolishParty.campaignEffect(C, 'press', 'class', 'bourgeois_landowners');
+  close(other.moved, PolishParty.campaignEffect(game(), 'press', 'class', 'bourgeois_landowners').moved, 1e-12);
+  assert.doesNotMatch(other.text, /programme/, 'no bonus outside the groups served');
+
+  const unemployed = Q => PolishElectorate.aggregate(Q.S, PolishElectorate.AUDIENCES.unemployed.filter, 'pps');
+  // In opposition a matching project brings nothing.
+  const O = game();
+  O.S.actors.pps.strategy.economic_priorities = ['public_works'];
+  O.S.cabinet.supporter_ids = O.S.cabinet.supporter_ids.filter(id => id !== 'pps');
+  O.S.cabinet.partner_ids = O.S.cabinet.partner_ids.filter(id => id !== 'pps');
+  assert.equal(PolishGovernment.ppsStance(O.S), 'opposition');
+  const before = unemployed(O);
+  PolishProjects.launchProject(O, PolishProjects.createProject(O, 'public_works', 'employment', {sponsor: 'cabinet'}), {sponsor: 'cabinet'});
+  close(unemployed(O), before, 1e-12);
+  assert.equal((O.S.actors.pps.programme_log || []).length, 0);
+
+  // Supporting the cabinet: the same project wins the unemployed and the workers +1 pp, once.
+  const Q = game();
+  Q.S.actors.pps.strategy.economic_priorities = ['public_works', 'stabilisation_with_protection'];
+  assert.equal(PolishGovernment.ppsStance(Q.S), 'supporter', 'PPS supports the cabinet of January 1922 in the opening state');
+  const start = unemployed(Q);
+  const project = PolishProjects.createProject(Q, 'public_works', 'employment', {sponsor: 'cabinet'});
+  PolishProjects.launchProject(Q, project, {sponsor: 'cabinet'});
+  close(unemployed(Q) - start, 1, 1e-9);
+  assert.deepEqual(Q.S.actors.pps.programme_log, [{t: Q.time, priority: 'public_works', sign: 1, kind: 'project', type: 'public_works', variant: 'employment'}]);
+  assert.deepEqual(PolishProjects.programmeReaction(Q, ['project:public_works'], project.id, {kind: 'project', type: 'public_works', variant: 'employment'}, Q.time, false), [],
+    'once per measure and priority');
+  // A contrary measure PPS votes for: the cut of the benefit loses the groups of "Stabilisation with protections" 1 pp.
+  const mid = unemployed(Q);
+  PolishProjects.applyInstrument(Q, 'benefit_cut', Q.time, {sponsor: 'cabinet', pps_answers: true});
+  close(unemployed(Q) - mid, -1, 1e-9);
+  assert.deepEqual(Q.S.actors.pps.programme_log.at(-1), {t: Q.time, priority: 'stabilisation_with_protection', sign: -1, kind: 'instrument', instrument: 'benefit_cut'});
+  // Without the votes of PPS a contrary measure brings no reaction.
+  const R = game();
+  R.S.actors.pps.strategy.economic_priorities = ['stabilisation_with_protection'];
+  const r0 = unemployed(R);
+  PolishProjects.applyInstrument(R, 'benefit_cut', R.time, {sponsor: 'cabinet', pps_answers: false});
+  close(unemployed(R), r0, 1e-12);
+  // The card shows the reactions, newest first.
+  PolishParty.programmeView(Q);
+  assert.match(Q.pl_prog_log, /^January 1922 — Cut of the unemployment benefit: contrary to “Stabilisation with protections”, −1 among workers, the unemployed and the intelligentsia; January 1922 — Public works \(quick employment of the unemployed\): matches “Public works and employment”, \+1 among the unemployed and workers$/);
+});

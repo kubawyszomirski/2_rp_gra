@@ -1,29 +1,28 @@
-title: Electoral Agreement
-subtitle: A joint list for the coming Sejm election, while the lists are open.
+title: A Joint List?
+subtitle: The lists for the Sejm election are open: a joint list, or our own.
 new-page: true
-is-card: true
-tags: parliament_affairs
-card-image: img/polish/polish_list_agreement.jpg
-view-if: {! return !!Q.S && PolishGovernment.listAgreementAvailable(Q) !}
+tags: pl_event
+face-image: img/polish/polish_list_agreement.jpg
+view-if: {! return !!Q.S && PolishGovernment.listEventDue(Q) !}
 on-arrival: {!
-// Card parliament.list_agreement (technical reference 6.2, 6.5; card catalogue 7.7). One choice; the
-// confirmation spends this month's action even when the partners refuse; looking is free.
-for (var id of PolishGovernment.LIST_ORDER) {
-    Q['pl_list_' + id + '_reason'] = PolishGovernment.listStatus(Q, id).reason;
-}
+// Event parliament.list_agreement (Z — 0.57, items 7 and 8 of the play notes of 5 X 2026). It replaces card 7.7 of the
+// card catalogue and keeps its scene ID: two months before the vote PPS proposes one joint list or goes alone; the
+// partners answer once by the evaluation of a cabinet offer (technical reference 6.2, 6.5). A proposal costs no action.
+// After a refusal the question returns once in the last month of the window, if a list is still possible. The peasant
+// bloc without PPS is no longer a decision of PPS.
+PolishGovernment.listEventView(Q);
 !}
 
 = A joint list?
 
-The lists for the coming Sejm election are open until the end of the month before the vote. Without an agreement PPS stands alone with its full programme and all its own candidates; refusing an alliance brings no bonus.
+The Sejm election is held on [+ pl_list_vote +], and the lists close at the end of the month before the vote. Without an agreement PPS stands alone with its full programme and all its own candidates; refusing an alliance brings no bonus.
 
-A joint list counts the votes of its parties together in the seat method, and shares its seats in proportion to their votes. Each party keeps its own club after the election and may vote differently; a list gives no ministry and binds nobody to a later cabinet. Each partner answers once, by the same evaluation as a cabinet offer. PPS can agree at most one list for this election.
+A joint list counts the votes of its parties together in the seat method, and shares its seats in proportion to their votes. Each party keeps its own club after the election and may vote differently; a list gives no ministry and binds nobody to a later cabinet. Each partner answers once, by the same evaluation as a cabinet offer. A proposal costs no action this month.
 
 - @left_peasant
 - @labour
 - @centrolew_early
-- @peasant
-- @easy_discard
+- @alone
 
 @left_peasant
 title: A joint list of PPS and PSL Wyzwolenie
@@ -35,6 +34,7 @@ var record = PolishGovernment.proposeList(Q, 'left_peasant');
 Q.pl_list_accepted = record.accepted ? 1 : 0;
 Q.pl_list_answers = PolishGovernment.describeAnswers(record);
 Q.pl_list_name = PolishGovernment.LIST_OPTIONS.left_peasant.name;
+Q.pl_list_retry = !record.accepted && PolishGovernment.listRetryPossible(Q) ? 1 : 0;
 !}
 go-to: result
 
@@ -48,6 +48,7 @@ var record = PolishGovernment.proposeList(Q, 'labour');
 Q.pl_list_accepted = record.accepted ? 1 : 0;
 Q.pl_list_answers = PolishGovernment.describeAnswers(record);
 Q.pl_list_name = PolishGovernment.LIST_OPTIONS.labour.name;
+Q.pl_list_retry = !record.accepted && PolishGovernment.listRetryPossible(Q) ? 1 : 0;
 !}
 go-to: result
 
@@ -61,21 +62,17 @@ var record = PolishGovernment.proposeList(Q, 'centrolew_early');
 Q.pl_list_accepted = record.accepted ? 1 : 0;
 Q.pl_list_answers = PolishGovernment.describeAnswers(record);
 Q.pl_list_name = PolishGovernment.LIST_OPTIONS.centrolew_early.name;
+Q.pl_list_retry = !record.accepted && PolishGovernment.listRetryPossible(Q) ? 1 : 0;
 !}
 go-to: result
 
-@peasant
-title: Support a peasant bloc of PSL Wyzwolenie and PSL Piast
-subtitle: Agriculture and credit. PPS brokers the agreement but is not on the list, and faces a stronger rival in the countryside.
-choose-if: {! return PolishGovernment.listStatus(Q, 'peasant').available !}
-unavailable-subtitle: [+ pl_list_peasant_reason +]
+@alone
+title: We go to the election alone
+subtitle: PPS stands with its full programme and all its own candidates; no joint list at this election.
 on-arrival: {!
-var record = PolishGovernment.proposeList(Q, 'peasant');
-Q.pl_list_accepted = record.accepted ? 1 : 0;
-Q.pl_list_answers = PolishGovernment.describeAnswers(record);
-Q.pl_list_name = PolishGovernment.LIST_OPTIONS.peasant.name;
+PolishGovernment.listGoAlone(Q);
 !}
-go-to: result
+go-to: alone_result
 
 @result
 new-page: true
@@ -87,5 +84,16 @@ new-page: true
 [? if pl_list_accepted : **[+ pl_list_name +] will stand as one list** at the coming election. ?]
 
 [? if not pl_list_accepted : **No joint list.** PPS keeps its own list. ?]
+
+[? if pl_list_retry : Before the lists close next month, PPS can propose another joint list. ?]
+
+- @root: Continue.
+
+@alone_result
+new-page: true
+
+= Our own list
+
+PPS goes to the election alone, with its full programme and all its own candidates.
 
 - @root: Continue.

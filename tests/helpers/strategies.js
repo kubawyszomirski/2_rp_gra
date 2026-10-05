@@ -23,29 +23,31 @@ function pick(engine, id) {
 }
 
 // ---- Paths of the month's actions: an entry (a choice of main, or a card scene opened directly) and steps.
+// Z — 0.57: the party agenda, the unions and the protection of the unemployed are deck cards, opened directly like the
+// others.
 const P = {
-  organize: branch => ['main:polish_party_agenda', 'polish_party_agenda.organize', 'polish_party_agenda.branch_' + branch],
-  organizeClass: cls => ['main:polish_party_agenda', 'polish_party_agenda.organize', 'polish_party_agenda.class_' + cls],
-  fundraise: () => ['main:polish_party_agenda', 'polish_party_agenda.fundraise'],
-  apparatus: () => ['main:polish_party_agenda', 'polish_party_agenda.apparatus'],
-  assess: () => ['main:polish_party_agenda', 'polish_party_agenda.assess_forces'],
-  cadres: branch => ['main:polish_party_agenda', 'polish_party_agenda.courses', 'polish_party_agenda.course_union_cadres', 'polish_party_agenda.cadres_' + branch],
-  cooperative: () => ['main:polish_party_agenda', 'polish_party_agenda.launch_cooperative'],
-  orgs: (a, b) => b ? ['polish_party_organizations', 'polish_party_organizations.p1_' + a, 'polish_party_organizations.p2_' + b, 'polish_party_organizations.do_confirm']
-    : ['polish_party_organizations', 'polish_party_organizations.p1_' + a, 'polish_party_organizations.only_one', 'polish_party_organizations.do_confirm'],
+  organize: branch => ['polish_party_agenda', 'polish_party_agenda.organize', 'polish_party_agenda.branch_' + branch],
+  organizeClass: cls => ['polish_party_agenda', 'polish_party_agenda.organize', 'polish_party_agenda.class_' + cls],
+  fundraise: () => ['polish_party_agenda', 'polish_party_agenda.fundraise'],
+  apparatus: () => ['polish_party_agenda', 'polish_party_agenda.apparatus'],
+  assess: () => ['polish_party_agenda', 'polish_party_agenda.assess_forces'],
+  cadres: branch => ['polish_party_agenda', 'polish_party_agenda.courses', 'polish_party_agenda.course_union_cadres', 'polish_party_agenda.cadres_' + branch],
+  cooperative: () => ['polish_party_agenda', 'polish_party_agenda.launch_cooperative'],
+  // Z — 0.57: the second choice (or "only the first") is carried out at once, without a page of confirmation.
+  orgs: (a, b) => b ? ['polish_party_organizations', 'polish_party_organizations.p1_' + a, 'polish_party_organizations.p2_' + b]
+    : ['polish_party_organizations', 'polish_party_organizations.p1_' + a, 'polish_party_organizations.only_one'],
   militia: step => ['polish_party_militia', 'polish_party_militia.' + step],
   campaign: (topic, audience) => ['polish_party_media', 'polish_party_media.campaign', 'polish_party_media.topic_' + topic, 'polish_party_media.to_' + audience],
   turnout: audience => ['polish_party_media', 'polish_party_media.turnout', 'polish_party_media.to_' + audience],
   distribution: () => ['polish_party_media', 'polish_party_media.distribution'],
   talk: party => ['inter_party_relationships', 'inter_party_relationships.' + party],
-  union: (branch, step) => ['main:polish_union_agenda', 'polish_union_agenda.' + branch, 'polish_union_agenda.' + step],
-  bill: () => ['main:polish_unemployment_bill', 'polish_unemployment_bill.start'],
+  union: (branch, step) => ['polish_union_agenda', 'polish_union_agenda.' + branch, 'polish_union_agenda.' + step],
+  bill: () => ['polish_unemployment_bill', 'polish_unemployment_bill.start'],
   gov: (card, option) => [card, card + '.' + option],
   agenda: option => ['main:polish_agenda', 'polish_agenda.' + option],
   support: option => ['polish_government_support', 'polish_government_support.' + option],
   constitution: variant => ['polish_constitution_project', 'polish_constitution_project.' + variant],
   armyOversight: variant => ['polish_parliament_army_oversight', 'polish_parliament_army_oversight.' + variant],
-  list: variant => ['polish_list_agreement', 'polish_list_agreement.' + variant],
   adviser: (who, action) => ['main:' + who, who + '.' + action],
 };
 
@@ -155,11 +157,13 @@ const PASSIVE_EVENTS = {
   polish_event_credit_crisis: ['none'],
   polish_event_austerity_1926: ['maintain'],
   polish_event_faction_split: ['accept'],
+  // Z — 0.57: the joint list is an event two months before the vote.
+  polish_list_agreement: ['alone'],
   polish_speaker_election: ['daszynski'],
   polish_presidential_first: ['decline_daszynski'],
   polish_presidential_second: ['do_not_run_daszynski_second'],
   polish_budget_package: ['refuse', 'later'],
-  polish_unemployment_bill: ['decline', 'later'],
+  polish_unemployment_bill: ['decline'],
   polish_government_response: ['maintain', 'motion_refuse', 'later'],
   polish_strike_steps: ['none', 'no_protection', 'done'],
   coup_stance: 'mediate', coup_commit: 'none', coup_f9: 'accept',
@@ -176,7 +180,7 @@ const ACTIVE_EVENTS = Object.assign({}, PASSIVE_EVENTS, {
   polish_event_austerity_1926_threat: ['back_down'],
   polish_speaker_election: ['rataj', 'daszynski'],
   polish_budget_package: ['protect', 'support', 'refuse', 'later'],
-  polish_unemployment_bill: ['full', 'limited', 'start', 'later'],
+  polish_unemployment_bill: ['full', 'limited', 'start'],
   polish_strike_steps: ['limited', 'protect', 'done'],
   coup_stance: 'defend_legal', coup_commit: 'both', coup_f9: 'accept',
 });
@@ -287,9 +291,11 @@ const STRATEGIES = {
   election_campaign: strategy('election_campaign', '21.2: active election campaign', {
     month: ctx => {
       const pre = (ctx.after(1922, 7) && ctx.before(1922, 11)) || (ctx.after(1927, 9) && ctx.before(1928, 2));
-      const extra = pre ? [P.list('left_peasant'), P.campaign('workers_gains', ['workers', 'rural', 'new_middle'][ctx.t % 3]), P.turnout('workers')] : [];
+      const extra = pre ? [P.campaign('workers_gains', ['workers', 'rural', 'new_middle'][ctx.t % 3]), P.turnout('workers')] : [];
       return plan.organised(ctx, [...extra, ...plan.wage(ctx), ...plan.support(ctx)]);
     },
+    // Z — 0.57: the joint list with PSL Wyzwolenie is the answer to the event before the election.
+    events: Object.assign({}, ACTIVE_EVENTS, { polish_list_agreement: ['left_peasant', 'alone'] }),
   }),
   permanent_opposition: strategy('permanent_opposition', '21.2: permanent opposition', {
     formation: FORMATION.opposition,
@@ -342,7 +348,7 @@ const STRATEGIES = {
 const CONTINUE = ['root', 'polish_event_coup.begin', 'polish_event_coup.f67_seen', 'sejm_election.calculate', 'sejm_election.finish',
   'sejm_election.return_to_play', 'polish_speaker_election.finish', 'polish_presidential_sequence.first_done',
   'polish_presidential_sequence.assassination', 'polish_presidential_sequence.finish', 'polish_cabinet_formation.done',
-  'polish_strike_steps.done', 'polish_party_organizations.do_confirm'];
+  'polish_strike_steps.done'];
 
 function answer(engine, strat) {
   const Q = engine.state.qualities, sid = engine.state.sceneId, ev = strat.events;

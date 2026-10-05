@@ -284,7 +284,9 @@ function noSteps(Q) {
   if (PolishUnions.stepsStage(Q.S) === 'protection') PolishUnions.chooseProtection(Q, 'none');
 }
 
-test('the wage case opens after three completed months below 80, not before, and again at the earliest three months after it closed', () => {
+// Z — 0.57 (item 13 of the play notes of 5 X 2026): one wage case per cause. The case no longer reopens three months after
+// it closed while wages stay low; a new case needs wages back at the limit and a new fall.
+test('Jedna sprawa płacowa na przyczynę (Z — 0.57): the wage case opens after three completed months below 80, not before; a new case needs a new cause', () => {
   const Q = game();
   const S = Q.S;
   S.economy.real_wage = 75;
@@ -301,6 +303,68 @@ test('the wage case opens after three completed months below 80, not before, and
   PolishUnions.endMonth(Q, { t: 22 });
   assert.deepEqual(S.strikes.pending_effects.filter(e => e.cause === 'rejected_wage_demand').map(e => e.value), [8]);
   assert.equal(PolishUnions.records(S).filter(r => r.kind === 'wage_case').length, 1, 'one case while it is open');
+  // The case ends with an accepted settlement; wages stay below 80, so the same cause opens no new case.
+  Q.time = 23;
+  S.rng.rolls[`strike:${rec.id}:round:1`] = 0.01; // fixture: the government offers at once
+  PolishUnions.caseChoose(Q, 'negotiate');
+  assert.deepEqual([rec.status, rec.outcome], ['ended', 'agreement']);
+  for (let t = 23; t <= 34; t++) PolishUnions.endMonth(Q, { t });
+  assert.equal(PolishUnions.records(S).filter(r => r.kind === 'wage_case').length, 1, 'a year of low wages: still one case');
+  // Wages recover and fall again for three months: a new cause, a new case, whose text names the previous one.
+  S.economy.real_wage = 85;
+  PolishUnions.endMonth(Q, { t: 35 });
+  S.economy.real_wage = 75;
+  for (const t of [36, 37]) PolishUnions.endMonth(Q, { t });
+  assert.equal(PolishUnions.records(S).filter(r => r.kind === 'wage_case').length, 1, 'two months of the new fall are not enough');
+  PolishUnions.endMonth(Q, { t: 38 });
+  assert.equal(PolishUnions.records(S).filter(r => r.kind === 'wage_case').length, 2);
+  Q.time = 39;
+  PolishUnions.caseView(Q);
+  assert.match(Q.pl_case_text, /^Three months of real wages below 80 \(now 75\) bring a demand for a wage rise in industry and railways\. The previous wage case ended with an accepted settlement in November 1923; this is a new cause\./);
+});
+
+// Z — 0.57 (item 13 of the play notes of 5 X 2026): at an offer that meets every demand there is nothing more to demand; an offer
+// PPS declined and the government repeats opens no new answer in the Sejm; a different offer does.
+test('Strajk i Sejm bez pętli (Z — 0.57): nothing to demand at a full offer; a repeated declined offer opens no new answer; a different one does', () => {
+  const Q = game();
+  const S = Q.S;
+  strongBranches(S);
+  PolishUnions.prepare(Q, 'industry', 'broad'); free(Q);
+  PolishUnions.startStrike(Q, 'industry'); free(Q);
+  noSteps(Q);
+  const rec = PolishUnions.branchRecord(S, 'industry');
+  assert.deepEqual(rec.demands.map(d => d.kind), ['wages', 'conditions']);
+  // A draw between the chances of the full and of the reduced package: the government offers wages only (half the demands).
+  const reducedOnly = n => {
+    const full = PolishUnions.roundChance(S, rec, rec.threshold), reduced = PolishUnions.roundChance(S, rec, 40);
+    assert.ok(full.chance < reduced.chance, 'a band for the reduced offer');
+    S.rng.rolls[`strike:${rec.id}:round:${n}`] = (full.chance + reduced.chance) / 2;
+  };
+  let t = Q.time;
+  PolishUnions.beginMonth(Q, { t });
+  reducedOnly(1);
+  PolishUnions.endMonth(Q, { t });
+  assert.deepEqual([rec.offer.clauses.map(c => c.kind), rec.offer.fulfilment, PolishUnions.responseDue(Q)], [['wages'], 0.5, true]);
+  assert.equal(PolishUnions.responseStatus(Q, 'demands').available, true, 'half the demands: PPS may demand more');
+  PolishUnions.responseChoose(Q, 'demands');
+  assert.match(Q.pl_union_result, /the Sejm returns to the dispute only when the government makes a different offer/);
+  // The next round repeats the declined offer: the government holds its position, the strike goes on, the Sejm is not asked.
+  t += 1;
+  PolishUnions.beginMonth(Q, { t });
+  reducedOnly(2);
+  PolishUnions.endMonth(Q, { t });
+  assert.deepEqual([rec.offer, rec.status, rec.rounds.at(-1).held, PolishUnions.responseDue(Q)], [null, 'active', true, false]);
+  // A different offer, the full package: a new answer, where there is nothing more to demand.
+  t += 1;
+  PolishUnions.beginMonth(Q, { t });
+  S.rng.rolls[`strike:${rec.id}:round:3`] = 0.01;
+  PolishUnions.endMonth(Q, { t });
+  assert.deepEqual([rec.offer.fulfilment, PolishUnions.responseDue(Q)], [1, true]);
+  PolishUnions.responseView(Q);
+  assert.match(Q.pl_resp_demands_why, /^The offer already meets all the demands: there is nothing more to demand\./);
+  assert.throws(() => PolishUnions.responseChoose(Q, 'demands'), /nothing more to demand/);
+  PolishUnions.responseChoose(Q, 'settlement');
+  assert.deepEqual([rec.status, rec.outcome], ['ended', 'agreement']);
 });
 
 test('Państwo a PPS w strajku: with Labour, the Interior or no portfolio: one goal and one answer of the authorities within their competence', () => {

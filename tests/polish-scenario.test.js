@@ -182,7 +182,7 @@ test('Zgromadzenie po rozłamie: MPs who left PPS with a faction before December
   const splinter = Q.S.parliament.clubs.filter(c => c.splinter_of === 'pps').reduce((n, c) => n + c.seats, 0);
   assert.ok(splinter > 0 && pps + splinter === before, 'the MPs moved to a splinter club');
   engine.goToScene('main');
-  dendry.choose(engine, 'polish_party_agenda');
+  dendry.playCard(engine, 'polish_party_agenda');
   dendry.choose(engine, 'polish_party_agenda.organize');
   dendry.choose(engine, 'polish_party_agenda.branch_farm_labour');
   dendry.choose(engine, 'root');

@@ -52,7 +52,7 @@ function spendMonth(engine) {
   // Stage 5: with an empty cash box only paid cards may be in the hand; organisational work in the party
   // agenda is always there and needs no money (technical reference 4.4; card catalogue 5.7).
   if (Q.time === before && Q.S.party_orgs) {
-    dendry.choose(engine, 'polish_party_agenda');
+    dendry.playCard(engine, 'polish_party_agenda');
     dendry.choose(engine, 'polish_party_agenda.organize');
     dendry.choose(engine, 'polish_party_agenda.branch_industry');
     result = { card: 'polish_party_agenda', steps: actUntilMain(engine) };
@@ -286,8 +286,9 @@ test('one free discard a month, available again after the month changes (4.4)', 
 });
 
 // Bug of 5 X 2026: the discard page and "Not now" of a pinned card went straight to the hand without a new page, so
-// their text stayed above the hand. They return through root, like "Return to hand".
-test('the discard page and "Not now" of a pinned card leave no text above the hand', () => {
+// their text stayed above the hand. They return through root, like "Return to hand". Z — 0.57: the party agenda is an
+// ordinary card, so it is closed with "Return to hand" and goes back to the hand.
+test('the discard page and "Return to hand" of the party agenda leave no text above the hand', () => {
   const engine = dendry.startGame();
   const text = () => JSON.stringify(engine.ui.paragraphs);
   dendry.choose(engine, 'polish_discard');
@@ -295,11 +296,12 @@ test('the discard page and "Not now" of a pinned card leave no text above the ha
   dendry.choose(engine, 'polish_discard.keep');
   assert.equal(engine.state.sceneId, 'main');
   assert.doesNotMatch(text(), /Once a month you may discard/);
-  dendry.choose(engine, 'polish_party_agenda');
+  dendry.playCard(engine, 'polish_party_agenda');
   assert.match(text(), /Party money/);
-  dendry.choose(engine, 'polish_party_agenda.later');
+  dendry.choose(engine, 'easy_discard');
   assert.equal(engine.state.sceneId, 'main');
   assert.doesNotMatch(text(), /Party money/);
+  assert.ok(engine.state.currentHands.main.some(card => card.id === 'polish_party_agenda'), 'the card is back in the hand');
   assert.deepEqual([engine.state.qualities.time, engine.state.qualities.month_actions || 0], [1, 0], 'no month and no action are used');
 });
 

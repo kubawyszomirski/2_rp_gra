@@ -8,8 +8,8 @@
   "PPS has [+ pl_org_cash +] R. Choose the first investment; a second one for another organisation can follow. The card itself costs one month and waits two months before it comes back.": "PPS ma [+ pl_org_cash +] R. Wybierz pierwszą inwestycję; po niej może przyjść druga, w inną organizację. Sama karta kosztuje jeden miesiąc i wraca po dwóch miesiącach.",
   "title: Extend the distribution of the press": "title: Poszerz kolportaż prasy",
   "subtitle: 1 resource; the press reaches more readers (+10).": "subtitle: 1 jednostka środków; prasa dociera do większej liczby czytelników (+10).",
-  "title: Start the next stage of TUR": "title: Rozpocznij kolejny etap TUR",
-  "subtitle: 2 resources; after two months TUR rises one level and gains cadres (+10).": "subtitle: 2 jednostki środków; po dwóch miesiącach TUR wchodzi o poziom wyżej i zyskuje kadry (+10).",
+  "title: [? if pl_tur_level = 0 : Found TUR ?][? if pl_tur_level > 0 : Start the next stage of TUR ?]": "title: [? if pl_tur_level = 0 : Załóż TUR ?][? if pl_tur_level > 0 : Rozpocznij kolejny etap TUR ?]",
+  "subtitle: [? if pl_tur_level = 0 : 2 resources; after two months TUR starts its work and gains cadres (+10). ?][? if pl_tur_level > 0 : 2 resources; after two months TUR rises one level and gains cadres (+10). ?]": "subtitle: [? if pl_tur_level = 0 : 2 jednostki środków; po dwóch miesiącach TUR zaczyna działać i zyskuje kadry (+10). ?][? if pl_tur_level > 0 : 2 jednostki środków; po dwóch miesiącach TUR wchodzi o poziom wyżej i zyskuje kadry (+10). ?]",
   "title: Recruit into Milicja": "title: Werbunek do Milicji",
   "subtitle: 1 resource; Milicja gains members (+100).": "subtitle: 1 jednostka środków; Milicja zyskuje członków (+100).",
   "title: Militarise Milicja": "title: Militaryzacja Milicji",
@@ -18,11 +18,9 @@
   "subtitle: 1 resource; its launch waits in the party agenda (2 resources).": "subtitle: 1 jednostka środków; jej uruchomienie czeka w agendzie partii (2 jednostki środków).",
   "title: Prepare a village cooperative of smallholders": "title: Przygotuj wiejską spółdzielnię drobnych gospodarzy",
   "= A second organisation": "= Druga organizacja",
-  "You may add one investment for another organisation, for the same month. Nothing is spent until you confirm.": "Możesz dodać jedną inwestycję w inną organizację, w tym samym miesiącu. Nic nie zostaje wydane, dopóki nie zatwierdzisz.",
+  "You may add one investment for another organisation, for the same month. Your choice is carried out at once.": "Możesz dodać jedną inwestycję w inną organizację, w tym samym miesiącu. Wybór zostaje od razu wykonany.",
   "- @polish_party_organizations: Choose again from the beginning.": "- @polish_party_organizations: Wybierz od początku.",
-  "title: Invest only in the first organisation": "title: Inwestuj tylko w pierwszą organizację",
-  "= Confirm the investment": "= Zatwierdź inwestycję",
-  "title: Confirm": "title: Zatwierdź",
+  "title: Invest only in: [+ pl_org_pick1_name +]": "title: Inwestuj tylko w: [+ pl_org_pick1_name +]",
   "- @root: Continue.": "- @root: Dalej."
  }
 }

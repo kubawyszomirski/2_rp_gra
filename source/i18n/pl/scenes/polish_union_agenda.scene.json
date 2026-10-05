@@ -8,8 +8,6 @@
   "title: Industry": "title: Przemysł",
   "title: Railways": "title: Kolej",
   "title: Agricultural labour": "title: Robotnicy rolni",
-  "title: Not now": "title: Nie teraz",
-  "subtitle: Nothing is spent.": "subtitle: Nic nie zostaje wydane.",
   "[? if pl_un_offer : [+ pl_un_offer +] PPS answers it in the Sejm. ?]": "[? if pl_un_offer : [+ pl_un_offer +] PPS odpowiada na nią w Sejmie. ?]",
   "- @polish_union_agenda: Back to the unions.": "- @polish_union_agenda: Wróć do związków.",
   "title: Agree the demands: wages and the return to work": "title: Uzgodnij postulaty: płace i powrót do pracy",

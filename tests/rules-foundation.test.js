@@ -67,7 +67,7 @@ test('the new-game state follows the domain register in 2.4', () => {
     unions: {},
     faction_cases: {},
     // Stage 6: no strike and no plant is recorded in a new game (14.3, 17.12).
-    strikes: { seq: 0, records: {}, due: {}, wage_watch: { months_below: 0, last_case_at: null, last_checked: 0 }, inputs: null, pending_effects: [] },
+    strikes: { seq: 0, records: {}, due: {}, wage_watch: { months_below: 0, last_case_at: null, last_checked: 0, latched: false }, inputs: null, pending_effects: [] },
     enterprises: { seq: 0, records: {} },
     // Stage 7: democracy 60, authority 55 (the reading of an empty journal), violence 10 (2.3–2.4); stage 8: pressure 0.
     politics: { profile_id: 'politics_v1', started: false, democracy: 60, parliament_authority: 55, authority_at: 0, violence: 10,

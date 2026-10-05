@@ -159,6 +159,15 @@ function watchEngineErrors() {
   return errors;
 }
 
+// Z — 0.57: the party agenda, the unions and the protection of the unemployed are ordinary cards of the decks, no longer
+// pinned. A test plays such a card as if it had been drawn: from main, the card is put into the hand and played.
+function playCard(engine, id) {
+  if (engine.state.sceneId !== 'main') engine.goToScene('main');
+  const hand = engine.state.currentHands.main || (engine.state.currentHands.main = []);
+  if (!hand.some(card => card.id === id)) hand.push({ id, title: id });
+  engine.playCard(id);
+}
+
 // Plays with a fixed rule: among the choosable options, sorted by ID because the build does not fix
 // the order of scenes, take the one at a position given by the step number and the variant. On the
 // same page in the same month it first tries options not yet taken there, so free moves such as
@@ -214,5 +223,6 @@ module.exports = {
   restoreState,
   saveAndRestore,
   watchEngineErrors,
+  playCard,
   walk,
 };

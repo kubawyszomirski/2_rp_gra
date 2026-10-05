@@ -1,6 +1,6 @@
 # Polska wersja: techniczna referencja mechanik, stanu i przejść
 
-**Wersja 0.56 — 5 października 2026.** Specyfikacja pierwszego rozdziału na podstawie [POLISH_DESCRIPTIVE_GUIDE.md](POLISH_DESCRIPTIVE_GUIDE.md). Obejmuje stan, jednostki, wzory, warunki kart, kolejność rozliczeń, głosowania, umowy, gospodarkę, organizacje, zamach i zapis kampanii. **To jedna aktualna wersja do kodowania: obowiązuje tekst rozdziałów 1–22.** Karty zbiera w jednym miejscu [katalog kart do kodowania](POLISH_CARD_CATALOGUE.md): jedna tabela na kartę, szkic z 0.32; wszystkie sześć partii użytkownik przejrzał w 0.33–0.38 i katalog nie ma otwartych pytań. Katalog nie tworzy reguł; przy rozbieżności obowiązuje ta referencja. Historia decyzji jest w rozdziale 23 i nie jest instrukcją wdrożenia. Trafiły tam dawny opis wersji, akapity rewizji 0.13–0.30 i zapisy zatwierdzeń. Oznaczenia K/Z/P/H/B objaśnia rozdział 1. Wszystkie punkty audytu mechanik są zamknięte w dokumentacji. **Etap 8 planu wdrożenia był ostatni: pierwszy rozdział jest wdrożony w całości** (23.22). Liczby P skalibrowano na pełnych kampaniach etapu 8 ([pomiar](../analysis/stage8-campaigns/REPORT.md)); ograniczenia gotowego rozdziału wymienia rozdział 18 [planu wdrożenia](POLISH_IMPLEMENTATION_PLAN.md). **Wersja 0.50 dodała polską wersję językową gry** (decyzja w 20.1, zapis wdrożenia w 23.23). **Wersja 0.51 pozwoliła potwierdzić obecną linię** w kartach stanowisk, Składkach i Programie gospodarczym (10.5, 13.1; zapis w 23.24). **Wersja 0.52 pokazała doradców w grze jako Centralny Komitet Wykonawczy PPS** (10.4; zapis w 23.25). **Wersja 0.53 uporządkowała opisy wyborów:** skutki słowami, ich wielkość w nawiasach na życzenie gracza, koszty bez skrótów (20.1; zapis w 23.26). **Wersja 0.54 porządkuje pasek boczny:** zakładki, jedna informacja w wierszu, objaśnienia w Bibliotece (20.1; zapis w 23.27). **Wersja 0.55 poprawia jego czytelność:** pogrubione etykiety, nagłówki z linią, rozbite wiersze i zakładka „Obrona” po jednej informacji w wierszu (20.1; zapis w 23.28). **Wersja 0.56 wprowadza dziewięć uwag z gry:** model pieniędzy z oryginału (zbiórki zamiast wpływów i kosztów), dwie karty organizacji, krytyka Piłsudskiego jako karta z prawdziwymi cytatami, debata konstytucyjna od grudnia 1924, rzadsza karta stosunku do rządu, program z sześcioma priorytetami, głosy z 1919 r. przy pierwszych wyborach, wyjaśnienie rządu mniejszościowego oraz poprawki powrotów do ręki i sondaży na starcie (20.1; zapis w 23.29). Dokument nie zmienia działającej gry.
+**Wersja 0.57 — 5 października 2026.** Specyfikacja pierwszego rozdziału na podstawie [POLISH_DESCRIPTIVE_GUIDE.md](POLISH_DESCRIPTIVE_GUIDE.md). Obejmuje stan, jednostki, wzory, warunki kart, kolejność rozliczeń, głosowania, umowy, gospodarkę, organizacje, zamach i zapis kampanii. **To jedna aktualna wersja do kodowania: obowiązuje tekst rozdziałów 1–22.** Karty zbiera w jednym miejscu [katalog kart do kodowania](POLISH_CARD_CATALOGUE.md): jedna tabela na kartę, szkic z 0.32; wszystkie sześć partii użytkownik przejrzał w 0.33–0.38 i katalog nie ma otwartych pytań. Katalog nie tworzy reguł; przy rozbieżności obowiązuje ta referencja. Historia decyzji jest w rozdziale 23 i nie jest instrukcją wdrożenia. Trafiły tam dawny opis wersji, akapity rewizji 0.13–0.30 i zapisy zatwierdzeń. Oznaczenia K/Z/P/H/B objaśnia rozdział 1. Wszystkie punkty audytu mechanik są zamknięte w dokumentacji. **Etap 8 planu wdrożenia był ostatni: pierwszy rozdział jest wdrożony w całości** (23.22). Liczby P skalibrowano na pełnych kampaniach etapu 8 ([pomiar](../analysis/stage8-campaigns/REPORT.md)); ograniczenia gotowego rozdziału wymienia rozdział 18 [planu wdrożenia](POLISH_IMPLEMENTATION_PLAN.md). **Wersja 0.50 dodała polską wersję językową gry** (decyzja w 20.1, zapis wdrożenia w 23.23). **Wersja 0.51 pozwoliła potwierdzić obecną linię** w kartach stanowisk, Składkach i Programie gospodarczym (10.5, 13.1; zapis w 23.24). **Wersja 0.52 pokazała doradców w grze jako Centralny Komitet Wykonawczy PPS** (10.4; zapis w 23.25). **Wersja 0.53 uporządkowała opisy wyborów:** skutki słowami, ich wielkość w nawiasach na życzenie gracza, koszty bez skrótów (20.1; zapis w 23.26). **Wersja 0.54 porządkuje pasek boczny:** zakładki, jedna informacja w wierszu, objaśnienia w Bibliotece (20.1; zapis w 23.27). **Wersja 0.55 poprawia jego czytelność:** pogrubione etykiety, nagłówki z linią, rozbite wiersze i zakładka „Obrona” po jednej informacji w wierszu (20.1; zapis w 23.28). **Wersja 0.57 wprowadza trzynaście kolejnych uwag z gry:** program gospodarczy ze skutkami (kampanie +10% i reakcje wyborców) i nowym pierwszym ekranem, wspólna lista jako wydarzenie przed wyborami z wyższymi progami i opcją „Idziemy do wyborów sami”, agenda partii, związki i ochrona bezrobotnych jako zwykłe karty, karta kontroli wojska tylko wtedy, gdy jest co wybrać, strajki bez pętli, opis głosowania rozstrzygającego w wyborach prezydenta, karta organizacji bez strony potwierdzenia i bez linii „własny profil i zasięg przez sojuszników” (20.1; zapis w 23.30). **Wersja 0.56 wprowadza dziewięć uwag z gry:** model pieniędzy z oryginału (zbiórki zamiast wpływów i kosztów), dwie karty organizacji, krytyka Piłsudskiego jako karta z prawdziwymi cytatami, debata konstytucyjna od grudnia 1924, rzadsza karta stosunku do rządu, program z sześcioma priorytetami, głosy z 1919 r. przy pierwszych wyborach, wyjaśnienie rządu mniejszościowego oraz poprawki powrotów do ręki i sondaży na starcie (20.1; zapis w 23.29). Dokument nie zmienia działającej gry.
 
 **Gdzie jest aktualna reguła.** Tabela wskazuje kanoniczne miejsce każdego tematu i ostatnie zatwierdzone zmiany. Oznaczenia „Z — 0.xx (Mxx)” w tekście mówią, która decyzja ustaliła daną regułę.
 
@@ -25,10 +25,10 @@
 | Karty, wydarzenia, scenariusz Normalny | 17 | M02 (17.16), M05 (17.15), M07 (17.12), M12 (17.4), katalog kart (17.2, 17.3, 17.10, 17.11, 17.12, 17.15), etap 4 (17.4, 17.10, 17.11, 17.15, 17.16.2, 17.16.4), etap 5 (17.4), etap 6 (17.4, 17.5, 17.5.1, 17.11, 17.12, 17.12.5, 17.16.5), etap 7 (17.5–17.7, 17.10–17.13, 17.16.3), etap 8 (17.7, 17.10, 17.12.4, 17.16.3, 17.16.6, 17.16.11) |
 | Ścieżki jako zestawy warunków | 18 | — |
 | Granica rozdziału, raport i zapis | 19 | M08 (19.1), stare zapisy i etap 0 (19.3), etap 2 (19.1–19.2), etap 7 (19.1–19.2), etap 8 (19.2) |
-| Integracja z Dendry i odziedziczonym kodem | 20 | M09, M10 (20.2), moduł reguł, język i etap 0 (20.1), plan wdrożenia (20.3), etap 2 (20.1, 20.2), etap 4 (20.2), etap 5 (20.2), etap 6 (20.2), etap 7 (20.2), opisy wyborów (20.1), pasek boczny (20.1), dziewięć uwag (20.1) |
+| Integracja z Dendry i odziedziczonym kodem | 20 | M09, M10 (20.2), moduł reguł, język i etap 0 (20.1), plan wdrożenia (20.3), etap 2 (20.1, 20.2), etap 4 (20.2), etap 5 (20.2), etap 6 (20.2), etap 7 (20.2), opisy wyborów (20.1), pasek boczny (20.1), dziewięć uwag (20.1), trzynaście uwag (20.1) |
 | Kryteria weryfikacji i testy | 21 | wszystkie powyższe (21.1), etap 8 (21.2) |
 | Granice pewności i źródła | 22 | — |
-| Archiwum decyzji | 23 | M19, katalog kart, etapy 0–8 (23.14–23.22), wersja polska (23.23), potwierdzenie obecnej linii (23.24), nazwa CKW (23.25), opisy wyborów (23.26), pasek boczny (23.27), dziewięć uwag (23.29) |
+| Archiwum decyzji | 23 | M19, katalog kart, etapy 0–8 (23.14–23.22), wersja polska (23.23), potwierdzenie obecnej linii (23.24), nazwa CKW (23.25), opisy wyborów (23.26), pasek boczny (23.27), dziewięć uwag (23.29), trzynaście uwag (23.30) |
 
 ## 1. Status reguł i granica audytu
 
@@ -287,6 +287,8 @@ Anulowanie przed `committed` niczego nie refunduje, bo koszt nie został jeszcze
 
 ### 4.4. Ręka i odnowienia
 
+**Z — 0.57: zwykłe karty zamiast przypiętych (punkt 11 z 5 X 2026).** „Agenda partii” i „Związki zawodowe” są kartami talii „Sprawy partii”, a „Ochrona bezrobotnych” kartą talii „Parlament”: trzeba je wylosować, a „Odłóż na rękę” zastępuje „Nie teraz”. Związki są w talii, gdy trwa spór albo jest jego przyczyna (14.1); ochrona bezrobotnych, gdy inicjatywa D1 albo D2 czeka.
+
 **Z — 0.56: powroty do ręki.** „Nie teraz” w kartach przypiętych (agenda partii, agenda związków, agenda Sejmu, odpowiedź rządowi, pakiet budżetowy, ustawa o bezrobociu) i strona „Odrzuć kartę” wracają przez `root`, jak „Odłóż na rękę”: zaczynają nową stronę, więc ich tekst nie zostaje nad ręką. Bez wykorzystanej akcji miesiąc się nie rozlicza. Pusta talia jest ukryta, więc „Parlament” znika, gdy nie ma w niej żadnej karty (np. w styczniu 1922 r.).
 
 **K:** normalne dobieranie z talii jest jednolite wśród legalnych kart; `frequency` nie waży zwykłego doboru w obecnej konfiguracji. Źródła: `source/scenes/main.scene.dry` oraz `node_modules/dendrynexus/lib/engine.js`.
@@ -312,6 +314,8 @@ Doradcy mają jedno wspólne `available_at`, ustawiane na t+6 po zatwierdzeniu d
 **K — etap 5 (0.46):** praca organizacyjna jest stałą pozycją karty „Party Agenda” (`polish_party_agenda`): 1 T, 0 R, +2 zasięgu jednej branży albo +2 bazy PPS w jednej klasie (×1,10 w środowisku partii z 10.6), dostępna przy każdej kasie; nie dotyczy prasy ani TUR. Karta otwarta przez doradcę ma w trybie doradcy opcję zamknięcia `cancel_advisor_action`, od etapu 5 także w 13 kartach `polish_gov_*`; zamknięcie nie zwraca odnowienia doradców.
 
 ### 4.5. Kolejka wydarzeń
+
+**Z — 0.57:** kolejka zna wydarzenie listy wspólnej `polish_list_agreement` (definicja `parliament.list_agreement`, kategoria 4 — termin zamknięcia list) z kluczem wyborów i miesiąca (`keyed_by: election_month`), więc po odmowie może wrócić raz w następnym miesiącu okna (6.5).
 
 `EventRun`: `id,definition_id,instance_key,due_date,priority,phase,entered_at,context_snapshot,payload,choices,roll_ids,applied_effect_ids,resolution`. `payload` zaczyna jako `{}` i zawiera stan właściwy tej sprawie. `instance_key` jest np. identyfikatorem umowy i numerem naruszenia, nie samą nazwą karty. Ten sam schemat obowiązuje w katalogu rozdziału 17.
 
@@ -592,6 +596,8 @@ Senat nie jest przeliczany z późniejszego sondażu. Ma własne głosowania i t
 
 ### 6.5. Konkretne sojusze wyborcze
 
+**Z — 0.57: wspólna lista jako wydarzenie (punkty 7 i 8 z 5 X 2026).** Pytanie o listę nie jest kartą talii, lecz wydarzeniem `parliament.list_agreement` (scena `polish_list_agreement`) w pierwszym miesiącu okna list, dwa miesiące przed głosowaniem. Opcje: PPS–Wyzwolenie (relacja ≥60), PPS–NPR (≥70), wczesny Centrolew (≥70 z każdym partnerem i 2 wykonane wspólne zobowiązania) albo „Idziemy do wyborów sami”. Blok ludowy bez PPS nie jest decyzją PPS i nie jest jej oferowany; zostaje alternatywą stronnictw ludowych w ich ocenie listy (potrzeba 8.3). Propozycja nie kosztuje akcji (wcześniej 1 T z C3). Po odmowie pytanie wraca raz w ostatnim miesiącu okna, jeśli inna lista jest możliwa; przyjęta lista albo „sami” zamykają je na te wybory.
+
 P — przy otwarciu okna list gracz widzi poniższe oferty, samodzielną listę oraz przyczyny blokad. Progi dotyczą relacji PPS z partnerami. Zgoda każdego partnera wymaga również `offerScore>=60` z 8.3 i braku sprzecznej aktywnej umowy. Wspólna lista nie daje resortów. Mniejszości zachowują własną listę; mogą podpisać porozumienie o konkretnym głosowaniu bez dołączenia do listy PPS.
 
 | ID / wybór | Członkowie i bramka P | Stały profil porozumienia | Szczególny koszt lub ograniczenie |
@@ -658,6 +664,8 @@ Przed grudniowym przejściem z Naczelnika nie używamy fikcyjnego Senatu do otwi
 **K — etap 4 (0.45):** każda ustawa przechodzi `PolishProjects.submitLaw`: głosowanie Sejmu w decyzji, uproszczony Senat po 30 dniach (reguła `senate_review`, kluby głosują tak jak w Sejmie), przy sprzeciwie zwrot po 60 dniach ze słabszym wariantem ustawy albo odrzuceniem, potem przyjęcie zmian zwykłą większością albo ich odrzucenie większością 11/20. Przed utworzeniem Senatu ustawa wchodzi w życie z głosowaniem Sejmu. Kroki z datą rozlicza miesięczne rozliczenie do końca okresu. Ustawy zmarłego Sejmu wygasają.
 
 ### 7.3. Wybory prezydenckie i sukcesja
+
+**Z — 0.57: głosowanie rozstrzygające (punkt 9 z 5 X 2026).** Ekran wyniku nazywa pokazane głosowanie „Głosowanie rozstrzygające (tura N)”. Gdy ma ono więcej niż dwóch kandydatów, wyjaśnia, że zwycięzca miał ponad połowę ważnych głosów (łącznie z pustymi) i wybory skończyły się bez kolejnej tury; finał dwóch odbywa się tylko bez takiej większości (konstytucja marcowa, art. 39). Kandydatura Daszyńskiego 20 XII 1922 zostaje jako historia alternatywna (decyzja użytkownika); historycznie startowali Wojciechowski i Morawski (298:221).
 
 Z — widoczna sekwencja to `nomination_choice → final_result → oath`. Gracz wybiera „zgłoś kandydata PPS” albo „nie zgłaszaj”. Gra nie pokazuje pośrednich głosowań, nie pyta o transfery po każdej turze i nie pobiera za nie miesięcy. Widoczny wynik obejmuje zwycięzcę, uczestników ostatniego głosowania, ich głosy oraz wstrzymania/nieważne głosy potrzebne do wyjaśnienia większości.
 
@@ -1403,6 +1411,8 @@ Rekord prób uogólniamy do `TrialRecord{id,action_id,kind,strike_id?,mode,terms
 
 ### 10.5. Karty strategiczne PPS — stan, wybory i czas
 
+**Z — 0.57: program gospodarczy w praktyce (decyzja z 5 X 2026: „Kampania i reakcje wyborców”).** Każdy priorytet służy nazwanym grupom i ma listę zgodnych oraz sprzecznych działań (`PolishProjects.PROGRAMME_LINKS`; P — uproszczenie projektanta, odczyt nazwy priorytetu, nie zapis historyczny): stabilizacja z osłonami — robotnicy, bezrobotni, inteligencja (zgodne: osłona bezrobotnych, reforma walutowa chroniona albo stopniowa; sprzeczne: cięcie zasiłku, reforma walutowa z szybkimi cięciami); roboty publiczne — bezrobotni i robotnicy (roboty publiczne, zamówienia, ratunek zakładu; sprzeczne: szybkie cięcia); podatki majątkowe i kapitał — robotnicy i drobnomieszczaństwo (podatek progresywny, nadzwyczajny podatek majątkowy, pożyczka inwestycyjna, kredyt publiczny albo spółdzielczy; sprzeczne: podatki pośrednie); uspołecznienie — robotnicy (kontrola publiczna zakładu, współdecydowanie); reforma rolna i modernizacja wsi — chłopi (reforma rolna, modernizacja rolnictwa); spółdzielczość i mieszkania — robotnicy, chłopi, inteligencja (mieszkania w robotach publicznych, kredyt spółdzielczy, spółdzielcze przetwórstwo). Kampanie PPS (prasa, związki, polemika) są o 10% skuteczniejsze w komórkach grup obecnego programu; wynik kampanii i strona wyboru adresatów to podają. Gdy zgodne działanie wchodzi w życie (zatwierdzenie projektu, ustawa, instrument), a PPS jest w gabinecie albo go popiera, grupy priorytetu +1 pp dla PPS; gdy wchodzi w życie sprzeczne działanie z głosami PPS, −1 pp. Raz na działanie i priorytet (`S.actors.pps.applied`); ostatnie sześć reakcji zapisuje `S.actors.pps.programme_log`. **Karta (decyzja punktu 10):** pierwsza strona podaje obecny program, jego skutki i trzy ostatnie reakcje; wybory: „Zatwierdź obecny program: [lista]” (1 T, cd 6 M, nic więcej) albo „Zmień program” (bez programu: „Ułóż program”); w menu priorytetów „Przyjmij nowy program” wymaga zmiany zestawu.
+
 **Z — 0.56: program gospodarczy.** Sześć priorytetów (nowy `cooperatives_housing`, „Spółdzielczość i mieszkania”; `agrarian_labour` nazywa się „Reforma rolna i modernizacja wsi”), najwyżej trzy w zestawie; pod każdym jedno zdanie opisu (teksty zatwierdzone przez użytkownika w drugiej sesji). Priorytety obecnego programu mają w menu pogrubioną etykietę „Obecny program”, a „Zatwierdź program” już jej nie ma. Bez programu pusty zestaw jest niedostępny („Wybierz co najmniej jeden priorytet”); zastępuje to pusty przypadek Z — 0.51. Otwarta sprawa: w kodzie priorytety czyta tylko lista w agendzie partii, więc nie mają skutku mechanicznego (23.29).
 
 **Z — rewizja użytkownika z 10 września:** poniższy katalog zastępuje zbiorczą kartę `party.program_declaration`. Karta ustrojowa ma trzy opcje, program gospodarczy limit trzech priorytetów, a organizacje limit dwóch inwestycji. Nie ma osobnej karty religii ani stałej karty wyboru strategii strajkowej. Wzory, odnowienia i reakcje liczbowe pozostają **P**.
@@ -1459,6 +1469,8 @@ Można łączyć stabilizację i roboty publiczne; ich zgodność zależy od fin
 **K — 0.51:** obecną linię w ośmiu kartach stanowisk i ten sam zestaw Programu gospodarczego można potwierdzić (`PolishParty.stanceChoose`, `PolishParty.programmeChoose`; transakcja z polem `kept: true`), a karta Składki ma opcję „utrzymać” (`PolishParty.duesChoose(Q, 'keep')`, 13.1). Opis opcji obecnej linii mówi, że potwierdzenie kosztuje akcję miesiąca i odnowienie, ale niczego więcej nie zmienia (`pl_stance_<wartość>_present`, `pl_prog_confirm_same`). Wyjście z karty (`source/scenes/easy_discard.scene.dry`) nazywa się „Return to hand” / „Odłóż na rękę”; ma go 70 scen kart, wszystkie z ręki, żadna przypięta. Wyjście z karty otwartej przez doradcę (`cancel_advisor_action`, „Close card”) się nie zmieniło, bo kończy akcję doradcy, a nie odkłada karty.
 
 ### 10.6. Kierunek i elektorat reagują na sytuację polityczną
+
+**Z — 0.57: charakter partii bez martwej linii (punkt 6 z 5 X 2026).** Linia „Własny profil i zasięg przez sojuszników” (`allied_reach`) niczego nie zmieniała, więc karta jej nie oferuje; zapis gry, który ją zadeklarował, zachowuje nazwę do następnej zmiany. Zostają trzy linie z premią +0,10 w swoim środowisku.
 
 Kierunek określa preferowaną metodę budowania wpływu; charakter partii określa odbiorców. Nie są to wykluczające się tryby kampanii. Partia robotnicza może bronić parlamentu, a szeroka partia demokratyczna nadal prowadzić politykę socjalną.
 
@@ -2038,6 +2050,8 @@ Gracz nie wybiera przydziałów. Przykład: przy dwóch sprawach Milicja 8 F chr
 
 ### 13.5. Karta organizacji: do dwóch inwestycji w jednej akcji
 
+**Z — 0.57 (punkty 1–4 z 5 X 2026):** druga strona karty wykonuje wybór od razu, bez strony potwierdzenia; zostaje strona wyniku z „Dalej”. „Inwestuj tylko w: …” nazywa pierwszą inwestycję. Opcja TUR nazywa się „Załóż TUR”, póki TUR nie istnieje, potem „Rozpocznij kolejny etap TUR” (dwa miesiące); przed styczniem 1923 r. jest zablokowana z tym powodem (data założenia TUR według jego publikacji, HISTORICAL_SOURCES.md). Opis rozbudowy branży wyjaśnia premie słowami („więcej przy linii partii robotniczej i z kadrami TUR”) zamiast „z modyfikatorami”.
+
 **Z — wybieramy maksymalnie dwie różne organizacje.** Jest to przyjęty wyjątek od domyślnego jednego wariantu karty, nadal z jednym kosztem czasu. Poniższe opcje przekierowują do istniejących działań; nie tworzą drugiego systemu darmowych premii:
 
 | Organizacja | Wybór jednego pakietu w tej organizacji | Koszt i rezultat P |
@@ -2063,6 +2077,8 @@ Przykład: **prasa + TUR = 3 R i jedna główna akcja**, +10 zasięgu prasy tera
 Z — decyzja o charakterze protestu należy do wydarzenia, przede wszystkim 17.5; nie ma osobnej powtarzalnej karty „strategia związkowa”. Rozbudowa i fundusz są wariantami Organizacji PPS z 13.5. Uzgodnienie żądań, rozpoczęcie oraz zakończenie konkretnej akcji pozostają w jej agendzie; poniższe akcje są etapami tych spraw.
 
 ### 14.1. Stan branży
+
+**Z — 0.57: karta związków w talii (punkt 11 z 5 X 2026).** Karta „Związki zawodowe” jest w talii „Sprawy partii”, gdy trwa spór albo jest jego przyczyna: żywy rekord sporu, otwarty spór branży z kierownictwem albo przyczyna żądań płacowych (płace realne <80 albo rozgoryczenie zatrudnionych robotników ≥60; `PolishUnions.disputeOpen`). Bez sporu postulatów nie da się uzgodnić z wyprzedzeniem; w kampaniach testowych spór albo przyczyna trwają od sierpnia 1923 r. do końca rozdziału.
 
 `UnionBranch` ma: `id,reach,readiness,trust,autonomy,dissent,fatigue,fund,alignment,agreements,strike`. Oceny są 0–100; fundusz w R. Wskaźnik zasięgu nie jest historyczną liczbą związkowców. `dissent` i `fatigue` zaczynają od 0.
 
@@ -2668,7 +2684,7 @@ W tabeli `1 T` oznacza jedyną główną akcję miesiąca, `0 T` — etap tej sa
 | `union.organize/prepare/fund/mediate/align` / organizacje lub agenda konkretnego sporu | Konkretna branża; koszty 14.1 i pakiet 13.5 | Własny zasięg, gotowość, fundusz albo sprzeciw organizacji |
 | `union.strike` / agenda | 1 T; cel, branża, roszczenie i plan zakończenia | Rekord strajku; nie natychmiastowe powodzenie ugody |
 | `party.outreach` / partia | 1 T; cd 3 M na partnera | Relacja +4, a od 70: +2; bez automatycznej deklaracji głosowania |
-| `parliament.list_agreement` / parlament | 1 T; otwarte okno list; zgoda wszystkich partnerów | Wspólna lista na wskazane wybory, bez wspólnego rządu z automatu |
+| `parliament.list_agreement` / parlament | 0 T (od 0.57 odpowiedź na wydarzenie przed wyborami; wcześniej 1 T); otwarte okno list; zgoda wszystkich partnerów | Wspólna lista na wskazane wybory, bez wspólnego rządu z automatu |
 | `parliament.cabinet_formation` / parlament, agenda formowania | Własna inicjatywa 1 T łącznie; obowiązkowe formowanie 0 T; 8.8 | Dostępna konfiguracja, kandydat, udział PPS, mniejszości i resorty w jednej sekwencji |
 | `parliament.bill` / wewnętrzne rozliczenie | Koszt zawarty we właściwej karcie; dla D wyłącznie 17.15 | Automatyczne głosowania, terminy i zapis ustawy; bez osobnego menu procedowania |
 | `parliament.government_support` / parlament lub odpowiedź na kryzys | 1 T, cd 6 M (od 0.56) i od razu po działaniu gabinetu wbrew PPS; odpowiedź 0 T raz na sprawę, 9.8 | Wycofać poparcie, negocjować, przekonać lub utrzymać; odwołanie jako krok tej samej karty |
@@ -2785,6 +2801,8 @@ H — krakowski kryzys listopadowy i negocjacje wokół represji, kolejarzy i ż
 
 ### 17.5.1. Kraków: ugoda i odpowiedź parlamentarna — B11+B12
 
+**Z — 0.57: bez pętli „Strajku i Sejmu” (punkt 13 z 5 X 2026).** Gdy oferta spełnia wszystkie postulaty, „Żądaj…” jest niedostępne z wyjaśnieniem (`PolishUnions.responseStatus`); zostają przyjęcie albo poparcie porządku. Oferta odrzucona przez „Żądaj…” zapisuje swoje klauzule (`declined_clauses`); jeśli następna runda daje te same klauzule, rząd podtrzymuje stanowisko, strajk trwa i Sejm nie jest pytany ponownie — wydarzenie wraca tylko z inną ofertą. Nowe postulaty albo ograniczony pakiet ugody kasują ten zapis. Faza otwarta przez rundę w odpowiedzi „ugoda” jest odpowiedziana tą decyzją (wcześniej wracała w tym samym miesiącu).
+
 **Z — jedno menu zamiast dwóch kart.** `parliament.strike_response` jest jedyną odpowiedzią w tej fazie istniejącej sprawy `society.krakow_1923` lub innego aktywnego protestu z represją albo rzeczywistą ofertą ugody. Dostępne również w opozycji. P: 0 T, 0 R za stanowisko; wykonanie ugody zachowuje zwykłe koszty i zgody. Rekord ma `parliament_response=null|demands|settlement|order`, wybraną ofertę i wynik.
 
 | Trzy wybory | Konkretny skutek |
@@ -2851,6 +2869,8 @@ Nowe karty zapisują wariant w istniejącym `Project`, `Agreement`, `Negotiation
 Szczególne efekty z tabel zastępują ogólny efekt tego samego rodzaju, zamiast go dublować. Przykładowo zaufanie +4 wykonanej szkoły to wynik z 5.4 z przypisaniem odpowiedzialności PPS, a nie +4 ze szkoły i kolejne +4 z raportu. Podobnie explicitna zmiana reputacji zastępuje domyślne +3/−5 za ten sam obowiązek z 17.4. Koszt kampanii już opłacony w wydarzeniu nie jest pobierany ponownie przez helper 5.3.
 
 ### 17.10. Aktualny manifest 10 kart parlamentarnych
+
+**Z — 0.57 (punkty 7, 11 i 12 z 5 X 2026):** karta kontroli wojska jest w talii przy konkretnej sprawie wojskowej, zanim powstanie projekt, albo gdy Sejm odrzucił ustawę projektu i można zmienić wariant; przygotowany projekt czeka na uruchomienie w agendzie, a reforma w toku albo wykonana nie przywraca karty (wcześniej karta była w talii od VII 1923 do końca rozdziału, bo sprawa wojskowa się nie zamyka). „Ochrona bezrobotnych” jest zwykłą kartą talii, gdy D1 albo D2 czeka. Porozumienie wyborcze jest wydarzeniem przed wyborami (6.5).
 
 **Z — rodziny wyborów, nie dziesięć kart losowanych w każdej sytuacji.** Zwykła inicjatywa zużywa jedną główną akcję (P: 1 T); obowiązkowa odpowiedź na rzeczywiste wydarzenie 0 T. **Z — 0.36:** karty 3–5 nie mają odnowienia: każda dotyczy konkretnej sprawy, każda próba kosztuje 1 T (karta 3, Budżet, jest odpowiedzią na konkretny pakiet za 0 T — decyzja etapu 4, potwierdzona w 0.49), a odrzuconej oferty nie ponawia się bez zmiany oferty albo sytuacji (8.3). Podmenu tej samej oferty nie dolicza czasu. Koszt przygotowania lub wykonania osobnego projektu pozostaje według 12.2; ponowne otwarcie istniejącej agendy nie pobiera go drugi raz. „Pula” oznacza dostępność w zwykłym doborze; „agenda” gwarantuje dostęp po otwarciu sprawy; „wydarzenie” pojawia się po wyzwalaczu. Poniższy manifest ma pierwszeństwo przed dawnymi roboczymi podziałami kart.
 
@@ -3278,6 +3298,8 @@ Inspiracja mechaniczna: `source/scenes/events/unemployment_insurance_1.scene.dry
 
 #### 17.16.5. Drożyzna, kolej i ugoda
 
+**Z — 0.57: jedna sprawa płacowa na przyczynę (punkt 13 z 5 X 2026).** Po otwarciu sprawy następna wymaga nowej przyczyny: płace realne muszą wrócić do 80, a rozgoryczenie spaść poniżej 60, i dopiero potem znów trzy miesiące płac <80 albo rozgoryczenie ≥60 (`S.strikes.wage_watch.latched`; zapis bez znacznika zamyka się, gdy ma już sprawę płacową). Odstęp 3 M po zamknięciu zostaje. Wcześniej identyczna sprawa wracała co 3 M, dopóki płace były niskie, także po przyjętej ugodzie (sprzeczne z P tego punktu). Tekst sprawy podaje jej przyczynę i koniec poprzedniej sprawy zamiast stałego „Nie przyjęto żadnej ugody”.
+
 P — trzy kolejne zakończone miesiące `real_wage<80` otwierają jedną sprawę żądań wyrównania płac dla objętych pracowników. Scenariusz zapisuje odbiorców i przedstawienie żądania w `EventRun.payload`, bez dodatkowego menu strategii. Reakcja PPS korzysta z istniejącego protestu/rokowań, a reakcja państwa z profilu gabinetu. Przy jawnym odrzuceniu żądania lub braku przyjętej ugody do następnego rozliczenia: raz **+8 grievance** w objętych komórkach. Nie jest to +8 dla całej ludności ani automatyczna kara od samej daty.
 
 Rzeczywiście zarządzona militaryzacja kolei w aktywnym sporze daje raz **+10 grievance kolejarzy**. Jeśli komórka elektoratu obejmuje również inne branże, dodaje się zmianę ważoną udziałem kolejarzy; branżowa gotowość do strajku odczytuje pełny adresowany skutek. Nie tworzymy nowej kategorii narodowej ani ludzi. Ten impuls opisuje konflikt o przymus służbowy; dodatkową ekspozycję na represję z 15.1 zapisuje dopiero osobne wykonane działanie wobec ludzi, nie drugi raz to samo zarządzenie.
@@ -3538,6 +3560,8 @@ Kod pomocniczy powinien oddzielać obliczenie od zapisania wyniku: np. `computeF
 
 **Z — 0.55: czytelność paska.** Każda informacja paska ma pogrubioną etykietę („**Kasa partii:** 2 R”), a nagłówki sekcji mają linię i odstęp nad sobą. Pierwszym nagłówkiem zakładki „Ogólne” jest data, a przed rozpoczęciem gry „Stan”. Złożone wiersze są rozbite: składki („2 z 4”), członkostwo (indeks, liczba całkowita) i poziom aparatu („1 z 4”) mają osobne wiersze, podobnie sprzeciw w partii i spójność (liczba całkowita na 100); sprzedaż prasy ma wiersz tylko wtedy, gdy przynosi wpływy. Wiersz związku nie powtarza nazwy branży, bo stoi ona w etykiecie. Pięć wskaźników zakładki „Polityka” podaje skalę i najwyżej jedno miejsce po przecinku („Demokracja: 60 na 100”). Nazwa frakcji jest pogrubiona i oddzielona myślnikiem od siły i sprzeciwu. Zakładka „Obrona” ma osobne nagłówki dla Milicji PPS (albo Akcji Socjalistycznej), policji i zgrupowań wojska, po jednej informacji w wierszu; znany przedział lojalności każdego zgrupowania stoi w osobnym wierszu. W „Sondażach” etykiety partii i grup są pogrubione, a szczegółowe wyniki mają nagłówek „Według grup społecznych”. Arkusz stylów ukrywa puste wiersze i nagłówki, wcina zawinięty wiersz pod jego etykietą i pomniejsza objaśnienia pisane kursywą; niełamliwe spacje trzymają liczbę razem z jednostką („0,5 R”) i skalą („na 100”). Pola: `PolishParty.sidebarDisplay` daje `pl_party_dues`, `pl_party_membership`, `pl_party_apparatus`, `pl_party_sales` i `pl_party_cohesion` zamiast `pl_party_base`; `PolishSecurity.defenseView` daje `pl_def_members`, `pl_def_efficiency`, `pl_def_condition`, `pl_def_attachment`, `pl_def_police_capacity`, `pl_def_police_command`, `pl_def_police_lawful`, `pl_def_police_protection` oraz `pl_def_force_<id>` z nazwą w `pl_def_force_<id>_name`, a dawne pola zbiorcze zostają dla Biblioteki. Wszystkie lokalne pliki strony mają `?v=0.55`. Ten zapis zastępuje zdanie Z — 0.54 o zakładkach „Obrona” i „Sondaże” bez zmian oraz pole `pl_party_base`. Reguły się nie zmieniają.
 
+**Z — 0.57: trzynaście uwag z 5 X 2026.** Program gospodarczy ze skutkami (kampanie +10% i reakcje wyborców) i nowym pierwszym ekranem, wspólna lista jako wydarzenie przed wyborami z wyższymi progami i opcją „Idziemy do wyborów sami”, agenda partii, związki i ochrona bezrobotnych jako zwykłe karty, karta kontroli wojska tylko wtedy, gdy jest co wybrać, strajki bez pętli, opis głosowania rozstrzygającego w wyborach prezydenta, karta organizacji bez strony potwierdzenia i bez linii „własny profil i zasięg przez sojuszników”. Szczegóły są przy regułach (10.5, 10.6, 6.5, 4.4, 4.5, 14.1, 17.10, 17.5.1, 17.16.5, 7.3, 13.5), a decyzje i pliki w 23.30. Pliki strony mają wersję `?v=0.57`.
+
 **Z — 0.56: dziewięć uwag z 5 X 2026.** Model pieniędzy z oryginału (zbiórki zamiast wpływów i kosztów), dwie karty organizacji, krytyka Piłsudskiego jako karta z prawdziwymi cytatami, debata konstytucyjna od grudnia 1924, rzadsza karta stosunku do rządu, program z sześcioma priorytetami, głosy z 1919 r. przy pierwszych wyborach, wyjaśnienie rządu mniejszościowego oraz poprawki powrotów do ręki i sondaży na starcie. Szczegóły są przy regułach (13.1, 13.5, 10.5, 10.7, 7.6, 9.8, 8.6, 4.4, 5.2, 6.4), a decyzje i pliki w 23.29. Pliki strony mają wersję `?v=0.56`.
 
 **K — etap 0 (0.41):** `npm run build` kopiuje `source/rules/polish_rules.js` do `out/html/`, `out/html/index.html` wczytuje go przed `core.js`, a testy Node wczytują tę samą kopię.
@@ -3635,7 +3659,7 @@ Poniższa lista jest specyfikacją przyszłych testów, nie raportem ich zalicze
 | Późni doradcy | Rozdział 1 do zamachu albo do wyborów 19 II 1928 | Próchnik i Drobner niedostępni; zapisani jako obsada kontynuacji |
 | Dyscyplina KPP | Relacja 30, cel partnera szeroki: wspólne żądania szerokie / ograniczone / strukturalne | 65% / 40% / 65%; zapisany jeden rzut |
 | Akceptacja a KPP | Ten sam przypadek po kompromisie w PPS (akceptacja 50 → 65) | Szansa KPP bez zmian; znika kara Centrum +5/+2 |
-| Program bez zmiany | Zatwierdzenie zestawu priorytetów identycznego z obecnym; osobno odłożenie karty na rękę bez zatwierdzenia | Zatwierdzenie dostępne: 1 T i cd 6 M, zestaw i `strategy_history` bez zmian (0.51); odłożenie bez kosztu i odnowienia |
+| Program bez zmiany | Zatwierdzenie zestawu priorytetów identycznego z obecnym (od 0.57 na pierwszej stronie karty); osobno odłożenie karty na rękę bez zatwierdzenia | Zatwierdzenie dostępne: 1 T i cd 6 M, zestaw i `strategy_history` bez zmian (0.51); odłożenie bez kosztu i odnowienia |
 | Odroczenie sprawy frakcji | Frakcja z żądaniem i sprzeciwem 50: odroczenie, potem sprzeciw 62 | Brak E3 przez 3 M od odroczenia, potem E3 możliwa; samo odroczenie nie zmienia sprzeciwu (0.35) |
 | Dwa warianty kompromisu | Ustępstwo dla Lewicy; osobno uzgodnienie linii współpracy z KPP | Sprzeciw Lewicy −8 za 1 T, 1 R, cd 3 M; akceptacja układu 50 → 65 w każdej frakcji za 1 T, 0 R, cd 6 M (0.35) |
 | Dostęp karty Jedność | Wszystkie frakcje ze sprzeciwem poniżej 30 i zamknięty kanał z KPP; potem sprzeciw jednej frakcji 30 | Karty nie ma w puli; potem jest (0.35) |
@@ -3654,6 +3678,7 @@ Poniższa lista jest specyfikacją przyszłych testów, nie raportem ich zalicze
 | Dwie kategorie mniejszości | Połączenie komórek początkowych różnych rozmiarów i tej samej frekwencji | Zachowane masy i głosy; tylko `jewish` i `other_minorities` obok większości; suma dwóch segmentów mandatowych równa mandatowi agregatu |
 | Jedna trudność | Nowa gra i wczytanie zapisu | Wyłącznie Normalny; brak selektora trybu historycznego, zapisy i sondaże dostępne |
 | Prezydentura bez interaktywnych tur | Zgłoszenie albo brak kandydata, następnie wczytanie | Jeden ekran końcowego wyniku; niezmienione głosy klubów, brak powtórnej nominacji i powtórnych skutków |
+| Głosowanie rozstrzygające | 20 XII 1922 z Daszyńskim; większość jednego z trzech kandydatów w pierwszej turze | Ekran „Głosowanie rozstrzygające (tura 1)” i wyjaśnienie, że bezwzględna większość kończy wybory; przy finale dwóch bez wyjaśnienia (Z — 0.57) |
 | Remis finalistów urzędu | Dwie ważne kandydatury, równe głosy, spełnione kworum; rzut poniżej 0,5 / równy 0,5 | Odpowiednio pierwszy / drugi finalista; 50/50, głosy bez zmian, brak `no_election` z powodu remisu |
 | Zamówienia | Jeden kontrakt, 3 M, wykonanie 1/0,5/0 i wygaśnięcie | 1 B/M, wkład 0,30/0,15/0 pp raz; potem 0. Brak drugiego pakietu i podwójnej redukcji bezrobocia |
 | Policja | Ukończenie reformy, zapis, zmiana gabinetu i próba powtórzenia | +10 command/lawful_compliance raz do 100; nowy rząd nie resetuje limitu ani efektu |
@@ -3790,10 +3815,11 @@ Poniższa lista jest specyfikacją przyszłych testów, nie raportem ich zalicze
 | Narastanie kryzysu | Ta sama dopuszczalna oferta kryzysowa przy rosnącym kryzysie | Premia 8.8 rośnie do limitu, nie omija czerwonych linii; po opanowaniu kryzysu przyjęty gabinet nie znika |
 | Wspólna karta gabinetowa | Grabski, osłony, udział PPS i resorty | Jedna sekwencja i jeden koszt inicjatywy; brak dodatkowego priorytetu lub karty Grabskiego |
 | Utrzymanie poparcia tylko w kryzysie | Karta Stosunek do rządu bez kryzysu; potem ultimatum partnera | Bez opcji „utrzymać”, zamknięcie bez kosztu; przy ultimatum odpowiedź „utrzymać” za 0 T (0.36) |
-| Kontrola wojska bez pustych opcji | Karta kontroli wojska przy przygotowanym projekcie | Dwie opcje: pełny nadzór i ograniczona reforma; zamknięcie bez kosztu (0.36) |
+| Kontrola wojska bez pustych opcji | Karta kontroli wojska przy otwartej sprawie wojskowej, zanim powstanie projekt | Dwie opcje: pełny nadzór i ograniczona reforma; zamknięcie bez kosztu (0.36); po przygotowaniu projektu karta znika z talii (Z — 0.57) |
 | Ograniczona reforma wojska | Ta sama grupa: pełny nadzór albo ograniczona reforma | Lojalność legalna +0,05 albo +0,025; obciążenie 1 B przez 3 M albo 2 M; w ofercie `army` +2 albo 0 (0.36) |
 | Opcje karty Budżet | Pakiet z cięciem świadczeń; warianty „chronić”, „majątek”, „pożyczka” przy kredycie 39 i 40 | „Chronić”: pakiet bez cięcia; „majątek”: podatek progresywny albo majątkowy; „pożyczka”: blokada przy 39, oferta przy 40 (0.36) |
 | Kompromis listowy a Lewica | Pierwsza lista `centrolew_early`; osobno lista `labour` | Lewica +3 tylko przy Centrolewie; przy liście z NPR bez reakcji (0.36) |
+| Wspólna lista jako wydarzenie | Pierwszy miesiąc okna list; odmowa partnera; drugi miesiąc; „sami” | Pytanie z kolejki bez akcji miesiąca; progi 60/70/70; bez bloku ludowego; po odmowie raz jeszcze, jeśli lista jest możliwa; „sami” zamyka sprawę (Z — 0.57) |
 | Impas | Trzy nieudane propozycje powołania; potem nowy kandydat | Stan `impasse`, gabinet pełniący obowiązki, kruchość 100 w rokowaniach; z nowym kandydatem obowiązkowe formowanie (0.36) |
 | Karty 3–5 bez odnowienia | Odrzucona oferta budżetowa, w następnym miesiącu ta sama oferta, potem zmieniona | Ta sama oferta niedostępna; zmieniona dostępna za 1 T (0.36) |
 | Budżet | Koalicjant / faktyczny gwarant eksperta / opozycja po pojedynczym głosie za ustawą | Dostęp odpowiednio tak / tak / nie przy aktywnym pakiecie; prawo do zwykłego głosu budżetowego pozostaje |
@@ -3801,7 +3827,11 @@ Poniższa lista jest specyfikacją przyszłych testów, nie raportem ich zalicze
 | Legalny kalendarz bez C8 | Upadek rządu; brak aktu rozwiązania / wcześniej legalnie zarządzone wybory | Brak sceny wcześniejszych wyborów w obu przypadkach; w pierwszym normalna kadencja, w drugim zachowany termin i koniec rozdziału po wyniku |
 | Pula ustępstw wojskowych | PPS w opozycji, tolerowaniu, z właściwym uprawnieniem rządowym | Brak zwykłej karty ustępstw w pierwszych dwóch; dostęp w trzecim. Parlament nadal proceduje wymagane ustawy |
 | Strajk i Sejm | Te same organizacje i fundusz, trzy parlamentarne odpowiedzi, ponowne otwarcie | Odczyt wcześniejszych wyborów; żadnego ponownego doboru partnera, drugiego strajku lub podwójnej kary za wycofanie |
+| Strajk i Sejm bez pętli | Oferta połowy postulatów odrzucona przez „Żądaj…”, ta sama oferta w następnej rundzie, potem pełna oferta | Powtórzona oferta bez nowej odpowiedzi w Sejmie; pełna otwiera ją z niedostępnym „Żądaj…” (Z — 0.57) |
+| Jedna sprawa płacowa na przyczynę | Sprawa zamknięta przyjętą ugodą przy płacach nadal <80; potem płace 85 i znów trzy miesiące <80 | Brak nowej sprawy przez rok niskich płac; nowa sprawa po nowym spadku, jej tekst podaje poprzednią ugodę (Z — 0.57) |
+| Związki zawodowe jako zwykła karta | Styczeń 1922; płace 79; otwarty spór branży z kierownictwem | Karta poza talią bez sporu; w talii przy przyczynie żądań albo sporze z kierownictwem (Z — 0.57) |
 | Program gospodarczy | Trzy priorytety, próba dodania czwartego i ponowne wejście | Limit 3; jeden T; brak wykonanej reformy lub premii za powtórzenie |
+| Program w praktyce | Kampania do grupy priorytetu i poza nią; zgodny projekt przy gabinecie wspieranym przez PPS i w opozycji; sprzeczne cięcie zasiłku z głosami PPS i bez nich | Kampania ×1,10 tylko w grupach programu; +1 pp tylko przy gabinecie PPS lub wspieranym, raz na działanie; −1 pp tylko z głosami PPS (Z — 0.57) |
 | Bez płatnego braku wyboru | Karta Organizacje zamknięta bez wyboru; karta Składki odłożona na rękę bez wyboru, potem „utrzymać” | Zamknięcie i odłożenie bez kosztu T i bez odnowienia (0.34). „Utrzymać”: 1 T, cd 6 M, składki i członkostwo bez zmian (0.51) |
 | Militaryzacja a frakcje | Pierwsza i druga militaryzacja Milicji | Centrum +3 sprzeciwu tylko przy pierwszej; Lewica bez zmian (0.34) |
 | Praca organizacyjna w komórkach | Praca w komórkach chłopów przy linii `workers_peasants`; próba wyboru prasy | `base_reach_pps` chłopów +2,2 (mnożnik 1,10); prasa niedostępna (0.34) |
@@ -4590,3 +4620,31 @@ Otwarte sprawy:
 - Użytkownik chce więcej kart czasowych (pojawiających się na pewien czas po wydarzeniu); do zaproponowania osobno.
 
 Sprawdzenie: budowa (102 pliki tłumaczeń kompletne), `npm test` 463 z 463, 18 kontroli analiz, test w przeglądarce po polsku (pasek ze zbiórką, sondaże na starcie, karta Składki z kwotami zbiórki, obie karty organizacji po 7 wyborów, obrazek karty związków, karta B2 z cytatem, wydarzenie debaty), bez błędów w konsoli.
+
+### 23.30. Trzynaście uwag z gry — 5 X 2026
+
+Tego samego dnia użytkownik przysłał trzynaście kolejnych uwag ze zrzutami ekranu. Decyzje zapadły w tej sesji (pytania z wyborem odpowiedzi, w dwóch rundach). Kolejność jak w uwagach:
+1. **TUR jako decyzja partii.** Opcje „Załóż TUR” / „Rozpocznij kolejny etap TUR” w karcie organizacji; data od stycznia 1923 r. zostaje (udokumentowana) i jest podana jako powód blokady (13.5).
+2. **„Z modyfikatorami”.** Zastąpione słowami: więcej przy linii partii robotniczej i z kadrami TUR (13.5).
+3. **„Inwestuj tylko w”** nazywa pierwszą inwestycję.
+4. **Strona potwierdzenia w kartach organizacji** usunięta; strona wyniku z „Dalej” zostaje (decyzja: „w kartach organizacji, ale nie usuwaj »dalej«”).
+5. **Skutki programu gospodarczego:** decyzja „Kampania i reakcje wyborców” — kampanie +10% w grupach priorytetu, +1/−1 pp za zgodne i sprzeczne działania (10.5).
+6. **„Własny profil i zasięg przez sojuszników”** usunięty (10.6).
+7. **Blok ludowy** nie jest już opcją PPS (6.5).
+8. **Wspólna lista:** decyzja „Wydarzenie przed wyborami” — dwa miesiące przed głosowaniem, progi Wyzwolenie 60, NPR 70, Centrolew 70, opcja „Idziemy do wyborów sami”. Założenie wykonawcy: propozycja w wydarzeniu nie kosztuje akcji miesiąca (jak inne wydarzenia), a po odmowie pytanie wraca raz w drugim miesiącu okna, jak dawniej druga próba karty (6.5).
+9. **„Ostatnie głosowanie” z trzema kandydatami 20 XII:** decyzja „Zostawić i poprawić opis” (7.3). Przyczyna: przy trzech kandydatach Wojciechowski miał bezwzględną większość już w pierwszej turze (285 z 555, potrzeba 278).
+10. **Karta programu:** pierwsza strona „Zatwierdź obecny program: [lista]” albo „Zmień program” (10.5).
+11. **Agenda partii, Związki zawodowe, Ochrona bezrobotnych:** decyzja „Zwykłe karty” — dwie w talii partii, trzecia w talii Parlament; związki tylko w czasie sporu albo przy jego przyczynie (4.4, 14.1).
+12. **Kontrola nad wojskiem „pojawia się cały czas”:** sprawa wojskowa z VII 1923 nie zamyka się, więc karta była w talii do końca rozdziału, także z dwiema zablokowanymi opcjami. Decyzja „Tylko gdy jest co wybrać” (17.10).
+13. **Strajki wracają:** dwie pętle — sprawa płacowa otwierała się co 3 M przy płacach <80 (także po ugodzie), a „Strajk i Sejm” wracał co miesiąc po „Żądaj…” przy ofercie 100%. Decyzja „Obie poprawki” (17.5.1, 17.16.5).
+
+Poza uwagami:
+- Test kampanii ze strategiami odpowiada na wydarzenie listy (bierne strategie „sami”, kampania wyborcza z Wyzwoleniem); karty agendy, związków i ustawy strategie otwierają bezpośrednio jak inne karty talii.
+- Nowy pomocnik testów `dendry.playCard` zagrywa kartę talii tak, jakby była wylosowana.
+- Kontrola planu przyjmuje obie formy liczebnika („testy”, „testów”) i sprawdza teraz także liczby etapów 3 i 7.
+
+Otwarte sprawy:
+- Bez sporu związkowego (w kampaniach testowych do VII 1923) nie da się z wyprzedzeniem podnieść gotowości branż, także kolei ważnej przy zamachu; do decyzji, jeśli okaże się to problemem w grze.
+- Użytkownik chce więcej kart czasowych; do zaproponowania osobno.
+
+Sprawdzenie: budowa (102 pliki tłumaczeń kompletne), `npm test` 469 z 469, 18 kontroli analiz, test w przeglądarce po polsku.

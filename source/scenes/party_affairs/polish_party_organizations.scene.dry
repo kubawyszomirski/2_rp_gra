@@ -39,8 +39,8 @@ PolishParty.organizationsSecondView(Q, 'press_distribution');
 go-to: second
 
 @p1_tur
-title: Start the next stage of TUR
-subtitle: 2 resources; after two months TUR rises one level and gains cadres (+10).
+title: [? if pl_tur_level = 0 : Found TUR ?][? if pl_tur_level > 0 : Start the next stage of TUR ?]
+subtitle: [? if pl_tur_level = 0 : 2 resources; after two months TUR starts its work and gains cadres (+10). ?][? if pl_tur_level > 0 : 2 resources; after two months TUR rises one level and gains cadres (+10). ?]
 choose-if: {! return PolishParty.packageStatus(Q, 'tur', 0).available !}
 unavailable-subtitle: [+ pl_org_tur_why +]
 on-arrival: {!
@@ -98,7 +98,7 @@ new-page: true
 
 = A second organisation
 
-You may add one investment for another organisation, for the same month. Nothing is spent until you confirm.
+You may add one investment for another organisation, for the same month. Your choice is carried out at once.
 
 - @p2_press_distribution
 - @p2_tur
@@ -117,21 +117,21 @@ choose-if: pl_org2_press_distribution_ok = 1
 unavailable-subtitle: [+ pl_org2_press_distribution_why +]
 on-arrival: {!
 Q.pl_org_pick2 = 'press_distribution';
-PolishParty.selectionSummary(Q, [Q.pl_org_pick1, Q.pl_org_pick2]);
+PolishParty.organizationsChoose(Q, [Q.pl_org_pick1, Q.pl_org_pick2]);
 !}
-go-to: confirm
+go-to: result
 
 @p2_tur
 view-if: {! return Q.pl_org_first_org !== 'tur' !}
-title: Start the next stage of TUR
-subtitle: 2 resources; after two months TUR rises one level and gains cadres (+10).
+title: [? if pl_tur_level = 0 : Found TUR ?][? if pl_tur_level > 0 : Start the next stage of TUR ?]
+subtitle: [? if pl_tur_level = 0 : 2 resources; after two months TUR starts its work and gains cadres (+10). ?][? if pl_tur_level > 0 : 2 resources; after two months TUR rises one level and gains cadres (+10). ?]
 choose-if: pl_org2_tur_ok = 1
 unavailable-subtitle: [+ pl_org2_tur_why +]
 on-arrival: {!
 Q.pl_org_pick2 = 'tur';
-PolishParty.selectionSummary(Q, [Q.pl_org_pick1, Q.pl_org_pick2]);
+PolishParty.organizationsChoose(Q, [Q.pl_org_pick1, Q.pl_org_pick2]);
 !}
-go-to: confirm
+go-to: result
 
 @p2_militia_recruit
 view-if: {! return Q.pl_org_first_org !== 'militia' !}
@@ -141,9 +141,9 @@ choose-if: pl_org2_militia_recruit_ok = 1
 unavailable-subtitle: [+ pl_org2_militia_recruit_why +]
 on-arrival: {!
 Q.pl_org_pick2 = 'militia_recruit';
-PolishParty.selectionSummary(Q, [Q.pl_org_pick1, Q.pl_org_pick2]);
+PolishParty.organizationsChoose(Q, [Q.pl_org_pick1, Q.pl_org_pick2]);
 !}
-go-to: confirm
+go-to: result
 
 @p2_militia_militarize
 view-if: {! return Q.pl_org_first_org !== 'militia' !}
@@ -153,9 +153,9 @@ choose-if: pl_org2_militia_militarize_ok = 1
 unavailable-subtitle: [+ pl_org2_militia_militarize_why +]
 on-arrival: {!
 Q.pl_org_pick2 = 'militia_militarize';
-PolishParty.selectionSummary(Q, [Q.pl_org_pick1, Q.pl_org_pick2]);
+PolishParty.organizationsChoose(Q, [Q.pl_org_pick1, Q.pl_org_pick2]);
 !}
-go-to: confirm
+go-to: result
 
 @p2_cooperative_workers
 view-if: {! return Q.pl_org_first_org !== 'cooperatives' !}
@@ -165,9 +165,9 @@ choose-if: pl_org2_cooperative_workers_ok = 1
 unavailable-subtitle: [+ pl_org2_cooperative_workers_why +]
 on-arrival: {!
 Q.pl_org_pick2 = 'cooperative_workers';
-PolishParty.selectionSummary(Q, [Q.pl_org_pick1, Q.pl_org_pick2]);
+PolishParty.organizationsChoose(Q, [Q.pl_org_pick1, Q.pl_org_pick2]);
 !}
-go-to: confirm
+go-to: result
 
 @p2_cooperative_rural
 view-if: {! return Q.pl_org_first_org !== 'cooperatives' !}
@@ -177,34 +177,18 @@ choose-if: pl_org2_cooperative_rural_ok = 1
 unavailable-subtitle: [+ pl_org2_cooperative_rural_why +]
 on-arrival: {!
 Q.pl_org_pick2 = 'cooperative_rural';
-PolishParty.selectionSummary(Q, [Q.pl_org_pick1, Q.pl_org_pick2]);
+PolishParty.organizationsChoose(Q, [Q.pl_org_pick1, Q.pl_org_pick2]);
 !}
-go-to: confirm
+go-to: result
 
 @only_one
-title: Invest only in the first organisation
-on-arrival: {!
-Q.pl_org_pick2 = '';
-PolishParty.selectionSummary(Q, [Q.pl_org_pick1]);
-!}
-go-to: confirm
-
-@confirm
-new-page: true
-
-= Confirm the investment
-
-[+ pl_org_summary +]
-
-- @do_confirm
-- @polish_party_organizations: Choose again from the beginning.
-
-@do_confirm
-title: Confirm
-choose-if: {! return PolishParty.selectionStatus(Q, [Q.pl_org_pick1].concat(Q.pl_org_pick2 ? [Q.pl_org_pick2] : [])).available !}
+title: Invest only in: [+ pl_org_pick1_name +]
+choose-if: {! return PolishParty.selectionStatus(Q, [Q.pl_org_pick1]).available !}
 unavailable-subtitle: [+ pl_org_confirm_why +]
 on-arrival: {!
-PolishParty.organizationsChoose(Q, [Q.pl_org_pick1].concat(Q.pl_org_pick2 ? [Q.pl_org_pick2] : []));
+// Z — 0.57: the choice is carried out at once, without a page of confirmation.
+Q.pl_org_pick2 = '';
+PolishParty.organizationsChoose(Q, [Q.pl_org_pick1]);
 !}
 go-to: result
 

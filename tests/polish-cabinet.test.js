@@ -377,15 +377,19 @@ test('C2/C3 and Skład porozumienia: one evaluation of a list, a refusal keeps t
   Q.S.agreements.old_npr = { id: 'old_npr', kind: 'support', parties: ['pps', 'npr'], status: 'breached', history: [],
     obligations: [1, 2, 3, 4, 5, 6].map(i => ({ id: `old_npr:${i}`, owner: 'pps', status: 'breached', weight: 1 })) };
   engine.goToScene('main');
-  assert.equal(PolishGovernment.listAgreementAvailable(Q), true, 'the list window of October 1922');
-  playFromHand(engine, 'polish_list_agreement');
+  // Z — 0.57: the joint list is an event in the list window, not a card; it offers no peasant bloc and costs no action.
+  assert.equal(PolishGovernment.listEventDue(Q), true, 'the list window of October 1922');
+  engine.goToScene('polish_list_agreement');
+  assert.deepEqual(ids(engine), ['polish_list_agreement.left_peasant', 'polish_list_agreement.labour', 'polish_list_agreement.centrolew_early',
+    'polish_list_agreement.alone']);
   assert.equal(choice(engine, 'polish_list_agreement.centrolew_early').canChoose, false);
   choose(engine, 'polish_list_agreement.labour');
   assert.equal(engine.state.sceneId, 'polish_list_agreement.result');
   assert.match(content(engine), /NPR: refuses/);
   assert.deepEqual(ids(engine), ['root'], 'no counter-proposal and no menu of list conditions');
   assert.deepEqual(Q.S.parliament.alliances, [], 'the PPS list stands alone');
-  assert.equal(Q.month_actions, 1, 'the confirmation spends the month even when refused');
+  assert.equal(Q.month_actions, 0, 'a proposal costs no action');
+  assert.equal(PolishGovernment.listEventDue(Q), false, 'the last month of the window: the question does not return');
   const restored = dendry.saveAndRestore(engine);
   const R = restored.state.qualities;
   R.S.turn.pending = null; R.month_actions = 0;
@@ -411,6 +415,51 @@ test('C2/C3 and Skład porozumienia: one evaluation of a list, a refusal keeps t
   assert.ok(Object.values(R.S.cabinet.portfolios).every(owner => ['pps', 'psl_wyzwolenie', 'psl_piast', 'npr', 'expert'].includes(owner)),
     'minorities receive no portfolio');
   assert.equal(R.S.cabinet.portfolios.labor, 'npr');
+});
+
+// Z — 0.57 (items 7 and 8 of the play notes of 5 X 2026, "an event before the election"): the question of a joint list
+// comes from the queue in the first month of the list window, with higher gates and the answer "we go alone"; the peasant
+// bloc without PPS is no longer offered. After a refusal it returns once in the last month of the window, if a list is
+// still possible; going alone closes it for the election. No answer costs an action.
+test('Wspólna lista jako wydarzenie (Z — 0.57): asked two months before the vote; gates 60/70/70; after a refusal once more; going alone closes it', () => {
+  const engine = dendry.startGame();
+  const Q = engine.state.qualities;
+  const G = PolishGovernment;
+  assert.deepEqual(G.LIST_ORDER, ['left_peasant', 'labour', 'centrolew_early'], 'no peasant bloc without PPS');
+  assert.deepEqual(G.LIST_ORDER.map(id => G.LIST_OPTIONS[id].gates.map(g => g.min)), [[60], [70], [70, 70, 70]]);
+  assert.equal(G.listEventDue(Q), false, 'not in January 1922');
+  assert.match(G.electionReminder(Object.assign(Object.create(Q), { time: 8 })), /two months before the vote it decides on a joint list/);
+  Q.year = 1922; Q.month = 9; Q.time = 9;
+  G.changeRelation(Q, 'psl_wyzwolenie', 60 - Q.S.actors.relations.psl_wyzwolenie, 'fixture');
+  G.changeRelation(Q, 'npr', 69 - Q.S.actors.relations.npr, 'fixture');
+  assert.equal(G.listEventDue(Q), true, 'September 1922: the first month of the window');
+  assert.equal(PolishRules.nextEvent(Q, ['polish_list_agreement']), 'polish_list_agreement');
+  assert.equal(Q.S.events.active.instance_key, 'polish_list_agreement:' + Q.S.parliament.next_election.id + ':9', 'one instance per election and month');
+  engine.goToScene('polish_list_agreement');
+  assert.match(content(engine).replace(/","/g, ''), /The Sejm election is held on 5 November 1922/);
+  assert.deepEqual(ids(engine), ['polish_list_agreement.left_peasant', 'polish_list_agreement.labour', 'polish_list_agreement.centrolew_early',
+    'polish_list_agreement.alone']);
+  assert.equal(choice(engine, 'polish_list_agreement.labour').canChoose, false, 'NPR needs 70');
+  assert.match(JSON.stringify(choice(engine, 'polish_list_agreement.labour').subtitle), /Relation with NPR is below 70/);
+  // PSL Wyzwolenie refuses: PPS broke six promises to it before (the breach penalty of 8.3).
+  Q.S.agreements.old_wyz = { id: 'old_wyz', kind: 'support', parties: ['pps', 'psl_wyzwolenie'], status: 'breached', history: [],
+    obligations: [1, 2, 3, 4, 5, 6].map(i => ({ id: `old_wyz:${i}`, owner: 'pps', status: 'breached', weight: 1 })) };
+  G.changeRelation(Q, 'npr', 1, 'fixture');
+  choose(engine, 'polish_list_agreement.left_peasant');
+  assert.match(content(engine), /No joint list/);
+  assert.match(content(engine), /Before the lists close next month, PPS can propose another joint list/, 'NPR is possible now');
+  assert.equal(Q.month_actions, 0, 'a proposal costs no action');
+  assert.equal(G.listEventDue(Q), false, 'one question a month');
+  // October 1922: the question returns once; the refused list is closed while nothing has changed.
+  Q.month = 10; Q.time = 10;
+  assert.equal(G.listEventDue(Q), true);
+  engine.goToScene('polish_list_agreement');
+  assert.match(JSON.stringify(choice(engine, 'polish_list_agreement.left_peasant').subtitle), /same proposal was refused/);
+  choose(engine, 'polish_list_agreement.alone');
+  assert.equal(engine.state.sceneId, 'polish_list_agreement.alone_result');
+  assert.match(content(engine), /PPS goes to the election alone/);
+  assert.deepEqual([Q.S.parliament.alliances, Q.month_actions, G.listEventDue(Q)], [[], 0, false], 'going alone closes the question');
+  assert.match(G.electionReminder(Q), /PPS stands on its own list\.$/);
 });
 
 test('leak 2: the German coalition counter and votes of no confidence have no effect in the Polish game', () => {

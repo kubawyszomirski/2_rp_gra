@@ -1,6 +1,6 @@
 # Polska wersja: katalog kart do kodowania
 
-**Stan — referencja 0.56, 5 października 2026. Wszystkie partie przejrzane; brak otwartych pytań; wszystkie karty wdrożone (etapy 0–8 planu implementacji); teksty kart mają też wersję polską (referencja 23.23); obecną linię kart stanowisk, Składek i Programu gospodarczego można potwierdzić (referencja 23.24); doradcy występują w grze jako Centralny Komitet Wykonawczy (referencja 23.25); opisy wyborów podają skutki słowami, a liczby na życzenie (referencja 23.26); dziewięć uwag z gry zmienia m.in. pieniądze partii, organizacje, B2, reformę konstytucyjną, stosunek do rządu i program (referencja 23.29).** Katalog zbiera w jednym miejscu to, co [referencja techniczna](POLISH_TECHNICAL_REFERENCE.md) mówi o każdej karcie i wydarzeniu pierwszego rozdziału. Jest ściągą do kodowania: jedna tabela na kartę. Katalog powstał w całości w wersji 0.32. Wszystkie sześć partii użytkownik przejrzał w 0.33–0.38. Rozstrzygnięte pytania pogrupowano w rozdziale 10.
+**Stan — referencja 0.57, 5 października 2026. Wszystkie partie przejrzane; brak otwartych pytań; wszystkie karty wdrożone (etapy 0–8 planu implementacji); teksty kart mają też wersję polską (referencja 23.23); obecną linię kart stanowisk, Składek i Programu gospodarczego można potwierdzić (referencja 23.24); doradcy występują w grze jako Centralny Komitet Wykonawczy (referencja 23.25); opisy wyborów podają skutki słowami, a liczby na życzenie (referencja 23.26); dziewięć uwag z gry zmienia m.in. pieniądze partii, organizacje, B2, reformę konstytucyjną, stosunek do rządu i program (referencja 23.29); trzynaście kolejnych uwag zmienia program, wspólną listę, karty przypięte, kontrolę wojska, strajki i opis wyborów prezydenta (referencja 23.30).** Katalog zbiera w jednym miejscu to, co [referencja techniczna](POLISH_TECHNICAL_REFERENCE.md) mówi o każdej karcie i wydarzeniu pierwszego rozdziału. Jest ściągą do kodowania: jedna tabela na kartę. Katalog powstał w całości w wersji 0.32. Wszystkie sześć partii użytkownik przejrzał w 0.33–0.38. Rozstrzygnięte pytania pogrupowano w rozdziale 10.
 
 ## 1. Jak czytać katalog
 
@@ -255,8 +255,9 @@ Linia nie jest warunkiem karty 16.7, tylko ogranicza dostępne ustępstwa (10.7)
 | Partia robotnicza (`workers`) | — (obecna linia: potwierdzenie za 1 T, bez skutków) | Zapis linii | +0,10 do mnożnika rozbudowy: trzy branże związkowe i komórki robotników, w tym robotników rolnych | Z / P |
 | Partia robotniczo-chłopska (`workers_peasants`) | — (obecna linia: potwierdzenie za 1 T, bez skutków) | Zapis linii | Jak wyżej oraz komórki chłopów | Z / P |
 | Szeroka partia demokratyczna (`broad_democratic`) | — (obecna linia: potwierdzenie za 1 T, bez skutków) | Zapis linii | +0,10 w komórkach inteligencji i drobnomieszczaństwa | Z / P |
-| Własny profil i docieranie przez sojusze (`allied_reach`) | — (obecna linia: potwierdzenie za 1 T, bez skutków) | Zapis linii | Zasięg partnera dopiero po jego zgodzie, bez liczenia tych samych odbiorców dwa razy | Z / P |
 | Reakcja frakcji na zmianę | — | Brak w profilu `faction_stance_profile_v1` | — | P; historycznie B |
+
+Od 0.57 karta nie oferuje linii „Własny profil i docieranie przez sojusze” (`allied_reach`): zapisywała linię bez żadnego skutku (referencja 23.30). Zapis gry, który ją zadeklarował, zachowuje jej nazwę do następnej zmiany.
 
 Rozbudową zasięgu jest każde podniesienie zasięgu branży związkowej albo `base_reach_pps` komórek docelowego środowiska: rozbudowa branży (5.1 katalogu), praca organizacyjna (5.7 katalogu) i akcje Pużaka, Arciszewskiego i Ziemięckiego (6.6 katalogu). Zasięg prasy się nie liczy. Łączny mnożnik rozbudowy z TUR jest ograniczony testowo do 1,30; nasycenie kampanii obowiązuje nadal.
 
@@ -364,7 +365,7 @@ Cztery karty talii partyjnej (Organizacje, Milicja, Media, Składki) oraz stałe
 | Zapisuje | `ActionTxn.selected_options`; zasięg lub fundusz branży, `press.reach`, `tur.active_build`, stan Milicji, `cooperatives.projects` | P |
 | Odczytują | Utrzymanie (13.1), rejestr organizacji (13.2), Milicja (13.3), związki (14.1), zasięg kampanii (5.3) | P |
 | Co zostaje po karcie | Budowa TUR w toku; przygotowana spółdzielnia czeka w agendzie (5.9 katalogu); od 0.56 bez miesięcznego utrzymania organizacji | P |
-| Obecny kod | Z — 0.56: pakiety związkowe są w osobnej karcie `source/scenes/party_affairs/polish_party_union_investments.scene.dry` (`party.union_investments`: jedna inwestycja w akcji, cd 2 M), a w tej karcie zostają prasa, TUR, Milicja i spółdzielnie, najwyżej 7 wyborów na stronie. Wcześniej `source/scenes/party_affairs/polish_party_organizations.scene.dry` (etap 5, 0.46): 12 pakietów, do dwóch różnych w jednej akcji ze wspólnym potwierdzeniem; nic nie jest pobierane przed potwierdzeniem. Reguły w `source/rules/polish_party.js`. Odziedziczona `source/scenes/party_affairs/party_organizations.scene.dry` ma warunek `not polish_party_rules` | K |
+| Obecny kod | Z — 0.57: wybór na drugiej stronie wykonuje się od razu, bez strony potwierdzenia (zostaje strona wyniku); „Inwestuj tylko w: …” nazywa pierwszą inwestycję; opcja TUR to „Załóż TUR” albo „Rozpocznij kolejny etap TUR”. Z — 0.56: pakiety związkowe są w osobnej karcie `source/scenes/party_affairs/polish_party_union_investments.scene.dry` (`party.union_investments`: jedna inwestycja w akcji, cd 2 M), a w tej karcie zostają prasa, TUR, Milicja i spółdzielnie, najwyżej 7 wyborów na stronie. Wcześniej `source/scenes/party_affairs/polish_party_organizations.scene.dry` (etap 5, 0.46): 12 pakietów, do dwóch różnych w jednej akcji ze wspólnym potwierdzeniem; nic nie jest pobierane przed potwierdzeniem. Reguły w `source/rules/polish_party.js`. Odziedziczona `source/scenes/party_affairs/party_organizations.scene.dry` ma warunek `not polish_party_rules` | K |
 | Źródła i testy | 13.5, 13.1, 13.2, 13.3, 14.1, 17.2; testy „Dwie organizacje”, „Podmenu i doradcy”, „TUR” w 21.1 | — |
 
 | Opcja (ID) | Zablokowana, gdy | Skutek od razu | Skutek później | Status |
@@ -467,7 +468,7 @@ Kampania mobilizacyjna i śledztwo prasowe należą do tej karty (Z — 0.34). �
 
 | Pole | Treść | Status |
 |---|---|---|
-| Talia i pula | Agenda finansów PPS, poza ręką | P |
+| Talia i pula | Agenda partii; od 0.57 zwykła karta talii Partia (wcześniej poza ręką) | P |
 | Dostęp | Zawsze po upłynięciu odnowienia | P |
 | Koszt | 1 T, 0 R | P |
 | Limit wyboru | Jedno działanie | P |
@@ -489,7 +490,7 @@ Kampania mobilizacyjna i śledztwo prasowe należą do tej karty (Z — 0.34). �
 
 | Pole | Treść | Status |
 |---|---|---|
-| Talia i pula | Agenda finansów PPS, poza ręką | P |
+| Talia i pula | Agenda partii; od 0.57 zwykła karta talii Partia (wcześniej poza ręką) | P |
 | Dostęp | Poziom aparatu <4 | P |
 | Koszt | 1 T, 2 R | P |
 | Limit wyboru | Jedno działanie | P |
@@ -536,7 +537,7 @@ Działanie jest darmowe, ale słabe. Przydaje się, gdy brakuje pieniędzy albo 
 
 | Pole | Treść | Status |
 |---|---|---|
-| Talia i pula | Agenda TUR po wykonaniu co najmniej poziomu 1 | P |
+| Talia i pula | Agenda TUR po wykonaniu co najmniej poziomu 1; od 0.57 agenda partii jest zwykłą kartą talii Partia | P |
 | Dostęp | Poziom TUR wymagany przez wybrany kurs | P |
 | Koszt | 1 T, 1 R; program trwa 2 M finansowanego działania | P |
 | Limit wyboru | Jeden kurs naraz | P |
@@ -563,7 +564,7 @@ Budowę samego TUR (`party.tur`) opisuje 5.1 katalogu.
 
 | Pole | Treść | Status |
 |---|---|---|
-| Talia i pula | Agenda po przygotowaniu projektu w Organizacjach PPS (5.1 katalogu) | P |
+| Talia i pula | Agenda po przygotowaniu projektu w Organizacjach PPS (5.1 katalogu); od 0.57 agenda partii jest zwykłą kartą talii Partia | P |
 | Dostęp | Przygotowany mały projekt z wskazanymi odbiorcami | P |
 | Koszt | 1 T, 2 R | P |
 | Limit wyboru | Jeden projekt | P |
@@ -587,7 +588,7 @@ Liczba spółdzielni nie ma osobnego limitu; ogranicza ją koszt oraz limit ulgi
 
 | Pole | Treść | Status |
 |---|---|---|
-| Talia i pula | Agenda konkretnej branży albo sporu; nie ma osobnej karty strategii związkowej | Z |
+| Talia i pula | Agenda konkretnej branży albo sporu; nie ma osobnej karty strategii związkowej. Od 0.57 karta „Związki zawodowe” jest zwykłą kartą talii Partia, gdy trwa spór albo jest jego przyczyna (płace realne <80, rozgoryczenie ≥60, otwarty spór z kierownictwem) | Z |
 | Dostęp | Istniejąca branża; strajk wymaga celu, branży, roszczenia i planu zakończenia | P |
 | Koszt | 1 T, 0 R za każdy krok | P |
 | Limit wyboru | Jeden krok | P |
@@ -596,7 +597,7 @@ Liczba spółdzielni nie ma osobnego limitu; ogranicza ją koszt oraz limit ulgi
 | Zapisuje | `UnionBranch.readiness`, `alignment`, `dissent`; rekord `Strike` | P |
 | Odczytują | Potencjał akcji i ugoda (14.2–14.4); zgoda na ugodę (17.4) | P |
 | Co zostaje po karcie | Strajk przechodzi fazy `prepared → negotiating → active → settlement_pending → ended`; każdy aktywny miesiąc pobiera fundusz | P |
-| Obecny kod | Stała karta `source/scenes/polish_union_agenda.scene.dry` (etap 6, 0.47): trzy branże, a w każdej uzgodnienie postulatów ograniczonych albo szerokich, zebranie o linii strajku albo uzgodnionego końca, mediacja i rozpoczęcie protestu; każdy krok 1 T i 0 R. Po rozpoczęciu kroki strajku w `source/scenes/polish_strike_steps.scene.dry`. Reguły w `source/rules/polish_unions.js`. Odziedziczona `source/scenes/government_affairs/labor_affairs.scene.dry` wymaga SPD, a `source/scenes/events/unions_declare_independence.scene.dry` ma warunek `not polish_union_rules` | K |
+| Obecny kod | Od 0.57 zwykła karta talii (`PolishUnions.agendaCardAvailable`); wcześniej stała karta `source/scenes/polish_union_agenda.scene.dry` (etap 6, 0.47): trzy branże, a w każdej uzgodnienie postulatów ograniczonych albo szerokich, zebranie o linii strajku albo uzgodnionego końca, mediacja i rozpoczęcie protestu; każdy krok 1 T i 0 R. Po rozpoczęciu kroki strajku w `source/scenes/polish_strike_steps.scene.dry`. Reguły w `source/rules/polish_unions.js`. Odziedziczona `source/scenes/government_affairs/labor_affairs.scene.dry` wymaga SPD, a `source/scenes/events/unions_declare_independence.scene.dry` ma warunek `not polish_union_rules` | K |
 | Źródła i testy | 14, 14.1, 14.2, 14.3, 17.2, 17.5; testy „Zgoda na ugodę”, „Zgoda a fundusz”, „Pełna oferta i czerwona linia” w 21.1 | — |
 
 | Opcja (ID) | Zablokowana, gdy | Skutek od razu | Skutek później | Status |
@@ -648,9 +649,9 @@ Karty talii partyjnej, które budują kontakty, program gospodarczy i spójnoś�
 | Odnowienie | cd 6 M | P |
 | Wyjątek | Doraźne osłony i wymagane odpowiedzi są dostępne także poza listą priorytetów | P |
 | Zapisuje | `S.actors.pps.strategy.economic_priorities`, zbiór; na starcie pusty | P |
-| Odczytują | Agenda przygotowania projektów (12.2); oceny ofert i obietnice — w kodzie 0.56 czyta je tylko lista w agendzie partii (referencja 23.29) | P |
+| Odczytują | Od 0.57 kampanie PPS (×1,10 w grupach priorytetów) i reakcje wyborców na zgodne i sprzeczne działania (+1/−1 pp; `PolishProjects.PROGRAMME_LINKS`); agenda przygotowania projektów (12.2), oceny ofert i obietnice ich nie czytają (referencja 23.29) | P |
 | Co zostaje po karcie | Przyjęte priorytety trafiają do agendy jako dostępne przygotowanie, każde z kosztami 12.2 | P |
-| Obecny kod | `source/scenes/party_affairs/polish_party_economic_program.scene.dry` (etap 5, 0.46): do trzech z sześciu priorytetów (od 0.56: „Reforma rolna i modernizacja wsi” zamiast programu agrarno-robotniczego, szósty priorytet „Spółdzielczość i mieszkania”, zdanie opisu pod każdym, etykieta „Obecny program” przy priorytetach, bez programu pusty zestaw niedostępny); od 0.51 ten sam zestaw można potwierdzić za 1 T bez skutków; nie wprowadza reformy. Odziedziczona `source/scenes/party_affairs/crisis_program.scene.dry` zależy od niemieckich pól i nie pojawia się w polskiej talii | K |
+| Obecny kod | Od 0.57 pierwsza strona: obecny program, jego skutki, ostatnie reakcje oraz „Zatwierdź obecny program: [lista]” albo „Zmień program”; menu przyjmuje tylko zmieniony zestaw. `source/scenes/party_affairs/polish_party_economic_program.scene.dry` (etap 5, 0.46): do trzech z sześciu priorytetów (od 0.56: „Reforma rolna i modernizacja wsi” zamiast programu agrarno-robotniczego, szósty priorytet „Spółdzielczość i mieszkania”, zdanie opisu pod każdym, etykieta „Obecny program” przy priorytetach, bez programu pusty zestaw niedostępny); od 0.51 ten sam zestaw można potwierdzić za 1 T bez skutków; nie wprowadza reformy. Odziedziczona `source/scenes/party_affairs/crisis_program.scene.dry` zależy od niemieckich pól i nie pojawia się w polskiej talii | K |
 | Źródła i testy | 10.5, 12.2, 17.2; test „Program gospodarczy” w 21.1 | — |
 
 | Opcja (ID) | Zablokowana, gdy | Skutek od razu | Skutek później | Status |
@@ -791,7 +792,7 @@ Transfery poparcia używają wzoru z 10.4.4 i jednej migawki sprzed akcji. Duboi
 
 | Pole | Treść | Status |
 |---|---|---|
-| Talia i pula | Stała pozycja agendy „Współpraca z KPP”, poza ręką; pojawia się po otwarciu kontaktu (6.1 katalogu) | Z |
+| Talia i pula | Stała pozycja agendy „Współpraca z KPP” w agendzie partii (od 0.57 zwykła karta talii Partia); pojawia się po otwarciu kontaktu (6.1 katalogu) | Z |
 | Dostęp | Otwarty kanał z KPP; pozycja pokazuje następny krok, którego warunki są spełnione | Z / P |
 | Koszt | 1 T za krok; szerszy układ 1 T i 1 R; odpowiedź w wydarzeniu 0 T, nigdy oba koszty za tę samą umowę | P |
 | Limit wyboru | Jeden krok | P |
@@ -817,7 +818,7 @@ Miejsce kroków i ich ID ustalono w 0.35.
 
 | Pole | Treść | Status |
 |---|---|---|
-| Talia i pula | Stałe działanie agendy, poza ręką, zawsze dostępne (od 0.35) | Z |
+| Talia i pula | Stałe działanie agendy partii, zawsze dostępne w niej (od 0.35); od 0.57 agenda partii jest zwykłą kartą talii Partia | Z |
 | Dostęp | Od stycznia 1922 | P |
 | Koszt | 1 T, 1 R | P |
 | Limit wyboru | Jedno działanie | P |
@@ -881,7 +882,7 @@ Czerwonych linii, brakujących mandatów i bramki kryzysu nie można ominąć wy
 
 | Pole | Treść | Status |
 |---|---|---|
-| Talia i pula | Parlament; gwarantowana agenda po wyborach 1922 | Z |
+| Talia i pula | Parlament; od 0.57 zwykła karta talii, gdy D1 albo D2 czeka (wcześniej gwarantowana agenda — karta przypięta) | Z |
 | Dostęp | Po wyborach 1922 i tylko gdy `pps_mode != member`; jedna inicjatywa w rozdziale | Z |
 | Koszt | D1 1 T; D2 0 T | P |
 | Limit wyboru | Jeden wybór w każdej z dwóch kart | Z |
@@ -890,7 +891,7 @@ Czerwonych linii, brakujących mandatów i bramki kryzysu nie można ominąć wy
 | Zapisuje | `chapter.unemployment_bill`: status, wybrany i uchwalony wariant, `project_id`, `ballot_ids`, `submitted_at`, `senate_notice_due`, `senate_return_due`, `effective_at`, zakres kompromisu. Projekt osłony z `sponsor=pps`, `executor=labor_administration` | P |
 | Odczytują | Budżet i wykonanie (11.3, 12.3), zasługa autora (5.4), odpowiedzialność | P |
 | Co zostaje po karcie | Datowana procedura bez decyzji gracza: Senat +30 dni, zwrot +60, promulgacja; po wejściu w życie obciążenie 2 B albo 1 B | P |
-| Obecny kod | `source/scenes/polish_unemployment_bill.scene.dry` (etap 4, 0.45): stała karta od wyniku wyborów 1922, gdy PPS nie jest członkiem gabinetu; D1 za 1 T, D2 za 0 T po rozliczeniu miesiąca. Procedura ustawy, kompromis i osłona w `source/rules/polish_projects.js`; rekord `S.chapter.unemployment_bill` | K |
+| Obecny kod | `source/scenes/polish_unemployment_bill.scene.dry` (etap 4, 0.45; od 0.57 karta talii Parlament, „Odłóż na rękę” zamiast „Nie teraz”): karta od wyniku wyborów 1922, gdy PPS nie jest członkiem gabinetu; D1 za 1 T, D2 za 0 T po rozliczeniu miesiąca. Procedura ustawy, kompromis i osłona w `source/rules/polish_projects.js`; rekord `S.chapter.unemployment_bill` | K |
 | Źródła i testy | 17.15 (D), 7.2, 11.3, 12.3, 5.4; kryteria D–G w 21.1 | — |
 
 | Opcja (ID) | Zablokowana, gdy | Skutek od razu | Skutek później | Status |
@@ -959,8 +960,8 @@ Opcje korzystają z gotowych narzędzi 11.9, a warunki PPS partnerzy oceniają w
 
 | Pole | Treść | Status |
 |---|---|---|
-| Talia i pula | Parlament; pula przy przygotowanym projekcie albo konkretnej sprawie wojskowej, agenda po rozpoczęciu | Z |
-| Dostęp | Przygotowany projekt albo konkretna sprawa wojskowa | Z |
+| Talia i pula | Parlament; od 0.57 pula przy konkretnej sprawie wojskowej, zanim powstanie projekt, albo po odrzuceniu ustawy projektu; przygotowany projekt czeka w agendzie | Z |
+| Dostęp | Konkretna sprawa wojskowa bez projektu albo przygotowany projekt po odrzuconej ustawie (od 0.57; wcześniej każdy przygotowany projekt i otwarta sprawa) | Z |
 | Koszt | 1 T za zwykłą inicjatywę; projekt kontroli cywilnej według 12.4 (duży, 1 B przez 3 M) | P |
 | Limit wyboru | 1 opcja | Z |
 | Odnowienie | Brak; odrzuconej oferty nie ponawia się bez zmiany (Z — 0.36) | Z / P |
@@ -1013,11 +1014,11 @@ Poza kryzysem nie ma opcji „Utrzymać poparcie”, a zamknięcie karty jest be
 
 | Pole | Treść | Status |
 |---|---|---|
-| Talia i pula | Parlament; okno przygotowania list | Z |
+| Talia i pula | Od 0.57 wydarzenie `polish_list_agreement` (kategoria 4) w pierwszym miesiącu okna list, nie karta talii; wcześniej Parlament, okno przygotowania list | Z |
 | Dostęp | Otwarte okno list przed wyborami | P |
-| Koszt | Potwierdzenie 1 T raz, także przy odmowie partnerów; oglądanie 0 T | P |
+| Koszt | Od 0.57 propozycja 0 T jako odpowiedź na wydarzenie (wcześniej potwierdzenie 1 T raz, także przy odmowie partnerów) | P |
 | Limit wyboru | Jeden wybór; w kampanii najwyżej jedno własne porozumienie | Z |
-| Odnowienie | Ta sama decyzja na niezmienionym stanie nie daje nowej oceny ani premii | P |
+| Odnowienie | Ta sama decyzja na niezmienionym stanie nie daje nowej oceny ani premii; od 0.57 po odmowie pytanie wraca raz w drugim miesiącu okna, jeśli inna lista jest możliwa | P |
 | Wyjątek | — | — |
 | Zapisuje | `ElectoralAlliance` (`members`, `accepted_by`, `nomination_terms`, `valid_until`, `withdrawal_rules`); `Negotiation.kind=electoral_list` | P |
 | Odczytują | Metoda wyborcza (6.1); ocena ofert (8.3), gdzie `portfolioFit` oznacza podział kandydatur | P |
@@ -1027,11 +1028,11 @@ Poza kryzysem nie ma opcji „Utrzymać poparcie”, a zamknięcie karty jest be
 
 | Opcja (ID) | Zablokowana, gdy | Skutek od razu | Skutek później | Status |
 |---|---|---|---|---|
-| Samodzielna lista PPS | — | Pełny program i własne nominacje; bez premii za odmowę sojuszu | — | Z |
-| PPS–Wyzwolenie (`left_peasant`) | relacja z Wyzwoleniem <50; ocena <60; sprzeczna aktywna umowa | Wspólna lista; podział miejsc proporcjonalny do głosów | Reforma ziemska z równym dostępem i ochrona pracy jako zobowiązanie | Z / P |
-| PPS–NPR (`labour`) | relacja z NPR <60; konfrontacyjny antyklerykalizm w programie | Wspólna lista | Ośmiogodzinny dzień pracy, osłona bezrobotnych, wolność religijna | Z / P |
-| Wcześniejszy Centrolew (`centrolew_early`) | relacje z Wyzwoleniem, Piastem i NPR <60; mniej niż 2 wykonane wspólne zobowiązania z udziałem PPS | Wspólna lista czterech partii | Legalna zmiana rządów, minimum społeczne, kompromis ziemski i religijny. Pierwsze przyjęcie: Lewica +3 sprzeciwu | Z / P |
-| Zabiegać o porozumienie z blokiem ludowym (`peasant`) | Piast i Wyzwolenie nie przyjmują pakietu ziemskiego | PPS wspiera zbliżenie, ale nie tworzy cudzej listy | Silniejszy partner na wsi | Z / P |
+| Samodzielna lista PPS („Idziemy do wyborów sami”, od 0.57 opcja wydarzenia) | — | Pełny program i własne nominacje; bez premii za odmowę sojuszu; zamyka pytanie na te wybory | — | Z |
+| PPS–Wyzwolenie (`left_peasant`) | relacja z Wyzwoleniem <60 (od 0.57; wcześniej <50); ocena <60; sprzeczna aktywna umowa | Wspólna lista; podział miejsc proporcjonalny do głosów | Reforma ziemska z równym dostępem i ochrona pracy jako zobowiązanie | Z / P |
+| PPS–NPR (`labour`) | relacja z NPR <70 (od 0.57; wcześniej <60); konfrontacyjny antyklerykalizm w programie | Wspólna lista | Ośmiogodzinny dzień pracy, osłona bezrobotnych, wolność religijna | Z / P |
+| Wcześniejszy Centrolew (`centrolew_early`) | relacje z Wyzwoleniem, Piastem i NPR <70 (od 0.57; wcześniej <60); mniej niż 2 wykonane wspólne zobowiązania z udziałem PPS | Wspólna lista czterech partii | Legalna zmiana rządów, minimum społeczne, kompromis ziemski i religijny. Pierwsze przyjęcie: Lewica +3 sprzeciwu | Z / P |
+| Zabiegać o porozumienie z blokiem ludowym (`peasant`) | od 0.57 nieoferowane: to nie jest decyzja PPS (zostaje alternatywą stronnictw ludowych w ich ocenie listy) | PPS wspiera zbliżenie, ale nie tworzy cudzej listy | Silniejszy partner na wsi | Z / P |
 
 Niepowodzenie zachowuje dotychczasową listę, domyślnie samodzielną. Pierwsze przyjęcie listy, której program rezygnuje z punktów programu robotniczego, daje Lewicy +3 sprzeciwu (Z — 0.36), bez powtórki, jeśli karę naliczyła już zmiana programu. W praktyce dotyczy to wcześniejszego Centrolewu; listy z Wyzwoleniem i z NPR zachowują ochronę pracy. Listy konkurentów (`christian_agrarian`, `chzjn`) powstają bez PPS.
 
@@ -1078,7 +1079,7 @@ Do jednego głosowania trafiają wszystkie podtrzymane kandydatury. Kworum ≥14
 | Zapisuje | `PresidentialElectionRun`: `assembly_snapshot`, `pps_nomination`, `preference_snapshot`, `final_ballot`, `winner`, `status`, `tie_break`, `effects_applied` | P |
 | Odczytują | Sukcesja i powołanie premiera (8.7); zagrożenie prezydenta (9.4 katalogu) | P |
 | Co zostaje po karcie | Przy wyborze marszałka na prezydenta najpierw wybór nowego marszałka, potem zwykła tura | P |
-| Obecny kod | `source/scenes/polish_presidential_sequence.scene.dry` i `source/rules/polish_institutions.js`: nominacja PPS, wynik liczony z głosów klubów, zastępstwo marszałka (etap 2); od etapu 7 (0.48) zagrożenie B3 bez menu i odpowiedź B4 z kolejki przed drugim głosowaniem (9.4–9.5 katalogu) | K |
+| Obecny kod | `source/scenes/polish_presidential_sequence.scene.dry` i `source/rules/polish_institutions.js`: nominacja PPS, wynik liczony z głosów klubów, zastępstwo marszałka (etap 2); od etapu 7 (0.48) zagrożenie B3 bez menu i odpowiedź B4 z kolejki przed drugim głosowaniem (9.4–9.5 katalogu); od 0.57 ekran nazywa wynik „Głosowanie rozstrzygające (tura N)” i wyjaśnia zwycięstwo bezwzględną większością przy więcej niż dwóch kandydatach | K |
 | Źródła i testy | 7.3, 7.1, 17.10, 17.14; testy „Prezydentura bez interaktywnych tur”, „Remis finalistów urzędu”, „Finał bez większości bezwzględnej”, „Kworum i kandydatury”, „Bezpiecznik wyboru urzędu”, „C5–C7” w 21.1 | — |
 
 | Opcja (ID) | Zablokowana, gdy | Skutek od razu | Skutek później | Status |
@@ -1098,7 +1099,7 @@ Finał dwóch kandydatów wygrywa większa liczba głosów; remis rozstrzyga los
 | Wyzwalacz | `society.krakow_1923` albo inny aktywny protest z represją albo rzeczywistą ofertą ugody | Z |
 | Okno | Test X–XI 1923 dla Krakowa; inne protesty w swoim czasie | P |
 | Kolejka | Kategoria 5 z 4.5: warunkowe kryzysy | P |
-| Powtarzalność | Jedna odpowiedź na fazę sprawy; nowa istotna oferta może wznowić sprawę bez ponownej nagrody | P |
+| Powtarzalność | Jedna odpowiedź na fazę sprawy; nowa istotna oferta może wznowić sprawę bez ponownej nagrody; od 0.57 oferta powtarzająca odrzuconą nie otwiera nowej fazy | P |
 | Koszt odpowiedzi | 0 T, 0 R za stanowisko; wykonanie ugody ze zwykłymi kosztami i zgodami | P |
 | Bez odpowiedzi | Odpowiedź obowiązkowa w tej fazie | Z |
 | Zapisuje | `parliament_response=null\|demands\|settlement\|order`, wybrana oferta i wynik | P |
@@ -1109,7 +1110,7 @@ Finał dwóch kandydatów wygrywa większa liczba głosów; remis rozstrzyga los
 
 | Opcja (ID) | Zablokowana, gdy | Skutek od razu | Skutek później | Status |
 |---|---|---|---|---|
-| Żądać cofnięcia represji i ustępstw (`demands`) | — | Uzupełnienie oferty o jedno niespełnione żądanie albo przedstawienie żądań, gdy oferty nie ma | Progi 14.4 i zgoda wykonawcy nadal obowiązują | Z / P |
+| Żądać cofnięcia represji i ustępstw (`demands`) | od 0.57: oferta spełnia już wszystkie postulaty | Uzupełnienie oferty o jedno niespełnione żądanie albo przedstawienie żądań, gdy oferty nie ma | Progi 14.4 i zgoda wykonawcy nadal obowiązują | Z / P |
 | Szukać ugody i zakończyć strajk (`settlement`) | — | Przyjęcie wykonalnej ugody albo przedstawienie jednego ograniczonego pakietu; wezwanie do uzgodnionego końca | Posłuch według 14.5 | Z / P |
 | Poprzeć przywrócenie porządku (`order`) | — | Wycofanie poparcia PPS dla kontynuacji bez nowych ustępstw | Niewykonane obietnice: raz sprzeciw związku +10 i zaufanie −8. Apel nie kończy protestu i nie jest rozkazem dla policji | Z / P |
 
@@ -1742,7 +1743,7 @@ Cel partnera zapisuje profil wydarzenia. Od etapu 8 (0.49) jest nim `structural`
 | Wyzwalacz | Niezadowolenie objętych robotników albo branży ≥60 i brak wykonanej ugody; albo sprawa żądań płacowych po trzech miesiącach płac realnych <80 (17.16.5) | P |
 | Okno | Główne okno jesienią 1923; poza nim ogólny kontekst sporu. Kraków: test X–XI 1923 | H / P |
 | Kolejka | Kategoria 5 z 4.5: warunkowe kryzysy | P |
-| Powtarzalność | Nowa sprawa najwcześniej po 3 M, jeśli przyczyna trwa; zamknięte żądanie nie otwiera tej samej akcji | P |
+| Powtarzalność | Od 0.57 jedna sprawa na przyczynę: następna dopiero po powrocie płac do 80 (i rozgoryczenia poniżej 60) i nowym spadku, najwcześniej 3 M po zamknięciu poprzedniej; zamknięte żądanie nie otwiera tej samej akcji | P |
 | Koszt odpowiedzi | Pierwsza odpowiedź 0 T; strajk zużywa fundusz (14.2); ochrona Milicji wymaga przydziału ludzi i 0,5 R. Własny protest przed wydarzeniem kosztuje 1 T (5.10 katalogu) | P |
 | Bez odpowiedzi | — | — |
 | Zapisuje | `EventRun.payload.strike_strategy`; `government_response`; rekord `Strike` | P |

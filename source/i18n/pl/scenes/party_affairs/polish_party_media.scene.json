@@ -29,6 +29,7 @@
   "title: The defence of democracy": "title: Obrona demokracji",
   "= To whom?": "= Do kogo?",
   "Choose the voters the campaign speaks to. Nothing is spent until you choose.": "Wybierz wyborców, do których mówi kampania. Nic nie zostaje wydane, dopóki nie wybierzesz.",
+  "[? if pl_aud_programme : The economic programme of PPS makes the campaign 10% stronger among [+ pl_aud_programme +]. ?]": "[? if pl_aud_programme : Program gospodarczy PPS wzmacnia kampanię o 10% wśród [+ pl_aud_programme +]. ?]",
   "title: To the workers": "title: Do robotników",
   "title: To the employed workers": "title: Do zatrudnionych robotników",
   "title: To the unemployed": "title: Do bezrobotnych",

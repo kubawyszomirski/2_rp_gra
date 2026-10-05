@@ -29,13 +29,20 @@ function quietGame() {
   Q.S.economy.budget_base = 10;
   return engine;
 }
+// Z — 0.57: the question of a joint list comes as an event two months before the vote; PPS goes alone.
+function answerList(engine) {
+  if (engine.state.sceneId !== 'polish_list_agreement') return;
+  choose(engine, 'polish_list_agreement.alone');
+  choose(engine, 'root');
+}
 // One month spent on organisational work in the party agenda (0 R); the engine stops at main.
 function spendMonth(engine) {
   engine.goToScene('main');
-  choose(engine, 'polish_party_agenda');
+  dendry.playCard(engine, 'polish_party_agenda');
   choose(engine, 'polish_party_agenda.organize');
   choose(engine, 'polish_party_agenda.branch_farm_labour');
   choose(engine, 'root');
+  answerList(engine);
   assert.equal(engine.state.sceneId, 'main');
 }
 
@@ -48,12 +55,13 @@ test('Rozpoznanie w agendzie: three assessments of the forces every 3 months nar
   PolishParty.writeMirrors(Q);
   for (let n = 0; n < 3; n++) {
     engine.goToScene('main');
-    choose(engine, 'polish_party_agenda');
+    dendry.playCard(engine, 'polish_party_agenda');
     const cash = S.party_orgs.cash, t = Q.time;
     choose(engine, 'polish_party_agenda.assess_forces');
     assert.ok(Math.abs(S.party_orgs.cash - (cash - 1)) < 1e-6, '1 R');
     assert.match(JSON.stringify(engine.ui.paragraphs), /narrows the interval/);
     choose(engine, 'root');
+    answerList(engine);
     assert.equal(Q.time, t + 1, '1 T: the month is spent');
     radii.push(S.security.known.capital_legal.radius);
     for (const view of PolishSecurity.knownView(S)) {
@@ -64,7 +72,7 @@ test('Rozpoznanie w agendzie: three assessments of the forces every 3 months nar
     }
     if (n < 2) {
       engine.goToScene('main');
-      choose(engine, 'polish_party_agenda');
+      dendry.playCard(engine, 'polish_party_agenda');
       assert.equal(choice(engine, 'polish_party_agenda.assess_forces').canChoose, false, 'waits 3 months');
       assert.match(Q.pl_pa_assess_why, /months before the next assessment/);
       spendMonth(engine);
@@ -75,13 +83,13 @@ test('Rozpoznanie w agendzie: three assessments of the forces every 3 months nar
   assert.deepEqual(S.security.assessments.map(a => a.radius), [20, 10, 5]);
   spendMonth(engine); spendMonth(engine);
   engine.goToScene('main');
-  choose(engine, 'polish_party_agenda');
+  dendry.playCard(engine, 'polish_party_agenda');
   assert.equal(choice(engine, 'polish_party_agenda.assess_forces').canChoose, false);
   assert.match(Q.pl_pa_assess_why, /as precise as it can be/);
   assert.deepEqual(S.security.forces.map(f => [f.loyalty_legal, f.loyalty_pils, f.loyalty_neutral]), loyalties);
 });
 
-test('Kontrola wojska bez pustych opcji: at a prepared project the Parliament card has two options, full oversight and a limited reform; closing it costs nothing (0.36)', () => {
+test('Kontrola wojska bez pustych opcji: at an open military case the Parliament card has two options, full oversight and a limited reform; closing it costs nothing (0.36); a prepared project waits in the agenda (Z — 0.57)', () => {
   const engine = quietGame();
   const Q = engine.state.qualities, S = Q.S;
   if (!S.cabinet.partner_ids.includes('pps')) S.cabinet.partner_ids.push('pps');
@@ -90,17 +98,17 @@ test('Kontrola wojska bez pustych opcji: at a prepared project the Parliament ca
   playFromHand(engine, 'polish_gov_military');
   assert.deepEqual(ids(engine).filter(id => !['easy_discard', 'cancel_advisor_action'].includes(id)),
     ['polish_gov_military.civilian_oversight', 'polish_gov_military.personnel_changes', 'polish_gov_military.organizational_compromise']);
-  choose(engine, 'polish_gov_military.civilian_oversight');
-  assert.match(JSON.stringify(engine.ui.paragraphs), /its law and launch wait in the agenda/);
-  choose(engine, 'root');
-  assert.equal(engine.state.sceneId, 'main');
+  choose(engine, 'easy_discard');
+  // Z — 0.57 (item 12 of the play notes): the card is in the deck only when there is something to choose.
+  assert.equal(PolishProjects.armyOversightAvailable(Q), false, 'no military case and no project');
+  PolishPolitics.openCase(Q, { id: 'military_case', kind: 'military', subject: 'the organisation of the supreme military authorities' });
+  assert.equal(PolishProjects.armyOversightAvailable(Q), true, 'a concrete military case opens the card');
   const t = Q.time;
-  assert.equal(PolishProjects.armyOversightAvailable(Q), true, 'a prepared project opens the card');
   playFromHand(engine, 'polish_parliament_army_oversight');
   const options = ids(engine).filter(id => !['easy_discard', 'cancel_advisor_action'].includes(id));
   assert.deepEqual(options, ['polish_parliament_army_oversight.civilian_oversight', 'polish_parliament_army_oversight.limited_reform'],
     'no paid explanations of the minister and no postponement');
-  assert.equal(choice(engine, 'polish_parliament_army_oversight.civilian_oversight').canChoose, false, 'the same variant is already prepared');
+  assert.equal(choice(engine, 'polish_parliament_army_oversight.civilian_oversight').canChoose, true);
   assert.equal(choice(engine, 'polish_parliament_army_oversight.limited_reform').canChoose, true);
   choose(engine, 'easy_discard');
   assert.deepEqual([Q.time, Q.month_actions || 0], [t, 0], 'closing the card costs nothing');
@@ -109,8 +117,8 @@ test('Kontrola wojska bez pustych opcji: at a prepared project the Parliament ca
   choose(engine, 'root');
   const project = Object.values(S.projects).find(p => p.type === 'army_control');
   assert.deepEqual([Q.time, project.variant, project.status, project.policy_choices.via, project.duration_months],
-    [t + 1, 'limited_reform', 'prepared', 'parliament', 2], '1 T: the one project, changed to the limited reform');
-  assert.equal(Object.values(S.projects).filter(p => p.type === 'army_control').length, 1, 'no second project');
+    [t + 1, 'limited_reform', 'prepared', 'parliament', 2], '1 T: the one project, the limited reform');
+  assert.equal(PolishProjects.armyOversightAvailable(Q), false, 'the prepared project waits for its launch in the agenda');
 });
 
 // ---- The coup F through the engine (16.4–16.8, 19.1; card catalogue 9.15) ----
@@ -134,7 +142,7 @@ function toCoup({ democracy = null, sides = null } = {}) {
   dendry.formCabinet(engine, { mode: 'opposition' });
   choose(engine, 'root');
   engine.goToScene('main');
-  choose(engine, 'polish_party_agenda');
+  dendry.playCard(engine, 'polish_party_agenda');
   choose(engine, 'polish_party_agenda.organize');
   choose(engine, 'polish_party_agenda.branch_farm_labour');
   choose(engine, 'root');
@@ -153,7 +161,7 @@ function toCoup({ democracy = null, sides = null } = {}) {
   S.coup.pressure = 70;
   if (democracy !== null) S.politics.democracy = democracy;
   engine.goToScene('main');
-  choose(engine, 'polish_party_agenda');
+  dendry.playCard(engine, 'polish_party_agenda');
   choose(engine, 'polish_party_agenda.organize');
   choose(engine, 'polish_party_agenda.branch_farm_labour');
   choose(engine, 'root');

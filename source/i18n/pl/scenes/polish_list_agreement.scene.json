@@ -2,11 +2,11 @@
  "source": "scenes/polish_list_agreement.scene.dry",
  "status": "complete",
  "lines": {
-  "title: Electoral Agreement": "title: Porozumienie wyborcze",
-  "subtitle: A joint list for the coming Sejm election, while the lists are open.": "subtitle: Wspólna lista na najbliższe wybory do Sejmu, póki listy są otwarte.",
+  "title: A Joint List?": "title: Wspólna lista?",
+  "subtitle: The lists for the Sejm election are open: a joint list, or our own.": "subtitle: Listy na wybory do Sejmu są otwarte: wspólna lista albo własna.",
   "= A joint list?": "= Wspólna lista?",
-  "The lists for the coming Sejm election are open until the end of the month before the vote. Without an agreement PPS stands alone with its full programme and all its own candidates; refusing an alliance brings no bonus.": "Listy na najbliższe wybory do Sejmu są otwarte do końca miesiąca poprzedzającego głosowanie. Bez porozumienia PPS startuje sama, z pełnym programem i wszystkimi własnymi kandydatami; odmowa sojuszu nie daje żadnej premii.",
-  "A joint list counts the votes of its parties together in the seat method, and shares its seats in proportion to their votes. Each party keeps its own club after the election and may vote differently; a list gives no ministry and binds nobody to a later cabinet. Each partner answers once, by the same evaluation as a cabinet offer. PPS can agree at most one list for this election.": "Wspólna lista liczy głosy swoich partii łącznie przy podziale mandatów i dzieli mandaty proporcjonalnie do ich głosów. Po wyborach każda partia zachowuje własny klub i może głosować inaczej; lista nie daje ministerstwa i nikogo nie wiąże przy późniejszym gabinecie. Każdy partner odpowiada raz, według tej samej oceny co przy ofercie gabinetu. PPS może uzgodnić najwyżej jedną listę na te wybory.",
+  "The Sejm election is held on [+ pl_list_vote +], and the lists close at the end of the month before the vote. Without an agreement PPS stands alone with its full programme and all its own candidates; refusing an alliance brings no bonus.": "Wybory do Sejmu odbędą się [+ pl_list_vote +], a listy zamykają się z końcem miesiąca poprzedzającego głosowanie. Bez porozumienia PPS startuje sama, z pełnym programem i wszystkimi własnymi kandydatami; odmowa sojuszu nie daje żadnej premii.",
+  "A joint list counts the votes of its parties together in the seat method, and shares its seats in proportion to their votes. Each party keeps its own club after the election and may vote differently; a list gives no ministry and binds nobody to a later cabinet. Each partner answers once, by the same evaluation as a cabinet offer. A proposal costs no action this month.": "Wspólna lista liczy głosy swoich partii łącznie przy podziale mandatów i dzieli mandaty proporcjonalnie do ich głosów. Po wyborach każda partia zachowuje własny klub i może głosować inaczej; lista nie daje ministerstwa i nikogo nie wiąże przy późniejszym gabinecie. Każdy partner odpowiada raz, według tej samej oceny co przy ofercie gabinetu. Propozycja nie zużywa akcji tego miesiąca.",
   "title: A joint list of PPS and PSL Wyzwolenie": "title: Wspólna lista PPS i PSL Wyzwolenie",
   "subtitle: Land reform with equal access and protection of labour; seats shared in proportion to votes.": "subtitle: Reforma rolna z równym dostępem i ochrona pracy; mandaty dzielone proporcjonalnie do głosów.",
   "Q.pl_list_name = PolishGovernment.LIST_OPTIONS.left_peasant.name;": "Q.pl_list_name = PolishGovernment.listNameText(PolishGovernment.LIST_OPTIONS.left_peasant.name);",
@@ -16,12 +16,14 @@
   "title: An early Centre-Left of PPS, both peasant parties and NPR": "title: Wczesny Centrolew: PPS, oba stronnictwa ludowe i NPR",
   "subtitle: A lawful change of government, a social minimum and a land and religious compromise. The Lewica opposes giving up points of the workers' programme.": "subtitle: Legalna zmiana rządu, minimum socjalne oraz kompromis w sprawie ziemi i religii. Lewica sprzeciwia się rezygnacji z punktów programu robotniczego.",
   "Q.pl_list_name = PolishGovernment.LIST_OPTIONS.centrolew_early.name;": "Q.pl_list_name = PolishGovernment.listNameText(PolishGovernment.LIST_OPTIONS.centrolew_early.name);",
-  "title: Support a peasant bloc of PSL Wyzwolenie and PSL Piast": "title: Wspieramy blok ludowy PSL Wyzwolenie i PSL Piast",
-  "subtitle: Agriculture and credit. PPS brokers the agreement but is not on the list, and faces a stronger rival in the countryside.": "subtitle: Rolnictwo i kredyt. PPS pośredniczy w porozumieniu, ale nie jest na liście i ma na wsi silniejszego rywala.",
-  "Q.pl_list_name = PolishGovernment.LIST_OPTIONS.peasant.name;": "Q.pl_list_name = PolishGovernment.listNameText(PolishGovernment.LIST_OPTIONS.peasant.name);",
+  "title: We go to the election alone": "title: Idziemy do wyborów sami",
+  "subtitle: PPS stands with its full programme and all its own candidates; no joint list at this election.": "subtitle: PPS startuje z pełnym programem i wszystkimi własnymi kandydatami; w tych wyborach bez wspólnej listy.",
   "= The answer": "= Odpowiedź",
   "[? if pl_list_accepted : **[+ pl_list_name +] will stand as one list** at the coming election. ?]": "[? if pl_list_accepted : **[+ pl_list_name +] wystartuje jako jedna lista** w najbliższych wyborach. ?]",
   "[? if not pl_list_accepted : **No joint list.** PPS keeps its own list. ?]": "[? if not pl_list_accepted : **Nie będzie wspólnej listy.** PPS zachowuje własną listę. ?]",
-  "- @root: Continue.": "- @root: Dalej."
+  "[? if pl_list_retry : Before the lists close next month, PPS can propose another joint list. ?]": "[? if pl_list_retry : Przed zamknięciem list w przyszłym miesiącu PPS może zaproponować inną wspólną listę. ?]",
+  "- @root: Continue.": "- @root: Dalej.",
+  "= Our own list": "= Własna lista",
+  "PPS goes to the election alone, with its full programme and all its own candidates.": "PPS idzie do wyborów sama, z pełnym programem i wszystkimi własnymi kandydatami."
  }
 }

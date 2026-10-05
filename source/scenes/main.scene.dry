@@ -45,10 +45,7 @@ max-cards: 3
 - @parliament
 - #advisor
 - @polish_government_response
-- @polish_party_agenda
-- @polish_union_agenda
 - @polish_agenda
-- @polish_unemployment_bill
 - @polish_budget_package
 - @polish_discard
 

@@ -1,11 +1,13 @@
 title: Party Agenda
 subtitle: Organisational work, collections, the apparatus, TUR courses and cooperatives.
-is-pinned-card: true
+is-card: true
+tags: party_affairs
 view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.agendaAvailable(Q) !}
 new-page: true
 on-arrival: {!
-// The party's standing actions outside the hand (technical reference 4.4, 13.1–13.2, 17.2; card
-// catalogue 5.5–5.9): each costs this month's action; organisational work is always there and needs no money.
+// The party's standing actions (technical reference 4.4, 13.1–13.2, 17.2; card catalogue 5.5–5.9): each costs this
+// month's action; organisational work needs no money. Since Z — 0.57 (item 11 of the play notes of 5 X 2026) it is an
+// ordinary card of the Party deck, no longer pinned: it has to be drawn and goes back to the hand unused.
 PolishParty.agendaView(Q);
 // Stage 7: the assessment of the forces of the state is a standing action of this agenda (card catalogue 6.8).
 if (Q.polish_security_rules && typeof PolishSecurity !== 'undefined' && PolishSecurity.ready(Q)) Q.pl_pa_assess_why = PolishSecurity.assessStatus(Q).reason;
@@ -27,7 +29,7 @@ TUR: [+ pl_party_tur +]. Cooperatives: [+ pl_party_coops +].
 - @kpp_rules
 - @kpp_agreement
 - @assess_forces
-- @later
+- @easy_discard
 
 @fundraise
 title: An extraordinary collection
@@ -339,11 +341,6 @@ PolishSecurity.assess(Q);
 Q.pl_party_result = Q.pl_security_result;
 !}
 go-to: result
-
-@later
-title: Not now
-subtitle: Nothing is spent.
-go-to: root
 
 @result
 new-page: true

@@ -28,7 +28,7 @@ function toMain(engine) {
 // One month spent on organisational work in the party agenda (0 R); `stop` leaves the engine at the first event.
 function spendMonth(engine, stop) {
   engine.goToScene('main');
-  choose(engine, 'polish_party_agenda');
+  dendry.playCard(engine, 'polish_party_agenda');
   choose(engine, 'polish_party_agenda.organize');
   choose(engine, 'polish_party_agenda.branch_farm_labour');
   choose(engine, 'root');
@@ -43,7 +43,7 @@ function plainSteps(engine) {
 }
 function unionStep(engine, branch, step) {
   engine.goToScene('main');
-  choose(engine, 'polish_union_agenda');
+  dendry.playCard(engine, 'polish_union_agenda');
   choose(engine, `polish_union_agenda.${branch}`);
   choose(engine, `polish_union_agenda.${step}`);
   if (step === 'start') plainSteps(engine);
@@ -64,9 +64,11 @@ test('the Trade Unions card: agreeing the demands and starting a strike each tak
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
   const S = Q.S;
-  assert.ok(ids(engine).includes('polish_union_agenda'), 'a pinned card');
+  // Z — 0.57: an ordinary card of the Party deck while a dispute is open or has a cause; the test plays it as if drawn.
+  assert.ok(!ids(engine).includes('polish_union_agenda'), 'not pinned');
   S.unions.industry.reach = 50;
   unionStep(engine, 'industry', 'prepare_limited');
+  assert.equal(PolishUnions.agendaCardAvailable(Q), true, 'the agreed demands are a live dispute');
   assert.equal(Q.time, 2, 'one month');
   assert.equal(S.unions.industry.readiness, 40);
   assert.equal(PolishRules.cooldownRemaining(Q, 'union.prepare.industry'), 1);
@@ -84,6 +86,24 @@ test('the Trade Unions card: agreeing the demands and starting a strike each tak
   assert.equal(S.economy.history.at(-1).strike_disruption, S.strikes.inputs.strike_disruption, 'the economy of the month read the strike');
 });
 
+// Z — 0.57 (item 11 of the play notes of 5 X 2026, "ordinary cards"): the card of the unions is in the Party deck only while
+// a dispute is open or has a cause.
+test('Związki zawodowe jako zwykła karta (Z — 0.57): in the Party deck during a dispute, with an open dispute with the leadership or a cause of wage demands', () => {
+  const engine = dendry.startGame();
+  const Q = engine.state.qualities, S = Q.S;
+  const inDeck = () => (engine._compileChoices(engine.game.scenes['main.party']) || []).filter(c => c.canChoose !== false)
+    .map(c => c.id).includes('polish_union_agenda');
+  assert.equal(inDeck(), false, 'January 1922: real wages at 100 and no dispute');
+  S.economy.real_wage = 79;
+  assert.equal(inDeck(), true, 'real wages below the limit of a wage case');
+  S.economy.real_wage = 100;
+  S.unions.rail.dissent = 10;
+  S.unions.rail.dissent_causes.push({ id: 'fixture', status: 'open' });
+  assert.equal(inDeck(), true, 'an open dispute of a branch with its leadership');
+  S.unions.rail.dissent_causes.at(-1).status = 'answered';
+  assert.equal(inDeck(), false);
+});
+
 test('an offer is answered without a month: accepting ends the strike on the agreed terms and the rise comes the next month', () => {
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
@@ -91,7 +111,7 @@ test('an offer is answered without a month: accepting ends the strike on the agr
   S.unions.rail.reach = 45;
   unionStep(engine, 'rail', 'prepare_limited');
   engine.goToScene('main');
-  choose(engine, 'polish_union_agenda');
+  dendry.playCard(engine, 'polish_union_agenda');
   choose(engine, 'polish_union_agenda.rail');
   choose(engine, 'polish_union_agenda.start');
   const rec = PolishUnions.records(S).find(r => r.branches.includes('rail'));
@@ -190,7 +210,7 @@ test('Klucz sprawy E6: strike S and settlement U1 refused by part of the striker
   // or a political demand.
   unionStep(engine, 'industry', 'prepare_broad');
   engine.goToScene('main');
-  choose(engine, 'polish_union_agenda');
+  dendry.playCard(engine, 'polish_union_agenda');
   choose(engine, 'polish_union_agenda.industry');
   choose(engine, 'polish_union_agenda.start');
   const rec = PolishUnions.records(S).find(r => r.branches.includes('industry'));
@@ -220,7 +240,7 @@ test('Klucz sprawy E6: strike S and settlement U1 refused by part of the striker
   const again = R.S.strikes.records[rec.id];
   // The next month brings a new offer U2; its refusal opens a new instance.
   restored.goToScene('main');
-  choose(restored, 'polish_party_agenda');
+  dendry.playCard(restored, 'polish_party_agenda');
   choose(restored, 'polish_party_agenda.organize');
   choose(restored, 'polish_party_agenda.branch_farm_labour');
   choose(restored, 'root');

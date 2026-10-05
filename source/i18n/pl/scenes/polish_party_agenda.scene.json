@@ -60,8 +60,6 @@
   "subtitle: This month's action and 1 resource; needs rules accepted by both sides and the acceptance of 60 inside PPS (now [+ pl_kpp_acceptance +]).": "subtitle: Akcja miesiąca i 1 jednostka środków; wymaga zasad przyjętych przez obie strony i akceptacji 60 wewnątrz PPS (obecnie [+ pl_kpp_acceptance +]).",
   "title: Assess the forces of the state": "title: Oceń siły państwa",
   "subtitle: 1 resource; the known loyalty of the army groups becomes more precise (−10 percentage points of the interval, down to ±5); waits three months. The loyalties themselves do not change.": "subtitle: 1 jednostka środków; znana lojalność zgrupowań wojska staje się dokładniejsza (−10 punktów procentowych przedziału, najwyżej do ±5); odnowienie: trzy miesiące. Sama lojalność się nie zmienia.",
-  "title: Not now": "title: Nie teraz",
-  "subtitle: Nothing is spent.": "subtitle: Nic nie zostaje wydane.",
   "- @root: Continue.": "- @root: Dalej."
  }
 }

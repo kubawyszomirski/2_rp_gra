@@ -105,9 +105,10 @@ const assignedTests = Object.values(byStageB).flat();
 assert.equal(new Set(assignedTests).size, assignedTests.length, 'no 21.1 test is assigned twice');
 assert.deepEqual(assignedTests.filter(t => !tests.includes(t)), [], 'every assigned name exists in 21.1');
 assert.deepEqual(tests.filter(t => !assignedTests.includes(t)), [], 'every 21.1 test has a stage');
-assert.ok(plan.includes(`Razem: ${tests.length} testów z 21.1.`), 'appendix B total');
+// Z — 0.57: the Polish numeral is „testy” after 2–4 (not 12–14) and „testów” otherwise; both forms are read.
+assert.ok(new RegExp(`Razem: ${tests.length} test(?:y|ów) z 21\\.1\\.`).test(plan), 'appendix B total');
 for (const s of stages) {
-  const m = s.text.match(/\*\*Testy z 21\.1:\*\* (\d+) testów z dodatku B/);
+  const m = s.text.match(/\*\*Testy z 21\.1:\*\* (\d+) test(?:y|ów) z dodatku B/);
   if (m) assert.equal(Number(m[1]), byStageB[s.n].length, `stage ${s.n}: test count in the stage text`);
   for (const name of [...(s.text.match(/\*\*Testy z 21\.1:\*\*[^\n]*/) || [''])[0].matchAll(/„([^”]+)”/g)].map(x => x[1])) {
     assert.ok(byStageB[s.n].includes(name), `stage ${s.n}: named test ${name} is assigned to this stage`);
@@ -293,7 +294,7 @@ assert.ok(plan.includes('## 15. Ustalenia z etapu 5'), 'stage 5 findings');
 assert.ok(/^### 23\.19\. Etap 5 wdrożony/m.test(tr), 'reference 23.19 records stage 5');
 assert.equal((tr.match(/\*\*K — etap 5 \(0\.46\):\*\*/g) || []).length, 34, 'thirty-four K notes of stage 5');
 for (const script of ['polish_electorate.js', 'polish_party.js']) assert.ok(loadsScript(read('out/html/index.html'), script), `the page loads ${script}`);
-assert.equal(byStageB[5].length, 67, 'stage 5 keeps 67 tests of 21.1');
+assert.equal(byStageB[5].length, 68, 'stage 5 keeps 68 tests of 21.1 (67 and the programme in practice of Z — 0.57)');
 const rulesSource = read('source/rules/polish_rules.js');
 assert.ok(rulesSource.includes("polish_event_faction_split: Object.freeze({definition_id: 'party.faction_split'"), 'E3 is one definition of the queue');
 for (const scene of ['pps_lewica_split', 'pps_pilsudczycy_split', 'pps_centrum_crisis']) {
@@ -322,7 +323,7 @@ assert.equal((tr.match(/\*\*K — etap 6 \(0\.47\):\*\*/g) || []).length, 26, 't
 assert.ok(loadsScript(read('out/html/index.html'), 'polish_unions.js'), 'the page loads polish_unions.js');
 const pageOrder = ['polish_party.js', 'polish_unions.js', 'polish_engine_hooks.js'].map(f => scriptAt(read('out/html/index.html'), f));
 assert.ok(pageOrder[0] < pageOrder[1] && pageOrder[1] < pageOrder[2], 'the unions module loads after the party and before the engine hooks');
-assert.equal(byStageB[6].length, 18, 'stage 6 keeps 18 tests of 21.1');
+assert.equal(byStageB[6].length, 21, 'stage 6 keeps 21 tests of 21.1 (18 and three strike tests of Z — 0.57)');
 const strikeTests = read('tests/rules-strike.test.js') + read('tests/polish-strike.test.js') + read('tests/rules-economy.test.js');
 for (const name of byStageB[6]) assert.ok(strikeTests.includes(`test('${name}`), `stage 6 test „${name}” is implemented`);
 for (const [id, category] of [['society.strike_1923', 5], ['parliament.strike_response', 5], ['society.strike_settlement_rejection', 1]]) {

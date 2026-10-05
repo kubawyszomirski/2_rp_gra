@@ -1,12 +1,14 @@
 title: Trade Unions
 subtitle: The steps of a union dispute: the demands, the line, mediation, a strike and its end.
-is-pinned-card: true
-view-if: {! return !!Q.S && !!Q.polish_union_rules && PolishUnions.agendaAvailable(Q) !}
+is-card: true
+tags: party_affairs
+view-if: {! return !!Q.S && !!Q.polish_union_rules && PolishUnions.agendaCardAvailable(Q) !}
 new-page: true
 on-arrival: {!
 // The agenda of a branch or a dispute (technical reference 14.1–14.5; card catalogue 5.10). Each step costs this
 // month's action (1 T, 0 R). The character of a protest in a crisis is chosen by its event, not here, and an offer of
-// the government is answered in the answer of the Sejm (17.5.1), for no month (14.3).
+// the government is answered in the answer of the Sejm (17.5.1), for no month (14.3). Since Z — 0.57 (item 11 of the
+// play notes of 5 X 2026) it is an ordinary card of the Party deck while a dispute is open or has a cause.
 PolishUnions.agendaView(Q);
 !}
 
@@ -17,7 +19,7 @@ PolishUnions.agendaView(Q);
 - @industry
 - @rail
 - @farm_labour
-- @later
+- @easy_discard
 
 @industry
 title: Industry
@@ -42,11 +44,6 @@ on-arrival: {!
 PolishUnions.branchView(Q, 'farm_labour');
 !}
 go-to: branch
-
-@later
-title: Not now
-subtitle: Nothing is spent.
-go-to: root
 
 @branch
 new-page: true

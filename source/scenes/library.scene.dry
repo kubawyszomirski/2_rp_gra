@@ -69,11 +69,11 @@ Under the March Constitution, the Sejm and Senate elect the President together a
 
 [? if national_assembly_total > 0 : **Gameplay Assembly:** 444 Sejm MPs plus the 111 recorded senators, for **[+ national_assembly_total +] members**. The Senate is derived once from the Sejm result; it is a simplification, not a separate campaign. ?]
 
-[? if polish_first_presidential_election_recorded : **In this game — final ballot, 9 December 1922:** [+ pl_pres_first_lines +]. [+ pl_pres_first_winner +] was elected (PPS nomination: [+ pl_pres_first_nominee +]). ?]
+[? if polish_first_presidential_election_recorded : **In this game — decisive ballot, 9 December 1922:** [+ pl_pres_first_lines +]. [+ pl_pres_first_winner +] was elected (PPS nomination: [+ pl_pres_first_nominee +]). ?]
 
 [? if pl_pres_first_tie : The first final was a tie decided by a recorded lot. ?]
 
-[? if polish_second_presidential_election_recorded : **In this game — final ballot, 20 December 1922:** [+ pl_pres_second_lines +]. [+ pl_pres_second_winner +] was elected (PPS nomination: [+ pl_pres_second_nominee +]). ?]
+[? if polish_second_presidential_election_recorded : **In this game — decisive ballot, 20 December 1922:** [+ pl_pres_second_lines +]. [+ pl_pres_second_winner +] was elected (PPS nomination: [+ pl_pres_second_nominee +]). ?]
 
 **Historical note (documented fact, not a game result):** on 9 December 1922 the National Assembly elected Gabriel Narutowicz by 289 votes to 227 for Maurycy Zamoyski, with 29 blank ballots; Narutowicz took the oath on 11 December, received the transfer of authority from Józef Piłsudski on 14 December and was assassinated on 16 December. Marshal Maciej Rataj briefly exercised the President's duties. On 20 December Stanisław Wojciechowski was elected by 298 votes to 221 for Kazimierz Morawski.
 

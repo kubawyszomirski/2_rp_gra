@@ -113,7 +113,7 @@ const { chromium } = require(process.argv[2] || 'playwright');
     await choose('polish_presidential_sequence.decline_daszynski');
     // The final result is counted from the clubs' votes (7.3), not fixed historical totals.
     assert.match(await page.locator('#content').innerText(), /Gabriel Narutowicz is elected President/);
-    assert.match(await page.locator('#content').innerText(), /Final ballot: Gabriel Narutowicz — \d+ votes/);
+    assert.match(await page.locator('#content').innerText(), /Decisive ballot \(round \d+\): Gabriel Narutowicz — \d+ votes/);
     await choose('polish_presidential_sequence.first_transfer');
     await choose('polish_presidential_sequence.assassination');
     const responseChoices = await page.evaluate(() => window.dendryUI.dendryEngine.getCurrentChoices()

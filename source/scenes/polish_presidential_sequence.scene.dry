@@ -64,6 +64,9 @@ function describe(prefix, id) {
     Q[prefix + '_status'] = run.status;
     Q[prefix + '_tie'] = run.tie_break ? 1 : 0;
     Q[prefix + '_rounds'] = run.rounds.length;
+    // Z — 0.57 (item 9 of the play notes of 5 X 2026): more than two candidates in the decisive ballot means a majority won
+    // outright; the screen explains it.
+    Q[prefix + '_outright'] = run.final_ballot.length > 2 ? 1 : 0;
     Q[prefix + '_nominee'] = run.pps_nomination ? 'Ignacy Daszyński' : 'no PPS candidate';
 }
 describe('pl_pres_first', 'president_1922_12_09');
@@ -153,7 +156,9 @@ new-page: true
 
 **[+ pl_pres_first_winner +] is elected President of the Republic.**
 
-Final ballot: [+ pl_pres_first_lines +].
+Decisive ballot (round [+ pl_pres_first_rounds +]): [+ pl_pres_first_lines +].
+
+[? if pl_pres_first_outright : The winner had more than half of the valid ballots (blank ones included) in this round, so the election ended without a further round; a final between two is held only when no candidate has such a majority. ?]
 
 [? if pl_pres_first_tie : The two finalists received the same number of votes; the office was decided by a recorded lot. ?]
 
@@ -358,7 +363,9 @@ if (pending && pending.phase === 'second_final') {
 
 **[+ pl_pres_second_winner +] is elected and assumes the office of President of the Republic.**
 
-Final ballot: [+ pl_pres_second_lines +].
+Decisive ballot (round [+ pl_pres_second_rounds +]): [+ pl_pres_second_lines +].
+
+[? if pl_pres_second_outright : The winner had more than half of the valid ballots (blank ones included) in this round, so the election ended without a further round; a final between two is held only when no candidate has such a majority. ?]
 
 [? if pl_pres_second_tie : The two finalists received the same number of votes; the office was decided by a recorded lot. ?]
 

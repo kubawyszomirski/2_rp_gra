@@ -409,7 +409,7 @@
     if (cash + 1e-9 < p.cost) return no(L('Needs ' + rules.units(p.cost) + '.', 'Wymaga ' + rules.units(p.cost, 'resources', 'gen') + '.'));
     if (p.org === 'tur') {
       const tur = S.party_orgs.tur;
-      if (Q.time < tur.available_from) return no(L('TUR is founded in January 1923.', 'TUR powstaje w styczniu 1923 roku.'));
+      if (Q.time < tur.available_from) return no(L('TUR can be founded from January 1923.', 'TUR można założyć od stycznia 1923 roku.'));
       if (tur.level >= TUR_MAX) return no(L('TUR has its full national coordination.', 'TUR ma już pełną koordynację ogólnokrajową.'));
       if (tur.active_build) return no(L('A stage of TUR is already being built.', 'Jeden etap TUR jest już w budowie.'));
     }
@@ -998,9 +998,14 @@
 
   // Z — 0.51 (the user, 4 X 2026; it replaces Z — 0.32): the present line can be chosen again. Confirming it costs this
   // month's action and the card's usual wait, like a change, and changes nothing else.
+  // Z — 0.57 (item 6 of the play notes of 5 X 2026): a line with no effect is no longer offered; its name stays for a save
+  // that declared it.
+  const RETIRED_STANCES = Object.freeze({electoral_base: Object.freeze(['allied_reach'])});
+
   function stanceStatus(Q, cardId, value) {
     const card = STANCES[cardId];
     if (!card || !card.values[value]) return no(L('Unknown line.', 'Nieznana linia.'));
+    if ((RETIRED_STANCES[cardId] || []).indexOf(value) >= 0) return no(L('This line is no longer offered.', 'Ta linia nie jest już dostępna.'));
     if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
     const wait = waitReason(Q, stanceCooldownKey(cardId));
     if (wait) return no(wait);
@@ -1148,16 +1153,44 @@
     S.actors.pps.strategy_history.push({t: t, field: 'economic_priorities', from: previous, to: strategy.economic_priorities.slice()});
     S.cooldowns['party.economic_program'] = t + 6;
     writeMirrors(Q);
+    // Z — 0.57: the result names what the programme now does (10.5).
+    const served = andList(programmeGroupNames(S));
     return result(Q, set.length ? L('The economic programme of PPS: ', 'Program gospodarczy PPS: ') + strategy.economic_priorities.map(priorityName).join('; ') +
-      L('. The priorities prepare nothing by themselves; each programme still needs its card, law, money and executor.',
-        '. Priorytety same niczego nie przygotowują; każdy program nadal potrzebuje swojej karty, ustawy, pieniędzy i wykonawcy.')
+      L('. Campaigns of PPS are now 10% stronger among ' + served + '. The priorities prepare nothing by themselves; each programme still needs its card, law, money and executor.',
+        '. Kampanie PPS są teraz o 10% skuteczniejsze wśród ' + served + '. Priorytety same niczego nie przygotowują; każdy program nadal potrzebuje swojej karty, ustawy, pieniędzy i wykonawcy.')
       : L('PPS withdraws its economic priorities.', 'PPS wycofuje swoje priorytety gospodarcze.'));
+  }
+
+  // Z — 0.57 (item 10 of the play notes): the card opens on the present programme, which can be confirmed at once; the
+  // menu of priorities accepts only a changed set.
+  function programmeChangeStatus(Q, set) {
+    if (Array.isArray(set) && set.length && sameSet(set, strategyOf(Q.S).economic_priorities)) {
+      return no(L('Nothing has changed. To confirm the present programme, go back to the beginning.',
+        'Nic się nie zmieniło. Aby zatwierdzić obecny program, wróć na początek.'));
+    }
+    return programmeStatus(Q, set);
+  }
+
+  // The last three reactions of voters to the programme (Z — 0.57, PolishProjects.programmeReaction), newest first.
+  function programmeLogText(S) {
+    const log = (S.actors.pps.programme_log || []).slice(-3).reverse();
+    return log.map(e => {
+      const groups = andList(((projects.PROGRAMME_LINKS[e.priority] || {serves: []}).serves).map(label =>
+        L(electorate.AUDIENCES[label] ? electorate.AUDIENCES[label].name : label, electorate.AUDIENCE_NAMES_PL_GENITIVE[label] || label)));
+      return rules.monthYear(e.t) + ' — ' + projects.programmeMeasureName(e) + ': ' + (e.sign > 0
+        ? L('matches “' + PRIORITIES[e.priority] + '”, +1 among ' + groups, 'zgodne z priorytetem „' + PRIORITIES_PL[e.priority] + '”, +1 wśród ' + groups)
+        : L('contrary to “' + PRIORITIES[e.priority] + '”, −1 among ' + groups, 'sprzeczne z priorytetem „' + PRIORITIES_PL[e.priority] + '”, −1 wśród ' + groups));
+    }).join('; ');
   }
 
   function programmeView(Q) {
     syncMirrors(Q);
     const draft = String(Q.pl_prog_draft || '').split(',').filter(Boolean);
     const current = strategyOf(Q.S).economic_priorities;
+    Q.pl_prog_has = current.length ? 1 : 0;
+    Q.pl_prog_present_why = programmeStatus(Q, current.slice()).reason;
+    Q.pl_prog_served = andList(programmeGroupNames(Q.S));
+    Q.pl_prog_log = programmeLogText(Q.S);
     // Z — 0.56: a priority of the present programme carries the bold label "Present programme" in the menu.
     for (const id of Object.keys(PRIORITIES)) {
       Q['pl_prog_' + id + '_in'] = draft.indexOf(id) >= 0 ? 1 : 0;
@@ -1165,7 +1198,7 @@
     }
     Q.pl_prog_current = strategyOf(Q.S).economic_priorities.map(priorityName).join('; ') || L('none', 'brak');
     Q.pl_prog_draft_text = draft.map(priorityName).join('; ') || L('none', 'brak');
-    Q.pl_prog_confirm_why = programmeStatus(Q, draft).reason;
+    Q.pl_prog_confirm_why = programmeChangeStatus(Q, draft).reason;
     Q.pl_prog_confirm_same = sameSet(draft, strategyOf(Q.S).economic_priorities) ? 1 : 0;
   }
 
@@ -1452,6 +1485,28 @@
     return result(Q, text);
   }
 
+  // Z — 0.57 (item 5 of the play notes of 5 X 2026): campaigns are 10% stronger among the groups the programme serves.
+  const PROGRAMME_CAMPAIGN_FACTOR = 1.10;
+
+  const andList = names => names.length < 2 ? (names[0] || '') : names.slice(0, -1).join(', ') + L(' and ', ' i ') + names[names.length - 1];
+
+  // The groups served by the programme among the given cells (all cells when none are given), for "among …".
+  function programmeGroupNames(S, cells) {
+    const names = [];
+    for (const label of projects.programmeServes(S)) {
+      const f = electorate.filterOfList([label]);
+      if (!f || (cells && !cells.some(f))) continue;
+      names.push(L(electorate.AUDIENCES[label] ? electorate.AUDIENCES[label].name : label, electorate.AUDIENCE_NAMES_PL_GENITIVE[label] || label));
+    }
+    return names;
+  }
+
+  function programmeCampaignNote(S, cells) {
+    const names = programmeGroupNames(S, cells);
+    return names.length ? L(' The economic programme of PPS makes it 10% stronger among ' + andList(names) + '.',
+      ' Program gospodarczy PPS wzmacnia ją o 10% wśród ' + andList(names) + '.') : '';
+  }
+
   // The effect of one campaign in its cells (5.3), without its action and cost: the card above pays 1 T and 1 R; an
   // event of stage 7 (B4, B5) pays its own cost in the same decision. A null audience is every cell the
   // organisation reaches — the reach of each cell decides how much it moves.
@@ -1459,6 +1514,8 @@
     const S = Q.S, t = Q.time, parties = S.society.parties;
     const filter = audience ? audienceFilter(audience) : () => true;
     const cells = S.society.cells.filter(filter);
+    // Z — 0.57: the groups the economic programme of PPS serves answer a campaign 10% more strongly.
+    const served = projects.programmeFilter(S);
     const key = kind === 'polemic' ? 'polemic:' + S.actors.pps.strategy.main_opponent : topic;
     const sources = kind === 'polemic' ? polemicAddressees(Q) : null;
     const pressFactor = kind === 'unions' ? 1 : 0.5 + 0.5 * pressEffective(S).credibility / 100;
@@ -1469,7 +1526,8 @@
     for (const cell of cells) {
       const workers = cell.class_id === 'workers' ? activeEffect(S, 'workers_campaign_multiplier', t) : 1;
       const tur = kind === 'polemic' ? 1 : 1 + takeCourseBonus(S, cell, topic, t);
-      const gain = electorate.campaignGain(cell, cellReach(S, cell, kind), Q.dissent || 0, key, t) * pressFactor * factor * tur * press * workers;
+      const programme = served && served(cell) ? PROGRAMME_CAMPAIGN_FACTOR : 1;
+      const gain = electorate.campaignGain(cell, cellReach(S, cell, kind), Q.dissent || 0, key, t) * pressFactor * factor * tur * press * workers * programme;
       moved += cell.mass * electorate.gainForPps(cell, gain, parties, sources);
       electorate.recordCampaign(cell, key, t);
     }
@@ -1483,7 +1541,8 @@
       (kind === 'polemic' ? 'Polemika' : kind === 'unions' ? 'Kampania przez związki i zebrania' : 'Kampania prasowa') +
       (topic && kind !== 'polemic' ? ' (temat: ' + topicName(topic) + ')' : '') + ' dociera do ' +
       (audience ? electorate.AUDIENCE_NAMES_PL_GENITIVE[audience] : 'wyborców w swoim zasięgu') + ': PPS ' +
-      fmt(before) + '% → ' + fmt(after) + '% w tej grupie.' + (kind === 'polemic' ? ' Relacja adresata z PPS −2.' : ''));
+      fmt(before) + '% → ' + fmt(after) + '% w tej grupie.' + (kind === 'polemic' ? ' Relacja adresata z PPS −2.' : '')) +
+      programmeCampaignNote(S, cells);
     S.history.reasons.push({t: t, kind: 'campaign', campaign: kind, topic: key, audience: audience || 'reached', moved: moved});
     electorate.writeClassMirrors(Q);
     return {moved: moved, before: before, after: after, text: text};
@@ -1562,6 +1621,8 @@
 
   function audienceView(Q, kind, topic) {
     for (const id of Object.keys(electorate.AUDIENCES)) Q['pl_aud_' + id + '_why'] = campaignStatus(Q, kind, topic, id).reason;
+    // Z — 0.57: the groups where the programme of PPS strengthens a campaign (empty without a programme or for mobilisation).
+    Q.pl_aud_programme = kind === 'turnout' ? '' : andList(programmeGroupNames(Q.S));
   }
 
   // ---- Results of policy for the cells: 5.4 ---------------------------------------------------------
@@ -2232,18 +2293,19 @@
   function packageLine(Q, id) {
     const p = PACKAGES[id];
     const names = rules.getLanguage() === 'pl' ? {
-      organize: 'Zorganizuj branżę ' + (p.branch ? BRANCH_PL_ACCUSATIVE[p.branch] : '') + ' (+15 zasięgu z modyfikatorami)',
+      organize: 'Zorganizuj branżę ' + (p.branch ? BRANCH_PL_ACCUSATIVE[p.branch] : '') + ' (+15 zasięgu, więcej przy linii robotniczej i z kadrami TUR)',
       fund: 'Wesprzyj fundusz związkowy branży ' + (p.branch ? BRANCH_PL_GENITIVE[p.branch] : '') + ' (+1 R dla związku)',
       distribution: 'Poszerz kolportaż prasy (+10 zasięgu)',
-      build: 'Rozpocznij kolejny etap TUR (dwa finansowane miesiące)',
+      // Z — 0.57: at level 0 the first build founds TUR, a decision of the party.
+      build: (Q.S.party_orgs.tur.level === 0 ? 'Załóż TUR' : 'Rozpocznij kolejny etap TUR') + ' (dwa miesiące)',
       recruit: 'Werbunek do Milicji (+100 członków)',
       militarize: 'Militaryzacja Milicji (sprawność +0,10, najwyżej 0,70)',
       prepare: 'Przygotuj ' + (p.class_id ? COOPERATIVE_NAMES_PL_ACCUSATIVE[p.class_id] : ''),
     } : {
-      organize: 'Organise the ' + (p.branch ? BRANCH_NAMES[p.branch].toLowerCase() : '') + ' branch (+15 reach with modifiers)',
+      organize: 'Organise the ' + (p.branch ? BRANCH_NAMES[p.branch].toLowerCase() : '') + ' branch (+15 reach, more under the workers’ line and with TUR cadres)',
       fund: 'Support the ' + (p.branch ? BRANCH_NAMES[p.branch].toLowerCase() : '') + ' union fund (+1 R to the union)',
       distribution: 'Extend the distribution of the press (+10 reach)',
-      build: 'Start the next stage of TUR (two financed months)',
+      build: (Q.S.party_orgs.tur.level === 0 ? 'Found TUR' : 'Start the next stage of TUR') + ' (two months)',
       recruit: 'Recruit into Milicja (+100 members)',
       militarize: 'Militarise Milicja (efficiency +0.10, up to 0.70)',
       prepare: 'Prepare ' + (p.class_id ? COOPERATIVE_NAMES[p.class_id] : ''),
@@ -2258,6 +2320,8 @@
       Q['pl_org_' + id + '_why'] = packageStatus(Q, id, 0).reason;
     }
     Q.pl_org_cash = fmt(Q.S.party_orgs.cash);
+    // Z — 0.57: the TUR package founds TUR while its level is 0.
+    Q.pl_tur_level = Q.S.party_orgs.tur.level;
   }
 
   // The union card: why each of its packages cannot be taken now (Z — 0.56).
@@ -2269,6 +2333,8 @@
   function organizationsSecondView(Q, first) {
     // The second page shows only the other organisations, so it never offers more than seven choices (Z — 0.56).
     Q.pl_org_first_org = PACKAGES[first].org;
+    // Z — 0.57: "Invest only in" names the first investment.
+    Q.pl_org_pick1_name = packageLine(Q, first).split(' — ')[0];
     for (const id of PACKAGE_ORDER) {
       const same = PACKAGES[id].org === PACKAGES[first].org;
       Q['pl_org2_' + id + '_ok'] = same ? 0 : (selectionStatus(Q, [first, id]).available ? 1 : 0);
@@ -2294,7 +2360,10 @@
       (orgs.press.format === 'popular' ? L('popular format', 'format popularny') : L('party journal', 'pismo partyjne')) + ')' +
       (press.penalty ? L('; restricted −', '; ograniczenia −') + fmt(press.penalty) : '');
     const tur = orgs.tur;
-    Q.pl_party_tur = Q.time < tur.available_from ? L('not yet founded (January 1923)', 'jeszcze nie założony (styczeń 1923)') :
+    // Z — 0.57: TUR is founded by a decision of the party, the first build in the card Organisations of PPS.
+    Q.pl_party_tur = tur.level === 0 && !tur.active_build ? L('not founded; it can be founded with the card Organisations of PPS',
+      'nie założony; można go założyć kartą Organizacje PPS') + (Q.time < tur.available_from ? L(' from January 1923', ' od stycznia 1923') : '') :
+      tur.level === 0 ? L('being founded (', 'w trakcie zakładania (') + tur.active_build.paid_months + L('/2 months)', '/2 mies.)') :
       L('level ', 'poziom ') + tur.level + L(', cadres ', ', kadry ') + tur.cadres + (tur.active_build ? L('; building level ', '; budowa poziomu ') +
         tur.active_build.target_level + ' (' + tur.active_build.paid_months + L('/2 months)', '/2 mies.)') : '') +
       (tur.active_course ? L('; course: ', '; kurs: ') + courseName(tur.active_course.course) + ' (' + tur.active_course.paid_months +
@@ -2470,6 +2539,7 @@
     programmeStatus: programmeStatus,
     programmeChoose: programmeChoose,
     programmeView: programmeView,
+    programmeChangeStatus: programmeChangeStatus,
     programmeToggle: programmeToggle,
     goalFit: goalFit,
     partnerCompliance: partnerCompliance,

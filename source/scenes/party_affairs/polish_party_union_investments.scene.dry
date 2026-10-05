@@ -25,7 +25,7 @@ PPS has [+ pl_org_cash +] R. Choose one investment for the unions; it costs this
 
 @union_organize_industry
 title: Organise the industrial branch
-subtitle: 1 resource; the branch’s reach grows (+15, with the modifiers of the party’s character and TUR).
+subtitle: 1 resource; the branch’s reach grows, more under the line of a workers’ party and with TUR cadres (+15; ×1.10 and up to ×1.30).
 choose-if: {! return PolishParty.selectionStatus(Q, ['union_organize_industry'], 'party.union_investments').available !}
 unavailable-subtitle: [+ pl_uni_union_organize_industry_why +]
 on-arrival: {!
@@ -35,7 +35,7 @@ go-to: result
 
 @union_organize_rail
 title: Organise the railway branch
-subtitle: 1 resource; the branch’s reach grows (+15, with modifiers).
+subtitle: 1 resource; the branch’s reach grows, more under the line of a workers’ party and with TUR cadres (+15; ×1.10 and up to ×1.30).
 choose-if: {! return PolishParty.selectionStatus(Q, ['union_organize_rail'], 'party.union_investments').available !}
 unavailable-subtitle: [+ pl_uni_union_organize_rail_why +]
 on-arrival: {!
@@ -45,7 +45,7 @@ go-to: result
 
 @union_organize_farm_labour
 title: Organise agricultural labour
-subtitle: 1 resource; the branch’s reach grows (+15, with modifiers).
+subtitle: 1 resource; the branch’s reach grows, more under the line of a workers’ party and with TUR cadres (+15; ×1.10 and up to ×1.30).
 choose-if: {! return PolishParty.selectionStatus(Q, ['union_organize_farm_labour'], 'party.union_investments').available !}
 unavailable-subtitle: [+ pl_uni_union_organize_farm_labour_why +]
 on-arrival: {!

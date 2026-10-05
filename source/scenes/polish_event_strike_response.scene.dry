@@ -22,6 +22,8 @@ PolishUnions.responseView(Q);
 @demands
 title: Demand the end of repression and concessions for the workers
 subtitle: [? if pl_resp_offer : The offer lapses; the next round asks for the fuller package. ?][? if not pl_resp_offer : The demands are put to the government now. ?] The thresholds and the executor's consent still apply.
+choose-if: {! return PolishUnions.responseStatus(Q, 'demands').available !}
+unavailable-subtitle: [+ pl_resp_demands_why +]
 on-arrival: {!
 PolishUnions.responseChoose(Q, 'demands');
 !}

@@ -2557,20 +2557,24 @@
   // The list offers of 6.5 with their fixed programme profiles (P, list_profiles_v1): the shared minimum
   // as positions on the topics of 8.1. The candidate split is proportional to the votes and accepted,
   // so a list gives no portfolio. The peasant bloc stands without PPS; PPS only brokers it (decision 7).
+  // Z — 0.57 (items 7 and 8 of the play notes of 5 X 2026): higher relation gates (Wyzwolenie 60, NPR 70, the early
+  // Centre-Left 70 each); the peasant bloc is no decision of PPS and is no longer offered to it, but it stays the peasant
+  // parties' own alternative in their evaluation of a list (LIST_ALTERNATIVES).
   const LIST_PROFILE_ID = 'list_profiles_v1';
   const LIST_OPTIONS = Object.freeze({
-    left_peasant: {name: 'PPS and PSL Wyzwolenie', members: ['pps', 'psl_wyzwolenie'], gates: [{actor: 'psl_wyzwolenie', min: 50}],
+    left_peasant: {name: 'PPS and PSL Wyzwolenie', members: ['pps', 'psl_wyzwolenie'], gates: [{actor: 'psl_wyzwolenie', min: 60}],
       programme: {land: 1, fiscal: 1}, profile: 'Land reform with equal access and protection of labour; seats shared in proportion to votes.'},
-    labour: {name: 'PPS and NPR', members: ['pps', 'npr'], gates: [{actor: 'npr', min: 60}], programme: {fiscal: 1, church: 0},
+    labour: {name: 'PPS and NPR', members: ['pps', 'npr'], gates: [{actor: 'npr', min: 70}], programme: {fiscal: 1, church: 0},
       profile: 'The eight-hour day, protection of the unemployed and religious freedom.'},
     centrolew_early: {name: 'An early Centre-Left', members: ['pps', 'psl_wyzwolenie', 'psl_piast', 'npr'],
-      gates: [{actor: 'psl_wyzwolenie', min: 60}, {actor: 'psl_piast', min: 60}, {actor: 'npr', min: 60}], fulfilled_needed: 2,
+      gates: [{actor: 'psl_wyzwolenie', min: 70}, {actor: 'psl_piast', min: 70}, {actor: 'npr', min: 70}], fulfilled_needed: 2,
       programme: {land: 0, fiscal: 0, institution: 1, church: 0}, lewica_dissent: 3,
       profile: 'A lawful change of government, a social minimum and a land and religious compromise; an alternative early bloc, not the historical Centrolew.'},
     peasant: {name: 'Peasant bloc (PSL Wyzwolenie and PSL Piast)', members: ['psl_wyzwolenie', 'psl_piast'], without_pps: true, gates: [],
       programme: {land: 0}, profile: 'Agriculture and credit; two separate clubs after the election. PPS supports the rapprochement but is not on the list.'},
   });
-  const LIST_ORDER = Object.freeze(['left_peasant', 'labour', 'centrolew_early', 'peasant']);
+  const LIST_ORDER = Object.freeze(['left_peasant', 'labour', 'centrolew_early']);
+  const LIST_ALTERNATIVES = Object.freeze(['left_peasant', 'labour', 'centrolew_early', 'peasant']);
   // The names of joint lists are stored in English in the records of S (decision 5A of the Polish version); the
   // displays translate them here.
   const LIST_NAMES_PL = Object.freeze({left_peasant: 'PPS i PSL Wyzwolenie', labour: 'PPS i NPR', centrolew_early: 'Wczesny Centrolew',
@@ -2594,16 +2598,14 @@
     if (!next || S.chapter.status === 'ended') return '';
     const left = next.time - Q.time;
     if (left < 0 || left > 3) return '';
-    const parts = String(next.vote_date || '').split('-').map(Number);
-    const date = parts.length === 3 ? L(parts[2] + ' ' + MONTH_NAMES[parts[1] - 1] + ' ' + parts[0], rules.dateText(next.vote_date)) :
-      rules.yearOf(next.time) + '';
+    const date = voteDateText(next);
     const when = left === 0 ? L('this month', 'w tym miesiącu') : left === 1 ? L('next month', 'w przyszłym miesiącu') :
       L('in ' + left + ' months', 'za ' + left + ' ' + rules.plural(left, 'miesiąc', 'miesiące', 'miesięcy'));
     const list = alliancesFor(S, next.id).filter(a => a.members.indexOf('pps') >= 0)[0];
     return L('The Sejm election is held on ' + date + ' (' + when + '). ', 'Wybory do Sejmu odbędą się ' + date + ' (' + when + '). ') +
       (list ? L('PPS stands on the joint list ' + list.name + '.', 'PPS startuje ze wspólnej listy ' + listNameText(list.name) + '.') :
-        L('PPS stands on its own list', 'PPS startuje z własnej listy') + (listWindow(Q).open ? L('; a joint list can still be agreed until the lists close.',
-          '; wspólną listę można jeszcze uzgodnić do zamknięcia list.') : '.'));
+        L('PPS stands on its own list', 'PPS startuje z własnej listy') + (left >= 3 ? L('; two months before the vote it decides on a joint list.',
+          '; dwa miesiące przed głosowaniem zdecyduje o wspólnej liście.') : '.'));
   }
 
   function alliancesFor(S, electionId) {
@@ -2639,7 +2641,7 @@
   function listNeed(Q, actorId, optionId) {
     const S = Q.S;
     let best = 0;
-    for (const id of LIST_ORDER) {
+    for (const id of LIST_ALTERNATIVES) {
       if (id === optionId || LIST_OPTIONS[id].members.indexOf(actorId) < 0) continue;
       if (LIST_OPTIONS[id].gates.some(g => relation(S, g.actor) < g.min)) continue;
       best = Math.max(best, scaledAlternative(baseScore(S, actorId, listOffer(id, actorId))));
@@ -2651,7 +2653,6 @@
     const S = Q.S, option = LIST_OPTIONS[optionId], window = listWindow(Q);
     if (!option) return {available: false, reason: L('Unknown list.', 'Nieznana lista.')};
     if (!window.open) return {available: false, reason: L('The list window is closed.', 'Okres zgłaszania list jest zamknięty.')};
-    if ((Q.month_actions || 0) >= 1) return {available: false, reason: L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.')};
     const own = S.history.negotiations.filter(n => n.kind === 'electoral_list' && n.election_id === window.election_id && n.accepted);
     if (own.length) return {available: false, reason: L('PPS already has its list agreement for this election.', 'PPS ma już porozumienie listowe na te wybory.')};
     const taken = alliancesFor(S, window.election_id).concat(window.election_id === 'first_election_1922' ? [institutions.CHZJN] : []);
@@ -2682,9 +2683,10 @@
     return {available: true, reason: ''};
   }
 
-  // One confirmation, 1 T even when the partners refuse (C3). An accepted list is stored for the
-  // election's seat count (6.1); the first acceptance of the early Centre-Left adds 3 dissent to the
-  // Lewica, which rejects giving up points of the workers' programme (Z — 0.36).
+  // One proposal; the partners answer once (C3). Since Z — 0.57 it is an answer to the event before the election and
+  // costs no action (it cost the month's action as card 7.7). An accepted list is stored for the election's seat count
+  // (6.1); the first acceptance of the early Centre-Left adds 3 dissent to the Lewica, which rejects giving up points of
+  // the workers' programme (Z — 0.36).
   function proposeList(Q, optionId) {
     const S = Q.S, status = listStatus(Q, optionId);
     if (!status.available) throw new Error('proposeList: ' + status.reason);
@@ -2693,9 +2695,8 @@
     const partners = option.members.filter(m => m !== 'pps');
     const evaluations = partners.map(id => evaluatePartner(S, id, listOffer(optionId, id), listNeed(Q, id, optionId)));
     const accepted = evaluations.every(e => e.accept);
-    rules.commitMainAction(Q, 'parliament.list_agreement', {option: optionId, election_id: window.election_id});
     const record = {id: 'neg-' + (S.history.negotiations.length + 1) + '-t' + t, kind: 'electoral_list', option_id: optionId,
-      election_id: window.election_id, t: t, cost_t: 1, profile_id: LIST_PROFILE_ID, evaluations: evaluations, accepted: accepted,
+      election_id: window.election_id, t: t, cost_t: 0, profile_id: LIST_PROFILE_ID, evaluations: evaluations, accepted: accepted,
       snapshot: listSnapshot(Q, optionId)};
     if (accepted) {
       S.parliament.alliances.push({id: optionId + '_' + window.election_id, election_id: window.election_id, name: option.name,
@@ -2711,10 +2712,50 @@
     return record;
   }
 
-  function listAgreementAvailable(Q) {
+  // Z — 0.57 (items 7 and 8 of the play notes of 5 X 2026, the option "an event before the election"): the question of a
+  // joint list is an event in the first month of the list window, two months before the vote, and is not drawn from a
+  // deck. PPS proposes one list or goes alone. After a refusal the question returns once in the last month of the
+  // window, if a list is still possible; an accepted list or going alone closes it for this election.
+  function listEventDue(Q) {
     const S = Q.S;
-    if (!S || S.chapter.status === 'ended' || !listWindow(Q).open) return false;
-    return !S.history.negotiations.some(n => n.kind === 'electoral_list' && n.election_id === listWindow(Q).election_id && n.accepted);
+    if (!S || !S.parliament || !S.chapter || S.chapter.status === 'ended') return false;
+    const window = listWindow(Q);
+    if (!window.open) return false;
+    const records = S.history.negotiations.filter(n => n.kind === 'electoral_list' && n.election_id === window.election_id);
+    if (records.some(n => n.accepted || n.t === Q.time)) return false;
+    if (S.history.reasons.some(r => r.kind === 'list_alone' && r.election_id === window.election_id)) return false;
+    return !records.length || LIST_ORDER.some(id => listStatus(Q, id).available);
+  }
+
+  // The answer "we go to the election alone": no list for this election, nothing else changes.
+  function listGoAlone(Q) {
+    const window = listWindow(Q);
+    if (!window.open) throw new Error('listGoAlone: the list window is closed');
+    Q.S.history.reasons.push({t: Q.time, kind: 'list_alone', election_id: window.election_id});
+  }
+
+  // After a refusal: whether the question can return next month (the window is still open then and another list is
+  // possible now).
+  function listRetryPossible(Q) {
+    const window = listWindow(Q);
+    return window.open && Q.time + 1 <= window.vote_time - 1 && LIST_ORDER.some(id => listStatus(Q, id).available);
+  }
+
+  // The day of the vote of the coming election, for the event and the reminder.
+  function voteDateText(next) {
+    const parts = String(next.vote_date || '').split('-').map(Number);
+    return parts.length === 3 ? L(parts[2] + ' ' + MONTH_NAMES[parts[1] - 1] + ' ' + parts[0], rules.dateText(next.vote_date)) : rules.yearOf(next.time) + '';
+  }
+
+  function listEventView(Q) {
+    const next = Q.S.parliament.next_election;
+    Q.pl_list_vote = next ? voteDateText(next) : '';
+    for (const id of LIST_ORDER) Q['pl_list_' + id + '_reason'] = listStatus(Q, id).reason;
+  }
+
+  // Kept for the earlier callers: the joint list is open exactly when its event is due.
+  function listAgreementAvailable(Q) {
+    return listEventDue(Q);
   }
 
   // The Marshal's election of 7.5 in the agreement system (moved from stage 2). The Rataj package
@@ -2854,6 +2895,10 @@
     listStatus: listStatus,
     proposeList: proposeList,
     listAgreementAvailable: listAgreementAvailable,
+    listEventDue: listEventDue,
+    listGoAlone: listGoAlone,
+    listRetryPossible: listRetryPossible,
+    listEventView: listEventView,
     alliancesFor: alliancesFor,
     fulfilledJointObligations: fulfilledJointObligations,
     agreementsDisplay: agreementsDisplay,

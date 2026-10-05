@@ -150,6 +150,8 @@ new-page: true
 
 Choose the voters the campaign speaks to. Nothing is spent until you choose.
 
+[? if pl_aud_programme : The economic programme of PPS makes the campaign 10% stronger among [+ pl_aud_programme +]. ?]
+
 - @to_workers
 - @to_employed_workers
 - @to_unemployed

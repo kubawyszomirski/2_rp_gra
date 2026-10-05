@@ -287,6 +287,36 @@ test('the second Daszyński candidacy is available after the answer to the assas
   assert.equal(choice(engine, 'polish_presidential_sequence.do_not_run_daszynski_second').canChoose, true);
 });
 
+// Z — 0.57 (item 9 of the play notes of 5 X 2026): with Daszyński on 20 December the decisive ballot can have three
+// candidates, because a majority in the first round ends the election; the screen names the round and explains it.
+test('Głosowanie rozstrzygające (Z — 0.57): three candidates on 20 December are explained by a majority in the first round', () => {
+  const { engine, Q } = december();
+  electSpeaker(engine);
+  choose(engine, 'polish_presidential_sequence.decline_daszynski');
+  choose(engine, 'polish_presidential_sequence.first_transfer');
+  choose(engine, 'polish_presidential_sequence.assassination');
+  answerAssassination(engine);
+  choose(engine, 'polish_presidential_sequence.run_daszynski_second');
+  assert.equal(engine.state.sceneId, 'polish_presidential_sequence.second_final');
+  const run = Q.polish_presidency.elections.find(e => e.id === 'president_1922_12_20');
+  const page = JSON.stringify(engine.ui.paragraphs).replace(/","/g, '');
+  assert.ok(page.includes('Decisive ballot (round ' + run.rounds.length + '): '), 'the round of the decisive ballot');
+  assert.equal(run.final_ballot.length, 2, 'in this Assembly Daszyński drops out and Wojciechowski wins a final of two');
+  assert.doesNotMatch(page, /more than half of the valid ballots/);
+  // Fixture: the result of the playtest of 5 X 2026, a majority of the three in the first round (285 of 555).
+  run.rounds = run.rounds.slice(0, 1);
+  run.final_ballot = [{ candidate_id: 'stanislaw_wojciechowski', candidate_name: 'Stanisław Wojciechowski', votes: 285 },
+    { candidate_id: 'kazimierz_morawski', candidate_name: 'Kazimierz Morawski', votes: 214 },
+    { candidate_id: 'ignacy_daszynski', candidate_name: 'Ignacy Daszyński', votes: 56 }];
+  run.blank_ballots = 0;
+  engine._runActions(engine.game.scenes.polish_presidential_sequence.onArrival); // the display fields of the recorded runs
+  engine.goToScene('polish_presidential_sequence.second_final');
+  const outright = JSON.stringify(engine.ui.paragraphs).replace(/","/g, '');
+  assert.ok(outright.includes('Decisive ballot (round 1): Stanisław Wojciechowski — 285 votes; Kazimierz Morawski — 214 votes; Ignacy Daszyński — 56 votes'));
+  assert.match(outright, /The winner had more than half of the valid ballots \(blank ones included\) in this round, so the election ended without a further round/);
+  assert.equal(Q.pl_pres_first_outright, 0, 'the first election of 9 December went to a final of two');
+});
+
 test('save/restore in the middle resumes once and cannot duplicate immutable history', () => {
   const { engine } = december();
   electSpeaker(engine);

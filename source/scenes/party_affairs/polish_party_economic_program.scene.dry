@@ -7,20 +7,37 @@ card-image: img/polish/polish_party_economic_program.jpg
 view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.programmeAvailable(Q) !}
 on-arrival: {!
 // Card party.economic_program (technical reference 10.5; card catalogue 6.2): the whole set of 0–3
-// priorities in one transaction, 1 T, cd 6 M; the present set can be confirmed too (Z — 0.51).
+// priorities in one transaction, 1 T, cd 6 M; the present set can be confirmed too (Z — 0.51), since Z — 0.57 on the
+// first page. The programme strengthens campaigns among the groups it serves and brings reactions of voters to matching
+// and contrary measures (PolishProjects.programmeReaction).
 Q.pl_prog_draft = Q.S.actors.pps.strategy.economic_priorities.join(',');
 PolishParty.programmeView(Q);
 !}
 
 = Economic programme
 
-The present programme: [+ pl_prog_current +]. Choose up to three priorities, then confirm the set. The priorities prepare nothing by themselves; each programme still needs its card, its law, its money and its executor.
+The present programme: [+ pl_prog_current +]. [? if pl_prog_has = 1 : It makes the campaigns of PPS 10% stronger among [+ pl_prog_served +]. When a matching law or project takes effect while PPS governs or supports the cabinet, these groups lean towards PPS (+1); when PPS votes for a contrary measure, they turn away from it (−1). ?][? if pl_prog_has = 0 : Without a programme, campaigns get no bonus and voters do not judge laws by it. ?]
 
+[? if pl_prog_log : Lately: [+ pl_prog_log +]. ?]
+
+- @confirm_present
 - @edit
 - @easy_discard
 
+@confirm_present
+view-if: pl_prog_has = 1
+title: Confirm the present programme: [+ pl_prog_current +]
+subtitle: Costs this month's action; the card then waits six months; nothing else changes.
+choose-if: {! return PolishParty.programmeStatus(Q, Q.S.actors.pps.strategy.economic_priorities.slice()).available !}
+unavailable-subtitle: [+ pl_prog_present_why +]
+on-arrival: {!
+PolishParty.programmeChoose(Q, Q.S.actors.pps.strategy.economic_priorities.slice());
+!}
+go-to: result
+
 @edit
-title: Compose the programme
+title: [? if pl_prog_has = 1 : Change the programme ?][? if pl_prog_has = 0 : Compose the programme ?]
+subtitle: Choose up to three priorities on the next page. Nothing is spent until you accept them.
 go-to: menu
 
 @menu
@@ -31,7 +48,7 @@ PolishParty.programmeView(Q);
 
 = The new programme
 
-Chosen: [+ pl_prog_draft_text +]. Nothing is spent until you confirm.
+Chosen: [+ pl_prog_draft_text +]. Choose up to three priorities. The priorities prepare nothing by themselves; each programme still needs its card, its law, its money and its executor. Nothing is spent until you accept.
 
 - @toggle_stabilisation_with_protection
 - @toggle_public_works
@@ -91,9 +108,9 @@ PolishParty.programmeToggle(Q, 'cooperatives_housing');
 go-to: menu
 
 @confirm
-title: Confirm the programme
-subtitle: [? if pl_prog_confirm_same = 1 : Confirms the present programme; it costs this month's action and the card waits six months; nothing else changes. ?][? if pl_prog_confirm_same = 0 : Costs this month's action; the card then waits six months. ?]
-choose-if: {! return PolishParty.programmeStatus(Q, String(Q.pl_prog_draft || '').split(',').filter(Boolean)).available !}
+title: Accept the new programme
+subtitle: Costs this month's action; the card then waits six months.
+choose-if: {! return PolishParty.programmeChangeStatus(Q, String(Q.pl_prog_draft || '').split(',').filter(Boolean)).available !}
 unavailable-subtitle: [+ pl_prog_confirm_why +]
 on-arrival: {!
 PolishParty.programmeChoose(Q, String(Q.pl_prog_draft || '').split(',').filter(Boolean));

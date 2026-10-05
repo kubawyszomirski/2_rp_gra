@@ -91,6 +91,11 @@ function campaign(engine, option = 'workers') {
   choose(engine, 'polish_party_media.topic_class');
   choose(engine, `polish_party_media.to_${option}`);
   choose(engine, 'root');
+  // Z — 0.57: two months before the vote the question of a joint list comes as an event; PPS goes alone.
+  if (engine.state.sceneId === 'polish_list_agreement') {
+    choose(engine, 'polish_list_agreement.alone');
+    choose(engine, 'root');
+  }
 }
 
 test('January through October campaigning preserves parliament and November resolves once', () => {

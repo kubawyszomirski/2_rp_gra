@@ -284,6 +284,11 @@
     return {fragility: fragility, threshold: threshold, rows: rows, chance: rows.length ? Math.min(...rows.map(r => r.chance)) : 0};
   }
 
+  const clauseKey = kinds => kinds.slice().sort().join(',');
+  function sameClauses(declined, offer) {
+    return Array.isArray(declined) && clauseKey(declined) === clauseKey(offer.clauses.map(c => c.kind));
+  }
+
   function offerOf(rec, kinds, t) {
     return {id: rec.id + ':offer-' + (rec.rounds.length + 1), t: t, clauses: kinds.map(kind => ({kind: kind, executor: CLAUSES[kind].executor})),
       fulfilment: kinds.length / Math.max(1, rec.demands.length), red_line: false, status: 'open', consent: null};
@@ -333,9 +338,15 @@
       reduced = roundChance(S, rec, THRESHOLDS.limited);
       if (u < reduced.chance) offer = offerOf(rec, ['wages'], t);
     }
+    // Z — 0.57 (item 13 of the play notes of 5 X 2026): an offer with the clauses PPS has just declined is no new offer.
+    // The government holds its position, the strike goes on, and the Sejm returns to the dispute only with another offer.
+    const held = !!offer && sameClauses(rec.declined_clauses, offer);
+    if (held) offer = null;
     rec.rounds.push({n: n, t: t, u: u, threshold: rec.threshold, chance: full.chance, reduced_chance: reduced ? reduced.chance : null,
-      fragility: full.fragility, rows: full.rows, offer_id: offer ? offer.id : null});
-    if (offer) {
+      fragility: full.fragility, rows: full.rows, offer_id: offer ? offer.id : null, held: held});
+    if (held) {
+      rec.history.push({t: t, kind: 'offer_held', round: n});
+    } else if (offer) {
       offer.consent = consentFor(S, rec, offer);
       rec.offer = offer;
       rec.status = 'settlement_pending';
@@ -757,6 +768,13 @@
     watch.last_checked = t;
     watch.months_below = S.economy.real_wage < WAGE_CASE_LIMIT ? watch.months_below + 1 : 0;
     const aggrieved = !!S.politics && workersGrievance(S) >= WAGE_CASE_GRIEVANCE;
+    // Z — 0.57 (item 13 of the play notes of 5 X 2026): one wage case per cause (17.16.5 P: a new case needs a new demand or
+    // cause; an accepted settlement closes the escalation of its dispute). After a case opens, the next one needs wages back
+    // at the limit and the grievance below its threshold first, then a new fall. A save without the mark latches when it
+    // already has a wage case.
+    if (watch.latched === undefined) watch.latched = records(S).some(r => r.kind === 'wage_case');
+    if (watch.latched && S.economy.real_wage >= WAGE_CASE_LIMIT && !aggrieved) watch.latched = false;
+    if (watch.latched) return null;
     if (watch.months_below < WAGE_CASE_MONTHS && !aggrieved) return null;
     if (records(S, LIVE).some(r => r.kind === 'wage_case')) return null;
     const last = records(S).filter(r => r.kind === 'wage_case').map(r => r.ended_at || r.case_opened_at).sort((a, b) => b - a)[0];
@@ -766,6 +784,7 @@
     const rec = newRecord(Q, {kind: 'wage_case', branches: branches, demands: [{kind: 'wages'}], level: 'limited', threshold: THRESHOLDS.limited,
       status: 'negotiating', rejected: true, pps_answered: false, case_opened_at: t});
     watch.last_case_at = t;
+    watch.latched = true;
     rec.history.push({t: t, kind: 'wage_demand_presented', months_below: watch.months_below, grievance: round(workersGrievance(S), 2)});
     S.history.reasons.push({t: t, kind: 'wage_case', strike_id: rec.id});
     return rec;
@@ -975,10 +994,24 @@
   // settlement (accept the offer, or put one limited package), or back the restoration of order (PPS withdraws its
   // support without new concessions: unmet promises cost the union +10 dissent and −8 trust once; the call does not
   // end the protest and is no order to the police).
+  // Z — 0.57 (item 13 of the play notes): when the offer meets every demand there is nothing more to demand; PPS accepts it
+  // or backs the restoration of order.
+  function responseStatus(Q, choice) {
+    const rec = responseRecord(Q.S);
+    if (!rec) return no(L('Nothing to answer.', 'Nie ma na co odpowiadać.'));
+    if (choice === 'demands' && rec.offer && rec.offer.fulfilment >= 1) {
+      return no(L('The offer already meets all the demands: there is nothing more to demand. Accept it, or back the restoration of order.',
+        'Oferta spełnia już wszystkie postulaty: nie ma czego więcej żądać. Przyjmij ją albo poprzyj przywrócenie porządku.'));
+    }
+    return OK;
+  }
+
   function responseChoose(Q, choice) {
     party.syncMirrors(Q);
     const S = Q.S, t = Q.time, rec = responseRecord(S);
     if (!rec) throw new Error('responseChoose: nothing to answer');
+    const status = responseStatus(Q, choice);
+    if (!status.available) throw new Error('responseChoose: ' + status.reason);
     rec.response_answered = rec.response_phase;
     rec.parliament_responses.push({t: t, phase: rec.response_phase, choice: choice, offer_id: rec.offer ? rec.offer.id : null});
     S.history.actions.push({t: t, action_id: 'parliament.strike_response.' + choice, strike_id: rec.id, cost_t: 0});
@@ -991,8 +1024,11 @@
     if (choice === 'settlement') {
       if (rec.offer) return answerOffer(Q, rec.id, 'accept');
       rec.demands = [{kind: 'wages', added_at: t}];
+      rec.declined_clauses = null; // PPS lowers its demands: an earlier declined offer is no longer a measure (Z — 0.57)
       updateThreshold(rec);
       const offer = negotiationRound(Q, rec, t);
+      // Z — 0.57: the phase this round opens is answered by this decision, so the Sejm is not asked again this month.
+      rec.response_answered = rec.response_phase;
       if (offer) return answerOffer(Q, rec.id, 'accept');
       return result(Q, L('The limited package is refused; the dispute goes on.', 'Ograniczony pakiet zostaje odrzucony; spór trwa.'));
     }
@@ -1018,6 +1054,20 @@
 
   function agendaAvailable(Q) {
     return ready(Q) && Q.S.chapter.status !== 'ended';
+  }
+
+  // Z — 0.57 (item 11 of the play notes of 5 X 2026, "ordinary cards"): the card of the unions is in the Party deck while
+  // a union dispute is open or has a cause: a live record of a dispute, an open dispute of a branch with its leadership,
+  // or a cause of wage demands (real wages below the limit of a wage case, or the grievance of the employed workers at
+  // its threshold).
+  function disputeOpen(S) {
+    if (records(S, LIVE).length) return true;
+    if (BRANCHES.some(id => S.unions[id] && openCause(S.unions[id]))) return true;
+    return S.economy.real_wage < WAGE_CASE_LIMIT || (!!S.politics && workersGrievance(S) >= WAGE_CASE_GRIEVANCE);
+  }
+
+  function agendaCardAvailable(Q) {
+    return agendaAvailable(Q) && disputeOpen(Q.S);
   }
 
   function baseStatus(Q, branchId) {
@@ -1050,6 +1100,7 @@
     if (rec) {
       rec.demands = demandsFor(level);
       rec.level = level;
+      rec.declined_clauses = null;
       rec.threshold = THRESHOLDS[level];
       rec.history.push({t: t, kind: 'demands_agreed', level: level});
     } else {
@@ -1153,9 +1204,12 @@
       offer.status = 'declined';
       rec.offer = null;
       rec.status = 'active';
+      rec.declined_clauses = offer.clauses.map(c => c.kind);
       rec.history.push({t: t, kind: 'offer_declined', offer_id: offer.id});
-      return result(Q, L('PPS keeps the strike going; the offer lapses. The next settlement brings another round of talks.',
-        'PPS kontynuuje strajk; oferta wygasa. Następne rozliczenie przyniesie kolejną rundę rozmów.'));
+      return result(Q, L('PPS keeps the strike going; the offer lapses. The next settlement brings another round of talks; the Sejm returns ' +
+        'to the dispute only when the government makes a different offer.',
+        'PPS kontynuuje strajk; oferta wygasa. Następne rozliczenie przyniesie kolejną rundę rozmów; Sejm wróci do sporu tylko wtedy, ' +
+        'gdy rząd złoży inną ofertę.'));
     }
     if (choice !== 'accept') throw new Error('answerOffer: unknown choice ' + choice);
     offer.status = 'accepted';
@@ -1349,11 +1403,22 @@
     const S = Q.S, rec = caseRecord(S);
     if (!rec) return;
     const pressure = rec.branches.map(b => branchName(b) + ' ' + fmt(potential(S, b).credible)).join(', ');
-    Q.pl_case_text = L('Three months of real wages below 80 (now ' + fmt(S.economy.real_wage) + ') bring a demand for a wage rise in ' +
-      rec.branches.map(b => BRANCH_NAMES[b].toLowerCase()).join(' and ') + '. No settlement has been accepted. Credible pressure of the unions ' +
-      'without a strike: ' + pressure + '. ', 'Trzy miesiące płac realnych poniżej 80 (obecnie ' + fmt(S.economy.real_wage) + ') przynoszą postulat ' +
-      'podwyżki płac (' + branchList(rec.branches) + '). Nie przyjęto żadnej ugody. Wiarygodny nacisk związków bez strajku: ' + pressure + '. ') +
-      responseText(S, {state_response: stateResponse(S)});
+    // Z — 0.57: the text names the cause that opened the case and the end of the previous case, instead of "no settlement".
+    const opened = rec.history.filter(h => h.kind === 'wage_demand_presented')[0] || {};
+    const lowWages = (opened.months_below || 0) >= WAGE_CASE_MONTHS;
+    const branchesEn = rec.branches.map(b => BRANCH_NAMES[b].toLowerCase()).join(' and ');
+    const cause = lowWages ? L('Three months of real wages below 80 (now ' + fmt(S.economy.real_wage) + ') bring a demand for a wage rise in ' + branchesEn + '.',
+      'Trzy miesiące płac realnych poniżej 80 (obecnie ' + fmt(S.economy.real_wage) + ') przynoszą postulat podwyżki płac (' + branchList(rec.branches) + ').') :
+      L('The grievance of the employed workers (' + fmt(opened.grievance || workersGrievance(S)) + ') brings a demand for a wage rise in ' + branchesEn + '.',
+        'Rozgoryczenie zatrudnionych robotników (' + fmt(opened.grievance || workersGrievance(S)) + ') przynosi postulat podwyżki płac (' + branchList(rec.branches) + ').');
+    const previous = records(S).filter(r => r.kind === 'wage_case' && r.id !== rec.id && r.status === 'ended').sort((a, b) => b.ended_at - a.ended_at)[0];
+    const before = !previous ? '' : previous.outcome === 'agreement' ?
+      L(' The previous wage case ended with an accepted settlement in ' + rules.monthYear(previous.ended_at) + '; this is a new cause.',
+        ' Poprzednia sprawa płacowa zakończyła się przyjętą ugodą (' + rules.monthYear(previous.ended_at) + '); to nowa przyczyna.') :
+      L(' The previous wage case ended without a settlement in ' + rules.monthYear(previous.ended_at) + '.',
+        ' Poprzednia sprawa płacowa zakończyła się bez ugody (' + rules.monthYear(previous.ended_at) + ').');
+    Q.pl_case_text = cause + before + L(' Credible pressure of the unions without a strike: ' + pressure + '. ',
+      ' Wiarygodny nacisk związków bez strajku: ' + pressure + '. ') + responseText(S, {state_response: stateResponse(S)});
     for (const strategy of ['negotiate', 'economic_strike', 'cabinet_resignation']) Q['pl_case_' + strategy + '_why'] = caseStatus(Q, strategy).reason;
   }
 
@@ -1395,6 +1460,7 @@
     parts.push(responseText(S, rec));
     Q.pl_resp_text = parts.join(' ');
     Q.pl_resp_offer = rec.offer ? 1 : 0;
+    Q.pl_resp_demands_why = responseStatus(Q, 'demands').reason;
   }
 
   function rejectionView(Q) {
@@ -1451,6 +1517,9 @@
     beginMonth: beginMonth,
     endMonth: endMonth,
     agendaAvailable: agendaAvailable,
+    agendaCardAvailable: agendaCardAvailable,
+    responseStatus: responseStatus,
+    disputeOpen: disputeOpen,
     prepareStatus: prepareStatus,
     prepare: prepare,
     alignStatus: alignStatus,

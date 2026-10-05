@@ -35,23 +35,38 @@ test('the Party deck offers the Polish cards of stage 5 and no longer the replac
   const cards = deck(engine);
   for (const id of ['polish_party_organizations', 'polish_party_union_investments', 'polish_party_militia', 'polish_party_dues']) assert.ok(cards.includes(id), id);
   for (const id of ['fundraising', 'party_organizations', 'reichsbanner']) assert.ok(!cards.includes(id), id + ' is replaced');
-  assert.ok(ids(engine).includes('polish_party_agenda'), 'the party agenda is a pinned card');
+  // Z — 0.57 (item 11 of the play notes): the party agenda is an ordinary card of the Party deck, no longer pinned; the
+  // unions join the deck only during a dispute or with its cause, and January 1922 has neither.
+  assert.ok(cards.includes('polish_party_agenda'), 'the party agenda is a card of the Party deck');
+  assert.ok(!ids(engine).includes('polish_party_agenda'), 'not pinned');
+  assert.ok(!cards.includes('polish_union_agenda'), 'no union dispute in January 1922');
 });
 
-test('Dwie organizacje in the game: two different organisations in one month; nothing is spent before the confirmation', () => {
+// Z — 0.57 (item 6 of the play notes of 5 X 2026): the line with no effect is no longer offered.
+test('Charakter partii (Z — 0.57): three lines, each with its environment; "our own profile, and reach through allies" is no longer offered', () => {
+  const engine = dendry.startGame();
+  playFromHand(engine, 'polish_party_electoral_base');
+  assert.deepEqual(ids(engine), ['polish_party_electoral_base.workers', 'polish_party_electoral_base.workers_peasants',
+    'polish_party_electoral_base.broad_democratic', 'easy_discard']);
+  assert.match(PolishParty.stanceStatus(engine.state.qualities, 'electoral_base', 'allied_reach').reason, /no longer offered/);
+});
+
+// Z — 0.57: the second choice is carried out at once (no page of confirmation); "Invest only in" names the first one.
+test('Dwie organizacje in the game: two different organisations in one month; the second choice is carried out at once', () => {
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
   Q.S.party_orgs.cash = 3;
   PolishParty.writeMirrors(Q);
   playFromHand(engine, 'polish_party_organizations');
   choose(engine, 'polish_party_organizations.p1_press_distribution');
+  assert.equal(Q.S.party_orgs.cash, 3, 'nothing is spent with the first choice');
   assert.equal(choice(engine, 'polish_party_organizations.p2_cooperative_workers').canChoose, true);
   assert.equal(choice(engine, 'polish_party_organizations.p2_press_distribution'), undefined, 'the same organisation is not offered again (Z — 0.56)');
   assert.ok(ids(engine).length <= 7, 'at most seven choices on the second page');
+  assert.equal(JSON.stringify(choice(engine, 'polish_party_organizations.only_one').title).replace(/[\["\]]/g, '').replace(/,/g, ''),
+    'Invest only in: Extend the distribution of the press (+10 reach)');
   choose(engine, 'polish_party_organizations.p2_cooperative_workers');
-  assert.match(content(engine), /Together 2 R and this month’s action/);
-  assert.equal(Q.S.party_orgs.cash, 3, 'nothing is spent before the confirmation');
-  choose(engine, 'polish_party_organizations.do_confirm');
+  assert.equal(engine.state.sceneId, 'polish_party_organizations.result', 'no page of confirmation');
   assert.match(content(engine), /the press gains 10 reach/);
   assert.equal(Q.S.party_orgs.press.reach, 40);
   assert.equal(Q.S.party_orgs.cooperatives.projects.filter(c => c.status === 'prepared').length, 1, 'a workers’ cooperative is prepared');
@@ -206,13 +221,17 @@ test('Obecna linia in the game: the present line can be confirmed for the month;
 });
 
 // Z — 0.56: the priorities of the present programme carry the bold label; without a programme an empty set cannot be
-// confirmed (it replaced the empty case of 0.51); a present programme can still be confirmed for the month.
-test('Program bez zmiany in the game (Z — 0.56): six described priorities; the present programme is marked on its priorities; an empty set without a programme is refused', () => {
+// confirmed (it replaced the empty case of 0.51). Z — 0.57 (item 10 of the play notes): the card opens on the present
+// programme, which is confirmed there in one step; the menu accepts only a changed set.
+test('Program bez zmiany in the game (Z — 0.56, 0.57): six described priorities; the present programme is confirmed on the first page; the menu accepts only a change', () => {
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
   const PRIORITY_IDS = ['stabilisation_with_protection', 'public_works', 'wealth_and_investment', 'socialisation', 'agrarian_labour',
     'cooperatives_housing'];
   playFromHand(engine, 'polish_party_economic_program');
+  assert.deepEqual(ids(engine), ['polish_party_economic_program.edit', 'easy_discard'], 'without a programme there is nothing to confirm');
+  assert.equal(plain(choice(engine, 'polish_party_economic_program.edit').title).trim(), 'Compose the programme');
+  assert.match(plain(engine.ui.paragraphs), /Without a programme, campaigns get no bonus/);
   choose(engine, 'polish_party_economic_program.edit');
   assert.deepEqual(ids(engine).filter(id => id.includes('.toggle_')), PRIORITY_IDS.map(id => 'polish_party_economic_program.toggle_' + id));
   for (const id of PRIORITY_IDS) {
@@ -222,6 +241,7 @@ test('Program bez zmiany in the game (Z — 0.56): six described priorities; the
   }
   assert.equal(plain(choice(engine, 'polish_party_economic_program.toggle_agrarian_labour').title), 'Land reform and rural modernisation');
   const empty = choice(engine, 'polish_party_economic_program.confirm');
+  assert.equal(plain(empty.title), 'Accept the new programme');
   assert.equal(empty.canChoose, false, 'no programme and nothing chosen');
   assert.equal(plain(empty.subtitle), 'Choose at least one priority.');
   choose(engine, 'polish_party_economic_program.toggle_public_works');
@@ -237,20 +257,29 @@ test('Program bez zmiany in the game (Z — 0.56): six described priorities; the
   choose(engine, 'root');
   assert.deepEqual(Q.S.actors.pps.strategy.economic_priorities, ['cooperatives_housing', 'public_works']);
   assert.equal(Q.time, 2);
-  // Six months later the card opens with the present programme marked on its two priorities, not on the confirmation.
+  // Six months later the card opens on the present programme: confirm it at once, or change it.
   delete Q.S.cooldowns['party.economic_program'];
-  engine.goToScene('polish_party_economic_program.menu');
-  Q.pl_prog_draft = Q.S.actors.pps.strategy.economic_priorities.join(',');
-  engine.goToScene('polish_party_economic_program.menu');
+  playFromHand(engine, 'polish_party_economic_program');
+  assert.deepEqual(ids(engine), ['polish_party_economic_program.confirm_present', 'polish_party_economic_program.edit', 'easy_discard']);
+  assert.equal(plain(choice(engine, 'polish_party_economic_program.confirm_present').title),
+    'Confirm the present programme: Cooperatives and housing; Public works and employment');
+  assert.equal(plain(choice(engine, 'polish_party_economic_program.edit').title).trim(), 'Change the programme');
+  assert.match(plain(engine.ui.paragraphs), /10% stronger among workers, the peasants, the intelligentsia and the unemployed/);
+  choose(engine, 'polish_party_economic_program.edit');
   for (const id of PRIORITY_IDS) {
     const marked = ['public_works', 'cooperatives_housing'].includes(id);
     assert.deepEqual(bold(choice(engine, 'polish_party_economic_program.toggle_' + id).subtitle), marked ? ['Present programme'] : [], id);
   }
   const same = choice(engine, 'polish_party_economic_program.confirm');
-  assert.equal(same.canChoose, true);
-  assert.deepEqual(bold(same.subtitle), [], 'the confirmation carries no label');
-  assert.match(plain(same.subtitle), /^Confirms the present programme; it costs this month's action/);
+  assert.equal(same.canChoose, false, 'an unchanged set is confirmed on the first page');
+  assert.equal(plain(same.subtitle), 'Nothing has changed. To confirm the present programme, go back to the beginning.');
   choose(engine, 'polish_party_economic_program.toggle_public_works');
   choose(engine, 'polish_party_economic_program.toggle_cooperatives_housing');
   assert.equal(choice(engine, 'polish_party_economic_program.confirm').canChoose, true, 'a present programme can be withdrawn');
+  choose(engine, 'polish_party_economic_program');
+  choose(engine, 'polish_party_economic_program.confirm_present');
+  assert.match(plain(engine.ui.paragraphs), /PPS confirms its present economic programme: Cooperatives and housing; Public works and employment\. Nothing else changes\./);
+  choose(engine, 'root');
+  assert.deepEqual(Q.S.actors.pps.strategy.economic_priorities, ['cooperatives_housing', 'public_works']);
+  assert.equal(Q.S.cooldowns['party.economic_program'], Q.time + 5, 'the card waits six months from the month it was played');
 });

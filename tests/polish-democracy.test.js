@@ -16,7 +16,7 @@ function ids(engine) {
 // One month spent on organisational work in the party agenda (0 R); the engine stops at the first event or at main.
 function spendMonth(engine) {
   engine.goToScene('main');
-  choose(engine, 'polish_party_agenda');
+  dendry.playCard(engine, 'polish_party_agenda');
   choose(engine, 'polish_party_agenda.organize');
   choose(engine, 'polish_party_agenda.branch_farm_labour');
   choose(engine, 'root');

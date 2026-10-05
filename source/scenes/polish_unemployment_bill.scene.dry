@@ -1,6 +1,7 @@
 title: Protection of the Unemployed
 subtitle: One initiative of PPS in the chapter: first the project, then the vote.
-is-pinned-card: true
+is-card: true
+tags: parliament_affairs
 card-image: img/Kollwitz_Arbeitslosigkeit.jpg
 view-if: {! return !!Q.S && (PolishProjects.billD1Available(Q) || PolishProjects.billD2Available(Q)) !}
 new-page: true
@@ -35,7 +36,7 @@ Q.pl_bill_withdraw_why = PolishProjects.billD2Status(Q, 'withdraw').reason;
 - @full
 - @limited
 - @withdraw
-- @later
+- @easy_discard
 
 @start
 title: D1: Start the legislative initiative of PPS
@@ -95,11 +96,6 @@ PolishProjects.billD2Choose(Q, 'withdraw');
 Q.pl_bill_result = 'PPS withdraws its bill. The initiative is closed for the chapter.';
 !}
 go-to: result
-
-@later
-title: Not now
-subtitle: The decision waits; ordinary actions continue.
-go-to: root
 
 @result
 new-page: true

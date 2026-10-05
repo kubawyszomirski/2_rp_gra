@@ -392,7 +392,90 @@
     E.policies.push(policy);
     S.history.reasons.push({t: m, kind: 'instrument', policy_id: id, instrument: kind, sponsor: policy.sponsor});
     checkConstraints(Q, 'fiscal', spec.position, {instrument: kind, sponsor: policy.sponsor});
+    programmeReaction(Q, ['instrument:' + kind], id, {kind: 'instrument', instrument: kind}, m, !!ctx.pps_answers);
     return policy;
+  }
+
+  // ---- The economic programme of PPS in practice (Z — 0.57) ------------------------------------------
+
+  // Item 5 of the play notes of 5 X 2026, the option "campaigns and voters' reactions" approved by the user: each priority
+  // of the programme of PPS (PolishParty.PRIORITIES) names the groups it serves, the measures that match it and those that
+  // contradict it. A gameplay simplification, not a historical record: the groups and the measures read the priority's name.
+  // A measure is named by its keys: project:<type>, project:<type>:<variant>, instrument:<kind> or law:<kind>.
+  const PROGRAMME_LINKS = Object.freeze({
+    stabilisation_with_protection: {serves: ['workers', 'unemployed', 'new_middle'],
+      matches: ['project:worker_protection', 'project:currency_reform:protected', 'project:currency_reform:gradual'],
+      contrary: ['instrument:benefit_cut', 'project:currency_reform:rapid_cuts']},
+    public_works: {serves: ['unemployed', 'workers'],
+      matches: ['project:public_works', 'project:orders', 'project:plant_rescue'],
+      contrary: ['project:currency_reform:rapid_cuts']},
+    wealth_and_investment: {serves: ['workers', 'old_middle'],
+      matches: ['instrument:progressive', 'instrument:wealth_tax', 'instrument:loan', 'project:credit_instrument:public',
+        'project:credit_instrument:cooperative'],
+      contrary: ['instrument:indirect']},
+    socialisation: {serves: ['workers'], matches: ['law:public_control', 'project:enterprise_representation:decision_rights'], contrary: []},
+    agrarian_labour: {serves: ['rural'], matches: ['project:land_program', 'project:agriculture_development'], contrary: []},
+    cooperatives_housing: {serves: ['workers', 'rural', 'new_middle'],
+      matches: ['project:public_works:housing', 'project:credit_instrument:cooperative', 'project:agriculture_development:cooperative_processing_sales'],
+      contrary: []},
+  });
+  const PROGRAMME_REACTION = 1;
+  const PROGRAMME_LOG_SIZE = 6;
+
+  const programmeOf = S => (S.actors && S.actors.pps && S.actors.pps.strategy && S.actors.pps.strategy.economic_priorities) || [];
+
+  // The cells the present programme serves (for the campaigns of PolishParty), or null without a programme.
+  function programmeFilter(S) {
+    const labels = [];
+    for (const id of programmeOf(S)) for (const label of (PROGRAMME_LINKS[id] || {serves: []}).serves) if (labels.indexOf(label) < 0) labels.push(label);
+    return electorate.filterOfList(labels);
+  }
+
+  function programmeServes(S) {
+    const labels = [];
+    for (const id of programmeOf(S)) for (const label of (PROGRAMME_LINKS[id] || {serves: []}).serves) if (labels.indexOf(label) < 0) labels.push(label);
+    return labels;
+  }
+
+  function programmeMeasureName(entry) {
+    if (entry.kind === 'project' && PROJECT_TYPES[entry.type]) {
+      const several = Object.keys(PROJECT_TYPES[entry.type].variants).length > 1;
+      return projectName(entry.type) + (several && entry.variant ? ' (' + variantName(entry.variant) + ')' : '');
+    }
+    if (entry.kind === 'instrument' && INSTRUMENTS[entry.instrument]) return capital(instrumentName(entry.instrument));
+    if (entry.kind === 'law' && entry.law === 'public_control') return L('Public control of a plant', 'Kontrola publiczna zakładu');
+    return String(entry.law || entry.type || entry.instrument || '');
+  }
+
+  // A matching measure taking effect while PPS governs or supports the cabinet: its groups +1 pp for PPS; a contrary measure
+  // taking effect with the votes of PPS: −1 pp. Once per measure and priority; the last six reactions are kept for the card.
+  function programmeReaction(Q, keys, measureId, entry, m, ppsVoted) {
+    const S = Q.S;
+    const priorities = programmeOf(S);
+    if (!priorities.length || !electorate.hasCells(S)) return [];
+    const governs = ['member', 'supporter'].indexOf(government.ppsStance(S)) >= 0;
+    const done = S.actors.pps.applied || (S.actors.pps.applied = []);
+    const reactions = [];
+    for (const id of priorities) {
+      const link = PROGRAMME_LINKS[id];
+      if (!link) continue;
+      const sign = governs && link.matches.some(k => keys.indexOf(k) >= 0) ? 1 : ppsVoted && link.contrary.some(k => keys.indexOf(k) >= 0) ? -1 : 0;
+      const key = 'programme:' + id + ':' + measureId;
+      if (!sign || done.indexOf(key) >= 0) continue;
+      done.push(key);
+      const filter = electorate.filterOfList(link.serves);
+      for (const cell of S.society.cells.filter(filter)) {
+        if (sign > 0) electorate.gainForPps(cell, PROGRAMME_REACTION, S.society.parties);
+        else electorate.lossForPps(cell, PROGRAMME_REACTION, S.society.parties);
+      }
+      const log = S.actors.pps.programme_log || (S.actors.pps.programme_log = []);
+      log.push(Object.assign({t: m, priority: id, sign: sign}, entry));
+      if (log.length > PROGRAMME_LOG_SIZE) log.splice(0, log.length - PROGRAMME_LOG_SIZE);
+      S.history.reasons.push({t: m, kind: 'programme_reaction', priority: id, measure_id: measureId, sign: sign});
+      reactions.push({priority: id, sign: sign});
+    }
+    if (reactions.length) electorate.writeClassMirrors(Q);
+    return reactions;
   }
 
   // ---- Rules of agreements against a contrary decision (decision 3 of stage 4; 9.2) ----------------
@@ -523,7 +606,7 @@
     if (!law) {
       // Without a law the reaction comes with the decision; with one, when the law is adopted (12.6).
       if (variant.business) economy.changeBusinessPressure(S, variant.business, project.id + ':business', t, project.type);
-      authorize(Q, project, t, 'competence');
+      authorize(Q, project, t, 'competence', project.sponsor === 'pps' || government.ppsStance(S) === 'member');
       return null;
     }
     const bill = submitLaw(Q, {kind: 'project', title: law.title + ' (' + VARIANT_NAMES[project.variant] + ')', project_id: project.id,
@@ -543,7 +626,7 @@
     return bill;
   }
 
-  function authorize(Q, project, m, authorizationId) {
+  function authorize(Q, project, m, authorizationId, ppsVoted) {
     project.authorized = true;
     project.authorization_id = authorizationId || project.authorization_id;
     if (project.started_at === null || project.started_at < m) {
@@ -559,6 +642,9 @@
       const variant = PROJECT_TYPES.currency_reform.variants[project.variant];
       economy.addShock(E, {id: project.id + ':credit', channel: 'credit', value: variant.credit_shock, starts_at: m, ends_at: m + variant.shock_months});
     }
+    // Z — 0.57: the voters' reaction to a project that matches or contradicts the programme of PPS.
+    programmeReaction(Q, ['project:' + project.type, 'project:' + project.type + ':' + project.variant], project.id,
+      {kind: 'project', type: project.type, variant: project.variant}, m, !!ppsVoted);
   }
 
   // stateCanExecute of 8.5: a valid authorisation, the competent executor, an active cabinet or a
@@ -807,14 +893,23 @@
       'czekają w agendzie, potem 1 B miesięcznie przez ' + months(project.duration_months) + '.'));
   }
 
-  // Card 7.5 of the Parliament deck: at a prepared project or a concrete military case; 1 T; no cooldown, and a refused
-  // law is not filed again unchanged (Z — 0.36).
+  // The last law of a project failed and the project is prepared again (12.2): its variant can be changed (Z — 0.57).
+  function lawFailed(project) {
+    const last = project.history.filter(h => h.kind === 'prepared' || String(h.kind).indexOf('law_') === 0).slice(-1)[0];
+    return !!last && last.kind !== 'prepared' && last.kind !== 'law_enacted';
+  }
+
+  // Card 7.5 of the Parliament deck: 1 T; no cooldown, and a refused law is not filed again unchanged (Z — 0.36).
+  // Z — 0.57 (item 12 of the play notes of 5 X 2026, "only when there is something to choose"): the card is in the deck at
+  // a concrete military case before there is a project, or when the Sejm refused the project's law and its variant can be
+  // changed. A prepared project waits for its launch in the agenda; a reform under way or done never brings it back.
   function armyOversightAvailable(Q) {
     const S = Q.S;
     if (!S || S.chapter.status === 'ended' || !S.politics || government.formationPending(Q)) return false;
     const pol = politicsModule();
     const project = armyProject(S);
-    return !!(pol && pol.openMilitaryCase(S)) || !!(project && preparedProject(project));
+    if (!project) return !!(pol && pol.openMilitaryCase(S));
+    return preparedProject(project) && lawFailed(project);
   }
 
   function armyOversightStatus(Q, option) {
@@ -963,6 +1058,7 @@
     plant.management = 'a public board under Industry and Trade';
     plant.history.push({t: m, kind: 'public_control', law_id: bill.id});
     economy.changeBusinessPressure(S, PUBLIC_CONTROL_BUSINESS, 'public_control:' + plant.id, m, 'public_control');
+    programmeReaction(Q, ['law:public_control'], bill.id, {kind: 'law', law: 'public_control'}, m, bill.sponsor === 'pps' || bill.pps_vote === 'yes');
   }
 
   // The monthly execution of every project (12.3) for the budget of period t. Returns the inputs of the
@@ -1249,7 +1345,7 @@
         project.charge_from = m;
         project.launched_at = project.launched_at || m;
       }
-      authorize(Q, project, m, bill.id);
+      authorize(Q, project, m, bill.id, bill.sponsor === 'pps' || bill.pps_vote === 'yes');
       const variant = PROJECT_TYPES[project.type].variants[project.variant];
       if (variant.business) economy.changeBusinessPressure(S, variant.business, project.id + ':business', m, project.type);
       if (project.type === 'land_program' && project.policy_choices.access === 'polish_majority') {
@@ -1371,7 +1467,7 @@
     for (const kind of pkg.instruments) {
       applyInstrument(Q, kind, m, {law_id: pkg.law_id, sponsor: 'cabinet', points: kind === 'emission' ? 2 : 0, pps_answers: ppsAnswers});
     }
-    if (pkg.project_id && S.projects[pkg.project_id] && !S.projects[pkg.project_id].authorized) authorize(Q, S.projects[pkg.project_id], m, pkg.law_id || 'package');
+    if (pkg.project_id && S.projects[pkg.project_id] && !S.projects[pkg.project_id].authorized) authorize(Q, S.projects[pkg.project_id], m, pkg.law_id || 'package', ppsAnswers);
     if (E.package_revision && (E.package_revision.original_id === pkg.revision_of || E.package_revision.original_id === pkg.id)) E.package_revision = null;
   }
 
@@ -2099,7 +2195,7 @@
       project.status = 'operating';
       project.preparation = 100;
       project.launched_at = m;
-      authorize(Q, project, m, bill.id);
+      authorize(Q, project, m, bill.id, bill.sponsor === 'pps' || bill.pps_vote === 'yes');
     }
     if (record) {
       record.status = 'enacted';
@@ -3039,6 +3135,11 @@
   }
 
   return Object.freeze({
+    PROGRAMME_LINKS: PROGRAMME_LINKS,
+    programmeFilter: programmeFilter,
+    programmeServes: programmeServes,
+    programmeMeasureName: programmeMeasureName,
+    programmeReaction: programmeReaction,
     PROJECT_TYPES: PROJECT_TYPES,
     INSTRUMENTS: INSTRUMENTS,
     CARDS: CARDS,

@@ -543,8 +543,8 @@ test('Kompromis listowy a Lewica: the early Centre-Left adds 3 Lewica dissent on
   const labour = gov.proposeList(L, 'labour');
   assert.equal(labour.accepted, true);
   assert.equal(L.lewica_dissent, 10, 'the list with NPR keeps the protection of labour');
-  assert.equal(L.month_actions, 1, 'the confirmation spends the month');
-  // Outside the window the card is closed.
+  assert.equal(L.month_actions, 0, 'an answer to the event before the election costs no action (Z — 0.57)');
+  // Outside the window the question is not asked.
   assert.equal(gov.listWindow(fixture({ time: 8, year: 1922, month: 8 })).open, false);
 });
 

@@ -85,6 +85,9 @@
     polish_event_austerity_1926: Object.freeze({definition_id: 'cabinet.austerity_1926', category: 4}),
     // Z — 0.56: the constitutional debate of December 1924 is background (category 6), once; it opens card 7.6.
     polish_event_constitution_debate: Object.freeze({definition_id: 'politics.constitution_debate', category: 6}),
+    // Z — 0.57: the joint list before a Sejm election is a deadline of the lists (category 4), one instance per election
+    // and month; it keeps the scene ID of card 7.7, which it replaces.
+    polish_list_agreement: Object.freeze({definition_id: 'parliament.list_agreement', category: 4, keyed_by: 'election_month'}),
   });
 
   const isPlainObject = value => value !== null && typeof value === 'object' && !Array.isArray(value) &&
@@ -224,7 +227,7 @@
   // Strikes and plants start empty in every new game (14.3, 17.12).
   function emptyUnions() {
     return {
-      strikes: {seq: 0, records: {}, due: {}, wage_watch: {months_below: 0, last_case_at: null, last_checked: 0}, inputs: null, pending_effects: []},
+      strikes: {seq: 0, records: {}, due: {}, wage_watch: {months_below: 0, last_case_at: null, last_checked: 0, latched: false}, inputs: null, pending_effects: []},
       enterprises: {seq: 0, records: {}},
     };
   }
@@ -752,7 +755,9 @@
       const key = definition.keyed_by === 'faction_case' ? sceneId + ':' + ((Q.S.faction_cases && Q.S.faction_cases.due_case_id) || '') :
         definition.keyed_by === 'strike' ? sceneId + ':' + ((Q.S.strikes && Q.S.strikes.due && Q.S.strikes.due[sceneId]) || '') :
         definition.keyed_by === 'politics' ? sceneId + ':' + ((Q.S.politics && Q.S.politics.due && Q.S.politics.due[sceneId]) || '') :
-        definition.keyed_by === 'coup' ? sceneId + ':' + ((Q.S.coup && Q.S.coup.attempt_id) || '') + ':' + ((Q.S.coup && Q.S.coup.phase) || '') : sceneId;
+        definition.keyed_by === 'coup' ? sceneId + ':' + ((Q.S.coup && Q.S.coup.attempt_id) || '') + ':' + ((Q.S.coup && Q.S.coup.phase) || '') :
+        definition.keyed_by === 'election_month' ? sceneId + ':' + ((Q.S.parliament && Q.S.parliament.next_election && Q.S.parliament.next_election.id) || '') + ':' + t :
+        sceneId;
       if (events.resolved[key]) continue;
       candidates.push({id: sceneId, key: key, definition: definition});
     }

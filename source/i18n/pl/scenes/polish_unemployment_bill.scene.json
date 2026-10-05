@@ -26,8 +26,6 @@
   "title: D2: Withdraw the bill": "title: D2: Wycofaj projekt",
   "subtitle: The initiative ends; offered only when no compromise exists.": "subtitle: Inicjatywa się kończy; możliwe tylko wtedy, gdy nie ma kompromisu.",
   "Q.pl_bill_result = 'PPS withdraws its bill. The initiative is closed for the chapter.';": "Q.pl_bill_result = 'PPS wycofuje swój projekt. Inicjatywa jest zamknięta do końca rozdziału.';",
-  "title: Not now": "title: Nie teraz",
-  "subtitle: The decision waits; ordinary actions continue.": "subtitle: Decyzja czeka; zwykłe działania trwają.",
   "- @root: Continue.": "- @root: Dalej."
  }
 }

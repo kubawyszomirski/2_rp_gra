@@ -1,6 +1,6 @@
 # Plan implementacji rozdziału 1
 
-**Stan — referencja 0.56, 5 października 2026. Wszystkie etapy 0–8 wykonane; etap 8 był ostatni, a pierwszy rozdział jest wdrożony w całości (rozdział 18). Po planie gra dostała polską wersję językową (rozdział 19), potwierdzanie obecnej linii (rozdział 20) nazwę Centralnego Komitetu Wykonawczego dla doradców (rozdział 21), nowe opisy wyborów (rozdział 22), czytelny pasek boczny (rozdziały 23 i 24) oraz dziewięć uwag z gry (rozdział 25).** Plan opisuje, w jakiej kolejności i jakimi zmianami w kodzie wdrożono pierwszy rozdział gry. Reguły gry podaje [referencja techniczna](POLISH_TECHNICAL_REFERENCE.md), a karty — [katalog kart](POLISH_CARD_CATALOGUE.md). Plan nie tworzy reguł: przy rozbieżności obowiązuje referencja. Sam plan niczego jeszcze nie zmienia w grze. Każdy etap zaczyna się dopiero po zatwierdzeniu jego szczegółowego planu.
+**Stan — referencja 0.57, 5 października 2026. Wszystkie etapy 0–8 wykonane; etap 8 był ostatni, a pierwszy rozdział jest wdrożony w całości (rozdział 18). Po planie gra dostała polską wersję językową (rozdział 19), potwierdzanie obecnej linii (rozdział 20) nazwę Centralnego Komitetu Wykonawczego dla doradców (rozdział 21), nowe opisy wyborów (rozdział 22), czytelny pasek boczny (rozdziały 23 i 24), dziewięć uwag z gry (rozdział 25) oraz trzynaście kolejnych uwag (rozdział 26).** Plan opisuje, w jakiej kolejności i jakimi zmianami w kodzie wdrożono pierwszy rozdział gry. Reguły gry podaje [referencja techniczna](POLISH_TECHNICAL_REFERENCE.md), a karty — [katalog kart](POLISH_CARD_CATALOGUE.md). Plan nie tworzy reguł: przy rozbieżności obowiązuje referencja. Sam plan niczego jeszcze nie zmienia w grze. Każdy etap zaczyna się dopiero po zatwierdzeniu jego szczegółowego planu.
 
 ## 1. Jak czytać plan
 
@@ -334,7 +334,7 @@ Szczegóły podaje [TRANSITION_MATRIX.md](../TRANSITION_MATRIX.md) w części �
 
 **Wzorzec liczb:** `analysis/m06-office-elections/`.
 
-**Testy z 21.1:** 15 testów z dodatku B, m.in. „Mandaty”, „Senat”, „Granica” i „Raport”.
+**Testy z 21.1:** 16 testów z dodatku B (15 z tego etapu i „Głosowanie rozstrzygające” dopisane w 0.57), m.in. „Mandaty”, „Senat”, „Granica” i „Raport”.
 
 **Gotowe, gdy:** obecne testy wyborów i prezydenta przechodzą, a rozdział kończy się raportem po legalnym wyniku.
 
@@ -378,7 +378,7 @@ Kartę 9.1 przeniesiono do etapu 7 (decyzja etapu 3).
 
 **Wzorzec liczb:** `analysis/m11-threat-persuasion/`, `analysis/m02-negotiations/` i `analysis/m02-political-chain/`.
 
-**Testy z 21.1:** 23 testy z dodatku B, m.in. „Oferta”, „Umowa”, „Impas” i „Perswazja”.
+**Testy z 21.1:** 24 testy z dodatku B (23 z tego etapu i „Wspólna lista jako wydarzenie” dopisana w 0.57), m.in. „Oferta”, „Umowa”, „Impas” i „Perswazja”.
 
 **Gotowe, gdy:** po wyborach 1922 gabinet powstaje przez negocjację, a jego upadek otwiera nową sekwencję bez starych progów.
 
@@ -486,7 +486,7 @@ Wskaźniki `qdisplays/dissent`, `qdisplays/strength`, `qdisplays/loyalty` i `qdi
 
 **Wzorzec liczb:** `analysis/m16-split-recalculation/`, `analysis/m17-late-advisors/`, `analysis/m18-membership-apparatus/`, `analysis/m13-communist-discipline/` i `analysis/m15-as-benefit/`.
 
-**Testy z 21.1:** 67 testów z dodatku B, m.in. „Rozłam E3”, „Składki” i „Obecna linia”; trzy z nich przeniósł etap 4.
+**Testy z 21.1:** 68 testów z dodatku B (67 z tego etapu i „Program w praktyce” dopisany w 0.57), m.in. „Rozłam E3”, „Składki” i „Obecna linia”; trzy z nich przeniósł etap 4.
 
 **Gotowe, gdy:** każda karta z partii 1–3 katalogu działa na nowej transakcji, a rozłam frakcji to karta E3 z dwoma wyborami.
 
@@ -529,7 +529,7 @@ Wskaźniki `qdisplays/dissent`, `qdisplays/strength`, `qdisplays/loyalty` i `qdi
 
 **Wzorzec liczb:** `analysis/m12-strike-settlement/`, `analysis/m13-communist-discipline/` i `analysis/m18-membership-apparatus/`.
 
-**Testy z 21.1:** 18 testów z dodatku B, m.in. „Zgoda na ugodę”, „Kraków” i „Klucz sprawy E6”; dwa z nich przeniósł etap 4.
+**Testy z 21.1:** 21 testów z dodatku B (18 z tego etapu i trzy dopisane w 0.57: „Strajk i Sejm bez pętli”, „Jedna sprawa płacowa na przyczynę”, „Związki zawodowe jako zwykła karta”), m.in. „Zgoda na ugodę”, „Kraków” i „Klucz sprawy E6”; dwa z nich przeniósł etap 4.
 
 **Gotowe, gdy:** strajk 1923 przechodzi od żądań do wykonanej albo odrzuconej ugody bez podwójnego liczenia funduszu.
 
@@ -579,7 +579,7 @@ Kartę 9.1 przeniesiono z etapu 3 (decyzja etapu 3): spór Naczelnika z Ponikows
 
 **Wzorzec liczb:** `analysis/m08-coup-profile/`, `analysis/m10-authority-democracy/`, `analysis/m02-pressure-calibration/` i `analysis/m15-as-benefit/`.
 
-**Testy z 21.1:** 53 testy z dodatku B, m.in. „Zamach”, „Autorytet z dziennika” i „Izolacja Polski”; cztery z nich przeniósł etap 4.
+**Testy z 21.1:** 54 testy z dodatku B (53 z tego etapu i „Milczenie i kolejne wystąpienia B2” dopisane w 0.56), m.in. „Zamach”, „Autorytet z dziennika” i „Izolacja Polski”; cztery z nich przeniósł etap 4.
 
 **Gotowe, gdy:** kampania od stycznia 1922 kończy się raportem po zamachu albo po następnych wyborach, a test „Izolacja Polski” potwierdza, że żaden stary zapis nie zmienia wyniku.
 
@@ -1183,6 +1183,18 @@ Siódma zmiana po zakończeniu planu, nie etap 9. 5 X 2026 użytkownik przysła�
 - **Testy w Dodatku B:** „Karta B2” zastępuje „Obowiązkową odpowiedź B2”; „Milczenie i kolejne wystąpienia B2” należy do etapu 7, a „Debata o konstytucji” do etapu 4, jak ich mechaniki.
 - **Otwarte:** skutki priorytetów programu; więcej kart czasowych.
 
+## 26. Trzynaście uwag z gry (po planie, 0.57)
+
+Ósma zmiana po zakończeniu planu, nie etap 9. 5 X 2026 użytkownik przysłał trzynaście kolejnych uwag z gry; decyzje i pliki opisuje referencja (20.1 i 23.30).
+
+- **Program:** skutki priorytetów (kampanie +10%, reakcje wyborców ±1 pp) i pierwsza strona „Zatwierdź obecny program” / „Zmień program”.
+- **Wybory:** wspólna lista jako wydarzenie dwa miesiące przed głosowaniem, z wyższymi progami, opcją „sami” i bez bloku ludowego; opis głosowania rozstrzygającego w wyborach prezydenta.
+- **Karty:** agenda partii, związki i ochrona bezrobotnych jako zwykłe karty talii; kontrola wojska tylko wtedy, gdy jest co wybrać; organizacje bez strony potwierdzenia i z nazwą „Załóż TUR”; charakter partii bez linii bez skutku.
+- **Strajki:** jedna sprawa płacowa na przyczynę; „Żądaj…” niedostępne przy pełnej ofercie; powtórzona oferta bez nowego pytania.
+- **Pliki:** reguły (`polish_party.js`, `polish_projects.js`, `polish_government.js`, `polish_unions.js`, `polish_rules.js`), sceny kart i wydarzeń z tłumaczeniami, `main`, testy i ich pomocniki, `out/html/index.html` (`?v=0.57`), kontrola planu.
+- **Wyniki:** `npm test` 469 z 469; 18 kontroli; test w przeglądarce.
+- **Otwarte:** gotowość związków bez sporu; więcej kart czasowych.
+
 ## Dodatek A. Karty katalogu według etapów
 
 | Etap | Pozycje katalogu | Liczba |
@@ -1206,15 +1218,15 @@ Test przypisujemy do pierwszego etapu, po którym da się go uruchomić w pełne
 
 - **Etap 0 (1):** „Jedna trudność”.
 - **Etap 1 (4):** „Jedna tura”, „Doradca”, „Ręka”, „Rzut”.
-- **Etap 2 (15):** „Prezydentura bez interaktywnych tur”, „Remis finalistów urzędu”, „Zapis losowania urzędu”, „Granica losowania urzędu”, „Finał bez większości bezwzględnej”, „Kworum i kandydatury”, „Bezpiecznik wyboru urzędu”, „Mandaty”, „Zwykła większość”, „Szczególna większość”, „Senat”, „Granica”, „Data”, „Raport”, „Marszałek i prezydent”.
-- **Etap 3 (23):** „Oferta”, „Umowa”, „Groźba przyjęta”, „Groźba odrzucona”, „Groźba po cofnięciu”, „Perswazja”, „Rząd bez potrzeby PPS”, „Utrata partnera”, „Skład porozumienia”, „Premier ekspercki”, „Resorty docelowe”, „Starszy gabinet”, „Gabinet po wyborach”, „Poparcie mniejszości”, „Utrzymanie poparcia tylko w kryzysie”, „Impas”, „Poparcie gabinetu”, „Legalny kalendarz bez C8”, „C1”, „C2/C3”, „C5–C7”, „C8/C9”, „Kompromis listowy a Lewica”.
+- **Etap 2 (16):** „Prezydentura bez interaktywnych tur”, „Remis finalistów urzędu”, „Zapis losowania urzędu”, „Granica losowania urzędu”, „Finał bez większości bezwzględnej”, „Kworum i kandydatury”, „Bezpiecznik wyboru urzędu”, „Mandaty”, „Zwykła większość”, „Szczególna większość”, „Senat”, „Granica”, „Data”, „Raport”, „Marszałek i prezydent”, „Głosowanie rozstrzygające”.
+- **Etap 3 (24):** „Oferta”, „Umowa”, „Groźba przyjęta”, „Groźba odrzucona”, „Groźba po cofnięciu”, „Perswazja”, „Rząd bez potrzeby PPS”, „Utrata partnera”, „Skład porozumienia”, „Premier ekspercki”, „Resorty docelowe”, „Starszy gabinet”, „Gabinet po wyborach”, „Poparcie mniejszości”, „Utrzymanie poparcia tylko w kryzysie”, „Impas”, „Poparcie gabinetu”, „Legalny kalendarz bez C8”, „C1”, „C2/C3”, „C5–C7”, „C8/C9”, „Kompromis listowy a Lewica”, „Wspólna lista jako wydarzenie”.
 - **Etap 4 (36):** „Niedobór budżetu”, „Budżet bez kumulacji”, „Efekt projektu”, „Zatrudnienie”, „Kapitał”, „Warunki życia”, „Przepływ pogorszenia”, „Przepływ poprawy”, „Asymetria”, „Brak przepływu”, „Mała pula”, „Bez podwójnego liczenia”, „Kolejność M09”, „Stare reguły poparcia”, „Zamówienia”, „Czasowy dochód”, „Pożyczka inwestycyjna”, „Parcelacja i komasacja”, „Remont Oświaty”, „Pobór w karcie finansowej”, „Szerokie grupy i emisja”, „Szkoła świecka bez reakcji frakcji”, „Oszczędności 1926 przez 9.8”, „Roboty pod Pracą”, „Wariant robót”, „Wykonanie i limit robót”, „Stabilizacja i finanse”, „Konflikt kapitału”, „Wykonalność jedności narodowej”, „Narastanie kryzysu”, „Opcje karty Budżet”, „Budżet”, „Trzy reformy”, „Kredyt B16”, „C4”, „Debata o konstytucji”.
-- **Etap 5 (67):** „Nowe powołanie”, „Start i odwołanie”, „Pużak”, „Jedno przekierowanie”, „Brak resortu”, „Piłsudczycy”, „Miasta i klasy”, „Efekty czasowe”, „KPP i Lewica”, „Droga do KPP”, „Wrogość a kanał”, „Późni doradcy”, „Dyscyplina KPP”, „Akceptacja a KPP”, „Program bez zmiany”, „Odroczenie sprawy frakcji”, „Dwa warianty kompromisu”, „Dostęp karty Jedność”, „Zmiana doradców osobno”, „Kontakt i agenda KPP”, „Kompromis w PPS”, „Granice dyscypliny”, „Rozmowa a akcja”, „Brak gotówki”, „Dwie kategorie mniejszości”, „Zmiana formatu prasy”, „Cel członkostwa”, „Zbliżanie członkostwa”, „Zwrot aparatu”, „Konfiskata”, „Preferencje”, „Nasycenie”, „AS”, „Posłuch AS”, „Jedna akcja Milicji”, „Mała AS i czwarta sprawa”, „Rozłam E3”, „Zamrożeni posłowie”, „Rozłam i czystka”, „Zamrożony wynik”, „Jedna karta E3”, „Czystka”, „TUR”, „Program gospodarczy”, „Bez płatnego braku wyboru”, „Militaryzacja a frakcje”, „Praca organizacyjna w komórkach”, „Media bez odnowienia karty”, „Dwie organizacje”, „Podmenu i doradcy”, „Demokracja zależna od sytuacji”, „Trzy ustroje”, „Cztery stanowiska autonomii”, „Składki”, „ZSRR”, „Potępienie modelu sowieckiego”, „Adresat polemiki”, „Arbitraż i linia”, „Oś autonomii”, „Bund”, „Sowiecki model B13”, „Obecna linia”, „Profil frakcji v1”, „Cele ustrojowe”, „Populacja”, „Warianty funduszu inwestycyjnego”, „Szkoły”.
-- **Etap 6 (18):** „Kolej”, „Zgoda na ugodę”, „Zgoda a fundusz”, „Pełna oferta i czerwona linia”, „Kruchość gabinetu”, „Komuniści”, „Współpraca i eskalacja”, „Kraków”, „Państwo a PPS w strajku”, „Strajk i Sejm”, „B8+B10 i B11+B12”, „Klucz sprawy E6”, „Układ zbiorowy i odstępstwo”, „Otwarcia finansowe”, „Zasięg i charakter partii”, „Tolerowanie B14”, „Ratunek zakładu”, „Wspólna karta gabinetowa”.
+- **Etap 5 (68):** „Nowe powołanie”, „Start i odwołanie”, „Pużak”, „Jedno przekierowanie”, „Brak resortu”, „Piłsudczycy”, „Miasta i klasy”, „Efekty czasowe”, „KPP i Lewica”, „Droga do KPP”, „Wrogość a kanał”, „Późni doradcy”, „Dyscyplina KPP”, „Akceptacja a KPP”, „Program bez zmiany”, „Odroczenie sprawy frakcji”, „Dwa warianty kompromisu”, „Dostęp karty Jedność”, „Zmiana doradców osobno”, „Kontakt i agenda KPP”, „Kompromis w PPS”, „Granice dyscypliny”, „Rozmowa a akcja”, „Brak gotówki”, „Dwie kategorie mniejszości”, „Zmiana formatu prasy”, „Cel członkostwa”, „Zbliżanie członkostwa”, „Zwrot aparatu”, „Konfiskata”, „Preferencje”, „Nasycenie”, „AS”, „Posłuch AS”, „Jedna akcja Milicji”, „Mała AS i czwarta sprawa”, „Rozłam E3”, „Zamrożeni posłowie”, „Rozłam i czystka”, „Zamrożony wynik”, „Jedna karta E3”, „Czystka”, „TUR”, „Program gospodarczy”, „Bez płatnego braku wyboru”, „Militaryzacja a frakcje”, „Praca organizacyjna w komórkach”, „Media bez odnowienia karty”, „Dwie organizacje”, „Podmenu i doradcy”, „Demokracja zależna od sytuacji”, „Trzy ustroje”, „Cztery stanowiska autonomii”, „Składki”, „ZSRR”, „Potępienie modelu sowieckiego”, „Adresat polemiki”, „Arbitraż i linia”, „Oś autonomii”, „Bund”, „Sowiecki model B13”, „Obecna linia”, „Profil frakcji v1”, „Cele ustrojowe”, „Populacja”, „Warianty funduszu inwestycyjnego”, „Szkoły”, „Program w praktyce”.
+- **Etap 6 (21):** „Kolej”, „Zgoda na ugodę”, „Zgoda a fundusz”, „Pełna oferta i czerwona linia”, „Kruchość gabinetu”, „Komuniści”, „Współpraca i eskalacja”, „Kraków”, „Państwo a PPS w strajku”, „Strajk i Sejm”, „B8+B10 i B11+B12”, „Klucz sprawy E6”, „Układ zbiorowy i odstępstwo”, „Otwarcia finansowe”, „Zasięg i charakter partii”, „Tolerowanie B14”, „Ratunek zakładu”, „Wspólna karta gabinetowa”, „Strajk i Sejm bez pętli”, „Jedna sprawa płacowa na przyczynę”, „Związki zawodowe jako zwykła karta”.
 - **Etap 7 (54):** „Autorytet z dziennika”, „Bez bezpośredniego zapisu”, „Demokracja w zwykłym Sejmie”, „Zdarzenia demokracji”, „Demokracja w presji”, „AS w zamachu”, „Podwójny przydział”, „Zamach”, „Zero sił”, „Gotowość wojska”, „Zdolność a demokracja”, „Losowanie po F5”, „Wczytanie zamachu”, „Szybkie zwycięstwo”, „Nadchodząca rezerwa”, „Pomiar strajku”, „Istotny udział”, „Ugoda w rundzie 1”, „Przewaga nie negocjuje”, „Odrzucone F9”, „Brak zwycięzcy”, „Wkład kontrfaktyczny”, „Kryzys i przerwa”, „Przegląd ugody chroniącej”, „Policja”, „Nominacja”, „Śledztwo i adresat polemiki”, „Ustępstwo Piłsudskiemu”, „Pula ustępstw wojskowych”, „Ustępstwa a linia”, „Rozpoznanie w agendzie”, „Mobilizacja i kult”, „B3/B4”, „Msza B5”, „B1/B2”, „Karta B2”, „Milczenie i kolejne wystąpienia B2”, „Sprzeczność odpowiedzi B2”, „Dwie decyzje Piłsudskiego”, „Kontrola wojska bez pustych opcji”, „Ograniczona reforma wojska”, „Karty 3–5 bez odnowienia”, „Karty rządowe bez pustych opcji”, „B18/B19/B21”, „Kolejność kategorii wydarzeń”, „Manifest parlamentu”, „Katalog rządowy”, „Sceny wycofane B”, „Izolacja Polski”, „Kolejność i zakres”, „Reprezentacja”, „Autonomia”, „Sprawiedliwość”, „Rozszerzyć i skupić osłony”.
 - **Etap 8 (0):** kontrole pełnych kampanii z 21.2, 21.2a, 21.2b i 21.2c. Wdrożone jako testy `tests/polish-campaign.test.js` i `tests/polish-scenario.test.js` oraz pomiar [`analysis/stage8-campaigns/`](../analysis/stage8-campaigns/REPORT.md).
 
-Razem: 218 testów z 21.1.
+Razem: 224 testy z 21.1.
 
 ## Dodatek C. Przecieki z 20.2 i etap, który je zamyka
 

@@ -42,8 +42,9 @@ test('Obrazki: karty i karty CKW mają obrazek na karcie, wydarzenia na stronie;
     assert.ok(scene, `${f}: scene ${id}`);
     const card = !!(scene.isCard || scene.isPinnedCard);
     const key = name === 'polish_gov_heritage_zamek_krolewski' ? 'faceImage' : card ? 'cardImage' : 'faceImage';
-    // Z — 0.56: B2 became a card of the Parliament deck and kept its scene ID, polish_event_pils_criticism.
-    const event = id.startsWith('polish_event_') && id !== 'polish_event_pils_criticism';
+    // Z — 0.56: B2 became a card of the Parliament deck and kept its scene ID, polish_event_pils_criticism. Z — 0.57: the
+    // joint list became an event before the election and kept the scene ID of card 7.7, polish_list_agreement.
+    const event = (id.startsWith('polish_event_') && id !== 'polish_event_pils_criticism') || id === 'polish_list_agreement';
     assert.equal(card, !event, `${id}: cards and pinned cards are not events`);
     assert.equal(scene[key], 'img/polish/' + f, `${id}: ${key}`);
     assert.equal(games.pl.scenes[id][key], scene[key], `${id}: the Polish game shows the same image`);
