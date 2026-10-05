@@ -2559,15 +2559,17 @@
   // so a list gives no portfolio. The peasant bloc stands without PPS; PPS only brokers it (decision 7).
   // Z — 0.57 (items 7 and 8 of the play notes of 5 X 2026): higher relation gates (Wyzwolenie 60, NPR 70, the early
   // Centre-Left 70 each); the peasant bloc is no decision of PPS and is no longer offered to it, but it stays the peasant
-  // parties' own alternative in their evaluation of a list (LIST_ALTERNATIVES).
+  // parties' own alternative in their evaluation of a list (LIST_ALTERNATIVES). Z — 0.58 (the user's decision of 5 X 2026):
+  // every partner accepts a joint list only from a relation of 75 with PPS.
+  const LIST_GATE = 75;
   const LIST_PROFILE_ID = 'list_profiles_v1';
   const LIST_OPTIONS = Object.freeze({
-    left_peasant: {name: 'PPS and PSL Wyzwolenie', members: ['pps', 'psl_wyzwolenie'], gates: [{actor: 'psl_wyzwolenie', min: 60}],
+    left_peasant: {name: 'PPS and PSL Wyzwolenie', members: ['pps', 'psl_wyzwolenie'], gates: [{actor: 'psl_wyzwolenie', min: LIST_GATE}],
       programme: {land: 1, fiscal: 1}, profile: 'Land reform with equal access and protection of labour; seats shared in proportion to votes.'},
-    labour: {name: 'PPS and NPR', members: ['pps', 'npr'], gates: [{actor: 'npr', min: 70}], programme: {fiscal: 1, church: 0},
+    labour: {name: 'PPS and NPR', members: ['pps', 'npr'], gates: [{actor: 'npr', min: LIST_GATE}], programme: {fiscal: 1, church: 0},
       profile: 'The eight-hour day, protection of the unemployed and religious freedom.'},
     centrolew_early: {name: 'An early Centre-Left', members: ['pps', 'psl_wyzwolenie', 'psl_piast', 'npr'],
-      gates: [{actor: 'psl_wyzwolenie', min: 70}, {actor: 'psl_piast', min: 70}, {actor: 'npr', min: 70}], fulfilled_needed: 2,
+      gates: [{actor: 'psl_wyzwolenie', min: LIST_GATE}, {actor: 'psl_piast', min: LIST_GATE}, {actor: 'npr', min: LIST_GATE}], fulfilled_needed: 2,
       programme: {land: 0, fiscal: 0, institution: 1, church: 0}, lewica_dissent: 3,
       profile: 'A lawful change of government, a social minimum and a land and religious compromise; an alternative early bloc, not the historical Centrolew.'},
     peasant: {name: 'Peasant bloc (PSL Wyzwolenie and PSL Piast)', members: ['psl_wyzwolenie', 'psl_piast'], without_pps: true, gates: [],

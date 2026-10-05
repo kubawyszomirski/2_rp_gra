@@ -523,7 +523,7 @@ test('Perswazja and Rząd bez potrzeby PPS: persuasion never changes relations; 
 });
 
 test('Kompromis listowy a Lewica: the early Centre-Left adds 3 Lewica dissent once; the list with NPR none', () => {
-  const high = { psl_wyzwolenie_relation: 70, psl_piast_relation: 70, npr_relation: 70, pschd_relation: 30 };
+  const high = { psl_wyzwolenie_relation: 75, psl_piast_relation: 75, npr_relation: 75, pschd_relation: 30 }; // Z — 0.58: the gates of 75
   const withJoint = Q => {
     // Two fulfilled joint obligations of PPS with the partners (6.5), each with its own ID.
     Q.S.agreements.joint = { id: 'joint', kind: 'support', parties: ['pps', 'psl_piast'], status: 'fulfilled', history: [],
@@ -552,7 +552,7 @@ test('an accepted list is counted as one list at the election; without an agreem
   const partySeats = { kpp: 2, pps: 35, npr: 22, psl_wyzwolenie: 25, psl_piast: 99, pschd: 27, zln: 83, minorities_bloc: 17, other: 134 };
   const votes = { kpp: 1.5, pps: 10, npr: 5, psl_wyzwolenie: 11, psl_piast: 13, pschd: 10, zln: 22, minorities_bloc: 16, other: 11.5 };
   const run = alliance => {
-    const Q = fixture({ time: 10, year: 1922, month: 10, npr_relation: 70, sejm_total_seats: 444, n_elections: 0, sejm_results: [],
+    const Q = fixture({ time: 10, year: 1922, month: 10, npr_relation: 75, sejm_total_seats: 444, n_elections: 0, sejm_results: [],
       party_names: Object.fromEntries(PARTIES.map(p => [p, p.toUpperCase()])) });
     for (const p of PARTIES) Q[`${p}_normalized`] = votes[p] / 100;
     if (alliance) assert.equal(gov.proposeList(Q, alliance).accepted, true);

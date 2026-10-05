@@ -53,7 +53,8 @@
   const APPARATUS_MAX = 4;
   const TUR_MAX = 3;
   // H — the TUR's own 1929 publication confirms its foundation in January 1923 (PL-CONTENT-1922-1926-2026-09);
-  // the pace of its levels is P (13.2).
+  // the pace of its levels is P (13.2). Z — 0.58 (the user's decision of 5 X 2026): the date stays recorded in
+  // `tur.available_from`, but it no longer blocks the founding; PPS may found TUR from the start (alternate history).
   const TUR_AVAILABLE_FROM = T(1923, 1);
   const REACH_MULTIPLIER_CAP = 1.30; // 10.6: character of the party and TUR together
   const COOPERATIVE_CLASSES = Object.freeze(['workers', 'rural']);
@@ -409,7 +410,6 @@
     if (cash + 1e-9 < p.cost) return no(L('Needs ' + rules.units(p.cost) + '.', 'Wymaga ' + rules.units(p.cost, 'resources', 'gen') + '.'));
     if (p.org === 'tur') {
       const tur = S.party_orgs.tur;
-      if (Q.time < tur.available_from) return no(L('TUR can be founded from January 1923.', 'TUR można założyć od stycznia 1923 roku.'));
       if (tur.level >= TUR_MAX) return no(L('TUR has its full national coordination.', 'TUR ma już pełną koordynację ogólnokrajową.'));
       if (tur.active_build) return no(L('A stage of TUR is already being built.', 'Jeden etap TUR jest już w budowie.'));
     }
@@ -476,8 +476,9 @@
     }
     if (p.kind === 'build') {
       S.party_orgs.tur.active_build = {target_level: S.party_orgs.tur.level + 1, started_at: t, paid_months: 0};
-      return L('TUR starts building level ' + (S.party_orgs.tur.level + 1) + ' (two financed months)',
-        'TUR zaczyna budowę poziomu ' + (S.party_orgs.tur.level + 1) + ' (dwa finansowane miesiące)');
+      // Z — 0.58: no monthly payments since Z — 0.56, so the build simply takes two months.
+      return L('TUR starts building level ' + (S.party_orgs.tur.level + 1) + ' (two months)',
+        'TUR zaczyna budowę poziomu ' + (S.party_orgs.tur.level + 1) + ' (dwa miesiące)');
     }
     if (p.kind === 'recruit') return recruit(Q);
     if (p.kind === 'militarize') return militarize(Q);
@@ -796,7 +797,7 @@
     tur.active_course = {course: courseId, target: chosen, started_at: t, paid_months: 0, effect_id: 'tur:' + courseId + ':t' + t};
     S.cooldowns['party.tur_course'] = t + 4;
     writeMirrors(Q);
-    return result(Q, courseName(courseId) + L(': the course runs for two financed months.', ': kurs trwa dwa finansowane miesiące.'));
+    return result(Q, courseName(courseId) + L(': the course runs for two months.', ': kurs trwa dwa miesiące.'));
   }
 
   // Its effect only after two financed months; a course interrupted by a shortfall waits (13.2).
@@ -2362,7 +2363,7 @@
     const tur = orgs.tur;
     // Z — 0.57: TUR is founded by a decision of the party, the first build in the card Organisations of PPS.
     Q.pl_party_tur = tur.level === 0 && !tur.active_build ? L('not founded; it can be founded with the card Organisations of PPS',
-      'nie założony; można go założyć kartą Organizacje PPS') + (Q.time < tur.available_from ? L(' from January 1923', ' od stycznia 1923') : '') :
+      'nie założony; można go założyć kartą Organizacje PPS') :
       tur.level === 0 ? L('being founded (', 'w trakcie zakładania (') + tur.active_build.paid_months + L('/2 months)', '/2 mies.)') :
       L('level ', 'poziom ') + tur.level + L(', cadres ', ', kadry ') + tur.cadres + (tur.active_build ? L('; building level ', '; budowa poziomu ') +
         tur.active_build.target_level + ' (' + tur.active_build.paid_months + L('/2 months)', '/2 mies.)') : '') +

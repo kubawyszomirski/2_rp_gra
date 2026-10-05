@@ -128,6 +128,20 @@ test('Zwrot aparatu: each level above the first adds 25% to every collection (Z 
   close(PolishParty.collectionGain(Q.S), 3.5);
 });
 
+// Z — 0.58 (the user's decision of 5 X 2026): TUR can be founded from the start; January 1923 stays only as the recorded
+// historical date.
+test('TUR od startu (Z — 0.58): in January 1922 PPS can found TUR; the historical date is recorded, not a gate', () => {
+  const Q = game();
+  assert.equal(Q.time, 1);
+  Q.S.party_orgs.cash = 2;
+  assert.equal(PolishParty.packageStatus(Q, 'tur', 0).available, true);
+  assert.equal(Q.S.party_orgs.tur.available_from, 13, 'January 1923, the founding of the historical TUR');
+  PolishParty.organizationsChoose(Q, ['tur']);
+  assert.deepEqual(Q.S.party_orgs.tur.active_build, {target_level: 1, started_at: 1, paid_months: 0});
+  PolishParty.partyDisplay(Q);
+  assert.match(Q.pl_party_tur, /being founded \(0\/2 months\)/);
+});
+
 test('Dwie organizacje: press and TUR cost 3 R and one month; with 2 R nothing is bought; the same organisation twice is refused', () => {
   const Q = game();
   at(Q, 1923, 1);

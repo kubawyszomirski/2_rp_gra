@@ -1,6 +1,6 @@
 # Polska wersja: katalog kart do kodowania
 
-**Stan — referencja 0.57, 5 października 2026. Wszystkie partie przejrzane; brak otwartych pytań; wszystkie karty wdrożone (etapy 0–8 planu implementacji); teksty kart mają też wersję polską (referencja 23.23); obecną linię kart stanowisk, Składek i Programu gospodarczego można potwierdzić (referencja 23.24); doradcy występują w grze jako Centralny Komitet Wykonawczy (referencja 23.25); opisy wyborów podają skutki słowami, a liczby na życzenie (referencja 23.26); dziewięć uwag z gry zmienia m.in. pieniądze partii, organizacje, B2, reformę konstytucyjną, stosunek do rządu i program (referencja 23.29); trzynaście kolejnych uwag zmienia program, wspólną listę, karty przypięte, kontrolę wojska, strajki i opis wyborów prezydenta (referencja 23.30).** Katalog zbiera w jednym miejscu to, co [referencja techniczna](POLISH_TECHNICAL_REFERENCE.md) mówi o każdej karcie i wydarzeniu pierwszego rozdziału. Jest ściągą do kodowania: jedna tabela na kartę. Katalog powstał w całości w wersji 0.32. Wszystkie sześć partii użytkownik przejrzał w 0.33–0.38. Rozstrzygnięte pytania pogrupowano w rozdziale 10.
+**Stan — referencja 0.58, 5 października 2026. Wszystkie partie przejrzane; brak otwartych pytań; wszystkie karty wdrożone (etapy 0–8 planu implementacji); teksty kart mają też wersję polską (referencja 23.23); obecną linię kart stanowisk, Składek i Programu gospodarczego można potwierdzić (referencja 23.24); doradcy występują w grze jako Centralny Komitet Wykonawczy (referencja 23.25); opisy wyborów podają skutki słowami, a liczby na życzenie (referencja 23.26); dziewięć uwag z gry zmienia m.in. pieniądze partii, organizacje, B2, reformę konstytucyjną, stosunek do rządu i program (referencja 23.29); trzynaście kolejnych uwag zmienia program, wspólną listę, karty przypięte, kontrolę wojska, strajki i opis wyborów prezydenta (referencja 23.30); od 0.58 TUR można założyć od startu, a wspólną listę partnerzy przyjmują od relacji 75 (referencja 23.31).** Katalog zbiera w jednym miejscu to, co [referencja techniczna](POLISH_TECHNICAL_REFERENCE.md) mówi o każdej karcie i wydarzeniu pierwszego rozdziału. Jest ściągą do kodowania: jedna tabela na kartę. Katalog powstał w całości w wersji 0.32. Wszystkie sześć partii użytkownik przejrzał w 0.33–0.38. Rozstrzygnięte pytania pogrupowano w rozdziale 10.
 
 ## 1. Jak czytać katalog
 
@@ -357,7 +357,7 @@ Cztery karty talii partyjnej (Organizacje, Milicja, Media, Składki) oraz stałe
 | Pole | Treść | Status |
 |---|---|---|
 | Talia i pula | Partia, zwykły dobór | Z |
-| Dostęp | Od stycznia 1922; pakiet TUR dopiero od daty dostępności organizacji (test: I 1923) | P / H |
+| Dostęp | Od stycznia 1922; od 0.58 także pakiet TUR (wcześniej od I 1923, daty założenia historycznego TUR; wcześniejsze założenie to historia alternatywna gry) | P / H |
 | Koszt | 1 T; suma R wybranych pakietów | P |
 | Limit wyboru | 1–2 różne organizacje, najwyżej jedna podakcja w każdej (`selection_limit=2`); zamknięcie bez wyboru jest bezpłatne | Z |
 | Odnowienie | cd 2 M dla karty; odnowienia wybranych podakcji obowiązują osobno | P |
@@ -1029,9 +1029,9 @@ Poza kryzysem nie ma opcji „Utrzymać poparcie”, a zamknięcie karty jest be
 | Opcja (ID) | Zablokowana, gdy | Skutek od razu | Skutek później | Status |
 |---|---|---|---|---|
 | Samodzielna lista PPS („Idziemy do wyborów sami”, od 0.57 opcja wydarzenia) | — | Pełny program i własne nominacje; bez premii za odmowę sojuszu; zamyka pytanie na te wybory | — | Z |
-| PPS–Wyzwolenie (`left_peasant`) | relacja z Wyzwoleniem <60 (od 0.57; wcześniej <50); ocena <60; sprzeczna aktywna umowa | Wspólna lista; podział miejsc proporcjonalny do głosów | Reforma ziemska z równym dostępem i ochrona pracy jako zobowiązanie | Z / P |
-| PPS–NPR (`labour`) | relacja z NPR <70 (od 0.57; wcześniej <60); konfrontacyjny antyklerykalizm w programie | Wspólna lista | Ośmiogodzinny dzień pracy, osłona bezrobotnych, wolność religijna | Z / P |
-| Wcześniejszy Centrolew (`centrolew_early`) | relacje z Wyzwoleniem, Piastem i NPR <70 (od 0.57; wcześniej <60); mniej niż 2 wykonane wspólne zobowiązania z udziałem PPS | Wspólna lista czterech partii | Legalna zmiana rządów, minimum społeczne, kompromis ziemski i religijny. Pierwsze przyjęcie: Lewica +3 sprzeciwu | Z / P |
+| PPS–Wyzwolenie (`left_peasant`) | relacja z Wyzwoleniem <75 (od 0.58; w 0.57 <60, wcześniej <50); ocena <60; sprzeczna aktywna umowa | Wspólna lista; podział miejsc proporcjonalny do głosów | Reforma ziemska z równym dostępem i ochrona pracy jako zobowiązanie | Z / P |
+| PPS–NPR (`labour`) | relacja z NPR <75 (od 0.58; w 0.57 <70, wcześniej <60); konfrontacyjny antyklerykalizm w programie | Wspólna lista | Ośmiogodzinny dzień pracy, osłona bezrobotnych, wolność religijna | Z / P |
+| Wcześniejszy Centrolew (`centrolew_early`) | relacje z Wyzwoleniem, Piastem i NPR <75 (od 0.58; w 0.57 <70, wcześniej <60); mniej niż 2 wykonane wspólne zobowiązania z udziałem PPS | Wspólna lista czterech partii | Legalna zmiana rządów, minimum społeczne, kompromis ziemski i religijny. Pierwsze przyjęcie: Lewica +3 sprzeciwu | Z / P |
 | Zabiegać o porozumienie z blokiem ludowym (`peasant`) | od 0.57 nieoferowane: to nie jest decyzja PPS (zostaje alternatywą stronnictw ludowych w ich ocenie listy) | PPS wspiera zbliżenie, ale nie tworzy cudzej listy | Silniejszy partner na wsi | Z / P |
 
 Niepowodzenie zachowuje dotychczasową listę, domyślnie samodzielną. Pierwsze przyjęcie listy, której program rezygnuje z punktów programu robotniczego, daje Lewicy +3 sprzeciwu (Z — 0.36), bez powtórki, jeśli karę naliczyła już zmiana programu. W praktyce dotyczy to wcześniejszego Centrolewu; listy z Wyzwoleniem i z NPR zachowują ochronę pracy. Listy konkurentów (`christian_agrarian`, `chzjn`) powstają bez PPS.

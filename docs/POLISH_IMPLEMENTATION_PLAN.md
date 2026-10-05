@@ -1,6 +1,6 @@
 # Plan implementacji rozdziału 1
 
-**Stan — referencja 0.57, 5 października 2026. Wszystkie etapy 0–8 wykonane; etap 8 był ostatni, a pierwszy rozdział jest wdrożony w całości (rozdział 18). Po planie gra dostała polską wersję językową (rozdział 19), potwierdzanie obecnej linii (rozdział 20) nazwę Centralnego Komitetu Wykonawczego dla doradców (rozdział 21), nowe opisy wyborów (rozdział 22), czytelny pasek boczny (rozdziały 23 i 24), dziewięć uwag z gry (rozdział 25) oraz trzynaście kolejnych uwag (rozdział 26).** Plan opisuje, w jakiej kolejności i jakimi zmianami w kodzie wdrożono pierwszy rozdział gry. Reguły gry podaje [referencja techniczna](POLISH_TECHNICAL_REFERENCE.md), a karty — [katalog kart](POLISH_CARD_CATALOGUE.md). Plan nie tworzy reguł: przy rozbieżności obowiązuje referencja. Sam plan niczego jeszcze nie zmienia w grze. Każdy etap zaczyna się dopiero po zatwierdzeniu jego szczegółowego planu.
+**Stan — referencja 0.58, 5 października 2026. Wszystkie etapy 0–8 wykonane; etap 8 był ostatni, a pierwszy rozdział jest wdrożony w całości (rozdział 18). Po planie gra dostała polską wersję językową (rozdział 19), potwierdzanie obecnej linii (rozdział 20) nazwę Centralnego Komitetu Wykonawczego dla doradców (rozdział 21), nowe opisy wyborów (rozdział 22), czytelny pasek boczny (rozdziały 23 i 24), dziewięć uwag z gry (rozdział 25), trzynaście kolejnych uwag (rozdział 26) oraz TUR od startu i próg wspólnej listy (rozdział 27).** Plan opisuje, w jakiej kolejności i jakimi zmianami w kodzie wdrożono pierwszy rozdział gry. Reguły gry podaje [referencja techniczna](POLISH_TECHNICAL_REFERENCE.md), a karty — [katalog kart](POLISH_CARD_CATALOGUE.md). Plan nie tworzy reguł: przy rozbieżności obowiązuje referencja. Sam plan niczego jeszcze nie zmienia w grze. Każdy etap zaczyna się dopiero po zatwierdzeniu jego szczegółowego planu.
 
 ## 1. Jak czytać plan
 
@@ -1194,6 +1194,10 @@ Siódma zmiana po zakończeniu planu, nie etap 9. 5 X 2026 użytkownik przysła�
 - **Pliki:** reguły (`polish_party.js`, `polish_projects.js`, `polish_government.js`, `polish_unions.js`, `polish_rules.js`), sceny kart i wydarzeń z tłumaczeniami, `main`, testy i ich pomocniki, `out/html/index.html` (`?v=0.57`), kontrola planu.
 - **Wyniki:** `npm test` 469 z 469; 18 kontroli; test w przeglądarce.
 - **Otwarte:** gotowość związków bez sporu; więcej kart czasowych.
+
+## 27. TUR od startu i próg wspólnej listy (po planie, 0.58)
+
+Dziewiąta zmiana po zakończeniu planu. Decyzjami użytkownika z 5 X 2026 TUR można założyć od stycznia 1922 r.; styczeń 1923 r. zostaje zapisem daty historycznej (referencja 13.2 i 23.31). Partnerzy przyjmują wspólną listę dopiero od relacji 75 (referencja 6.5). Pliki: `source/rules/polish_party.js`, `source/rules/polish_government.js`, `tests/rules-party.test.js`, `tests/rules-negotiation.test.js`, `tests/polish-cabinet.test.js`, `out/html/index.html` (`?v=0.58`). Wyniki: `npm test` 470 z 470; 18 kontroli.
 
 ## Dodatek A. Karty katalogu według etapów
 

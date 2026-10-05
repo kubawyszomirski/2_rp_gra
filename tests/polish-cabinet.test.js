@@ -372,7 +372,7 @@ test('C2/C3 and Skład porozumienia: one evaluation of a list, a refusal keeps t
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
   Q.year = 1922; Q.month = 10; Q.time = 10;
-  PolishGovernment.changeRelation(Q, 'npr', 70 - Q.S.actors.relations.npr, 'fixture');
+  PolishGovernment.changeRelation(Q, 'npr', 75 - Q.S.actors.relations.npr, 'fixture');
   // PPS broke six promises to NPR before: the breach penalty of 8.3 (−30) makes NPR refuse.
   Q.S.agreements.old_npr = { id: 'old_npr', kind: 'support', parties: ['pps', 'npr'], status: 'breached', history: [],
     obligations: [1, 2, 3, 4, 5, 6].map(i => ({ id: `old_npr:${i}`, owner: 'pps', status: 'breached', weight: 1 })) };
@@ -420,18 +420,18 @@ test('C2/C3 and Skład porozumienia: one evaluation of a list, a refusal keeps t
 // Z — 0.57 (items 7 and 8 of the play notes of 5 X 2026, "an event before the election"): the question of a joint list
 // comes from the queue in the first month of the list window, with higher gates and the answer "we go alone"; the peasant
 // bloc without PPS is no longer offered. After a refusal it returns once in the last month of the window, if a list is
-// still possible; going alone closes it for the election. No answer costs an action.
-test('Wspólna lista jako wydarzenie (Z — 0.57): asked two months before the vote; gates 60/70/70; after a refusal once more; going alone closes it', () => {
+// still possible; going alone closes it for the election. No answer costs an action. Z — 0.58: every gate is 75.
+test('Wspólna lista jako wydarzenie (Z — 0.57, 0.58): asked two months before the vote; gates of 75; after a refusal once more; going alone closes it', () => {
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
   const G = PolishGovernment;
   assert.deepEqual(G.LIST_ORDER, ['left_peasant', 'labour', 'centrolew_early'], 'no peasant bloc without PPS');
-  assert.deepEqual(G.LIST_ORDER.map(id => G.LIST_OPTIONS[id].gates.map(g => g.min)), [[60], [70], [70, 70, 70]]);
+  assert.deepEqual(G.LIST_ORDER.map(id => G.LIST_OPTIONS[id].gates.map(g => g.min)), [[75], [75], [75, 75, 75]]);
   assert.equal(G.listEventDue(Q), false, 'not in January 1922');
   assert.match(G.electionReminder(Object.assign(Object.create(Q), { time: 8 })), /two months before the vote it decides on a joint list/);
   Q.year = 1922; Q.month = 9; Q.time = 9;
-  G.changeRelation(Q, 'psl_wyzwolenie', 60 - Q.S.actors.relations.psl_wyzwolenie, 'fixture');
-  G.changeRelation(Q, 'npr', 69 - Q.S.actors.relations.npr, 'fixture');
+  G.changeRelation(Q, 'psl_wyzwolenie', 75 - Q.S.actors.relations.psl_wyzwolenie, 'fixture');
+  G.changeRelation(Q, 'npr', 74 - Q.S.actors.relations.npr, 'fixture');
   assert.equal(G.listEventDue(Q), true, 'September 1922: the first month of the window');
   assert.equal(PolishRules.nextEvent(Q, ['polish_list_agreement']), 'polish_list_agreement');
   assert.equal(Q.S.events.active.instance_key, 'polish_list_agreement:' + Q.S.parliament.next_election.id + ':9', 'one instance per election and month');
@@ -439,8 +439,8 @@ test('Wspólna lista jako wydarzenie (Z — 0.57): asked two months before the v
   assert.match(content(engine).replace(/","/g, ''), /The Sejm election is held on 5 November 1922/);
   assert.deepEqual(ids(engine), ['polish_list_agreement.left_peasant', 'polish_list_agreement.labour', 'polish_list_agreement.centrolew_early',
     'polish_list_agreement.alone']);
-  assert.equal(choice(engine, 'polish_list_agreement.labour').canChoose, false, 'NPR needs 70');
-  assert.match(JSON.stringify(choice(engine, 'polish_list_agreement.labour').subtitle), /Relation with NPR is below 70/);
+  assert.equal(choice(engine, 'polish_list_agreement.labour').canChoose, false, 'NPR needs 75');
+  assert.match(JSON.stringify(choice(engine, 'polish_list_agreement.labour').subtitle), /Relation with NPR is below 75/);
   // PSL Wyzwolenie refuses: PPS broke six promises to it before (the breach penalty of 8.3).
   Q.S.agreements.old_wyz = { id: 'old_wyz', kind: 'support', parties: ['pps', 'psl_wyzwolenie'], status: 'breached', history: [],
     obligations: [1, 2, 3, 4, 5, 6].map(i => ({ id: `old_wyz:${i}`, owner: 'pps', status: 'breached', weight: 1 })) };
