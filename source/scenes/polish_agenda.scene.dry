@@ -189,7 +189,7 @@ go-to: result
 @later
 title: Not now
 subtitle: The prepared reforms keep their preparation.
-go-to: main
+go-to: root
 
 @result
 new-page: true

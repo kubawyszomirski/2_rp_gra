@@ -206,7 +206,7 @@ if (Q.polish_election_system && Q.sejm_parliament) {
         var previousResult = Q.sejm_results.find(function(record) { return record.id === result.previous_parliament.id; });
         Q.sejm_vote_comparison_notice = previousResult ?
             'Vote changes are shown only for comparable electoral lists; a changed alliance has no like-for-like vote comparison.' :
-            'Previous vote comparison: not available. The opening parliament is a snapshot, not a previous election.';
+            'Previous votes: the Legislative Sejm was elected in 1919 on different dates and in only a part of the country, so the game shows the 1919 votes of comparable lists and no change.';
         var previousRows = previousResult ? displayRows(previousResult) : [];
         for (var row of Q.sejm_display_rows) {
             var comparable = row.members.every(function(id) { return Object.hasOwn(result.previous_parliament.party_seats, id); });
@@ -219,7 +219,7 @@ if (Q.polish_election_system && Q.sejm_parliament) {
                 ' MPs; ' + row.share.toFixed(2) + '% of seats' +
                 (comparable ? ' (MP change ' + signed(row.seats - oldSeats, 0) + '; seat-share change ' +
                 signed(row.share - oldShare, 2) + ' pp)' : ' (previous parliament not comparable)') +
-                (previousRow ? '; vote change ' + signed(row.votes - previousRow.votes, 2) + ' pp' : '; previous votes N/A');
+                (previousRow ? '; vote change ' + signed(row.votes - previousRow.votes, 2) + ' pp' : previousResult ? '; previous votes N/A' : PolishInstitutions.votes1919Text(row.members));
             // A joint list agreed in the list window (6.2) is shown on the line of each of its parties,
             // with the MPs attributed to that party; ChZJN keeps its own combined line.
             if (row.members.length > 1 && row.id !== 'chzjn') {

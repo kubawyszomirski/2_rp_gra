@@ -314,8 +314,9 @@ test('Status and Library show the Marshal, the Senate and the legal date; the Ge
   const Q = engine.state.qualities;
   novemberElection(engine);
   engine.goToScene('status');
-  assert.match(content(engine), /Senate: ","111 senators, derived once from the Sejm result/);
-  assert.match(content(engine), /Next Sejm election: ","1928-02-19/);
+  assert.match(content(engine), /Senate:["\]}, ]+111 senators, derived once from the Sejm result/);
+  engine.goToScene('status.politics');
+  assert.match(content(engine), /Next Sejm election:["\]}, ]+1928-02-19/);
   assert.match(content(engine), /not the historical election date/);
   engine.goToScene('backSpecialScene');
   historicalDecember(engine);

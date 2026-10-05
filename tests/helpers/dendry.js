@@ -180,8 +180,9 @@ function walk(engine, { variant = 0, maxSteps = 2500, lastYear = 1928, onStep } 
     const key = current.state.sceneId + '@' + current.state.qualities.time;
     const taken = tried.get(key) || new Set();
     const fresh = options.filter(option => !taken.has(option.id));
-    const pool = fresh.length ? fresh : options;
-    const pick = pool[(step * (variant + 3) + variant) % pool.length];
+    // Once every option of this page has been taken this month, rotate through all of them: a stride that shares a factor
+    // with their number would cycle over a few free moves for ever (nine options and the stride 3, seen in Z — 0.56).
+    const pick = fresh.length ? fresh[(step * (variant + 3) + variant) % fresh.length] : options[(step + variant) % options.length];
     taken.add(pick.id);
     tried.set(key, taken);
     current.choose(pick.index);

@@ -184,12 +184,13 @@ test('Dwie decyzje Piłsudskiego: the conditional line, then the defence of parl
   assert.ok(S.actors.pps.reactions.some(r => r.cause === 'criticism:speech_1922_dispute'), 'the answer keeps its own cause');
 });
 
-test('Kolejność kategorii wydarzeń: E6 (1), the review of 1926 (4) and the criticism of parliament (6) due in one month come in this order, all before the next action', () => {
+// Z — 0.56: the criticism of parliament is a card now; the cult of the assassin is the background event (6) of this test.
+test('Kolejność kategorii wydarzeń: E6 (1), the review of 1926 (4) and a background event (6) due in one month come in this order, all before the next action', () => {
   const Q = quiet();
   const S = Q.S;
-  S.politics.due.polish_event_pils_criticism = 'speech_fixture';
+  S.politics.due.polish_event_niewiadomski_cult = 'cult_fixture';
   S.strikes.due.polish_event_strike_rejection = 'strike-fixture:set-1';
-  const due = ['polish_event_pils_criticism', 'polish_event_austerity_1926', 'polish_event_strike_rejection'];
+  const due = ['polish_event_niewiadomski_cult', 'polish_event_austerity_1926', 'polish_event_strike_rejection'];
   const order = [];
   for (let i = 0; i < 4; i++) {
     const next = PolishRules.nextEvent(Q, due);
@@ -197,7 +198,7 @@ test('Kolejność kategorii wydarzeń: E6 (1), the review of 1926 (4) and the cr
     order.push(next);
     PolishRules.markEventEntered(Q);
   }
-  assert.deepEqual(order, ['polish_event_strike_rejection', 'polish_event_austerity_1926', 'polish_event_pils_criticism']);
+  assert.deepEqual(order, ['polish_event_strike_rejection', 'polish_event_austerity_1926', 'polish_event_niewiadomski_cult']);
 });
 
 test('B18/B19/B21: the return of Chjeno-Piast after a stabilising cabinet with an open military case gives +20 once; no extra card of formation or of preparing a coup', () => {

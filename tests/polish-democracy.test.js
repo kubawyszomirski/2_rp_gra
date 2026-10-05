@@ -40,27 +40,59 @@ function formationAfterB1(engine, answer) {
   return result;
 }
 
-test('Obowiązkowa odpowiedź B2: the speech of June 1922 must be answered before the next ordinary action; three answers, no silence, 0 T', () => {
+// Z — 0.56 (item 5 of 5 X 2026): B2 is a card of the Parliament deck for three months; it shows an authentic quotation of
+// Piłsudski without its date, the answer costs the month, and returning the card is free.
+const offered = engine => (engine._compileChoices(engine.game.scenes['main.parliament']) || []).filter(c => c.canChoose !== false).map(c => c.id);
+test('Karta B2: the speech of June 1922 opens a Parliament card with an authentic quotation; the answer costs the month', () => {
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
   toJune1922(engine);
   formationAfterB1(engine, 'opposition');
-  assert.equal(engine.state.sceneId, 'polish_event_pils_criticism', 'the queue brings the speech before any action');
-  assert.deepEqual(ids(engine).map(id => id.split('.').pop()), ['support', 'defend', 'reform'], 'no option to stay silent or leave');
-  assert.match(JSON.stringify(engine.ui.paragraphs), /not a historical quotation/);
+  assert.equal(engine.state.sceneId, 'main', 'no queued event any more');
+  assert.equal(Q.S.politics.speeches[0].response, null);
+  assert.ok(offered(engine).includes('polish_event_pils_criticism'), 'the card is in the Parliament deck');
+  engine.state.currentHands.main = [{ id: 'polish_event_pils_criticism', title: 'B2' }];
+  engine.playCard('polish_event_pils_criticism');
+  assert.deepEqual(ids(engine).map(id => id.split('.').pop()), ['support', 'defend', 'reform', 'easy_discard']);
+  const page = JSON.stringify(engine.ui.paragraphs);
+  assert.ok(page.includes(PolishPolitics.QUOTES[0][0]), 'the first and mildest quotation');
+  assert.doesNotMatch(page, /not a historical quotation|19[23]\d/, 'no synthetic disclaimer and no date');
+  choose(engine, 'easy_discard');
+  assert.deepEqual([Q.time, Q.month_actions || 0], [6, 0], 'returning the card costs nothing');
+  engine.playCard('polish_event_pils_criticism');
   choose(engine, 'polish_event_pils_criticism.defend');
+  assert.equal(Q.month_actions, 1, 'the answer is the action of the month');
   choose(engine, 'root');
-  for (let i = 0; i < 20 && engine.state.sceneId !== 'main'; i++) {
-    const open = (engine.getCurrentChoices() || []).filter(c => c.canChoose !== false);
-    engine.choose((engine.getCurrentChoices() || []).indexOf(open[0]));
-  }
-  assert.equal(engine.state.sceneId, 'main');
-  assert.deepEqual([Q.time, Q.month_actions || 0], [6, 0], '0 T: the month is still to be spent');
+  assert.equal(Q.time, 7);
   assert.equal(Q.S.politics.speeches[0].response, 'defend');
   assert.equal(Q.S.politics.institutional_log.filter(e => e.kind === 'stance_defense').length, 1);
-  spendMonth(engine);
-  assert.equal(engine.state.sceneId, 'main', 'answered once: the speech does not return');
-  assert.equal(Q.S.politics.parliament_authority, 60, 'the crisis of June resolved by a formation +4, the defence of parliament +1 (15.2)');
+  assert.ok(!offered(engine).includes('polish_event_pils_criticism'), 'answered once');
+});
+
+// Z — 0.56: without an answer for three months the speech is silence, recorded in the journal with no weight; an open
+// cabinet crisis half a year after the last speech brings another speech with the next quotation.
+test('Milczenie i kolejne wystąpienia B2: silence after three months; a later cabinet crisis brings another, sharper quotation', () => {
+  const engine = dendry.startGame();
+  const Q = engine.state.qualities, S = Q.S;
+  PolishPolitics.scheduleSpeech(Q, 'speech_1922_dispute', Q.time);
+  const authority = S.politics.parliament_authority;
+  for (let m = 0; m < 3; m++) spendMonth(engine);
+  assert.equal(engine.state.sceneId, 'main');
+  assert.equal(S.politics.speeches[0].response, 'silence');
+  assert.equal(S.politics.institutional_log.filter(e => e.kind === 'stance_silence').length, 1);
+  assert.equal(PolishRules.authorityFromLog(S.politics.institutional_log, Q.time), authority, 'silence has no weight');
+  assert.equal(PolishPolitics.criticismDue(Q), false);
+  Q.time = PolishRules.timeOf(1923, 3);
+  PolishGovernment.openCrisis(Q, 'cabinet_fall', S.cabinet.id);
+  PolishPolitics.afterEvents(Q);
+  const second = S.politics.speeches[1];
+  assert.equal(second.id, 'speech_crisis_' + S.cabinet_crisis.id);
+  assert.equal(PolishPolitics.criticismDue(Q), true);
+  PolishPolitics.criticismView(Q);
+  assert.equal(Q.pl_crit_quote, PolishPolitics.QUOTES[1][0], 'the next quotation');
+  assert.equal(Q.pl_crit_topic, 'the rule of the parties over the governments');
+  PolishPolitics.afterEvents(Q);
+  assert.equal(S.politics.speeches.length, 2, 'one speech for one crisis');
 });
 
 test('B1/B2: the dispute of June 1922 brings three answers of B1 into one free formation; the reformist answer of B2 creates no project, unlocks no variant and gives no votes', () => {
@@ -83,16 +115,21 @@ test('B1/B2: the dispute of June 1922 brings three answers of B1 into one free f
   choose(engine, 'polish_cabinet_formation.done');
   assert.equal(S.history.negotiations.length, 1, 'one formation sequence');
   assert.deepEqual([Q.time, Q.month_actions || 0], [6, 0], 'no month is spent');
-  assert.equal(engine.state.sceneId, 'polish_event_pils_criticism', 'then the speech of the same dispute (B2, category 6)');
+  // Z — 0.56: the speech of the same dispute waits in the Parliament deck as card B2.
+  assert.equal(engine.state.sceneId, 'main');
+  engine.state.currentHands.main = [{ id: 'polish_event_pils_criticism', title: 'B2' }];
+  engine.playCard('polish_event_pils_criticism');
   const projects = Object.keys(S.projects).length;
   const guarantees = PolishProjects.constitutionStatus(Q, 'democratic_guarantees').reason;
   const pps = S.society.cells.map(c => c.propensity.pps);
   const centrum = S.actors.pps.factions.centrum.dissent;
   choose(engine, 'polish_event_pils_criticism.reform');
   assert.equal(Object.keys(S.projects).length, projects, 'no project');
-  assert.equal(PolishProjects.constitutionStatus(Q, 'democratic_guarantees').reason, guarantees, 'no variant or path unlocked');
   assert.deepEqual(S.society.cells.map(c => c.propensity.pps), pps, 'no votes');
   assert.equal(S.actors.pps.factions.centrum.dissent, Math.max(0, centrum - 2), 'only the Centrum −2');
+  // The answer spends the month (Z — 0.56), so the path of the reform is compared in the next month.
+  choose(engine, 'root');
+  assert.equal(PolishProjects.constitutionStatus(Q, 'democratic_guarantees').reason, guarantees, 'no variant or path unlocked');
   // With another cabinet in office the sequence is not replayed: one case of the dispute, no fall.
   const other = dendry.startGame().state.qualities;
   other.S.cabinet.id = 'fixture_other_cabinet';

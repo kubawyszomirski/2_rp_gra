@@ -91,7 +91,7 @@ go-to: result
 @later
 title: Not now
 subtitle: Without an answer PPS votes as its role binds it.
-go-to: main
+go-to: root
 
 @result
 new-page: true

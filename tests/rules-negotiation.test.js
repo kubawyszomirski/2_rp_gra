@@ -448,7 +448,7 @@ test('Groźba przyjęta: four parties accept a threat; the concession is recorde
   assert.ok(promises.length === 4 && promises.every(o => o.status === 'active' && o.due_at === Q.time + 4 && o.portfolio === 'labor'),
     'decision 3 of stage 4: the promise is due in 4 months and executed by Labour');
   assert.equal(Q.month_actions, 1, 'an ordinary use spends the month');
-  assert.equal(rules.cooldownRemaining(Q, 'support.' + Q.S.cabinet.id), 3, 'renewal 3 months for this cabinet');
+  assert.equal(rules.cooldownRemaining(Q, 'support.' + Q.S.cabinet.id), 6, 'renewal 6 months for this cabinet (Z — 0.56; it was 3)');
   assert.equal(gov.supportOptionStatus(Q, 'bargain', 'ordinary').available, false, 'the same demand cannot be taken twice');
 });
 

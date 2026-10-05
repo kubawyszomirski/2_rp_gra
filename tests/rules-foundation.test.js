@@ -158,7 +158,7 @@ test('a save is compatible only with the current schema (19.3)', () => {
 test('the page and the engine tests load the same built copy of the rules', () => {
   const html = fs.readFileSync(path.join(ROOT, 'out', 'html', 'index.html'), 'utf8');
   const ignored = fs.readFileSync(path.join(ROOT, '.gitignore'), 'utf8').split('\n');
-  const at = file => html.indexOf('<script src="' + file + '"></script>');
+  const at = file => html.search(new RegExp('<script src="' + file.replace(/\./g, '\\.') + '(\\?v=[0-9.]+)?"></script>'));
   for (const file of ['polish_rules.js', 'polish_institutions.js', 'polish_electorate.js', 'polish_economy.js', 'polish_government.js',
     'polish_projects.js', 'polish_party.js', 'polish_unions.js']) {
     const built = path.join(ROOT, 'out', 'html', file);
@@ -178,6 +178,20 @@ test('the page and the engine tests load the same built copy of the rules', () =
   const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
   // Since the Polish version (decision 1A) the build ends with the Polish game, built after the rules are copied.
   assert.ok(pkg.scripts.build.endsWith('&& cp source/rules/*.js out/html/ && node tools/i18n/build.cjs'));
+});
+
+// Z — 0.54: game_pl.json is always fetched fresh, so the stylesheet and every local script carry one version. A cached
+// older polish_politics.js next to newer scenes once stopped the game after its first month ("Dalej..." did nothing).
+test('the stylesheet and every local script of the page carry the same version', () => {
+  const html = fs.readFileSync(path.join(ROOT, 'out', 'html', 'index.html'), 'utf8');
+  const css = html.match(/href="game\.css\?v=([0-9.]+)"/);
+  assert.ok(css, 'the stylesheet has a version');
+  const scripts = [...html.matchAll(/<script src="([^"?]+)(?:\?v=([0-9.]+))?"><\/script>/g)];
+  assert.equal(scripts.length, 17);
+  for (const [, file, version] of scripts) {
+    if (['jquery-1.11.1.min.js', 'd3.v7.min.js'].includes(file)) assert.equal(version, undefined, file + ' never changes');
+    else assert.equal(version, css[1], file + ' carries the version of the stylesheet');
+  }
 });
 
 test('the rules modules never draw their own random numbers', () => {

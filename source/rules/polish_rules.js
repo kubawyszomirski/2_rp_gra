@@ -50,7 +50,9 @@
   const POLITICS_DOMAINS = ['politics', 'security', 'coup'];
   const COUP_PHASES = ['dormant', 'political_crisis', 'attempt_declared', 'pps_stance', 'organization_commitment', 'execution_and_transport', 'resolved'];
   // 15.2 (Z — 0.22, M10): the one owner of the authority of the Sejm is its journal; each entry counts for twelve months.
-  const AUTHORITY_WEIGHTS = Object.freeze({law: 4, resolution: 4, failure: -6, gap: -3, breach: -5, stance_defense: 1, stance_criticism: -2});
+  // Z — 0.56: the silence of PPS after a speech of Piłsudski is recorded in the journal with no weight.
+  const AUTHORITY_WEIGHTS = Object.freeze({law: 4, resolution: 4, failure: -6, gap: -3, breach: -5, stance_defense: 1, stance_criticism: -2,
+    stance_silence: 0});
   const AUTHORITY_BASE = 55;
   const HAND_SIZE = 3; // 4.4: three places in total, not three per deck
   const ADVISOR_COOLDOWN_MONTHS = 6; // 4.4: one shared adviser cooldown
@@ -63,8 +65,7 @@
   // category of a review date (4).
   const EVENT_DEFINITIONS = Object.freeze({
     polish_event_faction_split: Object.freeze({definition_id: 'party.faction_split', category: 5, keyed_by: 'faction_case'}),
-    // Stage 7: the criticism of parliament is background (category 6), one instance per recorded speech (Z — 0.39).
-    polish_event_pils_criticism: Object.freeze({definition_id: 'politics.pils_parliament_criticism', category: 6, keyed_by: 'politics'}),
+    // Z — 0.56: the criticism of parliament (Z — 0.39: category 6) is no longer queued; it is a card of the Parliament deck.
     // Stage 7c (Z — 0.39): the cabinet crisis of 1922 is an institutional succession (2); the mobilisation after an
     // assassination a conditional crisis, always after the vacancy (5); the cult of the assassin background (6). The
     // threat to the President (B3) settles without a menu inside the presidential sequence and is not queued.
@@ -82,6 +83,8 @@
     polish_event_stabilization: Object.freeze({definition_id: 'economy.stabilization', category: 5}),
     polish_event_credit_crisis: Object.freeze({definition_id: 'economy.credit_crisis', category: 5}),
     polish_event_austerity_1926: Object.freeze({definition_id: 'cabinet.austerity_1926', category: 4}),
+    // Z — 0.56: the constitutional debate of December 1924 is background (category 6), once; it opens card 7.6.
+    polish_event_constitution_debate: Object.freeze({definition_id: 'politics.constitution_debate', category: 6}),
   });
 
   const isPlainObject = value => value !== null && typeof value === 'object' && !Array.isArray(value) &&

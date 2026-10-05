@@ -293,7 +293,8 @@ test('Adresat polemiki: capital and land address PSChD and ZLN; violence against
 
 test('Program gospodarczy and Program bez zmiany: three priorities in one month; a fourth is refused; the same set is only confirmed; no reform by itself', () => {
   const Q = game();
-  assert.equal(PolishParty.programmeStatus(Q, []).available, true, 'the present (empty) programme can be confirmed');
+  assert.match(PolishParty.programmeStatus(Q, []).reason, /Choose at least one priority/, 'without a programme an empty set is nothing to confirm (Z — 0.56)');
+  assert.equal(PolishParty.programmeStatus(Q, ['cooperatives_housing']).available, true, 'the sixth priority (Z — 0.56)');
   const three = ['public_works', 'stabilisation_with_protection', 'wealth_and_investment'];
   assert.match(PolishParty.programmeStatus(Q, three.concat(['socialisation'])).reason, /At most three/);
   PolishParty.programmeChoose(Q, three);

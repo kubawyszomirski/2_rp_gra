@@ -1969,9 +1969,29 @@
     S.history.reasons.push({t: t, kind: 'constitution_reform', reform: reform, project_id: project.id});
   }
 
+  // Z — 0.56 (item 2 of 5 X 2026): the card waits for a constitutional debate. It opens in December 1924, after the ZLN
+  // congress of 26 X 1924 and the congress of PSL "Piast" in XII 1924 declared the repair of the constitution their
+  // programme (HISTORICAL_SOURCES.md); the event politics.constitution_debate announces it once.
+  const CONSTITUTION_DEBATE_AT = T(1924, 12);
+  const constitutionDebateOpen = S => !!(S && S.politics && S.politics.constitution_debate);
+
+  function constitutionDebateDue(Q) {
+    const S = Q.S;
+    return !!S && !!S.politics && S.chapter.status !== 'ended' && Q.time >= CONSTITUTION_DEBATE_AT && !constitutionDebateOpen(S);
+  }
+
+  function openConstitutionDebate(Q) {
+    const S = Q.S;
+    if (constitutionDebateOpen(S)) return S.politics.constitution_debate;
+    S.politics.constitution_debate = {opened_at: Q.time};
+    S.history.reasons.push({t: Q.time, kind: 'constitution_debate_opened'});
+    return S.politics.constitution_debate;
+  }
+
   function constitutionCardAvailable(Q) {
     const S = Q.S;
     if (!S || S.chapter.status === 'ended' || government.formationPending(Q)) return false;
+    if (!constitutionDebateOpen(S)) return false;
     return REFORMS.some(reform => {
       const project = constitutionProject(S, reform);
       return (!project || project.preparation < 50) && constitutionStatus(Q, reform).available;
@@ -3062,6 +3082,10 @@
     constitutionStatus: constitutionStatus,
     constitutionChoose: constitutionChoose,
     constitutionCardAvailable: constitutionCardAvailable,
+    constitutionDebateDue: constitutionDebateDue,
+    constitutionDebateOpen: constitutionDebateOpen,
+    openConstitutionDebate: openConstitutionDebate,
+    CONSTITUTION_DEBATE_AT: CONSTITUTION_DEBATE_AT,
     billD1Available: billD1Available,
     billD1Choose: billD1Choose,
     billD2Available: billD2Available,

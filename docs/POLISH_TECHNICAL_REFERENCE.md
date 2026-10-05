@@ -1,6 +1,6 @@
 # Polska wersja: techniczna referencja mechanik, stanu i przejść
 
-**Wersja 0.53 — 4 października 2026.** Specyfikacja pierwszego rozdziału na podstawie [POLISH_DESCRIPTIVE_GUIDE.md](POLISH_DESCRIPTIVE_GUIDE.md). Obejmuje stan, jednostki, wzory, warunki kart, kolejność rozliczeń, głosowania, umowy, gospodarkę, organizacje, zamach i zapis kampanii. **To jedna aktualna wersja do kodowania: obowiązuje tekst rozdziałów 1–22.** Karty zbiera w jednym miejscu [katalog kart do kodowania](POLISH_CARD_CATALOGUE.md): jedna tabela na kartę, szkic z 0.32; wszystkie sześć partii użytkownik przejrzał w 0.33–0.38 i katalog nie ma otwartych pytań. Katalog nie tworzy reguł; przy rozbieżności obowiązuje ta referencja. Historia decyzji jest w rozdziale 23 i nie jest instrukcją wdrożenia. Trafiły tam dawny opis wersji, akapity rewizji 0.13–0.30 i zapisy zatwierdzeń. Oznaczenia K/Z/P/H/B objaśnia rozdział 1. Wszystkie punkty audytu mechanik są zamknięte w dokumentacji. **Etap 8 planu wdrożenia był ostatni: pierwszy rozdział jest wdrożony w całości** (23.22). Liczby P skalibrowano na pełnych kampaniach etapu 8 ([pomiar](../analysis/stage8-campaigns/REPORT.md)); ograniczenia gotowego rozdziału wymienia rozdział 18 [planu wdrożenia](POLISH_IMPLEMENTATION_PLAN.md). **Wersja 0.50 dodała polską wersję językową gry** (decyzja w 20.1, zapis wdrożenia w 23.23). **Wersja 0.51 pozwoliła potwierdzić obecną linię** w kartach stanowisk, Składkach i Programie gospodarczym (10.5, 13.1; zapis w 23.24). **Wersja 0.52 pokazała doradców w grze jako Centralny Komitet Wykonawczy PPS** (10.4; zapis w 23.25). **Wersja 0.53 porządkuje opisy wyborów:** skutki słowami, ich wielkość w nawiasach na życzenie gracza, koszty bez skrótów (20.1; zapis w 23.26). Dokument nie zmienia działającej gry.
+**Wersja 0.56 — 5 października 2026.** Specyfikacja pierwszego rozdziału na podstawie [POLISH_DESCRIPTIVE_GUIDE.md](POLISH_DESCRIPTIVE_GUIDE.md). Obejmuje stan, jednostki, wzory, warunki kart, kolejność rozliczeń, głosowania, umowy, gospodarkę, organizacje, zamach i zapis kampanii. **To jedna aktualna wersja do kodowania: obowiązuje tekst rozdziałów 1–22.** Karty zbiera w jednym miejscu [katalog kart do kodowania](POLISH_CARD_CATALOGUE.md): jedna tabela na kartę, szkic z 0.32; wszystkie sześć partii użytkownik przejrzał w 0.33–0.38 i katalog nie ma otwartych pytań. Katalog nie tworzy reguł; przy rozbieżności obowiązuje ta referencja. Historia decyzji jest w rozdziale 23 i nie jest instrukcją wdrożenia. Trafiły tam dawny opis wersji, akapity rewizji 0.13–0.30 i zapisy zatwierdzeń. Oznaczenia K/Z/P/H/B objaśnia rozdział 1. Wszystkie punkty audytu mechanik są zamknięte w dokumentacji. **Etap 8 planu wdrożenia był ostatni: pierwszy rozdział jest wdrożony w całości** (23.22). Liczby P skalibrowano na pełnych kampaniach etapu 8 ([pomiar](../analysis/stage8-campaigns/REPORT.md)); ograniczenia gotowego rozdziału wymienia rozdział 18 [planu wdrożenia](POLISH_IMPLEMENTATION_PLAN.md). **Wersja 0.50 dodała polską wersję językową gry** (decyzja w 20.1, zapis wdrożenia w 23.23). **Wersja 0.51 pozwoliła potwierdzić obecną linię** w kartach stanowisk, Składkach i Programie gospodarczym (10.5, 13.1; zapis w 23.24). **Wersja 0.52 pokazała doradców w grze jako Centralny Komitet Wykonawczy PPS** (10.4; zapis w 23.25). **Wersja 0.53 uporządkowała opisy wyborów:** skutki słowami, ich wielkość w nawiasach na życzenie gracza, koszty bez skrótów (20.1; zapis w 23.26). **Wersja 0.54 porządkuje pasek boczny:** zakładki, jedna informacja w wierszu, objaśnienia w Bibliotece (20.1; zapis w 23.27). **Wersja 0.55 poprawia jego czytelność:** pogrubione etykiety, nagłówki z linią, rozbite wiersze i zakładka „Obrona” po jednej informacji w wierszu (20.1; zapis w 23.28). **Wersja 0.56 wprowadza dziewięć uwag z gry:** model pieniędzy z oryginału (zbiórki zamiast wpływów i kosztów), dwie karty organizacji, krytyka Piłsudskiego jako karta z prawdziwymi cytatami, debata konstytucyjna od grudnia 1924, rzadsza karta stosunku do rządu, program z sześcioma priorytetami, głosy z 1919 r. przy pierwszych wyborach, wyjaśnienie rządu mniejszościowego oraz poprawki powrotów do ręki i sondaży na starcie (20.1; zapis w 23.29). Dokument nie zmienia działającej gry.
 
 **Gdzie jest aktualna reguła.** Tabela wskazuje kanoniczne miejsce każdego tematu i ostatnie zatwierdzone zmiany. Oznaczenia „Z — 0.xx (Mxx)” w tekście mówią, która decyzja ustaliła daną regułę.
 
@@ -25,10 +25,10 @@
 | Karty, wydarzenia, scenariusz Normalny | 17 | M02 (17.16), M05 (17.15), M07 (17.12), M12 (17.4), katalog kart (17.2, 17.3, 17.10, 17.11, 17.12, 17.15), etap 4 (17.4, 17.10, 17.11, 17.15, 17.16.2, 17.16.4), etap 5 (17.4), etap 6 (17.4, 17.5, 17.5.1, 17.11, 17.12, 17.12.5, 17.16.5), etap 7 (17.5–17.7, 17.10–17.13, 17.16.3), etap 8 (17.7, 17.10, 17.12.4, 17.16.3, 17.16.6, 17.16.11) |
 | Ścieżki jako zestawy warunków | 18 | — |
 | Granica rozdziału, raport i zapis | 19 | M08 (19.1), stare zapisy i etap 0 (19.3), etap 2 (19.1–19.2), etap 7 (19.1–19.2), etap 8 (19.2) |
-| Integracja z Dendry i odziedziczonym kodem | 20 | M09, M10 (20.2), moduł reguł, język i etap 0 (20.1), plan wdrożenia (20.3), etap 2 (20.1, 20.2), etap 4 (20.2), etap 5 (20.2), etap 6 (20.2), etap 7 (20.2), opisy wyborów (20.1) |
+| Integracja z Dendry i odziedziczonym kodem | 20 | M09, M10 (20.2), moduł reguł, język i etap 0 (20.1), plan wdrożenia (20.3), etap 2 (20.1, 20.2), etap 4 (20.2), etap 5 (20.2), etap 6 (20.2), etap 7 (20.2), opisy wyborów (20.1), pasek boczny (20.1), dziewięć uwag (20.1) |
 | Kryteria weryfikacji i testy | 21 | wszystkie powyższe (21.1), etap 8 (21.2) |
 | Granice pewności i źródła | 22 | — |
-| Archiwum decyzji | 23 | M19, katalog kart, etapy 0–8 (23.14–23.22), wersja polska (23.23), potwierdzenie obecnej linii (23.24), nazwa CKW (23.25), opisy wyborów (23.26) |
+| Archiwum decyzji | 23 | M19, katalog kart, etapy 0–8 (23.14–23.22), wersja polska (23.23), potwierdzenie obecnej linii (23.24), nazwa CKW (23.25), opisy wyborów (23.26), pasek boczny (23.27), dziewięć uwag (23.29) |
 
 ## 1. Status reguł i granica audytu
 
@@ -287,6 +287,8 @@ Anulowanie przed `committed` niczego nie refunduje, bo koszt nie został jeszcze
 
 ### 4.4. Ręka i odnowienia
 
+**Z — 0.56: powroty do ręki.** „Nie teraz” w kartach przypiętych (agenda partii, agenda związków, agenda Sejmu, odpowiedź rządowi, pakiet budżetowy, ustawa o bezrobociu) i strona „Odrzuć kartę” wracają przez `root`, jak „Odłóż na rękę”: zaczynają nową stronę, więc ich tekst nie zostaje nad ręką. Bez wykorzystanej akcji miesiąc się nie rozlicza. Pusta talia jest ukryta, więc „Parlament” znika, gdy nie ma w niej żadnej karty (np. w styczniu 1922 r.).
+
 **K:** normalne dobieranie z talii jest jednolite wśród legalnych kart; `frequency` nie waży zwykłego doboru w obecnej konfiguracji. Źródła: `source/scenes/main.scene.dry` oraz `node_modules/dendrynexus/lib/engine.js`.
 
 **P:** zachowujemy ten model. Gracz wybiera talię, a silnik losuje jedną kartę spośród N legalnych kart tej talii z prawdopodobieństwem 1/N. W ręce mogą być łącznie trzy karty, nie trzy z każdej talii. Jeśli N=0, dobieranie jest niedostępne z podanym powodem.
@@ -377,6 +379,8 @@ Dla testu udział w modelowanej miejskiej sile roboczej wynosi: robotnicy 1, int
 **K — etap 5 (0.46):** 54 rozłączne komórki: klasa × tożsamość (70/10/20) × zatrudnienie × osiedle; klasy miejskie mają połowę masy w dużych miastach (P z 10.4.4). Komórka ma `mass`, `propensity`, `turnout_base` 0,70, `turnout_bonus`, `trust_pps` 50, `base_reach_pps` 20 i zapis kampanii. Bezrobotni są stanem zatrudnienia, nie drugą pulą: zmiana stopy bezrobocia przesuwa masę między zatrudnionymi a bezrobotnymi tej samej klasy, tożsamości i osiedla (`PolishElectorate.applyEmployment`), a trend klas skaluje masy klas (`applyClassShares`). Suma mas wynosi 1.
 
 ### 5.2. Preferencje i wynik
+
+**Z — 0.56: sondaże od startu.** Obliczenie poparcia (dawna funkcja w `post_event`) jest w `PolishElectorate.recomputeSupport`; start gry woła je raz, więc zakładka „Sondaże” pokazuje poparcie z otwarcia już w styczniu 1922 r., a nie 0%.
 
 ```js
 p[cell,party] = max(0,propensity[cell,party]) /
@@ -741,6 +745,8 @@ H — Rataj i Śmiarowski rzeczywiście rywalizowali o urząd w 1922. Kandydatur
 
 ### 7.6. Trzy odrębne projekty ustrojowe
 
+**Z — 0.56: debata konstytucyjna.** Karta „Reforma konstytucyjna” wchodzi do talii dopiero po wydarzeniu `politics.constitution_debate` z grudnia 1924 r. (kongresy ZLN 26 X 1924 i PSL „Piast” w XII 1924, HISTORICAL_SOURCES.md); wydarzenie ma kategorię 6, zdarza się raz i nie kosztuje akcji. Ścieżka projektu przez kartę Sprawiedliwości jest bez zmian.
+
 Każdy projekt jest alternatywą ustrojową P, przechodzi tryb zmiany konstytucji z 7.1 i ma własny `law_id`. **Z — 0.33:** własne przygotowanie `presidential_arbitration` przez PPS wymaga linii `form_of_power=strong_presidency` (10.8); pozostałe dwa projekty nie mają warunku linii. Przygotowanie trwa 2 główne akcje; Doradca może zastąpić krok wyłącznie wtedy, gdy jego konkretna akcja z 10.4 obejmuje ten projekt; samo Defend Constitutional Democracy nie przygotowuje ustawy. Sam minister Sprawiedliwości nie zmienia ustroju. Koszt wykonania: obciążenie 1 B przez 1 M, bez stałego utrzymania, efekt po promulgacji i 1 M wdrożenia. To uszczegółowienie rekordu reformy z 12.4, nie drugi koszt obok niego.
 
 | Projekt / zapis w `Q.polish_presidency.constitution.reforms` | Treść i mechaniczny rezultat P | Cena polityczna i ograniczenie |
@@ -878,6 +884,8 @@ Dostęp PPS do pracy z właściwym ministrem nie oznacza automatycznego dostępu
 **K — etap 4 (0.45):** `PolishProjects.stateCanExecute` sprawdza obowiązującą podstawę, wykonawcę i stan gabinetu: pełniący obowiązki kontynuuje tylko osłony i inspekcję (`caretaker_allowed`). Nowe decyzje PPS (karty 8.x) wymagają resortu PPS w aktywnym gabinecie; umowy wykonania z partnerem nie da się jeszcze wynegocjować (luka).
 
 ### 8.6. Katalog gabinetów i ich programów
+
+**Z — 0.56: wyjaśnienie na ekranie.** Wynik tworzenia rządu mniejszościowego mówi wprost, że gabinet ma mniej niż 223 posłów, ale więcej za niż przeciw, a Sejm rozstrzyga zwykłą większością, więc rząd trwa, dopóki Sejm nie zażąda jego ustąpienia (konstytucja marcowa, art. 32 i 58; HISTORICAL_SOURCES.md). Reguła wariantu tolerowanego jest bez zmian.
 
 Z — rozwijamy konfiguracje z `PLAN.md` §14 i `MECHANICS_MAP.md` §10. **Reprezentacja mniejszości wspiera gabinet zewnętrznie, nie dostaje w tym rozdziale resortów.** Dwa segmenty negocjują osobno i razem nie przekraczają liczby istniejących mandatów agregatu. P — nazwy poniżej identyfikują oferty gry; nie są twierdzeniem, że wszystkie takie koalicje historycznie powstały.
 
@@ -1176,6 +1184,8 @@ Skutki finansowe określa 11.9, odpowiedzialność za faktycznie popartą polity
 
 ### 9.8. Stosunek do rządu — jedno proste menu
 
+**Z — 0.56: rytm karty.** Gdy PPS jest w gabinecie albo go popiera, karta wraca pół roku po powołaniu gabinetu albo po swoim ostatnim zwykłym użyciu (odnowienie 6 M zamiast 3), a od razu na 2 M, gdy gabinet zgłosi pakiet z podatkami pośrednimi, cłami, cięciami w administracji albo cięciem zasiłku dla bezrobotnych, lub gdy złamie zobowiązanie z umowy, za które PPS nie odpowiada (`PolishGovernment.supportProvocation`). Karta podaje powód, a jej zwykłe użycie odpowiada na wszystkie dotychczasowe działania.
+
 **Z — połączone sprawy tolerowania, koalicji i odwołania gabinetu.** `parliament.government_support` zastępuje niezależne karty „niewykonana umowa” i „wotum nieufności”. Jest dostępna przy rzeczywistej relacji PPS z gabinetem; w opozycji przy konkretnej inicjatywie jego odwołania. Zwykłe użycie P: 1 T, 0 R, cd 3 M na gabinet. Ostrzeżenie lub ultimatum otwiera gwarantowaną odpowiedź 0 T raz na sprawę, także podczas odnowienia. Nie zużywa drugiego miesiąca za samo przekazanie do właściwej procedury głosowania.
 
 | Wybór | Co robi | Warunek i skutek P |
@@ -1393,6 +1403,8 @@ Rekord prób uogólniamy do `TrialRecord{id,action_id,kind,strike_id?,mode,terms
 
 ### 10.5. Karty strategiczne PPS — stan, wybory i czas
 
+**Z — 0.56: program gospodarczy.** Sześć priorytetów (nowy `cooperatives_housing`, „Spółdzielczość i mieszkania”; `agrarian_labour` nazywa się „Reforma rolna i modernizacja wsi”), najwyżej trzy w zestawie; pod każdym jedno zdanie opisu (teksty zatwierdzone przez użytkownika w drugiej sesji). Priorytety obecnego programu mają w menu pogrubioną etykietę „Obecny program”, a „Zatwierdź program” już jej nie ma. Bez programu pusty zestaw jest niedostępny („Wybierz co najmniej jeden priorytet”); zastępuje to pusty przypadek Z — 0.51. Otwarta sprawa: w kodzie priorytety czyta tylko lista w agendzie partii, więc nie mają skutku mechanicznego (23.29).
+
 **Z — rewizja użytkownika z 10 września:** poniższy katalog zastępuje zbiorczą kartę `party.program_declaration`. Karta ustrojowa ma trzy opcje, program gospodarczy limit trzech priorytetów, a organizacje limit dwóch inwestycji. Nie ma osobnej karty religii ani stałej karty wyboru strategii strajkowej. Wzory, odnowienia i reakcje liczbowe pozostają **P**.
 
 Deklaracja zapisuje stanowisko w `S.actors.pps.strategy`, odczytywane przez kampanie, profile ofert, frakcje i wydarzenia. Nie ustawia flag wykonanej reformy, nowych kompetencji ani poparcia całego społeczeństwa. Zamiast osobnego równoległego programu `S.actors.pps.program` staje się jego odczytywaną projekcją dla istniejących konsumentów; `issue_ideals` jest wyliczany z aktualnych stanowisk oraz treści konkretnej oferty. Nie kopiujemy dwóch niezależnie zmienianych wersji.
@@ -1463,6 +1475,8 @@ Główny przeciwnik wskazuje cel polemiki. P — kampania przeciw wskazanemu prz
 **K — etap 5 (0.46):** `strategyFactor`: kierunek parlamentarny ×1,10 dla tematu parlamentarnego tylko przy ustawie PPS w procedurze; kierunek klasowy ×1,10 zawsze; obrona zdobyczy ×1,10 przy działającej osłonie lub inspekcji, a ×1,15, gdy gabinet proponuje cięcie świadczeń albo trwa przegląd oszczędności; ruch demokratyczny ×1,15 tylko przy zagrożeniu (`S.coup.pressure` ≥ 40, przed etapem 7 nie występuje). Elektorat partii daje ×1,10 rozbudowy w swoim środowisku; razem z kadrą TUR najwyżej ×1,30. Adresaci polemiki wynikają z linii przeciwnika: ZLN, KPP albo partie o ideałach fiskalnym i ziemskim ≤ −1; „przemoc antykonstytucyjna” czeka na dziennik etapu 7.
 
 ### 10.7. Dwie różne karty Piłsudskiego
+
+**Z — 0.56: B2 jako karta.** Krytyka parlamentu jest kartą talii „Parlament”, nie wydarzeniem z kolejki: dostępna 3 M od wystąpienia, odpowiedź kosztuje akcję miesiąca, odłożenie jest bezpłatne, a bez odpowiedzi wystąpienie staje się milczeniem (wpis `stance_silence` w dzienniku 15.2, waga 0). Poza wystąpieniami z 1922 r. i sprawy wojskowej Piłsudski przemawia znów przy otwartym kryzysie gabinetowym od 1923 r., najwyżej raz na 6 M (P: okazje są uproszczeniem). Karta pokazuje prawdziwy cytat bez daty, przy każdym wystąpieniu kolejny i coraz ostrzejszy (`PolishPolitics.QUOTES`, źródła w HISTORICAL_SOURCES.md).
 
 `party.pils_influence` określa trwałą linię. P — zmiana na poparcie daje relację +4, na sprzeciw −4, warunkowo 0; odnowienie 6 M oraz zwykłe reakcje frakcji. Przy ponownym powrocie do tej samej linii w ciągu 12 M nie naliczamy kolejnego dodatniego efektu relacji. **Z — 0.33: linia nie jest warunkiem karty 16.7, tylko ją ogranicza.** Przy poparciu dostępne są wszystkie ustępstwa 16.7, nadal przy ich relacji i zgodach. Warunkowe poparcie wymaga gwarancji kontroli cywilnej albo odpowiedzialności przed Sejmem: funkcja wojskowa pod cywilną kontrolą i premierostwo legalnego gabinetu spełniają ją z definicji, a samodzielny inspektorat wymaga zapisu o odpowiedzialności przed Sejmem, który Piłsudski ocenia zwykłą regułą 8.3. Sprzeciw blokuje inicjowanie ustępstw nadających autonomiczną władzę wojskową, czyli samodzielnego inspektoratu, do jawnej zmiany linii. Nie blokuje rozmów pokojowych ani poparcia legalnego premiera pod kontrolą Sejmu.
 
@@ -1885,6 +1899,8 @@ H — oba obiekty podlegały pracom w okresie międzywojennym; wawelskie zbiórk
 ## 13. Organizacje PPS i Milicja / AS
 
 ### 13.1. Finanse partyjne i utrzymanie
+
+**Z — 0.56: model pieniędzy z oryginału (decyzje 1a i 1b z 5 X 2026).** Nie ma miesięcznych wpływów ze składek, sprzedaży prasy, kosztów utrzymania (aparat, prasa, TUR, spółdzielnie, Milicja) ani zaległości; zaległości starszego zapisu są umarzane. Pieniądze dają zbiórki: karta „Składki” (każda opcja — utrzymać, podnieść, obniżyć — od razu zbiera składki po zmianie, odnowienie 6 M, jak karta „Fundraising” oryginału) i „Zbiórka nadzwyczajna” w agendzie partii (odnowienie 3 M); obie dają `składki × członkostwo / 100 × (1 + 0,25 × (poziom aparatu − 1))` (`PolishParty.collectionGain`). Aparat (2 R za poziom, do 4) podnosi więc każdą zbiórkę o 25% za poziom i nadal jest warunkiem negocjowania osłon. Członkostwo zmienia się co miesiąc jak dotąd. Organizacje działają bez opłat: prasa nie traci zasięgu, budowa i kurs TUR trwają po 2 M, spółdzielnia daje ulgę, dopóki działa, Milicja odzyskuje co miesiąc 5 zmęczenia, a werbunek i AS nie wymagają rezerwy na utrzymanie (AS: 2 R). Opisy niżej, które mówią o wpływach, utrzymaniu albo zaległościach, opisują stan sprzed 0.56.
 
 `apparatus.member_index` zaczyna testowo od 100 i mierzy skalę opłacającego składki członkostwa względem otwarcia, nie liczbę wyborców lub ludzi Milicji. **Z — 0.30 (M18):** jest to rzeczywista skala członkostwa, w rozdziale 1 w zakresie 0–150. Rozłam lub czystka od razu mnożą ją przez (1 − udział odchodzących). Co miesiąc, w punkcie 6 z 4.2, indeks zbliża się do celu:
 
@@ -2655,7 +2671,7 @@ W tabeli `1 T` oznacza jedyną główną akcję miesiąca, `0 T` — etap tej sa
 | `parliament.list_agreement` / parlament | 1 T; otwarte okno list; zgoda wszystkich partnerów | Wspólna lista na wskazane wybory, bez wspólnego rządu z automatu |
 | `parliament.cabinet_formation` / parlament, agenda formowania | Własna inicjatywa 1 T łącznie; obowiązkowe formowanie 0 T; 8.8 | Dostępna konfiguracja, kandydat, udział PPS, mniejszości i resorty w jednej sekwencji |
 | `parliament.bill` / wewnętrzne rozliczenie | Koszt zawarty we właściwej karcie; dla D wyłącznie 17.15 | Automatyczne głosowania, terminy i zapis ustawy; bez osobnego menu procedowania |
-| `parliament.government_support` / parlament lub odpowiedź na kryzys | 1 T, cd 3 M; odpowiedź 0 T raz na sprawę, 9.8 | Wycofać poparcie, negocjować, przekonać lub utrzymać; odwołanie jako krok tej samej karty |
+| `parliament.government_support` / parlament lub odpowiedź na kryzys | 1 T, cd 6 M (od 0.56) i od razu po działaniu gabinetu wbrew PPS; odpowiedź 0 T raz na sprawę, 9.8 | Wycofać poparcie, negocjować, przekonać lub utrzymać; odwołanie jako krok tej samej karty |
 | `parliament.no_confidence` / podakcja Stosunku do rządu | Czas zawarty w akcji 9.8; legalna procedura | Głosowanie; po reformie także nazwany następca. Nie jest odrębną losową kartą |
 | `project.prepare/launch` / podakcje istniejących kart | Mała reforma 1 T wdrożenia; duża 1 T przygotowania i 1 T wdrożenia; 12.2 | Zgody i finansowanie w decyzji wdrożenia; dalej automatycznie. D1–D2 i konstytucja mają własne procedury |
 | `government.tax` / rząd | 1 T wniesienia; kompetencja, ustawa i głosowania | Zmiana `tax_level` o 1 w granicach −3..3; rozkład obciążenia z 11.9, reakcja raz |
@@ -2665,7 +2681,7 @@ W tabeli `1 T` oznacza jedyną główną akcję miesiąca, `0 T` — etap tej sa
 | `government.army_control` / agenda | Projekt 12.4, legalny zakres stanowisk | Zmiana wskazanych lojalności po wykonaniu; żadnego zakupu lojalności całej armii |
 | `government.pils_agreement` / rząd | 1 T inicjatywy; odpowiedź na właściwą ofertę rządową 0 T; uprawnienia 16.7 | Trzy ustępstwa lub odmowa; właściwe powołanie i wykonanie, bez automatycznej redukcji presji |
 | `society.strike_communist_cooperation` / wydarzenie | 0 T w aktywnym strajku z partnerem; 9.6 | Pełna współpraca, lekka koordynacja albo odmowa; osobno rozliczany wynik rzeczywistej próby; dyscyplina KPP z relacji i zgodności celu (M13) |
-| `politics.pils_parliament_criticism` / wydarzenie | Konkretne wystąpienie; 0 T raz na sprawę | Trzy odpowiedzi z 10.7; skutek dla autorytetu jako wpis dziennika 15.2; nie nadpisuje trwałej linii |
+| `politics.pils_parliament_criticism` / karta talii „Parlament” (od 0.56) | Konkretne wystąpienie; 1 T, karta przez trzy miesiące (wcześniej wydarzenie za 0 T) | Trzy odpowiedzi z 10.7; skutek dla autorytetu jako wpis dziennika 15.2; nie nadpisuje trwałej linii |
 | `party.ussr_position` / pula partii | Od początku; 1 T, 0 R; cd 12 M | Trzy stanowiska z 10.10; nie jest reakcją wydarzenia ani bezpłatnym odblokowaniem koalicji |
 | `security.assess` / agenda, zawsze dostępne (Z — 0.35) | 1 T, 1 R; cd 3 M | Nowa datowana ocena sił; promień błędu rozpoznania maleje o 10 pp, nie poniżej 5 pp |
 
@@ -3518,6 +3534,12 @@ Kod pomocniczy powinien oddzielać obliczenie od zapisania wyniku: np. `computeF
 
 **Z — 0.53: opisy wyborów.** Opis wyboru nazywa skutek słowami, a jego wielkość podaje w nawiasie, który zaczyna się od znaku albo ×, zaraz po słowie: „sprzeciw Centrum rośnie (+3)”. Ustawienie „Liczby w opisach wyborów” w Opcjach (domyślnie wyłączone) pokazuje albo ukrywa te nawiasy; zapisuje je przeglądarka (`localStorage`, klucz `pps_effect_numbers`), jak język, a nie zapis gry. Strona oznacza nawiasy funkcją `PolishRules.markEffectNumbers` (w `window.displayText`), a styl `body.pl-hide-numbers` je ukrywa; `PolishRules.withoutEffectNumbers` daje tekst bez nich. Koszty i warunki zostają widoczne i są pisane słowami: „akcja miesiąca”, jednostki środków partii i jednostki budżetu (`PolishRules.units`, z polską odmianą), bez skrótów T, R i B. Skróty zostają w pasku bocznym i w komunikatach wyników; objaśnia je legenda w Bibliotece. Bieżące wartości, np. stan branży albo obecna relacja, też zostają. Pozycje programów opisują nazwy z reguł („przyspieszona reforma rolna”, „wspólne obciążenie fiskalne”), a liczba na skali od −2 do +2 stoi w nawiasie. Obecny wybór kart stanowisk, Składek i Programu gospodarczego zaczyna opis od pogrubionej etykiety „Obecna linia” („Obecny poziom”, „Obecny program”) w osobnym wierszu. Reguły, koszty i odnowienia się nie zmieniają.
 
+**Z — 0.54: pasek boczny.** Pasek pokazuje same dane, jedną informację w wierszu, z nagłówkami sekcji. Zakładka „Ogólne” pokazuje partię, jej organizacje, związki i rząd; „Polityka” — wskaźniki polityki, skład Sejmu, relacje z partiami i frakcje; nowa zakładka „Gospodarka” — budżet, walutę, ceny, produkcję, kredyt, bezrobocie, wieś, przedsiębiorców, projekty i ustawy w toku; „Obrona” i „Sondaże” bez zmian. Wartości dają osobne pola reguł (`PolishParty.sidebarDisplay`: `pl_party_income`, `pl_party_costs`, `pl_party_base`, `pl_party_union_<branża>`; `PolishPolitics.statusView`: `pl_pol_*`); dawne pola zbiorcze zostają dla innych ekranów. Pierwszą wywołuje strona miesiąca (przez `partyDisplay`) i zakładka „Ogólne”, drugą wyłącznie zakładka „Polityka”: wczytanie zapisu nie uruchamia skryptów strony, więc bez tego zapis sprzed 0.54 pokazywałby w nowych wierszach zera do następnego wyboru. Funkcje zapisują wyłącznie pola wyświetlania, a scena tras `polish_opening_state` nie zależy od żadnej z nich. **Wersje plików strony:** arkusz stylów i wszystkie lokalne skrypty mają w `out/html/index.html` ten sam numer wersji (`?v=0.54`), podnoszony z każdym wydaniem; bez numeru zostają tylko dwie niezmienne biblioteki (jQuery i D3). `game_pl.json` jest zawsze pobierany na świeżo, więc starsza kopia skryptu z pamięci przeglądarki obok nowszych scen mogła zatrzymać grę. Objaśnienia, które były na pasku (konstytucja i przepisy przejściowe, przybliżenie składu Sejmu, zasady wyborów, Senat, liczby gospodarki), są na stronie Biblioteki „Objaśnienia paska bocznego” (`library.sidebar_notes`). Reguły się nie zmieniają.
+
+**Z — 0.55: czytelność paska.** Każda informacja paska ma pogrubioną etykietę („**Kasa partii:** 2 R”), a nagłówki sekcji mają linię i odstęp nad sobą. Pierwszym nagłówkiem zakładki „Ogólne” jest data, a przed rozpoczęciem gry „Stan”. Złożone wiersze są rozbite: składki („2 z 4”), członkostwo (indeks, liczba całkowita) i poziom aparatu („1 z 4”) mają osobne wiersze, podobnie sprzeciw w partii i spójność (liczba całkowita na 100); sprzedaż prasy ma wiersz tylko wtedy, gdy przynosi wpływy. Wiersz związku nie powtarza nazwy branży, bo stoi ona w etykiecie. Pięć wskaźników zakładki „Polityka” podaje skalę i najwyżej jedno miejsce po przecinku („Demokracja: 60 na 100”). Nazwa frakcji jest pogrubiona i oddzielona myślnikiem od siły i sprzeciwu. Zakładka „Obrona” ma osobne nagłówki dla Milicji PPS (albo Akcji Socjalistycznej), policji i zgrupowań wojska, po jednej informacji w wierszu; znany przedział lojalności każdego zgrupowania stoi w osobnym wierszu. W „Sondażach” etykiety partii i grup są pogrubione, a szczegółowe wyniki mają nagłówek „Według grup społecznych”. Arkusz stylów ukrywa puste wiersze i nagłówki, wcina zawinięty wiersz pod jego etykietą i pomniejsza objaśnienia pisane kursywą; niełamliwe spacje trzymają liczbę razem z jednostką („0,5 R”) i skalą („na 100”). Pola: `PolishParty.sidebarDisplay` daje `pl_party_dues`, `pl_party_membership`, `pl_party_apparatus`, `pl_party_sales` i `pl_party_cohesion` zamiast `pl_party_base`; `PolishSecurity.defenseView` daje `pl_def_members`, `pl_def_efficiency`, `pl_def_condition`, `pl_def_attachment`, `pl_def_police_capacity`, `pl_def_police_command`, `pl_def_police_lawful`, `pl_def_police_protection` oraz `pl_def_force_<id>` z nazwą w `pl_def_force_<id>_name`, a dawne pola zbiorcze zostają dla Biblioteki. Wszystkie lokalne pliki strony mają `?v=0.55`. Ten zapis zastępuje zdanie Z — 0.54 o zakładkach „Obrona” i „Sondaże” bez zmian oraz pole `pl_party_base`. Reguły się nie zmieniają.
+
+**Z — 0.56: dziewięć uwag z 5 X 2026.** Model pieniędzy z oryginału (zbiórki zamiast wpływów i kosztów), dwie karty organizacji, krytyka Piłsudskiego jako karta z prawdziwymi cytatami, debata konstytucyjna od grudnia 1924, rzadsza karta stosunku do rządu, program z sześcioma priorytetami, głosy z 1919 r. przy pierwszych wyborach, wyjaśnienie rządu mniejszościowego oraz poprawki powrotów do ręki i sondaży na starcie. Szczegóły są przy regułach (13.1, 13.5, 10.5, 10.7, 7.6, 9.8, 8.6, 4.4, 5.2, 6.4), a decyzje i pliki w 23.29. Pliki strony mają wersję `?v=0.56`.
+
 **K — etap 0 (0.41):** `npm run build` kopiuje `source/rules/polish_rules.js` do `out/html/`, `out/html/index.html` wczytuje go przed `core.js`, a testy Node wczytują tę samą kopię.
 
 **K — etap 2 (0.43):** drugi plik reguł, `source/rules/polish_institutions.js` (`window.PolishInstitutions`), obsługuje wybory, Senat, głosowania, urzędy, kalendarz i koniec rozdziału. Korzysta z zegara i rzutów z `polish_rules.js`, więc strona wczytuje go po nim i przed `core.js`.
@@ -3746,7 +3768,9 @@ Poniższa lista jest specyfikacją przyszłych testów, nie raportem ich zalicze
 | Szkoła świecka bez reakcji frakcji | Wariant konfrontacyjny sprzeczny z umową z NPR | Naruszenie umowy z NPR; brak reakcji frakcji PPS (0.37) |
 | Jedna karta E3 | Lewica ze sprzeciwem 65: zamknięta sprawa A, potem nowa sprawa B z nowym żądaniem | Jedna definicja `party.faction_split`; sprawa A nie wraca, B otwiera instancję z własnym `case_id` (0.38) |
 | Klucz sprawy E6 | Strajk S, ugoda U1 odrzucona przez część uczestników; zapis i wczytanie; potem nowa ugoda U2 | Jedna `society.strike_settlement_rejection` dla S + U1, bez drugiej po wczytaniu; U2 może otworzyć nową (0.38) |
-| Obowiązkowa odpowiedź B2 | Wystąpienie w miesiącu t; próba przejścia do zwykłej akcji bez odpowiedzi | Zablokowane do wyboru jednej z trzech odpowiedzi w t; brak opcji „milczeć”; 0 T (0.38) |
+| Karta B2 | Wystąpienie w miesiącu t; karta w talii „Parlament” | Trzy odpowiedzi i bezpłatne odłożenie; prawdziwy cytat bez daty; odpowiedź kosztuje akcję miesiąca (Z — 0.56, zastępuje obowiązkową odpowiedź 0.38) |
+| Milczenie i kolejne wystąpienia B2 | Brak odpowiedzi przez 3 M; kryzys gabinetowy pół roku po ostatnim wystąpieniu | Milczenie w dzienniku z wagą 0; nowe wystąpienie z kolejnym, ostrzejszym cytatem; jedno na kryzys (Z — 0.56) |
+| Debata o konstytucji | Grudzień 1924 | Wydarzenie otwiera debatę raz; dopiero potem karta „Reforma konstytucyjna” jest w talii (Z — 0.56) |
 | Sprzeczność odpowiedzi B2 | `form_of_power=parliamentarism` i „Poprzeć krytykę”; osobno `pils_influence=support` i „Bronić parlamentu”; osobno `workers_councils` i „Poprzeć krytykę” | Pierwszy przypadek: ostrzeżenie i Centrum +8 (5 + 3). Drugi i trzeci: bez ostrzeżenia, tylko skutki samej odpowiedzi (0.38) |
 | Oszczędności 1926 przez 9.8 | Przegląd Skrzyńskiego w 6. miesiącu przy osłonie 2 B | Cztery odpowiedzi 9.8; brak osobnych opcji „nowe finansowanie”, „mniejszy zakres” i „naruszenie”; przy utrzymaniu poparcia cięcie 2 → 1 B przechodzi, jeśli ma poparcie (0.38) |
 | Kolejność kategorii wydarzeń | W jednym miesiącu należne: krytyka parlamentu, odmowa ugody E6 i przegląd oszczędności 1926 | Kolejność: E6 (1), przegląd (4), krytyka parlamentu (6); wszystkie przed następną zwykłą akcją (0.39) |
@@ -4504,3 +4528,65 @@ Sprawdzenie:
 - 13 strategii w obu językach pokazało 2234 różne opisy; po ukryciu liczb żaden nie ma liczby skutku, skrótu jednostki ani pustej treści.
 - Test w przeglądarce: etykieta „Obecna linia” w osobnym wierszu; liczby domyślnie ukryte i pokazywane od razu po zmianie ustawienia; bez błędów w konsoli.
 - 18 kontroli analitycznych przechodzi.
+
+### 23.27. Czytelny pasek boczny — 5 X 2026
+
+5 X 2026 użytkownik uznał zakładkę „Ogólne” paska bocznego za nieczytelną i zatwierdził dwie decyzje:
+- **Podział na zakładki, jedna informacja w wierszu.** Zakładka „Ogólne” pokazuje partię, jej organizacje, związki i rząd; „Polityka” — wskaźniki polityki, skład Sejmu, relacje z partiami i frakcje; nowa zakładka „Gospodarka” — budżet, walutę, ceny, produkcję, kredyt, bezrobocie, wieś, przedsiębiorców, projekty i ustawy w toku; „Obrona” i „Sondaże” bez zmian. Siły państwa, które powtarzały się na „Ogólne”, zostają tylko w „Obronie”.
+- **Objaśnienia do Biblioteki.** Na pasku zostają same dane; objaśnienia przeszły bez zmian treści na nową stronę „Objaśnienia paska bocznego”.
+
+Co się zmieniło:
+- `source/scenes/status.scene.dry`: nowe sekcje „Ogólne”, sekcje „Polityka” i „Sejm” w zakładce Polityka, nowa scena `status.economy`; polskie tłumaczenia w `status.scene.json`.
+- `source/scenes/library.scene.dry`: strona `library.sidebar_notes` z przeniesionymi objaśnieniami i pozycja w menu Biblioteki; tłumaczenia w `library.scene.json`.
+- Reguły: nowe funkcje `PolishParty.sidebarDisplay` (wywoływana przez `partyDisplay`) i `PolishPolitics.statusView` (wywoływana w `polish_opening_state`); obie wywołują też zakładki „Ogólne” i „Polityka”, bo wczytanie zapisu nie uruchamia skryptów strony miesiąca. Bez tego zapis z 0.53 pokazywał w nowych wierszach zera aż do następnego wyboru (wykryte w sprawdzeniu przed oddaniem zmiany).
+- Strona: przycisk zakładki „Gospodarka” (`out/html/index.html`, `game.js`), zwarte odstępy wierszy paska (`game.css`, wersja arkusza `?v=0.54`).
+- Błąd po wydaniu (5 X 2026, zgłoszony w drugiej sesji): po pierwszym miesiącu gra stawała na stronie „LUTY 1922”, a „Dalej...” nic nie robiło; przycisk zakładki pokazywał też napis „tab_economy”. Przyczyna: przeglądarka podała stare kopie `polish_politics.js` i `game.js` z pamięci, a `game_pl.json` przyszedł nowy; scena tras `polish_opening_state` wołała nową `PolishPolitics.statusView`, przerywała się przed wyznaczeniem trasy i `post_event` nie miał dokąd przejść. Poprawka: scena tras nie woła już funkcji paska (wskaźniki liczy sama zakładka „Polityka”), a arkusz i wszystkie lokalne skrypty mają w `index.html` wspólny numer wersji `?v=0.54`; test `tests/rules-foundation.test.js` pilnuje wspólnego numeru, a kontrola planu przyjmuje znaczniki z wersją. Doraźnie pomaga przeładowanie strony z pominięciem pamięci (Cmd+Shift+R).
+- Testy: siedem testów sprawdza teraz właściwą zakładkę albo stronę objaśnień (`tests/i18n.test.js`, `polish-economy`, `polish-government-cards`, `polish-institutions`, `polish-opening-state`, `polish-presidential-sequence`, `sejm-election`); nowy `tests/sidebar.test.js` wczytuje zapis bez pól 0.54, po angielsku i po polsku, i sprawdza, że pasek od razu pokazuje te same wartości.
+
+Sprawdzenie:
+- `npm test`: 455 z 455 (stan drzewa 5 X 2026, z testem wersji plików); 18 kontroli analiz; budowa: 100 plików tłumaczeń kompletnych, bez nieaktualnych wpisów.
+- Symulacja w Node: nowe sceny ze starym `polish_politics.js` przed poprawką stawały na `post_event` z samym „Continue...”; po poprawce dochodzą do ręki w lutym 1922.
+- Test w przeglądarce po polsku: zakładki Ogólne, Polityka i Gospodarka z jedną informacją w wierszu; zwarte odstępy; zapis z usuniętymi polami 0.54 po wczytaniu pokazuje te same wartości co przed zapisem; wszystkie lokalne pliki ładują się z `?v=0.54`; pierwszy miesiąc przechodzi do „LUTY 1922” z ręką; bez błędów w konsoli.
+
+### 23.28. Czytelność paska bocznego: etykiety, nagłówki i zakładka Obrona — 5 X 2026
+
+5 X 2026 użytkownik uznał, że pasek po 0.54 nadal jest nieczytelny, i poprosił o pogrubienia, podtytuły i przerwy. W tej samej rozmowie zatwierdził dokończenie zmiany i test w przeglądarce. Zmiana dotyczy tylko wyświetlania (20.1, Z — 0.55):
+- **Etykiety:** każda informacja ma pogrubioną etykietę we wszystkich pięciu zakładkach; nazwy frakcji są pogrubione i oddzielone myślnikiem; objaśnienia (frakcje, sondaże, zgrupowania) są pisane kursywą.
+- **Nagłówki i odstępy:** nagłówek sekcji ma linię i odstęp nad sobą; pierwszym nagłówkiem zakładki „Ogólne” jest data (przed grą „Stan”); puste wiersze i nagłówki nie zajmują miejsca; zawinięty wiersz ma wcięcie pod etykietą.
+- **Rozbite wiersze:** składki, członkostwo i poziom aparatu; sprzeciw i spójność; w „Obronie” Milicja PPS (albo AS), policja i każde zgrupowanie wojska osobno, pod własnymi nagłówkami.
+- **Liczby:** spójność i członkostwo to liczby całkowite; pięć wskaźników polityki ma skalę „na 100” i najwyżej jedno miejsce po przecinku; niełamliwe spacje trzymają liczbę z jednostką „R” i ze skalą, a przedział lojalności nie łamie się po półpauzie.
+
+Co się zmieniło:
+- `source/scenes/status.scene.dry` i `source/i18n/pl/scenes/status.scene.json`: etykiety, nagłówki, nowe wiersze; tłumaczenia kompletne (130 linii).
+- Reguły (tylko pola wyświetlania): `PolishParty.sidebarDisplay` i `partyDisplay` (`polish_party.js`), `PolishPolitics.statusView` (`polish_politics.js`), `PolishSecurity.defenseView` (`polish_security.js`, nowe pola zakładki „Obrona”; dawne pola zostają dla Biblioteki).
+- Strona: style paska w `out/html/game.css` (sekcja `#qualities`) i wspólny numer `?v=0.55` w `out/html/index.html`.
+- Testy: `tests/sidebar.test.js` sprawdza pogrubione etykiety, rozbite wiersze, liczby, zakładkę „Obrona” i nagłówek przed grą (pięć testów); wzorce paska w `tests/i18n.test.js`, `polish-cabinet`, `polish-economy`, `polish-institutions`, `polish-opening-state` i `polish-presidential-sequence` przyjmują pogrubioną etykietę.
+- Zmiana powstała równolegle z pracą drugiej sesji nad 0.56; podział plików uzgodniono między sesjami, a niełamliwe spacje przy „R” i całkowite członkostwo wpisała druga sesja w przekazanym jej `polish_party.js`.
+
+Sprawdzenie:
+- `npm run build`: 100 plików tłumaczeń kompletnych, bez nieaktualnych wpisów; `npm test`: 458 z 458; 18 kontroli analiz.
+- Test w przeglądarce po polsku (osobny serwer na porcie 8011): wszystkie lokalne pliki z `?v=0.55`; pięć zakładek z pogrubionymi etykietami i nagłówkami; „Obrona” po jednej informacji w wierszu; przed grą nagłówek „Stan”; pierwszy miesiąc przechodzi do „LUTY 1922” z ręką; tryb ciemny i wąski ekran czytelne; bez błędów w konsoli.
+
+### 23.29. Dziewięć uwag z gry — 5 X 2026
+
+5 X 2026 użytkownik przysłał dziewięć uwag z gry. Decyzje zapadły w tej sesji (pytania z wyborem odpowiedzi); teksty programu gospodarczego zatwierdził w drugiej sesji, która przekazała je tutaj. Kolejność jak w uwagach:
+1. **Kasa partii — model z oryginału.** Bez miesięcznych wpływów, kosztów i zaległości; zbiórki z karty „Składki” i agendy, aparat +25% do zbiórki za poziom (13.1). Pasek: „Zbiórka przynosi”, bez „Wpływów”, „Stałych kosztów” i „Sprzedaży prasy”.
+2. **Reforma konstytucyjna.** Karta czeka na wydarzenie debaty z grudnia 1924 r. (7.6). Sprawdzone: w 1925 r. debata toczyła się w partiach i prasie, nie w Sejmie; pierwsze wnioski w Sejmie: luty–kwiecień 1926.
+3. **„Odrzuć kartę” zostawało nad ręką.** Ten sam błąd miało „Nie teraz” w sześciu kartach przypiętych; powrót przez `root` (4.4). Z tekstu odrzucania zniknął odsyłacz do referencji.
+4. **Za dużo wyborów w „Organizacjach PPS”.** Dwie karty: „Związki zawodowe: organizowanie i fundusze” (`party.union_investments`, `source/scenes/party_affairs/polish_party_union_investments.scene.dry`, jedna inwestycja w akcji, cd 2 M) i „Organizacje PPS” (prasa, TUR, Milicja, spółdzielnie, do dwóch inwestycji w różne organizacje). Każda strona ma najwyżej 7 wyborów; druga strona organizacji nie pokazuje drugi raz tej samej organizacji. Obrazek karty związków: ulotka związku robotników rolnych, CC0 (credits_images.txt).
+5. **Krytyka Piłsudskiego.** Karta talii „Parlament” na 3 M, odpowiedź za akcję miesiąca, milczenie bez skutków; prawdziwe cytaty bez daty, coraz ostrzejsze; nowe wystąpienia przy kryzysach gabinetowych (10.7).
+6. **„Zatwierdź program (Obecny program)”.** Etykieta przy priorytetach obecnego programu; pusty zestaw bez programu niedostępny; sześć priorytetów z opisami (10.5).
+7. **„Nasz stosunek do rządu” za często.** Co pół roku albo od razu po działaniu rządu wbrew PPS (9.8). Przyczyna częstości: talia „Parlament” miała na co dzień 1–2 karty.
+8. **„Brak poprzednich głosów”.** Przy pierwszych wyborach liczba głosów z 1919 r. według GUS tam, gdzie lista ma pewnego poprzednika (PPS 515 062, PSL „Wyzwolenie” 839 914, PSL „Piast” 432 983, NZR i NSR 206 571), z dopiskiem, że głosowała tylko część kraju, bez wyliczania zmiany; przy KPP bojkot z 1919 r.; przy innych „brak porównywalnej listy” (`PolishInstitutions.votes1919Text`).
+9. **Rząd ze 177 posłami.** Reguła zgodna z konstytucją marcową (brak wotum inwestytury, ustąpienie na żądanie zwykłej większości); ekran wyniku ją wyjaśnia (8.6).
+
+Poza uwagami:
+- Sondaże na starcie pokazywały 0% (zauważyła druga sesja): obliczenie przeniesione do `PolishElectorate.recomputeSupport` i wołane przy starcie (5.2).
+- Pomocnik testów `tests/helpers/dendry.js`: po wypróbowaniu wszystkich opcji strony w miesiącu automat przechodzi kolejno przez wszystkie (krok 3 przy 9 opcjach krążył po trzech darmowych ruchach).
+- Talia „Parlament” bywa teraz pusta i jest wtedy ukryta.
+
+Otwarte sprawy:
+- Priorytety programu gospodarczego nie mają skutku mechanicznego: czyta je tylko lista w agendzie partii, choć katalog (6.2) zakładał odczyt w przygotowaniu projektów, ocenach ofert i obietnicach.
+- Użytkownik chce więcej kart czasowych (pojawiających się na pewien czas po wydarzeniu); do zaproponowania osobno.
+
+Sprawdzenie: budowa (102 pliki tłumaczeń kompletne), `npm test` 463 z 463, 18 kontroli analiz, test w przeglądarce po polsku (pasek ze zbiórką, sondaże na starcie, karta Składki z kwotami zbiórki, obie karty organizacji po 7 wyborów, obrazek karty związków, karta B2 z cytatem, wydarzenie debaty), bez błędów w konsoli.

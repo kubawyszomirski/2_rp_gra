@@ -93,7 +93,7 @@ test('Roboty pod Pracą in the game: the Government deck offers the Labour cards
   const works = Object.values(Q.S.projects).find(p => p.type === 'public_works');
   assert.equal(works.status, 'executing');
   assert.equal(Q.S.economy.history.at(-1).project_charges, 2, 'building costs 2 B from its launch month');
-  engine.goToScene('status');
+  engine.goToScene('status.economy');
   assert.match(content(engine), /Public works \(quick employment of the unemployed\): being built/);
 });
 
@@ -156,7 +156,7 @@ test('D1 and D2 from opposition: one initiative; D2 after the settlement; the Se
   assert.ok(['in_procedure', 'rejected'].includes(bill.status));
   if (bill.status === 'in_procedure') {
     assert.ok(bill.senate_notice_due && bill.senate_return_due, 'both dated steps are recorded');
-    engine.goToScene('status');
+    engine.goToScene('status.economy');
     assert.match(content(engine), /Laws in procedure/);
   }
   assert.ok(!ids(engine).includes('polish_unemployment_bill'), 'no second initiative');
@@ -182,7 +182,10 @@ test('the Budget card: a package of the cabinet before the Sejm; PPS as its supp
 test('the constitutional card: two main actions; the motion waits in the agenda and needs both chambers', () => {
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
-  assert.ok(offered(engine, 'main.parliament').includes('polish_constitution_project'), 'from January 1922 (card 7.4)');
+  // Z — 0.56: the card waits for the constitutional debate of December 1924; here the debate is opened at once.
+  assert.ok(!offered(engine, 'main.parliament').includes('polish_constitution_project'), 'not before the constitutional debate');
+  globalThis.PolishProjects.openConstitutionDebate(Q);
+  assert.ok(offered(engine, 'main.parliament').includes('polish_constitution_project'), 'once the debate is open (card 7.4)');
   playFromHand(engine, 'polish_constitution_project');
   assert.equal(choice(engine, 'polish_constitution_project.presidential_arbitration').canChoose, false);
   choose(engine, 'polish_constitution_project.democratic_guarantees');
@@ -209,4 +212,22 @@ test('9.11 in the game: a financial crisis without a reform queues the stabilisa
   choose(engine, 'polish_event_stabilization.wait');
   choose(engine, 'root');
   assert.equal(Q.S.events.resolved.polish_event_stabilization !== undefined || engine.state.sceneId === 'main', true);
+});
+
+// Z — 0.56 (item 2 of 5 X 2026): the constitutional debate opens with its event in December 1924, once, and only then the
+// constitutional card comes into the Parliament deck.
+test('Debata o konstytucji: the event of December 1924 opens the debate once, and with it the constitutional card', () => {
+  const engine = dendry.startGame();
+  const Q = engine.state.qualities;
+  const P = globalThis.PolishProjects;
+  assert.equal(P.CONSTITUTION_DEBATE_AT, globalThis.PolishRules.timeOf(1924, 12));
+  assert.equal(P.constitutionDebateDue(Q), false, 'not in 1922');
+  Q.time = P.CONSTITUTION_DEBATE_AT;
+  assert.equal(P.constitutionDebateDue(Q), true, 'due in December 1924');
+  assert.ok(!offered(engine, 'main.parliament').includes('polish_constitution_project'), 'the card waits for the event');
+  engine.goToScene('polish_event_constitution_debate');
+  assert.match(JSON.stringify(engine.ui.paragraphs), /26 October 1924 the Popular National Union \(ZLN\)/);
+  assert.equal(P.constitutionDebateOpen(Q.S), true);
+  assert.equal(P.constitutionDebateDue(Q), false, 'once');
+  assert.ok(offered(engine, 'main.parliament').includes('polish_constitution_project'), 'the card comes into the deck');
 });

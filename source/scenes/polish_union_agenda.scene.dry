@@ -46,7 +46,7 @@ go-to: branch
 @later
 title: Not now
 subtitle: Nothing is spent.
-go-to: main
+go-to: root
 
 @branch
 new-page: true

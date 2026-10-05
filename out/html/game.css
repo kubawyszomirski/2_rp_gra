@@ -225,10 +225,29 @@ blockquote + blockquote.attribution {
   line-height: 1.3em;
 }
 #qualities p {
-  text-indent: 0;
+  /* One fact per line in the sidebar (Z — 0.54): compact paragraphs. A wrapped line is indented under its bold
+     label, so it does not run into the next fact (Z — 0.55). */
+  margin: 0.25em 0;
+  padding-left: 0.9em;
+  text-indent: -0.9em;
+}
+/* A line or a heading whose condition is false stays empty; it takes no space (Z — 0.55). */
+#qualities p:empty,
+#qualities h1:empty {
+  display: none;
+}
+#qualities strong {
+  font-weight: bold;
+}
+/* The notes in italics are smaller than the facts (Z — 0.55). */
+#qualities p > em:only-child {
+  font-size: 0.9em;
 }
 #qualities h1 {
-  font-size: 1.1em;
+  font-size: 1.05em;
+  margin: 1.2em 0 0.45em;
+  padding-bottom: 0.25em;
+  border-bottom: 1px solid var(--card-border-color);
   font-weight: normal;
   text-align: center;
   text-transform: uppercase;
@@ -238,6 +257,9 @@ blockquote + blockquote.attribution {
 }
 #qualities h1 + p:first-line {
   font-weight: normal;
+}
+#qualities h1:first-child {
+  margin-top: 0.4em;
 }
 
 

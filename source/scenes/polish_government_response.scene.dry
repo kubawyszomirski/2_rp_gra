@@ -74,4 +74,4 @@ go-to: polish_government_support.vote_result
 @later
 title: Not now
 subtitle: The case stays open; this card remains available.
-go-to: main
+go-to: root

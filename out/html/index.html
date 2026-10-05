@@ -6,25 +6,27 @@
     <meta prefix="ifiction: http://babel.ifarchive.org/protocol/iFiction/"
         property="ifiction:ifid" content="7FCDF039-2B77-4179-B795-CBAFA65253AA">
     <title>PPS: An Alternate History - Autumn Chen</title>
-    <!-- The version makes the browser fetch a changed stylesheet instead of a cached copy (Z — 0.53). -->
-    <link rel="stylesheet" type="text/css" href="game.css?v=0.53">
+    <!-- The version makes the browser fetch changed files instead of cached copies (Z — 0.53, 0.54, 0.56). The stylesheet and
+         every local script carry the same version, raised with each release: game_pl.json is always fetched fresh, so a
+         cached older script next to newer scenes could stop the game. Only the two unchanged libraries have none. -->
+    <link rel="stylesheet" type="text/css" href="game.css?v=0.56">
     <script src="jquery-1.11.1.min.js"></script>
     <script src="d3.v7.min.js"></script>
-    <script src="d3-parliament.js"></script>
-    <script src="d3-linegraph.js"></script>
-    <script src="polish_rules.js"></script>
-    <script src="polish_institutions.js"></script>
-    <script src="polish_electorate.js"></script>
-    <script src="polish_economy.js"></script>
-    <script src="polish_government.js"></script>
-    <script src="polish_projects.js"></script>
-    <script src="polish_party.js"></script>
-    <script src="polish_unions.js"></script>
-    <script src="polish_politics.js"></script>
-    <script src="polish_security.js"></script>
-    <script src="polish_engine_hooks.js"></script>
-    <script src="core.js"></script>
-    <script src="game.js"></script>
+    <script src="d3-parliament.js?v=0.56"></script>
+    <script src="d3-linegraph.js?v=0.56"></script>
+    <script src="polish_rules.js?v=0.56"></script>
+    <script src="polish_institutions.js?v=0.56"></script>
+    <script src="polish_electorate.js?v=0.56"></script>
+    <script src="polish_economy.js?v=0.56"></script>
+    <script src="polish_government.js?v=0.56"></script>
+    <script src="polish_projects.js?v=0.56"></script>
+    <script src="polish_party.js?v=0.56"></script>
+    <script src="polish_unions.js?v=0.56"></script>
+    <script src="polish_politics.js?v=0.56"></script>
+    <script src="polish_security.js?v=0.56"></script>
+    <script src="polish_engine_hooks.js?v=0.56"></script>
+    <script src="core.js?v=0.56"></script>
+    <script src="game.js?v=0.56"></script>
   </head>
   <body class="pl-hide-numbers">
     <div class="background" id="bg2">
@@ -405,6 +407,7 @@
                     <div class="tab_container">
                         <button class="tab_button active" id="main_tab" onclick="window.changeTab('status', 'main_tab');" data-i18n="tab_main">Main</button>
                         <button class="tab_button" id="politics_tab" onclick="window.changeTab('status.politics', 'politics_tab');" data-i18n="tab_politics">Politics</button>
+                        <button class="tab_button" id="economy_tab" onclick="window.changeTab('status.economy', 'economy_tab');" data-i18n="tab_economy">Economy</button>
                         <button class="tab_button" id="paramilitary_tab" onclick="window.changeTab('status.paramilitaries', 'paramilitary_tab');" data-i18n="tab_defense">Defense</button>
                         <button class="tab_button" id="poll_tab" onclick="window.changeTab('status.polls', 'poll_tab');" data-i18n="tab_polls">Polls</button>
                     </div>

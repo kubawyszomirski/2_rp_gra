@@ -13,7 +13,7 @@ if (Q.polish_security_rules && typeof PolishSecurity !== 'undefined' && PolishSe
 
 = The party agenda
 
-Party money: [+ pl_party_cash +]; [+ pl_party_ledger +]. [? if pl_party_arrears : [+ pl_party_arrears +] ?]
+Party money: [+ pl_party_cash +]. A collection brings [+ pl_pa_fundraise_gain +] R now.
 
 TUR: [+ pl_party_tur +]. Cooperatives: [+ pl_party_coops +].
 
@@ -31,7 +31,7 @@ TUR: [+ pl_party_tur +]. Cooperatives: [+ pl_party_coops +].
 
 @fundraise
 title: An extraordinary collection
-subtitle: Brings [+ pl_pa_fundraise_gain +] resources (dues × membership / 100); waits three months.
+subtitle: Brings [+ pl_pa_fundraise_gain +] resources (dues × membership / 100, with the bonus of the apparatus); waits three months.
 choose-if: {! return PolishParty.fundraiseStatus(Q).available !}
 unavailable-subtitle: [+ pl_pa_fundraise_why +]
 on-arrival: {!
@@ -41,7 +41,7 @@ go-to: result
 
 @apparatus
 title: Build up the party apparatus
-subtitle: 2 resources; one level more (up to 4): more income (+0.15 resources × membership/100 a month) and more upkeep (+0.10 resources a month).
+subtitle: 2 resources; one level more (up to 4): every collection brings more (+25% for each level above the first).
 choose-if: {! return PolishParty.apparatusStatus(Q).available !}
 unavailable-subtitle: [+ pl_pa_apparatus_why +]
 on-arrival: {!
@@ -153,7 +153,7 @@ go-to: result
 
 @courses
 title: A TUR course
-subtitle: This month's action and 1 resource; two financed months; one course at a time, then four months before the next.
+subtitle: This month's action and 1 resource; two months; one course at a time, then four months before the next.
 view-if: {! return Q.S.party_orgs.tur.level >= 1 !}
 go-to: courses_menu
 
@@ -162,7 +162,7 @@ new-page: true
 
 = TUR courses
 
-A course gives its result only after two financed months of TUR. An unfinanced month makes it wait.
+A course gives its result after two months of TUR.
 
 - @course_civil_rights
 - @course_union_cadres
@@ -284,7 +284,7 @@ go-to: result
 
 @launch_cooperative
 title: Launch the prepared cooperative
-subtitle: This month's action and 2 resources: [+ pl_pa_coop_name +] starts work; upkeep 0.10 resources a month.
+subtitle: This month's action and 2 resources: [+ pl_pa_coop_name +] starts work and gives relief while it operates.
 view-if: pl_pa_coop_count > 0
 choose-if: {! return PolishParty.cooperativeStatus(Q, Q.pl_pa_coop_id).available !}
 unavailable-subtitle: [+ pl_pa_coop_why +]
@@ -343,7 +343,7 @@ go-to: result
 @later
 title: Not now
 subtitle: Nothing is spent.
-go-to: main
+go-to: root
 
 @result
 new-page: true

@@ -44,6 +44,8 @@ test('Rozpoznanie w agendzie: three assessments of the forces every 3 months nar
   const Q = engine.state.qualities, S = Q.S;
   const loyalties = S.security.forces.map(f => [f.loyalty_legal, f.loyalty_pils, f.loyalty_neutral]);
   const radii = [S.security.known.capital_legal.radius];
+  S.party_orgs.cash = 5; // Z — 0.56: no monthly income, so the three assessments get their money at the start
+  PolishParty.writeMirrors(Q);
   for (let n = 0; n < 3; n++) {
     engine.goToScene('main');
     choose(engine, 'polish_party_agenda');
@@ -258,8 +260,10 @@ test('Manifest parlamentu: the pool, the agenda and the events are the 10 famili
     'parliament.speaker_election': ['polish_speaker_election'],
     'presidency.election': ['polish_presidential_sequence'],
     'parliament.strike_response': ['polish_event_strike_response'],
+    // Z — 0.56: the criticism of parliament by Piłsudski (B2) is a card of the Parliament deck.
+    'politics.pils_parliament_criticism': ['polish_event_pils_criticism'],
   };
-  assert.equal(Object.keys(FAMILIES).length, 10);
+  assert.equal(Object.keys(FAMILIES).length, 11);
   const all = Object.values(FAMILIES).flat();
   for (const id of all) assert.ok(engine.game.scenes[id], id);
   assert.deepEqual(tagged(engine, 'parliament_affairs').filter(id => !all.includes(id)), [], 'every card of the Parliament deck belongs to a family');

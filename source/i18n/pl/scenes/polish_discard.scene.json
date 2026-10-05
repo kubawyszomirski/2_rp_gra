@@ -5,7 +5,7 @@
   "title: Discard a card": "title: Odrzuć kartę",
   "subtitle: Once a month, free of charge.": "subtitle: Raz w miesiącu, bezpłatnie.",
   "= Discard a card": "= Odrzuć kartę",
-  "Once a month you may discard one card from your hand for free. The card goes back to its deck: it has no effect and starts no cooldown (technical reference 4.4).": "Raz w miesiącu możesz bezpłatnie odrzucić jedną kartę z ręki. Karta wraca do swojej talii: nie wywołuje skutków i nie uruchamia odnowienia (referencja techniczna, 4.4).",
+  "Once a month you may discard one card from your hand for free. The card goes back to its deck: it has no effect and starts no cooldown.": "Raz w miesiącu możesz bezpłatnie odrzucić jedną kartę z ręki. Karta wraca do swojej talii: nie wywołuje skutków i nie uruchamia odnowienia.",
   "[? if pl_hand_count = 0 : Your hand is empty, so there is nothing to discard now. ?]": "[? if pl_hand_count = 0 : Twoja ręka jest pusta, więc teraz nie ma czego odrzucić. ?]",
   "title: Discard the first card": "title: Odrzuć pierwszą kartę",
   "title: Discard the second card": "title: Odrzuć drugą kartę",

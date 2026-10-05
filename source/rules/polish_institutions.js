@@ -1009,7 +1009,32 @@
     return '';
   }
 
+  // ---- The votes of 1919 next to the first election (Z — 0.56, item 8 of 5 X 2026) -------------------------------
+
+  // Only lists with a reliable predecessor in the official statistics of 1919 (GUS, ed. L. Krzywicki, Statystyka wyborów do
+  // Sejmu Ustawodawczego, 1921: the sums of the three partition tables). The Legislative Sejm was elected on different dates
+  // and in only a part of the country, so the game shows the number and no change; the communists boycotted the election
+  // (HISTORICAL_SOURCES.md).
+  const VOTES_1919 = Object.freeze({
+    pps: Object.freeze({votes: 515062}),
+    psl_wyzwolenie: Object.freeze({votes: 839914}),
+    psl_piast: Object.freeze({votes: 432983}),
+    npr: Object.freeze({votes: 206571, predecessors: ['NZR', 'NSR']}),
+  });
+  const groupDigits = (n, separator) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, separator);
+
+  function votes1919Text(members) {
+    if (members.length === 1 && members[0] === 'kpp') return L('; in 1919 the communists boycotted the election', '; w 1919 r. komuniści zbojkotowali wybory');
+    const v = members.length === 1 ? VOTES_1919[members[0]] : null;
+    if (!v) return L('; no comparable list in 1919', '; brak porównywalnej listy w 1919 r.');
+    const who = v.predecessors ? ' (' + v.predecessors.join(L(' and ', ' i ')) + ')' : '';
+    return L('; 1919' + who + ': ' + groupDigits(v.votes, ',') + ' votes (only a part of the country voted)',
+      '; 1919' + who + ': ' + groupDigits(v.votes, '\u00a0') + ' ' + rules.plural(v.votes, 'głos', 'głosy', 'głosów') + ' (głosowała tylko część kraju)');
+  }
+
   return Object.freeze({
+    VOTES_1919: VOTES_1919,
+    votes1919Text: votes1919Text,
     personNameText: personNameText,
     CHZJN: CHZJN,
     SEJM_SEATS: SEJM_SEATS,

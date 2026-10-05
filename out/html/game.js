@@ -104,6 +104,7 @@
     other_language: {en: 'Polski', pl: 'English'},
     tab_main: {en: 'Main', pl: 'Ogólne'},
     tab_politics: {en: 'Politics', pl: 'Polityka'},
+    tab_economy: {en: 'Economy', pl: 'Gospodarka'},
     tab_defense: {en: 'Defense', pl: 'Obrona'},
     tab_polls: {en: 'Polls', pl: 'Sondaże'},
     music: {en: 'Music', pl: 'Muzyka'},

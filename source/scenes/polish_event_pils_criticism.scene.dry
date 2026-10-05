@@ -1,27 +1,34 @@
 title: Piłsudski Criticises Parliament
-subtitle: A recorded speech of Piłsudski against the Sejm; PPS must answer it this month.
+subtitle: Piłsudski speaks out against the Sejm; PPS may answer within three months.
 new-page: true
-tags: pl_event
-face-image: img/polish/polish_event_pils_criticism.jpg
+is-card: true
+tags: parliament_affairs
+card-image: img/polish/polish_event_pils_criticism.jpg
 view-if: {! return !!Q.S && !!Q.polish_politics_rules && PolishPolitics.criticismDue(Q) !}
 on-arrival: {!
-// Event politics.pils_parliament_criticism, B2 (technical reference 10.7, 15.2; card catalogue 9.2; Z — 0.38): one
-// mandatory answer for 0 T per recorded speech, before the next ordinary action; no option to stay silent. The
-// speech is a synthetic game profile (P), not a historical quotation.
+// Card politics.pils_parliament_criticism, B2 (technical reference 10.7, 15.2; card catalogue 9.2). Z — 0.56 (item 5 of
+// 5 X 2026): a card of the Parliament deck for three months after each recorded speech; an answer costs this month's
+// action; without an answer the journal records silence. The quotation is authentic and shown without its date
+// (HISTORICAL_SOURCES.md); the occasion is a simplification of the game.
 PolishPolitics.criticismView(Q);
 !}
 
 = Piłsudski criticises parliament
 
-In this game Józef Piłsudski speaks publicly against the Sejm over [+ pl_crit_topic +]. The wording is a synthetic game event, not a historical quotation. PPS must answer this month; the answer is recorded in the journal of institutions and does not change our lasting line on Piłsudski or on the form of power.
+“[+ pl_crit_quote +]”
+
+Józef Piłsudski again speaks out against the Sejm, this time over [+ pl_crit_topic +]. The words are his own; the occasion in the game is a simplification. PPS may answer with this month's action; without an answer within three months the card disappears and the journal records our silence.
 
 - @support
 - @defend
 - @reform
+- @easy_discard
 
 @support
 title: Support the criticism of parliamentarism
-subtitle: The relation with Piłsudski improves (+4); Piłsudczycy dissent falls (−3) and Centre dissent rises (+5). The authority of the Sejm falls for twelve months (−2). [+ pl_crit_warning +]
+subtitle: Costs this month's action. The relation with Piłsudski improves (+4); Piłsudczycy dissent falls (−3) and Centre dissent rises (+5). The authority of the Sejm falls for twelve months (−2). [+ pl_crit_warning +]
+choose-if: {! return PolishPolitics.criticismStatus(Q, 'support').available !}
+unavailable-subtitle: [+ pl_crit_why +]
 on-arrival: {!
 PolishPolitics.criticismChoose(Q, 'support');
 !}
@@ -29,7 +36,9 @@ go-to: result
 
 @defend
 title: Defend parliament and the lawful change of governments
-subtitle: The relation with Piłsudski worsens (−4); Piłsudczycy dissent rises (+5) and Centre dissent falls (−3). The authority of the Sejm grows for twelve months (+1).
+subtitle: Costs this month's action. The relation with Piłsudski worsens (−4); Piłsudczycy dissent rises (+5) and Centre dissent falls (−3). The authority of the Sejm grows for twelve months (+1).
+choose-if: {! return PolishPolitics.criticismStatus(Q, 'defend').available !}
+unavailable-subtitle: [+ pl_crit_why +]
 on-arrival: {!
 PolishPolitics.criticismChoose(Q, 'defend');
 !}
@@ -37,7 +46,9 @@ go-to: result
 
 @reform
 title: Parliament should be reformed to work better
-subtitle: No change of relation; Centre dissent falls (−2). It supports the line of reform but creates no project, path or votes.
+subtitle: Costs this month's action. No change of relation; Centre dissent falls (−2). It supports the line of reform but creates no project, path or votes.
+choose-if: {! return PolishPolitics.criticismStatus(Q, 'reform').available !}
+unavailable-subtitle: [+ pl_crit_why +]
 on-arrival: {!
 PolishPolitics.criticismChoose(Q, 'reform');
 !}

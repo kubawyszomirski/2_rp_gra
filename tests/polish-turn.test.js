@@ -285,6 +285,24 @@ test('one free discard a month, available again after the month changes (4.4)', 
   assert.ok(choiceIds(engine).includes('polish_discard'), 'available again after the month changes');
 });
 
+// Bug of 5 X 2026: the discard page and "Not now" of a pinned card went straight to the hand without a new page, so
+// their text stayed above the hand. They return through root, like "Return to hand".
+test('the discard page and "Not now" of a pinned card leave no text above the hand', () => {
+  const engine = dendry.startGame();
+  const text = () => JSON.stringify(engine.ui.paragraphs);
+  dendry.choose(engine, 'polish_discard');
+  assert.match(text(), /Once a month you may discard/);
+  dendry.choose(engine, 'polish_discard.keep');
+  assert.equal(engine.state.sceneId, 'main');
+  assert.doesNotMatch(text(), /Once a month you may discard/);
+  dendry.choose(engine, 'polish_party_agenda');
+  assert.match(text(), /Party money/);
+  dendry.choose(engine, 'polish_party_agenda.later');
+  assert.equal(engine.state.sceneId, 'main');
+  assert.doesNotMatch(text(), /Party money/);
+  assert.deepEqual([engine.state.qualities.time, engine.state.qualities.month_actions || 0], [1, 0], 'no month and no action are used');
+});
+
 test('due events come one at a time from the queue, in a fixed order, and are not repeated (4.5)', () => {
   const engine = dendry.startGame();
   const Q = engine.state.qualities;

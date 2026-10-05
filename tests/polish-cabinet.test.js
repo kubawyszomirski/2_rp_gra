@@ -40,10 +40,8 @@ test('the talks card: one partner, the month is spent, the partner waits three m
   playFromHand(engine, 'inter_party_relationships');
   assert.equal(choice(engine, 'inter_party_relationships.psl_wyzwolenie').canChoose, false);
   assert.equal(choice(engine, 'inter_party_relationships.psl_piast').canChoose, true);
-  // Stage 5: the only change of party money is the monthly ledger of 13.1 (income less upkeep), not the talk.
-  const ledger = Q.S.party_orgs.last_ledger;
-  const net = ledger.income + ledger.sales - Object.values(ledger.paid).reduce((n, v) => n + v, 0);
-  assert.ok(Math.abs(Q.resources - (resources + net)) < 1e-9, 'no resources are spent on the talk');
+  // Z — 0.56: with no income or upkeep the money of the party does not change in a settled month, and the talk costs none.
+  assert.ok(Math.abs(Q.resources - resources) < 1e-9, 'no resources are spent on the talk');
   assert.deepEqual(Q.S.history.actions.filter(a => a.action_id === 'party.outreach').map(a => a.resource_cost), [{}]);
 });
 
@@ -133,6 +131,7 @@ test('C1: one screen; every setting is free and returns to it; one commit, then 
   assert.deepEqual([Q.time, Q.month_actions], [before.t, before.actions], 'the mandatory formation costs no month');
   assert.match(content(engine), /PSL Wyzwolenie: accepts/);
   assert.match(content(engine), /The head of state appoints ","Ignacy Daszyński/);
+  assert.match(content(engine), /A minority cabinet: it has fewer than 223 MPs, but more MPs declared for it than against it/, 'explained (Z — 0.56)');
   assert.equal(Q.S.cabinet.pm, 'daszynski');
   assert.deepEqual(Q.S.cabinet.portfolios.labor, 'pps');
   assert.deepEqual(Q.S.cabinet.portfolios.interior, 'pps');
@@ -225,7 +224,7 @@ test('Status and Library show the prime minister, support and the nine portfolio
   choose(engine, 'root');
   engine.goToScene('status');
   const status = content(engine);
-  assert.match(status, /PPS position: ","In the cabinet: Labour/);
+  assert.match(status, /PPS position:["\]}, ]+In the cabinet: Labour/);
   assert.match(status, /Julian Nowak \(non-party\) — PPS and PSL Wyzwolenie/);
   assert.match(status, /MPs declared for the cabinet \(minority\)/);
   assert.doesNotMatch(status, /Coalition dissent|Government formation pending/);
@@ -272,7 +271,10 @@ function agreementOf(Q, party) {
 test('Utrzymanie poparcia tylko w kryzysie: no Keep option outside a crisis; after an ultimatum, Keep for 0 T, once', () => {
   const engine = dendry.startGame();
   const Q = centreLeft(engine);
-  assert.equal(PolishGovernment.supportCardAvailable(Q), true, 'PPS sits in the cabinet');
+  // Z — 0.56: half a year after the formation, or at once after an act of the cabinet against PPS.
+  assert.equal(PolishGovernment.supportCardAvailable(Q), false, 'not in the first half-year of the cabinet');
+  Q.S.cabinet.formed_at = Q.time - 6;
+  assert.equal(PolishGovernment.supportCardAvailable(Q), true, 'PPS sits in the cabinet, half a year later');
   playFromHand(engine, 'polish_government_support');
   assert.deepEqual(ids(engine).sort(), ['easy_discard', 'polish_government_support.bargain', 'polish_government_support.persuade',
     'polish_government_support.withdraw']);
@@ -449,4 +451,40 @@ test('save and load in the middle of the formation keeps the offer; the restored
   assert.equal(R.S.history.negotiations.filter(n => n.kind === 'cabinet').length, 1);
   assert.equal(R.sejm_pending.phase, 'complete');
   assert.equal(Q.S.negotiation.phase, 'draft', 'the saved game is independent');
+});
+
+// Z — 0.56 (item 7 of 5 X 2026): card 7.6 comes back half a year after the formation or its last ordinary use, and at once
+// for two months when the cabinet acts against PPS: a package with an instrument PPS opposes, or a breach of our agreement.
+test('Nasz stosunek do rządu: every six months, and at once after an act of the cabinet against PPS', () => {
+  const engine = dendry.startGame();
+  const Q = centreLeft(engine);
+  assert.equal(PolishGovernment.supportCardAvailable(Q), false, 'the first half-year of the cabinet');
+  Q.S.economy.pending_package = { id: 'pkg-test', cabinet_id: Q.S.cabinet.id, proposed_at: Q.time, vote_at: Q.time + 1,
+    instruments: ['progressive', 'benefit_cut'], status: 'pending' };
+  assert.equal(PolishGovernment.supportCardAvailable(Q), true, 'a package with a cut of the benefit');
+  assert.equal(PolishGovernment.supportReason(Q), 'The cabinet has proposed a package with a cut of the unemployment benefit.');
+  playFromHand(engine, 'polish_government_support');
+  assert.match(content(engine), /The cabinet has proposed a package with a cut of the unemployment benefit\./);
+  choose(engine, 'polish_government_support.persuade');
+  assert.equal(Q.month_actions, 1, 'an ordinary use costs the month');
+  assert.equal(Q.S.cabinet.support_reviewed_at, Q.time);
+  assert.equal(PolishGovernment.supportCardAvailable(Q), false, 'the act is answered and the review waits six months');
+  // A later breach of an obligation of the cabinet opens the card again at once.
+  const agreement = agreementOf(Q, 'npr');
+  PolishGovernment.addObligation(Q, agreement.id, { ...PolishGovernment.TEST_PROGRAMME, id: 'breach_fixture', required_project: null,
+    portfolio: null, months: 0, beneficiaries: ['npr'] });
+  const obligation = agreement.obligations[agreement.obligations.length - 1];
+  obligation.owner = 'npr'; // the partner's own promise: PPS does not answer for it
+  Q.time += 1;
+  obligation.status = 'breached';
+  obligation.breached_at = Q.time;
+  assert.equal(PolishGovernment.supportProvocation(Q).kind, 'breach');
+  assert.equal(PolishGovernment.supportCardAvailable(Q), true, 'a breach opens the card at once');
+  assert.equal(PolishGovernment.supportReason(Q), 'The cabinet has broken an obligation of our agreement.');
+  Q.time += 2;
+  assert.equal(PolishGovernment.supportProvocation(Q), null, 'an act counts for two months');
+  Q.time += 3;
+  delete Q.S.cooldowns['support.' + Q.S.cabinet.id];
+  assert.equal(PolishGovernment.supportCardAvailable(Q), true, 'the half-yearly review');
+  assert.match(PolishGovernment.supportReason(Q), /^Half a year has passed/);
 });

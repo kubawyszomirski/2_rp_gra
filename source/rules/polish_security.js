@@ -1334,6 +1334,24 @@
       concessionName(a.variant) + (a.execution_started_at === null ? ' (jeszcze niewykonane).' : ', przegląd w ' + rules.monthYear(a.review_at, 'loc') + '.')) : '';
     Q.pl_def_crisis = S.coup.phase === 'political_crisis' ? L('Political crisis: preparations for a coup are reported.',
       'Kryzys polityczny: napływają doniesienia o przygotowaniach do zamachu.') : '';
+    // The Defense tab of the sidebar shows the same facts one per line with a bold label (Z — 0.55); the combined
+    // lines above stay for the Library.
+    Q.pl_def_members = String(m.strength);
+    Q.pl_def_efficiency = fmt(m.militancy);
+    Q.pl_def_condition = [m.militarized ? L('militarised', 'zmilitaryzowana') : '', m.fatigue ? L('fatigue ', 'zmęczenie ') + fmt(m.fatigue) : '']
+      .filter(Boolean).join('; ');
+    // No-break spaces and a word joiner after the dash keep a scale and an interval on one line.
+    Q.pl_def_attachment = fmt(m.alignment.legal_institutions === undefined ? 50 : m.alignment.legal_institutions) + L('\u00a0of\u00a0100', '\u00a0na\u00a0100');
+    const police = S.security.police;
+    Q.pl_def_police_capacity = fmt(police.capacity);
+    Q.pl_def_police_command = fmt(police.command);
+    Q.pl_def_police_lawful = fmt(police.lawful_compliance);
+    Q.pl_def_police_protection = fmt(protectionCapacity(S, null, Q.time)) + L('\u00a0of\u00a0100', '\u00a0na\u00a0100');
+    for (const id of Object.keys(FORCE_NAMES)) {
+      const v = knownView(S).find(f => f.id === id);
+      Q['pl_def_force_' + id + '_name'] = forceName(id).charAt(0).toUpperCase() + forceName(id).slice(1);
+      Q['pl_def_force_' + id] = v ? Math.round(100 * v.low) + '–\u2060' + Math.round(100 * v.high) + '%' : '';
+    }
   }
 
   function statusLine(Q) {

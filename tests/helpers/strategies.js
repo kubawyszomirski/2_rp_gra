@@ -314,7 +314,7 @@ const STRATEGIES = {
     month: ctx => {
       const extra = [];
       if (ctx.militiaStage < 2) {
-        // Stage 8 (A4): the AS as soon as it is affordable (10.9: 2 R and three months of its upkeep); before that the step
+        // Stage 8 (A4): the AS as soon as it is affordable (10.9: 2 R; since Z — 0.56 without a reserve for upkeep); before that the step
         // it still needs, then money saved for it — not a fixed rotation that misses the affordable month.
         const M = ctx.S.militia;
         if (globalThis.PolishParty.militiaStatus(ctx.Q, 'as').available) extra.push(P.militia('form_as'));

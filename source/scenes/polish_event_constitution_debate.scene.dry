@@ -1,0 +1,19 @@
+title: A Debate on the Constitution
+subtitle: The right and PSL “Piast” want to repair the March Constitution; PPS can table its own projects.
+new-page: true
+tags: pl_event
+view-if: {! return !!Q.S && PolishProjects.constitutionDebateDue(Q) !}
+on-arrival: {!
+// Event politics.constitution_debate (Z — 0.56, item 2 of 5 X 2026): it opens the constitutional debate once, in
+// December 1924, and with it the card parliament.constitution_project (technical reference 7.6). 0 T; PPS chooses its
+// projects later on the card. The facts of the text are in HISTORICAL_SOURCES.md.
+PolishProjects.openConstitutionDebate(Q);
+!}
+
+= A debate on the constitution
+
+At its congress on 26 October 1924 the Popular National Union (ZLN) adopted a resolution on the “repair of the constitution”: a President who may dissolve the Sejm, a Senate equal to the Sejm, fewer deputies, a narrower immunity and a constitutional tribunal. In December 1924 the congress of PSL “Piast” also declared a change of the constitution necessary. The revision of the March Constitution is on the agenda.
+
+From now on PPS can prepare and table its own projects with the card Constitutional Reform.
+
+- @root: Continue.

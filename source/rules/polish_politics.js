@@ -76,6 +76,7 @@
     // The topics of the recorded speeches of Piłsudski (card B2) and the recorded public military pressure.
     'the right to appoint the cabinet': 'prawo do powoływania gabinetu',
     'the Sejm and the organisation of the army’s command': 'Sejm i organizacja dowództwa wojska',
+    'the rule of the parties over the governments': 'władza partii nad rządami',
     'a public demand of Piłsudski on the army, with the support of intervening officers': 'publiczne żądanie Piłsudskiego w sprawie wojska, poparte przez interweniujących oficerów',
     'Warsaw, the Powązki cemetery: the funeral of Eligiusz Niewiadomski on 6 February 1923': 'Warszawa, cmentarz Powązkowski: pogrzeb Eligiusza Niewiadomskiego 6 lutego 1923 roku',
   });
@@ -93,11 +94,48 @@
     return text;
   }
   rules.registerStoredText(subjectText);
-  // 10.7 (P): the recorded speeches of Piłsudski that open the card B2; synthetic, without quotations. The topic of 1922
-  // follows the sources (stage 8, 8f): after the resignation of Ponikowski the dispute was over who appoints the cabinet.
+  // 10.7 (P): the recorded speeches of Piłsudski that open the card B2. The topic of 1922 follows the sources (stage 8, 8f):
+  // after the resignation of Ponikowski the dispute was over who appoints the cabinet.
   const SPEECHES = Object.freeze([
     {id: 'speech_1922_dispute', dispute: 'dispute_1922', topic: 'the right to appoint the cabinet', institution: 'the Sejm'},
     {id: 'speech_military_case', dispute: 'military_case', topic: 'the Sejm and the organisation of the army’s command', institution: 'the Sejm'},
+  ]);
+  // Z — 0.56 (item 5 of 5 X 2026): B2 is a card of the Parliament deck, open for three months after each speech; an answer
+  // costs the month, and without one the journal records silence. Besides the two dated speeches Piłsudski speaks against
+  // the Sejm again at an open cabinet crisis, at most once in six months (P: the occasions are a simplification of the game).
+  const CRISIS_SPEECH = Object.freeze({dispute: null, topic: 'the rule of the parties over the governments', institution: 'the Sejm'});
+  const SPEECH_INTERVAL = 6;
+  const SPEECH_WINDOW = 3;
+  // Authentic words of Piłsudski (decision of the user, 5 X 2026): shown without their date, each speech another one, from the
+  // milder to the harsher. The dates and the printed sources are in HISTORICAL_SOURCES.md; the spelling is modernised and
+  // the English is our translation.
+  const QUOTES = Object.freeze([
+    ['Let the President form the government, but without the pressure of the parties — that is his right!',
+      'Niech prezydent tworzy rząd, ale bez nacisku partii — to jest jego prawo!'],
+    ['I understand that soldiers are not voters whom a deputy cares about.',
+      'Rozumiem, że żołnierze nie są wyborcami, o których dba poseł.'],
+    ['The Sejm and the Senate have abused their privileges, and those who are called to govern must have more rights. Parliament ought to rest.',
+      'Sejm i senat nadużyły przywilejów i należy, aby ci, którzy powołani są do rządów, mieli więcej praw. Parlament winien odpocząć.'],
+    ['I take up the fight, as before, against the chief evil of the state: the rule of unruly parties and factions over Poland.',
+      'Staję do walki, tak jak i poprzednio, z głównym złem państwa: panowaniem rozwydrzonych partii i stronnictw nad Polską.'],
+    ['I would very much wish that the honourable deputies did not identify their method of work with democracy. They bring democracy no honour with this work.',
+      'Bardzo bym sobie życzył, aby panowie posłowie nie identyfikowali swej metody pracy z demokracją. Zaszczytu tą pracą demokracji nie przynoszą.'],
+    ['…I warn that the Sejm and the Senate are the institutions most hated in society.',
+      '…ostrzegam, że sejm i senat są instytucjami najbardziej znienawidzonymi w społeczeństwie.'],
+    ['…the deputies grew up in a corruption so far-reaching and so often practised that a deputy’s vote sometimes cost no more than 50 złoty.',
+      '…posłowie wychowali się w korupcji tak daleko sięgającej i tak często uprawianej, że głos posła kosztował niekiedy nie więcej, jak 50 złotych.'],
+    ['…a deputy to the Sejm is made to ask stupidly and to speak stupidly.',
+      '…poseł do Sejmu jest stworzony na to, ażeby głupio pytał i głupio mówił.'],
+    ['…I would do nothing else but kick the honourable deputies without end.',
+      '…tobym nic więcej nie uczynił, jak bym kopał panów posłów bezustannie.'],
+    ['A Sejm of harlots, working on the constitution in those days…',
+      'Sejm ladacznic, pracujący w owe czasy nad konstytucją…'],
+    ['I do not call it a constitution, sir; I call it a “constitute”. And I invented the word because it is the closest to “prostitute”.',
+      'Ja to, proszę pana, nie nazywam konstytucją, ja to nazywam konstytutą. I wymyśliłem to słowo, bo ono najbliższe jest do prostituty.'],
+    ['From the first moment of the state, party rivalry here went so strangely and so sharply, with so much lying and villainy, that what I called the “cloaca maxima” began to form at once.',
+      'Konkurencja partyjna poszła u nas od pierwszej chwili istnienia państwa tak dziwacznie i tak ostro, a zarazem z tak wielką ilością kłamstwa i łajdactwa, że od razu zaczęło się wytwarzać to, co nazwałem „cloaca maxima”.'],
+    ['…the Tribunal of State will not dare to meet even once, for I do not wish to stand on a level with such slobs!',
+      '…Trybunał Stanu nie ośmieli mi się zebrać ani razu, gdyż takiej równi z fajdanami ja sobie nie życzę!'],
   ]);
   // 15.3: impulses applied once per ID of their effect.
   const IMPULSES = Object.freeze({personal_conflict: 8, chjeno_return: 20});
@@ -515,10 +553,10 @@
   }
 
   // The recorded speech waits for its answer in the event queue (card B2); one per ID.
-  function scheduleSpeech(Q, id, t) {
+  function scheduleSpeech(Q, id, t, given) {
     const P = Q.S.politics;
     if (P.speeches.some(s => s.id === id)) return null;
-    const profile = SPEECHES.filter(s => s.id === id)[0];
+    const profile = given || SPEECHES.filter(s => s.id === id)[0];
     const speech = {id: id, t: t, topic: profile.topic, institution: profile.institution, dispute: profile.dispute, response: null,
       answered_at: null, profile_id: SCENARIO_INPUTS.profile_id};
     P.speeches.push(speech);
@@ -576,6 +614,24 @@
       !S.politics.speeches.some(s => s.id === 'speech_1922_dispute')) {
       scheduleSpeech(Q, 'speech_1922_dispute', Q.time);
     }
+    // Z — 0.56: an open cabinet crisis after 1922 brings another speech, at most once in six months.
+    const crisis = S.cabinet_crisis;
+    const last = S.politics.speeches.reduce((n, s) => Math.max(n, s.t), -Infinity);
+    if (crisis && Q.time >= T(1923, 1) && Q.time - last >= SPEECH_INTERVAL &&
+      !S.politics.speeches.some(s => s.id === 'speech_crisis_' + crisis.id)) {
+      scheduleSpeech(Q, 'speech_crisis_' + crisis.id, Q.time, CRISIS_SPEECH);
+    }
+  }
+
+  // Z — 0.56: a speech without an answer for three months is silence; the journal records it with no weight (15.2).
+  function scanSilence(Q) {
+    const S = Q.S;
+    for (const speech of S.politics.speeches) {
+      if (speech.response !== null || Q.time - speech.t < SPEECH_WINDOW) continue;
+      speech.response = 'silence';
+      speech.silent_at = Q.time;
+      addLogEntry(S, 'stance_silence', speech.id, Q.time);
+    }
   }
 
   // Called on every visit of post_event, after an event package and before the next ordinary action (4.2):
@@ -583,6 +639,7 @@
   function afterEvents(Q) {
     if (!ready(Q) || Q.S.chapter.status === 'ended') return null;
     scanDispute(Q);
+    scanSilence(Q);
     scanSpeeches(Q);
     scanCult(Q);
     scanImpulses(Q);
@@ -1105,12 +1162,25 @@
     return S.politics.speeches.filter(s => s.response === null)[0] || null;
   }
 
+  // Z — 0.56: the card can be answered for three months after its speech (it is no longer a queued event).
   function criticismDue(Q) {
     if (!ready(Q) || Q.S.chapter.status === 'ended') return false;
     const speech = speechDue(Q.S);
-    if (speech) Q.S.politics.due.polish_event_pils_criticism = speech.id;
-    else delete Q.S.politics.due.polish_event_pils_criticism;
-    return !!speech;
+    return !!speech && Q.time - speech.t < SPEECH_WINDOW;
+  }
+
+  function criticismStatus(Q, choice) {
+    if (!CRITICISM[choice]) return {available: false, reason: L('Unknown answer.', 'Nieznana odpowiedź.')};
+    if (!criticismDue(Q)) return {available: false, reason: L('No speech waits for an answer.', 'Żadne wystąpienie nie czeka na odpowiedź.')};
+    if (!rules.mainActionAvailable(Q)) return {available: false, reason: L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.')};
+    return {available: true, reason: ''};
+  }
+
+  // The quotation of one speech: the n-th speech gets the n-th quotation, the last one repeats after them.
+  function criticismQuote(S, speech) {
+    const index = Math.max(0, S.politics.speeches.indexOf(speech));
+    const quote = QUOTES[Math.min(index, QUOTES.length - 1)];
+    return L(quote[0], quote[1]);
   }
 
   // Only supporting the criticism under the line of parliamentarism contradicts a lasting line (Z — 0.38).
@@ -1130,6 +1200,8 @@
     const S = Q.S, speech = speechDue(S), spec = CRITICISM[choice];
     if (!speech) throw new Error('criticismChoose: no speech waits for an answer');
     if (!spec) throw new Error('criticismChoose: unknown answer ' + choice);
+    const status = criticismStatus(Q, choice);
+    if (!status.available) throw new Error('criticismChoose: ' + status.reason);
     party.syncMirrors(Q);
     speech.response = choice;
     speech.answered_at = Q.time;
@@ -1138,7 +1210,8 @@
     if (criticismContradicts(S, choice)) reactions.filter(r => r.faction === 'centrum')[0].dissent += 3;
     government.factionReactions(Q, reactions, {id: 'criticism:' + speech.id, kind: 'criticism_answer', reverse: null});
     if (spec.log) addLogEntry(S, spec.log, speech.id, Q.time);
-    S.history.actions.push({t: Q.time, action_id: 'politics.pils_parliament_criticism.' + choice, speech_id: speech.id, cost_t: 0});
+    // Z — 0.56: an answer is the action of the month.
+    rules.commitMainAction(Q, 'politics.pils_parliament_criticism', {option: choice, speech_id: speech.id});
     party.writeMirrors(Q);
     Q.pl_crit_result = rules.getLanguage() === 'pl' ? {support: 'PPS popiera krytykę parlamentaryzmu. Relacja z Piłsudskim się poprawia; Centrum protestuje.',
       defend: 'PPS broni parlamentu i legalnej zmiany rządów. Relacja z Piłsudskim się pogarsza; piłsudczycy protestują.',
@@ -1152,6 +1225,8 @@
   function criticismView(Q) {
     const S = Q.S, speech = speechDue(S);
     Q.pl_crit_topic = speech ? rules.storedText(speech.topic) : '';
+    Q.pl_crit_quote = speech ? criticismQuote(S, speech) : '';
+    Q.pl_crit_why = criticismStatus(Q, 'reform').reason;
     Q.pl_crit_warning = criticismContradicts(S, 'support') ?
       L('This contradicts our line of parliamentarism: the Centre objects once more (+3).', 'To sprzeczne z naszą linią parlamentaryzmu: Centrum protestuje jeszcze raz (+3).') : '';
     return speech;
@@ -1167,6 +1242,22 @@
       'demokracja ' + fmt(P.democracy) + ', autorytet Sejmu ' + fmt(P.parliament_authority) + ', niezadowolenie ' +
       fmt(P.national_grievance) + ', przemoc ' + fmt(P.violence) + '; presja na zamach ' + fmt(S.coup.pressure) +
       (openMilitaryCase(S) ? ' (otwarta sprawa wojskowa)' : '') + '.');
+  }
+
+  // The same values one per line for the sidebar (Z — 0.54). Only the sidebar's Politics tab computes them, so a save
+  // from before 0.54 shows them as soon as it is loaded and the routing scene polish_opening_state does not depend on
+  // them; they are display fields only.
+  function statusView(Q) {
+    const S = Q.S && !Q.polish_save_incompatible ? Q.S : null, P = S && S.politics;
+    if (!P || !S.coup) return;
+    // All five are on a scale of 0–100, shown with at most one decimal; no-break spaces keep the scale on one line
+    // (Z — 0.55).
+    const of100 = value => fmt(Math.round(value * 10) / 10) + L('\u00a0of\u00a0100', '\u00a0na\u00a0100');
+    Q.pl_pol_democracy = of100(P.democracy);
+    Q.pl_pol_authority = of100(P.parliament_authority);
+    Q.pl_pol_grievance = of100(P.national_grievance);
+    Q.pl_pol_violence = of100(P.violence);
+    Q.pl_pol_pressure = of100(S.coup.pressure) + (openMilitaryCase(S) ? L(' (an open military case)', ' (otwarta sprawa wojskowa)') : '');
   }
 
   return Object.freeze({
@@ -1232,9 +1323,13 @@
     afterEvents: afterEvents,
     settleMonth: settleMonth,
     criticismDue: criticismDue,
+    criticismStatus: criticismStatus,
+    criticismQuote: criticismQuote,
+    QUOTES: QUOTES,
     criticismContradicts: criticismContradicts,
     criticismChoose: criticismChoose,
     criticismView: criticismView,
     statusLine: statusLine,
+    statusView: statusView,
   });
 }));

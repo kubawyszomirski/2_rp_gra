@@ -1,6 +1,6 @@
 # Polska wersja: katalog kart do kodowania
 
-**Stan — referencja 0.53, 4 października 2026. Wszystkie partie przejrzane; brak otwartych pytań; wszystkie karty wdrożone (etapy 0–8 planu implementacji); teksty kart mają też wersję polską (referencja 23.23); obecną linię kart stanowisk, Składek i Programu gospodarczego można potwierdzić (referencja 23.24); doradcy występują w grze jako Centralny Komitet Wykonawczy (referencja 23.25); opisy wyborów podają skutki słowami, a liczby na życzenie (referencja 23.26).** Katalog zbiera w jednym miejscu to, co [referencja techniczna](POLISH_TECHNICAL_REFERENCE.md) mówi o każdej karcie i wydarzeniu pierwszego rozdziału. Jest ściągą do kodowania: jedna tabela na kartę. Katalog powstał w całości w wersji 0.32. Wszystkie sześć partii użytkownik przejrzał w 0.33–0.38. Rozstrzygnięte pytania pogrupowano w rozdziale 10.
+**Stan — referencja 0.56, 5 października 2026. Wszystkie partie przejrzane; brak otwartych pytań; wszystkie karty wdrożone (etapy 0–8 planu implementacji); teksty kart mają też wersję polską (referencja 23.23); obecną linię kart stanowisk, Składek i Programu gospodarczego można potwierdzić (referencja 23.24); doradcy występują w grze jako Centralny Komitet Wykonawczy (referencja 23.25); opisy wyborów podają skutki słowami, a liczby na życzenie (referencja 23.26); dziewięć uwag z gry zmienia m.in. pieniądze partii, organizacje, B2, reformę konstytucyjną, stosunek do rządu i program (referencja 23.29).** Katalog zbiera w jednym miejscu to, co [referencja techniczna](POLISH_TECHNICAL_REFERENCE.md) mówi o każdej karcie i wydarzeniu pierwszego rozdziału. Jest ściągą do kodowania: jedna tabela na kartę. Katalog powstał w całości w wersji 0.32. Wszystkie sześć partii użytkownik przejrzał w 0.33–0.38. Rozstrzygnięte pytania pogrupowano w rozdziale 10.
 
 ## 1. Jak czytać katalog
 
@@ -363,18 +363,18 @@ Cztery karty talii partyjnej (Organizacje, Milicja, Media, Składki) oraz stałe
 | Wyjątek | Doradca może zastąpić czas jednego etapu (10.4.4), nie całego pakietu | P |
 | Zapisuje | `ActionTxn.selected_options`; zasięg lub fundusz branży, `press.reach`, `tur.active_build`, stan Milicji, `cooperatives.projects` | P |
 | Odczytują | Utrzymanie (13.1), rejestr organizacji (13.2), Milicja (13.3), związki (14.1), zasięg kampanii (5.3) | P |
-| Co zostaje po karcie | Budowa TUR w toku; przygotowana spółdzielnia czeka w agendzie (5.9 katalogu); miesięczne utrzymanie organizacji | P |
-| Obecny kod | `source/scenes/party_affairs/polish_party_organizations.scene.dry` (etap 5, 0.46): 12 pakietów, do dwóch różnych w jednej akcji ze wspólnym potwierdzeniem; nic nie jest pobierane przed potwierdzeniem. Reguły w `source/rules/polish_party.js`. Odziedziczona `source/scenes/party_affairs/party_organizations.scene.dry` ma warunek `not polish_party_rules` | K |
+| Co zostaje po karcie | Budowa TUR w toku; przygotowana spółdzielnia czeka w agendzie (5.9 katalogu); od 0.56 bez miesięcznego utrzymania organizacji | P |
+| Obecny kod | Z — 0.56: pakiety związkowe są w osobnej karcie `source/scenes/party_affairs/polish_party_union_investments.scene.dry` (`party.union_investments`: jedna inwestycja w akcji, cd 2 M), a w tej karcie zostają prasa, TUR, Milicja i spółdzielnie, najwyżej 7 wyborów na stronie. Wcześniej `source/scenes/party_affairs/polish_party_organizations.scene.dry` (etap 5, 0.46): 12 pakietów, do dwóch różnych w jednej akcji ze wspólnym potwierdzeniem; nic nie jest pobierane przed potwierdzeniem. Reguły w `source/rules/polish_party.js`. Odziedziczona `source/scenes/party_affairs/party_organizations.scene.dry` ma warunek `not polish_party_rules` | K |
 | Źródła i testy | 13.5, 13.1, 13.2, 13.3, 14.1, 17.2; testy „Dwie organizacje”, „Podmenu i doradcy”, „TUR” w 21.1 | — |
 
 | Opcja (ID) | Zablokowana, gdy | Skutek od razu | Skutek później | Status |
 |---|---|---|---|---|
-| Związki: rozbudować jedną branżę (`union.organize`) | brak środków; odnowienie podakcji 2 M | −1 R; zasięg branży +15 z modyfikatorami, do 100 | Zasięg działa w kampaniach (5.3), celu członkostwa (13.1) i potencjale strajku (14.2) | Z / P |
-| Związki: zasilić fundusz branży (`union.fund`) | brak środków | −1 R; fundusz branży +1 | To pieniądze związku; PPS nie może ich odebrać (14.1) | Z / P |
+| Związki (od 0.56 osobna karta): rozbudować jedną branżę (`union.organize`) | brak środków; odnowienie podakcji 2 M | −1 R; zasięg branży +15 z modyfikatorami, do 100 | Zasięg działa w kampaniach (5.3), celu członkostwa (13.1) i potencjale strajku (14.2) | Z / P |
+| Związki (od 0.56 osobna karta): zasilić fundusz branży (`union.fund`) | brak środków | −1 R; fundusz branży +1 | To pieniądze związku; PPS nie może ich odebrać (14.1) | Z / P |
 | Prasa: rozszerzyć dystrybucję (`party.press_distribution`) | brak środków; cd 2 M | −1 R; `press.reach` +10, do 100 | Kampanie prasowe (5.3) | Z / P |
-| TUR: rozpocząć kolejny etap (`party.tur`) | przed datą TUR; poziom 3; trwa inna budowa | −2 R; start budowy | Po 2 opłaconych M: poziom +1 i kadra +10. W czasie budowy utrzymanie jak dla przyszłego poziomu | Z / P |
-| Milicja: rekrutacja (`militia.recruit`) | organizacja nieaktywna albo nielegalna; brak rezerwy na 3 M utrzymania; cd 2 M | −1 R; +100 ludzi | Utrzymanie `0.10*ceil(strength/200)` R/M | Z / P |
-| Milicja: militaryzacja (`militia.militarize`) | sprawność ≥0,70; brak rezerwy; cd 3 M | −2 R; sprawność +0,10, do 0,70; `militarized=true` | Pierwsza militaryzacja: Centrum +3 sprzeciwu | Z / P |
+| TUR: rozpocząć kolejny etap (`party.tur`) | przed datą TUR; poziom 3; trwa inna budowa | −2 R; start budowy | Po 2 M: poziom +1 i kadra +10 (od 0.56 bez utrzymania) | Z / P |
+| Milicja: rekrutacja (`militia.recruit`) | organizacja nieaktywna albo nielegalna; cd 2 M (od 0.56 bez rezerwy) | −1 R; +100 ludzi | Od 0.56 bez utrzymania | Z / P |
+| Milicja: militaryzacja (`militia.militarize`) | sprawność ≥0,70; cd 3 M (od 0.56 bez rezerwy) | −2 R; sprawność +0,10, do 0,70; `militarized=true` | Pierwsza militaryzacja: Centrum +3 sprzeciwu | Z / P |
 | Spółdzielczość: przygotować mały projekt (`party.cooperative`) | brak wskazanych odbiorców; brak środków | −1 R; projekt przygotowany | Uruchomienie w agendzie za 1 T i 2 R (5.9 katalogu) | Z / P |
 
 Nie ma płatnej opcji „Zachować środki”: zamknięcie karty bez wyboru jest bezpłatne, a karta zostaje w ręce (Z — 0.34). Jedna organizacja nie zajmuje obu miejsc: rekrutacja i militaryzacja to ta sama organizacja. AS nie należy do tej karty. Brak środków blokuje cały pakiet, zamiast kupić tańszą połowę. Rezerwę utrzymania Milicji sprawdzamy po wszystkich jednorazowych wydatkach pakietu.
@@ -447,19 +447,19 @@ Kampania mobilizacyjna i śledztwo prasowe należą do tej karty (Z — 0.34). �
 | Limit wyboru | 1 opcja | Z |
 | Odnowienie | cd 6 M | P |
 | Wyjątek | — | — |
-| Zapisuje | `dues` w granicach 1–4, na starcie 2; `apparatus.member_index` | P |
+| Zapisuje | `dues` w granicach 1–4, na starcie 2; `apparatus.member_index`; od 0.56 kasa PPS + zbiórka | P |
 | Odczytują | Miesięczne wpływy i cel członkostwa (13.1) | P |
-| Co zostaje po karcie | Nic w agendzie; podgląd pokazuje przed zatwierdzeniem nowe wpływy i koszty utrzymania | P |
-| Obecny kod | `source/scenes/party_affairs/polish_party_dues.scene.dry` (etap 5, 0.46): składki 1–4; od 0.51 „utrzymać” za 1 T i odnowienie, bez skutków; skutek dla członkostwa i wpływów w miesięcznej księdze partii (`source/rules/polish_party.js`) | K |
+| Co zostaje po karcie | Nic w agendzie; od 0.56 każda opcja od razu przynosi zbiórkę: składki × członkostwo/100, +25% za każdy poziom aparatu powyżej pierwszego (model z oryginału) | P |
+| Obecny kod | `source/scenes/party_affairs/polish_party_dues.scene.dry` (etap 5, 0.46): składki 1–4; od 0.51 „utrzymać” za 1 T i odnowienie; od 0.56 każda opcja, także „utrzymać”, od razu zbiera składki, a miesięcznych wpływów i kosztów nie ma (`source/rules/polish_party.js`) | K |
 | Źródła i testy | 13.1, 10.5, 17.2; testy „Składki”, „Cel członkostwa” w 21.1 | — |
 
 | Opcja (ID) | Zablokowana, gdy | Skutek od razu | Skutek później | Status |
 |---|---|---|---|---|
-| Podwyższyć | składki na poziomie 4 | Indeks członkostwa ×0,95, gdy płace realne <90 albo bezrobocie ≥8, a w innych warunkach ×0,98 | Wyższe wpływy; cel członkostwa −5% za każdy poziom powyżej 2 | Z / P |
-| Obniżyć | składki na poziomie 1 | Indeks członkostwa +2 punkty, najwyżej 150 | Niższe wpływy; cel członkostwa +5% przy poziomie 1 | Z / P |
-| Utrzymać (`keep`) | — | Składki, członkostwo i wpływy bez zmian | Karta czeka 6 M jak po zmianie | Z |
+| Podwyższyć | składki na poziomie 4 | Indeks członkostwa ×0,95, gdy płace realne <90 albo bezrobocie ≥8, a w innych warunkach ×0,98 | Zbiórka przy nowych składkach (od 0.56); cel członkostwa −5% za każdy poziom powyżej 2 | Z / P |
+| Obniżyć | składki na poziomie 1 | Indeks członkostwa +2 punkty, najwyżej 150 | Zbiórka przy nowych składkach (od 0.56); cel członkostwa +5% przy poziomie 1 | Z / P |
+| Utrzymać (`keep`) | — | Składki i członkostwo bez zmian; od 0.56 zbiórka przy obecnych składkach | Karta czeka 6 M jak po zmianie | Z |
 
-„Utrzymać” to potwierdzenie obecnego poziomu: kosztuje akcję miesiąca i odnowienie 6 M, ale niczego nie zmienia; odłożenie karty na rękę bez wyboru jest bezpłatne (Z — 0.51, zastępuje bezpłatne pozostawienie z 0.34). Strata członków nie przechodzi automatycznie na preferencje wyborcze (13.1).
+„Utrzymać” to potwierdzenie obecnego poziomu: kosztuje akcję miesiąca i odnowienie 6 M, a od 0.56 przynosi zbiórkę jak w oryginale; odłożenie karty na rękę bez wyboru jest bezpłatne (Z — 0.51, zastępuje bezpłatne pozostawienie z 0.34). Strata członków nie przechodzi automatycznie na preferencje wyborcze (13.1).
 
 **Otwarte pytania:** brak.
 
@@ -473,15 +473,15 @@ Kampania mobilizacyjna i śledztwo prasowe należą do tej karty (Z — 0.34). �
 | Limit wyboru | Jedno działanie | P |
 | Odnowienie | cd 3 M | P |
 | Wyjątek | — | — |
-| Zapisuje | Kasa PPS +`dues*member_index/100` R | P |
+| Zapisuje | Kasa PPS +`dues*member_index/100` R, od 0.56 z dodatkiem aparatu (+25% za poziom powyżej 1) | P |
 | Odczytują | — | — |
-| Co zostaje po karcie | Nic; to osobna składka nadzwyczajna, nie drugie zaksięgowanie wpływu miesięcznego | P |
+| Co zostaje po karcie | Nic; od 0.56 nie ma wpływu miesięcznego, więc zbiórki i karta Składki są stałymi źródłami pieniędzy | P |
 | Obecny kod | Pozycja stałej karty `source/scenes/polish_party_agenda.scene.dry` (etap 5, 0.46): składki × członkostwo/100 R, odnowienie 3 M. Odziedziczona `source/scenes/party_affairs/fundraising.scene.dry` ma warunek `not polish_party_rules` | K |
 | Źródła i testy | 13.1, 17.2; test „Brak gotówki” w 21.1 | — |
 
 | Opcja (ID) | Zablokowana, gdy | Skutek od razu | Skutek później | Status |
 |---|---|---|---|---|
-| Przeprowadzić zbiórkę (`party.fundraise`) | odnowienie | +`dues*member_index/100` R; przy składkach 2 i indeksie 100: +2 R | — | P |
+| Przeprowadzić zbiórkę (`party.fundraise`) | odnowienie | +`dues*member_index/100` R z dodatkiem aparatu; przy składkach 2, indeksie 100 i aparacie 1: +2 R | — | P |
 
 **Otwarte pytania:** brak.
 
@@ -497,8 +497,8 @@ Kampania mobilizacyjna i śledztwo prasowe należą do tej karty (Z — 0.34). �
 | Wyjątek | — | — |
 | Zapisuje | `apparatus.level` +1 | P |
 | Odczytują | Miesięczne wpływy i utrzymanie (13.1) | P |
-| Co zostaje po karcie | Stały koszt 0,10 R/M za każdy poziom | P |
-| Obecny kod | Pozycja stałej karty `source/scenes/polish_party_agenda.scene.dry` (etap 5, 0.46): 2 R za kolejny poziom aparatu; wpływy z aparatu w miesięcznej księdze partii (M18) | K |
+| Co zostaje po karcie | Od 0.56: każda zbiórka +25% za każdy poziom powyżej pierwszego; bez stałego kosztu | P |
+| Obecny kod | Pozycja stałej karty `source/scenes/polish_party_agenda.scene.dry` (etap 5, 0.46): 2 R za kolejny poziom aparatu; od 0.56 aparat podnosi zbiórki (+25% za poziom) zamiast miesięcznych wpływów (M18) | K |
 | Źródła i testy | 13.1, 17.2; testy „Zwrot aparatu”, „Otwarcia finansowe” w 21.1 | — |
 
 | Opcja (ID) | Zablokowana, gdy | Skutek od razu | Skutek później | Status |
@@ -644,13 +644,13 @@ Karty talii partyjnej, które budują kontakty, program gospodarczy i spójnoś�
 | Talia i pula | Partia, zwykły dobór | Z |
 | Dostęp | Od stycznia 1922 | P |
 | Koszt | 1 T, 0 R | P |
-| Limit wyboru | Zestaw 0–3 z pięciu priorytetów w jednej transakcji | Z |
+| Limit wyboru | Zestaw 0–3 z sześciu priorytetów w jednej transakcji (od 0.56; wcześniej pięciu); bez programu pusty zestaw jest niedostępny | Z |
 | Odnowienie | cd 6 M | P |
 | Wyjątek | Doraźne osłony i wymagane odpowiedzi są dostępne także poza listą priorytetów | P |
 | Zapisuje | `S.actors.pps.strategy.economic_priorities`, zbiór; na starcie pusty | P |
-| Odczytują | Agenda przygotowania projektów (12.2); oceny ofert i obietnice | P |
+| Odczytują | Agenda przygotowania projektów (12.2); oceny ofert i obietnice — w kodzie 0.56 czyta je tylko lista w agendzie partii (referencja 23.29) | P |
 | Co zostaje po karcie | Przyjęte priorytety trafiają do agendy jako dostępne przygotowanie, każde z kosztami 12.2 | P |
-| Obecny kod | `source/scenes/party_affairs/polish_party_economic_program.scene.dry` (etap 5, 0.46): do trzech z pięciu priorytetów; od 0.51 ten sam zestaw można potwierdzić za 1 T bez skutków; nie wprowadza reformy. Odziedziczona `source/scenes/party_affairs/crisis_program.scene.dry` zależy od niemieckich pól i nie pojawia się w polskiej talii | K |
+| Obecny kod | `source/scenes/party_affairs/polish_party_economic_program.scene.dry` (etap 5, 0.46): do trzech z sześciu priorytetów (od 0.56: „Reforma rolna i modernizacja wsi” zamiast programu agrarno-robotniczego, szósty priorytet „Spółdzielczość i mieszkania”, zdanie opisu pod każdym, etykieta „Obecny program” przy priorytetach, bez programu pusty zestaw niedostępny); od 0.51 ten sam zestaw można potwierdzić za 1 T bez skutków; nie wprowadza reformy. Odziedziczona `source/scenes/party_affairs/crisis_program.scene.dry` zależy od niemieckich pól i nie pojawia się w polskiej talii | K |
 | Źródła i testy | 10.5, 12.2, 17.2; test „Program gospodarczy” w 21.1 | — |
 
 | Opcja (ID) | Zablokowana, gdy | Skutek od razu | Skutek później | Status |
@@ -659,7 +659,8 @@ Karty talii partyjnej, które budują kontakty, program gospodarczy i spójnoś�
 | Roboty publiczne i zatrudnienie (`public_works`) | czwarty element zestawu | Zapis priorytetu | Projekt pracy i inwestycji; później finansowanie i wykonawca | Z / P |
 | Podatki majątkowe i kapitał na inwestycje (`wealth_and_investment`) | czwarty element zestawu | Zapis priorytetu | Wybór instrumentu z 11.9; deklaracja nie dodaje B | Z / P |
 | Uspołecznienie wybranych przedsiębiorstw (`socialisation`) | czwarty element zestawu | Zapis priorytetu | Przygotowanie zakresu przejęć, rekompensat i zarządzania | Z / P |
-| Program agrarno-robotniczy (`agrarian_labour`) | czwarty element zestawu | Zapis priorytetu | Wariant parcelacji, modernizacji albo ochrony pracy rolnej (12.6) | Z / P |
+| Reforma rolna i modernizacja wsi (`agrarian_labour`) | czwarty element zestawu | Zapis priorytetu | Wariant parcelacji, modernizacji albo ochrony pracy rolnej (12.6) | Z / P |
+| Spółdzielczość i mieszkania (`cooperatives_housing`) | czwarty element zestawu | Zapis priorytetu | Spółdzielnie spożywców i drobnych gospodarzy, kredyt przez spółdzielnie i mieszkania spółdzielcze (od 0.56) | Z / P |
 | Pusty zestaw | — (przy pustym obecnym zestawie: potwierdzenie za 1 T, bez skutków) | Świadome wycofanie priorytetów, bez nagrody | Nie kasuje ukończonej ustawy, wydatku ani podpisanej obietnicy | Z |
 
 Zatwierdzić można także zestaw równy obecnemu: to potwierdzenie za 1 T i odnowienie 6 M, bez innych skutków; odłożenie karty na rękę bez zatwierdzenia jest bezpłatne (Z — 0.51, zastępuje Z — 0.35). Ponowne wybranie istniejącego priorytetu nie daje postępu projektu. Zestaw może łączyć stabilizację i roboty publiczne; o zgodności decydują finansowanie i zakres oferty.
@@ -935,7 +936,7 @@ Opcje korzystają z gotowych narzędzi 11.9, a warunki PPS partnerzy oceniają w
 | Pole | Treść | Status |
 |---|---|---|
 | Talia i pula | Parlament; pula przygotowania, potem agenda | Z |
-| Dostęp | Od stycznia 1922; wniosek wymaga co najmniej 111 posłów (7.1) | H / P |
+| Dostęp | Od debaty konstytucyjnej (wydarzenie z grudnia 1924, od 0.56; wcześniej od stycznia 1922); wniosek wymaga co najmniej 111 posłów (7.1) | H / P |
 | Koszt | Przygotowanie 2 główne akcje; wykonanie obciąża 1 B przez 1 M, bez utrzymania | P |
 | Limit wyboru | Jeden projekt na transakcję; trzy odrębne projekty | Z |
 | Odnowienie | Brak; odrzuconej oferty nie ponawia się bez zmiany (Z — 0.36) | Z / P |
@@ -943,8 +944,8 @@ Opcje korzystają z gotowych narzędzi 11.9, a warunki PPS partnerzy oceniają w
 | Zapisuje | `Q.polish_presidency.constitution.reforms`: trzy pola, domyślnie false; własny `law_id` każdego projektu | P |
 | Odczytują | Zmiana konstytucji (7.1), odwołanie gabinetu (C7), wcześniejsze wybory (7.4) | P |
 | Co zostaje po karcie | Projekt w agendzie od przygotowania; skutek po promulgacji i 1 M wdrożenia | P |
-| Obecny kod | `source/scenes/polish_constitution_project.scene.dry` (etap 4, 0.45) w talii „Parliament”: pierwsza akcja przygotowuje tekst, druga składa wniosek w stałej karcie `source/scenes/polish_agenda.scene.dry`. Rekord `Q.polish_presidency.constitution.reforms`; `constructive_vonc` jest jego adapterem. Własne przygotowanie arbitrażu prezydenta zablokowane do etapu 5. Odziedziczona `source/scenes/government_affairs/constitutional_reform.scene.dry` jest zablokowana warunkiem `not polish_economy_system` | K |
-| Źródła i testy | 7.1, 7.6, 12.4, 17.10; testy „Trzy reformy”, „Szczególna większość”, „C5–C7” w 21.1 | — |
+| Obecny kod | Z — 0.56: karta czeka na wydarzenie `source/scenes/polish_event_constitution_debate.scene.dry` (grudzień 1924). `source/scenes/polish_constitution_project.scene.dry` (etap 4, 0.45) w talii „Parliament”: pierwsza akcja przygotowuje tekst, druga składa wniosek w stałej karcie `source/scenes/polish_agenda.scene.dry`. Rekord `Q.polish_presidency.constitution.reforms`; `constructive_vonc` jest jego adapterem. Własne przygotowanie arbitrażu prezydenta zablokowane do etapu 5. Odziedziczona `source/scenes/government_affairs/constitutional_reform.scene.dry` jest zablokowana warunkiem `not polish_economy_system` | K |
+| Źródła i testy | 7.1, 7.6, 12.4, 17.10; testy „Trzy reformy”, „Szczególna większość”, „C5–C7”, „Debata o konstytucji” w 21.1 | — |
 
 | Opcja (ID) | Zablokowana, gdy | Skutek od razu | Skutek później | Status |
 |---|---|---|---|---|
@@ -987,12 +988,12 @@ Nie ma płatnych „wyjaśnień ministra” ani „odłożenia”; zamknięcie k
 | Dostęp | Rzeczywista relacja PPS z gabinetem (członkostwo, tolerowanie); w opozycji przy konkretnej inicjatywie odwołania | Z |
 | Koszt | Zwykłe użycie 1 T, 0 R; przy ostrzeżeniu albo ultimatum odpowiedź 0 T raz na sprawę, także w odnowieniu | P |
 | Limit wyboru | 1 opcja | Z |
-| Odnowienie | cd 3 M na gabinet | P |
+| Odnowienie | cd 6 M na gabinet (od 0.56; wcześniej 3 M) i pół roku od powołania gabinetu; od razu na 2 M po działaniu gabinetu wbrew PPS | P |
 | Wyjątek | Po odmowie `bargain` natychmiastowy wybór za 0 T: spełnić groźbę albo się cofnąć (M11) | Z |
 | Zapisuje | `Negotiation` z jedną ofertą i odpowiedzią tak/nie; `Agreement` (zakres, termin); `S.cabinet.pps_threat_discounted`; wiarygodność PPS; relacje | P |
 | Odczytują | Ocena ofert (8.3), umowy i napięcie (9.1–9.4), odwołanie (7.1), odpowiedzialność (5.6) | P |
 | Co zostaje po karcie | Umowy i napięcie według 9.1–9.4; przyjęty postulat wykonuje zwykły wykonawca | P |
-| Obecny kod | `source/scenes/polish_government_support.scene.dry` (1 T w talii „Parliament”) i stała karta odpowiedzi `source/scenes/polish_government_response.scene.dry` (0 T), etap 3, 0.44. Żądaniem w grze jest osłona pracownicza z 9.1; od etapu 4 przyjęta staje się obietnicą osłony w pełnym wariancie z terminem. Wzór menu: odziedziczona `source/scenes/government_affairs/dealing_with_toleration.scene.dry`. Niemieckiego automatycznego zarządzenia wyborów nie przenosimy (9.8). Od etapu 8 (0.49) przy otwartej sprawie wojskowej żądaniem może być też kompromis z Piłsudskim pod kontrolą cywilną (`military_compromise`), z groźbą albo bez niej; gabinet wykonuje go sam przy najbliższym przeglądzie, a umowa obowiązuje, dopóki ten gabinet rządzi (A3) | K |
+| Obecny kod | Z — 0.56: rytm i powód karty z `PolishGovernment.supportProvocation` (pakiet z podatkami pośrednimi, cłami, cięciami administracji albo zasiłku; złamane zobowiązanie). `source/scenes/polish_government_support.scene.dry` (1 T w talii „Parliament”) i stała karta odpowiedzi `source/scenes/polish_government_response.scene.dry` (0 T), etap 3, 0.44. Żądaniem w grze jest osłona pracownicza z 9.1; od etapu 4 przyjęta staje się obietnicą osłony w pełnym wariancie z terminem. Wzór menu: odziedziczona `source/scenes/government_affairs/dealing_with_toleration.scene.dry`. Niemieckiego automatycznego zarządzenia wyborów nie przenosimy (9.8). Od etapu 8 (0.49) przy otwartej sprawie wojskowej żądaniem może być też kompromis z Piłsudskim pod kontrolą cywilną (`military_compromise`), z groźbą albo bez niej; gabinet wykonuje go sam przy najbliższym przeglądzie, a umowa obowiązuje, dopóki ten gabinet rządzi (A3) | K |
 | Źródła i testy | 9.8, 9.1, 9.2, 9.3, 9.4, 8.3, 17.4, 17.10, 17.14; testy „Groźba przyjęta”, „Groźba odrzucona”, „Groźba po cofnięciu”, „Perswazja”, „Rząd bez potrzeby PPS”, „Poparcie gabinetu”, „Utrata partnera”, „C5–C7” w 21.1 | — |
 
 | Opcja (ID) | Zablokowana, gdy | Skutek od razu | Skutek później | Status |
@@ -1581,18 +1582,18 @@ H: oś gabinetów Ponikowski — próba Śliwińskiego — Nowak według `PL-192
 
 | Pole | Treść | Status |
 |---|---|---|
-| Rodzaj | Wydarzenie; jedna odpowiedź na ID wystąpienia (B2) | Z |
-| Wyzwalacz | Zapisane wystąpienie Piłsudskiego i aktualny spór; profil wskazuje temat, instytucję i spór | P |
-| Okno | Od 1922 | P |
-| Kolejka | Kategoria 6 z 4.5: tło (Z — 0.39) | Z |
+| Rodzaj | Od 0.56 karta czasowa talii „Parlament” (wcześniej wydarzenie); jedna odpowiedź na ID wystąpienia (B2) | Z |
+| Wyzwalacz | Zapisane wystąpienie Piłsudskiego i aktualny spór; od 0.56 także otwarty kryzys gabinetowy od 1923, najwyżej raz na 6 M | P |
+| Okno | Od 1922; od 0.56 każda karta 3 M od wystąpienia | P |
+| Kolejka | Kategoria 6 z 4.5: tło (Z — 0.39) do 0.55; od 0.56 poza kolejką — karta talii „Parlament” | Z |
 | Powtarzalność | Nowe ID wystąpienia to nowa sprawa; wczytanie nie dodaje drugiego wpisu | Z |
-| Koszt odpowiedzi | 0 T | P |
-| Bez odpowiedzi | Odpowiedź obowiązkowa w miesiącu wystąpienia, przed następną zwykłą akcją; nie ma opcji „milczeć” (Z — 0.38) | Z |
+| Koszt odpowiedzi | Od 0.56 akcja miesiąca, czyli 1 T (wcześniej 0 T) | P |
+| Bez odpowiedzi | Od 0.56 po 3 M milczenie: wpis `stance_silence` w dzienniku 15.2 z wagą 0, bez innych skutków (wcześniej odpowiedź obowiązkowa, Z — 0.38) | Z |
 | Zapisuje | `response` w wydarzeniu; wpis dziennika instytucjonalnego 15.2 (`stance_criticism` albo `stance_defense`) | Z |
 | Odczytują | Autorytet Sejmu (15.2), frakcje (10.1), relacja z Piłsudskim | P |
 | Co zostaje po karcie | Wpis dziennika na 12 M; nie nadpisuje `pils_influence` ani `form_of_power` | Z |
-| Obecny kod | `source/scenes/polish_event_pils_criticism.scene.dry` i `source/rules/polish_politics.js` (etap 7, 0.48): jedna obowiązkowa odpowiedź na zapisane wystąpienie (spór 1922, sprawa wojskowa 1925), wpis dziennika 15.2. Od etapu 8 (0.49) sprawa wojskowa otwiera się w VII 1923 (badania 8f), a wystąpienie z 1922 r. dotyczy prawa powoływania rządu | K |
-| Źródła i testy | 10.7, 15.2, 17.3, 17.13; testy „Dwie decyzje Piłsudskiego”, „Autorytet z dziennika”, „Bez bezpośredniego zapisu”, „B1/B2”, „Obowiązkowa odpowiedź B2”, „Sprzeczność odpowiedzi B2” w 21.1 | — |
+| Obecny kod | `source/scenes/polish_event_pils_criticism.scene.dry` i `source/rules/polish_politics.js` (etap 7, 0.48): jedna obowiązkowa odpowiedź na zapisane wystąpienie (spór 1922, sprawa wojskowa 1925), wpis dziennika 15.2. Od etapu 8 (0.49) sprawa wojskowa otwiera się w VII 1923 (badania 8f), a wystąpienie z 1922 r. dotyczy prawa powoływania rządu. Od 0.56 karta talii „Parlament” z prawdziwym cytatem bez daty, coraz ostrzejszym (`PolishPolitics.QUOTES`) | K |
+| Źródła i testy | 10.7, 15.2, 17.3, 17.13; testy „Dwie decyzje Piłsudskiego”, „Autorytet z dziennika”, „Bez bezpośredniego zapisu”, „B1/B2”, „Karta B2”, „Milczenie i kolejne wystąpienia B2”, „Sprzeczność odpowiedzi B2” w 21.1 | — |
 
 | Opcja (ID) | Zablokowana, gdy | Skutek od razu | Skutek później | Status |
 |---|---|---|---|---|

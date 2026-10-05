@@ -533,6 +533,60 @@
     return problems;
   }
 
+  // ---- The polls of the Status tab (moved from post_event, Z — 0.56) ---------------------------------------------
+
+  // The class rows normalised for display and the national support of each party: from the cells since stage 5, from the
+  // class rows before them. The opening calls it too, so the Polls tab shows the opening support in January 1922, not 0%.
+  function recomputeSupport(Q) {
+    if (Q.polish_party_rules) {
+      absorbRowEdits(Q);
+      writeClassMirrors(Q);
+    }
+    for (const c of Q.classes) {
+      let classVotes = 0;
+      for (const party of Q.parties) {
+        if (Q[c + '_' + party] < 0) Q[c + '_' + party] = 0;
+        classVotes += Q[c + '_' + party];
+      }
+      for (const party of Q.parties) {
+        Q[c + '_' + party + '_normalized'] = classVotes > 0 ? 100 * Q[c + '_' + party] / classVotes : 0;
+        Q[c + '_' + party + '_display'] = classVotes > 0 ? Math.round(100 * Q[c + '_' + party] / classVotes) : 0;
+      }
+    }
+    for (const legacyParty in Q.legacy_party_map) {
+      const polishParty = Q.legacy_party_map[legacyParty];
+      for (const group of Q.classes) {
+        Q[group + '_' + legacyParty + '_normalized'] = Q[group + '_' + polishParty + '_normalized'];
+        Q[group + '_' + legacyParty + '_display'] = Q[group + '_' + polishParty + '_display'];
+      }
+    }
+    // The national result is the votes of the cells (5.2), not a sum of overlapping rows.
+    let totalSupport = 0;
+    const cellVotes = Q.polish_party_rules ? writeNationalQualities(Q) : null;
+    for (const party of Q.parties) {
+      if (cellVotes) {
+        totalSupport += Q[party + '_support'];
+        continue;
+      }
+      let partySupport = 0;
+      for (const c of Q.classes) partySupport += Q[c] * (Q.old_demographics ? Q[c + '_' + party] : Q[c + '_' + party + '_normalized']);
+      Q[party + '_support'] = partySupport;
+      totalSupport += partySupport;
+    }
+    for (const party of Q.parties) {
+      Q[party + '_normalized'] = Q[party + '_support'] / totalSupport;
+      Q[party + '_votes'] = Math.round(Q[party + '_normalized'] * 100);
+      Q[party + '_votes_display'] = Math.round(Q[party + '_normalized'] * 100);
+    }
+    for (const legacyParty in Q.legacy_party_map) {
+      const polishParty = Q.legacy_party_map[legacyParty];
+      Q[legacyParty + '_support'] = Q[polishParty + '_support'];
+      Q[legacyParty + '_normalized'] = Q[polishParty + '_normalized'];
+      Q[legacyParty + '_votes'] = Q[polishParty + '_votes'];
+      Q[legacyParty + '_votes_display'] = Q[polishParty + '_votes_display'];
+    }
+  }
+
   return Object.freeze({
     CELL_PROFILE_ID: CELL_PROFILE_ID,
     MAIN_CLASSES: MAIN_CLASSES,
@@ -558,6 +612,7 @@
     writeClassMirrors: writeClassMirrors,
     absorbRowEdits: absorbRowEdits,
     writeNationalQualities: writeNationalQualities,
+    recomputeSupport: recomputeSupport,
     applyEmployment: applyEmployment,
     applyClassShares: applyClassShares,
     gainForPps: gainForPps,

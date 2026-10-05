@@ -48,7 +48,7 @@ test('a new game has the party of 13.1–13.3 and the factions of 10.1 in Q.S; t
   assert.equal(S.party_orgs.cash, 3);
 });
 
-test('Brak gotówki: at 0 R no paid action is possible; organisational work stays available; the cash never goes below 0', () => {
+test('Brak gotówki: at 0 R no paid action is possible; organisational work and the collection stay available; the cash never goes below 0', () => {
   const Q = game();
   Q.S.party_orgs.cash = 0;
   PolishParty.writeMirrors(Q);
@@ -58,14 +58,14 @@ test('Brak gotówki: at 0 R no paid action is possible; organisational work stay
   assert.equal(PolishParty.organizeStatus(Q, 'branch:industry').available, true);
   PolishParty.organizeWithoutFunds(Q, 'branch:industry');
   assert.equal(Q.month_actions, 1);
-  Q.S.party_orgs.apparatus.member_index = 0; // no income at all
+  // Z — 0.56: the money of the original game: no income and no upkeep, so a settled month neither adds nor takes money.
   const ledger = PolishParty.settleParty(Q, Q.time);
   assert.equal(Q.S.party_orgs.cash, 0);
-  assert.ok(Object.keys(ledger.unpaid).length > 0, 'the unpaid upkeep is recorded');
-  assert.ok(Q.S.party_orgs.arrears.apparatus > 0 && Q.S.militia.arrears > 0);
+  assert.deepEqual([ledger.income, ledger.paid, ledger.unpaid], [undefined, undefined, undefined], 'the ledger records only membership');
+  assert.ok(Object.values(Q.S.party_orgs.arrears).every(v => v === 0) && Q.S.militia.arrears === 0, 'no arrears');
 });
 
-test('Składki: a rise at real wages 89 or 91 multiplies membership by 0.95 or 0.98; the income comes only in the monthly ledger', () => {
+test('Składki: a rise at real wages 89 or 91 multiplies membership by 0.95 or 0.98; every option collects the dues at once (Z — 0.56)', () => {
   for (const [wage, factor] of [[89, 0.95], [91, 0.98]]) {
     const Q = game();
     Q.S.economy.real_wage = wage;
@@ -74,11 +74,17 @@ test('Składki: a rise at real wages 89 or 91 multiplies membership by 0.95 or 0
     PolishParty.duesChoose(Q, 'raise');
     assert.equal(Q.S.party_orgs.dues, 3);
     close(Q.S.party_orgs.apparatus.member_index, 100 * factor);
-    assert.equal(Q.S.party_orgs.cash, cash, 'no extra income at once');
+    close(Q.S.party_orgs.cash - cash, 3 * factor); // the collection at the new dues and membership
     assert.equal(PolishParty.duesStatus(Q, 'keep').available, false, 'after a change the month is used, so the level cannot be confirmed now');
     free(Q);
     assert.match(PolishParty.duesStatus(Q, 'lower').reason, /Available again in 6 months/);
   }
+  const keep = game(), lower = game();
+  const [k0, l0] = [keep.S.party_orgs.cash, lower.S.party_orgs.cash];
+  PolishParty.duesChoose(keep, 'keep');
+  PolishParty.duesChoose(lower, 'lower');
+  close(keep.S.party_orgs.cash - k0, 2); // keeping collects too, as in the original game
+  close(lower.S.party_orgs.cash - l0, 1 * 102 / 100); // at dues 1 and membership 102
 });
 
 test('Cel członkostwa: the target is 100 at the start, 137.5 with union reach ×1.75, 95 at dues 3, always within 50–150', () => {
@@ -110,16 +116,16 @@ test('Zbliżanie członkostwa: 100 at a target of 137.5 becomes 101.875; 120 at 
   close(R.S.party_orgs.apparatus.member_index, 119);
 });
 
-test('Zwrot aparatu: the second level at full membership pays back its 2 R in 40 months (+0.05 R a month net)', () => {
+test('Zwrot aparatu: each level above the first adds 25% to every collection (Z — 0.56); at dues 2 and full membership the second level pays back its 2 R in four collections', () => {
   const Q = game();
-  const income1 = PolishParty.duesIncome(Q.S);
-  const cost1 = PolishParty.monthlyCosts(Q.S).find(item => item.id === 'apparatus').cost;
+  close(PolishParty.collectionGain(Q.S), 2); // dues 2 × membership 100 / 100
   PolishParty.buildApparatus(Q);
   assert.equal(Q.S.party_orgs.apparatus.level, 2);
   assert.equal(Q.S.party_orgs.cash, 0);
-  const net = (PolishParty.duesIncome(Q.S) - income1) - (PolishParty.monthlyCosts(Q.S).find(item => item.id === 'apparatus').cost - cost1);
-  close(net, 0.05);
-  close(2 / net, 40);
+  close(PolishParty.collectionGain(Q.S), 2.5);
+  close(2 / (PolishParty.collectionGain(Q.S) - 2), 4);
+  Q.S.party_orgs.apparatus.level = 4;
+  close(PolishParty.collectionGain(Q.S), 3.5);
 });
 
 test('Dwie organizacje: press and TUR cost 3 R and one month; with 2 R nothing is bought; the same organisation twice is refused', () => {
@@ -151,23 +157,17 @@ test('Podmenu i doradcy: a recruitment from the organisations card starts the sa
   assert.equal(PolishParty.militiaStatus(Q, 'militarize').available, true, 'another step of the same organisation has its own cooldown');
 });
 
-test('TUR: a course waits in an unfinanced month; unfinished it gives no bonus; completed, its campaign bonus in one cell is used once', () => {
+test('TUR: a course takes two months, with or without money (Z — 0.56); unfinished it gives no bonus; completed, its campaign bonus in one cell is used once', () => {
   const Q = game();
   at(Q, 1923, 1);
   Q.S.party_orgs.tur.level = 1;
   PolishParty.turCourse(Q, 'civil_rights', 'workers');
   PolishParty.settleParty(Q, Q.time);
   assert.equal(Q.S.party_orgs.tur.active_course.paid_months, 1);
-  // A month without money: the TUR upkeep is not paid and the course does not advance.
-  Q.S.party_orgs.cash = 0;
-  const index = Q.S.party_orgs.apparatus.member_index;
-  Q.S.party_orgs.apparatus.member_index = 0;
-  PolishParty.settleParty(Q, Q.time + 1);
-  assert.equal(Q.S.party_orgs.tur.active_course.paid_months, 1);
   assert.deepEqual(Q.S.party_orgs.tur.prepared_campaigns, [], 'an unfinished course gives no bonus');
-  Q.S.party_orgs.apparatus.member_index = index;
-  Q.S.party_orgs.cash = 3;
-  PolishParty.settleParty(Q, Q.time + 2);
+  // Z — 0.56: no upkeep, so an empty cash box does not stop the course.
+  Q.S.party_orgs.cash = 0;
+  PolishParty.settleParty(Q, Q.time + 1);
   assert.equal(Q.S.party_orgs.tur.active_course, null);
   assert.equal(Q.S.party_orgs.tur.prepared_campaigns.length, 1);
   const cell = Q.S.society.cells.find(c => c.class_id === 'workers');
@@ -212,7 +212,7 @@ test('Konfiskata: one restriction per ID, re-entry changes nothing, lifting remo
   assert.equal(PolishParty.liftPressRestriction(Q, 'conf-1'), false);
 });
 
-test('AS: 499 or 500 members, with and without militarisation: AS only from 500 after militarisation, with money, legality and no arrears', () => {
+test('AS: 499 or 500 members, with and without militarisation: AS only from 500 after militarisation, with 2 R and legality (Z — 0.56: no reserve for upkeep)', () => {
   const Q = game();
   Q.S.party_orgs.cash = 10;
   Q.S.militia.strength = 500;
@@ -223,15 +223,12 @@ test('AS: 499 or 500 members, with and without militarisation: AS only from 500 
   Q.S.militia.strength = 500;
   assert.equal(PolishParty.canFormAS(Q.S), true);
   assert.equal(Q.S.militia.stage, 1, 'the threshold does not reorganise by itself');
-  Q.S.party_orgs.cash = 3.1;
-  assert.match(PolishParty.militiaStatus(Q, 'as').reason, /Needs 3\.2 resources/);
+  Q.S.party_orgs.cash = 1.9;
+  assert.match(PolishParty.militiaStatus(Q, 'as').reason, /Needs 2 resources/);
   Q.S.party_orgs.cash = 10;
-  Q.S.militia.arrears = 0.1;
-  assert.match(PolishParty.militiaStatus(Q, 'as').reason, /unpaid upkeep/);
-  Q.S.militia.arrears = 0;
   PolishParty.militiaChoose(Q, 'as');
   assert.deepEqual([Q.S.militia.stage, Q.S.militia.strength, Q.pps_militia_name], [2, 500, 'Akcja Socjalistyczna']);
-  close(PolishParty.militiaUpkeep(Q.S.militia), 0.40);
+  close(Q.S.party_orgs.cash, 8); // only the 2 R of the change
 });
 
 test('Posłuch AS: alignment 50 / 20 / 100 gives compliance 0.835→0.985 / 0.715→0.865 / 1→1 and force ×1.18 / ×1.21 / ×1', () => {
@@ -288,5 +285,7 @@ test('cooperatives: prepared in the organisations card, launched in the agenda f
   const rural = Q.S.society.cells.find(c => c.class_id === 'rural');
   const workers = Q.S.society.cells.find(c => c.class_id === 'workers');
   assert.deepEqual([PolishParty.cooperativeRelief(Q.S, rural), PolishParty.cooperativeRelief(Q.S, workers)], [1, 0]);
-  assert.ok(PolishParty.monthlyCosts(Q.S).some(item => item.id === 'cooperative:' + project.id && item.cost === 0.10));
+  // Z — 0.56: no upkeep; the relief lasts while the cooperative operates.
+  PolishParty.settleParty(Q, Q.time);
+  assert.deepEqual([PolishParty.cooperativeRelief(Q.S, rural), Q.S.party_orgs.cash], [1, 2]);
 });

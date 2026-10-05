@@ -1,0 +1,12 @@
+{
+ "source": "scenes/polish_event_constitution_debate.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: A Debate on the Constitution": "title: Debata o konstytucji",
+  "subtitle: The right and PSL “Piast” want to repair the March Constitution; PPS can table its own projects.": "subtitle: Prawica i PSL „Piast” chcą naprawy konstytucji marcowej; PPS może zgłosić własne projekty.",
+  "= A debate on the constitution": "= Debata o konstytucji",
+  "At its congress on 26 October 1924 the Popular National Union (ZLN) adopted a resolution on the “repair of the constitution”: a President who may dissolve the Sejm, a Senate equal to the Sejm, fewer deputies, a narrower immunity and a constitutional tribunal. In December 1924 the congress of PSL “Piast” also declared a change of the constitution necessary. The revision of the March Constitution is on the agenda.": "Na kongresie 26 października 1924 r. Związek Ludowo-Narodowy przyjął uchwałę o „naprawie konstytucji”: prezydent z prawem rozwiązania Sejmu, Senat równorzędny z Sejmem, mniej posłów, węższy immunitet i trybunał konstytucyjny. W grudniu 1924 r. zmianę konstytucji uznał za konieczną także kongres PSL „Piast”. Rewizja konstytucji marcowej weszła na porządek dnia.",
+  "From now on PPS can prepare and table its own projects with the card Constitutional Reform.": "Od teraz PPS może przygotowywać i zgłaszać własne projekty kartą „Reforma konstytucyjna”.",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

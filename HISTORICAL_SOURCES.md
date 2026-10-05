@@ -1,5 +1,102 @@
 # Historical Source Register
 
+## PL-PILSUDSKI-QUOTES-2026-10-05 — authentic quotations on card B2
+
+- **Authority:** on 5 October 2026 the user asked for an authentic quotation of Piłsudski on the card of his criticism of the
+  Sejm, without its date, another one at each speech and sharper with time (technical reference 0.56, sections 10.7 and 23.29).
+- **Sources (accessed 5 October 2026; read in scans of same-day reprints):**
+  - 13 XI 1925, written statement handed to President Wojciechowski: *Ilustrowana Republika* nr 108, 15 XI 1925, p. 2
+    (https://bc.wbp.lodz.pl/dlibra/publication/23910/edition/22744). A variant wording is in *Pisma zbiorowe* t. 8 (reprint
+    1990), p. 247, as quoted by W. Suleja (IPN, https://przystanekhistoria.pl/pa2/teksty/100884,Zamach-majowy.html).
+  - 10 V 1926, press interview (*Kurier Poranny* of 11 V 1926 was confiscated): reprinted "ściśle w dosłownem brzmieniu" in
+    *Ilustrowana Republika* nr 130, 11 V 1926, p. 2 (https://bc.wbp.lodz.pl/Content/22987/). The game uses the modern
+    citation form; the print has the misprints "staje" and "ponowaniem".
+  - 29 V 1926, speech to the party leaders, a summary of the PAT agency, not a stenographic record: *Ilustrowana Republika*
+    nr 148, 30 V 1926, pp. 1–2 (https://bc.wbp.lodz.pl//Content/23004/IlustrowanaRepublika1926Nr148.pdf).
+  - 30 VI 1928, statement to journalists after his resignation as prime minister: *Ilustrowana Republika* nr 180, 1 VII 1928,
+    pp. 1–2 (https://bc.wbp.lodz.pl/dlibra/publication/24988/edition/23776).
+  - 7 IV 1929, article "Dno oka, czyli wrażenia człowieka chorego z sesji budżetowej w Sejmie": *Ilustrowana Republika* nr 94,
+    7 IV 1929, pp. 1–3 (https://bc.wbp.lodz.pl//Content/24374/IlustrowanaRepublika1929kwIINr094.pdf).
+  - 26 VIII 1930, interview with B. Miedziński (*Gazeta Polska*, 27 VIII 1930): *Ilustrowana Republika* nr 234, 27 VIII 1930,
+    pp. 1–2 (https://bc.wbp.lodz.pl//Content/25204/IlustrowanaRepublika1930Nr234.pdf).
+  - 24 X 1930, interview "Dlaczego Marszałek Piłsudski kandyduje?" (*Gazeta Polska*, 25 X 1930): *Ilustrowana Republika*
+    nr 293, 25 X 1930, pp. 1–2 (https://bc.wbp.lodz.pl//Content/25290/IlustrowanaRepublika1930Nr293.pdf).
+- **Evidence and confidence:** every quotation of `PolishPolitics.QUOTES` was read in these scans (high for the printed text).
+  Not checked: the original Warsaw papers and the pages of *Pisma zbiorowe*. The spelling is modernised ("partii", "od razu");
+  "…" marks a cut; the English versions are the project's translations.
+- **Game use:** the n-th recorded speech shows the n-th quotation, ordered from the milder (1925–1926) to the harsher
+  (1928–1930); the card shows no date.
+- **Classification / boundary:** the words are documented facts. The occasions of the game — the dispute of 1922, the
+  military case and the cabinet crises — are a gameplay simplification, and most quotations were said later than the game
+  date at which they appear. Not used, because unverified or wrong: "Rzeczpospolita to wielki burdel…" (no source),
+  "Bić kurwy i złodziei" (web only), "sejmokracja" as Piłsudski's word (not found in his verified texts; his attested words
+  are "sejmowładztwo" and "posłowładztwo"), "publiczne szmaty" (a misreading of the 1928 text).
+
+## PL-CONSTITUTION-DEBATE-1924 — the event that opens the constitutional card
+
+- **Authority:** decision of the user of 5 October 2026: the card "Constitutional Reform" appears only after an event of a
+  constitutional debate, in December 1924 (technical reference 0.56, sections 7.6 and 23.29).
+- **Sources (accessed 5 October 2026):** I. Iwanowicz, "Zjazdy (kongresy) Związku Ludowo-Narodowego w II Rzeczypospolitej",
+  *Piotrkowskie Zeszyty Historyczne* 4 (2002), pp. 224–225
+  (https://bazhum.muzhp.pl/media/texts/piotrkowskie-zeszyty-historyczne/2002-tom-4/piotrkowskie_zeszyty_historyczne-r2002-t4-s215-228.pdf);
+  *Dziennik Śląska Cieszyńskiego* nr 288, 16 XII 1924 (partisan press,
+  https://repozytorium.ossolineum.pl//Content/7512/LNNBU-VPV-352--1924-288.pdf); A. Szmyt, "Tryb zmiany konstytucji polskich
+  z 1921 i 1935 r.", *Toruńskie Studia Polsko-Włoskie* 17 (2021), pp. 26–36
+  (https://apcz.umk.pl/TSP-W/article/download/38219/32150/91900); A. Czubiński, "Problemy ustrojowe po przewrocie majowym"
+  (1999, https://www.wbc.poznan.pl/Content/158973/PDF/10.%20Problemy%20ustrojowe%20po%20przewrocie%20majowym.pdf).
+- **Evidence and confidence:**
+  - The IV congress of ZLN (26 X 1924) adopted a resolution on "naprawa konstytucji": two equal chambers, a President who may
+    dissolve the Sejm, voting ages 25/30, a narrower immunity, a constitutional tribunal and fewer deputies (Iwanowicz; high).
+  - The congress of PSL "Piast" in December 1924 declared a change of the constitution necessary; the exact day is not
+    verified (one partisan press source; medium).
+  - No constitutional bill and no committee work in the Sejm were found for 1925; the first motions date from February–April
+    1926, the joint motion on art. 26 from 26 IV 1926 (Czubiński; medium), the August Novelization from 2 VIII 1926 (Szmyt; high).
+- **Game use:** one background event in December 1924; from then on PPS can table its own three projects with card 7.4.
+- **Classification / boundary:** the congress resolutions are documented; that they open the card of PPS's own projects is a
+  gameplay simplification. Whether PPS tabled its own drafts before 1926: TBD — historical research required.
+
+## PL-MARCH-CONSTITUTION-CABINETS — appointment and dismissal of a minority cabinet
+
+- **Authority:** decision of the user of 5 October 2026 to keep the tolerated minority cabinet of 8.6 and to explain it on the
+  result screen (technical reference 0.56, sections 8.6 and 23.29).
+- **Sources (accessed 5 October 2026):** the Constitution of 17 March 1921, Dz.U. 1921 nr 44 poz. 267
+  (https://api.sejm.gov.pl/eli/acts/DU/1921/267/text.html): art. 32 (an ordinary majority with a third of the deputies
+  present), art. 45 (the President appoints the prime minister and, on his motion, the ministers), art. 58 (the Council of
+  Ministers resigns on the demand of the Sejm, voted by an ordinary majority); *Protokoły posiedzeń Rady Ministrów 1918–1923*,
+  t. XI, ed. M. Wołos (IH PAN 2023), pp. 163–166 (https://rcin.org.pl/Content/239867/WA303_276212_II15098-11_Wolos.pdf);
+  J. Goclon, *Przegląd Nauk Historycznych* 12/1 (2013) and *Scripta Historica* 22 (2016); K. Wrotkowski, *Argumenta
+  Historica* 3 (2016).
+- **Evidence and confidence:** the articles are primary (high). The government's own legal opinion of January 1923 and the
+  letter of Senate Marshal Trąmpczyński call the vote after an exposé a custom, not a constitutional duty (Wołos; high).
+  Practice: Grabski's extra-parliamentary cabinet won a vote of 194 to 76 while most of the left abstained (popular source,
+  date unclear; medium).
+- **Game use:** the result of a minority cabinet says that it has fewer than 223 MPs but more for than against it, and that it
+  governs until the Sejm demands its resignation.
+- **Classification / boundary:** documented constitutional rule. Before 14 XII 1922 the government was appointed under the
+  Small Constitution by the Naczelnik Państwa; how far the same reading applies then, and how the standing orders of 1923
+  counted abstentions: TBD — historical research required.
+
+## PL-ELECTION-1919-VOTES — the votes of 1919 next to the first election
+
+- **Authority:** decision of the user of 5 October 2026: show the 1919 votes where they are reliable (technical reference
+  0.56, section 23.29).
+- **Sources (accessed 5 October 2026):** GUS, ed. L. Krzywicki, *Statystyka wyborów do Sejmu Ustawodawczego*, Warszawa 1921,
+  Tablica III, pp. XXVI–XXIX (https://polona.pl/item-view/62ed8f59-bfdb-421b-b63a-64c34fb1aba5); GUS, *Rocznik Statystyki
+  Rzeczypospolitej Polskiej* 1920/22 cz. 2 (1923), Dział XIX, pp. 341–347
+  (https://mbc.cyfrowemazowsze.pl/dlibra/publication/17112/edition/14603); A. Sumara, "Kampania wyborcza do Sejmu
+  Ustawodawczego w 1919 roku", *Humanities and Cultural Studies* 2021, DOI 10.5604/01.3001.0015.5570.
+- **Evidence and confidence:**
+  - Sums of the GUS partition tables: PPS 515,062 (326,707 in the former Russian partition, 174,414 of the Galician PPSD and
+    13,941 in the former Prussian partition); PSL "Wyzwolenie" 839,914; PSL "Piast" with its allied lists 432,983
+    (90,431 + 342,552); NZR and NSR, the parties that formed NPR in 1920, 206,571 (67,285 + 139,286). High for the figures.
+  - The KPRP boycotted the election (Sumara; high).
+  - GUS gave no national vote share: the election was held on different dates (26 I 1919 and later) and in a much smaller
+    area than in 1922; some deputies were co-opted, not elected (high).
+- **Game use:** the number of votes of 1919 for these four lists, with a note that only a part of the country voted and
+  without a computed change; "the communists boycotted the election" for KPP; "no comparable list" for the others.
+- **Classification / boundary:** the figures are documented; the predecessors chosen for the lists of the game are our mapping
+  (medium). Equivalents for ZLN and ChZJN, PZL, the Jewish and German lists: TBD — historical research required.
+
 ## PL-PPS-CKW-NAME-2026-10-04 — the advisers shown as the Central Executive Committee of PPS
 
 - **Authority:** on 4 October 2026 the user asked that the advisers be called

@@ -33,7 +33,7 @@ function deck(engine) {
 test('the Party deck offers the Polish cards of stage 5 and no longer the replaced inherited ones', () => {
   const engine = dendry.startGame();
   const cards = deck(engine);
-  for (const id of ['polish_party_organizations', 'polish_party_militia', 'polish_party_dues']) assert.ok(cards.includes(id), id);
+  for (const id of ['polish_party_organizations', 'polish_party_union_investments', 'polish_party_militia', 'polish_party_dues']) assert.ok(cards.includes(id), id);
   for (const id of ['fundraising', 'party_organizations', 'reichsbanner']) assert.ok(!cards.includes(id), id + ' is replaced');
   assert.ok(ids(engine).includes('polish_party_agenda'), 'the party agenda is a pinned card');
 });
@@ -45,15 +45,39 @@ test('Dwie organizacje in the game: two different organisations in one month; no
   PolishParty.writeMirrors(Q);
   playFromHand(engine, 'polish_party_organizations');
   choose(engine, 'polish_party_organizations.p1_press_distribution');
-  assert.equal(choice(engine, 'polish_party_organizations.p2_union_organize_rail').canChoose, true);
-  assert.equal(choice(engine, 'polish_party_organizations.p2_press_distribution').canChoose, false, 'not the same organisation twice');
-  choose(engine, 'polish_party_organizations.p2_union_organize_rail');
+  assert.equal(choice(engine, 'polish_party_organizations.p2_cooperative_workers').canChoose, true);
+  assert.equal(choice(engine, 'polish_party_organizations.p2_press_distribution'), undefined, 'the same organisation is not offered again (Z — 0.56)');
+  assert.ok(ids(engine).length <= 7, 'at most seven choices on the second page');
+  choose(engine, 'polish_party_organizations.p2_cooperative_workers');
   assert.match(content(engine), /Together 2 R and this month’s action/);
   assert.equal(Q.S.party_orgs.cash, 3, 'nothing is spent before the confirmation');
   choose(engine, 'polish_party_organizations.do_confirm');
   assert.match(content(engine), /the press gains 10 reach/);
   assert.equal(Q.S.party_orgs.press.reach, 40);
+  assert.equal(Q.S.party_orgs.cooperatives.projects.filter(c => c.status === 'prepared').length, 1, 'a workers’ cooperative is prepared');
+  choose(engine, 'root');
+  assert.equal(Q.time, 2, 'one month');
+});
+
+// Z — 0.56 (item 4 of 5 X 2026): the union packages have a card of their own; one investment in one action.
+test('Związki zawodowe — organizowanie i fundusze: a card of its own with seven choices; one investment costs the month', () => {
+  const engine = dendry.startGame();
+  const Q = engine.state.qualities;
+  playFromHand(engine, 'polish_party_organizations');
+  assert.ok(ids(engine).length <= 7, 'the organisations card has at most seven choices');
+  assert.ok(!ids(engine).some(id => id.includes('union')), 'no union package in the organisations card');
+  choose(engine, 'easy_discard');
+  playFromHand(engine, 'polish_party_union_investments');
+  assert.deepEqual(ids(engine), ['polish_party_union_investments.union_organize_industry', 'polish_party_union_investments.union_organize_rail',
+    'polish_party_union_investments.union_organize_farm_labour', 'polish_party_union_investments.union_fund_industry',
+    'polish_party_union_investments.union_fund_rail', 'polish_party_union_investments.union_fund_farm_labour', 'easy_discard']);
+  choose(engine, 'polish_party_union_investments.union_organize_rail');
   assert.ok(Math.abs(Q.S.unions.rail.reach - 36.5) < 1e-9, 'rail +15 × 1.10: the character of a workers’ party (10.6)');
+  assert.equal(Q.month_actions, 1, 'the month is spent');
+  assert.equal(Q.S.cooldowns['party.union_investments'], Q.time + 2, 'the card waits two months');
+  assert.equal(Q.S.cooldowns['party.organizations'], undefined, 'the organisations card keeps its own wait');
+  assert.match(PolishParty.selectionStatus(Q, ['union_organize_rail', 'union_fund_rail'], 'party.union_investments').reason, /one investment for the unions/);
+  assert.match(PolishParty.selectionStatus(Q, ['press_distribution', 'union_fund_rail']).reason, /Unknown package/);
   choose(engine, 'root');
   assert.equal(Q.time, 2, 'one month');
 });
@@ -67,14 +91,14 @@ test('Bez płatnego braku wyboru: the organisations card returned to the hand co
   assert.deepEqual(engine.state.currentHands.main.map(c => c.id), ['polish_party_organizations'], 'the card goes back to the hand');
   playFromHand(engine, 'polish_party_dues');
   assert.equal(choice(engine, 'polish_party_dues.keep').canChoose, true);
-  assert.match(plain(choice(engine, 'polish_party_dues.keep').subtitle), /^Present level Costs this month's action; the dues stay at 2 and the card waits six months/);
+  assert.match(plain(choice(engine, 'polish_party_dues.keep').subtitle), /^Present level Costs this month's action; the dues stay at 2, the collection brings 2 resources now, and the card waits six months\.$/);
   assert.deepEqual(bold(choice(engine, 'polish_party_dues.keep').subtitle), ['Present level']);
   assert.equal([].concat(choice(engine, 'easy_discard').title).join(''), 'Return to hand');
   choose(engine, 'easy_discard');
   assert.equal(Q.time, 1);
   engine.playCard('polish_party_dues');
   choose(engine, 'polish_party_dues.keep');
-  assert.match(content(engine), /Dues stay at 2/);
+  assert.match(content(engine), /Dues stay at 2\. The collection brings 2 R\./);
   choose(engine, 'root');
   assert.deepEqual([Q.time, Q.S.party_orgs.dues, Q.S.cooldowns['party.dues']], [2, 2, 7], 'one month, the same dues, the usual wait');
 });
@@ -95,17 +119,18 @@ test('Brak gotówki in the game: with an empty cash box the party agenda still o
   assert.ok(Q.S.society.cells.filter(c => c.class_id === 'rural').every(c => Math.abs(c.base_reach_pps - 22) < 1e-9));
 });
 
-test('the Milicja card recruits for 1 R and settles the month; the party ledger then pays the larger upkeep', () => {
+test('the Milicja card recruits for 1 R and settles the month; the larger Milicja needs no upkeep (Z — 0.56)', () => {
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
   playFromHand(engine, 'polish_party_militia');
   assert.equal(choice(engine, 'polish_party_militia.form_as').canChoose, false);
+  const cash = Q.S.party_orgs.cash;
   choose(engine, 'polish_party_militia.recruit');
   choose(engine, 'root');
   assert.deepEqual([Q.time, Q.S.militia.strength, Q.pps_militia_strength], [2, 300, 300]);
   const ledger = Q.S.party_orgs.last_ledger;
   assert.equal(ledger.t, 1);
-  assert.ok(Math.abs(ledger.paid.militia - 0.20) < 1e-9, 'two hundreds of members cost 0.20 R');
+  assert.ok(Math.abs(Q.S.party_orgs.cash - (cash - 1)) < 1e-9, 'only the 1 R of the recruitment');
   engine.goToScene('status');
   assert.match(content(engine), /300 members/);
 });
@@ -180,27 +205,52 @@ test('Obecna linia in the game: the present line can be confirmed for the month;
   assert.ok(!deck(engine).includes('polish_party_pils_influence'), 'the card waits six months');
 });
 
-test('Program bez zmiany in the game: the same set can be confirmed for the month; returning the card is free; a new set costs the month', () => {
+// Z — 0.56: the priorities of the present programme carry the bold label; without a programme an empty set cannot be
+// confirmed (it replaced the empty case of 0.51); a present programme can still be confirmed for the month.
+test('Program bez zmiany in the game (Z — 0.56): six described priorities; the present programme is marked on its priorities; an empty set without a programme is refused', () => {
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
+  const PRIORITY_IDS = ['stabilisation_with_protection', 'public_works', 'wealth_and_investment', 'socialisation', 'agrarian_labour',
+    'cooperatives_housing'];
   playFromHand(engine, 'polish_party_economic_program');
   choose(engine, 'polish_party_economic_program.edit');
-  assert.equal(choice(engine, 'polish_party_economic_program.confirm').canChoose, true, 'the empty set is the present one and can be confirmed');
-  assert.match(plain(choice(engine, 'polish_party_economic_program.confirm').subtitle), /^Present programme Confirming it costs/);
-  assert.deepEqual(bold(choice(engine, 'polish_party_economic_program.confirm').subtitle), ['Present programme']);
+  assert.deepEqual(ids(engine).filter(id => id.includes('.toggle_')), PRIORITY_IDS.map(id => 'polish_party_economic_program.toggle_' + id));
+  for (const id of PRIORITY_IDS) {
+    const option = choice(engine, 'polish_party_economic_program.toggle_' + id);
+    assert.deepEqual(bold(option.subtitle), [], id + ': no present programme yet');
+    assert.match(plain(option.subtitle), /^[A-Z][^.]+\. Add it to the set\.$/, id + ': one sentence, then the action');
+  }
+  assert.equal(plain(choice(engine, 'polish_party_economic_program.toggle_agrarian_labour').title), 'Land reform and rural modernisation');
+  const empty = choice(engine, 'polish_party_economic_program.confirm');
+  assert.equal(empty.canChoose, false, 'no programme and nothing chosen');
+  assert.equal(plain(empty.subtitle), 'Choose at least one priority.');
   choose(engine, 'polish_party_economic_program.toggle_public_works');
   assert.match(plain(choice(engine, 'polish_party_economic_program.confirm').subtitle), /^Costs this month's action; the card then waits six months\.$/);
-  choose(engine, 'polish_party_economic_program.toggle_public_works');
-  assert.equal(choice(engine, 'polish_party_economic_program.confirm').canChoose, true);
   choose(engine, 'polish_party_economic_program');
   choose(engine, 'easy_discard');
-  assert.deepEqual([Q.time, Q.month_actions], [1, 0]);
+  assert.deepEqual([Q.time, Q.month_actions], [1, 0], 'returning the card is free');
   engine.playCard('polish_party_economic_program');
   choose(engine, 'polish_party_economic_program.edit');
   choose(engine, 'polish_party_economic_program.toggle_public_works');
-  choose(engine, 'polish_party_economic_program.toggle_agrarian_labour');
+  choose(engine, 'polish_party_economic_program.toggle_cooperatives_housing');
   choose(engine, 'polish_party_economic_program.confirm');
   choose(engine, 'root');
-  assert.deepEqual(Q.S.actors.pps.strategy.economic_priorities, ['agrarian_labour', 'public_works']);
+  assert.deepEqual(Q.S.actors.pps.strategy.economic_priorities, ['cooperatives_housing', 'public_works']);
   assert.equal(Q.time, 2);
+  // Six months later the card opens with the present programme marked on its two priorities, not on the confirmation.
+  delete Q.S.cooldowns['party.economic_program'];
+  engine.goToScene('polish_party_economic_program.menu');
+  Q.pl_prog_draft = Q.S.actors.pps.strategy.economic_priorities.join(',');
+  engine.goToScene('polish_party_economic_program.menu');
+  for (const id of PRIORITY_IDS) {
+    const marked = ['public_works', 'cooperatives_housing'].includes(id);
+    assert.deepEqual(bold(choice(engine, 'polish_party_economic_program.toggle_' + id).subtitle), marked ? ['Present programme'] : [], id);
+  }
+  const same = choice(engine, 'polish_party_economic_program.confirm');
+  assert.equal(same.canChoose, true);
+  assert.deepEqual(bold(same.subtitle), [], 'the confirmation carries no label');
+  assert.match(plain(same.subtitle), /^Confirms the present programme; it costs this month's action/);
+  choose(engine, 'polish_party_economic_program.toggle_public_works');
+  choose(engine, 'polish_party_economic_program.toggle_cooperatives_housing');
+  assert.equal(choice(engine, 'polish_party_economic_program.confirm').canChoose, true, 'a present programme can be withdrawn');
 });

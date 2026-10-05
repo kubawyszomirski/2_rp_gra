@@ -23,6 +23,7 @@ Units: **R** — the resources of PPS (its money); **B** — a unit of the state
 - @factions: Internal factions
 - @advisers: Central Executive Committee
 - @figures: Figures and charts
+- @sidebar_notes: Notes to the sidebar
 - @backSpecialScene: Exit library.
 
 @government
@@ -526,3 +527,31 @@ if (typeof d3 !== 'undefined' && typeof window !== 'undefined') {
 
 {!<svg id="economic_history" style="width: 500px; height: 300px;"> </svg>!}
 # TODO: maybe add textual histories too? some accessibility stuff as well...
+
+@sidebar_notes
+title: Notes to the sidebar
+go-to: menu
+
+= Notes to the sidebar
+
+The sidebar shows the current figures; these notes explain them.
+
+[? if polish_opening_government_active : March Constitution with transitional arrangements: the Sejm Ustawodawczy and Naczelnik Państwa remain in office. No operating Senate or presidential officeholder is simulated at the opening. ?]
+
+The presidential succession of December 1922 does not spend another monthly action.
+
+[? if polish_presidential_sequence_completed : March Constitution: the President is elected by the Sejm and Senate together as the National Assembly. Government acts require countersignature. ?]
+
+[? if opening_sejm_active : Approved simplification: August 1922 club shares scaled to 444 MPs from January, not an exact historical January roster. Campaigning changes public support, not these seats. Percentages are rounded for display. ?]
+
+ChZJN (ZLN + PSChD) is a joint list; the parties remain separate for government formation.
+
+[? if not sejm_first_election_completed : The first Sejm election is in November 1922. It allocates 444 MPs from voting intentions; ChZJN combines ZLN and PSChD on the ballot. ?]
+
+[? if sejm_first_election_completed and not polish_presidential_sequence_completed : In December the Sejm elects its Marshal and the National Assembly elects the President, without another monthly action. ?]
+
+[? if polish_presidential_sequence_completed : The 111-seat Senate is derived once from the Sejm result (a simplification); it has no separate campaign. There are no early elections without a lawful act, so the next election follows the default legal calendar. ?]
+
+Recorded votes and election history are in Figures and charts; the Polls tab shows voting intentions, not the sitting parliament.
+
+[? if polish_economy_system : The numbers are the game's working balance (economy_simple_v1), not historical statistics. ?]

@@ -880,6 +880,8 @@ Q.polish_politics_rules = 1;
 // uncertain assessment of their loyalty and the agreement with Piłsudski.
 PolishSecurity.attachSecurityState(Q);
 Q.polish_security_rules = 1;
+// Z — 0.56: the polls of the Status tab are computed at the opening, not only at the first post_event (they showed 0%).
+PolishElectorate.recomputeSupport(Q);
 !}
 new-page: true
 

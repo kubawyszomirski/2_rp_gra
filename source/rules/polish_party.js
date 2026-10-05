@@ -252,33 +252,19 @@
     return clip(100 * ratio * (1 - 0.05 * (S.party_orgs.dues - 2)), 50, 150);
   }
 
-  function duesIncome(S) {
+  // Z — 0.56 (item 1 of 5 X 2026): the money of the original game. There is no monthly income, upkeep or arrears; money
+  // comes from collections — the card Party Dues and the extraordinary collection of the agenda — and from events. A
+  // collection brings dues × membership / 100, and each level of the apparatus above the first adds 25% (decisions 1a, 1b).
+  const APPARATUS_COLLECTION_BONUS = 0.25;
+  function collectionAt(dues, members, level) {
+    return dues * members / 100 * (1 + APPARATUS_COLLECTION_BONUS * (level - 1));
+  }
+  function collectionGain(S) {
     const orgs = S.party_orgs;
-    return (0.25 * orgs.dues + 0.15 * (orgs.apparatus.level - 1)) * orgs.apparatus.member_index / 100;
-  }
-
-  function militiaUpkeep(militia, strength, stage) {
-    const people = strength === undefined ? militia.strength : strength;
-    const st = stage === undefined ? militia.stage : stage;
-    return 0.10 * Math.ceil(people / 200) + (st === 2 ? 0.10 : 0);
-  }
-
-  function turUpkeep(tur) {
-    const level = tur.active_build ? tur.active_build.target_level : tur.level;
-    return 0.05 * level;
+    return collectionAt(orgs.dues, orgs.apparatus.member_index, orgs.apparatus.level);
   }
 
   const operatingCooperatives = S => S.party_orgs.cooperatives.projects.filter(p => p.status === 'operating');
-
-  // The costs of one month in the order they are paid (P): apparatus, press, TUR, cooperatives, Milicja.
-  function monthlyCosts(S) {
-    const orgs = S.party_orgs;
-    const items = [{id: 'apparatus', cost: 0.10 * orgs.apparatus.level}, {id: 'press', cost: 0.10}];
-    if (orgs.tur.level > 0 || orgs.tur.active_build) items.push({id: 'tur', cost: turUpkeep(orgs.tur)});
-    for (const project of operatingCooperatives(S)) items.push({id: 'cooperative:' + project.id, cost: 0.10});
-    items.push({id: 'militia', cost: militiaUpkeep(S.militia)});
-    return items;
-  }
 
   function pressEffective(S) {
     const press = S.party_orgs.press, t = S.turn.last_settled_time + 1;
@@ -287,59 +273,23 @@
       credibility: clip(press.credibility - (press.format === 'popular' ? 5 : 0), 0, 100), penalty: penalty};
   }
 
-  function monthlyIncome(S) {
-    const press = S.party_orgs.press;
-    const sales = press.format === 'popular' && pressEffective(S).reach >= 50 && press.paid_last ? 0.10 : 0;
-    return {dues: duesIncome(S), sales: sales, total: duesIncome(S) + sales};
-  }
-
-  // Six months of the fixed costs and income at the present state, shown before a new fixed cost (13.1).
-  function forecastCash(S, extraCost, months) {
-    const n = months || 6;
-    const net = monthlyIncome(S).total - monthlyCosts(S).reduce((sum, item) => sum + item.cost, 0) - (extraCost || 0);
-    return S.party_orgs.cash + n * net;
-  }
-
-  // One month of the party's own finances (13.1–13.4, 14.1), in step 6 of 4.2 after the economy and the
-  // flows, before the agreements. Payment comes only from the money there is: a shortfall never makes the
-  // cash negative, it records the unfinanced organisation and its arrears; a surplus then pays arrears.
+  // One month of the party's own finances (13.1–13.4, 14.1), in step 6 of 4.2 after the economy and the flows, before the
+  // agreements. Z — 0.56: only the membership moves here; the organisations work without upkeep — the press keeps its
+  // reach, a build or a course of TUR advances every month, the cooperatives give their relief while they operate and
+  // Milicja recovers 5 fatigue a month. Arrears of an older save are written off.
   function settleParty(Q, t) {
     const S = Q.S, orgs = S.party_orgs, militia = S.militia;
-    // Membership first approaches its target by 5% of the gap, and the month's dues come from the new
-    // membership (13.1; the order of the approved M18 diagnostics, test „Otwarcia finansowe”).
+    // Membership approaches its target by 5% of the gap (13.1; the order of the approved M18 diagnostics).
     const apparatus = orgs.apparatus;
     const target = memberTarget(Q);
     apparatus.member_index = clip(apparatus.member_index + 0.05 * (target - apparatus.member_index), 0, 150);
-    const income = monthlyIncome(S);
-    orgs.cash += income.total;
-    const paid = {}, unpaid = {};
-    for (const item of monthlyCosts(S)) {
-      if (orgs.cash + 1e-9 >= item.cost) {
-        orgs.cash = Math.max(0, orgs.cash - item.cost);
-        paid[item.id] = item.cost;
-      } else {
-        unpaid[item.id] = item.cost;
-        if (item.id === 'militia') militia.arrears += item.cost;
-        else {
-          const key = item.id.indexOf('cooperative:') === 0 ? 'cooperatives' : item.id;
-          orgs.arrears[key] = (orgs.arrears[key] || 0) + item.cost;
-        }
-      }
-    }
-    // Arrears are paid from what is left, in the same order (P); paying them resumes the activity.
-    for (const key of ['apparatus', 'press', 'tur', 'cooperatives']) {
-      const due = orgs.arrears[key] || 0;
-      if (due > 0 && orgs.cash > 0) { const pay = Math.min(due, orgs.cash); orgs.arrears[key] = round(due - pay, 6); orgs.cash -= pay; }
-    }
-    if (militia.arrears > 0 && orgs.cash > 0) { const pay = Math.min(militia.arrears, orgs.cash); militia.arrears = round(militia.arrears - pay, 6); orgs.cash -= pay; }
-    orgs.cash = Math.max(0, round(orgs.cash, 6));
-    // Press: two months in a row without upkeep cost 5 reach a month (13.2).
+    for (const key of Object.keys(orgs.arrears)) orgs.arrears[key] = 0;
+    militia.arrears = 0;
     const press = orgs.press;
-    if (paid.press !== undefined) { press.unpaid_months = 0; press.paid_last = true; }
-    else { press.unpaid_months += 1; press.paid_last = false; if (press.unpaid_months >= 2) press.reach = Math.max(0, press.reach - 5); }
-    // TUR: a build or a course advances only in a financed month (13.2).
+    press.unpaid_months = 0;
+    press.paid_last = true;
     const tur = orgs.tur;
-    if (tur.active_build && paid.tur !== undefined) {
+    if (tur.active_build) {
       tur.active_build.paid_months += 1;
       if (tur.active_build.paid_months >= 2) {
         tur.level = tur.active_build.target_level;
@@ -348,20 +298,16 @@
         tur.active_build = null;
       }
     }
-    if (tur.active_course && paid.tur !== undefined) {
+    if (tur.active_course) {
       tur.active_course.paid_months += 1;
       if (tur.active_course.paid_months >= 2) completeCourse(Q, t);
     }
-    // Cooperatives give their relief only while their upkeep is paid.
-    for (const project of operatingCooperatives(S)) project.paid_last = paid['cooperative:' + project.id] !== undefined;
-    // Milicja: an unfinanced month adds 5 fatigue; a financed month without use removes 5 (13.4).
-    if (paid.militia !== undefined) militia.fatigue = Math.max(0, militia.fatigue - 5);
-    else militia.fatigue = Math.min(100, militia.fatigue + 5);
-    militia.unpaid_last = paid.militia === undefined;
+    for (const project of operatingCooperatives(S)) project.paid_last = true;
+    militia.fatigue = Math.max(0, militia.fatigue - 5);
+    militia.unpaid_last = false;
     // Since stage 6 the unions' own funds are settled by PolishUnions.beginMonth, before a strike draws on them
     // (14.1–14.2).
-    orgs.last_ledger = {t: t, income: round(income.dues, 4), sales: income.sales, paid: paid, unpaid: unpaid,
-      cash: round(orgs.cash, 4), member_index: round(apparatus.member_index, 4), member_target: round(target, 4)};
+    orgs.last_ledger = {t: t, cash: round(orgs.cash, 4), member_index: round(apparatus.member_index, 4), member_target: round(target, 4)};
     return orgs.last_ledger;
   }
 
@@ -428,6 +374,10 @@
     cooperative_rural: {org: 'cooperatives', cost: 1, kind: 'prepare', class_id: 'rural'},
   });
   const PACKAGE_ORDER = Object.freeze(Object.keys(PACKAGES));
+  // Z — 0.56 (item 4 of 5 X 2026): the union packages have a card of their own, party.union_investments; the other packages
+  // stay in party.organizations. Unions are one organisation, so their card takes one package in one action.
+  const UNION_CARD = 'party.union_investments', ORGANIZATIONS_CARD = 'party.organizations';
+  const cardOfPackage = id => (PACKAGES[id].org === 'unions' ? UNION_CARD : ORGANIZATIONS_CARD);
   const ORG_NAMES = Object.freeze({unions: 'trade unions', press: 'the press', tur: 'TUR', militia: 'Milicja', cooperatives: 'cooperatives'});
   const ORG_NAMES_PL_ACCUSATIVE = Object.freeze({unions: 'związki zawodowe', press: 'prasę', tur: 'TUR', militia: 'Milicję', cooperatives: 'spółdzielnie'});
   const ORGANIZATIONS_COOLDOWN = 2;
@@ -446,17 +396,6 @@
     const wait = key ? rules.cooldownRemaining(Q, key) : 0;
     return wait > 0 ? L('Available again in ' + wait + (wait === 1 ? ' month.' : ' months.'),
       'Znów dostępne za ' + wait + ' ' + rules.plural(wait, 'miesiąc', 'miesiące', 'miesięcy') + '.') : '';
-  }
-
-  // The reserve for Milicja (13.3): the cost and three months of the upkeep it will have, with no arrears.
-  function militiaReserveProblem(S, cashAfter, strength, stage) {
-    if (S.militia.arrears > 0) return L('Milicja has unpaid upkeep.', 'Milicja ma niezapłacone utrzymanie.');
-    const reserve = 3 * militiaUpkeep(S.militia, strength, stage);
-    if (cashAfter + 1e-9 < reserve) {
-      return L('Needs a reserve of ' + rules.units(reserve) + ' for three months of Milicja upkeep.',
-        'Wymaga rezerwy ' + rules.units(reserve, 'resources', 'gen') + ' na trzy miesiące utrzymania Milicji.');
-    }
-    return '';
   }
 
   // One package on the state before the transaction; `spent` is what the other package of the same card
@@ -478,9 +417,6 @@
       const m = S.militia;
       if (m.banned) return no(L('Milicja is banned.', 'Milicja jest zakazana.'));
       if (p.kind === 'militarize' && m.militancy >= 0.70 - 1e-9) return no(L('Its efficiency has reached 0.70.', 'Jej sprawność osiągnęła 0,70.'));
-      const strength = p.kind === 'recruit' ? m.strength + 100 : m.strength;
-      const problem = militiaReserveProblem(S, cash - p.cost, strength, m.stage);
-      if (problem) return no(problem);
     }
     if (p.org === 'cooperatives') {
       if (S.party_orgs.cooperatives.projects.some(c => c.class_id === p.class_id && c.status === 'prepared')) {
@@ -492,12 +428,19 @@
 
   function organizationsAvailable(Q) {
     if (!partyReady(Q) || Q.S.chapter.status === 'ended') return false;
-    if (rules.cooldownRemaining(Q, 'party.organizations') > 0) return false;
+    if (rules.cooldownRemaining(Q, ORGANIZATIONS_CARD) > 0) return false;
     return true;
   }
 
-  function selectionStatus(Q, ids) {
-    const S = Q.S;
+  function unionInvestmentsAvailable(Q) {
+    if (!partyReady(Q) || Q.S.chapter.status === 'ended') return false;
+    return rules.cooldownRemaining(Q, UNION_CARD) === 0;
+  }
+
+  function selectionStatus(Q, ids, card) {
+    const S = Q.S, owner = card || ORGANIZATIONS_CARD;
+    if (ids.some(id => !PACKAGES[id] || cardOfPackage(id) !== owner)) return no(L('Unknown package.', 'Nieznany pakiet.'));
+    if (owner === UNION_CARD && ids.length !== 1) return no(L('Choose one investment for the unions.', 'Wybierz jedną inwestycję w związki.'));
     if (!ids.length || ids.length > 2) return no(L('Choose one or two organisations.', 'Wybierz jedną albo dwie organizacje.'));
     if (ids.length === 2 && PACKAGES[ids[0]].org === PACKAGES[ids[1]].org) return no(L('The two packages must be for different organisations.', 'Oba pakiety muszą dotyczyć różnych organizacji.'));
     if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
@@ -550,13 +493,14 @@
 
   // The whole package is checked first, then the sum of R and 1 T are taken, then the effects and the
   // cooldowns are written; a missing R blocks the whole package, never half of it (13.5).
-  function organizationsChoose(Q, ids) {
+  function organizationsChoose(Q, ids, card) {
     syncMirrors(Q);
-    const status = selectionStatus(Q, ids);
+    const owner = card || ORGANIZATIONS_CARD;
+    const status = selectionStatus(Q, ids, owner);
     if (!status.available) throw new Error('organizationsChoose: ' + status.reason);
-    rules.commitMainAction(Q, 'party.organizations', {selected_options: ids.slice(), resource_cost: {R: ids.reduce((n, id) => n + PACKAGES[id].cost, 0)}});
+    rules.commitMainAction(Q, owner, {selected_options: ids.slice(), resource_cost: {R: ids.reduce((n, id) => n + PACKAGES[id].cost, 0)}});
     const results = ids.map(id => applyPackage(Q, id));
-    Q.S.cooldowns['party.organizations'] = Q.time + ORGANIZATIONS_COOLDOWN;
+    Q.S.cooldowns[owner] = Q.time + ORGANIZATIONS_COOLDOWN;
     writeMirrors(Q);
     return result(Q, L('PPS invests in ' + ids.map(id => ORG_NAMES[PACKAGES[id].org]).join(' and ') + ': ',
       'PPS inwestuje w ' + ids.map(id => ORG_NAMES_PL_ACCUSATIVE[PACKAGES[id].org]).join(' i ') + ': ') + results.join('; ') + '.');
@@ -583,8 +527,7 @@
 
   function canFormAS(S) {
     const m = S.militia;
-    return m.stage === 1 && m.militarized && m.strength >= 500 && !m.banned && !m.repressed &&
-      S.party_orgs.cash + 1e-9 >= 2 + 3 * militiaUpkeep(m, m.strength, 2) && m.arrears === 0;
+    return m.stage === 1 && m.militarized && m.strength >= 500 && !m.banned && !m.repressed && S.party_orgs.cash + 1e-9 >= 2;
   }
 
   function militiaStatus(Q, option) {
@@ -598,10 +541,8 @@
       if (!m.militarized) return no(L('Needs a militarised Milicja.', 'Wymaga zmilitaryzowanej Milicji.'));
       if (m.strength < 500) return no(L('Needs at least 500 members; Milicja has ' + m.strength + '.', 'Wymaga co najmniej 500 członków; Milicja ma ' + m.strength + '.'));
       if (m.repressed) return no(L('Milicja is under repression.', 'Milicja podlega represjom.'));
-      if (m.arrears > 0) return no(L('Milicja has unpaid upkeep.', 'Milicja ma niezapłacone utrzymanie.'));
-      const need = 2 + 3 * militiaUpkeep(m, m.strength, 2);
-      if (S.party_orgs.cash + 1e-9 < need) return no(L('Needs ' + rules.units(need) + ' (2 for the change and a reserve for three months of the upkeep of AS).',
-        'Wymaga ' + rules.units(need, 'resources', 'gen') + ' (2 na przekształcenie i zapas na trzy miesiące utrzymania AS).'));
+      // Z — 0.56: 2 for the change, with no reserve for upkeep.
+      if (S.party_orgs.cash + 1e-9 < 2) return no(L('Needs 2 resources.', 'Wymaga 2 jednostek środków.'));
       return OK;
     }
     return no(L('Unknown option.', 'Nieznana opcja.'));
@@ -681,34 +622,51 @@
     return partyReady(Q) && Q.S.chapter.status !== 'ended' && rules.cooldownRemaining(Q, 'party.dues') === 0;
   }
 
-  // A rise multiplies the membership by 0.95 when real wages are below 90 or unemployment is 8% or more,
-  // otherwise by 0.98; a cut adds 2 points up to 150. Income changes only in the monthly ledger (13.1).
+  // A rise multiplies the membership by 0.95 when real wages are below 90 or unemployment is 8% or more, otherwise by 0.98;
+  // a cut adds 2 points up to 150. Z — 0.56: as in the original game every option collects the dues at once, after the
+  // change (collectionGain); the card still waits six months.
+  function duesChange(S, option) {
+    const orgs = S.party_orgs, E = S.economy;
+    const hard = E.real_wage < 90 || E.unemployment >= 8;
+    if (option === 'raise') return {dues: orgs.dues + 1, members: orgs.apparatus.member_index * (hard ? 0.95 : 0.98), hard: hard};
+    if (option === 'lower') return {dues: orgs.dues - 1, members: Math.min(150, orgs.apparatus.member_index + 2), hard: hard};
+    return {dues: orgs.dues, members: orgs.apparatus.member_index, hard: hard};
+  }
+
+  // What each option collects at once, for the card (Z — 0.56).
+  function duesView(Q) {
+    const S = Q.S;
+    for (const option of ['keep', 'raise', 'lower']) {
+      const change = duesChange(S, option);
+      Q['pl_dues_' + option + '_gain'] = rules.units(round(collectionAt(change.dues, change.members, S.party_orgs.apparatus.level), 2));
+    }
+  }
+
   function duesChoose(Q, option) {
     syncMirrors(Q);
     const status = duesStatus(Q, option);
     if (!status.available) throw new Error('duesChoose: ' + status.reason);
-    const S = Q.S, orgs = S.party_orgs, E = S.economy;
+    const S = Q.S, orgs = S.party_orgs;
     rules.commitMainAction(Q, 'party.dues', {option: option});
+    const change = duesChange(S, option);
     let text;
     if (option === 'keep') {
-      S.cooldowns['party.dues'] = Q.time + 6;
-      writeMirrors(Q);
-      return result(Q, L('Dues stay at ' + orgs.dues + '; nothing else changes.', 'Składki pozostają na poziomie ' + orgs.dues + '; nic więcej się nie zmienia.'));
-    }
-    if (option === 'raise') {
-      const hard = E.real_wage < 90 || E.unemployment >= 8;
-      orgs.dues += 1;
-      orgs.apparatus.member_index *= hard ? 0.95 : 0.98;
-      text = L('Dues rise to ' + orgs.dues + '; some members leave (membership ×' + (hard ? '0.95' : '0.98') + ').',
-        'Składki rosną do ' + orgs.dues + '; część członków odchodzi (członkostwo ×' + (hard ? '0,95' : '0,98') + ').');
+      text = L('Dues stay at ' + orgs.dues + '.', 'Składki pozostają na poziomie ' + orgs.dues + '.');
+    } else if (option === 'raise') {
+      orgs.dues = change.dues;
+      orgs.apparatus.member_index = change.members;
+      text = L('Dues rise to ' + orgs.dues + '; some members leave (membership ×' + (change.hard ? '0.95' : '0.98') + ').',
+        'Składki rosną do ' + orgs.dues + '; część członków odchodzi (członkostwo ×' + (change.hard ? '0,95' : '0,98') + ').');
     } else {
-      orgs.dues -= 1;
-      orgs.apparatus.member_index = Math.min(150, orgs.apparatus.member_index + 2);
+      orgs.dues = change.dues;
+      orgs.apparatus.member_index = change.members;
       text = L('Dues fall to ' + orgs.dues + '; membership +2.', 'Składki spadają do ' + orgs.dues + '; członkostwo +2.');
     }
+    const gain = collectionGain(S);
+    orgs.cash += gain;
     S.cooldowns['party.dues'] = Q.time + 6;
     writeMirrors(Q);
-    return result(Q, text + L(' The new income appears in the monthly settlement.', ' Nowe wpływy pojawią się w miesięcznym rozliczeniu.'));
+    return result(Q, text + L(' The collection brings ' + fmt(gain) + ' R.', ' Zbiórka przynosi ' + fmt(gain) + ' R.'));
   }
 
   function fundraiseStatus(Q) {
@@ -724,7 +682,7 @@
     const status = fundraiseStatus(Q);
     if (!status.available) throw new Error('fundraise: ' + status.reason);
     const S = Q.S, orgs = S.party_orgs;
-    const gain = orgs.dues * orgs.apparatus.member_index / 100;
+    const gain = collectionGain(S);
     rules.commitMainAction(Q, 'party.fundraise', {});
     orgs.cash += gain;
     S.cooldowns['party.fundraise'] = Q.time + 3;
@@ -749,8 +707,8 @@
     orgs.cash = Math.max(0, orgs.cash - 2);
     orgs.apparatus.level += 1;
     writeMirrors(Q);
-    return result(Q, L('The party apparatus reaches level ' + orgs.apparatus.level + ': income +0.15 R × membership/100 a month, upkeep +0.10 R.',
-      'Aparat partii osiąga poziom ' + orgs.apparatus.level + ': wpływy +0,15 R × członkostwo/100 miesięcznie, utrzymanie +0,10 R.'));
+    return result(Q, L('The party apparatus reaches level ' + orgs.apparatus.level + ': every collection brings 25% more for each level above the first.',
+      'Aparat partii osiąga poziom ' + orgs.apparatus.level + ': każda zbiórka przynosi o 25% więcej za każdy poziom powyżej pierwszego.'));
   }
 
   // ---- Organisational work without money (4.4; card 5.7) ---------------------------------------------
@@ -899,8 +857,8 @@
     project.paid_last = true;
     writeMirrors(Q);
     const coopName = L(COOPERATIVE_NAMES[project.class_id], COOPERATIVE_NAMES_PL[project.class_id]);
-    return result(Q, coopName.charAt(0).toUpperCase() + coopName.slice(1) + L(' starts work: relief +1 for its recipients while its upkeep of 0.10 R a month is paid.',
-      ' zaczyna działać: ulga +1 dla jej odbiorców, dopóki płacone jest utrzymanie 0,10 R miesięcznie.'));
+    return result(Q, coopName.charAt(0).toUpperCase() + coopName.slice(1) + L(' starts work: relief +1 for its recipients while it operates.',
+      ' zaczyna działać: ulga +1 dla jej odbiorców, dopóki działa.'));
   }
 
   // A cooperative executor for the cooperative variants of the government cards (8.5, 8.9).
@@ -908,7 +866,7 @@
     return !!(S && S.party_orgs && operatingCooperatives(S).length);
   }
 
-  // The relief of the operating cooperatives in one cell (13.2): +1 each while paid, at most 6 in the cell.
+  // The relief of the operating cooperatives in one cell (13.2): +1 each while it operates (Z — 0.56), at most 6 in the cell.
   function cooperativeRelief(S, cell) {
     const relief = operatingCooperatives(S).filter(p => p.paid_last && p.class_id === cell.class_id).reduce((n, p) => n + p.relief, 0);
     return Math.min(RELIEF_CAP, relief);
@@ -1138,14 +1096,16 @@
 
   // ---- Economic programme: up to three priorities (10.5; card 6.2) --------------------------------------
 
+  // Z — 0.56 (texts approved by the user on 5 X 2026): a clearer name for agrarian_labour and a sixth priority; at most
+  // three of the six.
   const PRIORITIES = Object.freeze({
     stabilisation_with_protection: 'Stabilisation with protections', public_works: 'Public works and employment',
     wealth_and_investment: 'Wealth taxes and capital for investment', socialisation: 'Socialisation of selected enterprises',
-    agrarian_labour: 'An agrarian and workers’ programme',
+    agrarian_labour: 'Land reform and rural modernisation', cooperatives_housing: 'Cooperatives and housing',
   });
   const PRIORITIES_PL = Object.freeze({stabilisation_with_protection: 'Stabilizacja z osłonami', public_works: 'Roboty publiczne i zatrudnienie',
     wealth_and_investment: 'Podatki majątkowe i kapitał na inwestycje', socialisation: 'Uspołecznienie wybranych przedsiębiorstw',
-    agrarian_labour: 'Program rolny i robotniczy'});
+    agrarian_labour: 'Reforma rolna i modernizacja wsi', cooperatives_housing: 'Spółdzielczość i mieszkania'});
   const priorityName = id => L(PRIORITIES[id], PRIORITIES_PL[id]);
 
   const sameSet = (a, b) => a.length === b.length && a.every(x => b.indexOf(x) >= 0);
@@ -1158,6 +1118,8 @@
     const S = Q.S;
     if (!Array.isArray(set) || set.some(id => !PRIORITIES[id]) || new Set(set).size !== set.length) return no(L('Unknown priorities.', 'Nieznane priorytety.'));
     if (set.length > 3) return no(L('At most three priorities.', 'Najwyżej trzy priorytety.'));
+    // Z — 0.56: without a present programme an empty set is nothing to confirm (it replaces the empty case of Z — 0.51).
+    if (!set.length && !strategyOf(S).economic_priorities.length) return no(L('Choose at least one priority.', 'Wybierz co najmniej jeden priorytet.'));
     if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
     const wait = waitReason(Q, 'party.economic_program');
     if (wait) return no(wait);
@@ -1195,7 +1157,12 @@
   function programmeView(Q) {
     syncMirrors(Q);
     const draft = String(Q.pl_prog_draft || '').split(',').filter(Boolean);
-    for (const id of Object.keys(PRIORITIES)) Q['pl_prog_' + id + '_in'] = draft.indexOf(id) >= 0 ? 1 : 0;
+    const current = strategyOf(Q.S).economic_priorities;
+    // Z — 0.56: a priority of the present programme carries the bold label "Present programme" in the menu.
+    for (const id of Object.keys(PRIORITIES)) {
+      Q['pl_prog_' + id + '_in'] = draft.indexOf(id) >= 0 ? 1 : 0;
+      Q['pl_prog_' + id + '_now'] = current.indexOf(id) >= 0 ? 1 : 0;
+    }
     Q.pl_prog_current = strategyOf(Q.S).economic_priorities.map(priorityName).join('; ') || L('none', 'brak');
     Q.pl_prog_draft_text = draft.map(priorityName).join('; ') || L('none', 'brak');
     Q.pl_prog_confirm_why = programmeStatus(Q, draft).reason;
@@ -2293,7 +2260,15 @@
     Q.pl_org_cash = fmt(Q.S.party_orgs.cash);
   }
 
+  // The union card: why each of its packages cannot be taken now (Z — 0.56).
+  function unionInvestmentsView(Q) {
+    organizationsView(Q);
+    for (const id of PACKAGE_ORDER) if (cardOfPackage(id) === UNION_CARD) Q['pl_uni_' + id + '_why'] = selectionStatus(Q, [id], UNION_CARD).reason;
+  }
+
   function organizationsSecondView(Q, first) {
+    // The second page shows only the other organisations, so it never offers more than seven choices (Z — 0.56).
+    Q.pl_org_first_org = PACKAGES[first].org;
     for (const id of PACKAGE_ORDER) {
       const same = PACKAGES[id].org === PACKAGES[first].org;
       Q['pl_org2_' + id + '_ok'] = same ? 0 : (selectionStatus(Q, [first, id]).available ? 1 : 0);
@@ -2313,15 +2288,8 @@
   function partyDisplay(Q) {
     if (!partyReady(Q)) return;
     const S = Q.S, orgs = S.party_orgs, m = S.militia, press = pressEffective(S);
-    const costs = monthlyCosts(S).reduce((n, item) => n + item.cost, 0);
-    const income = monthlyIncome(S);
-    Q.pl_party_cash = fmt(orgs.cash) + ' R';
-    Q.pl_party_ledger = L('income ' + fmt(income.total) + ' R a month (dues ' + orgs.dues + ', membership ' + fmt(orgs.apparatus.member_index) +
-      ', apparatus level ' + orgs.apparatus.level + (income.sales ? ', press sales ' + fmt(income.sales) : '') + '); fixed costs ' + fmt(costs) + ' R',
-      'wpływy ' + fmt(income.total) + ' R miesięcznie (składki ' + orgs.dues + ', członkostwo ' + fmt(orgs.apparatus.member_index) +
-      ', poziom aparatu ' + orgs.apparatus.level + (income.sales ? ', sprzedaż prasy ' + fmt(income.sales) : '') + '); stałe koszty ' + fmt(costs) + ' R');
-    const arrears = Object.keys(orgs.arrears).reduce((n, k) => n + orgs.arrears[k], 0) + m.arrears;
-    Q.pl_party_arrears = arrears > 0 ? L('Unpaid upkeep: ', 'Niezapłacone utrzymanie: ') + fmt(arrears) + ' R.' : '';
+    // A no-break space keeps the unit with its number on the narrow sidebar (Z — 0.56).
+    Q.pl_party_cash = fmt(orgs.cash) + '\u00a0R';
     Q.pl_party_press = L('reach ', 'zasięg ') + fmt(press.reach) + L(', credibility ', ', wiarygodność ') + fmt(press.credibility) + ' (' +
       (orgs.press.format === 'popular' ? L('popular format', 'format popularny') : L('party journal', 'pismo partyjne')) + ')' +
       (press.penalty ? L('; restricted −', '; ograniczenia −') + fmt(press.penalty) : '');
@@ -2341,7 +2309,24 @@
       (m.fatigue ? ', zmęczenie ' + m.fatigue : '') + (m.militarized ? ', zmilitaryzowana' : '') + (m.stage === 2 ? '; Akcja Socjalistyczna' : ''));
     Q.pl_party_unions = BRANCHES.map(id => branchName(id) + L(' reach ', ': zasięg ') + fmt(S.unions[id].reach) + L(', fund ', ', fundusz ') +
       fmt(S.unions[id].fund) + ' R').join('; ');
-    Q.pl_party_cohesion = fmt(cohesion(S));
+    sidebarDisplay(Q);
+  }
+
+  // The same values one per line for the sidebar (Z — 0.54). The sidebar's Main tab also computes them itself, so a
+  // save from before 0.54 shows them as soon as it is loaded; they are display fields only.
+  function sidebarDisplay(Q) {
+    if (!partyReady(Q)) return;
+    const S = Q.S, orgs = S.party_orgs;
+    // Z — 0.56: what a collection brings now; there is no monthly income or upkeep.
+    Q.pl_party_collection = fmt(collectionGain(S)) + '\u00a0R';
+    // Each value has its own line with a bold label in the scene (Z — 0.55); the scales are 1–4 for both levels.
+    Q.pl_party_dues = orgs.dues + L(' of ', ' z ') + DUES_MAX;
+    Q.pl_party_membership = String(Math.round(orgs.apparatus.member_index));
+    Q.pl_party_apparatus = orgs.apparatus.level + L(' of ', ' z ') + APPARATUS_MAX;
+    Q.pl_party_cohesion = String(Math.round(cohesion(S)));
+    for (const id of BRANCHES) {
+      Q['pl_party_union_' + id] = L('reach ', 'zasięg ') + fmt(S.unions[id].reach) + L(', fund ', ', fundusz ') + fmt(S.unions[id].fund) + '\u00a0R';
+    }
   }
 
   // ---- Party agenda (4.4, 13.1–13.2; cards 5.5–5.9) ----------------------------------------------------
@@ -2354,7 +2339,7 @@
     syncMirrors(Q);
     const S = Q.S;
     Q.pl_pa_fundraise_why = fundraiseStatus(Q).reason;
-    Q.pl_pa_fundraise_gain = fmt(S.party_orgs.dues * S.party_orgs.apparatus.member_index / 100);
+    Q.pl_pa_fundraise_gain = fmt(collectionGain(S));
     Q.pl_pa_apparatus_why = apparatusStatus(Q).reason;
     for (const id of BRANCHES) Q['pl_pa_branch_' + id + '_why'] = organizeStatus(Q, 'branch:' + id).reason;
     for (const c of ORGANIZE_CLASSES) Q['pl_pa_class_' + c + '_why'] = organizeStatus(Q, 'class:' + c).reason;
@@ -2394,11 +2379,8 @@
     averageUnionReach: averageUnionReach,
     ppsWorkerSupport: ppsWorkerSupport,
     memberTarget: memberTarget,
-    duesIncome: duesIncome,
-    militiaUpkeep: militiaUpkeep,
-    monthlyCosts: monthlyCosts,
-    monthlyIncome: monthlyIncome,
-    forecastCash: forecastCash,
+    APPARATUS_COLLECTION_BONUS: APPARATUS_COLLECTION_BONUS,
+    collectionGain: collectionGain,
     pressEffective: pressEffective,
     settleParty: settleParty,
     settleMonth: settleMonth,
@@ -2406,6 +2388,8 @@
     packageStatus: packageStatus,
     selectionStatus: selectionStatus,
     organizationsAvailable: organizationsAvailable,
+    unionInvestmentsAvailable: unionInvestmentsAvailable,
+    unionInvestmentsView: unionInvestmentsView,
     organizationsChoose: organizationsChoose,
     organizationsView: organizationsView,
     organizationsSecondView: organizationsSecondView,
@@ -2420,6 +2404,7 @@
     duesStatus: duesStatus,
     duesAvailable: duesAvailable,
     duesChoose: duesChoose,
+    duesView: duesView,
     fundraiseStatus: fundraiseStatus,
     fundraise: fundraise,
     apparatusStatus: apparatusStatus,
@@ -2518,6 +2503,7 @@
     settleBrokenPromises: settleBrokenPromises,
     afterAgreements: afterAgreements,
     partyDisplay: partyDisplay,
+    sidebarDisplay: sidebarDisplay,
     agendaAvailable: agendaAvailable,
     agendaView: agendaView,
   });

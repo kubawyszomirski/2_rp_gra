@@ -375,7 +375,8 @@ test('polls, result text, chart rows, status and history agree without rewriting
   const engine = create();
   const Q = engine.state.qualities;
   const result = clone(election(engine));
-  assert.match(text(engine), /Previous vote comparison: not available/);
+  // Z — 0.56: next to the first election the 1919 votes of comparable lists, without a change (item 8 of 5 X 2026).
+  assert.match(text(engine), /Previous votes: the Legislative Sejm was elected in 1919 on different dates and in only a part of the country/);
   assert.match(text(engine), /ChZJN/);
   assert.equal(Q.sejm_display_rows.reduce((n, row) => n + row.seats, 0), 444);
   engine.goToScene('library');
@@ -393,7 +394,7 @@ test('polls, result text, chart rows, status and history agree without rewriting
   engine.goToScene('library');
   choose(engine, 'library.public_opinion');
   engine.goToScene('backSpecialScene');
-  engine.goToScene('status');
+  engine.goToScene('status.politics');
   assert.match(text(engine), /ChZJN/);
   assert.equal(Q.spd_r, 100 * result.party_seats.pps / 444);
   assert.deepEqual(Q.sejm_results[0], result);
@@ -491,7 +492,15 @@ test('different previous chamber size and new party identities do not invent vot
   assert.equal(result.previous_parliament.total_seats, 432);
   assert.match(Q.npr_election_display, /previous parliament not comparable/);
   close(Q.old_pps_r, 100 * 34 / 432);
-  assert.match(Q.pps_election_display, /previous votes N\/A/);
+  assert.match(Q.pps_election_display, /; 1919: 515,062 votes \(only a part of the country voted\)$/);
+  assert.match(Q.npr_election_display, /; 1919 \(NZR and NSR\): 206,571 votes/);
+  assert.match(Q.kpp_election_display, /; in 1919 the communists boycotted the election$/);
+  assert.match(Q.chzjn_election_display, /; no comparable list in 1919$/);
+  assert.doesNotMatch(Q.pps_election_display, /vote change/, 'no change is computed against 1919');
+  globalThis.PolishRules.setLanguage('pl');
+  assert.equal(globalThis.PolishInstitutions.votes1919Text(['pps']), '; 1919: 515\u00a0062 głosy (głosowała tylko część kraju)');
+  assert.equal(globalThis.PolishInstitutions.votes1919Text(['psl_wyzwolenie']), '; 1919: 839\u00a0914 głosów (głosowała tylko część kraju)');
+  globalThis.PolishRules.setLanguage('en');
 });
 
 test('post-election safeguards cover held cards, old coalition links and police choices; the Polish welfare card replaces the German one', () => {

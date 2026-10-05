@@ -25,7 +25,7 @@ test('Obrazki: każdy obrazek sceny istnieje, a każdy polski obrazek jest użyt
   }
   const credits = fs.readFileSync(path.join(ROOT, 'credits_images.txt'), 'utf8');
   const files = polishFiles();
-  assert.equal(files.length, 58);
+  assert.equal(files.length, 59, 'with the card of the unions (Z — 0.56)');
   for (const f of files) {
     assert.equal((used.get('polish/' + f) || []).length, 1, `polish/${f} is used by exactly one scene`);
     assert.ok(credits.includes('\npolish/' + f + ': '), `polish/${f} has an entry in credits_images.txt`);
@@ -42,7 +42,9 @@ test('Obrazki: karty i karty CKW mają obrazek na karcie, wydarzenia na stronie;
     assert.ok(scene, `${f}: scene ${id}`);
     const card = !!(scene.isCard || scene.isPinnedCard);
     const key = name === 'polish_gov_heritage_zamek_krolewski' ? 'faceImage' : card ? 'cardImage' : 'faceImage';
-    assert.equal(card, !id.startsWith('polish_event_'), `${id}: cards and pinned cards are not events`);
+    // Z — 0.56: B2 became a card of the Parliament deck and kept its scene ID, polish_event_pils_criticism.
+    const event = id.startsWith('polish_event_') && id !== 'polish_event_pils_criticism';
+    assert.equal(card, !event, `${id}: cards and pinned cards are not events`);
     assert.equal(scene[key], 'img/polish/' + f, `${id}: ${key}`);
     assert.equal(games.pl.scenes[id][key], scene[key], `${id}: the Polish game shows the same image`);
   }

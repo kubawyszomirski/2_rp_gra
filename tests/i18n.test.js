@@ -118,18 +118,22 @@ test('Pilotaż: ekran tytułowy, strona miesiąca i pasek boczny po polsku', () 
   assert.match(month, /Styczeń 1922/);
   assert.deepEqual(englishLeft(month), [], 'the month page');
   const titles = engine.getCurrentChoices().map(c => flat(c.title));
-  for (const title of ['Sprawy partii', 'Parlament', 'Agenda partii', 'Związki zawodowe', 'Odrzuć kartę']) assert.ok(titles.includes(title), title);
+  for (const title of ['Sprawy partii', 'Agenda partii', 'Związki zawodowe', 'Odrzuć kartę']) assert.ok(titles.includes(title), title);
+  // Z — 0.56: in January 1922 the Parliament deck has no card yet (the constitutional debate opens in XII 1924, the review of
+  // the cabinet comes after half a year), and an empty deck is hidden.
+  assert.ok(!titles.includes('Parlament'), 'the empty Parliament deck is hidden');
   const sidebar = {};
-  for (const id of ['status', 'status.politics', 'status.paramilitaries', 'status.polls']) {
+  for (const id of ['status', 'status.politics', 'status.economy', 'status.paramilitaries', 'status.polls']) {
     const scene = engine.game.scenes[id];
     engine._runActions(scene.onArrival);
     sidebar[id] = flat(engine._makeDisplayContent(scene.content, true));
     assert.deepEqual(englishLeft(sidebar[id]), [], `sidebar ${id}`);
   }
-  assert.match(sidebar.status, /Kasa partii: 2 R; wpływy 0,5 R miesięcznie/);
+  assert.match(sidebar.status, /Kasa partii: 2\u00a0R\s*\nZbiórka przynosi: 2\u00a0R/, 'a no-break space keeps the unit with the number; Z — 0.56: no income line');
   assert.match(sidebar.status, /Głowa państwa: Józef Piłsudski — Naczelnik Państwa/);
-  assert.match(sidebar.status, /PPS: 35 posłów; 7,9% mandatów/);
-  assert.match(sidebar['status.paramilitaries'], /Policja\. Policja: potencjał 50/);
+  assert.match(sidebar['status.politics'], /PPS: 35 posłów; 7,9% mandatów/);
+  assert.match(sidebar['status.economy'], /Budżet: \+2,00 B w tym miesiącu/);
+  assert.match(sidebar['status.paramilitaries'], /\nPolicja ?\n\s*Potencjał: 50 ?\n/);
   assert.match(sidebar['status.politics'], /PSL Wyzwolenie: przyjazne/);
   assert.deepEqual(errors, []);
 });

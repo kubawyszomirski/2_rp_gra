@@ -160,6 +160,7 @@ Q.pl_fres_offer = view.offer;
 Q.pl_fres_forecast = view.forecast;
 Q.pl_fres_answers = view.answers;
 Q.pl_fres_appointed = view.appointed;
+Q.pl_fres_minority = view.minority_note;
 Q.pl_fres_failed = view.failed;
 !}
 go-to: result
@@ -176,6 +177,8 @@ Our offer: [+ pl_fres_offer +].
 [? if pl_fres_answers : Answers: [+ pl_fres_answers +]. ?]
 
 [? if pl_fres_appointed : **The head of state appoints [+ pl_fres_appointed +].** ?]
+
+[? if pl_fres_minority : [+ pl_fres_minority +] ?]
 
 [? if pl_fres_failed : [+ pl_fres_failed +] ?]
 

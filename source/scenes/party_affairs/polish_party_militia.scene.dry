@@ -16,7 +16,7 @@ Q.pl_mil_as_why = PolishParty.militiaStatus(Q, 'as').reason;
 
 = Milicja PPS
 
-[+ pl_party_militia +]. The upkeep is 0.10 R a month for every 200 members (0.10 R more after AS). An unfinanced month adds 5 fatigue.
+[+ pl_party_militia +]. Milicja needs no upkeep; every month its fatigue falls by 5.
 
 - @recruit
 - @militarize
@@ -45,7 +45,7 @@ go-to: result
 
 @form_as
 title: Reorganise as Akcja Socjalistyczna
-subtitle: 2 resources, once; needs a militarised Milicja of at least 500, legality, no arrears and a reserve. Members follow a call better (+0.15); up to three cases at once before a coup.
+subtitle: 2 resources, once; needs a militarised Milicja of at least 500 and legality. Members follow a call better (+0.15); up to three cases at once before a coup.
 choose-if: {! return PolishParty.militiaStatus(Q, 'as').available !}
 unavailable-subtitle: [+ pl_mil_as_why +]
 on-arrival: {!

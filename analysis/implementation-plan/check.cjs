@@ -13,6 +13,10 @@ const assert = require('node:assert/strict');
 
 const root = path.resolve(__dirname, '../..');
 const read = f => fs.readFileSync(path.join(root, f), 'utf8');
+// Z — 0.54: the page's local scripts carry a version (?v=), so that a browser cannot mix cached and new files.
+const scriptTag = file => new RegExp('<script src="' + file.replace(/\./g, '\\.') + '(\\?v=[0-9.]+)?"></script>');
+const loadsScript = (html, file) => scriptTag(file).test(html);
+const scriptAt = (html, file) => html.search(scriptTag(file));
 const PLAN = 'docs/POLISH_IMPLEMENTATION_PLAN.md', TR = 'docs/POLISH_TECHNICAL_REFERENCE.md', CAT = 'docs/POLISH_CARD_CATALOGUE.md';
 const plan = read(PLAN), tr = read(TR), cat = read(CAT);
 const cells = line => line.split(/(?<!\\)\|/).slice(1, -1).map(c => c.trim());
@@ -181,7 +185,7 @@ assert.ok(/^### 23\.14\. Etap 0 wdrożony/m.test(tr), 'reference 23.14 records s
 const pkg = JSON.parse(read('package.json'));
 // The Polish version of the game (4 X 2026) adds its own step after the copy of the rules.
 assert.ok(/&& cp source\/rules\/\*\.js out\/html\/( && node tools\/i18n\/build\.cjs)?$/.test(pkg.scripts.build), 'the build copies the rules module');
-assert.ok(read('out/html/index.html').includes('<script src="polish_rules.js"></script>'), 'the page loads the rules module');
+assert.ok(loadsScript(read('out/html/index.html'), 'polish_rules.js'), 'the page loads the rules module');
 // Appendix E: every listed file contains the named variable as a whole word.
 const appE = section(plan, '## Dodatek E. ').split('\n').filter(l => /^- \*\*`[^`]+`\*\* — \d+ plików/.test(l));
 for (const l of appE) {
@@ -205,7 +209,7 @@ assert.ok(decisions.includes('Decyzje etapu 1 (Z — 0.42):'), 'stage 1 decision
 assert.ok(plan.includes('## 11. Ustalenia z etapu 1'), 'stage 1 findings');
 assert.ok(/^### 23\.15\. Etap 1 wdrożony/m.test(tr), 'reference 23.15 records stage 1');
 assert.equal((tr.match(/\*\*K — etap 1 \(0\.42\):\*\*/g) || []).length, 5, 'five K notes of stage 1 in chapter 4');
-assert.ok(read('out/html/index.html').includes('<script src="polish_engine_hooks.js"></script>'), 'the page loads the engine hooks');
+assert.ok(loadsScript(read('out/html/index.html'), 'polish_engine_hooks.js'), 'the page loads the engine hooks');
 assert.ok(read('out/html/game.js').includes('window.PolishEngineHooks.install('), 'game.js installs the engine hooks');
 const advisers = ['arciszewski', 'czapinski', 'daszynski', 'drobner', 'dubois', 'jaworowski', 'malinowski', 'moraczewski', 'niedzialkowski', 'perl', 'prochnik', 'puzak', 'zaremba', 'ziemiecki'];
 const commits = advisers.reduce((n, a) => n + (read(`source/scenes/advisors/${a}.scene.dry`).match(/^call: polish_advisor_commit$/gm) || []).length, 0);
@@ -223,7 +227,7 @@ assert.ok(decisions.includes('Decyzje etapu 2 (Z — 0.43):'), 'stage 2 decision
 assert.ok(plan.includes('## 12. Ustalenia z etapu 2'), 'stage 2 findings');
 assert.ok(/^### 23\.16\. Etap 2 wdrożony/m.test(tr), 'reference 23.16 records stage 2');
 assert.equal((tr.match(/\*\*K — etap 2 \(0\.43\)/g) || []).length, 12, 'twelve K notes of stage 2');
-assert.ok(read('out/html/index.html').includes('<script src="polish_institutions.js"></script>'), 'the page loads the institutions module');
+assert.ok(loadsScript(read('out/html/index.html'), 'polish_institutions.js'), 'the page loads the institutions module');
 assert.ok(byStageA[3].includes('7.7') && !byStageA[2].includes('7.7'), 'card 7.7 is in stage 3');
 assert.ok(byStageB[3].includes('Kompromis listowy a Lewica') && byStageB[4].includes('C4'), 'the two moved tests are in stages 3 and 4');
 
@@ -238,7 +242,7 @@ assert.ok(decisions.includes('Decyzje etapu 3 (Z — 0.44):'), 'stage 3 decision
 assert.ok(plan.includes('## 13. Ustalenia z etapu 3'), 'stage 3 findings');
 assert.ok(/^### 23\.17\. Etap 3 wdrożony/m.test(tr), 'reference 23.17 records stage 3');
 assert.equal((tr.match(/\*\*K — etap 3 \(0\.44\):\*\*/g) || []).length, 18, 'eighteen K notes of stage 3');
-assert.ok(read('out/html/index.html').includes('<script src="polish_government.js"></script>'), 'the page loads the government module');
+assert.ok(loadsScript(read('out/html/index.html'), 'polish_government.js'), 'the page loads the government module');
 assert.ok(byStageA[7].includes('9.1') && !byStageA[3].includes('9.1'), 'card 9.1 is in stage 7');
 assert.ok(!/\bcoalition_dissent\b/.test(read('source/scenes/advisors/malinowski.scene.dry') + read('source/scenes/advisors/ziemiecki.scene.dry')),
   'leak 2: the Polish advisers no longer write the German coalition counter');
@@ -259,12 +263,12 @@ assert.ok(decisions.includes('Decyzje etapu 4 (Z — 0.45):'), 'stage 4 decision
 assert.ok(plan.includes('## 14. Ustalenia z etapu 4'), 'stage 4 findings');
 assert.ok(/^### 23\.18\. Etap 4 wdrożony/m.test(tr), 'reference 23.18 records stage 4');
 assert.equal((tr.match(/\*\*K — etap 4 \(0\.45\):\*\*/g) || []).length, 22, 'twenty-two K notes of stage 4');
-for (const script of ['polish_economy.js', 'polish_projects.js']) assert.ok(read('out/html/index.html').includes(`<script src="${script}"></script>`), `the page loads ${script}`);
+for (const script of ['polish_economy.js', 'polish_projects.js']) assert.ok(loadsScript(read('out/html/index.html'), script), `the page loads ${script}`);
 for (const [name, stage] of [['Populacja', 5], ['Warianty funduszu inwestycyjnego', 5], ['Szkoły', 5], ['Ratunek zakładu', 6], ['Wspólna karta gabinetowa', 6],
   ['Reprezentacja', 7], ['Autonomia', 7], ['Sprawiedliwość', 7], ['Rozszerzyć i skupić osłony', 7]]) {
   assert.ok(byStageB[stage].includes(name) && !byStageB[4].includes(name), `decision 4 of stage 4: ${name} is in stage ${stage}`);
 }
-assert.equal(byStageB[4].length, 35, 'stage 4 keeps 35 tests of 21.1');
+assert.equal(byStageB[4].length, 36, 'stage 4 keeps 36 tests of 21.1 (35 and the debate on the constitution of Z — 0.56)');
 assert.ok(/if \(!Q\.polish_economy_system\) \{/.test(read('source/scenes/post_event.scene.dry')), 'leaks 1 and 9: the German monthly economy is guarded');
 for (const card of ['economic_policy', 'fiscal_policy', 'social_welfare', 'labor_rights', 'agricultural_policy', 'education_science', 'judiciary',
   'constitutional_reform', 'economic_democracy']) {
@@ -288,7 +292,7 @@ assert.ok(decisions.includes('Decyzje etapu 5 (Z — 0.46):'), 'stage 5 decision
 assert.ok(plan.includes('## 15. Ustalenia z etapu 5'), 'stage 5 findings');
 assert.ok(/^### 23\.19\. Etap 5 wdrożony/m.test(tr), 'reference 23.19 records stage 5');
 assert.equal((tr.match(/\*\*K — etap 5 \(0\.46\):\*\*/g) || []).length, 34, 'thirty-four K notes of stage 5');
-for (const script of ['polish_electorate.js', 'polish_party.js']) assert.ok(read('out/html/index.html').includes(`<script src="${script}"></script>`), `the page loads ${script}`);
+for (const script of ['polish_electorate.js', 'polish_party.js']) assert.ok(loadsScript(read('out/html/index.html'), script), `the page loads ${script}`);
 assert.equal(byStageB[5].length, 67, 'stage 5 keeps 67 tests of 21.1');
 const rulesSource = read('source/rules/polish_rules.js');
 assert.ok(rulesSource.includes("polish_event_faction_split: Object.freeze({definition_id: 'party.faction_split'"), 'E3 is one definition of the queue');
@@ -315,8 +319,8 @@ assert.ok(decisions.includes('Decyzje etapu 6 (Z — 0.47):'), 'stage 6 decision
 assert.ok(plan.includes('## 16. Ustalenia z etapu 6'), 'stage 6 findings');
 assert.ok(/^### 23\.20\. Etap 6 wdrożony/m.test(tr), 'reference 23.20 records stage 6');
 assert.equal((tr.match(/\*\*K — etap 6 \(0\.47\):\*\*/g) || []).length, 26, 'twenty-six K notes of stage 6');
-assert.ok(read('out/html/index.html').includes('<script src="polish_unions.js"></script>'), 'the page loads polish_unions.js');
-const pageOrder = ['polish_party.js', 'polish_unions.js', 'polish_engine_hooks.js'].map(f => read('out/html/index.html').indexOf(`<script src="${f}"></script>`));
+assert.ok(loadsScript(read('out/html/index.html'), 'polish_unions.js'), 'the page loads polish_unions.js');
+const pageOrder = ['polish_party.js', 'polish_unions.js', 'polish_engine_hooks.js'].map(f => scriptAt(read('out/html/index.html'), f));
 assert.ok(pageOrder[0] < pageOrder[1] && pageOrder[1] < pageOrder[2], 'the unions module loads after the party and before the engine hooks');
 assert.equal(byStageB[6].length, 18, 'stage 6 keeps 18 tests of 21.1');
 const strikeTests = read('tests/rules-strike.test.js') + read('tests/polish-strike.test.js') + read('tests/rules-economy.test.js');
@@ -350,14 +354,17 @@ assert.ok(plan.includes('## 17. Ustalenia z etapu 7'), 'stage 7 findings');
 assert.ok(/^### 23\.21\. Etap 7 wdrożony/m.test(tr), 'reference 23.21 records stage 7');
 assert.equal((tr.match(/\*\*K — etap 7 \(0\.48\):\*\*/g) || []).length, 32, 'thirty-two K notes of stage 7');
 const page7 = read('out/html/index.html');
-const pageOrder7 = ['polish_unions.js', 'polish_politics.js', 'polish_security.js', 'polish_engine_hooks.js'].map(f => page7.indexOf(`<script src="${f}"></script>`));
+const pageOrder7 = ['polish_unions.js', 'polish_politics.js', 'polish_security.js', 'polish_engine_hooks.js'].map(f => scriptAt(page7, f));
 assert.ok(pageOrder7.every(i => i >= 0) && pageOrder7[0] < pageOrder7[1] && pageOrder7[1] < pageOrder7[2] && pageOrder7[2] < pageOrder7[3],
   'the politics and security modules load after the unions and before the engine hooks');
-assert.equal(byStageB[7].length, 53, 'stage 7 keeps 53 tests of 21.1');
+assert.equal(byStageB[7].length, 54, 'stage 7 keeps 54 tests of 21.1 (53 and the silence of B2 of Z — 0.56)');
 const democracyTests = ['tests/rules-politics.test.js', 'tests/polish-democracy.test.js', 'tests/rules-coup.test.js', 'tests/polish-coup.test.js',
   'tests/rules-projects.test.js'].map(read).join('\n');
 for (const name of byStageB[7]) assert.ok(democracyTests.includes(`test('${name}`), `stage 7 test „${name}” is implemented`);
-for (const [id, category] of [['politics.pils_parliament_criticism', 6], ['opening.cabinet_1922', 2], ['presidency.assassination_response', 5],
+// Z — 0.56: B2 left the queue and is a card of the Parliament deck.
+assert.ok(!/definition_id: 'politics\.pils_parliament_criticism'/.test(rulesSource), 'B2 is no longer a queued event');
+assert.ok(read('source/scenes/polish_event_pils_criticism.scene.dry').includes('tags: parliament_affairs'), 'B2 is a card of the Parliament deck');
+for (const [id, category] of [['opening.cabinet_1922', 2], ['presidency.assassination_response', 5],
   ['society.niewiadomski_cult', 6], ['coup.attempt', 2]]) {
   assert.ok(new RegExp(`definition_id: '${id.replace('.', '\\.')}', category: ${category}`).test(rulesSource), `${id} is one definition of the queue with category ${category}`);
 }

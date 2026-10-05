@@ -308,7 +308,7 @@ const batch6Rules = [
 ];
 for (const [from, to, text] of batch6Rules) assert.ok(section(tr, from, to).includes(text), `reference ${from.trim()} has the 0.38 rule: ${text.slice(0, 50)}`);
 assert.ok(!section(tr, '### 17.3. ', '### 17.4. ').includes('Nowe finansowanie, mniejszy uzgodniony zakres, naruszenie albo wyjście PPS'), '17.3: stale austerity answers replaced');
-for (const name of ['Jedna karta E3', 'Klucz sprawy E6', 'Obowiązkowa odpowiedź B2', 'Sprzeczność odpowiedzi B2', 'Oszczędności 1926 przez 9.8']) assert.ok(tests.has(name), `21.1 test ${name}`);
+for (const name of ['Jedna karta E3', 'Klucz sprawy E6', 'Karta B2', 'Milczenie i kolejne wystąpienia B2', 'Sprzeczność odpowiedzi B2', 'Oszczędności 1926 przez 9.8']) assert.ok(tests.has(name), `21.1 test ${name}`);
 // The Centre's total reaction: the answer's own +5 from the 10.7 table plus the +3 credibility dispute.
 const s107 = section(tr, '### 10.7. ', '### 10.8. ');
 const centreOwn = num(cells(s107.split('\n').find(l => l.startsWith('| Poprzeć krytykę parlamentaryzmu |')))[1].match(/Centrum ([+−]\d+)/)[1]);
@@ -327,7 +327,9 @@ const e99 = entries.find(e => e.num === '9.9'), e910 = entries.find(e => e.num =
 assert.deepEqual([e99.ids, e910.ids], [['society.strike_settlement_rejection'], ['party.faction_split']], 'E6 and E3 headings carry their IDs');
 assert.ok(read('source/rules/polish_rules.js').includes("definition_id: 'society.strike_settlement_rejection'"), 'society.strike_settlement_rejection is the queue definition of stage 6');
 assert.ok(read('source/rules/polish_rules.js').includes("definition_id: 'party.faction_split'"), 'party.faction_split is the queue definition of stage 5');
-for (const n of ['9.2', '9.5']) assert.ok(entries.find(e => e.num === n).text.includes('| Bez odpowiedzi | Odpowiedź obowiązkowa'), `${n}: mandatory answer`);
+assert.ok(entries.find(e => e.num === '9.5').text.includes('| Bez odpowiedzi | Odpowiedź obowiązkowa'), '9.5: mandatory answer');
+// Z — 0.56: B2 is a timed card of the Parliament deck; without an answer for three months it is silence.
+assert.ok(entries.find(e => e.num === '9.2').text.includes('| Bez odpowiedzi | Od 0.56 po 3 M milczenie'), '9.2: silence after three months');
 assert.ok(section(cat, '## 9. ', '## 10. ').includes('**Status partii:** przejrzana przez użytkownika'), 'batch 6 marked as reviewed');
 assert.equal(entries.filter(e => e.num.startsWith('9.')).reduce((n, e) => n + e.questions.length, 0), 0, 'batch 6 has no open questions');
 assert.equal(entries.reduce((n, e) => n + e.questions.length, 0), 0, 'the catalogue has no open questions');

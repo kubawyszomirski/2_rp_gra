@@ -7,10 +7,12 @@ card-image: img/polish/polish_government_support.jpg
 view-if: {! return !!Q.S && PolishGovernment.supportCardAvailable(Q) !}
 on-arrival: {!
 // Card parliament.government_support (technical reference 9.8; card catalogue 7.6). An ordinary use
-// costs this month's action once an option is confirmed and starts a 3-month renewal for this
+// costs this month's action once an option is confirmed and starts a 6-month renewal for this
 // cabinet; opening and closing the card are free. Answers to a partner's warning or ultimatum use the
 // pinned card polish_government_response for 0 T.
 Q.pl_sup_mode = 'ordinary';
+// Z — 0.56: why the card is in the deck now (half a year, or an act of the cabinet against PPS).
+Q.pl_sup_reason = PolishGovernment.supportReason(Q);
 Q.pl_sup_member = PolishGovernment.ppsStance(Q.S) === 'member' ? 1 : 0;
 Q.pl_sup_withdraw_reason = PolishGovernment.supportOptionStatus(Q, 'withdraw', 'ordinary').reason;
 Q.pl_sup_demand_reason = PolishGovernment.supportOptionStatus(Q, 'bargain', 'ordinary').reason;
@@ -18,6 +20,8 @@ Q.pl_sup_military_reason = PolishGovernment.supportOptionStatus(Q, 'bargain', 'o
 !}
 
 = Our relation to the government
+
+[? if pl_sup_reason : [+ pl_sup_reason +] ?]
 
 Prime minister: [+ prime_minister_display +]. PPS position: [+ pps_government_position +].
 

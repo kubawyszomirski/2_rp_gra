@@ -154,8 +154,9 @@ test('opening, status and read-only cabinet agree without changing time or membe
   choose(engine, 'root.1928_main');
   engine.goToScene('status');
   assert.match(content(engine), /External toleration of Ponikowski/);
-  assert.match(content(engine), /35 MPs; 7.9%/);
   assert.doesNotMatch(content(engine), /Hindenburg|Chancellor:/);
+  engine.goToScene('status.politics');
+  assert.match(content(engine), /35 MPs; 7.9%/);
   engine.goToScene('backSpecialScene');
   engine.goToScene('library');
   choose(engine, 'library.curr_gov');
@@ -198,6 +199,7 @@ test('campaign choice, consequences, event processing and February preserve gove
   assert.equal(Q.n_elections, 0);
   engine.goToScene('status');
   assert.match(content(engine), /Antoni Ponikowski/);
+  engine.goToScene('status.politics');
   assert.match(content(engine), /444 MPs/);
 });
 
@@ -277,6 +279,7 @@ test('November election is scheduled without creating a Senate or president', ()
     Q.time = month;
     engine.goToScene('status');
     assert.equal(condition(engine, 'election_1928'), false);
+    engine.goToScene('library.sidebar_notes');
     assert.match(content(engine), /The first Sejm election is in November 1922/);
     assert.doesNotMatch(content(engine), /Development notice/, 'stage 8: no development notices in the Polish game');
     assert.equal(Q.head_of_state_office, 'naczelnik_panstwa');
@@ -320,6 +323,7 @@ test('legacy entry redirects to exact-seat election without its old monthly char
   assert.notEqual(Q.chancellor, 'Antoni Ponikowski');
   engine.goToScene('status');
   assert.doesNotMatch(content(engine), /External toleration of Ponikowski/);
+  engine.goToScene('status.politics');
   assert.match(content(engine), /444 MPs/);
 });
 
@@ -428,5 +432,5 @@ test('an inherited cabinet event keeps its other effects, but its cabinet assign
   assert.doesNotMatch(content(engine), /Papen|temporary government framework/);
   // The legacy German president no longer describes the Polish head of state (leak 5 of 20.2).
   assert.doesNotMatch(content(engine), /Hindenburg/);
-  assert.match(content(engine), /Head of state: ","Józef Piłsudski — Naczelnik Państwa/);
+  assert.match(content(engine), /Head of state:["\]}, ]+Józef Piłsudski — Naczelnik Państwa/);
 });

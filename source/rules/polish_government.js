@@ -1625,6 +1625,14 @@
       appointed: r.appointed ? r.appointed.pm_name + ' — ' + configName(r.appointed.configuration_id) + ', ' + r.appointed.support_seats +
         L(' MPs declared for it', ' posłów zadeklarowało poparcie') + (r.appointed.majority ? L(' (majority)', ' (większość)') : L(' (minority)', ' (mniejszość)')) +
         (r.appointed.by === 'npc' ? L('; formed without PPS', '; utworzony bez PPS') : '') : '',
+      // Z — 0.56: a minority cabinet is explained on the screen. Every appointment needs more MPs for than against (8.6); the
+      // Sejm resolves by an ordinary majority, abstentions not counted (March Constitution art. 32 and 58; HISTORICAL_SOURCES).
+      minority_note: r.appointed && !r.appointed.majority ? L('A minority cabinet: it has fewer than ' + majorityRequired(S) +
+        ' MPs, but more MPs declared for it than against it. The Sejm decides by an ordinary majority (more votes for than against; ' +
+        'abstentions do not count), so such a cabinet can govern until the Sejm demands its resignation.',
+        'Rząd mniejszościowy: ma mniej niż ' + majorityRequired(S) + ' posłów, ale za nim zadeklarowało się więcej posłów niż przeciw. ' +
+        'Sejm rozstrzyga zwykłą większością (więcej głosów za niż przeciw; wstrzymujący się nie liczą się), więc taki rząd może rządzić, ' +
+        'dopóki Sejm nie zażąda jego ustąpienia.') : '',
       failed: r.appointed ? '' : (crisis && crisis.status === 'impasse' ?
         L('No cabinet could be appointed. After three failed proposals the crisis is an impasse: the caretaker cabinet governs.',
           'Nie udało się powołać gabinetu. Po trzech nieudanych propozycjach kryzys przeszedł w impas: rządzi gabinet tymczasowy.') :
@@ -1719,7 +1727,17 @@
   const TENSION_ULTIMATUM = 60;
   const ULTIMATUM_MONTHS = 2;
   const EXTENSION_MONTHS = 3;
-  const SUPPORT_COOLDOWN_MONTHS = 3;
+  // Z — 0.56 (item 7 of 5 X 2026): the ordinary review of card 7.6 comes back every six months (it was three); an act of the
+  // cabinet against PPS opens it at once for two months.
+  const SUPPORT_COOLDOWN_MONTHS = 6;
+  const PROVOCATION_MONTHS = 2;
+  // The instruments of a cabinet package that act against PPS (their position in 11.9 is below 0).
+  const PROVOKING_INSTRUMENTS = Object.freeze({
+    indirect: ['indirect taxes', 'podatki pośrednie'],
+    customs: ['fiscal customs duties', 'cła fiskalne'],
+    admin_cuts: ['cuts in administrative spending', 'cięcia wydatków administracji'],
+    benefit_cut: ['a cut of the unemployment benefit', 'cięcie zasiłku dla bezrobotnych'],
+  });
   const FORCED_CONCESSION_RELATION = -3;
   const THREAT_BACKDOWN_CREDIBILITY = -5;
 
@@ -2175,12 +2193,54 @@
     return null;
   }
 
+  // Z — 0.56: while PPS sits in the cabinet or supports it, the card comes back half a year after the formation of the cabinet
+  // or after its last ordinary use, and at once when the cabinet acts against PPS (supportProvocation).
   function supportCardAvailable(Q) {
     const S = Q.S;
     if (!S || S.chapter.status === 'ended' || formationPending(Q)) return false;
     const stance = ppsStance(S);
     if (stance !== 'member' && stance !== 'supporter') return false;
-    return rules.cooldownRemaining(Q, 'support.' + S.cabinet.id) === 0;
+    return !!supportProvocation(Q) || supportReviewDue(Q);
+  }
+
+  function supportReviewDue(Q) {
+    const S = Q.S, cabinet = S.cabinet;
+    return rules.cooldownRemaining(Q, 'support.' + cabinet.id) === 0 && Q.time - (cabinet.formed_at || 0) >= SUPPORT_COOLDOWN_MONTHS;
+  }
+
+  // The latest act of this cabinet against PPS in the last two months that no ordinary use of the card has answered yet:
+  // a package with an instrument PPS opposes, or a breach of an agreement with PPS for which PPS does not answer.
+  function supportProvocation(Q) {
+    const S = Q.S, cabinet = S.cabinet, t = Q.time;
+    if (!cabinet) return null;
+    const seen = typeof cabinet.support_reviewed_at === 'number' ? cabinet.support_reviewed_at : -Infinity;
+    const fresh = at => typeof at === 'number' && at > seen && t - at < PROVOCATION_MONTHS;
+    const E = S.economy || {};
+    const packages = (E.packages || []).concat(E.pending_package ? [E.pending_package] : []);
+    for (const pkg of packages.slice().reverse()) {
+      if (pkg.cabinet_id !== cabinet.id || !fresh(pkg.proposed_at)) continue;
+      const opposed = (pkg.instruments || []).filter(kind => PROVOKING_INSTRUMENTS[kind]);
+      if (opposed.length) return {kind: 'package', t: pkg.proposed_at, id: pkg.id, instruments: opposed};
+    }
+    for (const id of ppsAgreements(S)) {
+      const agreement = S.agreements[id];
+      for (const o of agreement.obligations || []) {
+        if (o.status === 'breached' && fresh(o.breached_at) && !ppsResponsible(S, agreement, o)) return {kind: 'breach', t: o.breached_at, id: o.id};
+      }
+    }
+    return null;
+  }
+
+  // Why the card is in the deck now, for its first page.
+  function supportReason(Q) {
+    const p = supportProvocation(Q);
+    if (p && p.kind === 'package') {
+      return L('The cabinet has proposed a package with ' + p.instruments.map(k => PROVOKING_INSTRUMENTS[k][0]).join(', ') + '.',
+        'Rząd zgłosił pakiet, w którym są: ' + p.instruments.map(k => PROVOKING_INSTRUMENTS[k][1]).join(', ') + '.');
+    }
+    if (p) return L('The cabinet has broken an obligation of our agreement.', 'Rząd nie dotrzymał zobowiązania z naszej umowy.');
+    return L('Half a year has passed since the cabinet was formed or since our last decision about it.',
+      'Minęło pół roku od powołania gabinetu albo od naszej ostatniej decyzji wobec niego.');
   }
 
   // Who answers a PPS demand: the parties of the cabinet and its supporters other than PPS, and a
@@ -2244,7 +2304,7 @@
     return {available: true, reason: ''};
   }
 
-  // One commit of card 7.6: an ordinary use costs 1 T and starts the 3-month renewal for this cabinet;
+  // One commit of card 7.6: an ordinary use costs 1 T and starts the 6-month renewal for this cabinet (Z — 0.56);
   // an answer to an open case costs 0 T, once per case (9.8).
   function commitSupport(Q, mode, action) {
     const S = Q.S;
@@ -2257,6 +2317,8 @@
     }
     rules.commitMainAction(Q, 'parliament.government_support', {option: action, cabinet_id: S.cabinet.id});
     S.cooldowns['support.' + S.cabinet.id] = Q.time + SUPPORT_COOLDOWN_MONTHS;
+    // The ordinary use answers every act of the cabinet against PPS so far (Z — 0.56).
+    S.cabinet.support_reviewed_at = Q.time;
     return null;
   }
 
@@ -2774,6 +2836,8 @@
     ppsAgreements: ppsAgreements,
     responseCase: responseCase,
     supportCardAvailable: supportCardAvailable,
+    supportProvocation: supportProvocation,
+    supportReason: supportReason,
     supportOptionStatus: supportOptionStatus,
     governmentNeed: governmentNeed,
     demandEvaluators: demandEvaluators,

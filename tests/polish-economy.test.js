@@ -100,15 +100,16 @@ test('the German economy and welfare cards are switched off in the Polish econom
 
 test('Status shows the Polish budget, currency, prices, output, credit, unemployment, countryside and business; not the German lines', () => {
   const engine = dendry.startGame();
-  engine.goToScene('status');
+  engine.goToScene('status.economy');
   const text = content(engine);
   assert.match(text, /\+2\.00 B this month \(base \+2, taxes 0\); programmes run in full/);
   assert.match(text, /"Polish mark"/);
   assert.match(text, /"4\.0% a month"/);
-  assert.match(text, /Agrarian pressure \(0–100\): ","45\.0"/);
+  assert.match(text, /Agrarian pressure \(0–100\):["\]}, ]+45\.0"/);
   assert.match(text, /"calm, pressure 10"/);
-  assert.match(text, /working balance \(economy_simple_v1\)/);
   assert.doesNotMatch(text, /Economic growth: /, 'the German growth line is hidden in the Polish game');
+  engine.goToScene('library.sidebar_notes');
+  assert.match(content(engine), /working balance \(economy_simple_v1\)/, 'the note on the numbers is in the Library');
 });
 
 test('the Library records the Polish monthly readings for its economic chart', () => {

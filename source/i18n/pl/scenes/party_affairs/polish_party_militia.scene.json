@@ -5,13 +5,13 @@
   "title: Milicja PPS": "title: Milicja PPS",
   "subtitle: Recruit, militarise, or reorganise the self-defence as Akcja Socjalistyczna.": "subtitle: Werbunek, militaryzacja albo przekształcenie samoobrony w Akcję Socjalistyczną.",
   "= Milicja PPS": "= Milicja PPS",
-  "[+ pl_party_militia +]. The upkeep is 0.10 R a month for every 200 members (0.10 R more after AS). An unfinanced month adds 5 fatigue.": "[+ pl_party_militia +]. Utrzymanie kosztuje 0,10 R miesięcznie za każde 200 osób (po przekształceniu w AS o 0,10 R więcej). Miesiąc bez finansowania dodaje 5 zmęczenia.",
+  "[+ pl_party_militia +]. Milicja needs no upkeep; every month its fatigue falls by 5.": "[+ pl_party_militia +]. Milicja nie wymaga utrzymania; co miesiąc jej zmęczenie spada o 5.",
   "title: Recruit": "title: Werbunek",
   "subtitle: 1 resource; Milicja gains members (+100), with no gain in efficiency. Waits two months.": "subtitle: 1 jednostka środków; Milicja zyskuje członków (+100), bez wzrostu sprawności. Odnowienie: dwa miesiące.",
   "title: Militarise": "title: Militaryzacja",
   "subtitle: 2 resources; training and discipline raise efficiency (+0.10, up to 0.70). The first time Centrum dissent rises (+3). Waits three months.": "subtitle: 2 jednostki środków; szkolenie i dyscyplina podnoszą sprawność (+0,10, najwyżej 0,70). Za pierwszym razem rośnie sprzeciw Centrum (+3). Odnowienie: trzy miesiące.",
   "title: Reorganise as Akcja Socjalistyczna": "title: Przekształcenie w Akcję Socjalistyczną",
-  "subtitle: 2 resources, once; needs a militarised Milicja of at least 500, legality, no arrears and a reserve. Members follow a call better (+0.15); up to three cases at once before a coup.": "subtitle: 2 jednostki środków, jednorazowo; wymaga zmilitaryzowanej Milicji liczącej co najmniej 500 osób, legalności, braku zaległości i rezerwy. Członkowie lepiej odpowiadają na wezwanie (+0,15); przed zamachem do trzech spraw jednocześnie.",
+  "subtitle: 2 resources, once; needs a militarised Milicja of at least 500 and legality. Members follow a call better (+0.15); up to three cases at once before a coup.": "subtitle: 2 jednostki środków, jednorazowo; wymaga zmilitaryzowanej Milicji liczącej co najmniej 500 osób i legalności. Członkowie lepiej odpowiadają na wezwanie (+0,15); przed zamachem do trzech spraw jednocześnie.",
   "- @root: Continue.": "- @root: Dalej."
  }
 }

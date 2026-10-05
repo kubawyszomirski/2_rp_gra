@@ -312,10 +312,11 @@ test('Status and Library use the same authoritative president and the recorded f
   finishHistoricalBranch(engine);
   engine.goToScene('status');
   assert.match(content(engine), /Stanisław Wojciechowski/);
-  assert.match(content(engine), /National Assembly/);
-  assert.match(content(engine), /Marshal of the Sejm: ","Maciej Rataj/);
+  assert.match(content(engine), /Marshal of the Sejm:["\]}, ]+Maciej Rataj/);
   assert.match(content(engine), /111 senators/);
   engine.goToScene('backSpecialScene');
+  engine.goToScene('library.sidebar_notes');
+  assert.match(content(engine), /National Assembly/);
   engine.goToScene('library');
   choose(engine, 'library.presidency');
   const page = content(engine);

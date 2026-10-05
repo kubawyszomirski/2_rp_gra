@@ -9,7 +9,7 @@ PolishRules.refreshHandMirrors(Q, this.state);
 
 = Discard a card
 
-Once a month you may discard one card from your hand for free. The card goes back to its deck: it has no effect and starts no cooldown (technical reference 4.4).
+Once a month you may discard one card from your hand for free. The card goes back to its deck: it has no effect and starts no cooldown.
 
 [? if pl_hand_count = 0 : Your hand is empty, so there is nothing to discard now. ?]
 
@@ -22,7 +22,7 @@ Once a month you may discard one card from your hand for free. The card goes bac
 title: Discard the first card
 subtitle: [+ pl_hand_card_1 +]
 view-if: {! return PolishRules.handCardId(this.state, 0) !== null !}
-go-to: main
+go-to: root
 on-arrival: {!
 PolishRules.discardFromHand(Q, this.state, 0);
 !}
@@ -31,7 +31,7 @@ PolishRules.discardFromHand(Q, this.state, 0);
 title: Discard the second card
 subtitle: [+ pl_hand_card_2 +]
 view-if: {! return PolishRules.handCardId(this.state, 1) !== null !}
-go-to: main
+go-to: root
 on-arrival: {!
 PolishRules.discardFromHand(Q, this.state, 1);
 !}
@@ -40,11 +40,11 @@ PolishRules.discardFromHand(Q, this.state, 1);
 title: Discard the third card
 subtitle: [+ pl_hand_card_3 +]
 view-if: {! return PolishRules.handCardId(this.state, 2) !== null !}
-go-to: main
+go-to: root
 on-arrival: {!
 PolishRules.discardFromHand(Q, this.state, 2);
 !}
 
 @keep
 title: Back to the hand
-go-to: main
+go-to: root

@@ -9,6 +9,8 @@ on-arrival: {!
 // Card party.dues (technical reference 13.1; card catalogue 5.4): raise, lower or keep (Z — 0.51), 1 T, cd 6 M;
 // returning the card to the hand is free.
 PolishParty.partyDisplay(Q);
+// Z — 0.56: what each option collects at once.
+PolishParty.duesView(Q);
 Q.pl_dues_keep_why = PolishParty.duesStatus(Q, 'keep').reason;
 Q.pl_dues_raise_why = PolishParty.duesStatus(Q, 'raise').reason;
 Q.pl_dues_lower_why = PolishParty.duesStatus(Q, 'lower').reason;
@@ -16,7 +18,7 @@ Q.pl_dues_lower_why = PolishParty.duesStatus(Q, 'lower').reason;
 
 = Party dues
 
-Dues are [+ dues +] (from 1 to 4). Monthly income: [+ pl_party_ledger +].
+Dues are [+ dues +] (from 1 to 4). Every option collects the dues at once: dues × membership / 100, and 25% more for each level of the apparatus above the first.
 
 - @keep
 - @raise
@@ -25,7 +27,7 @@ Dues are [+ dues +] (from 1 to 4). Monthly income: [+ pl_party_ledger +].
 
 @keep
 title: Keep the present dues
-subtitle: **Present level** Costs this month's action; the dues stay at [+ dues +] and the card waits six months; nothing else changes.
+subtitle: **Present level** Costs this month's action; the dues stay at [+ dues +], the collection brings [+ pl_dues_keep_gain +] now, and the card waits six months.
 choose-if: {! return PolishParty.duesStatus(Q, 'keep').available !}
 unavailable-subtitle: [+ pl_dues_keep_why +]
 on-arrival: {!
@@ -35,7 +37,7 @@ go-to: result
 
 @raise
 title: Raise the dues by 1
-subtitle: More income per member; the membership falls at once, more in hard times (×0.98; ×0.95 when real wages are below 90 or unemployment is 8% or more). The target of membership falls for every level above 2 (−5% each).
+subtitle: The collection brings [+ pl_dues_raise_gain +] now; the membership falls at once, more in hard times (×0.98; ×0.95 when real wages are below 90 or unemployment is 8% or more). The target of membership falls for every level above 2 (−5% each).
 choose-if: {! return PolishParty.duesStatus(Q, 'raise').available !}
 unavailable-subtitle: [+ pl_dues_raise_why +]
 on-arrival: {!
@@ -45,7 +47,7 @@ go-to: result
 
 @lower
 title: Lower the dues by 1
-subtitle: Less income per member; membership rises at once (+2), and at level 1 the target of membership rises too (+5%).
+subtitle: The collection brings [+ pl_dues_lower_gain +] now; membership rises at once (+2), and at level 1 the target of membership rises too (+5%).
 choose-if: {! return PolishParty.duesStatus(Q, 'lower').available !}
 unavailable-subtitle: [+ pl_dues_lower_why +]
 on-arrival: {!

@@ -87,64 +87,9 @@ if (Q.pro_republic >= 100) {
 // re-calculate party support
 // calculate normalized class voting for the achievements. The same calculation runs again after the
 // month's settlement, because the living-conditions flow (5.6) changes the class rows.
+// Z — 0.56: the calculation lives in PolishElectorate.recomputeSupport, so that the opening can call it too.
 function recomputeSupport() {
-if (Q.polish_party_rules) {
-    PolishElectorate.absorbRowEdits(Q);
-    PolishElectorate.writeClassMirrors(Q);
-}
-for (var c of Q.classes) {
-    var class_votes = 0;
-    for (var party of Q.parties) {
-        if (Q[c+'_'+party] < 0) {
-            Q[c+'_'+party] = 0;
-        }
-        class_votes += Q[c+'_'+party];
-    }
-    for (var party of Q.parties) {
-        Q[c + '_' + party + '_normalized'] = class_votes > 0 ? 100*Q[c+'_'+party]/class_votes : 0;
-        Q[c + '_' + party + '_display'] = class_votes > 0 ? Math.round(100*Q[c+'_'+party]/class_votes) : 0;
-    }
-}
-for (var legacy_party in Q.legacy_party_map) {
-    var polish_party = Q.legacy_party_map[legacy_party];
-    for (var population_group of Q.classes) {
-        Q[population_group + '_' + legacy_party + '_normalized'] = Q[population_group + '_' + polish_party + '_normalized'];
-        Q[population_group + '_' + legacy_party + '_display'] = Q[population_group + '_' + polish_party + '_display'];
-    }
-}
-// calculate support for each of the parties
-var total_support = 0; 
-// Stage 5: the national result is the votes of the cells (5.2), not a sum of overlapping rows.
-var cell_votes = Q.polish_party_rules ? PolishElectorate.writeNationalQualities(Q) : null;
-for (var party of Q.parties) {
-    if (cell_votes) {
-        total_support += Q[party + '_support'];
-        continue;
-    }
-    var party_support = 0;
-    for (var c of Q.classes) {
-        if (Q.old_demographics) { 
-            party_support += Q[c]*Q[c+'_'+party];
-        } else  { 
-            party_support += Q[c]*Q[c+'_'+party+'_normalized'];
-        } 
-    }
-    Q[party + '_support'] = party_support;
-    total_support += party_support; 
-}
-// 2. normalize support (fraction)
-for (var party of Q.parties) {
-    Q[party+'_normalized'] = Q[party + '_support']/total_support;
-    Q[party+'_votes'] = Math.round(Q[party+'_normalized']*100);
-    Q[party+'_votes_display'] = Math.round(Q[party+'_normalized']*100);
-}
-for (var legacy_party in Q.legacy_party_map) {
-    var polish_party = Q.legacy_party_map[legacy_party];
-    Q[legacy_party + '_support'] = Q[polish_party + '_support'];
-    Q[legacy_party + '_normalized'] = Q[polish_party + '_normalized'];
-    Q[legacy_party + '_votes'] = Q[polish_party + '_votes'];
-    Q[legacy_party + '_votes_display'] = Q[polish_party + '_votes_display'];
-}
+    PolishElectorate.recomputeSupport(Q);
 }
 recomputeSupport();
 

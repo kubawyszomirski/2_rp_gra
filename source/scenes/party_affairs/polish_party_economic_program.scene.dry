@@ -38,12 +38,13 @@ Chosen: [+ pl_prog_draft_text +]. Nothing is spent until you confirm.
 - @toggle_wealth_and_investment
 - @toggle_socialisation
 - @toggle_agrarian_labour
+- @toggle_cooperatives_housing
 - @confirm
 - @polish_party_economic_program: Start again.
 
 @toggle_stabilisation_with_protection
 title: Stabilisation with protections
-subtitle: [? if pl_prog_stabilisation_with_protection_in = 1 : Chosen — remove it from the set. ?][? if pl_prog_stabilisation_with_protection_in = 0 : Add it to the set. ?]
+subtitle: [? if pl_prog_stabilisation_with_protection_now = 1 : **Present programme** ?]We back repairing the currency and the budget, but demand protection of wages and benefits for the unemployed. [? if pl_prog_stabilisation_with_protection_in = 1 : Chosen — remove it from the set. ?][? if pl_prog_stabilisation_with_protection_in = 0 : Add it to the set. ?]
 on-arrival: {!
 PolishParty.programmeToggle(Q, 'stabilisation_with_protection');
 !}
@@ -51,7 +52,7 @@ go-to: menu
 
 @toggle_public_works
 title: Public works and employment
-subtitle: [? if pl_prog_public_works_in = 1 : Chosen — remove it from the set. ?][? if pl_prog_public_works_in = 0 : Add it to the set. ?]
+subtitle: [? if pl_prog_public_works_now = 1 : **Present programme** ?]The state gives the jobless work on investment and transport. [? if pl_prog_public_works_in = 1 : Chosen — remove it from the set. ?][? if pl_prog_public_works_in = 0 : Add it to the set. ?]
 on-arrival: {!
 PolishParty.programmeToggle(Q, 'public_works');
 !}
@@ -59,7 +60,7 @@ go-to: menu
 
 @toggle_wealth_and_investment
 title: Wealth taxes and capital for investment
-subtitle: [? if pl_prog_wealth_and_investment_in = 1 : Chosen — remove it from the set. ?][? if pl_prog_wealth_and_investment_in = 0 : Add it to the set. ?]
+subtitle: [? if pl_prog_wealth_and_investment_now = 1 : **Present programme** ?]Higher taxes on high incomes and wealth, and public capital for investment. [? if pl_prog_wealth_and_investment_in = 1 : Chosen — remove it from the set. ?][? if pl_prog_wealth_and_investment_in = 0 : Add it to the set. ?]
 on-arrival: {!
 PolishParty.programmeToggle(Q, 'wealth_and_investment');
 !}
@@ -67,23 +68,31 @@ go-to: menu
 
 @toggle_socialisation
 title: Socialisation of selected enterprises
-subtitle: [? if pl_prog_socialisation_in = 1 : Chosen — remove it from the set. ?][? if pl_prog_socialisation_in = 0 : Add it to the set. ?]
+subtitle: [? if pl_prog_socialisation_now = 1 : **Present programme** ?]Selected plants come under public control, and their workforces gain a say in running them. [? if pl_prog_socialisation_in = 1 : Chosen — remove it from the set. ?][? if pl_prog_socialisation_in = 0 : Add it to the set. ?]
 on-arrival: {!
 PolishParty.programmeToggle(Q, 'socialisation');
 !}
 go-to: menu
 
 @toggle_agrarian_labour
-title: An agrarian and workers’ programme
-subtitle: [? if pl_prog_agrarian_labour_in = 1 : Chosen — remove it from the set. ?][? if pl_prog_agrarian_labour_in = 0 : Add it to the set. ?]
+title: Land reform and rural modernisation
+subtitle: [? if pl_prog_agrarian_labour_now = 1 : **Present programme** ?]Parcelling out the large estates, modernising farms and protecting agricultural labourers. [? if pl_prog_agrarian_labour_in = 1 : Chosen — remove it from the set. ?][? if pl_prog_agrarian_labour_in = 0 : Add it to the set. ?]
 on-arrival: {!
 PolishParty.programmeToggle(Q, 'agrarian_labour');
 !}
 go-to: menu
 
+@toggle_cooperatives_housing
+title: Cooperatives and housing
+subtitle: [? if pl_prog_cooperatives_housing_now = 1 : **Present programme** ?]Consumer and smallholder cooperatives, credit through cooperatives and cooperative housing for workers. [? if pl_prog_cooperatives_housing_in = 1 : Chosen — remove it from the set. ?][? if pl_prog_cooperatives_housing_in = 0 : Add it to the set. ?]
+on-arrival: {!
+PolishParty.programmeToggle(Q, 'cooperatives_housing');
+!}
+go-to: menu
+
 @confirm
 title: Confirm the programme
-subtitle: [? if pl_prog_confirm_same = 1 : **Present programme** Confirming it costs this month's action and the card waits six months; nothing else changes. ?][? if pl_prog_confirm_same = 0 : Costs this month's action; the card then waits six months. ?]
+subtitle: [? if pl_prog_confirm_same = 1 : Confirms the present programme; it costs this month's action and the card waits six months; nothing else changes. ?][? if pl_prog_confirm_same = 0 : Costs this month's action; the card then waits six months. ?]
 choose-if: {! return PolishParty.programmeStatus(Q, String(Q.pl_prog_draft || '').split(',').filter(Boolean)).available !}
 unavailable-subtitle: [+ pl_prog_confirm_why +]
 on-arrival: {!

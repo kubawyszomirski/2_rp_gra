@@ -107,11 +107,10 @@ test('Kolej: rail participation 39 or 40 at coordination 50: only the second del
   assert.deepEqual([delay(39, 50), delay(40, 50), delay(40, 49), delay(64, 70), delay(65, 69), delay(65, 70)], [0, 1, 0, 1, 1, 2]);
 });
 
-test('Otwarcia finansowe: over 52 months three apparatus levels give +1.65 R and three expansions of a branch +3.26 R against no investment', () => {
+test('Otwarcia finansowe: without collections the cash does not move over 52 months (Z — 0.56); three apparatus levels raise a collection by 75%, three expansions of a branch raise it through membership', () => {
   const run = kind => {
     const Q = game();
     const S = Q.S;
-    // M18 compares the cash flows of the ledger: enough money for the investments and no character bonus (13.1).
     S.party_orgs.cash = 10;
     S.actors.pps.strategy.electoral_base = 'broad_democratic';
     for (let m = 1; m <= 52; m++) {
@@ -119,11 +118,12 @@ test('Otwarcia finansowe: over 52 months three apparatus levels give +1.65 R and
       if (kind === 'reach' && m <= 3) { S.party_orgs.cash -= 1; S.unions.industry.reach += 15; }
       PolishParty.settleParty(Q, m);
     }
-    return S.party_orgs.cash;
+    return S;
   };
-  const none = run('none');
-  close(run('apparatus') - none, 1.65, 0.005);
-  close(run('reach') - none, 3.26, 0.005);
+  const none = run('none'), apparatus = run('apparatus'), reach = run('reach');
+  assert.deepEqual([none.party_orgs.cash, apparatus.party_orgs.cash, reach.party_orgs.cash], [10, 4, 7], 'no income and no upkeep');
+  close(PolishParty.collectionGain(apparatus) / PolishParty.collectionGain(none), 1.75, 0.005);
+  assert.ok(PolishParty.collectionGain(reach) > PolishParty.collectionGain(none) + 0.05, 'more members after the expansions');
 });
 
 test('Zasięg i charakter partii: the rail branch under the workers’ line and Ziemięcki under the broad democratic line ×1.10, at most 1.30 with TUR; the press has no multiplier', () => {
@@ -131,7 +131,7 @@ test('Zasięg i charakter partii: the rail branch under the workers’ line and 
   const S = Q.S;
   close(PolishParty.expansionMultiplier(S, { kind: 'branch', id: 'rail' }), 1.10);
   const rail = S.unions.rail.reach;
-  PolishParty.organizationsChoose(Q, ['union_organize_rail']);
+  PolishParty.organizationsChoose(Q, ['union_organize_rail'], 'party.union_investments');
   free(Q);
   close(S.unions.rail.reach, rail + 16.5);
   S.actors.pps.strategy.electoral_base = 'broad_democratic';
