@@ -1337,12 +1337,45 @@
       (rec.last_processed_time !== null ? ', aktywny udział ' + fmt(active) : ''));
   }
 
+  // Z — 0.59 (the user's note of 6 X 2026, "explain the card"): the numbers of a branch in one short line, named as in the legend
+  // of the card, and the state of its dispute with the next step in words.
   function branchLine(S, id) {
     const branch = S.unions[id];
-    return L(BRANCH_NAMES[id] + ': reach ' + fmt(branch.reach) + ', readiness ' + fmt(branch.readiness) + ', fatigue ' + fmt(branch.fatigue) +
-      ', trust ' + fmt(branch.trust) + ', dissent ' + fmt(branch.dissent) + ', fund ' + rules.units(branch.fund) + '; ',
-      branchName(id) + ': zasięg ' + fmt(branch.reach) + ', gotowość ' + fmt(branch.readiness) + ', zmęczenie ' + fmt(branch.fatigue) +
-      ', zaufanie ' + fmt(branch.trust) + ', sprzeciw ' + fmt(branch.dissent) + ', fundusz ' + rules.units(branch.fund) + '; ') + statusText(S, branchRecord(S, id));
+    return L('reach ' + fmt(branch.reach) + ' · readiness ' + fmt(branch.readiness) + ' · fatigue ' + fmt(branch.fatigue) + ' · trust ' +
+      fmt(branch.trust) + ' · dissent ' + fmt(branch.dissent) + ' · fund ' + fmt(branch.fund) + '\u00a0R. ',
+      'zasięg ' + fmt(branch.reach) + ' · gotowość ' + fmt(branch.readiness) + ' · zmęczenie ' + fmt(branch.fatigue) + ' · zaufanie ' +
+      fmt(branch.trust) + ' · sprzeciw ' + fmt(branch.dissent) + ' · fundusz ' + fmt(branch.fund) + '\u00a0R. ') + nextStepText(S, branchRecord(S, id));
+  }
+
+  function nextStepText(S, rec) {
+    if (!rec) return L('No dispute: start by agreeing the demands.', 'Brak sporu: zacznij od uzgodnienia postulatów.');
+    const state = statusText(S, rec);
+    const cap = state.charAt(0).toUpperCase() + state.slice(1);
+    if (rec.status === 'prepared') return cap + L(': you can start the protest, or first hold a meeting on the strike.',
+      ': możesz rozpocząć protest albo najpierw zwołać zebranie w sprawie strajku.');
+    if (rec.status === 'settlement_pending') return cap + L('; PPS answers the offer in the Sejm.', '; PPS odpowiada na nią w Sejmie.');
+    return cap + '.';
+  }
+
+  // Why the card is in the deck now (14.1, disputeOpen), in words.
+  function disputeCauseText(S) {
+    const live = records(S, LIVE);
+    if (live.length) {
+      const names = [];
+      for (const rec of live) for (const b of rec.branches) if (names.indexOf(b) < 0) names.push(b);
+      return L('a dispute is under way (' + names.map(b => BRANCH_NAMES[b].toLowerCase()).join(', ') + ')', 'trwa spór (' + branchList(names) + ')');
+    }
+    const caused = BRANCHES.filter(id => S.unions[id] && openCause(S.unions[id]));
+    if (caused.length) {
+      return L('a branch is in dispute with the PPS leadership (' + caused.map(b => BRANCH_NAMES[b].toLowerCase()).join(', ') + ')',
+        'branża jest w sporze z kierownictwem PPS (' + branchList(caused) + ')');
+    }
+    if (S.economy.real_wage < WAGE_CASE_LIMIT) {
+      return L('real wages have fallen below ' + WAGE_CASE_LIMIT + ' (now ' + fmt(S.economy.real_wage) + ')',
+        'płace realne spadły poniżej ' + WAGE_CASE_LIMIT + ' (obecnie ' + fmt(S.economy.real_wage) + ')');
+    }
+    return L('the grievance of the employed workers is high (' + fmt(workersGrievance(S)) + ')',
+      'rozgoryczenie zatrudnionych robotników jest wysokie (' + fmt(workersGrievance(S)) + ')');
   }
 
   function offerText(S, rec) {
@@ -1359,6 +1392,12 @@
     if (!ready(Q)) return;
     const S = Q.S;
     for (const id of BRANCHES) Q['pl_un_' + id + '_line'] = branchLine(S, id);
+    // Z — 0.59: what the card is, why it is in the deck now and where a dispute starts.
+    Q.pl_un_intro = L('This card is the work of PPS in three union branches; each step costs the month’s action. ',
+      'Ta karta to praca PPS w trzech branżach związkowych; każdy krok kosztuje akcję miesiąca. ') +
+      (disputeOpen(S) ? L('It is in the deck now because ' + disputeCauseText(S) + '. ', 'Jest teraz w talii, bo ' + disputeCauseText(S) + '. ') : '') +
+      L('A dispute usually starts with agreeing the demands; a strike comes only after that.',
+        'Zwykle zaczyna się od uzgodnienia postulatów, a dopiero potem przychodzi strajk.');
     const strikes = records(S, STRIKING);
     Q.pl_un_summary = strikes.length ? L(strikes.length + (strikes.length === 1 ? ' strike' : ' strikes') + ' under way.',
       'Trwające strajki: ' + strikes.length + '.') : L('No strike is under way.', 'Nie trwa żaden strajk.');
@@ -1369,9 +1408,11 @@
     const S = Q.S, rec = branchRecord(S, branchId);
     Q.pl_union_branch = branchId;
     Q.pl_un_branch_name = branchName(branchId);
-    Q.pl_un_branch_text = branchLine(S, branchId) + L('. Lines: the strike ', '. Linie: strajk ') + fmt(lineAlignment(S.unions[branchId], 'strike')) +
-      L(', the agreed end ', ', uzgodnione zakończenie ') + fmt(lineAlignment(S.unions[branchId], 'agreed_end')) + L('. Autonomy ', '. Autonomia ') +
-      fmt(S.unions[branchId].autonomy) + '.';
+    // Z — 0.59: the lines and the autonomy in words.
+    const branch = S.unions[branchId], line = branchLine(S, branchId);
+    Q.pl_un_branch_text = line.charAt(0).toUpperCase() + line.slice(1) + L(' Support of the branch for a strike call of PPS: ', ' Poparcie branży dla wezwania PPS do strajku: ') +
+      fmt(lineAlignment(branch, 'strike')) + L(' of 100; for a call to end on agreed terms: ', ' ze 100; dla wezwania do zakończenia na uzgodnionych warunkach: ') +
+      fmt(lineAlignment(branch, 'agreed_end')) + L(' of 100. Autonomy of the union from PPS: ', ' ze 100. Niezależność związku od PPS: ') + fmt(branch.autonomy) + '.';
     Q.pl_un_offer = offerText(S, rec);
     Q.pl_un_strike_id = rec ? rec.id : '';
     Q.pl_un_prepare_why = prepareStatus(Q, branchId).reason;

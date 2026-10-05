@@ -987,7 +987,14 @@
   // 1923; the named commemoration is his funeral at Powązki on 6 II 1923, with a requiem mass and about 10,000 people
   // (HISTORICAL_SOURCES.md). The answers of PPS and the mass for democracy remain a game event. An ordinary service is
   // no trigger.
-  const CULT_ANSWERS = Object.freeze(['condemn', 'democracy_mass', 'stay_out']);
+  // Z — 0.59 (the user's decision of 6 X 2026): PPS may also break up the services with its Milicja (`disrupt`), on the model of
+  // the retaliation of B4 — a game alternative. H: in Kraków on the evening of 10 II 1923, after a service, a PPS march of several
+  // thousand broke windows and clashed (PL-NIEWIADOMSKI-CULT-1923); whether the Milicja broke up a service itself is TBD —
+  // historical research required.
+  const CULT_ANSWERS = Object.freeze(['condemn', 'democracy_mass', 'disrupt', 'stay_out']);
+  const DISRUPT_COST = 0.5;
+  const DISRUPT_PSCHD = -5;
+  const DISRUPT_CATHOLIC_LOSS = 1;
   const CULT_PLACE = 'Warsaw, the Powązki cemetery: the funeral of Eligiusz Niewiadomski on 6 February 1923';
   const HOST_RELATION = 40; // P: the relation with PSChD at which a clergyman or host agrees, and PSChD joins a condemnation
 
@@ -1026,6 +1033,10 @@
       if (!(S.party_orgs.apparatus.level >= 1)) return no(L('Needs a working organisation of PPS.', 'Wymaga działającej organizacji PPS.'));
       if (S.party_orgs.cash + 1e-9 < 1) return no(L('Needs 1 resource.', 'Wymaga 1 jednostki środków.'));
     }
+    if (choice === 'disrupt') {
+      if (!militiaFree(S)) return no(L('Needs able members of the Milicja assigned to it: it is banned, empty or busy elsewhere.', 'Wymaga zdolnych do działania członków Milicji przydzielonych do tego zadania: Milicja jest objęta zakazem, pusta albo zajęta gdzie indziej.'));
+      if (S.party_orgs.cash + 1e-9 < DISRUPT_COST) return no(L('Needs 0.5 resources.', 'Wymaga 0,5 jednostki środków.'));
+    }
     return OK;
   }
 
@@ -1054,6 +1065,31 @@
       democracyEffect(Q, 'society.niewiadomski_cult:' + key, 2, 'B5');
       record.democracy_effect = 2;
       lines.push(L('The mass for the defence of democracy is held once: democracy +2. No alliance with the Christian Democrats follows from it.', 'Msza w obronie demokracji zostaje odprawiona raz: demokracja +2. Nie wynika z niej żaden sojusz z chadecją.'));
+    } else if (choice === 'disrupt') {
+      // The model of the retaliation of B4 (17.6): an authorised confrontation of the Milicja, the Centrum objects; a religious
+      // service also outrages the Christian Democrats and Catholic opinion among the peasants and the petty bourgeoisie (P).
+      record.cost_R = DISRUPT_COST;
+      record.pps_authorizes_confrontation = true;
+      S.party_orgs.cash = Math.max(0, round(S.party_orgs.cash - DISRUPT_COST, 6));
+      government.factionReaction(Q, 'centrum', {dissent: 8}, {id: 'b5_disrupt:' + key, kind: 'retaliation', reverse: null});
+      lines.push(L('The Centrum objects to breaking up a religious service: dissent +8.', 'Centrum protestuje przeciw rozbijaniu nabożeństw: sprzeciw +8.'));
+      government.changeRelation(Q, 'pschd', DISRUPT_PSCHD, 'b5_disrupt:' + key);
+      lines.push(L('The Christian Democrats are outraged: relation −5.', 'Chadecja jest oburzona: relacja −5.'));
+      if (electorate.hasCells(S)) {
+        for (const cell of S.society.cells.filter(c => c.class_id === 'rural' || c.class_id === 'old_middle')) {
+          electorate.lossForPps(cell, DISRUPT_CATHOLIC_LOSS, S.society.parties);
+        }
+        electorate.writeClassMirrors(Q);
+      }
+      lines.push(L('Catholic opinion turns against PPS: −1 among the peasants and the petty bourgeoisie.',
+        'Opinia katolicka odwraca się od PPS: −1 wśród chłopów i drobnomieszczaństwa.'));
+      record.clash = gatheringClash(Q, {id: 'b5:' + key, uncontrolled: uncontrolledPressure(S, 0), repressive: unions.cabinetProfile(S) === 'repress',
+        authorised: true, compliance: militiaCompliance(S), militia_people: S.militia.strength, audience: 'workers',
+        subject: 'the Milicja of PPS breaking up a service in honour of the assassin'});
+      lines.push(record.clash.clash ? L('The Milicja breaks up the service and clashes with its participants: executed unlawful violence, a case against the PPS organisations and a reaction of the authorities.',
+        'Milicja rozbija nabożeństwo i ściera się z jego uczestnikami: dokonana bezprawna przemoc, sprawa przeciw organizacjom PPS i reakcja władz.') :
+        L('The Milicja interrupts the service without serious violence: no victims and no case, but the scandal remains.',
+          'Milicja przerywa nabożeństwo bez poważnej przemocy: bez ofiar i bez sprawy, ale skandal zostaje.'));
     } else {
       if (publicPromise(S, t)) {
         government.factionReaction(Q, 'lewica', {dissent: 3}, {id: 'b5_stay_out:' + key, kind: 'broken_promise', reverse: null});
@@ -1063,7 +1099,8 @@
     }
     // 17.7: uncontrolled behaviour only from the existing unrest (17.4); an instruction of restraint reaches the
     // members of PPS, not everyone present. Without it no clash is drawn.
-    const unrest = uncontrolledPressure(S, 0);
+    // The authorised confrontation of `disrupt` already reads the unrest (Z — 0.59).
+    const unrest = choice === 'disrupt' ? 0 : uncontrolledPressure(S, 0);
     if (unrest > 0) {
       record.clash = gatheringClash(Q, {id: 'b5:' + key, uncontrolled: unrest, repressive: false, authorised: false,
         compliance: choice === 'stay_out' ? 0 : militiaCompliance(S), subject: 'an uncontrolled confrontation at the commemoration of the assassin'});

@@ -358,7 +358,7 @@ const page7 = read('out/html/index.html');
 const pageOrder7 = ['polish_unions.js', 'polish_politics.js', 'polish_security.js', 'polish_engine_hooks.js'].map(f => scriptAt(page7, f));
 assert.ok(pageOrder7.every(i => i >= 0) && pageOrder7[0] < pageOrder7[1] && pageOrder7[1] < pageOrder7[2] && pageOrder7[2] < pageOrder7[3],
   'the politics and security modules load after the unions and before the engine hooks');
-assert.equal(byStageB[7].length, 54, 'stage 7 keeps 54 tests of 21.1 (53 and the silence of B2 of Z — 0.56)');
+assert.equal(byStageB[7].length, 55, 'stage 7 keeps 55 tests of 21.1 (53, the silence of B2 of Z — 0.56 and the Milicja in B5 of Z — 0.59)');
 const democracyTests = ['tests/rules-politics.test.js', 'tests/polish-democracy.test.js', 'tests/rules-coup.test.js', 'tests/polish-coup.test.js',
   'tests/rules-projects.test.js'].map(read).join('\n');
 for (const name of byStageB[7]) assert.ok(democracyTests.includes(`test('${name}`), `stage 7 test „${name}” is implemented`);

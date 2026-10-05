@@ -234,7 +234,7 @@ test('B3/B4 (retaliation): the authorised confrontation costs 0.5 R and the Cent
   assert.equal(clash.S.politics.violence_episodes.filter(e => e.id === 'b4:security_crisis:gabriel_narutowicz').map(e => e.value)[0], 10, 'one serious episode');
 });
 
-test('Msza B5: three answers; without a host the mass is blocked at no cost; with one it is held once, without an automatic alliance with the Christian Democrats', () => {
+test('Msza B5: four answers (Z — 0.59: also breaking up the services); without a host the mass is blocked at no cost; with one it is held once, without an automatic alliance with the Christian Democrats', () => {
   const engine = december();
   const Q = engine.state.qualities, S = Q.S;
   choose(engine, 'polish_presidential_sequence.decline_daszynski');
@@ -253,7 +253,7 @@ test('Msza B5: three answers; without a host the mass is blocked at no cost; wit
   assert.deepEqual([Q.year, Q.month], [1923, 2]);
   assert.equal(engine.state.sceneId, 'polish_event_niewiadomski_cult');
   assert.deepEqual(ids(engine), ['polish_event_niewiadomski_cult.condemn', 'polish_event_niewiadomski_cult.democracy_mass',
-    'polish_event_niewiadomski_cult.stay_out']);
+    'polish_event_niewiadomski_cult.disrupt', 'polish_event_niewiadomski_cult.stay_out']);
   assert.equal(S.politics.episodes.find(e => e.kind === 'assassin_commemoration').place,
     'Warsaw, the Powązki cemetery: the funeral of Eligiusz Niewiadomski on 6 February 1923');
   const mass = () => (engine.getCurrentChoices() || []).find(c => c.id === 'polish_event_niewiadomski_cult.democracy_mass');
@@ -280,4 +280,50 @@ test('Msza B5: three answers; without a host the mass is blocked at no cost; wit
   const again = dendry.saveAndRestore(restored);
   assert.equal(PolishPolitics.cultDue(again.state.qualities), false, 'a new entry after loading adds nothing');
   assert.deepEqual(again.state.qualities.S.politics.democracy_effects.filter(e => e.cause === 'B5').length, 1);
+});
+
+// Z — 0.59 (the user's decision of 6 X 2026): PPS may break up the services with its Milicja, on the model of the retaliation
+// of B4. The sources record a PPS march with a clash in Kraków on 10 II 1923; whether the Milicja broke up a service itself is TBD,
+// so the answer is an alternative of the game.
+test('Rozbicie nabożeństwa B5 (Z — 0.59): a free Milicja and 0.5 R; the Centrum +8, the Christian Democrats −5, PPS −1 among the peasants and the petty bourgeoisie; an authorised confrontation', () => {
+  const engine = december();
+  const Q = engine.state.qualities, S = Q.S;
+  choose(engine, 'polish_presidential_sequence.decline_daszynski');
+  choose(engine, 'polish_presidential_sequence.first_transfer');
+  choose(engine, 'polish_presidential_sequence.assassination');
+  choose(engine, 'root');
+  choose(engine, 'polish_event_assassination_response.restraint');
+  choose(engine, 'root');
+  choose(engine, 'polish_presidential_sequence.do_not_run_daszynski_second');
+  choose(engine, 'polish_presidential_sequence.finish');
+  S.party_orgs.cash = 5;
+  spendMonth(engine);
+  spendMonth(engine);
+  assert.equal(engine.state.sceneId, 'polish_event_niewiadomski_cult');
+  const option = () => (engine.getCurrentChoices() || []).find(c => c.id === 'polish_event_niewiadomski_cult.disrupt');
+  S.militia.banned = true;
+  PolishPolitics.cultView(Q);
+  assert.equal(PolishPolitics.cultStatus(Q, 'disrupt').available, false);
+  assert.match(Q.pl_b5_disrupt_why, /banned, empty or busy/);
+  S.militia.banned = false;
+  engine.goToScene('polish_event_niewiadomski_cult');
+  assert.equal(option().canChoose, true);
+  const share = id => PolishElectorate.aggregate(S, c => c.class_id === id, 'pps');
+  const before = { cash: S.party_orgs.cash, centrum: S.actors.pps.factions.centrum.dissent, pschd: S.actors.relations.pschd,
+    rural: share('rural'), old_middle: share('old_middle'), workers: share('workers') };
+  const key = S.politics.due.polish_event_niewiadomski_cult;
+  S.rng.rolls[`b5:${key}:clash`] = 0.01; // fixture: the confrontation takes place
+  choose(engine, 'polish_event_niewiadomski_cult.disrupt');
+  assert.ok(Math.abs(S.party_orgs.cash - (before.cash - 0.5)) < 1e-9, '0.5 R');
+  assert.equal(S.actors.pps.factions.centrum.dissent, before.centrum + 8);
+  assert.equal(S.actors.relations.pschd, before.pschd - 5);
+  for (const id of ['rural', 'old_middle']) {
+    const lost = before[id] - share(id);
+    assert.ok(lost > 0.5 && lost <= 1 + 1e-9, id + ': PPS −1');
+  }
+  assert.ok(Math.abs(share('workers') - before.workers) < 1e-9, 'no change among the workers');
+  const record = S.politics.episodes.find(e => e.kind === 'cult_response');
+  assert.deepEqual([record.choice, record.pps_authorizes_confrontation, record.clash.clash], ['disrupt', true, true]);
+  assert.equal(S.politics.cases[`b5:${key}:pps`].assigned_party, 'pps', 'a case against the PPS organisations');
+  assert.match(JSON.stringify(engine.ui.paragraphs), /The Milicja breaks up the service and clashes with its participants/);
 });

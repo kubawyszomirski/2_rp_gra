@@ -18,6 +18,7 @@ Eligiusz Niewiadomski, who killed President Narutowicz, was executed on 31 Janua
 
 - @condemn
 - @democracy_mass
+- @disrupt
 - @stay_out
 
 @condemn
@@ -37,6 +38,18 @@ choose-if: {! return PolishPolitics.cultStatus(Q, 'democracy_mass').available !}
 unavailable-subtitle: [+ pl_b5_democracy_mass_why +]
 on-arrival: {!
 PolishPolitics.cultChoose(Q, 'democracy_mass');
+!}
+go-to: result
+
+@disrupt
+title: Break up the services with the Milicja
+subtitle: 0.5 resources and a free Milicja. The Centrum objects (+8), the Christian Democrats are outraged (−5) and PPS loses among the peasants and the petty bourgeoisie (−1). A risk of a clash: violence, a case against PPS and, under a repressive cabinet, a ban of the Milicja.
+choose-if: {! return PolishPolitics.cultStatus(Q, 'disrupt').available !}
+unavailable-subtitle: [+ pl_b5_disrupt_why +]
+on-arrival: {!
+// Z — 0.59: an alternative of the game on the model of the retaliation of B4. The nearest recorded event is the PPS march
+// with a clash in Kraków on 10 II 1923 (HISTORICAL_SOURCES.md); breaking up a service itself is TBD.
+PolishPolitics.cultChoose(Q, 'disrupt');
 !}
 go-to: result
 

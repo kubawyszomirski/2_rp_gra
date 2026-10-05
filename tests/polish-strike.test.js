@@ -104,6 +104,29 @@ test('Związki zawodowe jako zwykła karta (Z — 0.57): in the Party deck durin
   assert.equal(inDeck(), false);
 });
 
+// Z — 0.59 (the user's note of 6 X 2026): the card says what it is, why it is in the deck now and what its numbers mean;
+// each branch shows its numbers in one line and the next step in words.
+test('Opis karty związków (Z — 0.59): the card names its cause and its numbers; each branch shows the next step', () => {
+  const engine = dendry.startGame();
+  const Q = engine.state.qualities, S = Q.S;
+  S.economy.real_wage = 76.72;
+  dendry.playCard(engine, 'polish_union_agenda');
+  const text = JSON.stringify(engine.ui.paragraphs).replace(/","/g, '');
+  assert.match(text, /This card is the work of PPS in three union branches; each step costs the month’s action\. It is in the deck now because real wages have fallen below 80 \(now 76\.72\)\./);
+  assert.match(text, /What the numbers mean \(0–100\): reach — how widely the union reaches the workers of the branch;/);
+  const line = choice(engine, 'polish_union_agenda.industry').subtitle;
+  assert.equal(JSON.stringify(line).replace(/[\["\]]/g, '').replace(/ /g, ' '),
+    'reach 20 · readiness 25 · fatigue 0 · trust 50 · dissent 0 · fund 0.5 R. No dispute: start by agreeing the demands.');
+  S.unions.industry.reach = 50;
+  choose(engine, 'polish_union_agenda.industry');
+  choose(engine, 'polish_union_agenda.prepare_limited');
+  choose(engine, 'root');
+  dendry.playCard(engine, 'polish_union_agenda');
+  assert.match(JSON.stringify(engine.ui.paragraphs), /It is in the deck now because a dispute is under way \(industry\)/);
+  choose(engine, 'polish_union_agenda.industry');
+  assert.match(Q.pl_un_branch_text, /^Reach 50 · .*Demands agreed \(wages, threshold 40\), no action yet: you can start the protest, or first hold a meeting on the strike\. Support of the branch for a strike call of PPS: 50 of 100;/);
+});
+
 test('an offer is answered without a month: accepting ends the strike on the agreed terms and the rise comes the next month', () => {
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
