@@ -25,7 +25,7 @@ test('Obrazki: każdy obrazek sceny istnieje, a każdy polski obrazek jest użyt
   }
   const credits = fs.readFileSync(path.join(ROOT, 'credits_images.txt'), 'utf8');
   const files = polishFiles();
-  assert.equal(files.length, 59, 'with the card of the unions (Z — 0.56)');
+  assert.equal(files.length, 62, 'with the card of the unions (Z — 0.56) and the three decks (Z — 0.60)');
   for (const f of files) {
     assert.equal((used.get('polish/' + f) || []).length, 1, `polish/${f} is used by exactly one scene`);
     assert.ok(credits.includes('\npolish/' + f + ': '), `polish/${f} has an entry in credits_images.txt`);
@@ -37,10 +37,11 @@ test('Obrazki: karty i karty CKW mają obrazek na karcie, wydarzenia na stronie;
   const games = {en: read('out/game.json'), pl: read('out/html/game_pl.json')};
   for (const f of polishFiles()) {
     const name = f.replace(/\.jpg$/, '');
-    const id = name.replace(/_(wawel|zamek_krolewski)$/, '');
+    // Z — 0.60: the images of the three decks belong to the decks of main (polish_deck_party → main.party).
+    const id = name.startsWith('polish_deck_') ? 'main.' + name.slice('polish_deck_'.length) : name.replace(/_(wawel|zamek_krolewski)$/, '');
     const scene = games.en.scenes[id];
     assert.ok(scene, `${f}: scene ${id}`);
-    const card = !!(scene.isCard || scene.isPinnedCard);
+    const card = !!(scene.isCard || scene.isPinnedCard || scene.isDeck);
     const key = name === 'polish_gov_heritage_zamek_krolewski' ? 'faceImage' : card ? 'cardImage' : 'faceImage';
     // Z — 0.56: B2 became a card of the Parliament deck and kept its scene ID, polish_event_pils_criticism. Z — 0.57: the
     // joint list became an event before the election and kept the scene ID of card 7.7, polish_list_agreement.

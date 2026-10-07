@@ -1,6 +1,6 @@
 # Plan implementacji rozdziału 1
 
-**Stan — referencja 0.59, 6 października 2026. Wszystkie etapy 0–8 wykonane; etap 8 był ostatni, a pierwszy rozdział jest wdrożony w całości (rozdział 18). Po planie gra dostała polską wersję językową (rozdział 19), potwierdzanie obecnej linii (rozdział 20) nazwę Centralnego Komitetu Wykonawczego dla doradców (rozdział 21), nowe opisy wyborów (rozdział 22), czytelny pasek boczny (rozdziały 23 i 24), dziewięć uwag z gry (rozdział 25), trzynaście kolejnych uwag (rozdział 26) , TUR od startu i próg wspólnej listy (rozdział 27) oraz Milicja w B5 i opis karty związków (rozdział 28).** Plan opisuje, w jakiej kolejności i jakimi zmianami w kodzie wdrożono pierwszy rozdział gry. Reguły gry podaje [referencja techniczna](POLISH_TECHNICAL_REFERENCE.md), a karty — [katalog kart](POLISH_CARD_CATALOGUE.md). Plan nie tworzy reguł: przy rozbieżności obowiązuje referencja. Sam plan niczego jeszcze nie zmienia w grze. Każdy etap zaczyna się dopiero po zatwierdzeniu jego szczegółowego planu.
+**Stan — referencja 0.60, 7 października 2026. Wszystkie etapy 0–8 wykonane; etap 8 był ostatni, a pierwszy rozdział jest wdrożony w całości (rozdział 18). Po planie gra dostała polską wersję językową (rozdział 19), potwierdzanie obecnej linii (rozdział 20) nazwę Centralnego Komitetu Wykonawczego dla doradców (rozdział 21), nowe opisy wyborów (rozdział 22), czytelny pasek boczny (rozdziały 23 i 24), dziewięć uwag z gry (rozdział 25), trzynaście kolejnych uwag (rozdział 26), TUR od startu i próg wspólnej listy (rozdział 27), Milicja w B5 i opis karty związków (rozdział 28) oraz talie i ręka (rozdział 29).** Plan opisuje, w jakiej kolejności i jakimi zmianami w kodzie wdrożono pierwszy rozdział gry. Reguły gry podaje [referencja techniczna](POLISH_TECHNICAL_REFERENCE.md), a karty — [katalog kart](POLISH_CARD_CATALOGUE.md). Plan nie tworzy reguł: przy rozbieżności obowiązuje referencja. Sam plan niczego jeszcze nie zmienia w grze. Każdy etap zaczyna się dopiero po zatwierdzeniu jego szczegółowego planu.
 
 ## 1. Jak czytać plan
 
@@ -1202,6 +1202,10 @@ Dziewiąta zmiana po zakończeniu planu. Decyzjami użytkownika z 5 X 2026 TUR m
 ## 28. Milicja w B5 i opis karty związków (po planie, 0.59)
 
 Dziesiąta zmiana po zakończeniu planu. Decyzjami użytkownika z 6 X 2026 wydarzenie B5 ma czwartą odpowiedź — rozbicie nabożeństw ku czci Niewiadomskiego przez Milicję według wzoru odwetu z B4 — a karta „Związki zawodowe” wyjaśnia słowami, czym jest, dlaczego jest w talii i co znaczą jej liczby (referencja 17.7, 14.1 i 23.32). Wyniki: `npm test` 472 z 472; 18 kontroli.
+
+## 29. Talie i ręka (po planie, 0.60)
+
+Jedenasta zmiana po zakończeniu planu. Według uwag użytkownika z 7 X 2026: trzy talie zawsze widoczne w trzech rzędach, każda z dwoma miejscami ręki (sześć zamiast trzech), zamknięta talia wyszarzona z powodem; odrzucanie przyciskiem na karcie, raz w miesiącu, bez osobnej karty „Odrzuć kartę”; karty czasowe ze znaczkiem terminu; obrazki talii (referencja 4.4 i 23.33). Wyniki: `npm test` 472 z 472; 18 kontroli; test w przeglądarce.
 
 ## Dodatek A. Karty katalogu według etapów
 

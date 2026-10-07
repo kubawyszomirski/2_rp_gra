@@ -118,13 +118,16 @@ test('Pilotaż: ekran tytułowy, strona miesiąca i pasek boczny po polsku', () 
   assert.match(month, /Styczeń 1922/);
   assert.deepEqual(englishLeft(month), [], 'the month page');
   const titles = engine.getCurrentChoices().map(c => flat(c.title));
-  for (const title of ['Sprawy partii', 'Odrzuć kartę']) assert.ok(titles.includes(title), title);
+  // Z — 0.60: no separate card for discarding; the three decks are always shown, a closed one cannot be chosen.
+  for (const title of ['Sprawy partii', 'Sprawy rządu', 'Parlament']) assert.ok(titles.includes(title), title);
+  assert.ok(!titles.includes('Odrzuć kartę'), 'a card is discarded on the card itself');
   // Z — 0.57: the party agenda and the unions are cards of the Party deck, no longer pinned on the month page.
   for (const title of ['Agenda partii', 'Związki zawodowe']) assert.ok(!titles.includes(title), title);
   assert.deepEqual(['polish_party_agenda', 'polish_union_agenda'].map(id => flat(engine.game.scenes[id].title)), ['Agenda partii', 'Związki zawodowe']);
   // Z — 0.56: in January 1922 the Parliament deck has no card yet (the constitutional debate opens in XII 1924, the review of
-  // the cabinet comes after half a year), and an empty deck is hidden.
-  assert.ok(!titles.includes('Parlament'), 'the empty Parliament deck is hidden');
+  // the cabinet comes after half a year). Z — 0.60: it is shown but closed, with its reason.
+  assert.equal(engine.getCurrentChoices().find(c => c.id === 'main.parliament').canChoose, false, 'the empty Parliament deck is closed');
+  assert.equal(engine.state.qualities.pl_deck_parliament_why, 'Teraz nie ma żadnej karty parlamentarnej do zagrania.');
   const sidebar = {};
   for (const id of ['status', 'status.politics', 'status.economy', 'status.paramilitaries', 'status.polls']) {
     const scene = engine.game.scenes[id];

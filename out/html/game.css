@@ -441,6 +441,59 @@ a.card:focus .card-tooltip, a.card:hover .card-tooltip {
   position: absolute;
 }
 
+/* Z — 0.60 (the user's notes of 7 X 2026): three rows, each a deck with its two places of the hand. */
+#pl-tableau .pl-deck-row {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: nowrap;
+  margin-bottom: 0.6em;
+}
+#pl-tableau ul.decks, #pl-tableau ul.hand {
+  display: flex;
+  margin: 0;
+}
+#pl-tableau .deck {
+  margin-right: 1.6em;
+}
+#pl-tableau .unavailable-card .card-img {
+  filter: grayscale(100%);
+  opacity: 0.45;
+}
+.pl-deck-reason, .pl-undiscardable {
+  display: block;
+  max-width: 140px;
+  font-size: 0.8em;
+  text-align: center;
+  color: var(--unavailable-color);
+}
+button.pl-discard {
+  display: block;
+  margin: 0.1em auto 0;
+  padding: 0.1em 0.8em;
+  font: inherit;
+  font-size: 0.85em;
+  cursor: pointer;
+  color: var(--text-color, inherit);
+  background-color: var(--content-bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+}
+button.pl-discard.pl-disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.pl-timed-badge {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  z-index: 1;
+  padding: 1px 4px;
+  font-size: 0.75em;
+  color: #fff;
+  background-color: #8b1a1a;
+  border-radius: 3px;
+}
+
 /* Unlike cards, face images can have different sizes. */
 .face-figure {
   /*vertical-align: top;*/

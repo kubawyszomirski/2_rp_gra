@@ -24,7 +24,7 @@ const section = (text, from, to) => { const a = text.indexOf(from); assert.ok(a 
 const lineAfter = (text, label) => { const l = text.split('\n').find(x => x.startsWith(label)); assert.ok(l, `line ${label}`); return l.slice(label.length).trim(); };
 
 // ---- Header and approved decisions.
-assert.match(plan.split('\n')[2], /^\*\*Stan — referencja 0\.[45]\d, \d{1,2} \S+ \d{4}\./, 'plan state line');
+assert.match(plan.split('\n')[2], /^\*\*Stan — referencja 0\.[4-9]\d, \d{1,2} \S+ \d{4}\./, 'plan state line');
 const decisions = section(plan, '## 2. Zatwierdzone decyzje (Z — 0.40)', '## 3. ');
 for (const t of ['**Kod reguł w osobnym module.**', '**Na razie tylko angielski.**', '**Stare zapisy gry wymagają nowej gry.**']) assert.ok(decisions.includes(t), `decision ${t}`);
 const trRules = [
@@ -36,11 +36,11 @@ const trRules = [
   ['### 20.3. ', '## 21. ', '[POLISH_IMPLEMENTATION_PLAN.md](POLISH_IMPLEMENTATION_PLAN.md)'],
 ];
 for (const [from, to, text] of trRules) assert.ok(section(tr, from, to).includes(text), `reference ${from.trim()} records the 0.40 decision`);
-assert.ok(/^\*\*Wersja 0\.[45]\d — /m.test(tr), 'reference version 0.40 or later');
+assert.ok(/^\*\*Wersja 0\.[4-9]\d — /m.test(tr), 'reference version 0.40 or later');
 assert.ok(section(tr, '### 20.1. ', '### 20.1.1. ').includes('Decyzja zastępuje Z — 0.40'), 'reference 20.1 names the replaced 0.40 decision');
 assert.ok(plan.includes('## 19. Polska wersja językowa (po planie, 0.50)'), 'plan chapter 19: the Polish language version');
 for (const f of ['PLAN.md', 'MECHANICS_MAP.md', 'STATE_VARIABLES.md', 'TRANSITION_MATRIX.md']) {
-  const text = read(f), head = text.match(/^## Current state — reference 0\.[45]\d, .*$/m);
+  const text = read(f), head = text.match(/^## Current state — reference 0\.[4-9]\d, .*$/m);
   assert.ok(head, `${f} has a current state for reference 0.40 or later`);
   const state = section(text, head[0], '## Archive of entries');
   assert.ok(state.includes('`docs/POLISH_IMPLEMENTATION_PLAN.md`') && state.includes('**Implementation plan (Z, 0.40):**'), `${f} points to the plan`);

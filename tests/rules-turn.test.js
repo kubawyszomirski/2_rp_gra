@@ -209,13 +209,13 @@ test('a drawn card does not depend on the order of the legal cards (4.4, 4.6)', 
   assert.equal(rules.pickCard(Q, [], 'main.party'), null);
 });
 
-test('projects stay on the agenda, outside the three hand places (4.4)', () => {
+test('projects stay on the agenda, outside the hand places (4.4; Z — 0.60: two for each deck, six in all)', () => {
   const Q = newQ();
   Q.S.projects.p2 = { id: 'p2', status: 'implementing' };
   Q.S.projects.p1 = { id: 'p1', status: 'preparing' };
   Q.S.projects.p0 = { id: 'p0', status: 'completed' };
   assert.deepEqual(rules.agendaItems(Q.S), [{ id: 'p1', kind: 'project', status: 'preparing' }, { id: 'p2', kind: 'project', status: 'implementing' }]);
-  assert.equal(rules.HAND_SIZE, 3);
+  assert.deepEqual([rules.HAND_SIZE, rules.HAND_PER_DECK], [6, 2]);
 });
 
 test('validation covers transactions and rolls (schema 2)', () => {

@@ -114,11 +114,13 @@ test('Doradca (21.1): an adviser action at t=1 blocks all advisers until t=7, th
   assert.equal(Q.S.history.actions.filter(txn => txn.source === 'advisor').length, 1);
 });
 
-test('Ręka (21.1): three places, no fourth card, a legal refill and a lasting project agenda', () => {
+test('Ręka (21.1; Z — 0.60): two places for each deck, no third card of a deck, a legal refill and a lasting project agenda', () => {
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
-  for (let i = 0; i < 3; i++) assert.ok(engine.drawCard('main.party').id);
-  assert.deepEqual(engine.drawCard('main.party'), { id: null, title: 'no_space_in_hand' });
+  for (let i = 0; i < 2; i++) assert.ok(engine.drawCard('main.party').id);
+  assert.deepEqual(engine.drawCard('main.party'), { id: null, title: 'no_space_in_hand' }, 'two places for the Party deck');
+  assert.deepEqual(engine.drawCard('main.govt'), { id: null, title: 'no_card_in_deck' }, 'the closed Government deck offers no card');
+  assert.ok(engine.state.currentHands.main.every(card => card.deck === 'main.party'), 'a drawn card remembers its deck');
   // A card whose conditions stop holding leaves the hand when the hand is shown again. Inherited cards wait
   // on a Q timer; the Polish cards of stage 5 on a dated cooldown in Q.S (4.4).
   const block = (id, on) => {
@@ -134,13 +136,13 @@ test('Ręka (21.1): three places, no fourth card, a legal refill and a lasting p
     block(card.id, false);
   }
   assert.ok(removed, 'one card became illegal and left the hand');
-  assert.equal(engine.state.currentHands.main.length, 2);
+  assert.equal(engine.state.currentHands.main.length, 1);
   const refill = engine.drawCard('main.party');
   assert.ok(refill.id && refill.id !== removed, 'a legal card fills the place');
   Q.S.projects.test_project = { id: 'test_project', status: 'implementing' };
   spendMonth(engine);
   assert.deepEqual(PolishRules.agendaItems(Q.S), [{ id: 'test_project', kind: 'project', status: 'implementing' }], 'the project stays on the agenda');
-  assert.ok(engine.state.currentHands.main.length <= 3);
+  assert.ok(engine.state.currentHands.main.length <= 6);
 });
 
 test('Rzut (21.1): viewing, cancelling, saving and loading give the same recorded roll and no second reward', () => {
@@ -262,40 +264,38 @@ test('an adviser opening a card makes that step cost no month; closing it refund
   assert.deepEqual([R.time, R.month_actions, R.S.cooldowns.advisor], [1, 0, 7], 'no month used, no adviser refund');
 });
 
-test('one free discard a month, available again after the month changes (4.4)', () => {
+// Z — 0.60 (the user's notes of 7 X 2026): a card is discarded on the card itself, once a month; the timed cards, the cards of
+// the party's vision and the cards opened by a special event cannot be discarded. There is no separate discard card.
+test('one free discard a month on the card itself, available again after the month changes (4.4; Z — 0.60)', () => {
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
-  dendry.choose(engine, 'polish_discard');
-  assert.deepEqual(open(engine).map(choice => choice.id), ['polish_discard.keep'], 'an empty hand has nothing to discard');
-  dendry.choose(engine, 'polish_discard.keep');
-  const first = engine.drawCard('main.party');
-  engine.drawCard('main.party');
-  engine.goToScene('main');
-  dendry.choose(engine, 'polish_discard');
-  const hand = engine.state.currentHands.main.map(c => c.id);
-  dendry.choose(engine, 'polish_discard.slot_1');
-  assert.equal(engine.state.sceneId, 'main');
-  assert.deepEqual(engine.state.currentHands.main.map(c => c.id), hand.slice(1));
-  assert.ok(!engine.state.currentHands.main.some(c => c.id === first.id) || hand[0] !== first.id);
+  assert.ok(!choiceIds(engine).includes('polish_discard'), 'no separate discard card');
+  engine.state.currentHands.main = [
+    { id: 'polish_party_media', title: 'Media', deck: 'main.party' },
+    { id: 'polish_party_direction', title: 'Direction', deck: 'main.party' },
+  ];
+  assert.match(PolishRules.discardStatus(Q, engine.state, 'polish_party_direction').reason, /vision cannot be discarded/);
+  assert.match(PolishRules.discardStatus(Q, engine.state, 'polish_constitution_project').reason, /special event/);
+  assert.match(PolishRules.discardStatus(Q, engine.state, 'polish_event_pils_criticism').reason, /timed card/);
+  const party = PolishEngineHooks.deckView(engine, 'main.party');
+  assert.deepEqual([party.available, party.cards.map(c => c.id)], [false, ['polish_party_media', 'polish_party_direction']]);
+  assert.match(party.reason, /Both places of this deck are taken/);
+  PolishRules.discardCard(Q, engine.state, 'polish_party_media');
+  assert.deepEqual(engine.state.currentHands.main.map(c => c.id), ['polish_party_direction']);
   assert.equal(Q.time, 1, 'discarding costs no month');
-  assert.ok(!choiceIds(engine).includes('polish_discard'), 'only one discard a month');
+  engine.state.currentHands.main.push({ id: 'polish_party_militia', title: 'Milicja', deck: 'main.party' });
+  assert.match(PolishRules.discardStatus(Q, engine.state, 'polish_party_militia').reason, /already been discarded this month/);
+  assert.equal(PolishEngineHooks.deckView(engine, 'main.party').cards.find(c => c.id === 'polish_party_militia').discard.available, false);
   spendMonth(engine);
-  if (!engine.state.currentHands.main.length) engine.drawCard('main.party');
-  engine.goToScene('main');
-  assert.ok(choiceIds(engine).includes('polish_discard'), 'available again after the month changes');
+  assert.equal(Q.S.turn.discard_used, false, 'available again after the month changes');
 });
 
 // Bug of 5 X 2026: the discard page and "Not now" of a pinned card went straight to the hand without a new page, so
 // their text stayed above the hand. They return through root, like "Return to hand". Z — 0.57: the party agenda is an
-// ordinary card, so it is closed with "Return to hand" and goes back to the hand.
-test('the discard page and "Return to hand" of the party agenda leave no text above the hand', () => {
+// ordinary card, so it is closed with "Return to hand" and goes back to the hand. Z — 0.60: the discard page is gone.
+test('"Return to hand" of the party agenda leaves no text above the hand', () => {
   const engine = dendry.startGame();
   const text = () => JSON.stringify(engine.ui.paragraphs);
-  dendry.choose(engine, 'polish_discard');
-  assert.match(text(), /Once a month you may discard/);
-  dendry.choose(engine, 'polish_discard.keep');
-  assert.equal(engine.state.sceneId, 'main');
-  assert.doesNotMatch(text(), /Once a month you may discard/);
   dendry.playCard(engine, 'polish_party_agenda');
   assert.match(text(), /Party money/);
   dendry.choose(engine, 'easy_discard');

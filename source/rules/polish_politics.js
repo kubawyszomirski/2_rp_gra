@@ -1206,6 +1206,14 @@
     return !!speech && Q.time - speech.t < SPEECH_WINDOW;
   }
 
+  // The last month in which the card B2 can be answered: the badge of a timed card in the hand (Z — 0.60).
+  function criticismUntil(Q) {
+    if (!ready(Q) || Q.S.chapter.status === 'ended') return null;
+    const speech = speechDue(Q.S);
+    return speech ? speech.t + SPEECH_WINDOW - 1 : null;
+  }
+  rules.registerCardDeadline('polish_event_pils_criticism', criticismUntil);
+
   function criticismStatus(Q, choice) {
     if (!CRITICISM[choice]) return {available: false, reason: L('Unknown answer.', 'Nieznana odpowiedź.')};
     if (!criticismDue(Q)) return {available: false, reason: L('No speech waits for an answer.', 'Żadne wystąpienie nie czeka na odpowiedź.')};
@@ -1360,6 +1368,7 @@
     afterEvents: afterEvents,
     settleMonth: settleMonth,
     criticismDue: criticismDue,
+    criticismUntil: criticismUntil,
     criticismStatus: criticismStatus,
     criticismQuote: criticismQuote,
     QUOTES: QUOTES,

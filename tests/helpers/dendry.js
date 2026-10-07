@@ -46,7 +46,8 @@ function loadRules() {
   globalThis.PolishUnions = require(UNIONS_FILE);
   globalThis.PolishPolitics = require(POLITICS_FILE);
   globalThis.PolishSecurity = require(SECURITY_FILE);
-  require(HOOKS_FILE).install(DendryEngine.prototype, globalThis.PolishRules);
+  globalThis.PolishEngineHooks = require(HOOKS_FILE);
+  globalThis.PolishEngineHooks.install(DendryEngine.prototype, globalThis.PolishRules);
   return globalThis.PolishRules;
 }
 
@@ -176,6 +177,7 @@ function walk(engine, { variant = 0, maxSteps = 2500, lastYear = 1928, onStep } 
   let current = engine;
   let step = 0;
   const tried = new Map();
+  const visits = new Map();
   for (; step < maxSteps && !current.isGameOver() && current.state.qualities.year <= lastYear; step++) {
     if (onStep) {
       const replacement = onStep(current, step);
@@ -190,8 +192,12 @@ function walk(engine, { variant = 0, maxSteps = 2500, lastYear = 1928, onStep } 
     const taken = tried.get(key) || new Set();
     const fresh = options.filter(option => !taken.has(option.id));
     // Once every option of this page has been taken this month, rotate through all of them: a stride that shares a factor
-    // with their number would cycle over a few free moves for ever (nine options and the stride 3, seen in Z — 0.56).
-    const pick = fresh.length ? fresh[(step * (variant + 3) + variant) % fresh.length] : options[(step + variant) % options.length];
+    // with their number would cycle over a few free moves for ever (nine options and the stride 3, seen in Z — 0.56). Z — 0.60:
+    // the rotation counts the visits of the page, not the steps — main is reached every second step, so an even number of
+    // options cycled over half of them (four options, two advisers).
+    const visit = (visits.get(key) || 0) + 1;
+    visits.set(key, visit);
+    const pick = fresh.length ? fresh[(step * (variant + 3) + variant) % fresh.length] : options[(visit + variant) % options.length];
     taken.add(pick.id);
     tried.set(key, taken);
     current.choose(pick.index);

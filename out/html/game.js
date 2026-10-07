@@ -138,6 +138,10 @@
     empty: {en: 'Empty', pl: 'Pusty'},
     hand: {en: 'Hand - click a card to play.', pl: 'Ręka — kliknij kartę, aby ją zagrać.'},
     decks: {en: 'Decks - click a deck to draw a card.', pl: 'Talie — kliknij talię, aby dobrać kartę.'},
+    tableau: {en: 'Decks and hand — click a deck to draw a card (two places for each deck), or a card to play it.',
+      pl: 'Talie i ręka — kliknij talię, aby dobrać kartę (dwa miejsca na każdą talię), albo kartę, aby ją zagrać.'},
+    discard: {en: 'Discard', pl: 'Odrzuć'},
+    undiscardable: {en: 'cannot be discarded', pl: 'nie do odrzucenia'},
     pinned: {en: 'Central Executive Committee - actions are only usable once per 6 months.', pl: 'Centralny Komitet Wykonawczy — każda akcja raz na 6 miesięcy.'},
     continue_choice: {en: 'Continue...', pl: 'Dalej…'},
     load_failed: {en: 'The Polish version could not be loaded; the game continues in English.',
@@ -576,6 +580,111 @@
   };
 
   
+  // ---- Decks and hand (Z — 0.60, the user's notes of 7 X 2026) ----------------------------------------------------
+  // The three decks in three rows, each with its two places of the hand (PolishEngineHooks.deckView). A closed deck is
+  // greyed and says why. Under each card a button discards it, once a month; a timed card carries a badge with its last
+  // month. The decks are drawn together with the hand, so window.displayDecks draws nothing.
+  var DECK_IDS = ['main.party', 'main.govt', 'main.parliament'];
+  var MONTHS_EN_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  var MONTHS_ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
+  var deadlineBadge = function(t) {
+    var rules = window.PolishRules;
+    var m = rules.monthOf(t), y = rules.yearOf(t);
+    return window.currentLanguage === 'pl' ? '\u23f3 do ' + MONTHS_ROMAN[m - 1] + ' ' + y : '\u23f3 until ' + MONTHS_EN_SHORT[m - 1] + ' ' + y;
+  };
+  var deadlineText = function(t) {
+    var rules = window.PolishRules;
+    return window.currentLanguage === 'pl' ? 'Karta czasowa: zniknie z ręki po ' + rules.monthYear(t, 'loc') + '.' :
+      'Timed card: it leaves the hand after ' + rules.monthYear(t) + '.';
+  };
+  var renderTableau = function() {
+    var ui = window.dendryUI, engine = ui && ui.dendryEngine;
+    if (!engine || !window.PolishEngineHooks || !window.PolishEngineHooks.deckView || typeof $ === 'undefined') {
+      return;
+    }
+    var $tableau = $('#pl-tableau');
+    if ($tableau.length) {
+      $tableau.empty();
+    } else {
+      ui.$content.append($('<hr>'));
+      ui.$content.append($('<p>').addClass('deck-description').text(uiText('tableau')));
+      $tableau = $('<div>').attr('id', 'pl-tableau');
+      ui.$content.append($tableau);
+    }
+    DECK_IDS.forEach(function(deckId) {
+      var view = window.PolishEngineHooks.deckView(engine, deckId);
+      var $row = $('<div>').addClass('pl-deck-row');
+      var $deck = $('<li>').addClass('deck');
+      var $deckLink = $('<a>').addClass('card').attr({href: '#', 'card-id': deckId, title: view.title});
+      if (view.image) {
+        $deckLink.append($('<img>').addClass('card-img').attr({src: view.image, alt: view.title}));
+      }
+      if (!view.available) {
+        $deck.addClass('unavailable-card');
+        $deckLink.append($('<span>').addClass('card-tooltip').text(view.reason));
+      }
+      $deck.append($deckLink).append($('<span>').addClass('card-caption').text(view.title));
+      if (!view.available) {
+        $deck.append($('<span>').addClass('pl-deck-reason').text(view.reason));
+      }
+      $row.append($('<ul>').addClass('decks').append($deck));
+      var $hand = $('<ul>').addClass('hand');
+      for (var i = 0; i < Math.max(view.slots, view.cards.length); i++) {
+        var card = view.cards[i];
+        var $place = $('<li>').addClass('card-in-hand');
+        if (card) {
+          var $cardLink = $('<a>').addClass('card').attr({href: '#', 'card-id': card.id, title: card.title});
+          if (card.image) {
+            $cardLink.append($('<img>').addClass('card-img').attr({src: card.image, alt: card.title}));
+          }
+          if (card.until !== null && card.until !== undefined) {
+            $cardLink.addClass('pl-timed');
+            $cardLink.append($('<span>').addClass('pl-timed-badge').text(deadlineBadge(card.until)));
+            $cardLink.append($('<span>').addClass('card-tooltip').text(deadlineText(card.until)));
+          }
+          $place.append($cardLink).append($('<span>').addClass('card-caption').text(card.title));
+          var undiscardable = window.PolishRules.TIMED_CARDS.indexOf(card.id) >= 0 || window.PolishRules.VISION_CARDS.indexOf(card.id) >= 0 ||
+            window.PolishRules.EVENT_CARDS.indexOf(card.id) >= 0;
+          if (undiscardable) {
+            $place.append($('<span>').addClass('pl-undiscardable').attr('title', card.discard.reason).text(uiText('undiscardable')));
+          } else {
+            var $button = $('<button>').addClass('pl-discard').attr({type: 'button', 'data-card-id': card.id}).text(uiText('discard'));
+            if (!card.discard.available) {
+              $button.addClass('pl-disabled').attr({'aria-disabled': 'true', title: card.discard.reason});
+            }
+            $place.append($button);
+          }
+        } else {
+          $place.append($('<div>').addClass('blank-card'));
+        }
+        $hand.append($place);
+      }
+      $row.append($hand);
+      $tableau.append($row);
+    });
+  };
+  window.displayDecks = function(decks) {
+  };
+  window.displayHand = function(hand, maxCards) {
+    renderTableau();
+  };
+  var discardFromTableau = function(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    var $button = $(this);
+    if ($button.hasClass('pl-disabled')) {
+      return false;
+    }
+    var engine = window.dendryUI.dendryEngine, Q = engine.state.qualities, cardId = $button.attr('data-card-id');
+    if (!window.PolishRules.discardStatus(Q, engine.state, cardId).available) {
+      return false;
+    }
+    window.PolishRules.discardCard(Q, engine.state, cardId);
+    window.dendryUI.autosave();
+    renderTableau();
+    return false;
+  };
+
   // This function allows you to modify the text before it's displayed.
   // The effect numbers of choice descriptions are wrapped so that the Options setting can hide them (Z — 0.53).
   window.displayText = function(text) {
@@ -700,6 +809,7 @@
     document.getElementById('font_size_value').textContent = window.dendryUI.font_size.toFixed(1) + "em";
     window.pinnedCardsDescription = uiText('pinned');
     applyShowNumbers(storedShowNumbers());
+    $(document).on('click', 'button.pl-discard', discardFromTableau);
   };
 
 }());

@@ -2714,6 +2714,15 @@
     return record;
   }
 
+  // Z — 0.60 (the user's notes of 7 X 2026): the three decks are always shown, and a closed deck says why (the page reads
+  // these texts in PolishEngineHooks.deckView).
+  function deckReasons(Q) {
+    Q.pl_deck_govt_why = (Q.time < 6 || Q.polish_opening_government_active) ?
+      L('PPS tolerates the government but holds no ministries.', 'PPS toleruje rząd, ale nie ma ministerstw.') :
+      L('PPS holds no ministry that opens a government card now.', 'PPS nie ma teraz ministerstwa, które otwiera kartę rządową.');
+    Q.pl_deck_parliament_why = L('No parliamentary card can be played now.', 'Teraz nie ma żadnej karty parlamentarnej do zagrania.');
+  }
+
   // Z — 0.57 (items 7 and 8 of the play notes of 5 X 2026, the option "an event before the election"): the question of a
   // joint list is an event in the first month of the list window, two months before the vote, and is not drawn from a
   // deck. PPS proposes one list or goes alone. After a refusal the question returns once in the last month of the
@@ -2898,6 +2907,7 @@
     proposeList: proposeList,
     listAgreementAvailable: listAgreementAvailable,
     listEventDue: listEventDue,
+    deckReasons: deckReasons,
     listGoAlone: listGoAlone,
     listRetryPossible: listRetryPossible,
     listEventView: listEventView,

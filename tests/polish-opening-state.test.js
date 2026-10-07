@@ -263,7 +263,9 @@ test('Government Affairs remains inaccessible at its relative-month unlock witho
     Q.month = month;
     Q.time = month;
     engine.goToScene('main');
-    assert.equal(condition(engine, 'main.govt'), false);
+    // Z — 0.60: the deck is always shown and closed by its choose-if.
+    assert.equal(condition(engine, 'main.govt', 'chooseIf'), false);
+    assert.equal(engine.getCurrentChoices().find((c) => c.id === 'main.govt').canChoose, false);
     assert.ok(engine.getCurrentChoices().some((c) => c.id === 'main.party'));
     assert.ok(!engine._compileChoices(engine.game.scenes['main.govt']).some((c) =>
       c.canChoose && engine.game.scenes[c.id].isCard));

@@ -54,7 +54,18 @@
   const AUTHORITY_WEIGHTS = Object.freeze({law: 4, resolution: 4, failure: -6, gap: -3, breach: -5, stance_defense: 1, stance_criticism: -2,
     stance_silence: 0});
   const AUTHORITY_BASE = 55;
-  const HAND_SIZE = 3; // 4.4: three places in total, not three per deck
+  // 4.4; Z — 0.60 (the user's notes of 7 X 2026): two places for each of the three decks, six in all (until 0.59 three in all).
+  const HAND_SIZE = 6;
+  const HAND_PER_DECK = 2;
+  const DECK_TAGS = Object.freeze({party_affairs: 'main.party', govt_affairs: 'main.govt', parliament_affairs: 'main.parliament'});
+  // Cards that cannot be discarded (Z — 0.60): the timed cards, the cards of the party's vision and the cards a special
+  // event opens. A timed card registers the last month it can be played (registerCardDeadline).
+  const TIMED_CARDS = Object.freeze(['polish_event_pils_criticism']);
+  const VISION_CARDS = Object.freeze(['polish_party_direction', 'polish_party_main_opponent', 'polish_party_pils_influence',
+    'polish_party_form_of_power', 'polish_party_electoral_base', 'polish_party_slavic_autonomy', 'polish_party_jewish_cooperation',
+    'polish_party_ussr_position', 'polish_party_economic_program']);
+  const EVENT_CARDS = Object.freeze(['polish_constitution_project', 'polish_parliament_army_oversight']);
+  const cardDeadlines = {};
   const ADVISOR_COOLDOWN_MONTHS = 6; // 4.4: one shared adviser cooldown
   const TXN_SOURCES = ['main', 'advisor', 'event', 'cabinet'];
   const TXN_PHASES = ['preview', 'committed', 'settled'];
@@ -691,6 +702,50 @@
     return discardAvailable(Q) && handCards(state).length > 0;
   }
 
+  // The deck a card is drawn from, by its tag (Z — 0.60).
+  function deckOfCard(game, cardId) {
+    const scene = game && game.scenes && game.scenes[cardId];
+    for (const tag of (scene && scene.tags) || []) if (DECK_TAGS[tag]) return DECK_TAGS[tag];
+    return null;
+  }
+
+  function handOfDeck(state, game, deckId) {
+    return handCards(state).filter(card => (card.deck || deckOfCard(game, card.id)) === deckId);
+  }
+
+  // A module registers the last month in which its timed card can be played (Z — 0.60).
+  function registerCardDeadline(cardId, fn) {
+    cardDeadlines[cardId] = fn;
+  }
+
+  function cardDeadline(Q, cardId) {
+    const fn = cardDeadlines[cardId];
+    const t = fn ? fn(Q) : null;
+    return typeof t === 'number' ? t : null;
+  }
+
+  // Z — 0.60: a card is discarded on the card itself; once a month, and never a timed card, a card of the party's vision or a
+  // card opened by a special event.
+  function discardStatus(Q, state, cardId) {
+    const no = reason => ({available: false, reason: reason});
+    if (!Q.S) return no('');
+    if (TIMED_CARDS.indexOf(cardId) >= 0) return no(L('A timed card cannot be discarded; it leaves the hand when its time ends.',
+      'Karty czasowej nie można odrzucić; zniknie z ręki po swoim terminie.'));
+    if (VISION_CARDS.indexOf(cardId) >= 0) return no(L('A card of the party’s vision cannot be discarded: play it to confirm or change the line.',
+      'Karty wizji partii nie można odrzucić: zagraj ją, aby potwierdzić albo zmienić linię.'));
+    if (EVENT_CARDS.indexOf(cardId) >= 0) return no(L('A card opened by a special event cannot be discarded.',
+      'Karty otwartej przez specjalne wydarzenie nie można odrzucić.'));
+    if (Q.S.turn.discard_used) return no(L('A card has already been discarded this month.', 'W tym miesiącu odrzucono już kartę.'));
+    if (!handCards(state).some(card => card.id === cardId)) return no(L('The card is not in the hand.', 'Tej karty nie ma na ręce.'));
+    return {available: true, reason: ''};
+  }
+
+  function discardCard(Q, state, cardId) {
+    const status = discardStatus(Q, state, cardId);
+    if (!status.available) throw new Error('discardCard: ' + status.reason);
+    return discardFromHand(Q, state, handCards(state).findIndex(card => card.id === cardId));
+  }
+
   function refreshHandMirrors(Q, state) {
     Q.pl_hand_count = handCards(state).length;
     for (let i = 0; i < HAND_SIZE; i++) {
@@ -930,6 +985,16 @@
     canDiscard: canDiscard,
     refreshHandMirrors: refreshHandMirrors,
     discardFromHand: discardFromHand,
+    HAND_PER_DECK: HAND_PER_DECK,
+    TIMED_CARDS: TIMED_CARDS,
+    VISION_CARDS: VISION_CARDS,
+    EVENT_CARDS: EVENT_CARDS,
+    deckOfCard: deckOfCard,
+    handOfDeck: handOfDeck,
+    registerCardDeadline: registerCardDeadline,
+    cardDeadline: cardDeadline,
+    discardStatus: discardStatus,
+    discardCard: discardCard,
     pickCard: pickCard,
     agendaItems: agendaItems,
     nextEvent: nextEvent,

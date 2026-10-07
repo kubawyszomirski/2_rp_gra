@@ -17,9 +17,11 @@ Q.polish_government_actions_available = this._compileChoices(this.game.scenes['m
     .some(function(choice) { return choice.canChoose && this.game.scenes[choice.id].isCard; }, this);
 // G4 (card catalogue 9.17): the reminder of the coming election, in the three months before it.
 Q.pl_election_reminder = PolishGovernment.electionReminder(Q);
-// The Parliament deck (stage 3) is shown only when one of its cards can be played.
+// The Parliament deck (stage 3) opens only when one of its cards can be played.
 Q.polish_parliament_actions_available = this._compileChoices(this.game.scenes['main.parliament'])
     .some(function(choice) { return choice.canChoose && this.game.scenes[choice.id].isCard; }, this);
+// Z — 0.60 (the user's notes of 7 X 2026): the three decks are always shown; a closed deck says why.
+PolishGovernment.deckReasons(Q);
 if (Q.advisor_action_timer <= 0) {
     Q.pinnedCardsDescription = 'Central Executive Committee - an action is available.';
 } else if (Q.advisor_action_timer == 1) {
@@ -28,7 +30,7 @@ if (Q.advisor_action_timer <= 0) {
     Q.pinnedCardsDescription = 'Central Executive Committee - next action available in ' + Q.advisor_action_timer + ' months.';
 }
 !}
-max-cards: 3
+max-cards: 6
 
 #Here, the main deck will be displayed. Clicking on the deck draws a card into your hand. Clicking on a card activates that card.
 
@@ -47,25 +49,27 @@ max-cards: 3
 - @polish_government_response
 - @polish_agenda
 - @polish_budget_package
-- @polish_discard
 
 
 @party
 title: Party Affairs
 is-deck: true
+card-image: img/polish/polish_deck_party.jpg
 
 - #party_affairs
 
 @govt
 title: Government Affairs
-view-if: time >= 6 and not polish_opening_government_active and (not polish_government_safeguards or polish_government_actions_available)
+choose-if: time >= 6 and not polish_opening_government_active and (not polish_government_safeguards or polish_government_actions_available)
 is-deck: true
+card-image: img/polish/polish_deck_govt.jpg
 
 - #govt_affairs
 
 @parliament
 title: Parliament
-view-if: polish_parliament_actions_available
+choose-if: polish_parliament_actions_available
 is-deck: true
+card-image: img/polish/polish_deck_parliament.jpg
 
 - #parliament_affairs
