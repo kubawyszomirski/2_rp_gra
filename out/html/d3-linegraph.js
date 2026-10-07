@@ -42,9 +42,11 @@ d3.linegraph = function(noTicks, noDots, parties, partyColors, partyNames, dataM
       // Map the data to an array of arrays of {x, y} tuples.
       const series = parties.map(party => data.map(d => ({'x': new Date(d.date), 'y': d[party], 'series': party})));
 
-      // Declare the x (horizontal position) scale.
+      // Declare the x (horizontal position) scale. It starts at the first
+      // record; January 1928 (the German start date) is kept when there are none.
+      const minDate = d3.min(dates) || new Date(1928, 0);
       const maxDate = d3.max(dates);
-      const xScale = d3.scaleUtc([new Date(1928, 0), addMonths(maxDate, additionalMonths)], [marginLeft, width - marginRight]);
+      const xScale = d3.scaleUtc([minDate, addMonths(maxDate, additionalMonths)], [marginLeft, width - marginRight]);
 
       var xaxis = d3.axisBottom()
         .tickFormat(d3.timeFormat('%b %Y'))

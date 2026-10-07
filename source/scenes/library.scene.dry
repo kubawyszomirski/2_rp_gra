@@ -424,10 +424,13 @@ if (typeof d3 !== 'undefined' && typeof window !== 'undefined') {
 
     // party support records should not have so many ticks
     if (!Q.historical_mode || Q.game_over) {
+        // explicit y range: the linegraph default only reads the German spd/nsdap keys
+        var maxSupport = d3.max(Q.party_support_records, d => d3.max(Q.parties, party => d[party]));
         var lines_2 = d3.linegraph(true, true,
             Q.parties,
             Q.party_colors,
-            Q.party_names);
+            Q.party_names,
+            maxSupport + 5, 0);
         lines_2.width(width).height(400);
         d3.select("#party_support_history").datum(Q.party_support_records).call(lines_2);
     }
