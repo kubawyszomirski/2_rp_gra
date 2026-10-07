@@ -156,10 +156,9 @@ test('opening, status and read-only cabinet agree without changing time or membe
   assert.match(content(engine), /External toleration of Ponikowski/);
   assert.doesNotMatch(content(engine), /Hindenburg|Chancellor:/);
   engine.goToScene('status.politics');
-  // Z — 0.65: the sidebar gives only the number of MPs; the share of seats stays in the Library.
+  // Z — 0.65: the sidebar gives only the number of MPs. Z — 0.69: so does the parliament legend of the Library.
   assert.match(content(engine), /"35 MPs"/);
   assert.doesNotMatch(content(engine), /% of seats/);
-  assert.equal(engine.state.qualities.pps_sejm_display, '35 MPs; 7.9% of seats', 'the Library line keeps the share');
   engine.goToScene('backSpecialScene');
   engine.goToScene('library');
   choose(engine, 'library.curr_gov');
@@ -170,6 +169,10 @@ test('opening, status and read-only cabinet agree without changing time or membe
   assert.equal((cabinet.match(/Cabinet-administered; outside PPS control/g) || []).length, 9);
   assert.equal(engine.state.qualities.time, 1);
   assert.equal(engine.state.qualities.spd_in_government, 0);
+  choose(engine, 'library.figures');
+  const figures = content(engine);
+  assert.match(figures, /"35 MPs"/);
+  assert.doesNotMatch(figures, /% of seats|Percentages are rounded|Seats %/);
   engine.goToScene('backSpecialScene');
   assert.equal(engine.state.sceneId, 'main');
 });
@@ -310,6 +313,11 @@ test('legacy entry redirects to exact-seat election without its old monthly char
   engine.goToScene('election_1928');
   choose(engine, 'sejm_election.calculate');
   assert.equal(engine.state.sceneId, 'sejm_election.government');
+  // Z — 0.69: the result lines give votes, MPs and the change of MPs, without the share of seats.
+  assert.match(Q.pps_election_display, /^\d+\.\d\d% votes; \d+ MPs? \(MP change [^;)]+\)/);
+  for (const party of Q.parties) {
+    assert.doesNotMatch(String(Q[party + '_election_display'] || ''), /of seats|seat-share/, party);
+  }
   assert.equal(Q.opening_sejm_active, 0);
   // The previous cabinet governs as caretaker until the head of state appoints a new one (8.8).
   assert.equal(Q.polish_opening_government_active, 0);

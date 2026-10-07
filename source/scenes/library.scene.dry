@@ -459,10 +459,10 @@ if (typeof d3 !== 'undefined' && typeof window !== 'undefined') {
         var table = history.append('table');
         table.append('caption').text('Recorded votes and seats; Inne aggregates separate small lists');
         table.append('thead').append('tr').selectAll('th')
-            .data(['Electoral list / category', 'Votes %', 'MPs', 'Seats %']).enter().append('th').text(function(value) { return value; });
+            .data(['Electoral list / category', 'Votes %', 'MPs']).enter().append('th').text(function(value) { return value; });
         var rows = table.append('tbody').selectAll('tr').data(election.rows).enter().append('tr');
         rows.selectAll('td').data(function(row) {
-            return [row.name, row.votes.toFixed(2), row.seats, row.share.toFixed(2)];
+            return [row.name, row.votes.toFixed(2), row.seats];
         }).enter().append('td').text(function(value) { return value; });
     }
 
@@ -490,23 +490,23 @@ if (typeof d3 !== 'undefined' && typeof window !== 'undefined') {
 
 = [+ parliament_heading +]
 
-[? if opening_sejm_active : Each dot represents one MP in the approved 444-seat opening approximation, using August club shares from January. Percentages are rounded for display; these are not current opinion polls. ?]
+[? if opening_sejm_active : Each dot represents one MP in the approved 444-seat opening approximation, using August club shares from January. These are seats, not current opinion polls. ?]
 
 [? if not opening_sejm_active : Each dot represents one MP in the recorded [+ sejm_total_seats +]-seat result, not current polling. Majority: [+ sejm_majority_required +] MPs. [? if sejm_has_chzjn : ChZJN is displayed as one bloc; ZLN and PSChD remain separate political parties. ?] ?]
 
 {!<svg id="reichstag" style="width: 500px; height: 250px;"> </svg>!}
 
 {!<table>!}
-{!<tr><td><div class="box" style='background-color:#8B0000'> </div></td><td>!} KPP {!</td><td>!} [+ kpp_sejm_display +] {!</td></tr>!}
-{!<tr><td><div class="box" style='background-color:#E3000F; outline: 2px; outline-style: solid;'> </div></td><td>!} **PPS** {!</td><td>!} **[+ pps_sejm_display +]** {!</td></tr>!}
-{!<tr><td><div class="box" style='background-color:#C96A24'> </div></td><td>!} NPR {!</td><td>!} [+ npr_sejm_display +] {!</td></tr>!}
-{!<tr><td><div class="box" style='background-color:#6FAF45'> </div></td><td>!} PSL Wyzwolenie {!</td><td>!} [+ psl_wyzwolenie_sejm_display +] {!</td></tr>!}
-{!<tr><td><div class="box" style='background-color:#2F7D32'> </div></td><td>!} PSL Piast {!</td><td>!} [+ psl_piast_sejm_display +] {!</td></tr>!}
-[? if not sejm_has_chzjn : {!<tr><td><div class="box" style='background-color:#D5AC27'> </div></td><td>!} PSChD {!</td><td>!} [+ pschd_sejm_display +] {!</td></tr>!} ?]
-[? if not sejm_has_chzjn : {!<tr><td><div class="box" style='background-color:#3F7BC1'> </div></td><td>!} [+ zln_name +] {!</td><td>!} [+ zln_sejm_display +] {!</td></tr>!} ?]
-[? if sejm_has_chzjn : {!<tr><td><div class="box" style='background-color:#3F7BC1'> </div></td><td>!} ChZJN (ZLN + PSChD) {!</td><td>!} [+ chzjn_sejm_display +] {!</td></tr>!} ?]
-{!<tr><td><div class="box" style='background-color:#7C5AA6'> </div></td><td>!} [? if opening_sejm_active : Minority deputies ?][? if not opening_sejm_active : Blok Mniejszości Narodowych ?] {!</td><td>!} [+ minorities_bloc_sejm_display +] {!</td></tr>!}
-{!<tr><td><div class="box" style='background-color:#A0A0A0'> </div></td><td>!} Inne {!</td><td>!} [+ other_sejm_display +] {!</td></tr>!}
+{!<tr><td><div class="box" style='background-color:#8B0000'> </div></td><td>!} KPP {!</td><td>!} [+ kpp_sejm_seats_display +] {!</td></tr>!}
+{!<tr><td><div class="box" style='background-color:#E3000F; outline: 2px; outline-style: solid;'> </div></td><td>!} **PPS** {!</td><td>!} **[+ pps_sejm_seats_display +]** {!</td></tr>!}
+{!<tr><td><div class="box" style='background-color:#C96A24'> </div></td><td>!} NPR {!</td><td>!} [+ npr_sejm_seats_display +] {!</td></tr>!}
+{!<tr><td><div class="box" style='background-color:#6FAF45'> </div></td><td>!} PSL Wyzwolenie {!</td><td>!} [+ psl_wyzwolenie_sejm_seats_display +] {!</td></tr>!}
+{!<tr><td><div class="box" style='background-color:#2F7D32'> </div></td><td>!} PSL Piast {!</td><td>!} [+ psl_piast_sejm_seats_display +] {!</td></tr>!}
+[? if not sejm_has_chzjn : {!<tr><td><div class="box" style='background-color:#D5AC27'> </div></td><td>!} PSChD {!</td><td>!} [+ pschd_sejm_seats_display +] {!</td></tr>!} ?]
+[? if not sejm_has_chzjn : {!<tr><td><div class="box" style='background-color:#3F7BC1'> </div></td><td>!} [+ zln_name +] {!</td><td>!} [+ zln_sejm_seats_display +] {!</td></tr>!} ?]
+[? if sejm_has_chzjn : {!<tr><td><div class="box" style='background-color:#3F7BC1'> </div></td><td>!} ChZJN (ZLN + PSChD) {!</td><td>!} [+ chzjn_sejm_seats_display +] {!</td></tr>!} ?]
+{!<tr><td><div class="box" style='background-color:#7C5AA6'> </div></td><td>!} [? if opening_sejm_active : Minority deputies ?][? if not opening_sejm_active : Blok Mniejszości Narodowych ?] {!</td><td>!} [+ minorities_bloc_sejm_seats_display +] {!</td></tr>!}
+{!<tr><td><div class="box" style='background-color:#A0A0A0'> </div></td><td>!} Inne {!</td><td>!} [+ other_sejm_seats_display +] {!</td></tr>!}
 {!</table>!}
 
 = Election history
@@ -542,7 +542,7 @@ The presidential succession of December 1922 does not spend another monthly acti
 
 [? if polish_presidential_sequence_completed : March Constitution: the President is elected by the Sejm and Senate together as the National Assembly. Government acts require countersignature. ?]
 
-[? if opening_sejm_active : Approved simplification: August 1922 club shares scaled to 444 MPs from January, not an exact historical January roster. Campaigning changes public support, not these seats. Percentages are rounded for display. ?]
+[? if opening_sejm_active : Approved simplification: August 1922 club shares scaled to 444 MPs from January, not an exact historical January roster. Campaigning changes public support, not these seats. ?]
 
 ChZJN (ZLN + PSChD) is a joint list; the parties remain separate for government formation.
 

@@ -13,7 +13,7 @@
   "No parliamentary seats, election counter or history were changed. This indicates invalid simulation data, not an election outcome.": "Nie zmieniono mandatów, licznika wyborów ani historii. To oznacza błędne dane symulacji, a nie wynik wyborów.",
   "- @calculate: Retry the calculation.": "- @calculate: Spróbuj policzyć ponownie.",
   "= Sejm election result — [+ sejm_result_date +]": "= Wynik wyborów do Sejmu — [+ sejm_result_date +]",
-  "Each line separates **votes**, **MPs**, and **share of seats**. Changes refer to the previous parliament, not previous votes. Display rounding does not determine seats.": "Każdy wiersz podaje osobno **głosy**, **posłów** i **udział w mandatach**. Zmiany odnoszą się do poprzedniego Sejmu, a nie do poprzednich głosów. Zaokrąglenia na ekranie nie decydują o mandatach.",
+  "Each line separates **votes** and **MPs**. Changes refer to the previous parliament, not previous votes. Display rounding does not determine seats.": "Każdy wiersz podaje osobno **głosy** i **posłów**. Zmiany odnoszą się do poprzedniego Sejmu, a nie do poprzednich głosów. Zaokrąglenia na ekranie nie decydują o mandatach.",
   "KPP: [+ kpp_election_display +]": "KPP: [+ kpp_election_display +]",
   "PPS: [+ pps_election_display +]": "PPS: [+ pps_election_display +]",
   "NPR: [+ npr_election_display +]": "NPR: [+ npr_election_display +]",

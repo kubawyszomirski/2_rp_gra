@@ -249,14 +249,13 @@ try {
             for (var row of Q.sejm_display_rows) {
                 var comparable = row.members.every(function(id) { return Object.hasOwn(result.previous_parliament.party_seats, id); });
                 var oldSeats = row.members.reduce(function(n, id) { return n + (result.previous_parliament.party_seats[id] || 0); }, 0);
-                var oldShare = 100 * oldSeats / result.previous_parliament.total_seats;
                 var previousRow = previousRows.find(function(old) {
                     return old.id === row.id && old.members.join(',') === row.members.join(',');
                 });
+                // Z — 0.69: votes, MPs and the change of MPs; the share of seats is not shown.
                 Q[row.id + '_election_display'] = row.votes.toFixed(2) + '% votes; ' + row.seats +
-                    ' MPs; ' + row.share.toFixed(2) + '% of seats' +
-                    (comparable ? ' (MP change ' + signed(row.seats - oldSeats, 0) + '; seat-share change ' +
-                    signed(row.share - oldShare, 2) + ' pp)' : ' (previous parliament not comparable)') +
+                    (row.seats === 1 ? ' MP' : ' MPs') +
+                    (comparable ? ' (MP change ' + signed(row.seats - oldSeats, 0) + ')' : ' (previous parliament not comparable)') +
                     (previousRow ? '; vote change ' + signed(row.votes - previousRow.votes, 2) + ' pp' : previousResult ? '; previous votes N/A' : PolishInstitutions.votes1919Text(row.members));
                 // A joint list agreed in the list window (6.2) is shown on the line of each of its parties,
                 // with the MPs attributed to that party; ChZJN keeps its own combined line.

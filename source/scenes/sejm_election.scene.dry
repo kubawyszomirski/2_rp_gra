@@ -54,7 +54,7 @@ go-to: main if not sejm_has_result; government if sejm_has_result and not pl_cha
 
 = Sejm election result — [+ sejm_result_date +]
 
-Each line separates **votes**, **MPs**, and **share of seats**. Changes refer to the previous parliament, not previous votes. Display rounding does not determine seats.
+Each line separates **votes** and **MPs**. Changes refer to the previous parliament, not previous votes. Display rounding does not determine seats.
 
 KPP: [+ kpp_election_display +]
 
