@@ -59,8 +59,10 @@
   const SCENARIO_INPUTS = Object.freeze({profile_id: 'normal_chapter1_v1', dispute_1922: T(1922, 6), military_case: T(1923, 7),
     military_escalation: T(1925, 11), niewiadomski_cult: T(1923, 2), chjeno_piast_1923: T(1923, 5), chjeno_piast_1923_end: T(1923, 12),
     piast_split_1923: T(1923, 12), grabski_resignation_1925: T(1925, 11)});
-  // 17.16.8 (P, stage 8; the M02 runs): the synthetic departure of ten test MPs of Piast from a cabinet with the right.
-  const PIAST_SPLIT_SEATS = 10;
+  // 17.16.8 (P, stage 8; the M02 runs): the synthetic departure of test MPs of Piast from a cabinet with the right. Z — 0.71
+  // (the user's decision B of 7 X 2026): eleven instead of ten, because the fall of Chjeno-Piast rested on one seat (222 of 444
+  // left) and the stances of 0.71 moved one seat of the Christian Democrats in the election of 1922.
+  const PIAST_SPLIT_SEATS = 11;
   const MILITARY_CASE_SUBJECT = 'the organisation of the supreme military authorities';
   // The journal of cases stores its subjects in English (decision 5A of the Polish version); the Polish display translates
   // them here. Registered with PolishRules.storedText, so every module shows a subject the same way.

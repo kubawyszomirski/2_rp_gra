@@ -80,32 +80,38 @@ function form(engine, params) {
   if (engine.state.sceneId === 'sejm_election.government' && !pick(engine, 'polish_cabinet_formation')) return false;
   if (engine.state.sceneId !== 'polish_cabinet_formation') return false;
   const F = 'polish_cabinet_formation.';
-  const menu = (m, o) => {
-    if (!pick(engine, F + m)) return false;
-    if (pick(engine, F + o)) return true;
-    pick(engine, F + 'back');
-    if (engine.state.sceneId !== 'polish_cabinet_formation') engine.goToScene('polish_cabinet_formation');
-    return false;
-  };
-  if (params.configuration) menu('configurations', 'cfg_' + params.configuration);
-  if (params.mode) menu('modes', 'mode_' + params.mode);
-  if (params.candidate) menu('candidates', 'cand_' + params.candidate);
-  if (params.minorities === true) pick(engine, F + 'minorities_on');
-  if (params.minorities === false) pick(engine, F + 'minorities_off');
-  if (params.terms) menu('terms_menu', 'terms_' + params.terms);
-  if (params.claim) {
-    // Z — 0.61: the portfolios are bought with influence points; a greyed one is skipped.
-    if (pick(engine, F + 'portfolios')) {
-      for (const c of options(engine).filter(c => c.id.startsWith(F + 'drop_'))) pick(engine, c.id);
-      for (const key of params.claim) pick(engine, F + 'take_' + key);
-      pick(engine, F + 'back');
-      if (engine.state.sceneId !== 'polish_cabinet_formation') engine.goToScene('polish_cabinet_formation');
+  const at = page => engine.state.sceneId === F + page;
+  // Z — 0.71: the wizard. The variant carries the role of PPS (a party cabinet with PPS in it, a cabinet of experts
+  // supported from outside, opposition); the prime minister and the portfolios have pages only when there is a choice.
+  const draft = () => engine.state.qualities.S.negotiation.draft;
+  if (!pick(engine, F + 'variants')) return false;
+  // A variant that cannot be chosen keeps the default offer of the screen, as the one-screen formation did; then opposition.
+  const preset = draft().pps_mode === 'opposition' ? 'opposition' : draft().configuration_id;
+  const variant = params.mode === 'opposition' || !params.configuration ? 'opposition' : params.configuration;
+  if (!pick(engine, F + 'var_' + variant) && !pick(engine, F + 'var_' + preset) && !pick(engine, F + 'var_opposition')) return false;
+  if (at('premier')) {
+    if (!(params.candidate && pick(engine, F + 'cand_' + params.candidate)) && !pick(engine, F + 'cand_' + draft().candidate_id)) {
+      const first = options(engine).find(c => c.id.startsWith(F + 'cand_') && c.ok);
+      if (!first) return false;
+      engine.choose(first.i);
     }
   }
+  if (at('portfolio_menu')) {
+    // Z — 0.61: the portfolios are bought with influence points; a greyed one is skipped.
+    if (params.claim) {
+      for (const c of options(engine).filter(c => c.id.startsWith(F + 'drop_'))) pick(engine, c.id);
+      for (const key of params.claim) pick(engine, F + 'take_' + key);
+    }
+    pick(engine, F + 'ports_next');
+  }
+  if (!at('summary')) return false;
+  if (params.minorities === true) pick(engine, F + 'minorities_on');
+  if (params.minorities === false) pick(engine, F + 'minorities_off');
+  if (params.terms && pick(engine, F + 'terms_menu') && !pick(engine, F + 'terms_' + params.terms)) pick(engine, F + 'back');
   if (!pick(engine, F + 'submit')) {
     // The offer cannot be submitted as set: PPS stays out of the cabinet instead.
-    menu('modes', 'mode_opposition');
-    if (!pick(engine, F + 'submit')) return false;
+    engine.goToScene(F + 'variants');
+    if (!pick(engine, F + 'var_opposition') || !pick(engine, F + 'submit')) return false;
   }
   pick(engine, F + 'done');
   return true;
@@ -189,9 +195,10 @@ const ACTIVE_EVENTS = Object.assign({}, PASSIVE_EVENTS, {
 });
 
 // ---- Formation offers.
+// Z — 0.71: an expert of his period as the formation itself judges it (Skrzyński leads only his own broad cabinet).
 const inWindowExpert = ctx => {
   const G = globalThis.PolishGovernment;
-  return ['ponikowski', 'sliwinski', 'nowak', 'sikorski', 'grabski', 'skrzynski'].find(id => G.inWindow && G.inWindow(id, ctx.t)) || null;
+  return ['ponikowski', 'sliwinski', 'nowak', 'sikorski', 'grabski'].find(id => G.expertPeriodStatus(ctx.Q, id).available) || null;
 };
 
 const FORMATION = {

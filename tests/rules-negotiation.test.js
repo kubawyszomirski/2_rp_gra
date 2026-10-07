@@ -303,6 +303,8 @@ test('Poparcie mniejszości: one segment accepts, the other refuses; appointment
 test('Impas and C2: three failed rounds make an impasse; the same refused offer waits for a change; a new candidate returns', () => {
   const Q = chamber({ kpp: 250, pps: 50, other: 144 }, { time: 11, year: 1922, month: 11 });
   formation(Q);
+  // Z — 0.71 (decision 4A): in November 1922 Nowak is the one non-party candidate of the period.
+  assert.deepEqual([Q.S.negotiation.draft.configuration_id, Q.S.negotiation.draft.candidate_id], ['expert', 'nowak']);
   gov.submitFormation(Q);
   assert.equal(Q.S.cabinet.status, 'caretaker');
   assert.deepEqual([Q.S.cabinet_crisis.status, Q.S.cabinet_crisis.failed_proposals], ['open', 1]);
@@ -312,26 +314,27 @@ test('Impas and C2: three failed rounds make an impasse; the same refused offer 
   gov.enterFormation(Q);
   assert.equal(Q.S.negotiation.cost_t, 1);
   assert.match(gov.submitStatus(Q).reason, /same offer was refused/);
-  gov.setDraft(Q, 'candidate_id', 'sikorski');
-  assert.equal(gov.submitStatus(Q).available, true);
+  gov.setDraft(Q, 'pps_mode', 'opposition');
+  assert.equal(gov.submitStatus(Q).available, true, 'another offer: PPS stays in opposition');
   gov.submitFormation(Q);
   assert.equal(Q.month_actions, 1, 'the initiative spends the month');
   assert.equal(Q.S.cabinet_crisis.failed_proposals, 2);
   Q.S.turn.pending = null; Q.month_actions = 0; Q.time = 12; Q.month = 12;
   assert.equal(gov.formationDue(Q), false, 'December has the same window candidate');
   gov.enterFormation(Q);
-  gov.setDraft(Q, 'candidate_id', 'grabski');
+  // The offer with Nowak differs from the last refused one (opposition), so it may be submitted again.
+  assert.deepEqual([Q.S.negotiation.draft.candidate_id, Q.S.negotiation.draft.pps_mode], ['nowak', 'external_support']);
   gov.submitFormation(Q);
   assert.deepEqual([Q.S.cabinet_crisis.status, Q.S.cabinet_crisis.failed_proposals], ['impasse', 3]);
   assert.equal(Q.S.cabinet.status, 'caretaker');
   assert.equal(gov.governmentFragility(Q.S), 100);
   assert.match(gov.governmentDisplay(Q).crisis, /Impasse/);
-  // January 1923: Sikorski's window begins, a new candidate; the formation is mandatory again, 0 T.
-  Q.S.turn.pending = null; Q.month_actions = 0; Q.time = 13; Q.year = 1923; Q.month = 1;
+  // December 1923: Grabski's period begins, a new candidate; the formation is mandatory again, 0 T.
+  Q.S.turn.pending = null; Q.month_actions = 0; Q.time = rules.timeOf(1923, 12); Q.year = 1923; Q.month = 12;
   assert.equal(gov.formationDue(Q), true);
   assert.equal(gov.initiativeAvailable(Q), false, 'the mandatory formation comes first');
   const neg = gov.enterFormation(Q);
-  assert.deepEqual([neg.mandatory, neg.cost_t, neg.context.reason], [true, 0, 'crisis']);
+  assert.deepEqual([neg.mandatory, neg.cost_t, neg.context.reason, neg.draft.candidate_id], [true, 0, 'crisis', 'grabski']);
   assert.equal(gov.formationDue(Q), false, 'while it is being prepared');
   assert.equal(gov.formationVisible(Q), true);
 });
@@ -680,14 +683,17 @@ test('Ocena partnera 0.61: four visible parts — 30% relation, 35% programme, 2
   close(parts.total, 77.58);
   const answer = gov.evaluateCabinetPartner(Q.S, 'psl_piast', offer);
   assert.deepEqual([answer.accept, answer.need, Math.round(answer.score * 100) / 100], [true, null, 77.58]);
-  // The screen shows whole parts whose sum is the score, cut down so that 59.9 never reads as 60.
+  // The screen shows whole parts whose sum is the score, cut down so that 59.9 never reads as 60. Z — 0.71 (the user's note of
+  // 7 X 2026): each club is one line with its answer and overall score; the named parts open on a click.
   const lines = gov.formationView(Q).partner_lines;
-  assert.ok(lines.includes('PSL Piast: 77 ✓ (relation 18 + programme 32 + portfolio 20 + credibility of PPS 7).'), lines.join(' | '));
-  assert.ok(lines.includes('PSL Wyzwolenie: 70 ✓ (relation 20 + programme 23 + portfolio 20 + credibility of PPS 7).'));
+  assert.ok(lines.includes('<details class="pl-score"><summary>PSL Piast — agrees · 77/60</summary>relation with PPS +18 · ' +
+    'programme of the cabinet and the club’s views +32 · its portfolio +20 · credibility of PPS +7.</details>'), lines.join(' | '));
+  assert.ok(lines.includes('<details class="pl-score"><summary>PSL Wyzwolenie — agrees · 70/60</summary>relation with PPS +20 · ' +
+    'programme of the cabinet and the club’s views +23 · its portfolio +20 · credibility of PPS +7.</details>'));
   // A broken promise is a visible minus; a gate below its minimum is named with the current relation.
   Q.S.agreements.old = { id: 'old', kind: 'support', parties: ['pps', 'npr'], status: 'breached',
     obligations: [{ id: 'old:1', owner: 'pps', status: 'breached' }, { id: 'old:2', owner: 'pps', status: 'breached' }], history: [] };
-  assert.ok(gov.formationView(Q).partner_lines.some(l => /^NPR: 66 ✓ \(relation 17 .* − broken promises 10\)\.$/.test(l)));
+  assert.ok(gov.formationView(Q).partner_lines.some(l => /^<details class="pl-score"><summary>NPR — agrees · 66\/60<\/summary>relation with PPS \+17 .* · broken promises −10\.<\/details>$/.test(l)));
   gov.changeRelation(Q, 'npr', -10, 'fixture');
   assert.match(gov.draftChoiceStatus(Q, 'configuration', 'centre_left').reason, /Relation with NPR is below 55 \(now 45\)/);
 });
@@ -748,19 +754,29 @@ test('Powołanie od razu 0.61: an accepted PPS offer is appointed even when the 
   assert.match(gov.formationView(O).verdict, /PPS stays in opposition: the head of state appoints a cabinet without PPS: Wincenty Witos — Chjeno-Piast\./);
 });
 
-test('Premier 0.61: the leader of a partner party wins PPS +5 with it once; an expert has no effect; the candidate of the period is only marked', () => {
+test('Premier 0.71: a party cabinet is led by the leader of its largest club (Thugutt also in the centre-left); the leader of a partner party wins PPS +5 with it once; an expert leads only a cabinet of experts', () => {
   const Q = centreLeft();
-  gov.setDraft(Q, 'candidate_id', 'witos');
-  assert.match(gov.candidateNote(Q, 'witos'), /^Leader of PSL Piast: after the appointment \+5 relation with his party\.$/);
-  assert.match(gov.candidateNote(Q, 'nowak'), /No effect on relations\. Candidate of the Chief of State for this period\./);
-  assert.equal(gov.candidateShown(Q, 'thugutt'), true, 'the leader of a member party is shown, greyed with his reason');
+  const draft = Q.S.negotiation.draft;
+  // Decision 4A of 7 X 2026: PPS is the largest club of this centre-left, so Daszyński leads by default; Witos cannot, Thugutt
+  // can (his mission of a broad cabinet), and a non-party man leads a party cabinet only when none of its leaders can.
+  assert.equal(draft.candidate_id, 'daszynski');
+  assert.equal(gov.candidateStatus(Q, 'witos', draft).reason, 'PSL Piast is not the largest club of this cabinet.');
+  assert.equal(gov.candidateStatus(Q, 'thugutt', draft).available, true);
+  assert.equal(gov.candidateStatus(Q, 'nowak', draft).reason, 'A party cabinet is led by the leader of its largest party.');
+  assert.match(gov.candidateNote(Q, 'thugutt'), /^Leader of PSL Wyzwolenie: after the appointment \+5 relation with his party\.$/);
+  assert.equal(gov.candidateShown(Q, 'witos'), true, 'the leader of a member party is shown, greyed with his reason');
+  assert.equal(gov.candidateShown(Q, 'nowak'), false, 'an expert is no candidate of this party cabinet');
   assert.equal(gov.candidateShown(Q, 'pilsudski'), false);
+  gov.setDraft(Q, 'candidate_id', 'thugutt');
   gov.submitFormation(Q);
-  assert.equal(Q.S.cabinet.pm, 'witos');
-  assert.equal(Q.S.actors.relations.psl_piast, 65);
+  assert.equal(Q.S.cabinet.pm, 'thugutt');
+  assert.equal(Q.S.actors.relations.psl_wyzwolenie, 70);
   assert.equal(Q.S.history.reasons.filter(r => r.kind === 'relation' && /^premier:/.test(r.reason)).length, 1);
+  // A cabinet of experts has the expert of the period, with the clubs that historically backed and fought him.
   const E = centreLeft();
-  gov.setDraft(E, 'candidate_id', 'nowak');
+  gov.chooseCoalition(E, 'expert');
+  assert.deepEqual([E.S.negotiation.draft.candidate_id, E.S.negotiation.draft.pps_mode], ['nowak', 'external_support']);
+  assert.match(gov.candidateNote(E, 'nowak'), /Backed by PSL Piast, PSL Wyzwolenie, NPR, PPS\. Candidate of the Chief of State for this period\.$/);
   gov.submitFormation(E);
   assert.deepEqual([E.S.cabinet.pm, E.S.actors.relations.psl_piast], ['nowak', 60]);
 });
@@ -769,7 +785,7 @@ test('Lista gabinetów 0.61: every cabinet in one line with its clubs, seats, pa
   const Q = centreLeft();
   const line = gov.coalitionLine(Q, 'centre_left');
   assert.equal(line.available, true);
-  assert.match(line.line, /^Chosen now\. PPS 100 \+ PSL Wyzwolenie 60 \+ PSL Piast 80 \+ NPR 40 = 280 MPs\. Partners: PSL Wyzwolenie 70 ✓, PSL Piast 77 ✓, NPR 76 ✓\. Votes: majority \(280 for; 223 needed\)\./);
+  assert.match(line.line, /^Chosen now\. PPS 100 \+ PSL Wyzwolenie 60 \+ PSL Piast 80 \+ NPR 40 = 280 MPs\. Partners: PSL Wyzwolenie ✓, PSL Piast ✓, NPR ✓\. Votes: majority \(280 for; 223 needed\)\./);
   // Z — 0.67: after the election of 1922 the 160 MPs of PPS and PSL Wyzwolenie are below the 185 of decision 3A.
   const left = gov.coalitionLine(Q, 'left_minority');
   assert.equal(left.available, false);
@@ -785,6 +801,74 @@ test('Lista gabinetów 0.61: every cabinet in one line with its clubs, seats, pa
   gov.setDraft(Q, 'pps_mode', 'opposition');
   gov.chooseCoalition(Q, 'expert');
   assert.equal(Q.S.negotiation.draft.pps_mode, 'external_support');
+});
+
+// ---- Z — 0.71: the candidates of their period, the stances of the clubs to a non-party premier and the fallback ----------
+// (decisions 3A and 4A of 7 X 2026; H: PL-1922-1926-PM-CANDIDATES)
+const at = (year, month, seats = CENTRE) => chamber(seats, { time: rules.timeOf(year, month), year, month });
+test('Kandydaci okresu 0.71: each non-party premier only in his period and under his condition; Skrzyński only in his own cabinet', () => {
+  const EXPERTS = ['ponikowski', 'sliwinski', 'nowak', 'sikorski', 'grabski', 'skrzynski'];
+  const standing = Q => EXPERTS.filter(id => gov.expertPeriodStatus(Q, id).available);
+  assert.deepEqual(standing(at(1922, 3)), ['ponikowski', 'sliwinski']);
+  assert.deepEqual(standing(at(1922, 6)), ['sliwinski', 'nowak'], 'the crisis of VI 1922: the Naczelnik’s man and the compromise');
+  assert.deepEqual(standing(at(1922, 11)), ['nowak']);
+  assert.deepEqual(standing(at(1924, 3)), ['grabski']);
+  assert.deepEqual(standing(at(1926, 5)), ['grabski', 'skrzynski']);
+  // Sikorski only after the assassination of the President; Śliwiński only while Piłsudski is Naczelnik.
+  const december = at(1922, 12);
+  assert.equal(gov.expertPeriodStatus(december, 'sikorski').reason, 'Only after the assassination of the President.');
+  december.S.politics.episodes.push({ kind: 'security_crisis', outcome: 'death' });
+  assert.equal(gov.expertPeriodStatus(december, 'sikorski').available, true);
+  const june = at(1922, 6);
+  june.polish_presidency = { current: { office_id: 'prezydent_rp', holder_id: 'gabriel_narutowicz', holder_name: 'Gabriel Narutowicz', status: 'active' } };
+  assert.equal(gov.expertPeriodStatus(june, 'sliwinski').reason, 'Only while Piłsudski is Naczelnik.');
+  // Without a candidate of the period the cabinet of experts cannot be chosen; Skrzyński leads only his broad cabinet.
+  const between = at(1923, 6);
+  formation(between, 'crisis');
+  assert.equal(gov.variantStatus(between, 'expert').reason, 'No non-party prime minister stands in this period.');
+  const late = at(1925, 12);
+  assert.equal(gov.candidateStatus(late, 'skrzynski', { configuration_id: 'expert' }).reason, 'He leads only his own cabinet: Broad cabinet of Skrzyński.');
+  assert.equal(gov.candidateStatus(late, 'skrzynski', { configuration_id: 'skrzynski_broad' }).available, true);
+});
+
+test('Stosunek do fachowca 0.71: a supporter judges him with 80, a neutral club with 50, an opponent refuses and votes against', () => {
+  // VI 1922 in the Sejm of 1919: Śliwiński, backed by the left, Piast and the minorities, fought by ZLN and the Christian Democrats.
+  const Q = fixture({ time: 6, year: 1922, month: 6 });
+  formation(Q, 'crisis');
+  gov.chooseCoalition(Q, 'expert');
+  gov.setDraft(Q, 'candidate_id', 'sliwinski');
+  // The offer as the formation judges it: an expert proposed by PPS (by 'pps_expert').
+  const offer = { ...gov.buildCabinetOffer(Q, Q.S.negotiation.draft, Q.S.negotiation.context), by: 'pps_expert' };
+  assert.deepEqual(['psl_piast', 'zln', 'pschd', 'jewish_rep'].map(id => gov.expertStance(id, 'sliwinski')), ['for', 'against', 'against', 'for']);
+  close(gov.formationScoreParts(Q.S, 'psl_piast', offer).relation, 24);
+  close(gov.formationScoreParts(Q.S, 'zln', offer).relation, 6);
+  const zln = gov.evaluateCabinetPartner(Q.S, 'zln', offer);
+  assert.deepEqual([zln.accept, zln.opponent, zln.reasons], [false, true, ['an opponent of the prime minister']]);
+  const view = gov.formationView(Q);
+  assert.ok(view.partner_lines.includes('<details class="pl-score"><summary>ZLN — does not support it</summary>An opponent of this prime minister: ' +
+    'it votes against his cabinet whatever the score (59: an opponent of the premier +6 · programme of the premier and the club’s views +26 · ' +
+    'no demands +20 · fixed part +7).</details>'), view.partner_lines.join(' | '));
+  assert.ok(view.partner_lines.some(l => l.startsWith('<details class="pl-score"><summary>PSL Piast — supports it · 86/60</summary>a supporter of the premier +24')));
+  // The opponents vote against: 198 for (PPS, the peasants, NPR and the minorities), 110 against (ZLN and PSChD).
+  assert.match(view.votes, /^198 for, 110 against, 136 abstaining; a majority is 223\./);
+  assert.match(gov.candidateNote(Q, 'sliwinski'), /Backed by PPS, PSL Wyzwolenie, PSL Piast, NPR, Jewish representation, Other national minorities\. Fought by ZLN, PSChD\./);
+});
+
+test('Rząd awaryjny 0.71: the head of state appoints the expert of the period first, another non-party man only when nobody else can govern', () => {
+  // XI 1922: Nowak is the man of the period and governs without PPS.
+  const Q = at(1922, 11);
+  formation(Q);
+  assert.deepEqual([gov.fallbackCabinet(Q).offer.configuration_id, gov.fallbackCabinet(Q).offer.candidate_id], ['expert', 'nowak']);
+  // With his cabinet fallen and no Chjeno-Piast possible, the head of state turns to a man beyond his period whose conditions
+  // hold (P: no crisis without end) — never Sikorski before the assassination, never Skrzyński outside his own cabinet.
+  const F = at(1922, 11);
+  F.S.history.cabinets.push({ id: 'nowak_fixture', pm: 'nowak', end_reason: 'fall', ended_at: 5 });
+  formation(F);
+  assert.deepEqual([gov.fallbackCabinet(F).offer.configuration_id, gov.fallbackCabinet(F).offer.candidate_id], ['expert', 'ponikowski']);
+  // A cabinet of the parties comes before a man beyond his period (VI 1923, Chjeno-Piast).
+  const R = at(1923, 6, { pps: 100, psl_wyzwolenie: 60, psl_piast: 80, npr: 40, pschd: 40, zln: 100, other: 24 });
+  formation(R, 'crisis');
+  assert.deepEqual([gov.fallbackCabinet(R).offer.configuration_id, gov.fallbackCabinet(R).offer.candidate_id], ['chjeno_piast', 'witos']);
 });
 
 // ---- Z — 0.67: the formation after the election of 1922 (decisions 1A and 3A of 7 X 2026) ------------------------

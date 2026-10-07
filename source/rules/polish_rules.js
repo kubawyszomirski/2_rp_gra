@@ -556,12 +556,21 @@
     };
   }
 
+  // Z — 0.71: the pages of this card only prepare one decision, so closing it from any of them is still free (closeCard).
+  function freeCardPages(Q, cardId) {
+    const view = Q.S && Q.S.turn ? Q.S.turn.card_view : null;
+    if (view && view.card_id === cardId && view.t === Q.time) view.free_pages = true;
+  }
+
   // "Close card": when the player leaves the card from its first page without acting, restore what
   // the card recorded on opening and return a hand card to the hand. After an option has been
   // chosen, or for a card opened another way, closing is only navigation: nothing is refunded.
   function closeCard(Q, state) {
-    const S = Q.S, view = S.turn.card_view, cardId = state.prevSceneId;
+    const S = Q.S, view = S.turn.card_view;
     if (!view) return false;
+    // Z — 0.71: a card whose pages only prepare one decision (the cabinet formation) closes freely from any of its pages.
+    const fromPage = view.free_pages && String(state.prevSceneId).indexOf(view.card_id + '.') === 0;
+    const cardId = fromPage ? view.card_id : state.prevSceneId;
     if (view.card_id !== cardId || view.t !== Q.time) {
       // Left from a later page of the card, after an option: navigation only. The card was used.
       return false;
@@ -974,6 +983,7 @@
     openingKeys: openingKeys,
     beginCardView: beginCardView,
     closeCard: closeCard,
+    freeCardPages: freeCardPages,
     commitAdvisorAction: commitAdvisorAction,
     commitMainAction: commitMainAction,
     advisorStepPending: advisorStepPending,

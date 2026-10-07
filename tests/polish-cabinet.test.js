@@ -107,39 +107,66 @@ function strongLeft(engine) {
 // Only PPS, KPP and small lists win seats: no cabinet can be formed (a crisis fixture).
 const NO_PARTNERS = { kpp: 60, pps: 20, other: 20 };
 
-test('C1: one screen; every setting is free and returns to it; one commit, then the result; no second menu', () => {
+// Z — 0.71 (decisions 0 and 1A–5A of 7 X 2026): the formation is a wizard — an introduction, the variant with the role of PPS,
+// the prime minister and the portfolios when there is a choice, and a summary that keeps the offer apart from what follows.
+test('C1 0.71: the introduction, the variant, the prime minister, the portfolios and the summary; Back on every step; one commit', () => {
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
   november(engine, LEFT_SEJM_ROWS);
+  PolishGovernment.changeRelation(Q, 'npr', 60 - Q.S.actors.relations.npr, 'fixture');
   strongLeft(engine);
   choose(engine, 'polish_cabinet_formation');
   const before = { t: Q.time, actions: Q.month_actions, cabinet: clone(Q.S.cabinet), negotiations: Q.S.history.negotiations.length };
-  assert.deepEqual(ids(engine).sort(), ['polish_cabinet_formation.candidates', 'polish_cabinet_formation.configurations',
-    'polish_cabinet_formation.minorities_on', 'polish_cabinet_formation.modes', 'polish_cabinet_formation.portfolios',
-    'polish_cabinet_formation.submit'], 'settings and one submit; the mandatory formation has no Close');
-  choose(engine, 'polish_cabinet_formation.configurations');
-  assert.equal(choice(engine, 'polish_cabinet_formation.cfg_broad_centre').canChoose, false, 'greyed with its reason');
-  assert.match(JSON.stringify(choice(engine, 'polish_cabinet_formation.cfg_broad_centre').subtitle), /real crisis/);
-  choose(engine, 'polish_cabinet_formation.cfg_left_minority');
-  choose(engine, 'polish_cabinet_formation.minorities_on');
-  choose(engine, 'polish_cabinet_formation.candidates');
+  // Decision 0: what is happening, who appoints the cabinet and how the Sejm stands; the mandatory formation has no Close.
+  assert.deepEqual(ids(engine), ['polish_cabinet_formation.variants']);
+  assert.match(content(engine), /The election has given the Sejm a new composition, and a new cabinet must be formed\. Until then the cabinet of Antoni Ponikowski governs as caretaker\./);
+  assert.match(content(engine), /The Naczelnik Państwa, Józef Piłsudski, appoints the cabinet; his candidate for this period is Julian Nowak\./);
+  assert.match(content(engine), /The Sejm has 444 MPs; a majority is 223\. The largest clubs: PPS 110, ZLN 100, PSL Wyzwolenie 80/);
+  // Decision 2A: the variant carries the role of PPS — in the cabinet, a cabinet of experts from outside, or opposition.
+  choose(engine, 'polish_cabinet_formation.variants');
+  assert.equal(choice(engine, 'polish_cabinet_formation.var_broad_centre').canChoose, false, 'greyed with its reason');
+  assert.match(JSON.stringify(choice(engine, 'polish_cabinet_formation.var_broad_centre').subtitle), /real crisis/);
+  assert.match(JSON.stringify(choice(engine, 'polish_cabinet_formation.var_expert').title), /From outside: a cabinet of experts/);
+  assert.match(JSON.stringify(choice(engine, 'polish_cabinet_formation.var_expert').subtitle), /Prime minister Julian Nowak; support signed by: NPR ✓, PSL Wyzwolenie ✓, PSL Piast ✓/);
+  assert.match(JSON.stringify(choice(engine, 'polish_cabinet_formation.var_opposition').subtitle), /the head of state appoints a cabinet without PPS: Julian Nowak — Cabinet of experts/);
+  assert.equal(choice(engine, 'polish_cabinet_formation.var_mode_external_support'), undefined, 'no external support of a party cabinet');
+  choose(engine, 'polish_cabinet_formation.var_left_labour');
+  // Decisions 4A and 5A: only who can lead this cabinet now; the faction candidates of PPS with their reasons.
+  assert.equal(engine.state.sceneId, 'polish_cabinet_formation.premier');
+  assert.deepEqual(ids(engine), ['polish_cabinet_formation.cand_daszynski', 'polish_cabinet_formation.cand_moraczewski',
+    'polish_cabinet_formation.cand_czapinski', 'polish_cabinet_formation.cand_thugutt', 'polish_cabinet_formation.back_variants']);
+  assert.equal(choice(engine, 'polish_cabinet_formation.cand_czapinski').canChoose, false);
+  assert.match(JSON.stringify(choice(engine, 'polish_cabinet_formation.cand_czapinski').subtitle), /His faction has 15% of the party; it needs 30%/);
+  assert.match(JSON.stringify(choice(engine, 'polish_cabinet_formation.cand_thugutt').subtitle), /PSL Wyzwolenie is not the largest club of this cabinet/);
+  choose(engine, 'polish_cabinet_formation.back_variants');
+  assert.equal(engine.state.sceneId, 'polish_cabinet_formation.variants', 'Back returns to the previous step');
+  choose(engine, 'polish_cabinet_formation.var_left_labour');
   choose(engine, 'polish_cabinet_formation.cand_daszynski');
-  // Z — 0.61: step 4 buys Interior with influence points (68 = 58% of the cabinet's seats + 10; Labour 10, Interior 20).
-  choose(engine, 'polish_cabinet_formation.portfolios');
-  assert.match(content(engine), /Influence points: 68 = PPS share of the cabinet’s seats 58% \+ 10/);
+  // Z — 0.61: the portfolios are bought with influence points (62 = 52% of the cabinet's seats + 10); NPR keeps Labour.
+  assert.equal(engine.state.sceneId, 'polish_cabinet_formation.portfolio_menu');
+  assert.match(content(engine), /Influence points: 62 = PPS share of the cabinet’s seats 52% \+ 10/);
+  assert.equal(choice(engine, 'polish_cabinet_formation.take_labor').canChoose, false, 'NPR needs Labour');
   choose(engine, 'polish_cabinet_formation.take_interior');
   assert.equal(choice(engine, 'polish_cabinet_formation.drop_interior').canChoose, true, 'it can be given back');
-  choose(engine, 'polish_cabinet_formation.back');
-  assert.equal(engine.state.sceneId, 'polish_cabinet_formation');
-  assert.deepEqual(Q.S.negotiation.draft, { configuration_id: 'left_minority', candidate_id: 'daszynski', pps_mode: 'member',
-    seek_minority_support: true, portfolio_claim: ['labor', 'interior'] });
-  assert.match(content(engine), /Labour, Interior/);
-  // Decision 1B of 0.61: the score of each partner in four visible parts, before the commit.
-  assert.match(content(engine), /PSL Wyzwolenie: 79 ✓ \(relation 20 \+ programme 32 \+ portfolio 20 \+ credibility of PPS 7\)/);
-  assert.match(content(engine), /after the commit the cabinet is appointed at once — PPS and PSL Wyzwolenie, prime minister Ignacy Daszyński/);
+  choose(engine, 'polish_cabinet_formation.ports_next');
+  assert.equal(engine.state.sceneId, 'polish_cabinet_formation.summary');
+  assert.deepEqual(Q.S.negotiation.draft, { configuration_id: 'left_labour', candidate_id: 'daszynski', pps_mode: 'member',
+    seek_minority_support: false, portfolio_claim: ['economic', 'interior'] });
+  // The summary: our offer apart from what follows from it; each club in one line, its parts open on a click.
+  assert.match(content(engine), /Our offer:"\]\}," ","PPS, PSL Wyzwolenie and NPR — PPS in the cabinet; prime minister Ignacy Daszyński; PPS portfolios: Interior, Industry and Trade\./);
+  assert.match(content(engine), /<details class=\\"pl-score\\"><summary>PSL Wyzwolenie — agrees · \d+\/60<\/summary>relation with PPS \+20 · programme of the cabinet and the club’s views/);
+  assert.match(content(engine), /<details class=\\"pl-score\\"><summary>NPR — agrees · \d+\/60<\/summary>/);
+  assert.match(content(engine), /after the commit the cabinet is appointed at once — PPS, PSL Wyzwolenie and NPR, prime minister Ignacy Daszyński/);
+  choose(engine, 'polish_cabinet_formation.back_summary');
+  assert.equal(engine.state.sceneId, 'polish_cabinet_formation.portfolio_menu', 'Back from the summary to the portfolios');
+  choose(engine, 'polish_cabinet_formation.ports_next');
+  choose(engine, 'polish_cabinet_formation.minorities_on');
+  assert.equal(engine.state.sceneId, 'polish_cabinet_formation.summary');
+  choose(engine, 'polish_cabinet_formation.minorities_off');
   assert.deepEqual([Q.time, Q.month_actions, Q.S.history.negotiations.length], [before.t, before.actions, before.negotiations]);
   assert.deepEqual(Q.S.cabinet, before.cabinet, 'nothing is decided before the offer is submitted');
   assert.equal(Q.S.turn.pending, null);
+  const factions = clone(Q.S.actors.pps.factions);
   choose(engine, 'polish_cabinet_formation.submit');
   assert.equal(engine.state.sceneId, 'polish_cabinet_formation.result');
   assert.equal(Q.S.history.negotiations.length, before.negotiations + 1, 'one commit');
@@ -148,10 +175,12 @@ test('C1: one screen; every setting is free and returns to it; one commit, then 
   assert.match(content(engine), /The head of state appoints ","Ignacy Daszyński/);
   assert.match(content(engine), /A minority cabinet: it has fewer than 223 MPs, but more MPs declared for it than against it/, 'explained (Z — 0.56)');
   assert.equal(Q.S.cabinet.pm, 'daszynski');
-  assert.deepEqual(Q.S.cabinet.portfolios.labor, 'pps');
-  assert.deepEqual(Q.S.cabinet.portfolios.interior, 'pps');
-  assert.deepEqual(Q.S.cabinet.portfolios.agriculture, 'psl_wyzwolenie');
+  assert.deepEqual([Q.S.cabinet.portfolios.labor, Q.S.cabinet.portfolios.interior, Q.S.cabinet.portfolios.economic], ['npr', 'pps', 'pps']);
   assert.equal(Q.S.cabinet.appointment_basis, 'naczelnik_panstwa', 'before the constitutional transfer');
+  // Decision 5A: Daszyński strengthens the centre of PPS (+5 strength, −5 dissent); the other factions grumble (+3 dissent).
+  assert.equal(Q.S.actors.pps.factions.centrum.dissent, Math.max(0, factions.centrum.dissent - 5));
+  assert.deepEqual(['lewica', 'pilsudczycy'].map(id => Q.S.actors.pps.factions[id].dissent - factions[id].dissent), [3, 3]);
+  assert.ok(Q.S.actors.pps.factions.centrum.strength > factions.centrum.strength);
   choose(engine, 'polish_cabinet_formation.done');
   assert.equal(engine.state.sceneId, 'sejm_election.finish');
   assert.equal(Q.sejm_pending.phase, 'complete');
@@ -161,6 +190,33 @@ test('C1: one screen; every setting is free and returns to it; one commit, then 
   const restored = dendry.saveAndRestore(engine);
   restored.goToScene('main');
   assert.deepEqual(restored.state.qualities.S.cabinet, Q.S.cabinet, 'a save and load changes nothing');
+});
+
+// Decision 5A: Moraczewski of the Piłsudski wing is welcome to the clubs friendly to Piłsudski and unwelcome to the hostile ones;
+// on appointment his faction grows stronger. Czapiński needs a left of 30%.
+test('Premier z frakcji 0.71: Moraczewski adds +5 with Wyzwolenie, Piast and NPR before V 1923; his faction grows on appointment', () => {
+  const engine = dendry.startGame();
+  const Q = engine.state.qualities;
+  november(engine, LEFT_SEJM_ROWS);
+  for (const [id, value] of Object.entries({ npr: 60, psl_piast: 60 })) PolishGovernment.changeRelation(Q, id, value - Q.S.actors.relations[id], 'fixture');
+  strongLeft(engine);
+  choose(engine, 'polish_cabinet_formation');
+  choose(engine, 'polish_cabinet_formation.variants');
+  choose(engine, 'polish_cabinet_formation.var_centre_left');
+  assert.match(JSON.stringify(choice(engine, 'polish_cabinet_formation.cand_moraczewski').subtitle), /welcome to the clubs friendly to Piłsudski/);
+  assert.equal(choice(engine, 'polish_cabinet_formation.cand_thugutt').canChoose, true, 'Thugutt may lead the centre-left');
+  choose(engine, 'polish_cabinet_formation.cand_moraczewski');
+  choose(engine, 'polish_cabinet_formation.ports_next');
+  assert.match(content(engine), /<summary>PSL Piast — agrees · \d+\/60<\/summary>[^<]* · the premier of PPS \+5/);
+  assert.match(content(engine), /<summary>PSL Wyzwolenie — agrees · \d+\/60<\/summary>[^<]* · the premier of PPS \+5/);
+  const offer = PolishGovernment.buildCabinetOffer(Q, Q.S.negotiation.draft, Q.S.negotiation.context);
+  assert.deepEqual(['psl_wyzwolenie', 'psl_piast', 'npr', 'pschd', 'zln'].map(id => PolishGovernment.premierPart(id, offer)), [5, 5, 5, -5, -5]);
+  const before = clone(Q.S.actors.pps.factions);
+  choose(engine, 'polish_cabinet_formation.submit');
+  assert.equal(Q.S.cabinet.pm, 'moraczewski');
+  assert.ok(Q.S.actors.pps.factions.pilsudczycy.strength > before.pilsudczycy.strength);
+  assert.deepEqual(['centrum', 'lewica'].map(id => Q.S.actors.pps.factions[id].dissent - before[id].dissent), [3, 3]);
+  assert.equal(Q.S.actors.pps.reactions.filter(r => r.kind === 'premier_faction').length, 3, 'one reaction per faction, with its cause');
 });
 
 test('the own initiative in a crisis: the Parliament deck, the same refused offer blocked, 1 T on submit, closing free', () => {
@@ -176,14 +232,19 @@ test('the own initiative in a crisis: the Parliament deck, the same refused offe
   assert.equal(PolishGovernment.formationVisible(Q), true);
   playFromHand(engine, 'polish_cabinet_formation');
   assert.equal(Q.S.negotiation.cost_t, 1);
+  assert.match(content(engine), /PPS can make its own offer; submitting it spends this month’s action/);
+  choose(engine, 'polish_cabinet_formation.variants');
+  choose(engine, 'polish_cabinet_formation.var_expert');
+  assert.equal(engine.state.sceneId, 'polish_cabinet_formation.summary', 'one candidate of the period: no page of the prime minister');
   assert.equal(choice(engine, 'polish_cabinet_formation.submit').canChoose, false);
   assert.match(JSON.stringify(choice(engine, 'polish_cabinet_formation.submit').subtitle), /same offer was refused/);
   choose(engine, 'easy_discard');
   assert.deepEqual([Q.time, Q.month_actions], [11, 0], 'closing the card costs nothing');
   assert.ok(engine.state.currentHands.main.some(card => card.id === 'polish_cabinet_formation'), 'back in the hand');
   playFromHand(engine, 'polish_cabinet_formation');
-  choose(engine, 'polish_cabinet_formation.candidates');
-  choose(engine, 'polish_cabinet_formation.cand_sikorski');
+  // Z — 0.71: Nowak is the only non-party candidate of November 1922, so the other offer is PPS in opposition.
+  choose(engine, 'polish_cabinet_formation.variants');
+  choose(engine, 'polish_cabinet_formation.var_opposition');
   choose(engine, 'polish_cabinet_formation.submit');
   assert.equal(Q.month_actions, 1, 'the initiative spends the month when the offer is submitted');
   assert.equal(Q.S.turn.pending.action_id, 'parliament.cabinet_formation');
@@ -205,10 +266,14 @@ test('a due mandatory formation is routed before events, cannot be closed and co
   assert.equal(engine.state.sceneId, 'polish_cabinet_formation');
   assert.equal(Q.S.negotiation.mandatory, true);
   assert.equal(choice(engine, 'easy_discard'), undefined);
+  assert.match(content(engine), /The cabinet of Antoni Ponikowski has fallen and governs as caretaker until a new one is appointed\./);
   engine.goToScene('main');
   assert.equal(engine.state.sceneId, 'polish_cabinet_formation', 'main routes to it as well');
-  choose(engine, 'polish_cabinet_formation.submit');
-  choose(engine, 'polish_cabinet_formation.done');
+  choose(engine, 'polish_cabinet_formation.variants');
+  assert.equal(choice(engine, 'polish_cabinet_formation.back_intro').canChoose, true);
+  assert.equal(choice(engine, 'easy_discard'), undefined, 'no Close on any step');
+  choose(engine, 'polish_cabinet_formation.back_intro');
+  dendry.formCabinet(engine, {});
   assert.equal(engine.state.sceneId, 'main');
   assert.deepEqual([Q.time, Q.month_actions], [1, 0]);
   assert.equal(Q.S.cabinet_crisis, null, 'the crisis is resolved by the appointment');
@@ -269,7 +334,8 @@ function centreLeft(engine, relations = { psl_piast: 60, npr: 60 }) {
   PolishGovernment.openCrisis(Q, 'cabinet_fall', Q.S.cabinet.id);
   Q.S.cabinet.status = 'caretaker';
   engine.goToScene('post_event');
-  const result = dendry.formCabinet(engine, { configuration: 'centre_left', mode: 'member', claim: ['economic'] });
+  // Z — 0.71: Thugutt leads the centre-left (his broad mission), as the tests of this fixture assume.
+  const result = dendry.formCabinet(engine, { configuration: 'centre_left', mode: 'member', candidate: 'thugutt', claim: ['economic'] });
   assert.equal(result.appointed.configuration_id, 'centre_left');
   assert.equal(engine.state.sceneId, 'main');
   return Q;
@@ -508,15 +574,18 @@ test('save and load in the middle of the formation keeps the offer; the restored
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
   november(engine, LEFT_SEJM_ROWS);
+  PolishGovernment.changeRelation(Q, 'npr', 60 - Q.S.actors.relations.npr, 'fixture');
   strongLeft(engine);
   choose(engine, 'polish_cabinet_formation');
-  choose(engine, 'polish_cabinet_formation.minorities_on');
-  choose(engine, 'polish_cabinet_formation.candidates');
+  choose(engine, 'polish_cabinet_formation.variants');
+  choose(engine, 'polish_cabinet_formation.var_left_labour');
   choose(engine, 'polish_cabinet_formation.cand_daszynski');
+  choose(engine, 'polish_cabinet_formation.ports_next');
+  choose(engine, 'polish_cabinet_formation.minorities_on');
   const draft = clone(Q.S.negotiation.draft);
   const restored = dendry.saveAndRestore(engine);
   const R = restored.state.qualities;
-  assert.equal(restored.state.sceneId, 'polish_cabinet_formation');
+  assert.equal(restored.state.sceneId, 'polish_cabinet_formation.summary');
   assert.deepEqual(R.S.negotiation.draft, draft);
   choose(restored, 'polish_cabinet_formation.submit');
   choose(restored, 'polish_cabinet_formation.done');

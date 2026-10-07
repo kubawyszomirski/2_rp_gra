@@ -328,11 +328,17 @@ test('B14 in the game: the stabilisation event without the Treasury leads to the
   const S = Q.S;
   S.party_orgs.apparatus.level = 2;
   S.unions.industry.reach = 40;
+  // Z — 0.71 (decision 4A): Grabski stands from XII 1923, so the fixture crisis is in his period.
+  Q.year = 1924; Q.month = 1; Q.time = PolishRules.timeOf(1924, 1);
   PolishGovernment.openCrisis(Q, 'fixture_fall', S.cabinet.id);
   engine.goToScene('polish_event_stabilization');
   assert.equal(choice(engine, 'polish_event_stabilization.protections_terms').canChoose !== false, true);
   choose(engine, 'polish_event_stabilization.protections_terms');
   assert.equal(engine.state.sceneId, 'polish_cabinet_formation');
+  // Z — 0.71: the wizard opens on its introduction; the preset offer with the protections is on the summary.
+  choose(engine, 'polish_cabinet_formation.variants');
+  choose(engine, 'polish_cabinet_formation.var_expert');
+  assert.equal(engine.state.sceneId, 'polish_cabinet_formation.summary');
   assert.match(JSON.stringify(engine.ui.paragraphs), /protections and a heavier burden on wealth/);
   assert.equal(Q.month_actions || 0, 0);
 });

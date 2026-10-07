@@ -911,6 +911,8 @@ test('B14 through the stabilisation event: without the Treasury the answer opens
   const Q = game();
   const S = Q.S;
   preparedBase(Q);
+  // Z — 0.71 (decision 4A): Grabski stands from XII 1923, so the fixture is in his period.
+  Q.time = PolishRules.timeOf(1924, 1); Q.year = 1924; Q.month = 1;
   assert.match(PolishProjects.eventStatus(Q, 'stabilization', 'protections_terms').reason, /open cabinet crisis/);
   withPortfolios(Q, 'finance');
   assert.match(PolishProjects.eventStatus(Q, 'stabilization', 'protections_terms').reason, /holds the Treasury/);

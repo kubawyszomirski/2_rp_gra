@@ -34,10 +34,8 @@ function toJune1922(engine) {
 function formationAfterB1(engine, answer) {
   choose(engine, `polish_event_cabinet_1922.${answer}`);
   assert.equal(engine.state.sceneId, 'polish_cabinet_formation');
-  choose(engine, 'polish_cabinet_formation.submit');
-  const result = engine.state.qualities.S.history.negotiations.at(-1).result;
-  choose(engine, 'polish_cabinet_formation.done');
-  return result;
+  // Z — 0.71: the wizard keeps the answer of B1 as its preset (the variant and the candidate).
+  return dendry.formCabinet(engine, {});
 }
 
 // Z — 0.56 (item 5 of 5 X 2026): B2 is a card of the Parliament deck for three months; it shows an authentic quotation of
@@ -109,6 +107,13 @@ test('B1/B2: the dispute of June 1922 brings three answers of B1 into one free f
   const neg = S.negotiation;
   assert.deepEqual([neg.context.reason, neg.mandatory, neg.cost_t, neg.draft.configuration_id, neg.draft.candidate_id, neg.draft.pps_mode],
     ['cabinet_fall', true, 0, 'expert', 'sliwinski', 'external_support'], 'the one mandatory formation of 8.8 with the Naczelnik’s candidate');
+  // Z — 0.71: the introduction names the cause; the page of the prime minister offers the two men of VI 1922, the preset first.
+  assert.match(JSON.stringify(engine.ui.paragraphs), /The cabinet of Antoni Ponikowski has fallen/);
+  choose(engine, 'polish_cabinet_formation.variants');
+  choose(engine, 'polish_cabinet_formation.var_expert');
+  assert.deepEqual(ids(engine), ['polish_cabinet_formation.cand_sliwinski', 'polish_cabinet_formation.cand_nowak', 'polish_cabinet_formation.back_variants']);
+  assert.equal(S.negotiation.draft.candidate_id, 'sliwinski', 'choosing the same variant keeps the preset');
+  choose(engine, 'polish_cabinet_formation.cand_sliwinski');
   choose(engine, 'polish_cabinet_formation.submit');
   const result = S.history.negotiations.at(-1).result;
   assert.equal(result.pps_offer.candidate_id, 'sliwinski');

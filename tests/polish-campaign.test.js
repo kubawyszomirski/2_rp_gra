@@ -24,6 +24,18 @@ test('Kampanie strategii: each of the 13 scripted strategies plays from January 
   }
 });
 
+// Z — 0.71 (decision B of 7 X 2026): the chain of cabinets of the reference runs survives the formation of 0.71. The Piast split
+// of XII 1923 takes 11 MPs, so Chjeno-Piast falls although the stances of 0.71 move one seat of the Christian Democrats in 1922.
+test('Ciąg gabinetów 0.71: a tolerating PPS sees Śliwiński, Nowak, Witos, Grabski and Skrzyński; a passive PPS sees Nowak and Witos twice', () => {
+  const chain = (id, seed) => strategies.summarize(quiet(() => strategies.runCampaign(id, seed))).cabinets.map(c => `${c.formed} ${c.pm}`);
+  for (const seed of [1922, 7]) {
+    assert.deepEqual(chain('N_B', seed), ['1922-01 Antoni Ponikowski', '1922-06 Artur Śliwiński', '1922-11 Julian Nowak', '1923-06 Wincenty Witos',
+      '1924-01 Władysław Grabski', '1925-12 Aleksander Skrzyński'], `N_B, seed ${seed}`);
+    assert.deepEqual(chain('N_A', seed), ['1922-01 Antoni Ponikowski', '1922-06 Julian Nowak', '1922-11 Julian Nowak', '1923-07 Wincenty Witos',
+      '1924-01 Wincenty Witos'], `N_A, seed ${seed}`);
+  }
+});
+
 // Appendix D of the implementation plan (scenario_content, stage 8): no German card, adviser or event remains
 // available in the Polish game. Polish scenes and the Polish advisers adapted in stage 5 are allowed.
 const POLISH_ADVISERS = ['arciszewski', 'czapinski', 'daszynski', 'drobner', 'dubois', 'jaworowski', 'malinowski', 'moraczewski',

@@ -86,34 +86,46 @@ function choose(engine, id) {
   engine.choose(index);
 }
 
-// Walks the one-screen cabinet formation (card 7.1; technical reference 8.8, C1) and submits one
-// offer. It starts on the post-election summary or on the formation page; each option changes only
-// the offer, so the order is fixed: cabinet, role of PPS, prime minister, minorities, portfolios.
+// Walks the cabinet formation (card 7.1; technical reference 8.8, C1) and submits one offer. Z — 0.71: the formation is a
+// wizard — the introduction, the variant (which carries the role of PPS: a party cabinet with PPS in it, a cabinet of
+// experts supported from outside, or opposition), the prime minister and the portfolios when there is a choice, and the
+// summary with the minorities and the commit. It starts on the post-election summary or on the introduction.
 function formCabinet(engine, { configuration, mode, candidate, minorities, claim } = {}) {
   if (engine.state.sceneId === 'sejm_election.government') choose(engine, 'polish_cabinet_formation');
   assert.equal(engine.state.sceneId, 'polish_cabinet_formation');
-  const pick = (menu, option) => {
-    choose(engine, `polish_cabinet_formation.${menu}`);
-    choose(engine, `polish_cabinet_formation.${option}`);
-  };
-  if (configuration) pick('configurations', `cfg_${configuration}`);
-  if (mode) pick('modes', `mode_${mode}`);
-  if (candidate) pick('candidates', `cand_${candidate}`);
-  if (minorities === true) choose(engine, 'polish_cabinet_formation.minorities_on');
-  if (minorities === false && (engine.getCurrentChoices() || []).some(c => c.id === 'polish_cabinet_formation.minorities_off')) {
-    choose(engine, 'polish_cabinet_formation.minorities_off');
+  const F = 'polish_cabinet_formation.';
+  const draft = () => engine.state.qualities.S.negotiation.draft;
+  choose(engine, `${F}variants`);
+  const configId = configuration || draft().configuration_id;
+  // Without a role or a cabinet the preset of the draft holds (e.g. the opposition answer of B1).
+  if (mode === 'opposition' || (!mode && !configuration && draft().pps_mode === 'opposition')) {
+    choose(engine, `${F}var_opposition`);
+  } else {
+    assert.ok(!mode || mode === (configId === 'expert' ? 'external_support' : 'member'),
+      `the role ${mode} is not part of the variant ${configId}`);
+    choose(engine, `${F}var_${configId}`);
   }
-  if (claim) {
-    // Z — 0.61: step 4 gives up the portfolios held now and takes the requested ones with influence points.
-    choose(engine, 'polish_cabinet_formation.portfolios');
-    for (const c of engine.getCurrentChoices().filter(c => c.id.startsWith('polish_cabinet_formation.drop_'))) choose(engine, c.id);
-    for (const key of claim) choose(engine, `polish_cabinet_formation.take_${key}`);
-    choose(engine, 'polish_cabinet_formation.back');
+  if (engine.state.sceneId === `${F}premier`) choose(engine, `${F}cand_${candidate || draft().candidate_id}`);
+  else if (candidate) assert.equal(draft().candidate_id, candidate, 'the only possible prime minister');
+  if (engine.state.sceneId === `${F}portfolio_menu`) {
+    if (claim) {
+      // Z — 0.61: step 4 gives up the portfolios held now and takes the requested ones with influence points.
+      for (const c of engine.getCurrentChoices().filter(c => c.id.startsWith(`${F}drop_`) && c.canChoose !== false)) choose(engine, c.id);
+      for (const key of claim) choose(engine, `${F}take_${key}`);
+    }
+    choose(engine, `${F}ports_next`);
+  } else {
+    assert.ok(!claim, 'the portfolios of this variant cannot be chosen');
   }
-  choose(engine, 'polish_cabinet_formation.submit');
-  assert.equal(engine.state.sceneId, 'polish_cabinet_formation.result');
+  assert.equal(engine.state.sceneId, `${F}summary`);
+  if (minorities === true) choose(engine, `${F}minorities_on`);
+  if (minorities === false && (engine.getCurrentChoices() || []).some(c => c.id === `${F}minorities_off`)) {
+    choose(engine, `${F}minorities_off`);
+  }
+  choose(engine, `${F}submit`);
+  assert.equal(engine.state.sceneId, `${F}result`);
   const result = engine.state.qualities.S.history.negotiations.at(-1).result;
-  choose(engine, 'polish_cabinet_formation.done');
+  choose(engine, `${F}done`);
   return result;
 }
 
