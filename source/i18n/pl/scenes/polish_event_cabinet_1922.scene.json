@@ -3,15 +3,11 @@
  "status": "complete",
  "lines": {
   "title: The Cabinet Crisis of 1922": "title: Kryzys gabinetowy 1922 roku",
-  "subtitle: Ponikowski resigns after his dispute with the Naczelnik; PPS chooses how it enters the formation of a new cabinet.": "subtitle: Ponikowski ustępuje po sporze z Naczelnikiem Państwa; PPS wybiera, jak wejdzie w formowanie nowego gabinetu.",
+  "subtitle: Ponikowski resigns after his dispute with the Naczelnik; the formation of a new cabinet follows.": "subtitle: Ponikowski ustępuje po sporze z Naczelnikiem Państwa; następuje formowanie nowego gabinetu.",
   "= The cabinet of Ponikowski resigns": "= Gabinet Ponikowskiego podaje się do dymisji",
   "After a dispute with the Naczelnik Państwa over the cabinet, Antoni Ponikowski hands in his resignation and stays as caretaker until a new cabinet is appointed. In this game the Naczelnik prefers his own candidate, Artur Śliwiński; any cabinet still needs the support of the Sejm. The course of the dispute is a scenario profile of the game, based on the chronology of the cabinets of 1922.": "Po sporze z Naczelnikiem Państwa o gabinet Antoni Ponikowski składa dymisję i kieruje gabinetem tymczasowym do czasu powołania nowego gabinetu. W tej grze Naczelnik woli własnego kandydata, Artura Śliwińskiego; każdy gabinet nadal potrzebuje poparcia Sejmu. Przebieg sporu jest profilem scenariusza gry opartym na chronologii gabinetów z 1922 roku.",
-  "PPS chooses how it enters the formation. The formation card then shows every setting of our offer before it is submitted.": "PPS wybiera, jak wejdzie w formowanie gabinetu. Karta formowania pokaże potem wszystkie ustawienia naszej oferty przed jej złożeniem.",
-  "title: Support the Naczelnik's candidate, Artur Śliwiński": "title: Poprzyj kandydata Naczelnika, Artura Śliwińskiego",
-  "subtitle: The formation starts with him as prime minister of a non-party cabinet that PPS supports from outside. If the Sejm does not carry him, the next feasible offer is weighed.": "subtitle: Formowanie zaczyna się od niego jako premiera gabinetu pozapartyjnego, który PPS popiera z zewnątrz. Jeśli Sejm go nie poprze, rozważana jest następna wykonalna oferta.",
-  "title: Seek a compromise candidate of the Sejm": "title: Szukaj kompromisowego kandydata Sejmu",
-  "subtitle: The formation starts with Julian Nowak as prime minister of a non-party cabinet that PPS supports from outside.": "subtitle: Formowanie zaczyna się od Juliana Nowaka jako premiera gabinetu pozapartyjnego, który PPS popiera z zewnątrz.",
-  "title: Stay in opposition": "title: Pozostań w opozycji",
-  "subtitle: PPS leaves the formation to the other parties; they form a cabinet if they can.": "subtitle: PPS zostawia formowanie innym partiom; utworzą gabinet, jeśli zdołają."
+  "PPS gives its answer in the formation card that follows: it can support the Naczelnik's candidate from outside, seek another cabinet, or stay in opposition.": "PPS odpowiada w karcie formowania, która następuje teraz: może poprzeć z zewnątrz kandydata Naczelnika, szukać innego gabinetu albo pozostać w opozycji.",
+  "title: Go to the formation of a cabinet": "title: Przejdź do formowania gabinetu",
+  "subtitle: The mandatory formation costs no month.": "subtitle: Obowiązkowe formowanie nie zużywa miesiąca."
  }
 }

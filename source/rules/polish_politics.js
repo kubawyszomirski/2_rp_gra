@@ -735,10 +735,10 @@
       (episode.cause === 'currency_crisis' ? 'walutowy' : 'kredytowy') + ' 1925 roku przekreślił jego stabilizację.') : '';
   }
 
+  // Z — 0.72 (decision 1A of 8 X 2026): B1 has one answer. The choice of the cabinet — the Naczelnik's candidate Śliwiński,
+  // another variant or opposition — is made once, in the formation card, which starts from its usual default offer.
   const CABINET_1922 = Object.freeze({
-    pils_candidate: {candidate: 'sliwinski', name: 'the Naczelnik’s candidate', preset: {configuration_id: 'expert', pps_mode: 'external_support', candidate_id: 'sliwinski'}},
-    parliamentary_compromise: {candidate: 'nowak', name: 'a compromise candidate of the Sejm', preset: {configuration_id: 'expert', pps_mode: 'external_support', candidate_id: 'nowak'}},
-    opposition: {candidate: null, name: 'opposition', preset: {pps_mode: 'opposition'}},
+    formation: {candidate: null, name: 'the formation', preset: {}},
   });
 
   function cabinet1922Episode(S) {
@@ -751,20 +751,10 @@
     return !!e && e.response === null && !!Q.S.cabinet_crisis && Q.S.cabinet_crisis.id === e.crisis_id;
   }
 
-  // P: Śliwiński consents while the Naczelnik is in office and in his window of VI–VII 1922 (8.7); a compromise
-  // candidate is available while his own cabinet has not fallen.
+  // The conditions of the candidates (Śliwiński only under the Naczelnik and in VI–VII 1922, 8.7) are checked by the formation.
   function cabinet1922Status(Q, choice) {
-    const S = Q.S, spec = CABINET_1922[choice];
-    if (!spec) return no(L('Unknown answer.', 'Nieznana odpowiedź.'));
+    if (!CABINET_1922[choice]) return no(L('Unknown answer.', 'Nieznana odpowiedź.'));
     if (!cabinet1922Due(Q)) return no('');
-    if (choice === 'pils_candidate') {
-      const head = Q.polish_presidency && Q.polish_presidency.current;
-      if (head && head.holder_id !== 'jozef_pilsudski') return no(L('The Naczelnik is no longer in office; his candidate does not stand.', 'Naczelnik Państwa nie sprawuje już urzędu; jego kandydat nie startuje.'));
-      if (!government.inWindow('sliwinski', Q.time)) return no(L('Śliwiński stands only in June and July 1922.', 'Śliwiński kandyduje tylko w czerwcu i lipcu 1922 roku.'));
-    }
-    if (spec.candidate && !government.candidateStatus(Q, spec.candidate, {configuration_id: 'expert', pps_mode: 'external_support'}).available) {
-      return no(L('This candidate is not available.', 'Ten kandydat jest niedostępny.'));
-    }
     return OK;
   }
 

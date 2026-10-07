@@ -604,7 +604,8 @@
     // Stage 7c (8.7, 17.16.3; H: the attempt of VI–VII 1922 in PL-1922-1926-CABINETS): the Naczelnik's candidate after
     // the dispute with Ponikowski; he still needs the support of the Sejm.
     // Z — 0.71 (decision 4A; H: PL-1922-1926-PM-CANDIDATES): an expert stands only in the period of his historical crisis —
-    // Śliwiński while Piłsudski is Naczelnik, Nowak from the compromise of the crisis of VI 1922 to XII 1922, Sikorski only
+    // Śliwiński while Piłsudski is Naczelnik, Nowak from the crisis of VI 1922 to XII 1922 (decision 2B of 8 X 2026: in VI–VII
+    // 1922 an alternative beside Śliwiński; historically he came only after Śliwiński fell), Sikorski only
     // after the assassination of the President (XII 1922 – V 1923), Grabski from
     // XII 1923 and again in V 1926, when he tried a non-party cabinet.
     // Śliwiński: historically VI–VII 1922; a fall of Ponikowski before VI 1922 (alternate history) brings the same candidate of
@@ -748,7 +749,7 @@
 
   // Z — 0.71 (decision 4A; H: PL-1922-1926-PM-CANDIDATES): an expert stands in his period and leads a cabinet of experts; a
   // party leader leads a party cabinet in which his party is the largest club (Thugutt also the Centre-left and the broad
-  // centre, as in his mission of XII 1923); a candidate of PPS also needs his faction (5A) and two partners who accept him.
+  // centre, as in his mission of XII 1923); a candidate of PPS also needs his faction (5A) and two partner parties in the cabinet.
   // The condition of an expert beyond his period: Sikorski only after the assassination, Śliwiński only under the Naczelnik.
   function expertRequirement(Q, candidateId) {
     const candidate = CANDIDATES[candidateId];
@@ -760,6 +761,11 @@
       if (head && head.holder_id !== 'jozef_pilsudski') return L('Only while Piłsudski is Naczelnik.', 'Tylko gdy Piłsudski jest Naczelnikiem.');
     }
     return '';
+  }
+
+  // The non-party man the head of state proposes in this period: the first expert of the period with his conditions (8.7).
+  function headCandidate(Q) {
+    return EXPERTS.filter(id => expertPeriodStatus(Q, id).available)[0] || null;
   }
 
   function expertPeriodStatus(Q, candidateId) {
@@ -1721,10 +1727,18 @@
         if (profile.against.length) note += L(' Fought by ' + listNames(profile.against) + '.', ' Zwalczają go: ' + listNames(profile.against) + '.');
       }
     }
-    if (inWindow(candidateId, Q.time)) {
+    // Z — 0.72 (8 X 2026): only the one non-party man the head of state proposes is marked as his candidate; another man of the
+    // period is described as what he was (decision 2B: Nowak may stand in VI–VII 1922 beside Śliwiński).
+    const head = headCandidate(Q);
+    if (candidateId === head) {
       const president = Q.polish_presidency && Q.polish_presidency.current && Q.polish_presidency.current.office_id === 'prezydent_rp';
       note += president ? L(' Candidate of the President for this period.', ' Kandydat Prezydenta na ten okres.') :
         L(' Candidate of the Chief of State for this period.', ' Kandydat Naczelnika Państwa na ten okres.');
+    } else if (candidateId === 'nowak' && head === 'sliwinski') {
+      note += L(' A compromise candidate of the Sejm; historically he became prime minister only after Śliwiński fell (VII 1922).',
+        ' Kandydat kompromisu Sejmu; historycznie został premierem dopiero po upadku Śliwińskiego (VII 1922).');
+    } else if (!candidate.party && candidateId !== 'pilsudski' && expertPeriodStatus(Q, candidateId).available) {
+      note += L(' He stands in this period, but is not the candidate of the head of state.', ' Kandyduje w tym okresie, ale nie jest kandydatem głowy państwa.');
     }
     return note;
   }
@@ -1757,7 +1771,7 @@
     const head = Q.polish_presidency && Q.polish_presidency.current;
     const president = head && head.office_id === 'prezydent_rp';
     const headName = head && head.holder_id ? head.holder_name : (president ? '' : 'Józef Piłsudski');
-    const expert = EXPERTS.filter(id => expertPeriodStatus(Q, id).available)[0];
+    const expert = headCandidate(Q);
     const appoints = president ? L('The President' + (headName ? ', ' + headName + ',' : '') + ' appoints the cabinet',
       'Rząd powołuje Prezydent' + (headName ? ' ' + headName : '')) :
       L('The Naczelnik Państwa, ' + headName + ', appoints the cabinet', 'Rząd powołuje Naczelnik Państwa ' + headName);

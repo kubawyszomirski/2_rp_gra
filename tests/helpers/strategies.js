@@ -155,7 +155,8 @@ const lowest = (ctx, branches) => branches.slice().sort((a, b) => ctx.reach(a) -
 
 // ---- Default answers of events and sequences, by option ID in order of preference.
 const PASSIVE_EVENTS = {
-  polish_event_cabinet_1922: ['opposition'],
+  // Z — 0.72: B1 has one answer; the formation itself is answered by each strategy's formation.
+  polish_event_cabinet_1922: ['formation'],
   polish_event_pils_criticism: ['defend', 'reform', 'support'],
   polish_event_assassination_response: ['restraint'],
   polish_event_niewiadomski_cult: ['stay_out'],
@@ -179,7 +180,7 @@ const PASSIVE_EVENTS = {
 };
 
 const ACTIVE_EVENTS = Object.assign({}, PASSIVE_EVENTS, {
-  polish_event_cabinet_1922: ['parliamentary_compromise', 'opposition'],
+  polish_event_cabinet_1922: ['formation'],
   polish_event_assassination_response: ['defend', 'restraint'],
   polish_event_assassination_response_protection: ['protected', 'unprotected'],
   polish_event_niewiadomski_cult: ['condemn', 'stay_out'],
@@ -310,7 +311,7 @@ const STRATEGIES = {
   }),
   permanent_opposition: strategy('permanent_opposition', '21.2: permanent opposition', {
     formation: FORMATION.opposition,
-    events: Object.assign({}, ACTIVE_EVENTS, { polish_event_cabinet_1922: ['opposition'], polish_budget_package: ['refuse', 'later'] }),
+    events: Object.assign({}, ACTIVE_EVENTS, { polish_budget_package: ['refuse', 'later'] }),
     month: ctx => plan.organised(ctx, [...plan.wage(ctx)]),
   }),
   formal_coalition: strategy('formal_coalition', '21.2: formal coalition', {

@@ -1,5 +1,5 @@
 title: The Cabinet Crisis of 1922
-subtitle: Ponikowski resigns after his dispute with the Naczelnik; PPS chooses how it enters the formation of a new cabinet.
+subtitle: Ponikowski resigns after his dispute with the Naczelnik; the formation of a new cabinet follows.
 new-page: true
 tags: pl_event
 face-image: img/polish/polish_event_cabinet_1922.jpg
@@ -7,8 +7,8 @@ view-if: {! return !!Q.S && !!Q.polish_politics_rules && PolishPolitics.cabinet1
 on-arrival: {!
 // Event opening.cabinet_1922, B1 (technical reference 8.7, 8.8, 17.13, 17.16.3; card catalogue 9.1; decision 1A of
 // stage 7): the dispute of the Naczelnik with Ponikowski in VI 1922 ends in his resignation, because no card of this
-// chapter offers a compromise keeping the cabinet (P). Each answer enters the one mandatory formation of a cabinet,
-// free of charge; there is no fourth answer about a concession.
+// chapter offers a compromise keeping the cabinet (P). Z — 0.72 (decision 1A of 8 X 2026): the event only tells what has
+// happened; the answer of PPS is made once, in the one mandatory formation that follows, free of charge.
 PolishPolitics.cabinet1922View(Q);
 !}
 
@@ -16,38 +16,15 @@ PolishPolitics.cabinet1922View(Q);
 
 After a dispute with the Naczelnik Państwa over the cabinet, Antoni Ponikowski hands in his resignation and stays as caretaker until a new cabinet is appointed. In this game the Naczelnik prefers his own candidate, Artur Śliwiński; any cabinet still needs the support of the Sejm. The course of the dispute is a scenario profile of the game, based on the chronology of the cabinets of 1922.
 
-PPS chooses how it enters the formation. The formation card then shows every setting of our offer before it is submitted.
+PPS gives its answer in the formation card that follows: it can support the Naczelnik's candidate from outside, seek another cabinet, or stay in opposition.
 
-- @pils_candidate
-- @parliamentary_compromise
-- @opposition
+- @formation
 
-@pils_candidate
-title: Support the Naczelnik's candidate, Artur Śliwiński
-subtitle: The formation starts with him as prime minister of a non-party cabinet that PPS supports from outside. If the Sejm does not carry him, the next feasible offer is weighed.
-choose-if: {! return PolishPolitics.cabinet1922Status(Q, 'pils_candidate').available !}
-unavailable-subtitle: [+ pl_b1_pils_candidate_why +]
+@formation
+title: Go to the formation of a cabinet
+subtitle: The mandatory formation costs no month.
+choose-if: {! return PolishPolitics.cabinet1922Status(Q, 'formation').available !}
 on-arrival: {!
-PolishPolitics.cabinet1922Choose(Q, 'pils_candidate');
-!}
-go-to: polish_cabinet_formation
-
-@parliamentary_compromise
-title: Seek a compromise candidate of the Sejm
-subtitle: The formation starts with Julian Nowak as prime minister of a non-party cabinet that PPS supports from outside.
-choose-if: {! return PolishPolitics.cabinet1922Status(Q, 'parliamentary_compromise').available !}
-unavailable-subtitle: [+ pl_b1_parliamentary_compromise_why +]
-on-arrival: {!
-PolishPolitics.cabinet1922Choose(Q, 'parliamentary_compromise');
-!}
-go-to: polish_cabinet_formation
-
-@opposition
-title: Stay in opposition
-subtitle: PPS leaves the formation to the other parties; they form a cabinet if they can.
-choose-if: {! return PolishPolitics.cabinet1922Status(Q, 'opposition').available !}
-unavailable-subtitle: [+ pl_b1_opposition_why +]
-on-arrival: {!
-PolishPolitics.cabinet1922Choose(Q, 'opposition');
+PolishPolitics.cabinet1922Choose(Q, 'formation');
 !}
 go-to: polish_cabinet_formation

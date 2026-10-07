@@ -31,11 +31,11 @@ function toJune1922(engine) {
   assert.deepEqual([engine.state.qualities.year, engine.state.qualities.month], [1922, 6]);
   assert.equal(engine.state.sceneId, 'polish_event_cabinet_1922');
 }
-function formationAfterB1(engine, answer) {
-  choose(engine, `polish_event_cabinet_1922.${answer}`);
+function formationAfterB1(engine, mode) {
+  // Z — 0.72: B1 has one answer; the answer of PPS is given in the formation that follows.
+  choose(engine, 'polish_event_cabinet_1922.formation');
   assert.equal(engine.state.sceneId, 'polish_cabinet_formation');
-  // Z — 0.71: the wizard keeps the answer of B1 as its preset (the variant and the candidate).
-  return dendry.formCabinet(engine, {});
+  return dendry.formCabinet(engine, mode ? { mode } : {});
 }
 
 // Z — 0.56 (item 5 of 5 X 2026): B2 is a card of the Parliament deck for three months; it shows an authentic quotation of
@@ -93,26 +93,31 @@ test('Milczenie i kolejne wystąpienia B2: silence after three months; a later c
   assert.equal(S.politics.speeches.length, 2, 'one speech for one crisis');
 });
 
-test('B1/B2: the dispute of June 1922 brings three answers of B1 into one free formation; the reformist answer of B2 creates no project, unlocks no variant and gives no votes', () => {
+test('B1/B2: the dispute of June 1922 leads into one free formation where PPS answers; the reformist answer of B2 creates no project, unlocks no variant and gives no votes', () => {
   const engine = dendry.startGame();
   const Q = engine.state.qualities, S = Q.S;
   toJune1922(engine);
-  assert.deepEqual(ids(engine), ['polish_event_cabinet_1922.pils_candidate', 'polish_event_cabinet_1922.parliamentary_compromise',
-    'polish_event_cabinet_1922.opposition'], 'three answers, no fourth answer about a concession');
+  // Z — 0.72 (decision 1A of 8 X 2026): the event tells what has happened; PPS answers once, in the formation.
+  assert.deepEqual(ids(engine), ['polish_event_cabinet_1922.formation'], 'one answer, no choice made twice');
   assert.ok((engine.getCurrentChoices() || []).every(c => c.canChoose !== false));
   assert.deepEqual([S.politics.cases.dispute_1922.status, S.politics.cases.dispute_1922.closed_by], ['closed', 'ponikowski_resigned']);
   assert.deepEqual([S.cabinet.id, S.cabinet.status, S.cabinet_crisis.reason], ['ponikowski_1', 'caretaker', 'cabinet_fall']);
-  choose(engine, 'polish_event_cabinet_1922.pils_candidate');
+  choose(engine, 'polish_event_cabinet_1922.formation');
   assert.equal(engine.state.sceneId, 'polish_cabinet_formation');
   const neg = S.negotiation;
   assert.deepEqual([neg.context.reason, neg.mandatory, neg.cost_t, neg.draft.configuration_id, neg.draft.candidate_id, neg.draft.pps_mode],
     ['cabinet_fall', true, 0, 'expert', 'sliwinski', 'external_support'], 'the one mandatory formation of 8.8 with the Naczelnik’s candidate');
-  // Z — 0.71: the introduction names the cause; the page of the prime minister offers the two men of VI 1922, the preset first.
+  // Z — 0.71: the introduction names the cause; the page of the prime minister offers the two men of VI 1922, Śliwiński first.
   assert.match(JSON.stringify(engine.ui.paragraphs), /The cabinet of Antoni Ponikowski has fallen/);
   choose(engine, 'polish_cabinet_formation.variants');
   choose(engine, 'polish_cabinet_formation.var_expert');
   assert.deepEqual(ids(engine), ['polish_cabinet_formation.cand_sliwinski', 'polish_cabinet_formation.cand_nowak', 'polish_cabinet_formation.back_variants']);
-  assert.equal(S.negotiation.draft.candidate_id, 'sliwinski', 'choosing the same variant keeps the preset');
+  assert.equal(S.negotiation.draft.candidate_id, 'sliwinski', 'the default offer keeps the Naczelnik’s candidate');
+  // Z — 0.72: only Śliwiński is marked as the Naczelnik's candidate; Nowak stands beside him as a compromise of the Sejm (2B).
+  const subtitle = id => JSON.stringify((engine.getCurrentChoices() || []).find(c => c.id === 'polish_cabinet_formation.' + id).subtitle);
+  assert.match(subtitle('cand_sliwinski'), /Candidate of the Chief of State for this period/);
+  assert.doesNotMatch(subtitle('cand_nowak'), /Candidate of the Chief of State/);
+  assert.match(subtitle('cand_nowak'), /A compromise candidate of the Sejm; historically he became prime minister only after Śliwiński fell \(VII 1922\)/);
   choose(engine, 'polish_cabinet_formation.cand_sliwinski');
   choose(engine, 'polish_cabinet_formation.submit');
   const result = S.history.negotiations.at(-1).result;
