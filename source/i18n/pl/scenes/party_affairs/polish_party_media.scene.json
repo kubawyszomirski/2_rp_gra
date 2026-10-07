@@ -6,8 +6,6 @@
   "subtitle: The party press, its format, and one campaign to chosen voters.": "subtitle: Prasa partyjna, jej format i jedna kampania do wybranych wyborców.",
   "= Media and campaigns": "= Media i kampanie",
   "Party press: [+ pl_party_press +]. Party money: [+ pl_party_cash +]. A campaign moves voters only in the cells it reaches; a topic repeated within six months among the same voters gains less.": "Prasa partyjna: [+ pl_party_press +]. Kasa partii: [+ pl_party_cash +]. Kampania przesuwa wyborców tylko w grupach, do których dociera; temat powtórzony w ciągu sześciu miesięcy wśród tych samych wyborców daje mniej.",
-  "title: Extend the distribution of the press": "title: Poszerz kolportaż prasy",
-  "subtitle: 1 resource; the press reaches more readers (+10, up to 100). Waits two months.": "subtitle: 1 jednostka środków; prasa dociera do większej liczby czytelników (+10, najwyżej 100). Odnowienie: dwa miesiące.",
   "title: Change the format of the press to [+ pl_media_format_next +]": "title: Zmień format prasy na: [+ pl_media_format_next +]",
   "subtitle: 1 resource. A popular format: the press reaches more people (+10) but loses credibility (−5), and with a wide reach it earns from sales (0.10 resources a month at reach 50 or more); the first adoption raises Centrum dissent (+3). Waits six months.": "subtitle: 1 jednostka środków. Format popularny: prasa dociera do większej liczby ludzi (+10), ale traci wiarygodność (−5), a przy dużym zasięgu zarabia na sprzedaży (0,10 jednostki środków miesięcznie przy zasięgu 50 lub wyższym); pierwsze przejście na ten format zwiększa sprzeciw Centrum (+3). Odnowienie: sześć miesięcy.",
   "title: A press campaign on a topic": "title: Kampania prasowa na wybrany temat",

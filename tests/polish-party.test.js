@@ -74,6 +74,20 @@ test('Dwie organizacje in the game: two different organisations in one month; th
   assert.equal(Q.time, 2, 'one month');
 });
 
+// Z — 0.68 (the user's note of 7 X 2026): the press distribution is offered only on the card of the organisations.
+test('Kolportaż w Organizacjach 0.68: the Media card has no press distribution; the card of the organisations keeps it', () => {
+  const media = dendry.startGame();
+  playFromHand(media, 'polish_party_media');
+  assert.deepEqual(ids(media), ['polish_party_media.format', 'polish_party_media.campaign', 'polish_party_media.unions_campaign',
+    'polish_party_media.polemic', 'polish_party_media.turnout', 'polish_party_media.investigation', 'easy_discard']);
+  const engine = dendry.startGame();
+  const Q = engine.state.qualities;
+  playFromHand(engine, 'polish_party_organizations');
+  choose(engine, 'polish_party_organizations.p1_press_distribution');
+  choose(engine, 'polish_party_organizations.only_one');
+  assert.equal(Q.S.party_orgs.press.reach, 40, 'the press gains 10 reach through the card of the organisations');
+});
+
 // Z — 0.56 (item 4 of 5 X 2026): the union packages have a card of their own; one investment in one action.
 test('Związki zawodowe — organizowanie i fundusze: a card of its own with seven choices; one investment costs the month', () => {
   const engine = dendry.startGame();

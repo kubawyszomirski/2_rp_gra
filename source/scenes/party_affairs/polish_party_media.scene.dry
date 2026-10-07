@@ -17,7 +17,6 @@ Q.pl_media_topic = '';
 
 Party press: [+ pl_party_press +]. Party money: [+ pl_party_cash +]. A campaign moves voters only in the cells it reaches; a topic repeated within six months among the same voters gains less.
 
-- @distribution
 - @format
 - @campaign
 - @unions_campaign
@@ -25,16 +24,6 @@ Party press: [+ pl_party_press +]. Party money: [+ pl_party_cash +]. A campaign 
 - @turnout
 - @investigation
 - @easy_discard
-
-@distribution
-title: Extend the distribution of the press
-subtitle: 1 resource; the press reaches more readers (+10, up to 100). Waits two months.
-choose-if: {! return PolishParty.pressDistributionStatus(Q).available !}
-unavailable-subtitle: [+ pl_media_distribution_why +]
-on-arrival: {!
-PolishParty.pressDistribution(Q);
-!}
-go-to: result
 
 @format
 title: Change the format of the press to [+ pl_media_format_next +]

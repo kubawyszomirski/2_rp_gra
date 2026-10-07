@@ -1608,7 +1608,6 @@
   function mediaView(Q) {
     syncMirrors(Q);
     partyDisplay(Q);
-    Q.pl_media_distribution_why = pressDistributionStatus(Q).reason;
     Q.pl_media_format_why = pressFormatStatus(Q).reason;
     Q.pl_media_format_next = Q.S.party_orgs.press.format === 'popular' ? L('the party journal', 'pismo partyjne') : L('a popular format', 'format popularny');
     Q.pl_media_campaign_why = campaignStatus(Q, 'press').reason;

@@ -39,7 +39,8 @@ const P = {
   militia: step => ['polish_party_militia', 'polish_party_militia.' + step],
   campaign: (topic, audience) => ['polish_party_media', 'polish_party_media.campaign', 'polish_party_media.topic_' + topic, 'polish_party_media.to_' + audience],
   turnout: audience => ['polish_party_media', 'polish_party_media.turnout', 'polish_party_media.to_' + audience],
-  distribution: () => ['polish_party_media', 'polish_party_media.distribution'],
+  // The press distribution is offered only on the card of the organisations (the media card no longer has it).
+  distribution: () => P.orgs('press_distribution'),
   talk: party => ['inter_party_relationships', 'inter_party_relationships.' + party],
   union: (branch, step) => ['polish_union_agenda', 'polish_union_agenda.' + branch, 'polish_union_agenda.' + step],
   bill: () => ['polish_unemployment_bill', 'polish_unemployment_bill.start'],
