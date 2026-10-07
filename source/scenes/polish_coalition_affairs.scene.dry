@@ -1,0 +1,60 @@
+title: Coalition Affairs
+subtitle: While PPS sits in the cabinet: raise a demand in the Council of Ministers, give way to our partners, or leave.
+new-page: true
+is-card: true
+tags: govt_affairs
+view-if: {! return !!Q.S && PolishGovernment.coalitionCardAvailable(Q) !}
+on-arrival: {!
+// Card government.coalition_affairs (Z — 0.64, decisions 1A–3A of 7 X 2026; technical reference 9.8, card catalogue 7.6):
+// the card of card 7.6 for a PPS member of the cabinet, in the Government deck. It has the rhythm of the support card
+// (half a year, or at once after an act of the cabinet against PPS) and uses its options, worded for a coalition, and adds
+// the concession to the partners. An ordinary use costs this month's action; opening and closing the card are free.
+Q.pl_sup_mode = 'ordinary';
+Q.pl_sup_reason = PolishGovernment.supportReason(Q);
+Q.pl_sup_member = 1;
+Q.pl_sup_withdraw_reason = PolishGovernment.supportOptionStatus(Q, 'withdraw', 'ordinary').reason;
+Q.pl_sup_demand_reason = PolishGovernment.supportOptionStatus(Q, 'bargain', 'ordinary').reason;
+Q.pl_sup_military_reason = PolishGovernment.supportOptionStatus(Q, 'bargain', 'ordinary', 'military_compromise').reason;
+Q.pl_coal_tension = PolishGovernment.coalitionTensionText(Q);
+Q.pl_coal_concession_reason = PolishGovernment.concessionStatus(Q).reason;
+!}
+
+= Coalition affairs
+
+[? if pl_sup_reason : [+ pl_sup_reason +] ?]
+
+Prime minister: [+ prime_minister_display +]. PPS position: [+ pps_government_position +].
+
+[? if pl_cabinet_support_display : Declared support: [+ pl_cabinet_support_display +]. ?]
+
+[? if pl_coal_tension : [+ pl_coal_tension +] ?]
+
+Our ministers sit in the Council of Ministers with our partners. **An ultimatum** makes our demand a condition of staying in the cabinet: if the partners refuse, we must either leave or back down. **A proposal** asks without a threat and costs no relations. **Giving way** to the partners eases the tension in our coalition agreements, but the Left of PPS dislikes it.
+
+- @polish_government_support.bargain
+- @polish_government_support.persuade
+- @polish_government_support.bargain_military
+- @polish_government_support.persuade_military
+- @concession
+- @polish_government_support.withdraw
+- @easy_discard
+
+@concession
+title: Give way to our coalition partners
+subtitle: The tension in each of our coalition agreements falls by 20; the Left of PPS is displeased (+5 dissent).
+choose-if: {! return PolishGovernment.concessionStatus(Q).available !}
+unavailable-subtitle: [+ pl_coal_concession_reason +]
+on-arrival: {!
+PolishGovernment.coalitionConcession(Q);
+Q.pl_coal_tension = PolishGovernment.coalitionTensionText(Q);
+!}
+go-to: conceded
+
+@conceded
+new-page: true
+
+= We give way
+
+PPS lets the partners have their way on the disputed points. [+ pl_coal_tension +] The Left of PPS sees it as a retreat.
+
+- @root: Continue.

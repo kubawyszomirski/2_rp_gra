@@ -28,7 +28,7 @@ const COMPLETE = ['scenes/root.scene.dry', 'scenes/main.scene.dry', 'scenes/stat
   // Part 2: the Library, elections, the Marshal and the President, the formation and the relation to the government.
   'scenes/library.scene.dry', 'scenes/post_event.scene.dry', 'scenes/sejm_election.scene.dry', 'scenes/sejm_election_result.scene.dry',
   'scenes/election_simulation.scene.dry', 'scenes/election_algorithm.scene.dry', 'scenes/polish_speaker_election.scene.dry',
-  'scenes/polish_presidential_sequence.scene.dry', 'scenes/polish_cabinet_formation.scene.dry', 'scenes/polish_government_support.scene.dry',
+  'scenes/polish_presidential_sequence.scene.dry', 'scenes/polish_cabinet_formation.scene.dry', 'scenes/polish_government_support.scene.dry', 'scenes/polish_coalition_affairs.scene.dry',
   'scenes/polish_government_response.scene.dry', 'scenes/polish_list_agreement.scene.dry', 'scenes/polish_event_router.scene.dry',
   'scenes/polish_advisor_commit.scene.dry', 'scenes/cancel_advisor_action.scene.dry', 'scenes/easy_discard.scene.dry',
   'scenes/polish_incompatible_save.scene.dry', 'scenes/return.scene.dry', 'scenes/set_next_election_time.scene.dry',

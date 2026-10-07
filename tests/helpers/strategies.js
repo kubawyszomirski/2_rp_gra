@@ -46,6 +46,8 @@ const P = {
   gov: (card, option) => [card, card + '.' + option],
   agenda: option => ['main:polish_agenda', 'polish_agenda.' + option],
   support: option => ['polish_government_support', 'polish_government_support.' + option],
+  // Z — 0.64: a PPS member raises the same demands on the coalition card of the Government deck.
+  coalition: option => ['polish_coalition_affairs', 'polish_government_support.' + option],
   constitution: variant => ['polish_constitution_project', 'polish_constitution_project.' + variant],
   armyOversight: variant => ['polish_parliament_army_oversight', 'polish_parliament_army_oversight.' + variant],
   adviser: (who, action) => ['main:' + who, who + '.' + action],
@@ -236,7 +238,8 @@ const plan = {
     // Persuasion first; after a refused persuasion of this cabinet, the demand with a threat.
     const refused = ctx.S.history.negotiations.some(n => n.postulate_id === 'military_compromise' && n.action === 'persuade' &&
       !n.accepted && ctx.S.cabinet && n.cabinet_id === ctx.S.cabinet.id);
-    return refused ? [P.support('bargain_military'), P.support('persuade_military')] : [P.support('persuade_military'), P.support('bargain_military')];
+    const card = ctx.stance === 'member' ? P.coalition : P.support;
+    return refused ? [card('bargain_military'), card('persuade_military')] : [card('persuade_military'), card('bargain_military')];
   },
   government(ctx) {
     const list = [];

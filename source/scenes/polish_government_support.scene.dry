@@ -1,12 +1,13 @@
 title: Support for the Government
-subtitle: End our support, or make a demand with or without a threat.
+subtitle: While PPS tolerates the cabinet from outside: end our support, or make a demand with or without a threat.
 new-page: true
 is-card: true
 tags: parliament_affairs
 card-image: img/polish/polish_government_support.jpg
 view-if: {! return !!Q.S && PolishGovernment.supportCardAvailable(Q) !}
 on-arrival: {!
-// Card parliament.government_support (technical reference 9.8; card catalogue 7.6). An ordinary use
+// Card parliament.government_support (technical reference 9.8; card catalogue 7.6). Since 0.64 only while PPS tolerates
+// the cabinet; a PPS member has the card polish_coalition_affairs, which uses the options of this scene. An ordinary use
 // costs this month's action once an option is confirmed and starts a 6-month renewal for this
 // cabinet; opening and closing the card are free. Answers to a partner's warning or ultimatum use the
 // pinned card polish_government_response for 0 T.
@@ -19,7 +20,7 @@ Q.pl_sup_demand_reason = PolishGovernment.supportOptionStatus(Q, 'bargain', 'ord
 Q.pl_sup_military_reason = PolishGovernment.supportOptionStatus(Q, 'bargain', 'ordinary', 'military_compromise').reason;
 !}
 
-= Our relation to the government
+= Our support for the government
 
 [? if pl_sup_reason : [+ pl_sup_reason +] ?]
 
@@ -38,7 +39,7 @@ Prime minister: [+ prime_minister_display +]. PPS position: [+ pps_government_po
 
 @withdraw
 title: [? if pl_sup_member : Leave the cabinet with our ministers ?][? if not pl_sup_member : End our support of the cabinet ?]
-subtitle: Our agreements with the cabinet end. The cabinet continues as a minority government unless the Sejm dismisses it.
+subtitle: [? if pl_sup_member : Our ministers resign and our coalition agreements end. ?][? if not pl_sup_member : Our agreements with the cabinet end. ?] The cabinet continues as a minority government unless the Sejm dismisses it.
 choose-if: {! return PolishGovernment.supportOptionStatus(Q, 'withdraw', Q.pl_sup_mode).available !}
 unavailable-subtitle: [+ pl_sup_withdraw_reason +]
 on-arrival: {!
@@ -48,8 +49,8 @@ Q.pl_sup_fell = left.fell ? 1 : 0;
 go-to: motion if not pl_sup_fell; fallen if pl_sup_fell
 
 @bargain
-title: Demand financed worker protection, or we end our support
-subtitle: The government weighs how much it needs us. Parties that give in under a threat think less of us (−3 relation).
+title: [? if pl_sup_member : Put financed worker protection to the Council of Ministers, or we leave the cabinet ?][? if not pl_sup_member : Demand financed worker protection, or we end our support ?]
+subtitle: [? if pl_sup_member : Our coalition partners weigh how much they need us. ?][? if not pl_sup_member : The government weighs how much it needs us. ?] Parties that give in under a threat think less of us (−3 relation).
 choose-if: {! return PolishGovernment.supportOptionStatus(Q, 'bargain', Q.pl_sup_mode).available !}
 unavailable-subtitle: [+ pl_sup_demand_reason +]
 on-arrival: {!
@@ -61,8 +62,8 @@ Q.pl_sup_answers = PolishGovernment.describeAnswers(record);
 go-to: demand_result if pl_sup_accepted; threat if not pl_sup_accepted
 
 @persuade
-title: Ask for financed worker protection, without a threat
-subtitle: No threat, no relation change either way; if refused, our support stays as it is.
+title: [? if pl_sup_member : Propose financed worker protection in the Council of Ministers, without a threat ?][? if not pl_sup_member : Ask for financed worker protection, without a threat ?]
+subtitle: No threat, no relation change either way; [? if pl_sup_member : if refused, we stay in the cabinet as before. ?][? if not pl_sup_member : if refused, our support stays as it is. ?]
 choose-if: {! return PolishGovernment.supportOptionStatus(Q, 'persuade', Q.pl_sup_mode).available !}
 unavailable-subtitle: [+ pl_sup_demand_reason +]
 on-arrival: {!
@@ -75,7 +76,7 @@ go-to: demand_result
 
 @bargain_military
 view-if: {! return PolishGovernment.militaryCaseOpen(Q) !}
-title: Demand a compromise with Piłsudski under civilian control, or we end our support
+title: [? if pl_sup_member : Demand a compromise with Piłsudski under civilian control, or we leave the cabinet ?][? if not pl_sup_member : Demand a compromise with Piłsudski under civilian control, or we end our support ?]
 subtitle: The cabinet carries it out itself at its next review, if Piłsudski accepts a military function under civilian control. Parties that give in under a threat think less of us (−3 relation).
 choose-if: {! return PolishGovernment.supportOptionStatus(Q, 'bargain', Q.pl_sup_mode, 'military_compromise').available !}
 unavailable-subtitle: [+ pl_sup_military_reason +]
@@ -89,7 +90,7 @@ go-to: demand_result if pl_sup_accepted; threat if not pl_sup_accepted
 
 @persuade_military
 view-if: {! return PolishGovernment.militaryCaseOpen(Q) !}
-title: Ask the cabinet for a compromise with Piłsudski, without a threat
+title: [? if pl_sup_member : Propose a compromise with Piłsudski in the Council of Ministers, without a threat ?][? if not pl_sup_member : Ask the cabinet for a compromise with Piłsudski, without a threat ?]
 subtitle: The cabinet carries it out itself at its next review, if Piłsudski accepts. No threat and no relation change either way.
 choose-if: {! return PolishGovernment.supportOptionStatus(Q, 'persuade', Q.pl_sup_mode, 'military_compromise').available !}
 unavailable-subtitle: [+ pl_sup_military_reason +]
@@ -102,7 +103,7 @@ Q.pl_sup_answers = PolishGovernment.describeAnswers(record);
 go-to: demand_result
 
 @maintain
-title: Keep our support as it is
+title: [? if pl_sup_member : Stay in the cabinet as before ?][? if not pl_sup_member : Keep our support as it is ?]
 subtitle: [? if pl_resp_kind = "review" : The toleration goes on to the end of its six months. ?][? if pl_resp_kind = "renewal" : The toleration is renewed for six months, with a new review after three. ?][? if pl_resp_kind != "review" and pl_resp_kind != "renewal" : No new condition. The broken promise stays broken; the partner's case remains open. ?]
 choose-if: {! return PolishGovernment.supportOptionStatus(Q, 'maintain', Q.pl_sup_mode).available !}
 unavailable-subtitle: Only as an answer to a partner's warning or ultimatum.
@@ -126,7 +127,7 @@ go-to: extension_result
 @threat
 new-page: true
 
-= The government refuses
+= [? if pl_sup_member : Our coalition partners refuse ?][? if not pl_sup_member : The government refuses ?]
 
 [+ pl_sup_answers +]
 
@@ -136,8 +137,8 @@ A threat must be real. We decide now, without spending another month.
 - @back_down
 
 @carry_out
-title: Carry out the threat: end our support
-subtitle: The ordinary effects of ending our support, including the decision on a motion to dismiss the cabinet.
+title: [? if pl_sup_member : Carry out the threat: leave the cabinet ?][? if not pl_sup_member : Carry out the threat: end our support ?]
+subtitle: [? if pl_sup_member : The ordinary effects of leaving the cabinet, ?][? if not pl_sup_member : The ordinary effects of ending our support, ?] including the decision on a motion to dismiss the cabinet.
 on-arrival: {!
 var result = PolishGovernment.answerThreat(Q, 'carry_out');
 Q.pl_sup_fell = result.fell ? 1 : 0;
@@ -157,7 +158,7 @@ new-page: true
 
 = We back down
 
-PPS keeps supporting the cabinet without the concession. The government will not take our next threat seriously while this cabinet lasts.
+[? if pl_sup_member : PPS stays in the cabinet without the concession. ?][? if not pl_sup_member : PPS keeps supporting the cabinet without the concession. ?] The government will not take our next threat seriously while this cabinet lasts.
 
 - @root: Continue.
 
@@ -172,7 +173,9 @@ new-page: true
 
 [? if pl_sup_accepted and pl_sup_postulate = "military_compromise" : **The government accepts.** The compromise enters our agreement with the cabinet. The cabinet offers Piłsudski a military function under civilian control at its next review; if he refuses, the promise lapses without a breach. ?]
 
-[? if not pl_sup_accepted : **The government refuses.** Our support stays as it was. ?]
+[? if not pl_sup_accepted and pl_sup_member : **Our coalition partners refuse.** We stay in the cabinet as before. ?]
+
+[? if not pl_sup_accepted and not pl_sup_member : **The government refuses.** Our support stays as it was. ?]
 
 - @root: Continue.
 
@@ -192,7 +195,7 @@ new-page: true
 @maintained
 new-page: true
 
-= We keep our support
+= [? if pl_sup_member : We stay in the cabinet ?][? if not pl_sup_member : We keep our support ?]
 
 [? if pl_resp_kind = "review" : Our toleration goes on as agreed until the end of its six months. ?][? if pl_resp_kind = "renewal" : Our toleration is renewed for six months; its next review comes after three. ?][? if pl_resp_kind != "review" and pl_resp_kind != "renewal" : Nothing changes in our agreement. The partner still waits for the promise. ?]
 
@@ -205,7 +208,7 @@ on-arrival: {!
 Q.pl_sup_motion_reason = PolishGovernment.dismissalSupportStatus(Q).reason;
 !}
 
-= Our support has ended
+= [? if pl_sup_member : We have left the cabinet ?][? if not pl_sup_member : Our support has ended ?]
 
 [+ pl_cabinet_support_display +]. Without us the cabinet governs as a minority unless the Sejm dismisses it. A motion to dismiss the cabinet is now possible; the votes of the clubs decide it.
 

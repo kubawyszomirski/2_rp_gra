@@ -2508,13 +2508,69 @@
   }
 
   // Z — 0.56: while PPS sits in the cabinet or supports it, the card comes back half a year after the formation of the cabinet
-  // or after its last ordinary use, and at once when the cabinet acts against PPS (supportProvocation).
-  function supportCardAvailable(Q) {
+  // or after its last ordinary use, and at once when the cabinet acts against PPS (supportProvocation). Z — 0.64 (decisions
+  // 1A–3A of 7 X 2026): two cards share this rhythm — "Support for the Government" (Parliament deck) while PPS tolerates the
+  // cabinet from outside, and "Coalition Affairs" (Government deck) while PPS sits in it.
+  function relationCardDue(Q, stance) {
     const S = Q.S;
     if (!S || S.chapter.status === 'ended' || formationPending(Q)) return false;
-    const stance = ppsStance(S);
-    if (stance !== 'member' && stance !== 'supporter') return false;
+    if (ppsStance(S) !== stance) return false;
     return !!supportProvocation(Q) || supportReviewDue(Q);
+  }
+
+  function supportCardAvailable(Q) {
+    return relationCardDue(Q, 'supporter');
+  }
+
+  function coalitionCardAvailable(Q) {
+    return relationCardDue(Q, 'member');
+  }
+
+  // Z — 0.64 (decision 1A, P; modelled on the "Coalition Affairs" card of the original): PPS gives way to its coalition
+  // partners. The tension of every agreement of this cabinet falls by 20 (a warning comes at 40, an ultimatum at 60); the
+  // Left of PPS dislikes it (+5 dissent). It is an ordinary use of the coalition card: 1 T and the six-month renewal.
+  const CONCESSION_TENSION = 20;
+  const CONCESSION_LEFT_DISSENT = 5;
+
+  function cabinetAgreementsUnderTension(S) {
+    return (S.cabinet ? S.cabinet.agreement_ids : []).map(id => S.agreements[id])
+      .filter(a => a && a.kind === 'cabinet' && a.parties.indexOf('pps') >= 0 && (a.status === 'active' || a.status === 'breached') && a.tension > 0);
+  }
+
+  function concessionStatus(Q) {
+    const S = Q.S;
+    if (ppsStance(S) !== 'member') return {available: false, reason: L('PPS is not in the cabinet.', 'PPS nie jest w gabinecie.')};
+    if ((Q.month_actions || 0) >= 1) return {available: false, reason: L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.')};
+    if (!cabinetAgreementsUnderTension(S).length) {
+      return {available: false, reason: L('There is no tension in our coalition agreements.', 'W naszych umowach koalicyjnych nie ma napięcia.')};
+    }
+    return {available: true, reason: ''};
+  }
+
+  function coalitionConcession(Q) {
+    const S = Q.S, status = concessionStatus(Q);
+    if (!status.available) throw new Error('coalitionConcession: ' + status.reason);
+    const agreements = cabinetAgreementsUnderTension(S);
+    commitSupport(Q, 'ordinary', 'concession');
+    for (const agreement of agreements) {
+      const before = agreement.tension;
+      agreement.tension = Math.max(0, agreement.tension - CONCESSION_TENSION);
+      agreement.history.push({t: Q.time, kind: 'tension', delta: agreement.tension - before, tension: agreement.tension, reason: 'coalition_concession'});
+    }
+    const causeId = 'coalition_concession:' + S.cabinet.id + ':t' + Q.time;
+    factionReaction(Q, 'lewica', {dissent: CONCESSION_LEFT_DISSENT}, {id: causeId, kind: 'coalition_concession', reverse: null});
+    S.history.reasons.push({t: Q.time, kind: 'coalition_concession', cabinet_id: S.cabinet.id, agreements: agreements.map(a => a.id)});
+    return {agreements: agreements.map(a => ({id: a.id, partner: a.parties.filter(p => p !== 'pps')[0], tension: a.tension}))};
+  }
+
+  // The coalition partners and the tension of their agreements, for the coalition card.
+  function coalitionTensionText(Q) {
+    const S = Q.S;
+    const lines = (S.cabinet ? S.cabinet.agreement_ids : []).map(id => S.agreements[id])
+      .filter(a => a && a.kind === 'cabinet' && a.parties.indexOf('pps') >= 0 && (a.status === 'active' || a.status === 'breached'))
+      .map(a => describeParty(a.parties.filter(p => p !== 'pps')[0]) + ' ' + Math.round(a.tension));
+    return lines.length ? L('Tension in our agreements (a warning at 40, an ultimatum at 60): ', 'Napięcie w naszych umowach (ostrzeżenie przy 40, ultimatum przy 60): ') +
+      lines.join(', ') + '.' : '';
   }
 
   function supportReviewDue(Q) {
@@ -2629,7 +2685,9 @@
       S.history.actions.push({t: Q.time, action_id: 'parliament.government_support.' + action, case_id: open.case_id, cost_t: 0});
       return open;
     }
-    rules.commitMainAction(Q, 'parliament.government_support', {option: action, cabinet_id: S.cabinet.id});
+    // Z — 0.64: the coalition card of a PPS member is an action of the Government deck.
+    const actionId = ppsStance(S) === 'member' ? 'government.coalition_affairs' : 'parliament.government_support';
+    rules.commitMainAction(Q, actionId, {option: action, cabinet_id: S.cabinet.id});
     S.cooldowns['support.' + S.cabinet.id] = Q.time + SUPPORT_COOLDOWN_MONTHS;
     // The ordinary use answers every act of the cabinet against PPS so far (Z — 0.56).
     S.cabinet.support_reviewed_at = Q.time;
@@ -3202,6 +3260,12 @@
     ppsAgreements: ppsAgreements,
     responseCase: responseCase,
     supportCardAvailable: supportCardAvailable,
+    coalitionCardAvailable: coalitionCardAvailable,
+    concessionStatus: concessionStatus,
+    coalitionConcession: coalitionConcession,
+    coalitionTensionText: coalitionTensionText,
+    CONCESSION_TENSION: CONCESSION_TENSION,
+    CONCESSION_LEFT_DISSENT: CONCESSION_LEFT_DISSENT,
     supportProvocation: supportProvocation,
     supportReason: supportReason,
     supportOptionStatus: supportOptionStatus,
