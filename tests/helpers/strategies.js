@@ -91,11 +91,11 @@ function form(engine, params) {
   if (params.minorities === false) pick(engine, F + 'minorities_off');
   if (params.terms) menu('terms_menu', 'terms_' + params.terms);
   if (params.claim) {
+    // Z — 0.61: the portfolios are bought with influence points; a greyed one is skipped.
     if (pick(engine, F + 'portfolios')) {
-      if (!(params.claim.length === 1 && params.claim[0] === 'labor' ? pick(engine, F + 'claim_labor')
-        : params.claim[0] === 'labor' ? menu('claim_plus', 'plus_' + params.claim[1]) : menu('claim_instead', 'instead_' + params.claim[0]))) {
-        pick(engine, F + 'back');
-      }
+      for (const c of options(engine).filter(c => c.id.startsWith(F + 'drop_'))) pick(engine, c.id);
+      for (const key of params.claim) pick(engine, F + 'take_' + key);
+      pick(engine, F + 'back');
       if (engine.state.sceneId !== 'polish_cabinet_formation') engine.goToScene('polish_cabinet_formation');
     }
   }

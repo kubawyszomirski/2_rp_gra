@@ -1,14 +1,14 @@
 title: Cabinet Formation
-subtitle: One offer: the cabinet, its prime minister, the role of PPS and its portfolios.
+subtitle: Four steps: the cabinet, the role of PPS, the prime minister and the PPS portfolios. Every partner's score is visible before the commit.
 new-page: true
 is-card: true
 tags: parliament_affairs
 card-image: img/polish/polish_cabinet_formation.jpg
 view-if: {! return !!Q.S && PolishGovernment.formationVisible(Q) !}
 on-arrival: {!
-// Card parliament.cabinet_formation (technical reference 8.3, 8.4, 8.7, 8.8; card catalogue 7.1).
-// One offer on one screen: changing a setting is free and returns here; "Submit the offer" is the
-// one commit. A mandatory formation costs no month; the player's own initiative costs one.
+// Card parliament.cabinet_formation (technical reference 8.3, 8.4, 8.7, 8.8; card catalogue 7.1; Z — 0.61).
+// Four steps on one hub: changing a setting is free and returns here; the commit appoints an accepted offer at once.
+// A mandatory formation costs no month; the player's own initiative costs one.
 if (!Q.S) return;
 var neg = PolishGovernment.enterFormation(Q);
 var view = PolishGovernment.formationView(Q);
@@ -16,21 +16,28 @@ var submit = PolishGovernment.submitStatus(Q);
 Q.pl_form_mandatory = view.mandatory ? 1 : 0;
 Q.pl_form_post_election = view.reason === 'post_election' ? 1 : 0;
 Q.pl_form_config = view.configuration;
+Q.pl_form_clubs = view.clubs;
 Q.pl_form_candidate = view.candidate;
+Q.pl_form_candidate_note = view.candidate_note;
 Q.pl_form_mode = view.mode;
 Q.pl_form_minorities = view.minorities;
+Q.pl_form_minority_seats = view.minority_seats;
 Q.pl_form_minority_allowed = view.minority_allowed ? 1 : 0;
 Q.pl_form_seek = neg.draft.seek_minority_support ? 1 : 0;
 Q.pl_form_is_opposition = neg.draft.pps_mode === 'opposition' ? 1 : 0;
 Q.pl_form_free_portfolios = PolishGovernment.draftPortfolioChoice(Q) ? 1 : 0;
 Q.pl_form_portfolios = view.portfolios;
-Q.pl_form_allocation = view.allocation;
-Q.pl_form_partners = view.partners;
-Q.pl_form_programme = view.programme || 'the programme of the prime minister';
-Q.pl_form_members_seats = view.members_seats;
-Q.pl_form_requested_seats = view.requested_seats;
+Q.pl_form_points = view.points;
+Q.pl_form_programme = view.programme;
 Q.pl_form_majority = view.majority;
+Q.pl_form_votes = view.votes;
+Q.pl_form_verdict = view.verdict;
 Q.pl_form_submit_reason = submit.reason;
+// Up to eight partners, one line each with the parts of the score (decision 1B of 0.61).
+for (var i = 0; i < 8; i++) {
+    Q['pl_form_p' + (i + 1)] = view.partner_lines[i] || '';
+    Q['pl_form_p' + (i + 1) + '_on'] = view.partner_lines[i] ? 1 : 0;
+}
 // 9.7: the stabilisation terms of Grabski belong to this same card (no separate Grabski card).
 Q.pl_form_terms_open = view.stabilisation_open ? 1 : 0;
 Q.pl_form_terms = view.stabilisation;
@@ -46,43 +53,58 @@ Q.pl_form_cause_on = Q.pl_form_cause ? 1 : 0;
 
 [? if pl_form_cause_on : [+ pl_form_cause +] ?]
 
-[? if pl_form_mandatory and not pl_form_post_election : A cabinet crisis is open. The caretaker cabinet governs until the head of state appoints a new one. This mandatory formation costs no month. ?]
+[? if pl_form_mandatory and not pl_form_post_election : A cabinet crisis is open. The caretaker cabinet governs until a new one is appointed. This mandatory formation costs no month. ?]
 
 [? if not pl_form_mandatory : A cabinet crisis is open. Our own initiative spends this month's action when the offer is submitted; closing the card is free. ?]
 
-**Our offer.** PPS: [+ pl_form_mode +]. [? if not pl_form_is_opposition : Cabinet: [+ pl_form_config +]. Prime minister: [+ pl_form_candidate +]. ?]
+[? if not pl_form_is_opposition : **1. The cabinet:** [+ pl_form_config +] ([+ pl_form_clubs +]). Programme: [+ pl_form_programme +]. ?]
 
-[? if not pl_form_is_opposition : Minority support: [+ pl_form_minorities +]. Programme: [+ pl_form_programme +]. ?]
+[? if pl_form_is_opposition : **1. The cabinet:** none of ours. ?]
 
-[? if pl_form_terms_open : Terms of our toleration of Grabski's stabilisation: [+ pl_form_terms +]. ?]
+**2. The role of PPS:** [+ pl_form_mode +]. [? if pl_form_minority_allowed and not pl_form_is_opposition : Support of the minority representations ([+ pl_form_minority_seats +] MPs): [+ pl_form_minorities +]. ?] [? if pl_form_terms_open : Terms of our toleration of Grabski: [+ pl_form_terms +]. ?]
 
-[? if not pl_form_is_opposition : PPS portfolios: [+ pl_form_portfolios +]. All portfolios: [+ pl_form_allocation +]. ?]
+[? if not pl_form_is_opposition : **3. The prime minister:** [+ pl_form_candidate +]. [+ pl_form_candidate_note +] ?]
 
-[? if not pl_form_is_opposition : Partners and their known demands: [+ pl_form_partners +]. ?]
+[? if not pl_form_is_opposition : **4. The PPS portfolios:** [+ pl_form_portfolios +]. [+ pl_form_points +] ?]
 
-[? if not pl_form_is_opposition : The cabinet parties have [+ pl_form_members_seats +] MPs; with the requested support, [+ pl_form_requested_seats +]. A majority needs [+ pl_form_majority +]. Each partner answers only when the offer is submitted. ?]
+[? if not pl_form_is_opposition : **The partners' scores.** Each club agrees at 60 or more: 30% relation with PPS, 35% programme, 20% its portfolio or demands, 15% credibility of PPS, minus broken promises. ?]
 
-[? if pl_form_is_opposition : PPS stays in opposition. The other parties form a cabinet if they can; no one's agreement is needed for this. ?]
+[? if pl_form_p1_on : [+ pl_form_p1 +] ?]
 
-The head of state appoints the best cabinet that can be formed: our offer if the partners accept it, otherwise one formed without PPS, or none.
+[? if pl_form_p2_on : [+ pl_form_p2 +] ?]
 
-- @configurations: Change the cabinet
-- view-if: not pl_form_is_opposition
-- @candidates: Change the prime minister
-- view-if: not pl_form_is_opposition
-- @modes: Change the role of PPS
+[? if pl_form_p3_on : [+ pl_form_p3 +] ?]
+
+[? if pl_form_p4_on : [+ pl_form_p4 +] ?]
+
+[? if pl_form_p5_on : [+ pl_form_p5 +] ?]
+
+[? if pl_form_p6_on : [+ pl_form_p6 +] ?]
+
+[? if pl_form_p7_on : [+ pl_form_p7 +] ?]
+
+[? if pl_form_p8_on : [+ pl_form_p8 +] ?]
+
+[? if not pl_form_is_opposition : **Votes:** [+ pl_form_votes +] ?]
+
+**Result:** [+ pl_form_verdict +]
+
+- @configurations: 1. Choose the cabinet
+- @modes: 2. Change the role of PPS
 - @minorities_on
 - @minorities_off
-- @terms_menu: Set the terms of the stabilisation
+- @terms_menu: 2. Set the terms of the stabilisation
 - view-if: pl_form_terms_open
+- @candidates: 3. Choose the prime minister
+- view-if: not pl_form_is_opposition
 - @portfolios
 - @submit
 - @easy_discard
 - view-if: not pl_form_mandatory
 
 @minorities_on
-title: Ask the minority representations for external support
-subtitle: Language, school and legal-equality rights enter the agreement; minorities receive no portfolios.
+title: 2. Ask the minority representations for external support
+subtitle: Their [+ pl_form_minority_seats +] MPs may vote for the cabinet. Language, school and legal-equality rights enter the agreement; minorities receive no portfolios.
 view-if: pl_form_minority_allowed and not pl_form_seek and not pl_form_is_opposition
 on-arrival: {!
 PolishGovernment.setDraft(Q, 'seek_minority_support', true);
@@ -90,7 +112,7 @@ PolishGovernment.setDraft(Q, 'seek_minority_support', true);
 go-to: polish_cabinet_formation
 
 @minorities_off
-title: Do not ask the minority representations for support
+title: 2. Do not ask the minority representations for support
 view-if: pl_form_seek and not pl_form_is_opposition
 on-arrival: {!
 PolishGovernment.setDraft(Q, 'seek_minority_support', false);
@@ -98,7 +120,8 @@ PolishGovernment.setDraft(Q, 'seek_minority_support', false);
 go-to: polish_cabinet_formation
 
 @portfolios
-title: Change the PPS portfolios
+title: 4. Choose the PPS portfolios
+subtitle: [+ pl_form_points +]
 view-if: pl_form_free_portfolios
 go-to: portfolio_menu
 
@@ -146,7 +169,7 @@ subtitle: [? if pl_form_mandatory : No month is spent. ?][? if not pl_form_manda
 choose-if: {! return PolishGovernment.submitStatus(Q).available !}
 unavailable-subtitle: [+ pl_form_submit_reason +]
 on-arrival: {!
-// The one commit (8.3): partners answer, the head of state appoints the best feasible offer (8.7).
+// The one commit: an accepted PPS offer is appointed at once; otherwise a cabinet without PPS, if any (Z — 0.61).
 if (Q.S.negotiation && Q.S.negotiation.kind === 'cabinet' && Q.S.negotiation.phase === 'draft') {
     var result = PolishGovernment.submitFormation(Q);
     Q.pl_form_return_to_election = 0;
@@ -195,13 +218,14 @@ go-to: polish_cabinet_formation
 new-page: true
 on-arrival: {!
 for (var id of PolishGovernment.PPS_CONFIGURATIONS) {
-    Q['pl_cfg_' + id + '_reason'] = PolishGovernment.draftChoiceStatus(Q, 'configuration', id).reason;
+    Q['pl_cfg_' + id + '_line'] = PolishGovernment.coalitionLine(Q, id).line;
 }
+Q.pl_cfg_opposition_line = PolishGovernment.oppositionLine(Q);
 !}
 
-= Choose the cabinet
+= 1. Choose the cabinet
 
-Each cabinet has a fixed minimum programme; it enters the agreement with the partners. Cabinets that are not possible now show why.
+Each line shows the clubs and their MPs, the score of each partner with PPS in the cabinet (a partner agrees at 60 or more) and the votes. A majority needs [+ pl_form_majority +] MPs; a minority cabinet needs more votes for than against. A cabinet that is not possible now is greyed with the reason. Each cabinet has a fixed minimum programme; it enters the agreement with the partners.
 
 - @cfg_left_minority
 - @cfg_centre_left
@@ -213,125 +237,130 @@ Each cabinet has a fixed minimum programme; it enters the agreement with the par
 - @cfg_united_left
 - @cfg_workers_front
 - @cfg_expert
+- @cfg_opposition
 - @back
 
 @cfg_left_minority
 title: PPS and PSL Wyzwolenie
-subtitle: PPS and PSL Wyzwolenie. Minimum programme: accelerated land reform (+1), a fiscal burden leaning on wealth (+1) and the democratisation of institutions (+2).
+subtitle: [+ pl_cfg_left_minority_line +]
 choose-if: {! return PolishGovernment.draftChoiceStatus(Q, 'configuration', 'left_minority').available !}
-unavailable-subtitle: [+ pl_cfg_left_minority_reason +]
+unavailable-subtitle: [+ pl_cfg_left_minority_line +]
 on-arrival: {!
-PolishGovernment.setDraft(Q, 'configuration_id', 'left_minority');
+PolishGovernment.chooseCoalition(Q, 'left_minority');
 !}
 go-to: polish_cabinet_formation
 
 @cfg_centre_left
 title: Centre-left
-subtitle: PPS, PSL Wyzwolenie, PSL Piast and NPR. Minimum programme: land reform with compensation, a shared fiscal burden and a moderate democratisation of institutions (+1).
+subtitle: [+ pl_cfg_centre_left_line +]
 choose-if: {! return PolishGovernment.draftChoiceStatus(Q, 'configuration', 'centre_left').available !}
-unavailable-subtitle: [+ pl_cfg_centre_left_reason +]
+unavailable-subtitle: [+ pl_cfg_centre_left_line +]
 on-arrival: {!
-PolishGovernment.setDraft(Q, 'configuration_id', 'centre_left');
+PolishGovernment.chooseCoalition(Q, 'centre_left');
 !}
 go-to: polish_cabinet_formation
 
 @cfg_left_labour
 title: PPS, PSL Wyzwolenie and NPR
-subtitle: Minimum programme: accelerated land reform (+1), a fiscal burden leaning on wealth (+1) and a moderate democratisation of institutions (+1).
+subtitle: [+ pl_cfg_left_labour_line +]
 choose-if: {! return PolishGovernment.draftChoiceStatus(Q, 'configuration', 'left_labour').available !}
-unavailable-subtitle: [+ pl_cfg_left_labour_reason +]
+unavailable-subtitle: [+ pl_cfg_left_labour_line +]
 on-arrival: {!
-PolishGovernment.setDraft(Q, 'configuration_id', 'left_labour');
+PolishGovernment.chooseCoalition(Q, 'left_labour');
 !}
 go-to: polish_cabinet_formation
 
 @cfg_pps_majority
 title: PPS majority government
-subtitle: PPS alone with its own majority. Programme: accelerated land reform (+1), the burden on wealth (+2) and the democratisation of institutions (+2).
+subtitle: [+ pl_cfg_pps_majority_line +]
 choose-if: {! return PolishGovernment.draftChoiceStatus(Q, 'configuration', 'pps_majority').available !}
-unavailable-subtitle: [+ pl_cfg_pps_majority_reason +]
+unavailable-subtitle: [+ pl_cfg_pps_majority_line +]
 on-arrival: {!
-PolishGovernment.setDraft(Q, 'configuration_id', 'pps_majority');
+PolishGovernment.chooseCoalition(Q, 'pps_majority');
 !}
 go-to: polish_cabinet_formation
 
 @cfg_broad_centre
 title: Broad centre
-subtitle: PPS, both peasant parties, NPR and PSChD; only in a real crisis. Programme: land reform with compensation, a shared fiscal burden and the middle position on the Church.
+subtitle: [+ pl_cfg_broad_centre_line +]
 choose-if: {! return PolishGovernment.draftChoiceStatus(Q, 'configuration', 'broad_centre').available !}
-unavailable-subtitle: [+ pl_cfg_broad_centre_reason +]
+unavailable-subtitle: [+ pl_cfg_broad_centre_line +]
 on-arrival: {!
-PolishGovernment.setDraft(Q, 'configuration_id', 'broad_centre');
+PolishGovernment.chooseCoalition(Q, 'broad_centre');
 !}
 go-to: polish_cabinet_formation
 
 @cfg_skrzynski_broad
 title: Broad cabinet of Skrzyński
-subtitle: PPS, PSL Piast, NPR, PSChD and ZLN under Skrzyński; only in a real crisis. Programme: a shared fiscal burden.
+subtitle: [+ pl_cfg_skrzynski_broad_line +]
 choose-if: {! return PolishGovernment.draftChoiceStatus(Q, 'configuration', 'skrzynski_broad').available !}
-unavailable-subtitle: [+ pl_cfg_skrzynski_broad_reason +]
+unavailable-subtitle: [+ pl_cfg_skrzynski_broad_line +]
 on-arrival: {!
-PolishGovernment.setDraft(Q, 'configuration_id', 'skrzynski_broad');
+PolishGovernment.chooseCoalition(Q, 'skrzynski_broad');
 !}
 go-to: polish_cabinet_formation
 
 @cfg_national_unity
 title: National unity
-subtitle: All parties except the communists; only in a severe crisis. Programme: a shared fiscal burden.
+subtitle: [+ pl_cfg_national_unity_line +]
 choose-if: {! return PolishGovernment.draftChoiceStatus(Q, 'configuration', 'national_unity').available !}
-unavailable-subtitle: [+ pl_cfg_national_unity_reason +]
+unavailable-subtitle: [+ pl_cfg_national_unity_line +]
 on-arrival: {!
-PolishGovernment.setDraft(Q, 'configuration_id', 'national_unity');
+PolishGovernment.chooseCoalition(Q, 'national_unity');
 !}
 go-to: polish_cabinet_formation
 
 @cfg_united_left
 title: United left with the communists
-subtitle: PPS, PSL Wyzwolenie, NPR and KPP.
+subtitle: [+ pl_cfg_united_left_line +]
 choose-if: {! return PolishGovernment.draftChoiceStatus(Q, 'configuration', 'united_left').available !}
-unavailable-subtitle: [+ pl_cfg_united_left_reason +]
+unavailable-subtitle: [+ pl_cfg_united_left_line +]
 on-arrival: {!
-PolishGovernment.setDraft(Q, 'configuration_id', 'united_left');
+PolishGovernment.chooseCoalition(Q, 'united_left');
 !}
 go-to: polish_cabinet_formation
 
 @cfg_workers_front
 title: Workers’ front with the communists
-subtitle: PPS and KPP.
+subtitle: [+ pl_cfg_workers_front_line +]
 choose-if: {! return PolishGovernment.draftChoiceStatus(Q, 'configuration', 'workers_front').available !}
-unavailable-subtitle: [+ pl_cfg_workers_front_reason +]
+unavailable-subtitle: [+ pl_cfg_workers_front_line +]
 on-arrival: {!
-PolishGovernment.setDraft(Q, 'configuration_id', 'workers_front');
+PolishGovernment.chooseCoalition(Q, 'workers_front');
 !}
 go-to: polish_cabinet_formation
 
 @cfg_expert
 title: Cabinet of experts
-subtitle: A non-party prime minister and ministers; parties only sign support. Programme of the prime minister.
+subtitle: [+ pl_cfg_expert_line +]
 choose-if: {! return PolishGovernment.draftChoiceStatus(Q, 'configuration', 'expert').available !}
-unavailable-subtitle: [+ pl_cfg_expert_reason +]
+unavailable-subtitle: [+ pl_cfg_expert_line +]
 on-arrival: {!
-PolishGovernment.setDraft(Q, 'configuration_id', 'expert');
+PolishGovernment.chooseCoalition(Q, 'expert');
+!}
+go-to: polish_cabinet_formation
+
+@cfg_opposition
+title: PPS stays in opposition
+subtitle: [+ pl_cfg_opposition_line +]
+on-arrival: {!
+PolishGovernment.setDraft(Q, 'pps_mode', 'opposition');
 !}
 go-to: polish_cabinet_formation
 
 @candidates
 new-page: true
 on-arrival: {!
-for (var id of PolishGovernment.CANDIDATE_ORDER) {
-    var candidate = PolishGovernment.CANDIDATES[id];
+for (var id of PolishGovernment.CANDIDATE_ORDER.concat(['pilsudski'])) {
     Q['pl_cand_' + id + '_reason'] = PolishGovernment.draftChoiceStatus(Q, 'candidate', id).reason;
-    Q['pl_cand_' + id + '_note'] = (candidate.party ? PolishGovernment.ACTOR_PROFILES[candidate.party].name + ' leader' :
-        'Non-party expert, programme: ' + PolishGovernment.describeProgramme(candidate.programme)) +
-        (PolishGovernment.inWindow(id, Q.time) ? '. Candidate of the current period: a small advantage when the head of state compares feasible offers.' : '.');
+    Q['pl_cand_' + id + '_note'] = PolishGovernment.candidateNote(Q, id);
+    Q['pl_cand_' + id + '_show'] = PolishGovernment.candidateShown(Q, id) ? 1 : 0;
 }
-Q.pl_cand_pilsudski_reason = PolishGovernment.draftChoiceStatus(Q, 'candidate', 'pilsudski').reason;
-Q.pl_cand_pilsudski_note = 'Premiership agreed with Piłsudski (16.7): the programme of a legal cabinet, the usual parliamentary responsibility. The relief of pressure comes after his real appointment; this formation costs no second action.';
 !}
 
-= Choose the prime minister
+= 3. Choose the prime minister
 
-A party leader needs his party in the cabinet. A non-party expert governs with the portfolios given to experts and with the support that parties sign.
+A party leader needs his party in the cabinet; the leader of a partner party wins PPS +5 relation with that party. A non-party expert governs with the portfolios given to experts and has no effect on relations. The candidate of the period is only marked: an accepted offer is appointed whoever leads it.
 
 - @cand_daszynski
 - @cand_thugutt
@@ -348,6 +377,7 @@ A party leader needs his party in the cabinet. A non-party expert governs with t
 @cand_daszynski
 title: Ignacy Daszyński
 subtitle: [+ pl_cand_daszynski_note +]
+view-if: pl_cand_daszynski_show
 choose-if: {! return PolishGovernment.draftChoiceStatus(Q, 'candidate', 'daszynski').available !}
 unavailable-subtitle: [+ pl_cand_daszynski_reason +]
 on-arrival: {!
@@ -358,6 +388,7 @@ go-to: polish_cabinet_formation
 @cand_thugutt
 title: Stanisław Thugutt
 subtitle: [+ pl_cand_thugutt_note +]
+view-if: pl_cand_thugutt_show
 choose-if: {! return PolishGovernment.draftChoiceStatus(Q, 'candidate', 'thugutt').available !}
 unavailable-subtitle: [+ pl_cand_thugutt_reason +]
 on-arrival: {!
@@ -368,6 +399,7 @@ go-to: polish_cabinet_formation
 @cand_witos
 title: Wincenty Witos
 subtitle: [+ pl_cand_witos_note +]
+view-if: pl_cand_witos_show
 choose-if: {! return PolishGovernment.draftChoiceStatus(Q, 'candidate', 'witos').available !}
 unavailable-subtitle: [+ pl_cand_witos_reason +]
 on-arrival: {!
@@ -378,6 +410,7 @@ go-to: polish_cabinet_formation
 @cand_sliwinski
 title: Artur Śliwiński
 subtitle: [+ pl_cand_sliwinski_note +]
+view-if: pl_cand_sliwinski_show
 choose-if: {! return PolishGovernment.draftChoiceStatus(Q, 'candidate', 'sliwinski').available !}
 unavailable-subtitle: [+ pl_cand_sliwinski_reason +]
 on-arrival: {!
@@ -388,6 +421,7 @@ go-to: polish_cabinet_formation
 @cand_nowak
 title: Julian Nowak
 subtitle: [+ pl_cand_nowak_note +]
+view-if: pl_cand_nowak_show
 choose-if: {! return PolishGovernment.draftChoiceStatus(Q, 'candidate', 'nowak').available !}
 unavailable-subtitle: [+ pl_cand_nowak_reason +]
 on-arrival: {!
@@ -398,6 +432,7 @@ go-to: polish_cabinet_formation
 @cand_sikorski
 title: Władysław Sikorski
 subtitle: [+ pl_cand_sikorski_note +]
+view-if: pl_cand_sikorski_show
 choose-if: {! return PolishGovernment.draftChoiceStatus(Q, 'candidate', 'sikorski').available !}
 unavailable-subtitle: [+ pl_cand_sikorski_reason +]
 on-arrival: {!
@@ -408,6 +443,7 @@ go-to: polish_cabinet_formation
 @cand_ponikowski
 title: Antoni Ponikowski
 subtitle: [+ pl_cand_ponikowski_note +]
+view-if: pl_cand_ponikowski_show
 choose-if: {! return PolishGovernment.draftChoiceStatus(Q, 'candidate', 'ponikowski').available !}
 unavailable-subtitle: [+ pl_cand_ponikowski_reason +]
 on-arrival: {!
@@ -418,6 +454,7 @@ go-to: polish_cabinet_formation
 @cand_grabski
 title: Władysław Grabski
 subtitle: [+ pl_cand_grabski_note +]
+view-if: pl_cand_grabski_show
 choose-if: {! return PolishGovernment.draftChoiceStatus(Q, 'candidate', 'grabski').available !}
 unavailable-subtitle: [+ pl_cand_grabski_reason +]
 on-arrival: {!
@@ -428,6 +465,7 @@ go-to: polish_cabinet_formation
 @cand_skrzynski
 title: Aleksander Skrzyński
 subtitle: [+ pl_cand_skrzynski_note +]
+view-if: pl_cand_skrzynski_show
 choose-if: {! return PolishGovernment.draftChoiceStatus(Q, 'candidate', 'skrzynski').available !}
 unavailable-subtitle: [+ pl_cand_skrzynski_reason +]
 on-arrival: {!
@@ -448,8 +486,11 @@ go-to: polish_cabinet_formation
 
 @modes
 new-page: true
+on-arrival: {!
+Q.pl_cfg_opposition_line = PolishGovernment.oppositionLine(Q);
+!}
 
-= The role of PPS
+= 2. The role of PPS
 
 - @mode_member
 - @mode_external_support
@@ -458,7 +499,7 @@ new-page: true
 
 @mode_member
 title: PPS enters the cabinet
-subtitle: PPS ministers and full responsibility for the government.
+subtitle: PPS ministers and full responsibility for the government; PPS chooses its portfolios with influence points (step 4).
 choose-if: {! return PolishGovernment.draftChoiceStatus(Q, 'mode', 'member').available !}
 unavailable-subtitle: A cabinet of experts has no party ministers.
 on-arrival: {!
@@ -476,7 +517,7 @@ go-to: polish_cabinet_formation
 
 @mode_opposition
 title: PPS stays in opposition
-subtitle: No partner's agreement is needed; the other parties form a cabinet if they can.
+subtitle: [+ pl_cfg_opposition_line +]
 on-arrival: {!
 PolishGovernment.setDraft(Q, 'pps_mode', 'opposition');
 !}
@@ -484,163 +525,222 @@ go-to: polish_cabinet_formation
 
 @portfolio_menu
 new-page: true
+on-arrival: {!
+var view = PolishGovernment.formationView(Q);
+Q.pl_port_points = view.points;
+Q.pl_port_allocation = view.allocation;
+for (var key of PolishGovernment.PORTFOLIOS) {
+    var status = PolishGovernment.portfolioStatus(Q, key);
+    Q['pl_port_' + key + '_held'] = status.held ? 1 : 0;
+    Q['pl_port_' + key + '_line'] = PolishGovernment.portfolioLine(Q, key);
+    Q['pl_port_' + key + '_why'] = status.reason;
+}
+!}
 
-= PPS portfolios
+= 4. The PPS portfolios
 
-Partners receive their preferred portfolios automatically, the larger club first; the others go to non-party experts. Public works are part of Labour.
+[+ pl_port_points +]
 
-- @claim_labor
-- @claim_plus
-- @claim_instead
+Each portfolio costs influence points: Labour 10, Interior and the Treasury 20, the others 10. A partner keeps its preferred portfolio when it would refuse without it; the remaining portfolios go to non-party experts. Public works are part of Labour.
+
+Now: [+ pl_port_allocation +].
+
+- @take_labor
+- @drop_labor
+- @take_interior
+- @drop_interior
+- @take_finance
+- @drop_finance
+- @take_economic
+- @drop_economic
+- @take_justice
+- @drop_justice
+- @take_agriculture
+- @drop_agriculture
+- @take_reichswehr
+- @drop_reichswehr
+- @take_education
+- @drop_education
+- @take_foreign
+- @drop_foreign
 - @back
 
-@claim_labor
-title: Labour only
+@take_labor
+title: Take Labour
+subtitle: [+ pl_port_labor_line +]
+view-if: not pl_port_labor_held
+choose-if: {! return PolishGovernment.portfolioStatus(Q, 'labor').available !}
+unavailable-subtitle: [+ pl_port_labor_why +]
 on-arrival: {!
-PolishGovernment.setDraft(Q, 'portfolio_claim', ['labor']);
+PolishGovernment.setDraft(Q, 'portfolio_take', 'labor');
 !}
-go-to: polish_cabinet_formation
+go-to: portfolio_menu
 
-@claim_plus
-title: Labour and one more portfolio
-new-page: true
-
-= Labour and one more portfolio
-
-- @plus_interior
-- @plus_finance
-- @plus_economic
-- @plus_justice
-- @plus_agriculture
-- @plus_reichswehr
-- @plus_education
-- @plus_foreign
-- @back
-
-@plus_interior
-title: Labour and Interior
+@drop_labor
+title: Give up Labour
+subtitle: Returns 10 influence points.
+view-if: pl_port_labor_held
 on-arrival: {!
-PolishGovernment.setDraft(Q, 'portfolio_claim', ['labor', 'interior']);
+PolishGovernment.setDraft(Q, 'portfolio_drop', 'labor');
 !}
-go-to: polish_cabinet_formation
+go-to: portfolio_menu
 
-@plus_finance
-title: Labour and Treasury
+@take_interior
+title: Take Interior
+subtitle: [+ pl_port_interior_line +]
+view-if: not pl_port_interior_held
+choose-if: {! return PolishGovernment.portfolioStatus(Q, 'interior').available !}
+unavailable-subtitle: [+ pl_port_interior_why +]
 on-arrival: {!
-PolishGovernment.setDraft(Q, 'portfolio_claim', ['labor', 'finance']);
+PolishGovernment.setDraft(Q, 'portfolio_take', 'interior');
 !}
-go-to: polish_cabinet_formation
+go-to: portfolio_menu
 
-@plus_economic
-title: Labour and Industry and Trade
+@drop_interior
+title: Give up Interior
+subtitle: Returns 20 influence points.
+view-if: pl_port_interior_held
 on-arrival: {!
-PolishGovernment.setDraft(Q, 'portfolio_claim', ['labor', 'economic']);
+PolishGovernment.setDraft(Q, 'portfolio_drop', 'interior');
 !}
-go-to: polish_cabinet_formation
+go-to: portfolio_menu
 
-@plus_justice
-title: Labour and Justice
+@take_finance
+title: Take Treasury
+subtitle: [+ pl_port_finance_line +]
+view-if: not pl_port_finance_held
+choose-if: {! return PolishGovernment.portfolioStatus(Q, 'finance').available !}
+unavailable-subtitle: [+ pl_port_finance_why +]
 on-arrival: {!
-PolishGovernment.setDraft(Q, 'portfolio_claim', ['labor', 'justice']);
+PolishGovernment.setDraft(Q, 'portfolio_take', 'finance');
 !}
-go-to: polish_cabinet_formation
+go-to: portfolio_menu
 
-@plus_agriculture
-title: Labour and Agriculture
+@drop_finance
+title: Give up Treasury
+subtitle: Returns 20 influence points.
+view-if: pl_port_finance_held
 on-arrival: {!
-PolishGovernment.setDraft(Q, 'portfolio_claim', ['labor', 'agriculture']);
+PolishGovernment.setDraft(Q, 'portfolio_drop', 'finance');
 !}
-go-to: polish_cabinet_formation
+go-to: portfolio_menu
 
-@plus_reichswehr
-title: Labour and Military Affairs
+@take_economic
+title: Take Industry and Trade
+subtitle: [+ pl_port_economic_line +]
+view-if: not pl_port_economic_held
+choose-if: {! return PolishGovernment.portfolioStatus(Q, 'economic').available !}
+unavailable-subtitle: [+ pl_port_economic_why +]
 on-arrival: {!
-PolishGovernment.setDraft(Q, 'portfolio_claim', ['labor', 'reichswehr']);
+PolishGovernment.setDraft(Q, 'portfolio_take', 'economic');
 !}
-go-to: polish_cabinet_formation
+go-to: portfolio_menu
 
-@plus_education
-title: Labour and Education
+@drop_economic
+title: Give up Industry and Trade
+subtitle: Returns 10 influence points.
+view-if: pl_port_economic_held
 on-arrival: {!
-PolishGovernment.setDraft(Q, 'portfolio_claim', ['labor', 'education']);
+PolishGovernment.setDraft(Q, 'portfolio_drop', 'economic');
 !}
-go-to: polish_cabinet_formation
+go-to: portfolio_menu
 
-@plus_foreign
-title: Labour and Foreign Affairs
+@take_justice
+title: Take Justice
+subtitle: [+ pl_port_justice_line +]
+view-if: not pl_port_justice_held
+choose-if: {! return PolishGovernment.portfolioStatus(Q, 'justice').available !}
+unavailable-subtitle: [+ pl_port_justice_why +]
 on-arrival: {!
-PolishGovernment.setDraft(Q, 'portfolio_claim', ['labor', 'foreign']);
+PolishGovernment.setDraft(Q, 'portfolio_take', 'justice');
 !}
-go-to: polish_cabinet_formation
+go-to: portfolio_menu
 
-@claim_instead
-title: Another portfolio instead of Labour
-new-page: true
-
-= Another portfolio instead of Labour
-
-- @instead_interior
-- @instead_finance
-- @instead_economic
-- @instead_justice
-- @instead_agriculture
-- @instead_reichswehr
-- @instead_education
-- @instead_foreign
-- @back
-
-@instead_interior
-title: Interior instead of Labour
+@drop_justice
+title: Give up Justice
+subtitle: Returns 10 influence points.
+view-if: pl_port_justice_held
 on-arrival: {!
-PolishGovernment.setDraft(Q, 'portfolio_claim', ['interior']);
+PolishGovernment.setDraft(Q, 'portfolio_drop', 'justice');
 !}
-go-to: polish_cabinet_formation
+go-to: portfolio_menu
 
-@instead_finance
-title: Treasury instead of Labour
+@take_agriculture
+title: Take Agriculture
+subtitle: [+ pl_port_agriculture_line +]
+view-if: not pl_port_agriculture_held
+choose-if: {! return PolishGovernment.portfolioStatus(Q, 'agriculture').available !}
+unavailable-subtitle: [+ pl_port_agriculture_why +]
 on-arrival: {!
-PolishGovernment.setDraft(Q, 'portfolio_claim', ['finance']);
+PolishGovernment.setDraft(Q, 'portfolio_take', 'agriculture');
 !}
-go-to: polish_cabinet_formation
+go-to: portfolio_menu
 
-@instead_economic
-title: Industry and Trade instead of Labour
+@drop_agriculture
+title: Give up Agriculture
+subtitle: Returns 10 influence points.
+view-if: pl_port_agriculture_held
 on-arrival: {!
-PolishGovernment.setDraft(Q, 'portfolio_claim', ['economic']);
+PolishGovernment.setDraft(Q, 'portfolio_drop', 'agriculture');
 !}
-go-to: polish_cabinet_formation
+go-to: portfolio_menu
 
-@instead_justice
-title: Justice instead of Labour
+@take_reichswehr
+title: Take Military Affairs
+subtitle: [+ pl_port_reichswehr_line +]
+view-if: not pl_port_reichswehr_held
+choose-if: {! return PolishGovernment.portfolioStatus(Q, 'reichswehr').available !}
+unavailable-subtitle: [+ pl_port_reichswehr_why +]
 on-arrival: {!
-PolishGovernment.setDraft(Q, 'portfolio_claim', ['justice']);
+PolishGovernment.setDraft(Q, 'portfolio_take', 'reichswehr');
 !}
-go-to: polish_cabinet_formation
+go-to: portfolio_menu
 
-@instead_agriculture
-title: Agriculture instead of Labour
+@drop_reichswehr
+title: Give up Military Affairs
+subtitle: Returns 10 influence points.
+view-if: pl_port_reichswehr_held
 on-arrival: {!
-PolishGovernment.setDraft(Q, 'portfolio_claim', ['agriculture']);
+PolishGovernment.setDraft(Q, 'portfolio_drop', 'reichswehr');
 !}
-go-to: polish_cabinet_formation
+go-to: portfolio_menu
 
-@instead_reichswehr
-title: Military Affairs instead of Labour
+@take_education
+title: Take Education
+subtitle: [+ pl_port_education_line +]
+view-if: not pl_port_education_held
+choose-if: {! return PolishGovernment.portfolioStatus(Q, 'education').available !}
+unavailable-subtitle: [+ pl_port_education_why +]
 on-arrival: {!
-PolishGovernment.setDraft(Q, 'portfolio_claim', ['reichswehr']);
+PolishGovernment.setDraft(Q, 'portfolio_take', 'education');
 !}
-go-to: polish_cabinet_formation
+go-to: portfolio_menu
 
-@instead_education
-title: Education instead of Labour
+@drop_education
+title: Give up Education
+subtitle: Returns 10 influence points.
+view-if: pl_port_education_held
 on-arrival: {!
-PolishGovernment.setDraft(Q, 'portfolio_claim', ['education']);
+PolishGovernment.setDraft(Q, 'portfolio_drop', 'education');
 !}
-go-to: polish_cabinet_formation
+go-to: portfolio_menu
 
-@instead_foreign
-title: Foreign Affairs instead of Labour
+@take_foreign
+title: Take Foreign Affairs
+subtitle: [+ pl_port_foreign_line +]
+view-if: not pl_port_foreign_held
+choose-if: {! return PolishGovernment.portfolioStatus(Q, 'foreign').available !}
+unavailable-subtitle: [+ pl_port_foreign_why +]
 on-arrival: {!
-PolishGovernment.setDraft(Q, 'portfolio_claim', ['foreign']);
+PolishGovernment.setDraft(Q, 'portfolio_take', 'foreign');
 !}
-go-to: polish_cabinet_formation
+go-to: portfolio_menu
+
+@drop_foreign
+title: Give up Foreign Affairs
+subtitle: Returns 10 influence points.
+view-if: pl_port_foreign_held
+on-arrival: {!
+PolishGovernment.setDraft(Q, 'portfolio_drop', 'foreign');
+!}
+go-to: portfolio_menu

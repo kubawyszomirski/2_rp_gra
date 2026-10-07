@@ -509,8 +509,9 @@ test('Perswazja and Rząd bez potrzeby PPS: persuasion never changes relations; 
   assert.equal(B.S.actors.relations.psl_wyzwolenie, before.psl_wyzwolenie - 3, 'the threat still costs relation');
   // A refused persuasion leaves the support as it was and asks for nothing else.
   const R = make();
-  // Relation 0 and a reputation of 40: 0 + 35 (programme) + 20 (portfolio) + 4 = 59, below 60.
-  gov.changeRelation(R, 'psl_wyzwolenie', -75, 'fixture');
+  // Relation 0 and a reputation of 40: 0 + 35 (programme) + 20 (portfolio) + 4 = 59, below 60. Since 0.61 the appointment of
+  // Thugutt has added +5 with his party (decision 5A), so the fixture removes the whole relation.
+  gov.changeRelation(R, 'psl_wyzwolenie', -R.S.actors.relations.psl_wyzwolenie, 'fixture');
   gov.changeCredibility(R, 'fixture:breach', -10, 'breach');
   const snapshot = { ...R.S.actors.relations };
   const refused = gov.supportDemand(R, 'persuade', 'worker_protection', 'ordinary');
@@ -653,4 +654,130 @@ test('Broker a Coalition (10.4.3): +5 for the partners of one broad offer in pre
   agreement.tension = 6;
   assert.equal(gov.brokerCoalition(Q), 'tension');
   assert.equal(agreement.tension, 0);
+});
+
+// ---- Z — 0.61: the formation in four steps (decisions 1B simplified, 2A–7A and the necessary portfolios) ----------
+const CENTRE = { pps: 100, psl_wyzwolenie: 60, psl_piast: 80, npr: 40, zln: 100, other: 64 };
+function centreLeft(overrides = {}) {
+  const Q = chamber(CENTRE, { time: 11, year: 1922, month: 11, psl_piast_relation: 60, npr_relation: 55, ...overrides });
+  formation(Q);
+  gov.setDraft(Q, 'configuration_id', 'centre_left');
+  return Q;
+}
+
+test('Ocena partnera 0.61: four visible parts — 30% relation, 35% programme, 20% portfolio, 15% credibility — and no need', () => {
+  const Q = centreLeft();
+  const offer = gov.buildCabinetOffer(Q, Q.S.negotiation.draft, Q.S.negotiation.context);
+  const parts = gov.formationScoreParts(Q.S, 'psl_piast', offer);
+  close(parts.relation, 18);
+  close(parts.programme, 0.35 * 100 * (1 - 1 / 12));
+  close(parts.portfolio, 20); // Agriculture for PSL Piast
+  close(parts.credibility, 7.5);
+  close(parts.total, 77.58);
+  const answer = gov.evaluateCabinetPartner(Q.S, 'psl_piast', offer);
+  assert.deepEqual([answer.accept, answer.need, Math.round(answer.score * 100) / 100], [true, null, 77.58]);
+  // The screen shows whole parts whose sum is the score, cut down so that 59.9 never reads as 60.
+  const lines = gov.formationView(Q).partner_lines;
+  assert.ok(lines.includes('PSL Piast: 77 ✓ (relation 18 + programme 32 + portfolio 20 + credibility of PPS 7).'), lines.join(' | '));
+  assert.ok(lines.includes('PSL Wyzwolenie: 70 ✓ (relation 20 + programme 23 + portfolio 20 + credibility of PPS 7).'));
+  // A broken promise is a visible minus; a gate below its minimum is named with the current relation.
+  Q.S.agreements.old = { id: 'old', kind: 'support', parties: ['pps', 'npr'], status: 'breached',
+    obligations: [{ id: 'old:1', owner: 'pps', status: 'breached' }, { id: 'old:2', owner: 'pps', status: 'breached' }], history: [] };
+  assert.ok(gov.formationView(Q).partner_lines.some(l => /^NPR: 66 ✓ \(relation 17 .* − broken promises 10\)\.$/.test(l)));
+  gov.changeRelation(Q, 'npr', -10, 'fixture');
+  assert.match(gov.draftChoiceStatus(Q, 'configuration', 'centre_left').reason, /Relation with NPR is below 55 \(now 45\)/);
+});
+
+test('Konieczny resort 0.61: a partner keeps its preferred portfolio when it would refuse without it; with a margin PPS may take it', () => {
+  const Q = centreLeft();
+  // NPR wants Labour, PSL Piast Agriculture and PSL Wyzwolenie (the smaller peasant club) Interior: each would fall by 20.
+  assert.match(gov.portfolioStatus(Q, 'labor').reason, /Without it NPR refuses: its score falls from 76 to 56, below 60/);
+  assert.match(gov.portfolioStatus(Q, 'agriculture').reason, /Without it PSL Piast refuses: its score falls from 77 to 57/);
+  assert.match(gov.portfolioStatus(Q, 'interior').reason, /Without it PSL Wyzwolenie refuses: its score falls from 70 to 50/);
+  assert.deepEqual(Q.S.negotiation.draft.portfolio_claim, ['economic'], 'without Labour PPS starts with Industry and Trade');
+  assert.throws(() => gov.setDraft(Q, 'portfolio_take', 'labor'), /cannot be taken/);
+  // With relation 100 NPR keeps 69 without Labour: PPS may take it, and the screen says what NPR loses.
+  const R = centreLeft({ npr_relation: 100 });
+  assert.deepEqual(R.S.negotiation.draft.portfolio_claim, ['labor']);
+  gov.setDraft(R, 'portfolio_drop', 'labor');
+  const status = gov.portfolioStatus(R, 'labor');
+  assert.equal(status.available, true);
+  assert.equal(status.note, 'NPR loses its portfolio: score 89 → 69.');
+});
+
+test('Punkty wpływu 0.61: the PPS share of the cabinet’s seats + 10 when it is indispensable; Labour 10, Interior and Treasury 20, others 10', () => {
+  const Q = centreLeft();
+  // PPS has 100 of the cabinet's 280 MPs (36%); the other three have 180, below 223.
+  assert.deepEqual(gov.influencePoints(Q, Q.S.negotiation.draft), { points: 46, share: 36, pivotal: true });
+  assert.deepEqual([gov.PORTFOLIO_COSTS.labor, gov.PORTFOLIO_COSTS.interior, gov.PORTFOLIO_COSTS.finance, gov.PORTFOLIO_COSTS.justice], [10, 20, 20, 10]);
+  gov.setDraft(Q, 'portfolio_take', 'finance');
+  gov.setDraft(Q, 'portfolio_take', 'justice');
+  assert.equal(gov.claimCost(Q.S.negotiation.draft.portfolio_claim), 40);
+  assert.match(gov.portfolioStatus(Q, 'education').reason, /Not enough influence points: 6 left, 10 needed/);
+  assert.match(gov.formationView(Q).points, /Influence points: 46 = PPS share of the cabinet’s seats 36% \+ 10, because without PPS this cabinet has no majority\. The chosen portfolios cost 40, 6 left\./);
+  // A programmatic claim above the points cannot be submitted; a cabinet with a majority without PPS gives no +10.
+  gov.setDraft(Q, 'portfolio_claim', ['finance', 'interior', 'justice']);
+  assert.match(gov.submitStatus(Q).reason, /The chosen portfolios cost 50 influence points; PPS has 46/);
+  const big = chamber({ pps: 60, psl_wyzwolenie: 100, psl_piast: 130, npr: 40, zln: 50, other: 64 },
+    { time: 11, year: 1922, month: 11, psl_piast_relation: 60, npr_relation: 60 });
+  formation(big);
+  gov.setDraft(big, 'configuration_id', 'centre_left');
+  assert.deepEqual(gov.influencePoints(big, big.S.negotiation.draft), { points: 18, share: 18, pivotal: false });
+});
+
+test('Powołanie od razu 0.61: an accepted PPS offer is appointed even when the head of state’s candidate could govern without PPS', () => {
+  // VI 1923, the period of Witos: Chjeno-Piast could govern and would rank 82.6 with the +8 of the period (8.7).
+  const Q = chamber({ pps: 100, psl_wyzwolenie: 60, psl_piast: 80, npr: 40, pschd: 40, zln: 100, other: 24 },
+    { time: rules.timeOf(1923, 6), year: 1923, month: 6, psl_piast_relation: 60, npr_relation: 60 });
+  formation(Q, 'crisis');
+  gov.setDraft(Q, 'configuration_id', 'centre_left');
+  const fallback = gov.fallbackCabinet(Q);
+  assert.deepEqual([fallback.offer.configuration_id, fallback.offer.candidate_id], ['chjeno_piast', 'witos']);
+  assert.match(gov.formationView(Q).verdict, /after the commit the cabinet is appointed at once — Centre-left, prime minister Ignacy Daszyński/);
+  const result = gov.submitFormation(Q);
+  assert.deepEqual([result.appointed.configuration_id, result.appointed.by], ['centre_left', 'pps']);
+  // In opposition PPS sees beforehand which cabinet the head of state would appoint.
+  const O = chamber({ pps: 100, psl_wyzwolenie: 60, psl_piast: 80, npr: 40, pschd: 40, zln: 100, other: 24 },
+    { time: rules.timeOf(1923, 6), year: 1923, month: 6 });
+  formation(O, 'crisis');
+  gov.setDraft(O, 'pps_mode', 'opposition');
+  assert.match(gov.formationView(O).verdict, /PPS stays in opposition: the head of state appoints a cabinet without PPS: Wincenty Witos — Chjeno-Piast\./);
+});
+
+test('Premier 0.61: the leader of a partner party wins PPS +5 with it once; an expert has no effect; the candidate of the period is only marked', () => {
+  const Q = centreLeft();
+  gov.setDraft(Q, 'candidate_id', 'witos');
+  assert.match(gov.candidateNote(Q, 'witos'), /^Leader of PSL Piast: after the appointment \+5 relation with his party\.$/);
+  assert.match(gov.candidateNote(Q, 'nowak'), /No effect on relations\. Candidate of the Chief of State for this period\./);
+  assert.equal(gov.candidateShown(Q, 'thugutt'), true, 'the leader of a member party is shown, greyed with his reason');
+  assert.equal(gov.candidateShown(Q, 'pilsudski'), false);
+  gov.submitFormation(Q);
+  assert.equal(Q.S.cabinet.pm, 'witos');
+  assert.equal(Q.S.actors.relations.psl_piast, 65);
+  assert.equal(Q.S.history.reasons.filter(r => r.kind === 'relation' && /^premier:/.test(r.reason)).length, 1);
+  const E = centreLeft();
+  gov.setDraft(E, 'candidate_id', 'nowak');
+  gov.submitFormation(E);
+  assert.deepEqual([E.S.cabinet.pm, E.S.actors.relations.psl_piast], ['nowak', 60]);
+});
+
+test('Lista gabinetów 0.61: every cabinet in one line with its clubs, seats, partners’ scores and votes; the impossible ones greyed with a reason', () => {
+  const Q = centreLeft();
+  const line = gov.coalitionLine(Q, 'centre_left');
+  assert.equal(line.available, true);
+  assert.match(line.line, /^Chosen now\. PPS 100 \+ PSL Wyzwolenie 60 \+ PSL Piast 80 \+ NPR 40 = 280 MPs\. Partners: PSL Wyzwolenie 70 ✓, PSL Piast 77 ✓, NPR 76 ✓\. Votes: majority \(280 for; 223 needed\)\./);
+  const left = gov.coalitionLine(Q, 'left_minority');
+  assert.match(left.line, /^PPS 100 \+ PSL Wyzwolenie 60 = 160 MPs\. Partners: PSL Wyzwolenie \d+ ✓\. Votes: minority cabinet \(160 for, 100 against\)\./);
+  assert.match(left.line, /The minority representations can add 0 MPs\./);
+  const broad = gov.coalitionLine(Q, 'broad_centre');
+  assert.equal(broad.available, false);
+  assert.match(broad.line, /= 280 MPs\. Only in a real crisis/);
+  assert.match(gov.oppositionLine(Q), /^No partner’s agreement is needed\. Then /);
+  // Choosing a cabinet from the list brings PPS back from opposition.
+  gov.setDraft(Q, 'pps_mode', 'opposition');
+  gov.chooseCoalition(Q, 'left_minority');
+  assert.equal(Q.S.negotiation.draft.pps_mode, 'member');
+  gov.setDraft(Q, 'pps_mode', 'opposition');
+  gov.chooseCoalition(Q, 'expert');
+  assert.equal(Q.S.negotiation.draft.pps_mode, 'external_support');
 });

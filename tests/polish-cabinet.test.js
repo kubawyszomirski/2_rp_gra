@@ -114,14 +114,19 @@ test('C1: one screen; every setting is free and returns to it; one commit, then 
   choose(engine, 'polish_cabinet_formation.minorities_on');
   choose(engine, 'polish_cabinet_formation.candidates');
   choose(engine, 'polish_cabinet_formation.cand_daszynski');
+  // Z — 0.61: step 4 buys Interior with influence points (61 = 51% of the cabinet's seats + 10; Labour 10, Interior 20).
   choose(engine, 'polish_cabinet_formation.portfolios');
-  choose(engine, 'polish_cabinet_formation.claim_plus');
-  choose(engine, 'polish_cabinet_formation.plus_interior');
+  assert.match(content(engine), /Influence points: 61 = PPS share of the cabinet’s seats 51% \+ 10/);
+  choose(engine, 'polish_cabinet_formation.take_interior');
+  assert.equal(choice(engine, 'polish_cabinet_formation.drop_interior').canChoose, true, 'it can be given back');
+  choose(engine, 'polish_cabinet_formation.back');
   assert.equal(engine.state.sceneId, 'polish_cabinet_formation');
   assert.deepEqual(Q.S.negotiation.draft, { configuration_id: 'left_minority', candidate_id: 'daszynski', pps_mode: 'member',
     seek_minority_support: true, portfolio_claim: ['labor', 'interior'] });
   assert.match(content(engine), /Labour, Interior/);
-  assert.match(content(engine), /PSL Wyzwolenie \(relation 65\); gate 50 met; wants Agriculture or Interior — offered/);
+  // Decision 1B of 0.61: the score of each partner in four visible parts, before the commit.
+  assert.match(content(engine), /PSL Wyzwolenie: 79 ✓ \(relation 20 \+ programme 32 \+ portfolio 20 \+ credibility of PPS 7\)/);
+  assert.match(content(engine), /after the commit the cabinet is appointed at once — PPS and PSL Wyzwolenie, prime minister Ignacy Daszyński/);
   assert.deepEqual([Q.time, Q.month_actions, Q.S.history.negotiations.length], [before.t, before.actions, before.negotiations]);
   assert.deepEqual(Q.S.cabinet, before.cabinet, 'nothing is decided before the offer is submitted');
   assert.equal(Q.S.turn.pending, null);

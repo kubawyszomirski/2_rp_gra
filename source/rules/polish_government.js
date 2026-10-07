@@ -392,6 +392,40 @@
       red_lines: violations, reasons: reasons};
   }
 
+  // Z — 0.61 (decision 1B, simplified; P): a club deciding on a cabinet scores it in four visible parts, without the
+  // hidden need of 8.3: 30% relation, 35% programme fit, 20% its portfolio (or the minority terms), 15% the credibility
+  // of PPS (50 when PPS does not make the offer), minus broken promises, plus a broker's bonus; it agrees at 60. The
+  // other bargaining of PPS (support demands, joint lists, Grabski's terms) keeps offerScore with its need.
+  const FORMATION_WEIGHTS = Object.freeze({relation: 0.30, programme: 0.35, portfolio: 0.20, credibility: 0.15});
+  const FORMATION_THRESHOLD = 60;
+
+  function formationScoreParts(S, actorId, offer) {
+    const credibility = offer.by === 'pps' ? S.actors.pps.credibility : 50;
+    const parts = {
+      relation: FORMATION_WEIGHTS.relation * offerRelation(S, actorId, offer),
+      programme: FORMATION_WEIGHTS.programme * programFit(actorId, offer.programme),
+      portfolio: FORMATION_WEIGHTS.portfolio * portfolioFit(actorId, offer),
+      credibility: FORMATION_WEIGHTS.credibility * credibility,
+      penalty: -breachPenalty(S, actorId),
+      bonus: offer.advisor_bonus || 0,
+    };
+    parts.total = clip(parts.relation + parts.programme + parts.portfolio + parts.credibility + parts.penalty + parts.bonus, 0, 100);
+    return parts;
+  }
+
+  function evaluateCabinetPartner(S, actorId, offer) {
+    const violations = redLineViolations(actorId, offer);
+    const parts = formationScoreParts(S, actorId, offer);
+    const score = parts.total;
+    const gates = (offer.gates || []).filter(gate => gate.actor === actorId && relation(S, actorId) < gate.min);
+    const reasons = [];
+    for (const line of violations) reasons.push('red line: ' + line.replace(/_/g, ' '));
+    for (const gate of gates) reasons.push('relation below ' + gate.min);
+    if (!violations.length && !gates.length && score < FORMATION_THRESHOLD) reasons.push('score ' + shownScore(score) + ' is below 60');
+    return {actor: actorId, score: Math.round(score * 100) / 100, need: null, parts: parts,
+      accept: !violations.length && !gates.length && score >= FORMATION_THRESHOLD, red_lines: violations, reasons: reasons};
+  }
+
   // Leverage of PPS in one conversation (8.2): a diagnostic result, never an extra bonus.
   function leverage(input) {
     const pivotal = input.canSucceedWithPPS && !input.canSucceedWithoutPPS ? 100 : 0;
@@ -731,6 +765,72 @@
       minority_terms: [], gates: [], lead_party: config.expert ? null : config.lead_party, context: {}};
   }
 
+  // Z — 0.61 (decision 4A; P): PPS buys its portfolios with influence points: its share of the cabinet's seats × 100, plus
+  // 10 when the other members have no majority without it. Labour costs 10, Interior and the Treasury 20, the others 10.
+  // A partner keeps its preferred portfolio when it would refuse without it (decision of 0.61); otherwise PPS may take it
+  // and the screen shows the partner's lower score.
+  const PORTFOLIO_COSTS = Object.freeze({labor: 10, interior: 20, finance: 20, economic: 10, justice: 10, agriculture: 10,
+    reichswehr: 10, education: 10, foreign: 10});
+  const PIVOT_BONUS = 10;
+  const DEFAULT_CLAIMS = Object.freeze(['labor', 'economic']);
+
+  function influencePoints(Q, draft) {
+    const S = Q.S, config = CONFIGURATIONS[draft.configuration_id];
+    const total = seatsOfList(S, config.members), pps = seatsOf(S, 'pps');
+    if (!total || config.members.indexOf('pps') < 0) return {points: 0, share: 0, pivotal: false};
+    const share = Math.round(100 * pps / total);
+    const pivotal = total - pps < majorityRequired(S);
+    return {points: share + (pivotal ? PIVOT_BONUS : 0), share: share, pivotal: pivotal};
+  }
+
+  function claimCost(claim) {
+    return (claim || []).reduce((n, key) => n + (PORTFOLIO_COSTS[key] || 0), 0);
+  }
+
+  // PPS chooses its portfolios only as a member of a cabinet whose portfolios are not fixed.
+  function portfolioChoiceOpen(draft) {
+    const config = CONFIGURATIONS[draft.configuration_id];
+    return draft.pps_mode === 'member' && !config.expert && !config.majority_alone && !config.portfolio_map;
+  }
+
+  // Whether PPS can take one more portfolio: enough points left, and no partner that loses its preferred portfolio by
+  // it would fall below 60. `note` names the partners that lose their portfolio and still agree.
+  function portfolioStatusFor(Q, draft, key, context) {
+    const S = Q.S;
+    const claim = draft.portfolio_claim || [];
+    if (claim.indexOf(key) >= 0) return {available: true, held: true, reason: '', note: ''};
+    const left = influencePoints(Q, draft).points - claimCost(claim);
+    const cost = PORTFOLIO_COSTS[key];
+    if (cost > left) {
+      return {available: false, held: false, note: '', reason: L('Not enough influence points: ' + left + ' left, ' + cost + ' needed.',
+        'Za mało punktów wpływu: zostało ' + left + ', potrzeba ' + cost + '.')};
+    }
+    const before = buildCabinetOffer(Q, draft, context);
+    const after = buildCabinetOffer(Q, Object.assign({}, draft, {portfolio_claim: claim.concat([key])}), context);
+    const losers = before.members.filter(m => m !== 'pps' && portfolioFit(m, before) === 100 && portfolioFit(m, after) < 100)
+      .map(m => ({id: m, was: evaluateCabinetPartner(S, m, before).score, now: evaluateCabinetPartner(S, m, after).score}));
+    const blocking = losers.filter(l => l.now < FORMATION_THRESHOLD)[0];
+    if (blocking) {
+      return {available: false, held: false, note: '', reason: L('Without it ' + ACTOR_PROFILES[blocking.id].name + ' refuses: its score falls from ' +
+        shownScore(blocking.was) + ' to ' + shownScore(blocking.now) + ', below 60.', 'Bez niego ' + actorName(blocking.id) + ' odmówi: jego ocena spada z ' +
+        shownScore(blocking.was) + ' do ' + shownScore(blocking.now) + ', poniżej 60.')};
+    }
+    return {available: true, held: false, reason: '', note: losers.map(l => L(ACTOR_PROFILES[l.id].name + ' loses its portfolio: score ' +
+      shownScore(l.was) + ' → ' + shownScore(l.now) + '.', actorName(l.id) + ' traci swój resort: ocena ' + shownScore(l.was) + ' → ' + shownScore(l.now) + '.')).join(' ')};
+  }
+
+  // The first of Labour and Industry and Trade that PPS can take; none when neither is possible.
+  function defaultClaim(Q, draft, context) {
+    if (!portfolioChoiceOpen(draft)) return [];
+    const empty = Object.assign({}, draft, {portfolio_claim: []});
+    return DEFAULT_CLAIMS.filter(key => portfolioStatusFor(Q, empty, key, context).available).slice(0, 1);
+  }
+
+  // A score on the screen is cut to a whole number, so 59.9 never reads as an accepted 60.
+  function shownScore(score) {
+    return Math.floor(score + 1e-9);
+  }
+
   // How a club outside the agreement votes on the budget and on a dismissal (decision 7): its view
   // of the cabinet programme from relation and programme fit, 0–100; below 40 it votes against,
   // otherwise it abstains. KPP and "Inne" abstain; neutral abstentions are never votes for.
@@ -804,8 +904,9 @@
     }
     for (const gate of config.gates) {
       if (relation(S, gate.actor) < gate.min) {
-        return {available: false, reason: L('Relation with ' + ACTOR_PROFILES[gate.actor].name + ' is below ' + gate.min + '.',
-          'Relacja z ' + actorName(gate.actor) + ' jest niższa niż ' + gate.min + '.')};
+        const now = Math.floor(relation(S, gate.actor));
+        return {available: false, reason: L('Relation with ' + ACTOR_PROFILES[gate.actor].name + ' is below ' + gate.min + ' (now ' + now + ').',
+          'Relacja z ' + actorName(gate.actor) + ' jest niższa niż ' + gate.min + ' (teraz ' + now + ').')};
       }
     }
     for (const member of config.members) {
@@ -861,25 +962,15 @@
       EXPERTS.filter(id => !expertFallen(S, id))[0] || 'nowak';
   }
 
-  // 8.8: min(20, 5 × falls + 0.5 × max(0, grievance − 60) + 10 × currency crisis).
-  function crisisCooperation(Q, offer, context) {
-    const config = CONFIGURATIONS[offer.configuration_id];
-    const crisis = crisisState(Q, context);
-    return config && config.crisis && crisis.allowed ?
-      Math.min(20, 5 * crisis.falls + 0.5 * Math.max(0, crisis.grievance - 60) + (crisis.currency ? 10 : 0)) : 0;
-  }
-
+  // Z — 0.61: the clubs of a cabinet offer answer with the visible score of formationScoreParts, without need.
   function evaluateOffer(Q, offer, context) {
     const S = Q.S;
     const partners = offer.by === 'pps' ? partnersOf(offer) : offer.members.filter(m => m !== offer.lead_party);
-    return partners.map(actorId => {
-      const need = needFor(bestAlternativeScore(Q, actorId, offer, context), crisisCooperation(Q, offer, context));
-      return evaluatePartner(S, actorId, offer, need);
-    });
+    return partners.map(actorId => evaluateCabinetPartner(S, actorId, offer));
   }
 
-  // The ranking of 8.7: the average offerScore of the required partners (external ones too), +8 for
-  // the candidate of the historical window; PPS alone with a majority counts 60.
+  // The ranking of 8.7: the average score of the required partners (external ones too), +8 for the candidate of the
+  // historical window; PPS alone with a majority counts 60. Since 0.61 it only orders the cabinets without PPS.
   function rankOf(Q, offer, evaluations) {
     const scores = evaluations.filter(e => e.accept).map(e => e.score);
     const average = scores.length ? scores.reduce((n, s) => n + s, 0) / scores.length : (offer.members.length === 1 && offer.members[0] === 'pps' ? 60 : null);
@@ -918,7 +1009,7 @@
     const guarantors = [];
     for (const club of S.parliament.clubs) {
       if (!ACTOR_PROFILES[club.id] || club.id === 'pps' || club.id === 'kpp' || bound.indexOf(club.id) >= 0) continue;
-      const evaluation = evaluatePartner(S, club.id, offer, needFor(bestAlternativeScore(Q, club.id, offer, {}), 0));
+      const evaluation = evaluateCabinetPartner(S, club.id, offer);
       evaluations.push(evaluation);
       if (evaluation.accept) guarantors.push(club.id);
     }
@@ -944,6 +1035,7 @@
     const first = PPS_CONFIGURATIONS.filter(id => !CONFIGURATIONS[id].expert && configurationStatus(Q, id, context).available)[0];
     if (first) Object.assign(draft, {configuration_id: first, pps_mode: 'member'});
     draft.candidate_id = firstCandidate(Q, draft);
+    draft.portfolio_claim = defaultClaim(Q, draft, context);
     return draft;
   }
 
@@ -987,10 +1079,19 @@
       if (CONFIGURATIONS[value].expert && draft.pps_mode === 'member') draft.pps_mode = 'external_support';
       if (!CONFIGURATIONS[value].minority_support) draft.seek_minority_support = false;
       draft.candidate_id = firstCandidate(Q, draft);
+      draft.portfolio_claim = defaultClaim(Q, draft, neg.context);
     } else if (field === 'pps_mode') {
       draft.pps_mode = value;
       if (!candidateStatus(Q, draft.candidate_id, draft).available) draft.candidate_id = firstCandidate(Q, draft);
       if (!stabilisationTermsOpen(draft)) delete draft.stabilisation_terms;
+      draft.portfolio_claim = defaultClaim(Q, draft, neg.context);
+    } else if (field === 'portfolio_take') {
+      // Z — 0.61: one more PPS portfolio, paid with influence points (step 4 of the formation).
+      const status = portfolioChoiceOpen(draft) ? portfolioStatusFor(Q, draft, value, neg.context) : {available: false, reason: 'no portfolio choice'};
+      if (!status.available || status.held) throw new Error('setDraft: portfolio ' + value + ' cannot be taken: ' + (status.reason || 'already held'));
+      draft.portfolio_claim = (draft.portfolio_claim || []).concat([value]);
+    } else if (field === 'portfolio_drop') {
+      draft.portfolio_claim = (draft.portfolio_claim || []).filter(key => key !== value);
     } else if (field === 'seek_minority_support') {
       draft.seek_minority_support = !!value && CONFIGURATIONS[draft.configuration_id].minority_support;
       if (!candidateStatus(Q, draft.candidate_id, draft).available) draft.candidate_id = firstCandidate(Q, draft);
@@ -1004,6 +1105,14 @@
     } else {
       throw new Error('setDraft: unknown field ' + field);
     }
+    return draft;
+  }
+
+  // Step 1 of the formation (Z — 0.61): choosing a cabinet from the list also brings PPS back from opposition, into the
+  // cabinet or, for a cabinet of experts, to support from outside.
+  function chooseCoalition(Q, configId) {
+    const draft = setDraft(Q, 'configuration_id', configId);
+    if (draft.pps_mode === 'opposition') setDraft(Q, 'pps_mode', CONFIGURATIONS[configId].expert ? 'external_support' : 'member');
     return draft;
   }
 
@@ -1158,7 +1267,7 @@
     m = text.match(/^relation below (\d+)$/);
     if (m) return 'relacja poniżej ' + m[1];
     m = text.match(/^score ([\d.]+) is below 60$/);
-    if (m) return 'ocena ' + rules.num(+m[1], 1) + ' poniżej 60';
+    if (m) return 'ocena ' + (Number.isInteger(+m[1]) ? m[1] : rules.num(+m[1], 1)) + ' poniżej 60';
     m = text.match(/^Grabski refuses the protections: (.+)$/);
     if (m) return 'Grabski odrzuca osłony: ' + m[1].split(', ').map(reasonText).join(', ');
     return text;
@@ -1173,51 +1282,231 @@
     return CANDIDATES[id] ? CANDIDATES[id].name : id;
   }
 
-  // Display fields of the offer screen: the offer, the partners' known demands and red lines, and
-  // whether the offer meets them. The 8.3 scores appear only in the result (decision 4).
+  // ---- The formation screen (Z — 0.61): four steps, every number visible ----------------------------------------
+
+  const SCORE_PART_NAMES = Object.freeze({relation: ['relation', 'relacja'], programme: ['programme', 'program'],
+    portfolio: ['portfolio', 'resort'], minority: ['minority rights', 'prawa mniejszości'], none: ['no demands', 'bez żądań'],
+    credibility: ['credibility of PPS', 'wiarygodność PPS'], penalty: ['broken promises', 'złamane obietnice'], bonus: ['broker', 'pośrednik']});
+  const partName = key => L(SCORE_PART_NAMES[key][0], SCORE_PART_NAMES[key][1]);
+
+  // Whole-number parts whose sum is the shown score: each part cut down, then the missing points go to the parts with
+  // the largest remainders (a score clipped at 0 or 100 keeps its cut parts).
+  function shownParts(parts) {
+    const keys = ['relation', 'programme', 'portfolio', 'credibility', 'penalty', 'bonus'];
+    const out = {};
+    let sum = 0;
+    for (const key of keys) {
+      out[key] = Math.floor(parts[key] + 1e-9);
+      sum += out[key];
+    }
+    const missing = shownScore(parts.total) - sum;
+    if (missing > 0 && missing < keys.length) {
+      keys.slice().sort((a, b) => (parts[b] - out[b]) - (parts[a] - out[a]) || keys.indexOf(a) - keys.indexOf(b))
+        .slice(0, missing).forEach(key => { out[key] += 1; });
+    }
+    return out;
+  }
+
+  // One partner on the screen: its score out of 60 with the parts, or the gate or red line that stops it.
+  function partnerLine(S, offer, evaluation) {
+    const id = evaluation.actor;
+    const name = describeParty(id);
+    if (evaluation.red_lines.length) {
+      return name + ': ✗ ' + L('red line: ', 'czerwona linia: ') + redLineText(evaluation.red_lines.join(', ').replace(/_/g, ' ')) + '.';
+    }
+    const gate = (offer.gates || []).filter(g => g.actor === id && relation(S, id) < g.min)[0];
+    if (gate) {
+      return name + ': ✗ ' + L('needs a relation of ' + gate.min + ' with PPS (now ' + Math.floor(relation(S, id)) + ').',
+        'wymaga relacji ' + gate.min + ' z PPS (teraz ' + Math.floor(relation(S, id)) + ').');
+    }
+    const parts = shownParts(evaluation.parts);
+    const profile = profileOf(id) || {};
+    const demand = offer.members.indexOf(id) >= 0 && id !== 'kpp' ? 'portfolio' : (profile.minority ? 'minority' : 'none');
+    const bits = [partName('relation') + ' ' + parts.relation, partName('programme') + ' ' + parts.programme,
+      partName(demand) + ' ' + parts.portfolio, partName('credibility') + ' ' + parts.credibility];
+    let text = bits.join(' + ');
+    if (parts.penalty) text += ' − ' + partName('penalty') + ' ' + Math.abs(parts.penalty);
+    if (parts.bonus) text += ' + ' + partName('bonus') + ' ' + parts.bonus;
+    const score = shownScore(evaluation.score);
+    return name + ': ' + score + (evaluation.accept ? ' ✓' : ' ✗') + ' (' + text + ')' +
+      (evaluation.accept ? '.' : L('; ' + (FORMATION_THRESHOLD - score) + ' short of 60.', '; brakuje ' + (FORMATION_THRESHOLD - score) + ' do 60.'));
+  }
+
+  function clubsText(S, members) {
+    const list = members.filter(m => m === 'pps' || seatsOf(S, m) > 0);
+    return list.map(m => describeParty(m) + ' ' + seatsOf(S, m)).join(' + ') + ' = ' +
+      seatsOfList(S, list) + L(' MPs', ' posłów');
+  }
+
+  function votesText(S, fc) {
+    const base = L(fc.yes + ' for, ' + fc.no + ' against, ' + fc.abstain + ' abstaining; a majority is ' + majorityRequired(S) + '. ',
+      fc.yes + ' za, ' + fc.no + ' przeciw, ' + fc.abstain + ' wstrzymujących się; większość to ' + majorityRequired(S) + '. ');
+    if (fc.majority) return base + L('A majority cabinet.', 'Rząd większościowy.');
+    if (fc.viable) {
+      return base + L('A minority cabinet: more votes for than against, so it can govern until the Sejm dismisses it.',
+        'Rząd mniejszościowy: więcej głosów za niż przeciw, więc może rządzić, dopóki Sejm go nie odwoła.');
+    }
+    return base + L('Too few votes: more against than for.', 'Za mało głosów: więcej przeciw niż za.');
+  }
+
+  function cabinetName(entry) {
+    return CANDIDATES[entry.offer.candidate_id].name + ' — ' + configName(entry.offer.configuration_id);
+  }
+
+  // The cabinet the head of state would appoint without PPS (8.7), or none.
+  function fallbackCabinet(Q) {
+    return pickBest(npcEntries(Q, [], true));
+  }
+
+  function fallbackText(Q) {
+    const entry = fallbackCabinet(Q);
+    return entry ? L('the head of state appoints a cabinet without PPS: ' + cabinetName(entry),
+      'głowa państwa powoła gabinet bez PPS: ' + cabinetName(entry)) :
+      L('no cabinet can be formed and the crisis continues', 'nie powstanie żaden gabinet i kryzys potrwa');
+  }
+
+  // A sample offer of one cabinet for the list of step 1: PPS in it (or supporting an expert), the first possible
+  // prime minister and the default portfolios.
+  function sampleDraft(Q, configId) {
+    const config = CONFIGURATIONS[configId];
+    const draft = {configuration_id: configId, pps_mode: config.expert ? 'external_support' : 'member', seek_minority_support: false,
+      portfolio_claim: [], candidate_id: 'nowak'};
+    draft.candidate_id = firstCandidate(Q, draft);
+    draft.portfolio_claim = defaultClaim(Q, draft, Q.S.negotiation.context);
+    return draft;
+  }
+
+  // Step 1: one line of the list for each cabinet — its clubs and seats, the partners' scores and the votes (2A, 3A).
+  function coalitionLine(Q, configId) {
+    const S = Q.S, neg = S.negotiation, config = CONFIGURATIONS[configId];
+    const status = configurationStatus(Q, configId, neg.context);
+    const programme = config.expert ? L('programme of the prime minister', 'program premiera') : describeProgramme(config.programme);
+    const clubs = config.expert ? L('A non-party prime minister and ministers; clubs only sign support.',
+      'Bezpartyjny premier i ministrowie; kluby tylko podpisują poparcie.') : clubsText(S, config.members) + '.';
+    if (!status.available) return {available: false, line: clubs + ' ' + status.reason};
+    const chosen = neg.draft.configuration_id === configId && neg.draft.pps_mode !== 'opposition' ? L('Chosen now. ', 'Wybrany teraz. ') : '';
+    const assessed = assessDraft(Q, sampleDraft(Q, configId));
+    const record = assessed.pps_offer;
+    const signed = record.evaluations.filter(e => config.expert ? e.accept : true)
+      .map(e => describeParty(e.actor) + ' ' + shownScore(e.score) + (e.accept ? ' ✓' : ' ✗'));
+    const partners = config.expert ? L('Support signed by: ', 'Poparcie podpisują: ') + (signed.join(', ') || L('nobody', 'nikt')) :
+      L('Partners: ', 'Partnerzy: ') + (signed.join(', ') || L('none', 'brak'));
+    const fc = record.forecast;
+    const votes = fc.majority ? L('majority (' + fc.yes + ' for; ' + majorityRequired(S) + ' needed)', 'większość (' + fc.yes + ' za; potrzeba ' + majorityRequired(S) + ')') :
+      fc.viable ? L('minority cabinet (' + fc.yes + ' for, ' + fc.no + ' against)', 'rząd mniejszościowy (' + fc.yes + ' za, ' + fc.no + ' przeciw)') :
+        L('too few votes (' + fc.yes + ' for, ' + fc.no + ' against)', 'za mało głosów (' + fc.yes + ' za, ' + fc.no + ' przeciw)');
+    const minorities = config.minority_support ? L(' The minority representations can add ' + seatsOfList(S, SEGMENTS) + ' MPs.',
+      ' Mniejszości mogą dodać ' + seatsOfList(S, SEGMENTS) + ' posłów.') : '';
+    return {available: true, line: chosen + clubs + ' ' + partners + '. ' + L('Votes: ', 'Głosy: ') + votes + '.' + minorities + ' ' +
+      L('Programme: ', 'Program: ') + programme + '.'};
+  }
+
+  function oppositionLine(Q) {
+    return L('No partner’s agreement is needed. Then ', 'Nie potrzeba niczyjej zgody. Wtedy ') + fallbackText(Q) + '.';
+  }
+
+  // Step 3: one sentence about each prime minister (5A): a partner's leader wins his party +5; an expert has no party
+  // effect; the candidate of the period is only marked.
+  function candidateNote(Q, candidateId) {
+    const S = Q.S, candidate = CANDIDATES[candidateId];
+    if (candidateId === 'pilsudski') {
+      return L('Premiership agreed with Piłsudski (16.7): the programme of a legal cabinet, the usual parliamentary responsibility. The relief of pressure comes after his real appointment; this formation costs no second action.',
+        'Premierostwo uzgodnione z Piłsudskim (16.7): program legalnego gabinetu, zwykła odpowiedzialność parlamentarna. Ulga w nacisku przychodzi po jego rzeczywistym powołaniu; to formowanie nie kosztuje drugiej akcji.');
+    }
+    let note;
+    if (candidate.party === 'pps') {
+      note = L('Leader of PPS: a prime minister of our own; PPS must be the largest club of the cabinet and at least two partners must accept him.',
+        'Lider PPS: premier z naszej partii; PPS musi być największym klubem gabinetu i co najmniej dwóch partnerów musi go zaakceptować.');
+    } else if (candidate.party) {
+      note = L('Leader of ' + ACTOR_PROFILES[candidate.party].name + ': after the appointment +' + PREMIER_RELATION + ' relation with his party.',
+        'Lider ' + actorName(candidate.party) + ': po powołaniu +' + PREMIER_RELATION + ' relacji z jego partią.');
+    } else {
+      note = L('Non-party expert, programme: ', 'Bezpartyjny fachowiec, program: ') + describeProgramme(candidate.programme) +
+        L('. No effect on relations.', '. Bez wpływu na relacje.');
+    }
+    if (inWindow(candidateId, Q.time)) {
+      const president = Q.polish_presidency && Q.polish_presidency.current && Q.polish_presidency.current.office_id === 'prezydent_rp';
+      note += president ? L(' Candidate of the President for this period.', ' Kandydat Prezydenta na ten okres.') :
+        L(' Candidate of the Chief of State for this period.', ' Kandydat Naczelnika Państwa na ten okres.');
+    }
+    return note;
+  }
+
+  // Step 3 shows the possible prime ministers and, greyed, the leaders of the cabinet's own parties.
+  function candidateShown(Q, candidateId) {
+    const neg = Q.S.negotiation, candidate = CANDIDATES[candidateId];
+    if (!neg || !candidate) return false;
+    if (candidateStatus(Q, candidateId, neg.draft).available) return true;
+    return !!candidate.party && CONFIGURATIONS[neg.draft.configuration_id].members.indexOf(candidate.party) >= 0;
+  }
+
+  // Step 4: the influence points of PPS in words.
+  function pointsText(Q, draft) {
+    const config = CONFIGURATIONS[draft.configuration_id];
+    if (draft.pps_mode !== 'member' || config.expert) return L('PPS is outside the cabinet and takes no portfolios.', 'PPS jest poza gabinetem i nie obejmuje resortów.');
+    if (config.majority_alone) return L('PPS governs alone and takes every portfolio.', 'PPS rządzi sama i obejmuje wszystkie resorty.');
+    if (config.portfolio_map) return L('The portfolios of this cabinet are fixed.', 'Resorty tego gabinetu są ustalone.');
+    const ip = influencePoints(Q, draft), cost = claimCost(draft.portfolio_claim);
+    return L('Influence points: ' + ip.points + ' = PPS share of the cabinet’s seats ' + ip.share + '%' +
+      (ip.pivotal ? ' + ' + PIVOT_BONUS + ', because without PPS this cabinet has no majority' : '') + '. The chosen portfolios cost ' + cost + ', ' + (ip.points - cost) + ' left.',
+      'Punkty wpływu: ' + ip.points + ' = udział PPS w mandatach gabinetu ' + ip.share + '%' +
+      (ip.pivotal ? ' + ' + PIVOT_BONUS + ', bo bez PPS ten gabinet nie ma większości' : '') + '. Wybrane resorty kosztują ' + cost + ', zostaje ' + (ip.points - cost) + '.');
+  }
+
+  // Step 4: one line for one portfolio — its cost and who takes it now.
+  function portfolioLine(Q, key) {
+    const neg = Q.S.negotiation;
+    const offer = buildCabinetOffer(Q, neg.draft, neg.context);
+    const status = portfolioStatus(Q, key);
+    const owner = offer.portfolios[key];
+    const now = owner === 'pps' ? L('PPS takes it', 'obejmuje PPS') : owner === 'expert' ? L('a non-party expert takes it', 'obejmie bezpartyjny fachowiec') :
+      L(describeParty(owner) + ' takes it', 'obejmie ' + describeParty(owner));
+    return L('Costs ' + PORTFOLIO_COSTS[key] + ' points; now ' + now + '.', 'Kosztuje ' + PORTFOLIO_COSTS[key] + ' pkt; teraz ' + now + '.') +
+      (status.note ? ' ' + status.note : '');
+  }
+
+  // The hub of the formation card: the four steps, the partners' scores, the votes and what the commit would do.
   function formationView(Q) {
     const S = Q.S, neg = S.negotiation;
     if (!neg) return null;
     const draft = neg.draft;
     const config = CONFIGURATIONS[draft.configuration_id];
     const offer = buildCabinetOffer(Q, draft, neg.context);
-    const partnerLines = partnersOf(offer).map(id => {
-      const profile = ACTOR_PROFILES[id];
-      const bits = [actorName(id) + L(' (relation ', ' (relacja ') + Math.round(relation(S, id)) + ')'];
-      const gate = (config.gates || []).filter(g => g.actor === id)[0];
-      if (gate) {
-        bits.push(relation(S, id) >= gate.min ? L('gate ' + gate.min + ' met', 'próg ' + gate.min + ' spełniony') :
-          L('gate ' + gate.min + ' NOT met', 'próg ' + gate.min + ' NIESPEŁNIONY'));
-      }
-      if (offer.members.indexOf(id) >= 0) {
-        const wanted = profile.preferred_portfolios;
-        const got = wanted.some(key => offer.portfolios[key] === id);
-        bits.push(L('wants ' + wanted.map(key => PORTFOLIO_SHORT[key]).join(' or ') + (got ? ' — offered' : ' — NOT offered'),
-          'chce: ' + wanted.map(portfolioShort).join(' lub ') + (got ? ' — w ofercie' : ' — BRAK w ofercie')));
-      } else if (profile.minority) {
-        bits.push(L('asks for minority rights — offered', 'chce praw mniejszości — w ofercie'));
-      }
-      const lines = redLineViolations(id, offer);
-      bits.push(lines.length ? L('red line crossed: ', 'przekroczona czerwona linia: ') + redLineText(lines.join(', ').replace(/_/g, ' ')) :
-        L('no red line crossed', 'bez przekroczonych czerwonych linii'));
-      return bits.join('; ');
-    });
+    const assessed = assessDraft(Q);
+    const record = assessed.pps_offer;
     const own = PORTFOLIOS.filter(key => offer.portfolios[key] === 'pps');
-    const fc = forecast(Q, offer, offer.members.concat(offer.supporters));
+    const partnerLines = record ? record.evaluations.map(e => partnerLine(S, assessed.offer, e)) : [];
+    let verdict;
+    if (!record) {
+      verdict = L('PPS stays in opposition: ', 'PPS zostaje w opozycji: ') + fallbackText(Q) + '.';
+    } else if (record.accepted) {
+      verdict = L('The partners agree and the Sejm supports it: after the commit the cabinet is appointed at once — ' +
+        configName(draft.configuration_id) + ', prime minister ' + CANDIDATES[draft.candidate_id].name + '.',
+        'Partnerzy się zgadzają i Sejm go poprze: po zatwierdzeniu gabinet powstanie od razu — ' + configName(draft.configuration_id) +
+        ', premier ' + CANDIDATES[draft.candidate_id].name + '.');
+    } else {
+      verdict = L('This offer fails (' + record.reason + '). Then ', 'Ta oferta nie przejdzie (' + reasonText(record.reason) + '). Wtedy ') + fallbackText(Q) + '.';
+    }
     return {
       mandatory: neg.mandatory, cost_t: formationCost(Q, neg), reason: neg.context.reason,
       configuration: configName(draft.configuration_id), candidate: (CANDIDATES[draft.candidate_id] || {}).name || '—',
+      candidate_note: draft.pps_mode === 'opposition' ? '' : candidateNote(Q, draft.candidate_id),
       mode: L(MODE_NAMES[offer.pps_mode], MODE_NAMES_PL[offer.pps_mode]),
       minorities: offer.minority_terms.length ? L('requested', 'zabiegamy o nie') : L('not requested', 'nie zabiegamy'),
+      minority_seats: seatsOfList(S, SEGMENTS),
       stabilisation_open: stabilisationTermsOpen(draft),
       stabilisation: L({none: 'no terms', loan: 'a loan and limited cuts', protections: 'protections and a heavier burden on wealth'}[offer.stabilisation_terms] || 'no terms',
         {none: 'bez warunków', loan: 'pożyczka i ograniczone cięcia', protections: 'osłony i większe obciążenie majątku'}[offer.stabilisation_terms] || 'bez warunków'),
       minority_allowed: !!config.minority_support,
       portfolios: offer.pps_mode === 'member' ? (own.length ? own.map(portfolioShort).join(', ') : L('none', 'brak')) : L('none (outside the cabinet)', 'brak (poza gabinetem)'),
+      points: pointsText(Q, draft),
       allocation: PORTFOLIOS.map(key => portfolioShort(key) + ': ' + describeParty(offer.portfolios[key])).join('; '),
-      partners: partnerLines.length ? partnerLines.join(' | ') : L('none', 'brak'),
-      members_seats: seatsOfList(S, offer.members), requested_seats: fc.yes, majority: majorityRequired(S),
-      programme: describeProgramme(offer.programme),
+      partner_lines: partnerLines,
+      clubs: config.expert ? L('a non-party cabinet', 'gabinet bezpartyjny') : clubsText(S, offer.members),
+      members_seats: seatsOfList(S, offer.members), requested_seats: forecast(Q, offer, offer.members.concat(offer.supporters)).yes, majority: majorityRequired(S),
+      votes: record ? votesText(S, record.forecast) : '',
+      verdict: verdict,
+      programme: config.expert ? describeProgramme((CANDIDATES[draft.candidate_id] || {}).programme) : describeProgramme(offer.programme),
     };
   }
 
@@ -1235,19 +1524,14 @@
     S.negotiation = null;
   }
 
-  // One commit: the partners answer yes or no; the head of state appoints the best feasible offer.
-  function submitFormation(Q) {
+  // The answers to the offer being prepared (8.3, 8.6), without changing anything: the record of the PPS offer and,
+  // when it is accepted, the cabinet to appoint. The screen shows it live; the commit applies it (Z — 0.61).
+  function assessDraft(Q, draftOverride) {
     const S = Q.S, neg = S.negotiation;
-    if (!neg || neg.kind !== 'cabinet' || neg.phase !== 'draft') throw new Error('submitFormation: no offer is being prepared');
-    syncRelations(Q);
-    if (formationCost(Q, neg)) rules.commitMainAction(Q, 'parliament.cabinet_formation', {negotiation_id: neg.id});
-    const draft = neg.draft;
+    const draft = draftOverride || neg.draft;
     const context = neg.context;
-    const result = {negotiation_id: neg.id, t: Q.time, reason: context.reason, pps_mode: draft.pps_mode, pps_offer: null,
-      appointed: null, lines: []};
-    let entries = [];
-    let bound = [];
-    if (draft.pps_mode !== 'opposition' && CONFIGURATIONS[draft.configuration_id].expert) {
+    if (draft.pps_mode === 'opposition') return {pps_offer: null, offer: null, entry: null};
+    if (CONFIGURATIONS[draft.configuration_id].expert) {
       const entry = expertEntry(Q, draft.candidate_id, [], true);
       entry.offer.stabilisation_terms = stabilisationTermsOpen(draft) ? draft.stabilisation_terms || 'none' : 'none';
       // Without an agreement on the terms there is no support (test "Tolerowanie B14").
@@ -1256,39 +1540,46 @@
         entry.ok = false;
         entry.reason = terms.reason;
       }
-      result.pps_offer = {configuration_id: 'expert', candidate_id: draft.candidate_id, evaluations: entry.evaluations,
-        forecast: entry.forecastSummary, accepted: entry.ok, reason: entry.ok ? '' : entry.reason, terms_answer: terms};
-      if (entry.ok) {
-        bound = entry.offer.supporters.filter(id => id !== 'pps');
-        entries.push({offer: entry.offer, evaluations: entry.signed, forecast: entry.forecast, rank: rankOf(Q, entry.offer, entry.signed)});
-      }
-    } else if (draft.pps_mode !== 'opposition') {
-      const offer = buildCabinetOffer(Q, draft, context);
-      if (neg.advisor_bonus && neg.advisor_bonus_until >= Q.time && BROAD_CONFIGURATIONS.indexOf(offer.configuration_id) >= 0) {
-        offer.advisor_bonus = neg.advisor_bonus;
-      }
-      const evaluations = evaluateOffer(Q, offer, context);
-      const members = offer.members.filter(m => m !== 'pps');
-      const membersAccept = members.every(m => evaluations.filter(e => e.actor === m)[0].accept);
-      const acceptedSupporters = offer.supporters.filter(s => s === 'pps' || (evaluations.filter(e => e.actor === s)[0] || {}).accept);
-      const supporting = offer.members.concat(acceptedSupporters);
-      const fc = forecast(Q, offer, supporting);
-      const acceptedPartners = evaluations.filter(e => e.accept).length;
-      const candidateOk = draft.candidate_id !== 'daszynski' || CONFIGURATIONS[draft.configuration_id].majority_alone || acceptedPartners >= 2;
-      const ok = membersAccept && candidateOk && fc.viable && (offer.members.length > 0 || acceptedSupporters.length > 1);
-      result.pps_offer = {configuration_id: offer.configuration_id, candidate_id: offer.candidate_id, evaluations: evaluations,
-        forecast: {yes: fc.yes, no: fc.no, abstain: fc.abstain, majority: fc.majority, viable: fc.viable}, accepted: ok,
-        reason: ok ? '' : (!membersAccept ? 'a cabinet partner refused' : !candidateOk ? 'fewer than two partners accept Daszyński' :
-          !fc.viable ? 'too few votes for the budget and against dismissal' : 'no signed support')};
-      if (ok) {
-        offer.supporters = acceptedSupporters;
-        bound = supporting.filter(id => id !== 'pps');
-        entries.push({offer: offer, evaluations: evaluations.filter(e => e.accept), forecast: fc, rank: rankOf(Q, offer, evaluations)});
-      }
+      return {pps_offer: {configuration_id: 'expert', candidate_id: draft.candidate_id, evaluations: entry.evaluations,
+        forecast: entry.forecastSummary, accepted: entry.ok, reason: entry.ok ? '' : entry.reason, terms_answer: terms}, offer: entry.offer,
+        entry: entry.ok ? {offer: entry.offer, evaluations: entry.signed, forecast: entry.forecast} : null};
     }
-    const npc = npcEntries(Q, bound, draft.pps_mode === 'opposition' || !result.pps_offer || !result.pps_offer.accepted);
-    entries = entries.concat(npc);
-    const best = pickBest(entries);
+    const offer = buildCabinetOffer(Q, draft, context);
+    if (neg.advisor_bonus && neg.advisor_bonus_until >= Q.time && BROAD_CONFIGURATIONS.indexOf(offer.configuration_id) >= 0) {
+      offer.advisor_bonus = neg.advisor_bonus;
+    }
+    const evaluations = evaluateOffer(Q, offer, context);
+    const members = offer.members.filter(m => m !== 'pps');
+    const membersAccept = members.every(m => evaluations.filter(e => e.actor === m)[0].accept);
+    const acceptedSupporters = offer.supporters.filter(s => s === 'pps' || (evaluations.filter(e => e.actor === s)[0] || {}).accept);
+    const supporting = offer.members.concat(acceptedSupporters);
+    const fc = forecast(Q, offer, supporting);
+    const acceptedPartners = evaluations.filter(e => e.accept).length;
+    const candidateOk = draft.candidate_id !== 'daszynski' || CONFIGURATIONS[draft.configuration_id].majority_alone || acceptedPartners >= 2;
+    const ok = membersAccept && candidateOk && fc.viable && (offer.members.length > 0 || acceptedSupporters.length > 1);
+    const record = {configuration_id: offer.configuration_id, candidate_id: offer.candidate_id, evaluations: evaluations,
+      forecast: {yes: fc.yes, no: fc.no, abstain: fc.abstain, majority: fc.majority, viable: fc.viable}, accepted: ok,
+      reason: ok ? '' : (!membersAccept ? 'a cabinet partner refused' : !candidateOk ? 'fewer than two partners accept Daszyński' :
+        !fc.viable ? 'too few votes for the budget and against dismissal' : 'no signed support')};
+    if (!ok) return {pps_offer: record, offer: offer, entry: null};
+    offer.supporters = acceptedSupporters;
+    return {pps_offer: record, offer: offer, entry: {offer: offer, evaluations: evaluations.filter(e => e.accept), forecast: fc}};
+  }
+
+  // One commit: the partners answer; an accepted PPS offer is appointed at once (Z — 0.61, decision 6A). Only without
+  // one does the head of state choose among the cabinets of the other parties, as before (8.7: the average score, +8 for
+  // the candidate of the period).
+  function submitFormation(Q) {
+    const S = Q.S, neg = S.negotiation;
+    if (!neg || neg.kind !== 'cabinet' || neg.phase !== 'draft') throw new Error('submitFormation: no offer is being prepared');
+    syncRelations(Q);
+    if (formationCost(Q, neg)) rules.commitMainAction(Q, 'parliament.cabinet_formation', {negotiation_id: neg.id});
+    const draft = neg.draft;
+    const context = neg.context;
+    const assessment = assessDraft(Q);
+    const result = {negotiation_id: neg.id, t: Q.time, reason: context.reason, pps_mode: draft.pps_mode, pps_offer: assessment.pps_offer,
+      appointed: null, lines: []};
+    const best = assessment.entry || pickBest(npcEntries(Q, [], true));
     if (best) {
       appointCabinet(Q, best, context);
       result.appointed = {cabinet_id: S.cabinet.id, configuration_id: best.offer.configuration_id, candidate_id: best.offer.candidate_id,
@@ -1486,6 +1777,16 @@
       S.cabinet_crisis = null;
     }
     S.history.reasons.push({t: t, kind: 'cabinet_appointed', cabinet_id: cabinetId, by: authority});
+    // Z — 0.61 (decision 5A; P): a PPS offer with the leader of a partner party as prime minister wins that party +5.
+    const premierParty = premierPartner(offer);
+    if (premierParty) changeRelation(Q, premierParty, PREMIER_RELATION, 'premier:' + cabinetId);
+  }
+
+  const PREMIER_RELATION = 5;
+
+  function premierPartner(offer) {
+    const party = CANDIDATES[offer.candidate_id] ? CANDIDATES[offer.candidate_id].party : null;
+    return offer.by === 'pps' && party && party !== 'pps' && offer.members.indexOf(party) >= 0 ? party : null;
   }
 
   // After the certified 1922 result the previous cabinet stays as caretaker until a new one is
@@ -1522,6 +1823,11 @@
       if (!config.available) return {available: false, reason: config.reason};
       const candidate = candidateStatus(Q, draft.candidate_id, draft);
       if (!candidate.available) return {available: false, reason: candidate.reason};
+      const points = influencePoints(Q, draft).points, cost = claimCost(draft.portfolio_claim);
+      if (portfolioChoiceOpen(draft) && cost > points) {
+        return {available: false, reason: L('The chosen portfolios cost ' + cost + ' influence points; PPS has ' + points + '.',
+          'Wybrane resorty kosztują ' + cost + ' punktów wpływu, a PPS ma ' + points + '.')};
+      }
     }
     if (crisis && crisis.last_pps_draft && JSON.stringify(crisis.last_pps_draft) === JSON.stringify(draft) && !situationChanged(Q)) {
       return {available: false, reason: L('The same offer was refused and nothing has changed since.', 'Ta sama oferta została odrzucona i od tego czasu nic się nie zmieniło.')};
@@ -1596,8 +1902,16 @@
   function draftPortfolioChoice(Q) {
     const neg = Q.S.negotiation;
     if (!neg || neg.phase !== 'draft') return false;
-    const config = CONFIGURATIONS[neg.draft.configuration_id];
-    return neg.draft.pps_mode === 'member' && !config.expert && !config.majority_alone && !config.portfolio_map;
+    return portfolioChoiceOpen(neg.draft);
+  }
+
+  // Step 4 of the formation (Z — 0.61): the status of one portfolio for the PPS menu.
+  function portfolioStatus(Q, key) {
+    const neg = Q.S.negotiation;
+    if (!neg || neg.phase !== 'draft' || !portfolioChoiceOpen(neg.draft)) {
+      return {available: false, held: false, note: '', reason: L('PPS chooses no portfolios in this offer.', 'W tej ofercie PPS nie wybiera resortów.')};
+    }
+    return portfolioStatusFor(Q, neg.draft, key, neg.context);
   }
 
   // The result screen: the partners' answers with reasons and who was appointed.
@@ -1609,7 +1923,7 @@
     const lines = [];
     if (r.pps_offer) {
       for (const e of r.pps_offer.evaluations) {
-        lines.push(actorName(e.actor) + ': ' + (e.accept ? L('accepts (', 'akceptuje (') + rules.num(e.score, 1) + ')' :
+        lines.push(actorName(e.actor) + ': ' + (e.accept ? L('accepts (', 'akceptuje (') + shownScore(e.score) + ')' :
           L('refuses — ', 'odmawia — ') + e.reasons.map(reasonText).join('; ')));
       }
     }
@@ -2955,6 +3269,24 @@
     TOLERATION_MONTHS: TOLERATION_MONTHS,
     TOLERATION_REVIEW: TOLERATION_REVIEW,
     formationView: formationView,
+    FORMATION_WEIGHTS: FORMATION_WEIGHTS,
+    FORMATION_THRESHOLD: FORMATION_THRESHOLD,
+    formationScoreParts: formationScoreParts,
+    evaluateCabinetPartner: evaluateCabinetPartner,
+    PORTFOLIO_COSTS: PORTFOLIO_COSTS,
+    influencePoints: influencePoints,
+    claimCost: claimCost,
+    defaultClaim: defaultClaim,
+    portfolioStatus: portfolioStatus,
+    portfolioLine: portfolioLine,
+    chooseCoalition: chooseCoalition,
+    assessDraft: assessDraft,
+    fallbackCabinet: fallbackCabinet,
+    coalitionLine: coalitionLine,
+    oppositionLine: oppositionLine,
+    candidateNote: candidateNote,
+    candidateShown: candidateShown,
+    premierPartner: premierPartner,
     submitFormation: submitFormation,
     openCrisis: openCrisis,
     situationChanged: situationChanged,

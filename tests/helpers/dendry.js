@@ -104,10 +104,11 @@ function formCabinet(engine, { configuration, mode, candidate, minorities, claim
     choose(engine, 'polish_cabinet_formation.minorities_off');
   }
   if (claim) {
+    // Z — 0.61: step 4 gives up the portfolios held now and takes the requested ones with influence points.
     choose(engine, 'polish_cabinet_formation.portfolios');
-    if (claim.length === 1 && claim[0] === 'labor') choose(engine, 'polish_cabinet_formation.claim_labor');
-    else if (claim[0] === 'labor') pick('claim_plus', `plus_${claim[1]}`);
-    else pick('claim_instead', `instead_${claim[0]}`);
+    for (const c of engine.getCurrentChoices().filter(c => c.id.startsWith('polish_cabinet_formation.drop_'))) choose(engine, c.id);
+    for (const key of claim) choose(engine, `polish_cabinet_formation.take_${key}`);
+    choose(engine, 'polish_cabinet_formation.back');
   }
   choose(engine, 'polish_cabinet_formation.submit');
   assert.equal(engine.state.sceneId, 'polish_cabinet_formation.result');
