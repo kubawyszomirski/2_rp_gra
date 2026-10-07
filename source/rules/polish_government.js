@@ -871,9 +871,31 @@
       if (vote === 'yes') yes += club.seats; else if (vote === 'no') no += club.seats; else abstain += club.seats;
       lines.push({club: club.id, seats: club.seats, vote: vote});
     }
+    // Z — 0.67 (decision 1A of 7 X 2026; P on the background of PL-1922-MINORITY-VOTES): a cabinet without PSL Piast that
+    // has more votes for than against only thanks to the minority representations is opposed by the Polish clubs of the
+    // centre and the right outside it, as after the election of Narutowicz with the votes of the minorities in 1922.
+    const minorityYes = lines.filter(l => SEGMENTS.indexOf(l.club) >= 0 && l.vote === 'yes').reduce((n, l) => n + l.seats, 0);
+    let minorityReaction = false;
+    if (minorityYes > 0 && supporting.indexOf('psl_piast') < 0 && yes - minorityYes <= no) {
+      for (const line of lines) {
+        if (MINORITY_VOTE_OPPONENTS.indexOf(line.club) >= 0 && line.vote === 'abstain') {
+          line.vote = 'no';
+          line.minority_reaction = true;
+          abstain -= line.seats;
+          no += line.seats;
+          minorityReaction = true;
+        }
+      }
+    }
     const majority = yes >= majorityRequired(S);
-    return {yes: yes, no: no, abstain: abstain, majority: majority, viable: majority || yes > no, lines: lines};
+    return {yes: yes, no: no, abstain: abstain, majority: majority, viable: majority || yes > no, lines: lines, minority_reaction: minorityReaction};
   }
+
+  const MINORITY_VOTE_OPPONENTS = Object.freeze(['psl_piast', 'npr', 'pschd', 'zln']);
+  // Z — 0.67 (decision 3A of 7 X 2026; P): after the election of 1922 a cabinet with PPS needs a good election result — its
+  // own clubs, without the minority representations, need 185 MPs (178 historically for PPS, PSL Wyzwolenie, PSL Piast
+  // and NPR; 175–181 in the test campaigns, 185–186 with a joint list and a campaign).
+  const POST_ELECTION_OWN_SEATS = 185;
 
   // 9.6: the broader agreement with the KPP, on its three rules (legal vote, no forced merger, agreed end of strikes),
   // unlocks the offers united_left and workers_front; they still need the gates, the partners and the votes of 8.6
@@ -916,6 +938,14 @@
     }
     if (config.majority_alone && seatsOf(S, 'pps') < majorityRequired(S)) {
       return {available: false, reason: L('PPS has no majority of its own.', 'PPS nie ma własnej większości.')};
+    }
+    if (context && context.reason === 'post_election' && !config.expert && config.members.indexOf('pps') >= 0) {
+      const own = seatsOfList(S, config.members);
+      if (own < POST_ELECTION_OWN_SEATS) {
+        return {available: false, reason: L('After the election of 1922 a cabinet with PPS needs ' + POST_ELECTION_OWN_SEATS +
+          ' MPs of its own clubs, without the minority representations; this one has ' + own + '.',
+          'Po wyborach 1922 r. gabinet z PPS potrzebuje ' + POST_ELECTION_OWN_SEATS + ' posłów własnych klubów, bez mniejszości; ten ma ' + own + '.')};
+      }
     }
     if (!config.expert) {
       // A realistic chance of support: the members, with the minority representations where allowed.
@@ -1018,7 +1048,7 @@
     const fc = forecast(Q, offer, offer.supporters, withPPS ? bound : bound);
     const ok = signed.length > 0 && fc.viable;
     return {offer: offer, evaluations: evaluations, signed: signed, forecast: fc, ok: ok,
-      forecastSummary: {yes: fc.yes, no: fc.no, abstain: fc.abstain, majority: fc.majority, viable: fc.viable},
+      forecastSummary: {yes: fc.yes, no: fc.no, abstain: fc.abstain, majority: fc.majority, viable: fc.viable, minority_reaction: fc.minority_reaction},
       reason: !signed.length ? 'no club signs support for the expert' : 'too few votes for the budget and against dismissal'};
   }
 
@@ -1341,12 +1371,14 @@
   function votesText(S, fc) {
     const base = L(fc.yes + ' for, ' + fc.no + ' against, ' + fc.abstain + ' abstaining; a majority is ' + majorityRequired(S) + '. ',
       fc.yes + ' za, ' + fc.no + ' przeciw, ' + fc.abstain + ' wstrzymujących się; większość to ' + majorityRequired(S) + '. ');
-    if (fc.majority) return base + L('A majority cabinet.', 'Rząd większościowy.');
+    const reaction = fc.minority_reaction ? L('PSL Piast, NPR, the Christian Democrats and ZLN vote against a cabinet that rests on the votes of the minorities. ',
+      'PSL Piast, NPR, chadecja i ZLN głosują przeciw rządowi opartemu na głosach mniejszości. ') : '';
+    if (fc.majority) return base + reaction + L('A majority cabinet.', 'Rząd większościowy.');
     if (fc.viable) {
-      return base + L('A minority cabinet: more votes for than against, so it can govern until the Sejm dismisses it.',
+      return base + reaction + L('A minority cabinet: more votes for than against, so it can govern until the Sejm dismisses it.',
         'Rząd mniejszościowy: więcej głosów za niż przeciw, więc może rządzić, dopóki Sejm go nie odwoła.');
     }
-    return base + L('Too few votes: more against than for.', 'Za mało głosów: więcej przeciw niż za.');
+    return base + reaction + L('Too few votes: more against than for.', 'Za mało głosów: więcej przeciw niż za.');
   }
 
   function cabinetName(entry) {
@@ -1397,7 +1429,11 @@
         L('too few votes (' + fc.yes + ' for, ' + fc.no + ' against)', 'za mało głosów (' + fc.yes + ' za, ' + fc.no + ' przeciw)');
     const minorities = config.minority_support ? L(' The minority representations can add ' + seatsOfList(S, SEGMENTS) + ' MPs.',
       ' Mniejszości mogą dodać ' + seatsOfList(S, SEGMENTS) + ' posłów.') : '';
-    return {available: true, line: chosen + clubs + ' ' + partners + '. ' + L('Votes: ', 'Głosy: ') + votes + '.' + minorities + ' ' +
+    // Z — 0.67: whether the sample offer rests on the votes of the minorities (with them asked, where allowed).
+    const withMinorities = config.minority_support ? assessDraft(Q, Object.assign(sampleDraft(Q, configId), {seek_minority_support: true})).pps_offer : null;
+    const reaction = withMinorities && withMinorities.forecast.minority_reaction ? L(' With the minorities, PSL Piast, NPR, the Christian Democrats and ZLN would vote against it.',
+      ' Z mniejszościami przeciw głosowałyby PSL Piast, NPR, chadecja i ZLN.') : '';
+    return {available: true, line: chosen + clubs + ' ' + partners + '. ' + L('Votes: ', 'Głosy: ') + votes + '.' + minorities + reaction + ' ' +
       L('Programme: ', 'Program: ') + programme + '.'};
   }
 
@@ -1558,7 +1594,7 @@
     const candidateOk = draft.candidate_id !== 'daszynski' || CONFIGURATIONS[draft.configuration_id].majority_alone || acceptedPartners >= 2;
     const ok = membersAccept && candidateOk && fc.viable && (offer.members.length > 0 || acceptedSupporters.length > 1);
     const record = {configuration_id: offer.configuration_id, candidate_id: offer.candidate_id, evaluations: evaluations,
-      forecast: {yes: fc.yes, no: fc.no, abstain: fc.abstain, majority: fc.majority, viable: fc.viable}, accepted: ok,
+      forecast: {yes: fc.yes, no: fc.no, abstain: fc.abstain, majority: fc.majority, viable: fc.viable, minority_reaction: fc.minority_reaction}, accepted: ok,
       reason: ok ? '' : (!membersAccept ? 'a cabinet partner refused' : !candidateOk ? 'fewer than two partners accept Daszyński' :
         !fc.viable ? 'too few votes for the budget and against dismissal' : 'no signed support')};
     if (!ok) return {pps_offer: record, offer: offer, entry: null};
@@ -3333,6 +3369,8 @@
     TOLERATION_MONTHS: TOLERATION_MONTHS,
     TOLERATION_REVIEW: TOLERATION_REVIEW,
     formationView: formationView,
+    MINORITY_VOTE_OPPONENTS: MINORITY_VOTE_OPPONENTS,
+    POST_ELECTION_OWN_SEATS: POST_ELECTION_OWN_SEATS,
     FORMATION_WEIGHTS: FORMATION_WEIGHTS,
     FORMATION_THRESHOLD: FORMATION_THRESHOLD,
     formationScoreParts: formationScoreParts,

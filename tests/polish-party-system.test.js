@@ -109,6 +109,14 @@ function runPostEvent(Q) {
   });
 }
 
+// Z — 0.67 (decision 3A of 7 X 2026): after the election of 1922 a cabinet with PPS needs 185 MPs of its own clubs, so
+// the tests of a left cabinet give the left a strong result in the chamber (a fixture, not a calibrated election).
+function strongLeft(Q) {
+  Q.S.parliament.clubs = PolishInstitutions.clubsFromSeats({kpp: 2, pps: 120, npr: 10, psl_wyzwolenie: 70, psl_piast: 40, pschd: 20,
+    zln: 80, minorities_bloc: 90, other: 12}, Q.parties);
+  return Q;
+}
+
 function closeTo(actual, expected, tolerance = 1e-9) {
   assert.ok(Math.abs(actual - expected) <= tolerance, `${actual} != ${expected}`);
 }
@@ -314,9 +322,11 @@ test('minority-supported government is external toleration, not cabinet membersh
   const Q = runElection(newGameState());
   Q.sejm_pending = {id: 'fixture', year: 1922, month: 11, first: true, phase: 'pending'};
   runScene('sejm_election_result', Q);
+  strongLeft(Q);
   runScene('polish_opening_state', Q);
   // One cabinet offer (8.8): PPS and PSL Wyzwolenie, supported from outside by both minority representations.
-  PolishGovernment.setDraft(Q, 'configuration_id', 'left_minority');
+  PolishGovernment.chooseCoalition(Q, 'left_minority');
+  PolishGovernment.setDraft(Q, 'pps_mode', 'member');
   PolishGovernment.setDraft(Q, 'seek_minority_support', true);
   const result = PolishGovernment.submitFormation(Q);
   runScene('polish_opening_state', Q);
@@ -465,7 +475,9 @@ test('the six approved starting-adviser actions follow 10.4.3 and write only the
   const coalition = runElection(newGameState());
   coalition.sejm_pending = {id: 'fixture', year: 1922, month: 11, first: true, phase: 'pending'};
   runScene('sejm_election_result', coalition);
-  PolishGovernment.setDraft(coalition, 'configuration_id', 'left_minority');
+  strongLeft(coalition);
+  PolishGovernment.chooseCoalition(coalition, 'left_minority');
+  PolishGovernment.setDraft(coalition, 'pps_mode', 'member');
   PolishGovernment.setDraft(coalition, 'seek_minority_support', true);
   PolishGovernment.submitFormation(coalition);
   const agreements = coalition.S.cabinet.agreement_ids.map(id => coalition.S.agreements[id]).filter(a => a.kind === 'cabinet');

@@ -237,13 +237,16 @@ test('Gabinet po wyborach: after 1922 the broad and stabilising cabinets stay gr
   Q.S.history.cabinets.push({ id: 'a', pm: 'a', end_reason: 'fall', ended_at: 9 }, { id: 'b', pm: 'b', end_reason: 'fall', ended_at: 10 });
   assert.equal(gov.draftChoiceStatus(Q, 'configuration', 'broad_centre').available, false);
   assert.equal(gov.configurationStatus(Q, 'broad_centre', { reason: 'crisis' }).available, true, 'a real crisis unlocks it');
-  // The left depends on the forecast of 7A, not on a fixed ban. In the opening parliament it has 77
-  // MPs with the minorities; at the opening relations ZLN (83) and PSChD (27) vote against.
+  // Z — 0.67 (decision 3A): after the election of 1922 a cabinet with PPS needs 185 MPs of its own clubs, without the
+  // minority representations; the 60 MPs of PPS and PSL Wyzwolenie in the opening parliament are far from it, whatever
+  // the relations. In a later crisis the threshold does not apply and the forecast of 7A decides.
+  assert.equal(gov.POST_ELECTION_OWN_SEATS, 185);
   const normal = fixture({ time: 11, year: 1922, month: 11 });
   formation(normal);
-  assert.match(gov.draftChoiceStatus(normal, 'configuration', 'left_minority').reason, /No realistic parliamentary support/);
-  // At relation 90 with everyone nobody votes against, so the same 77 MPs could govern as a minority.
-  assert.equal(gov.draftChoiceStatus(Q, 'configuration', 'left_minority').available, true);
+  assert.match(gov.draftChoiceStatus(normal, 'configuration', 'left_minority').reason,
+    /After the election of 1922 a cabinet with PPS needs 185 MPs of its own clubs, without the minority representations; this one has 60\./);
+  assert.match(gov.draftChoiceStatus(Q, 'configuration', 'left_minority').reason, /needs 185 MPs/, 'relation 90 does not help');
+  assert.match(gov.configurationStatus(normal, 'left_minority', { reason: 'crisis' }).reason, /No realistic parliamentary support/);
   const strong = chamber({ pps: 170, psl_wyzwolenie: 60, minorities_bloc: 30, zln: 100, other: 84 }, { time: 11, year: 1922, month: 11 });
   assert.equal(gov.configurationStatus(strong, 'left_minority', { reason: 'post_election' }).available, true);
 });
@@ -252,7 +255,8 @@ test('Poparcie mniejszości: one segment accepts, the other refuses; appointment
   // PPS and PSL Wyzwolenie have 140 MPs, ZLN 214; the minorities (30 Jewish, 60 other) decide.
   const seats = { pps: 100, psl_wyzwolenie: 40, minorities_bloc: 90, zln: 214 };
   const Q = chamber(seats, { time: 11, year: 1922, month: 11 });
-  formation(Q);
+  // Z — 0.67: a later cabinet crisis, not the formation after the election of 1922 (which needs 185 MPs of its own clubs).
+  formation(Q, 'crisis');
   gov.setDraft(Q, 'configuration_id', 'left_minority');
   assert.equal(gov.draftChoiceStatus(Q, 'configuration', 'left_minority').available, true, 'possible with minority support');
   gov.setDraft(Q, 'seek_minority_support', true);
@@ -273,7 +277,7 @@ test('Poparcie mniejszości: one segment accepts, the other refuses; appointment
   assert.notEqual(Q.S.cabinet.configuration_id, 'left_minority');
   // With both segments the same offer is appointed; minorities receive no portfolio.
   const ok = chamber(seats, { time: 11, year: 1922, month: 11 });
-  formation(ok);
+  formation(ok, 'crisis');
   gov.setDraft(ok, 'configuration_id', 'left_minority');
   gov.setDraft(ok, 'seek_minority_support', true);
   const appointed = gov.submitFormation(ok);
@@ -766,9 +770,10 @@ test('Lista gabinetów 0.61: every cabinet in one line with its clubs, seats, pa
   const line = gov.coalitionLine(Q, 'centre_left');
   assert.equal(line.available, true);
   assert.match(line.line, /^Chosen now\. PPS 100 \+ PSL Wyzwolenie 60 \+ PSL Piast 80 \+ NPR 40 = 280 MPs\. Partners: PSL Wyzwolenie 70 ✓, PSL Piast 77 ✓, NPR 76 ✓\. Votes: majority \(280 for; 223 needed\)\./);
+  // Z — 0.67: after the election of 1922 the 160 MPs of PPS and PSL Wyzwolenie are below the 185 of decision 3A.
   const left = gov.coalitionLine(Q, 'left_minority');
-  assert.match(left.line, /^PPS 100 \+ PSL Wyzwolenie 60 = 160 MPs\. Partners: PSL Wyzwolenie \d+ ✓\. Votes: minority cabinet \(160 for, 100 against\)\./);
-  assert.match(left.line, /The minority representations can add 0 MPs\./);
+  assert.equal(left.available, false);
+  assert.match(left.line, /^PPS 100 \+ PSL Wyzwolenie 60 = 160 MPs\. After the election of 1922 a cabinet with PPS needs 185 MPs/);
   const broad = gov.coalitionLine(Q, 'broad_centre');
   assert.equal(broad.available, false);
   assert.match(broad.line, /= 280 MPs\. Only in a real crisis/);
@@ -780,4 +785,53 @@ test('Lista gabinetów 0.61: every cabinet in one line with its clubs, seats, pa
   gov.setDraft(Q, 'pps_mode', 'opposition');
   gov.chooseCoalition(Q, 'expert');
   assert.equal(Q.S.negotiation.draft.pps_mode, 'external_support');
+});
+
+// ---- Z — 0.67: the formation after the election of 1922 (decisions 1A and 3A of 7 X 2026) ------------------------
+test('Głosy mniejszości 0.67: a cabinet without PSL Piast that passes only with the minorities meets the votes of Piast, NPR, PSChD and ZLN', () => {
+  // A later crisis (no threshold of 3A). PPS and PSL Wyzwolenie have 100 MPs, the minorities 90; ZLN 100 and PSChD 34 vote
+  // against, so only the minorities give the cabinet more votes for than against: PSL Piast 90 and NPR 30 vote against too.
+  const weak = chamber({ pps: 60, psl_wyzwolenie: 40, minorities_bloc: 90, psl_piast: 90, npr: 30, pschd: 34, zln: 100 }, { time: 20, year: 1923, month: 8 });
+  formation(weak, 'crisis');
+  gov.setDraft(weak, 'configuration_id', 'left_minority');
+  gov.setDraft(weak, 'seek_minority_support', true);
+  const w = gov.buildCabinetOffer(weak, weak.S.negotiation.draft, weak.S.negotiation.context);
+  const wf = gov.forecast(weak, w, w.members.concat(w.supporters));
+  assert.deepEqual([wf.minority_reaction, wf.yes, wf.no, wf.viable], [true, 190, 254, false]);
+  assert.deepEqual(wf.lines.filter(l => l.minority_reaction).map(l => l.club).sort(), ['npr', 'psl_piast']);
+  assert.match(gov.formationView(weak).votes, /PSL Piast, NPR, the Christian Democrats and ZLN vote against a cabinet that rests on the votes of the minorities\./);
+  assert.match(gov.configurationStatus(weak, 'left_minority', { reason: 'crisis' }).reason, /No realistic parliamentary support/);
+  // A strong left (150 MPs against 114) does not need the minorities: their votes cause no reaction.
+  const strong = chamber({ pps: 90, psl_wyzwolenie: 60, minorities_bloc: 90, psl_piast: 70, npr: 20, pschd: 34, zln: 80 }, { time: 20, year: 1923, month: 8 });
+  formation(strong, 'crisis');
+  gov.setDraft(strong, 'configuration_id', 'left_minority');
+  gov.setDraft(strong, 'seek_minority_support', true);
+  const s1 = gov.buildCabinetOffer(strong, strong.S.negotiation.draft, strong.S.negotiation.context);
+  const sf = gov.forecast(strong, s1, s1.members.concat(s1.supporters));
+  assert.deepEqual([sf.minority_reaction, sf.yes, sf.viable], [false, 240, true]);
+  // With PSL Piast inside (the Centre-left) the minorities' votes cause no reaction either.
+  gov.changeRelation(weak, 'psl_piast', 60 - weak.S.actors.relations.psl_piast, 'fixture');
+  gov.changeRelation(weak, 'npr', 60 - weak.S.actors.relations.npr, 'fixture');
+  gov.setDraft(weak, 'configuration_id', 'centre_left');
+  gov.setDraft(weak, 'seek_minority_support', true);
+  const centre = gov.buildCabinetOffer(weak, weak.S.negotiation.draft, weak.S.negotiation.context);
+  assert.equal(gov.forecast(weak, centre, centre.members.concat(centre.supporters)).minority_reaction, false);
+});
+
+test('Próg po wyborach 1922 0.67: a cabinet with PPS needs 185 MPs of its own clubs; a crisis later has no such threshold', () => {
+  const high = { psl_piast_relation: 60, npr_relation: 60 };
+  const at = (n, reason = 'post_election') => {
+    const Q = chamber({ pps: 50, psl_wyzwolenie: 50, psl_piast: 65, npr: n, pschd: 40, zln: 120, minorities_bloc: 90, other: 444 - 415 - n },
+      { time: 11, year: 1922, month: 11, ...high });
+    formation(Q, reason);
+    return gov.configurationStatus(Q, 'centre_left', Q.S.negotiation.context);
+  };
+  assert.match(at(19).reason, /After the election of 1922 a cabinet with PPS needs 185 MPs of its own clubs, without the minority representations; this one has 184\./);
+  assert.equal(at(20).available, true, '185 MPs of PPS, PSL Wyzwolenie, PSL Piast and NPR');
+  assert.equal(at(19, 'crisis').available, true, 'only the formation after the election');
+  // The cabinet of experts tolerated by PPS has no such threshold.
+  const Q = chamber({ pps: 50, psl_wyzwolenie: 50, psl_piast: 65, npr: 19, pschd: 40, zln: 120, minorities_bloc: 90, other: 10 }, { time: 11, year: 1922, month: 11 });
+  formation(Q);
+  assert.equal(gov.configurationStatus(Q, 'expert', Q.S.negotiation.context).available, true);
+  assert.equal(Q.S.negotiation.draft.configuration_id, 'expert', 'the default offer after the election is the tolerated expert');
 });

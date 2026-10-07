@@ -95,6 +95,15 @@ const LEFT_SEJM_ROWS = {
   unemployed: OLD_ROW([29.44, 34.96, 11.04, 1.84, 0.92, 4.6, 3.68, 5.52, 8]),
   national_minorities: OLD_ROW([9.2, 6.44, 0.92, 1.84, 0.92, 0.92, 1.84, 69.92, 8]),
 };
+// Z — 0.67 (decision 3A of 7 X 2026): after the election of 1922 a cabinet with PPS needs 185 MPs of its own clubs. The
+// formation tests give the left a strong result in the chamber — PPS 110 and PSL Wyzwolenie 80, a minority cabinet with
+// the 30 MPs of the minority representations — and open the formation again on these seats (a fixture).
+function strongLeft(engine) {
+  const Q = engine.state.qualities;
+  Q.S.parliament.clubs = PolishInstitutions.clubsFromSeats({ kpp: 2, pps: 110, npr: 20, psl_wyzwolenie: 80, psl_piast: 60, pschd: 30,
+    zln: 100, minorities_bloc: 30, other: 12 }, Q.parties);
+  PolishGovernment.beginPostElectionFormation(Q);
+}
 // Only PPS, KPP and small lists win seats: no cabinet can be formed (a crisis fixture).
 const NO_PARTNERS = { kpp: 60, pps: 20, other: 20 };
 
@@ -102,6 +111,7 @@ test('C1: one screen; every setting is free and returns to it; one commit, then 
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
   november(engine, LEFT_SEJM_ROWS);
+  strongLeft(engine);
   choose(engine, 'polish_cabinet_formation');
   const before = { t: Q.time, actions: Q.month_actions, cabinet: clone(Q.S.cabinet), negotiations: Q.S.history.negotiations.length };
   assert.deepEqual(ids(engine).sort(), ['polish_cabinet_formation.candidates', 'polish_cabinet_formation.configurations',
@@ -114,9 +124,9 @@ test('C1: one screen; every setting is free and returns to it; one commit, then 
   choose(engine, 'polish_cabinet_formation.minorities_on');
   choose(engine, 'polish_cabinet_formation.candidates');
   choose(engine, 'polish_cabinet_formation.cand_daszynski');
-  // Z — 0.61: step 4 buys Interior with influence points (61 = 51% of the cabinet's seats + 10; Labour 10, Interior 20).
+  // Z — 0.61: step 4 buys Interior with influence points (68 = 58% of the cabinet's seats + 10; Labour 10, Interior 20).
   choose(engine, 'polish_cabinet_formation.portfolios');
-  assert.match(content(engine), /Influence points: 61 = PPS share of the cabinet’s seats 51% \+ 10/);
+  assert.match(content(engine), /Influence points: 68 = PPS share of the cabinet’s seats 58% \+ 10/);
   choose(engine, 'polish_cabinet_formation.take_interior');
   assert.equal(choice(engine, 'polish_cabinet_formation.drop_interior').canChoose, true, 'it can be given back');
   choose(engine, 'polish_cabinet_formation.back');
@@ -225,6 +235,7 @@ test('Status and Library show the prime minister, support and the nine portfolio
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
   november(engine, LEFT_SEJM_ROWS);
+  strongLeft(engine);
   dendry.formCabinet(engine, { configuration: 'left_minority', mode: 'member' });
   choose(engine, 'root');
   engine.goToScene('status');
@@ -497,6 +508,7 @@ test('save and load in the middle of the formation keeps the offer; the restored
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
   november(engine, LEFT_SEJM_ROWS);
+  strongLeft(engine);
   choose(engine, 'polish_cabinet_formation');
   choose(engine, 'polish_cabinet_formation.minorities_on');
   choose(engine, 'polish_cabinet_formation.candidates');

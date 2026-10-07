@@ -1,5 +1,17 @@
 # Historical Source Register
 
+## PL-1922-ELECTION-MINORITY-VOTES — the Sejm of 1922 and the cabinet resting on minority votes
+
+- **Authority:** on 7 October 2026 the user asked why forming a cabinet after the 1922 election was so easy and for historical research; decisions 1A and 3A (technical reference 0.67, sections 8.8 and 23.40). The user's Notion workspace held no notes on the game.
+- **Sources (accessed 7 October 2026):**
+  - Seats of the election of 5 November 1922 (444): ChZJN 163, PSL Piast 70, Bloc of National Minorities 66, PSL Wyzwolenie 49, PPS 41, NPR 18, other Jewish and Ukrainian lists about 16–17, Polish Centre 6, the communist list 2, others 4 — Wikipedia (pl), "Wybory parlamentarne w Polsce w 1922 roku" (https://pl.wikipedia.org/wiki/Wybory_parlamentarne_w_Polsce_w_1922_roku); vote shares of the right about 29%, the centre 24%, the left 25%, the minority bloc 22%: IPN, "Czasy sejmokracji" (https://przystanekhistoria.pl/pa2/tematy/gabriel-narutowicz/98308,Czasy-sejmokracji.pdf).
+  - Narutowicz was elected president on 9 December 1922 with 289 votes against 227, with the left, PSL Piast and the national minorities; part of the right-wing press called him "the Jewish president" — Wikipedia (en), "Gabriel Narutowicz" (https://en.wikipedia.org/wiki/Gabriel_Narutowicz); M. Przeperski, "Ku śmierci prezydenta" (https://teologiapolityczna.pl/michal-przeperski-ku-smierci-prezydenta-klimat-polityczny-jesienia-1922-r/pdf).
+  - The Lanckorona Pact of 17 May 1923 between PSL Piast and the parties of ChZJN (stricter polonisation, a larger role of the Church) dismissed Sikorski's cabinet and formed Witos's Chjeno-Piast cabinet on 28 May 1923 — Wikipedia (en), "Lanckorona Pact" (https://en.wikipedia.org/wiki/Lanckorona_Pact) and "Chjeno-Piast" (https://en.wikipedia.org/wiki/Chjeno-Piast).
+- **Historical fact:** arithmetically the left, PSL Piast and the minorities had a majority (the presidential vote of December 1922), but PPS formed no cabinet between 1922 and 1925 and PSL Piast turned to the right in 1923 (with `PL-1922-1926-CABINETS`).
+- **Gameplay simplification (P):** the threshold of 185 MPs of a cabinet's own clubs after the election, and the rule that PSL Piast, NPR, PSChD and ZLN vote against a cabinet without Piast that passes only with the minorities, are game rules inferred from this background; they do not reconstruct a recorded vote. The 185 is calibrated on the test campaigns (175–181 MPs for the Centre-left, 185–186 with a joint list and a campaign).
+- **Confidence:** high for the seat counts and the dates (several concordant secondary sources; the official statistics were not checked); the reaction of the clubs is a design inference. **Unresolved:** the exact club composition after the election and each club's votes on the cabinets of 1922–1923 — TBD, historical research required.
+- **Game use:** `PolishGovernment.forecast`, `configurationStatus` (`MINORITY_VOTE_OPPONENTS`, `POST_ELECTION_OWN_SEATS`).
+
 ## PL-PILSUDSKI-QUOTES-2026-10-05 — authentic quotations on card B2
 
 - **Authority:** on 5 October 2026 the user asked for an authentic quotation of Piłsudski on the card of his criticism of the
