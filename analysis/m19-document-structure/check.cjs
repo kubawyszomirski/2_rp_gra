@@ -163,7 +163,8 @@ function markdownFiles(dir) {
   const out = [];
   for (const e of fs.readdirSync(path.join(root, dir), { withFileTypes: true })) {
     const rel = path.join(dir, e.name);
-    if (e.isDirectory()) { if (!['node_modules', 'out', '.git'].includes(e.name)) out.push(...markdownFiles(rel)); }
+    // .claude holds the worktrees of parallel Claude sessions: copies of the documents, not the project's own.
+    if (e.isDirectory()) { if (!['node_modules', 'out', '.git', '.claude'].includes(e.name)) out.push(...markdownFiles(rel)); }
     else if (e.name.endsWith('.md')) out.push(rel);
   }
   return out;
