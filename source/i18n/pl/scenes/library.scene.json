@@ -223,6 +223,7 @@
   "The sidebar shows the current figures; these notes explain them.": "Pasek boczny pokazuje bieżące dane; te uwagi je objaśniają.",
   "The presidential succession of December 1922 does not spend another monthly action.": "Grudniowy wybór prezydenta w 1922 roku nie zużywa dodatkowej akcji miesiąca.",
   "ChZJN (ZLN + PSChD) is a joint list; the parties remain separate for government formation.": "ChZJN (ZLN + PSChD) to wspólna lista; przy tworzeniu rządu partie pozostają osobne.",
-  "Recorded votes and election history are in Figures and charts; the Polls tab shows voting intentions, not the sitting parliament.": "Zapisane głosowania i historię wyborów zawiera strona „Liczby i wykresy”; zakładka Sondaże pokazuje preferencje wyborcze, a nie obecny skład Sejmu."
+  "Recorded votes and election history are in Figures and charts; the Polls tab shows voting intentions, not the sitting parliament.": "Zapisane głosowania i historię wyborów zawiera strona „Liczby i wykresy”; zakładka Sondaże pokazuje preferencje wyborcze, a nie obecny skład Sejmu.",
+  "[? if sejm_votes_1919_display : [+ sejm_votes_1919_display +] ?]": "[? if sejm_votes_1919_display : [+ sejm_votes_1919_display +] ?]"
  }
 }

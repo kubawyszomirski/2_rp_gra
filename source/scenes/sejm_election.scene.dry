@@ -51,42 +51,58 @@ No parliamentary seats, election counter or history were changed. This indicates
 new-page: true
 call: polish_opening_state
 go-to: main if not sejm_has_result; government if sejm_has_result and not pl_chapter_ended; chapter_end if sejm_has_result and pl_chapter_ended
+on-display: {!
+// Z — 0.73: the hemicycle and the table of the results card, from the same list rows as the Library's chart.
+if (typeof d3 !== 'undefined' && typeof window !== 'undefined' && document.getElementById('sejm_result_chart')) {
+    var width = 500;
+    var height = 500;
+    var screenWidth = document.getElementById('content').offsetWidth;
+    if (screenWidth < width - 50) {
+        width = screenWidth - 50;
+        height = width;
+        document.getElementById('sejm_result_chart').style.height = screenWidth / 2 + 'px';
+    }
+    var parliament = d3.parliament();
+    parliament.width(width).height(height).innerRadiusCoef(0.4);
+    parliament.enter.fromCenter(true).smallToBig(true);
+    parliament.exit.toCenter(false).bigToSmall(true);
+    d3.select('#sejm_result_chart').datum(Q.sejm_display_rows.map(function(row) {
+        return {id: row.id, legend: row.name, name: row.name, seats: row.seats};
+    })).call(parliament);
+    var table = d3.select('#sejm_result_table').append('table').attr('class', 'pl-result');
+    table.append('thead').append('tr').selectAll('th')
+        .data(['', 'List', 'Votes %', 'MPs', 'Change']).enter().append('th').text(function(value) { return value; });
+    var body = table.append('tbody');
+    for (var row of Q.sejm_display_rows) {
+        d3.select('#sejm_result_chart').selectAll('.seat.' + row.id).style('fill', Q.sejm_chart_colors[row.id]);
+        var change = Q.sejm_seat_changes ? Q.sejm_seat_changes[row.id] : null;
+        var tr = body.append('tr').classed('pl-pps', row.id === 'pps');
+        tr.append('td').append('span').attr('class', 'box').style('background-color', Q.sejm_chart_colors[row.id]);
+        tr.append('td').text(row.name);
+        tr.append('td').text(row.votes.toFixed(1));
+        tr.append('td').text(row.seats);
+        tr.append('td').text(change === null || change === undefined ? '—' : change > 0 ? '+' + change : change < 0 ? '\u2212' + (-change) : '0');
+    }
+    var total = table.append('tfoot').append('tr');
+    total.append('td');
+    total.append('td').text('Total');
+    total.append('td');
+    total.append('td').text(Q.sejm_total_seats);
+    total.append('td');
+}
+!}
 
 = Sejm election result — [+ sejm_result_date +]
 
-Each line separates **votes** and **MPs**. Changes refer to the previous parliament, not previous votes. Display rounding does not determine seats.
+The most votes went to [+ sejm_largest_lists +].
 
-KPP: [+ kpp_election_display +]
+{!<svg id="sejm_result_chart" style="width: 100%; max-width: 500px; height: 250px;"> </svg>!}
 
-PPS: [+ pps_election_display +]
+{!<div id="sejm_result_table"></div>!}
 
-NPR: [+ npr_election_display +]
+[? if pl_joint_lists_display : Joint lists at this election: [+ pl_joint_lists_display +]. A joint list shares its MPs among its parties in proportion to their votes; each party keeps its own club, its relations and its own place in a cabinet. ?]
 
-PSL Wyzwolenie: [+ psl_wyzwolenie_election_display +]
-
-PSL Piast: [+ psl_piast_election_display +]
-
-[? if sejm_has_chzjn : ChZJN (ZLN + PSChD): [+ chzjn_election_display +] ?]
-
-[? if not sejm_has_chzjn : PSChD: [+ pschd_election_display +] ?]
-
-[? if not sejm_has_chzjn : ZLN: [+ zln_election_display +] ?]
-
-Blok Mniejszości Narodowych: [+ minorities_bloc_election_display +]
-
-Inne (separate small lists, not one alliance): [+ other_election_display +]
-
-Total: [+ sejm_total_seats +] MPs. Majority: [+ sejm_majority_required +] MPs.
-
-Largest electoral list(s): [+ sejm_largest_lists +]. Largest named parliamentary party/group(s): [+ sejm_largest_parties +].
-
-[? if sejm_has_chzjn : ChZJN is displayed together, but ZLN and PSChD remain separate parties for relations and cabinet membership. Its MPs are attributed in proportion to their support at this election. ?]
-
-[? if pl_joint_lists_display : Joint lists at this election: [+ pl_joint_lists_display +]. Each joint list shares its MPs among its parties in proportion to their votes; every party keeps its own club. ?]
-
-[+ sejm_vote_comparison_notice +]
-
-The Library's Figures and charts page shows the same parliament and recorded results. Later campaigning changes polling, not this election.
+[? if sejm_has_chzjn and not pl_joint_lists_display : ChZJN is shown together, but ZLN and PSChD remain separate parties for relations and cabinet membership; its MPs are shared in proportion to their votes. ?]
 
 @government
 call: polish_opening_state

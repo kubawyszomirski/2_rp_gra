@@ -515,6 +515,9 @@ if (typeof d3 !== 'undefined' && typeof window !== 'undefined') {
 
 {!<div id="election_history" style="overflow-x: auto;"></div>!}
 
+# Z — 0.73: the 1919 votes of comparable lists, moved here from the results card.
+[? if sejm_votes_1919_display : [+ sejm_votes_1919_display +] ?]
+
 = Party support history
 
 [? if historical_mode: Not available in historical mode. ?]

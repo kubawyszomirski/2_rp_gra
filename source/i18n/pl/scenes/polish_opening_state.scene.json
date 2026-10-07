@@ -60,6 +60,9 @@
   "displayFailed('the Sejm', error);": null,
   "displayFailed('the Marshal and the Senate', error);": null,
   "displayFailed('the economy', error);": null,
-  "displayFailed('the party', error);": null
+  "displayFailed('the party', error);": null,
+  "Q.sejm_votes_1919_display = firstResult ? 'Previous votes: the Legislative Sejm was elected in 1919 on different dates and in only a part of the country, so no vote change is computed. Votes of comparable lists in 1919: ' +": "Q.sejm_votes_1919_display = firstResult ? 'Poprzednie głosy: Sejm Ustawodawczy wybrano w 1919 r. w różnych terminach i tylko w części kraju, więc gra nie liczy zmiany głosów. Głosy porównywalnych list w 1919 r.: ' +",
+  "if (row.members.length === 1 && row.members[0] === 'kpp') return row.name + ' — boycott';": "if (row.members.length === 1 && row.members[0] === 'kpp') return row.name + ' — bojkot';",
+  "return old ? row.name + (old.predecessors ? ' (' + old.predecessors.join(' and ') + ')' : '') + ' ' + String(old.votes).replace(/\\B(?=(\\d{3})+(?!\\d))/g, ',') : '';": "return old ? row.name + (old.predecessors ? ' (' + old.predecessors.join(' i ') + ')' : '') + ' ' + String(old.votes).replace(/\\B(?=(\\d{3})+(?!\\d))/g, '\\u00a0') : '';"
  }
 }

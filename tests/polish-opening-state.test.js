@@ -318,6 +318,13 @@ test('legacy entry redirects to exact-seat election without its old monthly char
   for (const party of Q.parties) {
     assert.doesNotMatch(String(Q[party + '_election_display'] || ''), /of seats|seat-share/, party);
   }
+  // Z — 0.73: a short results card — one sentence, the hemicycle and the table (drawn on the page), the joint lists.
+  const card = content(engine).replace(/","/g, '');
+  assert.match(card, /The most votes went to ChZJN \(ZLN \+ PSChD\)\./);
+  assert.match(card, /sejm_result_chart/);
+  assert.match(card, /sejm_result_table/);
+  assert.doesNotMatch(card, /Each line separates|1919|Largest named parliamentary/);
+  assert.equal(Q.sejm_seat_changes.pps, Q.pps_seats - 35, 'the table shows the change from the 35 opening MPs');
   assert.equal(Q.opening_sejm_active, 0);
   // The previous cabinet governs as caretaker until the head of state appoints a new one (8.8).
   assert.equal(Q.polish_opening_government_active, 0);

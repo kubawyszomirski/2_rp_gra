@@ -233,6 +233,14 @@ try {
         }
         Q.pl_joint_lists_display = result ? result.lists.filter(function(list) { return list.members.length > 1; })
             .map(function(list) { return list.name; }).join(', ') : '';
+        // Z — 0.73: the 1919 votes of comparable lists are noted in the Library's election history, not on the results card.
+        var firstResult = Q.sejm_results.length ? Q.sejm_results[0] : null;
+        Q.sejm_votes_1919_display = firstResult ? 'Previous votes: the Legislative Sejm was elected in 1919 on different dates and in only a part of the country, so no vote change is computed. Votes of comparable lists in 1919: ' +
+            displayRows(firstResult).map(function(row) {
+                if (row.members.length === 1 && row.members[0] === 'kpp') return row.name + ' — boycott';
+                var old = row.members.length === 1 ? PolishInstitutions.VOTES_1919[row.members[0]] : null;
+                return old ? row.name + (old.predecessors ? ' (' + old.predecessors.join(' and ') + ')' : '') + ' ' + String(old.votes).replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '';
+            }).filter(Boolean).join('; ') + '.' : '';
         // The old flat history is a derived adapter only, never the source of seats.
         Q.election_records = Q.sejm_results.map(function(record) {
             var flat = {date: record.date};
@@ -246,9 +254,12 @@ try {
                 'Vote changes are shown only for comparable electoral lists; a changed alliance has no like-for-like vote comparison.' :
                 'Previous votes: the Legislative Sejm was elected in 1919 on different dates and in only a part of the country, so the game shows the 1919 votes of comparable lists and no change.';
             var previousRows = previousResult ? displayRows(previousResult) : [];
+            // Z — 0.73: the change of MPs of each list for the table of the results card (null: not comparable).
+            Q.sejm_seat_changes = {};
             for (var row of Q.sejm_display_rows) {
                 var comparable = row.members.every(function(id) { return Object.hasOwn(result.previous_parliament.party_seats, id); });
                 var oldSeats = row.members.reduce(function(n, id) { return n + (result.previous_parliament.party_seats[id] || 0); }, 0);
+                Q.sejm_seat_changes[row.id] = comparable ? row.seats - oldSeats : null;
                 var previousRow = previousRows.find(function(old) {
                     return old.id === row.id && old.members.join(',') === row.members.join(',');
                 });

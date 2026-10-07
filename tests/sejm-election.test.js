@@ -380,12 +380,15 @@ test('polls, result text, chart rows, status and history agree without rewriting
   const engine = create();
   const Q = engine.state.qualities;
   const result = clone(election(engine));
-  // Z — 0.56: next to the first election the 1919 votes of comparable lists, without a change (item 8 of 5 X 2026).
-  assert.match(text(engine), /Previous votes: the Legislative Sejm was elected in 1919 on different dates and in only a part of the country/);
+  // Z — 0.73: the results card is short (a chart, a table, the joint lists); the 1919 votes of comparable lists
+  // (Z — 0.56, item 8 of 5 X 2026) are noted in the Library's election history.
+  assert.doesNotMatch(text(engine), /Previous votes|1919/);
   assert.match(text(engine), /ChZJN/);
   assert.equal(Q.sejm_display_rows.reduce((n, row) => n + row.seats, 0), 444);
   engine.goToScene('library');
   choose(engine, 'library.figures');
+  assert.match(text(engine), /Previous votes: the Legislative Sejm was elected in 1919 on different dates and in only a part of the country/);
+  assert.match(text(engine), /Votes of comparable lists in 1919: KPP — boycott; PPS 515,062; NPR \(NZR and NSR\) 206,571/);
   assert.deepEqual(Q.sejm_history[0].rows, Q.sejm_display_rows);
   assert.match(text(engine), /Each dot represents one MP/);
   choose(engine, 'library.public_opinion');
