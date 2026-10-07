@@ -52,6 +52,13 @@
   "(lastSpeakerRun && lastSpeakerRun.status === 'no_election' ? 'Vacant — ' + lastSpeakerRun.acting_holder.name +": "(lastSpeakerRun && lastSpeakerRun.status === 'no_election' ? 'Wakat — ' + PolishInstitutions.personNameText(lastSpeakerRun.acting_holder.name) +",
   "' presides until a new vote next month' : 'Not yet elected');": "' przewodniczy do nowego głosowania w przyszłym miesiącu' : 'Jeszcze nie wybrany');",
   "S.senate.total + ' senators, derived once from the Sejm result (' + S.senate.method + ', a simplification)' :": "S.senate.total + ' senatorów, wyliczonych raz z wyniku wyborów do Sejmu (' + S.senate.method + ', uproszczenie)' :",
-  "'Not yet constituted';": "'Jeszcze nie ukonstytuowany';"
+  "'Not yet constituted';": "'Jeszcze nie ukonstytuowany';",
+  "console.log('Error: the routing scene could not prepare ' + part + ':', error);": null,
+  "displayFailed('the relations and the government mirrors', error);": null,
+  "displayFailed('the head of state and the government', error);": null,
+  "displayFailed('the Sejm', error);": null,
+  "displayFailed('the Marshal and the Senate', error);": null,
+  "displayFailed('the economy', error);": null,
+  "displayFailed('the party', error);": null
  }
 }

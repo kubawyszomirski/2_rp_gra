@@ -145,7 +145,10 @@
     pinned: {en: 'Central Executive Committee - actions are only usable once per 6 months.', pl: 'Centralny Komitet Wykonawczy — każda akcja raz na 6 miesięcy.'},
     continue_choice: {en: 'Continue...', pl: 'Dalej…'},
     load_failed: {en: 'The Polish version could not be loaded; the game continues in English.',
-      pl: 'Nie udało się wczytać polskiej wersji; gra toczy się dalej po angielsku.'}
+      pl: 'Nie udało się wczytać polskiej wersji; gra toczy się dalej po angielsku.'},
+    script_error: {en: 'A game script has failed, so elections and events may not appear. Reload the page without the cache (Cmd+Shift+R, or Ctrl+Shift+R).',
+      pl: 'Skrypt gry zgłosił błąd, więc wybory i wydarzenia mogą się nie pojawić. Przeładuj stronę z pominięciem pamięci przeglądarki (Cmd+Shift+R albo Ctrl+Shift+R).'},
+    script_error_close: {en: 'Close', pl: 'Zamknij'}
   };
   var uiText = function(key) {
     var entry = UI_TEXT[key];
@@ -789,6 +792,44 @@
         document.getElementById("stats_sidebar").setAttribute("style", "font-size: " + sidebar_fs + "em;");
         document.getElementById('font_size_value').textContent = window.dendryUI.font_size.toFixed(1) + "em";
         window.dendryUI.saveSettings();
+  }
+
+  // Z — 0.62: a failing game script is shown, not silent. The engine only logs the errors of scene scripts and
+  // conditions ("Error:" or "Error in expression"); a stale cached rules file next to newer scenes once let the game go
+  // on for months without elections or events. The page shows one notice per load and asks for a reload without the
+  // cache. Outside a page (the Node test of the save check) there is no document and nothing is shown.
+  var scriptErrorShown = false;
+  var showScriptError = function() {
+    if (scriptErrorShown || typeof document === 'undefined' || !document.body) {
+      return;
+    }
+    scriptErrorShown = true;
+    var box = document.createElement('div');
+    box.className = 'pl-script-error';
+    box.setAttribute('role', 'alert');
+    var text = document.createElement('span');
+    text.textContent = uiText('script_error');
+    var close = document.createElement('button');
+    close.type = 'button';
+    close.textContent = uiText('script_error_close');
+    close.onclick = function() {
+      if (box.parentNode) {
+        box.parentNode.removeChild(box);
+      }
+    };
+    box.appendChild(text);
+    box.appendChild(close);
+    document.body.appendChild(box);
+  };
+  var nativeLog = console.log;
+  console.log = function(first) {
+    if (typeof first === 'string' && /^Error/.test(first)) {
+      showScriptError();
+    }
+    return nativeLog.apply(console, arguments);
+  };
+  if (typeof window.addEventListener === 'function') {
+    window.addEventListener('error', showScriptError);
   }
 
   window.onload = function() {
