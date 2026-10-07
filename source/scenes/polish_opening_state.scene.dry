@@ -142,6 +142,8 @@ try {
     for (var party of Q.parties) {
         Q[party + '_sejm_display'] = (Q.opening_sejm_active ? Q.opening_sejm_seats[party] + ' MPs; ' : '') +
             Number(Q[party + '_r']).toFixed(1) + '%';
+        // Z — 0.65: the sidebar shows only the number of MPs (set below with the parliament); this is its fallback.
+        Q[party + '_sejm_seats_display'] = Q[party + '_sejm_display'];
     }
     if (government) {
         // Nine portfolios (8.5): public works belong to Labour and are not a separate office.
@@ -178,6 +180,7 @@ try {
             Q[party + '_seats'] = parliament.party_seats[party] || 0;
             Q[party + '_r'] = 100 * Q[party + '_seats'] / parliament.total_seats;
             Q[party + '_sejm_display'] = Q[party + '_seats'] + ' MPs; ' + Q[party + '_r'].toFixed(1) + '% of seats';
+            Q[party + '_sejm_seats_display'] = Q[party + '_seats'] + (Q[party + '_seats'] === 1 ? ' MP' : ' MPs');
             if (result) {
                 var previous = result.previous_parliament;
                 Q['old_' + party + '_r'] = 100 * (previous.party_seats[party] || 0) / previous.total_seats;
@@ -265,6 +268,7 @@ try {
                 }
             }
             Q.chzjn_sejm_display = (Q.zln_seats + Q.pschd_seats) + ' MPs; ' + (Q.zln_r + Q.pschd_r).toFixed(1) + '% of seats';
+            Q.chzjn_sejm_seats_display = (Q.zln_seats + Q.pschd_seats) + ' MPs';
             var maxVotes = Math.max.apply(null, result.lists.map(function(row) { return row.vote_share; }));
             Q.sejm_largest_lists = result.lists.filter(function(row) { return Math.abs(row.vote_share - maxVotes) < 1e-9; })
                 .map(function(row) { return row.name; }).join(', ');

@@ -1,51 +1,51 @@
 {
   "scope": "M19: one current version for coding (technical chapters 1-22) and a separated decision archive (chapter 23); guide history appendix; registers with a current state above the archive of entries. Structure checks, anchor resolution of every markdown link, optional preservation check against the pre-M19 copies.",
   "hashes": {
-    "docs/POLISH_TECHNICAL_REFERENCE.md": "3ace4285eaea16cae67d6f61581cfef326466a074bc8821b325a0d7f49a7e3df",
-    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "693c74d3651a9e2c755ccf82b065086e8a8f7b5bb1e92d4adb02314a42a3f1fe",
-    "docs/POLISH_MECHANICS_AUDIT.md": "22c29f5bca6b1e39322a4c4f42547c4d687ead9a6957699a6da2b79143d6120f",
+    "docs/POLISH_TECHNICAL_REFERENCE.md": "6dba4fee5d4a09d72af02b0b9ea73af509f594e9706e5e8f5e3750889083076d",
+    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "ac271a4597367b03e9c7cfbcc62a628ac42600f8ed2fdf190b645ff09d422330",
+    "docs/POLISH_MECHANICS_AUDIT.md": "07cf9f0c9158b6f62d27ae1e5a39e95c4db489c2798f95ccb2a62241289de79c",
     "HISTORICAL_SOURCES.md": "528bd070ac243a33680aa2e518b1b1fcda19f06de1380389e4cecede56a0776d",
-    "PLAN.md": "4fcf22d3b7f1849fda4eeb94b4603b3cf99d995bfa15795add21a8c2e92b0b1b",
-    "MECHANICS_MAP.md": "4e1f4318e0ac0dd85b92999b51c5be221c80b4c25b7c77524707a167a22bee5e",
-    "STATE_VARIABLES.md": "f36dc14cad90c42110f7888a85b729e95e93737c9773a1bca080a1d8d668b6e1",
-    "TRANSITION_MATRIX.md": "74c79d80432467f1c0ff5b5e85c48fc15968616e10f57a6147bfeb2cdf7a62f5"
+    "PLAN.md": "6edb89cc6bed0c7a70cc6b202291fddbcbca91c1f21527a4c89eda0680854351",
+    "MECHANICS_MAP.md": "c60e951d19c436181e300ad42d1fe2be0376537b3b73b167528bb5283197534f",
+    "STATE_VARIABLES.md": "1e1fd76f61d5abd8b945c1f1c123984e043fac7f639d482e51afeb08df6c8296",
+    "TRANSITION_MATRIX.md": "2e83eb88602ab0dbcd9f62713abc753ca3e2d06ae04761c5fb07fc0223e8c396"
   },
   "structure": {
-    "indexSubsectionsChecked": 108,
+    "indexSubsectionsChecked": 109,
     "technical": {
       "chapters": 23,
       "revisionParagraphsInArchive": 17,
       "approvalLogsInArchive": 21,
-      "archiveStartsAtLine": 4103
+      "archiveStartsAtLine": 4105
     },
     "guide": {
       "chapters": 19,
-      "notesInAppendix": 63,
+      "notesInAppendix": 64,
       "appendixStartsAtLine": 1711
     },
     "registers": {
       "PLAN.md": {
         "areas": 18,
-        "archiveStartsAtLine": 68
+        "archiveStartsAtLine": 69
       },
       "MECHANICS_MAP.md": {
         "areas": 18,
-        "archiveStartsAtLine": 68
+        "archiveStartsAtLine": 69
       },
       "STATE_VARIABLES.md": {
         "areas": 18,
-        "archiveStartsAtLine": 77
+        "archiveStartsAtLine": 78
       },
       "TRANSITION_MATRIX.md": {
         "areas": 18,
-        "archiveStartsAtLine": 69
+        "archiveStartsAtLine": 70
       }
     }
   },
   "links": {
-    "fileLinks": 984,
+    "fileLinks": 420,
     "missingFiles": 0,
-    "anchorLinks": 524,
+    "anchorLinks": 201,
     "anchorLinksIntoM19Docs": 117,
     "brokenAnchors": 0
   },

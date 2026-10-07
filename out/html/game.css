@@ -665,6 +665,46 @@ button.pl-discard.pl-disabled:hover {
   border: 2px solid var(--accent-color);
 }
 
+/* Z — 0.65 (the user's note of 7 X 2026): the decks and the Central Executive Committee share one board. When the
+   board is wide enough, the Committee is a column to the right of the decks, one card under another; otherwise it goes
+   under the decks, as before, behind a thin rule. */
+#pl-board {
+  container-type: inline-size;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+#pl-ckw {
+  flex: 1 1 100%;
+  margin-top: 0.6em;
+  padding-top: 0.6em;
+  border-top: 1px solid var(--hair-color);
+}
+#pl-ckw p.pinned-text-description {
+  text-indent: 0;
+  margin-bottom: 0.6em;
+}
+#pl-ckw ul.pinned-cards {
+  margin: 0;
+}
+@container (min-width: 690px) {
+  #pl-ckw {
+    flex: 0 0 150px;
+    margin: 0 0 0 1.4em;
+    padding: 0 0 0 1.4em;
+    border-top: none;
+    border-left: 1px solid var(--hair-color);
+  }
+  #pl-ckw p.pinned-text-description {
+    font-size: 0.9em;
+    line-height: 1.3;
+  }
+  #pl-ckw .pinned-card {
+    display: block;
+    margin: 0 0 0.6em;
+  }
+}
+
 /* Unlike cards, face images can have different sizes. */
 .face-figure {
   /*vertical-align: top;*/
@@ -783,8 +823,9 @@ img {
     background-color: var(--content-bg-color);
   }
   .tab_button {
-    font-size: 0.8em;
+    font-size: 0.76em;
     letter-spacing: 0;
+    padding: 0.55em 0.15em;
   }
   #content {
     grid-area: main;
@@ -808,6 +849,7 @@ img {
   .tab_button {
     font-size: 0.85em;
     letter-spacing: 0.02em;
+    padding: 0.55em 0.25em;
   }
 }
 /* mobile: move the stat box to the top if the screen is too small,
@@ -853,6 +895,12 @@ img {
   }
   #header-links a {
       padding: 0 0.5em;
+  }
+  /* The five tabs in one row on a phone, with "Obronność" (Z — 0.65). */
+  .tab_button {
+      font-size: 0.8em;
+      letter-spacing: 0;
+      padding: 0.55em 0.15em;
   }
 
   /* cards are smaller on mobile */

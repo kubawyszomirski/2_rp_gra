@@ -156,7 +156,10 @@ test('opening, status and read-only cabinet agree without changing time or membe
   assert.match(content(engine), /External toleration of Ponikowski/);
   assert.doesNotMatch(content(engine), /Hindenburg|Chancellor:/);
   engine.goToScene('status.politics');
-  assert.match(content(engine), /35 MPs; 7.9%/);
+  // Z — 0.65: the sidebar gives only the number of MPs; the share of seats stays in the Library.
+  assert.match(content(engine), /"35 MPs"/);
+  assert.doesNotMatch(content(engine), /% of seats/);
+  assert.equal(engine.state.qualities.pps_sejm_display, '35 MPs; 7.9% of seats', 'the Library line keeps the share');
   engine.goToScene('backSpecialScene');
   engine.goToScene('library');
   choose(engine, 'library.curr_gov');

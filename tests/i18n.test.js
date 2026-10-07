@@ -137,7 +137,10 @@ test('Pilotaż: ekran tytułowy, strona miesiąca i pasek boczny po polsku', () 
   }
   assert.match(sidebar.status, /Kasa partii: 2\u00a0R\s*\nZbiórka przynosi: 2\u00a0R/, 'a no-break space keeps the unit with the number; Z — 0.56: no income line');
   assert.match(sidebar.status, /Głowa państwa: Józef Piłsudski — Naczelnik Państwa/);
-  assert.match(sidebar['status.politics'], /PPS: 35 posłów; 7,9% mandatów/);
+  // Z — 0.65: the sidebar gives only the number of MPs; the share of seats stays in the Library.
+  assert.match(sidebar['status.politics'], /\nPPS: 35 posłów ?\n/);
+  assert.match(sidebar['status.politics'], /\nPSL Piast: 99 posłów ?\n/);
+  assert.doesNotMatch(sidebar['status.politics'], /mandatów/);
   assert.match(sidebar['status.economy'], /Budżet: \+2,00 B w tym miesiącu/);
   assert.match(sidebar['status.paramilitaries'], /\nPolicja ?\n\s*Potencjał: 50 ?\n/);
   assert.match(sidebar['status.politics'], /PSL Wyzwolenie: przyjazne/);

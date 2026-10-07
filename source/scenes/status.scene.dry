@@ -108,25 +108,25 @@ if (Q.polish_politics_rules && typeof PolishPolitics !== 'undefined') {
 
 = [+ parliament_heading +]
 
-**KPP:** [+ kpp_sejm_display +]
+**KPP:** [+ kpp_sejm_seats_display +]
 
-**PPS:** [+ pps_sejm_display +]
+**PPS:** [+ pps_sejm_seats_display +]
 
-**NPR:** [+ npr_sejm_display +]
+**NPR:** [+ npr_sejm_seats_display +]
 
-**PSL Wyzwolenie:** [+ psl_wyzwolenie_sejm_display +]
+**PSL Wyzwolenie:** [+ psl_wyzwolenie_sejm_seats_display +]
 
-**PSL Piast:** [+ psl_piast_sejm_display +]
+**PSL Piast:** [+ psl_piast_sejm_seats_display +]
 
-[? if not sejm_has_chzjn : **PSChD:** [+ pschd_sejm_display +] ?]
+[? if not sejm_has_chzjn : **PSChD:** [+ pschd_sejm_seats_display +] ?]
 
-[? if not sejm_has_chzjn : **[+ zln_name +]:** [+ zln_sejm_display +] ?]
+[? if not sejm_has_chzjn : **[+ zln_name +]:** [+ zln_sejm_seats_display +] ?]
 
-[? if sejm_has_chzjn : **ChZJN (ZLN + PSChD):** [+ chzjn_sejm_display +] ?]
+[? if sejm_has_chzjn : **ChZJN (ZLN + PSChD):** [+ chzjn_sejm_seats_display +] ?]
 
-[? if opening_sejm_active : **Minority deputies:** ?][? if not opening_sejm_active : **Blok Mniejszości Narodowych:** ?] [+ minorities_bloc_sejm_display +]
+[? if opening_sejm_active : **Minority deputies:** ?][? if not opening_sejm_active : **Blok Mniejszości Narodowych:** ?] [+ minorities_bloc_sejm_seats_display +]
 
-**Inne:** [+ other_sejm_display +]
+**Inne:** [+ other_sejm_seats_display +]
 
 **Next Sejm election:** [+ pl_next_election_display +]
 

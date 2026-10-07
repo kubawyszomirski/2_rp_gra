@@ -105,7 +105,7 @@
     tab_main: {en: 'Main', pl: 'Ogólne'},
     tab_politics: {en: 'Politics', pl: 'Polityka'},
     tab_economy: {en: 'Economy', pl: 'Gospodarka'},
-    tab_defense: {en: 'Defense', pl: 'Obrona'},
+    tab_defense: {en: 'Defense', pl: 'Obronność'},
     tab_polls: {en: 'Polls', pl: 'Sondaże'},
     music: {en: 'Music', pl: 'Muzyka'},
     currently_playing: {en: 'Currently playing: ', pl: 'Teraz gra: '},
@@ -614,7 +614,8 @@
       ui.$content.append($('<hr>'));
       ui.$content.append($('<p>').addClass('deck-description').text(uiText('tableau')));
       $tableau = $('<div>').attr('id', 'pl-tableau');
-      ui.$content.append($tableau);
+      // Z — 0.65: the decks and the Central Executive Committee share one board (see window.displayPinnedCards).
+      ui.$content.append($('<div>').attr('id', 'pl-board').append($tableau));
     }
     DECK_IDS.forEach(function(deckId) {
       var view = window.PolishEngineHooks.deckView(engine, deckId);
@@ -672,6 +673,44 @@
   };
   window.displayHand = function(hand, maxCards) {
     renderTableau();
+  };
+  // Z — 0.65 (the user's note of 7 X 2026): the cards of the Central Executive Committee stand in a column to the right
+  // of the decks, one under another, when the play field is wide enough (game.css, #pl-board); on a narrower page the
+  // column goes under the decks. The markup and the click handler (ul.pinned-cards li a) are those of core.js.
+  window.displayPinnedCards = function(cards) {
+    var ui = window.dendryUI;
+    if (!ui || typeof $ === 'undefined') {
+      return;
+    }
+    var description = window.pinnedCardsDescription || 'Pinned cards - click a card to play.';
+    var qualities = ui.dendryEngine && ui.dendryEngine.state.qualities;
+    if (qualities && qualities.pinnedCardsDescription) {
+      description = qualities.pinnedCardsDescription;
+    }
+    var $column = $('#pl-ckw');
+    if ($column.length) {
+      $column.empty();
+    } else {
+      $column = $('<div>').attr('id', 'pl-ckw');
+      if ($('#pl-board').length) {
+        $('#pl-board').append($column);
+      } else {
+        ui.$content.append($('<hr>')).append($column);
+      }
+    }
+    $column.append($('<p>').addClass('pinned-text-description').text(description));
+    var $list = $('<ul>').addClass('pinned-cards');
+    cards.forEach(function(card) {
+      var $link = $('<a>').addClass('card').attr({href: '#', 'card-id': card.id, title: card.title});
+      if (card.image) {
+        $link.append($('<img>').addClass('card-img').attr({src: card.image, alt: card.title}));
+      }
+      if (card.subtitle) {
+        $link.append($('<span>').addClass('card-tooltip').text(card.subtitle));
+      }
+      $list.append($('<li>').addClass('pinned-card').append($link).append($('<span>').addClass('card-caption').text(card.title)));
+    });
+    $column.append($list);
   };
   var discardFromTableau = function(event) {
     event.preventDefault();
