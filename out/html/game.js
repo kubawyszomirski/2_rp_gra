@@ -142,6 +142,7 @@
       pl: 'Talie i ręka — kliknij talię, aby dobrać kartę (dwa miejsca na każdą talię), albo kartę, aby ją zagrać.'},
     discard: {en: 'Discard', pl: 'Odrzuć'},
     undiscardable: {en: 'cannot be discarded', pl: 'nie do odrzucenia'},
+    free_place: {en: 'empty place', pl: 'wolne miejsce'},
     pinned: {en: 'Central Executive Committee - actions are only usable once per 6 months.', pl: 'Centralny Komitet Wykonawczy — każda akcja raz na 6 miesięcy.'},
     continue_choice: {en: 'Continue...', pl: 'Dalej…'},
     load_failed: {en: 'The Polish version could not be loaded; the game continues in English.',
@@ -587,13 +588,14 @@
   // The three decks in three rows, each with its two places of the hand (PolishEngineHooks.deckView). A closed deck is
   // greyed and says why. Under each card a button discards it, once a month; a timed card carries a badge with its last
   // month. The decks are drawn together with the hand, so window.displayDecks draws nothing.
+  // Z — 0.63 (decision 4A): the badge is a stamp without the hourglass sign, and an empty place says so.
   var DECK_IDS = ['main.party', 'main.govt', 'main.parliament'];
   var MONTHS_EN_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   var MONTHS_ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
   var deadlineBadge = function(t) {
     var rules = window.PolishRules;
     var m = rules.monthOf(t), y = rules.yearOf(t);
-    return window.currentLanguage === 'pl' ? '\u23f3 do ' + MONTHS_ROMAN[m - 1] + ' ' + y : '\u23f3 until ' + MONTHS_EN_SHORT[m - 1] + ' ' + y;
+    return window.currentLanguage === 'pl' ? 'do ' + MONTHS_ROMAN[m - 1] + ' ' + y : 'until ' + MONTHS_EN_SHORT[m - 1] + ' ' + y;
   };
   var deadlineText = function(t) {
     var rules = window.PolishRules;
@@ -658,7 +660,7 @@
             $place.append($button);
           }
         } else {
-          $place.append($('<div>').addClass('blank-card'));
+          $place.append($('<div>').addClass('blank-card').append($('<span>').text(uiText('free_place'))));
         }
         $hand.append($place);
       }
@@ -709,6 +711,54 @@
     }
   };
 
+  // Z — 0.63 (decision 3A): the sidebar reads like a ledger. A fact "**Label:** value" gets its value in a span of its
+  // own: a value that fits stands at the right end of the line after a dotted leader, a longer one goes under its label.
+  // Only the presentation changes; the scenes and their texts stay as they are.
+  var ledgerRows = function(root) {
+    $(root).find('p').each(function() {
+      var label = this.firstChild;
+      if (!label || label.nodeName !== 'STRONG' || !/:\s*$/.test(label.textContent) || !label.nextSibling) {
+        return;
+      }
+      var value = document.createElement('span');
+      value.className = 'pl-val';
+      while (label.nextSibling) {
+        value.appendChild(label.nextSibling);
+      }
+      if (value.firstChild && value.firstChild.nodeType === 3) {
+        value.firstChild.nodeValue = value.firstChild.nodeValue.replace(/^\s+/, '');
+      }
+      if (!value.textContent.trim()) {
+        this.appendChild(value);
+        return;
+      }
+      var dots = document.createElement('span');
+      dots.className = 'pl-dots';
+      this.appendChild(dots);
+      this.appendChild(value);
+      $(this).addClass('pl-row');
+    });
+    fitLedgerRows(root);
+  };
+  // A value that wraps inside its line is moved under its label. Without a layout (a hidden page), the length decides.
+  var fitLedgerRows = function(root) {
+    $(root).find('p.pl-row').each(function() {
+      var $row = $(this).removeClass('pl-long');
+      var value = $row.children('.pl-val')[0];
+      var lineHeight = parseFloat(window.getComputedStyle(this).lineHeight) || 20;
+      var long = this.offsetWidth ? value.offsetHeight > lineHeight * 1.5 :
+        (this.firstChild.textContent + value.textContent).length > 36;
+      $row.toggleClass('pl-long', long);
+    });
+  };
+  var refitTimer = null;
+  if (typeof window.addEventListener === 'function') {
+    window.addEventListener('resize', function() {
+      clearTimeout(refitTimer);
+      refitTimer = setTimeout(function() { fitLedgerRows('#qualities'); }, 150);
+    });
+  }
+
   // TODO: have some code for tabbed sidebar browsing.
   window.updateSidebar = function() {
       $('#qualities').empty();
@@ -716,6 +766,7 @@
       dendryUI.dendryEngine._runActions(scene.onArrival);
       var displayContent = dendryUI.dendryEngine._makeDisplayContent(scene.content, true);
       $('#qualities').append(dendryUI.contentToHTML.convert(displayContent));
+      ledgerRows('#qualities');
   };
 
   window.changeTab = function(newTab, tabId) {

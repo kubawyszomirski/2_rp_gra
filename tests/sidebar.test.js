@@ -116,7 +116,9 @@ test('Sondaże na starcie pokazują poparcie z otwarcia, nie zera (pl)', () => {
   const engine = dendry.startGame(1922, 'pl');
   const text = sidebar(engine, 'status.polls');
   assert.match(text, /\nPPS: [1-9]\d*%/);
-  assert.match(text, /\nRobotnicy: KPP \d+%, PPS [1-9]\d*%/);
+  // Z — 0.63: the social groups are one table (a row for each party); the first column is the workers.
+  assert.match(text, /<th><span>Robotnicy<\/span><\/th>/);
+  assert.match(text, /<tr class="pl-pps"><th>\s*PPS\s*<\/th><td>\s*[1-9]\d*\s*<\/td>/);
   const Q = engine.state.qualities;
   assert.equal(Math.round(100 * Q.parties.reduce((n, p) => n + Q[p + '_normalized'], 0)), 100, 'the national shares sum to 100%');
   assert.deepEqual(errors, []);
