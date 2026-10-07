@@ -22,7 +22,7 @@ Credit has fallen below 35 for two months, or the scenario's credit shock of 192
 
 @credit
 title: A conditional credit for threatened activity
-subtitle: Prepares the credit instrument of Treasury or Industry; its launch waits in the agenda.
+subtitle: Prepares the credit instrument of Treasury or Industry; its launch waits in the card “Prepared Reforms”.
 choose-if: {! return PolishProjects.eventStatus(Q, 'credit', 'credit').available !}
 unavailable-subtitle: [+ pl_ev_credit_why +]
 on-arrival: {!

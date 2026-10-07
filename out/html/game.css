@@ -649,6 +649,38 @@ button.pl-discard.pl-disabled:hover {
   color: var(--text-color, inherit);
   border-color: var(--hair-color);
 }
+/* Z — 0.74 (decisions 1A–3A of 8 X 2026): an urgent card stands in an extra place after the two ordinary ones of its deck,
+   set off by a hairline, with a red frame and the word "urgent" above it. */
+#pl-tableau .card-in-hand.pl-urgent {
+  padding-left: 0.8em;
+  border-left: 1px solid var(--hair-color);
+}
+#pl-tableau .card-in-hand.pl-urgent a.card {
+  border-color: var(--accent-color);
+}
+.pl-urgent-label {
+  display: block;
+  font-size: 0.8em;
+  font-variant: small-caps;
+  letter-spacing: 0.06em;
+  text-align: center;
+  color: var(--accent-color);
+}
+/* A card without its own picture shows its title as a printed label in a red double rule (Z — 0.74). */
+.pl-text-card-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  padding: 0.5em;
+  border: 3px double var(--accent-color);
+  font-variant: small-caps;
+  letter-spacing: 0.04em;
+  line-height: 1.25;
+  text-align: center;
+}
 /* The timed-card badge is a red stamp (Z — 0.63). */
 .pl-timed-badge {
   position: absolute;

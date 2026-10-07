@@ -20,9 +20,9 @@
     "stance_criticism": -2
   },
   "hashes": {
-    "docs/POLISH_TECHNICAL_REFERENCE.md": "127b4ea50c32bb30145c9d40d9e74b0e0b99e7e9d0a7951375ed7073c0b11377",
-    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "ed3d47cb57e8d24940c17864d3615f4995c58cecb4bb3c43ba0afd6476c03411",
-    "docs/POLISH_MECHANICS_AUDIT.md": "af63e4a0c273df1a2ab2b66edb7ba3f37c95d7bc2d25200a8fe3f24f512d3cc4",
+    "docs/POLISH_TECHNICAL_REFERENCE.md": "f13df0ec1defa22cdcc9c7de34297a7cdd42397f95c9cd4bf543c8defcdcafd9",
+    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "d5326eba34e76f2560371306f0afdc23d0543501ebd48bf3d98228ec628fc611",
+    "docs/POLISH_MECHANICS_AUDIT.md": "429fa851e4a28a4d313d234b88f6adb717ac3df5a449781d795248f7782c10ed",
     "analysis/m02-robustness/engine.cjs": "e0b544d65a4381ed7698f3f649fd54e41714a3a1027852a7ea455d0ad49b43cd",
     "analysis/m08-coup-profile/check.cjs": "117c774d0d702de80c73d6d39e56e9bd25f35ae418cdee3d1d522d35ff4f21eb"
   },

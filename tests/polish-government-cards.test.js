@@ -65,7 +65,7 @@ function offered(engine, deck) {
   return (engine._compileChoices(engine.game.scenes[deck]) || []).filter(c => c.canChoose !== false).map(c => c.id);
 }
 
-test('Roboty pod Pracą in the game: the Government deck offers the Labour cards; a prepared programme waits in the agenda; the launch costs its month', () => {
+test('Roboty pod Pracą in the game: the Government deck offers the Labour cards; a prepared programme comes back as the urgent card of prepared reforms; the launch costs its month', () => {
   const engine = dendry.startGame();
   const Q = leftCabinet(engine);
   const deck = offered(engine, 'main.govt');
@@ -79,12 +79,15 @@ test('Roboty pod Pracą in the game: the Government deck offers the Labour cards
   assert.deepEqual(engine.state.currentHands.main.map(c => c.id), ['polish_gov_public_works'], 'the card goes back to the hand');
   engine.playCard('polish_gov_public_works');
   choose(engine, 'polish_gov_public_works.employment');
-  assert.match(content(engine), /Its launch waits in the agenda/);
+  assert.match(content(engine), /Its launch waits in the card “Prepared Reforms”/);
   choose(engine, 'root');
   assert.equal(Q.time, t + 1, 'the preparation spent the month');
   toMain(engine); // the December offices of 1922 come first
-  assert.ok(ids(engine).includes('polish_agenda'), 'the agenda needs no card from the hand');
-  engine.playPinnedCard('polish_agenda');
+  // Z — 0.74 (decision 2A of 8 X 2026): the prepared reforms come into the hand of the Government deck by themselves.
+  assert.ok(dendry.urgentCards(engine).includes('polish_agenda'), 'no lucky draw is needed');
+  assert.equal(dendry.urgentDeck(engine, 'polish_agenda'), 'main.govt');
+  assert.ok(!ids(engine).includes('polish_agenda'), 'no pinned card any more');
+  engine.playCard('polish_agenda');
   assert.equal(choice(engine, 'polish_agenda.launch_public_works').canChoose, true);
   choose(engine, 'polish_agenda.launch_public_works');
   choose(engine, 'root');
@@ -176,19 +179,22 @@ test('the Budget card: a package of the cabinet before the Sejm; PPS as its supp
   const Q = engine.state.qualities;
   PolishProjects.newPackage(Q, { instruments: ['broad'], necessary: false, reason: 'deficit' });
   engine.goToScene('main');
-  assert.ok(ids(engine).includes('polish_budget_package'));
+  // Z — 0.74 (decision 3A of 8 X 2026): an urgent card of the Parliament deck until the vote of the package.
+  assert.ok(dendry.urgentCards(engine).includes('polish_budget_package'));
+  assert.equal(dendry.urgentDeck(engine, 'polish_budget_package'), 'main.parliament');
+  assert.equal(PolishRules.cardDeadline(Q, 'polish_budget_package'), Q.S.economy.pending_package.vote_at);
   assert.match(content(engine), /The cabinet proposes a package/);
   const t = Q.time;
-  engine.playPinnedCard('polish_budget_package');
+  engine.playCard('polish_budget_package');
   assert.equal(choice(engine, 'polish_budget_package.protect').canChoose, false, 'no cut of benefits in this package');
   choose(engine, 'polish_budget_package.support');
   choose(engine, 'root');
   assert.equal(Q.time, t, 'the answer costs no month');
   assert.equal(Q.S.economy.pending_package.pps_vote, 'yes');
-  assert.ok(!ids(engine).includes('polish_budget_package'), 'one answer per package');
+  assert.ok(!dendry.urgentCards(engine).includes('polish_budget_package'), 'one answer per package');
 });
 
-test('the constitutional card: two main actions; the motion waits in the agenda and needs both chambers', () => {
+test('the constitutional card: two main actions; the prepared motion comes back as an urgent card and needs both chambers', () => {
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
   // Z — 0.56: the card waits for the constitutional debate of December 1924; here the debate is opened at once.
@@ -200,8 +206,12 @@ test('the constitutional card: two main actions; the motion waits in the agenda 
   choose(engine, 'polish_constitution_project.democratic_guarantees');
   choose(engine, 'root');
   assert.equal(Q.time, 2, 'the first step spent the month');
-  engine.playPinnedCard('polish_agenda');
-  const submit = choice(engine, 'polish_agenda.submit_democratic_guarantees');
+  // Z — 0.74 (decision 2A of 8 X 2026): the card itself files the motion; while it waits, it is an urgent card of Parliament.
+  engine.goToScene('main');
+  assert.deepEqual([dendry.urgentCards(engine), dendry.urgentDeck(engine, 'polish_constitution_project')], [['polish_constitution_project'], 'main.parliament']);
+  engine.playCard('polish_constitution_project');
+  assert.equal(choice(engine, 'polish_constitution_project.democratic_guarantees'), undefined, 'the prepared text is not prepared again');
+  const submit = choice(engine, 'polish_constitution_project.file_democratic_guarantees');
   assert.equal(submit.canChoose, false);
   assert.match(String(submit.subtitle), /Senate is not yet constituted/);
 });

@@ -143,6 +143,7 @@
     discard: {en: 'Discard', pl: 'Odrzuć'},
     undiscardable: {en: 'cannot be discarded', pl: 'nie do odrzucenia'},
     free_place: {en: 'empty place', pl: 'wolne miejsce'},
+    urgent: {en: 'urgent', pl: 'pilne'},
     pinned: {en: 'Central Executive Committee - actions are only usable once per 6 months.', pl: 'Centralny Komitet Wykonawczy — każda akcja raz na 6 miesięcy.'},
     continue_choice: {en: 'Continue...', pl: 'Dalej…'},
     load_failed: {en: 'The Polish version could not be loaded; the game continues in English.',
@@ -635,13 +636,28 @@
       }
       $row.append($('<ul>').addClass('decks').append($deck));
       var $hand = $('<ul>').addClass('hand');
-      for (var i = 0; i < Math.max(view.slots, view.cards.length); i++) {
-        var card = view.cards[i];
+      // Z — 0.74 (decisions 1A–3A of 8 X 2026): the two ordinary places, then an extra place for each urgent card, marked
+      // "urgent"; an urgent card cannot be discarded.
+      var ordinary = view.cards.filter(function(c) { return !c.urgent; });
+      var urgent = view.cards.filter(function(c) { return c.urgent; });
+      var places = [];
+      for (var k = 0; k < Math.max(view.slots, ordinary.length); k++) {
+        places.push(ordinary[k] || null);
+      }
+      places = places.concat(urgent);
+      for (var i = 0; i < places.length; i++) {
+        var card = places[i];
         var $place = $('<li>').addClass('card-in-hand');
+        if (card && card.urgent) {
+          $place.addClass('pl-urgent').append($('<span>').addClass('pl-urgent-label').text(uiText('urgent')));
+        }
         if (card) {
           var $cardLink = $('<a>').addClass('card').attr({href: '#', 'card-id': card.id, title: card.title});
           if (card.image) {
             $cardLink.append($('<img>').addClass('card-img').attr({src: card.image, alt: card.title}));
+          } else {
+            // Z — 0.74: a card without its own picture (the urgent cards) shows its title as a printed label.
+            $cardLink.append($('<span>').addClass('pl-text-card-title').text(card.title));
           }
           if (card.until !== null && card.until !== undefined) {
             $cardLink.addClass('pl-timed');
@@ -657,8 +673,8 @@
             $cardLink.append($('<span>').addClass('pl-ministry-badge').text(ministry));
           }
           $place.append($cardLink).append($('<span>').addClass('card-caption').text(card.title));
-          var undiscardable = window.PolishRules.TIMED_CARDS.indexOf(card.id) >= 0 || window.PolishRules.VISION_CARDS.indexOf(card.id) >= 0 ||
-            window.PolishRules.EVENT_CARDS.indexOf(card.id) >= 0;
+          var undiscardable = card.urgent || window.PolishRules.TIMED_CARDS.indexOf(card.id) >= 0 ||
+            window.PolishRules.VISION_CARDS.indexOf(card.id) >= 0 || window.PolishRules.EVENT_CARDS.indexOf(card.id) >= 0;
           if (undiscardable) {
             $place.append($('<span>').addClass('pl-undiscardable').attr('title', card.discard.reason).text(uiText('undiscardable')));
           } else {

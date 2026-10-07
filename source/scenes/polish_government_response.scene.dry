@@ -1,12 +1,13 @@
 title: Answer to a Partner
 subtitle: [+ pl_resp_subtitle +]
-is-pinned-card: true
+is-card: true
 view-if: {! return !!Q.S && !!PolishGovernment.responseCase(Q) !}
 new-page: true
 on-arrival: {!
 // The guaranteed answer of card 7.6 (technical reference 9.8): a partner's warning or ultimatum, or a
 // motion to dismiss the cabinet after a partner withdrew, gives PPS one answer for 0 T per case; so do the review
-// after three months and the end of a six-month toleration agreement (9.7, stage 6).
+// after three months and the end of a six-month toleration agreement (9.7, stage 6). Z — 0.74 (decision 3A of 8 X 2026): an
+// urgent card of the Government deck while PPS sits in the cabinet, otherwise of the Parliament deck.
 Q.pl_sup_mode = 'response';
 var open = PolishGovernment.responseCase(Q);
 Q.pl_resp_kind = open ? open.kind : '';
@@ -73,5 +74,5 @@ go-to: polish_government_support.vote_result
 
 @later
 title: Not now
-subtitle: The case stays open; this card remains available.
+subtitle: The case stays open; the card stays in the hand.
 go-to: root

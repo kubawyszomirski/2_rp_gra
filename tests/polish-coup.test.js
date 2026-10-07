@@ -428,7 +428,7 @@ test('Karty 3–5 bez odnowienia: an answered budget package, a refused motion a
   C.S.actors.relations.pschd = 0;
   PolishProjects.constitutionChoose(C, 'democratic_guarantees', 'parliament');
   C.month_actions = 0; C.S.turn.pending = null;
-  PolishProjects.agendaChoose(C, 'submit_democratic_guarantees');
+  PolishProjects.constitutionFile(C, 'democratic_guarantees');
   assert.equal(C.S.parliament.laws.at(-1).status, 'rejected', 'no two thirds');
   C.month_actions = 0; C.S.turn.pending = null;
   assert.match(PolishProjects.constitutionStatus(C, 'democratic_guarantees').reason, /same motion was refused/);

@@ -175,6 +175,15 @@ function watchEngineErrors() {
 
 // Z — 0.57: the party agenda, the unions and the protection of the unemployed are ordinary cards of the decks, no longer
 // pinned. A test plays such a card as if it had been drawn: from main, the card is put into the hand and played.
+// Z — 0.74: the urgent cards in the hand (the prepared reforms, the budget, the answer to a partner, the constitutional motion).
+function urgentCards(engine) {
+  return (engine.state.currentHands.main || []).filter(card => card.urgent).map(card => card.id);
+}
+function urgentDeck(engine, id) {
+  const card = (engine.state.currentHands.main || []).find(c => c.id === id && c.urgent);
+  return card ? card.deck : null;
+}
+
 function playCard(engine, id) {
   if (engine.state.sceneId !== 'main') engine.goToScene('main');
   const hand = engine.state.currentHands.main || (engine.state.currentHands.main = []);
@@ -243,5 +252,7 @@ module.exports = {
   saveAndRestore,
   watchEngineErrors,
   playCard,
+  urgentCards,
+  urgentDeck,
   walk,
 };

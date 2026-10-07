@@ -2,9 +2,9 @@
  "source": "scenes/polish_agenda.scene.dry",
  "status": "complete",
  "lines": {
-  "title: Agenda": "title: Agenda",
-  "subtitle: Prepared reforms wait here for their launch.": "subtitle: Tu przygotowane reformy czekają na uruchomienie.",
-  "= The agenda": "= Agenda",
+  "title: Prepared Reforms": "title: Przygotowane reformy",
+  "subtitle: An urgent card: the reforms prepared by our ministries wait here for their launch.": "subtitle: Karta pilna: reformy przygotowane przez nasze resorty czekają tu na uruchomienie.",
+  "= Prepared reforms": "= Przygotowane reformy",
   "title: Launch the prepared public works": "title: Uruchom przygotowane roboty publiczne",
   "title: Launch the prepared credit instrument": "title: Uruchom przygotowany instrument kredytowy",
   "title: Put the land reform to the Sejm and launch it": "title: Przedłóż Sejmowi reformę rolną i uruchom ją",
@@ -17,12 +17,8 @@
   "title: Put co-decision in the public plant to the Sejm and launch it": "title: Przedłóż Sejmowi współdecydowanie w zakładzie publicznym i uruchom je",
   "title: Put civilian control of the army to the Sejm and launch it": "title: Przedłóż Sejmowi cywilną kontrolę nad wojskiem i uruchom ją",
   "title: Put the limited autonomy of one area to the Sejm and launch it": "title: Przedłóż Sejmowi ograniczoną autonomię jednego obszaru i uruchom ją",
-  "title: File the motion: democratic guarantees": "title: Złóż wniosek: gwarancje demokratyczne",
-  "subtitle: Two thirds of the valid votes in the Sejm now, then in the Senate after 30 days.": "subtitle: Dwie trzecie ważnych głosów w Sejmie teraz, potem w Senacie po 30 dniach.",
-  "title: File the motion: constructive vote of no confidence": "title: Złóż wniosek: konstruktywne wotum nieufności",
-  "title: File the motion: presidential arbitration": "title: Złóż wniosek: arbitraż prezydencki",
   "title: Not now": "title: Nie teraz",
-  "subtitle: The prepared reforms keep their preparation.": "subtitle: Przygotowane reformy zachowują swoje przygotowanie.",
+  "subtitle: The prepared reforms keep their preparation; the card stays in the hand.": "subtitle: Przygotowane reformy zachowują przygotowanie; karta zostaje w ręce.",
   "- @root: Continue.": "- @root: Dalej."
  }
 }

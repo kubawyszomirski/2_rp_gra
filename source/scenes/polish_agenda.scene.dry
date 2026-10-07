@@ -1,16 +1,18 @@
-title: Agenda
-subtitle: Prepared reforms wait here for their launch.
-is-pinned-card: true
+title: Prepared Reforms
+subtitle: An urgent card: the reforms prepared by our ministries wait here for their launch.
+is-card: true
 view-if: {! return !!Q.S && PolishProjects.agendaAvailable(Q) !}
 new-page: true
 on-arrival: {!
 // The agenda of prepared reforms (technical reference 12.2, 17.11): the next step of a prepared project
 // needs no card from the hand and no renewal; it still costs this month's action (1 T) and needs its law,
 // its financing and its executor. A new programme starts only at a forecast budget of −2 B or above (11.3).
+// Z — 0.74 (decision 2A of 8 X 2026): an urgent card of the Government deck (of the Parliament deck for a launch by the
+// parliamentary route alone); a prepared constitutional motion is filed in the card of the constitutional reform.
 PolishProjects.agendaView(Q);
 !}
 
-= The agenda
+= Prepared reforms
 
 [+ pl_agenda_lines +]
 
@@ -28,9 +30,6 @@ PolishProjects.agendaView(Q);
 - @launch_enterprise_representation
 - @launch_army_control
 - @launch_limited_autonomy
-- @submit_democratic_guarantees
-- @submit_constructive_vonc
-- @submit_presidential_arbitration
 - @later
 
 @launch_public_works
@@ -153,48 +152,15 @@ PolishProjects.agendaChoose(Q, 'limited_autonomy');
 !}
 go-to: result
 
-@submit_democratic_guarantees
-title: File the motion: democratic guarantees
-subtitle: Two thirds of the valid votes in the Sejm now, then in the Senate after 30 days.
-view-if: {! return PolishProjects.agendaItemsFor(Q).indexOf('submit_democratic_guarantees') >= 0 !}
-choose-if: {! return PolishProjects.agendaStatus(Q, 'submit_democratic_guarantees').available !}
-unavailable-subtitle: [+ pl_agenda_submit_democratic_guarantees_why +]
-on-arrival: {!
-PolishProjects.agendaChoose(Q, 'submit_democratic_guarantees');
-!}
-go-to: result
-
-@submit_constructive_vonc
-title: File the motion: constructive vote of no confidence
-subtitle: Two thirds of the valid votes in the Sejm now, then in the Senate after 30 days.
-view-if: {! return PolishProjects.agendaItemsFor(Q).indexOf('submit_constructive_vonc') >= 0 !}
-choose-if: {! return PolishProjects.agendaStatus(Q, 'submit_constructive_vonc').available !}
-unavailable-subtitle: [+ pl_agenda_submit_constructive_vonc_why +]
-on-arrival: {!
-PolishProjects.agendaChoose(Q, 'submit_constructive_vonc');
-!}
-go-to: result
-
-@submit_presidential_arbitration
-title: File the motion: presidential arbitration
-subtitle: Two thirds of the valid votes in the Sejm now, then in the Senate after 30 days.
-view-if: {! return PolishProjects.agendaItemsFor(Q).indexOf('submit_presidential_arbitration') >= 0 !}
-choose-if: {! return PolishProjects.agendaStatus(Q, 'submit_presidential_arbitration').available !}
-unavailable-subtitle: [+ pl_agenda_submit_presidential_arbitration_why +]
-on-arrival: {!
-PolishProjects.agendaChoose(Q, 'submit_presidential_arbitration');
-!}
-go-to: result
-
 @later
 title: Not now
-subtitle: The prepared reforms keep their preparation.
+subtitle: The prepared reforms keep their preparation; the card stays in the hand.
 go-to: root
 
 @result
 new-page: true
 
-= The agenda
+= Prepared reforms
 
 [+ pl_gc_result +]
 

@@ -9,7 +9,7 @@
   "title: Conditional credit for the market": "title: Warunkowy kredyt dla rynku",
   "subtitle: Prepares the credit instrument (public fund): the credit target rises while it works (+5).": "subtitle: Przygotowuje instrument kredytowy (fundusz publiczny): docelowy kredyt rośnie, dopóki działa (+5).",
   "title: Conditional credit to rescue a named plant": "title: Warunkowy kredyt na ratowanie wymienionego zakładu",
-  "subtitle: Prepares the rescue of the oldest recorded plant that lost capacity: costs the budget 2 units a month for two months, then 1 unit; restores its capacity. Launched from the agenda.": "subtitle: Przygotowuje ratunek najstarszego zapisanego zakładu, który stracił moce: obciąża budżet: 2 jednostki miesięcznie przez dwa miesiące, potem 1 jednostka; przywraca jego moce. Uruchamiany z agendy.",
+  "subtitle: Prepares the rescue of the oldest recorded plant that lost capacity: costs the budget 2 units a month for two months, then 1 unit; restores its capacity. Launched from the card “Prepared Reforms”.": "subtitle: Przygotowuje ratunek najstarszego zapisanego zakładu, który stracił moce: obciąża budżet: 2 jednostki miesięcznie przez dwa miesiące, potem 1 jednostka; przywraca jego moce. Uruchamiany z karty „Przygotowane reformy”.",
   "title: Public orders": "title: Zamówienia publiczne",
   "subtitle: One contract for three settlements: costs the budget 1 unit a month; output grows (+0.30 percentage points × execution).": "subtitle: Jeden kontrakt na trzy rozliczenia: obciąża budżet: 1 jednostka miesięcznie; produkcja rośnie (+0,30 punktu procentowego × wykonanie).",
   "title: Take an enterprise under public control": "title: Obejmij przedsiębiorstwo kontrolą publiczną",
@@ -22,7 +22,7 @@
   "title: Information and consultation": "title: Informacja i konsultacja",
   "subtitle: This month's action, nothing from the budget, by the act of the public owner; the workers' grievance falls (−2).": "subtitle: Akcja miesiąca, bez kosztu dla budżetu, aktem publicznego właściciela; niezadowolenie robotników spada (−2).",
   "title: Co-decision on mass dismissals and the wage rules": "title: Współdecydowanie o masowych zwolnieniach i zasadach płac",
-  "subtitle: Prepared now (this month's action); its law and launch in the agenda (another month's action), then costs the budget 1 unit a month for two months; grievance falls (−4, or the missing −2 after consultation).": "subtitle: Przygotowanie teraz (akcja miesiąca); ustawa i uruchomienie w agendzie (kolejna akcja miesiąca), potem obciąża budżet: 1 jednostka miesięcznie przez dwa miesiące; niezadowolenie spada (−4 albo brakujące −2 po konsultacji).",
+  "subtitle: Prepared now (this month's action); its law and launch in the card “Prepared Reforms” (another month's action), then costs the budget 1 unit a month for two months; grievance falls (−4, or the missing −2 after consultation).": "subtitle: Przygotowanie teraz (akcja miesiąca); ustawa i uruchomienie w karcie „Przygotowane reformy” (kolejna akcja miesiąca), potem obciąża budżet: 1 jednostka miesięcznie przez dwa miesiące; niezadowolenie spada (−4 albo brakujące −2 po konsultacji).",
   "- @root: Continue.": "- @root: Dalej."
  }
 }

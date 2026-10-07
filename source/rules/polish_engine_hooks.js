@@ -9,7 +9,8 @@
 //   can undo exactly that;
 // - Z — 0.60: the hand has two places for each of the three decks, and a closed deck (its choose-if) offers no card;
 //   deckView describes a deck and its places for the page (out/html/game.js);
-// - in the Polish version, a number inserted into the text gets a decimal comma (Polish version, decision 6A).
+// - in the Polish version, a number inserted into the text gets a decimal comma (Polish version, decision 6A);
+// - Z — 0.74: an urgent card goes into the hand of its deck by itself, in an extra place (syncUrgentCards).
 (function (root, factory) {
   'use strict';
   const hooks = factory();
@@ -37,22 +38,46 @@
 
   let installedRules = null;
 
+  // Z — 0.74 (decisions 1A–3A of 8 X 2026): every urgent card whose condition holds is in the hand of its deck, marked urgent,
+  // in an extra place; one that is no longer urgent leaves it. Called when the month's page opens (main.scene.dry).
+  function syncUrgentCards(engine) {
+    const rules = installedRules;
+    if (!rules || !rules.urgentCardIds) return;
+    const Q = engine.state.qualities;
+    const hand = engine.state.currentHands.main || (engine.state.currentHands.main = []);
+    for (const cardId of rules.urgentCardIds()) {
+      const scene = engine.game.scenes[cardId];
+      const active = !!scene && rules.urgentCardActive(Q, cardId) && (!scene.viewIf || engine._runPredicate(scene.viewIf, true));
+      const index = hand.findIndex(card => card.id === cardId);
+      if (active) {
+        const deck = rules.urgentCardDeck(Q, cardId);
+        if (index < 0) hand.push({id: cardId, title: scene.title, deck: deck, urgent: true, image: scene.cardImage || null});
+        else if (hand[index].urgent) hand[index].deck = deck;
+      } else if (index >= 0 && hand[index].urgent) {
+        hand.splice(index, 1);
+      }
+    }
+  }
+
   // One deck and its places of the hand, for the page (Z — 0.60): whether a card can be drawn and why not, and the cards
   // of this deck in the hand with their deadline and whether they can be discarded.
   function deckView(engine, deckId) {
     const rules = installedRules;
     const Q = engine.state.qualities, scene = engine.game.scenes[deckId] || {};
-    const cards = rules.handOfDeck(engine.state, engine.game, deckId).map(card => {
+    // The ordinary cards first, then the urgent ones in their extra places (Z — 0.74).
+    const inHand = rules.handOfDeck(engine.state, engine.game, deckId);
+    const cards = inHand.filter(card => !card.urgent).concat(inHand.filter(card => card.urgent)).map(card => {
       const until = rules.cardDeadline(Q, card.id);
       return {id: card.id, title: card.title, image: card.image || (engine.game.scenes[card.id] || {}).cardImage, until: until,
-        discard: rules.discardStatus(Q, engine.state, card.id)};
+        urgent: !!card.urgent, discard: rules.discardStatus(Q, engine.state, card.id)};
     });
+    const ordinary = cards.filter(card => !card.urgent).length;
     const key = deckId.split('.').pop();
     let available = true, reason = '';
     if (scene.chooseIf && !engine._runPredicate(scene.chooseIf, true)) {
       available = false;
       reason = Q['pl_deck_' + key + '_why'] || rules.L('This deck is closed now.', 'Ta talia jest teraz zamknięta.');
-    } else if (cards.length >= rules.HAND_PER_DECK) {
+    } else if (ordinary >= rules.HAND_PER_DECK) {
       available = false;
       reason = rules.L('Both places of this deck are taken: play or discard a card.', 'Oba miejsca tej talii są zajęte: zagraj albo odrzuć kartę.');
     } else if (!legalDeckCards(engine, deckId).length) {
@@ -78,9 +103,9 @@
       const sceneId = this.state.sceneId;
       const scene = this.getCurrentScene();
       const hand = this.state.currentHands[sceneId] || (this.state.currentHands[sceneId] = []);
-      if (scene.maxCards <= hand.length) return {id: null, title: 'no_space_in_hand'};
-      // Z — 0.60: two places for each deck.
-      if (rules.handOfDeck(this.state, this.game, deckId).length >= rules.HAND_PER_DECK) return {id: null, title: 'no_space_in_hand'};
+      if (scene.maxCards <= hand.filter(card => !card.urgent).length) return {id: null, title: 'no_space_in_hand'};
+      // Z — 0.60: two places for each deck; an urgent card has its own extra place (Z — 0.74).
+      if (rules.ordinaryHandOfDeck(this.state, this.game, deckId).length >= rules.HAND_PER_DECK) return {id: null, title: 'no_space_in_hand'};
       const card = rules.pickCard(this.state.qualities, legalDeckCards(this, deckId), deckId);
       if (!card) return {id: null, title: 'no_card_in_deck'};
       card.deck = deckId;
@@ -124,9 +149,13 @@
       return playCard.call(this, cardId);
     };
 
+    proto.syncUrgentCards = function () {
+      syncUrgentCards(this);
+    };
+
     proto.polishEngineHooks = true;
     return true;
   }
 
-  return Object.freeze({install: install, legalDeckCards: legalDeckCards, deckView: deckView});
+  return Object.freeze({install: install, legalDeckCards: legalDeckCards, deckView: deckView, syncUrgentCards: syncUrgentCards});
 }));

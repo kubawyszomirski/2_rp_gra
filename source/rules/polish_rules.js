@@ -66,6 +66,12 @@
     'polish_party_ussr_position', 'polish_party_economic_program']);
   const EVENT_CARDS = Object.freeze(['polish_constitution_project', 'polish_parliament_army_oversight']);
   const cardDeadlines = {};
+  // Z — 0.74 (decisions 1A–3A of 8 X 2026): urgent cards. A module registers a card that must not wait for a lucky draw — the
+  // prepared reforms, the answer to the cabinet's budget package, the answer to a partner, the filing of a prepared
+  // constitutional motion — with its deck and the condition under which it is urgent. The engine hook puts such a card into
+  // the hand of its deck by itself (an extra place marked "urgent", besides the two ordinary ones); it cannot be discarded and
+  // leaves the hand when it is played or when its condition ends.
+  const urgentCards = {};
   const ADVISOR_COOLDOWN_MONTHS = 6; // 4.4: one shared adviser cooldown
   const TXN_SOURCES = ['main', 'advisor', 'event', 'cabinet'];
   const TXN_PHASES = ['preview', 'committed', 'settled'];
@@ -582,7 +588,8 @@
     else state.visits[cardId] = view.visits;
     if (view.from_hand && view.hand_entry) {
       const hand = state.currentHands.main || (state.currentHands.main = []);
-      if (!hand.some(card => card.id === cardId) && hand.length < HAND_SIZE) hand.push(view.hand_entry);
+      const ordinary = hand.filter(card => !card.urgent).length;
+      if (!hand.some(card => card.id === cardId) && (view.hand_entry.urgent || ordinary < HAND_SIZE)) hand.push(view.hand_entry);
     }
     S.history.reasons.push({t: Q.time, kind: 'close', card: cardId});
     return true;
@@ -722,6 +729,30 @@
     return handCards(state).filter(card => (card.deck || deckOfCard(game, card.id)) === deckId);
   }
 
+  // The ordinary places of a deck: an urgent card takes its own extra place (Z — 0.74).
+  function ordinaryHandOfDeck(state, game, deckId) {
+    return handOfDeck(state, game, deckId).filter(card => !card.urgent);
+  }
+
+  // spec: {deck: Q => deck id, active: Q => true while the card is urgent}.
+  function registerUrgentCard(cardId, spec) {
+    urgentCards[cardId] = spec;
+  }
+
+  function urgentCardIds() {
+    return Object.keys(urgentCards).sort();
+  }
+
+  function urgentCardActive(Q, cardId) {
+    const spec = urgentCards[cardId];
+    return !!spec && !!Q.S && !!spec.active(Q);
+  }
+
+  function urgentCardDeck(Q, cardId) {
+    const spec = urgentCards[cardId];
+    return spec ? spec.deck(Q) : null;
+  }
+
   // A module registers the last month in which its timed card can be played (Z — 0.60).
   function registerCardDeadline(cardId, fn) {
     cardDeadlines[cardId] = fn;
@@ -744,6 +775,8 @@
       'Karty wizji partii nie można odrzucić: zagraj ją, aby potwierdzić albo zmienić linię.'));
     if (EVENT_CARDS.indexOf(cardId) >= 0) return no(L('A card opened by a special event cannot be discarded.',
       'Karty otwartej przez specjalne wydarzenie nie można odrzucić.'));
+    if (handCards(state).some(card => card.id === cardId && card.urgent)) return no(L('An urgent card cannot be discarded; it leaves the hand when it is played or its time ends.',
+      'Pilnej karty nie można odrzucić; zniknie z ręki po zagraniu albo po swoim terminie.'));
     if (Q.S.turn.discard_used) return no(L('A card has already been discarded this month.', 'W tym miesiącu odrzucono już kartę.'));
     if (!handCards(state).some(card => card.id === cardId)) return no(L('The card is not in the hand.', 'Tej karty nie ma na ręce.'));
     return {available: true, reason: ''};
@@ -787,7 +820,7 @@
     return sorted[Math.min(sorted.length - 1, Math.floor(r * sorted.length))];
   }
 
-  // Projects and required responses stay outside the three hand places (4.4).
+  // Projects stay outside the hand places (4.4); since 0.74 the required answers and the prepared reforms are urgent cards.
   function agendaItems(S) {
     return Object.keys(S.projects).sort()
       .map(id => S.projects[id])
@@ -983,6 +1016,11 @@
     openingKeys: openingKeys,
     beginCardView: beginCardView,
     closeCard: closeCard,
+    registerUrgentCard: registerUrgentCard,
+    urgentCardIds: urgentCardIds,
+    urgentCardActive: urgentCardActive,
+    urgentCardDeck: urgentCardDeck,
+    ordinaryHandOfDeck: ordinaryHandOfDeck,
     freeCardPages: freeCardPages,
     commitAdvisorAction: commitAdvisorAction,
     commitMainAction: commitMainAction,

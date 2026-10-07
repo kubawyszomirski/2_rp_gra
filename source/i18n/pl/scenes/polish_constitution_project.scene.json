@@ -12,7 +12,11 @@
   "subtitle: Dismissing a cabinet needs 223 votes for an agreed successor at the same time. It protects cabinets PPS does not want too.": "subtitle: Odwołanie gabinetu wymaga 223 głosów oddanych jednocześnie za uzgodnionym następcą. Chroni też gabinety, których PPS nie chce.",
   "title: Presidential arbitration": "title: Arbitraż prezydencki",
   "subtitle: After two failed formations in three months the President may dissolve the Sejm; Lewica dissent rises (+8).": "subtitle: Po dwóch nieudanych próbach utworzenia gabinetu w ciągu trzech miesięcy prezydent może rozwiązać Sejm; sprzeciw Lewicy rośnie (+8).",
-  "The text is prepared. Filing the motion — the second main action — waits in the agenda.": "Tekst jest przygotowany. Złożenie wniosku — druga główna akcja — czeka w agendzie.",
-  "- @root: Continue.": "- @root: Dalej."
+  "The text is prepared. Filing the motion — the second main action — comes back as an urgent card of the Parliament deck.": "Tekst jest przygotowany. Złożenie wniosku — druga główna akcja — wróci jako karta pilna talii „Parlament”.",
+  "- @root: Continue.": "- @root: Dalej.",
+  "title: File the motion: democratic guarantees": "title: Złóż wniosek: gwarancje demokratyczne",
+  "subtitle: Two thirds of the valid votes in the Sejm now, then in the Senate after 30 days.": "subtitle: Dwie trzecie ważnych głosów w Sejmie teraz, potem w Senacie po 30 dniach.",
+  "title: File the motion: constructive vote of no confidence": "title: Złóż wniosek: konstruktywne wotum nieufności",
+  "title: File the motion: presidential arbitration": "title: Złóż wniosek: arbitraż prezydencki"
  }
 }

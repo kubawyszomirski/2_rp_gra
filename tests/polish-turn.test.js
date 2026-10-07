@@ -290,6 +290,44 @@ test('one free discard a month on the card itself, available again after the mon
   assert.equal(Q.S.turn.discard_used, false, 'available again after the month changes');
 });
 
+// Z — 0.74 (decisions 1A–3A of 8 X 2026): the cards that must not wait for a lucky draw — the prepared reforms, the answer to
+// the cabinet's budget package, the answer to a partner, the filing of a constitutional motion — are urgent cards in the hand
+// of their deck; the column of the Central Executive Committee holds only the advisers.
+test('Karty pilne 0.74: an urgent card enters the hand of its deck in an extra place, cannot be discarded, stays after Not now and leaves with its condition', () => {
+  const engine = dendry.startGame();
+  const Q = engine.state.qualities;
+  engine.goToScene('main');
+  for (const id of ['polish_agenda', 'polish_budget_package', 'polish_government_response']) assert.ok(!choiceIds(engine).includes(id), `${id} is not pinned`);
+  // Both ordinary places of Parliament are taken; the cabinet's package brings the budget card into a third, urgent place.
+  engine.state.currentHands.main = [
+    { id: 'inter_party_relationships', title: 'Talks', deck: 'main.parliament' },
+    { id: 'polish_unemployment_bill', title: 'Bill', deck: 'main.parliament' },
+  ];
+  PolishProjects.newPackage(Q, { instruments: ['broad'], necessary: false, reason: 'deficit' });
+  engine.syncUrgentCards();
+  const view = PolishEngineHooks.deckView(engine, 'main.parliament');
+  assert.deepEqual(view.cards.map(c => [c.id, c.urgent]), [['inter_party_relationships', false], ['polish_unemployment_bill', false],
+    ['polish_budget_package', true]]);
+  assert.equal(view.slots, 2, 'two ordinary places; the urgent card has its own');
+  assert.equal(view.available, false, 'no draw: the deck is closed in January 1922 and its places are taken');
+  assert.equal(view.cards[2].until, Q.S.economy.pending_package.vote_at, 'the badge of its last month');
+  assert.match(PolishRules.discardStatus(Q, engine.state, 'polish_budget_package').reason, /urgent card cannot be discarded/);
+  assert.equal(PolishRules.ordinaryHandOfDeck(engine.state, engine.game, 'main.parliament').length, 2);
+  // "Not now" keeps it in the hand; the answer removes it.
+  engine.state.currentHands.main = [];
+  engine.goToScene('main');
+  assert.deepEqual(dendry.urgentCards(engine), ['polish_budget_package']);
+  engine.playCard('polish_budget_package');
+  dendry.choose(engine, 'polish_budget_package.later');
+  assert.equal(engine.state.sceneId, 'main');
+  assert.deepEqual(dendry.urgentCards(engine), ['polish_budget_package'], 'back in its place after Not now');
+  engine.playCard('polish_budget_package');
+  dendry.choose(engine, 'polish_budget_package.support');
+  dendry.choose(engine, 'root');
+  assert.deepEqual(dendry.urgentCards(engine), [], 'answered: the condition has ended');
+  assert.equal(Q.time, 1, 'the answer costs no month');
+});
+
 // Bug of 5 X 2026: the discard page and "Not now" of a pinned card went straight to the hand without a new page, so
 // their text stayed above the hand. They return through root, like "Return to hand". Z — 0.57: the party agenda is an
 // ordinary card, so it is closed with "Return to hand" and goes back to the hand. Z — 0.60: the discard page is gone.

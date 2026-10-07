@@ -1,12 +1,13 @@
 title: Budget and the Costs of the Crisis
-subtitle: Answer the cabinet's package before the Sejm votes on it.
-is-pinned-card: true
+subtitle: An urgent card: answer the cabinet's package before the Sejm votes on it.
+is-card: true
 view-if: {! return !!Q.S && PolishProjects.budgetCardAvailable(Q) !}
 new-page: true
 on-arrival: {!
 // Card parliament.finance_amendment (technical reference 17.10; card catalogue 7.3): open while a package
 // of this cabinet waits for its vote and PPS is in the cabinet or supports it (decision 5 of stage 4).
-// One answer for 0 T; the partners judge a PPS condition by 8.3.
+// One answer for 0 T; the partners judge a PPS condition by 8.3. Z — 0.74 (decision 3A of 8 X 2026): an urgent card of the
+// Parliament deck until the vote of the package.
 var view = PolishProjects.budgetView(Q);
 Q.pl_bud_package = view.package;
 Q.pl_bud_project = view.project;
@@ -90,7 +91,7 @@ go-to: result
 
 @later
 title: Not now
-subtitle: Without an answer PPS votes as its role binds it.
+subtitle: Without an answer PPS votes as its role binds it; the card stays in the hand until the vote.
 go-to: root
 
 @result

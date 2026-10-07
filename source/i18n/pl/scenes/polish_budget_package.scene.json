@@ -3,7 +3,7 @@
  "status": "complete",
  "lines": {
   "title: Budget and the Costs of the Crisis": "title: Budżet i koszty kryzysu",
-  "subtitle: Answer the cabinet's package before the Sejm votes on it.": "subtitle: Odpowiedz na pakiet gabinetu, zanim Sejm nad nim zagłosuje.",
+  "subtitle: An urgent card: answer the cabinet's package before the Sejm votes on it.": "subtitle: Karta pilna: odpowiedz na pakiet gabinetu, zanim Sejm nad nim zagłosuje.",
   "= The cabinet's package": "= Pakiet gabinetu",
   "Because [+ pl_bud_reason +], the cabinet proposes: [+ pl_bud_package +][? if pl_bud_project : , with [+ pl_bud_project +] ?]. The Sejm votes at the settlement of [+ pl_bud_vote +]. Budget: [+ pl_bud_forecast +].": "Powód: [+ pl_bud_reason +]. Gabinet proponuje: [+ pl_bud_package +][? if pl_bud_project : , wraz z: [+ pl_bud_project +] ?]. Sejm głosuje przy rozliczeniu [+ pl_bud_vote +]. Budżet: [+ pl_bud_forecast +].",
   "[? if pl_bud_necessary : The premier treats this package as necessary: if it is refused, he presents one revision, and resigns if that fails too. ?]": "[? if pl_bud_necessary : Premier uważa ten pakiet za konieczny: jeśli zostanie odrzucony, przedstawi jedną poprawioną wersję, a gdy i ona upadnie, poda się do dymisji. ?]",
@@ -25,7 +25,7 @@
   "subtitle: PPS does not support the package.": "subtitle: PPS nie popiera pakietu.",
   "Q.pl_bud_result = 'PPS will vote against the package.';": "Q.pl_bud_result = 'PPS zagłosuje przeciw pakietowi.';",
   "title: Not now": "title: Nie teraz",
-  "subtitle: Without an answer PPS votes as its role binds it.": "subtitle: Bez odpowiedzi PPS głosuje tak, jak wiąże ją jej rola.",
+  "subtitle: Without an answer PPS votes as its role binds it; the card stays in the hand until the vote.": "subtitle: Bez odpowiedzi PPS głosuje tak, jak wiąże ją jej rola; karta zostaje w ręce do głosowania.",
   "- @root: Continue.": "- @root: Dalej."
  }
 }

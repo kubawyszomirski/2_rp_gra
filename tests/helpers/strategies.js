@@ -45,7 +45,8 @@ const P = {
   union: (branch, step) => ['polish_union_agenda', 'polish_union_agenda.' + branch, 'polish_union_agenda.' + step],
   bill: () => ['polish_unemployment_bill', 'polish_unemployment_bill.start'],
   gov: (card, option) => [card, card + '.' + option],
-  agenda: option => ['main:polish_agenda', 'polish_agenda.' + option],
+  // Z — 0.74: the prepared reforms are an urgent card in the hand, opened here directly (as a played card is).
+  agenda: option => ['polish_agenda', 'polish_agenda.' + option],
   support: option => ['polish_government_support', 'polish_government_support.' + option],
   // Z — 0.64: a PPS member raises the same demands on the coalition card of the Government deck.
   coalition: option => ['polish_coalition_affairs', 'polish_government_support.' + option],
@@ -350,7 +351,7 @@ const STRATEGIES = {
   }),
   constitutional_defense: strategy('constitutional_defense', '21.2: constitutional defence', {
     free: ctx => [P.adviser('niedzialkowski', 'defend_democracy')],
-    month: ctx => plan.organised(ctx, [P.constitution('democratic_guarantees'), P.agenda('submit_democratic_guarantees'),
+    month: ctx => plan.organised(ctx, [P.constitution('democratic_guarantees'), P.constitution('file_democratic_guarantees'),
       P.armyOversight('civilian_oversight'), P.agenda('launch_army_control'), P.militia(ctx.t % 2 ? 'militarize' : 'form_as'),
       P.campaign('democracy', 'workers'), ...plan.military(ctx)]),
   }),

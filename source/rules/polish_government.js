@@ -3597,6 +3597,23 @@
     };
   }
 
+  // Z — 0.74 (decision 3A of 8 X 2026): the answer to a partner is an urgent card — of the Government deck while PPS sits in the
+  // cabinet, otherwise of the Parliament deck. An ultimatum can be answered until the month before it expires, a dismissal
+  // motion in the month it is moved (it is voted at the next settlement); a warning, a review or the end of a term have no date.
+  function responseDeadline(Q) {
+    const c = Q.S ? responseCase(Q) : null;
+    if (!c) return null;
+    if (c.kind === 'motion') return Q.S.cabinet.dismissal_motion ? Q.S.cabinet.dismissal_motion.opened_at : null;
+    if (c.kind === 'ultimatum') {
+      const ultimatum = Q.S.agreements[c.agreement_id].ultimatum;
+      return ultimatum && ultimatum.status === 'open' ? ultimatum.due_at - 1 : null;
+    }
+    return null;
+  }
+  rules.registerUrgentCard('polish_government_response', {active: Q => !!responseCase(Q),
+    deck: Q => ppsStance(Q.S) === 'member' ? 'main.govt' : 'main.parliament'});
+  rules.registerCardDeadline('polish_government_response', responseDeadline);
+
   return Object.freeze({
     ACTOR_PROFILE_ID: ACTOR_PROFILE_ID,
     PORTFOLIO_ALTERNATIVES: PORTFOLIO_ALTERNATIVES,
@@ -3642,6 +3659,7 @@
     ppsStance: ppsStance,
     ppsAgreements: ppsAgreements,
     responseCase: responseCase,
+    responseDeadline: responseDeadline,
     supportCardAvailable: supportCardAvailable,
     coalitionCardAvailable: coalitionCardAvailable,
     concessionStatus: concessionStatus,

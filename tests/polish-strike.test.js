@@ -313,7 +313,7 @@ test('the plant cards in the game: Labour signs a collective agreement in the br
   choose(engine, 'root');
   toMain(engine);
   assert.equal(Q.time, 3);
-  choose(engine, 'polish_agenda');
+  engine.playCard('polish_agenda');
   assert.ok(ids(engine).includes('polish_agenda.launch_plant_rescue'));
   choose(engine, 'polish_agenda.launch_plant_rescue');
   choose(engine, 'root');

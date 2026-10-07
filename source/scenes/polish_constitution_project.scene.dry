@@ -7,8 +7,8 @@ card-image: img/polish/polish_constitution_project.jpg
 view-if: {! return !!Q.S && PolishProjects.constitutionCardAvailable(Q) !}
 on-arrival: {!
 // Card parliament.constitution_project (technical reference 7.6, 17.10; card catalogue 7.4). Preparing a
-// reform takes two main actions: this card prepares the text (1 T); filing the motion waits in the
-// agenda. The amendment needs two thirds of the valid votes in the Sejm (quorum 222) and in the Senate
+// reform takes two main actions: this card prepares the text (1 T) and files the motion (1 T). Z — 0.74 (decision 2A of
+// 8 X 2026): while a prepared motion waits, the card is an urgent card of the Parliament deck. The amendment needs two thirds of the valid votes in the Sejm (quorum 222) and in the Senate
 // (quorum 56), and the signatures of at least 111 MPs.
 for (var reform of ['democratic_guarantees', 'constructive_vonc', 'presidential_arbitration']) {
     Q['pl_con_' + reform + '_why'] = PolishProjects.constitutionStatus(Q, reform).reason;
@@ -20,13 +20,17 @@ for (var reform of ['democratic_guarantees', 'constructive_vonc', 'presidential_
 Each project is a separate alternative with its own act. After its promulgation and one month of implementation it costs 1 B once and changes the rules it names; no declaration alone changes the constitution.
 
 - @democratic_guarantees
+- @file_democratic_guarantees
 - @constructive_vonc
+- @file_constructive_vonc
 - @presidential_arbitration
+- @file_presidential_arbitration
 - @easy_discard
 
 @democratic_guarantees
 title: Democratic guarantees
 subtitle: Protection of associations, equal rights and self-government; relations with Wyzwolenie and both minority representations improve (+4); ZLN is against.
+view-if: {! return !PolishProjects.constitutionPrepared(Q, 'democratic_guarantees') !}
 choose-if: {! return PolishProjects.constitutionStatus(Q, 'democratic_guarantees').available !}
 unavailable-subtitle: [+ pl_con_democratic_guarantees_why +]
 on-arrival: {!
@@ -34,9 +38,21 @@ PolishProjects.constitutionChoose(Q, 'democratic_guarantees', 'card');
 !}
 go-to: result
 
+@file_democratic_guarantees
+title: File the motion: democratic guarantees
+subtitle: Two thirds of the valid votes in the Sejm now, then in the Senate after 30 days.
+view-if: {! return PolishProjects.constitutionPrepared(Q, 'democratic_guarantees') !}
+choose-if: {! return PolishProjects.constitutionStatus(Q, 'democratic_guarantees').available !}
+unavailable-subtitle: [+ pl_con_democratic_guarantees_why +]
+on-arrival: {!
+Q.pl_con_result = PolishProjects.constitutionFile(Q, 'democratic_guarantees');
+!}
+go-to: filed
+
 @constructive_vonc
 title: Constructive vote of no confidence
 subtitle: Dismissing a cabinet needs 223 votes for an agreed successor at the same time. It protects cabinets PPS does not want too.
+view-if: {! return !PolishProjects.constitutionPrepared(Q, 'constructive_vonc') !}
 choose-if: {! return PolishProjects.constitutionStatus(Q, 'constructive_vonc').available !}
 unavailable-subtitle: [+ pl_con_constructive_vonc_why +]
 on-arrival: {!
@@ -44,9 +60,21 @@ PolishProjects.constitutionChoose(Q, 'constructive_vonc', 'card');
 !}
 go-to: result
 
+@file_constructive_vonc
+title: File the motion: constructive vote of no confidence
+subtitle: Two thirds of the valid votes in the Sejm now, then in the Senate after 30 days.
+view-if: {! return PolishProjects.constitutionPrepared(Q, 'constructive_vonc') !}
+choose-if: {! return PolishProjects.constitutionStatus(Q, 'constructive_vonc').available !}
+unavailable-subtitle: [+ pl_con_constructive_vonc_why +]
+on-arrival: {!
+Q.pl_con_result = PolishProjects.constitutionFile(Q, 'constructive_vonc');
+!}
+go-to: filed
+
 @presidential_arbitration
 title: Presidential arbitration
 subtitle: After two failed formations in three months the President may dissolve the Sejm; Lewica dissent rises (+8).
+view-if: {! return !PolishProjects.constitutionPrepared(Q, 'presidential_arbitration') !}
 choose-if: {! return PolishProjects.constitutionStatus(Q, 'presidential_arbitration').available !}
 unavailable-subtitle: [+ pl_con_presidential_arbitration_why +]
 on-arrival: {!
@@ -54,11 +82,31 @@ PolishProjects.constitutionChoose(Q, 'presidential_arbitration', 'card');
 !}
 go-to: result
 
+@file_presidential_arbitration
+title: File the motion: presidential arbitration
+subtitle: Two thirds of the valid votes in the Sejm now, then in the Senate after 30 days.
+view-if: {! return PolishProjects.constitutionPrepared(Q, 'presidential_arbitration') !}
+choose-if: {! return PolishProjects.constitutionStatus(Q, 'presidential_arbitration').available !}
+unavailable-subtitle: [+ pl_con_presidential_arbitration_why +]
+on-arrival: {!
+Q.pl_con_result = PolishProjects.constitutionFile(Q, 'presidential_arbitration');
+!}
+go-to: filed
+
 @result
 new-page: true
 
 = Constitutional reform
 
-The text is prepared. Filing the motion — the second main action — waits in the agenda.
+The text is prepared. Filing the motion — the second main action — comes back as an urgent card of the Parliament deck.
+
+- @root: Continue.
+
+@filed
+new-page: true
+
+= Constitutional reform
+
+[+ pl_con_result +]
 
 - @root: Continue.

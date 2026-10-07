@@ -9,6 +9,9 @@ if (typeof PolishRules === 'undefined' || !PolishRules.isSaveCompatible(Q)) {
     Q.polish_save_incompatible = 1;
     return;
 }
+// Z — 0.74 (decisions 1A–3A of 8 X 2026): the urgent cards — the prepared reforms, the answer to the cabinet's budget package,
+// the answer to a partner and the filing of a constitutional motion — go into the hand of their deck by themselves.
+if (this.syncUrgentCards) this.syncUrgentCards();
 // Events are routed by post_event only; main offers the ordinary turn or a mandatory sequence.
 Q.has_event = 0;
 // Displays of dated cooldowns (technical reference 4.4).
@@ -46,9 +49,6 @@ max-cards: 6
 - @govt
 - @parliament
 - #advisor
-- @polish_government_response
-- @polish_agenda
-- @polish_budget_package
 
 
 @party

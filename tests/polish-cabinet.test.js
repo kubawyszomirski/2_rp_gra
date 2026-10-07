@@ -375,12 +375,17 @@ test('Utrzymanie poparcia tylko w kryzysie: no Keep option outside a crisis; aft
   spendMonth(engine);
   assert.equal(Q.time, 2);
   assert.equal(agreement.ultimatum.status, 'open');
-  assert.ok(ids(engine).includes('polish_government_response'), 'the pinned 0 T answer');
+  // Z — 0.74 (decision 3A of 8 X 2026): the 0 T answer is an urgent card in the hand of the Government deck (PPS sits in the
+  // cabinet), with the month before the ultimatum expires as its last month.
+  assert.ok(dendry.urgentCards(engine).includes('polish_government_response'), 'the urgent 0 T answer');
+  assert.equal(dendry.urgentDeck(engine, 'polish_government_response'), 'main.govt');
+  assert.equal(PolishRules.cardDeadline(Q, 'polish_government_response'), agreement.ultimatum.due_at - 1);
+  assert.equal(PolishRules.discardStatus(Q, engine.state, 'polish_government_response').available, false, 'an urgent card cannot be discarded');
   assert.match(content(engine), /Ultimatum from NPR/);
   const restored = dendry.saveAndRestore(engine);
   restored.goToScene('main');
   const R = restored.state.qualities;
-  restored.playPinnedCard('polish_government_response');
+  restored.playCard('polish_government_response');
   assert.match(content(restored), /An ultimatum from/);
   assert.equal(choice(restored, 'polish_government_support.maintain').canChoose, true);
   choose(restored, 'polish_government_support.maintain');
@@ -388,7 +393,7 @@ test('Utrzymanie poparcia tylko w kryzysie: no Keep option outside a crisis; aft
   assert.deepEqual([R.time, R.month_actions], [2, 0], 'the answer costs no month');
   assert.equal(PolishGovernment.responseCase(R), null, 'one answer per case');
   assert.equal(R.S.agreements[agreement.id].ultimatum.status, 'open', 'keeping support removes no breach');
-  assert.ok(!ids(restored).includes('polish_government_response'));
+  assert.ok(!dendry.urgentCards(restored).includes('polish_government_response'), 'answered: the card leaves the hand');
 });
 
 test('Poparcie gabinetu: a refused threat, then carrying it out and the vote; one offer, no counter-proposal', () => {

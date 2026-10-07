@@ -18,7 +18,7 @@ Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_public_works');
 
 *[+ pl_gc_ministry +]*
 
-Public works belong to Labour; the Treasury alone gives no access. Each programme is large: its preparation (1 T) now, its launch (1 T) in the agenda. Working programmes add public jobs, at most 8 units in the country.
+Public works belong to Labour; the Treasury alone gives no access. Each programme is large: its preparation (1 T) now, its launch (1 T) in the card “Prepared Reforms”. Working programmes add public jobs, at most 8 units in the country.
 
 [+ pl_gc_budget +]
 

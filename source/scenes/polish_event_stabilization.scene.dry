@@ -18,7 +18,7 @@ Q.pl_ev_protected_why = PolishProjects.eventStatus(Q, 'stabilization', 'protecte
 
 The budget has stayed below −2 B, or inflation at 20% a month or more, for two settlements. A currency reform is now possible: one project, prepared and then launched with the currency law and its financing.
 
-[? if pl_ev_treasury : PPS holds the Treasury and chooses the variant now. The launch waits in the agenda. ?]
+[? if pl_ev_treasury : PPS holds the Treasury and chooses the variant now. The launch waits in the card “Prepared Reforms”. ?]
 
 [? if not pl_ev_treasury : PPS does not hold the Treasury. The cabinet may prepare the reform itself; its package will come before the Sejm, where PPS can answer it with the Budget card if it sits in the cabinet or supports it. ?]
 

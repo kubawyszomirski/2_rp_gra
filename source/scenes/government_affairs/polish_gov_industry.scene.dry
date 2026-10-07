@@ -46,7 +46,7 @@ go-to: result
 
 @rescue
 title: Conditional credit to rescue a named plant
-subtitle: Prepares the rescue of the oldest recorded plant that lost capacity: costs the budget 2 units a month for two months, then 1 unit; restores its capacity. Launched from the agenda.
+subtitle: Prepares the rescue of the oldest recorded plant that lost capacity: costs the budget 2 units a month for two months, then 1 unit; restores its capacity. Launched from the card “Prepared Reforms”.
 choose-if: {! return PolishProjects.optionStatus(Q, 'industrial_policy', 'rescue').available !}
 unavailable-subtitle: [+ pl_industrial_policy_rescue_why +]
 on-arrival: {!
@@ -104,7 +104,7 @@ go-to: result
 
 @rep_decision_rights
 title: Co-decision on mass dismissals and the wage rules
-subtitle: Prepared now (this month's action); its law and launch in the agenda (another month's action), then costs the budget 1 unit a month for two months; grievance falls (−4, or the missing −2 after consultation).
+subtitle: Prepared now (this month's action); its law and launch in the card “Prepared Reforms” (another month's action), then costs the budget 1 unit a month for two months; grievance falls (−4, or the missing −2 after consultation).
 choose-if: {! return PolishProjects.optionStatus(Q, 'industrial_policy', 'worker_representation', {variant: 'decision_rights'}).available !}
 unavailable-subtitle: [+ pl_rep_decision_rights_why +]
 on-arrival: {!
