@@ -345,6 +345,22 @@
     window.setLanguage(window.currentLanguage === 'pl' ? 'en' : 'pl');
   };
 
+  // Z — 0.75: on the page "The new Committee" each candidate shows the portrait of their Committee card at the left; the
+  // title and the description move into one column beside it (the click handlers of core.js still find the link).
+  var addChoicePortraits = function(dendryUI, choices) {
+    var scenes = dendryUI.dendryEngine && dendryUI.dendryEngine.game && dendryUI.dendryEngine.game.scenes;
+    if (!choices || !scenes) return;
+    var $items = dendryUI.$content.find('ul.choices').last().children('li');
+    choices.forEach(function(choice, i) {
+      var match = choice && /^polish_party_advisers\.toggle_([a-z]+)$/.exec(String(choice.id || '').replace(/^@/, ''));
+      var scene = match && scenes[match[1]];
+      if (!scene || !scene.cardImage) return;
+      var $item = $items.eq(i);
+      var $text = $('<div>').addClass('pl-portrait-text').append($item.contents());
+      $item.addClass('pl-portrait-choice').append($('<img>').addClass('pl-portrait').attr({src: scene.cardImage, alt: ''}), $text);
+    });
+  };
+
   var main = function(dendryUI) {
     ui = dendryUI;
     game = ui.game;
@@ -364,7 +380,9 @@
             return choice && choice.title === 'Continue...' ? Object.assign({}, choice, {title: uiText('continue_choice')}) : choice;
           });
         }
-        return displayChoices.call(this, choices);
+        var result = displayChoices.call(this, choices);
+        addChoicePortraits(this, choices);
+        return result;
       };
     }
     var populateSaveSlots = dendryUI.populateSaveSlots;

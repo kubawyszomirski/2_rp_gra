@@ -88,6 +88,33 @@ test('Kolportaż w Organizacjach 0.68: the Media card has no press distribution;
   assert.equal(Q.S.party_orgs.press.reach, 40, 'the press gains 10 reach through the card of the organisations');
 });
 
+// Z — 0.75 (the user's note of 8 X 2026): on "The new Committee" each candidate opens with the bold faction, says who the
+// person was and what they enable in the game, and ends with the state; a candidate who cannot be added keeps the description.
+test('Nowy skład CKW 0.75: each candidate has a bold faction, a description and the state', () => {
+  const engine = dendry.startGame();
+  playFromHand(engine, 'polish_party_advisers');
+  choose(engine, 'polish_party_advisers.compose');
+  const toggles = () => (engine.getCurrentChoices() || []).filter(c => /\.toggle_/.test(c.id));
+  assert.equal(toggles().length, 11);
+  for (const c of toggles()) {
+    assert.doesNotMatch(plain(c.title), /\(/, `${c.id}: the title is the name only`);
+    assert.equal(bold(c.subtitle).length, 1, `${c.id}: one bold faction`);
+    assert.match(plain(c.subtitle), /In the game: /, c.id);
+  }
+  const daszynski = choice(engine, 'polish_party_advisers.toggle_daszynski');
+  assert.equal(plain(daszynski.title), 'Ignacy Daszyński');
+  assert.deepEqual(bold(daszynski.subtitle), ['Centrum.']);
+  assert.match(plain(daszynski.subtitle), /In the game: Parliamentary Compromise.* On the Committee — remove\.$/);
+  const zaremba = choice(engine, 'polish_party_advisers.toggle_zaremba');
+  assert.equal(zaremba.canChoose, false, 'the three seats are taken');
+  assert.deepEqual(bold(zaremba.subtitle), ['Lewica.']);
+  assert.match(plain(zaremba.subtitle), /In the game: Worker-Peasant Front.* The three seats are taken\.$/);
+  assert.deepEqual(bold(choice(engine, 'polish_party_advisers.toggle_malinowski').subtitle), ['Piłsudczycy.']);
+  choose(engine, 'polish_party_advisers.toggle_daszynski');
+  assert.match(plain(choice(engine, 'polish_party_advisers.toggle_zaremba').subtitle), / Add to the Committee\.$/);
+  assert.match(plain(choice(engine, 'polish_party_advisers.toggle_daszynski').subtitle), / Add to the Committee\.$/);
+});
+
 // Z — 0.56 (item 4 of 5 X 2026): the union packages have a card of their own; one investment in one action.
 test('Związki zawodowe — organizowanie i fundusze: a card of its own with seven choices; one investment costs the month', () => {
   const engine = dendry.startGame();

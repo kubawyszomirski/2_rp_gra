@@ -1144,3 +1144,30 @@ table {
   font-family: inherit;
   cursor: pointer;
 }
+
+/* Z — 0.75: a candidate on the page "The new Committee" with the portrait of their Committee card at the left (game.js,
+   addChoicePortraits); the bold faction that opens the description stands on its own line, as other bold labels. */
+ul.choices li.pl-portrait-choice {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8em;
+}
+ul.choices li.pl-portrait-choice .pl-portrait {
+  flex: 0 0 auto;
+  width: 3.5em;
+  height: 4.4em;
+  object-fit: cover;
+  object-position: top;
+  border: 1px solid var(--rule-color);
+}
+ul.choices li.pl-portrait-choice .pl-portrait-text {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+ul.choices li.pl-portrait-choice div.subtitle {
+  margin-left: 0;
+}
+ul.choices li.pl-portrait-choice.unavailable .pl-portrait {
+  opacity: 0.6;
+  filter: grayscale(1);
+}

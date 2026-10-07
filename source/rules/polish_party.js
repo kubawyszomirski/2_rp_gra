@@ -2106,6 +2106,9 @@
       Q['pl_adv_' + id + '_why'] = ADVISERS[id].continuation ? L('Belongs to the continuation (from 1928 in chapter 2).',
         'Należy do kontynuacji (od 1928 roku, w rozdziale 2).') : !adviserInPool(Q, id) && current.indexOf(id) < 0 ? L('No longer available.', 'Już niedostępny.') :
         draft.length >= TEAM_SIZE ? L('The three seats are taken.', 'Trzy miejsca są zajęte.') : '';
+      // Z — 0.75: the last sentence of the candidate's description: remove, add, or why not.
+      Q['pl_adv_' + id + '_state'] = Q['pl_adv_' + id + '_in'] ? L('On the Committee — remove.', 'Zasiada w CKW — usuń.') :
+        Q['pl_adv_' + id + '_can_add'] ? L('Add to the Committee.', 'Dodaj do CKW.') : Q['pl_adv_' + id + '_why'];
     }
     Q.pl_adv_draft_text = draft.map(id => ADVISERS[id].name).join(', ') || L('nobody', 'nikt');
     Q.pl_adv_confirm_why = advisersStatus(Q, draft).reason;

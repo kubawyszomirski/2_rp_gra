@@ -48,110 +48,99 @@ Chosen: [+ pl_adv_draft_text +]. Nothing is spent until you confirm.
 - @polish_party_advisers: Start again.
 
 @toggle_daszynski
-title: Ignacy Daszyński (Centrum)
-subtitle: [? if pl_adv_daszynski_in = 1 : On the Committee — remove. ?][? if pl_adv_daszynski_in = 0 : Add to the Committee. ?]
+title: Ignacy Daszyński
+subtitle: **Centrum.** Austrian Reichsrat deputy 1897–1918; in November 1918 he headed the Provisional People’s Government in Lublin. Since 1919 a deputy to the Sejm Ustawodawczy and member of the PPS CKW; deputy prime minister 1920–1921. In the game: Parliamentary Compromise (better relations with Piast, NPR and the Christian Democrats) and Broker a Coalition (calmer coalition agreements or a better-judged broad cabinet offer). [+ pl_adv_daszynski_state +]
 choose-if: pl_adv_daszynski_in = 1 or pl_adv_daszynski_can_add = 1
-unavailable-subtitle: [+ pl_adv_daszynski_why +]
 on-arrival: {!
 PolishParty.advisersToggle(Q, 'daszynski');
 !}
 go-to: menu
 
 @toggle_puzak
-title: Kazimierz Pużak (Centrum)
-subtitle: [? if pl_adv_puzak_in = 1 : On the Committee — remove. ?][? if pl_adv_puzak_in = 0 : Add to the Committee. ?]
+title: Kazimierz Pużak
+subtitle: **Centrum.** A political prisoner of tsarist Russia 1911–1917, from 1915 in the Schlüsselburg fortress. Since 1919 a PPS deputy to the Sejm Ustawodawczy and member of the party’s Rada Naczelna; in 1920 deputy head of the CKW Military Department. In the game: Party Discipline (less dissent in all three factions) and Mobilize the Organization (more reach among workers and stronger workers’ campaigns). [+ pl_adv_puzak_state +]
 choose-if: pl_adv_puzak_in = 1 or pl_adv_puzak_can_add = 1
-unavailable-subtitle: [+ pl_adv_puzak_why +]
 on-arrival: {!
 PolishParty.advisersToggle(Q, 'puzak');
 !}
 go-to: menu
 
 @toggle_perl
-title: Feliks Perl (Centrum)
-subtitle: [? if pl_adv_perl_in = 1 : On the Committee — remove. ?][? if pl_adv_perl_in = 0 : Add to the Committee. ?]
+title: Feliks Perl
+subtitle: **Centrum.** Co-founder and leading ideologue of the PPS (Paris congress, 1892) and editor-in-chief of the party daily Robotnik; since 1919 a PPS deputy to the Sejm Ustawodawczy. In the game: Define the Party Line (a stronger and calmer Centrum, workers won back from the KPP) and Direct the Party Press (a more credible press and stronger press campaigns). [+ pl_adv_perl_state +]
 choose-if: pl_adv_perl_in = 1 or pl_adv_perl_can_add = 1
-unavailable-subtitle: [+ pl_adv_perl_why +]
 on-arrival: {!
 PolishParty.advisersToggle(Q, 'perl');
 !}
 go-to: menu
 
 @toggle_niedzialkowski
-title: Mieczysław Niedziałkowski (Centrum)
-subtitle: [? if pl_adv_niedzialkowski_in = 1 : On the Committee — remove. ?][? if pl_adv_niedzialkowski_in = 0 : Add to the Committee. ?]
+title: Mieczysław Niedziałkowski
+subtitle: **Centrum.** A PPS theorist. In 1918 head of the Sejm department of the Interior Ministry; since 1919 a deputy to the Sejm Ustawodawczy, secretary of its Constitutional Committee and member of the PPS CKW. In the game: Build Centrolew (better relations with the peasant and centre parties) and Defend Constitutional Democracy (democracy grows and the PPS organisations stand by lawful institutions). [+ pl_adv_niedzialkowski_state +]
 choose-if: pl_adv_niedzialkowski_in = 1 or pl_adv_niedzialkowski_can_add = 1
-unavailable-subtitle: [+ pl_adv_niedzialkowski_why +]
 on-arrival: {!
 PolishParty.advisersToggle(Q, 'niedzialkowski');
 !}
 go-to: menu
 
 @toggle_arciszewski
-title: Tomasz Arciszewski (Centrum)
-subtitle: [? if pl_adv_arciszewski_in = 1 : On the Committee — remove. ?][? if pl_adv_arciszewski_in = 0 : Add to the Committee. ?]
+title: Tomasz Arciszewski
+subtitle: **Centrum.** In PPS since 1896 and one of the leaders of its Combat Organisation; in November 1918 minister of labour in the Lublin government, then minister of posts and telegraphs until January 1919; since 1919 a deputy to the Sejm Ustawodawczy. In the game: Organize the Workers (a union branch reaches further and PPS gains among its workers) and, when PPS holds Labour, the Labour Programme (one stage of workers’ rights or benefits without this month’s action). [+ pl_adv_arciszewski_state +]
 choose-if: pl_adv_arciszewski_in = 1 or pl_adv_arciszewski_can_add = 1
-unavailable-subtitle: [+ pl_adv_arciszewski_why +]
 on-arrival: {!
 PolishParty.advisersToggle(Q, 'arciszewski');
 !}
 go-to: menu
 
 @toggle_zaremba
-title: Zygmunt Zaremba (Lewica)
-subtitle: [? if pl_adv_zaremba_in = 1 : On the Committee — remove. ?][? if pl_adv_zaremba_in = 0 : Add to the Committee. ?]
+title: Zygmunt Zaremba
+subtitle: **Lewica.** A socialist since 1912; in 1917 he led the Polish socialists of southern Russia. In 1918–1919 he represented PPS on the executive of the Warsaw Council of Workers’ Delegates; a member of the PPS CKW and Rada Naczelna. In the game: Worker-Peasant Front (a better relation with PSL Wyzwolenie) and Class Campaign (PPS gains among workers and the unemployed, loses a little among the petty bourgeoisie; a stronger Lewica). [+ pl_adv_zaremba_state +]
 choose-if: pl_adv_zaremba_in = 1 or pl_adv_zaremba_can_add = 1
-unavailable-subtitle: [+ pl_adv_zaremba_why +]
 on-arrival: {!
 PolishParty.advisersToggle(Q, 'zaremba');
 !}
 go-to: menu
 
 @toggle_czapinski
-title: Kazimierz Czapiński (Lewica)
-subtitle: [? if pl_adv_czapinski_in = 1 : On the Committee — remove. ?][? if pl_adv_czapinski_in = 0 : Add to the Committee. ?]
+title: Kazimierz Czapiński
+subtitle: **Lewica.** A socialist publicist born in Minsk, in the Galician PPSD from 1910; since 1919 a deputy to the Sejm Ustawodawczy and secretary of the socialist deputies’ club; since 1921 a member of the PPS CKW. In the game: Socialist Education (a stronger Lewica and fewer workers lost to the KPP; needs TUR) and, with PPS in the cabinet, the Socialist Economic Programme (progressive taxes, public ownership or workers’ representation). [+ pl_adv_czapinski_state +]
 choose-if: pl_adv_czapinski_in = 1 or pl_adv_czapinski_can_add = 1
-unavailable-subtitle: [+ pl_adv_czapinski_why +]
 on-arrival: {!
 PolishParty.advisersToggle(Q, 'czapinski');
 !}
 go-to: menu
 
 @toggle_jaworowski
-title: Rajmund Jaworowski (Piłsudczycy)
-subtitle: [? if pl_adv_jaworowski_in = 1 : On the Committee — remove. ?][? if pl_adv_jaworowski_in = 0 : Add to the Committee. ?]
+title: Rajmund Jaworowski
+subtitle: **Piłsudczycy.** A PPS militant and in 1914–1915 an intelligence officer of the Legions; since 1918 chairman of the PPS Warsaw District Workers’ Committee, a Warsaw city councillor and, since 1921, a member of the PPS CKW. In the game: Back Piłsudski (a better relation with Piłsudski and stronger Piłsudczycy, at the cost of dissent in Centrum and Lewica). [+ pl_adv_jaworowski_state +]
 choose-if: pl_adv_jaworowski_in = 1 or pl_adv_jaworowski_can_add = 1
-unavailable-subtitle: [+ pl_adv_jaworowski_why +]
 on-arrival: {!
 PolishParty.advisersToggle(Q, 'jaworowski');
 !}
 go-to: menu
 
 @toggle_moraczewski
-title: Jędrzej Moraczewski (Piłsudczycy)
-subtitle: [? if pl_adv_moraczewski_in = 1 : On the Committee — remove. ?][? if pl_adv_moraczewski_in = 0 : Add to the Committee. ?]
+title: Jędrzej Moraczewski
+subtitle: **Piłsudczycy.** Prime minister of Poland’s first central government (November 1918 – January 1919). Since 1919 vice-marshal of the Sejm Ustawodawczy and member of the PPS CKW; from 1920 a vice-chairman of the railway workers’ union. In the game: when PPS holds Labour, the Public Works Programme (one stage of public works without this month’s action). [+ pl_adv_moraczewski_state +]
 choose-if: pl_adv_moraczewski_in = 1 or pl_adv_moraczewski_can_add = 1
-unavailable-subtitle: [+ pl_adv_moraczewski_why +]
 on-arrival: {!
 PolishParty.advisersToggle(Q, 'moraczewski');
 !}
 go-to: menu
 
 @toggle_ziemiecki
-title: Bronisław Ziemięcki (Piłsudczycy)
-subtitle: [? if pl_adv_ziemiecki_in = 1 : On the Committee — remove. ?][? if pl_adv_ziemiecki_in = 0 : Add to the Committee. ?]
+title: Bronisław Ziemięcki
+subtitle: **Piłsudczycy.** Minister of industry in the Lublin government in November 1918, then minister of labour and social welfare under Moraczewski until January 1919; since 1919 a deputy to the Sejm Ustawodawczy. In the game: Conditional Toleration (calmer Centrum and Lewica while PPS tolerates a minority cabinet close to Piłsudski) and Municipal Socialism (PPS gains in the large cities). [+ pl_adv_ziemiecki_state +]
 choose-if: pl_adv_ziemiecki_in = 1 or pl_adv_ziemiecki_can_add = 1
-unavailable-subtitle: [+ pl_adv_ziemiecki_why +]
 on-arrival: {!
 PolishParty.advisersToggle(Q, 'ziemiecki');
 !}
 go-to: menu
 
 @toggle_malinowski
-title: Marian Malinowski (Piłsudczycy)
-subtitle: [? if pl_adv_malinowski_in = 1 : On the Committee — remove. ?][? if pl_adv_malinowski_in = 0 : Add to the Committee. ?]
+title: Marian Malinowski
+subtitle: **Piłsudczycy.** A PPS militant from the Radom district who twice escaped tsarist exile. In November 1918 minister of public works in the Lublin government, then minister without portfolio under Moraczewski; since 1919 a deputy to the Sejm Ustawodawczy. In the game: Organize the Piłsudczyks (stronger and calmer Piłsudczycy). [+ pl_adv_malinowski_state +]
 choose-if: pl_adv_malinowski_in = 1 or pl_adv_malinowski_can_add = 1
-unavailable-subtitle: [+ pl_adv_malinowski_why +]
 on-arrival: {!
 PolishParty.advisersToggle(Q, 'malinowski');
 !}
