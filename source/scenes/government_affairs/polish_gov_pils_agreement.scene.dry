@@ -10,9 +10,13 @@ on-arrival: {!
 // it does not buy a relief of pressure. An own initiative costs this month's action; the answer in the political
 // crisis of a coup costs none. One agreement at a time; its relief comes once, when its execution starts.
 PolishSecurity.pilsView(Q);
+// Z — 0.66 (decision 2A): the ministry of this card, on its page and as a badge in the hand.
+Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_pils_agreement');
 !}
 
 = Agreement with Piłsudski
+
+*[+ pl_gc_ministry +]*
 
 [+ pl_pils_line +]
 

@@ -1,0 +1,92 @@
+title: Loan, Savings and Emission
+subtitle: Treasury: a domestic loan, savings, emission financing or better tax collection.
+new-page: true
+is-card: true
+tags: govt_affairs
+view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'finance_package') !}
+on-arrival: {!
+// Card government.finance_package (technical reference 17.11–17.12; card catalogue 8.3). Z — 0.66 (decision 1A of 7 X 2026):
+// the Treasury family has two cards, the taxes (polish_gov_finance) and the loan, savings and emission
+// (polish_gov_finance_funding); both use the same rules of 11.9. Opening and closing the card are free; a confirmed option
+// costs this month's action, or the one free step of an adviser who opened the card.
+PolishProjects.cardView(Q, 'finance_package');
+// Z — 0.66 (decision 2A): the ministry of this card, on its page and as a badge in the hand.
+Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_finance_funding');
+!}
+
+= Loan, savings and emission
+
+*[+ pl_gc_ministry +]*
+
+One instrument per decision, voted by the Sejm at once; one instrument of each kind can be in force, and a temporary revenue ends when it expires.
+
+[+ pl_gc_budget +]
+
+[+ pl_gc_projects +]
+
+- @loan
+- @admin_cuts
+- @benefit_cut
+- @emission
+- @collection
+- @easy_discard
+- @cancel_advisor_action
+
+@loan
+title: Domestic loan
+subtitle: Brings the budget 3 units a month for six months, then costs it 1 unit a month for twelve months. Needs credit of at least 40.
+choose-if: {! return PolishProjects.optionStatus(Q, 'finance_package', 'loan').available !}
+unavailable-subtitle: [+ pl_finance_package_loan_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'finance_package', 'loan');
+!}
+go-to: result
+
+@admin_cuts
+title: Savings in named administrative spending
+subtitle: Brings the budget 1 unit a month for six months; the discontent of the public employees named grows (+4).
+choose-if: {! return PolishProjects.optionStatus(Q, 'finance_package', 'admin_cuts').available !}
+unavailable-subtitle: [+ pl_finance_package_admin_cuts_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'finance_package', 'admin_cuts');
+!}
+go-to: result
+
+@benefit_cut
+title: Savings: cut the unemployment benefit
+subtitle: Only the difference of the real cost, from 2 to 1 budget unit, and a change of the law; Lewica dissent rises (+8).
+choose-if: {! return PolishProjects.optionStatus(Q, 'finance_package', 'benefit_cut').available !}
+unavailable-subtitle: [+ pl_finance_package_benefit_cut_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'finance_package', 'benefit_cut');
+!}
+go-to: result
+
+@emission
+title: Emission financing
+subtitle: Before the złoty: printing within an authorised limit of 1–3 points; after it: transitional coinage, 1 point for three months.
+choose-if: {! return PolishProjects.optionStatus(Q, 'finance_package', 'emission').available !}
+unavailable-subtitle: [+ pl_finance_package_emission_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'finance_package', 'emission');
+!}
+go-to: result
+
+@collection
+title: Improve tax collection
+subtitle: Costs the budget 1 unit a month for two months, then brings it 1 unit a month for good; once in the chapter.
+choose-if: {! return PolishProjects.optionStatus(Q, 'finance_package', 'collection').available !}
+unavailable-subtitle: [+ pl_finance_package_collection_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'finance_package', 'collection');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= Loan, savings and emission
+
+[+ pl_gc_result +]
+
+- @root: Continue.

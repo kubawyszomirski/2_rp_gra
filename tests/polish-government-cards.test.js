@@ -70,7 +70,7 @@ test('Roboty pod Pracą in the game: the Government deck offers the Labour cards
   const Q = leftCabinet(engine);
   const deck = offered(engine, 'main.govt');
   for (const id of ['polish_gov_public_works', 'polish_gov_social_welfare', 'polish_gov_labor_rights']) assert.ok(deck.includes(id), id);
-  for (const id of ['polish_gov_finance', 'polish_gov_land', 'polish_gov_education']) assert.ok(!deck.includes(id), id + ' needs another portfolio');
+  for (const id of ['polish_gov_finance', 'polish_gov_finance_funding', 'polish_gov_land', 'polish_gov_education']) assert.ok(!deck.includes(id), id + ' needs another portfolio');
   const t = Q.time;
   playFromHand(engine, 'polish_gov_public_works');
   assert.match(content(engine), /Budget this month/);
@@ -239,4 +239,51 @@ test('Debata o konstytucji: the event of December 1924 opens the debate once, an
   assert.equal(P.constitutionDebateOpen(Q.S), true);
   assert.equal(P.constitutionDebateDue(Q), false, 'once');
   assert.ok(offered(engine, 'main.parliament').includes('polish_constitution_project'), 'the card comes into the deck');
+});
+
+// Z — 0.66 (decisions 1A and 2A of 7 X 2026): the Treasury card is split in two — the taxes, and the loan, savings and emission —
+// with the same rules of 11.9; every card of a ministry names its ministry, on its page and as a badge in the hand.
+test('Karty resortów 0.66: two Treasury cards with five instruments each; every government card names its ministry', () => {
+  const engine = dendry.startGame();
+  const Q = leftCabinet(engine);
+  const options = id => Object.keys(engine.game.scenes).filter(s => s.startsWith(id + '.') && !s.endsWith('.result')).map(s => s.slice(id.length + 1)).sort();
+  assert.deepEqual(options('polish_gov_finance'), ['broad', 'customs', 'indirect', 'progressive', 'wealth_tax']);
+  assert.deepEqual(options('polish_gov_finance_funding'), ['admin_cuts', 'benefit_cut', 'collection', 'emission', 'loan']);
+  assert.equal(engine.game.scenes.polish_gov_finance.title, 'Taxes');
+  assert.equal(engine.game.scenes.polish_gov_finance_funding.title, 'Loan, Savings and Emission');
+  // With the Treasury both cards are in the Government deck.
+  Q.S.cabinet.portfolios.finance = 'pps';
+  const deck = offered(engine, 'main.govt');
+  for (const id of ['polish_gov_finance', 'polish_gov_finance_funding']) assert.ok(deck.includes(id), id);
+  playFromHand(engine, 'polish_gov_finance_funding');
+  assert.match(content(engine), /A card of the Treasury ministry\./);
+  assert.match(content(engine), /Budget this month/);
+  assert.equal(choice(engine, 'polish_gov_finance_funding.loan').canChoose, Q.S.economy.credit >= 40);
+  choose(engine, 'easy_discard');
+  playFromHand(engine, 'polish_gov_finance');
+  assert.match(content(engine), /One instrument per decision, voted by the Sejm at once/);
+  assert.doesNotMatch(content(engine), /11\.9|No project of this card yet/, 'no section number and no empty project line on the taxes card');
+  choose(engine, 'easy_discard');
+  // The badge names the ministry of every government card; of two portfolios, the one PPS holds.
+  const P = PolishProjects;
+  const expect = { polish_gov_labor_rights: 'Labour', polish_gov_social_welfare: 'Labour', polish_gov_public_works: 'Labour',
+    polish_gov_finance: 'Treasury', polish_gov_finance_funding: 'Treasury', polish_gov_currency: 'Treasury', polish_gov_investment: 'Treasury',
+    polish_gov_industry: 'Industry and Trade', polish_gov_land: 'Agriculture', polish_gov_agriculture: 'Agriculture',
+    polish_gov_education: 'Education', polish_gov_minority_schools: 'Education', polish_gov_heritage: 'Education',
+    polish_gov_interior: 'Interior', polish_gov_justice: 'Justice', polish_gov_military: 'Military Affairs', polish_gov_pils_agreement: 'Military Affairs' };
+  for (const [id, name] of Object.entries(expect)) assert.equal(P.ministryBadge(Q, id), name, id);
+  const govScenes = Object.keys(engine.game.scenes).filter(id => !id.includes('.') && (engine.game.scenes[id].tags || []).includes('govt_affairs') && id.startsWith('polish_gov_'));
+  assert.deepEqual(govScenes.filter(id => !P.ministryBadge(Q, id)), [], 'every Polish government card has a ministry');
+  Q.S.cabinet.portfolios.finance = 'expert';
+  Q.S.cabinet.portfolios.economic = 'pps';
+  assert.equal(P.ministryBadge(Q, 'polish_gov_investment'), 'Industry and Trade', 'the investment fund under Industry and Trade');
+  assert.equal(P.ministryBadge(Q, 'polish_party_dues'), '', 'no badge on a party card');
+  PolishRules.setLanguage('pl');
+  try {
+    assert.equal(P.ministryBadge(Q, 'polish_gov_finance'), 'Skarb');
+    assert.equal(P.ministryLine(Q, 'polish_gov_finance'), 'Karta resortu Skarbu.');
+    assert.equal(P.ministryLine(Q, 'polish_gov_pils_agreement'), 'Karta resortu Spraw Wojskowych.');
+  } finally {
+    PolishRules.setLanguage('en');
+  }
 });

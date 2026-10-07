@@ -648,6 +648,14 @@
             $cardLink.append($('<span>').addClass('pl-timed-badge').text(deadlineBadge(card.until)));
             $cardLink.append($('<span>').addClass('card-tooltip').text(deadlineText(card.until)));
           }
+          // Z — 0.66 (decision 2A of 7 X 2026): a card of a ministry carries the name of its ministry
+          // (PolishProjects.ministryBadge: of the portfolios that open it, the one PPS holds).
+          var ministry = window.PolishProjects && window.PolishProjects.ministryBadge ?
+            window.PolishProjects.ministryBadge(engine.state.qualities, card.id) : '';
+          if (ministry) {
+            $cardLink.addClass('pl-ministry');
+            $cardLink.append($('<span>').addClass('pl-ministry-badge').text(ministry));
+          }
           $place.append($cardLink).append($('<span>').addClass('card-caption').text(card.title));
           var undiscardable = window.PolishRules.TIMED_CARDS.indexOf(card.id) >= 0 || window.PolishRules.VISION_CARDS.indexOf(card.id) >= 0 ||
             window.PolishRules.EVENT_CARDS.indexOf(card.id) >= 0;

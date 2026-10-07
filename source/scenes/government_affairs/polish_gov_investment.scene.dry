@@ -10,9 +10,13 @@ on-arrival: {!
 // the card are free; a confirmed option costs this month's action, or the one free step of an adviser
 // who opened the card. Options that need a system of a later stage are shown with their reason.
 PolishProjects.cardView(Q, 'investment_fund');
+// Z — 0.66 (decision 2A): the ministry of this card, on its page and as a badge in the hand.
+Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_investment');
 !}
 
 = Capital for investment
+
+*[+ pl_gc_ministry +]*
 
 The credit instrument is a large project: 2 B of building for 2 months, then 1 B to run, and +5 to the credit target while it works. The variants differ in who pays and who must agree: one financing, one cost, one effect.
 

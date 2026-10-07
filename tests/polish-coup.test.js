@@ -293,7 +293,8 @@ test('Katalog rządowy: 16 families in the pool, the agenda and the triggers; no
     heritage_restoration: 'polish_gov_heritage',
   };
   assert.equal(Object.keys(FAMILIES).length, 16);
-  const polish = Object.values(FAMILIES);
+  // Z — 0.66 (decision 1A of 7 X 2026): the Treasury family has a second card, the loan, savings and emission.
+  const polish = Object.values(FAMILIES).concat(['polish_gov_finance_funding']);
   for (const id of polish) assert.ok(engine.game.scenes[id], id);
   // A fixture cabinet in which PPS holds all nine portfolios, in a financial crisis (the stabilisation).
   if (!S.cabinet.partner_ids.includes('pps')) S.cabinet.partner_ids.push('pps');

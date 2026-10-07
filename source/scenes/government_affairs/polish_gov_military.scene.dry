@@ -9,9 +9,13 @@ on-arrival: {!
 // control for the one synthetic post over the near reserve. Preparing it costs this month's action, its launch in
 // the agenda another; its effects come once per scope of the reform.
 PolishProjects.cardView(Q, 'military_policy');
+// Z — 0.66 (decision 2A): the ministry of this card, on its page and as a badge in the hand.
+Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_military');
 !}
 
 = Military affairs
+
+*[+ pl_gc_ministry +]*
 
 The post and its scope are a marked synthetic function over one group of the army; the historical appointments are not reconstructed. A compromise that gives Piłsudski personal powers goes through the agreement with him, not through this card.
 

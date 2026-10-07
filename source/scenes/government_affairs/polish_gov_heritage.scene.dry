@@ -11,9 +11,13 @@ on-arrival: {!
 // the card are free; a confirmed option costs this month's action, or the one free step of an adviser
 // who opened the card. Options that need a system of a later stage are shown with their reason.
 PolishProjects.cardView(Q, 'heritage_restoration');
+// Z — 0.66 (decision 2A): the ministry of this card, on its page and as a badge in the hand.
+Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_heritage');
 !}
 
 = Wawel or the Royal Castle
+
+*[+ pl_gc_ministry +]*
 
 Works in existing buildings, within the existing competences and the budget. Limited conservation is a small reform (1 T, 1 B for 2 months); a wider restoration with public access is a large one (2 B for 4 months). One project for each building; a completed one is not started again.
 

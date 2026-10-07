@@ -2246,6 +2246,37 @@
     heritage_restoration: {portfolios: ['education'], options: ['wawel_conservation', 'wawel_restoration', 'zamek_conservation', 'zamek_restoration']},
   });
 
+  // Z — 0.66 (decision 2A of 7 X 2026): every government card is marked with its ministry — a badge on the card in the hand
+  // and a first line on its page. The scenes of the cards (the Treasury family has two since decision 1A: taxes, and the
+  // loan, savings and emission) and, for the agreement with Piłsudski of PolishSecurity, its portfolio.
+  const CARD_SCENES = Object.freeze({polish_gov_labor_rights: 'labor_rights', polish_gov_social_welfare: 'social_welfare',
+    polish_gov_finance: 'finance_package', polish_gov_finance_funding: 'finance_package', polish_gov_currency: 'currency_stabilisation',
+    polish_gov_investment: 'investment_fund', polish_gov_industry: 'industrial_policy', polish_gov_public_works: 'public_works',
+    polish_gov_land: 'land_program', polish_gov_agriculture: 'agriculture_development', polish_gov_education: 'education_program',
+    polish_gov_minority_schools: 'minority_school_rights', polish_gov_justice: 'justice_policy', polish_gov_interior: 'internal_security',
+    polish_gov_military: 'military_policy', polish_gov_heritage: 'heritage_restoration'});
+  const SCENE_PORTFOLIOS = Object.freeze({polish_gov_pils_agreement: Object.freeze(['reichswehr'])});
+  const PORTFOLIO_BADGE_PL = Object.freeze({labor: 'Praca', interior: 'Sprawy Wewnętrzne', finance: 'Skarb', economic: 'Przemysł i Handel',
+    justice: 'Sprawiedliwość', agriculture: 'Rolnictwo', reichswehr: 'Sprawy Wojskowe', education: 'Oświata', foreign: 'Sprawy Zagraniczne'});
+
+  // The ministry of a card: of the portfolios that open it, the one PPS holds, otherwise the first; null for other scenes.
+  function ministryOf(Q, sceneId) {
+    const portfolios = SCENE_PORTFOLIOS[sceneId] || (CARD_SCENES[sceneId] ? CARDS[CARD_SCENES[sceneId]].portfolios : null);
+    if (!portfolios) return null;
+    const S = Q && Q.S;
+    return portfolios.filter(key => S && ppsHolds(S, key))[0] || portfolios[0];
+  }
+
+  function ministryBadge(Q, sceneId) {
+    const key = ministryOf(Q, sceneId);
+    return key ? L(PORTFOLIO_SHORT[key], PORTFOLIO_BADGE_PL[key]) : '';
+  }
+
+  function ministryLine(Q, sceneId) {
+    const key = ministryOf(Q, sceneId);
+    return key ? L('A card of the ' + PORTFOLIO_SHORT[key] + ' ministry.', 'Karta resortu ' + PORTFOLIO_SHORT_PL[key] + '.') : '';
+  }
+
   // The card is in the pool only with the right access (17.11): PPS holds one of its portfolios in an
   // active cabinet; stabilisation also needs a financial crisis or an existing project.
   function cardAvailable(Q, cardId) {
@@ -3195,6 +3226,10 @@
     billView: billView,
     compromiseClubs: compromiseClubs,
     cardAvailable: cardAvailable,
+    CARD_SCENES: CARD_SCENES,
+    ministryOf: ministryOf,
+    ministryBadge: ministryBadge,
+    ministryLine: ministryLine,
     landAccessStatus: landAccessStatus,
     optionStatus: optionStatus,
     chooseOption: chooseOption,

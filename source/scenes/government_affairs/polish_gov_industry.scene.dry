@@ -10,9 +10,13 @@ on-arrival: {!
 // the card are free; a confirmed option costs this month's action, or the one free step of an adviser
 // who opened the card. The rescue, public control and representation act on the plant records of stage 6.
 PolishProjects.cardView(Q, 'industrial_policy');
+// Z — 0.66 (decision 2A): the ministry of this card, on its page and as a badge in the hand.
+Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_industry');
 !}
 
 = Industrial policy
+
+*[+ pl_gc_ministry +]*
 
 Industry and Trade can prepare the credit instrument or run one package of public orders. It can also act on a recorded plant of industry or a railway workshop: rescue it by a conditional credit, take it under public control, or give its workers a representation once it is public. No intervention causes no arbitrary bankruptcy.
 

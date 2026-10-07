@@ -269,7 +269,7 @@ for (const [name, stage] of [['Populacja', 5], ['Warianty funduszu inwestycyjneg
   ['Reprezentacja', 7], ['Autonomia', 7], ['Sprawiedliwość', 7], ['Rozszerzyć i skupić osłony', 7]]) {
   assert.ok(byStageB[stage].includes(name) && !byStageB[4].includes(name), `decision 4 of stage 4: ${name} is in stage ${stage}`);
 }
-assert.equal(byStageB[4].length, 36, 'stage 4 keeps 36 tests of 21.1 (35 and the debate on the constitution of Z — 0.56)');
+assert.equal(byStageB[4].length, 37, 'stage 4 keeps 37 tests of 21.1 (35, the debate on the constitution of Z — 0.56 and the ministry cards of Z — 0.66)');
 assert.ok(/if \(!Q\.polish_economy_system\) \{/.test(read('source/scenes/post_event.scene.dry')), 'leaks 1 and 9: the German monthly economy is guarded');
 for (const card of ['economic_policy', 'fiscal_policy', 'social_welfare', 'labor_rights', 'agricultural_policy', 'education_science', 'judiciary',
   'constitutional_reform', 'economic_democracy']) {

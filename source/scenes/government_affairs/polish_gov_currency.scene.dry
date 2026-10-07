@@ -10,9 +10,13 @@ on-arrival: {!
 // the card are free; a confirmed option costs this month's action, or the one free step of an adviser
 // who opened the card. Options that need a system of a later stage are shown with their reason.
 PolishProjects.cardView(Q, 'currency_stabilisation');
+// Z — 0.66 (decision 2A): the ministry of this card, on its page and as a badge in the hand.
+Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_currency');
 !}
 
 = Currency stabilisation
+
+*[+ pl_gc_ministry +]*
 
 A financial crisis — a budget below −2 B or inflation of at least 20% a month for two months — opens the one currency reform. Choosing a variant prepares it (1 T); its launch with the currency law and the necessary financing waits in the agenda (1 T). When it is completed the złoty ends the marka pressures and the ordinary emission.
 

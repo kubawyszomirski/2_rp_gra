@@ -11,9 +11,13 @@ on-arrival: {!
 // a change of government neither undoes the training nor makes them an organisation of PPS.
 PolishProjects.cardView(Q, 'internal_security');
 Q.pl_police_line = PolishSecurity.policeLine(Q);
+// Z — 0.66 (decision 2A): the ministry of this card, on its page and as a badge in the hand.
+Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_interior');
 !}
 
 = Police and internal security
+
+*[+ pl_gc_ministry +]*
 
 [+ pl_police_line +]
 

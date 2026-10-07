@@ -10,9 +10,13 @@ on-arrival: {!
 // the card are free; a confirmed option costs this month's action, or the one free step of an adviser
 // who opened the card. Options that need a system of a later stage are shown with their reason.
 PolishProjects.cardView(Q, 'agriculture_development');
+// Z — 0.66 (decision 2A): the ministry of this card, on its page and as a badge in the hand.
+Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_agriculture');
 !}
 
 = Modernisation of agriculture
+
+*[+ pl_gc_ministry +]*
 
 Each project covers one of three tranches of the countryside and costs 1 B for 4 months, nothing after. The same area does not get the same improvement twice; land reform and modernisation may cover the same people.
 

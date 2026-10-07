@@ -11,9 +11,13 @@ on-arrival: {!
 // who opened the card. Collective agreements and derogations use the union branches and plant records of
 // stage 6 (PolishUnions).
 PolishProjects.cardView(Q, 'labor_rights');
+// Z — 0.66 (decision 2A): the ministry of this card, on its page and as a badge in the hand.
+Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_labor_rights');
 !}
 
 = Workers’ rights
+
+*[+ pl_gc_ministry +]*
 
 Labour enforces the law on working time and oversees agreements between employers and unions. An inspection is a small reform: one decision, 1 B for two months of building, then 1 B to run. Its law goes to the Sejm and the Senate in the same decision. A collective agreement and a derogation cost the budget nothing.
 

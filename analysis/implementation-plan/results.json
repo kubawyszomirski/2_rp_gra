@@ -1,9 +1,9 @@
 {
   "scope": "Implementation plan 0.40: stages 0-8, catalogue entries, 21.1 tests and 20.2 leaks each assigned once; scope sections, files and links exist; approved decisions recorded.",
   "hashes": {
-    "docs/POLISH_IMPLEMENTATION_PLAN.md": "fb9113a03b9a92b0735518f77ef3f7e94e24edb692ebc381d26bd1e4edd2d7d2",
-    "docs/POLISH_TECHNICAL_REFERENCE.md": "6dba4fee5d4a09d72af02b0b9ea73af509f594e9706e5e8f5e3750889083076d",
-    "docs/POLISH_CARD_CATALOGUE.md": "e33bcd285105c3f8239e1d5787aa1e51dfa9a00426e8cae1af58f79a3d742672"
+    "docs/POLISH_IMPLEMENTATION_PLAN.md": "f26983f95dc0271ddc8c70371c89c94240d94ffb76d845f00bfb816a5b7af1e5",
+    "docs/POLISH_TECHNICAL_REFERENCE.md": "29a4f3e36cbbc90ee328bc76c285b927a094dc09f9cc494d18ed5d9fee832fe3",
+    "docs/POLISH_CARD_CATALOGUE.md": "f6cdcc37bd81f7882231655299a9f1540805f1c9e69fdfe94d850a31ab5288d3"
   },
   "stages": 9,
   "cardsByStage": {
@@ -22,13 +22,13 @@
     "1": 4,
     "2": 16,
     "3": 31,
-    "4": 36,
+    "4": 37,
     "5": 68,
     "6": 21,
     "7": 55,
     "8": 0
   },
-  "tests": 232,
+  "tests": 233,
   "leaksByStage": {
     "0": [],
     "1": [

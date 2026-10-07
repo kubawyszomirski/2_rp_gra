@@ -1,0 +1,21 @@
+{
+ "source": "scenes/government_affairs/polish_gov_finance_funding.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Loan, Savings and Emission": "title: Pożyczka, oszczędności i emisja",
+  "subtitle: Treasury: a domestic loan, savings, emission financing or better tax collection.": "subtitle: Resort Skarbu: pożyczka wewnętrzna, oszczędności, finansowanie emisją albo lepszy pobór podatków.",
+  "= Loan, savings and emission": "= Pożyczka, oszczędności i emisja",
+  "One instrument per decision, voted by the Sejm at once; one instrument of each kind can be in force, and a temporary revenue ends when it expires.": "Jeden instrument na decyzję, nad którym Sejm głosuje od razu; naraz może działać jeden instrument każdego rodzaju, a dochód tymczasowy znika, gdy wygasa.",
+  "- @root: Continue.": "- @root: Dalej.",
+  "title: Domestic loan": "title: Pożyczka wewnętrzna",
+  "subtitle: Brings the budget 3 units a month for six months, then costs it 1 unit a month for twelve months. Needs credit of at least 40.": "subtitle: Zasila budżet: 3 jednostki miesięcznie przez sześć miesięcy, potem obciąża go: 1 jednostka miesięcznie przez dwanaście miesięcy. Wymaga kredytu co najmniej 40.",
+  "title: Savings in named administrative spending": "title: Oszczędności w wymienionych wydatkach administracyjnych",
+  "subtitle: Brings the budget 1 unit a month for six months; the discontent of the public employees named grows (+4).": "subtitle: Zasila budżet: 1 jednostka miesięcznie przez sześć miesięcy; niezadowolenie wymienionych pracowników publicznych rośnie (+4).",
+  "title: Savings: cut the unemployment benefit": "title: Oszczędności: cięcie zasiłku dla bezrobotnych",
+  "subtitle: Only the difference of the real cost, from 2 to 1 budget unit, and a change of the law; Lewica dissent rises (+8).": "subtitle: Tylko różnica rzeczywistego kosztu, z 2 do 1 jednostki budżetu, i zmiana ustawy; sprzeciw Lewicy rośnie (+8).",
+  "title: Emission financing": "title: Finansowanie emisją",
+  "subtitle: Before the złoty: printing within an authorised limit of 1–3 points; after it: transitional coinage, 1 point for three months.": "subtitle: Przed złotym: druk pieniądza w zatwierdzonym limicie 1–3 punktów; po nim: przejściowa emisja bilonu, 1 punkt przez trzy miesiące.",
+  "title: Improve tax collection": "title: Usprawnij pobór podatków",
+  "subtitle: Costs the budget 1 unit a month for two months, then brings it 1 unit a month for good; once in the chapter.": "subtitle: Obciąża budżet: 1 jednostka miesięcznie przez dwa miesiące, potem trwale go zasila: 1 jednostka miesięcznie; raz w rozdziale."
+ }
+}

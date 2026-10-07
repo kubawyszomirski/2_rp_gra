@@ -42,7 +42,7 @@ const COMPLETE = ['scenes/root.scene.dry', 'scenes/main.scene.dry', 'scenes/stat
   ...['arciszewski', 'czapinski', 'daszynski', 'drobner', 'dubois', 'jaworowski', 'malinowski', 'moraczewski', 'niedzialkowski', 'perl',
     'prochnik', 'puzak', 'zaremba', 'ziemiecki'].map(id => 'scenes/advisors/' + id + '.scene.dry'),
   // Part 4: the government cards, the projects, the economy, the budget and the bill D.
-  ...['labor_rights', 'social_welfare', 'public_works', 'finance', 'currency', 'investment', 'industry', 'agriculture', 'land', 'education',
+  ...['labor_rights', 'social_welfare', 'public_works', 'finance', 'finance_funding', 'currency', 'investment', 'industry', 'agriculture', 'land', 'education',
     'minority_schools', 'heritage', 'interior', 'justice', 'military', 'pils_agreement'].map(id => 'scenes/government_affairs/polish_gov_' + id + '.scene.dry'),
   'scenes/polish_budget_package.scene.dry', 'scenes/polish_unemployment_bill.scene.dry', 'scenes/polish_constitution_project.scene.dry',
   'scenes/polish_parliament_army_oversight.scene.dry', 'scenes/polish_event_stabilization.scene.dry', 'scenes/polish_event_credit_crisis.scene.dry',

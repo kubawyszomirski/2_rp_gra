@@ -12,9 +12,13 @@ on-arrival: {!
 // effect only when a tranche is executed.
 PolishProjects.cardView(Q, 'land_program');
 Q.pl_land_variant = '';
+// Z — 0.66 (decision 2A): the ministry of this card, on its page and as a badge in the hand.
+Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_land');
 !}
 
 = Execution of the land reform
+
+*[+ pl_gc_ministry +]*
 
 Holding Agriculture does not change ownership by itself: the reform needs its law, its financing and one of three tranches of the country. Each executed tranche lowers the agrarian pressure by 3 once; it gives PPS no seats.
 
