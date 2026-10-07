@@ -1,10 +1,10 @@
 {
   "scope": "Card catalogue 0.32: coverage of every reference card family, sub-action, event and advisor action; table template; statuses; cited sections and 21.1 tests; code files; 17.2 cost tokens; approved stance-card rules; index and grouped questions.",
   "hashes": {
-    "docs/POLISH_CARD_CATALOGUE.md": "704cc1243d7d7ee3e3360b3f3a6a51e5d74243872b8529b6df744c63399b0905",
-    "docs/POLISH_TECHNICAL_REFERENCE.md": "68e1c8f45d8539ff780086f3ae59a85396ab1577421fa2ca5f9196b2c894d951",
-    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "af48de77f83122444cb6510cc2879c4f289469bc05fd134334144d9e853b79dd",
-    "docs/POLISH_MECHANICS_AUDIT.md": "6d8dd4ecbe086a95ede4cdd12b5bd3f16f6e522f3ee4825f67354f1ea35a715a"
+    "docs/POLISH_CARD_CATALOGUE.md": "7a96ea96a42509b91bb470db682adf5ae881f02f03d6e11b7a94a46e03b0159b",
+    "docs/POLISH_TECHNICAL_REFERENCE.md": "8702807c64eda4db1d424298b86becffa827266ea4fb3f6cb691e9308b32ee21",
+    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "6bc1a107aae3520a67a7b077da79b4a4b78b740d4f2b6520e1079d0a8b3231b1",
+    "docs/POLISH_MECHANICS_AUDIT.md": "65f5b3cf8211f27924a4adecd01d6e04b14592f9a34d63e95c9d2b9878abdec6"
   },
   "entries": 69,
   "cards": 49,

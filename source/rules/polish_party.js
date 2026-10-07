@@ -1549,22 +1549,6 @@
     return {moved: moved, before: before, after: after, text: text};
   }
 
-  function pressDistributionStatus(Q) {
-    const status = packageStatus(Q, 'press_distribution', 0);
-    if (!status.available) return status;
-    return rules.mainActionAvailable(Q) ? OK : no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
-  }
-
-  function pressDistribution(Q) {
-    syncMirrors(Q);
-    const status = pressDistributionStatus(Q);
-    if (!status.available) throw new Error('pressDistribution: ' + status.reason);
-    rules.commitMainAction(Q, 'party.press_distribution', {resource_cost: {R: 1}});
-    const text = applyPackage(Q, 'press_distribution');
-    writeMirrors(Q);
-    return result(Q, text.charAt(0).toUpperCase() + text.slice(1) + '.');
-  }
-
   // A press investigation needs a real case and evidence (13.2). P (stage 7): the evidence is the record of the case
   // in the journal of 15.2 — an open case of violence or an active unlawful restriction, not yet revealed; never a
   // case of the PPS organisations themselves, never the political dispute about the army, never an invented scandal.
@@ -2561,8 +2545,6 @@
     cellReach: cellReach,
     campaignStatus: campaignStatus,
     campaign: campaign,
-    pressDistributionStatus: pressDistributionStatus,
-    pressDistribution: pressDistribution,
     pressInvestigationStatus: pressInvestigationStatus,
     campaignEffect: campaignEffect,
     pressInvestigationTarget: pressInvestigationTarget,
