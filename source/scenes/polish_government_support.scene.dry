@@ -104,7 +104,7 @@ go-to: demand_result
 
 @maintain
 title: [? if pl_sup_member : Stay in the cabinet as before ?][? if not pl_sup_member : Keep our support as it is ?]
-subtitle: [? if pl_resp_kind = "review" : The toleration goes on to the end of its six months. ?][? if pl_resp_kind = "renewal" : The toleration is renewed for six months, with a new review after three. ?][? if pl_resp_kind != "review" and pl_resp_kind != "renewal" : No new condition. The broken promise stays broken; the partner's case remains open. ?]
+subtitle: [? if pl_resp_kind = "review" : The toleration goes on to the end of its six months. ?][? if pl_resp_kind = "renewal" : The toleration is renewed for six months, with a new review after three. ?][? if pl_resp_kind != "review" and pl_resp_kind != "renewal" : We take note and stay. Nothing changes: the promise still has to be met, or the partner acts as written above. ?]
 choose-if: {! return PolishGovernment.supportOptionStatus(Q, 'maintain', Q.pl_sup_mode).available !}
 unavailable-subtitle: Only as an answer to a partner's warning or ultimatum.
 on-arrival: {!
@@ -114,9 +114,9 @@ go-to: maintained
 
 @extension
 title: Ask the partner for three more months
-subtitle: One standard extension of the overdue promise, if the partner accepts; it records the new date, not progress.
+subtitle: The overdue promise gets a new date three months on, if the partner accepts; this is the one standard extension. [+ pl_sup_extension_conditions +]
 choose-if: {! return PolishGovernment.supportOptionStatus(Q, 'extension', Q.pl_sup_mode).available !}
-unavailable-subtitle: [+ pl_sup_extension_reason +]
+unavailable-subtitle: [+ pl_sup_extension_conditions +]
 on-arrival: {!
 var record = PolishGovernment.requestExtension(Q);
 Q.pl_sup_accepted = record.accepted ? 1 : 0;

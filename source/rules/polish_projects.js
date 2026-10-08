@@ -2296,9 +2296,66 @@
     return key ? L(PORTFOLIO_SHORT[key], PORTFOLIO_BADGE_PL[key]) : '';
   }
 
+  // Z — 0.77 (decision 2A of 8 X 2026): the first line of the card is a printed label of its ministry, bold red small capitals
+  // (game.css .pl-ministry-label), not an italic sentence.
   function ministryLine(Q, sceneId) {
     const key = ministryOf(Q, sceneId);
-    return key ? L('A card of the ' + PORTFOLIO_SHORT[key] + ' ministry.', 'Karta resortu ' + PORTFOLIO_SHORT_PL[key] + '.') : '';
+    return key ? '<span class="pl-ministry-label">' + L(PORTFOLIO_SHORT[key] + ' ministry', 'Resort ' + PORTFOLIO_SHORT_PL[key]) + '</span>' : '';
+  }
+
+  // Z — 0.77 (decision 5A of 8 X 2026): what PPS can do about the overdue promise of an open warning or ultimatum, for the card
+  // of the answer to a partner: which card prepares it, who holds that ministry and how far its project is. titleOf(sceneId)
+  // gives the title of a card in the language of the page.
+  function promiseRemedy(Q, o, titleOf) {
+    const S = Q.S, type = PROJECT_TYPES[o.required_project];
+    if (!type) {
+      return o.required_military ? L('The cabinet carries out the compromise with Piłsudski itself at its next review, if Piłsudski accepts a military ' +
+        'function under civilian control.', 'Kompromis z Piłsudskim gabinet przeprowadza sam przy najbliższym przeglądzie, jeśli Piłsudski przyjmie ' +
+        'funkcję wojskową pod kontrolą cywilną.') : '';
+    }
+    const portfolio = o.portfolio || type.portfolios[0];
+    const holder = S.cabinet && S.cabinet.status === 'active' ? S.cabinet.portfolios[portfolio] : null;
+    const sceneId = Object.keys(CARD_SCENES).filter(id => CARD_SCENES[id] === type.card)[0];
+    const title = (sceneId && titleOf && titleOf(sceneId)) || projectName(o.required_project);
+    const agenda = (titleOf && titleOf('polish_agenda')) || L('Prepared Reforms', 'Przygotowane reformy');
+    const ministry = L('the ' + PORTFOLIO_SHORT[portfolio] + ' ministry', 'resort ' + PORTFOLIO_SHORT_PL[portfolio]);
+    const Ministry = L('The ' + PORTFOLIO_SHORT[portfolio] + ' ministry', 'Resort ' + PORTFOLIO_SHORT_PL[portfolio]);
+    const variants = (o.required_variants || []).map(variantName).join(L(' or ', ' albo '));
+    const matching = projectsOf(S, o.required_project, p => !o.required_variants || o.required_variants.indexOf(p.variant) >= 0);
+    const status = ['operating', 'completed', 'executing', 'prepared'].filter(st => matching.some(p => p.status === st))[0] || null;
+    const done = o.required_stage === 'completed' ? L('when it is completed', 'gdy zostanie ukończony') : L('when it starts operating', 'gdy zacznie działać');
+    let step;
+    if (status === 'executing') {
+      step = L('Its project is being carried out; the promise is met ' + done + '.', 'Projekt jest w realizacji; obietnica spełni się, ' + done + '.');
+    } else if (status === 'prepared') {
+      step = L('Its project is prepared: launch it with the card “' + agenda + '”.', 'Projekt jest przygotowany: uruchom go kartą „' + agenda + '”.');
+    } else if (status) {
+      step = L('Its project already runs; the promise is counted at the next settlement.', 'Projekt już działa; obietnica zostanie zaliczona przy najbliższym rozliczeniu.');
+    } else {
+      step = L('The project must be prepared with the card “' + title + '” (' + ministry + (variants ? ', variant: ' + variants : '') +
+        '), then launched with the card “' + agenda + '”.', 'Projekt trzeba przygotować kartą „' + title + '” (' + ministry +
+        (variants ? ', wariant: ' + variants : '') + '), a potem uruchomić kartą „' + agenda + '”.');
+    }
+    const holderName = holder === 'expert' ? L('a non-party expert', 'bezpartyjny fachowiec') : holder ? government.describeParty(holder) : '';
+    const who = holder === 'pps' ? L(Ministry + ' is held by PPS, so it is in our hands. ', Ministry + ' trzyma PPS, więc to w naszych rękach. ') :
+      holder ? L(Ministry + ' is held by ' + holderName + ', so it is that ministry’s task, not ours; we can press, ask for more time or leave. ',
+        Ministry + ' trzyma ' + holderName + ', więc to zadanie tego resortu, nie nasze; możemy naciskać, prosić o czas albo wyjść. ') : '';
+    return who + step;
+  }
+
+  function responseRemedy(Q, titleOf) {
+    const promises = government.responsePromises(Q), parts = [], seen = [];
+    for (const o of promises) {
+      const key = o.required_project || o.required_military || o.topic;
+      if (seen.indexOf(key) >= 0) continue;
+      seen.push(key);
+      const text = promiseRemedy(Q, o, titleOf);
+      if (text) parts.push(text);
+    }
+    if (!promises.length) return '';
+    parts.push(L('Or ask the partner for three more months (the conditions are under that option).',
+      'Można też poprosić partnera o trzy miesiące więcej (warunki są przy tej opcji).'));
+    return '<strong>' + L('How to put it right.', 'Jak to naprawić.') + '</strong> ' + parts.join(' ');
   }
 
   // The card is in the pool only with the right access (17.11): PPS holds one of its portfolios in an
@@ -3252,6 +3309,7 @@
     ministryOf: ministryOf,
     ministryBadge: ministryBadge,
     ministryLine: ministryLine,
+    responseRemedy: responseRemedy,
     landAccessStatus: landAccessStatus,
     optionStatus: optionStatus,
     chooseOption: chooseOption,

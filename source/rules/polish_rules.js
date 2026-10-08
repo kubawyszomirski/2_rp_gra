@@ -71,7 +71,11 @@
   // that is always open) has none. Longer waits of single cards stay.
   const PARTY_REST_MONTHS = 3;
   const LINE_REST_MONTHS = 6;
-  const NO_REST_CARDS = Object.freeze(['polish_party_agenda']);
+  // Z — 0.77 (decision 3A of 8 X 2026): an ordinary card of the Government deck rests 3 months as well. Coalition Affairs keeps
+  // its own rhythm (half a year, or at once after an act of the cabinet against PPS); urgent cards never rest.
+  const GOVT_REST_MONTHS = 3;
+  const REST_DECKS = Object.freeze({'main.party': PARTY_REST_MONTHS, 'main.govt': GOVT_REST_MONTHS});
+  const NO_REST_CARDS = Object.freeze(['polish_party_agenda', 'polish_coalition_affairs']);
   // Z — 0.74 (decisions 1A–3A of 8 X 2026): urgent cards. A module registers a card that must not wait for a lucky draw — the
   // prepared reforms, the answer to the cabinet's budget package, the answer to a partner, the filing of a prepared
   // constitutional motion — with its deck and the condition under which it is urgent. The engine hook puts such a card into
@@ -645,20 +649,20 @@
   // One main action of a new Polish card, committed when the player confirms it; opening and
   // closing the card cost nothing (4.3). It consumes the month and is settled once in post_event.
   // In a card opened by an adviser the one step belongs to the adviser transaction and costs no month.
-  // The rest of a used party card (Z — 0.76): the card open now, when its action is taken.
+  // The rest of a used party card (Z — 0.76) or government card (Z — 0.77): the card open now, when its action is taken.
   function restKey(cardId) {
     return VISION_CARDS.indexOf(cardId) >= 0 ? 'rest:party_line' : 'rest:' + cardId;
   }
 
   function startCardRest(Q) {
     const view = Q.S.turn.card_view;
-    if (!view || view.deck !== 'main.party' || NO_REST_CARDS.indexOf(view.card_id) >= 0) return;
-    const months = VISION_CARDS.indexOf(view.card_id) >= 0 ? LINE_REST_MONTHS : PARTY_REST_MONTHS;
+    if (!view || !REST_DECKS[view.deck] || NO_REST_CARDS.indexOf(view.card_id) >= 0 || urgentCards[view.card_id]) return;
+    const months = VISION_CARDS.indexOf(view.card_id) >= 0 ? LINE_REST_MONTHS : REST_DECKS[view.deck];
     const key = restKey(view.card_id);
     Q.S.cooldowns[key] = Math.max(Q.S.cooldowns[key] || 0, Q.time + months);
   }
 
-  // Months until a party card can be drawn again (0: it can).
+  // Months until a party or government card can be drawn again (0: it can).
   function cardRest(Q, cardId) {
     return Q.S && Q.S.cooldowns ? cooldownRemaining(Q, restKey(cardId)) : 0;
   }
@@ -1068,6 +1072,7 @@
     cardRest: cardRest,
     PARTY_REST_MONTHS: PARTY_REST_MONTHS,
     LINE_REST_MONTHS: LINE_REST_MONTHS,
+    GOVT_REST_MONTHS: GOVT_REST_MONTHS,
     handOfDeck: handOfDeck,
     registerCardDeadline: registerCardDeadline,
     cardDeadline: cardDeadline,

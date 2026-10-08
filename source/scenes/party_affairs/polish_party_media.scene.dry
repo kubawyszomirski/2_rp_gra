@@ -1,81 +1,57 @@
-title: Media and Campaigns
-subtitle: The party press, its format, and one campaign to chosen voters.
+title: Press
+subtitle: The party press: a campaign over several groups, reportage, an open debate, an investigation or its format.
 new-page: true
 is-card: true
 tags: party_affairs
 card-image: img/polish/polish_party_media.jpg
 view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.partyReady(Q) && Q.S.chapter.status !== 'ended' !}
 on-arrival: {!
-// Card party.media (technical reference 5.3, 10.6, 13.2; card catalogue 5.3): one variant, 1 T and 1 R each;
-// the card has no cooldown of its own, a repeated topic loses strength by saturation (Z — 0.34).
-PolishParty.mediaView(Q);
-Q.pl_media_kind = '';
-Q.pl_media_topic = '';
+// Card party.media (technical reference 5.3, 10.6, 13.2; card catalogue 5.3). Z — 0.77 (decisions of 8 X 2026): the Press card;
+// the campaigns among chosen voters moved to the new Campaign card (polish_party_campaign). One option, 1 T; the debate costs no
+// resource. The card rests three months after use (Z — 0.76).
+PolishParty.pressView(Q);
 !}
 
-= Media and campaigns
+= Press
 
-Party press: [+ pl_party_press +]. Party money: [+ pl_party_cash +]. A campaign moves voters only in the cells it reaches; a topic repeated within six months among the same voters gains less.
+[+ pl_press_state +]. Party money: [+ pl_party_cash +]. The press reaches several groups at once, more weakly than a campaign of meetings and unions; what it reaches depends on its format and its credibility.
 
-- @format
-- @campaign
-- @unions_campaign
-- @polemic
-- @turnout
+- @press_campaign
+- @reportage
+- @debate
 - @investigation
+- @format
 - @easy_discard
 
-@format
-title: Change the format of the press to [+ pl_media_format_next +]
-subtitle: 1 resource. A popular format: the press reaches more people (+10) but loses credibility (−5), and with a wide reach it earns from sales (0.10 resources a month at reach 50 or more); the first adoption raises Centrum dissent (+3). Waits six months.
-choose-if: {! return PolishParty.pressFormatStatus(Q).available !}
-unavailable-subtitle: [+ pl_media_format_why +]
+@press_campaign
+title: The press in the service of the campaign
+subtitle: 1 resource. [+ pl_press_campaign_effect +]
+choose-if: {! return PolishParty.pressActionStatus(Q, 'campaign').available !}
+unavailable-subtitle: [+ pl_press_campaign_why +]
 on-arrival: {!
-PolishParty.pressFormatChoose(Q);
+PolishParty.pressCampaign(Q);
 !}
 go-to: result
 
-@campaign
-title: A press campaign on a topic
-subtitle: 1 resource; reach from the unions, the press and the party's own base; the credibility of the press multiplies it.
-choose-if: {! return PolishParty.campaignStatus(Q, 'press').available !}
-unavailable-subtitle: [+ pl_media_campaign_why +]
+@reportage
+title: Reportage on the conditions of work and life
+subtitle: 1 resource. No votes at once: the trust of the workers and the unemployed in PPS rises (+3), so the next campaigns among them are stronger.
+choose-if: {! return PolishParty.pressActionStatus(Q, 'reportage').available !}
+unavailable-subtitle: [+ pl_press_reportage_why +]
 on-arrival: {!
-Q.pl_media_kind = 'press';
+PolishParty.pressReportage(Q);
 !}
-go-to: topics
+go-to: result
 
-@unions_campaign
-title: A campaign through the unions and meetings
-subtitle: 1 resource; the reach of the matching union branch, no press bonus. Useful when the press is weak or restricted.
-choose-if: {! return PolishParty.campaignStatus(Q, 'unions').available !}
-unavailable-subtitle: [+ pl_media_unions_why +]
+@debate
+title: An open debate in the columns of the press
+subtitle: No resource. Every faction may speak: the dissent of each faction falls (−3). No votes.
+choose-if: {! return PolishParty.pressActionStatus(Q, 'debate').available !}
+unavailable-subtitle: [+ pl_press_debate_why +]
 on-arrival: {!
-Q.pl_media_kind = 'unions';
+PolishParty.pressDebate(Q);
 !}
-go-to: topics
-
-@polemic
-title: A polemic against our main opponent
-subtitle: 1 resource; votes come only from [+ pl_media_addressees +]; the addressee's relation with PPS worsens (−2).
-choose-if: {! return PolishParty.campaignStatus(Q, 'polemic').available !}
-unavailable-subtitle: [+ pl_media_polemic_why +]
-on-arrival: {!
-Q.pl_media_kind = 'polemic';
-PolishParty.audienceView(Q, 'polemic');
-!}
-go-to: audiences
-
-@turnout
-title: A mobilisation campaign
-subtitle: 1 resource; more of the chosen voters turn out (+0.04, up to 0.90) until the next election.
-choose-if: {! return PolishParty.campaignStatus(Q, 'turnout').available !}
-unavailable-subtitle: [+ pl_media_turnout_why +]
-on-arrival: {!
-Q.pl_media_kind = 'turnout';
-PolishParty.audienceView(Q, 'turnout');
-!}
-go-to: audiences
+go-to: result
 
 @investigation
 title: A press investigation
@@ -87,166 +63,20 @@ PolishParty.pressInvestigation(Q);
 !}
 go-to: result
 
-@topics
-new-page: true
-
-= The topic of the campaign
-
-The line of the party multiplies a matching topic when it has an addressee (the direction of PPS).
-
-- @topic_parliamentary
-- @topic_class
-- @topic_workers_gains
-- @topic_democracy
-- @polish_party_media: Choose another variant.
-
-@topic_parliamentary
-title: Parliamentary socialism
+@format
+title: Change the format of the press to [+ pl_media_format_next +]
+subtitle: 1 resource. A popular format: the press reaches more people (+10) and also the intelligentsia and the petty bourgeoisie, but loses credibility (−5), and with a wide reach it earns from sales (0.10 resources a month at reach 50 or more); the first adoption raises Centrum dissent (+3). Waits six months.
+choose-if: {! return PolishParty.pressFormatStatus(Q).available !}
+unavailable-subtitle: [+ pl_media_format_why +]
 on-arrival: {!
-Q.pl_media_topic = 'parliamentary';
-PolishParty.audienceView(Q, Q.pl_media_kind, 'parliamentary');
-!}
-go-to: audiences
-
-@topic_class
-title: Independent class politics
-on-arrival: {!
-Q.pl_media_topic = 'class';
-PolishParty.audienceView(Q, Q.pl_media_kind, 'class');
-!}
-go-to: audiences
-
-@topic_workers_gains
-title: The defence of workers’ gains
-on-arrival: {!
-Q.pl_media_topic = 'workers_gains';
-PolishParty.audienceView(Q, Q.pl_media_kind, 'workers_gains');
-!}
-go-to: audiences
-
-@topic_democracy
-title: The defence of democracy
-on-arrival: {!
-Q.pl_media_topic = 'democracy';
-PolishParty.audienceView(Q, Q.pl_media_kind, 'democracy');
-!}
-go-to: audiences
-
-@audiences
-new-page: true
-
-= To whom?
-
-Choose the voters the campaign speaks to. Nothing is spent until you choose.
-
-[? if pl_aud_programme : The economic programme of PPS makes the campaign 10% stronger among [+ pl_aud_programme +]. ?]
-
-- @to_workers
-- @to_employed_workers
-- @to_unemployed
-- @to_old_middle
-- @to_new_middle
-- @to_rural
-- @to_bourgeois_landowners
-- @to_major_cities
-- @to_jewish
-- @to_other_minorities
-- @polish_party_media: Choose another variant.
-
-@to_workers
-title: To the workers
-choose-if: {! return PolishParty.campaignStatus(Q, Q.pl_media_kind, Q.pl_media_topic || undefined, 'workers').available !}
-unavailable-subtitle: [+ pl_aud_workers_why +]
-on-arrival: {!
-PolishParty.campaign(Q, Q.pl_media_kind, Q.pl_media_topic || undefined, 'workers');
-!}
-go-to: result
-
-@to_employed_workers
-title: To the employed workers
-choose-if: {! return PolishParty.campaignStatus(Q, Q.pl_media_kind, Q.pl_media_topic || undefined, 'employed_workers').available !}
-unavailable-subtitle: [+ pl_aud_employed_workers_why +]
-on-arrival: {!
-PolishParty.campaign(Q, Q.pl_media_kind, Q.pl_media_topic || undefined, 'employed_workers');
-!}
-go-to: result
-
-@to_unemployed
-title: To the unemployed
-choose-if: {! return PolishParty.campaignStatus(Q, Q.pl_media_kind, Q.pl_media_topic || undefined, 'unemployed').available !}
-unavailable-subtitle: [+ pl_aud_unemployed_why +]
-on-arrival: {!
-PolishParty.campaign(Q, Q.pl_media_kind, Q.pl_media_topic || undefined, 'unemployed');
-!}
-go-to: result
-
-@to_old_middle
-title: To the petty bourgeoisie
-choose-if: {! return PolishParty.campaignStatus(Q, Q.pl_media_kind, Q.pl_media_topic || undefined, 'old_middle').available !}
-unavailable-subtitle: [+ pl_aud_old_middle_why +]
-on-arrival: {!
-PolishParty.campaign(Q, Q.pl_media_kind, Q.pl_media_topic || undefined, 'old_middle');
-!}
-go-to: result
-
-@to_new_middle
-title: To the intelligentsia
-choose-if: {! return PolishParty.campaignStatus(Q, Q.pl_media_kind, Q.pl_media_topic || undefined, 'new_middle').available !}
-unavailable-subtitle: [+ pl_aud_new_middle_why +]
-on-arrival: {!
-PolishParty.campaign(Q, Q.pl_media_kind, Q.pl_media_topic || undefined, 'new_middle');
-!}
-go-to: result
-
-@to_rural
-title: To the peasants
-choose-if: {! return PolishParty.campaignStatus(Q, Q.pl_media_kind, Q.pl_media_topic || undefined, 'rural').available !}
-unavailable-subtitle: [+ pl_aud_rural_why +]
-on-arrival: {!
-PolishParty.campaign(Q, Q.pl_media_kind, Q.pl_media_topic || undefined, 'rural');
-!}
-go-to: result
-
-@to_bourgeois_landowners
-title: To the bourgeoisie and landowners
-choose-if: {! return PolishParty.campaignStatus(Q, Q.pl_media_kind, Q.pl_media_topic || undefined, 'bourgeois_landowners').available !}
-unavailable-subtitle: [+ pl_aud_bourgeois_landowners_why +]
-on-arrival: {!
-PolishParty.campaign(Q, Q.pl_media_kind, Q.pl_media_topic || undefined, 'bourgeois_landowners');
-!}
-go-to: result
-
-@to_major_cities
-title: To the large cities
-choose-if: {! return PolishParty.campaignStatus(Q, Q.pl_media_kind, Q.pl_media_topic || undefined, 'major_cities').available !}
-unavailable-subtitle: [+ pl_aud_major_cities_why +]
-on-arrival: {!
-PolishParty.campaign(Q, Q.pl_media_kind, Q.pl_media_topic || undefined, 'major_cities');
-!}
-go-to: result
-
-@to_jewish
-title: To Jewish voters
-choose-if: {! return PolishParty.campaignStatus(Q, Q.pl_media_kind, Q.pl_media_topic || undefined, 'jewish').available !}
-unavailable-subtitle: [+ pl_aud_jewish_why +]
-on-arrival: {!
-PolishParty.campaign(Q, Q.pl_media_kind, Q.pl_media_topic || undefined, 'jewish');
-!}
-go-to: result
-
-@to_other_minorities
-title: To voters of the other minorities
-choose-if: {! return PolishParty.campaignStatus(Q, Q.pl_media_kind, Q.pl_media_topic || undefined, 'other_minorities').available !}
-unavailable-subtitle: [+ pl_aud_other_minorities_why +]
-on-arrival: {!
-PolishParty.campaign(Q, Q.pl_media_kind, Q.pl_media_topic || undefined, 'other_minorities');
+PolishParty.pressFormatChoose(Q);
 !}
 go-to: result
 
 @result
 new-page: true
 
-= Media and campaigns
+= Press
 
 [+ pl_party_result +]
 

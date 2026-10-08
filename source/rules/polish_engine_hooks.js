@@ -39,6 +39,18 @@
       .sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
   }
 
+  // Months until the first resting card of a deck could be drawn again (0: none is resting).
+  function restingReturn(engine, deckId) {
+    const rules = installedRules;
+    if (!rules || !rules.cardRest) return 0;
+    const Q = engine.state.qualities;
+    const hand = (engine.state.currentHands[engine.state.sceneId] || []).map(card => card.id);
+    const months = (engine._compileChoices(engine.game.scenes[deckId]) || [])
+      .filter(choice => choice.canChoose && engine.game.scenes[choice.id] && engine.game.scenes[choice.id].isCard && hand.indexOf(choice.id) < 0)
+      .map(choice => rules.cardRest(Q, choice.id)).filter(n => n > 0);
+    return months.length ? Math.min(...months) : 0;
+  }
+
   let installedRules = null;
 
   // Z — 0.74 (decisions 1A–3A of 8 X 2026): every urgent card whose condition holds is in the hand of its deck, marked urgent,
@@ -67,25 +79,28 @@
   function deckView(engine, deckId) {
     const rules = installedRules;
     const Q = engine.state.qualities, scene = engine.game.scenes[deckId] || {};
-    // The ordinary cards first, then the urgent ones in their extra places (Z — 0.74).
+    // The ordinary cards first, then the urgent ones (Z — 0.74), which take the free places (Z — 0.77).
     const inHand = rules.handOfDeck(engine.state, engine.game, deckId);
     const cards = inHand.filter(card => !card.urgent).concat(inHand.filter(card => card.urgent)).map(card => {
       const until = rules.cardDeadline(Q, card.id);
       return {id: card.id, title: card.title, image: card.image || (engine.game.scenes[card.id] || {}).cardImage, until: until,
         urgent: !!card.urgent, discard: rules.discardStatus(Q, engine.state, card.id)};
     });
-    const ordinary = cards.filter(card => !card.urgent).length;
     const key = deckId.split('.').pop();
     let available = true, reason = '';
     if (scene.chooseIf && !engine._runPredicate(scene.chooseIf, true)) {
       available = false;
       reason = Q['pl_deck_' + key + '_why'] || rules.L('This deck is closed now.', 'Ta talia jest teraz zamknięta.');
-    } else if (ordinary >= rules.HAND_PER_DECK) {
+    } else if (cards.length >= rules.HAND_PER_DECK) {
       available = false;
       reason = rules.L('Both places of this deck are taken: play or discard a card.', 'Oba miejsca tej talii są zajęte: zagraj albo odrzuć kartę.');
     } else if (!legalDeckCards(engine, deckId).length) {
       available = false;
-      reason = rules.L('No card of this deck can be drawn now.', 'Teraz nie można dobrać żadnej karty z tej talii.');
+      // Z — 0.77: when used cards are resting, say when the first of them comes back.
+      const back = restingReturn(engine, deckId);
+      reason = back ? rules.L('The other cards of this deck are resting after use; the first comes back in ' + back + (back === 1 ? ' month.' : ' months.'),
+        'Pozostałe karty tej talii odpoczywają po użyciu; pierwsza wróci za ' + back + (back === 1 ? ' miesiąc.' : back < 5 ? ' miesiące.' : ' miesięcy.')) :
+        rules.L('No card of this deck can be drawn now.', 'Teraz nie można dobrać żadnej karty z tej talii.');
     }
     return {id: deckId, title: scene.title || deckId, image: scene.cardImage || null, available: available, reason: reason,
       cards: cards, slots: rules.HAND_PER_DECK};
@@ -107,8 +122,9 @@
       const scene = this.getCurrentScene();
       const hand = this.state.currentHands[sceneId] || (this.state.currentHands[sceneId] = []);
       if (scene.maxCards <= hand.filter(card => !card.urgent).length) return {id: null, title: 'no_space_in_hand'};
-      // Z — 0.60: two places for each deck; an urgent card has its own extra place (Z — 0.74).
-      if (rules.ordinaryHandOfDeck(this.state, this.game, deckId).length >= rules.HAND_PER_DECK) return {id: null, title: 'no_space_in_hand'};
+      // Z — 0.60: two places for each deck. Z — 0.77 (decision 4A of 8 X 2026): an urgent card takes one of them; it gets an
+      // extra place only when it arrives while both are taken (syncUrgentCards), and no card is drawn then.
+      if (rules.handOfDeck(this.state, this.game, deckId).length >= rules.HAND_PER_DECK) return {id: null, title: 'no_space_in_hand'};
       const card = rules.pickCard(this.state.qualities, legalDeckCards(this, deckId), deckId);
       if (!card) return {id: null, title: 'no_card_in_deck'};
       card.deck = deckId;

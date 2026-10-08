@@ -660,15 +660,13 @@
       }
       $row.append($('<ul>').addClass('decks').append($deck));
       var $hand = $('<ul>').addClass('hand');
-      // Z — 0.74 (decisions 1A–3A of 8 X 2026): the two ordinary places, then an extra place for each urgent card, marked
-      // "urgent"; an urgent card cannot be discarded.
-      var ordinary = view.cards.filter(function(c) { return !c.urgent; });
-      var urgent = view.cards.filter(function(c) { return c.urgent; });
-      var places = [];
-      for (var k = 0; k < Math.max(view.slots, ordinary.length); k++) {
-        places.push(ordinary[k] || null);
+      // Z — 0.74 (decisions 1A–3A of 8 X 2026): an urgent card is marked "urgent" and cannot be discarded. Z — 0.77 (decision 4A
+      // of 8 X 2026): it stands in a free place of its own row, after the ordinary cards; a third place appears only when it
+      // arrives while both are taken, and it wraps under the row (game.css), so the Committee column never moves.
+      var places = view.cards.slice();
+      while (places.length < view.slots) {
+        places.push(null);
       }
-      places = places.concat(urgent);
       for (var i = 0; i < places.length; i++) {
         var card = places[i];
         var $place = $('<li>').addClass('card-in-hand');

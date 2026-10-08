@@ -37,8 +37,10 @@ const P = {
   orgs: (a, b) => b ? ['polish_party_organizations', 'polish_party_organizations.p1_' + a, 'polish_party_organizations.p2_' + b]
     : ['polish_party_organizations', 'polish_party_organizations.p1_' + a, 'polish_party_organizations.only_one'],
   militia: step => ['polish_party_militia', 'polish_party_militia.' + step],
-  campaign: (topic, audience) => ['polish_party_media', 'polish_party_media.campaign', 'polish_party_media.topic_' + topic, 'polish_party_media.to_' + audience],
-  turnout: audience => ['polish_party_media', 'polish_party_media.turnout', 'polish_party_media.to_' + audience],
+  // Z — 0.77: a campaign on a matter and the rallies before an election are on the Campaign card; the Press card has the rest.
+  campaign: issue => ['polish_party_campaign', 'polish_party_campaign.' + issue],
+  rallies: () => ['polish_party_campaign', 'polish_party_campaign.rallies'],
+  press: option => ['polish_party_media', 'polish_party_media.' + option],
   // The press distribution is offered only on the card of the organisations (the media card no longer has it).
   distribution: () => P.orgs('press_distribution'),
   talk: party => ['inter_party_relationships', 'inter_party_relationships.' + party],
@@ -304,7 +306,7 @@ const STRATEGIES = {
   election_campaign: strategy('election_campaign', '21.2: active election campaign', {
     month: ctx => {
       const pre = (ctx.after(1922, 7) && ctx.before(1922, 11)) || (ctx.after(1927, 9) && ctx.before(1928, 2));
-      const extra = pre ? [P.campaign('workers_gains', ['workers', 'rural', 'new_middle'][ctx.t % 3]), P.turnout('workers')] : [];
+      const extra = pre ? [P.campaign(['eight_hours', 'land', 'republic'][ctx.t % 3]), P.rallies()] : [];
       return plan.organised(ctx, [...extra, ...plan.wage(ctx), ...plan.support(ctx)]);
     },
     // Z — 0.57: the joint list with PSL Wyzwolenie is the answer to the event before the election.
@@ -353,7 +355,7 @@ const STRATEGIES = {
     free: ctx => [P.adviser('niedzialkowski', 'defend_democracy')],
     month: ctx => plan.organised(ctx, [P.constitution('democratic_guarantees'), P.constitution('file_democratic_guarantees'),
       P.armyOversight('civilian_oversight'), P.agenda('launch_army_control'), P.militia(ctx.t % 2 ? 'militarize' : 'form_as'),
-      P.campaign('democracy', 'workers'), ...plan.military(ctx)]),
+      P.campaign('republic'), ...plan.military(ctx)]),
   }),
 };
 

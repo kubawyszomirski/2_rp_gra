@@ -186,11 +186,9 @@ test('campaign choice, consequences, event processing and February preserve gove
   const before = parliamentaryShares(Q);
   const initialSupport = Q.workers_pps;
   const initialPoll = Q.pps_normalized;
-  // Stage 5: the Media card replaces the inherited campaigning card (card catalogue 5.3).
-  playEligibleFixture(engine, 'polish_party_media');
-  choose(engine, 'polish_party_media.campaign');
-  choose(engine, 'polish_party_media.topic_class');
-  choose(engine, 'polish_party_media.to_workers');
+  // Stage 5: the Media card replaces the inherited campaigning card (card catalogue 5.3). Z — 0.77: the Campaign card.
+  playEligibleFixture(engine, 'polish_party_campaign');
+  choose(engine, 'polish_party_campaign.eight_hours');
   assert.ok(Q.workers_pps > initialSupport);
   choose(engine, 'root');
   assert.equal(engine.state.sceneId, 'main');
@@ -392,10 +390,8 @@ test('same-version save/restore preserves the opening and remains playable', () 
   restored.goToScene('status');
   assert.match(content(restored), /Józef Piłsudski/);
   restored.goToScene('backSpecialScene');
-  playEligibleFixture(restored, 'polish_party_media');
-  choose(restored, 'polish_party_media.campaign');
-  choose(restored, 'polish_party_media.topic_class');
-  choose(restored, 'polish_party_media.to_workers');
+  playEligibleFixture(restored, 'polish_party_campaign');
+  choose(restored, 'polish_party_campaign.eight_hours');
   choose(restored, 'root');
   assert.equal(restored.state.qualities.month, 2);
 });

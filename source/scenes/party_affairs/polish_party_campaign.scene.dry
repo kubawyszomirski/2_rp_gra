@@ -1,0 +1,95 @@
+title: Campaign
+subtitle: Meetings, rallies and the unions: one campaign on a matter that reaches several groups at once.
+new-page: true
+is-card: true
+tags: party_affairs
+view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.partyReady(Q) && Q.S.chapter.status !== 'ended' !}
+on-arrival: {!
+// Card party.campaign (Z — 0.77, decisions of 8 X 2026): five campaigns on a matter, each over its own groups, through
+// meetings, rallies and the unions; rallies before an election in the last three months before the vote. One option, 1 T and
+// 1 R. The direction and the character of the party and the state of the country strengthen a campaign; they do not choose it.
+// The card rests three months after use (Z — 0.76).
+PolishParty.campaignView(Q);
+!}
+
+= Campaign
+
+Meetings, rallies and the unions. Each campaign costs 1 resource and reaches several groups at once; the numbers are the expected change of PPS support in points. [+ pl_campaign_line +] Party money: [+ pl_party_cash +].
+
+- @eight_hours
+- @prices
+- @land
+- @republic
+- @unemployed
+- @rallies
+- @easy_discard
+
+@eight_hours
+title: In defence of the eight-hour day
+subtitle: [+ pl_issue_eight_hours_effect +]
+choose-if: {! return PolishParty.issueCampaignStatus(Q, 'eight_hours').available !}
+unavailable-subtitle: [+ pl_issue_eight_hours_why +]
+on-arrival: {!
+PolishParty.issueCampaign(Q, 'eight_hours');
+!}
+go-to: result
+
+@prices
+title: Against high prices: wages must keep up with prices
+subtitle: [+ pl_issue_prices_effect +]
+choose-if: {! return PolishParty.issueCampaignStatus(Q, 'prices').available !}
+unavailable-subtitle: [+ pl_issue_prices_why +]
+on-arrival: {!
+PolishParty.issueCampaign(Q, 'prices');
+!}
+go-to: result
+
+@land
+title: Land for the peasants
+subtitle: [+ pl_issue_land_effect +]
+choose-if: {! return PolishParty.issueCampaignStatus(Q, 'land').available !}
+unavailable-subtitle: [+ pl_issue_land_why +]
+on-arrival: {!
+PolishParty.issueCampaign(Q, 'land');
+!}
+go-to: result
+
+@republic
+title: In defence of the Republic
+subtitle: [+ pl_issue_republic_effect +]
+choose-if: {! return PolishParty.issueCampaignStatus(Q, 'republic').available !}
+unavailable-subtitle: [+ pl_issue_republic_why +]
+on-arrival: {!
+PolishParty.issueCampaign(Q, 'republic');
+!}
+go-to: result
+
+@unemployed
+title: Work and benefits for the unemployed
+subtitle: [+ pl_issue_unemployed_effect +]
+choose-if: {! return PolishParty.issueCampaignStatus(Q, 'unemployed').available !}
+unavailable-subtitle: [+ pl_issue_unemployed_why +]
+on-arrival: {!
+PolishParty.issueCampaign(Q, 'unemployed');
+!}
+go-to: result
+
+@rallies
+title: Rallies before the election
+subtitle: 1 resource. More of our voters go to the polls: the turnout of [+ pl_rally_groups +] rises by 0.04 until the vote.
+view-if: pl_rally_open = 1
+choose-if: {! return PolishParty.rallyStatus(Q).available !}
+unavailable-subtitle: [+ pl_rally_why +]
+on-arrival: {!
+PolishParty.electionRallies(Q);
+!}
+go-to: result
+
+@result
+new-page: true
+
+= Campaign
+
+[+ pl_party_result +]
+
+- @root: Continue.

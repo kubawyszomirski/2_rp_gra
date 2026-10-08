@@ -100,6 +100,42 @@ test('Roboty pod Pracą in the game: the Government deck offers the Labour cards
   assert.match(content(engine), /Public works \(quick employment of the unemployed\): being built/);
 });
 
+// Z — 0.77 (decisions 3A and 4A of 8 X 2026): an ordinary card of the Government deck rests 3 months after use, like a party
+// card; the deck says when the first resting card comes back. An urgent card takes a free place of its row, so with one
+// ordinary card the row is full and nothing is drawn; urgent cards never rest.
+test('Karty rządu 0.77: a used government card rests 3 months; an urgent card takes a free place of its row', () => {
+  const engine = dendry.startGame();
+  const Q = leftCabinet(engine);
+  const drawable = () => PolishEngineHooks.legalDeckCards(engine, 'main.govt').map(c => c.id);
+  playFromHand(engine, 'polish_gov_public_works');
+  choose(engine, 'polish_gov_public_works.employment');
+  assert.equal(PolishRules.cardRest(Q, 'polish_gov_public_works'), 3);
+  choose(engine, 'root');
+  toMain(engine);
+  assert.ok(!drawable().includes('polish_gov_public_works'), 'not drawn while it rests');
+  assert.ok(drawable().includes('polish_gov_social_welfare'), 'the other cards of the ministry can be drawn');
+  // The prepared reforms take the free place next to one ordinary card: the row is full.
+  engine.state.currentHands.main = [{ id: 'polish_gov_social_welfare', title: 'Welfare', deck: 'main.govt' }];
+  engine.syncUrgentCards();
+  const view = PolishEngineHooks.deckView(engine, 'main.govt');
+  assert.deepEqual(view.cards.map(c => [c.id, c.urgent]), [['polish_gov_social_welfare', false], ['polish_agenda', true]]);
+  assert.equal(view.available, false);
+  assert.match(view.reason, /Both places of this deck are taken/);
+  assert.equal(engine.drawCard('main.govt').title, 'no_space_in_hand');
+  engine.playCard('polish_agenda');
+  choose(engine, 'polish_agenda.launch_public_works');
+  assert.equal(PolishRules.cardRest(Q, 'polish_agenda'), 0, 'an urgent card never rests');
+  choose(engine, 'root');
+  toMain(engine);
+  // When every card that could be drawn rests, the deck says when the first comes back.
+  engine.state.currentHands.main = [];
+  for (const id of drawable()) Q.S.cooldowns['rest:' + id] = Q.time + 2;
+  Q.S.cooldowns['rest:polish_gov_public_works'] = Q.time + 1;
+  const empty = PolishEngineHooks.deckView(engine, 'main.govt');
+  assert.equal(empty.available, false);
+  assert.match(empty.reason, /resting after use; the first comes back in 1 month\./);
+});
+
 test('Jedno przekierowanie: Moraczewski opens the Public Works card; its one step costs no month and uses the shared adviser cooldown', () => {
   const engine = dendry.startGame();
   const Q = leftCabinet(engine);
@@ -266,7 +302,7 @@ test('Karty resortów 0.66: two Treasury cards with five instruments each; every
   const deck = offered(engine, 'main.govt');
   for (const id of ['polish_gov_finance', 'polish_gov_finance_funding']) assert.ok(deck.includes(id), id);
   playFromHand(engine, 'polish_gov_finance_funding');
-  assert.match(content(engine), /A card of the Treasury ministry\./);
+  assert.match(content(engine), /pl-ministry-label\W{1,3}>Treasury ministry</, 'Z — 0.77: a printed label, not a sentence');
   assert.match(content(engine), /Budget this month/);
   assert.equal(choice(engine, 'polish_gov_finance_funding.loan').canChoose, Q.S.economy.credit >= 40);
   choose(engine, 'easy_discard');
@@ -291,8 +327,8 @@ test('Karty resortów 0.66: two Treasury cards with five instruments each; every
   PolishRules.setLanguage('pl');
   try {
     assert.equal(P.ministryBadge(Q, 'polish_gov_finance'), 'Skarb');
-    assert.equal(P.ministryLine(Q, 'polish_gov_finance'), 'Karta resortu Skarbu.');
-    assert.equal(P.ministryLine(Q, 'polish_gov_pils_agreement'), 'Karta resortu Spraw Wojskowych.');
+    assert.equal(P.ministryLine(Q, 'polish_gov_finance'), '<span class="pl-ministry-label">Resort Skarbu</span>');
+    assert.equal(P.ministryLine(Q, 'polish_gov_pils_agreement'), '<span class="pl-ministry-label">Resort Spraw Wojskowych</span>');
   } finally {
     PolishRules.setLanguage('en');
   }

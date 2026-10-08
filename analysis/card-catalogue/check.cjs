@@ -181,7 +181,7 @@ const batch2Rules = [
 for (const [from, to, text] of batch2Rules) assert.ok(section(tr, from, to).includes(text), `reference ${from.trim()} has the 0.34 rule: ${text.slice(0, 50)}`);
 assert.ok(!section(tr, '### 13.1. ', '### 13.2. ').includes('Utrzymanie nie zmienia stanu i nie daje premii.'), 'the pre-0.34 wording is gone');
 assert.ok(section(tr, '### 13.1. ', '### 13.2. ').includes('„Utrzymać” kosztuje 1 T i odnowienie 6 M; poziom składek, członkostwo i wpływy zostają bez zmian'), 'dues keep is a paid confirmation (0.51)');
-for (const name of ['Bez płatnego braku wyboru', 'Militaryzacja a frakcje', 'Praca organizacyjna w komórkach', 'Media bez odnowienia karty']) assert.ok(tests.has(name), `21.1 test ${name}`);
+for (const name of ['Bez płatnego braku wyboru', 'Militaryzacja a frakcje', 'Praca organizacyjna w komórkach', 'Kampania bez odnowienia karty']) assert.ok(tests.has(name), `21.1 test ${name}`);
 const organizingGain = Math.round(2 * (1 + 0.10) * 10) / 10;
 assert.equal(organizingGain, 2.2);
 assert.ok(section(tr, '### 21.1. ', '### 21.2. ').includes('`base_reach_pps` chłopów +2,2 (mnożnik 1,10)'), '21.1 organising test matches the computed gain');

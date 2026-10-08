@@ -3661,6 +3661,114 @@
     }
     return null;
   }
+
+  // Z — 0.77 (decision 5A of 8 X 2026): the card of a warning or an ultimatum says plainly what happened, what is at stake and
+  // how to put it right (PolishProjects.responseRemedy), with the numbers of the game. The promises an agreement can break by
+  // its date, named as the player knows them from the cards.
+  const PROMISE_NAMES = Object.freeze({
+    land: ['the first tranche of the land reform', 'pierwsza transza reformy rolnej'],
+    worker_protection: ['financed protection for the unemployed in full', 'sfinansowana osłona dla bezrobotnych w pełnym zakresie'],
+    language_rights: ['language rights and minority schools', 'prawa językowe i szkoły mniejszości'],
+    school_rights: ['language rights and minority schools', 'prawa językowe i szkoły mniejszości'],
+    military_compromise: ['a compromise with Piłsudski under civilian control', 'kompromis z Piłsudskim pod kontrolą cywilną'],
+  });
+  const ULTIMATUM_THRESHOLD_TEXT = String(TENSION_ULTIMATUM);
+
+  function promiseName(o) {
+    const name = PROMISE_NAMES[o.topic];
+    const plain = String(o.topic).replace(/_/g, ' ');
+    return name ? L(name[0], name[1]) : plain;
+  }
+
+  // The overdue promises behind an open warning or ultimatum (an ultimatum names its causes).
+  function responsePromises(Q) {
+    const c = Q.S ? responseCase(Q) : null;
+    if (!c || (c.kind !== 'warning' && c.kind !== 'ultimatum')) return [];
+    const agreement = Q.S.agreements[c.agreement_id];
+    const overdue = agreement.obligations.filter(o => overdueObligation(o, Q.time));
+    const ultimatum = c.kind === 'ultimatum' && agreement.ultimatum && agreement.ultimatum.status === 'open' ? agreement.ultimatum : null;
+    const causes = ultimatum ? overdue.filter(o => ultimatum.cause_ids.indexOf(o.id) >= 0) : [];
+    return causes.length ? causes : overdue;
+  }
+
+  const unique = list => list.filter((x, i) => list.indexOf(x) === i);
+  const mpsText = n => L(n + (n === 1 ? ' MP' : ' MPs'), n + (n === 1 ? ' posła' : ' posłów'));
+
+  // {what, risk}: two paragraphs of the card, empty for the other kinds of answer.
+  function responseBrief(Q) {
+    const S = Q.S, c = S ? responseCase(Q) : null;
+    if (!c || (c.kind !== 'warning' && c.kind !== 'ultimatum')) return {what: '', risk: ''};
+    const agreement = S.agreements[c.agreement_id], t = Q.time;
+    const partner = describeParty(c.by);
+    const promises = responsePromises(Q);
+    let what;
+    if (!promises.length) {
+      what = L('The promises of the agreement are met now; the tension falls at the next settlement.',
+        'Obietnice z porozumienia są już spełnione; napięcie spadnie przy najbliższym rozliczeniu.');
+    } else {
+      const names = unique(promises.map(promiseName)).join(L(' and ', ' oraz '));
+      const due = Math.min(...promises.map(o => o.due_at));
+      what = L(partner + ' reminds us of a promise of our agreement: ' + names + ' by ' + rules.monthYear(due) +
+        '. The date has passed and the promise is not met.',
+        partner + ' przypomina obietnicę z naszego porozumienia: ' + names + ' do ' + rules.monthYear(due, 'gen') +
+        '. Termin minął, a obietnica nie jest spełniona.');
+    }
+    // The consequence: the partner leaves the basis of the cabinet (9.4) and a motion to dismiss it is moved.
+    const cabinet = S.cabinet;
+    const member = cabinet && cabinet.partner_ids.indexOf(c.by) >= 0;
+    const inBasis = cabinet && agreement.cabinet_id === cabinet.id && (member || cabinet.supporter_ids.indexOf(c.by) >= 0);
+    const leaves = member ? L('leaves the cabinet with its ministers', 'wyjdzie z gabinetu ze swoimi ministrami') :
+      L('withdraws its support from the cabinet', 'wycofa poparcie dla gabinetu');
+    let seatsLine = '';
+    if (inBasis) {
+      const seats = seatsOf(S, c.by), total = seatsOfList(S, S.parliament.clubs.map(club => club.id));
+      const majority = Math.floor(total / 2) + 1, after = Math.max(0, (cabinet.support_seats || 0) - seats);
+      seatsLine = ' ' + L('The cabinet would lose ' + mpsText(seats) + ' and keep ' + after + ' of ' + total + ' (a majority is ' + majority +
+        (after >= majority ? '), still a majority' : ')') + '; the Sejm would then vote on a motion to dismiss it.',
+        'Gabinet straci wtedy ' + mpsText(seats) + ' i zostanie mu ' + after + ' z ' + total + ' (większość to ' + majority +
+        (after >= majority ? '), więc większość utrzyma' : ')') + '; w Sejmie stanie wtedy wniosek o odwołanie gabinetu.');
+    }
+    let risk;
+    const ultimatum = agreement.ultimatum && agreement.ultimatum.status === 'open' ? agreement.ultimatum : null;
+    if (c.kind === 'ultimatum' && ultimatum) {
+      risk = L('Unless the promise is met or extended, ' + partner + ' ' + leaves + ' at the start of ' + rules.monthYear(ultimatum.due_at) + '.',
+        'Jeśli obietnica nie zostanie spełniona albo przedłużona, ' + partner + ' ' + leaves + ' na początku ' +
+        rules.monthYear(ultimatum.due_at, 'gen') + '.') + seatsLine;
+    } else {
+      const overdue = agreement.obligations.filter(o => overdueObligation(o, t));
+      const perMonth = Math.min(20, 8 * overdue.reduce((n, o) => n + o.weight, 0));
+      const tension = Math.round(agreement.tension);
+      let pace = '';
+      if (perMonth > 0) {
+        const at = t + Math.max(1, Math.ceil((TENSION_ULTIMATUM - agreement.tension) / perMonth)) - 1;
+        pace = L(' At ' + ULTIMATUM_THRESHOLD_TEXT + ' ' + partner + ' sets an ultimatum — at this pace at the start of ' + rules.monthYear(at + 1) +
+          '; two months later it ' + leaves + '.',
+          ' Przy ' + ULTIMATUM_THRESHOLD_TEXT + ' ' + partner + ' postawi ultimatum — w tym tempie na początku ' + rules.monthYear(at + 1, 'gen') +
+          '; dwa miesiące później ' + leaves + '.');
+      }
+      risk = L('Tension in the agreement: ' + tension + ' of 100; it rises by ' + perMonth + ' at each settlement while the promise is unmet.',
+        'Napięcie w porozumieniu: ' + tension + ' na 100; rośnie o ' + perMonth + ' przy każdym rozliczeniu, dopóki obietnica nie jest spełniona.') +
+        pace + seatsLine;
+    }
+    return {what: '<strong>' + L('What happened.', 'Co się stało.') + '</strong> ' + what,
+      risk: '<strong>' + L('What is at stake.', 'Co grozi.') + '</strong> ' + risk};
+  }
+
+  // The four conditions of the one standard extension (9.3), each with its present value, for the option of the card.
+  function extensionConditions(Q) {
+    const S = Q.S, target = extensionTarget(Q);
+    if (!target) return extensionStatus(Q).reason;
+    const agreement = target.agreement, mark = ok => (ok ? ' ✓' : ' ✗');
+    const rel = Math.round(relation(S, target.partner)), done = Math.round(100 * weightedFulfillment(agreement));
+    const used = agreement.extensions_used > 0, redLine = agreement.history.some(h => h.kind === 'red_line_breach');
+    return L('Conditions: relation with the partner at least 50 (now ' + rel + ')' + mark(rel >= 50) + '; at least half of the promises met (now ' +
+      done + '%)' + mark(done >= 50) + '; no extension before' + mark(!used) + '; no red line crossed' + mark(!redLine) +
+      '. The partner may still refuse.',
+      'Warunki: relacja z partnerem co najmniej 50 (teraz ' + rel + ')' + mark(rel >= 50) + '; spełniona co najmniej połowa obietnic (teraz ' +
+      done + '%)' + mark(done >= 50) + '; bez wcześniejszego przedłużenia' + mark(!used) + '; bez przekroczonej czerwonej linii' + mark(!redLine) +
+      '. Partner może mimo to odmówić.');
+  }
+
   rules.registerUrgentCard('polish_government_response', {active: Q => !!responseCase(Q),
     deck: Q => ppsStance(Q.S) === 'member' ? 'main.govt' : 'main.parliament'});
   rules.registerCardDeadline('polish_government_response', responseDeadline);
@@ -3711,6 +3819,9 @@
     ppsAgreements: ppsAgreements,
     responseCase: responseCase,
     responseDeadline: responseDeadline,
+    responsePromises: responsePromises,
+    responseBrief: responseBrief,
+    extensionConditions: extensionConditions,
     againstNaczelnik: againstNaczelnik,
     AGAINST_NACZELNIK: AGAINST_NACZELNIK,
     headCandidate: headCandidate,

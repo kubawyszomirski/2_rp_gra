@@ -18,13 +18,23 @@ Q.pl_sup_withdraw_reason = PolishGovernment.supportOptionStatus(Q, 'withdraw', '
 Q.pl_sup_demand_reason = PolishGovernment.supportOptionStatus(Q, 'bargain', 'response').reason;
 Q.pl_sup_extension_reason = PolishGovernment.supportOptionStatus(Q, 'extension', 'response').reason;
 Q.pl_sup_motion_reason = PolishGovernment.dismissalSupportStatus(Q).reason;
+// Z — 0.77 (decision 5A of 8 X 2026): a warning or an ultimatum says what happened, what is at stake and how to put it right,
+// and the extension lists its conditions with their present values.
+var engine = this;
+var brief = PolishGovernment.responseBrief(Q);
+Q.pl_resp_what = brief.what;
+Q.pl_resp_risk = brief.risk;
+Q.pl_resp_fix = PolishProjects.responseRemedy(Q, function (id) { var scene = engine.game.scenes[id]; return scene ? scene.title : ''; });
+Q.pl_sup_extension_conditions = PolishGovernment.extensionConditions(Q);
 !}
 
 = [? if pl_resp_kind = "warning" : A warning from [+ pl_resp_by +] ?][? if pl_resp_kind = "ultimatum" : An ultimatum from [+ pl_resp_by +] ?][? if pl_resp_kind = "motion" : A motion to dismiss the cabinet ?][? if pl_resp_kind = "review" : The review of our toleration of [+ pl_resp_by +] ?][? if pl_resp_kind = "renewal" : The end of our toleration of [+ pl_resp_by +] ?]
 
-[? if pl_resp_kind = "warning" : A promise of our agreement is overdue and the tension has passed 40. [+ pl_resp_by +] warns that its support is at risk. ?]
+[? if pl_resp_what : [+ pl_resp_what +] ?]
 
-[? if pl_resp_kind = "ultimatum" : The tension has passed 60. Unless the broken promise is met or extended, [+ pl_resp_by +] ends its support at the settlement two months after the ultimatum. ?]
+[? if pl_resp_risk : [+ pl_resp_risk +] ?]
+
+[? if pl_resp_fix : [+ pl_resp_fix +] ?]
 
 [? if pl_resp_kind = "motion" and not pl_resp_competing : [+ pl_resp_by +] has withdrawn its support from the cabinet, and a motion to dismiss it is before the Sejm. Without our answer PPS abstains when it is voted at the next settlement. ?]
 
@@ -34,8 +44,6 @@ Q.pl_sup_motion_reason = PolishGovernment.dismissalSupportStatus(Q).reason;
 
 [? if pl_resp_kind = "renewal" : The six months of our toleration of [+ pl_resp_by +] are over. Keeping our support renews the agreement for six months, with a new review after three; without an answer the toleration goes on unchanged. ?]
 
-[? if pl_agreement_notices : [+ pl_agreement_notices +] ?]
-
 One answer costs no month. Leaving this card without an answer changes nothing.
 
 - @polish_government_support.maintain
@@ -43,9 +51,9 @@ One answer costs no month. Leaving this card without an answer changes nothing.
 - @polish_government_support.extension
 - view-if: pl_resp_kind != "motion"
 - @polish_government_support.bargain
-- view-if: pl_resp_kind != "motion"
+- view-if: pl_resp_kind = "review" or pl_resp_kind = "renewal"
 - @polish_government_support.persuade
-- view-if: pl_resp_kind != "motion"
+- view-if: pl_resp_kind = "review" or pl_resp_kind = "renewal"
 - @polish_government_support.withdraw
 - view-if: pl_resp_kind != "motion"
 - @motion_support

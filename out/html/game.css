@@ -649,11 +649,12 @@ button.pl-discard.pl-disabled:hover {
   color: var(--text-color, inherit);
   border-color: var(--hair-color);
 }
-/* Z — 0.74 (decisions 1A–3A of 8 X 2026): an urgent card stands in an extra place after the two ordinary ones of its deck,
-   set off by a hairline, with a red frame and the word "urgent" above it. */
-#pl-tableau .card-in-hand.pl-urgent {
-  padding-left: 0.8em;
-  border-left: 1px solid var(--hair-color);
+/* Z — 0.74 (decisions 1A–3A of 8 X 2026): an urgent card has a red frame and the word "urgent" above it. Z — 0.77 (decision 4A
+   of 8 X 2026): it takes a free place of its row; a rare third place wraps under the two, so a row is never wider than a deck
+   and two places and the Committee column stays where it is. */
+#pl-tableau ul.hand {
+  flex-wrap: wrap;
+  max-width: calc(300px + 2em + 2px);
 }
 #pl-tableau .card-in-hand.pl-urgent a.card {
   border-color: var(--accent-color);
@@ -730,6 +731,21 @@ details.pl-score[open] {
   color: var(--mount-color);
   background-color: var(--text-color, #222);
   opacity: 0.9;
+}
+/* Z — 0.77 (decision 2A of 8 X 2026): on the page of a ministry card its ministry is a printed rubric above the text — bold
+   red small capitals over a thin rule — not an italic sentence (the scenes still wrap the line in *…*). */
+.pl-ministry-label {
+  display: block;
+  margin-bottom: 0.2em;
+  padding-bottom: 0.15em;
+  text-indent: 0;
+  font-style: normal;
+  font-weight: bold;
+  font-variant: small-caps;
+  font-size: 1.15em;
+  letter-spacing: 0.08em;
+  color: var(--accent-color);
+  border-bottom: 1px solid var(--hair-color);
 }
 
 /* Z — 0.65 (the user's note of 7 X 2026): the decks and the Central Executive Committee share one board. When the
@@ -1042,6 +1058,10 @@ img {
     max-width: 120px;
     margin-right: 1em;
     vertical-align: top;
+  }
+  /* Two places of a row on a phone (Z — 0.77). */
+  #pl-tableau ul.hand {
+    max-width: calc(240px + 2em + 2px);
   }
 }
 

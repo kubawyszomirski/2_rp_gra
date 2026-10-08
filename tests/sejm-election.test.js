@@ -82,14 +82,12 @@ function allocate(values, options = {}) {
   update(engine);
   return {engine, Q, result: Q.sejm_results[0]};
 }
-// Stage 5: a press campaign of the Media card (card catalogue 5.3) to one class of voters.
-function campaign(engine, option = 'workers') {
-  assert.ok(engine._compileChoices(engine.game.scenes['main.party']).some((c) => c.id === 'polish_party_media'));
-  engine.state.currentHands.main = [{id: 'polish_party_media', title: 'Media and Campaigns'}];
-  engine.playCard('polish_party_media');
-  choose(engine, 'polish_party_media.campaign');
-  choose(engine, 'polish_party_media.topic_class');
-  choose(engine, `polish_party_media.to_${option}`);
+// Stage 5: a campaign of the party (card catalogue 5.3). Z — 0.77: the Campaign card, one campaign on a matter.
+function campaign(engine, option = 'eight_hours') {
+  assert.ok(engine._compileChoices(engine.game.scenes['main.party']).some((c) => c.id === 'polish_party_campaign'));
+  engine.state.currentHands.main = [{id: 'polish_party_campaign', title: 'Campaign'}];
+  engine.playCard('polish_party_campaign');
+  choose(engine, `polish_party_campaign.${option}`);
   choose(engine, 'root');
   // Z — 0.57: two months before the vote the question of a joint list comes as an event; PPS goes alone.
   if (engine.state.sceneId === 'polish_list_agreement') {
@@ -131,7 +129,7 @@ test('January through October campaigning preserves parliament and November reso
   assert.equal(Q.S.parliament.next_election.vote_date, '1928-02-19');
   const frozen = clone(Q.sejm_results);
   const seats = clone(Q.sejm_parliament);
-  campaign(engine, 'rural');
+  campaign(engine, 'land');
   assert.equal(Q.month, 12);
   assert.deepEqual(Q.sejm_results, frozen);
   assert.deepEqual(Q.sejm_parliament, seats);

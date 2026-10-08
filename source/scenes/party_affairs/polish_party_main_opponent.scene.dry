@@ -1,5 +1,5 @@
 title: Main Opponent
-subtitle: Whom our polemics address.
+subtitle: Whose voters our press campaigns win over.
 new-page: true
 is-card: true
 tags: party_affairs
@@ -23,7 +23,7 @@ The present line: **[+ pl_stance_current +]**. A new declaration costs this mont
 
 @nationalist_right
 title: The national right
-subtitle: [? if pl_stance_nationalist_right_present = 1 : **Present line** Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_nationalist_right_present = 0 : The addressee of polemics: ZLN. ?]
+subtitle: [? if pl_stance_nationalist_right_present = 1 : **Present line** Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_nationalist_right_present = 0 : Our press campaigns take half of their gains from ZLN voters. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'main_opponent', 'nationalist_right').available !}
 unavailable-subtitle: [+ pl_stance_nationalist_right_why +]
 on-arrival: {!
@@ -33,7 +33,7 @@ go-to: result
 
 @communists
 title: The communists
-subtitle: [? if pl_stance_communists_present = 1 : **Present line** Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_communists_present = 0 : The addressee: the KPP. Each polemic worsens the relation with it (−2) and can close the way to contact. ?]
+subtitle: [? if pl_stance_communists_present = 1 : **Present line** Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_communists_present = 0 : Our press campaigns take half of their gains from KPP voters. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'main_opponent', 'communists').available !}
 unavailable-subtitle: [+ pl_stance_communists_why +]
 on-arrival: {!
@@ -43,7 +43,7 @@ go-to: result
 
 @capital_land
 title: The defenders of capital and landed estates
-subtitle: [? if pl_stance_capital_land_present = 1 : **Present line** Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_capital_land_present = 0 : The addressees: the parties that defend capital and large landed property (−1 or less on the land and tax scales); in the test profile PSChD and ZLN. ?]
+subtitle: [? if pl_stance_capital_land_present = 1 : **Present line** Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_capital_land_present = 0 : Our press campaigns take half of their gains from the voters of the parties that defend capital and large landed property (−1 or less on the land and tax scales); in the test profile PSChD and ZLN. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'main_opponent', 'capital_land').available !}
 unavailable-subtitle: [+ pl_stance_capital_land_why +]
 on-arrival: {!
@@ -53,7 +53,7 @@ go-to: result
 
 @unconstitutional_force
 title: Violence against the constitution, from any side
-subtitle: [? if pl_stance_unconstitutional_force_present = 1 : **Present line** Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_unconstitutional_force_present = 0 : The addressee: a party with an open case of unconstitutional violence; without one, polemics are blocked. ?]
+subtitle: [? if pl_stance_unconstitutional_force_present = 1 : **Present line** Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_unconstitutional_force_present = 0 : Our press campaigns take half of their gains from the voters of a party with an open case of unconstitutional violence; without one, from all others alike. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'main_opponent', 'unconstitutional_force').available !}
 unavailable-subtitle: [+ pl_stance_unconstitutional_force_why +]
 on-arrival: {!

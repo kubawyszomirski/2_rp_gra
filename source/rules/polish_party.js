@@ -1549,6 +1549,351 @@
     return {moved: moved, before: before, after: after, text: text};
   }
 
+  // ---- Z — 0.77: the Campaign card and the Press card (decisions of 8 X 2026) ------------------------------------------------
+
+  // The Campaign card: five campaigns on a matter — a gameplay simplification of typical PPS matters of 1922–1926 (the eight-hour
+  // day, prices in the inflation, land, the Republic, the unemployed; HISTORICAL_SOURCES.md, 0.77). Each reaches several groups at
+  // once with its own weight (P), negative where the matter puts voters off, through meetings, rallies and the unions (the reach
+  // of the unions and of the party's base, no press). The line of the party and the state of the country make a campaign
+  // stronger (P: the direction ×1.10, the character of the party ×1.10 in its own groups, the situation ×1.25); they do not choose it.
+  const LINE_FACTOR = 1.10;
+  const CHARACTER_FACTOR = 1.10;
+  const SITUATION_FACTOR = 1.25;
+  const HIGH_UNEMPLOYMENT = 10;
+  const HIGH_INFLATION = 10;
+  const ISSUES = Object.freeze({
+    eight_hours: Object.freeze({name: ['In defence of the eight-hour day', 'W obronie 8-godzinnego dnia pracy'],
+      groups: Object.freeze({employed_workers: 1, unemployed: 0.3, bourgeois_landowners: -0.2}),
+      directions: Object.freeze(['workers_gains', 'class_independence']),
+      situation: S => gainUnderThreat(S),
+      situation_text: ['stronger while the cabinet or the employers threaten the workers’ gains', 'silniejsza, gdy rząd albo pracodawcy zagrażają zdobyczom robotniczym']}),
+    prices: Object.freeze({name: ['Against high prices: wages must keep up with prices', 'Przeciw drożyźnie: płace muszą nadążać za cenami'],
+      groups: Object.freeze({workers: 0.6, new_middle: 0.5, unemployed: 0.4}),
+      directions: Object.freeze(['class_independence']),
+      situation: S => economy.currencyCrisis(S.economy) || (S.economy.inflation_m || 0) >= HIGH_INFLATION,
+      situation_text: ['stronger in a currency crisis and high inflation', 'silniejsza w czasie kryzysu walutowego i wysokiej inflacji']}),
+    land: Object.freeze({name: ['Land for the peasants', 'Ziemia dla chłopów'],
+      groups: Object.freeze({rural: 0.6, workers: 0.3, bourgeois_landowners: -0.3}),
+      directions: Object.freeze(['parliamentary_socialism']),
+      situation: S => Object.keys(S.projects).some(id => S.projects[id] && S.projects[id].type === 'land_program' &&
+        ['idea', 'prepared', 'executing'].indexOf(S.projects[id].status) >= 0),
+      situation_text: ['stronger while a land reform is prepared or carried out', 'silniejsza, gdy reforma rolna jest przygotowywana albo wykonywana']}),
+    republic: Object.freeze({name: ['In defence of the Republic', 'W obronie Republiki'],
+      groups: Object.freeze({new_middle: 0.7, workers: 0.4, jewish: 0.4, other_minorities: 0.3}),
+      directions: Object.freeze(['democratic_movement']), tur_topic: 'democracy',
+      situation: S => democraticThreat(S),
+      situation_text: ['stronger while democracy is threatened (a coup threat, violence, a breach of the law)', 'silniejsza, gdy demokracji coś zagraża (zamach, przemoc, łamanie prawa)']}),
+    unemployed: Object.freeze({name: ['Work and benefits for the unemployed', 'Praca i zasiłek dla bezrobotnych'],
+      groups: Object.freeze({unemployed: 1, workers: 0.35}),
+      directions: Object.freeze(['workers_gains', 'parliamentary_socialism']),
+      situation: S => (S.economy.unemployment || 0) >= HIGH_UNEMPLOYMENT,
+      situation_text: ['stronger at high unemployment (' + HIGH_UNEMPLOYMENT + '% or more)', 'silniejsza przy wysokim bezrobociu (' + HIGH_UNEMPLOYMENT + '% i więcej)']}),
+  });
+  const ISSUE_ORDER = Object.freeze(['eight_hours', 'prices', 'land', 'republic', 'unemployed']);
+  const issueName = id => L(ISSUES[id].name[0], ISSUES[id].name[1]);
+  // The Press card: the press campaign reaches the groups of its format (P) and takes half of its gains from the voters of the
+  // main opponent of the party's line, where they are (the line steers the press; no relation changes).
+  const PRESS_GROUPS = Object.freeze({
+    party_journal: Object.freeze({workers: 0.7, unemployed: 0.35}),
+    popular: Object.freeze({workers: 0.6, unemployed: 0.3, new_middle: 0.5, old_middle: 0.4}),
+  });
+  const OPPONENT_SHARE = 0.5;
+  const REPORTAGE_TRUST = 3;
+  const DEBATE_DISSENT = -3;
+  const RALLY_TURNOUT = 0.04;
+
+  const capitalise = text => text.charAt(0).toUpperCase() + text.slice(1);
+  // A change in points with one decimal (two below 0.1), as on the card: +1.5, −0.3, +0.04.
+  const signed = value => {
+    const abs = Math.abs(value);
+    const text = abs < 0.005 ? '0' : abs.toFixed(abs < 0.1 ? 2 : 1);
+    return (value < -0.005 ? '−' : '+') + (rules.getLanguage() === 'pl' ? text.replace('.', ',') : text);
+  };
+  const groupName = id => L(electorate.AUDIENCES[id].name, electorate.AUDIENCE_NAMES_PL[id]);
+
+  // The weight of a cell in a bundle of groups: the strongest positive weight of its groups, otherwise the weakest negative one.
+  function bundleWeight(bundle, cell) {
+    let plus = 0, minus = 0;
+    for (const id of Object.keys(bundle)) {
+      if (!audienceFilter(id)(cell)) continue;
+      if (bundle[id] > plus) plus = bundle[id];
+      if (bundle[id] < minus) minus = bundle[id];
+    }
+    return plus > 0 ? plus : minus;
+  }
+
+  // A TUR course prepares one topic for its classes (13.2); a preview does not use the bonus up.
+  function courseBonus(S, cell, topic, t, consume) {
+    if (!topic) return 0;
+    if (consume) return takeCourseBonus(S, cell, topic, t);
+    return S.party_orgs.tur.prepared_campaigns.some(e => e.topic === topic && t < e.expires_at && e.classes.indexOf(cell.class_id) >= 0 &&
+      e.used_by.indexOf(cell.id) < 0) ? 0.10 : 0;
+  }
+
+  // One campaign over a bundle of groups. spec: {key, channel ('unions' | 'press'), bundle, factor(cell), course_topic,
+  // sources (parties the gain is partly taken from), source_share}. Returns the signed points moved in each cell; with apply
+  // false nothing changes (the preview of the card), with apply true the cells change and the campaign is recorded.
+  function bundleCampaign(Q, spec, apply) {
+    const S = Q.S, t = Q.time, parties = S.society.parties;
+    const served = projects.programmeFilter(S);
+    const moved = {};
+    for (const cell of S.society.cells) {
+      const w = bundleWeight(spec.bundle, cell);
+      if (!w) continue;
+      const workers = cell.class_id === 'workers' ? activeEffect(S, 'workers_campaign_multiplier', t) : 1;
+      const programme = served && served(cell) ? PROGRAMME_CAMPAIGN_FACTOR : 1;
+      const tur = 1 + courseBonus(S, cell, spec.course_topic, t, apply);
+      const base = electorate.campaignGain(cell, cellReach(S, cell, spec.channel), Q.dissent || 0, spec.key, t) *
+        spec.factor(cell) * workers * programme * tur;
+      const amount = base * Math.abs(w);
+      let value;
+      if (w < 0) {
+        value = -(apply ? electorate.lossForPps(cell, amount, parties) : Math.min(amount, cell.propensity.pps));
+      } else {
+        const sources = (spec.sources || []).filter(p => cell.propensity[p] > 0);
+        const first = sources.length ? amount * (spec.source_share || 0) : 0;
+        if (apply) {
+          value = electorate.gainForPps(cell, first, parties, sources) + electorate.gainForPps(cell, amount - first, parties);
+        } else {
+          const room = 100 - cell.propensity.pps;
+          const pool = sources.reduce((n, p) => n + cell.propensity[p], 0);
+          const one = Math.min(first, pool, room);
+          value = one + Math.min(amount - first, room - one);
+        }
+      }
+      if (apply) electorate.recordCampaign(cell, spec.key, t);
+      moved[cell.id] = value;
+    }
+    return moved;
+  }
+
+  // The change of the PPS share in each group of the bundle and in the whole electorate, in points.
+  function bundleChanges(S, bundle, moved) {
+    const change = filter => {
+      const cells = S.society.cells.filter(filter);
+      const mass = cells.reduce((n, c) => n + c.mass, 0);
+      return mass > 0 ? cells.reduce((n, c) => n + c.mass * (moved[c.id] || 0), 0) / mass : 0;
+    };
+    return {groups: Object.keys(bundle).map(id => ({id: id, change: change(audienceFilter(id))})), total: change(() => true)};
+  }
+
+  function changesText(changes) {
+    const groups = changes.groups.map(g => capitalise(groupName(g.id)) + ' ' + signed(g.change)).join(' · ');
+    return groups + L('; in the whole country ' + signed(changes.total) + ' points', '; razem w kraju ' + signed(changes.total) + ' pkt');
+  }
+
+  function issueFactor(Q, id) {
+    const S = Q.S, issue = ISSUES[id];
+    const line = issue.directions.indexOf(S.actors.pps.strategy.direction) >= 0 ? LINE_FACTOR : 1;
+    const situation = issue.situation(S) ? SITUATION_FACTOR : 1;
+    return cell => line * situation * (inEnvironment(S, {kind: 'cell', class_id: cell.class_id}) ? CHARACTER_FACTOR : 1);
+  }
+
+  function issueSpec(Q, id) {
+    const issue = ISSUES[id];
+    return {key: 'issue:' + id, channel: 'unions', bundle: issue.groups, factor: issueFactor(Q, id), course_topic: issue.tur_topic || null};
+  }
+
+  function issueCampaignStatus(Q, id) {
+    const S = Q.S;
+    if (!ISSUES[id]) return no(L('Unknown campaign.', 'Nieznana kampania.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
+    if (S.party_orgs.cash + 1e-9 < 1) return no(L('Needs 1 resource.', 'Wymaga 1 jednostki środków.'));
+    if (!electorate.hasCells(S)) return no(L('The cells of the electorate are not recorded.', 'Grupy wyborców nie są zapisane.'));
+    return OK;
+  }
+
+  // What strengthens the campaign now: the situation of the country and the party's line.
+  function issueBoosts(Q, id) {
+    const S = Q.S, issue = ISSUES[id], parts = [];
+    if (issue.situation(S)) parts.push(L('the situation of the country', 'sytuacja w kraju'));
+    if (issue.directions.indexOf(S.actors.pps.strategy.direction) >= 0) parts.push(L('the direction of the party', 'kierunek partii'));
+    return parts;
+  }
+
+  function issuePreview(Q, id) {
+    const S = Q.S;
+    if (!electorate.hasCells(S)) return '';
+    const changes = bundleChanges(S, ISSUES[id].groups, bundleCampaign(Q, issueSpec(Q, id), false));
+    const boosts = issueBoosts(Q, id);
+    const issue = ISSUES[id];
+    return changesText(changes) + '. ' + capitalise(L(issue.situation_text[0], issue.situation_text[1])) + '.' +
+      (boosts.length ? L(' Stronger now: ', ' Teraz wzmacnia ją: ') + boosts.join(L(' and ', ' i ')) + '.' : '');
+  }
+
+  function issueCampaign(Q, id) {
+    syncMirrors(Q);
+    const status = issueCampaignStatus(Q, id);
+    if (!status.available) throw new Error('issueCampaign: ' + status.reason);
+    const S = Q.S, t = Q.time;
+    rules.commitMainAction(Q, 'party.campaign', {kind: 'issue', topic: id, audience: 'bundle', resource_cost: {R: 1}});
+    S.party_orgs.cash = Math.max(0, S.party_orgs.cash - 1);
+    const moved = bundleCampaign(Q, issueSpec(Q, id), true);
+    const changes = bundleChanges(S, ISSUES[id].groups, moved);
+    const total = Object.keys(moved).reduce((n, cellId) => n + (S.society.cells.find(c => c.id === cellId).mass * moved[cellId]), 0);
+    S.party_orgs.press.campaigns.push({t: t, kind: 'issue', topic: 'issue:' + id, audience: 'bundle'});
+    S.history.reasons.push({t: t, kind: 'campaign', campaign: 'issue', topic: 'issue:' + id, audience: 'bundle', moved: total});
+    electorate.writeClassMirrors(Q);
+    writeMirrors(Q);
+    const boosts = issueBoosts(Q, id);
+    return result(Q, L('The campaign “' + issueName(id) + '”: ', 'Kampania „' + issueName(id) + '”: ') + changesText(changes) + '.' +
+      (boosts.length ? L(' It was stronger thanks to ', ' Wzmocniły ją: ') + boosts.join(L(' and ', ' i ')) + '.' : '') +
+      programmeCampaignNote(S, S.society.cells.filter(c => bundleWeight(ISSUES[id].groups, c) > 0)));
+  }
+
+  // Rallies before an election: in the last three months before the vote, the groups of the party — the workers and the groups
+  // of the character of the party — turn out more (+0.04 up to 0.90) until the election (5.3).
+  function rallyFilter(S) {
+    return cell => cell.class_id === 'workers' || inEnvironment(S, {kind: 'cell', class_id: cell.class_id});
+  }
+
+  function rallyGroupsText(S) {
+    const base = S.actors.pps.strategy.electoral_base;
+    return base === 'workers_peasants' ? L('the workers and the peasants', 'robotników i chłopów') :
+      base === 'broad_democratic' ? L('the workers, the intelligentsia and the petty bourgeoisie', 'robotników, inteligencji i drobnomieszczaństwa') :
+        L('the workers', 'robotników');
+  }
+
+  function rallyWindow(Q) {
+    const next = Q.S && Q.S.parliament && Q.S.parliament.next_election;
+    const left = next ? next.time - Q.time : -1;
+    return left >= 0 && left <= 3;
+  }
+
+  function rallyStatus(Q) {
+    const S = Q.S;
+    if (!rallyWindow(Q)) return no(L('Only in the last three months before a Sejm election.', 'Tylko w ostatnich trzech miesiącach przed wyborami do Sejmu.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
+    if (S.party_orgs.cash + 1e-9 < 1) return no(L('Needs 1 resource.', 'Wymaga 1 jednostki środków.'));
+    if (!electorate.hasCells(S)) return no(L('The cells of the electorate are not recorded.', 'Grupy wyborców nie są zapisane.'));
+    return OK;
+  }
+
+  function electionRallies(Q) {
+    syncMirrors(Q);
+    const status = rallyStatus(Q);
+    if (!status.available) throw new Error('electionRallies: ' + status.reason);
+    const S = Q.S;
+    rules.commitMainAction(Q, 'party.turnout', {kind: 'turnout', topic: null, audience: 'party_groups', resource_cost: {R: 1}});
+    S.party_orgs.cash = Math.max(0, S.party_orgs.cash - 1);
+    electorate.addTurnout(S, rallyFilter(S), RALLY_TURNOUT);
+    electorate.writeClassMirrors(Q);
+    writeMirrors(Q);
+    return result(Q, L('Rallies before the election: the turnout of ' + rallyGroupsText(S) + ' rises by 0.04 until the vote.',
+      'Wiece przed wyborami: frekwencja ' + rallyGroupsText(S) + ' rośnie o 0,04 do dnia głosowania.'));
+  }
+
+  function campaignView(Q) {
+    syncMirrors(Q);
+    partyDisplay(Q);
+    for (const id of ISSUE_ORDER) {
+      Q['pl_issue_' + id + '_why'] = issueCampaignStatus(Q, id).reason;
+      Q['pl_issue_' + id + '_effect'] = issuePreview(Q, id);
+    }
+    Q.pl_rally_open = rallyWindow(Q) ? 1 : 0;
+    Q.pl_rally_why = rallyStatus(Q).reason;
+    Q.pl_rally_groups = rallyGroupsText(Q.S);
+    Q.pl_campaign_line = L('The direction of the party: ', 'Kierunek partii: ') + stanceValue('direction', Q.S.actors.pps.strategy.direction) + '.';
+  }
+
+  // The Press card. A working press is paid and reaches someone (13.2).
+  function pressWorking(S) {
+    return !(S.party_orgs.press.unpaid_months >= 2 || S.party_orgs.press.reach <= 0);
+  }
+
+  function pressActionStatus(Q, option) {
+    const S = Q.S;
+    if (!pressWorking(S)) return no(L('Needs a working party press.', 'Wymaga działającej prasy partyjnej.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
+    if (option !== 'debate' && S.party_orgs.cash + 1e-9 < 1) return no(L('Needs 1 resource.', 'Wymaga 1 jednostki środków.'));
+    if (option !== 'debate' && !electorate.hasCells(S)) return no(L('The cells of the electorate are not recorded.', 'Grupy wyborców nie są zapisane.'));
+    return OK;
+  }
+
+  function pressSpec(Q) {
+    const S = Q.S, t = Q.time, press = S.party_orgs.press;
+    const credibility = 0.5 + 0.5 * pressEffective(S).credibility / 100;
+    const multiplier = activeEffect(S, 'press_campaign_multiplier', t);
+    return {key: 'press', channel: 'press', bundle: PRESS_GROUPS[press.format === 'popular' ? 'popular' : 'party_journal'],
+      factor: () => credibility * multiplier, course_topic: null, sources: polemicAddressees(Q), source_share: OPPONENT_SHARE};
+  }
+
+  function opponentText(Q) {
+    const ids = polemicAddressees(Q);
+    return ids.length ? L('half of its gains from the voters of ' + ids.map(describe).join(' and '), 'połowę zysków kosztem wyborców: ' +
+      ids.map(describe).join(', ')) : L('its gains from all other parties alike (the main opponent names no party now)',
+      'zyski od wszystkich innych partii po równo (główny przeciwnik nie wskazuje teraz żadnej partii)');
+  }
+  const describe = id => government.describeParty(id);
+
+  function pressCampaignPreview(Q) {
+    const S = Q.S;
+    if (!electorate.hasCells(S)) return '';
+    const spec = pressSpec(Q);
+    return changesText(bundleChanges(S, spec.bundle, bundleCampaign(Q, spec, false))) + L('; ', '; ') + opponentText(Q) + '.';
+  }
+
+  function pressCampaign(Q) {
+    syncMirrors(Q);
+    const status = pressActionStatus(Q, 'campaign');
+    if (!status.available) throw new Error('pressCampaign: ' + status.reason);
+    const S = Q.S, t = Q.time;
+    rules.commitMainAction(Q, 'party.campaign', {kind: 'press', topic: null, audience: 'press_groups', resource_cost: {R: 1}});
+    S.party_orgs.cash = Math.max(0, S.party_orgs.cash - 1);
+    const spec = pressSpec(Q);
+    const moved = bundleCampaign(Q, spec, true);
+    const total = Object.keys(moved).reduce((n, cellId) => n + (S.society.cells.find(c => c.id === cellId).mass * moved[cellId]), 0);
+    S.party_orgs.press.campaigns.push({t: t, kind: 'press', topic: 'press', audience: 'press_groups'});
+    S.history.reasons.push({t: t, kind: 'campaign', campaign: 'press', topic: 'press', audience: 'press_groups', moved: total});
+    electorate.writeClassMirrors(Q);
+    writeMirrors(Q);
+    return result(Q, L('The press campaign: ', 'Kampania prasowa: ') + changesText(bundleChanges(S, spec.bundle, moved)) + L('; ', '; ') +
+      opponentText(Q) + '.');
+  }
+
+  // Reportage on the conditions of work and life: the trust of the workers and the unemployed in PPS +3 (P), so the next
+  // campaigns among them are stronger; no votes at once.
+  function pressReportage(Q) {
+    syncMirrors(Q);
+    const status = pressActionStatus(Q, 'reportage');
+    if (!status.available) throw new Error('pressReportage: ' + status.reason);
+    const S = Q.S;
+    rules.commitMainAction(Q, 'party.press_reportage', {resource_cost: {R: 1}});
+    S.party_orgs.cash = Math.max(0, S.party_orgs.cash - 1);
+    electorate.changeCells(S, cell => cell.class_id === 'workers' || cell.employment === 'unemployed', {trust_pps: REPORTAGE_TRUST});
+    electorate.writeClassMirrors(Q);
+    writeMirrors(Q);
+    return result(Q, L('Reportage on the conditions of work and life: the trust of the workers and the unemployed in PPS +3; the next campaigns among ' +
+      'them are stronger.', 'Reportaże o warunkach pracy i życia: zaufanie robotników i bezrobotnych do PPS +3; następne kampanie w tych grupach będą mocniejsze.'));
+  }
+
+  // An open debate in the columns of the press: every faction may speak; its dissent −3 (P, after the German Media card).
+  function pressDebate(Q) {
+    syncMirrors(Q);
+    const status = pressActionStatus(Q, 'debate');
+    if (!status.available) throw new Error('pressDebate: ' + status.reason);
+    const t = Q.time;
+    rules.commitMainAction(Q, 'party.press_debate', {});
+    for (const id of FACTIONS) government.factionReaction(Q, id, {dissent: DEBATE_DISSENT}, {id: 'party.press_debate:' + id + ':t' + t, kind: 'press_debate', reverse: null});
+    writeMirrors(Q);
+    return result(Q, L('An open debate in the party press: every faction’s dissent −3.', 'Otwarta dyskusja na łamach prasy partyjnej: sprzeciw każdej frakcji −3.'));
+  }
+
+  function pressView(Q) {
+    syncMirrors(Q);
+    partyDisplay(Q);
+    const S = Q.S, press = S.party_orgs.press, effective = pressEffective(S);
+    Q.pl_media_format_why = pressFormatStatus(Q).reason;
+    Q.pl_media_format_next = press.format === 'popular' ? L('the party journal', 'pismo partyjne') : L('a popular format', 'format popularny');
+    Q.pl_press_state = (press.format === 'popular' ? L('A popular format', 'Format popularny') : L('The party journal', 'Pismo partyjne')) +
+      L(' · reach ', ' · zasięg ') + fmt(effective.reach) + L(' · credibility ', ' · wiarygodność ') + fmt(effective.credibility);
+    Q.pl_press_campaign_why = pressActionStatus(Q, 'campaign').reason;
+    Q.pl_press_campaign_effect = pressCampaignPreview(Q);
+    Q.pl_press_reportage_why = pressActionStatus(Q, 'reportage').reason;
+    Q.pl_press_debate_why = pressActionStatus(Q, 'debate').reason;
+    Q.pl_media_investigation_why = pressInvestigationStatus(Q).reason;
+  }
+
   // A press investigation needs a real case and evidence (13.2). P (stage 7): the evidence is the record of the case
   // in the journal of 15.2 — an open case of violence or an active unlawful restriction, not yet revealed; never a
   // case of the PPS organisations themselves, never the political dispute about the army, never an invented scandal.
@@ -2582,6 +2927,21 @@
     pressInvestigationTarget: pressInvestigationTarget,
     pressInvestigation: pressInvestigation,
     mediaView: mediaView,
+    ISSUES: ISSUES,
+    ISSUE_ORDER: ISSUE_ORDER,
+    PRESS_GROUPS: PRESS_GROUPS,
+    issueCampaignStatus: issueCampaignStatus,
+    issueCampaign: issueCampaign,
+    issuePreview: issuePreview,
+    rallyStatus: rallyStatus,
+    electionRallies: electionRallies,
+    campaignView: campaignView,
+    pressActionStatus: pressActionStatus,
+    pressCampaign: pressCampaign,
+    pressCampaignPreview: pressCampaignPreview,
+    pressReportage: pressReportage,
+    pressDebate: pressDebate,
+    pressView: pressView,
     audienceView: audienceView,
     settleRewards: settleRewards,
     settleBrokenPromises: settleBrokenPromises,

@@ -1,0 +1,18 @@
+{
+ "source": "scenes/party_affairs/polish_party_campaign.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Campaign": "title: Kampania",
+  "subtitle: Meetings, rallies and the unions: one campaign on a matter that reaches several groups at once.": "subtitle: Zebrania, wiece i związki: jedna kampania w sprawie, która trafia naraz do kilku grup.",
+  "= Campaign": "= Kampania",
+  "Meetings, rallies and the unions. Each campaign costs 1 resource and reaches several groups at once; the numbers are the expected change of PPS support in points. [+ pl_campaign_line +] Party money: [+ pl_party_cash +].": "Zebrania, wiece i związki. Każda kampania kosztuje 1 jednostkę środków i trafia naraz do kilku grup; liczby to spodziewana zmiana poparcia PPS w punktach. [+ pl_campaign_line +] Pieniądze partii: [+ pl_party_cash +].",
+  "title: In defence of the eight-hour day": "title: W obronie 8-godzinnego dnia pracy",
+  "title: Against high prices: wages must keep up with prices": "title: Przeciw drożyźnie: płace muszą nadążać za cenami",
+  "title: Land for the peasants": "title: Ziemia dla chłopów",
+  "title: In defence of the Republic": "title: W obronie Republiki",
+  "title: Work and benefits for the unemployed": "title: Praca i zasiłek dla bezrobotnych",
+  "title: Rallies before the election": "title: Wiece przed wyborami",
+  "subtitle: 1 resource. More of our voters go to the polls: the turnout of [+ pl_rally_groups +] rises by 0.04 until the vote.": "subtitle: 1 jednostka środków. Więcej naszych wyborców pójdzie do urn: frekwencja [+ pl_rally_groups +] rośnie o 0,04 do dnia głosowania.",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

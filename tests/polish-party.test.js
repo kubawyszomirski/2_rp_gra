@@ -78,8 +78,9 @@ test('Dwie organizacje in the game: two different organisations in one month; th
 test('Kolportaż w Organizacjach 0.68: the Media card has no press distribution; the card of the organisations keeps it', () => {
   const media = dendry.startGame();
   playFromHand(media, 'polish_party_media');
-  assert.deepEqual(ids(media), ['polish_party_media.format', 'polish_party_media.campaign', 'polish_party_media.unions_campaign',
-    'polish_party_media.polemic', 'polish_party_media.turnout', 'polish_party_media.investigation', 'easy_discard']);
+  // Z — 0.77: the Press card (the campaigns among voters moved to the Campaign card).
+  assert.deepEqual(ids(media), ['polish_party_media.press_campaign', 'polish_party_media.reportage', 'polish_party_media.debate',
+    'polish_party_media.investigation', 'polish_party_media.format', 'easy_discard']);
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
   playFromHand(engine, 'polish_party_organizations');
@@ -207,41 +208,123 @@ test('a year of play keeps the party consistent: cash never negative, one ledger
   assert.ok(Math.abs(Q.S.society.cells.reduce((n, c) => n + c.mass, 0) - 1) < 1e-9);
 });
 
-test('Media bez odnowienia karty: two campaigns on the same topic in consecutive months are both possible; the second gains less', () => {
+// Z — 0.77: the same matter twice within six months gains less among the same voters (saturation); the card's rest of three
+// months does not stop a card already in the hand.
+test('Kampania bez odnowienia karty: the same matter twice in consecutive months; the second gains less', () => {
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
   Q.S.party_orgs.cash = 5;
   PolishParty.writeMirrors(Q);
-  const workers = () => PolishElectorate.aggregate(Q.S, c => c.class_id === 'workers', 'pps');
+  const workers = () => PolishElectorate.aggregate(Q.S, c => c.class_id === 'workers' && c.employment === 'employed', 'pps');
   const gains = [];
   for (let month = 0; month < 2; month++) {
     const before = workers();
-    playFromHand(engine, 'polish_party_media');
-    choose(engine, 'polish_party_media.campaign');
-    choose(engine, 'polish_party_media.topic_class');
-    choose(engine, 'polish_party_media.to_workers');
+    playFromHand(engine, 'polish_party_campaign');
+    choose(engine, 'polish_party_campaign.eight_hours');
     choose(engine, 'root');
     gains.push(workers() - before);
   }
   assert.equal(Q.time, 3);
   assert.ok(gains[0] > 0 && gains[1] > 0);
-  assert.ok(gains[1] < gains[0], 'saturation of the topic among the same voters');
+  assert.ok(gains[1] < gains[0], 'saturation of the matter among the same voters');
 });
 
-test('Konfiskata in the game: a restricted press weakens the press campaign; the campaign through the unions still works and ignores the press', () => {
+test('Konfiskata in the game: a restricted press weakens the press campaign; the Campaign card goes through the unions and ignores the press', () => {
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
+  const free = PolishParty.pressCampaignPreview(Q);
+  const campaign = PolishParty.issuePreview(Q, 'eight_hours');
   PolishParty.addPressRestriction(Q, {id: 'test-confiscation', event_id: 'fixture', reach_penalty: 30, expires_at: Q.time + 2});
   const cell = Q.S.society.cells.find(c => c.class_id === 'workers');
   assert.equal(PolishParty.cellReach(Q.S, cell, 'unions'), 20, 'the branches only');
   assert.ok(PolishParty.cellReach(Q.S, cell, 'press') < 0.5 * 20 + 0.3 * 30 + 0.2 * 20, 'the press part is restricted');
-  playFromHand(engine, 'polish_party_media');
-  choose(engine, 'polish_party_media.unions_campaign');
-  choose(engine, 'polish_party_media.topic_class');
-  choose(engine, 'polish_party_media.to_workers');
-  assert.match(content(engine), /through the unions and meetings/);
+  const number = text => Number(text.match(/^Workers \+([\d.]+)/)[1]);
+  assert.ok(number(PolishParty.pressCampaignPreview(Q)) < number(free), 'the press campaign is weaker');
+  assert.equal(PolishParty.issuePreview(Q, 'eight_hours'), campaign, 'the campaign of meetings and unions is not');
+  playFromHand(engine, 'polish_party_campaign');
+  choose(engine, 'polish_party_campaign.eight_hours');
+  assert.match(content(engine), /The campaign “In defence of the eight-hour day”: Employed workers \+/);
   choose(engine, 'root');
   assert.equal(Q.time, 2);
+});
+
+// Z — 0.77 (decisions of 8 X 2026): the Campaign card — five campaigns on a matter, each over its own groups at once, with the
+// expected change on the card; the line and the situation strengthen a campaign; rallies only before an election.
+test('Kampania 0.77: five matters over several groups at once, a preview with the sum, boosts from the line and the situation, rallies before the vote', () => {
+  const engine = dendry.startGame();
+  const Q = engine.state.qualities;
+  assert.ok(deck(engine).includes('polish_party_campaign'));
+  playFromHand(engine, 'polish_party_campaign');
+  assert.deepEqual(ids(engine), ['polish_party_campaign.eight_hours', 'polish_party_campaign.prices', 'polish_party_campaign.land',
+    'polish_party_campaign.republic', 'polish_party_campaign.unemployed', 'easy_discard'], 'no rallies ten months before the vote');
+  assert.match(plain(choice(engine, 'polish_party_campaign.eight_hours').subtitle),
+    /^Employed workers \+[\d.]+ · The unemployed \+[\d.]+ · The bourgeoisie and landowners −[\d.]+; in the whole country \+[\d.]+ points\./);
+  // The opening direction, parliamentary socialism, strengthens the land and the unemployed; a threat to democracy the Republic.
+  assert.match(plain(choice(engine, 'polish_party_campaign.land').subtitle), /Stronger now: the direction of the party\./);
+  assert.doesNotMatch(plain(choice(engine, 'polish_party_campaign.republic').subtitle), /Stronger now/);
+  const before = PolishParty.issuePreview(Q, 'republic');
+  Q.S.coup = Object.assign(Q.S.coup || {}, {pressure: 50});
+  assert.match(PolishParty.issuePreview(Q, 'republic'), /Stronger now: the situation of the country\./);
+  const total = text => Number(text.match(/in the whole country \+([\d.]+)/)[1]);
+  assert.ok(total(PolishParty.issuePreview(Q, 'republic')) >= total(before));
+  Q.S.coup.pressure = 0;
+  // One campaign: 1 resource and the month; PPS gains among employed workers and loses a little among the bourgeoisie.
+  const share = f => PolishElectorate.aggregate(Q.S, f, 'pps');
+  const employed = c => c.class_id === 'workers' && c.employment === 'employed', rich = c => c.class_id === 'bourgeois_landowners';
+  const [cash, w0, b0] = [Q.S.party_orgs.cash, share(employed), share(rich)];
+  choose(engine, 'polish_party_campaign.eight_hours');
+  assert.equal(Q.S.party_orgs.cash, cash - 1);
+  assert.ok(share(employed) > w0 && share(rich) < b0);
+  choose(engine, 'root');
+  assert.equal(Q.time, 2);
+  assert.equal(PolishRules.cardRest(Q, 'polish_party_campaign'), 2, 'the card rests');
+  // Rallies in the last three months before the vote: the turnout of the party's groups +0.04.
+  Q.S.parliament.next_election.time = Q.time + 2;
+  playFromHand(engine, 'polish_party_campaign');
+  assert.ok(ids(engine).includes('polish_party_campaign.rallies'));
+  const worker = Q.S.society.cells.find(c => c.class_id === 'workers'), peasant = Q.S.society.cells.find(c => c.class_id === 'rural');
+  const [tw, tp] = [worker.turnout_bonus, peasant.turnout_bonus];
+  choose(engine, 'polish_party_campaign.rallies');
+  assert.ok(Math.abs(worker.turnout_bonus - tw - 0.04) < 1e-9, 'the workers turn out more');
+  assert.equal(peasant.turnout_bonus, tp, 'a workers’ party does not mobilise the peasants');
+  assert.match(content(engine), /Rallies before the election: the turnout of the workers rises by 0.04/);
+});
+
+// Z — 0.77: the Press card — a press campaign over the groups of its format, half of its gains from the voters of the main
+// opponent of the line; reportage raises trust; an open debate lowers the dissent of every faction; no polemic any more.
+test('Prasa 0.77: the press campaign follows the format and the main opponent; reportage and an open debate', () => {
+  const engine = dendry.startGame();
+  const Q = engine.state.qualities;
+  Q.S.party_orgs.cash = 5;
+  PolishParty.writeMirrors(Q);
+  playFromHand(engine, 'polish_party_media');
+  assert.match(plain(choice(engine, 'polish_party_media.press_campaign').subtitle),
+    /^1 resource\. Workers \+[\d.]+ · The unemployed \+[\d.]+; in the whole country \+[\d.]+ points; half of its gains from the voters of ZLN\./);
+  const zln = () => PolishElectorate.aggregate(Q.S, c => c.class_id === 'workers', 'zln');
+  const z0 = zln();
+  choose(engine, 'polish_party_media.press_campaign');
+  assert.ok(zln() < z0, 'the main opponent loses voters');
+  assert.match(content(engine), /The press campaign: Workers \+/);
+  choose(engine, 'root');
+  // A popular format reaches the intelligentsia and the petty bourgeoisie too.
+  Q.S.party_orgs.press.format = 'popular';
+  assert.match(PolishParty.pressCampaignPreview(Q), /The intelligentsia \+[\d.]+ · The petty bourgeoisie \+/);
+  Q.S.party_orgs.press.format = 'party_journal';
+  // Reportage: the trust of workers and the unemployed +3.
+  const worker = Q.S.society.cells.find(c => c.class_id === 'workers');
+  const trust = worker.trust_pps;
+  playFromHand(engine, 'polish_party_media');
+  choose(engine, 'polish_party_media.reportage');
+  assert.equal(worker.trust_pps, Math.min(100, trust + 3));
+  choose(engine, 'root');
+  // An open debate: no money, every faction's dissent −3.
+  const dissent = Q.lewica_dissent, cash = Q.S.party_orgs.cash;
+  playFromHand(engine, 'polish_party_media');
+  choose(engine, 'polish_party_media.debate');
+  assert.equal(Q.lewica_dissent, dissent - 3);
+  assert.equal(Q.S.party_orgs.cash, cash, 'the debate costs no money');
+  choose(engine, 'root');
+  assert.equal(Q.time, 4);
 });
 
 test('Obecna linia in the game: the present line can be confirmed for the month; returning the card costs nothing and keeps it in the hand', () => {

@@ -396,6 +396,52 @@ test('Utrzymanie poparcia tylko w kryzysie: no Keep option outside a crisis; aft
   assert.ok(!dendry.urgentCards(restored).includes('polish_government_response'), 'answered: the card leaves the hand');
 });
 
+// Z — 0.77 (decision 5A of 8 X 2026): the card of a warning says what happened, what is at stake and how to put it right, with the
+// numbers of the game; it offers only the answers that fit (no demand of worker protection), lists the conditions of the
+// extension with their present values and no longer repeats the notice of the main page.
+test('Odpowiedź partnerowi 0.77: a warning says what happened, what is at stake and how to put it right; only fitting answers', () => {
+  const engine = dendry.startGame();
+  const Q = centreLeft(engine);
+  const agreement = agreementOf(Q, 'npr');
+  PolishGovernment.addObligation(Q, agreement.id, { ...PolishGovernment.TEST_PROGRAMME, required_project: null, portfolio: null,
+    months: 0, beneficiaries: ['npr'] });
+  agreement.tension = 30;
+  spendMonth(engine);
+  assert.equal(PolishGovernment.responseCase(Q).kind, 'warning');
+  assert.equal(Math.round(agreement.tension), 46);
+  engine.playCard('polish_government_response');
+  const text = content(engine);
+  assert.match(text, /<strong>What happened\.<\/strong> NPR reminds us of a promise of our agreement: financed protection for the unemployed in full by \w+ 1922\. The date has passed/);
+  assert.match(text, /<strong>What is at stake\.<\/strong> Tension in the agreement: 46 of 100; it rises by 16 at each settlement/);
+  assert.match(text, /At 60 NPR sets an ultimatum — at this pace at the start of \w+ 1922; two months later it leaves the cabinet with its ministers\./);
+  assert.match(text, /The cabinet would lose \d+ MPs and keep \d+ of 444 \(a majority is 223/);
+  assert.match(text, /<strong>How to put it right\.<\/strong> Or ask the partner for three more months/);
+  assert.doesNotMatch(text, /a promise of the agreement is overdue/, 'the notice of the main page is not repeated');
+  assert.deepEqual(ids(engine).sort(), ['polish_government_response.later', 'polish_government_support.extension',
+    'polish_government_support.maintain', 'polish_government_support.withdraw'], 'no demand of worker protection in a warning');
+  assert.match(JSON.stringify(choice(engine, 'polish_government_support.extension')),
+    /Conditions: relation with the partner at least 50 \(now \d+\) [✓✗]; at least half of the promises met \(now 0%\) ✗/);
+  // A promise with a project names its card, the ministry and who holds it.
+  const schools = PolishGovernment.addObligation(Q, agreement.id, { id: 'schools', topic: 'school_rights', required_project: 'minority_schools',
+    required_variants: ['own_language', 'agreed_bilingual'], required_stage: 'operating', portfolio: 'education', weight: 2, months: 0,
+    beneficiaries: ['npr'] });
+  schools.due_at = Q.time - 1;
+  const holder = PolishGovernment.describeParty(Q.S.cabinet.portfolios.education);
+  const remedy = PolishProjects.responseRemedy(Q, id => (engine.game.scenes[id] || {}).title);
+  assert.ok(remedy.includes('The Education ministry is held by ' + (Q.S.cabinet.portfolios.education === 'expert' ? 'a non-party expert' : holder) +
+    ', so it is that ministry’s task, not ours'), remedy);
+  assert.ok(remedy.includes('The project must be prepared with the card “Language Rights and Minority Schools” (the Education ministry, variant: ' +
+    'teaching in the own language or agreed bilingualism), then launched with the card “Prepared Reforms”.'), remedy);
+  PolishRules.setLanguage('pl');
+  try {
+    assert.match(PolishGovernment.responseBrief(Q).what, /^<strong>Co się stało\.<\/strong> NPR przypomina obietnicę z naszego porozumienia: .*prawa językowe i szkoły mniejszości do \w+ 1922\. Termin minął/);
+    assert.match(PolishGovernment.responseBrief(Q).risk, /Napięcie w porozumieniu: 46 na 100; rośnie o 20 przy każdym rozliczeniu/);
+  } finally {
+    PolishRules.setLanguage('en');
+  }
+  choose(engine, 'polish_government_response.later');
+});
+
 test('Poparcie gabinetu: a refused threat, then carrying it out and the vote; one offer, no counter-proposal', () => {
   const engine = dendry.startGame();
   const Q = centreLeft(engine);
