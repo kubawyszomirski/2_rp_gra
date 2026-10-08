@@ -39,8 +39,7 @@ function answerList(engine) {
 function spendMonth(engine) {
   engine.goToScene('main');
   dendry.playCard(engine, 'polish_party_agenda');
-  choose(engine, 'polish_party_agenda.organize');
-  choose(engine, 'polish_party_agenda.branch_farm_labour');
+  choose(engine, 'polish_party_agenda.organize_unions');
   choose(engine, 'root');
   answerList(engine);
   assert.equal(engine.state.sceneId, 'main');
@@ -143,8 +142,7 @@ function toCoup({ democracy = null, sides = null } = {}) {
   choose(engine, 'root');
   engine.goToScene('main');
   dendry.playCard(engine, 'polish_party_agenda');
-  choose(engine, 'polish_party_agenda.organize');
-  choose(engine, 'polish_party_agenda.branch_farm_labour');
+  choose(engine, 'polish_party_agenda.organize_unions');
   choose(engine, 'root');
   choose(engine, 'polish_speaker_election.rataj');
   choose(engine, 'polish_speaker_election.finish');
@@ -162,8 +160,7 @@ function toCoup({ democracy = null, sides = null } = {}) {
   if (democracy !== null) S.politics.democracy = democracy;
   engine.goToScene('main');
   dendry.playCard(engine, 'polish_party_agenda');
-  choose(engine, 'polish_party_agenda.organize');
-  choose(engine, 'polish_party_agenda.branch_farm_labour');
+  choose(engine, 'polish_party_agenda.organize_unions');
   choose(engine, 'root');
   assert.equal(engine.state.sceneId, 'polish_event_coup.f3', 'the queue brings the declared attempt at once (category 2)');
   if (sides) S.security.forces.forEach((f, i) => { S.rng.rolls[`coup_${S.coup.attempt_id}:${f.id}:allegiance`] = U[f.id][sides[i]]; });

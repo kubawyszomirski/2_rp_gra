@@ -1,0 +1,71 @@
+title: TUR Courses
+subtitle: One course of the workers’ university, one click; the game picks whom it serves.
+new-page: true
+is-card: true
+tags: party_affairs
+view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.turCardAvailable(Q) !}
+on-arrival: {!
+// Card party.tur_courses (Z — 0.78, decision 5A of 8 X 2026): the courses of TUR left the party agenda for a card of their own,
+// in the Party deck once TUR works. Each course is one click: this month's action and 1 R, two months of work, one course at a
+// time and then four months before the next (13.2); the target is chosen by PolishParty.courseTarget.
+PolishParty.turCardView(Q);
+!}
+
+= TUR courses
+
+TUR: [+ pl_party_tur +]. Party money: [+ pl_party_cash +]. A course costs this month's action and 1 resource and gives its result after two months.
+
+- @civil_rights
+- @union_cadres
+- @social_reform
+- @national_education
+- @easy_discard
+
+@civil_rights
+title: Civil rights and the practice of democracy (level 1)
+subtitle: [+ pl_tur_civil_rights_target +] Radicalisation falls (−3), and their next democracy campaign within six months works better (+0.10, once).
+choose-if: {! return PolishParty.courseStatus(Q, 'civil_rights', PolishParty.courseTarget(Q, 'civil_rights')).available !}
+unavailable-subtitle: [+ pl_tur_civil_rights_why +]
+on-arrival: {!
+PolishParty.turCardCourse(Q, 'civil_rights');
+!}
+go-to: result
+
+@union_cadres
+title: Union cadres and the line of PPS (level 2)
+subtitle: [+ pl_tur_union_cadres_target +] Trust rises (+3) and dissent falls (−4); it does not order the union to follow another line.
+choose-if: {! return PolishParty.courseStatus(Q, 'union_cadres', PolishParty.courseTarget(Q, 'union_cadres')).available !}
+unavailable-subtitle: [+ pl_tur_union_cadres_why +]
+on-arrival: {!
+PolishParty.turCardCourse(Q, 'union_cadres');
+!}
+go-to: result
+
+@social_reform
+title: Preparation of a social reform (level 2)
+subtitle: [+ pl_tur_social_reform_target +] A large labour, education, housing or cooperative project not yet launched: full preparation and one month shorter, once.
+choose-if: {! return PolishParty.courseStatus(Q, 'social_reform').available !}
+unavailable-subtitle: [+ pl_tur_social_reform_why +]
+on-arrival: {!
+PolishParty.turCardCourse(Q, 'social_reform');
+!}
+go-to: result
+
+@national_education
+title: A national education campaign (level 3)
+subtitle: [+ pl_tur_national_education_target +] As the civil rights course, in three classes at once.
+choose-if: {! return PolishParty.courseStatus(Q, 'national_education', PolishParty.courseTarget(Q, 'national_education')).available !}
+unavailable-subtitle: [+ pl_tur_national_education_why +]
+on-arrival: {!
+PolishParty.turCardCourse(Q, 'national_education');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= TUR courses
+
+[+ pl_party_result +]
+
+- @root: Continue.

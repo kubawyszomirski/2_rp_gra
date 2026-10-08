@@ -3249,6 +3249,7 @@
     programmeFilter: programmeFilter,
     programmeServes: programmeServes,
     programmeMeasureName: programmeMeasureName,
+    projectName: projectName,
     programmeReaction: programmeReaction,
     PROJECT_TYPES: PROJECT_TYPES,
     INSTRUMENTS: INSTRUMENTS,

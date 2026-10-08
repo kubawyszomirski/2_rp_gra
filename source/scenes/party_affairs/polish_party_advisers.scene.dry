@@ -148,6 +148,7 @@ go-to: menu
 
 @confirm
 title: Confirm the Committee
+subtitle: [+ pl_adv_confirm_note +]
 choose-if: {! return PolishParty.advisersStatus(Q, String(Q.pl_adv_draft || '').split(',').filter(Boolean)).available !}
 unavailable-subtitle: [+ pl_adv_confirm_why +]
 on-arrival: {!

@@ -1,194 +1,64 @@
 title: Organisations of PPS
-subtitle: Up to two investments in one action: press, TUR, Milicja or cooperatives.
+subtitle: One investment in one action: the press, TUR or a cooperative.
 new-page: true
 is-card: true
 tags: party_affairs
 card-image: img/polish/polish_party_organizations.jpg
 view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.organizationsAvailable(Q) !}
 on-arrival: {!
-// Card party.organizations (technical reference 13.5; card catalogue 5.1): one or two different
-// organisations among the press, TUR, Milicja and cooperatives (since Z — 0.56 the unions have their own card,
-// polish_party_union_investments), at most one package in each, one month and the sum of their R. Nothing is spent
-// before the confirmation; a missing R blocks the whole package, never half of it.
+// Card party.organizations (technical reference 13.5; card catalogue 5.1). Z — 0.78 (decision 2A of 8 X 2026): one investment
+// in one action, chosen on one page — the press, TUR or a cooperative; Milicja has its own card (polish_party_militia) and the
+// unions theirs (polish_party_union_investments). The choice is carried out at once for its R and this month's action.
 PolishParty.organizationsView(Q);
-Q.pl_org_pick1 = '';
-Q.pl_org_pick2 = '';
 !}
 
 = Organisations of PPS
 
-PPS has [+ pl_org_cash +] R. Choose the first investment; a second one for another organisation can follow. The card itself costs one month and waits two months before it comes back.
+PPS has [+ pl_org_cash +] R. Choose one investment; it is carried out at once. Milicja has its own card.
 
-- @p1_press_distribution
-- @p1_tur
-- @p1_militia_recruit
-- @p1_militia_militarize
-- @p1_cooperative_workers
-- @p1_cooperative_rural
+- @press_distribution
+- @tur
+- @cooperative_workers
+- @cooperative_rural
 - @easy_discard
 
-@p1_press_distribution
+@press_distribution
 title: Extend the distribution of the press
 subtitle: 1 resource; the press reaches more readers (+10).
-choose-if: {! return PolishParty.packageStatus(Q, 'press_distribution', 0).available !}
+choose-if: {! return PolishParty.selectionStatus(Q, ['press_distribution']).available !}
 unavailable-subtitle: [+ pl_org_press_distribution_why +]
 on-arrival: {!
-Q.pl_org_pick1 = 'press_distribution';
-PolishParty.organizationsSecondView(Q, 'press_distribution');
+PolishParty.organizationsChoose(Q, ['press_distribution']);
 !}
-go-to: second
+go-to: result
 
-@p1_tur
+@tur
 title: [? if pl_tur_level = 0 : Found TUR ?][? if pl_tur_level > 0 : Start the next stage of TUR ?]
 subtitle: [? if pl_tur_level = 0 : 2 resources; after two months TUR starts its work and gains cadres (+10). ?][? if pl_tur_level > 0 : 2 resources; after two months TUR rises one level and gains cadres (+10). ?]
-choose-if: {! return PolishParty.packageStatus(Q, 'tur', 0).available !}
+choose-if: {! return PolishParty.selectionStatus(Q, ['tur']).available !}
 unavailable-subtitle: [+ pl_org_tur_why +]
 on-arrival: {!
-Q.pl_org_pick1 = 'tur';
-PolishParty.organizationsSecondView(Q, 'tur');
+PolishParty.organizationsChoose(Q, ['tur']);
 !}
-go-to: second
+go-to: result
 
-@p1_militia_recruit
-title: Recruit into Milicja
-subtitle: 1 resource; Milicja gains members (+100).
-choose-if: {! return PolishParty.packageStatus(Q, 'militia_recruit', 0).available !}
-unavailable-subtitle: [+ pl_org_militia_recruit_why +]
-on-arrival: {!
-Q.pl_org_pick1 = 'militia_recruit';
-PolishParty.organizationsSecondView(Q, 'militia_recruit');
-!}
-go-to: second
-
-@p1_militia_militarize
-title: Militarise Milicja
-subtitle: 2 resources; Milicja becomes more efficient (+0.10, up to 0.70).
-choose-if: {! return PolishParty.packageStatus(Q, 'militia_militarize', 0).available !}
-unavailable-subtitle: [+ pl_org_militia_militarize_why +]
-on-arrival: {!
-Q.pl_org_pick1 = 'militia_militarize';
-PolishParty.organizationsSecondView(Q, 'militia_militarize');
-!}
-go-to: second
-
-@p1_cooperative_workers
+@cooperative_workers
 title: Prepare a workers’ consumer cooperative
 subtitle: 1 resource; its launch waits in the party agenda (2 resources).
-choose-if: {! return PolishParty.packageStatus(Q, 'cooperative_workers', 0).available !}
+choose-if: {! return PolishParty.selectionStatus(Q, ['cooperative_workers']).available !}
 unavailable-subtitle: [+ pl_org_cooperative_workers_why +]
 on-arrival: {!
-Q.pl_org_pick1 = 'cooperative_workers';
-PolishParty.organizationsSecondView(Q, 'cooperative_workers');
+PolishParty.organizationsChoose(Q, ['cooperative_workers']);
 !}
-go-to: second
+go-to: result
 
-@p1_cooperative_rural
+@cooperative_rural
 title: Prepare a village cooperative of smallholders
 subtitle: 1 resource; its launch waits in the party agenda (2 resources).
-choose-if: {! return PolishParty.packageStatus(Q, 'cooperative_rural', 0).available !}
+choose-if: {! return PolishParty.selectionStatus(Q, ['cooperative_rural']).available !}
 unavailable-subtitle: [+ pl_org_cooperative_rural_why +]
 on-arrival: {!
-Q.pl_org_pick1 = 'cooperative_rural';
-PolishParty.organizationsSecondView(Q, 'cooperative_rural');
-!}
-go-to: second
-
-@second
-new-page: true
-
-= A second organisation
-
-You may add one investment for another organisation, for the same month. Your choice is carried out at once.
-
-- @p2_press_distribution
-- @p2_tur
-- @p2_militia_recruit
-- @p2_militia_militarize
-- @p2_cooperative_workers
-- @p2_cooperative_rural
-- @only_one
-- @polish_party_organizations: Choose again from the beginning.
-
-@p2_press_distribution
-view-if: {! return Q.pl_org_first_org !== 'press' !}
-title: Extend the distribution of the press
-subtitle: 1 resource; the press reaches more readers (+10).
-choose-if: pl_org2_press_distribution_ok = 1
-unavailable-subtitle: [+ pl_org2_press_distribution_why +]
-on-arrival: {!
-Q.pl_org_pick2 = 'press_distribution';
-PolishParty.organizationsChoose(Q, [Q.pl_org_pick1, Q.pl_org_pick2]);
-!}
-go-to: result
-
-@p2_tur
-view-if: {! return Q.pl_org_first_org !== 'tur' !}
-title: [? if pl_tur_level = 0 : Found TUR ?][? if pl_tur_level > 0 : Start the next stage of TUR ?]
-subtitle: [? if pl_tur_level = 0 : 2 resources; after two months TUR starts its work and gains cadres (+10). ?][? if pl_tur_level > 0 : 2 resources; after two months TUR rises one level and gains cadres (+10). ?]
-choose-if: pl_org2_tur_ok = 1
-unavailable-subtitle: [+ pl_org2_tur_why +]
-on-arrival: {!
-Q.pl_org_pick2 = 'tur';
-PolishParty.organizationsChoose(Q, [Q.pl_org_pick1, Q.pl_org_pick2]);
-!}
-go-to: result
-
-@p2_militia_recruit
-view-if: {! return Q.pl_org_first_org !== 'militia' !}
-title: Recruit into Milicja
-subtitle: 1 resource; Milicja gains members (+100).
-choose-if: pl_org2_militia_recruit_ok = 1
-unavailable-subtitle: [+ pl_org2_militia_recruit_why +]
-on-arrival: {!
-Q.pl_org_pick2 = 'militia_recruit';
-PolishParty.organizationsChoose(Q, [Q.pl_org_pick1, Q.pl_org_pick2]);
-!}
-go-to: result
-
-@p2_militia_militarize
-view-if: {! return Q.pl_org_first_org !== 'militia' !}
-title: Militarise Milicja
-subtitle: 2 resources; Milicja becomes more efficient (+0.10, up to 0.70).
-choose-if: pl_org2_militia_militarize_ok = 1
-unavailable-subtitle: [+ pl_org2_militia_militarize_why +]
-on-arrival: {!
-Q.pl_org_pick2 = 'militia_militarize';
-PolishParty.organizationsChoose(Q, [Q.pl_org_pick1, Q.pl_org_pick2]);
-!}
-go-to: result
-
-@p2_cooperative_workers
-view-if: {! return Q.pl_org_first_org !== 'cooperatives' !}
-title: Prepare a workers’ consumer cooperative
-subtitle: 1 resource; its launch waits in the party agenda (2 resources).
-choose-if: pl_org2_cooperative_workers_ok = 1
-unavailable-subtitle: [+ pl_org2_cooperative_workers_why +]
-on-arrival: {!
-Q.pl_org_pick2 = 'cooperative_workers';
-PolishParty.organizationsChoose(Q, [Q.pl_org_pick1, Q.pl_org_pick2]);
-!}
-go-to: result
-
-@p2_cooperative_rural
-view-if: {! return Q.pl_org_first_org !== 'cooperatives' !}
-title: Prepare a village cooperative of smallholders
-subtitle: 1 resource; its launch waits in the party agenda (2 resources).
-choose-if: pl_org2_cooperative_rural_ok = 1
-unavailable-subtitle: [+ pl_org2_cooperative_rural_why +]
-on-arrival: {!
-Q.pl_org_pick2 = 'cooperative_rural';
-PolishParty.organizationsChoose(Q, [Q.pl_org_pick1, Q.pl_org_pick2]);
-!}
-go-to: result
-
-@only_one
-title: Invest only in: [+ pl_org_pick1_name +]
-choose-if: {! return PolishParty.selectionStatus(Q, [Q.pl_org_pick1]).available !}
-unavailable-subtitle: [+ pl_org_confirm_why +]
-on-arrival: {!
-// Z — 0.57: the choice is carried out at once, without a page of confirmation.
-Q.pl_org_pick2 = '';
-PolishParty.organizationsChoose(Q, [Q.pl_org_pick1]);
+PolishParty.organizationsChoose(Q, ['cooperative_rural']);
 !}
 go-to: result
 

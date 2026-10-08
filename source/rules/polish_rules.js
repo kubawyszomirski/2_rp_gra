@@ -1070,6 +1070,7 @@
     EVENT_CARDS: EVENT_CARDS,
     deckOfCard: deckOfCard,
     cardRest: cardRest,
+    startCardRest: startCardRest,
     PARTY_REST_MONTHS: PARTY_REST_MONTHS,
     LINE_REST_MONTHS: LINE_REST_MONTHS,
     GOVT_REST_MONTHS: GOVT_REST_MONTHS,

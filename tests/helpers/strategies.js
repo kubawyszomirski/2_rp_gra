@@ -26,16 +26,18 @@ function pick(engine, id) {
 // Z — 0.57: the party agenda, the unions and the protection of the unemployed are deck cards, opened directly like the
 // others.
 const P = {
-  organize: branch => ['polish_party_agenda', 'polish_party_agenda.organize', 'polish_party_agenda.branch_' + branch],
-  organizeClass: cls => ['polish_party_agenda', 'polish_party_agenda.organize', 'polish_party_agenda.class_' + cls],
+  // Z — 0.78 (decision 4A): two kinds of organisational work on the agenda; the game picks the weakest branch and the groups of
+  // the character of the party, so the branch or class named by a strategy is no longer used.
+  organize: () => ['polish_party_agenda', 'polish_party_agenda.organize_unions'],
+  organizeClass: () => ['polish_party_agenda', 'polish_party_agenda.organize_voters'],
   fundraise: () => ['polish_party_agenda', 'polish_party_agenda.fundraise'],
   apparatus: () => ['polish_party_agenda', 'polish_party_agenda.apparatus'],
   assess: () => ['polish_party_agenda', 'polish_party_agenda.assess_forces'],
-  cadres: branch => ['polish_party_agenda', 'polish_party_agenda.courses', 'polish_party_agenda.course_union_cadres', 'polish_party_agenda.cadres_' + branch],
+  // Z — 0.78: the TUR courses are a card of their own; the game picks the branch (the one that trusts PPS least).
+  cadres: () => ['polish_party_tur', 'polish_party_tur.union_cadres'],
   cooperative: () => ['polish_party_agenda', 'polish_party_agenda.launch_cooperative'],
-  // Z — 0.57: the second choice (or "only the first") is carried out at once, without a page of confirmation.
-  orgs: (a, b) => b ? ['polish_party_organizations', 'polish_party_organizations.p1_' + a, 'polish_party_organizations.p2_' + b]
-    : ['polish_party_organizations', 'polish_party_organizations.p1_' + a, 'polish_party_organizations.only_one'],
+  // Z — 0.78: the card of the organisations takes one investment at once; a second one named here waits for another month.
+  orgs: a => ['polish_party_organizations', 'polish_party_organizations.' + a],
   militia: step => ['polish_party_militia', 'polish_party_militia.' + step],
   // Z — 0.77: a campaign on a matter and the rallies before an election are on the Campaign card; the Press card has the rest.
   campaign: issue => ['polish_party_campaign', 'polish_party_campaign.' + issue],

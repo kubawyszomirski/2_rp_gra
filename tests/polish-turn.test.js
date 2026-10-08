@@ -53,8 +53,7 @@ function spendMonth(engine) {
   // agenda is always there and needs no money (technical reference 4.4; card catalogue 5.7).
   if (Q.time === before && Q.S.party_orgs) {
     dendry.playCard(engine, 'polish_party_agenda');
-    dendry.choose(engine, 'polish_party_agenda.organize');
-    dendry.choose(engine, 'polish_party_agenda.branch_industry');
+    dendry.choose(engine, 'polish_party_agenda.organize_unions');
     result = { card: 'polish_party_agenda', steps: actUntilMain(engine) };
   }
   assert.equal(Q.time, before + 1, 'exactly one month is settled');
@@ -334,8 +333,7 @@ test('Odstęp kart partii 0.76: a used card rests 3 months, the cards of the par
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
   dendry.playCard(engine, 'polish_party_organizations');
-  dendry.choose(engine, 'polish_party_organizations.p1_press_distribution');
-  dendry.choose(engine, 'polish_party_organizations.only_one');
+  dendry.choose(engine, 'polish_party_organizations.press_distribution');
   assert.equal(Q.month_actions, 1);
   assert.equal(PolishRules.cardRest(Q, 'polish_party_organizations'), 3);
   assert.ok(!PolishEngineHooks.legalDeckCards(engine, 'main.party').some(c => c.id === 'polish_party_organizations'), 'not drawn while it rests');
@@ -350,8 +348,7 @@ test('Odstęp kart partii 0.76: a used card rests 3 months, the cards of the par
   assert.deepEqual(drawable.filter(id => PolishRules.VISION_CARDS.includes(id)), [], 'no card of the party line for six months');
   const agenda = dendry.startGame();
   dendry.playCard(agenda, 'polish_party_agenda');
-  dendry.choose(agenda, 'polish_party_agenda.organize');
-  dendry.choose(agenda, 'polish_party_agenda.branch_farm_labour');
+  dendry.choose(agenda, 'polish_party_agenda.organize_unions');
   assert.equal(PolishRules.cardRest(agenda.state.qualities, 'polish_party_agenda'), 0, 'the agenda never rests');
 });
 

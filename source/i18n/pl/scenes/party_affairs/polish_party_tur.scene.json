@@ -1,0 +1,19 @@
+{
+ "source": "scenes/party_affairs/polish_party_tur.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: TUR Courses": "title: Kursy TUR",
+  "subtitle: One course of the workers’ university, one click; the game picks whom it serves.": "subtitle: Jeden kurs uniwersytetu robotniczego, jednym kliknięciem; gra wybiera, komu służy.",
+  "= TUR courses": "= Kursy TUR",
+  "TUR: [+ pl_party_tur +]. Party money: [+ pl_party_cash +]. A course costs this month's action and 1 resource and gives its result after two months.": "TUR: [+ pl_party_tur +]. Pieniądze partii: [+ pl_party_cash +]. Kurs kosztuje akcję tego miesiąca i 1 jednostkę środków, a wynik daje po dwóch miesiącach.",
+  "title: Civil rights and the practice of democracy (level 1)": "title: Prawa obywatelskie i praktyka demokracji (poziom 1)",
+  "subtitle: [+ pl_tur_civil_rights_target +] Radicalisation falls (−3), and their next democracy campaign within six months works better (+0.10, once).": "subtitle: [+ pl_tur_civil_rights_target +] Radykalizacja spada (−3), a ich następna kampania w obronie demokracji w ciągu sześciu miesięcy działa lepiej (+0,10, raz).",
+  "title: Union cadres and the line of PPS (level 2)": "title: Kadry związkowe i linia PPS (poziom 2)",
+  "subtitle: [+ pl_tur_union_cadres_target +] Trust rises (+3) and dissent falls (−4); it does not order the union to follow another line.": "subtitle: [+ pl_tur_union_cadres_target +] Zaufanie rośnie (+3), a sprzeciw spada (−4); kurs nie nakazuje związkowi innej linii.",
+  "title: Preparation of a social reform (level 2)": "title: Przygotowanie reformy społecznej (poziom 2)",
+  "subtitle: [+ pl_tur_social_reform_target +] A large labour, education, housing or cooperative project not yet launched: full preparation and one month shorter, once.": "subtitle: [+ pl_tur_social_reform_target +] Duży projekt pracy, oświaty, mieszkalnictwa albo spółdzielczości, jeszcze nieuruchomiony: pełne przygotowanie i krótszy o miesiąc, raz.",
+  "title: A national education campaign (level 3)": "title: Ogólnokrajowa kampania oświatowa (poziom 3)",
+  "subtitle: [+ pl_tur_national_education_target +] As the civil rights course, in three classes at once.": "subtitle: [+ pl_tur_national_education_target +] Jak kurs praw obywatelskich, w trzech klasach naraz.",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

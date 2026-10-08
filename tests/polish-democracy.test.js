@@ -17,8 +17,7 @@ function ids(engine) {
 function spendMonth(engine) {
   engine.goToScene('main');
   dendry.playCard(engine, 'polish_party_agenda');
-  choose(engine, 'polish_party_agenda.organize');
-  choose(engine, 'polish_party_agenda.branch_farm_labour');
+  choose(engine, 'polish_party_agenda.organize_unions');
   choose(engine, 'root');
 }
 

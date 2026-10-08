@@ -3,24 +3,16 @@
  "status": "complete",
  "lines": {
   "title: Organisations of PPS": "title: Organizacje PPS",
-  "subtitle: Up to two investments in one action: press, TUR, Milicja or cooperatives.": "subtitle: Do dwóch inwestycji w jednej akcji: prasa, TUR, Milicja albo spółdzielnie.",
   "= Organisations of PPS": "= Organizacje PPS",
-  "PPS has [+ pl_org_cash +] R. Choose the first investment; a second one for another organisation can follow. The card itself costs one month and waits two months before it comes back.": "PPS ma [+ pl_org_cash +] R. Wybierz pierwszą inwestycję; po niej może przyjść druga, w inną organizację. Sama karta kosztuje jeden miesiąc i wraca po dwóch miesiącach.",
   "title: Extend the distribution of the press": "title: Poszerz kolportaż prasy",
   "subtitle: 1 resource; the press reaches more readers (+10).": "subtitle: 1 jednostka środków; prasa dociera do większej liczby czytelników (+10).",
   "title: [? if pl_tur_level = 0 : Found TUR ?][? if pl_tur_level > 0 : Start the next stage of TUR ?]": "title: [? if pl_tur_level = 0 : Załóż TUR ?][? if pl_tur_level > 0 : Rozpocznij kolejny etap TUR ?]",
   "subtitle: [? if pl_tur_level = 0 : 2 resources; after two months TUR starts its work and gains cadres (+10). ?][? if pl_tur_level > 0 : 2 resources; after two months TUR rises one level and gains cadres (+10). ?]": "subtitle: [? if pl_tur_level = 0 : 2 jednostki środków; po dwóch miesiącach TUR zaczyna działać i zyskuje kadry (+10). ?][? if pl_tur_level > 0 : 2 jednostki środków; po dwóch miesiącach TUR wchodzi o poziom wyżej i zyskuje kadry (+10). ?]",
-  "title: Recruit into Milicja": "title: Werbunek do Milicji",
-  "subtitle: 1 resource; Milicja gains members (+100).": "subtitle: 1 jednostka środków; Milicja zyskuje członków (+100).",
-  "title: Militarise Milicja": "title: Militaryzacja Milicji",
-  "subtitle: 2 resources; Milicja becomes more efficient (+0.10, up to 0.70).": "subtitle: 2 jednostki środków; sprawność Milicji rośnie (+0,10, najwyżej 0,70).",
   "title: Prepare a workers’ consumer cooperative": "title: Przygotuj robotniczą spółdzielnię spożywców",
   "subtitle: 1 resource; its launch waits in the party agenda (2 resources).": "subtitle: 1 jednostka środków; jej uruchomienie czeka w agendzie partii (2 jednostki środków).",
   "title: Prepare a village cooperative of smallholders": "title: Przygotuj wiejską spółdzielnię drobnych gospodarzy",
-  "= A second organisation": "= Druga organizacja",
-  "You may add one investment for another organisation, for the same month. Your choice is carried out at once.": "Możesz dodać jedną inwestycję w inną organizację, w tym samym miesiącu. Wybór zostaje od razu wykonany.",
-  "- @polish_party_organizations: Choose again from the beginning.": "- @polish_party_organizations: Wybierz od początku.",
-  "title: Invest only in: [+ pl_org_pick1_name +]": "title: Inwestuj tylko w: [+ pl_org_pick1_name +]",
-  "- @root: Continue.": "- @root: Dalej."
+  "- @root: Continue.": "- @root: Dalej.",
+  "subtitle: One investment in one action: the press, TUR or a cooperative.": "subtitle: Jedna inwestycja w jednej akcji: prasa, TUR albo spółdzielnia.",
+  "PPS has [+ pl_org_cash +] R. Choose one investment; it is carried out at once. Milicja has its own card.": "PPS ma [+ pl_org_cash +] R. Wybierz jedną inwestycję; zostanie wykonana od razu. Milicja ma własną kartę."
  }
 }

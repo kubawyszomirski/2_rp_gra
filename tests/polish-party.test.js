@@ -51,27 +51,31 @@ test('Charakter partii (Z — 0.57): three lines, each with its environment; "ou
   assert.match(PolishParty.stanceStatus(engine.state.qualities, 'electoral_base', 'allied_reach').reason, /no longer offered/);
 });
 
-// Z — 0.57: the second choice is carried out at once (no page of confirmation); "Invest only in" names the first one.
-test('Dwie organizacje in the game: two different organisations in one month; the second choice is carried out at once', () => {
+// Z — 0.78 (decision 2A of 8 X 2026): the card of the organisations takes one investment on one page, carried out at once;
+// Milicja is on its own card. Money is counted to the grosz (decision 1A): a cash shown as "1 R" pays for a 1 R option.
+test('Jedna inwestycja w Organizacjach 0.78: one page, one investment at once, no Milicja; a shown 1 R pays for 1 R', () => {
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
   Q.S.party_orgs.cash = 3;
   PolishParty.writeMirrors(Q);
   playFromHand(engine, 'polish_party_organizations');
-  choose(engine, 'polish_party_organizations.p1_press_distribution');
-  assert.equal(Q.S.party_orgs.cash, 3, 'nothing is spent with the first choice');
-  assert.equal(choice(engine, 'polish_party_organizations.p2_cooperative_workers').canChoose, true);
-  assert.equal(choice(engine, 'polish_party_organizations.p2_press_distribution'), undefined, 'the same organisation is not offered again (Z — 0.56)');
-  assert.ok(ids(engine).length <= 7, 'at most seven choices on the second page');
-  assert.equal(JSON.stringify(choice(engine, 'polish_party_organizations.only_one').title).replace(/[\["\]]/g, '').replace(/,/g, ''),
-    'Invest only in: Extend the distribution of the press (+10 reach)');
-  choose(engine, 'polish_party_organizations.p2_cooperative_workers');
-  assert.equal(engine.state.sceneId, 'polish_party_organizations.result', 'no page of confirmation');
+  assert.deepEqual(ids(engine), ['polish_party_organizations.press_distribution', 'polish_party_organizations.tur',
+    'polish_party_organizations.cooperative_workers', 'polish_party_organizations.cooperative_rural', 'easy_discard']);
+  choose(engine, 'polish_party_organizations.press_distribution');
+  assert.equal(engine.state.sceneId, 'polish_party_organizations.result', 'carried out at once');
   assert.match(content(engine), /the press gains 10 reach/);
-  assert.equal(Q.S.party_orgs.press.reach, 40);
-  assert.equal(Q.S.party_orgs.cooperatives.projects.filter(c => c.status === 'prepared').length, 1, 'a workers’ cooperative is prepared');
+  assert.deepEqual([Q.S.party_orgs.press.reach, Q.S.party_orgs.cash], [40, 2]);
   choose(engine, 'root');
   assert.equal(Q.time, 2, 'one month');
+  // A collection of 0.9972 R was shown as "1 R" but could not pay 1 R; now the cash is kept to the grosz.
+  const other = dendry.startGame();
+  const O = other.state.qualities;
+  O.S.party_orgs.cash = 0.9972;
+  PolishParty.writeMirrors(O);
+  assert.equal(O.S.party_orgs.cash, 1);
+  playFromHand(other, 'polish_party_organizations');
+  assert.equal(choice(other, 'polish_party_organizations.press_distribution').canChoose, true);
+  assert.equal(PolishParty.collectionGain(O.S), Math.round(PolishParty.collectionGain(O.S) * 100) / 100, 'the collection to the grosz');
 });
 
 // Z — 0.68 (the user's note of 7 X 2026): the press distribution is offered only on the card of the organisations.
@@ -84,8 +88,7 @@ test('Kolportaż w Organizacjach 0.68: the Media card has no press distribution;
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
   playFromHand(engine, 'polish_party_organizations');
-  choose(engine, 'polish_party_organizations.p1_press_distribution');
-  choose(engine, 'polish_party_organizations.only_one');
+  choose(engine, 'polish_party_organizations.press_distribution');
   assert.equal(Q.S.party_orgs.press.reach, 40, 'the press gains 10 reach through the card of the organisations');
 });
 
@@ -119,6 +122,83 @@ test('Nowy skład CKW 0.75/0.76: each candidate has a bold faction, a descriptio
   // Z — 0.76: with two people chosen the Committee cannot be confirmed.
   assert.equal(choice(engine, 'polish_party_advisers.confirm').canChoose, false);
   assert.match(plain(choice(engine, 'polish_party_advisers.confirm').subtitle), /Choose three people for the three seats \(now 2\)/);
+});
+
+// Z — 0.78 (the user's note of 8 X 2026): the present Committee can simply be confirmed — for free; the card leaves the hand
+// and rests; a change still costs the month.
+test('Obecny skład CKW 0.78: confirming the present Committee is possible, free, and changes nothing', () => {
+  const engine = dendry.startGame();
+  const Q = engine.state.qualities;
+  const before = PolishParty.activeAdvisers(Q);
+  playFromHand(engine, 'polish_party_advisers');
+  choose(engine, 'polish_party_advisers.compose');
+  const confirm = choice(engine, 'polish_party_advisers.confirm');
+  assert.equal(confirm.canChoose, true, 'the present Committee can be accepted');
+  assert.match(plain(confirm.subtitle), /No change: the present Committee stays; this costs no month\./);
+  choose(engine, 'polish_party_advisers.confirm');
+  assert.match(content(engine), /The Central Executive Committee stays as it is: /);
+  choose(engine, 'root');
+  assert.deepEqual([Q.time, Q.month_actions || 0], [1, 0], 'no month is used');
+  assert.deepEqual(PolishParty.activeAdvisers(Q), before);
+  assert.ok(!engine.state.currentHands.main.some(c => c.id === 'polish_party_advisers'), 'the card leaves the hand');
+  assert.equal(PolishRules.cardRest(Q, 'polish_party_advisers'), 3, 'and rests');
+  // A change still costs the month.
+  const other = dendry.startGame();
+  playFromHand(other, 'polish_party_advisers');
+  choose(other, 'polish_party_advisers.compose');
+  choose(other, 'polish_party_advisers.toggle_daszynski');
+  choose(other, 'polish_party_advisers.toggle_zaremba');
+  assert.match(plain(choice(other, 'polish_party_advisers.confirm').subtitle), /A change costs this month’s action/);
+});
+
+// Z — 0.78 (decision 5A of 8 X 2026): the TUR courses are a card of their own once TUR works, one click each; the game picks
+// the target; the party agenda has no courses any more.
+test('Kursy TUR 0.78: a card of its own once TUR works; one click per course with a target chosen by the game', () => {
+  const engine = dendry.startGame();
+  const Q = engine.state.qualities;
+  assert.ok(!deck(engine).includes('polish_party_tur'), 'no card before TUR is founded');
+  playFromHand(engine, 'polish_party_agenda');
+  assert.ok(!ids(engine).some(id => /course/.test(id)), 'no courses in the agenda');
+  choose(engine, 'easy_discard');
+  Q.S.party_orgs.tur.level = 1;
+  Q.S.party_orgs.cash = 3;
+  PolishParty.writeMirrors(Q);
+  assert.ok(deck(engine).includes('polish_party_tur'));
+  playFromHand(engine, 'polish_party_tur');
+  assert.deepEqual(ids(engine), ['polish_party_tur.civil_rights', 'polish_party_tur.union_cadres', 'polish_party_tur.social_reform',
+    'polish_party_tur.national_education', 'easy_discard']);
+  assert.match(plain(choice(engine, 'polish_party_tur.civil_rights').subtitle), /^For the workers, the first group of the character of the party\. /);
+  assert.equal(choice(engine, 'polish_party_tur.union_cadres').canChoose, false, 'level 2');
+  assert.equal(PolishParty.courseTarget(Q, 'union_cadres'), ['industry', 'rail', 'farm_labour'].sort((a, b) => Q.S.unions[a].trust - Q.S.unions[b].trust)[0]);
+  choose(engine, 'polish_party_tur.civil_rights');
+  assert.deepEqual([Q.S.party_orgs.tur.active_course.course, Q.S.party_orgs.tur.active_course.target], ['civil_rights', 'workers']);
+  assert.equal(Q.S.party_orgs.cash, 2);
+  choose(engine, 'root');
+  assert.equal(Q.time, 2);
+});
+
+// Z — 0.78 (decision 4A of 8 X 2026): organisational work is two options straight on the agenda; the game picks the weakest
+// branch and the groups of the character of the party, and says so with the gain.
+test('Praca organizacyjna 0.78: two options on the agenda; the weakest branch and the groups of the character of the party', () => {
+  const engine = dendry.startGame();
+  const Q = engine.state.qualities;
+  Q.S.unions.rail.reach = 12;
+  playFromHand(engine, 'polish_party_agenda');
+  assert.ok(ids(engine).includes('polish_party_agenda.organize_unions') && ids(engine).includes('polish_party_agenda.organize_voters'));
+  assert.ok(!ids(engine).includes('polish_party_agenda.organize'), 'no second page');
+  assert.match(plain(choice(engine, 'polish_party_agenda.organize_unions').subtitle), /^No money\. The weakest branch: Railways — reach 12 → 14/);
+  assert.match(plain(choice(engine, 'polish_party_agenda.organize_voters').subtitle), /The workers — PPS reach [\d.]+ → [\d.]+\.$/);
+  choose(engine, 'easy_discard');
+  // A party of workers and peasants organises the peasants too.
+  Q.S.actors.pps.strategy.electoral_base = 'workers_peasants';
+  const peasant = Q.S.society.cells.find(c => c.class_id === 'rural'), worker = Q.S.society.cells.find(c => c.class_id === 'workers');
+  const [p0, w0] = [peasant.base_reach_pps, worker.base_reach_pps];
+  engine.playCard('polish_party_agenda');
+  choose(engine, 'polish_party_agenda.organize_voters');
+  assert.ok(peasant.base_reach_pps > p0 && worker.base_reach_pps > w0);
+  assert.match(content(engine), /among the workers \+[\d.]+ and the peasants \+[\d.]+\./);
+  choose(engine, 'root');
+  assert.equal(Q.time, 2);
 });
 
 // Z — 0.56 (item 4 of 5 X 2026): the union packages have a card of their own; one investment in one action.
@@ -172,13 +252,13 @@ test('Brak gotówki in the game: with an empty cash box the party agenda still o
   PolishParty.writeMirrors(Q);
   engine.playPinnedCard('polish_party_agenda');
   assert.equal(choice(engine, 'polish_party_agenda.apparatus').canChoose, false);
-  choose(engine, 'polish_party_agenda.organize');
-  choose(engine, 'polish_party_agenda.class_rural');
-  assert.match(content(engine), /base reach of PPS there \+2/);
+  // Z — 0.78 (decision 4A): organisational work among our voters, the groups of the character of the party.
+  choose(engine, 'polish_party_agenda.organize_voters');
+  assert.match(content(engine), /Organisers work among our voters: the base reach of PPS among the workers \+2\.2\./, '×1.10 in the party’s own groups');
   choose(engine, 'root');
   assert.equal(Q.time, 2);
   assert.ok(Q.S.party_orgs.cash >= 0);
-  assert.ok(Q.S.society.cells.filter(c => c.class_id === 'rural').every(c => Math.abs(c.base_reach_pps - 22) < 1e-9));
+  assert.ok(Q.S.society.cells.filter(c => c.class_id === 'workers').every(c => Math.abs(c.base_reach_pps - 22.2) < 1e-9));
 });
 
 test('the Milicja card recruits for 1 R and settles the month; the larger Milicja needs no upkeep (Z — 0.56)', () => {

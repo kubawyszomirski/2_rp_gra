@@ -294,7 +294,7 @@ assert.ok(plan.includes('## 15. Ustalenia z etapu 5'), 'stage 5 findings');
 assert.ok(/^### 23\.19\. Etap 5 wdrożony/m.test(tr), 'reference 23.19 records stage 5');
 assert.equal((tr.match(/\*\*K — etap 5 \(0\.46\):\*\*/g) || []).length, 34, 'thirty-four K notes of stage 5');
 for (const script of ['polish_electorate.js', 'polish_party.js']) assert.ok(loadsScript(read('out/html/index.html'), script), `the page loads ${script}`);
-assert.equal(byStageB[5].length, 72, 'stage 5 keeps 72 tests of 21.1 (67, the programme in practice of Z — 0.57, the press distribution of Z — 0.68, the new Committee page of Z — 0.75 and the Campaign and Press cards of Z — 0.77)');
+assert.equal(byStageB[5].length, 76, 'stage 5 keeps 76 tests of 21.1 (67, the programme in practice of Z — 0.57, the press distribution of Z — 0.68, the new Committee page of Z — 0.75, the Campaign and Press cards of Z — 0.77 and four tests of Z — 0.78)');
 const rulesSource = read('source/rules/polish_rules.js');
 assert.ok(rulesSource.includes("polish_event_faction_split: Object.freeze({definition_id: 'party.faction_split'"), 'E3 is one definition of the queue');
 for (const scene of ['pps_lewica_split', 'pps_pilsudczycy_split', 'pps_centrum_crisis']) {

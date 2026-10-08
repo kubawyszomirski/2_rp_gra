@@ -29,8 +29,7 @@ function toMain(engine) {
 function spendMonth(engine, stop) {
   engine.goToScene('main');
   dendry.playCard(engine, 'polish_party_agenda');
-  choose(engine, 'polish_party_agenda.organize');
-  choose(engine, 'polish_party_agenda.branch_farm_labour');
+  choose(engine, 'polish_party_agenda.organize_unions');
   choose(engine, 'root');
   if (!stop) toMain(engine);
 }
@@ -264,8 +263,7 @@ test('Klucz sprawy E6: strike S and settlement U1 refused by part of the striker
   // The next month brings a new offer U2; its refusal opens a new instance.
   restored.goToScene('main');
   dendry.playCard(restored, 'polish_party_agenda');
-  choose(restored, 'polish_party_agenda.organize');
-  choose(restored, 'polish_party_agenda.branch_farm_labour');
+  choose(restored, 'polish_party_agenda.organize_unions');
   choose(restored, 'root');
   assert.equal(restored.state.sceneId, 'polish_event_strike_response');
   choose(restored, 'polish_event_strike_response.settlement');

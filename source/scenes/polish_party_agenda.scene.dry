@@ -1,5 +1,5 @@
 title: Party Agenda
-subtitle: Organisational work, collections, the apparatus, TUR courses and cooperatives.
+subtitle: Organisational work, collections, the apparatus and cooperatives.
 is-card: true
 tags: party_affairs
 view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.agendaAvailable(Q) !}
@@ -7,7 +7,9 @@ new-page: true
 on-arrival: {!
 // The party's standing actions (technical reference 4.4, 13.1–13.2, 17.2; card catalogue 5.5–5.9): each costs this
 // month's action; organisational work needs no money. Since Z — 0.57 (item 11 of the play notes of 5 X 2026) it is an
-// ordinary card of the Party deck, no longer pinned: it has to be drawn and goes back to the hand unused.
+// ordinary card of the Party deck, no longer pinned: it has to be drawn and goes back to the hand unused. Z — 0.78 (decision 5A
+// of 8 X 2026): the TUR courses have their own card, polish_party_tur; organisational work is two options straight on this page,
+// the target picked by the game (decision 4A).
 PolishParty.agendaView(Q);
 // Stage 7: the assessment of the forces of the state is a standing action of this agenda (card catalogue 6.8).
 if (Q.polish_security_rules && typeof PolishSecurity !== 'undefined' && PolishSecurity.ready(Q)) Q.pl_pa_assess_why = PolishSecurity.assessStatus(Q).reason;
@@ -21,10 +23,10 @@ TUR: [+ pl_party_tur +]. Cooperatives: [+ pl_party_coops +].
 
 [? if pl_pa_priorities : Economic priorities of PPS: [+ pl_pa_priorities +]. Each is prepared through its government card, with its own costs. ?]
 
-- @organize
+- @organize_unions
+- @organize_voters
 - @fundraise
 - @apparatus
-- @courses
 - @launch_cooperative
 - @kpp_rules
 - @kpp_agreement
@@ -51,236 +53,23 @@ PolishParty.buildApparatus(Q);
 !}
 go-to: result
 
-@organize
-title: Organisational work
-subtitle: No money; the reach of one union branch grows (+2), or the base reach of PPS among one class (+2).
-go-to: organize_menu
-
-@organize_menu
-new-page: true
-
-= Organisational work
-
-Organisers work without money. The gain is multiplied by the character of the party where it matches, and by TUR cadres (together at most ×1.30).
-
-- @branch_industry
-- @branch_rail
-- @branch_farm_labour
-- @class_workers
-- @class_rural
-- @class_new_middle
-- @class_old_middle
-- @class_bourgeois_landowners
-- @polish_party_agenda: Back to the agenda.
-
-@branch_industry
-title: Work in the industrial branch
-subtitle: The branch’s reach grows (+2).
-choose-if: {! return PolishParty.organizeStatus(Q, 'branch:industry').available !}
-unavailable-subtitle: [+ pl_pa_branch_industry_why +]
+@organize_unions
+title: Organisational work in the unions
+subtitle: No money. [+ pl_pa_org_unions_text +]
+choose-if: {! return PolishParty.organizeStatusOf(Q, 'unions').available !}
+unavailable-subtitle: [+ pl_pa_org_unions_why +]
 on-arrival: {!
-PolishParty.organizeWithoutFunds(Q, 'branch:industry');
+PolishParty.organizeUnions(Q);
 !}
 go-to: result
 
-@branch_rail
-title: Work in the railway branch
-subtitle: The branch’s reach grows (+2).
-choose-if: {! return PolishParty.organizeStatus(Q, 'branch:rail').available !}
-unavailable-subtitle: [+ pl_pa_branch_rail_why +]
+@organize_voters
+title: Organisational work among our voters
+subtitle: No money; the groups of the character of the party. [+ pl_pa_org_voters_text +]
+choose-if: {! return PolishParty.organizeStatusOf(Q, 'voters').available !}
+unavailable-subtitle: [+ pl_pa_org_voters_why +]
 on-arrival: {!
-PolishParty.organizeWithoutFunds(Q, 'branch:rail');
-!}
-go-to: result
-
-@branch_farm_labour
-title: Work in agricultural labour
-subtitle: The branch’s reach grows (+2).
-choose-if: {! return PolishParty.organizeStatus(Q, 'branch:farm_labour').available !}
-unavailable-subtitle: [+ pl_pa_branch_farm_labour_why +]
-on-arrival: {!
-PolishParty.organizeWithoutFunds(Q, 'branch:farm_labour');
-!}
-go-to: result
-
-@class_workers
-title: Work among the workers
-subtitle: The base reach of PPS among them grows (+2).
-choose-if: {! return PolishParty.organizeStatus(Q, 'class:workers').available !}
-unavailable-subtitle: [+ pl_pa_class_workers_why +]
-on-arrival: {!
-PolishParty.organizeWithoutFunds(Q, 'class:workers');
-!}
-go-to: result
-
-@class_rural
-title: Work among the peasants
-subtitle: The base reach of PPS among them grows (+2).
-choose-if: {! return PolishParty.organizeStatus(Q, 'class:rural').available !}
-unavailable-subtitle: [+ pl_pa_class_rural_why +]
-on-arrival: {!
-PolishParty.organizeWithoutFunds(Q, 'class:rural');
-!}
-go-to: result
-
-@class_new_middle
-title: Work among the intelligentsia
-subtitle: The base reach of PPS among them grows (+2).
-choose-if: {! return PolishParty.organizeStatus(Q, 'class:new_middle').available !}
-unavailable-subtitle: [+ pl_pa_class_new_middle_why +]
-on-arrival: {!
-PolishParty.organizeWithoutFunds(Q, 'class:new_middle');
-!}
-go-to: result
-
-@class_old_middle
-title: Work among the petty bourgeoisie
-subtitle: The base reach of PPS among them grows (+2).
-choose-if: {! return PolishParty.organizeStatus(Q, 'class:old_middle').available !}
-unavailable-subtitle: [+ pl_pa_class_old_middle_why +]
-on-arrival: {!
-PolishParty.organizeWithoutFunds(Q, 'class:old_middle');
-!}
-go-to: result
-
-@class_bourgeois_landowners
-title: Work among the bourgeoisie and landowners
-subtitle: The base reach of PPS among them grows (+2).
-choose-if: {! return PolishParty.organizeStatus(Q, 'class:bourgeois_landowners').available !}
-unavailable-subtitle: [+ pl_pa_class_bourgeois_landowners_why +]
-on-arrival: {!
-PolishParty.organizeWithoutFunds(Q, 'class:bourgeois_landowners');
-!}
-go-to: result
-
-@courses
-title: A TUR course
-subtitle: This month's action and 1 resource; two months; one course at a time, then four months before the next.
-view-if: {! return Q.S.party_orgs.tur.level >= 1 !}
-go-to: courses_menu
-
-@courses_menu
-new-page: true
-
-= TUR courses
-
-A course gives its result after two months of TUR.
-
-- @course_civil_rights
-- @course_union_cadres
-- @course_social_reform
-- @course_national_education
-- @polish_party_agenda: Back to the agenda.
-
-@course_civil_rights
-title: Civil rights and the practice of democracy (level 1)
-subtitle: Among one class: radicalisation falls (−3), and its next democracy campaign within six months works better (+0.10, once).
-choose-if: {! return PolishParty.courseStatus(Q, 'civil_rights').available !}
-unavailable-subtitle: [+ pl_pa_course_civil_rights_why +]
-go-to: civil_rights_menu
-
-@civil_rights_menu
-new-page: true
-
-= Civil rights course: for whom?
-
-- @civil_workers
-- @civil_rural
-- @civil_new_middle
-- @civil_old_middle
-- @civil_bourgeois_landowners
-- @courses_menu: Back to the courses.
-
-@civil_workers
-title: For the workers
-on-arrival: {!
-PolishParty.turCourse(Q, 'civil_rights', 'workers');
-!}
-go-to: result
-
-@civil_rural
-title: For the peasants
-on-arrival: {!
-PolishParty.turCourse(Q, 'civil_rights', 'rural');
-!}
-go-to: result
-
-@civil_new_middle
-title: For the intelligentsia
-on-arrival: {!
-PolishParty.turCourse(Q, 'civil_rights', 'new_middle');
-!}
-go-to: result
-
-@civil_old_middle
-title: For the petty bourgeoisie
-on-arrival: {!
-PolishParty.turCourse(Q, 'civil_rights', 'old_middle');
-!}
-go-to: result
-
-@civil_bourgeois_landowners
-title: For the bourgeoisie and landowners
-on-arrival: {!
-PolishParty.turCourse(Q, 'civil_rights', 'bourgeois_landowners');
-!}
-go-to: result
-
-@course_union_cadres
-title: Union cadres and the line of PPS (level 2)
-subtitle: One branch: trust rises (+3) and dissent falls (−4); it does not order the union to follow another line.
-choose-if: {! return PolishParty.courseStatus(Q, 'union_cadres').available !}
-unavailable-subtitle: [+ pl_pa_course_union_cadres_why +]
-go-to: cadres_menu
-
-@cadres_menu
-new-page: true
-
-= Union cadres course: which branch?
-
-- @cadres_industry
-- @cadres_rail
-- @cadres_farm_labour
-- @courses_menu: Back to the courses.
-
-@cadres_industry
-title: For the industrial branch
-on-arrival: {!
-PolishParty.turCourse(Q, 'union_cadres', 'industry');
-!}
-go-to: result
-
-@cadres_rail
-title: For the railway branch
-on-arrival: {!
-PolishParty.turCourse(Q, 'union_cadres', 'rail');
-!}
-go-to: result
-
-@cadres_farm_labour
-title: For agricultural labour
-on-arrival: {!
-PolishParty.turCourse(Q, 'union_cadres', 'farm_labour');
-!}
-go-to: result
-
-@course_social_reform
-title: Preparation of a social reform (level 2)
-subtitle: A large labour, education, housing or cooperative project not yet launched: full preparation and one month shorter, once.
-choose-if: {! return PolishParty.courseStatus(Q, 'social_reform').available !}
-unavailable-subtitle: [+ pl_pa_course_social_reform_why +]
-on-arrival: {!
-PolishParty.turCourse(Q, 'social_reform');
-!}
-go-to: result
-
-@course_national_education
-title: A national education campaign (level 3)
-subtitle: As the civil rights course, among the workers, the peasants and the intelligentsia.
-choose-if: {! return PolishParty.courseStatus(Q, 'national_education').available !}
-unavailable-subtitle: [+ pl_pa_course_national_education_why +]
-on-arrival: {!
-PolishParty.turCourse(Q, 'national_education', 'workers,rural,new_middle');
+PolishParty.organizeVoters(Q);
 !}
 go-to: result
 

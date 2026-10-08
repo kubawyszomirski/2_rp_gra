@@ -207,7 +207,9 @@
   function writeMirrors(Q) {
     if (!partyReady(Q)) return;
     const S = Q.S, orgs = S.party_orgs, militia = S.militia, base = orgs.mirror_base;
-    Q.resources = round(orgs.cash, 4);
+    // Z — 0.78 (decision 1A): the party's cash is kept to the grosz (0.01 R) after every change, as the page shows it.
+    orgs.cash = Math.max(0, round(orgs.cash, 2));
+    Q.resources = orgs.cash;
     Q.dues = orgs.dues;
     Q.pps_militia_strength = militia.strength;
     Q.pps_militia_militancy = round(militia.militancy, 4);
@@ -260,9 +262,11 @@
   function collectionAt(dues, members, level) {
     return dues * members / 100 * (1 + APPARATUS_COLLECTION_BONUS * (level - 1));
   }
+  // Z — 0.78 (decision 1A of 8 X 2026): money is counted to the grosz, as the page shows it — the collection is rounded to
+  // 0.01 R, so a shown "1 R" is really 1 R and pays for a 1 R option.
   function collectionGain(S) {
     const orgs = S.party_orgs;
-    return collectionAt(orgs.dues, orgs.apparatus.member_index, orgs.apparatus.level);
+    return round(collectionAt(orgs.dues, orgs.apparatus.member_index, orgs.apparatus.level), 2);
   }
 
   const operatingCooperatives = S => S.party_orgs.cooperatives.projects.filter(p => p.status === 'operating');
@@ -751,6 +755,67 @@
     return result(Q, text);
   }
 
+  // Z — 0.78 (decision 4A of 8 X 2026): two kinds of organisational work straight on the agenda, the target picked by the game —
+  // in the unions the branch with the smallest reach; among our voters the groups of the character of the party (P: the
+  // workers; with a party of workers and peasants also the peasants; a broad democratic party the intelligentsia and the
+  // petty bourgeoisie), each by the same +2 as before, with the same multipliers.
+  const CHARACTER_CLASSES = Object.freeze({workers: Object.freeze(['workers']), workers_peasants: Object.freeze(['workers', 'rural']),
+    broad_democratic: Object.freeze(['new_middle', 'old_middle'])});
+
+  function weakestBranch(S) {
+    return BRANCHES.slice().sort((a, b) => S.unions[a].reach - S.unions[b].reach)[0];
+  }
+
+  function characterClasses(S) {
+    return (CHARACTER_CLASSES[S.actors.pps.strategy.electoral_base] || CHARACTER_CLASSES.workers).slice();
+  }
+
+  function baseReachOf(S, classId) {
+    const cells = S.society.cells.filter(cell => cell.class_id === classId);
+    const mass = cells.reduce((n, cell) => n + cell.mass, 0);
+    return mass > 0 ? cells.reduce((n, cell) => n + cell.mass * cell.base_reach_pps, 0) / mass : 0;
+  }
+
+  function organizePreview(Q, kind) {
+    const S = Q.S;
+    if (kind === 'unions') {
+      const id = weakestBranch(S), reach = S.unions[id].reach;
+      const gain = 2 * expansionMultiplier(S, {kind: 'branch', id: id});
+      return L('The weakest branch: ' + BRANCH_NAMES[id] + ' — reach ' + fmt(reach) + ' → ' + fmt(Math.min(100, reach + gain)) + '.',
+        'Najsłabsza branża: ' + BRANCH_NAMES_PL[id] + ' — zasięg ' + fmt(reach) + ' → ' + fmt(Math.min(100, reach + gain)) + '.');
+    }
+    if (!electorate.hasCells(S)) return '';
+    return characterClasses(S).map(c => {
+      const reach = baseReachOf(S, c), gain = 2 * expansionMultiplier(S, {kind: 'class', class_id: c});
+      return capitalise(L(electorate.CLASS_NAMES[c], electorate.CLASS_NAMES_PL[c] || electorate.CLASS_NAMES_PL_GENITIVE[c])) +
+        L(' — PPS reach ', ' — zasięg PPS ') + fmt(reach) + ' → ' + fmt(Math.min(100, reach + gain));
+    }).join('; ') + '.';
+  }
+
+  function organizeStatusOf(Q, kind) {
+    return kind === 'unions' ? organizeStatus(Q, 'branch:' + weakestBranch(Q.S)) : organizeStatus(Q, 'class:' + characterClasses(Q.S)[0]);
+  }
+
+  function organizeUnions(Q) {
+    return organizeWithoutFunds(Q, 'branch:' + weakestBranch(Q.S));
+  }
+
+  function organizeVoters(Q) {
+    syncMirrors(Q);
+    const S = Q.S, classes = characterClasses(S);
+    const status = organizeStatus(Q, 'class:' + classes[0]);
+    if (!status.available) throw new Error('organizeVoters: ' + status.reason);
+    rules.commitMainAction(Q, 'party.organize_without_funds', {target: 'class:' + classes.join(',')});
+    const parts = classes.map(c => {
+      const gain = 2 * expansionMultiplier(S, {kind: 'class', class_id: c});
+      electorate.addBaseReach(S, cell => cell.class_id === c, gain);
+      return L(electorate.CLASS_NAMES[c] + ' +' + fmt(gain), electorate.CLASS_NAMES_PL_GENITIVE[c] + ' +' + fmt(gain));
+    });
+    writeMirrors(Q);
+    return result(Q, L('Organisers work among our voters: the base reach of PPS among ', 'Organizatorzy pracują wśród naszych wyborców: bazowy zasięg PPS wśród ') +
+      parts.join(L(' and ', ' i ')) + '.');
+  }
+
   // ---- TUR: levels and courses (13.2; cards 5.1 and 5.8) ----------------------------------------------
 
   const COURSES = Object.freeze({
@@ -783,6 +848,49 @@
     }
     if (target !== undefined && course.audience === 'branch' && BRANCHES.indexOf(target) < 0) return no(L('Choose a union branch.', 'Wybierz branżę związkową.'));
     return OK;
+  }
+
+  // Z — 0.78 (decision 5A of 8 X 2026): the TUR courses have a card of their own, one click each; the game picks the target —
+  // civil rights for the first group of the character of the party (P), union cadres for the branch that trusts PPS least,
+  // the social reform for the first eligible project (as before), the national campaign for its three classes.
+  const CHARACTER_CLASS = Object.freeze({workers: 'workers', workers_peasants: 'workers', broad_democratic: 'new_middle'});
+
+  function courseTarget(Q, courseId) {
+    const S = Q.S;
+    if (courseId === 'civil_rights') return CHARACTER_CLASS[S.actors.pps.strategy.electoral_base] || 'workers';
+    if (courseId === 'union_cadres') return BRANCHES.slice().sort((a, b) => S.unions[a].trust - S.unions[b].trust)[0];
+    if (courseId === 'national_education') return 'workers,rural,new_middle';
+    return undefined;
+  }
+
+  function courseTargetText(Q, courseId) {
+    const S = Q.S, target = courseTarget(Q, courseId);
+    if (courseId === 'civil_rights') return L('For ' + electorate.CLASS_NAMES[target] + ', the first group of the character of the party.',
+      'Dla ' + electorate.CLASS_NAMES_PL_GENITIVE[target] + ' — pierwszej grupy z charakteru partii.');
+    if (courseId === 'union_cadres') return L('For the ' + BRANCH_NAMES[target].toLowerCase() + ' branch, which trusts PPS least (' + fmt(S.unions[target].trust) + ').',
+      'Dla branży ' + BRANCH_PL_GENITIVE[target] + ', która najmniej ufa PPS (' + fmt(S.unions[target].trust) + ').');
+    if (courseId === 'social_reform') {
+      const project = reformProjects(S)[0];
+      return project ? L('For ' + projects.projectName(project.type) + '.', 'Dla projektu: ' + projects.projectName(project.type) + '.') : '';
+    }
+    return L('For the workers, the peasants and the intelligentsia.', 'Dla robotników, chłopów i inteligencji.');
+  }
+
+  function turCardAvailable(Q) {
+    return partyReady(Q) && Q.S.chapter.status !== 'ended' && Q.S.party_orgs.tur.level >= 1;
+  }
+
+  function turCardView(Q) {
+    syncMirrors(Q);
+    partyDisplay(Q);
+    for (const id of Object.keys(COURSES)) {
+      Q['pl_tur_' + id + '_why'] = courseStatus(Q, id, courseTarget(Q, id)).reason;
+      Q['pl_tur_' + id + '_target'] = courseTargetText(Q, id);
+    }
+  }
+
+  function turCardCourse(Q, courseId) {
+    return turCourse(Q, courseId, courseTarget(Q, courseId));
   }
 
   function turCourse(Q, courseId, target) {
@@ -2407,7 +2515,8 @@
       return no(L('Choose three people for the three seats (now ' + draft.length + ').', 'Wybierz trzy osoby na trzy miejsca (teraz ' + draft.length + ').'));
     }
     if (draft.some(id => current.indexOf(id) < 0 && !adviserInPool(Q, id))) return no(L('Someone in this Committee is not available.', 'Ktoś z tego składu CKW jest niedostępny.'));
-    if (sameSet(draft, current)) return no(L('This is the present Committee.', 'To obecny skład CKW.'));
+    // Z — 0.78 (the user's note of 8 X 2026): the present Committee can simply be accepted; it costs nothing (advisersChoose).
+    if (sameSet(draft, current)) return OK;
     if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
     const wait = waitReason(Q, 'party.advisers');
     return wait ? no(wait) : OK;
@@ -2421,6 +2530,15 @@
     const status = advisersStatus(Q, draft);
     if (!status.available) throw new Error('advisersChoose: ' + status.reason);
     const S = Q.S, t = Q.time, current = activeAdvisers(Q);
+    // Z — 0.78: accepting the present Committee changes nothing and costs no month; the card leaves the hand and rests.
+    if (sameSet(draft, current)) {
+      rules.startCardRest(Q);
+      S.history.reasons.push({t: t, kind: 'advisers_kept', advisers: current.slice()});
+      writeMirrors(Q);
+      return result(Q, L('The Central Executive Committee stays as it is: ', 'Centralny Komitet Wykonawczy pozostaje w obecnym składzie: ') +
+        current.map(id => ADVISERS[id].name).join(', ') + L('. This costs no month; the card comes back in three months.',
+          '. To nie kosztuje miesiąca; karta wróci za trzy miesiące.'));
+    }
     rules.commitMainAction(Q, 'party.advisers', {from: current, to: draft.slice()});
     const lines = [];
     for (const id of current) {
@@ -2486,6 +2604,10 @@
     }
     Q.pl_adv_draft_text = draft.map(id => ADVISERS[id].name).join(', ') || L('nobody', 'nikt');
     Q.pl_adv_confirm_why = advisersStatus(Q, draft).reason;
+    // Z — 0.78: confirming the present Committee keeps it for free; a change costs this month's action.
+    Q.pl_adv_confirm_note = sameSet(draft, current) ? L('No change: the present Committee stays; this costs no month.',
+      'Bez zmian: obecny skład zostaje; to nie kosztuje miesiąca.') : L('A change costs this month’s action; the next change waits six months.',
+      'Zmiana kosztuje akcję tego miesiąca; następna zmiana czeka sześć miesięcy.');
   }
 
   function advisersToggle(Q, id) {
@@ -2678,7 +2800,8 @@
     syncMirrors(Q);
     for (const id of PACKAGE_ORDER) {
       Q['pl_org_' + id + '_title'] = packageLine(Q, id);
-      Q['pl_org_' + id + '_why'] = packageStatus(Q, id, 0).reason;
+      // Z — 0.78: the card takes one package at once, so its reason is that of the whole selection (the month included).
+      Q['pl_org_' + id + '_why'] = cardOfPackage(id) === ORGANIZATIONS_CARD ? selectionStatus(Q, [id]).reason : packageStatus(Q, id, 0).reason;
     }
     Q.pl_org_cash = fmt(Q.S.party_orgs.cash);
     // Z — 0.57: the TUR package founds TUR while its level is 0.
@@ -2773,6 +2896,11 @@
     Q.pl_pa_apparatus_why = apparatusStatus(Q).reason;
     for (const id of BRANCHES) Q['pl_pa_branch_' + id + '_why'] = organizeStatus(Q, 'branch:' + id).reason;
     for (const c of ORGANIZE_CLASSES) Q['pl_pa_class_' + c + '_why'] = organizeStatus(Q, 'class:' + c).reason;
+    // Z — 0.78: the two kinds of organisational work, with their target and gain.
+    for (const kind of ['unions', 'voters']) {
+      Q['pl_pa_org_' + kind + '_why'] = organizeStatusOf(Q, kind).reason;
+      Q['pl_pa_org_' + kind + '_text'] = organizePreview(Q, kind);
+    }
     for (const id of Object.keys(COURSES)) Q['pl_pa_course_' + id + '_why'] = courseStatus(Q, id).reason;
     const prepared = preparedCooperatives(S);
     Q.pl_pa_coop_count = prepared.length;
@@ -2843,6 +2971,15 @@
     organizeWithoutFunds: organizeWithoutFunds,
     courseStatus: courseStatus,
     turCourse: turCourse,
+    weakestBranch: weakestBranch,
+    characterClasses: characterClasses,
+    organizeStatusOf: organizeStatusOf,
+    organizeUnions: organizeUnions,
+    organizeVoters: organizeVoters,
+    courseTarget: courseTarget,
+    turCardAvailable: turCardAvailable,
+    turCardView: turCardView,
+    turCardCourse: turCardCourse,
     takeCourseBonus: takeCourseBonus,
     reformProjects: reformProjects,
     cooperativeStatus: cooperativeStatus,
