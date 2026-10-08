@@ -30,9 +30,12 @@
     if (deck && deck.chooseIf && !engine._runPredicate(deck.chooseIf, true)) return [];
     const viewable = engine._compileChoices(engine.game.scenes[deckId]) || [];
     const hand = (engine.state.currentHands[engine.state.sceneId] || []).map(card => card.id);
+    // Z — 0.76: a used party card rests before it can be drawn again (PolishRules.cardRest).
+    const Q = engine.state.qualities;
+    const resting = id => !!installedRules && !!installedRules.cardRest && installedRules.cardRest(Q, id) > 0;
     return viewable
       .filter(choice => choice.canChoose && engine.game.scenes[choice.id] && engine.game.scenes[choice.id].isCard &&
-        hand.indexOf(choice.id) < 0)
+        hand.indexOf(choice.id) < 0 && !resting(choice.id))
       .sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
   }
 
@@ -144,7 +147,8 @@
       if (Q.S) {
         const hand = this.state.currentHands[this.state.sceneId] || [];
         const entry = hand.filter(card => card.id === cardId)[0] || null;
-        rules.beginCardView(Q, this.state, cardId, {from_hand: true, hand_entry: entry, keys: rules.openingKeys(this.game, cardId)});
+        rules.beginCardView(Q, this.state, cardId, {from_hand: true, hand_entry: entry, keys: rules.openingKeys(this.game, cardId),
+          deck: (entry && entry.deck) || rules.deckOfCard(this.game, cardId)});
       }
       return playCard.call(this, cardId);
     };

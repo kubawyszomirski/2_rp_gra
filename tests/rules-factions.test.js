@@ -88,7 +88,10 @@ test('Start i odwołanie: a starting adviser dismissed and brought back gets no 
   act(engine, 'daszynski', 'parliamentary_compromise');
   assert.equal(PolishRules.cooldownRemaining(Q, 'advisor'), 6);
   const opening = strengths(S);
-  PolishParty.advisersChoose(Q, ['daszynski', 'perl']);
+  // Z — 0.76: the Committee has all three seats filled; Ziemięcki stands in for Pużak, marked as appointed before (a fixture),
+  // so only Pużak's dismissal and return change the factions.
+  Q.ziemiecki_appointed_once = 1;
+  PolishParty.advisersChoose(Q, ['daszynski', 'perl', 'ziemiecki']);
   assert.equal(Q.puzak_advisor, 0);
   assert.equal(S.actors.pps.factions.centrum.dissent, 5);
   assert.deepEqual(strengths(S), opening, 'a dismissal is no departure of a group');

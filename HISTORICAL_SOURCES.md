@@ -1,5 +1,14 @@
 # Historical Source Register
 
+## PRESIDENT-1922-ROUNDS — the rounds of the presidential election of 9 December 1922
+
+- **Authority:** on 8 October 2026 the user noted that Narutowicz never became president in the game; decision 7A (technical reference 0.76, sections 7.3 and 23.49).
+- **Source (accessed 8 October 2026):** Wikipedia (en), "1922 Polish presidential elections" (https://en.wikipedia.org/wiki/1922_Polish_presidential_elections): round 1 — Zamoyski 222, Wojciechowski 105, Baudouin de Courtenay 103, Narutowicz 62, Daszyński 49; round 2 — Zamoyski 228, Wojciechowski 153, Narutowicz 151, Baudouin de Courtenay 10, Daszyński 1; round 3 — Zamoyski 228, Narutowicz 158, Wojciechowski 150, Baudouin de Courtenay 5; round 4 — Zamoyski 224, Narutowicz 171, Wojciechowski 145 (Wojciechowski eliminated); round 5 — Narutowicz 289, Zamoyski 227.
+- **Historical fact:** the minority deputies left Baudouin de Courtenay after the first round, and Narutowicz won the fifth round with the left, PSL Piast and the minorities.
+- **Gameplay simplification (P):** Baudouin de Courtenay withdraws as a symbolic candidate after the first round instead of the weakest candidate, and his voters move to their next preference; the game counts fewer rounds than the National Assembly did.
+- **Confidence:** medium — one secondary source for the counts; the order of eliminations after rounds 1–3 is read from the table, not stated in it. **Unresolved:** the official record of the National Assembly — TBD, historical research required.
+- **Game use:** `PolishInstitutions` (`rawOfficeProfile` `president_first`, field `symbolic`; the elimination loop).
+
 ## PL-PPS-CKW-BIOS-2026-10-08 — short biographies of the eleven Committee candidates
 
 - **Authority:** on 8 October 2026 the user asked that each candidate on the page "Nowy skład CKW" show a photo, a short description of who the person is and what they enable in the game, with the faction in bold; the user chose "facts with sources" (one or two sentences, uncertain points left out) (technical reference 0.75, sections 10.4 and 23.48; chapter 44 of the implementation plan).

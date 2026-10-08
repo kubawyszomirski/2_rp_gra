@@ -2,7 +2,6 @@
  "source": "scenes/status.scene.dry",
  "status": "complete",
  "lines": {
-  "= [? if year : [+ month : month +] [+ year +] ?][? if not year : Status ?]": "= [? if year : [+ month : month +] [+ year +] ?][? if not year : Stan ?]",
   "title: Status": "title: Stan",
   "[? if not polish_party_rules : **Resources available:** [+ resources +] ?]": "[? if not polish_party_rules : **Dostępne środki:** [+ resources +] ?]",
   "= PPS": "= PPS",

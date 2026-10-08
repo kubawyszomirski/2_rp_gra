@@ -776,7 +776,7 @@ test('Premier 0.71: a party cabinet is led by the leader of its largest club (Th
   const E = centreLeft();
   gov.chooseCoalition(E, 'expert');
   assert.deepEqual([E.S.negotiation.draft.candidate_id, E.S.negotiation.draft.pps_mode], ['nowak', 'external_support']);
-  assert.match(gov.candidateNote(E, 'nowak'), /Backed by PSL Piast, PSL Wyzwolenie, NPR, PPS\. Candidate of the Chief of State for this period\.$/);
+  assert.match(gov.candidateNote(E, 'nowak'), /Backed by PSL Piast, PSL Wyzwolenie, NPR, PPS\. Candidate of the Naczelnik Państwa for this period: supporting him costs nothing with Piłsudski\.$/);
   gov.submitFormation(E);
   assert.deepEqual([E.S.cabinet.pm, E.S.actors.relations.psl_piast], ['nowak', 60]);
 });

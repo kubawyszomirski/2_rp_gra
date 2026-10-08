@@ -328,6 +328,33 @@ test('Karty pilne 0.74: an urgent card enters the hand of its deck in an extra p
   assert.equal(Q.time, 1, 'the answer costs no month');
 });
 
+// Z — 0.76 (decision 1A of 8 X 2026): a used party card rests before it can be drawn again — 3 months; the cards of the party's
+// line together 6 months; the party agenda, the move that is always open, never.
+test('Odstęp kart partii 0.76: a used card rests 3 months, the cards of the party line together 6, the agenda never', () => {
+  const engine = dendry.startGame();
+  const Q = engine.state.qualities;
+  dendry.playCard(engine, 'polish_party_organizations');
+  dendry.choose(engine, 'polish_party_organizations.p1_press_distribution');
+  dendry.choose(engine, 'polish_party_organizations.only_one');
+  assert.equal(Q.month_actions, 1);
+  assert.equal(PolishRules.cardRest(Q, 'polish_party_organizations'), 3);
+  assert.ok(!PolishEngineHooks.legalDeckCards(engine, 'main.party').some(c => c.id === 'polish_party_organizations'), 'not drawn while it rests');
+  const line = dendry.startGame();
+  const L = line.state.qualities;
+  dendry.playCard(line, 'polish_party_direction');
+  const option = (line.getCurrentChoices() || []).find(c => c.id.startsWith('polish_party_direction.') && c.canChoose !== false);
+  dendry.choose(line, option.id);
+  assert.equal(L.month_actions, 1);
+  for (const id of PolishRules.VISION_CARDS) assert.equal(PolishRules.cardRest(L, id), 6, `${id} rests with the line`);
+  const drawable = PolishEngineHooks.legalDeckCards(line, 'main.party').map(c => c.id);
+  assert.deepEqual(drawable.filter(id => PolishRules.VISION_CARDS.includes(id)), [], 'no card of the party line for six months');
+  const agenda = dendry.startGame();
+  dendry.playCard(agenda, 'polish_party_agenda');
+  dendry.choose(agenda, 'polish_party_agenda.organize');
+  dendry.choose(agenda, 'polish_party_agenda.branch_farm_labour');
+  assert.equal(PolishRules.cardRest(agenda.state.qualities, 'polish_party_agenda'), 0, 'the agenda never rests');
+});
+
 // Bug of 5 X 2026: the discard page and "Not now" of a pinned card went straight to the hand without a new page, so
 // their text stayed above the hand. They return through root, like "Return to hand". Z — 0.57: the party agenda is an
 // ordinary card, so it is closed with "Return to hand" and goes back to the hand. Z — 0.60: the discard page is gone.
@@ -404,9 +431,10 @@ test('walks that play like the page keep every stage 1 rule', () => {
         dendry.choose(engine, 'puzak.party_discipline');
         actUntilMain(engine);
         seenAdviserActions.push(Q.time);
-      } else if (step % 7 === 3 && PolishRules.canDiscard(Q, engine.state)) {
-        dendry.choose(engine, 'polish_discard');
-        dendry.choose(engine, 'polish_discard.slot_1');
+      } else if (step % 7 === 3 && (engine.state.currentHands.main || []).some(c => PolishRules.discardStatus(Q, engine.state, c.id).available)) {
+        // Z — 0.60: a card is discarded on the card itself (the separate discard card is gone).
+        const card = engine.state.currentHands.main.find(c => PolishRules.discardStatus(Q, engine.state, c.id).available);
+        PolishRules.discardCard(Q, engine.state, card.id);
       } else {
         spendMonth(engine);
       }

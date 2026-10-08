@@ -90,7 +90,7 @@ test('Kolportaż w Organizacjach 0.68: the Media card has no press distribution;
 
 // Z — 0.75 (the user's note of 8 X 2026): on "The new Committee" each candidate opens with the bold faction, says who the
 // person was and what they enable in the game, and ends with the state; a candidate who cannot be added keeps the description.
-test('Nowy skład CKW 0.75: each candidate has a bold faction, a description and the state', () => {
+test('Nowy skład CKW 0.75/0.76: each candidate has a bold faction, a description, the actions under „Actions:” and the state; three seats are required', () => {
   const engine = dendry.startGame();
   playFromHand(engine, 'polish_party_advisers');
   choose(engine, 'polish_party_advisers.compose');
@@ -99,20 +99,25 @@ test('Nowy skład CKW 0.75: each candidate has a bold faction, a description and
   for (const c of toggles()) {
     assert.doesNotMatch(plain(c.title), /\(/, `${c.id}: the title is the name only`);
     assert.equal(bold(c.subtitle).length, 1, `${c.id}: one bold faction`);
-    assert.match(plain(c.subtitle), /In the game: /, c.id);
+    // Z — 0.76: the actions stand in a paragraph of their own, one per line after a dash.
+    assert.match(plain(c.subtitle), /<span class="pl-adv-actions">Actions:<br>– /, c.id);
+    assert.doesNotMatch(plain(c.subtitle), /In the game: /, c.id);
   }
   const daszynski = choice(engine, 'polish_party_advisers.toggle_daszynski');
   assert.equal(plain(daszynski.title), 'Ignacy Daszyński');
   assert.deepEqual(bold(daszynski.subtitle), ['Centrum.']);
-  assert.match(plain(daszynski.subtitle), /In the game: Parliamentary Compromise.* On the Committee — remove\.$/);
+  assert.match(plain(daszynski.subtitle), /Actions:<br>– Parliamentary Compromise: .*<br>– Broker a Coalition: .*<strong class="pl-adv-in">On the Committee<\/strong> — click to remove\.<\/span>$/);
   const zaremba = choice(engine, 'polish_party_advisers.toggle_zaremba');
   assert.equal(zaremba.canChoose, false, 'the three seats are taken');
   assert.deepEqual(bold(zaremba.subtitle), ['Lewica.']);
-  assert.match(plain(zaremba.subtitle), /In the game: Worker-Peasant Front.* The three seats are taken\.$/);
+  assert.match(plain(zaremba.subtitle), /Actions:<br>– Worker-Peasant Front: .*The three seats are taken\.<\/span>$/);
   assert.deepEqual(bold(choice(engine, 'polish_party_advisers.toggle_malinowski').subtitle), ['Piłsudczycy.']);
   choose(engine, 'polish_party_advisers.toggle_daszynski');
-  assert.match(plain(choice(engine, 'polish_party_advisers.toggle_zaremba').subtitle), / Add to the Committee\.$/);
-  assert.match(plain(choice(engine, 'polish_party_advisers.toggle_daszynski').subtitle), / Add to the Committee\.$/);
+  assert.match(plain(choice(engine, 'polish_party_advisers.toggle_zaremba').subtitle), /Add to the Committee\.<\/span>$/);
+  assert.match(plain(choice(engine, 'polish_party_advisers.toggle_daszynski').subtitle), /Add to the Committee\.<\/span>$/);
+  // Z — 0.76: with two people chosen the Committee cannot be confirmed.
+  assert.equal(choice(engine, 'polish_party_advisers.confirm').canChoose, false);
+  assert.match(plain(choice(engine, 'polish_party_advisers.confirm').subtitle), /Choose three people for the three seats \(now 2\)/);
 });
 
 // Z — 0.56 (item 4 of 5 X 2026): the union packages have a card of their own; one investment in one action.

@@ -84,7 +84,7 @@ The first President of the Republic is elected by the **National Assembly**: the
 
 The candidates of the other groups are **Maurycy Zamoyski** for the right, **Stanisław Wojciechowski** for PSL Piast, **Jan Baudouin de Courtenay** for the national minorities and **Gabriel Narutowicz** for PSL Wyzwolenie. PPS decides whether to nominate **Ignacy Daszyński**.
 
-The game shows only the final result. Each club votes for its preferred candidate still standing; the weakest candidate drops out until one has more than half of the valid votes, or the larger vote wins a final between two. A tie between two finalists is decided by a recorded lot. The clubs' preferences are an approved test profile, not a reconstruction of the historical ballots.
+The game shows only the final result. Each club votes for its preferred candidate still standing; the weakest candidate drops out until one has more than half of the valid votes, or the larger vote wins a final between two. Baudouin de Courtenay is the symbolic candidate of the minorities: after the first round he withdraws and they vote for their next choice, as in 1922. A tie between two finalists is decided by a recorded lot. The clubs' preferences are an approved test profile, not a reconstruction of the historical ballots.
 
 - @confirm_daszynski: Nominate Ignacy Daszyński as the PPS candidate.
 - @decline_daszynski: Do not nominate a PPS candidate.

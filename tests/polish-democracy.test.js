@@ -115,9 +115,10 @@ test('B1/B2: the dispute of June 1922 leads into one free formation where PPS an
   assert.equal(S.negotiation.draft.candidate_id, 'sliwinski', 'the default offer keeps the Naczelnik’s candidate');
   // Z — 0.72: only Śliwiński is marked as the Naczelnik's candidate; Nowak stands beside him as a compromise of the Sejm (2B).
   const subtitle = id => JSON.stringify((engine.getCurrentChoices() || []).find(c => c.id === 'polish_cabinet_formation.' + id).subtitle);
-  assert.match(subtitle('cand_sliwinski'), /Candidate of the Chief of State for this period/);
-  assert.doesNotMatch(subtitle('cand_nowak'), /Candidate of the Chief of State/);
-  assert.match(subtitle('cand_nowak'), /A compromise candidate of the Sejm; historically he became prime minister only after Śliwiński fell \(VII 1922\)/);
+  assert.match(subtitle('cand_sliwinski'), /Candidate of the Naczelnik Państwa for this period: supporting him costs nothing with Piłsudski\. Risk: ZLN, PSChD vote against him\./);
+  assert.doesNotMatch(subtitle('cand_nowak'), /Candidate of the Naczelnik/);
+  // Z — 0.76 (decision 5 of 8 X 2026): what Nowak gives and what going against the Naczelnik costs.
+  assert.match(subtitle('cand_nowak'), /A compromise candidate\. Gain: the right does not fight him, so he has a better chance of a majority in the Sejm\. Cost: it goes against the Naczelnik’s own candidate — when the offer is submitted, relation with Piłsudski −5 and 1 R for the talks\. Historically he became prime minister only after Śliwiński fell \(VII 1922\)\./);
   choose(engine, 'polish_cabinet_formation.cand_sliwinski');
   choose(engine, 'polish_cabinet_formation.submit');
   const result = S.history.negotiations.at(-1).result;
@@ -149,11 +150,48 @@ test('B1/B2: the dispute of June 1922 leads into one free formation where PPS an
   assert.equal(PolishPolitics.cabinet1922Due(other), false);
 });
 
+// Z — 0.76 (decision 5 of 8 X 2026): a cabinet of experts led by another man than the Naczelnik's own candidate goes against
+// Piłsudski: the offer costs relation with Piłsudski −5 and 1 R for the talks, said beforehand and on the result.
+test('Wbrew Naczelnikowi 0.76: Nowak instead of Śliwiński costs relation with Piłsudski −5 and 1 R; without 1 R he is greyed', () => {
+  const engine = dendry.startGame();
+  const Q = engine.state.qualities, S = Q.S;
+  toJune1922(engine);
+  choose(engine, 'polish_event_cabinet_1922.formation');
+  choose(engine, 'polish_cabinet_formation.variants');
+  choose(engine, 'polish_cabinet_formation.var_expert');
+  const cash = S.party_orgs.cash, relation = S.actors.relations.pilsudski;
+  assert.ok(cash >= 1);
+  choose(engine, 'polish_cabinet_formation.cand_nowak');
+  assert.equal(engine.state.sceneId, 'polish_cabinet_formation.summary');
+  assert.match(JSON.stringify(engine.ui.paragraphs), /against the Naczelnik’s candidate: relation with Piłsudski −5 and 1 R/);
+  assert.deepEqual([S.party_orgs.cash, S.actors.relations.pilsudski], [cash, relation], 'nothing is paid before the commit');
+  choose(engine, 'polish_cabinet_formation.submit');
+  assert.ok(Math.abs(S.party_orgs.cash - (cash - 1)) < 1e-9, '1 R for the talks');
+  assert.equal(S.actors.relations.pilsudski, relation - 5);
+  assert.match(JSON.stringify(engine.ui.paragraphs), /against the Naczelnik’s candidate: relation with Piłsudski −5, 1 R for the talks/);
+  // Supporting the Naczelnik's own candidate costs nothing; without 1 R Nowak cannot be proposed.
+  const poor = dendry.startGame();
+  const P = poor.state.qualities;
+  toJune1922(poor);
+  choose(poor, 'polish_event_cabinet_1922.formation');
+  P.S.party_orgs.cash = 0.5;
+  const nowak = PolishGovernment.candidateStatus(P, 'nowak', { ...P.S.negotiation.draft, configuration_id: 'expert', pps_mode: 'external_support' });
+  assert.equal(nowak.available, false);
+  assert.match(nowak.reason, /The talks against the Naczelnik’s own candidate \(Artur Śliwiński\) cost 1 R; PPS has 0.5 R/);
+  // With one possible prime minister the page of the prime minister is skipped (0.71).
+  choose(poor, 'polish_cabinet_formation.variants');
+  choose(poor, 'polish_cabinet_formation.var_expert');
+  assert.equal(poor.state.sceneId, 'polish_cabinet_formation.summary');
+  const before = P.S.actors.relations.pilsudski;
+  choose(poor, 'polish_cabinet_formation.submit');
+  assert.deepEqual([P.S.party_orgs.cash, P.S.actors.relations.pilsudski], [0.5, before], 'his own candidate costs nothing');
+});
+
 // ---- December 1922 and the presidency (17.6–17.7) ----
 const HISTORICAL_LIKE = { zln: 22, pschd: 10, psl_piast: 13, psl_wyzwolenie: 11, pps: 10, npr: 5, minorities_bloc: 16, kpp: 1.5, other: 11.5 };
-// The national result of the opening before the calibration of stage 8 (decision 2A): PPS is slightly larger than
-// PSL Wyzwolenie, so a Daszyński nomination eliminates Narutowicz first (a fixture for the branch without him).
-const PPS_AHEAD = { kpp: 6.005, pps: 13.287, npr: 6.33, psl_wyzwolenie: 12.751, psl_piast: 13.145, pschd: 6.589, zln: 11.848, minorities_bloc: 20.451, other: 9.594 };
+// Z — 0.76 (decision 7A of 8 X 2026): with Baudouin de Courtenay as a symbolic candidate Narutowicz wins in the historical
+// Sejm, so the branch without him needs a strong PSL Piast: Piast and NPR outvote PSL Wyzwolenie, PPS and the minorities.
+const PIAST_AHEAD = { kpp: 2, pps: 8, npr: 8, psl_wyzwolenie: 6, psl_piast: 30, pschd: 8, zln: 22, minorities_bloc: 8, other: 8 };
 function december({ values = HISTORICAL_LIKE } = {}) {
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
@@ -206,8 +244,8 @@ test('B3/B4: the threat settles without a menu; only a confirmed death, after th
   assert.equal(PolishPolitics.responseDue(restored.state.qualities), false, 'answered once, also after loading');
   choose(restored, 'polish_presidential_sequence.do_not_run_daszynski_second');
   assert.equal(restored.state.qualities.S.politics.cases[death.case_id].closed_by, 'lawful_succession');
-  // No death, no B4: with the Daszyński nomination another President is elected (PPS_AHEAD).
-  const other = december({ values: PPS_AHEAD });
+  // No death, no B4: with a strong PSL Piast another President is elected (PIAST_AHEAD).
+  const other = december({ values: PIAST_AHEAD });
   choose(other, 'polish_presidential_sequence.confirm_daszynski');
   assert.notEqual(other.state.qualities.polish_presidency.elections[0].winner_id, 'gabriel_narutowicz');
   choose(other, 'polish_presidential_sequence.first_transfer');

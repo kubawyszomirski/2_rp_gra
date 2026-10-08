@@ -66,6 +66,12 @@
     'polish_party_ussr_position', 'polish_party_economic_program']);
   const EVENT_CARDS = Object.freeze(['polish_constitution_project', 'polish_parliament_army_oversight']);
   const cardDeadlines = {};
+  // Z — 0.76 (decision 1A of 8 X 2026): a card of the party deck rests after it is used, so it is not drawn again too soon: at
+  // least 3 months; the cards of the party's line share one rest of 6 months; the party agenda (organisational work, the move
+  // that is always open) has none. Longer waits of single cards stay.
+  const PARTY_REST_MONTHS = 3;
+  const LINE_REST_MONTHS = 6;
+  const NO_REST_CARDS = Object.freeze(['polish_party_agenda']);
   // Z — 0.74 (decisions 1A–3A of 8 X 2026): urgent cards. A module registers a card that must not wait for a lucky draw — the
   // prepared reforms, the answer to the cabinet's budget package, the answer to a partner, the filing of a prepared
   // constitutional motion — with its deck and the condition under which it is urgent. The engine hook puts such a card into
@@ -553,6 +559,7 @@
     }
     Q.S.turn.card_view = {
       card_id: cardId,
+      deck: (options && options.deck) || null,
       t: Q.time,
       from_hand: !!(options && options.from_hand),
       hand_entry: options && options.hand_entry ? copy(options.hand_entry) : null,
@@ -617,7 +624,7 @@
     Q.advisor_action_timer = ADVISOR_COOLDOWN_MONTHS;
     if (target) {
       txn.redirect = {card: target, month_actions_before: Q.month_actions || 0};
-      beginCardView(Q, state, target, {from_hand: false, keys: openingKeys(game, target)});
+      beginCardView(Q, state, target, {from_hand: false, keys: openingKeys(game, target), deck: deckOfCard(game, target)});
     }
     S.turn.pending = txn;
     return txn;
@@ -638,12 +645,31 @@
   // One main action of a new Polish card, committed when the player confirms it; opening and
   // closing the card cost nothing (4.3). It consumes the month and is settled once in post_event.
   // In a card opened by an adviser the one step belongs to the adviser transaction and costs no month.
+  // The rest of a used party card (Z — 0.76): the card open now, when its action is taken.
+  function restKey(cardId) {
+    return VISION_CARDS.indexOf(cardId) >= 0 ? 'rest:party_line' : 'rest:' + cardId;
+  }
+
+  function startCardRest(Q) {
+    const view = Q.S.turn.card_view;
+    if (!view || view.deck !== 'main.party' || NO_REST_CARDS.indexOf(view.card_id) >= 0) return;
+    const months = VISION_CARDS.indexOf(view.card_id) >= 0 ? LINE_REST_MONTHS : PARTY_REST_MONTHS;
+    const key = restKey(view.card_id);
+    Q.S.cooldowns[key] = Math.max(Q.S.cooldowns[key] || 0, Q.time + months);
+  }
+
+  // Months until a party card can be drawn again (0: it can).
+  function cardRest(Q, cardId) {
+    return Q.S && Q.S.cooldowns ? cooldownRemaining(Q, restKey(cardId)) : 0;
+  }
+
   function commitMainAction(Q, actionId, fields) {
     const S = Q.S;
     if (advisorStepPending(Q)) {
       const pending = S.turn.pending;
       pending.redirect.action_id = actionId;
       pending.redirect.fields = copy(fields || {});
+      startCardRest(Q);
       return pending;
     }
     if (S.turn.pending && S.turn.pending.phase === 'committed') {
@@ -653,6 +679,7 @@
     const txn = newTxn(S, Q.time, Object.assign({action_id: actionId, source: 'main', consumes_month: true}, fields || {}));
     S.turn.pending = txn;
     Q.month_actions = (Q.month_actions || 0) + 1;
+    startCardRest(Q);
     return txn;
   }
 
@@ -1038,6 +1065,9 @@
     VISION_CARDS: VISION_CARDS,
     EVENT_CARDS: EVENT_CARDS,
     deckOfCard: deckOfCard,
+    cardRest: cardRest,
+    PARTY_REST_MONTHS: PARTY_REST_MONTHS,
+    LINE_REST_MONTHS: LINE_REST_MONTHS,
     handOfDeck: handOfDeck,
     registerCardDeadline: registerCardDeadline,
     cardDeadline: cardDeadline,

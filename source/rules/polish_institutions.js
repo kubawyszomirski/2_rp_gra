@@ -485,6 +485,9 @@
           kpp: [], other: []},
         // Before the first President the Naczelnik Państwa stays in office.
         acting_holder: {id: 'jozef_pilsudski', name: PEOPLE.jozef_pilsudski},
+        // Z — 0.76 (decision 7A of 8 X 2026; H: PRESIDENT-1922-ROUNDS): Baudouin de Courtenay was the symbolic candidate of the
+        // minorities, who left him after the first round (103 votes, then 10) for Narutowicz and Wojciechowski.
+        symbolic: ['jan_baudouin_de_courtenay'],
       };
     }
     if (kind === 'president_second') {
@@ -599,9 +602,18 @@
         entry.eliminated = order.slice(2);
         standing = order.slice(0, 2).sort(compareId);
       } else {
-        const weakest = order[order.length - 1];
-        entry.eliminated = [weakest];
-        standing = standing.filter(id => id !== weakest);
+        // Z — 0.76: after the first round a symbolic candidate withdraws instead of the weakest one, and his voters move to
+        // their next choice.
+        const symbolic = round === 1 ? (profile.symbolic || []).filter(id => standing.indexOf(id) >= 0) : [];
+        if (symbolic.length && standing.length - symbolic.length >= 2) {
+          entry.eliminated = symbolic.slice();
+          entry.withdrawn = symbolic.slice();
+          standing = standing.filter(id => symbolic.indexOf(id) < 0);
+        } else {
+          const weakest = order[order.length - 1];
+          entry.eliminated = [weakest];
+          standing = standing.filter(id => id !== weakest);
+        }
       }
     }
     run.reason = 'unresolved';

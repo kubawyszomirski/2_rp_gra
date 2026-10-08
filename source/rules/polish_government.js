@@ -768,6 +768,28 @@
     return EXPERTS.filter(id => expertPeriodStatus(Q, id).available)[0] || null;
   }
 
+  // Z — 0.76 (decision 5 of 8 X 2026; P): a cabinet of experts led by another man than the Naczelnik's own candidate goes against
+  // Piłsudski and needs talks: when PPS submits such an offer, its relation with Piłsudski falls by 5 and the talks cost 1 R.
+  // Only while the Naczelnik appoints the cabinet and the party model keeps that relation.
+  const AGAINST_NACZELNIK = Object.freeze({relation: 5, cash: 1});
+  function againstNaczelnik(Q, draft) {
+    const S = Q.S, head = Q.polish_presidency && Q.polish_presidency.current;
+    if ((head && head.office_id === 'prezydent_rp') || !S.actors || S.actors.relations.pilsudski === undefined) return false;
+    const config = CONFIGURATIONS[draft.configuration_id], candidate = CANDIDATES[draft.candidate_id], own = headCandidate(Q);
+    return !!config && !!config.expert && draft.pps_mode !== 'opposition' && !!own && !!candidate && !candidate.party &&
+      draft.candidate_id !== own && draft.candidate_id !== 'pilsudski';
+  }
+
+  function payAgainstNaczelnik(Q, draft, negotiationId) {
+    if (!againstNaczelnik(Q, draft)) return false;
+    const S = Q.S;
+    changeRelation(Q, 'pilsudski', -AGAINST_NACZELNIK.relation, 'against_naczelnik:' + negotiationId);
+    S.party_orgs.cash = Math.max(0, S.party_orgs.cash - AGAINST_NACZELNIK.cash);
+    S.history.reasons.push({t: Q.time, kind: 'against_naczelnik', negotiation_id: negotiationId, candidate_id: draft.candidate_id,
+      relation: -AGAINST_NACZELNIK.relation, cash: -AGAINST_NACZELNIK.cash});
+    return true;
+  }
+
   function expertPeriodStatus(Q, candidateId) {
     const S = Q.S;
     if (expertFallen(S, candidateId)) return {available: false, reason: L('His cabinet has fallen.', 'Jego gabinet upadł.')};
@@ -842,7 +864,15 @@
     if (!candidate.party) {
       const period = expertPeriodStatus(Q, candidateId);
       if (!period.available) return period;
-      if (config.expert) return period;
+      if (config.expert) {
+        const own = headCandidate(Q);
+        if (againstNaczelnik(Q, Object.assign({}, draft, {candidate_id: candidateId})) && Q.S.party_orgs.cash < AGAINST_NACZELNIK.cash) {
+          return {available: false, reason: L('The talks against the Naczelnik’s own candidate (' + CANDIDATES[own].name + ') cost ' +
+            AGAINST_NACZELNIK.cash + ' R; PPS has ' + rules.num(Q.S.party_orgs.cash, 1) + ' R.', 'Rokowania wbrew kandydatowi Naczelnika (' +
+            CANDIDATES[own].name + ') kosztują ' + AGAINST_NACZELNIK.cash + ' R; PPS ma ' + rules.num(Q.S.party_orgs.cash, 1) + ' R.')};
+        }
+        return period;
+      }
       // A party cabinet takes a non-party premier only when none of its party leaders can lead it (P).
       if (CANDIDATE_ORDER.some(id => CANDIDATES[id].party && leaderStatus(Q, id, draft).available)) {
         return {available: false, reason: L('A party cabinet is led by the leader of its largest party.', 'Gabinet partyjny prowadzi lider jego największej partii.')};
@@ -1730,15 +1760,27 @@
     // Z — 0.72 (8 X 2026): only the one non-party man the head of state proposes is marked as his candidate; another man of the
     // period is described as what he was (decision 2B: Nowak may stand in VI–VII 1922 beside Śliwiński).
     const head = headCandidate(Q);
+    const neg = Q.S.negotiation;
+    const against = !!neg && againstNaczelnik(Q, Object.assign({}, neg.draft, {candidate_id: candidateId}));
+    const cost = L(' Cost: it goes against the Naczelnik’s own candidate — when the offer is submitted, relation with Piłsudski −' +
+      AGAINST_NACZELNIK.relation + ' and ' + AGAINST_NACZELNIK.cash + ' R for the talks.', ' Koszt: idziemy wbrew kandydatowi Naczelnika — po złożeniu ' +
+      'oferty relacja z Piłsudskim −' + AGAINST_NACZELNIK.relation + ' i ' + AGAINST_NACZELNIK.cash + ' R na rokowania.');
     if (candidateId === head) {
       const president = Q.polish_presidency && Q.polish_presidency.current && Q.polish_presidency.current.office_id === 'prezydent_rp';
       note += president ? L(' Candidate of the President for this period.', ' Kandydat Prezydenta na ten okres.') :
-        L(' Candidate of the Chief of State for this period.', ' Kandydat Naczelnika Państwa na ten okres.');
+        L(' Candidate of the Naczelnik Państwa for this period: supporting him costs nothing with Piłsudski.',
+          ' Kandydat Naczelnika Państwa na ten okres: poparcie go nic nie kosztuje u Piłsudskiego.');
+      const profile = EXPERT_STANCES[candidateId];
+      if (profile && profile.against.length) {
+        note += L(' Risk: ' + listNames(profile.against) + ' vote against him.', ' Ryzyko: ' + listNames(profile.against) + ' głosują przeciw niemu.');
+      }
     } else if (candidateId === 'nowak' && head === 'sliwinski') {
-      note += L(' A compromise candidate of the Sejm; historically he became prime minister only after Śliwiński fell (VII 1922).',
-        ' Kandydat kompromisu Sejmu; historycznie został premierem dopiero po upadku Śliwińskiego (VII 1922).');
+      note += L(' A compromise candidate. Gain: the right does not fight him, so he has a better chance of a majority in the Sejm.',
+        ' Kandydat kompromisu. Zysk: prawica go nie zwalcza, więc łatwiej mu o większość w Sejmie.') + (against ? cost : '') +
+        L(' Historically he became prime minister only after Śliwiński fell (VII 1922).', ' Historycznie premierem został dopiero po upadku Śliwińskiego (VII 1922).');
     } else if (!candidate.party && candidateId !== 'pilsudski' && expertPeriodStatus(Q, candidateId).available) {
-      note += L(' He stands in this period, but is not the candidate of the head of state.', ' Kandyduje w tym okresie, ale nie jest kandydatem głowy państwa.');
+      note += L(' He stands in this period, but is not the candidate of the head of state.', ' Kandyduje w tym okresie, ale nie jest kandydatem głowy państwa.') +
+        (against ? cost : '');
     }
     return note;
   }
@@ -1798,6 +1840,10 @@
     const parts = [configName(draft.configuration_id) + ' — ' + role, L('prime minister ', 'premier ') + ((CANDIDATES[draft.candidate_id] || {}).name || '—')];
     if (draft.pps_mode === 'member' && !config.expert) parts.push(L('PPS portfolios: ', 'resorty PPS: ') + (own.length ? own.map(portfolioShort).join(', ') : L('none', 'brak')));
     if (offer.minority_terms.length) parts.push(L('with the support of the minority representations', 'z poparciem mniejszości'));
+    if (againstNaczelnik(Q, draft)) {
+      parts.push(L('against the Naczelnik’s candidate: relation with Piłsudski −' + AGAINST_NACZELNIK.relation + ' and ' + AGAINST_NACZELNIK.cash + ' R',
+        'wbrew kandydatowi Naczelnika: relacja z Piłsudskim −' + AGAINST_NACZELNIK.relation + ' i ' + AGAINST_NACZELNIK.cash + ' R'));
+    }
     if (stabilisationTermsOpen(draft) && offer.stabilisation_terms !== 'none') {
       parts.push(L({loan: 'terms: a loan and limited cuts', protections: 'terms: protections and a heavier burden on wealth'}[offer.stabilisation_terms],
         {loan: 'warunki: pożyczka i ograniczone cięcia', protections: 'warunki: osłony i większe obciążenie majątku'}[offer.stabilisation_terms]));
@@ -1949,9 +1995,10 @@
     if (formationCost(Q, neg)) rules.commitMainAction(Q, 'parliament.cabinet_formation', {negotiation_id: neg.id});
     const draft = neg.draft;
     const context = neg.context;
+    const againstPaid = payAgainstNaczelnik(Q, draft, neg.id);
     const assessment = assessDraft(Q);
     const result = {negotiation_id: neg.id, t: Q.time, reason: context.reason, pps_mode: draft.pps_mode, pps_offer: assessment.pps_offer,
-      appointed: null, lines: []};
+      appointed: null, lines: [], against_naczelnik: againstPaid};
     const best = assessment.entry || pickBest(npcEntries(Q, [], true));
     if (best) {
       appointCabinet(Q, best, context);
@@ -2314,7 +2361,11 @@
     return {
       offer: r.pps_offer ? (L(CONFIGURATIONS[r.pps_offer.configuration_id].name + ' with ' + CANDIDATES[r.pps_offer.candidate_id].name,
         configName(r.pps_offer.configuration_id) + ', premier ' + CANDIDATES[r.pps_offer.candidate_id].name) +
-        (r.pps_offer.accepted ? L(': accepted', ': przyjęta') : L(': not accepted (', ': nieprzyjęta (') + reasonText(r.pps_offer.reason) + ')')) :
+        (r.pps_offer.accepted ? L(': accepted', ': przyjęta') : L(': not accepted (', ': nieprzyjęta (') + reasonText(r.pps_offer.reason) + ')') +
+        // Z — 0.76: the price of going against the Naczelnik's own candidate, paid when the offer was submitted.
+        (r.against_naczelnik ? L('; against the Naczelnik’s candidate: relation with Piłsudski −' + AGAINST_NACZELNIK.relation + ', ' +
+          AGAINST_NACZELNIK.cash + ' R for the talks', '; wbrew kandydatowi Naczelnika: relacja z Piłsudskim −' + AGAINST_NACZELNIK.relation + ', ' +
+          AGAINST_NACZELNIK.cash + ' R na rokowania') : '')) :
         L('PPS stays in opposition', 'PPS pozostaje w opozycji'),
       forecast: r.pps_offer ? L(r.pps_offer.forecast.yes + ' MPs for, ' + r.pps_offer.forecast.no + ' against, ' + r.pps_offer.forecast.abstain + ' abstaining',
         r.pps_offer.forecast.yes + ' posłów za, ' + r.pps_offer.forecast.no + ' przeciw, ' + r.pps_offer.forecast.abstain + ' wstrzymujących się') : '',
@@ -3660,6 +3711,9 @@
     ppsAgreements: ppsAgreements,
     responseCase: responseCase,
     responseDeadline: responseDeadline,
+    againstNaczelnik: againstNaczelnik,
+    AGAINST_NACZELNIK: AGAINST_NACZELNIK,
+    headCandidate: headCandidate,
     supportCardAvailable: supportCardAvailable,
     coalitionCardAvailable: coalitionCardAvailable,
     concessionStatus: concessionStatus,

@@ -102,7 +102,7 @@
     save_load: {en: 'Save/Load', pl: 'Zapis i odczyt'},
     options: {en: 'Options', pl: 'Opcje'},
     other_language: {en: 'Polski', pl: 'English'},
-    tab_main: {en: 'Main', pl: 'Ogólne'},
+    tab_main: {en: 'Party', pl: 'Partia'},
     tab_politics: {en: 'Politics', pl: 'Polityka'},
     tab_economy: {en: 'Economy', pl: 'Gospodarka'},
     tab_defense: {en: 'Defense', pl: 'Obronność'},
@@ -351,6 +351,9 @@
     var scenes = dendryUI.dendryEngine && dendryUI.dendryEngine.game && dendryUI.dendryEngine.game.scenes;
     if (!choices || !scenes) return;
     var $items = dendryUI.$content.find('ul.choices').last().children('li');
+    // Z — 0.76 (the user's note of 8 X 2026): the people chosen for the new Committee are marked by a red rule at the left.
+    var qualities = dendryUI.dendryEngine.state && dendryUI.dendryEngine.state.qualities;
+    var chosen = String((qualities && qualities.pl_adv_draft) || '').split(',');
     choices.forEach(function(choice, i) {
       var match = choice && /^polish_party_advisers\.toggle_([a-z]+)$/.exec(String(choice.id || '').replace(/^@/, ''));
       var scene = match && scenes[match[1]];
@@ -358,6 +361,9 @@
       var $item = $items.eq(i);
       var $text = $('<div>').addClass('pl-portrait-text').append($item.contents());
       $item.addClass('pl-portrait-choice').append($('<img>').addClass('pl-portrait').attr({src: scene.cardImage, alt: ''}), $text);
+      if (chosen.indexOf(match[1]) >= 0) {
+        $item.addClass('pl-portrait-chosen');
+      }
     });
   };
 

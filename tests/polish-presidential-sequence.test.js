@@ -14,9 +14,9 @@ afterEach(() => assert.deepEqual(errors, [], 'Dendry must not swallow script or 
 const sum = object => Object.values(object).reduce((total, value) => total + value, 0);
 // Close to the 1922 shares: the historical winners follow from it (Rataj, Narutowicz, Wojciechowski).
 const HISTORICAL_LIKE = { zln: 22, pschd: 10, psl_piast: 13, psl_wyzwolenie: 11, pps: 10, npr: 5, minorities_bloc: 16, kpp: 1.5, other: 11.5 };
-// The national result of the opening before the calibration of stage 8 (decision 2A): PPS is slightly larger than
-// PSL Wyzwolenie, so a Daszyński nomination eliminates Narutowicz first (a fixture for the branch without him).
-const PPS_AHEAD = { kpp: 6.005, pps: 13.287, npr: 6.33, psl_wyzwolenie: 12.751, psl_piast: 13.145, pschd: 6.589, zln: 11.848, minorities_bloc: 20.451, other: 9.594 };
+// Z — 0.76 (decision 7A of 8 X 2026): with Baudouin de Courtenay as a symbolic candidate Narutowicz wins in the historical
+// Sejm, so the branch without him needs a strong PSL Piast: Piast and NPR outvote PSL Wyzwolenie, PPS and the minorities.
+const PIAST_AHEAD = { kpp: 2, pps: 8, npr: 8, psl_wyzwolenie: 6, psl_piast: 30, pschd: 8, zln: 22, minorities_bloc: 8, other: 8 };
 
 function choice(engine, id) {
   return engine.getCurrentChoices().find(item => item.id === id);
@@ -220,10 +220,24 @@ test('counted ballots, supporters and office transitions are recorded once; cabi
   assert.deepEqual([Q.year, Q.month, Q.time, Q.month_actions], [1922, 12, 12, 0]);
 });
 
+// Z — 0.76 (decision 7A of 8 X 2026; H: PRESIDENT-1922-ROUNDS): Baudouin de Courtenay is a symbolic candidate who withdraws
+// after the first round, as the minorities left him in 1922 (103, then 10 votes); Narutowicz then wins with or without Daszyński.
+test('Kandydat symboliczny 0.76: Baudouin withdraws after the first round; Narutowicz wins with and without the Daszyński nomination', () => {
+  for (const nominate of [false, true]) {
+    const { engine, Q } = december();
+    electSpeaker(engine);
+    choose(engine, nominate ? 'polish_presidential_sequence.confirm_daszynski' : 'polish_presidential_sequence.decline_daszynski');
+    const first = Q.polish_presidency.elections[0];
+    assert.equal(first.winner_id, 'gabriel_narutowicz', `Daszyński nominated: ${nominate}`);
+    assert.deepEqual(first.rounds[0].withdrawn, ['jan_baudouin_de_courtenay'], 'he withdraws instead of the weakest');
+    assert.ok(!Object.prototype.hasOwnProperty.call(first.rounds[1].votes, 'jan_baudouin_de_courtenay'));
+    if (nominate) assert.ok(Object.prototype.hasOwnProperty.call(first.rounds[1].votes, 'ignacy_daszynski'), 'Daszyński stays one more round');
+  }
+});
+
 test('the threat branch follows only the election of Narutowicz', () => {
-  // With PPS slightly larger than PSL Wyzwolenie (PPS_AHEAD), a Daszyński nomination eliminates Narutowicz
-  // first and another President is elected.
-  const { engine, Q } = december({ values: PPS_AHEAD });
+  // With a strong PSL Piast (PIAST_AHEAD), Narutowicz is eliminated and another President is elected.
+  const { engine, Q } = december({ values: PIAST_AHEAD });
   electSpeaker(engine);
   choose(engine, 'polish_presidential_sequence.confirm_daszynski');
   const first = Q.polish_presidency.elections[0];

@@ -1167,6 +1167,21 @@ ul.choices li.pl-portrait-choice .pl-portrait-text {
 ul.choices li.pl-portrait-choice div.subtitle {
   margin-left: 0;
 }
+/* Z — 0.76: a person chosen for the new Committee — a red rule at the left and a red small-capital mark; his actions in a
+   paragraph of their own under the biography. */
+ul.choices li.pl-portrait-choice.pl-portrait-chosen {
+  box-shadow: inset 3px 0 0 var(--accent-color);
+  padding-left: 0.6em;
+}
+.pl-adv-in {
+  font-variant: small-caps;
+  letter-spacing: 0.04em;
+  color: var(--accent-color);
+}
+.pl-adv-actions, .pl-adv-state {
+  display: block;
+  margin-top: 0.35em;
+}
 ul.choices li.pl-portrait-choice.unavailable .pl-portrait {
   opacity: 0.6;
   filter: grayscale(1);

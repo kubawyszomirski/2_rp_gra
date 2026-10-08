@@ -19,9 +19,8 @@ if (Q.polish_party_rules && typeof PolishParty !== 'undefined') {
 }
 !}
 
-# The sidebar: one fact per line under section headings (Z — 0.54), each with a bold label (Z — 0.55).
-= [? if year : [+ month : month +] [+ year +] ?][? if not year : Status ?]
-
+# The sidebar: one fact per line under section headings (Z — 0.54), each with a bold label (Z — 0.55). Z — 0.76 (the user's
+# note of 8 X 2026): the first tab is "Party" and has no date heading; the month is shown elsewhere on the page.
 [? if not polish_party_rules : **Resources available:** [+ resources +] ?]
 
 = PPS

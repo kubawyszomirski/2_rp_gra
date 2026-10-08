@@ -64,8 +64,9 @@ test('Pasek boczny: pogrubione etykiety, rozbite wiersze i liczby bez zbędnych 
   const engine = dendry.startGame(1922, 'pl');
   const main = display(engine, 'status'), politics = display(engine, 'status.politics');
   const mainText = flat(main), politicsText = flat(politics).replace(/<[^>]*>/g, '');
-  // The date is the first heading; the old heading "Stan" is gone.
-  assert.match(mainText, /^Styczeń 1922 ?\n/);
+  // Z — 0.76: the tab "Partia" has no date heading; its first heading is PPS.
+  assert.match(mainText, /^\s*PPS ?\n/);
+  assert.doesNotMatch(mainText, /Styczeń 1922/);
   for (const label of ['Kasa partii:', 'Zbiórka przynosi:', 'Składki:', 'Członkostwo (indeks):', 'Poziom aparatu:',
     'Sprzeciw w partii:', 'Spójność:', 'Pozycja PPS:', 'Prasa:', 'TUR:', 'Spółdzielnie:', 'Milicja:', 'Przemysł:', 'Kolej:',
     'Robotnicy rolni:', 'Głowa państwa:', 'Premier:']) {
@@ -101,12 +102,14 @@ test('Pasek boczny: zakładka Obrona ma nagłówek dla każdej siły i jedną in
   assert.deepEqual(errors, []);
 });
 
-test('Pasek boczny przed rozpoczęciem gry ma nagłówek „Stan”, a w grze datę (pl)', () => {
+// Z — 0.76 (the user's note of 8 X 2026): the first tab is called "Partia" and shows no date, before the game and in it.
+test('Pasek boczny: zakładka „Partia” bez daty, przed rozpoczęciem gry i w grze (pl)', () => {
   const errors = dendry.watchEngineErrors();
   const before = dendry.createEngine(1922, 'pl');
-  assert.match(sidebar(before, 'status'), /^Stan ?\n/);
+  assert.doesNotMatch(sidebar(before, 'status'), /^Stan ?\n/);
   const engine = dendry.startGame(1922, 'pl');
-  assert.match(sidebar(engine, 'status'), /^Styczeń 1922 ?\n/);
+  assert.match(sidebar(engine, 'status'), /^\s*PPS ?\n/);
+  assert.doesNotMatch(sidebar(engine, 'status'), /Styczeń 1922/);
   assert.deepEqual(errors, []);
 });
 

@@ -2056,6 +2056,11 @@
   function advisersStatus(Q, draft) {
     const current = activeAdvisers(Q);
     if (draft.length > TEAM_SIZE) return no(L('Three seats at most.', 'Najwyżej trzy miejsca.'));
+    // Z — 0.76 (the user's note of 8 X 2026): all three seats are filled, unless fewer people are left to choose from.
+    const choosable = ADVISER_ORDER.filter(id => current.indexOf(id) >= 0 || adviserInPool(Q, id)).length;
+    if (draft.length < Math.min(TEAM_SIZE, choosable)) {
+      return no(L('Choose three people for the three seats (now ' + draft.length + ').', 'Wybierz trzy osoby na trzy miejsca (teraz ' + draft.length + ').'));
+    }
     if (draft.some(id => current.indexOf(id) < 0 && !adviserInPool(Q, id))) return no(L('Someone in this Committee is not available.', 'Ktoś z tego składu CKW jest niedostępny.'));
     if (sameSet(draft, current)) return no(L('This is the present Committee.', 'To obecny skład CKW.'));
     if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
@@ -2098,6 +2103,26 @@
     return result(Q, lines.join('; ') + '.');
   }
 
+  // Z — 0.76 (the user's note of 8 X 2026): the actions of each member, listed under "Actions:" on the page of the Committee.
+  const ADVISER_ACTION_LINES = Object.freeze({
+    daszynski: [['Parliamentary Compromise: better relations with Piast, NPR and the Christian Democrats', 'Kompromis parlamentarny: lepsze relacje z Piastem, NPR i chadecją'], ['Broker a Coalition: calmer coalition agreements or a better-judged broad cabinet offer', 'Pośrednictwo w koalicji: mniejsze napięcie umów koalicyjnych albo lepiej oceniona szeroka oferta gabinetu']],
+    puzak: [['Party Discipline: less dissent in all three factions', 'Dyscyplina partyjna: mniejszy sprzeciw we wszystkich trzech frakcjach'], ['Mobilize the Organization: more reach among workers and stronger workers’ campaigns', 'Mobilizacja organizacji: większy zasięg wśród robotników i mocniejsze kampanie robotnicze']],
+    perl: [['Define the Party Line: a stronger and calmer Centrum, workers won back from the KPP', 'Określenie linii partii: silniejsze i spokojniejsze Centrum, robotnicy odzyskani od KPP'], ['Direct the Party Press: a more credible press and stronger press campaigns', 'Kierowanie prasą partyjną: wiarygodniejsza prasa i mocniejsze kampanie prasowe']],
+    niedzialkowski: [['Build Centrolew: better relations with the peasant and centre parties', 'Budowa Centrolewu: lepsze relacje z partiami chłopskimi i centrum'], ['Defend Constitutional Democracy: democracy grows and the PPS organisations stand by lawful institutions', 'Obrona demokracji konstytucyjnej: demokracja rośnie, a organizacje PPS stoją przy legalnych instytucjach']],
+    arciszewski: [['Organize the Workers: a union branch reaches further and PPS gains among its workers', 'Organizowanie robotników: większy zasięg branży związkowej i zysk PPS wśród jej robotników'], ['Labour Programme, when PPS holds Labour: one stage of workers’ rights or benefits without this month’s action', 'Program pracy, gdy PPS ma resort Pracy: jeden etap praw robotniczych albo zasiłków bez akcji miesiąca']],
+    zaremba: [['Worker-Peasant Front: a better relation with PSL Wyzwolenie', 'Front robotniczo-chłopski: lepsza relacja z PSL Wyzwolenie'], ['Class Campaign: PPS gains among workers and the unemployed, loses a little among the petty bourgeoisie; a stronger Lewica', 'Kampania klasowa: zysk PPS wśród robotników i bezrobotnych, mała strata wśród drobnomieszczaństwa; silniejsza Lewica']],
+    czapinski: [['Socialist Education: a stronger Lewica and fewer workers lost to the KPP; needs TUR', 'Edukacja socjalistyczna: silniejsza Lewica i mniej robotników odchodzi do KPP; wymaga TUR'], ['Socialist Economic Programme, with PPS in the cabinet: progressive taxes, public ownership or workers’ representation', 'Socjalistyczny program gospodarczy, gdy PPS jest w gabinecie: podatki progresywne, własność publiczna albo przedstawicielstwo robotników']],
+    jaworowski: [['Back Piłsudski: a better relation with Piłsudski and stronger Piłsudczycy, at the cost of dissent in Centrum and Lewica', 'Poparcie dla Piłsudskiego: lepsza relacja z Piłsudskim i silniejsi piłsudczycy, kosztem sprzeciwu Centrum i Lewicy']],
+    moraczewski: [['Public Works Programme, when PPS holds Labour: one stage of public works without this month’s action', 'Program robót publicznych, gdy PPS ma resort Pracy: jeden etap robót bez akcji miesiąca']],
+    ziemiecki: [['Conditional Toleration: calmer Centrum and Lewica while PPS tolerates a minority cabinet close to Piłsudski', 'Warunkowe tolerowanie: spokojniejsze Centrum i Lewica, gdy PPS toleruje mniejszościowy gabinet bliski Piłsudskiemu'], ['Municipal Socialism: PPS gains in the large cities', 'Socjalizm municypalny: zysk PPS w wielkich miastach']],
+    malinowski: [['Organize the Piłsudczyks: stronger and calmer Piłsudczycy', 'Organizowanie piłsudczyków: silniejsi i spokojniejsi piłsudczycy']],
+  });
+
+  function adviserActionsHtml(id) {
+    const items = (ADVISER_ACTION_LINES[id] || []).map(pair => '<br>– ' + L(pair[0], pair[1]));
+    return items.length ? '<span class="pl-adv-actions">' + L('Actions:', 'Akcje:') + items.join('') + '</span>' : '';
+  }
+
   function advisersView(Q) {
     const draft = draftOf(Q), current = activeAdvisers(Q);
     for (const id of ADVISER_ORDER) {
@@ -2106,9 +2131,13 @@
       Q['pl_adv_' + id + '_why'] = ADVISERS[id].continuation ? L('Belongs to the continuation (from 1928 in chapter 2).',
         'Należy do kontynuacji (od 1928 roku, w rozdziale 2).') : !adviserInPool(Q, id) && current.indexOf(id) < 0 ? L('No longer available.', 'Już niedostępny.') :
         draft.length >= TEAM_SIZE ? L('The three seats are taken.', 'Trzy miejsca są zajęte.') : '';
-      // Z — 0.75: the last sentence of the candidate's description: remove, add, or why not.
-      Q['pl_adv_' + id + '_state'] = Q['pl_adv_' + id + '_in'] ? L('On the Committee — remove.', 'Zasiada w CKW — usuń.') :
-        Q['pl_adv_' + id + '_can_add'] ? L('Add to the Committee.', 'Dodaj do CKW.') : Q['pl_adv_' + id + '_why'];
+      // Z — 0.75: the last sentence of the candidate's description: remove, add, or why not. Z — 0.76: a chosen member is marked
+      // in red small capitals (and his row on the page, out/html/game.js); his actions stand in a paragraph of their own.
+      Q['pl_adv_' + id + '_state'] = Q['pl_adv_' + id + '_in'] ?
+        '<span class="pl-adv-state"><strong class="pl-adv-in">' + L('On the Committee', 'W składzie CKW') + '</strong> — ' +
+          L('click to remove.', 'kliknij, by usunąć.') + '</span>' :
+        '<span class="pl-adv-state">' + (Q['pl_adv_' + id + '_can_add'] ? L('Add to the Committee.', 'Dodaj do CKW.') : Q['pl_adv_' + id + '_why']) + '</span>';
+      Q['pl_adv_' + id + '_actions'] = adviserActionsHtml(id);
     }
     Q.pl_adv_draft_text = draft.map(id => ADVISERS[id].name).join(', ') || L('nobody', 'nikt');
     Q.pl_adv_confirm_why = advisersStatus(Q, draft).reason;
