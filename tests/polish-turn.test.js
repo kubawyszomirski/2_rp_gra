@@ -265,7 +265,9 @@ test('an adviser opening a card makes that step cost no month; closing it refund
 
 // Z — 0.60 (the user's notes of 7 X 2026): a card is discarded on the card itself, once a month; the timed cards, the cards of
 // the party's vision and the cards opened by a special event cannot be discarded. There is no separate discard card.
-test('one free discard a month on the card itself, available again after the month changes (4.4; Z — 0.60)', () => {
+// Z — 0.79 (decision 1A of 14 X 2026): discarding has no monthly limit, so two cards the party cannot pay for never stop the
+// game; a discarded card rests 3 months like a used one.
+test('Odrzucanie bez limitu 0.79: discarding on the card itself without a monthly limit; a discarded card rests 3 months (4.4; Z — 0.60)', () => {
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
   assert.ok(!choiceIds(engine).includes('polish_discard'), 'no separate discard card');
@@ -282,11 +284,14 @@ test('one free discard a month on the card itself, available again after the mon
   PolishRules.discardCard(Q, engine.state, 'polish_party_media');
   assert.deepEqual(engine.state.currentHands.main.map(c => c.id), ['polish_party_direction']);
   assert.equal(Q.time, 1, 'discarding costs no month');
+  assert.equal(PolishRules.cardRest(Q, 'polish_party_media'), 3, 'the discarded card rests');
+  assert.ok(!PolishEngineHooks.legalDeckCards(engine, 'main.party').some(c => c.id === 'polish_party_media'), 'and is not drawn');
   engine.state.currentHands.main.push({ id: 'polish_party_militia', title: 'Milicja', deck: 'main.party' });
-  assert.match(PolishRules.discardStatus(Q, engine.state, 'polish_party_militia').reason, /already been discarded this month/);
-  assert.equal(PolishEngineHooks.deckView(engine, 'main.party').cards.find(c => c.id === 'polish_party_militia').discard.available, false);
-  spendMonth(engine);
-  assert.equal(Q.S.turn.discard_used, false, 'available again after the month changes');
+  assert.equal(PolishRules.discardStatus(Q, engine.state, 'polish_party_militia').available, true, 'a second discard in the same month');
+  assert.equal(PolishEngineHooks.deckView(engine, 'main.party').cards.find(c => c.id === 'polish_party_militia').discard.available, true);
+  PolishRules.discardCard(Q, engine.state, 'polish_party_militia');
+  assert.deepEqual(engine.state.currentHands.main.map(c => c.id), ['polish_party_direction']);
+  assert.equal(Q.time, 1);
 });
 
 // Z — 0.74 (decisions 1A–3A of 8 X 2026): the cards that must not wait for a lucky draw — the prepared reforms, the answer to

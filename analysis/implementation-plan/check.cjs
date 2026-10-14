@@ -294,7 +294,7 @@ assert.ok(plan.includes('## 15. Ustalenia z etapu 5'), 'stage 5 findings');
 assert.ok(/^### 23\.19\. Etap 5 wdrożony/m.test(tr), 'reference 23.19 records stage 5');
 assert.equal((tr.match(/\*\*K — etap 5 \(0\.46\):\*\*/g) || []).length, 34, 'thirty-four K notes of stage 5');
 for (const script of ['polish_electorate.js', 'polish_party.js']) assert.ok(loadsScript(read('out/html/index.html'), script), `the page loads ${script}`);
-assert.equal(byStageB[5].length, 76, 'stage 5 keeps 76 tests of 21.1 (67, the programme in practice of Z — 0.57, the press distribution of Z — 0.68, the new Committee page of Z — 0.75, the Campaign and Press cards of Z — 0.77 and four tests of Z — 0.78)');
+assert.equal(byStageB[5].length, 79, 'stage 5 keeps 79 tests of 21.1 (67, the programme in practice of Z — 0.57, the press distribution of Z — 0.68, the new Committee page of Z — 0.75, the Campaign and Press cards of Z — 0.77, four tests of Z — 0.78 and three of Z — 0.79)');
 const rulesSource = read('source/rules/polish_rules.js');
 assert.ok(rulesSource.includes("polish_event_faction_split: Object.freeze({definition_id: 'party.faction_split'"), 'E3 is one definition of the queue');
 for (const scene of ['pps_lewica_split', 'pps_pilsudczycy_split', 'pps_centrum_crisis']) {
@@ -358,7 +358,7 @@ const page7 = read('out/html/index.html');
 const pageOrder7 = ['polish_unions.js', 'polish_politics.js', 'polish_security.js', 'polish_engine_hooks.js'].map(f => scriptAt(page7, f));
 assert.ok(pageOrder7.every(i => i >= 0) && pageOrder7[0] < pageOrder7[1] && pageOrder7[1] < pageOrder7[2] && pageOrder7[2] < pageOrder7[3],
   'the politics and security modules load after the unions and before the engine hooks');
-assert.equal(byStageB[7].length, 55, 'stage 7 keeps 55 tests of 21.1 (53, the silence of B2 of Z — 0.56 and the Milicja in B5 of Z — 0.59)');
+assert.equal(byStageB[7].length, 56, 'stage 7 keeps 56 tests of 21.1 (53, the silence of B2 of Z — 0.56, the Milicja in B5 of Z — 0.59 and the result after the assassination of Z — 0.79)');
 const democracyTests = ['tests/rules-politics.test.js', 'tests/polish-democracy.test.js', 'tests/rules-coup.test.js', 'tests/polish-coup.test.js',
   'tests/rules-projects.test.js'].map(read).join('\n');
 for (const name of byStageB[7]) assert.ok(democracyTests.includes(`test('${name}`), `stage 7 test „${name}” is implemented`);

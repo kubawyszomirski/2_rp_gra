@@ -213,8 +213,10 @@ go-to: polish_cabinet_formation
 @premier
 new-page: true
 on-arrival: {!
+// Z — 0.79 (decision 3 of 14 X 2026): a greyed candidate shows why, and then the same lines about who he is.
 for (var id of PolishGovernment.CANDIDATE_ORDER.concat(['pilsudski'])) {
-    Q['pl_cand_' + id + '_reason'] = PolishGovernment.draftChoiceStatus(Q, 'candidate', id).reason;
+    var why = PolishGovernment.draftChoiceStatus(Q, 'candidate', id).reason;
+    Q['pl_cand_' + id + '_reason'] = why ? PolishGovernment.candidateNote(Q, id, why) : '';
     Q['pl_cand_' + id + '_note'] = PolishGovernment.candidateNote(Q, id);
     Q['pl_cand_' + id + '_show'] = PolishGovernment.candidateShown(Q, id) ? 1 : 0;
 }

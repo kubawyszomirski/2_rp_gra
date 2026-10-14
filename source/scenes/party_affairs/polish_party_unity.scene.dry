@@ -7,17 +7,14 @@ card-image: img/polish/polish_party_unity.jpg
 view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.unityAvailable(Q) !}
 on-arrival: {!
 // Card party.unity (technical reference 10.2, 10.5, 10.9, 9.5; card catalogue 6.3–6.4): in the pool only
-// when a faction's dissent is 30 or more or the channel to the KPP is open. There is no plain "hold the line".
+// when a faction's dissent is 30 or more or the channel to the KPP is open. There is no plain "hold the line". Z — 0.79
+// (decision 8A of 14 X 2026): the page says why the card is here and shows only the options that fit (pl_unity_*_show).
 PolishParty.unityView(Q);
 !}
 
 = Unity and leadership
 
-[+ pl_unity_centrum_line +]
-
-[+ pl_unity_lewica_line +]
-
-[+ pl_unity_pilsudczycy_line +]
+[+ pl_unity_intro +]
 
 - @concession_centrum
 - @concession_lewica
@@ -33,6 +30,7 @@ PolishParty.unityView(Q);
 
 @concession_centrum
 title: A concession to Centrum PPS
+view-if: pl_unity_concession_centrum_show = 1
 subtitle: 1 resource; the faction's dissent falls (−8). Waits three months for this faction.
 choose-if: {! return PolishParty.unityStatus(Q, 'concession', 'centrum').available !}
 unavailable-subtitle: [+ pl_unity_concession_centrum_why +]
@@ -43,6 +41,7 @@ go-to: result
 
 @concession_lewica
 title: A concession to Lewica PPS
+view-if: pl_unity_concession_lewica_show = 1
 subtitle: 1 resource; the faction's dissent falls (−8). Waits three months for this faction.
 choose-if: {! return PolishParty.unityStatus(Q, 'concession', 'lewica').available !}
 unavailable-subtitle: [+ pl_unity_concession_lewica_why +]
@@ -53,6 +52,7 @@ go-to: result
 
 @concession_pilsudczycy
 title: A concession to Piłsudczycy
+view-if: pl_unity_concession_pilsudczycy_show = 1
 subtitle: 1 resource; the faction's dissent falls (−8). Waits three months for this faction.
 choose-if: {! return PolishParty.unityStatus(Q, 'concession', 'pilsudczycy').available !}
 unavailable-subtitle: [+ pl_unity_concession_pilsudczycy_why +]
@@ -63,6 +63,7 @@ go-to: result
 
 @kpp_line
 title: Agree on the line of cooperation with the communists
+view-if: pl_unity_kpp_line_show = 1
 subtitle: No money; every faction accepts the cooperation more readily (+15). Waits six months.
 choose-if: {! return PolishParty.unityStatus(Q, 'kpp_line').available !}
 unavailable-subtitle: [+ pl_unity_kpp_line_why +]
@@ -73,6 +74,7 @@ go-to: result
 
 @postpone_centrum
 title: Persuade Centrum PPS to wait
+view-if: pl_unity_postpone_centrum_show = 1
 subtitle: Its case cannot lead to a split for three months; its dissent does not change. Once per case.
 choose-if: {! return PolishParty.unityStatus(Q, 'postpone', 'centrum').available !}
 unavailable-subtitle: [+ pl_unity_postpone_centrum_why +]
@@ -83,6 +85,7 @@ go-to: result
 
 @postpone_lewica
 title: Persuade Lewica PPS to wait
+view-if: pl_unity_postpone_lewica_show = 1
 subtitle: Its case cannot lead to a split for three months; its dissent does not change. Once per case.
 choose-if: {! return PolishParty.unityStatus(Q, 'postpone', 'lewica').available !}
 unavailable-subtitle: [+ pl_unity_postpone_lewica_why +]
@@ -93,6 +96,7 @@ go-to: result
 
 @postpone_pilsudczycy
 title: Persuade Piłsudczycy to wait
+view-if: pl_unity_postpone_pilsudczycy_show = 1
 subtitle: Its case cannot lead to a split for three months; its dissent does not change. Once per case.
 choose-if: {! return PolishParty.unityStatus(Q, 'postpone', 'pilsudczycy').available !}
 unavailable-subtitle: [+ pl_unity_postpone_pilsudczycy_why +]
@@ -103,6 +107,7 @@ go-to: result
 
 @expel_centrum
 title: Expel part of Centrum PPS
+view-if: pl_unity_expel_centrum_show = 1
 subtitle: 1 resource; a quarter of its base leaves with voters and MPs; its dissent falls (−15). Every purge waits twelve months.
 choose-if: {! return PolishParty.unityStatus(Q, 'expel', 'centrum').available !}
 unavailable-subtitle: [+ pl_unity_expel_centrum_why +]
@@ -113,6 +118,7 @@ go-to: result
 
 @expel_lewica
 title: Expel part of Lewica PPS
+view-if: pl_unity_expel_lewica_show = 1
 subtitle: 1 resource; a quarter of its base leaves with voters and MPs; its dissent falls (−15). Every purge waits twelve months.
 choose-if: {! return PolishParty.unityStatus(Q, 'expel', 'lewica').available !}
 unavailable-subtitle: [+ pl_unity_expel_lewica_why +]
@@ -123,6 +129,7 @@ go-to: result
 
 @expel_pilsudczycy
 title: Expel part of Piłsudczycy
+view-if: pl_unity_expel_pilsudczycy_show = 1
 subtitle: 1 resource; a quarter of its base leaves with voters and MPs; its dissent falls (−15). Every purge waits twelve months.
 choose-if: {! return PolishParty.unityStatus(Q, 'expel', 'pilsudczycy').available !}
 unavailable-subtitle: [+ pl_unity_expel_pilsudczycy_why +]

@@ -2,7 +2,7 @@
  "source": "scenes/polish_event_assassination_response.scene.dry",
  "status": "complete",
  "lines": {
-  "title: After the Assassination": "title: Po zamachu",
+  "title: After the Assassination": "title: Po zabójstwie prezydenta",
   "subtitle: The President has been killed; PPS decides how its organisations answer.": "subtitle: Prezydent został zabity; PPS decyduje, jak odpowiedzą jej organizacje.",
   "= After the assassination of Gabriel Narutowicz": "= Po zabójstwie Gabriela Narutowicza",
   "[? if pl_b4_acting : [+ pl_b4_acting +], Marshal of the Sejm, substitutes for the President until the National Assembly elects a successor. ?]": "[? if pl_b4_acting : [+ pl_b4_acting +], marszałek Sejmu, zastępuje prezydenta, dopóki Zgromadzenie Narodowe nie wybierze następcy. ?]",
@@ -19,7 +19,7 @@
   "title: Hold the gathering without the Milicja": "title: Zorganizuj zgromadzenie bez Milicji",
   "title: Protect the gathering with the Milicja": "title: Chroń zgromadzenie siłami Milicji",
   "subtitle: 0.5 resources more.": "subtitle: Dodatkowe 0,5 jednostki środków.",
-  "= After the assassination": "= Po zamachu",
-  "- @root: Continue.": "- @root: Dalej."
+  "- @root: Continue.": "- @root: Dalej.",
+  "= After the assassination of President Narutowicz": "= Po zabójstwie prezydenta Narutowicza"
  }
 }

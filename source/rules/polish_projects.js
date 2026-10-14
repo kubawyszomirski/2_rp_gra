@@ -2427,11 +2427,26 @@
       reasons.map((r, i) => unions.branchName(unions.BRANCHES[i]) + ' — ' + r.reason).join(' '));
   }
 
+  // Z — 0.79 (the user's note of 14 X 2026): why a government card is not open now, in words — instead of "The card is not
+  // available." — so that an adviser's action that opens it says what is missing.
+  function cardUnavailableReason(Q, cardId) {
+    const S = Q.S, card = CARDS[cardId];
+    if (!S || !card) return L('The card is not available.', 'Karta jest niedostępna.');
+    if (S.chapter.status === 'ended') return L('The chapter has ended.', 'Rozdział się zakończył.');
+    if (government.formationPending(Q)) return L('A cabinet must be formed first.', 'Najpierw musi powstać gabinet.');
+    if (!ppsHoldsAny(S, card.portfolios)) {
+      return L('Needs PPS in the cabinet with the ' + card.portfolios.map(k => PORTFOLIO_SHORT[k]).join(' or ') + ' ministry.',
+        'Wymaga PPS w gabinecie z resortem ' + card.portfolios.map(k => PORTFOLIO_SHORT_PL[k]).join(' albo ') + '.');
+    }
+    if (cardId === 'currency_stabilisation' && !financialCrisis(S)) return L('Needs a financial crisis.', 'Wymaga kryzysu finansowego.');
+    return L('The card is not available.', 'Karta jest niedostępna.');
+  }
+
   // Status of one option of a government card (the reason is shown under the option). `extra` names the branch,
   // the variant of representation, or `adviser` when an adviser checks the option before opening the card.
   function optionStatus(Q, cardId, option, extra) {
     const S = Q.S, E = S.economy, t = Q.time;
-    if (!cardAvailable(Q, cardId)) return no(L('The card is not available.', 'Karta jest niedostępna.'));
+    if (!cardAvailable(Q, cardId)) return no(cardUnavailableReason(Q, cardId));
     const blockedLater = {
       expropriation: L('Needs a prior change of the constitutional guarantees of property; no card of this chapter creates it (12.6).',
         'Wymaga wcześniejszej zmiany konstytucyjnych gwarancji własności; żadna karta tego rozdziału jej nie tworzy (12.6).'),

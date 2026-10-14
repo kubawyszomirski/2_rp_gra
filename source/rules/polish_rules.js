@@ -740,9 +740,12 @@
     return card ? card.id : null;
   }
 
-  // The free discard of this month is still unused (the card offering it stays visible).
+  // Z — 0.79 (decision 1A of 14 X 2026): a card can be discarded at any time, without a monthly limit, so two cards the party
+  // cannot pay for never stop the game; a discarded card rests 3 months like a used one (DISCARD_REST_MONTHS), so the
+  // deck cannot be fished for one card. `discard_used` still records that a card was discarded this month.
+  const DISCARD_REST_MONTHS = 3;
   function discardAvailable(Q) {
-    return !!Q.S && !Q.S.turn.discard_used;
+    return !!Q.S;
   }
 
   function canDiscard(Q, state) {
@@ -808,7 +811,6 @@
       'Karty otwartej przez specjalne wydarzenie nie można odrzucić.'));
     if (handCards(state).some(card => card.id === cardId && card.urgent)) return no(L('An urgent card cannot be discarded; it leaves the hand when it is played or its time ends.',
       'Pilnej karty nie można odrzucić; zniknie z ręki po zagraniu albo po swoim terminie.'));
-    if (Q.S.turn.discard_used) return no(L('A card has already been discarded this month.', 'W tym miesiącu odrzucono już kartę.'));
     if (!handCards(state).some(card => card.id === cardId)) return no(L('The card is not in the hand.', 'Tej karty nie ma na ręce.'));
     return {available: true, reason: ''};
   }
@@ -827,15 +829,17 @@
     }
   }
 
-  // One free voluntary discard a month: the card leaves the hand without effect or cooldown; the
-  // counter resets only when the month changes (4.4).
+  // A voluntary discard: the card leaves the hand without effect; since Z — 0.79 without a monthly limit, and the card rests
+  // 3 months (4.4).
   function discardFromHand(Q, state, index) {
-    if (!canDiscard(Q, state)) throw new Error('discardFromHand: no free discard left this month');
+    if (!canDiscard(Q, state)) throw new Error('discardFromHand: no card to discard');
     const hand = handCards(state);
     const card = hand[index];
     if (!card) throw new Error('discardFromHand: no card in place ' + (index + 1));
     hand.splice(index, 1);
     Q.S.turn.discard_used = true;
+    const key = restKey(card.id);
+    Q.S.cooldowns[key] = Math.max(Q.S.cooldowns[key] || 0, Q.time + DISCARD_REST_MONTHS);
     Q.S.history.reasons.push({t: Q.time, kind: 'discard', card: card.id});
     return card.id;
   }
@@ -1074,6 +1078,7 @@
     PARTY_REST_MONTHS: PARTY_REST_MONTHS,
     LINE_REST_MONTHS: LINE_REST_MONTHS,
     GOVT_REST_MONTHS: GOVT_REST_MONTHS,
+    DISCARD_REST_MONTHS: DISCARD_REST_MONTHS,
     handOfDeck: handOfDeck,
     registerCardDeadline: registerCardDeadline,
     cardDeadline: cardDeadline,

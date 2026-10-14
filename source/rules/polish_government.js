@@ -1728,61 +1728,83 @@
 
   const listNames = ids => ids.map(describeParty).join(', ');
 
-  // Step 2: one sentence about each prime minister (5A of 0.61 and 0.71): a partner's leader wins his party +5; a
-  // candidate of PPS stands for his faction; an expert is backed or fought by the clubs of his history.
-  function candidateNote(Q, candidateId) {
-    const candidate = CANDIDATES[candidateId];
+  // Step 2: what the player should know about each prime minister (Z — 0.79, decision 3 of 14 X 2026): who he is, who stands
+  // behind him and who against him (with their MPs), his programme, what choosing him gains and what it costs — short lines, no
+  // history lesson. Earlier (0.61, 0.71, 0.72, 0.76) one sentence. A greyed candidate shows the same lines after the reason.
+  function candidateNote(Q, candidateId, unavailableReason) {
+    const S = Q.S, candidate = CANDIDATES[candidateId];
+    const clubsIn = ids => ids.filter(id => seatsOf(S, id) > 0);
+    const withSeats = ids => {
+      const present = clubsIn(ids);
+      return present.length ? listNames(present) + L(' (' + seatsOfList(S, present) + ' MPs).', ' (' + seatsOfList(S, present) + ' posłów).') : '';
+    };
+    const line = (label, text) => text ? '<strong>' + label + '</strong> ' + text : '';
+    let who = '', behind = '', against = '', programme = '', gain = '', cost = L('none.', 'brak.');
     if (candidateId === 'pilsudski') {
-      return L('Premiership agreed with Piłsudski (16.7): the programme of a legal cabinet, the usual parliamentary responsibility. The relief of pressure comes after his real appointment; this formation costs no second action.',
-        'Premierostwo uzgodnione z Piłsudskim (16.7): program legalnego gabinetu, zwykła odpowiedzialność parlamentarna. Ulga w nacisku przychodzi po jego rzeczywistym powołaniu; to formowanie nie kosztuje drugiej akcji.');
-    }
-    let note;
-    if (candidateId === 'daszynski') {
-      note = L('Leader of PPS, of its centre: a prime minister of our own. The partners take him as they take PPS. On appointment the centre of PPS grows stronger.',
-        'Lider PPS z centrum partii: premier z naszej partii. Partnerzy przyjmują go tak jak samą PPS. Po powołaniu centrum PPS się wzmacnia.');
+      who = L('Józef Piłsudski, as prime minister agreed with him (16.7): the programme of a legal cabinet and the usual parliamentary responsibility.',
+        'Józef Piłsudski jako premier uzgodniony z nim (16.7): program legalnego gabinetu i zwykła odpowiedzialność przed Sejmem.');
+      gain = L('the pressure eases after his real appointment.', 'nacisk słabnie po jego rzeczywistym powołaniu.');
+      cost = L('this formation costs no second action.', 'to formowanie nie kosztuje drugiej akcji.');
+    } else if (candidateId === 'daszynski') {
+      who = L('the leader of PPS, of its Centrum: a prime minister of our own.', 'lider PPS z Centrum partii: premier z naszej partii.');
+      behind = L('the partners take him as they take PPS.', 'partnerzy przyjmują go tak jak samą PPS.');
+      gain = L('on appointment Centrum PPS grows stronger.', 'po powołaniu Centrum PPS się wzmacnia.');
     } else if (candidateId === 'moraczewski') {
-      note = L('Of the Piłsudski wing of PPS: welcome to the clubs friendly to Piłsudski, unwelcome to ZLN and the Christian Democrats. On appointment the piłsudczycy grow stronger and the other factions grumble.',
-        'Z piłsudczyków PPS: mile widziany przez kluby życzliwe Piłsudskiemu, źle widziany przez ZLN i chadecję. Po powołaniu piłsudczycy się wzmacniają, a pozostałe frakcje są niezadowolone.');
+      who = L('of the Piłsudczycy of PPS.', 'z piłsudczyków PPS.');
+      behind = L('the clubs friendly to Piłsudski.', 'kluby życzliwe Piłsudskiemu.');
+      against = withSeats(['zln', 'pschd']);
+      gain = L('on appointment the Piłsudczycy grow stronger.', 'po powołaniu piłsudczycy się wzmacniają.');
+      cost = L('the other factions of PPS grumble.', 'pozostałe frakcje PPS są niezadowolone.');
     } else if (candidateId === 'czapinski') {
-      note = L('Of the left of PPS: welcome to PSL Wyzwolenie only, unwelcome to Piast, NPR, the Christian Democrats and ZLN. On appointment the left grows stronger and the other factions grumble.',
-        'Z lewicy PPS: mile widziany tylko przez PSL Wyzwolenie, źle widziany przez Piasta, NPR, chadecję i ZLN. Po powołaniu lewica się wzmacnia, a pozostałe frakcje są niezadowolone.');
+      who = L('of the Left of PPS.', 'z lewicy PPS.');
+      behind = withSeats(['psl_wyzwolenie']);
+      against = withSeats(['psl_piast', 'npr', 'pschd', 'zln']);
+      gain = L('on appointment the Left grows stronger.', 'po powołaniu lewica się wzmacnia.');
+      cost = L('the other factions of PPS grumble.', 'pozostałe frakcje PPS są niezadowolone.');
     } else if (candidate.party) {
-      note = L('Leader of ' + ACTOR_PROFILES[candidate.party].name + ': after the appointment +' + PREMIER_RELATION + ' relation with his party.',
-        'Lider ' + actorName(candidate.party) + ': po powołaniu +' + PREMIER_RELATION + ' relacji z jego partią.');
+      who = L('the leader of ' + ACTOR_PROFILES[candidate.party].name + '.', 'lider ' + actorName(candidate.party) + '.');
+      behind = withSeats([candidate.party]);
+      gain = L('after the appointment +' + PREMIER_RELATION + ' relation with his party.', 'po powołaniu relacja z jego partią +' + PREMIER_RELATION + '.');
     } else {
-      const profile = EXPERT_STANCES[candidateId];
-      note = L('Non-party expert, programme: ', 'Bezpartyjny fachowiec, program: ') + describeProgramme(candidate.programme) + '.';
-      if (profile) {
-        note += L(' Backed by ' + listNames(profile.for) + '.', ' Popierają go: ' + listNames(profile.for) + '.');
-        if (profile.against.length) note += L(' Fought by ' + listNames(profile.against) + '.', ' Zwalczają go: ' + listNames(profile.against) + '.');
-      }
-    }
-    // Z — 0.72 (8 X 2026): only the one non-party man the head of state proposes is marked as his candidate; another man of the
-    // period is described as what he was (decision 2B: Nowak may stand in VI–VII 1922 beside Śliwiński).
-    const head = headCandidate(Q);
-    const neg = Q.S.negotiation;
-    const against = !!neg && againstNaczelnik(Q, Object.assign({}, neg.draft, {candidate_id: candidateId}));
-    const cost = L(' Cost: it goes against the Naczelnik’s own candidate — when the offer is submitted, relation with Piłsudski −' +
-      AGAINST_NACZELNIK.relation + ' and ' + AGAINST_NACZELNIK.cash + ' R for the talks.', ' Koszt: idziemy wbrew kandydatowi Naczelnika — po złożeniu ' +
-      'oferty relacja z Piłsudskim −' + AGAINST_NACZELNIK.relation + ' i ' + AGAINST_NACZELNIK.cash + ' R na rokowania.');
-    if (candidateId === head) {
+      // Z — 0.72 (8 X 2026): only the one non-party man the head of state proposes is marked as his candidate; another man of
+      // the period is described as what he is (decision 2B: Nowak may stand in VI–VII 1922 beside Śliwiński).
+      const head = headCandidate(Q);
+      const neg = S.negotiation;
+      const goesAgainst = !!neg && againstNaczelnik(Q, Object.assign({}, neg.draft, {candidate_id: candidateId}));
       const president = Q.polish_presidency && Q.polish_presidency.current && Q.polish_presidency.current.office_id === 'prezydent_rp';
-      note += president ? L(' Candidate of the President for this period.', ' Kandydat Prezydenta na ten okres.') :
-        L(' Candidate of the Naczelnik Państwa for this period: supporting him costs nothing with Piłsudski.',
-          ' Kandydat Naczelnika Państwa na ten okres: poparcie go nic nie kosztuje u Piłsudskiego.');
       const profile = EXPERT_STANCES[candidateId];
-      if (profile && profile.against.length) {
-        note += L(' Risk: ' + listNames(profile.against) + ' vote against him.', ' Ryzyko: ' + listNames(profile.against) + ' głosują przeciw niemu.');
+      let role;
+      if (candidateId === head) {
+        role = president ? L('the candidate of the President for this period', 'kandydat Prezydenta na ten okres') :
+          L('the candidate of the Naczelnik Państwa (Piłsudski) for this period', 'kandydat Naczelnika Państwa (Piłsudskiego) na ten okres');
+      } else if (candidateId === 'nowak' && head === 'sliwinski') {
+        role = L('the candidate of a parliamentary compromise', 'kandydat kompromisu parlamentu');
+        gain = L('the right does not fight him, so he has a better chance of a majority in the Sejm.',
+          'prawica go nie zwalcza, więc łatwiej mu o większość w Sejmie.');
+      } else {
+        role = L('he stands in this period, but is not the candidate of the head of state', 'kandyduje w tym okresie, ale nie jest kandydatem głowy państwa');
       }
-    } else if (candidateId === 'nowak' && head === 'sliwinski') {
-      note += L(' A compromise candidate. Gain: the right does not fight him, so he has a better chance of a majority in the Sejm.',
-        ' Kandydat kompromisu. Zysk: prawica go nie zwalcza, więc łatwiej mu o większość w Sejmie.') + (against ? cost : '') +
-        L(' Historically he became prime minister only after Śliwiński fell (VII 1922).', ' Historycznie premierem został dopiero po upadku Śliwińskiego (VII 1922).');
-    } else if (!candidate.party && candidateId !== 'pilsudski' && expertPeriodStatus(Q, candidateId).available) {
-      note += L(' He stands in this period, but is not the candidate of the head of state.', ' Kandyduje w tym okresie, ale nie jest kandydatem głowy państwa.') +
-        (against ? cost : '');
+      who = L('a non-party expert; ', 'bezpartyjny fachowiec; ') + role + '.';
+      if (profile) {
+        behind = withSeats(profile.for);
+        against = profile.against.length ? withSeats(profile.against) : L('nobody.', 'nikt.');
+      }
+      programme = describeProgramme(candidate.programme) + '.';
+      if (candidateId === head && !president) cost = L('none — supporting him costs nothing with Piłsudski.', 'brak — poparcie go nic nie kosztuje u Piłsudskiego.');
+      else if (goesAgainst) cost = L('it goes against the Naczelnik’s candidate — when the offer is submitted, relation with Piłsudski −' + AGAINST_NACZELNIK.relation +
+        ' and ' + AGAINST_NACZELNIK.cash + ' R for the talks.', 'idziemy wbrew kandydatowi Naczelnika — po złożeniu oferty relacja z Piłsudskim −' +
+        AGAINST_NACZELNIK.relation + ' i ' + AGAINST_NACZELNIK.cash + ' R na rokowania.');
     }
-    return note;
+    const lines = [
+      unavailableReason ? line(L('Not available now:', 'Teraz niedostępny:'), unavailableReason) : '',
+      line(L('Who he is:', 'Kim jest:'), who),
+      line(L('Behind him:', 'Za nim stoją:'), behind),
+      line(L('Against him:', 'Przeciw niemu:'), against),
+      line(L('Programme:', 'Program:'), programme),
+      line(L('Gain:', 'Zysk:'), gain),
+      line(L('Cost of choosing him:', 'Koszt wyboru:'), cost),
+    ].filter(Boolean);
+    return '<span class="pl-cand-note">' + lines.join('<br>') + '</span>';
   }
 
   // Step 2 shows the possible prime ministers and, greyed, the leaders of the cabinet's own parties and the experts of

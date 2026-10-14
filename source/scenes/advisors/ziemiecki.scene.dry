@@ -14,18 +14,19 @@ PolishParty.advisorView(Q, 'ziemiecki');
 
 Ziemięcki represents the Piłsudczyk current while favoring conditional parliamentary cooperation.
 
-- @conditional_toleration
+- @emergency_fundraising
 - @municipal_socialism
 - @root: Return to main
 
-@conditional_toleration
-title: Conditional Toleration
-subtitle: When PPS supports a minority cabinet of Śliwiński or Piłsudski from outside, by an agreement: dissent falls in Centrum (−10) and Lewica (−8). The kind of support does not change.
-choose-if: {! return PolishParty.advisorActionStatus(Q, 'ziemiecki', 'conditional_toleration').available !}
-unavailable-subtitle: [+ pl_advact_conditional_toleration_why +]
+@emergency_fundraising
+title: Emergency Fundraising
+subtitle: An emergency infusion of resources: the party's money grows at once (+2).
+choose-if: {! return PolishParty.advisorActionStatus(Q, 'ziemiecki', 'emergency_fundraising').available !}
+unavailable-subtitle: [+ pl_advact_emergency_fundraising_why +]
 call: polish_advisor_commit
 on-arrival: {!
-PolishParty.advisorAction(Q, 'ziemiecki', 'conditional_toleration');
+// Z — 0.79 (decision 5A of 14 X 2026): in place of the conditional toleration.
+PolishParty.advisorAction(Q, 'ziemiecki', 'emergency_fundraising');
 !}
 
 [+ pl_party_result +]

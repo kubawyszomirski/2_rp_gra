@@ -763,7 +763,10 @@ test('Premier 0.71: a party cabinet is led by the leader of its largest club (Th
   assert.equal(gov.candidateStatus(Q, 'witos', draft).reason, 'PSL Piast is not the largest club of this cabinet.');
   assert.equal(gov.candidateStatus(Q, 'thugutt', draft).available, true);
   assert.equal(gov.candidateStatus(Q, 'nowak', draft).reason, 'A party cabinet is led by the leader of its largest party.');
-  assert.match(gov.candidateNote(Q, 'thugutt'), /^Leader of PSL Wyzwolenie: after the appointment \+5 relation with his party\.$/);
+  // Z — 0.79 (decision 3 of 14 X 2026): the note is short labelled lines.
+  const plainNote = text => text.replace(/<br>/g, ' | ').replace(/<[^>]+>/g, '');
+  assert.equal(plainNote(gov.candidateNote(Q, 'thugutt')), 'Who he is: the leader of PSL Wyzwolenie. | Behind him: PSL Wyzwolenie (' +
+    gov.seatsOf(Q.S, 'psl_wyzwolenie') + ' MPs). | Gain: after the appointment +5 relation with his party. | Cost of choosing him: none.');
   assert.equal(gov.candidateShown(Q, 'witos'), true, 'the leader of a member party is shown, greyed with his reason');
   assert.equal(gov.candidateShown(Q, 'nowak'), false, 'an expert is no candidate of this party cabinet');
   assert.equal(gov.candidateShown(Q, 'pilsudski'), false);
@@ -776,7 +779,10 @@ test('Premier 0.71: a party cabinet is led by the leader of its largest club (Th
   const E = centreLeft();
   gov.chooseCoalition(E, 'expert');
   assert.deepEqual([E.S.negotiation.draft.candidate_id, E.S.negotiation.draft.pps_mode], ['nowak', 'external_support']);
-  assert.match(gov.candidateNote(E, 'nowak'), /Backed by PSL Piast, PSL Wyzwolenie, NPR, PPS\. Candidate of the Naczelnik Państwa for this period: supporting him costs nothing with Piłsudski\.$/);
+  const nowakNote = gov.candidateNote(E, 'nowak').replace(/<[^>]+>/g, ' ');
+  assert.match(nowakNote, /Who he is:  a non-party expert; the candidate of the Naczelnik Państwa \(Piłsudski\) for this period\./);
+  assert.match(nowakNote, /Behind him:  PSL Piast, PSL Wyzwolenie, NPR, PPS \(\d+ MPs\)\./);
+  assert.match(nowakNote, /Cost of choosing him:  none — supporting him costs nothing with Piłsudski\.\s*$/);
   gov.submitFormation(E);
   assert.deepEqual([E.S.cabinet.pm, E.S.actors.relations.psl_piast], ['nowak', 60]);
 });
@@ -851,7 +857,7 @@ test('Stosunek do fachowca 0.71: a supporter judges him with 80, a neutral club 
   assert.ok(view.partner_lines.some(l => l.startsWith('<details class="pl-score"><summary>PSL Piast — supports it · 86/60</summary>a supporter of the premier +24')));
   // The opponents vote against: 198 for (PPS, the peasants, NPR and the minorities), 110 against (ZLN and PSChD).
   assert.match(view.votes, /^198 for, 110 against, 136 abstaining; a majority is 223\./);
-  assert.match(gov.candidateNote(Q, 'sliwinski'), /Backed by PPS, PSL Wyzwolenie, PSL Piast, NPR, Jewish representation, Other national minorities\. Fought by ZLN, PSChD\./);
+  assert.match(gov.candidateNote(Q, 'sliwinski'), /Behind him:<\/strong> PPS, PSL Wyzwolenie, PSL Piast, NPR, Jewish representation, Other national minorities \(198 MPs\)\.<br><strong>Against him:<\/strong> ZLN, PSChD \(110 MPs\)\./);
 });
 
 test('Rząd awaryjny 0.71: the head of state appoints the expert of the period first, another non-party man only when nobody else can govern', () => {

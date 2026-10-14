@@ -6,15 +6,15 @@ tags: party_affairs
 view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.partyReady(Q) && Q.S.chapter.status !== 'ended' !}
 on-arrival: {!
 // Card party.campaign (Z — 0.77, decisions of 8 X 2026): five campaigns on a matter, each over its own groups, through
-// meetings, rallies and the unions; rallies before an election in the last three months before the vote. One option, 1 T and
-// 1 R. The direction and the character of the party and the state of the country strengthen a campaign; they do not choose it.
+// meetings, rallies and the unions; rallies before an election in the last three months before the vote. One option, 1 T;
+// since Z — 0.79 (decision 2A of 14 X 2026) no R. The direction and the character of the party and the state of the country strengthen a campaign; they do not choose it.
 // The card rests three months after use (Z — 0.76).
 PolishParty.campaignView(Q);
 !}
 
 = Campaign
 
-Meetings, rallies and the unions. Each campaign costs 1 resource and reaches several groups at once; the numbers are the expected change of PPS support in points. [+ pl_campaign_line +] Party money: [+ pl_party_cash +].
+Meetings, rallies and the unions. A campaign costs no money, only this month's action, and reaches several groups at once; the numbers are the expected change of PPS support in points. [+ pl_campaign_line +]
 
 - @eight_hours
 - @prices
@@ -76,7 +76,7 @@ go-to: result
 
 @rallies
 title: Rallies before the election
-subtitle: 1 resource. More of our voters go to the polls: the turnout of [+ pl_rally_groups +] rises by 0.04 until the vote.
+subtitle: No money. More of our voters go to the polls: the turnout of [+ pl_rally_groups +] rises by 0.04 until the vote.
 view-if: pl_rally_open = 1
 choose-if: {! return PolishParty.rallyStatus(Q).available !}
 unavailable-subtitle: [+ pl_rally_why +]

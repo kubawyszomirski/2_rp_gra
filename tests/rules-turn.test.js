@@ -110,7 +110,8 @@ test('closing a card from its first page undoes what it recorded on opening; lat
   assert.equal(rules.closeCard({ ...Q, S: rules.createFoundationState({ randomState: [1] }) }, state), false, 'no card open');
 });
 
-test('one free discard a month, reset only when the month changes (4.4)', () => {
+// Z — 0.79 (decision 1A of 14 X 2026): no monthly limit; a discarded card rests 3 months.
+test('discards without a monthly limit; a discarded card rests 3 months (4.4)', () => {
   const Q = newQ(1);
   const state = engineState([{ id: 'media', title: 'Media' }, { id: 'rally', title: 'Rally' }]);
   rules.refreshHandMirrors(Q, state);
@@ -118,11 +119,11 @@ test('one free discard a month, reset only when the month changes (4.4)', () => 
   assert.equal(rules.canDiscard(Q, state), true);
   assert.equal(rules.discardFromHand(Q, state, 1), 'rally');
   assert.deepEqual(state.currentHands.main.map(card => card.id), ['media']);
-  assert.equal(rules.canDiscard(Q, state), false);
-  assert.throws(() => rules.discardFromHand(Q, state, 0), /no free discard/);
-  Q.month_actions = 1;
-  rules.beginMonthSettlement(Q, engineState());
-  assert.equal(rules.canDiscard(Q, state), true);
+  assert.equal(rules.cardRest(Q, 'rally'), 3, 'the discarded card rests 3 months');
+  assert.equal(rules.canDiscard(Q, state), true, 'no monthly limit');
+  assert.equal(rules.discardFromHand(Q, state, 0), 'media');
+  assert.equal(rules.canDiscard(Q, state), false, 'nothing left to discard');
+  assert.throws(() => rules.discardFromHand(Q, state, 0), /no card to discard/);
   assert.equal(rules.canDiscard({ time: 1 }, state), false, 'an old save without S never discards');
 });
 

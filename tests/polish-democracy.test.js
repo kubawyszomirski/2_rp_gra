@@ -114,10 +114,20 @@ test('B1/B2: the dispute of June 1922 leads into one free formation where PPS an
   assert.equal(S.negotiation.draft.candidate_id, 'sliwinski', 'the default offer keeps the Naczelnik’s candidate');
   // Z — 0.72: only Śliwiński is marked as the Naczelnik's candidate; Nowak stands beside him as a compromise of the Sejm (2B).
   const subtitle = id => JSON.stringify((engine.getCurrentChoices() || []).find(c => c.id === 'polish_cabinet_formation.' + id).subtitle);
-  assert.match(subtitle('cand_sliwinski'), /Candidate of the Naczelnik Państwa for this period: supporting him costs nothing with Piłsudski\. Risk: ZLN, PSChD vote against him\./);
-  assert.doesNotMatch(subtitle('cand_nowak'), /Candidate of the Naczelnik/);
-  // Z — 0.76 (decision 5 of 8 X 2026): what Nowak gives and what going against the Naczelnik costs.
-  assert.match(subtitle('cand_nowak'), /A compromise candidate\. Gain: the right does not fight him, so he has a better chance of a majority in the Sejm\. Cost: it goes against the Naczelnik’s own candidate — when the offer is submitted, relation with Piłsudski −5 and 1 R for the talks\. Historically he became prime minister only after Śliwiński fell \(VII 1922\)\./);
+  // Z — 0.79 (decision 3 of 14 X 2026): who he is, who stands behind and against him, his programme, the gain and the cost, in lines.
+  const plain = id => subtitle(id).replace(/<br>/g, ' | ').replace(/<[^>]+>/g, '');
+  assert.match(plain('cand_sliwinski'), /Who he is: a non-party expert; the candidate of the Naczelnik Państwa \(Piłsudski\) for this period\. \| Behind him: .* \| Against him: ZLN, PSChD \(\d+ MPs\)\. \| Programme: .* \| Cost of choosing him: none — supporting him costs nothing with Piłsudski\./);
+  assert.doesNotMatch(plain('cand_nowak'), /candidate of the Naczelnik/);
+  // Z — 0.76 (decision 5 of 8 X 2026): what Nowak gives and what going against the Naczelnik costs; Z — 0.79 without history.
+  assert.match(plain('cand_nowak'), /Who he is: a non-party expert; the candidate of a parliamentary compromise\. .* \| Gain: the right does not fight him, so he has a better chance of a majority in the Sejm\. \| Cost of choosing him: it goes against the Naczelnik’s candidate — when the offer is submitted, relation with Piłsudski −5 and 1 R for the talks\./);
+  assert.doesNotMatch(plain('cand_nowak'), /Historically/);
+  PolishRules.setLanguage('pl');
+  try {
+    const pl = PolishGovernment.candidateNote(Q, 'nowak').replace(/<br>/g, ' | ').replace(/<[^>]+>/g, '');
+    assert.match(pl, /^Kim jest: bezpartyjny fachowiec; kandydat kompromisu parlamentu\. \| Za nim stoją: .* \| Przeciw niemu: nikt\. \| Program: .* \| Zysk: .* \| Koszt wyboru: idziemy wbrew kandydatowi Naczelnika/);
+  } finally {
+    PolishRules.setLanguage('en');
+  }
   choose(engine, 'polish_cabinet_formation.cand_sliwinski');
   choose(engine, 'polish_cabinet_formation.submit');
   const result = S.history.negotiations.at(-1).result;
@@ -279,6 +289,32 @@ test('B3/B4 (retaliation): the authorised confrontation costs 0.5 R and the Cent
   assert.equal(clash.S.militia.strength, clash.people - Math.round(0.02 * clash.people), 'the Milicja loses 2% of its people once');
   assert.deepEqual([clash.S.militia.banned, Object.values(clash.S.politics.restrictions).map(r => [r.kind, r.lawful])], [true, [['militia_ban', true]]]);
   assert.equal(clash.S.politics.violence_episodes.filter(e => e.id === 'b4:security_crisis:gabriel_narutowicz').map(e => e.value)[0], 10, 'one serious episode');
+});
+
+// Z — 0.79 (the user's note of 14 X 2026): the result after the assassination says plainly what PPS did, what happened and
+// what it cost; the title names the assassination of the President, not "the coup".
+test('Po zabójstwie Narutowicza 0.79: the result says what PPS did, what happened and what it cost', () => {
+  const run = (choice, lang) => {
+    const engine = dendry.startGame(), Q = engine.state.qualities, S = Q.S;
+    if (lang) PolishRules.setLanguage(lang);
+    Q.time = 12; Q.month = 12;
+    S.party_orgs.cash = 5;
+    PolishPolitics.securityCrisis(Q, { holder_id: 'gabriel_narutowicz', holder_name: 'Gabriel Narutowicz', date: '1922-12-16', perpetrator: 'Eligiusz Niewiadomski' });
+    Q.polish_presidency.current = { office_id: 'prezydent_rp', holder_id: 'maciej_rataj', holder_name: 'Maciej Rataj', status: 'acting', since: '1922-12-16' };
+    S.rng.rolls['b4:security_crisis:gabriel_narutowicz:clash'] = 0.999; // fixture: no clash
+    PolishPolitics.responseChoose(Q, choice);
+    return Q.pl_b4_result;
+  };
+  assert.equal(run('retaliation'), 'We allow our Milicja a retaliatory confrontation (0.5 resources). Centrum PPS objects, because the party did not agree on it: ' +
+    'Centrum’s dissent +8. No clash happened, so there are no victims and no case against PPS.');
+  assert.match(run('restraint'), /^We choose restraint: a declaration and our votes in the National Assembly, without a mass campaign\. Nothing else changes\./);
+  try {
+    assert.match(run('retaliation', 'pl'), /^Pozwalamy Milicji na odwet \(0,5 jednostki środków\)\. Centrum PPS się temu sprzeciwia, bo partia tego nie uzgodniła: sprzeciw Centrum \+8\. Do starcia nie doszło, więc nie ma ofiar ani sprawy przeciw PPS\.$/);
+  } finally {
+    PolishRules.setLanguage('en');
+  }
+  const pl = JSON.parse(require('node:fs').readFileSync(require('node:path').join(__dirname, '../out/html/game_pl.json'), 'utf8'));
+  assert.equal(pl.scenes.polish_event_assassination_response.title, 'Po zabójstwie prezydenta');
 });
 
 test('Msza B5: four answers (Z — 0.59: also breaking up the services); without a host the mass is blocked at no cost; with one it is held once, without an automatic alliance with the Christian Democrats', () => {

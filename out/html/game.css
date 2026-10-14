@@ -1202,6 +1202,18 @@ ul.choices li.pl-portrait-choice.pl-portrait-chosen {
   display: block;
   margin-top: 0.35em;
 }
+/* Z — 0.79 (decision 3 of 14 X 2026): a prime-ministerial candidate in short lines — who he is, who stands behind him and who
+   against him, his programme, the gain and the cost — each led by a small-capitals label in upright type. */
+.pl-cand-note {
+  display: block;
+  line-height: 1.45;
+}
+.pl-cand-note strong {
+  font-style: normal;
+  font-weight: normal;
+  font-variant: small-caps;
+  letter-spacing: 0.03em;
+}
 ul.choices li.pl-portrait-choice.unavailable .pl-portrait {
   opacity: 0.6;
   filter: grayscale(1);

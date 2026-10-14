@@ -138,6 +138,9 @@ test('C1 0.71: the introduction, the variant, the prime minister, the portfolios
   assert.equal(choice(engine, 'polish_cabinet_formation.cand_czapinski').canChoose, false);
   assert.match(JSON.stringify(choice(engine, 'polish_cabinet_formation.cand_czapinski').subtitle), /His faction has 15% of the party; it needs 30%/);
   assert.match(JSON.stringify(choice(engine, 'polish_cabinet_formation.cand_thugutt').subtitle), /PSL Wyzwolenie is not the largest club of this cabinet/);
+  // Kandydaci w liniach 0.79 (decision 3 of 14 X 2026): a greyed candidate shows why, then who he is and who stands behind him.
+  const greyed = JSON.stringify(choice(engine, 'polish_cabinet_formation.cand_thugutt').subtitle).replace(/<[^>]+>/g, ' ');
+  assert.match(greyed, /Not available now: +PSL Wyzwolenie is not the largest club of this cabinet\..*Who he is: +the leader of PSL Wyzwolenie\..*Behind him: +PSL Wyzwolenie \(\d+ MPs\)\./);
   choose(engine, 'polish_cabinet_formation.back_variants');
   assert.equal(engine.state.sceneId, 'polish_cabinet_formation.variants', 'Back returns to the previous step');
   choose(engine, 'polish_cabinet_formation.var_left_labour');
@@ -203,7 +206,7 @@ test('Premier z frakcji 0.71: Moraczewski adds +5 with Wyzwolenie, Piast and NPR
   choose(engine, 'polish_cabinet_formation');
   choose(engine, 'polish_cabinet_formation.variants');
   choose(engine, 'polish_cabinet_formation.var_centre_left');
-  assert.match(JSON.stringify(choice(engine, 'polish_cabinet_formation.cand_moraczewski').subtitle), /welcome to the clubs friendly to Piłsudski/);
+  assert.match(JSON.stringify(choice(engine, 'polish_cabinet_formation.cand_moraczewski').subtitle), /Behind him:<\/strong> the clubs friendly to Piłsudski/);
   assert.equal(choice(engine, 'polish_cabinet_formation.cand_thugutt').canChoose, true, 'Thugutt may lead the centre-left');
   choose(engine, 'polish_cabinet_formation.cand_moraczewski');
   choose(engine, 'polish_cabinet_formation.ports_next');

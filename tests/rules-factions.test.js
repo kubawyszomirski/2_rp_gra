@@ -145,7 +145,7 @@ test('Brak resortu: Moraczewski in opposition, or with PPS holding only the Trea
   declined();
 });
 
-test('Piłsudczycy in a formal coalition: Jaworowski moves the relation and the faction, Malinowski only the faction; Ziemięcki’s toleration is closed, his municipal action is not', () => {
+test('Piłsudczycy in a formal coalition: Jaworowski moves the relation and the faction, Malinowski only the faction; Ziemięcki offers the emergency collection (Z — 0.79) and his municipal action', () => {
   const coalition = adviser => {
     const engine = dendry.startGame();
     const Q = engine.state.qualities;
@@ -172,9 +172,9 @@ test('Piłsudczycy in a formal coalition: Jaworowski moves the relation and the 
   const Z = ziemiecki.state.qualities;
   ziemiecki.goToScene('main');
   choose(ziemiecki, 'ziemiecki');
-  const toleration = choice(ziemiecki, 'ziemiecki.conditional_toleration');
-  assert.equal(toleration.canChoose, false);
-  assert.match(String(toleration.subtitle), /external support of a cabinet with a pilsudski_aligned profile/);
+  // Z — 0.79 (decision 5A of 14 X 2026): the emergency collection replaces the conditional toleration on his card.
+  assert.equal(choice(ziemiecki, 'ziemiecki.conditional_toleration'), undefined);
+  assert.equal(choice(ziemiecki, 'ziemiecki.emergency_fundraising').canChoose, true);
   assert.equal(choice(ziemiecki, 'ziemiecki.municipal_socialism').canChoose, true);
   choose(ziemiecki, 'root');
   const cells = Z.S.society.cells.map(c => ({ city: c.settlement === 'major_city', pps: c.propensity.pps }));

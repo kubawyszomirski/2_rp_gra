@@ -919,6 +919,9 @@
       S.party_orgs.cash = Math.max(0, round(S.party_orgs.cash - record.cost_R, 6));
       const kind = pressWorks(S) ? 'press' : 'unions';
       record.organisations = [kind === 'press' ? 'press' : 'unions'].concat(protect ? ['militia'] : []);
+      // Z — 0.79 (the user's note of 14 X 2026): the result says plainly what PPS did, what happened and what it cost.
+      lines.push(L('We call a mass defence of the Republic (' + rules.units(record.cost_R) + (protect ? ', the Milicja protects the gathering' : '') + ').',
+        'Wzywamy do masowej obrony Rzeczypospolitej (' + rules.units(record.cost_R) + (protect ? '; Milicja chroni zgromadzenie' : '') + ').'));
       // P (5.3): the covered cells are the workers our press or unions mobilise.
       lines.push(party.campaignEffect(Q, kind, 'democracy', 'workers').text);
       const participation = average(Object.keys(S.unions).sort().map(id => unions.participation(S, id)));
@@ -931,29 +934,31 @@
       if (!record.clash || !record.clash.clash) {
         democracyEffect(Q, 'presidency.assassination_response:' + key, 2, 'B4');
         record.democracy_effect = 2;
-        lines.push(L('The gathering passes peacefully: democracy +2 once. It does not authorise a general strike.', 'Zgromadzenie przebiega spokojnie: jednorazowo demokracja +2. Nie upoważnia do strajku generalnego.'));
+        lines.push(L('The gathering passes peacefully: democracy +2 (once). It is not a general strike.', 'Zgromadzenie przebiega spokojnie: demokracja +2 (raz). To nie jest strajk generalny.'));
       } else {
-        lines.push(L('The gathering ends in a clash: one serious episode of violence and a case of responsibility; no gain for democracy.', 'Zgromadzenie kończy się starciem: jeden poważny przypadek przemocy i sprawa odpowiedzialności; bez zysku dla demokracji.'));
+        lines.push(L('The gathering ends in a clash: a serious act of violence and a case about who is responsible; democracy gains nothing.', 'Na zgromadzeniu dochodzi do starcia: poważny akt przemocy i sprawa o odpowiedzialność; demokracja nic nie zyskuje.'));
       }
     } else if (choice === 'restraint') {
       if (publicPromise(S, t)) {
         government.factionReaction(Q, 'lewica', {dissent: 3}, {id: 'b4_restraint:' + key, kind: 'broken_promise', reverse: null});
-        lines.push(L('The Left had been promised a public mobilisation: its dissent +3.', 'Lewicy obiecano publiczną mobilizację: jej sprzeciw +3.'));
+        lines.push(L('The Left had been promised a public mobilisation, so its dissent rises by 3.', 'Lewicy obiecano publiczną mobilizację, więc jej sprzeciw rośnie o 3.'));
       }
-      lines.push(L('PPS concentrates on the lawful succession: no free mass campaign.', 'PPS skupia się na legalnej sukcesji: bez darmowej kampanii masowej.'));
+      lines.unshift(L('We choose restraint: a declaration and our votes in the National Assembly, without a mass campaign. Nothing else changes.',
+        'Wybieramy powściągliwość: deklaracja i nasze głosy w Zgromadzeniu Narodowym, bez masowej kampanii. Nic więcej się nie zmienia.'));
     } else {
       record.cost_R = 0.5;
       S.party_orgs.cash = Math.max(0, round(S.party_orgs.cash - 0.5, 6));
       record.organisations = ['militia'];
       government.factionReaction(Q, 'centrum', {dissent: 8}, {id: 'b4_retaliation:' + key, kind: 'retaliation', reverse: null});
-      lines.push(L('Without an internal agreement the Centrum objects: dissent +8.', 'Bez wewnętrznego porozumienia Centrum protestuje: sprzeciw +8.'));
+      lines.push(L('We allow our Milicja a retaliatory confrontation (0.5 resources). Centrum PPS objects, because the party did not agree on it: Centrum’s dissent +8.',
+        'Pozwalamy Milicji na odwet (0,5 jednostki środków). Centrum PPS się temu sprzeciwia, bo partia tego nie uzgodniła: sprzeciw Centrum +8.'));
       record.clash = gatheringClash(Q, {id: 'b4:' + key, uncontrolled: uncontrolledPressure(S, 0), repressive: repressive, authorised: true,
         compliance: militiaCompliance(S), militia_people: S.militia.strength, audience: 'workers',
         subject: 'a retaliatory confrontation of Milicja PPS after the assassination'});
-      lines.push(record.clash.clash ? L('The Milicja clashes with its opponents: executed unlawful violence, a case against the PPS organisations and a reaction of the authorities.',
-        'Milicja ściera się z przeciwnikami: dokonana bezprawna przemoc, sprawa przeciw organizacjom PPS i reakcja władz.') :
-        L('The authorised confrontation does not take place: the declaration creates no victims and no case.',
-          'Zatwierdzona konfrontacja nie dochodzi do skutku: deklaracja nie powoduje ofiar ani sprawy.'));
+      lines.push(record.clash.clash ? L('The Milicja clashes with its opponents. That is unlawful violence: a case against the PPS organisations and a reaction of the authorities.',
+        'Milicja starła się z przeciwnikami. To bezprawna przemoc: sprawa przeciw organizacjom PPS i reakcja władz.') :
+        L('No clash happened, so there are no victims and no case against PPS.',
+          'Do starcia nie doszło, więc nie ma ofiar ani sprawy przeciw PPS.'));
     }
     P.episodes.push(record);
     // The decision is also kept in the record of the presidency (stage 2), as before.

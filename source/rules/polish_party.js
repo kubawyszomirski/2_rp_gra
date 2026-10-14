@@ -1806,7 +1806,7 @@
     const S = Q.S;
     if (!ISSUES[id]) return no(L('Unknown campaign.', 'Nieznana kampania.'));
     if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
-    if (S.party_orgs.cash + 1e-9 < 1) return no(L('Needs 1 resource.', 'Wymaga 1 jednostki środków.'));
+    // Z — 0.79 (decision 2A of 14 X 2026): the campaigns of meetings, rallies and unions cost no money, only this month's action.
     if (!electorate.hasCells(S)) return no(L('The cells of the electorate are not recorded.', 'Grupy wyborców nie są zapisane.'));
     return OK;
   }
@@ -1834,8 +1834,7 @@
     const status = issueCampaignStatus(Q, id);
     if (!status.available) throw new Error('issueCampaign: ' + status.reason);
     const S = Q.S, t = Q.time;
-    rules.commitMainAction(Q, 'party.campaign', {kind: 'issue', topic: id, audience: 'bundle', resource_cost: {R: 1}});
-    S.party_orgs.cash = Math.max(0, S.party_orgs.cash - 1);
+    rules.commitMainAction(Q, 'party.campaign', {kind: 'issue', topic: id, audience: 'bundle', resource_cost: {R: 0}});
     const moved = bundleCampaign(Q, issueSpec(Q, id), true);
     const changes = bundleChanges(S, ISSUES[id].groups, moved);
     const total = Object.keys(moved).reduce((n, cellId) => n + (S.society.cells.find(c => c.id === cellId).mass * moved[cellId]), 0);
@@ -1872,7 +1871,6 @@
     const S = Q.S;
     if (!rallyWindow(Q)) return no(L('Only in the last three months before a Sejm election.', 'Tylko w ostatnich trzech miesiącach przed wyborami do Sejmu.'));
     if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
-    if (S.party_orgs.cash + 1e-9 < 1) return no(L('Needs 1 resource.', 'Wymaga 1 jednostki środków.'));
     if (!electorate.hasCells(S)) return no(L('The cells of the electorate are not recorded.', 'Grupy wyborców nie są zapisane.'));
     return OK;
   }
@@ -1882,8 +1880,7 @@
     const status = rallyStatus(Q);
     if (!status.available) throw new Error('electionRallies: ' + status.reason);
     const S = Q.S;
-    rules.commitMainAction(Q, 'party.turnout', {kind: 'turnout', topic: null, audience: 'party_groups', resource_cost: {R: 1}});
-    S.party_orgs.cash = Math.max(0, S.party_orgs.cash - 1);
+    rules.commitMainAction(Q, 'party.turnout', {kind: 'turnout', topic: null, audience: 'party_groups', resource_cost: {R: 0}});
     electorate.addTurnout(S, rallyFilter(S), RALLY_TURNOUT);
     electorate.writeClassMirrors(Q);
     writeMirrors(Q);
@@ -2240,12 +2237,16 @@
   }
 
   // In Polish the demand is a noun phrase ('powrót do linii …'); the scenes and results put it after a colon.
+  // Z — 0.79: the opening value of a line that no card offers has a name too ("uncommitted" was shown raw).
+  const OPENING_LINE_NAMES = Object.freeze({uncommitted: ['no declared position', 'bez zajętego stanowiska']});
   function describeDemand(Q, demand) {
     const r = demand.reverse;
     if (r.kind === 'strategy') {
       const cardId = STANCE_ORDER.find(id => STANCES[id].field === r.field), card = cardId ? STANCES[cardId] : null;
-      return L('return to the line “' + (card ? card.values[r.value] : r.value) + '” (' + (card ? card.name : r.field) + ')',
-        'powrót do linii „' + (card && card.values[r.value] ? stanceValue(cardId, r.value) : r.value) + '” (' + (card ? stanceName(cardId) : r.field) + ')');
+      const opening = OPENING_LINE_NAMES[r.value];
+      const value = card && card.values[r.value] ? L(card.values[r.value], stanceValue(cardId, r.value)) : opening ? L(opening[0], opening[1]) : r.value;
+      return L('return to the line “' + value + '” (' + (card ? card.name : r.field) + ')',
+        'powrót do linii „' + value + '” (' + (card ? stanceName(cardId) : r.field) + ')');
     }
     if (r.kind === 'press_format') return L('return the party press to the party journal', 'powrót prasy partyjnej do formuły pisma partyjnego');
     if (r.kind === 'leave_cabinet') return L('end PPS’s participation in, or support for, the present cabinet',
@@ -2456,16 +2457,54 @@
     for (const id of FACTIONS) acceptance[id] = Math.max(0, acceptance[id] - 15);
   }
 
+  // Z — 0.79 (decision 8A of 14 X 2026): the card says why it is here — which faction is discontented, what it demands and what
+  // threatens — and offers only the options that fit; the calm factions get one sentence. Earlier one line per faction and all
+  // ten options, most of them greyed.
+  function unityRelevant(Q, option, factionId) {
+    const S = Q.S, f = factionsOf(S)[factionId];
+    if (option === 'concession') return f.dissent >= 30;
+    if (option === 'postpone') return f.dissent >= 45 && !!(activeCase(S, factionId) || factionDemand(Q, factionId));
+    if (option === 'expel') return f.strength > 0 && f.dissent >= Math.max(30, 100 * partyDissent(S));
+    return false;
+  }
+
+  function unityFactionText(Q, id) {
+    const S = Q.S, f = factionsOf(S)[id], current = activeCase(S, id), demand = current ? current.demand : factionDemand(Q, id);
+    let text = '<strong>' + FACTION_NAMES[id] + '</strong>' + L(' is discontented: dissent ' + fmt(f.dissent) + ' of 100 (strength in the party ' +
+      fmt(f.strength) + ').', ' jest niezadowolone: sprzeciw ' + fmt(f.dissent) + ' na 100 (siła w partii ' + fmt(f.strength) + ').');
+    if (current && current.status === 'postponed') {
+      text += L(' It has raised its case — ' + describeDemand(Q, demand) + ' — and agreed to wait until ' + rules.monthYear(current.postponed_until) + '.',
+        ' Postawiła sprawę — ' + describeDemand(Q, demand) + ' — i zgodziła się poczekać do ' + rules.monthYear(current.postponed_until, 'gen') + '.');
+    } else if (current) {
+      text += L(' It has raised its case: ' + describeDemand(Q, demand) + '. While its dissent stays at 60 or more, a split threatens.',
+        ' Postawiła sprawę: ' + describeDemand(Q, demand) + '. Dopóki jej sprzeciw wynosi 60 lub więcej, grozi rozłam.');
+    } else if (demand) {
+      text += L(' It wants: ' + describeDemand(Q, demand) + '. At dissent 60 it raises this as its case, and an unresolved case may end in a split.',
+        ' Chce: ' + describeDemand(Q, demand) + '. Przy sprzeciwie 60 postawi to jako swoją sprawę, a nierozwiązana sprawa może skończyć się rozłamem.');
+    } else {
+      text += L(' It has no concrete demand yet.', ' Nie ma jeszcze konkretnego żądania.');
+    }
+    return text;
+  }
+
   function unityView(Q) {
     syncMirrors(Q);
-    const S = Q.S;
+    const S = Q.S, f = factionsOf(S);
     for (const id of FACTIONS) {
-      for (const option of ['concession', 'postpone', 'expel']) Q['pl_unity_' + option + '_' + id + '_why'] = unityStatus(Q, option, id).reason;
-      Q['pl_unity_' + id + '_line'] = FACTION_NAMES[id] + L(': strength ', ': siła ') + fmt(factionsOf(S)[id].strength) + L(', dissent ', ', sprzeciw ') +
-        fmt(factionsOf(S)[id].dissent) + (activeCase(S, id) ? L('; its demand: ', '; jej żądanie: ') + describeDemand(Q, activeCase(S, id).demand) :
-          factionDemand(Q, id) ? L('; it could demand: ', '; możliwe żądanie: ') + describeDemand(Q, factionDemand(Q, id)) : '');
+      for (const option of ['concession', 'postpone', 'expel']) {
+        Q['pl_unity_' + option + '_' + id + '_why'] = unityStatus(Q, option, id).reason;
+        Q['pl_unity_' + option + '_' + id + '_show'] = unityRelevant(Q, option, id) ? 1 : 0;
+      }
     }
+    const troubled = FACTIONS.filter(id => f[id].dissent >= 30 || activeCase(S, id));
+    const calm = FACTIONS.filter(id => troubled.indexOf(id) < 0);
+    const parts = troubled.map(id => unityFactionText(Q, id));
+    if (calm.length) parts.push(L('Calm (dissent below 30): ', 'Spokojne (sprzeciw poniżej 30): ') + calm.map(id => FACTION_NAMES[id]).join(', ') + '.');
+    if (channelOpen(S)) parts.push(L('The channel to the KPP is open: the factions can agree on a common line towards the communists.',
+      'Kanał kontaktu z KPP jest otwarty: frakcje mogą uzgodnić wspólną linię wobec komunistów.'));
+    Q.pl_unity_intro = parts.join('<br><br>');
     Q.pl_unity_kpp_line_why = unityStatus(Q, 'kpp_line').reason;
+    Q.pl_unity_kpp_line_show = channelOpen(S) ? 1 : 0;
   }
 
   // ---- Advisers: the change of the team and the actions of 10.4 (cards 6.5–6.6) ------------------------
@@ -2577,7 +2616,7 @@
     czapinski: [['Socialist Education: a stronger Lewica and fewer workers lost to the KPP; needs TUR', 'Edukacja socjalistyczna: silniejsza Lewica i mniej robotników odchodzi do KPP; wymaga TUR'], ['Socialist Economic Programme, with PPS in the cabinet: progressive taxes, public ownership or workers’ representation', 'Socjalistyczny program gospodarczy, gdy PPS jest w gabinecie: podatki progresywne, własność publiczna albo przedstawicielstwo robotników']],
     jaworowski: [['Back Piłsudski: a better relation with Piłsudski and stronger Piłsudczycy, at the cost of dissent in Centrum and Lewica', 'Poparcie dla Piłsudskiego: lepsza relacja z Piłsudskim i silniejsi piłsudczycy, kosztem sprzeciwu Centrum i Lewicy']],
     moraczewski: [['Public Works Programme, when PPS holds Labour: one stage of public works without this month’s action', 'Program robót publicznych, gdy PPS ma resort Pracy: jeden etap robót bez akcji miesiąca']],
-    ziemiecki: [['Conditional Toleration: calmer Centrum and Lewica while PPS tolerates a minority cabinet close to Piłsudski', 'Warunkowe tolerowanie: spokojniejsze Centrum i Lewica, gdy PPS toleruje mniejszościowy gabinet bliski Piłsudskiemu'], ['Municipal Socialism: PPS gains in the large cities', 'Socjalizm municypalny: zysk PPS w wielkich miastach']],
+    ziemiecki: [['Emergency Fundraising: +2 resources at once', 'Nadzwyczajna zbiórka: od razu +2 jednostki środków'], ['Municipal Socialism: PPS gains in the large cities', 'Socjalizm municypalny: zysk PPS w wielkich miastach']],
     malinowski: [['Organize the Piłsudczyks: stronger and calmer Piłsudczycy', 'Organizowanie piłsudczyków: silniejsi i spokojniejsi piłsudczycy']],
   });
 
@@ -2636,6 +2675,7 @@
 
   const ACTION_COSTS = Object.freeze({mobilize_organization: 1, direct_party_press: 1, organize_workers: 1, class_campaign: 1,
     socialist_education: 1, municipal_socialism: 1});
+  const EMERGENCY_FUNDS = 2;
 
   function advisorActionStatus(Q, advisorId, actionId) {
     const S = Q.S;
@@ -2645,13 +2685,17 @@
       return no(L(wait + (wait === 1 ? ' month' : ' months') + ' before the next Committee action.',
         'Do następnej akcji CKW: ' + wait + ' ' + rules.plural(wait, 'miesiąc', 'miesiące', 'miesięcy') + '.'));
     }
+    // Z — 0.79 (the user's note of 14 X 2026): an action that needs TUR says so before its price, so it never looks open
+    // before TUR is founded.
+    if (actionId === 'socialist_education' && S.party_orgs.tur.level < 1) return no(L('Needs a working TUR (found it with the card Organisations of PPS).',
+      'Wymaga działającego TUR (załóż go kartą Organizacje PPS).'));
     const cost = ACTION_COSTS[actionId] || 0;
     if (cost && S.party_orgs.cash + 1e-9 < cost) return no(L('Needs ' + rules.units(cost) + '.', 'Wymaga ' + rules.units(cost, 'resources', 'gen') + '.'));
     if (advisorId === 'perl' && Q.time > ADVISERS.perl.last_time) return no(L('Perl is no longer active.', 'Perl nie jest już aktywny.'));
     if (actionId === 'direct_party_press' && (S.party_orgs.press.unpaid_months >= 2 || S.party_orgs.press.reach <= 0)) return no(L('Needs a working party press.', 'Wymaga działającej prasy partyjnej.'));
     if (actionId === 'broker_coalition') return government.brokerStatus(Q);
-    if (actionId === 'socialist_education' && S.party_orgs.tur.level < 1) return no(L('Needs a working TUR.', 'Wymaga działającego TUR.'));
-    // Decision 5A of stage 8: the profile pilsudski_aligned of A10 belongs to the cabinets of Śliwiński and Piłsudski.
+    // Decision 5A of stage 8: the profile pilsudski_aligned of A10 belongs to the cabinets of Śliwiński and Piłsudski. Z — 0.79: the
+    // rule stays, but Ziemięcki's card offers the emergency collection instead.
     if (actionId === 'conditional_toleration') {
       if (government.ppsStance(S) !== 'supporter') return no(L('Needs external support of a cabinet with a pilsudski_aligned profile and an agreement; full membership does not qualify.', 'Wymaga poparcia z zewnątrz i porozumienia z gabinetem o profilu bliskim Piłsudskiemu (pilsudski_aligned); pełny udział w gabinecie się nie liczy.'));
       if (!government.pilsudskiAligned(S)) return no(L('Needs a minority cabinet with a pilsudski_aligned profile: premier Śliwiński or Piłsudski.', 'Wymaga gabinetu mniejszościowego o profilu bliskim Piłsudskiemu (pilsudski_aligned): premier Śliwiński albo Piłsudski.'));
@@ -2733,6 +2777,12 @@
       government.factionReactions(Q, [{faction: 'pilsudczycy', strength: 5}, {faction: 'centrum', dissent: 3}, {faction: 'lewica', dissent: 3}],
         {id: key + ':t' + t, kind: 'adviser', reverse: null});
       text = L('Relation with Piłsudski +8; Piłsudczycy +5 strength; Centrum and Lewica dissent +3.', 'Relacja z Piłsudskim +8; Piłsudczycy: siła +5; Centrum i Lewica: sprzeciw +3.');
+    } else if (key === 'advisor.ziemiecki.emergency_fundraising') {
+      // Z — 0.79 (decision 5A of 14 X 2026): an emergency infusion of resources, after the German original's Emergency
+      // Fundraising (P: +2 R), in place of the conditional toleration on Ziemięcki's card.
+      S.party_orgs.cash += EMERGENCY_FUNDS;
+      text = L('An emergency collection organised by the Committee: +' + EMERGENCY_FUNDS + ' resources.',
+        'Nadzwyczajna zbiórka zorganizowana przez CKW: +' + EMERGENCY_FUNDS + ' jednostki środków.');
     } else if (key === 'advisor.ziemiecki.municipal_socialism') {
       const city = cell => cell.settlement === 'major_city' && ['workers', 'new_middle', 'old_middle'].indexOf(cell.class_id) >= 0;
       for (const c of ['workers', 'new_middle', 'old_middle']) {
@@ -2756,7 +2806,7 @@
     const actions = {daszynski: ['parliamentary_compromise', 'broker_coalition'], puzak: ['party_discipline', 'mobilize_organization'],
       perl: ['define_party_line', 'direct_party_press'], niedzialkowski: ['build_centrolew', 'defend_democracy'], arciszewski: ['organize_workers'],
       zaremba: ['worker_peasant_front', 'class_campaign'], czapinski: ['socialist_education'], jaworowski: ['back_pilsudski'],
-      ziemiecki: ['conditional_toleration', 'municipal_socialism'], malinowski: ['organize_pilsudczyks']}[advisorId] || [];
+      ziemiecki: ['emergency_fundraising', 'municipal_socialism'], malinowski: ['organize_pilsudczyks']}[advisorId] || [];
     for (const id of actions) Q['pl_advact_' + id + '_why'] = advisorActionStatus(Q, advisorId, id).reason;
   }
 

@@ -201,6 +201,59 @@ test('Praca organizacyjna 0.78: two options on the agenda; the weakest branch an
   assert.equal(Q.time, 2);
 });
 
+// Z — 0.79 (decision 8A of 14 X 2026): the card of unity says why it is here — the discontented faction, its demand (also the
+// opening line of the Soviet model, no longer shown raw) and what threatens — and shows only the options that fit.
+test('Jedność i kierownictwo 0.79: why the card is here, the demand in words and only the options that fit', () => {
+  const engine = dendry.startGame();
+  const Q = engine.state.qualities;
+  PolishParty.stanceChoose(Q, 'ussr_position', 'sympathetic');
+  Q.S.actors.pps.factions.centrum.dissent = 44;
+  PolishParty.writeMirrors(Q);
+  engine.goToScene('main');
+  playFromHand(engine, 'polish_party_unity');
+  const text = content(engine);
+  assert.match(text, /Centrum PPS<\/strong> is discontented: dissent 44 of 100/);
+  assert.match(text, /It wants: return to the line “no declared position” \(PPS and the Soviet model\)\. At dissent 60 it raises this as its case/);
+  assert.doesNotMatch(text, /uncommitted/);
+  assert.match(text, /Calm \(dissent below 30\): Lewica PPS, Piłsudczycy\./);
+  assert.deepEqual(ids(engine), ['polish_party_unity.concession_centrum', 'polish_party_unity.expel_centrum', 'easy_discard'],
+    'no options for the calm factions, no postponement below 45, no line on the communists while the channel is closed');
+  PolishRules.setLanguage('pl');
+  try {
+    assert.match(PolishParty.describeDemand(Q, PolishParty.factionDemand(Q, 'centrum')), /^powrót do linii „bez zajętego stanowiska”/);
+  } finally {
+    PolishRules.setLanguage('en');
+  }
+});
+
+// Z — 0.79 (decision 5A of 14 X 2026): Ziemięcki's emergency collection, +2 R, with the shared cooldown of the Committee.
+test('Nadzwyczajna zbiórka 0.79: Ziemięcki brings +2 resources at once; the Committee then waits', () => {
+  const engine = dendry.startGame();
+  const Q = engine.state.qualities;
+  Q.ziemiecki_advisor = 1;
+  const cash = Q.S.party_orgs.cash;
+  engine.goToScene('ziemiecki');
+  assert.deepEqual(ids(engine), ['ziemiecki.emergency_fundraising', 'ziemiecki.municipal_socialism', 'root']);
+  choose(engine, 'ziemiecki.emergency_fundraising');
+  assert.equal(Q.S.party_orgs.cash, cash + 2);
+  assert.match(content(engine), /An emergency collection organised by the Committee: \+2 resources\./);
+  assert.equal(PolishParty.advisorActionStatus(Q, 'ziemiecki', 'municipal_socialism').available, false, 'the shared cooldown');
+});
+
+// Z — 0.79 (the user's notes of 14 X 2026): an adviser's action says what is missing — the ministry of its government card,
+// or TUR before its price.
+test('Powody niedostępności 0.79: Czapiński names the missing ministry; socialist education asks for TUR before money', () => {
+  const engine = dendry.startGame();
+  const Q = engine.state.qualities;
+  Q.czapinski_advisor = 1;
+  Q.S.party_orgs.cash = 0;
+  PolishParty.writeMirrors(Q);
+  engine.goToScene('czapinski');
+  assert.equal(Q.pl_czap_public_control_why, 'Needs PPS in the cabinet with the Industry and Trade ministry.');
+  assert.equal(PolishParty.advisorActionStatus(Q, 'czapinski', 'socialist_education').reason,
+    'Needs a working TUR (found it with the card Organisations of PPS).', 'TUR before the price');
+});
+
 // Z — 0.56 (item 4 of 5 X 2026): the union packages have a card of their own; one investment in one action.
 test('Związki zawodowe — organizowanie i fundusze: a card of its own with seven choices; one investment costs the month', () => {
   const engine = dendry.startGame();
@@ -348,12 +401,12 @@ test('Kampania 0.77: five matters over several groups at once, a preview with th
   const total = text => Number(text.match(/in the whole country \+([\d.]+)/)[1]);
   assert.ok(total(PolishParty.issuePreview(Q, 'republic')) >= total(before));
   Q.S.coup.pressure = 0;
-  // One campaign: 1 resource and the month; PPS gains among employed workers and loses a little among the bourgeoisie.
+  // One campaign: the month (no money since 0.79); PPS gains among employed workers and loses a little among the bourgeoisie.
   const share = f => PolishElectorate.aggregate(Q.S, f, 'pps');
   const employed = c => c.class_id === 'workers' && c.employment === 'employed', rich = c => c.class_id === 'bourgeois_landowners';
   const [cash, w0, b0] = [Q.S.party_orgs.cash, share(employed), share(rich)];
   choose(engine, 'polish_party_campaign.eight_hours');
-  assert.equal(Q.S.party_orgs.cash, cash - 1);
+  assert.equal(Q.S.party_orgs.cash, cash, 'Z — 0.79: a campaign costs no money');
   assert.ok(share(employed) > w0 && share(rich) < b0);
   choose(engine, 'root');
   assert.equal(Q.time, 2);
