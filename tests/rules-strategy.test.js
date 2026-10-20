@@ -210,18 +210,23 @@ test('Oś autonomii: an offer with cultural rights (0) and one with the autonomy
   assert.equal(Q.S.actors.pps.program.slavic_autonomy, 0);
 });
 
-test('Arbitraż i linia: blocked with its reason under parliamentarism, prepared under a stronger presidency; a later change keeps the project', () => {
+// Z — 0.82: the line counts at the constitutional debate; a later change of the line does not change the list of PPS.
+test('Arbitraż i linia: blocked with its reason under parliamentarism, supported in the debate under a stronger presidency; a later change keeps the motion', () => {
   const Q = game();
-  assert.match(PolishProjects.constitutionStatus(Q, 'presidential_arbitration').reason, /stronger presidency/);
+  PolishProjects.openConstitutionDebate(Q);
+  assert.match(PolishProjects.motionStatus(Q, 'presidential_arbitration').reason, /stronger presidency/);
+  assert.equal(PolishProjects.motionStatus(Q, 'labour_chamber').available, true);
   PolishParty.stanceChoose(Q, 'form_of_power', 'strong_presidency');
   free(Q);
-  assert.equal(PolishProjects.constitutionStatus(Q, 'presidential_arbitration').available, true);
-  PolishProjects.constitutionChoose(Q, 'presidential_arbitration', 'parliament');
-  free(Q);
+  assert.equal(PolishProjects.motionStatus(Q, 'presidential_arbitration').available, true);
+  assert.match(PolishProjects.motionStatus(Q, 'labour_chamber').reason, /Parliamentarism/);
+  PolishProjects.debateToggle(Q, 'presidential_arbitration');
+  PolishProjects.debateDeclare(Q);
   delete Q.S.cooldowns['party.form_of_power'];
   PolishParty.stanceChoose(Q, 'form_of_power', 'parliamentarism');
   free(Q);
-  assert.doesNotMatch(PolishProjects.constitutionStatus(Q, 'presidential_arbitration').reason, /stronger presidency/);
+  const debate = PolishProjects.debateState(Q.S);
+  assert.deepEqual([debate.ranking, debate.motions.presidential_arbitration.status], [['presidential_arbitration'], 'waiting']);
 });
 
 test('Trzy ustroje: a stronger presidency or workers’ councils set no reform in force; the head of state and the cabinet stay', () => {

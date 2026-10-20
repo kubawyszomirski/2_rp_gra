@@ -178,7 +178,13 @@
       beneficiaries: [], law: {constitutional: true},
       variants: {democratic_guarantees: {build: 1, upkeep: 0, duration: 1, programme: {institution: 2}},
         constructive_vonc: {build: 1, upkeep: 0, duration: 1, programme: {institution: 0}},
-        presidential_arbitration: {build: 1, upkeep: 0, duration: 1, programme: {institution: -2}}}},
+        presidential_arbitration: {build: 1, upkeep: 0, duration: 1, programme: {institution: -2}},
+        // Z — 0.82: the motions of the constitutional debate that PPS can support besides the three reforms of 7.6.
+        church_separation: {build: 1, upkeep: 0, duration: 1, programme: {institution: 1, church: 2}},
+        // The referendum is a demand of "further democratisation" of the left (HISTORICAL_SOURCES.md): the democratisation of 7.6.
+        referendum: {build: 1, upkeep: 0, duration: 1, programme: {institution: 2}},
+        labour_chamber: {build: 1, upkeep: 0, duration: 1, programme: {institution: 2}},
+        unicameral: {build: 1, upkeep: 0, duration: 1, programme: {institution: 2}}}},
   });
 
   const VARIANT_NAMES = Object.freeze({
@@ -202,6 +208,8 @@
     regional_sejm: 'autonomy of Eastern Galicia with a regional diet', employment_small: 'a smaller programme of employment',
     housing_coop: 'cooperative houses on state credit', rent_freeze: 'no further rent rises and protection against eviction',
     rent_suspension: 'rent rises suspended for nine months', pension_all: 'insurance of all workers', pension_industry: 'insurance of the workers of large industry and the railways',
+    church_separation: 'the separation of the Church and the state', referendum: 'the popular referendum',
+    labour_chamber: 'a Chamber of Labour in place of the Senate', unicameral: 'one chamber: the abolition of the Senate',
   });
   // 11.7: the prepared public control of an enterprise, once per plant.
   const PUBLIC_CONTROL_BUSINESS = 15;
@@ -241,6 +249,8 @@
     housing_coop: 'domy spółdzielcze z kredytem państwa', rent_freeze: 'bez dalszych podwyżek czynszu i z ochroną przed eksmisją',
     rent_suspension: 'podwyżki czynszu zawieszone na dziewięć miesięcy', pension_all: 'ubezpieczenie wszystkich robotników',
     pension_industry: 'ubezpieczenie robotników wielkiego przemysłu i kolei',
+    church_separation: 'rozdział Kościoła od państwa', referendum: 'referendum ludowe', labour_chamber: 'Izba Pracy w miejsce Senatu',
+    unicameral: 'jedna izba: zniesienie Senatu',
   });
   // Wawel and the Royal Castle in the cases the sentences need: 'Wawel', 'konserwacja Wawelu', 'prace przy Wawelu'.
   const HERITAGE_OBJECTS_PL = Object.freeze({wawel: {nom: 'Wawel', gen: 'Wawelu', loc: 'Wawelu'},
@@ -1302,8 +1312,27 @@
       enactLaw(Q, bill, bill.submitted_at, bill.variant);
       return bill;
     }
+    // Z — 0.82: after the abolition of the Senate in the constitutional debate a change of the constitution needs the Sejm only.
+    if (S.senate.status === 'abolished') {
+      bill.senate = 'abolished';
+      enactLaw(Q, bill, bill.submitted_at, bill.variant);
+      return bill;
+    }
     if (S.senate.status !== 'constituted') {
       closeLaw(Q, bill, 'rejected', 'the Senate is not yet constituted');
+      return bill;
+    }
+    // Z — 0.82 (decision 1A of 21 X 2026): a motion of the constitutional debate is voted by both chambers on the same day; it
+    // brings the counts of its rolled vote in the Senate too.
+    if (spec.senate_counts) {
+      const senate = recordBallot(Q, 'constitutional_amendment_senate', bill, copy(spec.senate_counts), 'senate');
+      if (senate.result === 'passed') {
+        bill.senate = 'accepted';
+        enactLaw(Q, bill, bill.submitted_at, bill.variant);
+      } else {
+        bill.senate = 'rejected';
+        closeLaw(Q, bill, 'rejected', 'no two-thirds majority in the Senate');
+      }
       return bill;
     }
     bill.senate_notice_due = institutions.addDays(bill.submitted_at, 30);
@@ -1442,8 +1471,7 @@
         project.first_effect_time = null;
         project.interruption_reason = 'The law failed (' + bill.reason + '); the preparation is kept.';
         project.history.push({t: Q.time, kind: 'law_' + bill.status, law_id: bill.id});
-        if (project.type === 'constitution') project.rejected_forecast = forecastKey(Q, project);
-        else if (project.type === 'army_control') project.rejected_forecast = lawForecastKey(Q, project);
+        if (project.type === 'army_control') project.rejected_forecast = lawForecastKey(Q, project);
       }
     }
     if (bill.kind === 'unemployment_bill' && S.chapter.unemployment_bill) {
@@ -2004,6 +2032,8 @@
       voteDuePackage(Q, t);
       cabinetReview(Q, t);
       processLaws(Q, t);
+      // Z — 0.82: the Constitutional Committee may bring one motion of PPS to the floor (the vote card from t+1).
+      constitutionAgenda(Q, t);
       const budget = economy.budgetAt(S, t);
       const inputs = processProjects(Q, t, budget);
       // Stage 6: strikes and wage agreements of the period, recorded by the union rules before the economy (17.4, 11.4).
@@ -2026,7 +2056,22 @@
     }
   }
 
-  // ---- Constitutional projects (7.6; card 7.4) ---------------------------------------------------
+  // The same law of an ordinary project after a refusal (Z — 0.36): the forecast of its vote must have changed.
+  function lawForecastKey(Q, project) {
+    const S = Q.S, law = projectLaw(project);
+    const counts = sejmCounts(Q, {sponsor: 'pps', programme: law ? law.programme : {fiscal: 0}, pps_vote: 'yes'});
+    return project.variant + ':' + counts.yes + '/' + counts.no + '/' + counts.abstain + '/' + S.parliament.chamber_id + '/' + S.senate.status;
+  }
+
+  // ---- The constitutional debate (7.6; card 7.4 until 0.81) ----------------------------------------
+  //
+  // Z — 0.82 (the user's decisions of 21 X 2026: the list of seven motions, 1A, 2 "obniżyć o 5–20%", 3A, 4A, 5A; no signatures):
+  // the event of the constitutional debate in December 1924 is the only page on which PPS states which motions to change the
+  // constitution it supports, in its order of importance. The debate does not mean a vote: each month the Constitutional
+  // Committee may bring one motion of PPS to the floor, the higher on the list the likelier (17%, 10%, 7%, then 3.5%; P). The
+  // vote is an urgent card of the Parliament deck: the Sejm and the Senate vote on the same day, two thirds of the votes for and
+  // against (7.1), with the light chance of the legislative initiative. A change that passes is in force at once and costs the
+  // budget 1 unit for one month; a motion that fails does not come back. The 111 signatures of art. 125 are left out (P).
 
   const REFORMS = Object.freeze(['democratic_guarantees', 'constructive_vonc', 'presidential_arbitration']);
 
@@ -2037,114 +2082,55 @@
     return constitution.reforms;
   }
 
-  function constitutionProject(S, reform) {
-    return projectsOf(S, 'constitution', p => p.variant === reform)[0] || null;
-  }
+  // The seven motions of the debate. `lines`: the lines of the card What Power Do We Want under which PPS can support it;
+  // `excludes`: a motion that cannot be supported with it; `support`: the effects of the support itself, once at the
+  // declaration; `flags`: the special votes (senate_abolition: the clubs that made the Senate in 1920 vote against). Game
+  // values (P); the historical grounds of each motion are in HISTORICAL_SOURCES.md (PL-CONSTITUTION-DEBATE-1924-1926).
+  const CHAMBER_LINES = Object.freeze(['parliamentarism', 'workers_councils']);
+  const MOTIONS = Object.freeze([
+    {id: 'democratic_guarantees', name: ['Democratic guarantees', 'Gwarancje demokratyczne'],
+      text: ['The constitution would protect associations, equal rights and self-government.', 'Konstytucja chroniłaby stowarzyszenia, równe prawa i samorząd.'],
+      support: []},
+    {id: 'church_separation', name: ['Separation of the Church and the state', 'Rozdział Kościoła od państwa'],
+      text: ['The end of the leading position of the Catholic Church and of compulsory religious instruction in schools.',
+        'Koniec „naczelnego stanowiska” Kościoła katolickiego i przymusowej nauki religii w szkołach.'],
+      support: [{type: 'relation', actor: 'pschd', value: -3}, {type: 'relation', actor: 'psl_piast', value: -3}, {type: 'faction', faction: 'lewica', dissent: -2}]},
+    {id: 'constructive_vonc', name: ['Constructive vote of no confidence', 'Konstruktywne wotum nieufności'],
+      text: ['The Sejm could dismiss a cabinet only by electing its successor at the same time. It would also protect cabinets PPS does not want.',
+        'Sejm mógłby odwołać rząd tylko razem z wyborem nowego. Chroniłoby to także rządy, których PPS nie chce.'],
+      support: []},
+    {id: 'referendum', name: ['Popular referendum', 'Referendum ludowe'],
+      text: ['The citizens could decide the most important matters themselves, in a popular vote.', 'Najważniejsze sprawy mogliby rozstrzygać sami obywatele w głosowaniu ludowym.'],
+      support: []},
+    {id: 'presidential_arbitration', lines: ['strong_presidency'], name: ['Presidential arbitration', 'Arbitraż prezydencki'],
+      text: ['After two failed attempts to form a cabinet within three months the President could dissolve the Sejm. The Left of PPS would protest.',
+        'Po dwóch nieudanych próbach utworzenia rządu w ciągu trzech miesięcy Prezydent mógłby rozwiązać Sejm. Lewica PPS by protestowała.'],
+      support: []},
+    {id: 'labour_chamber', lines: CHAMBER_LINES, excludes: 'unicameral', flags: ['senate_abolition'],
+      name: ['A Chamber of Labour in place of the Senate', 'Izba Pracy w miejsce Senatu'],
+      text: ['The Senate would give way to a chamber of the representatives of labour, elected at the next elections. The Senate itself would have to vote for its end.',
+        'Senat ustąpiłby miejsca izbie przedstawicieli pracy, wybranej w następnych wyborach. Senat musiałby sam zagłosować za swoim końcem.'],
+      support: [{type: 'faction', faction: 'lewica', dissent: -2}, {type: 'relation', actor: 'zln', value: -2}]},
+    {id: 'unicameral', lines: CHAMBER_LINES, excludes: 'labour_chamber', flags: ['senate_abolition'],
+      name: ['One chamber: the abolition of the Senate', 'Jedna izba: zniesienie Senatu'],
+      text: ['The Sejm alone would pass the laws and the changes of the constitution. The Senate itself would have to vote for its end.',
+        'Ustawy i zmiany konstytucji uchwalałby sam Sejm. Senat musiałby sam zagłosować za swoim końcem.'],
+      support: [{type: 'relation', actor: 'psl_wyzwolenie', value: 2}, {type: 'relation', actor: 'zln', value: -2}, {type: 'relation', actor: 'psl_piast', value: -2}]},
+  ]);
+  const MOTION_BY_ID = Object.freeze(MOTIONS.reduce((map, motion) => Object.assign(map, {[motion.id]: motion}), {}));
+  const MOTION_IDS = Object.freeze(MOTIONS.map(motion => motion.id));
+  const motionName = id => L(MOTION_BY_ID[id].name[0], MOTION_BY_ID[id].name[1]);
+  // The clubs that made the Senate in 1920 vote against its abolition (P on the background of HISTORICAL_SOURCES.md).
+  const SENATE_MAKERS = Object.freeze(['zln', 'pschd', 'psl_piast']);
+  // The chance that the Constitutional Committee brings a motion to the floor in a month, by its place among the motions of PPS
+  // still waiting (P, the user's decision 2 of 21 X 2026: the first proposal 20/12/8/4% lowered by 12–17%).
+  const AGENDA_CHANCES = Object.freeze([0.17, 0.10, 0.07]);
+  const AGENDA_CHANCE_LATER = 0.035;
+  const agendaChance = position => (position < AGENDA_CHANCES.length ? AGENDA_CHANCES[position] : AGENDA_CHANCE_LATER);
 
-  // P: the motion needs the signatures of at least 111 MPs (7.1): PPS and the clubs that would vote for it.
-  function signatures(Q, reform) {
-    const S = Q.S;
-    const bill = {sponsor: 'pps', programme: PROJECT_TYPES.constitution.variants[reform].programme, pps_vote: 'yes'};
-    const counts = sejmCounts(Q, bill);
-    return counts.yes;
-  }
-
-  function forecastKey(Q, project) {
-    const S = Q.S;
-    const bill = {sponsor: 'pps', programme: PROJECT_TYPES.constitution.variants[project.variant].programme, pps_vote: 'yes'};
-    const counts = sejmCounts(Q, bill);
-    return counts.yes + '/' + counts.no + '/' + counts.abstain + '/' + S.parliament.chamber_id + '/' + S.senate.status;
-  }
-
-  // The same law of an ordinary project after a refusal (Z — 0.36): the forecast of its vote must have changed.
-  function lawForecastKey(Q, project) {
-    const S = Q.S, law = projectLaw(project);
-    const counts = sejmCounts(Q, {sponsor: 'pps', programme: law ? law.programme : {fiscal: 0}, pps_vote: 'yes'});
-    return project.variant + ':' + counts.yes + '/' + counts.no + '/' + counts.abstain + '/' + S.parliament.chamber_id + '/' + S.senate.status;
-  }
-
-  function constitutionStatus(Q, reform, via) {
-    const S = Q.S;
-    if (!S || S.chapter.status === 'ended') return no('');
-    if (REFORMS.indexOf(reform) < 0) return no(L('Unknown reform.', 'Nieznana reforma.'));
-    if (reformsRecord(Q)[reform]) return no(L('This reform is already in force.', 'Ta reforma już obowiązuje.'));
-    const project = constitutionProject(S, reform);
-    if (project && (liveProject(project) || project.status === 'completed')) return no(L('The reform is being carried out after its promulgation.', 'Reforma jest wprowadzana po jej ogłoszeniu.'));
-    const law = project && project.law_id ? S.parliament.laws.filter(l => l.id === project.law_id)[0] : null;
-    if (law && law.status === 'in_procedure') return no(L('The motion is before the Senate.', 'Wniosek jest w Senacie.'));
-    // 10.8 (Z — 0.33): PPS prepares the arbitration only with the line of a stronger presidency; a later change of the
-    // line does not cancel a prepared project.
-    const strong = S.actors && S.actors.pps && S.actors.pps.strategy && S.actors.pps.strategy.form_of_power === 'strong_presidency';
-    if (reform === 'presidential_arbitration' && !strong && !(project && project.preparation >= 50)) {
-      return no(L('PPS prepares it only with the line of a stronger presidency (card What Power Do We Want).', 'PPS przygotowuje ją tylko przy linii silniejszej prezydentury (karta „Jakiej władzy chcemy”).'));
-    }
-    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
-    if (!project || project.preparation < 50) return OK;
-    if (S.senate.status !== 'constituted') return no(L('The March Constitution needs both chambers; the Senate is not yet constituted.', 'Konstytucja marcowa wymaga obu izb; Senat jeszcze się nie ukonstytuował.'));
-    if (signatures(Q, reform) < 111) return no(L('The motion needs the signatures of at least 111 MPs; PPS and the clubs that support it have ' + signatures(Q, reform) + '.',
-      'Wniosek wymaga podpisów co najmniej 111 posłów; PPS i popierające go kluby mają ' + signatures(Q, reform) + '.'));
-    if (project.rejected_forecast && project.rejected_forecast === forecastKey(Q, project)) return no(L('The same motion was refused and nothing has changed since.', 'Ten sam wniosek został odrzucony i od tego czasu nic się nie zmieniło.'));
-    return OK;
-  }
-
-  // Preparation takes two main actions (7.6): the first prepares the text, the second files the motion
-  // and puts it to the vote of both chambers (2/3; the Senate at +30 days).
-  function constitutionChoose(Q, reform, via) {
-    const S = Q.S;
-    const status = constitutionStatus(Q, reform, via);
-    if (!status.available) throw new Error('constitutionChoose: ' + status.reason);
-    let project = constitutionProject(S, reform);
-    rules.commitMainAction(Q, via === 'justice' ? 'government.justice_policy.broad_safeguards' : 'parliament.constitution_project', {reform: reform});
-    if (!project || project.preparation < 50) {
-      project = project || createProject(Q, 'constitution', reform, {sponsor: 'pps', responsibility: {pps: 0.70}, executor: 'parliament'});
-      project.preparation = 50;
-      project.status = 'idea';
-      project.history.push({t: Q.time, kind: 'preparation', step: 1});
-      return {step: 'prepared', project: project, law: null};
-    }
-    project.preparation = 100;
-    project.status = 'prepared';
-    project.prepared_at = Q.time;
-    const bill = submitLaw(Q, {kind: 'constitution', title: 'Constitutional reform: ' + VARIANT_NAMES[reform], project_id: project.id,
-      sponsor: 'pps', programme: PROJECT_TYPES.constitution.variants[reform].programme, constitutional: true, pps_vote: 'yes'});
-    project.law_id = bill.id;
-    project.authorization_id = bill.id;
-    return {step: 'submitted', project: project, law: bill};
-  }
-
-  // Z — 0.74: filing a prepared motion in the card of the constitutional reform (until 0.73 in the agenda); the result in words.
-  function constitutionFile(Q, reform) {
-    const out = constitutionChoose(Q, reform, 'card');
-    return out.law.status === 'rejected' ? L('The motion fails: ' + out.law.reason + '.', 'Wniosek upada: ' + rules.storedText(out.law.reason) + '.') :
-      L('The Sejm adopts the constitutional reform by two thirds; the Senate votes on ' + out.law.senate_notice_due + '.',
-        'Sejm przyjmuje reformę konstytucyjną większością dwóch trzecich; Senat głosuje ' + isoText(out.law.senate_notice_due) + '.');
-  }
-
-  // The reform takes effect after its promulgation and one month of implementation (7.6).
-  function enactReform(Q, reform, project, t) {
-    const S = Q.S;
-    const record = reformsRecord(Q);
-    if (record[reform]) return;
-    record[reform] = true;
-    if (reform === 'constructive_vonc') {
-      S.parliament.constructive_vonc = true;
-      Q.constructive_vonc = 1;
-    }
-    if (reform === 'democratic_guarantees') {
-      for (const id of ['psl_wyzwolenie', 'jewish_rep', 'other_minorities_rep']) {
-        if (S.actors.relations[id] !== undefined) government.changeRelation(Q, id, 4, 'reform:democratic_guarantees');
-      }
-      pend(project, {system: 'democracy', stage: 7, value: 3, when: 'first_effect', note: 'once'});
-    }
-    if (reform === 'presidential_arbitration') {
-      government.factionReaction(Q, 'lewica', {dissent: 8}, {id: 'reform:presidential_arbitration', kind: 'reform', reverse: null});
-    }
-    S.history.reasons.push({t: t, kind: 'constitution_reform', reform: reform, project_id: project.id});
-  }
-
-  // Z — 0.56 (item 2 of 5 X 2026): the card waits for a constitutional debate. It opens in December 1924, after the ZLN
-  // congress of 26 X 1924 and the congress of PSL "Piast" in XII 1924 declared the repair of the constitution their
-  // programme (HISTORICAL_SOURCES.md); the event politics.constitution_debate announces it once.
+  // Z — 0.56 (item 2 of 5 X 2026): the debate waits for December 1924, after the ZLN congress of 26 X 1924 and the congress of
+  // PSL "Piast" in XII 1924 declared the repair of the constitution their programme (HISTORICAL_SOURCES.md); the event
+  // politics.constitution_debate opens it once.
   const CONSTITUTION_DEBATE_AT = T(1924, 12);
   const constitutionDebateOpen = S => !!(S && S.politics && S.politics.constitution_debate);
 
@@ -2155,36 +2141,333 @@
 
   function openConstitutionDebate(Q) {
     const S = Q.S;
-    if (constitutionDebateOpen(S)) return S.politics.constitution_debate;
-    S.politics.constitution_debate = {opened_at: Q.time};
+    if (constitutionDebateOpen(S)) return debateState(S);
+    S.politics.constitution_debate = {opened_at: Q.time, draft: [], declared_at: null, ranking: [], motions: {}, pending: null};
     S.history.reasons.push({t: Q.time, kind: 'constitution_debate_opened'});
     return S.politics.constitution_debate;
   }
 
-  function constitutionCardAvailable(Q) {
-    const S = Q.S;
-    if (!S || S.chapter.status === 'ended' || government.formationPending(Q)) return false;
-    if (!constitutionDebateOpen(S)) return false;
-    return constitutionFilingPending(Q) || REFORMS.some(reform => {
-      const project = constitutionProject(S, reform);
-      return (!project || project.preparation < 50) && constitutionStatus(Q, reform).available;
-    });
+  function debateState(S) {
+    const debate = S && S.politics && S.politics.constitution_debate;
+    if (!debate) return null;
+    if (!Array.isArray(debate.draft)) debate.draft = [];
+    if (!Array.isArray(debate.ranking)) debate.ranking = [];
+    if (!debate.motions) debate.motions = {};
+    if (debate.declared_at === undefined) debate.declared_at = null;
+    if (debate.pending === undefined) debate.pending = null;
+    return debate;
+  }
+  const debateDeclared = S => !!debateState(S) && debateState(S).declared_at !== null;
+  // The motions of PPS that wait for the Constitutional Committee, in the order of PPS.
+  const waitingMotions = debate => debate.ranking.filter(id => debate.motions[id] && debate.motions[id].status === 'waiting');
+
+  function lineReason(motion) {
+    return motion.lines === CHAMBER_LINES ?
+      L('Only with the line “Parliamentarism” or “Workers’ councils” (card What Power Do We Want).',
+        'Tylko przy linii „Parlamentaryzm” albo „Rady robotnicze” (karta „Jakiej władzy chcemy”).') :
+      L('Only with the line “A stronger presidency” (card What Power Do We Want).', 'Tylko przy linii „Silniejsza prezydentura” (karta „Jakiej władzy chcemy”).');
   }
 
-  // Z — 0.74 (decision 2A of 8 X 2026): the reforms whose text is prepared and whose motion waits to be filed (the second main
-  // action of 7.6). While one waits, the card of the constitutional reform is an urgent card of the Parliament deck.
-  function constitutionFilingPending(Q) {
-    const S = Q.S;
-    if (!S || S.chapter.status === 'ended') return false;
-    return REFORMS.some(reform => {
-      const project = constitutionProject(S, reform);
-      return !!project && project.preparation >= 50 && project.status === 'idea';
-    });
+  // Whether PPS can add the motion to its list now: the line at the debate and the exclusions. A chosen motion can always be
+  // taken off the list.
+  function motionStatus(Q, id) {
+    const S = Q.S, motion = MOTION_BY_ID[id], debate = debateState(S);
+    if (!motion) return no(L('Unknown motion.', 'Nieznany wniosek.'));
+    if (!debate || debate.declared_at !== null) return no('');
+    if (reformsRecord(Q)[id]) return no(L('This change is already in force.', 'Ta zmiana już obowiązuje.'));
+    const line = S.actors.pps && S.actors.pps.strategy ? S.actors.pps.strategy.form_of_power : 'parliamentarism';
+    if (motion.lines && motion.lines.indexOf(line) < 0) return no(lineReason(motion));
+    if (motion.excludes && debate.draft.indexOf(motion.excludes) >= 0) {
+      return no(L('It excludes the motion “' + motionName(motion.excludes) + '”: take that one off the list first.',
+        'Wyklucza się z wnioskiem „' + motionName(motion.excludes) + '”: najpierw go odznacz.'));
+    }
+    return OK;
+  }
+  function motionToggleable(Q, id) {
+    const debate = debateState(Q.S);
+    return !!debate && debate.declared_at === null && (debate.draft.indexOf(id) >= 0 || motionStatus(Q, id).available);
+  }
+  // A click on a motion: a chosen one leaves the list (the later ones move up), another one joins it at the end.
+  function debateToggle(Q, id) {
+    const debate = debateState(Q.S);
+    if (!debate || debate.declared_at !== null) throw new Error('debateToggle: the debate does not wait for the position of PPS');
+    const index = debate.draft.indexOf(id);
+    if (index >= 0) debate.draft.splice(index, 1);
+    else {
+      const status = motionStatus(Q, id);
+      if (!status.available) throw new Error('debateToggle: ' + id + ': ' + status.reason);
+      debate.draft.push(id);
+    }
+    debateView(Q);
   }
 
-  function constitutionPrepared(Q, reform) {
-    const project = Q.S ? constitutionProject(Q.S, reform) : null;
-    return !!project && project.preparation >= 50 && project.status === 'idea';
+  // How the chambers would vote on the motion now, PPS for it.
+  function motionBill(id) {
+    return {sponsor: 'pps', programme: PROJECT_TYPES.constitution.variants[id].programme, flags: (MOTION_BY_ID[id].flags || []).slice(), pps_vote: 'yes'};
+  }
+  function motionCounts(Q, id) {
+    const S = Q.S, bill = motionBill(id);
+    const sejm = sejmCounts(Q, bill);
+    const senate = S.senate.status === 'constituted' ? senateCounts(Q, bill) : null;
+    const sejmPassed = institutions.resolveBallot('constitutional_amendment_sejm', sejm).result === 'passed';
+    const senatePassed = senate ? institutions.resolveBallot('constitutional_amendment_senate', senate).result === 'passed' : S.senate.status === 'abolished';
+    return {sejm: sejm, senate: senate, sejm_passed: sejmPassed, senate_passed: senatePassed, passed: sejmPassed && senatePassed};
+  }
+  // The light chance (decision 4A): 50% plus half the margin over two thirds in the Sejm, between 5% and 95% (132 for, 0 against:
+  // 95%; 181 for, 158 against: 5%).
+  const motionChance = counts => clip(0.5 + (counts.sejm.yes - 2 * counts.sejm.no) / 200, INITIATIVE_CHANCE_MIN, INITIATIVE_CHANCE_MAX);
+  // One recorded roll per vote decides. When it turns the forecast over, opponents abstain in each chamber that would reject the
+  // change, or in the Sejm those who were to abstain vote against (and, if that is not enough, some supporters abstain).
+  function motionOutcome(Q, id, key) {
+    const counts = motionCounts(Q, id), chance = motionChance(counts);
+    // Before the first Senate is constituted no change of the constitution can pass (7.6).
+    const chambers = Q.S.senate.status === 'constituted' || Q.S.senate.status === 'abolished';
+    const passes = chambers && rules.roll(Q.S, key) < chance;
+    const sejm = Object.assign({}, counts.sejm, {turned: 0, kind: null});
+    const senate = counts.senate ? Object.assign({}, counts.senate, {turned: 0, kind: null}) : null;
+    if (passes && !counts.passed) {
+      for (const chamber of [sejm, senate]) {
+        if (!chamber || chamber.yes >= 2 * chamber.no) continue;
+        const k = Math.ceil(chamber.no - chamber.yes / 2 - 1e-9);
+        chamber.no -= k;
+        chamber.abstain += k;
+        chamber.turned = k;
+        chamber.kind = 'opponents_abstain';
+      }
+    } else if (!passes && counts.passed && chambers) {
+      const k = Math.min(sejm.abstain, Math.floor(sejm.yes / 2) - sejm.no + 1);
+      sejm.abstain -= k;
+      sejm.no += k;
+      sejm.turned = k;
+      sejm.kind = 'abstainers_against';
+      if (sejm.yes >= 2 * sejm.no) {
+        const a = sejm.yes - 2 * sejm.no + 1;
+        sejm.yes -= a;
+        sejm.abstain += a;
+        sejm.turned_supporters = a;
+      }
+    }
+    const sejmPassed = institutions.resolveBallot('constitutional_amendment_sejm', sejm).result === 'passed';
+    return {id: id, chance: chance, passes: passes, forecast: counts.passed, sejm: sejm, senate: sejmPassed ? senate : null, sejm_passed: sejmPassed,
+      chambers: chambers};
+  }
+  const motionChanceWords = chance => (chance >= 0.9 ? L('would almost surely pass', 'niemal na pewno by przeszedł') :
+    chance >= 0.6 ? L('would probably pass', 'raczej by przeszedł') : chance > 0.4 ? L('would have an uncertain fate', 'miałby niepewny los') :
+      chance > 0.1 ? L('would probably fail', 'raczej by upadł') : L('would almost surely fail', 'prawie na pewno by upadł'));
+
+  // The page of the debate: one line per motion and the list of PPS so far.
+  function debateView(Q) {
+    const S = Q.S, debate = debateState(S);
+    if (!debate) return;
+    const list = debate.declared_at === null ? debate.draft : waitingMotions(debate);
+    for (const motion of MOTIONS) {
+      const id = motion.id, place = list.indexOf(id);
+      const status = motionStatus(Q, id);
+      Q['pl_con_' + id + '_mark'] = place >= 0 ? '■ ' + (place + 1) + '.' : '□';
+      Q['pl_con_' + id + '_why'] = status.reason || '';
+      const chance = motionChance(motionCounts(Q, id));
+      const support = (motion.support || []).map(filingText);
+      Q['pl_con_' + id + '_line'] = L(motion.text[0], motion.text[1]) + ' ' + L('Today it ', 'Dziś ') + motionChanceWords(chance) + chancePct(chance) + '.' +
+        (support.length ? L(' Our support: ', ' Samo poparcie: ') + support.join(', ') + '.' : '');
+    }
+    Q.pl_con_draft_text = list.length ? list.map((id, i) => (i + 1) + '. ' + motionName(id)).join(', ') : L('no motion yet', 'na razie żaden wniosek');
+  }
+
+  // "We announce our position": the list of PPS is fixed, the effects of the support follow at once. Costs no month.
+  function debateDeclare(Q) {
+    const S = Q.S, debate = debateState(S), t = Q.time;
+    if (!debate || debate.declared_at !== null) throw new Error('debateDeclare: the debate does not wait for the position of PPS');
+    const ranking = debate.draft.filter(id => MOTION_BY_ID[id] && !reformsRecord(Q)[id]);
+    debate.ranking = ranking.slice();
+    debate.declared_at = t;
+    debate.draft = [];
+    const effects = [];
+    ranking.forEach((id, i) => {
+      debate.motions[id] = {status: 'waiting', rank: i + 1, supported_at: t, voted_at: null, law_id: null};
+      const cause = 'constitution_debate:' + id;
+      for (const e of MOTION_BY_ID[id].support || []) {
+        if (e.type === 'relation') relation(Q, e.actor, e.value, cause);
+        else if (e.type === 'faction') government.factionReaction(Q, e.faction, {dissent: e.dissent}, {id: cause + ':' + e.faction, kind: 'constitution_debate', reverse: null});
+        effects.push(filingText(e));
+      }
+    });
+    S.history.reasons.push({t: t, kind: 'constitution_position', ranking: ranking.slice()});
+    debateView(Q);
+    if (!ranking.length) {
+      return L('PPS supports none of the motions. Without its support none of them comes to a vote in this Sejm.',
+        'PPS nie popiera żadnego wniosku. Bez jej poparcia żaden z nich nie trafi pod głosowanie w tym Sejmie.');
+    }
+    return L('PPS supports in the debate: ', 'PPS popiera w debacie: ') + ranking.map((id, i) => (i + 1) + '. ' + motionName(id)).join(', ') + '. ' +
+      L('The Constitutional Committee brings the motions to the floor when it is ready; the higher a motion stands on our list, the sooner it may come to a vote.',
+        'Komisja Konstytucyjna skieruje wnioski pod obrady, kiedy będzie gotowa; im wyżej wniosek stoi na naszej liście, tym prędzej może trafić pod głosowanie.') +
+      (effects.length ? ' ' + L('At once: ', 'Od razu: ') + effects.join(', ') + '.' : '');
+  }
+
+  // The monthly roll of the Constitutional Committee (settleMonth, period t): at most one motion a month, none while a vote
+  // waits or a cabinet is being formed.
+  function constitutionAgenda(Q, t) {
+    const S = Q.S, debate = debateState(S);
+    if (!debate || debate.declared_at === null || debate.pending || S.chapter.status === 'ended' || government.formationPending(Q)) return null;
+    const waiting = waitingMotions(debate);
+    for (let i = 0; i < waiting.length; i++) {
+      if (rules.roll(S, 'constitution:agenda:' + waiting[i] + ':t' + t) >= agendaChance(i)) continue;
+      debate.pending = {id: waiting[i], drawn_at: t};
+      S.history.reasons.push({t: t, kind: 'constitution_agenda', motion: waiting[i], place: i + 1});
+      return waiting[i];
+    }
+    return null;
+  }
+
+  // The urgent card of the vote: from the month after the Committee brought the motion to the floor. It costs no month.
+  function constitutionVoteActive(Q) {
+    const S = Q.S, debate = S ? debateState(S) : null;
+    return !!debate && !!debate.pending && S.chapter.status !== 'ended' && Q.time > debate.pending.drawn_at && !government.formationPending(Q);
+  }
+  const voteKey = pending => 'constitution:vote:' + pending.id + ':t' + pending.drawn_at;
+  const seatsText = n => String(Math.round(n));
+  function constitutionVoteView(Q) {
+    const S = Q.S, debate = debateState(S), pending = debate && debate.pending;
+    if (!pending) return null;
+    const out = motionOutcome(Q, pending.id, voteKey(pending));
+    const sejm = out.sejm, senate = out.senate;
+    const votes = c => L(seatsText(c.yes) + ' for, ' + seatsText(c.no) + ' against, ' + seatsText(c.abstain) + ' abstaining',
+      'za ' + seatsText(c.yes) + ', przeciw ' + seatsText(c.no) + ', wstrzymało się ' + seatsText(c.abstain));
+    const turned = (c, senators) => {
+      if (c.kind === 'opponents_abstain') return ' ' + (senators ? L('Some of its opponents in the Senate (' + seatsText(c.turned) + ') abstained.', 'Część przeciwników w Senacie (' + seatsText(c.turned) + ' senatorów) wstrzymała się od głosu.') :
+        L('Some of its opponents (' + c.turned + ' MPs) abstained.', 'Część przeciwników (' + c.turned + ' posłów) wstrzymała się od głosu.'));
+      if (c.kind === 'abstainers_against') return ' ' + L('Some of the MPs who were to abstain (' + c.turned + ') voted against.', 'Część posłów, którzy mieli się wstrzymać (' + c.turned + '), głosowała przeciw.') +
+        (c.turned_supporters ? ' ' + L('Some of its supporters (' + c.turned_supporters + ') abstained.', 'Część zwolenników (' + c.turned_supporters + ' posłów) wstrzymała się od głosu.') : '');
+      return '';
+    };
+    let line = L('The Constitutional Committee has brought the motion to the floor; both chambers vote on the same day. ', 'Komisja Konstytucyjna skierowała wniosek pod obrady; obie izby głosują tego samego dnia. ') +
+      L('The Sejm: ', 'Sejm: ') + votes(sejm) + '.' + turned(sejm, false);
+    if (!out.sejm_passed) line += ' ' + L('There are not two thirds of the votes in the Sejm: the motion fails.', 'W Sejmie zabrakło dwóch trzecich głosów: wniosek upada.');
+    else if (!out.chambers) line += ' ' + L('The Senate is not yet constituted: the motion fails.', 'Senat jeszcze się nie ukonstytuował: wniosek upada.');
+    else if (senate) {
+      line += ' ' + L('The Senate: ', 'Senat: ') + votes(senate) + '.' + turned(senate, true) + ' ' + (out.passes ?
+        L('Both chambers have adopted the change of the constitution.', 'Obie izby przyjęły zmianę konstytucji.') :
+        L('There are not two thirds of the votes in the Senate: the motion fails.', 'W Senacie zabrakło dwóch trzecich głosów: wniosek upada.'));
+    } else line += ' ' + L('Without the Senate, the vote of the Sejm decides: the change of the constitution is adopted.', 'Bez Senatu rozstrzyga głosowanie Sejmu: zmiana konstytucji zostaje przyjęta.');
+    return {id: pending.id, name: motionName(pending.id), passes: out.passes, line: line};
+  }
+  // "Continue" on the vote card: the law of the change, its effects and the cost; a failed motion does not come back (3A).
+  function constitutionVoteResolve(Q) {
+    const S = Q.S, debate = debateState(S), pending = debate && debate.pending, t = Q.time;
+    if (!pending) throw new Error('constitutionVoteResolve: no motion waits for its vote');
+    const id = pending.id, out = motionOutcome(Q, id, voteKey(pending)), bill0 = motionBill(id);
+    const countsOf = c => ({yes: c.yes, no: c.no, abstain: c.abstain, present: c.present, eligible: c.eligible, club_votes: c.club_votes});
+    debate.pending = null;
+    let project = null;
+    if (out.passes) {
+      project = createProject(Q, 'constitution', id, {sponsor: 'pps', responsibility: {pps: 0.70}, executor: 'parliament'});
+      project.preparation = 100;
+      project.status = 'prepared';
+      project.prepared_at = t;
+    }
+    const bill = submitLaw(Q, Object.assign({kind: 'constitution', title: 'Constitutional reform: ' + VARIANT_NAMES[id], project_id: project ? project.id : null,
+      constitutional: true, counts: countsOf(out.sejm), senate_counts: out.senate ? countsOf(out.senate) : null}, bill0));
+    if (project) {
+      project.law_id = bill.id;
+      project.authorization_id = bill.id;
+    }
+    const record = debate.motions[id];
+    record.voted_at = t;
+    record.law_id = bill.id;
+    if (bill.status !== 'enacted') {
+      record.status = 'failed';
+      S.history.reasons.push({t: t, kind: 'constitution_vote', motion: id, result: 'failed', law_id: bill.id});
+      return L('The motion has failed and does not come back in this Sejm.', 'Wniosek upadł i nie wróci w tym Sejmie.');
+    }
+    record.status = 'passed';
+    S.history.reasons.push({t: t, kind: 'constitution_vote', motion: id, result: 'passed', law_id: bill.id});
+    const effect = enactReform(Q, id, project, t);
+    return L('The change of the constitution is in force from this month; it costs the budget 1 unit this month.', 'Zmiana konstytucji obowiązuje od tego miesiąca; kosztuje budżet 1 jednostkę w tym miesiącu.') +
+      (effect ? ' ' + effect : '');
+  }
+
+  // Z — 0.82: a change of the second chamber ends the Senate for the rest of the chapter; the Chamber of Labour would be
+  // elected at the next elections (P: its composition is not modelled).
+  function abolishSenate(Q, reform, t) {
+    const S = Q.S;
+    S.senate = Object.assign({}, S.senate, {status: 'abolished', total: 0, club_seats: {}, abolished_at: t, abolished_by: reform});
+  }
+
+  // The effects of a change in force, at once (Z — 0.82; until 0.81 after a month of implementation). The sentence of the
+  // effects is returned for the result page. The democracy of the guarantees and of the referendum follows with the first
+  // effect of the project.
+  function enactReform(Q, reform, project, t) {
+    const S = Q.S;
+    const record = reformsRecord(Q);
+    if (record[reform]) return '';
+    record[reform] = true;
+    const cause = 'reform:' + reform;
+    const has = id => S.actors.relations[id] !== undefined;
+    let text = '';
+    if (reform === 'constructive_vonc') {
+      S.parliament.constructive_vonc = true;
+      Q.constructive_vonc = 1;
+      text = L('From now on the Sejm can dismiss a cabinet only by electing its successor.', 'Odtąd Sejm może odwołać rząd tylko, wybierając jego następcę.');
+    }
+    if (reform === 'democratic_guarantees') {
+      for (const id of ['psl_wyzwolenie', 'jewish_rep', 'other_minorities_rep']) if (has(id)) government.changeRelation(Q, id, 4, cause);
+      pend(project, {system: 'democracy', stage: 7, value: 3, when: 'first_effect', note: 'once'});
+      text = L('Relations with PSL Wyzwolenie and the minorities improve (+4), and democracy grows stronger (+3).',
+        'Poprawiają się stosunki z PSL „Wyzwolenie” i mniejszościami (+4), a demokracja się umacnia (+3).');
+    }
+    if (reform === 'presidential_arbitration') {
+      government.factionReaction(Q, 'lewica', {dissent: 8}, {id: cause, kind: 'reform', reverse: null});
+      text = L('The dissent of the Left of PPS rises (+8).', 'Sprzeciw Lewicy PPS rośnie (+8).');
+    }
+    if (reform === 'church_separation') {
+      const changes = {psl_wyzwolenie: 3, jewish_rep: 3, other_minorities_rep: 2, pschd: -3};
+      for (const id of Object.keys(changes)) if (has(id)) government.changeRelation(Q, id, changes[id], cause);
+      checkConstraints(Q, 'church', 2, {instrument: 'church_separation'});
+      text = L('Relations with PSL Wyzwolenie and the Jewish deputies improve (+3), with the deputies of the other minorities too (+2); with the Christian Democrats they worsen (−3).',
+        'Poprawiają się stosunki z PSL „Wyzwolenie” i posłami żydowskimi (+3), a także z posłami innych mniejszości (+2); z chadecją się pogarszają (−3).');
+    }
+    if (reform === 'referendum') {
+      if (has('psl_wyzwolenie')) government.changeRelation(Q, 'psl_wyzwolenie', 2, cause);
+      pend(project, {system: 'democracy', stage: 7, value: 2, when: 'first_effect', note: 'once'});
+      text = L('Relations with PSL Wyzwolenie improve (+2), and democracy grows stronger (+2).', 'Poprawiają się stosunki z PSL „Wyzwolenie” (+2), a demokracja się umacnia (+2).');
+    }
+    if (reform === 'labour_chamber' || reform === 'unicameral') {
+      abolishSenate(Q, reform, t);
+      government.factionReaction(Q, 'lewica', {dissent: -3}, {id: cause, kind: 'reform', reverse: null});
+      text = (reform === 'labour_chamber' ?
+        L('The Senate ends; the Chamber of Labour will be elected at the next elections. ', 'Senat przestaje istnieć; Izba Pracy zostanie wybrana w następnych wyborach. ') :
+        L('The Senate ends; from now on the Sejm alone decides. ', 'Senat przestaje istnieć; odtąd rozstrzyga sam Sejm. ')) +
+        L('The dissent of the Left of PPS falls (−3).', 'Sprzeciw Lewicy PPS spada (−3).');
+    }
+    S.history.reasons.push({t: t, kind: 'constitution_reform', reform: reform, project_id: project ? project.id : null});
+    return text;
+  }
+
+  // Z — 0.82 (decision 4A of 21 X 2026): the Judiciary of PPS puts the democratic guarantees first on the list of PPS in the
+  // debate, or adds them to it, while they have not been voted on. It costs this month's action.
+  function justiceGuaranteesStatus(Q) {
+    const S = Q.S, debate = debateState(S);
+    if (!debate || debate.declared_at === null) return no(L('Changes of the constitution wait for the constitutional debate (from December 1924).',
+      'Zmiany konstytucji czekają na debatę konstytucyjną (od grudnia 1924 r.).'));
+    if (reformsRecord(Q).democratic_guarantees) return no(L('The democratic guarantees are already in force.', 'Gwarancje demokratyczne już obowiązują.'));
+    const record = debate.motions.democratic_guarantees;
+    if (record && record.status !== 'waiting') return no(L('The Sejm has already voted on the democratic guarantees.', 'Sejm już głosował nad gwarancjami demokratycznymi.'));
+    if (debate.pending && debate.pending.id === 'democratic_guarantees') return no(L('The democratic guarantees wait for their vote.', 'Gwarancje demokratyczne czekają na głosowanie.'));
+    if (waitingMotions(debate)[0] === 'democratic_guarantees') return no(L('The democratic guarantees are already the first motion of PPS.', 'Gwarancje demokratyczne są już pierwszym wnioskiem PPS.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
+    return OK;
+  }
+  function justiceGuaranteesChoose(Q) {
+    const S = Q.S, debate = debateState(S), status = justiceGuaranteesStatus(Q);
+    if (!status.available) throw new Error('justiceGuaranteesChoose: ' + status.reason);
+    rules.commitMainAction(Q, 'government.justice_policy.broad_safeguards', {reform: 'democratic_guarantees'});
+    const added = !debate.motions.democratic_guarantees;
+    debate.ranking = ['democratic_guarantees'].concat(debate.ranking.filter(id => id !== 'democratic_guarantees'));
+    if (added) debate.motions.democratic_guarantees = {status: 'waiting', rank: 1, supported_at: Q.time, voted_at: null, law_id: null, by: 'justice'};
+    S.history.reasons.push({t: Q.time, kind: 'constitution_justice', added: added});
+    return added ? L('The ministry prepares the democratic guarantees: they join the motions of PPS in the debate, in the first place.',
+      'Resort przygotowuje gwarancje demokratyczne: dołączają do wniosków PPS w debacie, na pierwszym miejscu.') :
+      L('The ministry prepares the democratic guarantees: they become the first motion of PPS in the debate.',
+        'Resort przygotowuje gwarancje demokratyczne: stają się pierwszym wnioskiem PPS w debacie.');
   }
 
   // ---- The unemployment bill D (card 7.2; 17.15) -------------------------------------------------------
@@ -2341,6 +2624,8 @@
     const t = bill.submitted_t !== undefined ? bill.submitted_t : bill.t;
     if (flags.indexOf('army_against_pilsudski') >= 0 && pilsFriendly(t).indexOf(clubId) >= 0) return 'no';
     if (flags.indexOf('army_compromise') >= 0 && pilsFriendly(t).indexOf(clubId) >= 0) return 'abstain';
+    // Z — 0.82: the clubs that made the Senate in 1920 vote against its abolition.
+    if (flags.indexOf('senate_abolition') >= 0 && SENATE_MAKERS.indexOf(clubId) >= 0) return 'no';
     if (flags.indexOf('minority_autonomy') >= 0 && (clubId === 'psl_piast' || clubId === 'pschd')) {
       const cabinet = S.cabinet;
       if (cabinet && (cabinet.status === 'active' || cabinet.status === 'caretaker') && cabinet.partner_ids.indexOf('zln') >= 0 &&
@@ -3205,7 +3490,8 @@
           if (!reviewTarget(S)) return no(L('Needs an active restriction of a named case that is not already under review.', 'Wymaga aktywnego ograniczenia w wymienionej sprawie, które nie jest jeszcze rozpatrywane.'));
           return forecastWith(Q, {charge: 1}) >= -2 ? OK : no(forecastBlock());
         }
-        const status = constitutionStatus(Q, 'democratic_guarantees', 'justice');
+        // Z — 0.82 (decision 4A): the broad variant puts the democratic guarantees first among the motions of PPS in the debate.
+        const status = justiceGuaranteesStatus(Q);
         return status.available ? OK : no(status.reason);
       }
       case 'internal_security': return securityOptionStatus(Q, option);
@@ -3262,13 +3548,8 @@
       return cardId === 'internal_security' ? securityChoose(Q, option) : armyChoose(Q, option);
     }
     if (cardId === 'justice_policy') {
-      // The broad variant is the one democratic_guarantees project, without an extra step (17.12.3).
-      const out = constitutionChoose(Q, 'democratic_guarantees', 'justice');
-      return result(Q, out.step === 'prepared' ? L('The democratic guarantees are prepared; filing the motion comes back as an urgent card of the Parliament deck.',
-        'Gwarancje demokratyczne są przygotowane; złożenie wniosku wróci jako karta pilna talii „Parlament”.') :
-        out.law.status === 'rejected' ? L('The motion fails: ' + out.law.reason + '.', 'Wniosek upada: ' + rules.storedText(out.law.reason) + '.') :
-          L('The Sejm adopts the democratic guarantees; the Senate votes on ' + out.law.senate_notice_due + '.',
-            'Sejm przyjmuje gwarancje demokratyczne; Senat głosuje ' + isoText(out.law.senate_notice_due) + '.'));
+      // The broad variant is the one motion of the democratic guarantees in the constitutional debate (17.12.3; Z — 0.82).
+      return result(Q, justiceGuaranteesChoose(Q));
     }
     rules.commitMainAction(Q, actionId(cardId, option), {card: cardId, option: option});
     const share = ppsShare(S, 'pps', CARDS[cardId].portfolios);
@@ -3619,8 +3900,8 @@
       PROJECT_NAMES_PL[item] + ': uruchomiono; ' + num(project.build_budget_B) + ' B miesięcznie w czasie budowy.') + lawNote(law));
   }
 
-  // Z — 0.74 (decision 2A of 8 X 2026): the prepared reforms of the ministries; a prepared constitutional motion is filed in the
-  // card of the constitutional reform instead (constitutionFilingPending).
+  // Z — 0.74 (decision 2A of 8 X 2026): the prepared reforms of the ministries; a change of the constitution is a motion of the
+  // constitutional debate instead (Z — 0.82).
   function agendaItemsFor(Q) {
     const S = Q.S;
     return AGENDA_TYPES.filter(type => agendaProject(S, type));
@@ -3894,7 +4175,8 @@
   // Z — 0.74 (decisions 1A–3A of 8 X 2026): the urgent cards of this module (PolishRules.registerUrgentCard). The prepared
   // reforms belong to the Government deck while PPS holds a portfolio that can launch one of them; a launch of civilian control by
   // the parliamentary route alone (card 7.5) belongs to the Parliament deck. The budget card belongs to the Parliament deck until
-  // the vote of the package; the constitutional card, while a prepared motion waits to be filed.
+  // the vote of the package; the vote on a motion of the constitutional debate (Z — 0.82), from the month after the Committee
+  // brought it to the floor.
   const viaParliamentOnly = (S, item) => item === 'army_control' && agendaProject(S, item).policy_choices.via === 'parliament';
   function agendaUrgent(Q) {
     const S = Q.S;
@@ -3904,8 +4186,7 @@
     deck: Q => agendaItemsFor(Q).every(item => viaParliamentOnly(Q.S, item)) ? 'main.parliament' : 'main.govt'});
   rules.registerUrgentCard('polish_budget_package', {active: Q => budgetCardAvailable(Q), deck: () => 'main.parliament'});
   rules.registerCardDeadline('polish_budget_package', Q => Q.S && Q.S.economy && Q.S.economy.pending_package ? Q.S.economy.pending_package.vote_at : null);
-  rules.registerUrgentCard('polish_constitution_project', {deck: () => 'main.parliament',
-    active: Q => !government.formationPending(Q) && constitutionDebateOpen(Q.S) && constitutionFilingPending(Q)});
+  rules.registerUrgentCard('polish_constitution_vote', {deck: () => 'main.parliament', active: constitutionVoteActive});
 
   // Z — 0.81: the vote on a bill of the legislative initiative is an urgent card of the Parliament deck.
   rules.registerUrgentCard('polish_initiative_vote', {deck: () => 'main.parliament', active: initiativeVoteActive});
@@ -3971,9 +4252,23 @@
     ppsResponsibility: ppsResponsibility,
     settleMonth: settleMonth,
     reformsRecord: reformsRecord,
-    constitutionStatus: constitutionStatus,
-    constitutionChoose: constitutionChoose,
-    constitutionCardAvailable: constitutionCardAvailable,
+    MOTION_IDS: MOTION_IDS,
+    AGENDA_CHANCES: AGENDA_CHANCES,
+    AGENDA_CHANCE_LATER: AGENDA_CHANCE_LATER,
+    debateState: debateState,
+    debateDeclared: debateDeclared,
+    motionStatus: motionStatus,
+    motionToggleable: motionToggleable,
+    motionCounts: motionCounts,
+    motionChance: motionChance,
+    debateToggle: debateToggle,
+    debateView: debateView,
+    debateDeclare: debateDeclare,
+    constitutionAgenda: constitutionAgenda,
+    constitutionVoteActive: constitutionVoteActive,
+    constitutionVoteView: constitutionVoteView,
+    constitutionVoteResolve: constitutionVoteResolve,
+    justiceGuaranteesStatus: justiceGuaranteesStatus,
     constitutionDebateDue: constitutionDebateDue,
     constitutionDebateOpen: constitutionDebateOpen,
     openConstitutionDebate: openConstitutionDebate,
@@ -3997,9 +4292,6 @@
     cardView: cardView,
     agendaAvailable: agendaAvailable,
     agendaUrgent: agendaUrgent,
-    constitutionFilingPending: constitutionFilingPending,
-    constitutionPrepared: constitutionPrepared,
-    constitutionFile: constitutionFile,
     agendaStatus: agendaStatus,
     agendaChoose: agendaChoose,
     agendaView: agendaView,

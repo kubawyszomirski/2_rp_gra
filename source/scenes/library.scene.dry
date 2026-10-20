@@ -553,7 +553,7 @@ ChZJN (ZLN + PSChD) is a joint list; the parties remain separate for government 
 
 [? if sejm_first_election_completed and not polish_presidential_sequence_completed : In December the Sejm elects its Marshal and the National Assembly elects the President, without another monthly action. ?]
 
-[? if polish_presidential_sequence_completed : The 111-seat Senate is derived once from the Sejm result (a simplification); it has no separate campaign. There are no early elections without a lawful act, so the next election follows the default legal calendar. An ordinary law takes effect with the vote of the Sejm; the Senate votes only on a change of the constitution (a simplification of the game). ?]
+[? if polish_presidential_sequence_completed : The 111-seat Senate is derived once from the Sejm result (a simplification); it has no separate campaign. There are no early elections without a lawful act, so the next election follows the default legal calendar. An ordinary law takes effect with the vote of the Sejm; the Senate votes only on a change of the constitution (a simplification of the game). A change of the constitution needs two thirds of the votes for and against in both chambers, voted on the same day; the signatures of 111 MPs that art. 125 requires for a motion are left out (a simplification of the game). ?]
 
 Recorded votes and election history are in Figures and charts; the Polls tab shows voting intentions, not the sitting parliament.
 

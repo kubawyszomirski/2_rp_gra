@@ -237,28 +237,6 @@ test('the Budget card: a package of the cabinet before the Sejm; PPS as its supp
   assert.ok(!dendry.urgentCards(engine).includes('polish_budget_package'), 'one answer per package');
 });
 
-test('the constitutional card: two main actions; the prepared motion comes back as an urgent card and needs both chambers', () => {
-  const engine = dendry.startGame();
-  const Q = engine.state.qualities;
-  // Z — 0.56: the card waits for the constitutional debate of December 1924; here the debate is opened at once.
-  assert.ok(!offered(engine, 'main.parliament').includes('polish_constitution_project'), 'not before the constitutional debate');
-  globalThis.PolishProjects.openConstitutionDebate(Q);
-  assert.ok(offered(engine, 'main.parliament').includes('polish_constitution_project'), 'once the debate is open (card 7.4)');
-  playFromHand(engine, 'polish_constitution_project');
-  assert.equal(choice(engine, 'polish_constitution_project.presidential_arbitration').canChoose, false);
-  choose(engine, 'polish_constitution_project.democratic_guarantees');
-  choose(engine, 'root');
-  assert.equal(Q.time, 2, 'the first step spent the month');
-  // Z — 0.74 (decision 2A of 8 X 2026): the card itself files the motion; while it waits, it is an urgent card of Parliament.
-  engine.goToScene('main');
-  assert.deepEqual([dendry.urgentCards(engine), dendry.urgentDeck(engine, 'polish_constitution_project')], [['polish_constitution_project'], 'main.parliament']);
-  engine.playCard('polish_constitution_project');
-  assert.equal(choice(engine, 'polish_constitution_project.democratic_guarantees'), undefined, 'the prepared text is not prepared again');
-  const submit = choice(engine, 'polish_constitution_project.file_democratic_guarantees');
-  assert.equal(submit.canChoose, false);
-  assert.match(String(submit.subtitle), /Senate is not yet constituted/);
-});
-
 test('9.11 in the game: a financial crisis without a reform queues the stabilisation event; without the Treasury PPS leaves it to the cabinet', () => {
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
@@ -276,22 +254,55 @@ test('9.11 in the game: a financial crisis without a reform queues the stabilisa
   assert.equal(Q.S.events.resolved.polish_event_stabilization !== undefined || engine.state.sceneId === 'main', true);
 });
 
-// Z — 0.56 (item 2 of 5 X 2026): the constitutional debate opens with its event in December 1924, once, and only then the
-// constitutional card comes into the Parliament deck.
-test('Debata o konstytucji: the event of December 1924 opens the debate once, and with it the constitutional card', () => {
-  const engine = dendry.startGame();
+// Z — 0.56 (item 2 of 5 X 2026) and 0.82 (the user's decisions of 21 X 2026): the constitutional debate opens with its event in
+// December 1924, once; on its page PPS marks the motions it supports in its order. The old card stays out of the deck.
+test('Debata o konstytucji 0.82 w grze: one page of seven motions marked in order, a free position, the vote card of Parliament in Polish', () => {
+  const engine = dendry.startGame(1922, 'pl');
   const Q = engine.state.qualities;
   const P = globalThis.PolishProjects;
-  assert.equal(P.CONSTITUTION_DEBATE_AT, globalThis.PolishRules.timeOf(1924, 12));
-  assert.equal(P.constitutionDebateDue(Q), false, 'not in 1922');
-  Q.time = P.CONSTITUTION_DEBATE_AT;
-  assert.equal(P.constitutionDebateDue(Q), true, 'due in December 1924');
-  assert.ok(!offered(engine, 'main.parliament').includes('polish_constitution_project'), 'the card waits for the event');
-  engine.goToScene('polish_event_constitution_debate');
-  assert.match(JSON.stringify(engine.ui.paragraphs), /26 October 1924 the Popular National Union \(ZLN\)/);
-  assert.equal(P.constitutionDebateOpen(Q.S), true);
-  assert.equal(P.constitutionDebateDue(Q), false, 'once');
-  assert.ok(offered(engine, 'main.parliament').includes('polish_constitution_project'), 'the card comes into the deck');
+  const plain = x => (x == null ? '' : typeof x === 'string' ? x : Array.isArray(x) ? x.map(plain).join('') : plain(x.content));
+  const page = () => plain(engine.ui.paragraphs.map(p => [p.content, ' ']));
+  try {
+    assert.equal(P.CONSTITUTION_DEBATE_AT, globalThis.PolishRules.timeOf(1924, 12));
+    assert.equal(P.constitutionDebateDue(Q), false, 'not in 1922');
+    Q.time = P.CONSTITUTION_DEBATE_AT;
+    assert.equal(P.constitutionDebateDue(Q), true, 'due in December 1924');
+    engine.goToScene('polish_event_constitution_debate');
+    assert.match(page(), /26 października 1924 r\. Związek Ludowo-Narodowy.*Debata nie oznacza głosowania.*pierwszy na naszej liście ma szansę ok\. 17%.*Nasza lista: na razie żaden wniosek\./);
+    assert.deepEqual([P.constitutionDebateOpen(Q.S), P.constitutionDebateDue(Q)], [true, false], 'once');
+    assert.deepEqual(ids(engine), [...P.MOTION_IDS.map(id => 'polish_event_constitution_debate.m_' + id), 'polish_event_constitution_debate.declare']);
+    const arbitration = choice(engine, 'polish_event_constitution_debate.m_presidential_arbitration');
+    assert.deepEqual([arbitration.canChoose, plain(arbitration.subtitle)], [false, 'Tylko przy linii „Silniejsza prezydentura” (karta „Jakiej władzy chcemy”).']);
+    assert.equal(plain(choice(engine, 'polish_event_constitution_debate.m_referendum').title), '□ Referendum ludowe');
+    assert.match(plain(choice(engine, 'polish_event_constitution_debate.m_church_separation').subtitle),
+      /^Koniec „naczelnego stanowiska” Kościoła katolickiego.* Samo poparcie: stosunki z chadecją się pogarszają \(−3\), stosunki z PSL „Piast” się pogarszają \(−3\), sprzeciw Lewicy PPS spada \(−2\)\.$/);
+    choose(engine, 'polish_event_constitution_debate.m_constructive_vonc');
+    choose(engine, 'polish_event_constitution_debate.m_labour_chamber');
+    assert.equal(engine.state.sceneId, 'polish_event_constitution_debate.menu');
+    assert.match(page(), /Nasza lista: 1\. Konstruktywne wotum nieufności, 2\. Izba Pracy w miejsce Senatu\./);
+    assert.equal(plain(choice(engine, 'polish_event_constitution_debate.m_constructive_vonc').title), '■ 1. Konstruktywne wotum nieufności');
+    const unicameral = choice(engine, 'polish_event_constitution_debate.m_unicameral');
+    assert.deepEqual([unicameral.canChoose, plain(unicameral.subtitle)], [false, 'Wyklucza się z wnioskiem „Izba Pracy w miejsce Senatu”: najpierw go odznacz.']);
+    const t = Q.time, actions = Q.month_actions || 0;
+    choose(engine, 'polish_event_constitution_debate.declare');
+    assert.match(page(), /PPS popiera w debacie: 1\. Konstruktywne wotum nieufności, 2\. Izba Pracy w miejsce Senatu\. Komisja Konstytucyjna skieruje wnioski pod obrady/);
+    assert.deepEqual([Q.time, Q.month_actions || 0], [t, actions], 'the position costs no month');
+    choose(engine, 'root');
+    assert.ok(!offered(engine, 'main.parliament').includes('polish_constitution_project'), 'the old card stays out of the deck');
+    // The Committee brought the constructive vote to the floor last month: the urgent vote card of Parliament (a fixture Senate).
+    Q.S.senate = Object.assign({}, Q.S.senate, { status: 'constituted', total: 111, club_seats: { pps: 30, psl_piast: 40, zln: 41 } });
+    P.debateState(Q.S).pending = { id: 'constructive_vonc', drawn_at: Q.time - 1 };
+    engine.goToScene('main');
+    assert.deepEqual([dendry.urgentCards(engine), dendry.urgentDeck(engine, 'polish_constitution_vote')], [['polish_constitution_vote'], 'main.parliament']);
+    dendry.playCard(engine, 'polish_constitution_vote');
+    assert.match(page(), /Głosowanie nad zmianą konstytucji.*Konstruktywne wotum nieufności.*Komisja Konstytucyjna skierowała wniosek pod obrady; obie izby głosują tego samego dnia\. Sejm: za \d+, przeciw \d+, wstrzymało się \d+\./);
+    choose(engine, 'polish_constitution_vote.resolve');
+    assert.match(page(), /Zmiana konstytucji obowiązuje od tego miesiąca|Wniosek upadł i nie wróci w tym Sejmie/);
+    choose(engine, 'root');
+    assert.deepEqual([Q.time, P.debateState(Q.S).pending, dendry.urgentCards(engine)], [t, null, []], 'the vote costs no month and leaves the hand');
+  } finally {
+    globalThis.PolishRules.setLanguage('en');
+  }
 });
 
 // Z — 0.66 (decisions 1A and 2A of 7 X 2026): the Treasury card is split in two — the taxes, and the loan, savings and emission —

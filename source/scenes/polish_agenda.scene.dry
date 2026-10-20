@@ -8,7 +8,7 @@ on-arrival: {!
 // needs no card from the hand and no renewal; it still costs this month's action (1 T) and needs its law,
 // its financing and its executor. A new programme starts only at a forecast budget of −2 B or above (11.3).
 // Z — 0.74 (decision 2A of 8 X 2026): an urgent card of the Government deck (of the Parliament deck for a launch by the
-// parliamentary route alone); a prepared constitutional motion is filed in the card of the constitutional reform.
+// parliamentary route alone); a change of the constitution is a motion of the constitutional debate (Z — 0.82).
 PolishProjects.agendaView(Q);
 !}
 

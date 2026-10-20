@@ -702,31 +702,161 @@ test('Trzy reformy: only the constructive vote in force; no arbitration and no c
   assert.equal(gov.constructiveVoteRequired(Q.S, Q), true);
   assert.equal(Q.S.parliament.constructive_vonc, true, 'the old field is only the adapter');
   assert.equal(Q.constructive_vonc, 1);
-  // Two main actions: the text, then the motion to both chambers; 2/3 and at least 111 signatures.
-  freeAction(Q);
-  proj.constitutionChoose(Q, 'democratic_guarantees', 'card');
-  assert.equal(Q.month_actions, 1);
-  freeAction(Q);
-  const status = proj.constitutionStatus(Q, 'democratic_guarantees');
-  if (status.available) {
-    const out = proj.constitutionChoose(Q, 'democratic_guarantees', 'agenda');
-    assert.equal(out.law.rule, 'constitutional');
-    assert.equal(Q.S.ballots.at(-1).rule, 'constitutional_amendment_sejm');
-  } else {
-    assert.match(status.reason, /111 MPs/);
-  }
-  assert.match(proj.constitutionStatus(Q, 'presidential_arbitration').reason, /stronger presidency/);
+  // Z — 0.82: a change of the constitution is a motion of the debate; a change in force cannot be supported again.
+  proj.openConstitutionDebate(Q);
+  assert.match(proj.motionStatus(Q, 'constructive_vonc').reason, /already in force/);
+  assert.match(proj.motionStatus(Q, 'presidential_arbitration').reason, /stronger presidency/);
 });
 
-test('Sprawiedliwość (stage-4 part): the broad variant is the one democratic_guarantees project; the review of an abuse needs a restriction case', () => {
-  const Q = withPortfolio(world({ time: 12 }), 'justice');
+test('Sprawiedliwość (stage-4 part): the broad variant puts the democratic guarantees first among the motions of PPS; the review of an abuse needs a restriction case', () => {
+  const Q = withPortfolio(world({ time: 36, senate: true }), 'justice');
+  assert.match(proj.optionStatus(Q, 'justice_policy', 'broad_safeguards').reason, /constitutional debate/, 'not before the debate');
+  proj.openConstitutionDebate(Q);
+  proj.debateToggle(Q, 'constructive_vonc');
+  proj.debateDeclare(Q);
+  assert.equal(proj.optionStatus(Q, 'justice_policy', 'broad_safeguards').available, true);
   proj.chooseOption(Q, 'justice_policy', 'broad_safeguards');
-  const project = Object.values(Q.S.projects).find(p => p.type === 'constitution');
-  assert.equal(project.variant, 'democratic_guarantees', 'the ID of democratisation');
-  assert.equal(Object.values(Q.S.projects).filter(p => p.type === 'constitution').length, 1, 'no second project');
-  // Stage 7 records the restrictions (S.politics); without one the review has nothing to examine.
+  const debate = proj.debateState(Q.S);
+  assert.deepEqual([debate.ranking, debate.motions.democratic_guarantees.status, Q.month_actions], [['democratic_guarantees', 'constructive_vonc'], 'waiting', 1]);
+  assert.equal(Object.values(Q.S.projects).filter(p => p.type === 'constitution').length, 0, 'no project before the vote');
   freeAction(Q);
+  assert.match(proj.optionStatus(Q, 'justice_policy', 'broad_safeguards').reason, /already the first motion/);
+  // Stage 7 records the restrictions (S.politics); without one the review has nothing to examine.
   assert.match(proj.optionStatus(Q, 'justice_policy', 'limited_redress').reason, /active restriction of a named case/);
+});
+
+// Z — 0.82 (the user's decisions of 21 X 2026): the constitutional debate. The fixture parliament LEFT gives the guarantees 270 votes
+// for and 120 against (two thirds of the votes for and against), the constructive vote 150 for and none against.
+test('Debata 0.82: the list of PPS in its order; the lines of What Power Do We Want and the exclusion; the position costs no month and brings the effects of support once', () => {
+  const Q = world({ seats: LEFT, time: 36, senate: true });
+  assert.equal(proj.debateState(Q.S), null, 'no debate before its event');
+  proj.openConstitutionDebate(Q);
+  assert.deepEqual(proj.MOTION_IDS, ['democratic_guarantees', 'church_separation', 'constructive_vonc', 'referendum', 'presidential_arbitration',
+    'labour_chamber', 'unicameral']);
+  assert.match(proj.motionStatus(Q, 'presidential_arbitration').reason, /A stronger presidency/);
+  Q.S.actors.pps.strategy = { form_of_power: 'strong_presidency' };
+  assert.equal(proj.motionStatus(Q, 'presidential_arbitration').available, true);
+  assert.match(proj.motionStatus(Q, 'labour_chamber').reason, /Parliamentarism” or “Workers’ councils/);
+  Q.S.actors.pps.strategy = { form_of_power: 'workers_councils' };
+  for (const id of ['constructive_vonc', 'democratic_guarantees', 'labour_chamber']) proj.debateToggle(Q, id);
+  assert.match(proj.motionStatus(Q, 'unicameral').reason, /excludes the motion “A Chamber of Labour in place of the Senate”/);
+  assert.equal(proj.motionToggleable(Q, 'unicameral'), false);
+  assert.throws(() => proj.debateToggle(Q, 'unicameral'));
+  assert.equal(proj.motionToggleable(Q, 'labour_chamber'), true, 'a chosen motion can always be unmarked');
+  proj.debateToggle(Q, 'labour_chamber');
+  assert.equal(proj.motionStatus(Q, 'unicameral').available, true);
+  proj.debateToggle(Q, 'church_separation');
+  proj.debateToggle(Q, 'constructive_vonc');
+  proj.debateToggle(Q, 'constructive_vonc');
+  assert.equal(Q.pl_con_draft_text, '1. Democratic guarantees, 2. Separation of the Church and the state, 3. Constructive vote of no confidence',
+    'an unmarked motion leaves the list and comes back at its end');
+  assert.deepEqual([Q.pl_con_church_separation_mark, Q.pl_con_referendum_mark], ['■ 2.', '□']);
+  assert.match(Q.pl_con_church_separation_line, /^The end of the leading position of the Catholic Church.*Our support: relations with the Christian Democrats worsen \(−3\)/);
+  const before = { pschd: Q.S.actors.relations.pschd, piast: Q.S.actors.relations.psl_piast, lewica: Q.lewica_dissent };
+  const text = proj.debateDeclare(Q);
+  assert.equal(Q.month_actions, 0, 'the position costs no month');
+  assert.match(text, /^PPS supports in the debate: 1\. Democratic guarantees, 2\. Separation of the Church and the state, 3\. Constructive vote of no confidence\./);
+  const debate = proj.debateState(Q.S);
+  assert.deepEqual([debate.declared_at, debate.ranking, Object.keys(debate.motions).map(id => debate.motions[id].status)],
+    [36, ['democratic_guarantees', 'church_separation', 'constructive_vonc'], ['waiting', 'waiting', 'waiting']]);
+  assert.deepEqual([Q.S.actors.relations.pschd, Q.S.actors.relations.psl_piast, Q.lewica_dissent], [before.pschd - 3, before.piast - 3, before.lewica - 2]);
+  assert.throws(() => proj.debateDeclare(Q), /does not wait/, 'one position in the debate');
+  assert.throws(() => proj.debateToggle(Q, 'referendum'));
+  // Supporting none is a position too: then no motion comes to a vote.
+  const N = world({ seats: LEFT, time: 36, senate: true });
+  proj.openConstitutionDebate(N);
+  assert.match(proj.debateDeclare(N), /supports none of the motions/);
+  for (let i = 0; i < 6; i++) month(N);
+  assert.equal(proj.debateState(N.S).pending, null);
+});
+
+test('Komisja Konstytucyjna 0.82: at most one motion a month, by its place among the waiting motions; none while a vote waits; the vote card only the next month', () => {
+  const Q = world({ seats: LEFT, time: 36, senate: true });
+  assert.deepEqual([proj.AGENDA_CHANCES, proj.AGENDA_CHANCE_LATER], [[0.17, 0.10, 0.07], 0.035]);
+  proj.openConstitutionDebate(Q);
+  for (const id of ['constructive_vonc', 'democratic_guarantees', 'referendum']) proj.debateToggle(Q, id);
+  proj.debateDeclare(Q);
+  const rolls = Q.S.rng.rolls, key = (id, t) => 'constitution:agenda:' + id + ':t' + t;
+  // The first misses (0.5 ≥ 17%), the second and the third would both come (below 10% and 7%): the higher one comes.
+  Object.assign(rolls, { [key('constructive_vonc', 36)]: 0.5, [key('democratic_guarantees', 36)]: 0.09, [key('referendum', 36)]: 0.01 });
+  assert.equal(proj.constitutionVoteActive(Q), false);
+  month(Q);
+  const debate = proj.debateState(Q.S);
+  assert.deepEqual(debate.pending, { id: 'democratic_guarantees', drawn_at: 36 });
+  assert.equal(proj.constitutionVoteActive(Q), true, 'the vote card from the next month');
+  rolls[key('constructive_vonc', 37)] = 0;
+  month(Q);
+  assert.deepEqual(debate.pending, { id: 'democratic_guarantees', drawn_at: 36 }, 'no second motion while a vote waits');
+  assert.equal(rolls[key('constructive_vonc', 37)], 0, 'and no roll is drawn');
+});
+
+test('Głosowanie konstytucyjne 0.82: both chambers on the same day by two thirds of the votes for and against; in force at once and 1 B for a month; a failed motion does not come back', () => {
+  const Q = world({ seats: LEFT, time: 36, senate: true });
+  proj.openConstitutionDebate(Q);
+  for (const id of ['democratic_guarantees', 'constructive_vonc']) proj.debateToggle(Q, id);
+  proj.debateDeclare(Q);
+  const debate = proj.debateState(Q.S);
+  debate.pending = { id: 'democratic_guarantees', drawn_at: 36 };
+  Q.time = 37; Q.year = rules.yearOf(37); Q.month = rules.monthOf(37);
+  Q.S.rng.rolls['constitution:vote:democratic_guarantees:t36'] = 0.5; // the chance is 65%
+  const view = proj.constitutionVoteView(Q);
+  assert.equal(view.passes, true);
+  assert.match(view.line, /The Sejm: 270 for, 120 against, 54 abstaining\. The Senate: 67 for, 30 against, 14 abstaining\. Both chambers have adopted/);
+  const wyzwolenie = Q.S.actors.relations.psl_wyzwolenie;
+  const text = proj.constitutionVoteResolve(Q);
+  assert.match(text, /^The change of the constitution is in force from this month; it costs the budget 1 unit this month\. Relations with PSL Wyzwolenie/);
+  assert.equal(Q.month_actions, 0, 'the vote costs no month');
+  const law = Q.S.parliament.laws.at(-1);
+  assert.deepEqual([law.rule, law.status, law.senate, Q.S.ballots.slice(-2).map(b => b.rule + ':' + b.result)],
+    ['constitutional', 'enacted', 'accepted', ['constitutional_amendment_sejm:passed', 'constitutional_amendment_senate:passed']]);
+  assert.equal(Q.S.ballots.at(-1).denominator, 97, 'two thirds of the senators voting for and against');
+  assert.equal(proj.reformsRecord(Q).democratic_guarantees, true, 'in force at once');
+  assert.equal(Q.S.actors.relations.psl_wyzwolenie, wyzwolenie + 4);
+  const project = proj.projectsOf(Q.S, 'constitution')[0];
+  assert.deepEqual([project.variant, project.status, project.build_budget_B, project.duration_months], ['democratic_guarantees', 'executing', 1, 1]);
+  month(Q);
+  assert.equal(project.status, 'completed', '1 B for one month');
+  // The constructive vote has 150 for and none against (95%); a roll of 0.99 turns it over.
+  debate.pending = { id: 'constructive_vonc', drawn_at: Q.time - 1 };
+  Q.S.rng.rolls['constitution:vote:constructive_vonc:t' + (Q.time - 1)] = 0.99;
+  const failed = proj.constitutionVoteView(Q);
+  assert.equal(failed.passes, false);
+  assert.match(failed.line, /Some of the MPs who were to abstain \(76\) voted against\. There are not two thirds of the votes in the Sejm: the motion fails\./);
+  assert.match(proj.constitutionVoteResolve(Q), /does not come back/);
+  assert.deepEqual([debate.motions.constructive_vonc.status, proj.reformsRecord(Q).constructive_vonc], ['failed', false]);
+  assert.equal(proj.projectsOf(Q.S, 'constitution').length, 1, 'a failed motion creates no project');
+  for (let i = 0; i < 6; i++) month(Q);
+  assert.equal(debate.pending, null, 'nothing is left to bring to the floor');
+});
+
+test('Senat i los 0.82: the clubs that made the Senate vote against its end; a roll can pass a motion when its opponents abstain; without the Senate the Sejm alone decides', () => {
+  const O = world({ seats: OPENING, time: 36, senate: true });
+  const votes = proj.motionCounts(O, 'unicameral').sejm.club_votes;
+  assert.deepEqual(['zln', 'pschd', 'psl_piast'].map(id => votes[id].vote), ['no', 'no', 'no']);
+  proj.openConstitutionDebate(O);
+  proj.debateToggle(O, 'unicameral');
+  proj.debateDeclare(O);
+  proj.debateState(O.S).pending = { id: 'unicameral', drawn_at: 36 };
+  O.time = 37;
+  O.S.rng.rolls['constitution:vote:unicameral:t36'] = 0.01; // 77 for, 209 against: the chance is 5%
+  const view = proj.constitutionVoteView(O);
+  assert.equal(view.passes, true);
+  assert.match(view.line, /Some of its opponents \(171 MPs\) abstained\..*Some of its opponents in the Senate \(\d+\) abstained\..*Both chambers have adopted/);
+  const text = proj.constitutionVoteResolve(O);
+  assert.match(text, /The Senate ends; from now on the Sejm alone decides\./);
+  assert.deepEqual([O.S.senate.status, O.S.senate.total, O.S.senate.abolished_by], ['abolished', 0, 'unicameral']);
+  // A later change of the constitution needs the Sejm only.
+  const Q = world({ seats: LEFT, time: 36, senate: true });
+  Q.S.senate = Object.assign({}, Q.S.senate, { status: 'abolished', total: 0, club_seats: {} });
+  proj.openConstitutionDebate(Q);
+  proj.debateToggle(Q, 'constructive_vonc');
+  proj.debateDeclare(Q);
+  proj.debateState(Q.S).pending = { id: 'constructive_vonc', drawn_at: 36 };
+  Q.time = 37;
+  Q.S.rng.rolls['constitution:vote:constructive_vonc:t36'] = 0.5;
+  assert.match(proj.constitutionVoteView(Q).line, /Without the Senate, the vote of the Sejm decides/);
+  proj.constitutionVoteResolve(Q);
+  assert.deepEqual([Q.S.parliament.laws.at(-1).senate, proj.reformsRecord(Q).constructive_vonc], ['abolished', true]);
 });
 
 // ---- Crisis offers (8.6, 8.8) ----

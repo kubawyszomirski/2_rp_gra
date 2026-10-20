@@ -259,7 +259,8 @@ test('Manifest parlamentu: the pool, the agenda and the events are the 10 famili
     // Z — 0.81: the card Legislative Initiative and its vote; the bill D and the army control left the deck (their scenes stay).
     'parliament.legislative_program': ['polish_legislative_initiative', 'polish_initiative_vote', 'polish_unemployment_bill'],
     'parliament.finance_amendment': ['polish_budget_package'],
-    'parliament.constitution_project': ['polish_constitution_project'],
+    // Z — 0.82: the changes of the constitution are motions of the debate event; their vote is a card, the old card left the deck.
+    'parliament.constitution_project': ['polish_constitution_project', 'polish_constitution_vote'],
     'parliament.army_oversight': ['polish_parliament_army_oversight'],
     'parliament.government_support': ['polish_government_support', 'polish_government_response'],
     'parliament.list_agreement': ['polish_list_agreement'],
@@ -421,22 +422,26 @@ test('Karty 3–5 bez odnowienia: an answered budget package, a refused motion a
   assert.equal(Q.month_actions, 1, '1 T');
   Q.month_actions = 0; S.turn.pending = null;
   assert.equal(PolishProjects.agendaStatus(Q, 'army_control').available, true, 'the changed offer can be filed');
-  // Card 4: a refused constitutional motion is not filed again while its forecast is the same; a changed situation opens it.
+  // Card 4 (Z — 0.82, decision 3A of 21 X 2026): a motion of the constitutional debate that fails does not come back, even when the
+  // situation changes.
   const C = quietGame().state.qualities;
   C.S.senate.status = 'constituted'; C.S.senate.club_seats = { pps: 40, pschd: 71 }; C.S.senate.total = 111;
   const cc = C.S.parliament.clubs;
   C.S.parliament.clubs = [cc.find(c => c.id === 'pps'), cc.find(c => c.id === 'pschd')];
   C.S.parliament.clubs[0].seats = 150; C.S.parliament.clubs[1].seats = 294;
   C.S.actors.relations.pschd = 0;
-  PolishProjects.constitutionChoose(C, 'democratic_guarantees', 'parliament');
-  C.month_actions = 0; C.S.turn.pending = null;
-  PolishProjects.constitutionFile(C, 'democratic_guarantees');
+  PolishProjects.openConstitutionDebate(C);
+  PolishProjects.debateToggle(C, 'democratic_guarantees');
+  PolishProjects.debateDeclare(C);
+  const debate = PolishProjects.debateState(C.S);
+  debate.pending = { id: 'democratic_guarantees', drawn_at: C.time - 1 };
+  C.S.rng.rolls['constitution:vote:democratic_guarantees:t' + (C.time - 1)] = 0.99;
+  PolishProjects.constitutionVoteResolve(C);
   assert.equal(C.S.parliament.laws.at(-1).status, 'rejected', 'no two thirds');
-  C.month_actions = 0; C.S.turn.pending = null;
-  assert.match(PolishProjects.constitutionStatus(C, 'democratic_guarantees').reason, /same motion was refused/);
   C.S.actors.relations.pschd = 100; // a changed situation: the Christian Democrats no longer vote against
   PolishGovernment.writeGovernmentMirrors(C);
-  assert.equal(PolishProjects.constitutionStatus(C, 'democratic_guarantees').available, true, 'a changed situation opens it again for 1 T');
+  assert.deepEqual([debate.motions.democratic_guarantees.status, PolishProjects.constitutionAgenda(C, C.time), debate.pending],
+    ['failed', null, null], 'the failed motion does not come back');
 });
 
 test('Kampania od stycznia 1922 do raportu: two walks of the whole chapter end in one report — after the coup or after the next election — with a valid state and no engine error', () => {

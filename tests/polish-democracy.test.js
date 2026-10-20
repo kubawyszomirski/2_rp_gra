@@ -140,7 +140,7 @@ test('B1/B2: the dispute of June 1922 leads into one free formation where PPS an
   engine.state.currentHands.main = [{ id: 'polish_event_pils_criticism', title: 'B2' }];
   engine.playCard('polish_event_pils_criticism');
   const projects = Object.keys(S.projects).length;
-  const guarantees = PolishProjects.constitutionStatus(Q, 'democratic_guarantees').reason;
+  const guarantees = PolishProjects.justiceGuaranteesStatus(Q).reason;
   const pps = S.society.cells.map(c => c.propensity.pps);
   const centrum = S.actors.pps.factions.centrum.dissent;
   choose(engine, 'polish_event_pils_criticism.reform');
@@ -149,7 +149,8 @@ test('B1/B2: the dispute of June 1922 leads into one free formation where PPS an
   assert.equal(S.actors.pps.factions.centrum.dissent, Math.max(0, centrum - 2), 'only the Centrum −2');
   // The answer spends the month (Z — 0.56), so the path of the reform is compared in the next month.
   choose(engine, 'root');
-  assert.equal(PolishProjects.constitutionStatus(Q, 'democratic_guarantees').reason, guarantees, 'no variant or path unlocked');
+  assert.equal(PolishProjects.justiceGuaranteesStatus(Q).reason, guarantees, 'no variant or path unlocked');
+  assert.equal(PolishProjects.constitutionDebateOpen(S), false, 'no constitutional debate either');
   // With another cabinet in office the sequence is not replayed: one case of the dispute, no fall.
   const other = dendry.startGame().state.qualities;
   other.S.cabinet.id = 'fixture_other_cabinet';

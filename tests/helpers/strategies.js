@@ -54,7 +54,6 @@ const P = {
   support: option => ['polish_government_support', 'polish_government_support.' + option],
   // Z — 0.64: a PPS member raises the same demands on the coalition card of the Government deck.
   coalition: option => ['polish_coalition_affairs', 'polish_government_support.' + option],
-  constitution: variant => ['polish_constitution_project', 'polish_constitution_project.' + variant],
   adviser: (who, action) => ['main:' + who, who + '.' + action],
 };
 
@@ -178,6 +177,9 @@ const PASSIVE_EVENTS = {
   polish_presidential_second: ['do_not_run_daszynski_second'],
   polish_budget_package: ['refuse', 'later'],
   polish_initiative_vote: ['passed', 'rejected', 'withdraw'],
+  // Z — 0.82: the motions PPS supports in the constitutional debate, in its order (none by default); the vote card has one answer.
+  constitution_debate: [],
+  polish_constitution_vote: ['resolve'],
   polish_government_response: ['maintain', 'motion_refuse', 'later'],
   polish_strike_steps: ['none', 'no_protection', 'done'],
   coup_stance: 'mediate', coup_commit: 'none', coup_f9: 'accept',
@@ -354,8 +356,8 @@ const STRATEGIES = {
   }),
   constitutional_defense: strategy('constitutional_defense', '21.2: constitutional defence', {
     free: ctx => [P.adviser('niedzialkowski', 'defend_democracy')],
-    month: ctx => plan.organised(ctx, [P.constitution('democratic_guarantees'), P.constitution('file_democratic_guarantees'),
-      P.initiative('army_oversight'), P.militia(ctx.t % 2 ? 'militarize' : 'form_as'),
+    events: Object.assign({}, ACTIVE_EVENTS, { constitution_debate: ['democratic_guarantees', 'constructive_vonc', 'referendum'] }),
+    month: ctx => plan.organised(ctx, [P.initiative('army_oversight'), P.militia(ctx.t % 2 ? 'militarize' : 'form_as'),
       P.campaign('republic'), ...plan.military(ctx)]),
   }),
 };
@@ -391,6 +393,11 @@ function answer(engine, strat) {
     prefs = (ev.polish_event_austerity_1926_threat || ['back_down']).map(o => 'polish_event_austerity_1926.' + o);
   } else if (sid === 'polish_speaker_election.choice') {
     prefs = (ev.polish_speaker_election || []).map(o => 'polish_speaker_election.' + o);
+  } else if (base === 'polish_event_constitution_debate') {
+    // Z — 0.82: mark the wanted motions not yet on the list, in order, then announce the position.
+    const debate = globalThis.PolishProjects.debateState(Q.S);
+    const want = (ev.constitution_debate || []).filter(id => debate && debate.declared_at === null && debate.draft.indexOf(id) < 0);
+    prefs = want.map(id => 'polish_event_constitution_debate.m_' + id).concat(['polish_event_constitution_debate.declare']);
   } else if (sid === 'polish_government_support.threat') {
     prefs = ['polish_government_support.back_down'];
   } else if (sid === 'polish_government_support.motion') {
@@ -411,7 +418,8 @@ function playMonth(engine, strat, used) {
   const Q = engine.state.qualities, R = globalThis.PolishRules;
   const ctx = context(engine);
   // Z — 0.81: the vote on a bill of the legislative initiative is an urgent card that costs no month; it is answered first.
-  if (runPath(engine, ['polish_initiative_vote'])) {
+  // Z — 0.82: so is the vote on a motion of the constitutional debate.
+  for (const card of ['polish_initiative_vote', 'polish_constitution_vote']) if (runPath(engine, [card])) {
     while (engine.state.sceneId !== 'main' && Q.S.chapter.status !== 'ended' && Q.time === ctx.t) {
       if (!answer(engine, strat)) break;
     }

@@ -1,19 +1,138 @@
 title: A Debate on the Constitution
-subtitle: The right and PSL “Piast” want to repair the March Constitution; PPS can table its own projects.
+subtitle: The right and PSL “Piast” want to repair the March Constitution; PPS states which motions it supports.
 new-page: true
 tags: pl_event
 view-if: {! return !!Q.S && PolishProjects.constitutionDebateDue(Q) !}
 on-arrival: {!
-// Event politics.constitution_debate (Z — 0.56, item 2 of 5 X 2026): it opens the constitutional debate once, in
-// December 1924, and with it the card parliament.constitution_project (technical reference 7.6). 0 T; PPS chooses its
-// projects later on the card. The facts of the text are in HISTORICAL_SOURCES.md.
+// Event politics.constitution_debate (Z — 0.56, item 2 of 5 X 2026; Z — 0.82, the user's decisions of 21 X 2026): it opens
+// the constitutional debate once, in December 1924. On this page PPS marks the motions it supports, in its order; the
+// Constitutional Committee then brings them to the floor by a monthly chance and the urgent card polish_constitution_vote
+// puts each to both chambers (technical reference 7.6). 0 T. The facts of the text are in HISTORICAL_SOURCES.md.
 PolishProjects.openConstitutionDebate(Q);
+PolishProjects.debateView(Q);
 !}
 
 = A debate on the constitution
 
-At its congress on 26 October 1924 the Popular National Union (ZLN) adopted a resolution on the “repair of the constitution”: a President who may dissolve the Sejm, a Senate equal to the Sejm, fewer deputies, a narrower immunity and a constitutional tribunal. In December 1924 the congress of PSL “Piast” also declared a change of the constitution necessary. The revision of the March Constitution is on the agenda.
+At its congress on 26 October 1924 the Popular National Union (ZLN) adopted a resolution on the “repair of the constitution”: a President who may dissolve the Sejm, a Senate equal to the Sejm, fewer deputies, a narrower immunity and a constitutional tribunal. In December 1924 the congress of PSL “Piast” also declared a change of the constitution necessary. The Sejm opens a constitutional debate.
 
-From now on PPS can prepare and table its own projects with the card Constitutional Reform.
+A debate does not mean a vote: the Constitutional Committee may work for months. Mark the motions PPS will support, in the order of their importance. Each month the Committee may bring one of them to the floor: the first on our list has a chance of about 17%, the second 10%, the third 7%, each later one 3.5%. The Sejm and the Senate then vote on the same day, and a change needs two thirds of the votes for and against in both chambers. A motion PPS does not support does not come to a vote.
+
+Our list: [+ pl_con_draft_text +].
+
+- @m_democratic_guarantees
+- @m_church_separation
+- @m_constructive_vonc
+- @m_referendum
+- @m_presidential_arbitration
+- @m_labour_chamber
+- @m_unicameral
+- @declare
+
+@menu
+new-page: true
+on-arrival: {!
+PolishProjects.debateView(Q);
+!}
+
+= A debate on the constitution
+
+Mark the motions in the order of their importance; a motion you unmark leaves the list, and the later ones move up.
+
+Our list: [+ pl_con_draft_text +].
+
+- @m_democratic_guarantees
+- @m_church_separation
+- @m_constructive_vonc
+- @m_referendum
+- @m_presidential_arbitration
+- @m_labour_chamber
+- @m_unicameral
+- @declare
+
+@m_democratic_guarantees
+title: [+ pl_con_democratic_guarantees_mark +] Democratic guarantees
+subtitle: [+ pl_con_democratic_guarantees_line +]
+choose-if: {! return PolishProjects.motionToggleable(Q, 'democratic_guarantees') !}
+unavailable-subtitle: [+ pl_con_democratic_guarantees_why +]
+on-arrival: {!
+PolishProjects.debateToggle(Q, 'democratic_guarantees');
+!}
+go-to: menu
+
+@m_church_separation
+title: [+ pl_con_church_separation_mark +] Separation of the Church and the state
+subtitle: [+ pl_con_church_separation_line +]
+choose-if: {! return PolishProjects.motionToggleable(Q, 'church_separation') !}
+unavailable-subtitle: [+ pl_con_church_separation_why +]
+on-arrival: {!
+PolishProjects.debateToggle(Q, 'church_separation');
+!}
+go-to: menu
+
+@m_constructive_vonc
+title: [+ pl_con_constructive_vonc_mark +] Constructive vote of no confidence
+subtitle: [+ pl_con_constructive_vonc_line +]
+choose-if: {! return PolishProjects.motionToggleable(Q, 'constructive_vonc') !}
+unavailable-subtitle: [+ pl_con_constructive_vonc_why +]
+on-arrival: {!
+PolishProjects.debateToggle(Q, 'constructive_vonc');
+!}
+go-to: menu
+
+@m_referendum
+title: [+ pl_con_referendum_mark +] Popular referendum
+subtitle: [+ pl_con_referendum_line +]
+choose-if: {! return PolishProjects.motionToggleable(Q, 'referendum') !}
+unavailable-subtitle: [+ pl_con_referendum_why +]
+on-arrival: {!
+PolishProjects.debateToggle(Q, 'referendum');
+!}
+go-to: menu
+
+@m_presidential_arbitration
+title: [+ pl_con_presidential_arbitration_mark +] Presidential arbitration
+subtitle: [+ pl_con_presidential_arbitration_line +]
+choose-if: {! return PolishProjects.motionToggleable(Q, 'presidential_arbitration') !}
+unavailable-subtitle: [+ pl_con_presidential_arbitration_why +]
+on-arrival: {!
+PolishProjects.debateToggle(Q, 'presidential_arbitration');
+!}
+go-to: menu
+
+@m_labour_chamber
+title: [+ pl_con_labour_chamber_mark +] A Chamber of Labour in place of the Senate
+subtitle: [+ pl_con_labour_chamber_line +]
+choose-if: {! return PolishProjects.motionToggleable(Q, 'labour_chamber') !}
+unavailable-subtitle: [+ pl_con_labour_chamber_why +]
+on-arrival: {!
+PolishProjects.debateToggle(Q, 'labour_chamber');
+!}
+go-to: menu
+
+@m_unicameral
+title: [+ pl_con_unicameral_mark +] One chamber: the abolition of the Senate
+subtitle: [+ pl_con_unicameral_line +]
+choose-if: {! return PolishProjects.motionToggleable(Q, 'unicameral') !}
+unavailable-subtitle: [+ pl_con_unicameral_why +]
+on-arrival: {!
+PolishProjects.debateToggle(Q, 'unicameral');
+!}
+go-to: menu
+
+@declare
+title: We announce our position
+subtitle: Costs no month. The effects of our support follow at once; the votes come when the Constitutional Committee brings the motions to the floor.
+on-arrival: {!
+Q.pl_con_result = PolishProjects.debateDeclare(Q);
+!}
+go-to: result
+
+@result
+new-page: true
+
+= A debate on the constitution
+
+[+ pl_con_result +]
 
 - @root: Continue.

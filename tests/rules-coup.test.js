@@ -374,6 +374,10 @@ test('Sprawiedliwość: a confirmed unlawful act lifts only its restriction (dem
   S.cabinet.status = 'active';
   free(Q);
   assert.match(PolishProjects.optionStatus(Q, 'justice_policy', 'limited_redress').reason, /not already under review/, 'the same material is not reviewed again');
+  // Z — 0.82: the broad variant puts the democratic guarantees first among the motions of PPS in the constitutional debate.
+  assert.match(PolishProjects.optionStatus(Q, 'justice_policy', 'broad_safeguards').reason, /constitutional debate/);
+  PolishProjects.openConstitutionDebate(Q);
+  PolishProjects.debateDeclare(Q);
   assert.equal(PolishProjects.optionStatus(Q, 'justice_policy', 'broad_safeguards').available, true, 'the broad variant is the democratic_guarantees route');
 });
 

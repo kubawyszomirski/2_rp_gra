@@ -1,0 +1,40 @@
+title: The Vote on a Change of the Constitution
+subtitle: An urgent card: the Sejm and the Senate vote on a motion of the constitutional debate.
+new-page: true
+is-card: true
+tags: parliament_affairs
+view-if: {! return !!Q.S && PolishProjects.constitutionVoteActive(Q) !}
+on-arrival: {!
+// The vote on a motion of the constitutional debate (Z — 0.82): from the month after the Constitutional Committee brought it to
+// the floor; it costs no month. Both chambers vote on the same day; a change that passes is in force at once, a motion that
+// fails does not come back (technical reference 7.6).
+var view = PolishProjects.constitutionVoteView(Q);
+Q.pl_cv_name = view ? view.name : '';
+Q.pl_cv_line = view ? view.line : '';
+!}
+
+= The vote on a change of the constitution
+
+**[+ pl_cv_name +]**
+
+[+ pl_cv_line +]
+
+- @resolve
+
+@resolve
+title: Continue
+on-arrival: {!
+Q.pl_cv_result = PolishProjects.constitutionVoteResolve(Q);
+!}
+go-to: result
+
+@result
+new-page: true
+
+= The vote on a change of the constitution
+
+**[+ pl_cv_name +]**
+
+[+ pl_cv_result +]
+
+- @root: Continue.

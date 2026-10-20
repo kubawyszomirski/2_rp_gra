@@ -1,5 +1,14 @@
 # Historical Source Register
 
+## PL-CONSTITUTION-DEBATE-1924-1926 — the motions of the constitutional debate
+
+- **Authority:** the user's decisions of 21 October 2026 (technical reference 0.82, sections 7.1, 7.6 and 23.55).
+- **Sources (accessed 21 October 2026):** the Constitution of 17 III 1921, art. 125 (https://biblioteka.sejm.gov.pl/tek01/txt/kpol/1921a-r6.html); A. Czubiński, "Problemy ustrojowe po przewrocie majowym" (1999), pp. 168–173 (https://wbc.poznan.pl//Content/158973/PDF/10.%20Problemy%20ustrojowe%20po%20przewrocie%20majowym.pdf); W. Suleja, "Spór o kształt ustrojowy II RP", Przystanek Historia (IPN), 17 II 2021 (https://przystanekhistoria.pl/pa2/tematy/niepodleglosc/78808,Spor-o-ksztalt-ustrojowy-II-RP.html); M. Łysko, "Przepisy wyznaniowe w Konstytucji marcowej" (https://repozytorium.uwb.edu.pl/jspui/bitstream/11320/14094/1/M_Lysko_Przepisy_wyznaniowe_w_Konstytucji_marcowej.pdf), citing K. Krasowski, *Związki wyznaniowe*; the August Novelization, Dz.U. 1926 nr 78 poz. 442.
+- **Historical fact (high confidence, read in the texts):** art. 125 — a motion signed by at least a quarter of the statutory number of deputies, announced at least 15 days before, adopted in each chamber in the presence of at least half of its members by a majority of 2/3 of the votes; the text does not name the denominator. In 1919–1921 the left (PPS and PSL "Wyzwolenie") failed to obtain one chamber; PPS accepted a second chamber only as a Chamber of Labour (Izba Pracy) representing the workers (Suleja). The PPS draft constitution of May 1919 by M. Niedziałkowski stood on the separation of the religious bodies from the state, and a motion of the socialist deputies on the separation did not obtain a majority in the Legislative Sejm (Łysko, after Krasowski). In the 1920s the legal left demanded a popular referendum in certain matters and an "apolitical" Chamber of Labour or a Supreme Economic Chamber, and PPS demanded the President's right to dissolve the chambers before the end of their term (Czubiński, p. 169). The joint motion of ChD, ZLN, PSL "Piast" and NPR of 26 IV 1926 gave the President the right to dissolve the chambers; PPS and NPR also voted for the change of art. 26 in 1926; the August Novelization of 2 VIII 1926 brought the dissolution on the government's motion, decrees with the force of law, the vote of no confidence only at the next sitting, sanctions under art. 22 and budget deadlines (Czubiński, pp. 170–173).
+- **Game use:** the seven motions of the event (the ZLN resolution of 1924 stays in its text, see `PL-CONSTITUTION-DEBATE-1924`); the separation, the referendum, the Chamber of Labour and one chamber as motions PPS can support in 1924–1926; the clubs that made the Senate in 1920 (ZLN, the Christian Democrats, PSL "Piast") vote against its end.
+- **Gameplay simplification (P):** the omitted 111 signatures and 15 days; two thirds of the votes for and against (the denominator); both chambers on the same day; the monthly chances of the Constitutional Committee; the programme values of the motions and all effects; the constructive vote of no confidence and the presidential arbitration are alternative reforms of the game, not motions of the debate.
+- **Unresolved:** whether PPS tabled its own constitutional motions in 1924–1925; whether in 1924–1926 the Chamber of Labour was to replace the Senate or sit beside it; the exact date of the PPS demand for the President's dissolution right and of the referendum demand; the clubs' votes on each motion — TBD, historical research required.
+
 ## PL-LEGISLATIVE-INITIATIVE-1922-1926 — the laws of the card Legislative Initiative
 
 - **Authority:** the user's decisions of 20 October 2026 (technical reference 0.81, sections 17.15 and 23.54); the research was asked for two laws "spoza gry".
@@ -141,7 +150,7 @@
     verified (one partisan press source; medium).
   - No constitutional bill and no committee work in the Sejm were found for 1925; the first motions date from February–April
     1926, the joint motion on art. 26 from 26 IV 1926 (Czubiński; medium), the August Novelization from 2 VIII 1926 (Szmyt; high).
-- **Game use:** one background event in December 1924; from then on PPS can table its own three projects with card 7.4.
+- **Game use:** one background event in December 1924; from then on PPS can table its own three projects with card 7.4. Since 0.82 the event is the page of the debate on which PPS marks the motions it supports (see `PL-CONSTITUTION-DEBATE-1924-1926`).
 - **Classification / boundary:** the congress resolutions are documented; that they open the card of PPS's own projects is a
   gameplay simplification. Whether PPS tabled its own drafts before 1926: TBD — historical research required.
 
@@ -2618,6 +2627,7 @@ Add one row whenever an entry above is assigned a stable Source ID.
 | PL-PPS-CURRENTS-1922-1926 | PPS factions | Support for the stance rules of the Piłsudczycy (strong) and the Centrum (partial) | Researched and approved; documentation only | Stage 8, part 8f, 4 October 2026 |
 | PL-MINORITY-AUTONOMY-1922-1926 | Minorities / party programmes | Party positions on territorial autonomy; PPS autonomy bills of 1921 and 1925 | Researched and approved; implemented in `actor_profiles_v2` | Stage 8, part 8f, 4 October 2026 |
 | PL-LEGISLATIVE-INITIATIVE-1922-1926 | Laws / PPS initiatives | The acts, the PPS motion on tenants of 1925, the May Day demands of 1924 and the penal code of 1932 behind the twelve laws of the card Legislative Initiative | Researched; implemented with the gaps marked TBD | 0.81, 20 October 2026 |
+| PL-CONSTITUTION-DEBATE-1924-1926 | Constitution / debate | Art. 125, the left's demands (one chamber, Chamber of Labour, referendum, separation of the Church), the motions of 1926 and the August Novelization behind the seven motions of the debate | Researched; implemented with the gaps marked TBD | 0.82, 21 October 2026 |
 | PL-STAGE8-NORMAL-SCENARIO-2026-10-04 | Implementation | Stage 8, the last stage: the Normal scenario with the dated inputs of 17.16 and of the 8f research, the opening calibrated to the M02 Sejm, rule 8.9 for the NPR, the military compromise carried out by the cabinet, Polish-only screens, thirteen strategy automata playing full campaigns, and the closing fixes | Implemented | Implemented, 4 October 2026 |
 | TBD | TBD | TBD | TBD | TBD |
 

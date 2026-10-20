@@ -1,0 +1,11 @@
+{
+ "source": "scenes/polish_constitution_vote.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: The Vote on a Change of the Constitution": "title: Głosowanie nad zmianą konstytucji",
+  "subtitle: An urgent card: the Sejm and the Senate vote on a motion of the constitutional debate.": "subtitle: Karta pilna: Sejm i Senat głosują nad wnioskiem z debaty konstytucyjnej.",
+  "= The vote on a change of the constitution": "= Głosowanie nad zmianą konstytucji",
+  "title: Continue": "title: Dalej",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

@@ -364,14 +364,16 @@
 
   // Procedures of 7.1 with their quorum, denominator and threshold. The denominator of a qualified
   // majority is the valid votes: yes, no and abstentions; invalid votes count only for attendance
-  // (the P convention of 7.1). Composition-based thresholds read the full membership.
+  // (the P convention of 7.1). Composition-based thresholds read the full membership. Z — 0.82 (decision 3A of 21 X 2026;
+  // P): the two thirds of a change of the constitution count the votes for and against only — art. 125 says "większością 2/3
+  // głosów" without naming the denominator, and those who abstain still count for the quorum.
   const BALLOT_RULES = Object.freeze({
     ordinary_resolution: Object.freeze({chamber: 'sejm', quorum: 148, kind: 'more_yes_than_no', basis: 'H: art. 32'}),
     cabinet_dismissal: Object.freeze({chamber: 'sejm', quorum: 148, kind: 'more_yes_than_no', basis: 'H: art. 58'}),
     sejm_self_dissolution: Object.freeze({chamber: 'sejm', quorum: 222, kind: 'share_of_valid', num: 2, den: 3, basis: 'H: art. 26'}),
     senate_dissolution_consent: Object.freeze({chamber: 'senate', quorum: 0, kind: 'share_of_membership', num: 3, den: 5, membership: SENATE_SEATS, basis: 'H: art. 26'}),
-    constitutional_amendment_sejm: Object.freeze({chamber: 'sejm', quorum: 222, kind: 'share_of_valid', num: 2, den: 3, basis: 'H: art. 125'}),
-    constitutional_amendment_senate: Object.freeze({chamber: 'senate', quorum: 56, kind: 'share_of_valid', num: 2, den: 3, basis: 'H: art. 125'}),
+    constitutional_amendment_sejm: Object.freeze({chamber: 'sejm', quorum: 222, kind: 'share_of_cast', num: 2, den: 3, basis: 'H: art. 125; P: the denominator'}),
+    constitutional_amendment_senate: Object.freeze({chamber: 'senate', quorum: 56, kind: 'share_of_cast', num: 2, den: 3, basis: 'H: art. 125; P: the denominator'}),
     senate_amendment_rejection: Object.freeze({chamber: 'sejm', quorum: 148, kind: 'share_of_valid', num: 11, den: 20, basis: 'H: art. 35'}),
     // The simplified Senate reviews a law passed by the Sejm (7.2, stage 4): without a majority against
     // the text it raises no objection (P: the detailed procedure of the Senate needs research).
@@ -402,6 +404,10 @@
       ballot.denominator = valid;
       ballot.threshold = rule.num + '/' + rule.den;
       ballot.result = yes * rule.den >= rule.num * valid && valid > 0 ? 'passed' : 'failed';
+    } else if (rule.kind === 'share_of_cast') {
+      ballot.denominator = yes + no;
+      ballot.threshold = rule.num + '/' + rule.den + ' of yes and no';
+      ballot.result = yes * rule.den >= rule.num * (yes + no) && yes > 0 ? 'passed' : 'failed';
     } else {
       ballot.denominator = rule.membership;
       ballot.threshold = rule.num + '/' + rule.den + ' of ' + rule.membership;
