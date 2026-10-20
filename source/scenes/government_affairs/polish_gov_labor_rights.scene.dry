@@ -19,7 +19,7 @@ Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_labor_rights');
 
 *[+ pl_gc_ministry +]*
 
-Labour enforces the law on working time and oversees agreements between employers and unions. An inspection is a small reform: one decision, 1 B for two months of building, then 1 B to run. Its law goes to the Sejm and the Senate in the same decision. A collective agreement and a derogation cost the budget nothing.
+Labour enforces the law on working time and oversees agreements between employers and unions. An inspection is a small reform: one decision, 1 B for two months of building, then 1 B to run. The Sejm votes on its law in the same decision. A collective agreement and a derogation cost the budget nothing.
 
 [+ pl_gc_budget +]
 

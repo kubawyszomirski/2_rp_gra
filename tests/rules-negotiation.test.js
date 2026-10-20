@@ -751,7 +751,7 @@ test('Powołanie od razu 0.61: an accepted PPS offer is appointed even when the 
     { time: rules.timeOf(1923, 6), year: 1923, month: 6 });
   formation(O, 'crisis');
   gov.setDraft(O, 'pps_mode', 'opposition');
-  assert.match(gov.formationView(O).verdict, /PPS stays in opposition: the head of state appoints a cabinet without PPS: Wincenty Witos — Chjeno-Piast\./);
+  assert.match(gov.formationView(O).verdict, /^PPS stays in opposition\. The Naczelnik Państwa will then appoint a Chjeno-Piast cabinet of Wincenty Witos without us\.$/);
 });
 
 test('Premier 0.71: a party cabinet is led by the leader of its largest club (Thugutt also in the centre-left); the leader of a partner party wins PPS +5 with it once; an expert leads only a cabinet of experts', () => {

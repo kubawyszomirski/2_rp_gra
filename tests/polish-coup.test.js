@@ -256,7 +256,8 @@ test('Manifest parlamentu: the pool, the agenda and the events are the 10 famili
   const engine = dendry.startGame();
   const FAMILIES = {
     'parliament.cabinet_formation': ['polish_cabinet_formation'],
-    'parliament.legislative_program': ['polish_unemployment_bill'],
+    // Z — 0.81: the card Legislative Initiative and its vote; the bill D and the army control left the deck (their scenes stay).
+    'parliament.legislative_program': ['polish_legislative_initiative', 'polish_initiative_vote', 'polish_unemployment_bill'],
     'parliament.finance_amendment': ['polish_budget_package'],
     'parliament.constitution_project': ['polish_constitution_project'],
     'parliament.army_oversight': ['polish_parliament_army_oversight'],
@@ -274,8 +275,8 @@ test('Manifest parlamentu: the pool, the agenda and the events are the 10 famili
   assert.deepEqual(tagged(engine, 'parliament_affairs').filter(id => !all.includes(id)), [], 'every card of the Parliament deck belongs to a family');
   assert.ok(!topScenes(engine).some(id => /early_election|zyrardow|dissolution/.test(id)), 'no card of early elections (C8) and no Żyrardów (B15)');
   assert.deepEqual(optionIds(engine, 'polish_event_strike_response'), ['demands', 'settlement', 'order'], 'one menu for B11+B12');
-  assert.deepEqual(optionIds(engine, 'polish_parliament_army_oversight').filter(id => !['easy_discard', 'cancel_advisor_action'].includes(id)),
-    ['civilian_oversight', 'limited_reform']);
+  assert.deepEqual(optionIds(engine, 'polish_legislative_initiative').filter(id => !['easy_discard'].includes(id)),
+    [...PolishProjects.INITIATIVE_IDS, 'skip'], 'twelve laws and filing none');
 });
 
 test('Katalog rządowy: 16 families in the pool, the agenda and the triggers; no extra menus of B10 or B20; no cards for Foreign Affairs; the credit crisis leads to the proper policies', () => {
@@ -405,7 +406,11 @@ test('Karty 3–5 bez odnowienia: an answered budget package, a refused motion a
   S.parliament.clubs = [clubs.find(c => c.id === 'pps'), clubs.find(c => c.id === 'pschd')]; // fixture: a Sejm that refuses the law
   S.parliament.clubs[0].seats = 1; S.parliament.clubs[1].seats = 443;
   S.actors.relations.pschd = 0; // fixture: the Christian Democrats vote against, not abstain
+  const pils = S.actors.relations.pilsudski, pd = S.actors.pps.factions.pilsudczycy.dissent;
   PolishProjects.chooseOption(Q, 'military_policy', 'civilian_oversight');
+  // Z — 0.81 (the user's note of 20 X 2026): full civilian oversight goes against Piłsudski and the Piłsudczycy of PPS at once.
+  assert.equal(S.actors.relations.pilsudski, Math.max(0, pils - 10));
+  assert.equal(S.actors.pps.factions.pilsudczycy.dissent, Math.min(100, pd + 8));
   Q.month_actions = 0; S.turn.pending = null;
   PolishProjects.agendaChoose(Q, 'army_control');
   assert.equal(S.parliament.laws.at(-1).status, 'rejected');

@@ -1,0 +1,180 @@
+title: Legislative Initiative
+subtitle: A bill of PPS: taking it up costs this month's action, and the Sejm votes on it next month.
+new-page: true
+is-card: true
+tags: parliament_affairs
+view-if: {! return !!Q.S && PolishProjects.initiativeCardAvailable(Q) !}
+on-arrival: {!
+// Card parliament.legislative_initiative (Z — 0.81, decisions of 20 X 2026): it replaces the cards of the unemployment bill D
+// and of the parliamentary control of the army. At most five laws of a fixed order; taking one up is this month's action and
+// moves relations at once; the next month the urgent card polish_initiative_vote puts it to the Sejm (technical reference 7.2).
+PolishProjects.initiativeView(Q);
+!}
+
+= The legislative initiative
+
+The club of PPS can file a bill of its own. We choose one matter, and next month the Sejm votes on it. A law passed in full leaves this card; one passed only in its limited version, rejected or withdrawn comes back after nine months.
+
+- @unemployment
+- @labor_inspection
+- @progressive_tax
+- @army_oversight
+- @secular_school
+- @autonomy
+- @land_reform
+- @public_works
+- @workers_housing
+- @tenants
+- @old_age
+- @abortion
+- @skip
+- @easy_discard
+
+@unemployment
+title: Protection of the unemployed
+subtitle: [+ pl_ini_unemployment_line +]
+view-if: {! return PolishProjects.initiativeIsShown(Q, 'unemployment') !}
+choose-if: {! return PolishProjects.initiativeStatus(Q, 'unemployment').available !}
+unavailable-subtitle: [+ pl_ini_unemployment_why +] [+ pl_ini_unemployment_line +]
+on-arrival: {!
+Q.pl_ini_result = PolishProjects.initiativeFile(Q, 'unemployment');
+!}
+go-to: result
+
+@labor_inspection
+title: Labour inspection and working time
+subtitle: [+ pl_ini_labor_inspection_line +]
+view-if: {! return PolishProjects.initiativeIsShown(Q, 'labor_inspection') !}
+choose-if: {! return PolishProjects.initiativeStatus(Q, 'labor_inspection').available !}
+unavailable-subtitle: [+ pl_ini_labor_inspection_why +] [+ pl_ini_labor_inspection_line +]
+on-arrival: {!
+Q.pl_ini_result = PolishProjects.initiativeFile(Q, 'labor_inspection');
+!}
+go-to: result
+
+@progressive_tax
+title: Progressive tax on high incomes and wealth
+subtitle: [+ pl_ini_progressive_tax_line +]
+view-if: {! return PolishProjects.initiativeIsShown(Q, 'progressive_tax') !}
+choose-if: {! return PolishProjects.initiativeStatus(Q, 'progressive_tax').available !}
+unavailable-subtitle: [+ pl_ini_progressive_tax_why +] [+ pl_ini_progressive_tax_line +]
+on-arrival: {!
+Q.pl_ini_result = PolishProjects.initiativeFile(Q, 'progressive_tax');
+!}
+go-to: result
+
+@army_oversight
+title: Civilian oversight of the army
+subtitle: [+ pl_ini_army_oversight_line +]
+view-if: {! return PolishProjects.initiativeIsShown(Q, 'army_oversight') !}
+choose-if: {! return PolishProjects.initiativeStatus(Q, 'army_oversight').available !}
+unavailable-subtitle: [+ pl_ini_army_oversight_why +] [+ pl_ini_army_oversight_line +]
+on-arrival: {!
+Q.pl_ini_result = PolishProjects.initiativeFile(Q, 'army_oversight');
+!}
+go-to: result
+
+@secular_school
+title: Secular school with religious freedom
+subtitle: [+ pl_ini_secular_school_line +]
+view-if: {! return PolishProjects.initiativeIsShown(Q, 'secular_school') !}
+choose-if: {! return PolishProjects.initiativeStatus(Q, 'secular_school').available !}
+unavailable-subtitle: [+ pl_ini_secular_school_why +] [+ pl_ini_secular_school_line +]
+on-arrival: {!
+Q.pl_ini_result = PolishProjects.initiativeFile(Q, 'secular_school');
+!}
+go-to: result
+
+@autonomy
+title: Autonomy of the minorities
+subtitle: [+ pl_ini_autonomy_line +]
+view-if: {! return PolishProjects.initiativeIsShown(Q, 'autonomy') !}
+choose-if: {! return PolishProjects.initiativeStatus(Q, 'autonomy').available !}
+unavailable-subtitle: [+ pl_ini_autonomy_why +] [+ pl_ini_autonomy_line +]
+on-arrival: {!
+Q.pl_ini_result = PolishProjects.initiativeFile(Q, 'autonomy');
+!}
+go-to: result
+
+@land_reform
+title: Land reform
+subtitle: [+ pl_ini_land_reform_line +]
+view-if: {! return PolishProjects.initiativeIsShown(Q, 'land_reform') !}
+choose-if: {! return PolishProjects.initiativeStatus(Q, 'land_reform').available !}
+unavailable-subtitle: [+ pl_ini_land_reform_why +] [+ pl_ini_land_reform_line +]
+on-arrival: {!
+Q.pl_ini_result = PolishProjects.initiativeFile(Q, 'land_reform');
+!}
+go-to: result
+
+@public_works
+title: Public works for the unemployed
+subtitle: [+ pl_ini_public_works_line +]
+view-if: {! return PolishProjects.initiativeIsShown(Q, 'public_works') !}
+choose-if: {! return PolishProjects.initiativeStatus(Q, 'public_works').available !}
+unavailable-subtitle: [+ pl_ini_public_works_why +] [+ pl_ini_public_works_line +]
+on-arrival: {!
+Q.pl_ini_result = PolishProjects.initiativeFile(Q, 'public_works');
+!}
+go-to: result
+
+@workers_housing
+title: Workers’ housing
+subtitle: [+ pl_ini_workers_housing_line +]
+view-if: {! return PolishProjects.initiativeIsShown(Q, 'workers_housing') !}
+choose-if: {! return PolishProjects.initiativeStatus(Q, 'workers_housing').available !}
+unavailable-subtitle: [+ pl_ini_workers_housing_why +] [+ pl_ini_workers_housing_line +]
+on-arrival: {!
+Q.pl_ini_result = PolishProjects.initiativeFile(Q, 'workers_housing');
+!}
+go-to: result
+
+@tenants
+title: Protection of tenants
+subtitle: [+ pl_ini_tenants_line +]
+view-if: {! return PolishProjects.initiativeIsShown(Q, 'tenants') !}
+choose-if: {! return PolishProjects.initiativeStatus(Q, 'tenants').available !}
+unavailable-subtitle: [+ pl_ini_tenants_why +] [+ pl_ini_tenants_line +]
+on-arrival: {!
+Q.pl_ini_result = PolishProjects.initiativeFile(Q, 'tenants');
+!}
+go-to: result
+
+@old_age
+title: Old-age insurance of workers
+subtitle: [+ pl_ini_old_age_line +]
+view-if: {! return PolishProjects.initiativeIsShown(Q, 'old_age') !}
+choose-if: {! return PolishProjects.initiativeStatus(Q, 'old_age').available !}
+unavailable-subtitle: [+ pl_ini_old_age_why +] [+ pl_ini_old_age_line +]
+on-arrival: {!
+Q.pl_ini_result = PolishProjects.initiativeFile(Q, 'old_age');
+!}
+go-to: result
+
+@abortion
+title: Termination of pregnancy
+subtitle: [+ pl_ini_abortion_line +]
+view-if: {! return PolishProjects.initiativeIsShown(Q, 'abortion') !}
+choose-if: {! return PolishProjects.initiativeStatus(Q, 'abortion').available !}
+unavailable-subtitle: [+ pl_ini_abortion_why +] [+ pl_ini_abortion_line +]
+on-arrival: {!
+Q.pl_ini_result = PolishProjects.initiativeFile(Q, 'abortion');
+!}
+go-to: result
+
+@skip
+title: We file no bill
+subtitle: Nothing happens and the card is played; it comes back in three months. It costs no month.
+on-arrival: {!
+Q.pl_ini_result = PolishProjects.initiativeSkip(Q);
+!}
+go-to: result
+
+@result
+new-page: true
+
+= The legislative initiative
+
+[+ pl_ini_result +]
+
+- @root: Continue.

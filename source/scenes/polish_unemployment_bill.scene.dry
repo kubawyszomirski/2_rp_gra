@@ -3,9 +3,10 @@ subtitle: One initiative of PPS in the chapter: first the project, then the vote
 is-card: true
 tags: parliament_affairs
 card-image: img/Kollwitz_Arbeitslosigkeit.jpg
-view-if: {! return !!Q.S && (PolishProjects.billD1Available(Q) || PolishProjects.billD2Available(Q)) !}
+view-if: {! return false !}
 new-page: true
 on-arrival: {!
+// Z — 0.81: the card left the Parliament deck (view-if false); its law is one of the card Legislative Initiative.
 // Card parliament.legislative_program (technical reference 17.15; card catalogue 7.2): the guaranteed
 // agenda after the 1922 election, only outside the cabinet. D1 costs this month's action (1 T); D2 comes
 // after the settlement of D1's month, costs 0 T and puts the chosen variant to the Sejm at once; the

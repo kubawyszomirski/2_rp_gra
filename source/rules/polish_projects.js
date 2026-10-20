@@ -81,7 +81,9 @@
     labor_inspection: {name: 'Labour inspection and working time', card: 'labor_rights', portfolios: ['labor'], klass: 'small',
       investment: false, ongoing: true, caretaker_allowed: true, beneficiaries: ['workers'],
       law: {title: 'Enforcement of working time', programme: {fiscal: 1}},
-      variants: {inspection: {build: 1, upkeep: 1, duration: 2}}},
+      // Z — 0.81 (decision 4B of 20 X 2026): the limited variant of the legislative initiative — inspection in large industry only.
+      variants: {inspection: {build: 1, upkeep: 1, duration: 2, relief: 3},
+        industry_only: {build: 1, upkeep: 0.5, duration: 1, relief: 1.5, law: {title: 'Enforcement of working time in large industry', programme: {fiscal: 0}}}}},
     worker_protection: {name: 'Protection for the unemployed', card: 'social_welfare', portfolios: ['labor'], klass: 'small',
       investment: false, ongoing: true, on_launch: 'operating', caretaker_allowed: true, beneficiaries: ['unemployed'], law: null,
       variants: {full: {build: 0, upkeep: 2, share: 1, relief_start: -6, relief: 2}, focused: {build: 0, upkeep: 1, share: 0.5, relief_start: -6, relief: 2},
@@ -90,7 +92,10 @@
       beneficiaries: ['unemployed'], law: null,
       variants: {employment: {build: 2, upkeep: 1, duration: 3, units: 2, output_pp: 0.15},
         infrastructure: {build: 2, upkeep: 1, duration: 4, units: 2, output_pp: 0.25},
-        housing: {build: 2, upkeep: 1, duration: 4, units: 0, output_pp: 0, relief: 2, beneficiaries: ['workers']}}},
+        housing: {build: 2, upkeep: 1, duration: 4, units: 0, output_pp: 0, relief: 2, beneficiaries: ['workers']},
+        // Z — 0.81 (decision 4B): the limited variants of the legislative initiative.
+        employment_small: {build: 1, upkeep: 0.5, duration: 3, units: 1, output_pp: 0.15},
+        housing_coop: {build: 1, upkeep: 0.5, duration: 4, units: 0, output_pp: 0, relief: 1, beneficiaries: ['workers']}}},
     credit_instrument: {name: 'Credit instrument', card: 'investment_fund', portfolios: ['finance', 'economic'], klass: 'large',
       investment: true, ongoing: true, beneficiaries: ['workers', 'old_middle'], law: null,
       variants: {public: {build: 2, upkeep: 1, duration: 2, credit_support: 5},
@@ -113,7 +118,7 @@
       investment: true, ongoing: true, tranches: 3, law: null, beneficiaries: ['rural'],
       variants: {rural_access: {build: 1, upkeep: 1, duration: 4, trust: 4, beneficiaries: ['rural']},
         urban_worker_adult_access: {build: 1, upkeep: 1, duration: 4, trust: 4, beneficiaries: ['workers']},
-        secular: {build: 1, upkeep: 1, duration: 4, tranches: 1, beneficiaries: ['workers', 'new_middle'],
+        secular: {build: 1, upkeep: 1, duration: 4, tranches: 1, trust: 4, beneficiaries: ['workers', 'new_middle'],
           law: {title: 'Secular school with religious freedom', programme: {church: 1}}}}},
     minority_schools: {name: 'Language rights and minority schools', card: 'minority_school_rights', portfolios: ['education'],
       klass: 'large', investment: true, ongoing: true, law: null, beneficiaries: ['national_minorities'],
@@ -149,13 +154,26 @@
       investment: false, beneficiaries: [], law: null, variants: {protection: {build: 1, upkeep: 0, duration: 1}}},
     limited_autonomy: {name: 'Limited administrative and cultural autonomy', card: 'internal_security', portfolios: ['interior'], klass: 'large',
       investment: false, beneficiaries: ['other_minorities'], law: {title: 'Limited administrative and cultural autonomy', programme: {autonomy: 1}},
-      variants: {autonomy: {build: 1, upkeep: 0, duration: 3}}},
+      // Z — 0.81: `autonomy` is the execution of the act of 26 IX 1922 on the voivodeship self-government; `regional_sejm` the
+      // autonomy of Eastern Galicia with a regional diet, as in the PPS bills of 1921 and 1925 (HISTORICAL_SOURCES.md).
+      variants: {autonomy: {build: 1, upkeep: 0, duration: 3, relief: 3},
+        regional_sejm: {build: 1, upkeep: 0, duration: 3, relief: 6, law: {title: 'Autonomy of Eastern Galicia with a regional diet', programme: {autonomy: 2}}}}},
     army_control: {name: 'Civilian control of the army', card: 'military_policy', portfolios: ['reichswehr'], klass: 'large', investment: false,
       beneficiaries: [], law: {title: 'Civilian oversight of the army', programme: {army: 2}},
       variants: {civilian_oversight: {build: 1, upkeep: 0, duration: 3}, personnel_changes: {build: 1, upkeep: 0, duration: 3},
         limited_reform: {build: 1, upkeep: 0, duration: 2, law: {title: 'A limited reform of the command of the army', programme: {army: 0}}}}},
     justice_review: {name: 'Review of a named abuse', card: 'justice_policy', portfolios: ['justice'], klass: 'small', investment: false,
       beneficiaries: [], law: null, variants: {limited_redress: {build: 1, upkeep: 0, duration: 1}}},
+    // Z — 0.81 (the legislative initiative of PPS, 20 X 2026; P): the protection of tenants after the act of 11 IV 1924 (the PPS
+    // motion of X 1925; the act of 27 III 1926 suspended the rises for nine months) and the old-age insurance of workers (a PPS
+    // demand of 1924; introduced only in 1933). The courts apply the tenant law; no ministry card of PPS carries either.
+    tenant_protection: {name: 'Protection of tenants', card: 'legislative_initiative', portfolios: ['justice'], klass: 'small', investment: false,
+      ongoing: true, on_launch: 'operating', caretaker_allowed: true, beneficiaries: ['workers', 'unemployed', 'new_middle'], law: null,
+      variants: {rent_freeze: {build: 0, upkeep: 0, relief_start: -3, relief: 1, business: 3},
+        rent_suspension: {build: 0, upkeep: 0, relief_start: -2, relief: 0.5, months: 9, business: 1}}},
+    old_age_insurance: {name: 'Old-age insurance of workers', card: 'legislative_initiative', portfolios: ['labor'], klass: 'small', investment: false,
+      ongoing: true, on_launch: 'operating', caretaker_allowed: true, beneficiaries: ['workers'], law: null,
+      variants: {pension_all: {build: 0, upkeep: 1, relief_start: -2, business: 6}, pension_industry: {build: 0, upkeep: 0.5, relief_start: -1, business: 3}}},
     constitution: {name: 'Constitutional reform', card: 'constitution_project', portfolios: [], klass: 'constitutional', investment: true,
       beneficiaries: [], law: {constitutional: true},
       variants: {democratic_guarantees: {build: 1, upkeep: 0, duration: 1, programme: {institution: 2}},
@@ -178,9 +196,12 @@
     presidential_arbitration: 'presidential arbitration', rescue: 'a conditional credit restoring its lost capacity',
     consultative: 'information and consultation', decision_rights: 'co-decision on mass dismissals and the wage rules',
     professionalization: 'professionalisation and subordination to lawful authorities', far_right: 'violence of the far right',
-    communist: 'violence of the communists', protection: 'protection of a named gathering or institution', autonomy: 'limited autonomy of one area',
+    communist: 'violence of the communists', protection: 'protection of a named gathering or institution', autonomy: 'the execution of the act of 26 IX 1922 on the voivodeship self-government',
     civilian_oversight: 'full civilian oversight', personnel_changes: 'lawful changes of personnel', limited_reform: 'a limited reform',
-    limited_redress: 'the review of a named abuse',
+    limited_redress: 'the review of a named abuse', industry_only: 'inspection in large industry only',
+    regional_sejm: 'autonomy of Eastern Galicia with a regional diet', employment_small: 'a smaller programme of employment',
+    housing_coop: 'cooperative houses on state credit', rent_freeze: 'no further rent rises and protection against eviction',
+    rent_suspension: 'rent rises suspended for nine months', pension_all: 'insurance of all workers', pension_industry: 'insurance of the workers of large industry and the railways',
   });
   // 11.7: the prepared public control of an enterprise, once per plant.
   const PUBLIC_CONTROL_BUSINESS = 15;
@@ -196,7 +217,8 @@
     collection: 'Lepszy pobór podatków', plant_rescue: 'Ratowanie zakładu', enterprise_representation: 'Przedstawicielstwo robotników w zakładzie',
     police_professionalization: 'Profesjonalizacja policji', police_investigation: 'Śledztwo w wymienionej sprawie',
     police_protection: 'Ochrona zgromadzenia albo instytucji', limited_autonomy: 'Ograniczona autonomia administracyjna i kulturalna',
-    army_control: 'Cywilna kontrola nad wojskiem', justice_review: 'Rewizja wymienionego nadużycia', constitution: 'Reforma konstytucyjna'});
+    army_control: 'Cywilna kontrola nad wojskiem', justice_review: 'Rewizja wymienionego nadużycia', constitution: 'Reforma konstytucyjna',
+    tenant_protection: 'Ochrona lokatorów', old_age_insurance: 'Ubezpieczenie robotników na starość'});
   const VARIANT_NAMES_PL = Object.freeze({
     inspection: 'inspekcja i egzekwowanie czasu pracy', full: 'pełna osłona', focused: 'skupiona na najbardziej potrzebujących',
     limited: 'ograniczony zasiłek', employment: 'szybkie zatrudnienie bezrobotnych', infrastructure: 'transport i infrastruktura',
@@ -212,9 +234,13 @@
     presidential_arbitration: 'arbitraż prezydencki', rescue: 'warunkowy kredyt przywracający utracone moce',
     consultative: 'informacja i konsultacja', decision_rights: 'współdecydowanie o masowych zwolnieniach i zasadach płac',
     professionalization: 'profesjonalizacja i podporządkowanie legalnym władzom', far_right: 'przemoc skrajnej prawicy',
-    communist: 'przemoc komunistów', protection: 'ochrona wymienionego zgromadzenia albo instytucji', autonomy: 'ograniczona autonomia jednego obszaru',
+    communist: 'przemoc komunistów', protection: 'ochrona wymienionego zgromadzenia albo instytucji', autonomy: 'wykonanie ustawy z 26 IX 1922 o samorządzie wojewódzkim',
     civilian_oversight: 'pełny nadzór cywilny', personnel_changes: 'legalne zmiany personalne', limited_reform: 'ograniczona reforma',
-    limited_redress: 'rewizja wymienionego nadużycia',
+    limited_redress: 'rewizja wymienionego nadużycia', industry_only: 'inspekcja tylko w wielkim przemyśle',
+    regional_sejm: 'autonomia Galicji Wschodniej z sejmem krajowym', employment_small: 'mniejszy program zatrudnienia',
+    housing_coop: 'domy spółdzielcze z kredytem państwa', rent_freeze: 'bez dalszych podwyżek czynszu i z ochroną przed eksmisją',
+    rent_suspension: 'podwyżki czynszu zawieszone na dziewięć miesięcy', pension_all: 'ubezpieczenie wszystkich robotników',
+    pension_industry: 'ubezpieczenie robotników wielkiego przemysłu i kolei',
   });
   // Wawel and the Royal Castle in the cases the sentences need: 'Wawel', 'konserwacja Wawelu', 'prace przy Wawelu'.
   const HERITAGE_OBJECTS_PL = Object.freeze({wawel: {nom: 'Wawel', gen: 'Wawelu', loc: 'Wawelu'},
@@ -230,6 +256,9 @@
   // schedule: [months, B] windows from the effective month; tax: a change of tax_level by one level.
   const INSTRUMENTS = Object.freeze({
     progressive: {name: 'progressive tax on high incomes and wealth', position: 2, law: true, tax: 1, incidence: 'progressive', business: 4, lewica: -3},
+    // Z — 0.81 (decision 4B): the limited variant of the legislative initiative and its later raise to the full tax; not on card 8.3.
+    progressive_top: {name: 'tax on the highest incomes only, without wealth', position: 1, law: true, tax: 0.5, incidence: 'progressive', business: 2, lewica: -1},
+    progressive_raise: {name: 'progressive tax raised to incomes and wealth', position: 2, law: true, tax: 0.5, incidence: 'progressive', business: 2, lewica: -2},
     wealth_tax: {name: 'extraordinary wealth tax', position: 2, law: true, schedule: [[6, 2]], business: 8},
     indirect: {name: 'indirect taxes', position: -1, law: true, tax: 1, incidence: 'indirect', lewica: 3,
       pending: {system: 'grievance', stage: 7, value: 3, recipients: 'poor recipients'}},
@@ -245,6 +274,7 @@
     coinage: {name: 'transitional coinage', position: 0, law: true, months: 3},
   });
   const INSTRUMENT_NAMES_PL = Object.freeze({progressive: 'progresywny podatek od wysokich dochodów i majątku',
+    progressive_top: 'podatek tylko od najwyższych dochodów, bez majątku', progressive_raise: 'podatek progresywny rozszerzony na dochody i majątek',
     wealth_tax: 'nadzwyczajny podatek majątkowy', indirect: 'podatki pośrednie', broad: 'szersza podstawa opodatkowania',
     customs: 'cła fiskalne', loan: 'wewnętrzna pożyczka inwestycyjna', admin_cuts: 'cięcia wymienionych wydatków administracyjnych',
     benefit_cut: 'cięcie zasiłku dla bezrobotnych', emission: 'finansowanie emisją', coinage: 'przejściowa emisja bilonu'});
@@ -707,7 +737,10 @@
       } else if (project.type === 'constitution') {
         enactReform(Q, project.variant, project, t);
       } else if (project.type === 'labor_inspection') {
-        pend(project, {system: 'grievance', stage: 7, value: -3, when: 'first_operation', scale: coverage, note: 'recipients, × execution'});
+        pend(project, {system: 'grievance', stage: 7, value: -(variant.relief || 3), when: 'first_operation', scale: coverage, note: 'recipients, × execution'});
+      } else if (project.type === 'tenant_protection' || project.type === 'old_age_insurance') {
+        // Z — 0.81: the relief of the initiative laws of PPS on tenants and old age, once at their first effect.
+        pend(project, {system: 'grievance', stage: 7, value: variant.relief_start, when: 'first_payment', scale: coverage, note: 'the initial relief, once'});
       } else if (project.type === 'worker_protection') {
         pend(project, {system: 'grievance', stage: 7, value: variant.relief_start, when: 'first_payment', scale: coverage,
           share: variant.share, note: 'the initial relief, once at the first real payment'});
@@ -770,7 +803,8 @@
     S.politics.delegations.push({id: 'delegation-' + project.id, project_id: project.id, territory_id: 'synthetic_autonomy_area',
       recipient_authority_id: 'the self-government of the area', capabilities: AUTONOMY_CAPABILITIES.slice(), authorization_id: project.authorization_id,
       since: t, status: 'in_force'});
-    pend(project, {system: 'grievance', stage: 7, value: -3, when: 'first_effect', share: AUTONOMY_SHARE, note: 'the covered population of the area'});
+    const relief = PROJECT_TYPES.limited_autonomy.variants[project.variant].relief || 3;
+    pend(project, {system: 'grievance', stage: 7, value: -relief, when: 'first_effect', share: AUTONOMY_SHARE, note: 'the covered population of the area'});
     // The executed delegation is recorded with the agreement that opened it; its obligations keep their own projects.
     const agreement = project.policy_choices.agreement_id ? S.agreements[project.policy_choices.agreement_id] : null;
     if (agreement) agreement.history.push({t: t, kind: 'autonomy_executed', project_id: project.id});
@@ -858,8 +892,8 @@
     prepareProject(Q, 'limited_autonomy', 'autonomy', Object.assign({policy_choices: {territory_id: 'synthetic_autonomy_area',
       recipient_authority_id: 'the self-government of the area', delegated_capabilities: AUTONOMY_CAPABILITIES.slice(),
       agreement_id: autonomyAgreement(S).id}}, fields));
-    return result(Q, L('The limited autonomy of one area is prepared: its law and launch wait in the card “Prepared Reforms”, then 1 B a month for three months.',
-      'Ograniczona autonomia jednego obszaru jest przygotowana: jej ustawa i uruchomienie czekają w karcie „Przygotowane reformy”, potem 1 B miesięcznie przez trzy miesiące.'));
+    return result(Q, L('The execution of the act of 26 IX 1922 on the voivodeship self-government is prepared: its law and launch wait in the card “Prepared Reforms”, then 1 budget unit a month for three months.',
+      'Wykonanie ustawy z 26 IX 1922 o samorządzie wojewódzkim jest przygotowane: jego ustawa i uruchomienie czekają w karcie „Przygotowane reformy”, potem 1 jednostka budżetu miesięcznie przez trzy miesiące.'));
   }
 
   // Cards 7.5 and 8.14 share one project of civilian control for the one synthetic post over the near reserve.
@@ -888,9 +922,19 @@
       policy_choices: {force_id: securityModule().OVERSIGHT_FORCE, position_id: 'synthetic_oversight_post', via: via || 'military_affairs'}};
     const project = prepareProject(Q, 'army_control', variant, fields);
     project.policy_choices = Object.assign({}, project.policy_choices, fields.policy_choices);
-    return result(Q, L('Civilian control of the army is prepared (' + VARIANT_NAMES[variant] + '): its law and launch wait in the card “Prepared Reforms”, then 1 B a month for ' +
+    // Z — 0.81 (the user's note of 20 X 2026; P): full civilian oversight goes against Piłsudski and the Piłsudczycy of PPS at
+    // once; the organisational compromise costs half; lawful changes of personnel keep their own rule.
+    const cost = option === 'civilian_oversight' ? {dissent: 8, relation: -10} : option === 'organizational_compromise' ? {dissent: 4, relation: -5} : null;
+    let costText = '';
+    if (cost) {
+      government.factionReaction(Q, 'pilsudczycy', {dissent: cost.dissent}, {id: 'army_control:' + project.id + ':t' + Q.time, kind: 'cabinet_policy', reverse: null});
+      government.changeRelation(Q, 'pilsudski', cost.relation, 'army_control:' + project.id);
+      costText = L(' The dissent of the Piłsudczycy in PPS rises (+' + cost.dissent + ') and relations with Piłsudski worsen (−' + Math.abs(cost.relation) + ').',
+        ' Sprzeciw piłsudczyków w PPS rośnie (+' + cost.dissent + '), a stosunki z Piłsudskim się pogarszają (−' + Math.abs(cost.relation) + ').');
+    }
+    return result(Q, L('Civilian control of the army is prepared (' + VARIANT_NAMES[variant] + '): its law and launch wait in the card “Prepared Reforms”, then 1 budget unit a month for ' +
       project.duration_months + ' months.', 'Cywilna kontrola nad wojskiem jest przygotowana (' + VARIANT_NAMES_PL[variant] + '): jej ustawa i uruchomienie ' +
-      'czekają w karcie „Przygotowane reformy”, potem 1 B miesięcznie przez ' + months(project.duration_months) + '.'));
+      'czekają w karcie „Przygotowane reformy”, potem 1 jednostka budżetu miesięcznie przez ' + months(project.duration_months) + '.') + costText);
   }
 
   // The last law of a project failed and the project is prepared again (12.2): its variant can be changed (Z — 0.57).
@@ -1105,6 +1149,10 @@
           project.status = 'completed';
           project.history.push({t: t, kind: 'contract_ended'});
         }
+      } else if (project.type === 'tenant_protection' && project.ends_at !== null && t >= project.ends_at - 1) {
+        // Z — 0.81: the suspension of the rent rises ends after its nine months.
+        project.status = 'completed';
+        project.history.push({t: t, kind: 'suspension_ended'});
       }
     }
     // 11.5: at most 8 units together; one common factor scales both contributions once.
@@ -1149,6 +1197,9 @@
     const bound = cabinet && (cabinet.status === 'active' || cabinet.status === 'caretaker') ? cabinet.partner_ids.concat(cabinet.supporter_ids) : [];
     if (clubId === 'kpp' || !government.ACTOR_PROFILES[clubId]) return 'abstain';
     if (government.redLineViolations(clubId, offer).length) return 'no';
+    // Z — 0.81: the special votes of the legislative initiative (the army, the autonomy).
+    const special = initiativeVote(S, clubId, bill);
+    if (special) return special;
     if (bill.sponsor === 'cabinet' && bound.indexOf(clubId) >= 0) return 'yes';
     const stance = government.programmeStance(S, clubId, offer);
     return stance >= 60 ? 'yes' : stance < 40 ? 'no' : 'abstain';
@@ -1162,6 +1213,12 @@
     return stance >= 60 ? 'yes' : stance < 40 ? 'no' : 'abstain';
   }
 
+  // Z — 0.81 (the user's note of 20 X 2026; P): on a law that changes the place of the Church (church +1 or more: the secular school,
+  // the termination of pregnancy) half of the deputies of the other minorities — the Greek Catholic Ukrainians — vote against; the
+  // rest vote with their club. The split part is recorded as `<club>:church`.
+  const CHURCH_SPLIT = Object.freeze({other_minorities_rep: 0.5});
+  const CHURCH_SPLIT_SUFFIX = ':church';
+
   function sejmCounts(Q, bill, programme) {
     const S = Q.S;
     const offer = billOffer(S, Object.assign({}, bill, {programme: programme || bill.programme}));
@@ -1169,8 +1226,15 @@
     let yes = 0, no = 0, abstain = 0;
     for (const club of S.parliament.clubs) {
       const vote = clubVote(S, club.id, bill, offer);
-      clubVotes[club.id] = {vote: vote, seats: club.seats};
-      if (vote === 'yes') yes += club.seats; else if (vote === 'no') no += club.seats; else abstain += club.seats;
+      const share = offer.programme && offer.programme.church >= 1 && vote !== 'no' ? CHURCH_SPLIT[club.id] || 0 : 0;
+      const part = Math.round(club.seats * share);
+      if (part > 0) {
+        clubVotes[club.id + CHURCH_SPLIT_SUFFIX] = {vote: 'no', seats: part};
+        no += part;
+      }
+      const seats = club.seats - part;
+      clubVotes[club.id] = {vote: vote, seats: seats};
+      if (vote === 'yes') yes += seats; else if (vote === 'no') no += seats; else abstain += seats;
     }
     const total = S.parliament.clubs.reduce((n, club) => n + club.seats, 0);
     return {yes: yes, no: no, abstain: abstain, present: total, eligible: total, club_votes: clubVotes};
@@ -1208,9 +1272,10 @@
     return ballot;
   }
 
-  // Submitting a law: the Sejm votes at once in the decision; then the dated Senate procedure. Before
-  // the Senate is constituted (the first chapter until the 1922 result) the law takes effect with the
-  // Sejm vote (P): no fictitious Senate is used (7.2).
+  // Submitting a law: the Sejm votes at once in the decision. Z — 0.80/0.81 (decision 1A of 20 X 2026): an ordinary law takes
+  // effect with the Sejm vote — the Senate stage of 30 and 60 days is a simplification left out of the game (P); a
+  // constitutional amendment keeps the vote of the Senate (7.2, 7.6). Before the Senate is constituted (the first chapter
+  // until the 1922 result) a constitutional amendment cannot pass.
   function submitLaw(Q, spec) {
     const S = Q.S, t = Q.time;
     const bill = {id: 'law-' + (S.parliament.laws.length + 1) + '-t' + t, kind: spec.kind, title: spec.title,
@@ -1221,23 +1286,24 @@
       rule: spec.constitutional ? 'constitutional' : 'ordinary', status: 'in_procedure', submitted_at: isoOf(t), submitted_t: t,
       ballot_ids: [], senate: null, senate_notice_due: null, senate_return_due: null, amendment: null, effective_at: null,
       enacted_variant: null, next_step: null, pps_vote: null, compromise_scope: spec.compromise_scope || null, closed_at: null,
-      reason: '', instrument: spec.instrument || null, points: spec.points || 0};
+      reason: '', instrument: spec.instrument || null, points: spec.points || 0, initiative: spec.initiative || null};
     if (spec.plant_id) bill.plant_id = spec.plant_id;
     bill.pps_vote = spec.pps_vote || ppsDefaultVote(Q, bill);
     S.parliament.laws.push(bill);
-    const counts = sejmCounts(Q, bill);
+    // Z — 0.81: a bill of the legislative initiative brings the counts of its rolled vote.
+    const counts = spec.counts ? copy(spec.counts) : sejmCounts(Q, bill);
     const ballot = recordBallot(Q, bill.rule === 'constitutional' ? 'constitutional_amendment_sejm' : 'ordinary_resolution', bill, counts, 'sejm');
     if (ballot.result !== 'passed') {
       closeLaw(Q, bill, 'rejected', ballot.result === 'no_quorum' ? 'no quorum in the Sejm' : 'no majority in the Sejm');
       return bill;
     }
-    if (S.senate.status !== 'constituted') {
-      if (bill.rule === 'constitutional') {
-        closeLaw(Q, bill, 'rejected', 'the Senate is not yet constituted');
-        return bill;
-      }
-      bill.senate = 'not_constituted';
+    if (bill.rule !== 'constitutional') {
+      bill.senate = S.senate.status === 'constituted' ? 'not_required' : 'not_constituted';
       enactLaw(Q, bill, bill.submitted_at, bill.variant);
+      return bill;
+    }
+    if (S.senate.status !== 'constituted') {
+      closeLaw(Q, bill, 'rejected', 'the Senate is not yet constituted');
       return bill;
     }
     bill.senate_notice_due = institutions.addDays(bill.submitted_at, 30);
@@ -1354,13 +1420,14 @@
       }
       if (project.type === 'education_program' && project.variant === 'secular') checkConstraints(Q, 'church', 1, {instrument: 'secular_school'});
     }
-    if (bill.package_id) applyPackage(Q, bill.package_id, m);
+    if (bill.package_id) applyPackage(Q, bill.package_id, m, bill.id);
     if (bill.kind === 'unemployment_bill') billEnacted(Q, bill, m);
     if (bill.kind === 'instrument') {
       applyInstrument(Q, bill.instrument, m, {law_id: bill.id, sponsor: bill.sponsor, points: bill.points,
         pps_answers: bill.sponsor === 'pps' || bill.pps_vote === 'yes'});
     }
     if (bill.kind === 'public_control') publicControlEnacted(Q, bill, m);
+    if (bill.kind === 'initiative') initiativeEnacted(Q, bill, m);
     S.history.reasons.push({t: m, kind: 'law_enacted', law_id: bill.id, title: bill.title, variant: bill.enacted_variant});
   }
 
@@ -1457,10 +1524,12 @@
     return pkg;
   }
 
-  function applyPackage(Q, packageId, m) {
+  function applyPackage(Q, packageId, m, lawId) {
     const S = Q.S, E = S.economy;
     const pkg = E.packages.filter(p => p.id === packageId)[0];
     if (!pkg || pkg.applied) return;
+    // Z — 0.81: a law now takes effect inside submitLaw, before its caller records the id on the package.
+    if (lawId && !pkg.law_id) pkg.law_id = lawId;
     pkg.applied = true;
     pkg.status = 'passed';
     const ppsAnswers = pkg.pps_vote === 'yes' || (!pkg.pps_vote && government.ppsBound(S));
@@ -2245,6 +2314,585 @@
       budget: signed(round(forecast.budget, 2), 2) + L(' B now; the full variant would cost 2 B a month, the limited 1 B',
         ' B obecnie; pełny wariant kosztowałby 2 B miesięcznie, ograniczony 1 B'),
     };
+  }
+
+  // ---- The legislative initiative of PPS (Z — 0.81; card parliament.legislative_initiative) -----------------------------
+  // Decisions of 20 X 2026 (1A, 2A, 4B, 5A, 6B, 8A, 9A and the user's notes): one card of the Parliament deck replaces the cards
+  // of the unemployment bill D and of the parliamentary control of the army. It shows at most five laws of a fixed order; taking
+  // one up costs this month's action and may move relations at once; the next month an urgent card puts it to the Sejm: it
+  // passes, or only its limited variant would pass (then the limited variant or a withdrawal), or it is rejected. A law passed in
+  // full leaves the card; one passed in its limited variant, rejected or withdrawn comes back after nine months — after a limited
+  // one only in full. A law the cabinet already carries out (or prepares) is not offered; nor one held by a ministry card of PPS.
+  const INITIATIVE_CARD = 'polish_legislative_initiative';
+  const INITIATIVE_SHOWN = 5;
+  const INITIATIVE_RETURN_MONTHS = 9;
+  const INITIATIVE_REST_MONTHS = 3;
+  const HIGH_UNEMPLOYMENT_WORKS = 10;
+  const INITIATIVE_SHARE = 0.40;
+
+  // The clubs friendly to Piłsudski (0.71, decision 5A): until V 1923 Wyzwolenie, Piast and NPR, then Wyzwolenie and NPR.
+  const pilsFriendly = t => (t < T(1923, 5) ? ['psl_wyzwolenie', 'psl_piast', 'npr'] : ['psl_wyzwolenie', 'npr']);
+
+  // The special votes of the initiative (P): the friends of Piłsudski vote against full civilian oversight and abstain on the
+  // compromise; PSL Piast and the Christian Democrats vote against an autonomy bill while they sit in a cabinet with ZLN (the
+  // Lanckorona pact of 1923, HISTORICAL_SOURCES.md).
+  function initiativeVote(S, clubId, bill) {
+    const flags = bill.flags || [];
+    const t = bill.submitted_t !== undefined ? bill.submitted_t : bill.t;
+    if (flags.indexOf('army_against_pilsudski') >= 0 && pilsFriendly(t).indexOf(clubId) >= 0) return 'no';
+    if (flags.indexOf('army_compromise') >= 0 && pilsFriendly(t).indexOf(clubId) >= 0) return 'abstain';
+    if (flags.indexOf('minority_autonomy') >= 0 && (clubId === 'psl_piast' || clubId === 'pschd')) {
+      const cabinet = S.cabinet;
+      if (cabinet && (cabinet.status === 'active' || cabinet.status === 'caretaker') && cabinet.partner_ids.indexOf('zln') >= 0 &&
+        cabinet.partner_ids.indexOf(clubId) >= 0) return 'no';
+    }
+    return null;
+  }
+
+  function initiativeState(S) {
+    if (!S.chapter.initiatives) S.chapter.initiatives = {pending: null, records: {}};
+    return S.chapter.initiatives;
+  }
+  function initiativeRecord(S, id) {
+    const state = initiativeState(S);
+    if (!state.records[id]) state.records[id] = {level: null, until: null, filings: 0, plus_used: false, history: []};
+    return state.records[id];
+  }
+
+  // What the cabinet (or PPS) already carries out or prepares, by any route: 'full', 'limited' or 'none'.
+  const carried = p => liveProject(p) || p.status === 'completed' || preparedProject(p);
+  function projectLevel(S, type, fullVariants, limitedVariants) {
+    const list = projectsOf(S, type, carried);
+    if (list.some(p => fullVariants.indexOf(p.variant) >= 0)) return 'full';
+    if (list.some(p => limitedVariants.indexOf(p.variant) >= 0)) return 'limited';
+    return 'none';
+  }
+
+  // The coalition agreement of PPS forbids the law (a constraint of its cabinet on the topic): the reason, else ''.
+  function constraintConflict(Q, topic, position) {
+    const S = Q.S;
+    for (const id of Object.keys(S.agreements).sort()) {
+      const agreement = S.agreements[id];
+      if (agreement.status !== 'active' && agreement.status !== 'breached') continue;
+      if (!S.cabinet || agreement.cabinet_id !== S.cabinet.id || agreement.parties.indexOf('pps') < 0) continue;
+      if ((agreement.obligations || []).some(o => o.kind === 'constraint' && o.topic === topic && o.status !== 'breached' && contradicts(topic, o.position, position))) {
+        return L('It would break our coalition agreement, which keeps the present rules on the Church.',
+          'Naruszyłoby to naszą umowę koalicyjną, która utrzymuje obecne zasady w sprawach Kościoła.');
+      }
+    }
+    return '';
+  }
+
+  // Starts a project carried out by the cabinet after the law of the initiative took effect (no second vote).
+  function startByLaw(Q, typeId, variantId, fields, bill, m) {
+    const S = Q.S, type = PROJECT_TYPES[typeId];
+    const project = createProject(Q, typeId, variantId, Object.assign({sponsor: 'pps', responsibility: {pps: INITIATIVE_SHARE}}, fields || {}));
+    project.preparation = 100;
+    project.prepared_at = m;
+    project.launched_at = m;
+    project.status = type.on_launch === 'operating' ? 'operating' : 'executing';
+    project.started_at = m;
+    project.charge_from = m;
+    if (type.on_launch === 'operating') project.first_effect_time = m;
+    const variant = type.variants[variantId];
+    if (variant.months) project.ends_at = m + variant.months;
+    project.law_id = bill.id;
+    project.history.push({t: m, kind: 'launch', by: 'pps', via: 'legislative_initiative'});
+    authorize(Q, project, m, bill.id, true);
+    if (variant.business) economy.changeBusinessPressure(S, variant.business, project.id + ':business', m, typeId);
+    return project;
+  }
+  function upgradeProject(Q, typeId, fromVariants, toVariant, m) {
+    const project = projectsOf(Q.S, typeId, p => carried(p) && fromVariants.indexOf(p.variant) >= 0)[0] || null;
+    if (!project) return null;
+    setVariant(project, toVariant);
+    project.ends_at = PROJECT_TYPES[typeId].variants[toVariant].months ? m + PROJECT_TYPES[typeId].variants[toVariant].months : null;
+    if (project.status === 'completed' && PROJECT_TYPES[typeId].ongoing) project.status = 'operating';
+    project.history.push({t: m, kind: 'raised', variant: toVariant, via: 'legislative_initiative'});
+    return project;
+  }
+  function extraGrievance(project, value, key) {
+    project.pending_effects.push({id: project.id + ':grievance:' + key, system: 'grievance', stage: 7, value: value, beneficiaries: project.beneficiaries.slice(),
+      note: 'the raise of the law'});
+  }
+  const relation = (Q, actor, value, cause) => government.changeRelation(Q, actor, value, cause);
+
+  // The twelve laws in their order on the card. variants: [full, limited]; vote: programme and flags of each; level(S): what is
+  // carried out already; available(Q): '' or the reason it is not on the card; blocked(Q): '' or the reason it is greyed;
+  // filing: the effects of taking it up; enact(Q, variant, bill, m, raise): the effects of the law, returning a sentence.
+  const INITIATIVES = Object.freeze([
+    {id: 'unemployment', portfolio: 'labor', name: ['Protection of the unemployed', 'Ochrona bezrobotnych'],
+      text: ['Benefits for the unemployed from the state budget: the full benefit costs 2 budget units a month, the limited one 1. The unemployed radicalise less and trust PPS more.',
+        'Zasiłek dla bezrobotnych z budżetu państwa: pełny kosztuje 2 jednostki budżetu miesięcznie, ograniczony 1. Bezrobotni mniej się radykalizują i bardziej ufają PPS.'],
+      raise: ['A limited benefit is paid today; the law raises it to the full benefit (2 budget units a month instead of 1).',
+        'Dziś wypłacany jest zasiłek ograniczony; ustawa podnosi go do pełnego (2 jednostki budżetu miesięcznie zamiast 1).'],
+      variants: [{key: 'full', name: ['the full benefit', 'pełny zasiłek'], programme: {fiscal: 2}}, {key: 'limited', name: ['the limited benefit', 'ograniczony zasiłek'], programme: {fiscal: 1}}],
+      level: S => { const p = operatingProtection(S); return !p ? 'none' : p.variant === 'full' ? 'full' : 'limited'; },
+      filing: [{type: 'faction', faction: 'lewica', dissent: -2}],
+      enact: (Q, variant, bill, m) => {
+        billEnacted(Q, {id: bill.id, variant: variant, enacted_variant: variant, sponsor: 'pps', pps_vote: 'yes', effective_at: bill.effective_at}, m);
+        return variant === 'full' ? L('The full benefit is paid from the next settlement: 2 budget units a month.', 'Pełny zasiłek będzie wypłacany od najbliższego rozliczenia: 2 jednostki budżetu miesięcznie.') :
+          L('The limited benefit is paid from the next settlement: 1 budget unit a month.', 'Ograniczony zasiłek będzie wypłacany od najbliższego rozliczenia: 1 jednostka budżetu miesięcznie.');
+      }},
+    {id: 'labor_inspection', portfolio: 'labor', name: ['Labour inspection and working time', 'Inspekcja pracy i czas pracy'],
+      text: ['Inspectors enforce the statutory working time: building costs 1 budget unit a month for two months, then the same to run it. The discontent of the workers falls.',
+        'Inspektorzy pilnują ustawowego czasu pracy: budowa kosztuje 1 jednostkę budżetu miesięcznie przez dwa miesiące, potem tyle samo na utrzymanie. Niezadowolenie robotników spada.'],
+      raise: ['The inspection works today only in large industry; the law extends it to all workplaces.', 'Dziś inspekcja działa tylko w wielkim przemyśle; ustawa obejmuje nią wszystkie zakłady.'],
+      variants: [{key: 'inspection', name: ['inspection everywhere', 'inspekcja we wszystkich zakładach'], programme: {fiscal: 1}},
+        {key: 'industry_only', name: ['inspection in large industry only', 'inspekcja tylko w wielkim przemyśle'], programme: {fiscal: 0}}],
+      level: S => projectLevel(S, 'labor_inspection', ['inspection'], ['industry_only']),
+      filing: [{type: 'relation', actor: 'npr', value: 3}],
+      enact: (Q, variant, bill, m, raise) => {
+        if (raise) {
+          const p = upgradeProject(Q, 'labor_inspection', ['industry_only'], 'inspection', m);
+          if (p) extraGrievance(p, -1.5, 'raise');
+        } else startByLaw(Q, 'labor_inspection', variant, {executor: 'labor'}, bill, m);
+        return L('The labour administration builds the inspection.', 'Administracja resortu Pracy buduje inspekcję.');
+      }},
+    {id: 'progressive_tax', portfolio: 'finance', name: ['Progressive tax on high incomes and wealth', 'Podatek progresywny od wysokich dochodów i majątku'],
+      text: ['The budget gains a lasting income (+1 a month), business presses harder on the cabinet (+4) and the Left of PPS is satisfied.',
+        'Budżet zyskuje stały dochód (+1 miesięcznie), przedsiębiorcy mocniej naciskają na rząd (+4), a Lewica PPS jest zadowolona.'],
+      raise: ['Today only the highest incomes are taxed; the law extends the tax to high incomes and wealth.', 'Dziś opodatkowane są tylko najwyższe dochody; ustawa obejmuje podatkiem wysokie dochody i majątek.'],
+      variants: [{key: 'progressive', name: ['the tax on high incomes and wealth', 'podatek od wysokich dochodów i majątku'], programme: {fiscal: 2}},
+        {key: 'progressive_top', name: ['the tax on the highest incomes only, without wealth', 'podatek tylko od najwyższych dochodów, bez majątku'], programme: {fiscal: 1}}],
+      level: S => {
+        const E = S.economy;
+        const has = kind => E.policies.some(p => p.kind === kind && p.status !== 'cancelled');
+        return has('progressive') || has('progressive_raise') ? 'full' : has('progressive_top') ? 'limited' : 'none';
+      },
+      filing: [{type: 'faction', faction: 'lewica', dissent: -3}, {type: 'business', value: 2}, {type: 'relation', actor: 'zln', value: -3}],
+      enact: (Q, variant, bill, m, raise) => {
+        applyInstrument(Q, raise ? 'progressive_raise' : variant, m, {law_id: bill.id, sponsor: 'pps', pps_answers: true});
+        return L('The tax is collected from the next settlement.', 'Podatek będzie pobierany od najbliższego rozliczenia.');
+      }},
+    {id: 'army_oversight', portfolio: 'reichswehr', name: ['Civilian oversight of the army', 'Cywilny nadzór nad wojskiem'],
+      text: ['The army under the control of the government and the Sejm: 1 budget unit a month for three months; one group of the army grows more loyal to the legal authorities.',
+        'Wojsko pod kontrolą rządu i Sejmu: 1 jednostka budżetu miesięcznie przez trzy miesiące; jedno zgrupowanie wojska staje się bardziej lojalne wobec legalnej władzy.'],
+      raise: ['Today a limited reform of the command is in force; the law brings full civilian oversight.', 'Dziś obowiązuje ograniczona reforma dowództwa; ustawa wprowadza pełny nadzór cywilny.'],
+      variants: [{key: 'civilian_oversight', name: ['full civilian oversight', 'pełny nadzór cywilny'], programme: {army: 2}, flags: ['army_against_pilsudski']},
+        {key: 'limited_reform', name: ['a compromise on the command', 'kompromis w sprawie dowództwa'], programme: {army: 0}, flags: ['army_compromise']}],
+      level: S => projectLevel(S, 'army_control', ['civilian_oversight'], ['limited_reform', 'personnel_changes']),
+      available: Q => {
+        const pol = politicsModule(), security = securityModule(), a = security ? security.pilsAgreement(Q.S) : null;
+        if (a && a.status === 'active') return L('An agreement with Piłsudski is in force.', 'Obowiązuje porozumienie z Piłsudskim.');
+        return pol && pol.openMilitaryCase(Q.S) ? '' : L('There is no open dispute about the army.', 'Nie ma otwartego sporu o wojsko.');
+      },
+      filing: [{type: 'faction', faction: 'pilsudczycy', dissent: 8}, {type: 'relation', actor: 'pilsudski', value: -10}],
+      enact: (Q, variant, bill, m, raise) => {
+        const security = securityModule();
+        if (raise) {
+          const p = upgradeProject(Q, 'army_control', ['limited_reform', 'personnel_changes'], 'civilian_oversight', m);
+          if (p && security) security.shiftLoyalty(security.forceOf(Q.S, p.policy_choices.force_id || security.OVERSIGHT_FORCE), 'loyalty_legal', 0.025);
+        } else {
+          startByLaw(Q, 'army_control', variant, {executor: 'reichswehr', policy_choices: {force_id: security ? security.OVERSIGHT_FORCE : null,
+            position_id: 'synthetic_oversight_post', via: 'parliament'}}, bill, m);
+        }
+        return L('The cabinet carries out the reform.', 'Rząd przeprowadza reformę.');
+      }},
+    {id: 'secular_school', portfolio: 'education', name: ['Secular school with religious freedom', 'Szkoła świecka z wolnością religijną'],
+      text: ['A secular school programme: 1 budget unit a month for four months, then 1 to run; the trust of workers and the intelligentsia in PPS grows.',
+        'Program szkoły świeckiej: 1 jednostka budżetu miesięcznie przez cztery miesiące, potem 1 na utrzymanie; rośnie zaufanie robotników i inteligencji do PPS.'],
+      raise: ['Today parents may exempt their children from religion; the law brings the secular school.', 'Dziś rodzice mogą zwolnić dziecko z nauki religii; ustawa wprowadza szkołę świecką.'],
+      variants: [{key: 'secular', name: ['the secular school', 'szkoła świecka'], programme: {church: 1}},
+        {key: 'religion_exemption', name: ['exemption from religion at the parents’ request', 'zwolnienie z religii na wniosek rodziców'], programme: {church: 0}}],
+      level: S => projectLevel(S, 'education_program', ['secular'], []) !== 'none' ? 'full' : (initiativeRecord(S, 'secular_school').level || 'none'),
+      blocked: Q => constraintConflict(Q, 'church', 1),
+      filing: [{type: 'relation', actor: 'pschd', value: -8}, {type: 'relation', actor: 'psl_piast', value: -3}, {type: 'faction', faction: 'lewica', dissent: -2}],
+      enact: (Q, variant, bill, m) => {
+        const S = Q.S;
+        if (variant === 'secular') {
+          startByLaw(Q, 'education_program', 'secular', {executor: 'education', tranche: nextTranche(S, 'education_program', 'secular') || 1}, bill, m);
+          checkConstraints(Q, 'church', 1, {instrument: 'secular_school'});
+          return L('The ministry of education builds the secular school.', 'Resort oświaty buduje szkołę świecką.');
+        }
+        const filter = electorate.filterOfList(['workers', 'new_middle']);
+        if (electorate.hasCells(S) && filter) electorate.changeCells(S, filter, {trust_pps: 2});
+        return L('Parents may exempt their children from religion: the trust of workers and the intelligentsia in PPS grows (+2).',
+          'Rodzice mogą zwolnić dziecko z nauki religii: zaufanie robotników i inteligencji do PPS rośnie (+2).');
+      }},
+    {id: 'autonomy', portfolio: 'interior', name: ['Autonomy of the minorities', 'Autonomia mniejszości'],
+      text: ['Full: the autonomy of Eastern Galicia with a regional diet, as in the PPS bills of 1921 and 1925. Limited: the execution of the act of 26 IX 1922 — voivodeship diets with a Polish and a Ruthenian chamber, schools in the language of the chamber, a Ruthenian university.',
+        'Pełna: autonomia Galicji Wschodniej z sejmem krajowym, jak w projektach PPS z 1921 i 1925 roku. Ograniczona: wykonanie ustawy z 26 IX 1922 — sejmiki wojewódzkie z izbą polską i ruską, szkoły w języku izby, uniwersytet ruski.'],
+      raise: ['Today the act of 1922 is carried out; the law brings the autonomy of Eastern Galicia with a regional diet.', 'Dziś wykonywana jest ustawa z 1922 roku; ustawa wprowadza autonomię Galicji Wschodniej z sejmem krajowym.'],
+      variants: [{key: 'regional_sejm', name: ['the autonomy of Eastern Galicia with a regional diet', 'autonomia Galicji Wschodniej z sejmem krajowym'], programme: {autonomy: 2}, flags: ['minority_autonomy']},
+        {key: 'autonomy', name: ['the execution of the act of 26 IX 1922', 'wykonanie ustawy z 26 IX 1922'], programme: {autonomy: 1}, flags: ['minority_autonomy']}],
+      level: S => projectLevel(S, 'limited_autonomy', ['regional_sejm'], ['autonomy']),
+      available: Q => {
+        const line = Q.S.actors.pps.strategy && Q.S.actors.pps.strategy.slavic_autonomy;
+        return line === 'regional_autonomy' || line === 'federation' ? '' :
+          L('Needs a party line for the autonomy of the voivodeships or a federation.', 'Wymaga linii partii za autonomią województw albo federacją.');
+      },
+      filing: [{type: 'relation', actor: 'other_minorities_rep', value: 5}, {type: 'relation', actor: 'psl_wyzwolenie', value: 2}, {type: 'relation', actor: 'zln', value: -8}],
+      enact: (Q, variant, bill, m, raise) => {
+        if (raise) {
+          const p = upgradeProject(Q, 'limited_autonomy', ['autonomy'], 'regional_sejm', m);
+          if (p) extraGrievance(p, -3, 'raise');
+          relation(Q, 'other_minorities_rep', 4, 'initiative:autonomy:raise');
+          relation(Q, 'zln', -5, 'initiative:autonomy:raise');
+          relation(Q, 'pschd', -5, 'initiative:autonomy:raise');
+          relation(Q, 'psl_piast', -5, 'initiative:autonomy:raise');
+        } else {
+          startByLaw(Q, 'limited_autonomy', variant, {executor: 'interior', policy_choices: {agreement_id: null, via: 'parliament'}}, bill, m);
+          const full = variant === 'regional_sejm';
+          relation(Q, 'other_minorities_rep', full ? 8 : 4, 'initiative:autonomy');
+          relation(Q, 'zln', full ? -10 : -5, 'initiative:autonomy');
+          if (full) { relation(Q, 'pschd', -5, 'initiative:autonomy'); relation(Q, 'psl_piast', -5, 'initiative:autonomy'); }
+        }
+        return L('The ministry of the interior carries out the autonomy.', 'Resort Spraw Wewnętrznych wprowadza autonomię.');
+      }},
+    {id: 'land_reform', portfolio: 'agriculture', name: ['Land reform', 'Reforma rolna'],
+      text: ['Full: the expropriation of large estates without compensation (1 budget unit a month for four months; a very strong reaction of business, +25). Limited: an accelerated reform with compensation (3 a month for three months; +12). It covers the first of three parts of the countryside.',
+        'Pełna: wywłaszczenie wielkiej własności bez odszkodowania (1 jednostka budżetu miesięcznie przez cztery miesiące; bardzo silna reakcja przedsiębiorców, +25). Ograniczona: przyspieszona reforma z odszkodowaniem (3 miesięcznie przez trzy miesiące; +12). Obejmuje pierwszą z trzech części wsi.'],
+      raise: ['A land reform with compensation is carried out today; the law turns it into expropriation without compensation (business +13, the cost falls to 1 a month).',
+        'Dziś trwa reforma z odszkodowaniem; ustawa zmienia ją w wywłaszczenie bez odszkodowania (przedsiębiorcy +13, koszt spada do 1 miesięcznie).'],
+      variants: [{key: 'expropriation', name: ['expropriation without compensation', 'wywłaszczenie bez odszkodowania'], programme: {land: 2}},
+        {key: 'accelerated', name: ['an accelerated reform with compensation', 'przyspieszona reforma z odszkodowaniem'], programme: {land: 1}}],
+      level: S => projectLevel(S, 'land_program', ['expropriation'], ['compensated', 'accelerated']),
+      available: Q => nextTranche(Q.S, 'land_program', 'accelerated') !== null || projectsOf(Q.S, 'land_program', liveProject).length ? '' :
+        L('The whole countryside is already covered.', 'Reforma objęła już całą wieś.'),
+      filing: [{type: 'relation', actor: 'psl_wyzwolenie', value: 6}, {type: 'relation', actor: 'psl_piast', value: 2}, {type: 'relation', actor: 'zln', value: -5}, {type: 'business', value: 2}],
+      enact: (Q, variant, bill, m, raise) => {
+        const S = Q.S;
+        if (raise) {
+          const running = projectsOf(S, 'land_program', p => p.status === 'executing' && (p.variant === 'compensated' || p.variant === 'accelerated'))[0];
+          if (running) {
+            setVariant(running, 'expropriation');
+            running.history.push({t: m, kind: 'raised', variant: 'expropriation', via: 'legislative_initiative'});
+            economy.changeBusinessPressure(S, 13, running.id + ':raise', m, 'land_program');
+            return L('The running reform turns into expropriation without compensation.', 'Trwająca reforma zmienia się w wywłaszczenie bez odszkodowania.');
+          }
+        }
+        const tranche = nextTranche(S, 'land_program', variant);
+        if (tranche === null) return L('The whole countryside is already covered.', 'Reforma objęła już całą wieś.');
+        startByLaw(Q, 'land_program', variant, {executor: 'agriculture', tranche: tranche, policy_choices: {access: 'equal'}}, bill, m);
+        return L('The ministry of agriculture carries out the reform in the next part of the countryside.', 'Resort Rolnictwa przeprowadza reformę w kolejnej części wsi.');
+      }},
+    {id: 'public_works', portfolio: 'labor', name: ['Public works for the unemployed', 'Roboty publiczne dla bezrobotnych'],
+      text: ['Work for the unemployed: 2 budget units a month for three months, then 1; two units of employment.',
+        'Praca dla bezrobotnych: 2 jednostki budżetu miesięcznie przez trzy miesiące, potem 1; dwie jednostki zatrudnienia.'],
+      raise: ['A smaller programme runs today; the law enlarges it to two units of employment.', 'Dziś działa mniejszy program; ustawa powiększa go do dwóch jednostek zatrudnienia.'],
+      variants: [{key: 'employment', name: ['two units of employment', 'dwie jednostki zatrudnienia'], programme: {fiscal: 1}},
+        {key: 'employment_small', name: ['one unit of employment', 'jedna jednostka zatrudnienia'], programme: {fiscal: 0}}],
+      level: S => projectLevel(S, 'public_works', ['employment'], ['employment_small']),
+      available: Q => Q.S.economy.unemployment >= HIGH_UNEMPLOYMENT_WORKS ? '' :
+        L('Needs unemployment of ' + HIGH_UNEMPLOYMENT_WORKS + '% or more.', 'Wymaga bezrobocia co najmniej ' + HIGH_UNEMPLOYMENT_WORKS + '%.'),
+      enact: (Q, variant, bill, m, raise) => {
+        if (raise) upgradeProject(Q, 'public_works', ['employment_small'], 'employment', m);
+        else startByLaw(Q, 'public_works', variant, {executor: 'labor'}, bill, m);
+        return L('The labour administration starts the works.', 'Administracja resortu Pracy rozpoczyna roboty.');
+      }},
+    {id: 'workers_housing', portfolio: 'labor', name: ['Workers’ housing', 'Mieszkania robotnicze'],
+      text: ['Houses for workers: 2 budget units a month for four months, then 1; the discontent of the workers grows more slowly.',
+        'Domy dla robotników: 2 jednostki budżetu miesięcznie przez cztery miesiące, potem 1; niezadowolenie robotników rośnie wolniej.'],
+      raise: ['Cooperative houses are built today; the law brings the full programme of workers’ housing.', 'Dziś powstają domy spółdzielcze; ustawa wprowadza pełny program mieszkań robotniczych.'],
+      variants: [{key: 'housing', name: ['the full programme', 'pełny program'], programme: {fiscal: 1}},
+        {key: 'housing_coop', name: ['cooperative houses on state credit', 'domy spółdzielcze z kredytem państwa'], programme: {fiscal: 0}}],
+      level: S => projectLevel(S, 'public_works', ['housing'], ['housing_coop']),
+      enact: (Q, variant, bill, m, raise) => {
+        if (raise) upgradeProject(Q, 'public_works', ['housing_coop'], 'housing', m);
+        else startByLaw(Q, 'public_works', variant, {executor: 'labor'}, bill, m);
+        return L('The labour administration starts building.', 'Administracja resortu Pracy rozpoczyna budowę.');
+      }},
+    {id: 'tenants', portfolio: null, name: ['Protection of tenants', 'Ochrona lokatorów'],
+      text: ['Full (the PPS motion of 1925): no further rent rises and protection against eviction for those without means. Limited (as the act of 1926): rent rises suspended for nine months, evictions postponed and arrears in instalments.',
+        'Pełna (wniosek klubu PPS z 1925 roku): bez dalszych podwyżek czynszu i z ochroną przed eksmisją ludzi bez środków do życia. Ograniczona (jak ustawa z 1926 roku): podwyżki zawieszone na dziewięć miesięcy, odroczone eksmisje i zaległy czynsz na raty.'],
+      raise: ['The rises were suspended; the law stops them for good and protects those without means against eviction.', 'Podwyżki były zawieszone; ustawa wstrzymuje je na stałe i chroni ludzi bez środków przed eksmisją.'],
+      variants: [{key: 'rent_freeze', name: ['no further rises and protection against eviction', 'bez dalszych podwyżek i z ochroną przed eksmisją'], programme: {fiscal: 2}},
+        {key: 'rent_suspension', name: ['rises suspended for nine months', 'podwyżki zawieszone na dziewięć miesięcy'], programme: {fiscal: 1}}],
+      level: S => projectLevel(S, 'tenant_protection', ['rent_freeze'], ['rent_suspension']),
+      available: Q => Q.time >= T(1924, 6) ? '' : L('The act on the protection of tenants takes effect in June 1924.', 'Ustawa o ochronie lokatorów wchodzi w życie w czerwcu 1924 roku.'),
+      filing: [{type: 'trust', labels: ['workers', 'new_middle'], value: 2}, {type: 'business', value: 1}],
+      enact: (Q, variant, bill, m, raise) => {
+        if (raise) {
+          const p = upgradeProject(Q, 'tenant_protection', ['rent_suspension'], 'rent_freeze', m) || startByLaw(Q, 'tenant_protection', 'rent_freeze', {}, bill, m);
+          extraGrievance(p, -1, 'raise');
+          economy.changeBusinessPressure(Q.S, 2, p.id + ':raise', m, 'tenant_protection');
+        } else startByLaw(Q, 'tenant_protection', variant, {}, bill, m);
+        return L('The courts apply the new rules at once.', 'Sądy stosują nowe przepisy od razu.');
+      }},
+    {id: 'old_age', portfolio: null, name: ['Old-age insurance of workers', 'Ubezpieczenie robotników na starość'],
+      text: ['Insurance of workers for old age, widows and orphans from the contributions of employers and workers with a state subsidy: 1 budget unit a month; business presses harder (+6).',
+        'Ubezpieczenie robotników na starość, wdów i sierot ze składek pracodawców i robotników z dopłatą państwa: 1 jednostka budżetu miesięcznie; przedsiębiorcy mocniej naciskają (+6).'],
+      raise: ['Only the workers of large industry and the railways are insured today; the law covers all workers.', 'Dziś ubezpieczeni są tylko robotnicy wielkiego przemysłu i kolei; ustawa obejmuje wszystkich robotników.'],
+      variants: [{key: 'pension_all', name: ['the insurance of all workers', 'ubezpieczenie wszystkich robotników'], programme: {fiscal: 2}},
+        {key: 'pension_industry', name: ['the insurance of large industry and the railways', 'ubezpieczenie wielkiego przemysłu i kolei'], programme: {fiscal: 1}}],
+      level: S => projectLevel(S, 'old_age_insurance', ['pension_all'], ['pension_industry']),
+      enact: (Q, variant, bill, m, raise) => {
+        if (raise) {
+          const p = upgradeProject(Q, 'old_age_insurance', ['pension_industry'], 'pension_all', m);
+          if (p) { extraGrievance(p, -1, 'raise'); economy.changeBusinessPressure(Q.S, 3, p.id + ':raise', m, 'old_age_insurance'); }
+        } else startByLaw(Q, 'old_age_insurance', variant, {executor: 'labor'}, bill, m);
+        return L('The insurance starts with the next settlement.', 'Ubezpieczenie rusza od najbliższego rozliczenia.');
+      }},
+    {id: 'abortion', portfolio: null, name: ['Termination of pregnancy', 'Przerwanie ciąży'],
+      text: ['Full: a termination of pregnancy by a doctor is no crime. Limited (as the penal code of 1932): allowed when the woman’s health needs it or when the pregnancy is the result of a crime.',
+        'Pełna: przerwanie ciąży przez lekarza przestaje być przestępstwem. Ograniczona (jak kodeks karny z 1932 roku): dopuszczalne, gdy wymaga tego zdrowie kobiety albo gdy ciąża jest wynikiem przestępstwa.'],
+      raise: ['Today a doctor may terminate a pregnancy for the woman’s health or after a crime; the law removes the penalty altogether.',
+        'Dziś lekarz może przerwać ciążę ze względu na zdrowie kobiety albo po przestępstwie; ustawa znosi karę całkowicie.'],
+      variants: [{key: 'decriminalised', name: ['no penalty for a termination by a doctor', 'bez kary za przerwanie ciąży przez lekarza'], programme: {church: 2}},
+        {key: 'indications', name: ['for the woman’s health or after a crime', 'ze względu na zdrowie kobiety albo po przestępstwie'], programme: {church: 1}}],
+      level: S => initiativeRecord(S, 'abortion').level || 'none',
+      blocked: Q => constraintConflict(Q, 'church', 1),
+      filing: [{type: 'relation', actor: 'pschd', value: -8}, {type: 'relation', actor: 'zln', value: -4}, {type: 'relation', actor: 'psl_piast', value: -4},
+        {type: 'faction', faction: 'centrum', dissent: 3}],
+      enact: (Q, variant, bill, m, raise) => {
+        const S = Q.S, size = raise || variant === 'indications' ? 0.5 : 1;
+        if (electorate.hasCells(S)) {
+          for (const cell of S.society.cells.filter(c => c.class_id === 'rural' || c.class_id === 'old_middle')) electorate.lossForPps(cell, size, S.society.parties);
+          const filter = electorate.filterOfList(['workers', 'new_middle']);
+          if (filter) electorate.changeCells(S, filter, {trust_pps: 2 * size});
+          electorate.writeClassMirrors(Q);
+        }
+        checkConstraints(Q, 'church', variant === 'decriminalised' ? 2 : 1, {instrument: 'termination_law'});
+        const n = v => (Number.isInteger(v) ? String(v) : rules.num(v, 1));
+        return L('Catholic opinion among the peasants and the petty bourgeoisie turns away from PPS (−' + n(size) + '); workers and the intelligentsia trust PPS more (+' + n(2 * size) + ').',
+          'Opinia katolicka wśród chłopów i drobnomieszczaństwa odwraca się od PPS (−' + n(size) + '); robotnicy i inteligencja bardziej ufają PPS (+' + n(2 * size) + ').');
+      }},
+  ]);
+  const INITIATIVE_BY_ID = Object.freeze(INITIATIVES.reduce((map, law) => Object.assign(map, {[law.id]: law}), {}));
+  const lawName = law => L(law.name[0], law.name[1]);
+  // The clubs of a vote in words; a split part of a club (`<club>:church`) is "part of the deputies of …".
+  function clubsText(ids) {
+    const whole = ids.filter(id => id.indexOf(CHURCH_SPLIT_SUFFIX) < 0);
+    const minorities = ['jewish_rep', 'other_minorities_rep'];
+    const both = minorities.every(id => whole.indexOf(id) >= 0);
+    const names = whole.filter(id => !(both && minorities.indexOf(id) >= 0)).map(id => government.plainParties([id]));
+    if (both) names.push(government.plainParties(minorities));
+    if (ids.some(id => id.indexOf(CHURCH_SPLIT_SUFFIX) >= 0)) names.push(L('part of the deputies of the other minorities', 'część posłów innych mniejszości'));
+    return names.length < 2 ? (names[0] || '') : names.slice(0, -1).join(', ') + L(' and ', ' i ') + names[names.length - 1];
+  }
+
+  // The names of the parties in the instrumental case, for "relations with … improve".
+  const WITH_PL = Object.freeze({psl_wyzwolenie: 'PSL „Wyzwolenie”', psl_piast: 'PSL „Piast”', npr: 'Narodową Partią Robotniczą', pschd: 'chadecją',
+    zln: 'endecją', other_minorities_rep: 'posłami innych mniejszości', jewish_rep: 'posłami żydowskimi', pilsudski: 'Piłsudskim'});
+  const WITH_EN = Object.freeze({psl_wyzwolenie: 'PSL Wyzwolenie', psl_piast: 'PSL Piast', npr: 'the National Workers’ Party', pschd: 'the Christian Democrats',
+    zln: 'the National Democrats', other_minorities_rep: 'the deputies of the other minorities', jewish_rep: 'the Jewish deputies', pilsudski: 'Piłsudski'});
+  const FACTION_OF_PL = Object.freeze({lewica: 'Lewicy PPS', centrum: 'Centrum PPS', pilsudczycy: 'piłsudczyków w PPS'});
+  const FACTION_OF_EN = Object.freeze({lewica: 'the Left of PPS', centrum: 'the Centre of PPS', pilsudczycy: 'the Piłsudczycy in PPS'});
+  const filingPlus = e => (e.type === 'relation' && e.value > 0) || (e.type === 'faction' && e.dissent < 0) || (e.type === 'trust' && e.value > 0);
+  function filingText(e) {
+    const n = v => (v > 0 ? '+' : '−') + (Number.isInteger(v) ? String(Math.abs(v)) : rules.num(Math.abs(v), 1));
+    if (e.type === 'relation') return e.value > 0 ? L('relations with ' + WITH_EN[e.actor] + ' improve (' + n(e.value) + ')', 'stosunki z ' + WITH_PL[e.actor] + ' się poprawiają (' + n(e.value) + ')') :
+      L('relations with ' + WITH_EN[e.actor] + ' worsen (' + n(e.value) + ')', 'stosunki z ' + WITH_PL[e.actor] + ' się pogarszają (' + n(e.value) + ')');
+    if (e.type === 'faction') return e.dissent < 0 ? L('the dissent of ' + FACTION_OF_EN[e.faction] + ' falls (' + n(e.dissent) + ')', 'sprzeciw ' + FACTION_OF_PL[e.faction] + ' spada (' + n(e.dissent) + ')') :
+      L('the dissent of ' + FACTION_OF_EN[e.faction] + ' rises (' + n(e.dissent) + ')', 'sprzeciw ' + FACTION_OF_PL[e.faction] + ' rośnie (' + n(e.dissent) + ')');
+    if (e.type === 'business') return L('business presses harder (' + n(e.value) + ')', 'przedsiębiorcy naciskają mocniej (' + n(e.value) + ')');
+    if (e.type === 'trust') return L('the trust of workers and the intelligentsia in PPS grows (' + n(e.value) + ')', 'zaufanie robotników i inteligencji do PPS rośnie (' + n(e.value) + ')');
+    return '';
+  }
+  // The effects of taking a law up now: the gains only at its first filing in the chapter, the costs every time.
+  function filingEffects(S, law) {
+    const record = initiativeRecord(S, law.id);
+    return (law.filing || []).filter(e => !filingPlus(e) || !record.plus_used);
+  }
+  function applyFiling(Q, law, t) {
+    const S = Q.S, cause = 'initiative:' + law.id + ':t' + t;
+    for (const e of filingEffects(S, law)) {
+      if (e.type === 'relation') relation(Q, e.actor, e.value, cause);
+      else if (e.type === 'faction') government.factionReaction(Q, e.faction, {dissent: e.dissent}, {id: cause + ':' + e.faction, kind: 'initiative', reverse: null});
+      else if (e.type === 'business') economy.changeBusinessPressure(S, e.value, cause, t, 'initiative');
+      else if (e.type === 'trust' && electorate.hasCells(S)) {
+        const filter = electorate.filterOfList(e.labels);
+        if (filter) electorate.changeCells(S, filter, {trust_pps: e.value});
+        electorate.writeClassMirrors(Q);
+      }
+    }
+    if ((law.filing || []).some(filingPlus)) initiativeRecord(S, law.id).plus_used = true;
+  }
+
+  function initiativeCardBase(Q) {
+    const S = Q.S;
+    if (!S || S.chapter.status === 'ended' || !Q.sejm_first_election_completed || government.formationPending(Q)) return false;
+    return !initiativeState(S).pending;
+  }
+  // One law now: its offer ('both' or 'full' only), whether it is on the card and the reason it cannot be chosen.
+  function initiativeStatus(Q, id) {
+    const S = Q.S, law = INITIATIVE_BY_ID[id], record = initiativeRecord(S, id);
+    if (!law) return {eligible: false, available: false, reason: L('Unknown law.', 'Nieznana ustawa.')};
+    const level = law.level(S);
+    const off = reason => ({eligible: false, available: false, reason: reason, offer: null});
+    if (level === 'full' || record.level === 'full') return off(L('The law is already in force.', 'Ustawa już obowiązuje.'));
+    if (record.until !== null && Q.time < record.until) return off(L('It comes back in ' + rules.monthYear(record.until, 'loc') + '.', 'Wróci w ' + rules.monthYear(record.until, 'loc') + '.'));
+    if (law.portfolio && ppsHolds(S, law.portfolio)) return off(L('Our ministry carries it on its own card.', 'Prowadzi ją nasz resort na własnej karcie.'));
+    const unavailable = law.available ? law.available(Q) : '';
+    if (unavailable) return off(unavailable);
+    const offer = level === 'limited' || record.level === 'limited' ? 'full' : 'both';
+    const blocked = law.blocked ? law.blocked(Q) : '';
+    if (!rules.mainActionAvailable(Q)) return {eligible: true, available: false, offer: offer, reason: L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.')};
+    return {eligible: true, available: !blocked, offer: offer, reason: blocked};
+  }
+  function initiativeShown(Q) {
+    if (!initiativeCardBase(Q)) return [];
+    return INITIATIVES.map(law => law.id).filter(id => initiativeStatus(Q, id).eligible).slice(0, INITIATIVE_SHOWN);
+  }
+  const initiativeIsShown = (Q, id) => initiativeShown(Q).indexOf(id) >= 0;
+  function initiativeCardAvailable(Q) {
+    return initiativeCardBase(Q) && rules.cardRest(Q, INITIATIVE_CARD) === 0 && initiativeShown(Q).length > 0;
+  }
+
+  // How the Sejm would vote on one variant now (the preview equals the vote: the rules of 7.1 are deterministic).
+  function initiativeCounts(Q, law, index) {
+    const v = law.variants[index];
+    const counts = sejmCounts(Q, {sponsor: 'pps', programme: v.programme, flags: v.flags || [], pps_vote: 'yes', t: Q.time});
+    const ballot = institutions.resolveBallot('ordinary_resolution', counts);
+    return {yes: counts.yes, no: counts.no, abstain: counts.abstain, present: counts.present, eligible: counts.eligible, club_votes: counts.club_votes,
+      passed: ballot.result === 'passed',
+      no_clubs: Object.keys(counts.club_votes).filter(k => counts.club_votes[k].vote === 'no'),
+      yes_clubs: Object.keys(counts.club_votes).filter(k => counts.club_votes[k].vote === 'yes')};
+  }
+  // Z — 0.81 (the user's note of 20 X 2026, "lekka losowość"; P): the vote is not certain. The chance that a variant passes is
+  // 50% plus half the margin of the forecast in points of the chamber, between 5% and 95% (270 against 99: 95%; 200 against 158:
+  // about 71%; 140 against 288: 5%). One recorded roll per filing and variant decides; when it turns the forecast over, some
+  // deputies of the larger side stay away from the vote, so the recorded counts match the result.
+  const INITIATIVE_CHANCE_MIN = 0.05, INITIATIVE_CHANCE_MAX = 0.95;
+  function passChance(counts) {
+    return clip(0.5 + (counts.yes - counts.no) / 200, INITIATIVE_CHANCE_MIN, INITIATIVE_CHANCE_MAX);
+  }
+  function rolledCounts(Q, law, index, key) {
+    const counts = initiativeCounts(Q, law, index), chance = passChance(counts);
+    const passes = rules.roll(Q.S, key) < chance;
+    const out = Object.assign({}, counts, {chance: chance, passed: passes, absent: 0, forecast_passed: counts.passed});
+    if (passes !== counts.passed) {
+      // The larger side loses as many deputies as needed (absent from the vote).
+      const absent = Math.abs(counts.yes - counts.no) + 1;
+      out.absent = absent;
+      out.present = counts.present - absent;
+      if (passes) out.no = counts.no - absent; else out.yes = counts.yes - absent;
+    }
+    return out;
+  }
+  function initiativeOutcome(Q, pending) {
+    const law = INITIATIVE_BY_ID[pending.id], base = 'initiative:' + law.id + ':t' + pending.filed_at;
+    const full = rolledCounts(Q, law, 0, base + ':full');
+    const limited = pending.offer === 'both' && law.variants[1] && !full.passed ? rolledCounts(Q, law, 1, base + ':limited') : null;
+    return {law: law, full: full, limited: limited, outcome: full.passed ? 'full' : limited && limited.passed ? 'choice' : 'rejected'};
+  }
+  // The words of a chance on the card; its size in parentheses (hidden without the numbers of descriptions).
+  const chanceWords = chance => (chance >= 0.9 ? L('would almost surely pass', 'niemal na pewno by przeszła') :
+    chance >= 0.6 ? L('would probably pass', 'raczej by przeszła') : chance > 0.4 ? L('would have an uncertain fate', 'miałaby niepewny los') :
+      chance > 0.1 ? L('would probably fail', 'raczej by upadła') : L('would almost surely fail', 'prawie na pewno by upadła'));
+  const chancePct = chance => ' (' + L('about ', 'szansa ok. ') + Math.round(chance * 100) + '%)';
+  function forecastText(Q, law, offer) {
+    const full = passChance(initiativeCounts(Q, law, 0));
+    const limited = offer === 'both' && law.variants[1] && full < 0.5 ? passChance(initiativeCounts(Q, law, 1)) : null;
+    if (limited === null || limited < 0.5) return L('Today it ', 'Dziś ') + chanceWords(full) + chancePct(full) + '.';
+    return L('Today the full version ', 'Dziś pełna wersja ') + chanceWords(full) + chancePct(full) + L(', the limited one ', ', a ograniczona ') +
+      chanceWords(limited) + chancePct(limited) + '.';
+  }
+
+  // The card: one line per shown law.
+  function initiativeView(Q) {
+    const S = Q.S;
+    for (const law of INITIATIVES) {
+      const status = initiativeStatus(Q, law.id);
+      Q['pl_ini_' + law.id + '_why'] = status.reason || '';
+      if (!status.eligible) { Q['pl_ini_' + law.id + '_line'] = ''; continue; }
+      const what = status.offer === 'full' ? L(law.raise[0], law.raise[1]) : L(law.text[0], law.text[1]);
+      const today = forecastText(Q, law, status.offer);
+      const filing = filingEffects(S, law).map(filingText);
+      Q['pl_ini_' + law.id + '_line'] = what + ' ' + today + (filing.length ? L(' Taking it up: ', ' Samo wniesienie: ') + filing.join(', ') + '.' : '');
+    }
+    Q.pl_ini_shown = initiativeShown(Q).join(' ');
+  }
+
+  // Taking a law up: this month's action, the effects of filing, the vote next month.
+  function initiativeFile(Q, id) {
+    const S = Q.S, law = INITIATIVE_BY_ID[id], status = initiativeStatus(Q, id);
+    if (!status.available || initiativeShown(Q).indexOf(id) < 0) throw new Error('initiativeFile: ' + id + ': ' + status.reason);
+    rules.commitMainAction(Q, 'parliament.legislative_initiative.' + id, {law: id});
+    const effects = filingEffects(S, law).map(filingText);
+    applyFiling(Q, law, Q.time);
+    const record = initiativeRecord(S, id);
+    record.filings += 1;
+    record.history.push({t: Q.time, kind: 'filed', offer: status.offer});
+    initiativeState(S).pending = {id: id, filed_at: Q.time, offer: status.offer};
+    return L('PPS files its bill “' + lawName(law) + '”; the Sejm votes on it next month.', 'PPS wnosi projekt ustawy „' + lawName(law) + '”; Sejm zagłosuje nad nim w przyszłym miesiącu.') +
+      (effects.length ? ' ' + L('At once: ', 'Od razu: ') + effects.join(', ') + '.' : '');
+  }
+  // Not taking any law up: the card is played, no month is spent, it comes back after three months.
+  function initiativeSkip(Q) {
+    Q.S.cooldowns['rest:' + INITIATIVE_CARD] = Math.max(Q.S.cooldowns['rest:' + INITIATIVE_CARD] || 0, Q.time + INITIATIVE_REST_MONTHS);
+    return L('PPS files no bill now; the card comes back in three months.', 'PPS nie wnosi teraz żadnej ustawy; karta wróci za trzy miesiące.');
+  }
+
+  // The urgent card of the vote: from the month after the filing.
+  function initiativeVoteActive(Q) {
+    const S = Q.S, pending = S && S.chapter && S.chapter.initiatives && S.chapter.initiatives.pending;
+    return !!pending && S.chapter.status !== 'ended' && Q.time > pending.filed_at && !government.formationPending(Q);
+  }
+  function initiativeVoteView(Q) {
+    const S = Q.S, pending = initiativeState(S).pending;
+    if (!pending) return null;
+    const result = initiativeOutcome(Q, pending), law = result.law, full = result.full, limited = result.limited, outcome = result.outcome;
+    const variantName = index => L(law.variants[index].name[0], law.variants[index].name[1]);
+    // A vote the roll turned over says that some deputies stayed away.
+    const absent = c => (c && c.absent ? ' ' + (c.passed ? L('Some of its opponents (' + c.absent + ') did not come to the vote.', 'Część przeciwników (' + c.absent + ' posłów) nie przyszła na głosowanie.') :
+      L('Some of its supporters (' + c.absent + ') did not come to the vote.', 'Część zwolenników (' + c.absent + ' posłów) nie przyszła na głosowanie.')) : '');
+    const votes = c => L(c.yes + ' MPs for, ' + c.no + ' against', 'za ' + c.yes + ' posłów, przeciw ' + c.no);
+    let line;
+    if (outcome === 'full') line = L('The Sejm passes our bill: ', 'Sejm przyjął nasz projekt: ') + votes(full) + '.' + absent(full);
+    else if (outcome === 'choice') {
+      const extra = limited.yes_clubs.filter(c => full.yes_clubs.indexOf(c) < 0 && c !== 'pps');
+      line = L('The full bill has no majority: ', 'Pełny projekt nie ma większości: ') + votes(full) + '.' + absent(full) + ' ' +
+        (extra.length ? L('The limited variant (' + variantName(1) + ') would also have the votes of ' + clubsText(extra) + ': ',
+          'Wariant ograniczony (' + variantName(1) + ') poparliby też ' + clubsText(extra) + ': ') :
+          L('The limited variant (' + variantName(1) + ') would pass: ', 'Wariant ograniczony (' + variantName(1) + ') by przeszedł: ')) + votes(limited) + '.' + absent(limited);
+    } else {
+      const against = full.no_clubs.filter(c => c.indexOf(CHURCH_SPLIT_SUFFIX) >= 0 || government.plainParties([c]));
+      line = L('The Sejm rejects our bill: ', 'Sejm odrzucił nasz projekt: ') + votes(full) + '.' + absent(full) +
+        (against.length ? ' ' + L('Against: ' + clubsText(against) + '.', 'Przeciw głosowali: ' + clubsText(against) + '.') : '') + ' ' +
+        L('We can take it up again in nine months at the earliest.', 'Możemy wnieść go ponownie najwcześniej za dziewięć miesięcy.');
+    }
+    const capital = text => text.charAt(0).toUpperCase() + text.slice(1);
+    return {id: law.id, name: lawName(law), outcome: outcome, line: line, limited_name: limited ? capital(variantName(1)) : ''};
+  }
+  // The answer on the vote card: 'full' (the bill passed), 'limited', 'withdraw' or 'rejected'. Costs no month.
+  function initiativeResolve(Q, choice) {
+    const S = Q.S, state = initiativeState(S), pending = state.pending;
+    if (!pending) throw new Error('initiativeResolve: no bill waits for its vote');
+    const view = initiativeVoteView(Q), law = INITIATIVE_BY_ID[pending.id], record = initiativeRecord(S, law.id), t = Q.time;
+    const allowed = view.outcome === 'full' ? ['full'] : view.outcome === 'choice' ? ['limited', 'withdraw'] : ['rejected'];
+    if (allowed.indexOf(choice) < 0) throw new Error('initiativeResolve: ' + choice + ' is not open (' + view.outcome + ')');
+    state.pending = null;
+    const raise = pending.offer === 'full';
+    // The record keeps the English title (decision 5A of the Polish version).
+    // The vote of the bill keeps the rolled counts of the vote card (the same recorded rolls).
+    const rolled = initiativeOutcome(Q, pending);
+    const countsOf = c => ({yes: c.yes, no: c.no, abstain: c.abstain, present: c.present, eligible: c.eligible, club_votes: c.club_votes});
+    const file = index => submitLaw(Q, {kind: 'initiative', title: law.name[0] + ' (' + law.variants[index].name[0] + ')', sponsor: 'pps',
+      pps_vote: 'yes', programme: law.variants[index].programme, flags: law.variants[index].flags || [], variant: law.variants[index].key,
+      initiative: {id: law.id, raise: index === 0 && raise}, counts: countsOf(index === 0 ? rolled.full : rolled.limited)});
+    if (choice === 'withdraw') {
+      record.until = t + INITIATIVE_RETURN_MONTHS;
+      record.history.push({t: t, kind: 'withdrawn'});
+      return L('PPS withdraws its bill. We can take it up again in nine months at the earliest.', 'PPS wycofuje projekt. Możemy wnieść go ponownie najwcześniej za dziewięć miesięcy.');
+    }
+    const bill = file(choice === 'limited' ? 1 : 0);
+    if (bill.status !== 'enacted') {
+      record.until = t + INITIATIVE_RETURN_MONTHS;
+      record.history.push({t: t, kind: 'rejected', law_id: bill.id});
+      return L('The bill is rejected. We can take it up again in nine months at the earliest.', 'Projekt został odrzucony. Możemy wnieść go ponownie najwcześniej za dziewięć miesięcy.');
+    }
+    if (choice === 'limited') {
+      record.level = 'limited';
+      record.until = t + INITIATIVE_RETURN_MONTHS;
+    } else {
+      record.level = 'full';
+      record.until = null;
+    }
+    record.history.push({t: t, kind: 'enacted', variant: choice === 'limited' ? law.variants[1].key : law.variants[0].key, law_id: bill.id});
+    const effect = lastInitiativeText;
+    lastInitiativeText = '';
+    return L('The law is in force from this month. ', 'Ustawa obowiązuje od tego miesiąca. ') + effect +
+      (choice === 'limited' ? ' ' + L('In nine months we can propose its full version.', 'Za dziewięć miesięcy możemy zaproponować jej pełną wersję.') : '');
+  }
+  // The effects of an enacted law of the initiative (lawEnactedHooks). The sentence for the result page is kept outside the
+  // state, so the state stays the same in both languages.
+  let lastInitiativeText = '';
+  function initiativeEnacted(Q, bill, m) {
+    const law = INITIATIVE_BY_ID[bill.initiative && bill.initiative.id];
+    if (!law) return;
+    lastInitiativeText = law.enact(Q, bill.variant, bill, m, !!bill.initiative.raise) || '';
   }
 
   // ---- Government cards (17.11; catalogue 8.1–8.11, 8.13, 8.16) -------------------------------------
@@ -3259,8 +3907,25 @@
   rules.registerUrgentCard('polish_constitution_project', {deck: () => 'main.parliament',
     active: Q => !government.formationPending(Q) && constitutionDebateOpen(Q.S) && constitutionFilingPending(Q)});
 
+  // Z — 0.81: the vote on a bill of the legislative initiative is an urgent card of the Parliament deck.
+  rules.registerUrgentCard('polish_initiative_vote', {deck: () => 'main.parliament', active: initiativeVoteActive});
+
   return Object.freeze({
     PROGRAMME_LINKS: PROGRAMME_LINKS,
+    INITIATIVE_IDS: Object.freeze(INITIATIVES.map(law => law.id)),
+    INITIATIVE_CARD: INITIATIVE_CARD,
+    initiativeState: initiativeState,
+    initiativeStatus: initiativeStatus,
+    initiativeShown: initiativeShown,
+    initiativeIsShown: initiativeIsShown,
+    initiativeCardAvailable: initiativeCardAvailable,
+    initiativeView: initiativeView,
+    initiativeFile: initiativeFile,
+    initiativeSkip: initiativeSkip,
+    initiativeVoteActive: initiativeVoteActive,
+    initiativeVoteView: initiativeVoteView,
+    initiativeResolve: initiativeResolve,
+    initiativeCounts: (Q, id, index) => initiativeCounts(Q, INITIATIVE_BY_ID[id], index),
     programmeFilter: programmeFilter,
     programmeServes: programmeServes,
     programmeMeasureName: programmeMeasureName,

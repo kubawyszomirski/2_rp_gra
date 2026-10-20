@@ -4,8 +4,9 @@ new-page: true
 is-card: true
 tags: parliament_affairs
 card-image: img/polish/polish_parliament_army_oversight.jpg
-view-if: {! return !!Q.S && !!Q.polish_security_rules && PolishProjects.armyOversightAvailable(Q) !}
+view-if: {! return false !}
 on-arrival: {!
+// Z — 0.81: the card left the Parliament deck (view-if false); its law is one of the card Legislative Initiative.
 // Card parliament.army_oversight (technical reference 16.3, 17.10, 17.12.4; card catalogue 7.5): 1 T; it prepares
 // the one project of civilian control, which the agenda then puts to the Sejm; the cabinet executes it. A law the
 // Sejm refused is not filed again unchanged, and the same scope never gives a second +0.05.

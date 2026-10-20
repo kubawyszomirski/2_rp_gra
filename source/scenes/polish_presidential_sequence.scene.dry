@@ -68,6 +68,8 @@ function describe(prefix, id) {
     // outright; the screen explains it.
     Q[prefix + '_outright'] = run.final_ballot.length > 2 ? 1 : 0;
     Q[prefix + '_nominee'] = run.pps_nomination ? 'Ignacy Daszyński' : 'no PPS candidate';
+    Q[prefix + '_nominee_line'] = run.pps_nomination ? PolishRules.L('PPS candidate: Ignacy Daszyński.', 'Kandydat PPS: Ignacy Daszyński.') : PolishRules.L('PPS put up no candidate.', 'PPS nie zgłosiła kandydata.');
+    Q[prefix + '_rounds_text'] = run.rounds.length + PolishRules.L(run.rounds.length === 1 ? ' round' : ' rounds', ' ' + PolishRules.plural(run.rounds.length, 'turę', 'tury', 'tur'));
 }
 describe('pl_pres_first', 'president_1922_12_09');
 describe('pl_pres_second', 'president_1922_12_20');
@@ -162,7 +164,7 @@ Decisive ballot (round [+ pl_pres_first_rounds +]): [+ pl_pres_first_lines +].
 
 [? if pl_pres_first_tie : The two finalists received the same number of votes; the office was decided by lot. ?]
 
-PPS candidate: [+ pl_pres_first_nominee +]. The vote took [+ pl_pres_first_rounds +] rounds.
+[+ pl_pres_first_nominee_line +] The vote took [+ pl_pres_first_rounds_text +].
 
 - @first_transfer: Continue to the oath.
 
@@ -369,7 +371,7 @@ Decisive ballot (round [+ pl_pres_second_rounds +]): [+ pl_pres_second_lines +].
 
 [? if pl_pres_second_tie : The two finalists received the same number of votes; the office was decided by lot. ?]
 
-PPS candidate: [+ pl_pres_second_nominee +]. Electing a President does not change the cabinet.
+[+ pl_pres_second_nominee_line +] Electing a President does not change the cabinet.
 
 - @finish: Resume December play.
 

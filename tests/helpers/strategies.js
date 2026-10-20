@@ -46,7 +46,8 @@ const P = {
   distribution: () => P.orgs('press_distribution'),
   talk: party => ['inter_party_relationships', 'inter_party_relationships.' + party],
   union: (branch, step) => ['polish_union_agenda', 'polish_union_agenda.' + branch, 'polish_union_agenda.' + step],
-  bill: () => ['polish_unemployment_bill', 'polish_unemployment_bill.start'],
+  // Z — 0.81: the bill of the legislative initiative (the card replaced the bill D and the parliamentary control of the army).
+  initiative: id => ['polish_legislative_initiative', 'polish_legislative_initiative.' + id],
   gov: (card, option) => [card, card + '.' + option],
   // Z — 0.74: the prepared reforms are an urgent card in the hand, opened here directly (as a played card is).
   agenda: option => ['polish_agenda', 'polish_agenda.' + option],
@@ -54,7 +55,6 @@ const P = {
   // Z — 0.64: a PPS member raises the same demands on the coalition card of the Government deck.
   coalition: option => ['polish_coalition_affairs', 'polish_government_support.' + option],
   constitution: variant => ['polish_constitution_project', 'polish_constitution_project.' + variant],
-  armyOversight: variant => ['polish_parliament_army_oversight', 'polish_parliament_army_oversight.' + variant],
   adviser: (who, action) => ['main:' + who, who + '.' + action],
 };
 
@@ -177,7 +177,7 @@ const PASSIVE_EVENTS = {
   polish_presidential_first: ['decline_daszynski'],
   polish_presidential_second: ['do_not_run_daszynski_second'],
   polish_budget_package: ['refuse', 'later'],
-  polish_unemployment_bill: ['decline'],
+  polish_initiative_vote: ['passed', 'rejected', 'withdraw'],
   polish_government_response: ['maintain', 'motion_refuse', 'later'],
   polish_strike_steps: ['none', 'no_protection', 'done'],
   coup_stance: 'mediate', coup_commit: 'none', coup_f9: 'accept',
@@ -194,7 +194,7 @@ const ACTIVE_EVENTS = Object.assign({}, PASSIVE_EVENTS, {
   polish_event_austerity_1926_threat: ['back_down'],
   polish_speaker_election: ['rataj', 'daszynski'],
   polish_budget_package: ['protect', 'support', 'refuse', 'later'],
-  polish_unemployment_bill: ['full', 'limited', 'start'],
+  polish_initiative_vote: ['passed', 'limited', 'rejected'],
   polish_strike_steps: ['limited', 'protect', 'done'],
   coup_stance: 'defend_legal', coup_commit: 'both', coup_f9: 'accept',
 });
@@ -330,7 +330,7 @@ const STRATEGIES = {
   active_employment: strategy('active_employment', '21.2: active employment', {
     formation: FORMATION.coalition,
     free: ctx => [P.adviser('moraczewski', 'public_works')],
-    month: ctx => plan.organised(ctx, [...prepare(ctx, ctx.before(1924, 1) ? 'early' : 'broad'), ...plan.government(ctx), P.bill()]),
+    month: ctx => plan.organised(ctx, [...prepare(ctx, ctx.before(1924, 1) ? 'early' : 'broad'), ...plan.government(ctx), P.initiative('unemployment')]),
   }),
   mass_organizations: strategy('mass_organizations', '21.2: mass organisations', {
     month: ctx => {
@@ -355,7 +355,7 @@ const STRATEGIES = {
   constitutional_defense: strategy('constitutional_defense', '21.2: constitutional defence', {
     free: ctx => [P.adviser('niedzialkowski', 'defend_democracy')],
     month: ctx => plan.organised(ctx, [P.constitution('democratic_guarantees'), P.constitution('file_democratic_guarantees'),
-      P.armyOversight('civilian_oversight'), P.agenda('launch_army_control'), P.militia(ctx.t % 2 ? 'militarize' : 'form_as'),
+      P.initiative('army_oversight'), P.militia(ctx.t % 2 ? 'militarize' : 'form_as'),
       P.campaign('republic'), ...plan.military(ctx)]),
   }),
 };
@@ -410,6 +410,13 @@ function answer(engine, strat) {
 function playMonth(engine, strat, used) {
   const Q = engine.state.qualities, R = globalThis.PolishRules;
   const ctx = context(engine);
+  // Z — 0.81: the vote on a bill of the legislative initiative is an urgent card that costs no month; it is answered first.
+  if (runPath(engine, ['polish_initiative_vote'])) {
+    while (engine.state.sceneId !== 'main' && Q.S.chapter.status !== 'ended' && Q.time === ctx.t) {
+      if (!answer(engine, strat)) break;
+    }
+    if (engine.state.sceneId !== 'main') engine.goToScene('main');
+  }
   for (const path of strat.free(ctx)) {
     const key = path.join('>') + '@' + Q.time;
     if (used.has(key)) continue;

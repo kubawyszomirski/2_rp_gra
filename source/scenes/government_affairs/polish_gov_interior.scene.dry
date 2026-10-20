@@ -1,5 +1,5 @@
 title: Police and Internal Security
-subtitle: The Interior: the police, the investigation of named violence, protection, and a limited autonomy.
+subtitle: The Interior: the police, the investigation of named violence, protection, and the act of 1922 on the voivodeship self-government.
 new-page: true
 is-card: true
 tags: govt_affairs
@@ -21,7 +21,7 @@ Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_interior');
 
 [+ pl_police_line +]
 
-An investigation concerns a known case; it does not by itself prove anyone's guilt. The autonomy delegates schools, the official language and cultural institutions of one area to its self-government.
+An investigation concerns a known case; it does not by itself prove anyone's guilt. The execution of the act of 26 IX 1922 gives the voivodeships of Lwów, Stanisławów and Tarnopol their diets with a Polish and a Ruthenian chamber, schools in the language of the chamber and a Ruthenian university.
 
 [+ pl_gc_budget +]
 
@@ -76,7 +76,7 @@ PolishProjects.chooseOption(Q, 'internal_security', 'police_protection');
 go-to: result
 
 @limited_autonomy
-title: Prepare a limited autonomy of one area
+title: Prepare the execution of the act of 26 IX 1922 on the voivodeship self-government
 subtitle: Needs an agreed point with the representation of the other minorities; a law, then costs the budget 1 unit a month for three months.
 choose-if: {! return PolishProjects.optionStatus(Q, 'internal_security', 'limited_autonomy').available !}
 unavailable-subtitle: [+ pl_internal_security_limited_autonomy_why +]

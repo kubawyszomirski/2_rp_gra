@@ -45,6 +45,7 @@ const COMPLETE = ['scenes/root.scene.dry', 'scenes/main.scene.dry', 'scenes/stat
   ...['labor_rights', 'social_welfare', 'public_works', 'finance', 'finance_funding', 'currency', 'investment', 'industry', 'agriculture', 'land', 'education',
     'minority_schools', 'heritage', 'interior', 'justice', 'military', 'pils_agreement'].map(id => 'scenes/government_affairs/polish_gov_' + id + '.scene.dry'),
   'scenes/polish_budget_package.scene.dry', 'scenes/polish_unemployment_bill.scene.dry', 'scenes/polish_constitution_project.scene.dry',
+  'scenes/polish_legislative_initiative.scene.dry', 'scenes/polish_initiative_vote.scene.dry',
   'scenes/polish_parliament_army_oversight.scene.dry', 'scenes/polish_event_stabilization.scene.dry', 'scenes/polish_event_credit_crisis.scene.dry',
   'scenes/polish_event_austerity_1926.scene.dry',
   // Part 5: politics, security, the coup, the chapter report and the headings of the Credits (their lists stay original, 7A).

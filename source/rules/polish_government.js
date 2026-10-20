@@ -277,7 +277,13 @@
   // ---- Offer evaluation (8.1–8.3) --------------------------------------------------------------------
 
   // Programme fit for the topics of the offer only; without topics there is no offer (8.1).
-  function programFit(actorId, programme) {
+  // Z — 0.81 (decision 6B of 20 X 2026 and the user's notes on the secular school; P): the clubs' views on the Church, read only
+  // in the votes on laws (the secular school, the termination of pregnancy) and never in the formation of a cabinet; PSL Piast
+  // is against. Part of the deputies of the other minorities votes against too (PolishProjects, CHURCH_SPLIT). Game values —
+  // TBD, historical research required.
+  const BILL_CHURCH_IDEALS = Object.freeze({pschd: -2, zln: -1, psl_piast: -2, npr: 0, psl_wyzwolenie: 1, jewish_rep: 0, other_minorities_rep: 0});
+
+  function programFit(actorId, programme, bill) {
     const profile = profileOf(actorId);
     if (!profile) throw new Error('programFit: no profile for ' + actorId);
     const topics = Object.keys(programme || {});
@@ -285,7 +291,8 @@
     let distance = 0;
     for (const topic of topics) {
       if (TOPICS.indexOf(topic) < 0) throw new Error('programFit: unknown topic ' + topic);
-      distance += Math.abs(programme[topic] - (profile.ideals[topic] || 0));
+      const ideal = bill && topic === 'church' && BILL_CHURCH_IDEALS[actorId] !== undefined ? BILL_CHURCH_IDEALS[actorId] : (profile.ideals[topic] || 0);
+      distance += Math.abs(programme[topic] - ideal);
     }
     return 100 * (1 - distance / (4 * topics.length));
   }
@@ -1024,7 +1031,7 @@
   // otherwise it abstains. KPP and "Inne" abstain; neutral abstentions are never votes for.
   function programmeStance(S, clubId, offer) {
     if (!ACTOR_PROFILES[clubId]) return null;
-    return clip((0.25 * offerRelation(S, clubId, offer) + 0.35 * programFit(clubId, offer.programme)) / 0.60, 0, 100);
+    return clip((0.25 * offerRelation(S, clubId, offer) + 0.35 * programFit(clubId, offer.programme, offer.kind === 'bill')) / 0.60, 0, 100);
   }
 
   // 17.16.8 (P, stage 8): the ten test MPs of Piast who left a cabinet with the right in XII 1923 keep their
@@ -2036,7 +2043,8 @@
     const partnerLines = record ? record.evaluations.map(e => partnerLine(S, assessed.offer, e)) : [];
     let verdict;
     if (!record) {
-      verdict = L('PPS stays in opposition: ', 'PPS zostaje w opozycji: ') + fallbackText(Q) + '.';
+      // Z — 0.81: the same words as the variant „We stay in opposition”.
+      verdict = L('PPS stays in opposition. ', 'PPS zostaje w opozycji. ') + oppositionLine(Q);
     } else if (record.accepted && config.expert) {
       verdict = L('Enough clubs sign their support and the Sejm supports it: after the commit the cabinet is appointed at once — ' +
         cabinetWords(draft.configuration_id) + ', prime minister ' + CANDIDATES[draft.candidate_id].name + '.',

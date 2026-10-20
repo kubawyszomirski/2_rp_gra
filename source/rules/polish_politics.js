@@ -481,7 +481,11 @@
         const reliefs = {full: 2, focused: 2, limited: 1}, shares = {full: 1, focused: 0.5, limited: 1};
         relief += (reliefs[p.variant] || 0) * (shares[p.variant] || 0) * coverage * Math.min(PROTECTION_LEVELS, p.scope || 1) / PROTECTION_LEVELS;
       }
-      if (p.type === 'public_works' && p.variant === 'housing' && cell.class_id === 'workers') relief += 2 * coverage / PROTECTION_LEVELS;
+      if (p.type === 'public_works' && (p.variant === 'housing' || p.variant === 'housing_coop') && cell.class_id === 'workers') {
+        relief += (p.variant === 'housing' ? 2 : 1) * coverage / PROTECTION_LEVELS;
+      }
+      // Z — 0.81: the protection of tenants keeps the unemployed in their homes (the initiative of PPS).
+      if (p.type === 'tenant_protection' && cell.employment === 'unemployed') relief += (p.variant === 'rent_freeze' ? 1 : 0.5) * coverage;
     }
     relief += party.cooperativeRelief ? party.cooperativeRelief(S, cell) : 0;
     return Math.min(RELIEF_CAP, relief);

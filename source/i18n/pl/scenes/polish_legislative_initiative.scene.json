@@ -1,0 +1,25 @@
+{
+ "source": "scenes/polish_legislative_initiative.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Legislative Initiative": "title: Inicjatywa ustawodawcza",
+  "subtitle: A bill of PPS: taking it up costs this month's action, and the Sejm votes on it next month.": "subtitle: Własny projekt ustawy PPS: podjęcie tematu zużywa akcję tego miesiąca, a Sejm głosuje nad nim w przyszłym miesiącu.",
+  "= The legislative initiative": "= Inicjatywa ustawodawcza",
+  "The club of PPS can file a bill of its own. We choose one matter, and next month the Sejm votes on it. A law passed in full leaves this card; one passed only in its limited version, rejected or withdrawn comes back after nine months.": "Klub PPS może wnieść własny projekt ustawy. Wybieramy jeden temat, a w przyszłym miesiącu Sejm nad nim zagłosuje. Ustawa przyjęta w całości znika z tej karty; przyjęta tylko w wersji ograniczonej, odrzucona albo wycofana wraca po dziewięciu miesiącach.",
+  "title: Protection of the unemployed": "title: Ochrona bezrobotnych",
+  "title: Labour inspection and working time": "title: Inspekcja pracy i czas pracy",
+  "title: Progressive tax on high incomes and wealth": "title: Podatek progresywny od wysokich dochodów i majątku",
+  "title: Civilian oversight of the army": "title: Cywilny nadzór nad wojskiem",
+  "title: Secular school with religious freedom": "title: Szkoła świecka z wolnością religijną",
+  "title: Autonomy of the minorities": "title: Autonomia mniejszości",
+  "title: Land reform": "title: Reforma rolna",
+  "title: Public works for the unemployed": "title: Roboty publiczne dla bezrobotnych",
+  "title: Workers’ housing": "title: Mieszkania robotnicze",
+  "title: Protection of tenants": "title: Ochrona lokatorów",
+  "title: Old-age insurance of workers": "title: Ubezpieczenie robotników na starość",
+  "title: Termination of pregnancy": "title: Przerwanie ciąży",
+  "title: We file no bill": "title: Nie wnosimy żadnej ustawy",
+  "subtitle: Nothing happens and the card is played; it comes back in three months. It costs no month.": "subtitle: Nic się nie dzieje, a karta zostaje zagrana; wróci za trzy miesiące. Nie zużywa akcji miesiąca.",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

@@ -1,0 +1,15 @@
+{
+ "source": "scenes/polish_initiative_vote.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: The Vote on Our Bill": "title: Głosowanie nad naszym projektem",
+  "subtitle: An urgent card: the Sejm votes on the bill of PPS.": "subtitle: Karta pilna: Sejm głosuje nad projektem ustawy PPS.",
+  "= The vote on our bill": "= Głosowanie nad naszym projektem",
+  "title: Continue": "title: Dalej",
+  "title: We accept the limited variant": "title: Przyjmujemy wariant ograniczony",
+  "subtitle: [+ pl_iv_limited +]: the law takes effect at once.": "subtitle: [+ pl_iv_limited +]: ustawa obowiązuje od razu.",
+  "title: We withdraw the bill": "title: Wycofujemy projekt",
+  "subtitle: The law does not take effect; we can file it again in nine months at the earliest.": "subtitle: Ustawa nie wejdzie w życie; możemy wnieść ją ponownie najwcześniej za dziewięć miesięcy.",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

@@ -1,0 +1,71 @@
+title: The Vote on Our Bill
+subtitle: An urgent card: the Sejm votes on the bill of PPS.
+new-page: true
+is-card: true
+tags: parliament_affairs
+view-if: {! return !!Q.S && PolishProjects.initiativeVoteActive(Q) !}
+on-arrival: {!
+// The vote on a bill of the legislative initiative (Z — 0.81): the month after the filing; it costs no month. The full bill
+// passes, or only its limited variant would pass (then the limited variant or a withdrawal), or the Sejm rejects it.
+var view = PolishProjects.initiativeVoteView(Q);
+Q.pl_iv_name = view ? view.name : '';
+Q.pl_iv_line = view ? view.line : '';
+Q.pl_iv_outcome = view ? view.outcome : '';
+Q.pl_iv_limited = view ? view.limited_name : '';
+!}
+
+= The vote on our bill
+
+**[+ pl_iv_name +]**
+
+[+ pl_iv_line +]
+
+- @passed
+- @limited
+- @withdraw
+- @rejected
+
+@passed
+title: Continue
+view-if: pl_iv_outcome = "full"
+on-arrival: {!
+Q.pl_iv_result = PolishProjects.initiativeResolve(Q, 'full');
+!}
+go-to: result
+
+@limited
+title: We accept the limited variant
+subtitle: [+ pl_iv_limited +]: the law takes effect at once.
+view-if: pl_iv_outcome = "choice"
+on-arrival: {!
+Q.pl_iv_result = PolishProjects.initiativeResolve(Q, 'limited');
+!}
+go-to: result
+
+@withdraw
+title: We withdraw the bill
+subtitle: The law does not take effect; we can file it again in nine months at the earliest.
+view-if: pl_iv_outcome = "choice"
+on-arrival: {!
+Q.pl_iv_result = PolishProjects.initiativeResolve(Q, 'withdraw');
+!}
+go-to: result
+
+@rejected
+title: Continue
+view-if: pl_iv_outcome = "rejected"
+on-arrival: {!
+Q.pl_iv_result = PolishProjects.initiativeResolve(Q, 'rejected');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= The vote on our bill
+
+**[+ pl_iv_name +]**
+
+[+ pl_iv_result +]
+
+- @root: Continue.

@@ -167,47 +167,54 @@ test('Arciszewski needs PPS with Labour; outside the cabinet his Labour Programm
   assert.match(String(choice(engine, 'arciszewski.labour_programme').subtitle), /Needs PPS in the cabinet with Labour/);
 });
 
-test('D1 and D2 from opposition: one initiative; D2 after the settlement; the Sejm votes at once; the Senate follows its dates', () => {
-  const engine = dendry.startGame();
+// Z — 0.81 (decisions of 20 X 2026): the card Legislative Initiative and the urgent card of its vote in the game, in Polish.
+test('Inicjatywa w grze 0.81: one card of the Parliament deck, the laws in plain Polish, the urgent vote card next month without a month', () => {
+  const engine = dendry.startGame(1922, 'pl');
   const Q = engine.state.qualities;
-  november(engine, { zln: 30, pschd: 15, psl_piast: 30, pps: 10, other: 15 });
-  Q.S.history.cabinets.push({ id: 'nowak_fixture', pm: 'nowak', end_reason: 'fall', ended_at: 5 });
-  dendry.formCabinet(engine, { mode: 'opposition' });
-  for (let i = 0; i < 40 && engine.state.sceneId !== 'main'; i++) {
-    const open = (engine.getCurrentChoices() || []).filter(c => c.canChoose !== false);
-    engine.choose((engine.getCurrentChoices() || []).indexOf(open[0]));
+  const plain = x => (x == null ? '' : typeof x === 'string' ? x : Array.isArray(x) ? x.map(plain).join('') : plain(x.content));
+  try {
+    november(engine, { zln: 30, pschd: 15, psl_piast: 30, pps: 10, other: 15 });
+    Q.S.history.cabinets.push({ id: 'nowak_fixture', pm: 'nowak', end_reason: 'fall', ended_at: 5 });
+    dendry.formCabinet(engine, { mode: 'opposition' });
+    const settle = () => {
+      for (let i = 0; i < 40 && engine.state.sceneId !== 'main'; i++) {
+        const open = (engine.getCurrentChoices() || []).filter(c => c.canChoose !== false);
+        engine.choose((engine.getCurrentChoices() || []).indexOf(open[0]));
+      }
+    };
+    settle();
+    engine.goToScene('main');
+    const parliament = () => (engine._compileChoices(engine.game.scenes['main.parliament']) || []).filter(c => c.canChoose !== false).map(c => c.id);
+    assert.ok(parliament().includes('polish_legislative_initiative'));
+    assert.ok(!parliament().includes('polish_unemployment_bill') && !parliament().includes('polish_parliament_army_oversight'), 'the old cards left the deck');
+    const t = Q.time;
+    dendry.playCard(engine, 'polish_legislative_initiative');
+    const shown = PolishProjects.initiativeShown(Q);
+    assert.ok(shown.length > 0 && shown.length <= 5);
+    for (const id of shown) assert.ok(ids(engine).includes('polish_legislative_initiative.' + id), id);
+    assert.ok(ids(engine).includes('polish_legislative_initiative.skip'));
+    assert.match(plain(choice(engine, 'polish_legislative_initiative.unemployment').subtitle),
+      /^Zasiłek dla bezrobotnych z budżetu państwa: pełny kosztuje 2 jednostki budżetu miesięcznie, ograniczony 1\..* Samo wniesienie: sprzeciw Lewicy PPS spada \(−2\)\.$/);
+    assert.equal(plain(choice(engine, 'polish_legislative_initiative.unemployment').title), 'Ochrona bezrobotnych');
+    choose(engine, 'polish_legislative_initiative.unemployment');
+    assert.match(content(engine), /PPS wnosi projekt ustawy „Ochrona bezrobotnych”; Sejm zagłosuje nad nim w przyszłym miesiącu/);
+    choose(engine, 'root');
+    assert.equal(Q.time, t + 1, 'taking a law up costs one month');
+    settle();
+    assert.ok(!parliament().includes('polish_legislative_initiative'), 'one initiative at a time');
+    dendry.playCard(engine, 'polish_initiative_vote');
+    const outcome = Q.pl_iv_outcome;
+    assert.ok(['full', 'choice', 'rejected'].includes(outcome));
+    assert.match(content(engine), /Głosowanie nad naszym projektem.*Ochrona bezrobotnych/);
+    choose(engine, 'polish_initiative_vote.' + (outcome === 'full' ? 'passed' : outcome === 'choice' ? 'limited' : 'rejected'));
+    choose(engine, 'root');
+    assert.equal(Q.time, t + 1, 'the vote costs no month');
+    if (outcome !== 'rejected') assert.ok(PolishProjects.operatingProtection(Q.S), 'the protection works');
+    assert.ok(!Q.S.parliament.laws.some(l => l.status === 'in_procedure'), 'no Senate stage');
+    assert.ok(parliament().includes('polish_legislative_initiative'), 'the card comes back at once');
+  } finally {
+    PolishRules.setLanguage('en');
   }
-  engine.goToScene('main');
-  assert.equal(PolishGovernment.ppsStance(Q.S), 'opposition');
-  // Z — 0.57: an ordinary card of the Parliament deck while the bill waits, no longer pinned.
-  const parliament = () => (engine._compileChoices(engine.game.scenes['main.parliament']) || []).filter(c => c.canChoose !== false).map(c => c.id);
-  assert.ok(parliament().includes('polish_unemployment_bill'), 'the guaranteed agenda after the 1922 election');
-  assert.ok(!ids(engine).includes('polish_unemployment_bill'), 'not pinned');
-  const t = Q.time;
-  dendry.playCard(engine, 'polish_unemployment_bill');
-  assert.ok(ids(engine).includes('polish_unemployment_bill.start') && !ids(engine).includes('polish_unemployment_bill.full'));
-  choose(engine, 'polish_unemployment_bill.start');
-  choose(engine, 'root');
-  assert.equal(Q.time, t + 1, 'D1 costs one month');
-  // Z — 0.57: a deck card is played from the hand, so the Marshal's election of December 1922 is finished first.
-  for (let i = 0; i < 40 && engine.state.sceneId !== 'main'; i++) {
-    const open = (engine.getCurrentChoices() || []).filter(c => c.canChoose !== false);
-    engine.choose((engine.getCurrentChoices() || []).indexOf(open[0]));
-  }
-  assert.equal(Q.time, t + 1);
-  dendry.playCard(engine, 'polish_unemployment_bill');
-  assert.ok(ids(engine).includes('polish_unemployment_bill.full'));
-  choose(engine, 'polish_unemployment_bill.full');
-  choose(engine, 'root');
-  assert.equal(Q.time, t + 1, 'D2 costs no month');
-  const bill = Q.S.chapter.unemployment_bill;
-  assert.ok(['in_procedure', 'rejected'].includes(bill.status));
-  if (bill.status === 'in_procedure') {
-    assert.ok(bill.senate_notice_due && bill.senate_return_due, 'both dated steps are recorded');
-    engine.goToScene('status.economy');
-    assert.match(content(engine), /Laws in procedure/);
-  }
-  assert.ok(!parliament().includes('polish_unemployment_bill'), 'no second initiative');
 });
 
 test('the Budget card: a package of the cabinet before the Sejm; PPS as its supporter answers once for 0 T', () => {
