@@ -55,7 +55,7 @@ new-page: true
 
 = Collective agreements
 
-A collective agreement of one branch records its employers, the union, the covered workers, the wage conditions and a term of twelve months. Its wage effect is that of a settled wage clause: +2 pp times the branch's scope, for two months. A branch in an open dispute settles its wages there instead.
+A collective agreement binds the employers and the union of one branch for twelve months and sets the wage conditions. For two months it raises wages like a settled wage clause: by 2 percentage points times the branch's scope. A branch in an open dispute settles its wages there instead.
 
 - @collective_industry
 - @collective_rail

@@ -80,11 +80,11 @@ new-page: true
 
 = Zgromadzenie Narodowe — 9 December 1922
 
-The first President of the Republic is elected by the **National Assembly**: the 444-member Sejm together with the 111 senators recorded after the Sejm election. The Senate follows the Sejm party proportions; it is a simplification, not a separate campaign.
+The first President of the Republic is elected by the **National Assembly**: the 444-member Sejm together with the 111 senators.
 
 The candidates of the other groups are **Maurycy Zamoyski** for the right, **Stanisław Wojciechowski** for PSL Piast, **Jan Baudouin de Courtenay** for the national minorities and **Gabriel Narutowicz** for PSL Wyzwolenie. PPS decides whether to nominate **Ignacy Daszyński**.
 
-The game shows only the final result. Each club votes for its preferred candidate still standing; the weakest candidate drops out until one has more than half of the valid votes, or the larger vote wins a final between two. Baudouin de Courtenay is the symbolic candidate of the minorities: after the first round he withdraws and they vote for their next choice, as in 1922. A tie between two finalists is decided by a recorded lot. The clubs' preferences are an approved test profile, not a reconstruction of the historical ballots.
+Each club votes for its preferred candidate still in the race; in each round the weakest drops out, until someone has more than half of the votes.
 
 - @confirm_daszynski: Nominate Ignacy Daszyński as the PPS candidate.
 - @decline_daszynski: Do not nominate a PPS candidate.
@@ -158,11 +158,11 @@ new-page: true
 
 Decisive ballot (round [+ pl_pres_first_rounds +]): [+ pl_pres_first_lines +].
 
-[? if pl_pres_first_outright : The winner had more than half of the valid ballots (blank ones included) in this round, so the election ended without a further round; a final between two is held only when no candidate has such a majority. ?]
+[? if pl_pres_first_outright : The winner had more than half of the valid votes in this round, so no further round was needed. ?]
 
-[? if pl_pres_first_tie : The two finalists received the same number of votes; the office was decided by a recorded lot. ?]
+[? if pl_pres_first_tie : The two finalists received the same number of votes; the office was decided by lot. ?]
 
-PPS nomination: [+ pl_pres_first_nominee +]. The count took [+ pl_pres_first_rounds +] rounds; only the final is shown. The result is recorded once and does not change after a save and load.
+PPS candidate: [+ pl_pres_first_nominee +]. The vote took [+ pl_pres_first_rounds +] rounds.
 
 - @first_transfer: Continue to the oath.
 
@@ -202,7 +202,7 @@ if (pending && pending.phase === 'first_final') {
 
 [+ pl_pres_first_winner +] takes the constitutional oath on 11 December. On 14 December, Józef Piłsudski formally transfers state authority to the President, ending the transitional office of Naczelnik Państwa.
 
-The presidency is governed by the March Constitution. Government acts require ministerial countersignature; the President appoints the prime minister and appoints ministers on the prime minister's proposal. The office does not inherit the German president's direct-popular mandate, independent emergency-decree model or legacy game powers.
+The presidency is governed by the March Constitution. Government acts require ministerial countersignature; the President appoints the prime minister and appoints ministers on the prime minister's proposal.
 
 - @assassination: Continue to 16 December.
 - @first_done: Resume December play.
@@ -260,7 +260,7 @@ On 16 December, Gabriel Narutowicz is assassinated at the Zachęta gallery by El
 
 [? if pl_acting_president : As Marshal of the Sejm, [+ pl_acting_president +] substitutes for the President until the National Assembly elects a successor. ?]
 
-The protection of the President is not modelled in this chapter: the threat is settled without a separate choice. PPS now answers the assassination; the National Assembly then meets again to elect a successor.
+PPS must now answer the assassination; the National Assembly will then meet again to elect a successor.
 
 - @root: Continue.
 
@@ -269,7 +269,7 @@ new-page: true
 
 = The second election — 20 December 1922
 
-The National Assembly reconvenes. **Stanisław Wojciechowski**, supported by PSL Piast, faces **Kazimierz Morawski**, the candidate of the right. PPS decides whether to nominate Ignacy Daszyński. As before, the clubs' votes decide the result and only the final is shown.
+The National Assembly reconvenes. **Stanisław Wojciechowski**, supported by PSL Piast, faces **Kazimierz Morawski**, the candidate of the right. PPS decides whether to nominate Ignacy Daszyński. As before, the clubs' votes decide.
 
 - @do_not_run_daszynski_second: Do not nominate a PPS candidate.
 - @run_daszynski_second: Nominate Ignacy Daszyński as the PPS candidate.
@@ -365,15 +365,14 @@ if (pending && pending.phase === 'second_final') {
 
 Decisive ballot (round [+ pl_pres_second_rounds +]): [+ pl_pres_second_lines +].
 
-[? if pl_pres_second_outright : The winner had more than half of the valid ballots (blank ones included) in this round, so the election ended without a further round; a final between two is held only when no candidate has such a majority. ?]
+[? if pl_pres_second_outright : The winner had more than half of the valid votes in this round, so no further round was needed. ?]
 
-[? if pl_pres_second_tie : The two finalists received the same number of votes; the office was decided by a recorded lot. ?]
+[? if pl_pres_second_tie : The two finalists received the same number of votes; the office was decided by lot. ?]
 
-PPS nomination: [+ pl_pres_second_nominee +]. The current government and all nine portfolio assignments remain unchanged: electing a President does not change the cabinet.
+PPS candidate: [+ pl_pres_second_nominee +]. Electing a President does not change the cabinet.
 
 - @finish: Resume December play.
 
 @finish
 go-to: root
 
-The presidential results and PPS decisions are now part of the permanent game history. No monthly action has been spent.

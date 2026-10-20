@@ -18,7 +18,7 @@ new-page: true
 
 = An attempt against the government
 
-Units close to Józef Piłsudski march on the capital; the government refuses to step down. The pressure towards a coup has passed every threshold of the attempt. The army groups of this game are a synthetic profile, not the units of May 1926.
+Units close to Józef Piłsudski march on the capital; the government refuses to step down.
 
 What PPS knows of the loyalty of the groups to Piłsudski is only an interval: [+ pl_coup_known +]. Democracy stands at [+ pl_coup_democracy +]; it shifts how many soldiers are ready to join. No month is spent until the attempt is resolved.
 

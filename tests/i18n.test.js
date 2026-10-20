@@ -62,6 +62,27 @@ test('Tłumaczenia: każdy wpis ma swoją angielską linię, a pliki kompletne n
   for (const file of COMPLETE) assert.equal(cov[file] && cov[file].status, 'complete', `${file} is complete`);
 });
 
+// Z — 0.80 (decision 4A and the user's notes of 20 X 2026): outside the Library the Polish texts keep the player in the period —
+// no notes of the workshop (test profiles, simplifications, section numbers, the German original) — and name the Society of
+// the Workers' University in full; the abbreviation TUR stays only in the titles of cards.
+test('Immersja 0.80: polskie teksty scen bez uwag warsztatowych, a TUR tylko w tytułach kart', () => {
+  const META = /profil\w* testow|uproszczeni|\(Z — |\bM\d\d\b|referencj\w* techniczn|kalendarz\w* prawn\w* gry|alternatyw\w* gry|syntetyczn|\bw tej grze\b|zatwierdzon\w* (przybliżen|wynik)|niemieck\w* (progów|scenariusz)|nie jest (w tym rozdziale )?modelowan|\(\d+\.\d+\)/i;
+  const CODE = /^\s*(Q\.|Q\[|S\.|var |const |let |if \(|\}|'|"|return|function|PolishRules|\(|\/\/)/;
+  const root = path.join(__dirname, '..', 'source', 'i18n', 'pl', 'scenes');
+  const files = fs.readdirSync(root, { recursive: true }).filter(f => f.endsWith('.json') && !/library|credits/.test(f));
+  const meta = [], tur = [];
+  for (const file of files) {
+    for (const value of Object.values(JSON.parse(fs.readFileSync(path.join(root, file), 'utf8')).lines)) {
+      if (!value || CODE.test(value)) continue;
+      if (META.test(value)) meta.push(file + ': ' + value.slice(0, 120));
+      if (/\bTUR\b/.test(value) && !/^(title:|= )/.test(value.trim())) tur.push(file + ': ' + value.slice(0, 120));
+    }
+  }
+  assert.deepEqual(meta, [], 'notes of the workshop in the Polish scenes');
+  assert.deepEqual(tur, [], 'the abbreviation TUR outside the titles of cards');
+  assert.ok(files.length > 90, 'the Polish scenes are read');
+});
+
 test('Wersja polska: te same sceny, jakości i logika co angielska', () => {
   const en = JSON.parse(fs.readFileSync(path.join(dendry.ROOT, 'out', 'game.json'), 'utf8'));
   let pl;

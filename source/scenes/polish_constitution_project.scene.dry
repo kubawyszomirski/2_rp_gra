@@ -17,7 +17,7 @@ for (var reform of ['democratic_guarantees', 'constructive_vonc', 'presidential_
 
 = Constitutional reform
 
-Each project is a separate alternative with its own act. After its promulgation and one month of implementation it costs 1 B once and changes the rules it names; no declaration alone changes the constitution.
+Each project is a separate act. After its promulgation and one month of implementation it costs 1 budget unit once and changes the rules it names; no declaration alone changes the constitution.
 
 - @democratic_guarantees
 - @file_democratic_guarantees

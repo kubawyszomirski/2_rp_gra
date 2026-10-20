@@ -3,17 +3,15 @@
  "status": "complete",
  "lines": {
   "title: Protection of the Unemployed": "title: Ochrona bezrobotnych",
-  "subtitle: One initiative of PPS in the chapter: first the project, then the vote.": "subtitle: Jedna inicjatywa PPS w rozdziale: najpierw projekt, potem głosowanie.",
+  "subtitle: One initiative of PPS in the chapter: first the project, then the vote.": "subtitle: Jedyna taka inicjatywa PPS: najpierw projekt, potem głosowanie.",
   "Q.pl_bill_start_why = PolishRules.mainActionAvailable(Q) ? '' : 'This month’s action has already been used.';": "Q.pl_bill_start_why = PolishRules.mainActionAvailable(Q) ? '' : 'Akcja tego miesiąca została już wykorzystana.';",
   "= The protection of the unemployed": "= Ochrona bezrobotnych",
-  "[? if not pl_bill_d2 : **D1.** PPS can start its own bill for the protection of the unemployed: a ready project with its cost, its financing and its executor, Labour's administration. It is one initiative in the chapter; refusing closes the offer without a bonus. ?]": "[? if not pl_bill_d2 : **D1.** PPS może wnieść własny projekt ustawy o ochronie bezrobotnych: gotowy projekt z kosztem, finansowaniem i wykonawcą — administracją resortu Pracy. To jedna inicjatywa w rozdziale; odmowa zamyka ofertę bez premii. ?]",
-  "[? if pl_bill_d2 : **D2.** The bill is ready. The full variant costs 2 B a month once it is in force; the limited variant covers the same people with a lower benefit for 1 B. The Sejm votes at once; the Senate has 30 days to object and 30 more to return the bill. ?]": "[? if pl_bill_d2 : **D2.** Projekt jest gotowy. Pełny wariant kosztuje 2 B miesięcznie, gdy wejdzie w życie; wariant ograniczony obejmuje tych samych ludzi niższym zasiłkiem za 1 B. Sejm głosuje od razu; Senat ma 30 dni na sprzeciw i kolejne 30 na zwrot ustawy. ?]",
   "[? if pl_bill_d2 : Forecast of the full variant: [+ pl_bill_full_forecast +]. Of the limited variant: [+ pl_bill_limited_forecast +]. [? if pl_bill_compromise : Ready to support the limited variant: [+ pl_bill_compromise +]. ?] ?]": "[? if pl_bill_d2 : Prognoza dla pełnego wariantu: [+ pl_bill_full_forecast +]. Dla ograniczonego: [+ pl_bill_limited_forecast +]. [? if pl_bill_compromise : Gotowi poprzeć wariant ograniczony: [+ pl_bill_compromise +]. ?] ?]",
   "title: D1: Start the legislative initiative of PPS": "title: D1: Rozpocznij inicjatywę ustawodawczą PPS",
   "subtitle: This month's action; a full project with cost, financing and executor. The vote comes next month.": "subtitle: Akcja miesiąca; pełny projekt z kosztem, finansowaniem i wykonawcą. Głosowanie przyjdzie w następnym miesiącu.",
   "Q.pl_bill_result = 'The bill is ready. Its decision — the full or the limited variant — comes after this month is settled.';": "Q.pl_bill_result = 'Projekt jest gotowy. Decyzja o nim — pełny albo ograniczony wariant — zapadnie po rozliczeniu tego miesiąca.';",
   "title: D1: Do not take up the initiative": "title: D1: Nie podejmuj inicjatywy",
-  "subtitle: No month's action; the offer closes for the chapter, without a bonus.": "subtitle: Bez akcji miesiąca; oferta zamyka się na cały rozdział, bez premii.",
+  "subtitle: No month's action; the offer closes for the chapter, without a bonus.": "subtitle: Nie zużywa akcji miesiąca; ta możliwość już nie wróci.",
   "Q.pl_bill_result = 'PPS does not take up its own bill in this chapter.';": "Q.pl_bill_result = 'PPS nie podejmuje w tym rozdziale własnego projektu ustawy.';",
   "title: D2: Keep the full project of PPS": "title: D2: Zachowaj pełny projekt PPS",
   "subtitle: No month's action; the Sejm votes now. Full variant: costs the budget 2 units a month once in force. It may fall.": "subtitle: Bez akcji miesiąca; Sejm głosuje teraz. Pełny wariant: po wejściu w życie obciąża budżet: 2 jednostki miesięcznie. Może upaść.",
@@ -26,6 +24,8 @@
   "title: D2: Withdraw the bill": "title: D2: Wycofaj projekt",
   "subtitle: The initiative ends; offered only when no compromise exists.": "subtitle: Inicjatywa się kończy; możliwe tylko wtedy, gdy nie ma kompromisu.",
   "Q.pl_bill_result = 'PPS withdraws its bill. The initiative is closed for the chapter.';": "Q.pl_bill_result = 'PPS wycofuje swój projekt. Inicjatywa jest zamknięta do końca rozdziału.';",
-  "- @root: Continue.": "- @root: Dalej."
+  "- @root: Continue.": "- @root: Dalej.",
+  "[? if not pl_bill_d2 : PPS can start its own bill for the protection of the unemployed: a ready project with its cost, its financing and its executor, Labour's administration. We can do it only once; refusing closes this chance. ?]": "[? if not pl_bill_d2 : PPS może wnieść własny projekt ustawy o ochronie bezrobotnych: gotowy projekt z kosztem, finansowaniem i wykonawcą — administracją resortu Pracy. Możemy to zrobić tylko raz; odmowa zamyka tę możliwość. ?]",
+  "[? if pl_bill_d2 : The bill is ready. The full variant costs 2 budget units a month once it is in force; the limited variant covers the same people with a lower benefit for 1 unit. The Sejm votes at once; the Senate has 30 days to object and 30 more to return the bill. ?]": "[? if pl_bill_d2 : Projekt jest gotowy. Pełny wariant kosztuje 2 jednostki budżetu miesięcznie, gdy wejdzie w życie; wariant ograniczony obejmuje tych samych ludzi niższym zasiłkiem za 1 jednostkę. Sejm głosuje od razu; Senat ma 30 dni na sprzeciw i kolejne 30 na zwrot ustawy. ?]"
  }
 }

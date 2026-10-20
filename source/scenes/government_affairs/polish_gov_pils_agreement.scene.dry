@@ -20,7 +20,7 @@ Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_pils_agreement');
 
 [+ pl_pils_line +]
 
-Piłsudski judges an offer by its programme, the real function it gives him and the credibility of PPS; the minimal relation is only a gate. The dispute about the organisation of the supreme military authorities is the historical background; an early inspectorate and the premiership on these terms are alternatives of the game.
+Piłsudski judges an offer by its programme, the real function it gives him and the credibility of PPS; good relations are needed, but they are not enough.
 
 - @military_function
 - @inspectorate

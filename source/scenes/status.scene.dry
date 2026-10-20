@@ -149,7 +149,7 @@ if (Q.polish_politics_rules && typeof PolishPolitics !== 'undefined') {
 
 = Factions in the PPS
 
-*These three currents are gameplay abstractions rather than formal organizations. [? if not polish_party_rules : Inherited German cards feed them through a temporary compatibility bridge until each card receives a researched Polish response. ?][? if polish_party_rules : Their strengths add up to 100; the party's dissent is their dissent weighted by strength. ?]*
+*[? if not polish_party_rules : Inherited German cards feed them through a temporary compatibility bridge until each card receives a researched Polish response. ?][? if polish_party_rules : The strengths of the three currents add up to 100; the dissent of the party is their dissent weighted by strength. ?]*
 
 {!<strong><span class="tooltip-text" title="The parliamentary mainstream: democratic socialism, reform, workers' rights, defence of democracy and Polish independence.">Centrum PPS</span></strong>!} — strength: [+ centrum_strength : strength +], dissent: [+ centrum_dissent : dissent +]
 

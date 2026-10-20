@@ -96,13 +96,7 @@ if (report) {
 
 [? if pl_report_ready : **Unfinished matters.** [+ pl_report_unfinished +]. ?]
 
-[? if pl_report_ready : **Beyond this chapter.** [+ pl_report_not_modelled +]. ?]
-
-[? if pl_report_ready : **Uncertainties.** [+ pl_report_uncertainties +] ?]
-
-[? if pl_report_ready : **Record.** [+ pl_report_ledger +]. ?]
-
-This report describes the state of the country and the party; it is not a score. No decisions remain in this chapter. You can still open the Status and Library pages and save the game. Reload the page to start a new game.
+This report describes the state of the country and the party at the end of the chapter. No decisions remain. You can still look at the state of the country and the Library or save the game; reload the page to start a new game.
 
 - @again: Read the report again.
 

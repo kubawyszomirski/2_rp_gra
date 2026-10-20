@@ -8,20 +8,19 @@ on-arrival: {!
 // Card party.campaign (Z — 0.77, decisions of 8 X 2026): five campaigns on a matter, each over its own groups, through
 // meetings, rallies and the unions; rallies before an election in the last three months before the vote. One option, 1 T;
 // since Z — 0.79 (decision 2A of 14 X 2026) no R. The direction and the character of the party and the state of the country strengthen a campaign; they do not choose it.
-// The card rests three months after use (Z — 0.76).
+// The card rests three months after use (Z — 0.76). Z — 0.80 (the user's note of 20 X 2026): no rallies on the card.
 PolishParty.campaignView(Q);
 !}
 
 = Campaign
 
-Meetings, rallies and the unions. A campaign costs no money, only this month's action, and reaches several groups at once; the numbers are the expected change of PPS support in points. [+ pl_campaign_line +]
+Meetings, rallies and the unions. A campaign costs nothing but this month's action and reaches several groups of voters at once. [+ pl_campaign_line +]
 
 - @eight_hours
 - @prices
 - @land
 - @republic
 - @unemployed
-- @rallies
 - @easy_discard
 
 @eight_hours
@@ -71,17 +70,6 @@ choose-if: {! return PolishParty.issueCampaignStatus(Q, 'unemployed').available 
 unavailable-subtitle: [+ pl_issue_unemployed_why +]
 on-arrival: {!
 PolishParty.issueCampaign(Q, 'unemployed');
-!}
-go-to: result
-
-@rallies
-title: Rallies before the election
-subtitle: No money. More of our voters go to the polls: the turnout of [+ pl_rally_groups +] rises by 0.04 until the vote.
-view-if: pl_rally_open = 1
-choose-if: {! return PolishParty.rallyStatus(Q).available !}
-unavailable-subtitle: [+ pl_rally_why +]
-on-arrival: {!
-PolishParty.electionRallies(Q);
 !}
 go-to: result
 

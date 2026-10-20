@@ -371,34 +371,38 @@ test('Konfiskata in the game: a restricted press weakens the press campaign; the
   const cell = Q.S.society.cells.find(c => c.class_id === 'workers');
   assert.equal(PolishParty.cellReach(Q.S, cell, 'unions'), 20, 'the branches only');
   assert.ok(PolishParty.cellReach(Q.S, cell, 'press') < 0.5 * 20 + 0.3 * 30 + 0.2 * 20, 'the press part is restricted');
-  const number = text => Number(text.match(/^Workers \+([\d.]+)/)[1]);
+  // Z — 0.80: the preview in words, the change in parentheses ("It reaches workers (+0.5) …").
+  const number = text => Number(text.match(/reaches workers \(\+([\d.]+)\)/)[1]);
   assert.ok(number(PolishParty.pressCampaignPreview(Q)) < number(free), 'the press campaign is weaker');
   assert.equal(PolishParty.issuePreview(Q, 'eight_hours'), campaign, 'the campaign of meetings and unions is not');
   playFromHand(engine, 'polish_party_campaign');
   choose(engine, 'polish_party_campaign.eight_hours');
-  assert.match(content(engine), /The campaign “In defence of the eight-hour day”: Employed workers \+/);
+  assert.match(content(engine), /The campaign “In defence of the eight-hour day”: PPS gains among employed workers \(\+/);
   choose(engine, 'root');
   assert.equal(Q.time, 2);
 });
 
 // Z — 0.77 (decisions of 8 X 2026): the Campaign card — five campaigns on a matter, each over its own groups at once, with the
 // expected change on the card; the line and the situation strengthen a campaign; rallies only before an election.
+// Z — 0.80 (the user's note of 20 X 2026): the preview in words ("very popular among …", the change in parentheses) and no
+// rallies on the card any more.
 test('Kampania 0.77: five matters over several groups at once, a preview with the sum, boosts from the line and the situation, rallies before the vote', () => {
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
   assert.ok(deck(engine).includes('polish_party_campaign'));
   playFromHand(engine, 'polish_party_campaign');
   assert.deepEqual(ids(engine), ['polish_party_campaign.eight_hours', 'polish_party_campaign.prices', 'polish_party_campaign.land',
-    'polish_party_campaign.republic', 'polish_party_campaign.unemployed', 'easy_discard'], 'no rallies ten months before the vote');
+    'polish_party_campaign.republic', 'polish_party_campaign.unemployed', 'easy_discard'], 'no rallies');
   assert.match(plain(choice(engine, 'polish_party_campaign.eight_hours').subtitle),
-    /^Employed workers \+[\d.]+ · The unemployed \+[\d.]+ · The bourgeoisie and landowners −[\d.]+; in the whole country \+[\d.]+ points\./);
+    /^Very popular among employed workers \(\+[\d.]+\), popular among the unemployed \(\+[\d.]+\), disliked among the bourgeoisie and landowners \(−[\d.]+\)\./);
+  assert.doesNotMatch(plain(choice(engine, 'polish_party_campaign.eight_hours').subtitle), /points|in the whole country/);
   // The opening direction, parliamentary socialism, strengthens the land and the unemployed; a threat to democracy the Republic.
   assert.match(plain(choice(engine, 'polish_party_campaign.land').subtitle), /Stronger now: the direction of the party\./);
   assert.doesNotMatch(plain(choice(engine, 'polish_party_campaign.republic').subtitle), /Stronger now/);
   const before = PolishParty.issuePreview(Q, 'republic');
   Q.S.coup = Object.assign(Q.S.coup || {}, {pressure: 50});
   assert.match(PolishParty.issuePreview(Q, 'republic'), /Stronger now: the situation of the country\./);
-  const total = text => Number(text.match(/in the whole country \+([\d.]+)/)[1]);
+  const total = text => [...text.matchAll(/\(([+−])([\d.]+)\)/g)].reduce((n, m) => n + (m[1] === '+' ? 1 : -1) * Number(m[2]), 0);
   assert.ok(total(PolishParty.issuePreview(Q, 'republic')) >= total(before));
   Q.S.coup.pressure = 0;
   // One campaign: the month (no money since 0.79); PPS gains among employed workers and loses a little among the bourgeoisie.
@@ -411,16 +415,11 @@ test('Kampania 0.77: five matters over several groups at once, a preview with th
   choose(engine, 'root');
   assert.equal(Q.time, 2);
   assert.equal(PolishRules.cardRest(Q, 'polish_party_campaign'), 2, 'the card rests');
-  // Rallies in the last three months before the vote: the turnout of the party's groups +0.04.
+  // Z — 0.80: no rallies even in the last months before the vote.
   Q.S.parliament.next_election.time = Q.time + 2;
   playFromHand(engine, 'polish_party_campaign');
-  assert.ok(ids(engine).includes('polish_party_campaign.rallies'));
-  const worker = Q.S.society.cells.find(c => c.class_id === 'workers'), peasant = Q.S.society.cells.find(c => c.class_id === 'rural');
-  const [tw, tp] = [worker.turnout_bonus, peasant.turnout_bonus];
-  choose(engine, 'polish_party_campaign.rallies');
-  assert.ok(Math.abs(worker.turnout_bonus - tw - 0.04) < 1e-9, 'the workers turn out more');
-  assert.equal(peasant.turnout_bonus, tp, 'a workers’ party does not mobilise the peasants');
-  assert.match(content(engine), /Rallies before the election: the turnout of the workers rises by 0.04/);
+  assert.ok(!ids(engine).includes('polish_party_campaign.rallies'));
+  assert.doesNotMatch(content(engine), /Rallies|rallies before/);
 });
 
 // Z — 0.77: the Press card — a press campaign over the groups of its format, half of its gains from the voters of the main
@@ -432,16 +431,16 @@ test('Prasa 0.77: the press campaign follows the format and the main opponent; r
   PolishParty.writeMirrors(Q);
   playFromHand(engine, 'polish_party_media');
   assert.match(plain(choice(engine, 'polish_party_media.press_campaign').subtitle),
-    /^1 resource\. Workers \+[\d.]+ · The unemployed \+[\d.]+; in the whole country \+[\d.]+ points; half of its gains from the voters of ZLN\./);
+    /^1 resource\. It reaches workers \(\+[\d.]+\) and the unemployed \(\+[\d.]+\); half of the new votes it takes from our main opponent: the National Democrats\./);
   const zln = () => PolishElectorate.aggregate(Q.S, c => c.class_id === 'workers', 'zln');
   const z0 = zln();
   choose(engine, 'polish_party_media.press_campaign');
   assert.ok(zln() < z0, 'the main opponent loses voters');
-  assert.match(content(engine), /The press campaign: Workers \+/);
+  assert.match(content(engine), /The press campaign: PPS gains among workers \(\+/);
   choose(engine, 'root');
   // A popular format reaches the intelligentsia and the petty bourgeoisie too.
   Q.S.party_orgs.press.format = 'popular';
-  assert.match(PolishParty.pressCampaignPreview(Q), /The intelligentsia \+[\d.]+ · The petty bourgeoisie \+/);
+  assert.match(PolishParty.pressCampaignPreview(Q), /the intelligentsia \(\+[\d.]+\).*the petty bourgeoisie \(\+/);
   Q.S.party_orgs.press.format = 'party_journal';
   // Reportage: the trust of workers and the unemployed +3.
   const worker = Q.S.society.cells.find(c => c.class_id === 'workers');

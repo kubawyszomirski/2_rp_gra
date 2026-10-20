@@ -121,14 +121,17 @@ test('C1 0.71: the introduction, the variant, the prime minister, the portfolios
   assert.deepEqual(ids(engine), ['polish_cabinet_formation.variants']);
   assert.match(content(engine), /The election has given the Sejm a new composition, and a new cabinet must be formed\. Until then the cabinet of Antoni Ponikowski governs as caretaker\./);
   assert.match(content(engine), /The Naczelnik Państwa, Józef Piłsudski, appoints the cabinet; his candidate for this period is Julian Nowak\./);
-  assert.match(content(engine), /The Sejm has 444 MPs; a majority is 223\. The largest clubs: PPS 110, ZLN 100, PSL Wyzwolenie 80/);
+  // Z — 0.80 (the user's note of 20 X 2026): the introduction no longer lists the Sejm; each variant says what its MPs mean.
+  assert.doesNotMatch(content(engine), /The Sejm has 444 MPs; a majority is 223/);
   // Decision 2A: the variant carries the role of PPS — in the cabinet, a cabinet of experts from outside, or opposition.
   choose(engine, 'polish_cabinet_formation.variants');
   assert.equal(choice(engine, 'polish_cabinet_formation.var_broad_centre').canChoose, false, 'greyed with its reason');
-  assert.match(JSON.stringify(choice(engine, 'polish_cabinet_formation.var_broad_centre').subtitle), /real crisis/);
-  assert.match(JSON.stringify(choice(engine, 'polish_cabinet_formation.var_expert').title), /From outside: a cabinet of experts/);
-  assert.match(JSON.stringify(choice(engine, 'polish_cabinet_formation.var_expert').subtitle), /Prime minister Julian Nowak; support signed by: NPR ✓, PSL Wyzwolenie ✓, PSL Piast ✓/);
-  assert.match(JSON.stringify(choice(engine, 'polish_cabinet_formation.var_opposition').subtitle), /the head of state appoints a cabinet without PPS: Julian Nowak — Cabinet of experts/);
+  assert.match(JSON.stringify(choice(engine, 'polish_cabinet_formation.var_broad_centre').subtitle), /only in a serious crisis of the state: when two cabinets fall within half a year, or a currency or credit crisis breaks out\. There is no such crisis now, so it cannot be formed\./);
+  assert.match(JSON.stringify(choice(engine, 'polish_cabinet_formation.var_expert').title), /We support a cabinet of experts/);
+  assert.match(JSON.stringify(choice(engine, 'polish_cabinet_formation.var_expert').subtitle), /The prime minister is the non-party Julian Nowak, and the ministers are experts from outside the parties\. PPS has no ministers in this cabinet — it only votes for it in the Sejm\. The National Workers’ Party, PSL Wyzwolenie, PSL Piast/);
+  assert.match(JSON.stringify(choice(engine, 'polish_cabinet_formation.var_pps_majority').subtitle), /This is a cabinet of PPS alone\. PPS has 110 of 444 MPs\. PPS would need a majority of the Sejm on its own\./);
+  assert.match(JSON.stringify(choice(engine, 'polish_cabinet_formation.var_left_labour').subtitle), /PSL Wyzwolenie and the National Workers’ Party agree to enter it\. 210 MPs would vote for the cabinet and 100 against\. That is less than half of the Sejm, but more than its opponents/);
+  assert.match(JSON.stringify(choice(engine, 'polish_cabinet_formation.var_opposition').subtitle), /The Naczelnik Państwa will then appoint a cabinet of experts of Julian Nowak without us\./);
   assert.equal(choice(engine, 'polish_cabinet_formation.var_mode_external_support'), undefined, 'no external support of a party cabinet');
   choose(engine, 'polish_cabinet_formation.var_left_labour');
   // Decisions 4A and 5A: only who can lead this cabinet now; the faction candidates of PPS with their reasons.
@@ -156,10 +159,10 @@ test('C1 0.71: the introduction, the variant, the prime minister, the portfolios
   assert.deepEqual(Q.S.negotiation.draft, { configuration_id: 'left_labour', candidate_id: 'daszynski', pps_mode: 'member',
     seek_minority_support: false, portfolio_claim: ['economic', 'interior'] });
   // The summary: our offer apart from what follows from it; each club in one line, its parts open on a click.
-  assert.match(content(engine), /Our offer:"\]\}," ","PPS, PSL Wyzwolenie and NPR — PPS in the cabinet; prime minister Ignacy Daszyński; PPS portfolios: Interior, Industry and Trade\./);
+  assert.match(content(engine), /Our offer:"\]\}," ","A cabinet of PPS, PSL Wyzwolenie and the National Workers’ Party, PPS in the cabinet; prime minister Ignacy Daszyński; PPS portfolios: Interior, Industry and Trade\. Its programme: /);
   assert.match(content(engine), /<details class=\\"pl-score\\"><summary>PSL Wyzwolenie — agrees · \d+\/60<\/summary>relation with PPS \+20 · programme of the cabinet and the club’s views/);
   assert.match(content(engine), /<details class=\\"pl-score\\"><summary>NPR — agrees · \d+\/60<\/summary>/);
-  assert.match(content(engine), /after the commit the cabinet is appointed at once — PPS, PSL Wyzwolenie and NPR, prime minister Ignacy Daszyński/);
+  assert.match(content(engine), /after the commit the cabinet is appointed at once — a cabinet of PPS, PSL Wyzwolenie and the National Workers’ Party, prime minister Ignacy Daszyński/);
   choose(engine, 'polish_cabinet_formation.back_summary');
   assert.equal(engine.state.sceneId, 'polish_cabinet_formation.portfolio_menu', 'Back from the summary to the portfolios');
   choose(engine, 'polish_cabinet_formation.ports_next');
@@ -174,9 +177,11 @@ test('C1 0.71: the introduction, the variant, the prime minister, the portfolios
   assert.equal(engine.state.sceneId, 'polish_cabinet_formation.result');
   assert.equal(Q.S.history.negotiations.length, before.negotiations + 1, 'one commit');
   assert.deepEqual([Q.time, Q.month_actions], [before.t, before.actions], 'the mandatory formation costs no month');
-  assert.match(content(engine), /PSL Wyzwolenie: accepts/);
-  assert.match(content(engine), /The head of state appoints ","Ignacy Daszyński/);
-  assert.match(content(engine), /A minority cabinet: it has fewer than 223 MPs, but more MPs declared for it than against it/, 'explained (Z — 0.56)');
+  // Z — 0.80 (decision 3 of 20 X 2026): who supported the offer, without scores, and the cabinet in words.
+  assert.match(content(engine), /Our offer: ","A cabinet of PPS, PSL Wyzwolenie and the National Workers’ Party, prime minister Ignacy Daszyński — accepted/);
+  assert.match(content(engine), /Supported: PSL Wyzwolenie and the National Workers’ Party\./);
+  assert.match(content(engine), /The Naczelnik Państwa appoints a cabinet of PPS, PSL Wyzwolenie and the National Workers’ Party; Ignacy Daszyński becomes prime minister\. 210 MPs back it\./);
+  assert.match(content(engine), /This is a minority cabinet: it has less than half of the Sejm, but more supporters than opponents/, 'explained (Z — 0.56)');
   assert.equal(Q.S.cabinet.pm, 'daszynski');
   assert.deepEqual([Q.S.cabinet.portfolios.labor, Q.S.cabinet.portfolios.interior, Q.S.cabinet.portfolios.economic], ['npr', 'pps', 'pps']);
   assert.equal(Q.S.cabinet.appointment_basis, 'naczelnik_panstwa', 'before the constitutional transfer');
@@ -193,6 +198,48 @@ test('C1 0.71: the introduction, the variant, the prime minister, the portfolios
   const restored = dendry.saveAndRestore(engine);
   restored.goToScene('main');
   assert.deepEqual(restored.state.qualities.S.cabinet, Q.S.cabinet, 'a save and load changes nothing');
+});
+
+// Z — 0.80 (the user's text of 20 X 2026, decisions 1A–4A): the variants in plain Polish — what the cabinet is, its MPs and what
+// that means, who agrees, the votes and the programme in words, why a variant is impossible now; no abbreviations of the
+// parties; the summary in the same words; the result names who supported the offer, without scores.
+test('Warianty 0.80: plain Polish variants, summary and result, without abbreviations or scores', () => {
+  const engine = dendry.startGame(1922, 'pl');
+  const Q = engine.state.qualities;
+  const plain = x => (x == null ? '' : typeof x === 'string' ? x : Array.isArray(x) ? x.map(plain).join('') : plain(x.content));
+  try {
+    november(engine, LEFT_SEJM_ROWS);
+    PolishGovernment.changeRelation(Q, 'npr', 60 - Q.S.actors.relations.npr, 'fixture');
+    strongLeft(engine);
+    choose(engine, 'polish_cabinet_formation');
+    assert.doesNotMatch(content(engine), /Sejm liczy 444 posłów; większość to 223/);
+    choose(engine, 'polish_cabinet_formation.variants');
+    const sub = id => plain(choice(engine, 'polish_cabinet_formation.' + id).subtitle);
+    assert.equal(sub('var_national_unity'), 'To rząd wszystkich dużych partii. Razem mają 400 z 444 posłów, więc miałby pewną większość w Sejmie. ' +
+      'Partie zgodzą się na taki rząd tylko w poważnym kryzysie państwa: gdy w ciągu pół roku upadną dwa rządy albo wybuchnie kryzys walutowy ' +
+      'lub kredytowy. Teraz takiego kryzysu nie ma, więc nie można go utworzyć.');
+    assert.match(sub('var_expert'), /^Premierem zostaje bezpartyjny Julian Nowak, a ministrami fachowcy spoza partii\. PPS nie ma w tym rządzie ministrów — tylko głosuje za nim w Sejmie\. Poprą go też .+\. Za rządem stanie \d+ posłów, przeciw \d+\. .+ Rząd prowadzi politykę swojego premiera\.$/);
+    assert.equal(sub('var_opposition'), 'Naczelnik Państwa powoła wtedy bez nas rząd fachowców Juliana Nowaka.');
+    assert.match(sub('var_pps_majority'), /^To rząd samej PPS\. PPS ma 110 z 444 posłów\./);
+    assert.match(sub('var_left_minority'), /Na wejście do rządu zgadza się PSL „Wyzwolenie”\. Za rządem stanie 190 posłów, przeciw 130\. To mniej niż połowa Sejmu, ale więcej niż przeciwników, więc rząd może rządzić, dopóki Sejm go nie odwoła\./);
+    assert.match(sub('var_centre_left'), /PSL „Piast” nie wejdzie do takiego rządu, dopóki nasze stosunki są zbyt chłodne: potrzeba relacji 55 \(teraz \d+\)\./);
+    assert.equal(plain(choice(engine, 'polish_cabinet_formation.var_left_labour').title), 'Wchodzimy do rządu z PSL „Wyzwolenie” i Narodową Partią Robotniczą');
+    for (const id of ids(engine).filter(id => /var_/.test(id))) {
+      assert.doesNotMatch(sub(id.split('.')[1]), /\b(NPR|ZLN|PSChD|KPP)\b|Teraz niemożliwy|program premiera\b|W rządzie:/, id);
+    }
+    choose(engine, 'polish_cabinet_formation.var_left_labour');
+    choose(engine, 'polish_cabinet_formation.cand_daszynski');
+    choose(engine, 'polish_cabinet_formation.ports_next');
+    assert.match(content(engine), /Rząd PPS, PSL „Wyzwolenie” i Narodowej Partii Robotniczej, PPS w rządzie; premier Ignacy Daszyński; resorty PPS: [^.]+\. W programie: szybsza reforma rolna z odszkodowaniem/);
+    assert.doesNotMatch(plain(choice(engine, 'polish_cabinet_formation.submit').subtitle), /miesiąca/, 'the mandatory formation says nothing about the month');
+    choose(engine, 'polish_cabinet_formation.submit');
+    const result = content(engine);
+    assert.match(result, /Poparli: PSL „Wyzwolenie” i Narodowa Partia Robotnicza\./);
+    assert.match(result, /Naczelnik Państwa powołuje rząd PPS, PSL „Wyzwolenie” i Narodowej Partii Robotniczej; premierem zostaje Ignacy Daszyński\. Popiera go 210 posłów\./);
+    assert.doesNotMatch(result, /przeciwnik premiera|\/60|\bNPR\b/);
+  } finally {
+    PolishRules.setLanguage('en');
+  }
 });
 
 // Decision 5A: Moraczewski of the Piłsudski wing is welcome to the clubs friendly to Piłsudski and unwelcome to the hostile ones;

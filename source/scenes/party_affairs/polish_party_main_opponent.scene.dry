@@ -43,7 +43,7 @@ go-to: result
 
 @capital_land
 title: The defenders of capital and landed estates
-subtitle: [? if pl_stance_capital_land_present = 1 : **Present line** Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_capital_land_present = 0 : Our press campaigns take half of their gains from the voters of the parties that defend capital and large landed property (−1 or less on the land and tax scales); in the test profile PSChD and ZLN. ?]
+subtitle: [? if pl_stance_capital_land_present = 1 : **Present line** Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_capital_land_present = 0 : Our press campaigns take half of their gains from the voters of the parties that defend capital and large landed property (−1 or less on the land and tax scales); today these are the Christian Democrats and the National Democrats. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'main_opponent', 'capital_land').available !}
 unavailable-subtitle: [+ pl_stance_capital_land_why +]
 on-arrival: {!

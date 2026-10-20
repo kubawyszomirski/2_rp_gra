@@ -18,13 +18,13 @@ go-to: results if sejm_forming_government; main if not sejm_election_in_progress
 
 = Wybory do Sejmu — [+ month : month +] [+ year +]
 
-[? if not sejm_first_election_completed : The Sejm election of 5 November 1922 is now due. Voting, results and government formation are compressed into one November sequence. The result also constitutes a simplified 111-seat Senate in the same party proportions; it is recorded once, not a separate campaign. ChZJN contests as a joint ZLN–PSChD list. ?]
+[? if not sejm_first_election_completed : The day of the Sejm election, 5 November 1922, has come. The same result sets the 111-seat Senate in the same party proportions. The National Democrats and the Christian Democrats stand together as the list of the Christian Union of National Unity. ?]
 
-[? if not sejm_first_election_completed : Campaigning and monthly effects determine voting intentions. We will record those votes once, allocate **444 MPs**, and then consider governments. A majority requires **223 MPs**. Reading these screens and choosing a government does not spend another monthly action. ?]
+[? if not sejm_first_election_completed : The campaigns and events of the past months have shaped the voters' intentions. The votes will fill **444 seats**; a majority needs **223 MPs**. Then we turn to the government — the negotiations spend no extra monthly action. ?]
 
-[? if sejm_first_election_completed : The five-year term of the Sejm elected in 1922 has ended. Under the game's default legal calendar the election was ordered the next day and is held on Sunday 19 February 1928, the first Sunday at least 78 days later. This is a gameplay calendar, not the historical election date. The same 444-seat method applies, every list stands on its own and no German thresholds or bans apply. ?]
+[? if sejm_first_election_completed : The five-year term of the Sejm elected in 1922 has ended. The election is held on Sunday 19 February 1928. The same law applies: 444 seats, and every list stands on its own. ?]
 
-[? if sejm_first_election_completed : This is the next lawful Sejm election after 1922. Its certified result ends the first chapter: no new government is formed in this chapter, and a report follows. ?]
+[? if sejm_first_election_completed : This election ends the first chapter: the chapter report follows the result, before a new government is formed. ?]
 
 - @calculate: Count the votes.
 
@@ -131,7 +131,7 @@ if (Q.sejm_pending && Q.sejm_pending.phase === 'results' && Q.S.chapter.status =
 
 = The chapter ends
 
-The result above is certified: 444 MPs and the simplified Senate are recorded. This was the next lawful Sejm election after 1922, so the first chapter ends here, before a new government is formed.
+The new Sejm has been elected. The first chapter ends here, before a new government is formed.
 
 - @polish_chapter_report: Read the chapter report.
 
@@ -145,7 +145,5 @@ if (Q.sejm_pending && Q.sejm_pending.phase === 'results' && Q.sejm_pending.gover
 !}
 
 PPS position: [+ pps_government_position +].
-
-This completes the election sequence without spending a monthly action. Parliamentary results remain fixed between elections. The Marshal and the President are elected in December; the cabinet stays in office. Inherited Prussian executive powers remain unavailable. The Polish economy, budget and state cards follow the portfolios of the new cabinet.
 
 - @root: Resume play.

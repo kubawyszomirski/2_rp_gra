@@ -5,7 +5,7 @@
   "title: Party Agenda": "title: Agenda partii",
   "= The party agenda": "= Agenda partii",
   "Party money: [+ pl_party_cash +]. A collection brings [+ pl_pa_fundraise_gain +] R now.": "Kasa partii: [+ pl_party_cash +]. Zbiórka przynosi teraz [+ pl_pa_fundraise_gain +] R.",
-  "TUR: [+ pl_party_tur +]. Cooperatives: [+ pl_party_coops +].": "TUR: [+ pl_party_tur +]. Spółdzielnie: [+ pl_party_coops +].",
+  "TUR: [+ pl_party_tur +]. Cooperatives: [+ pl_party_coops +].": "Towarzystwo Uniwersytetu Robotniczego: [+ pl_party_tur +]. Spółdzielnie: [+ pl_party_coops +].",
   "[? if pl_pa_priorities : Economic priorities of PPS: [+ pl_pa_priorities +]. Each is prepared through its government card, with its own costs. ?]": "[? if pl_pa_priorities : Priorytety gospodarcze PPS: [+ pl_pa_priorities +]. Każdy z nich przygotowuje się przez właściwą kartę rządową, z jej własnymi kosztami. ?]",
   "title: An extraordinary collection": "title: Zbiórka nadzwyczajna",
   "subtitle: Brings [+ pl_pa_fundraise_gain +] resources (dues × membership / 100, with the bonus of the apparatus); waits three months.": "subtitle: Przynosi partii środki: [+ pl_pa_fundraise_gain +] (składki × członkostwo / 100, z dodatkiem za aparat); odnowienie: trzy miesiące.",

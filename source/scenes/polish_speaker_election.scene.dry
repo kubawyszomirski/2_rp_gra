@@ -17,8 +17,8 @@ if (Q.S && !Q.polish_save_incompatible && Q.S.chapter.status !== 'ended' &&
     if (run.phase === 'result') {
         var ballot = run.final_ballot;
         Q.pl_speaker_result_lines = ballot ? ballot.candidates.map(function(row) {
-            return row.candidate_name + ' — ' + row.votes + ' votes';
-        }).join('; ') + '; abstentions — ' + ballot.abstain : '';
+            return row.candidate_name + ' — ' + row.votes + PolishRules.L(' votes', ' ' + PolishRules.plural(row.votes, 'głos', 'głosy', 'głosów'));
+        }).join('; ') + PolishRules.L('; abstentions — ', '; wstrzymujący się — ') + ballot.abstain : '';
         Q.pl_speaker_winner = run.winner_name || '';
         Q.pl_speaker_status = run.status;
         Q.pl_speaker_tie = run.tie_break ? 1 : 0;
@@ -38,9 +38,7 @@ new-page: true
 
 [? if pl_speaker_vacancy : The Marshal of the Sejm has become President of the Republic and has left both the office and the Sejm. The Sejm must elect a new Marshal before ordinary business resumes. His seat passes to the next candidate on the same list, so the club keeps its number of MPs. ?]
 
-All clubs attend. Every club votes for its preferred candidate still standing; if nobody has more than half of the valid votes, the two strongest meet in a run-off and the larger vote wins. A tie between two finalists is decided by a recorded lot. The clubs' preferences are an approved test profile, not a reconstruction of the historical vote.
-
-Our stance costs no monthly action. Talks with other parties beforehand are ordinary actions.
+Supporting a candidate improves our relation with his party.
 
 - @smiarowski
 - @rataj
@@ -48,7 +46,7 @@ Our stance costs no monthly action. Talks with other parties beforehand are ordi
 
 @smiarowski
 title: Support Eugeniusz Śmiarowski
-subtitle: Cooperation with PSL Wyzwolenie: the relation improves (+4). He takes office only if he wins the vote.
+subtitle: The candidate of PSL Wyzwolenie. Supporting him improves our relation with Wyzwolenie (+4).
 on-arrival: {!
 PolishInstitutions.chooseSpeakerStance(Q, 'smiarowski');
 !}
@@ -56,7 +54,7 @@ go-to: polish_speaker_election
 
 @rataj
 title: Agree to support Maciej Rataj
-subtitle: A package with PSL Piast: defence of the standing orders and PPS work in the committees. The relation with PSL Piast improves (+4).
+subtitle: A deal with PSL Piast: we vote for Rataj, and PPS gets seats in the Sejm committees; in return we promise to defend the standing orders of the Sejm. Our relation with Piast improves (+4).
 choose-if: {! return PolishInstitutions.speakerOptions(Q).rataj.available !}
 unavailable-subtitle: [+ pl_speaker_rataj_reason +]
 on-arrival: {!
@@ -68,7 +66,7 @@ go-to: polish_speaker_election
 
 @daszynski
 title: Nominate Ignacy Daszyński
-subtitle: PSL Wyzwolenie signs the nomination and backs him instead of its own candidate. No bonus for the nomination itself.
+subtitle: The candidate of PPS. PSL Wyzwolenie backs him instead of its own candidate. If he wins, the credibility of PPS grows (+5).
 view-if: {! return !Q.pl_speaker_vacancy !}
 choose-if: {! return PolishInstitutions.speakerOptions(Q).daszynski.available !}
 unavailable-subtitle: [+ pl_speaker_daszynski_reason +]
@@ -88,11 +86,10 @@ new-page: true
 
 [? if pl_speaker_status = "elected" : Final ballot: [+ pl_speaker_result_lines +]. ?]
 
-[? if pl_speaker_tie : The two finalists received the same number of votes; the office was decided by a recorded lot. ?]
+[? if pl_speaker_tie : The two finalists received the same number of votes; the office was decided by lot. ?]
 
 [? if pl_speaker_status = "no_election" : The vote did not produce a Marshal. [+ pl_speaker_acting +] presides until a new vote next month; ordinary business continues meanwhile. ?]
 
-The result, the votes and any lot are recorded once; returning to this screen or loading a save does not repeat the vote.
 
 - @finish: Continue.
 

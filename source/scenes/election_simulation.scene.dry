@@ -3,7 +3,7 @@ view-if: not started
 go-to: main if started
 set-jump: post_election
 
-The implemented simulator covers the approved January 1922 Polish opening model. The inherited German 1928, 1930 and 1932 scenarios have been retired from the active Polish party system.
+The simulator shows the voting intentions of January 1922.
 
 - @opening: January 1922 Polish opening model
 

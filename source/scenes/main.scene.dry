@@ -41,7 +41,7 @@ max-cards: 6
 
 [? if pl_economy_notices : **Economy:** [+ pl_economy_notices +] ?]
 
-[? if pl_election_reminder : **Elections approaching.** [+ pl_election_reminder +] [? if sejm_first_election_completed : The certified result of this election ends the chapter. ?] ?]
+[? if pl_election_reminder : **Elections approaching.** [+ pl_election_reminder +] [? if sejm_first_election_completed : This election ends the chapter. ?] ?]
 
 [? if polish_opening_government_active and time >= 6 : PPS tolerates the government but holds no ministries, so the Government Affairs deck is closed. The nine portfolios can be inspected in the Library. ?]
 

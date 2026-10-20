@@ -114,7 +114,7 @@
   const PLANT_KINDS = Object.freeze({industry: 'industrial plant', rail: 'railway workshop', farm_labour: 'estate'});
   const PLANT_KINDS_PL = Object.freeze({industry: 'zakład przemysłowy', rail: 'warsztat kolejowy', farm_labour: 'majątek ziemski'});
   const PLANT_HINT = 'plants are recorded by a credit crisis, an active reaction of business or a strike ended by exhaustion';
-  const PLANT_HINT_PL = 'zakład zapisuje kryzys kredytowy, aktywna reakcja przedsiębiorców albo strajk zakończony wyczerpaniem';
+  const PLANT_HINT_PL = 'zakłady trafiają na listę resortu przy kryzysie kredytowym, aktywnej reakcji przedsiębiorców albo po strajku zakończonym wyczerpaniem';
   // Texts this module stores in the records of S stay in English (decision 5A); the Polish display translates them.
   const STORED_PL = Object.freeze({'its private owner': 'prywatny właściciel', 'the workers of the branch': 'robotnicy branży',
     'working time in this plant only': 'czas pracy tylko w tym zakładzie', 'the workers of the plant': 'robotnicy zakładu'});
@@ -671,9 +671,9 @@
 
   function plantsLine(S) {
     const list = S.enterprises ? plants(S) : [];
-    return list.length ? L('Recorded plants: ', 'Zapisane zakłady: ') + list.map(describePlant).join(' ') :
+    return list.length ? L('Recorded plants: ', 'Zakłady na liście resortu: ') + list.map(describePlant).join(' ') :
       L('No plant is recorded: a credit crisis, an active reaction of business or a strike ended by exhaustion records one.',
-        'Nie zapisano żadnego zakładu: ' + PLANT_HINT_PL + '.');
+        'Na liście resortu nie ma żadnego zakładu; ' + PLANT_HINT_PL + '.');
   }
 
   // ---- Collective agreements and derogations (card 8.1; 17.12) ---------------------------------------------
@@ -718,7 +718,7 @@
     const S = Q.S;
     if (!workingTimeLaw(S)) return no(L('Needs a legal basis: the law enforcing working time (the inspection of this card) must be in force.', 'Wymaga podstawy prawnej: musi obowiązywać ustawa egzekwująca czas pracy (inspekcja z tej karty).'));
     if (!derogationTarget(S)) return no(L('Needs a recorded plant in difficulty without a derogation; ' + PLANT_HINT + '.',
-      'Wymaga zapisanego zakładu w trudnościach bez odstępstwa; ' + PLANT_HINT_PL + '.'));
+      'Wymaga zakładu w trudnościach z listy resortu, bez odstępstwa; ' + PLANT_HINT_PL + '.'));
     return OK;
   }
 

@@ -4,7 +4,7 @@
  "lines": {
   "title: Incompatible save": "title: Niezgodny zapis",
   "= This save cannot be continued": "= Tego zapisu nie da się kontynuować",
-  "This save comes from an older version of the game. The Polish chapter now keeps its state in a new format, and older saves are not converted (technical reference 19.3).": "Ten zapis pochodzi ze starszej wersji gry. Polski rozdział przechowuje teraz stan w nowym formacie, a starsze zapisy nie są przenoszone (referencja techniczna, 19.3).",
-  "Reload the page to start a new game. Your save slots are not deleted.": "Odśwież stronę, aby rozpocząć nową grę. Twoje zapisy nie zostaną usunięte."
+  "Reload the page to start a new game. Your save slots are not deleted.": "Odśwież stronę, aby rozpocząć nową grę. Twoje zapisy nie zostaną usunięte.",
+  "This save comes from an older version of the game and cannot be loaded in this one.": "Ten zapis pochodzi ze starszej wersji gry i nie da się go wczytać w obecnej."
  }
 }

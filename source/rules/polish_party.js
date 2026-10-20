@@ -384,7 +384,7 @@
   const UNION_CARD = 'party.union_investments', ORGANIZATIONS_CARD = 'party.organizations';
   const cardOfPackage = id => (PACKAGES[id].org === 'unions' ? UNION_CARD : ORGANIZATIONS_CARD);
   const ORG_NAMES = Object.freeze({unions: 'trade unions', press: 'the press', tur: 'TUR', militia: 'Milicja', cooperatives: 'cooperatives'});
-  const ORG_NAMES_PL_ACCUSATIVE = Object.freeze({unions: 'związki zawodowe', press: 'prasę', tur: 'TUR', militia: 'Milicję', cooperatives: 'spółdzielnie'});
+  const ORG_NAMES_PL_ACCUSATIVE = Object.freeze({unions: 'związki zawodowe', press: 'prasę', tur: 'Towarzystwo Uniwersytetu Robotniczego', militia: 'Milicję', cooperatives: 'spółdzielnie'});
   const ORGANIZATIONS_COOLDOWN = 2;
   const SUBACTION_COOLDOWNS = Object.freeze({organize: 2, distribution: 2, recruit: 2, militarize: 3});
 
@@ -414,8 +414,8 @@
     if (cash + 1e-9 < p.cost) return no(L('Needs ' + rules.units(p.cost) + '.', 'Wymaga ' + rules.units(p.cost, 'resources', 'gen') + '.'));
     if (p.org === 'tur') {
       const tur = S.party_orgs.tur;
-      if (tur.level >= TUR_MAX) return no(L('TUR has its full national coordination.', 'TUR ma już pełną koordynację ogólnokrajową.'));
-      if (tur.active_build) return no(L('A stage of TUR is already being built.', 'Jeden etap TUR jest już w budowie.'));
+      if (tur.level >= TUR_MAX) return no(L('TUR has its full national coordination.', 'Towarzystwo Uniwersytetu Robotniczego ma już pełną koordynację ogólnokrajową.'));
+      if (tur.active_build) return no(L('A stage of TUR is already being built.', 'Kolejny etap rozbudowy Towarzystwa Uniwersytetu Robotniczego już trwa.'));
     }
     if (p.org === 'militia') {
       const m = S.militia;
@@ -482,7 +482,7 @@
       S.party_orgs.tur.active_build = {target_level: S.party_orgs.tur.level + 1, started_at: t, paid_months: 0};
       // Z — 0.58: no monthly payments since Z — 0.56, so the build simply takes two months.
       return L('TUR starts building level ' + (S.party_orgs.tur.level + 1) + ' (two months)',
-        'TUR zaczyna budowę poziomu ' + (S.party_orgs.tur.level + 1) + ' (dwa miesiące)');
+        'Towarzystwo Uniwersytetu Robotniczego zaczyna budowę poziomu ' + (S.party_orgs.tur.level + 1) + ' (dwa miesiące)');
     }
     if (p.kind === 'recruit') return recruit(Q);
     if (p.kind === 'militarize') return militarize(Q);
@@ -722,7 +722,7 @@
 
   function organizeStatus(Q, target) {
     const isBranch = target.indexOf('branch:') === 0, isClass = target.indexOf('class:') === 0;
-    if (!isBranch && !isClass) return no(L('Organisational work reaches a union branch or the cells of one class, not the press or TUR.', 'Praca organizacyjna obejmuje branżę związkową albo grupy wyborców jednej klasy, a nie prasę ani TUR.'));
+    if (!isBranch && !isClass) return no(L('Organisational work reaches a union branch or the cells of one class, not the press or TUR.', 'Praca organizacyjna obejmuje branżę związkową albo grupy wyborców jednej klasy, a nie prasę ani Towarzystwo Uniwersytetu Robotniczego.'));
     if (isBranch && BRANCHES.indexOf(target.slice(7)) < 0) return no(L('Unknown branch.', 'Nieznana branża.'));
     if (isClass && ORGANIZE_CLASSES.indexOf(target.slice(6)) < 0) return no(L('Unknown class.', 'Nieznana klasa.'));
     if (isClass && !electorate.hasCells(Q.S)) return no(L('The cells of the electorate are not recorded.', 'Grupy wyborców nie są zapisane.'));
@@ -837,7 +837,7 @@
   function courseStatus(Q, courseId, target) {
     const S = Q.S, tur = S.party_orgs.tur, course = COURSES[courseId];
     if (!course) return no(L('Unknown course.', 'Nieznany kurs.'));
-    if (tur.level < course.level) return no(L('Needs TUR level ' + course.level + '.', 'Wymaga TUR na poziomie ' + course.level + '.'));
+    if (tur.level < course.level) return no(L('Needs TUR level ' + course.level + '.', 'Wymaga Towarzystwa Uniwersytetu Robotniczego na poziomie ' + course.level + '.'));
     if (tur.active_course) return no(L('A course is already running.', 'Kurs już trwa.'));
     if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
     const wait = waitReason(Q, 'party.tur_course');
@@ -1790,6 +1790,29 @@
     return groups + L('; in the whole country ' + signed(changes.total) + ' points', '; razem w kraju ' + signed(changes.total) + ' pkt');
   }
 
+  // Z — 0.80 (decision 1A of 20 X 2026): the groups in words — popular, very popular, disliked — with the change of support in a
+  // parenthesis that the setting "Numbers in choices" shows or hides; on a result page the same in the past tense.
+  const groupGenitive = id => L(electorate.AUDIENCES[id].name, electorate.AUDIENCE_NAMES_PL_GENITIVE[id]);
+  const andJoin = list => list.length < 2 ? (list[0] || '') : list.slice(0, -1).join(', ') + L(' and ', ' i ') + list[list.length - 1];
+  function changesWords(changes, mode) {
+    const sorted = changes.groups.slice().sort((a, b) => b.change - a.change);
+    const item = g => groupGenitive(g.id) + ' (' + signed(g.change) + ')';
+    const plus = sorted.filter(g => g.change > 0.005), minus = sorted.filter(g => g.change < -0.005);
+    const parts = [];
+    if (mode === 'result') {
+      if (plus.length) parts.push(L('PPS gains among ', 'PPS zyskuje wśród ') + andJoin(plus.map(item)));
+      if (minus.length) parts.push(L('loses among ', 'traci wśród ') + andJoin(minus.map(item)));
+    } else if (mode === 'press') {
+      if (plus.length) parts.push(L('It reaches ', 'Trafia do ') + andJoin(plus.map(item)));
+    } else {
+      const very = plus.filter(g => g.change >= 0.8), more = plus.filter(g => g.change < 0.8);
+      if (very.length) parts.push(L('Very popular among ', 'Bardzo popularna wśród ') + andJoin(very.map(item)));
+      if (more.length) parts.push((very.length ? L('popular among ', 'popularna wśród ') : L('Popular among ', 'Popularna wśród ')) + andJoin(more.map(item)));
+      if (minus.length) parts.push(L('disliked among ', 'nielubiana wśród ') + andJoin(minus.map(item)));
+    }
+    return parts.join(mode === 'result' ? L('; ', '; ') : ', ');
+  }
+
   function issueFactor(Q, id) {
     const S = Q.S, issue = ISSUES[id];
     const line = issue.directions.indexOf(S.actors.pps.strategy.direction) >= 0 ? LINE_FACTOR : 1;
@@ -1825,7 +1848,7 @@
     const changes = bundleChanges(S, ISSUES[id].groups, bundleCampaign(Q, issueSpec(Q, id), false));
     const boosts = issueBoosts(Q, id);
     const issue = ISSUES[id];
-    return changesText(changes) + '. ' + capitalise(L(issue.situation_text[0], issue.situation_text[1])) + '.' +
+    return changesWords(changes, 'preview') + '. ' + capitalise(L(issue.situation_text[0], issue.situation_text[1])) + '.' +
       (boosts.length ? L(' Stronger now: ', ' Teraz wzmacnia ją: ') + boosts.join(L(' and ', ' i ')) + '.' : '');
   }
 
@@ -1843,7 +1866,7 @@
     electorate.writeClassMirrors(Q);
     writeMirrors(Q);
     const boosts = issueBoosts(Q, id);
-    return result(Q, L('The campaign “' + issueName(id) + '”: ', 'Kampania „' + issueName(id) + '”: ') + changesText(changes) + '.' +
+    return result(Q, L('The campaign “' + issueName(id) + '”: ', 'Kampania „' + issueName(id) + '”: ') + changesWords(changes, 'result') + '.' +
       (boosts.length ? L(' It was stronger thanks to ', ' Wzmocniły ją: ') + boosts.join(L(' and ', ' i ')) + '.' : '') +
       programmeCampaignNote(S, S.society.cells.filter(c => bundleWeight(ISSUES[id].groups, c) > 0)));
   }
@@ -1925,9 +1948,9 @@
 
   function opponentText(Q) {
     const ids = polemicAddressees(Q);
-    return ids.length ? L('half of its gains from the voters of ' + ids.map(describe).join(' and '), 'połowę zysków kosztem wyborców: ' +
-      ids.map(describe).join(', ')) : L('its gains from all other parties alike (the main opponent names no party now)',
-      'zyski od wszystkich innych partii po równo (główny przeciwnik nie wskazuje teraz żadnej partii)');
+    return ids.length ? L('half of the new votes it takes from our main opponent: ' + government.plainParties(ids),
+      'połowę nowych głosów odbiera naszemu głównemu przeciwnikowi: ' + government.plainParties(ids)) :
+      L('it takes its votes from all other parties alike', 'głosy odbiera wszystkim innym partiom po równo');
   }
   const describe = id => government.describeParty(id);
 
@@ -1935,7 +1958,7 @@
     const S = Q.S;
     if (!electorate.hasCells(S)) return '';
     const spec = pressSpec(Q);
-    return changesText(bundleChanges(S, spec.bundle, bundleCampaign(Q, spec, false))) + L('; ', '; ') + opponentText(Q) + '.';
+    return changesWords(bundleChanges(S, spec.bundle, bundleCampaign(Q, spec, false)), 'press') + L('; ', '; ') + opponentText(Q) + '.';
   }
 
   function pressCampaign(Q) {
@@ -1952,7 +1975,7 @@
     S.history.reasons.push({t: t, kind: 'campaign', campaign: 'press', topic: 'press', audience: 'press_groups', moved: total});
     electorate.writeClassMirrors(Q);
     writeMirrors(Q);
-    return result(Q, L('The press campaign: ', 'Kampania prasowa: ') + changesText(bundleChanges(S, spec.bundle, moved)) + L('; ', '; ') +
+    return result(Q, L('The press campaign: ', 'Kampania prasowa: ') + changesWords(bundleChanges(S, spec.bundle, moved), 'result') + L('; ', '; ') +
       opponentText(Q) + '.');
   }
 
@@ -2016,7 +2039,7 @@
 
   function pressInvestigationStatus(Q) {
     const S = Q.S;
-    if (!pressInvestigationTarget(S)) return no(L('Needs an open case with evidence: a recorded case of violence or an unlawful restriction not yet revealed.', 'Wymaga otwartej sprawy z dowodami: zapisanego przypadku przemocy albo bezprawnego ograniczenia, którego jeszcze nie ujawniono.'));
+    if (!pressInvestigationTarget(S)) return no(L('Needs an open case with evidence: a recorded case of violence or an unlawful restriction not yet revealed.', 'Wymaga otwartej sprawy z dowodami: znanego przypadku przemocy albo bezprawnego ograniczenia, którego jeszcze nie ujawniono.'));
     if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
     if (S.party_orgs.cash + 1e-9 < 1) return no(L('Needs 1 resource.', 'Wymaga 1 jednostki środków.'));
     return OK;
@@ -2036,7 +2059,7 @@
     S.history.reasons.push({t: t, kind: 'press_investigation', target_kind: target.kind, target_id: target.id});
     writeMirrors(Q);
     return result(Q, L('The party press documents ' + target.subject + ': credibility +4. The fact is recorded once; nothing is invented.',
-      'Prasa partyjna dokumentuje sprawę: ' + rules.storedText(target.subject) + '. Wiarygodność +4. Fakt zostaje zapisany raz; nic nie jest zmyślone.'));
+      'Prasa partyjna dokumentuje sprawę: ' + rules.storedText(target.subject) + '. Wiarygodność prasy rośnie (+4). Ujawniamy tylko prawdziwe fakty.'));
   }
 
   function mediaView(Q) {
@@ -2613,7 +2636,7 @@
     niedzialkowski: [['Build Centrolew: better relations with the peasant and centre parties', 'Budowa Centrolewu: lepsze relacje z partiami chłopskimi i centrum'], ['Defend Constitutional Democracy: democracy grows and the PPS organisations stand by lawful institutions', 'Obrona demokracji konstytucyjnej: demokracja rośnie, a organizacje PPS stoją przy legalnych instytucjach']],
     arciszewski: [['Organize the Workers: a union branch reaches further and PPS gains among its workers', 'Organizowanie robotników: większy zasięg branży związkowej i zysk PPS wśród jej robotników'], ['Labour Programme, when PPS holds Labour: one stage of workers’ rights or benefits without this month’s action', 'Program pracy, gdy PPS ma resort Pracy: jeden etap praw robotniczych albo zasiłków bez akcji miesiąca']],
     zaremba: [['Worker-Peasant Front: a better relation with PSL Wyzwolenie', 'Front robotniczo-chłopski: lepsza relacja z PSL Wyzwolenie'], ['Class Campaign: PPS gains among workers and the unemployed, loses a little among the petty bourgeoisie; a stronger Lewica', 'Kampania klasowa: zysk PPS wśród robotników i bezrobotnych, mała strata wśród drobnomieszczaństwa; silniejsza Lewica']],
-    czapinski: [['Socialist Education: a stronger Lewica and fewer workers lost to the KPP; needs TUR', 'Edukacja socjalistyczna: silniejsza Lewica i mniej robotników odchodzi do KPP; wymaga TUR'], ['Socialist Economic Programme, with PPS in the cabinet: progressive taxes, public ownership or workers’ representation', 'Socjalistyczny program gospodarczy, gdy PPS jest w gabinecie: podatki progresywne, własność publiczna albo przedstawicielstwo robotników']],
+    czapinski: [['Socialist Education: a stronger Lewica and fewer workers lost to the KPP; needs TUR', 'Edukacja socjalistyczna: silniejsza Lewica i mniej robotników odchodzi do KPP; wymaga Towarzystwa Uniwersytetu Robotniczego'], ['Socialist Economic Programme, with PPS in the cabinet: progressive taxes, public ownership or workers’ representation', 'Socjalistyczny program gospodarczy, gdy PPS jest w gabinecie: podatki progresywne, własność publiczna albo przedstawicielstwo robotników']],
     jaworowski: [['Back Piłsudski: a better relation with Piłsudski and stronger Piłsudczycy, at the cost of dissent in Centrum and Lewica', 'Poparcie dla Piłsudskiego: lepsza relacja z Piłsudskim i silniejsi piłsudczycy, kosztem sprzeciwu Centrum i Lewicy']],
     moraczewski: [['Public Works Programme, when PPS holds Labour: one stage of public works without this month’s action', 'Program robót publicznych, gdy PPS ma resort Pracy: jeden etap robót bez akcji miesiąca']],
     ziemiecki: [['Emergency Fundraising: +2 resources at once', 'Nadzwyczajna zbiórka: od razu +2 jednostki środków'], ['Municipal Socialism: PPS gains in the large cities', 'Socjalizm municypalny: zysk PPS w wielkich miastach']],
@@ -2631,7 +2654,7 @@
       Q['pl_adv_' + id + '_in'] = draft.indexOf(id) >= 0 ? 1 : 0;
       Q['pl_adv_' + id + '_can_add'] = draft.indexOf(id) < 0 && draft.length < TEAM_SIZE && (current.indexOf(id) >= 0 || adviserInPool(Q, id)) ? 1 : 0;
       Q['pl_adv_' + id + '_why'] = ADVISERS[id].continuation ? L('Belongs to the continuation (from 1928 in chapter 2).',
-        'Należy do kontynuacji (od 1928 roku, w rozdziale 2).') : !adviserInPool(Q, id) && current.indexOf(id) < 0 ? L('No longer available.', 'Już niedostępny.') :
+        'Nie można go powołać w latach 1922–1928.') : !adviserInPool(Q, id) && current.indexOf(id) < 0 ? L('No longer available.', 'Już niedostępny.') :
         draft.length >= TEAM_SIZE ? L('The three seats are taken.', 'Trzy miejsca są zajęte.') : '';
       // Z — 0.75: the last sentence of the candidate's description: remove, add, or why not. Z — 0.76: a chosen member is marked
       // in red small capitals (and his row on the page, out/html/game.js); his actions stand in a paragraph of their own.
@@ -2688,7 +2711,7 @@
     // Z — 0.79 (the user's note of 14 X 2026): an action that needs TUR says so before its price, so it never looks open
     // before TUR is founded.
     if (actionId === 'socialist_education' && S.party_orgs.tur.level < 1) return no(L('Needs a working TUR (found it with the card Organisations of PPS).',
-      'Wymaga działającego TUR (załóż go kartą Organizacje PPS).'));
+      'Wymaga działającego Towarzystwa Uniwersytetu Robotniczego (załóż je kartą Organizacje PPS).'));
     const cost = ACTION_COSTS[actionId] || 0;
     if (cost && S.party_orgs.cash + 1e-9 < cost) return no(L('Needs ' + rules.units(cost) + '.', 'Wymaga ' + rules.units(cost, 'resources', 'gen') + '.'));
     if (advisorId === 'perl' && Q.time > ADVISERS.perl.last_time) return no(L('Perl is no longer active.', 'Perl nie jest już aktywny.'));
@@ -2826,11 +2849,11 @@
   function packageLine(Q, id) {
     const p = PACKAGES[id];
     const names = rules.getLanguage() === 'pl' ? {
-      organize: 'Zorganizuj branżę ' + (p.branch ? BRANCH_PL_ACCUSATIVE[p.branch] : '') + ' (+15 zasięgu, więcej przy linii robotniczej i z kadrami TUR)',
+      organize: 'Zorganizuj branżę ' + (p.branch ? BRANCH_PL_ACCUSATIVE[p.branch] : '') + ' (+15 zasięgu, więcej przy linii robotniczej i z kadrami Towarzystwa Uniwersytetu Robotniczego)',
       fund: 'Wesprzyj fundusz związkowy branży ' + (p.branch ? BRANCH_PL_GENITIVE[p.branch] : '') + ' (+1 R dla związku)',
       distribution: 'Poszerz kolportaż prasy (+10 zasięgu)',
       // Z — 0.57: at level 0 the first build founds TUR, a decision of the party.
-      build: (Q.S.party_orgs.tur.level === 0 ? 'Załóż TUR' : 'Rozpocznij kolejny etap TUR') + ' (dwa miesiące)',
+      build: (Q.S.party_orgs.tur.level === 0 ? 'Załóż Towarzystwo Uniwersytetu Robotniczego' : 'Rozpocznij kolejny etap Towarzystwa Uniwersytetu Robotniczego') + ' (dwa miesiące)',
       recruit: 'Werbunek do Milicji (+100 członków)',
       militarize: 'Militaryzacja Milicji (sprawność +0,10, najwyżej 0,70)',
       prepare: 'Przygotuj ' + (p.class_id ? COOPERATIVE_NAMES_PL_ACCUSATIVE[p.class_id] : ''),
@@ -2896,7 +2919,7 @@
     const tur = orgs.tur;
     // Z — 0.57: TUR is founded by a decision of the party, the first build in the card Organisations of PPS.
     Q.pl_party_tur = tur.level === 0 && !tur.active_build ? L('not founded; it can be founded with the card Organisations of PPS',
-      'nie założony; można go założyć kartą Organizacje PPS') :
+      'nie założone; można je założyć kartą Organizacje PPS') :
       tur.level === 0 ? L('being founded (', 'w trakcie zakładania (') + tur.active_build.paid_months + L('/2 months)', '/2 mies.)') :
       L('level ', 'poziom ') + tur.level + L(', cadres ', ', kadry ') + tur.cadres + (tur.active_build ? L('; building level ', '; budowa poziomu ') +
         tur.active_build.target_level + ' (' + tur.active_build.paid_months + L('/2 months)', '/2 mies.)') : '') +

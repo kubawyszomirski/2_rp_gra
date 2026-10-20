@@ -172,12 +172,13 @@ test('Wbrew Naczelnikowi 0.76: Nowak instead of Śliwiński costs relation with 
   assert.ok(cash >= 1);
   choose(engine, 'polish_cabinet_formation.cand_nowak');
   assert.equal(engine.state.sceneId, 'polish_cabinet_formation.summary');
-  assert.match(JSON.stringify(engine.ui.paragraphs), /against the Naczelnik’s candidate: relation with Piłsudski −5 and 1 R/);
+  // Z — 0.80: the price in words, not in abbreviations.
+  assert.match(JSON.stringify(engine.ui.paragraphs), /against the Naczelnik’s candidate: relations with Piłsudski worsen \(−5\) and the talks cost 1 unit of party money/);
   assert.deepEqual([S.party_orgs.cash, S.actors.relations.pilsudski], [cash, relation], 'nothing is paid before the commit');
   choose(engine, 'polish_cabinet_formation.submit');
   assert.ok(Math.abs(S.party_orgs.cash - (cash - 1)) < 1e-9, '1 R for the talks');
   assert.equal(S.actors.relations.pilsudski, relation - 5);
-  assert.match(JSON.stringify(engine.ui.paragraphs), /against the Naczelnik’s candidate: relation with Piłsudski −5, 1 R for the talks/);
+  assert.match(JSON.stringify(engine.ui.paragraphs), /against the Naczelnik’s candidate: relations with Piłsudski worsen \(−5\) and the talks cost 1 unit of party money/);
   // Supporting the Naczelnik's own candidate costs nothing; without 1 R Nowak cannot be proposed.
   const poor = dendry.startGame();
   const P = poor.state.qualities;

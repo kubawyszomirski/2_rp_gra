@@ -15,7 +15,7 @@
   "**PPS position:** [+ pps_government_position +].": "**Pozycja PPS:** [+ pps_government_position +].",
   "= Organisations": "= Organizacje",
   "[? if polish_party_rules : **Press:** [+ pl_party_press +] ?]": "[? if polish_party_rules : **Prasa:** [+ pl_party_press +] ?]",
-  "[? if polish_party_rules : **TUR:** [+ pl_party_tur +] ?]": "[? if polish_party_rules : **TUR:** [+ pl_party_tur +] ?]",
+  "[? if polish_party_rules : **TUR:** [+ pl_party_tur +] ?]": "[? if polish_party_rules : **Towarzystwo Uniwersytetu Robotniczego:** [+ pl_party_tur +] ?]",
   "[? if polish_party_rules : **Cooperatives:** [+ pl_party_coops +] ?]": "[? if polish_party_rules : **Spółdzielnie:** [+ pl_party_coops +] ?]",
   "[? if polish_party_rules : **Milicja:** [+ pl_party_militia +] ?]": "[? if polish_party_rules : **Milicja:** [+ pl_party_militia +] ?]",
   "= Trade unions": "= Związki zawodowe",
@@ -31,7 +31,7 @@
   "[? if polish_presidential_in_progress : The December 1922 presidential succession is in progress. ?]": "[? if polish_presidential_in_progress : Trwa grudniowy wybór prezydenta w 1922 roku. ?]",
   "[? if sejm_first_election_completed : **Marshal of the Sejm:** [+ pl_speaker_display +] ?]": "[? if sejm_first_election_completed : **Marszałek Sejmu:** [+ pl_speaker_display +] ?]",
   "[? if sejm_first_election_completed : **Senate:** [+ pl_senate_display +] ?]": "[? if sejm_first_election_completed : **Senat:** [+ pl_senate_display +] ?]",
-  "[? if pl_chapter_ended : The first chapter has ended with the certified result of the next lawful Sejm election. The chapter report describes the final state. ?]": "[? if pl_chapter_ended : Pierwszy rozdział zakończył się zatwierdzonym wynikiem następnych legalnych wyborów do Sejmu. Raport z rozdziału opisuje stan końcowy. ?]",
+  "[? if pl_chapter_ended : The first chapter has ended with the certified result of the next lawful Sejm election. The chapter report describes the final state. ?]": "[? if pl_chapter_ended : Pierwszy rozdział zakończył się kolejnymi wyborami do Sejmu. Raport z rozdziału opisuje stan końcowy. ?]",
   "= Politics": "= Polityka",
   "[? if polish_politics_rules : **Democracy:** [+ pl_pol_democracy +] ?]": "[? if polish_politics_rules : **Demokracja:** [+ pl_pol_democracy +] ?]",
   "[? if polish_politics_rules : **Authority of the Sejm:** [+ pl_pol_authority +] ?]": "[? if polish_politics_rules : **Autorytet Sejmu:** [+ pl_pol_authority +] ?]",
@@ -58,7 +58,6 @@
   "**KPP:** [+ kpp_relation : relationships +]": "**KPP:** [+ kpp_relation : relationships +]",
   "**ZLN:** [+ zln_relation : relationships +]": "**ZLN:** [+ zln_relation : relationships +]",
   "= Factions in the PPS": "= Frakcje w PPS",
-  "*These three currents are gameplay abstractions rather than formal organizations. [? if not polish_party_rules : Inherited German cards feed them through a temporary compatibility bridge until each card receives a researched Polish response. ?][? if polish_party_rules : Their strengths add up to 100; the party's dissent is their dissent weighted by strength. ?]*": "*Te trzy nurty są uproszczeniem gry, a nie formalnymi organizacjami. [? if not polish_party_rules : Odziedziczone karty niemieckie zasilają je przez tymczasowy pomost zgodności, dopóki każda karta nie dostanie zbadanej polskiej odpowiedzi. ?][? if polish_party_rules : Ich siły sumują się do 100; sprzeciw w partii to sprzeciw frakcji ważony ich siłą. ?]*",
   "{!<strong><span class=\"tooltip-text\" title=\"The parliamentary mainstream: democratic socialism, reform, workers' rights, defence of democracy and Polish independence.\">Centrum PPS</span></strong>!} — strength: [+ centrum_strength : strength +], dissent: [+ centrum_dissent : dissent +]": "{!<strong><span class=\"tooltip-text\" title=\"Parlamentarny główny nurt: demokratyczny socjalizm, reformy, prawa pracownicze, obrona demokracji i niepodległości Polski.\">Centrum PPS</span></strong>!} — siła: [+ centrum_strength : strength +], sprzeciw: [+ centrum_dissent : dissent +]",
   "{!<strong><span class=\"tooltip-text\" title=\"The socialist left: stronger class politics, faster economic transformation and greater openness to cooperation on the left.\">Lewica PPS</span></strong>!} — strength: [+ lewica_strength : strength +], dissent: [+ lewica_dissent : dissent +]": "{!<strong><span class=\"tooltip-text\" title=\"Socjalistyczna lewica: wyraźniejsza polityka klasowa, szybsza przebudowa gospodarki i większa otwartość na współpracę na lewicy.\">Lewica PPS</span></strong>!} — siła: [+ lewica_strength : strength +], sprzeciw: [+ lewica_dissent : dissent +]",
   "{!<strong><span class=\"tooltip-text\" title=\"The independence and Piłsudski-oriented current: a strong state, anti-communism and state-led social reform.\">Piłsudczycy</span></strong>!} — strength: [+ pilsudczycy_strength : strength +], dissent: [+ pilsudczycy_dissent : dissent +]": "{!<strong><span class=\"tooltip-text\" title=\"Nurt niepodległościowy, bliski Piłsudskiemu: silne państwo, antykomunizm i reformy społeczne prowadzone przez państwo.\">Piłsudczycy</span></strong>!} — siła: [+ pilsudczycy_strength : strength +], sprzeciw: [+ pilsudczycy_dissent : dissent +]",
@@ -121,7 +120,7 @@
   "[? if polish_economy_system : **Budget:** [+ pl_eco_budget +] ?]": "[? if polish_economy_system : **Budżet:** [+ pl_eco_budget +] ?]",
   "[? if polish_economy_system : **Currency:** [+ pl_eco_currency +] ?]": "[? if polish_economy_system : **Waluta:** [+ pl_eco_currency +] ?]",
   "[? if polish_economy_system : **Inflation:** [+ pl_eco_inflation +] ?]": "[? if polish_economy_system : **Inflacja:** [+ pl_eco_inflation +] ?]",
-  "[? if polish_economy_system : **Real wages (index, 100 at the opening):** [+ pl_eco_wage +] ?]": "[? if polish_economy_system : **Płace realne (indeks, 100 na początku gry):** [+ pl_eco_wage +] ?]",
+  "[? if polish_economy_system : **Real wages (index, 100 at the opening):** [+ pl_eco_wage +] ?]": "[? if polish_economy_system : **Płace realne (indeks, styczeń 1922 = 100):** [+ pl_eco_wage +] ?]",
   "[? if polish_economy_system : **Output (index):** [+ pl_eco_output +] ?]": "[? if polish_economy_system : **Produkcja (indeks):** [+ pl_eco_output +] ?]",
   "[? if polish_economy_system : **Credit (0–100):** [+ pl_eco_credit +] ?]": "[? if polish_economy_system : **Kredyt (0–100):** [+ pl_eco_credit +] ?]",
   "[? if polish_economy_system : **Unemployment:** [+ pl_eco_unemployment +] ?]": "[? if polish_economy_system : **Bezrobocie:** [+ pl_eco_unemployment +] ?]",
@@ -132,6 +131,7 @@
   "[? if not polish_economy_system and spd_in_government = 1 : **Budget:** [+ budget +] ?]": "[? if not polish_economy_system and spd_in_government = 1 : **Budżet:** [+ budget +] ?]",
   "[? if not polish_economy_system : **Inflation:** [+ inflation_2 +]% ?]": "[? if not polish_economy_system : **Inflacja:** [+ inflation_2 +]% ?]",
   "[? if not polish_economy_system and black_thursday_seen = 1 : **Unemployment:** [+ unemployed_2 +]% ?]": "[? if not polish_economy_system and black_thursday_seen = 1 : **Bezrobocie:** [+ unemployed_2 +]% ?]",
-  "[? if not polish_economy_system : **Economic growth:** [+ economic_growth_2 +]% ?]": "[? if not polish_economy_system : **Wzrost gospodarczy:** [+ economic_growth_2 +]% ?]"
+  "[? if not polish_economy_system : **Economic growth:** [+ economic_growth_2 +]% ?]": "[? if not polish_economy_system : **Wzrost gospodarczy:** [+ economic_growth_2 +]% ?]",
+  "*[? if not polish_party_rules : Inherited German cards feed them through a temporary compatibility bridge until each card receives a researched Polish response. ?][? if polish_party_rules : The strengths of the three currents add up to 100; the dissent of the party is their dissent weighted by strength. ?]*": "*[? if not polish_party_rules : Odziedziczone karty niemieckie zasilają je przez tymczasowy pomost zgodności, dopóki każda karta nie dostanie zbadanej polskiej odpowiedzi. ?][? if polish_party_rules : Siły trzech nurtów sumują się do 100; sprzeciw w partii to ich sprzeciw ważony siłą. ?]*"
  }
 }

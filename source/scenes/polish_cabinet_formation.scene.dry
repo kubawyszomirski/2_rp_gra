@@ -31,8 +31,6 @@ Q.pl_form_cause_on = Q.pl_form_cause ? 1 : 0;
 
 [+ pl_form_intro_appoints +]
 
-[+ pl_form_intro_sejm +]
-
 [+ pl_form_intro_plan +]
 
 - @variants: Begin: choose the variant of the cabinet
@@ -49,9 +47,9 @@ Q.pl_cfg_opposition_line = PolishGovernment.oppositionLine(Q);
 Q.pl_form_majority = PolishGovernment.majorityRequired(Q.S);
 !}
 
-= The variant of the cabinet
+= What cabinet do we want?
 
-Each variant says who forms the cabinet and what PPS does in it: in a party cabinet PPS sits with its ministers, a cabinet of experts PPS supports from outside, and in opposition PPS leaves the cabinet to the others. A majority needs [+ pl_form_majority +] MPs; a minority cabinet needs more votes for than against. A variant that is not possible now is greyed with the reason.
+Choose what kind of cabinet we want and what PPS does in it. A majority in the Sejm is [+ pl_form_majority +] MPs; a cabinet with less support can still govern if more MPs vote for it than against.
 
 - @var_left_minority
 - @var_centre_left
@@ -67,7 +65,7 @@ Each variant says who forms the cabinet and what PPS does in it: in a party cabi
 - @back_intro
 
 @var_left_minority
-title: In the cabinet: PPS and PSL Wyzwolenie
+title: We enter a cabinet with PSL Wyzwolenie
 subtitle: [+ pl_cfg_left_minority_line +]
 choose-if: {! return PolishGovernment.variantStatus(Q, 'left_minority').available !}
 unavailable-subtitle: [+ pl_cfg_left_minority_line +]
@@ -80,7 +78,7 @@ Q.pl_form_need_ports = st.portfolios ? 1 : 0;
 go-to: premier if pl_form_need_premier; portfolio_menu if pl_form_need_ports and not pl_form_need_premier; summary if not pl_form_need_premier and not pl_form_need_ports
 
 @var_centre_left
-title: In the cabinet: Centre-left
+title: We enter a centre-left cabinet
 subtitle: [+ pl_cfg_centre_left_line +]
 choose-if: {! return PolishGovernment.variantStatus(Q, 'centre_left').available !}
 unavailable-subtitle: [+ pl_cfg_centre_left_line +]
@@ -93,7 +91,7 @@ Q.pl_form_need_ports = st.portfolios ? 1 : 0;
 go-to: premier if pl_form_need_premier; portfolio_menu if pl_form_need_ports and not pl_form_need_premier; summary if not pl_form_need_premier and not pl_form_need_ports
 
 @var_left_labour
-title: In the cabinet: PPS, PSL Wyzwolenie and NPR
+title: We enter a cabinet with PSL Wyzwolenie and the National Workers’ Party
 subtitle: [+ pl_cfg_left_labour_line +]
 choose-if: {! return PolishGovernment.variantStatus(Q, 'left_labour').available !}
 unavailable-subtitle: [+ pl_cfg_left_labour_line +]
@@ -106,7 +104,7 @@ Q.pl_form_need_ports = st.portfolios ? 1 : 0;
 go-to: premier if pl_form_need_premier; portfolio_menu if pl_form_need_ports and not pl_form_need_premier; summary if not pl_form_need_premier and not pl_form_need_ports
 
 @var_pps_majority
-title: In the cabinet: PPS majority government
+title: We form a cabinet of PPS alone
 subtitle: [+ pl_cfg_pps_majority_line +]
 choose-if: {! return PolishGovernment.variantStatus(Q, 'pps_majority').available !}
 unavailable-subtitle: [+ pl_cfg_pps_majority_line +]
@@ -119,7 +117,7 @@ Q.pl_form_need_ports = st.portfolios ? 1 : 0;
 go-to: premier if pl_form_need_premier; portfolio_menu if pl_form_need_ports and not pl_form_need_premier; summary if not pl_form_need_premier and not pl_form_need_ports
 
 @var_broad_centre
-title: In the cabinet: Broad centre
+title: We enter a cabinet of the broad centre
 subtitle: [+ pl_cfg_broad_centre_line +]
 choose-if: {! return PolishGovernment.variantStatus(Q, 'broad_centre').available !}
 unavailable-subtitle: [+ pl_cfg_broad_centre_line +]
@@ -132,7 +130,7 @@ Q.pl_form_need_ports = st.portfolios ? 1 : 0;
 go-to: premier if pl_form_need_premier; portfolio_menu if pl_form_need_ports and not pl_form_need_premier; summary if not pl_form_need_premier and not pl_form_need_ports
 
 @var_skrzynski_broad
-title: In the cabinet: Broad cabinet of Skrzyński
+title: We enter the broad cabinet of Skrzyński
 subtitle: [+ pl_cfg_skrzynski_broad_line +]
 choose-if: {! return PolishGovernment.variantStatus(Q, 'skrzynski_broad').available !}
 unavailable-subtitle: [+ pl_cfg_skrzynski_broad_line +]
@@ -145,7 +143,7 @@ Q.pl_form_need_ports = st.portfolios ? 1 : 0;
 go-to: premier if pl_form_need_premier; portfolio_menu if pl_form_need_ports and not pl_form_need_premier; summary if not pl_form_need_premier and not pl_form_need_ports
 
 @var_national_unity
-title: In the cabinet: National unity
+title: We enter a cabinet of national unity
 subtitle: [+ pl_cfg_national_unity_line +]
 choose-if: {! return PolishGovernment.variantStatus(Q, 'national_unity').available !}
 unavailable-subtitle: [+ pl_cfg_national_unity_line +]
@@ -158,7 +156,7 @@ Q.pl_form_need_ports = st.portfolios ? 1 : 0;
 go-to: premier if pl_form_need_premier; portfolio_menu if pl_form_need_ports and not pl_form_need_premier; summary if not pl_form_need_premier and not pl_form_need_ports
 
 @var_united_left
-title: In the cabinet: United left with the communists
+title: We enter a cabinet of the united left with the communists
 subtitle: [+ pl_cfg_united_left_line +]
 choose-if: {! return PolishGovernment.variantStatus(Q, 'united_left').available !}
 unavailable-subtitle: [+ pl_cfg_united_left_line +]
@@ -171,7 +169,7 @@ Q.pl_form_need_ports = st.portfolios ? 1 : 0;
 go-to: premier if pl_form_need_premier; portfolio_menu if pl_form_need_ports and not pl_form_need_premier; summary if not pl_form_need_premier and not pl_form_need_ports
 
 @var_workers_front
-title: In the cabinet: Workers’ front with the communists
+title: We form a workers’ front with the communists
 subtitle: [+ pl_cfg_workers_front_line +]
 choose-if: {! return PolishGovernment.variantStatus(Q, 'workers_front').available !}
 unavailable-subtitle: [+ pl_cfg_workers_front_line +]
@@ -184,7 +182,7 @@ Q.pl_form_need_ports = st.portfolios ? 1 : 0;
 go-to: premier if pl_form_need_premier; portfolio_menu if pl_form_need_ports and not pl_form_need_premier; summary if not pl_form_need_premier and not pl_form_need_ports
 
 @var_expert
-title: From outside: a cabinet of experts
+title: We support a cabinet of experts
 subtitle: [+ pl_cfg_expert_line +]
 choose-if: {! return PolishGovernment.variantStatus(Q, 'expert').available !}
 unavailable-subtitle: [+ pl_cfg_expert_line +]
@@ -197,7 +195,7 @@ Q.pl_form_need_ports = st.portfolios ? 1 : 0;
 go-to: premier if pl_form_need_premier; portfolio_menu if pl_form_need_ports and not pl_form_need_premier; summary if not pl_form_need_premier and not pl_form_need_ports
 
 @var_opposition
-title: In opposition: PPS does not enter a cabinet
+title: We stay in opposition
 subtitle: [+ pl_cfg_opposition_line +]
 on-arrival: {!
 PolishGovernment.chooseVariant(Q, 'opposition');
@@ -714,7 +712,7 @@ new-page: true
 
 = Terms of the stabilisation
 
-Grabski's stabilisation profile is part of this offer (9.7). By default he stabilises quickly with named cuts and a wealth tax. Our toleration can ask for other terms; he may refuse our demands if he has enough support without us. Changing the terms is free.
+Grabski's stabilisation programme is part of this offer. Without our terms he stabilises quickly, with the named cuts and a wealth tax. Our toleration can ask for other terms; he may refuse them if he has enough support without us. Changing the terms is free.
 
 - @terms_none
 - @terms_loan
@@ -723,7 +721,7 @@ Grabski's stabilisation profile is part of this offer (9.7). By default he stabi
 
 @terms_none
 title: No terms of our own
-subtitle: Grabski keeps his default profile.
+subtitle: Grabski follows his own plan of stabilisation.
 on-arrival: {!
 PolishGovernment.setDraft(Q, 'stabilisation_terms', 'none');
 !}
@@ -749,7 +747,7 @@ go-to: summary
 
 @submit
 title: Submit the offer
-subtitle: [? if pl_form_mandatory : No month is spent. ?][? if not pl_form_mandatory : Spends this month's action. ?]
+subtitle: [? if not pl_form_mandatory : Spends this month's action. ?]
 choose-if: {! return PolishGovernment.submitStatus(Q).available !}
 unavailable-subtitle: [+ pl_form_submit_reason +]
 on-arrival: {!
@@ -779,11 +777,11 @@ new-page: true
 
 Our offer: [+ pl_fres_offer +].
 
-[? if pl_fres_forecast : Declared votes on our offer: [+ pl_fres_forecast +]. ?]
+[? if pl_fres_forecast : [+ pl_fres_forecast +] ?]
 
-[? if pl_fres_answers : Answers: [+ pl_fres_answers +]. ?]
+[? if pl_fres_answers : [+ pl_fres_answers +] ?]
 
-[? if pl_fres_appointed : **The head of state appoints [+ pl_fres_appointed +].** ?]
+[? if pl_fres_appointed : **[+ pl_fres_appointed +]** ?]
 
 [? if pl_fres_minority : [+ pl_fres_minority +] ?]
 

@@ -5,7 +5,6 @@
   "title: The Coup": "title: Zamach",
   "subtitle: An armed attempt against the government; PPS decides its stance and the part of its organisations.": "subtitle: Zbrojna próba przeciw rządowi; PPS decyduje o swoim stanowisku i udziale swoich organizacji.",
   "= An attempt against the government": "= Próba zamachu na rząd",
-  "Units close to Józef Piłsudski march on the capital; the government refuses to step down. The pressure towards a coup has passed every threshold of the attempt. The army groups of this game are a synthetic profile, not the units of May 1926.": "Oddziały bliskie Józefowi Piłsudskiemu maszerują na stolicę; rząd odmawia ustąpienia. Presja na zamach przekroczyła wszystkie progi próby. Zgrupowania wojska w tej grze to syntetyczny profil, a nie jednostki z maja 1926 roku.",
   "What PPS knows of the loyalty of the groups to Piłsudski is only an interval: [+ pl_coup_known +]. Democracy stands at [+ pl_coup_democracy +]; it shifts how many soldiers are ready to join. No month is spent until the attempt is resolved.": "O lojalności zgrupowań wobec Piłsudskiego PPS zna tylko przedziały: [+ pl_coup_known +]. Demokracja wynosi [+ pl_coup_democracy +]; wpływa na to, ilu żołnierzy jest gotowych się przyłączyć. Do rozstrzygnięcia próby nie upływa żaden miesiąc.",
   "- @begin: Decide the stance of PPS.": "- @begin: Zdecyduj o stanowisku PPS.",
   "= The stance of PPS": "= Stanowisko PPS",
@@ -35,6 +34,7 @@
   "title: Reject it and keep our organisations engaged": "title: Odrzuć ją i utrzymaj zaangażowanie naszych organizacji",
   "= The outcome of the attempt": "= Wynik próby",
   "The contribution of PPS, compared with the same draws without our organisations: [+ pl_coup_contribution +]. [+ pl_coup_effects +].": "Wkład PPS w porównaniu z tymi samymi losowaniami bez naszych organizacji: [+ pl_coup_contribution +]. [+ pl_coup_effects +].",
-  "- @polish_chapter_report: Continue to the report of the chapter.": "- @polish_chapter_report: Przejdź do raportu z rozdziału."
+  "- @polish_chapter_report: Continue to the report of the chapter.": "- @polish_chapter_report: Przejdź do raportu z rozdziału.",
+  "Units close to Józef Piłsudski march on the capital; the government refuses to step down.": "Oddziały bliskie Józefowi Piłsudskiemu maszerują na stolicę; rząd odmawia ustąpienia."
  }
 }

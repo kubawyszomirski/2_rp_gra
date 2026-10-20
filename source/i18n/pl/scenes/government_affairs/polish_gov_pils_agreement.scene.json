@@ -5,7 +5,6 @@
   "title: Agreement with Piłsudski": "title: Porozumienie z Piłsudskim",
   "subtitle: A concrete concession under a legal procedure, or a refusal and a civilian cabinet.": "subtitle: Konkretne ustępstwo w legalnej procedurze albo odmowa i gabinet cywilny.",
   "= Agreement with Piłsudski": "= Porozumienie z Piłsudskim",
-  "Piłsudski judges an offer by its programme, the real function it gives him and the credibility of PPS; the minimal relation is only a gate. The dispute about the organisation of the supreme military authorities is the historical background; an early inspectorate and the premiership on these terms are alternatives of the game.": "Piłsudski ocenia ofertę według jej programu, rzeczywistej funkcji, jaką mu daje, i wiarygodności PPS; minimalna relacja jest tylko progiem. Spór o organizację naczelnych władz wojskowych jest tłem historycznym; wczesny inspektorat i premierostwo na tych warunkach to alternatywy gry.",
   "title: A military function under civilian control": "title: Funkcja wojskowa pod kontrolą cywilną",
   "subtitle: Needs a relation of at least 40; once carried out: the coup pressure falls (−12), the relation improves (+4) and Piłsudczycy dissent falls (−5); nominations raise loyalty to him in the group under him (+0.05 at most).": "subtitle: Wymaga relacji co najmniej 40; po wykonaniu: presja na zamach spada (−12), relacja się poprawia (+4), a sprzeciw Piłsudczyków spada (−5); nominacje zwiększają lojalność wobec niego w podległym mu zgrupowaniu (+0,05 najwyżej).",
   "title: An independent inspectorate with freer nominations": "title: Niezależny inspektorat z większą swobodą nominacji",
@@ -14,6 +13,7 @@
   "subtitle: Needs a relation of at least 65; he becomes a candidate of the next formation of a cabinet. After his real appointment: the coup pressure falls (−20), the relation improves (+4) and Piłsudczycy dissent falls (−5).": "subtitle: Wymaga relacji co najmniej 65; staje się kandydatem przy następnym formowaniu gabinetu. Po jego rzeczywistym powołaniu: presja na zamach spada (−20), relacja się poprawia (+4), a sprzeciw Piłsudczyków spada (−5).",
   "title: Refuse concessions and offer a civilian cabinet": "title: Odmów ustępstw i zaproponuj gabinet cywilny",
   "subtitle: No free relief of pressure; the first new civil obligation fulfilled may lower it once.": "subtitle: Bez darmowego zmniejszenia presji; pierwsze spełnione nowe zobowiązanie cywilne może ją raz obniżyć.",
-  "- @root: Continue.": "- @root: Dalej."
+  "- @root: Continue.": "- @root: Dalej.",
+  "Piłsudski judges an offer by its programme, the real function it gives him and the credibility of PPS; good relations are needed, but they are not enough.": "Piłsudski ocenia ofertę według jej programu, rzeczywistej funkcji, jaką mu daje, i wiarygodności PPS; poprawne stosunki są potrzebne, ale same nie wystarczą."
  }
 }

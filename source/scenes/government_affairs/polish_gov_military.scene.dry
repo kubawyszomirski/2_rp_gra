@@ -17,7 +17,7 @@ Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_military');
 
 *[+ pl_gc_ministry +]*
 
-The post and its scope are a marked synthetic function over one group of the army; the historical appointments are not reconstructed. A compromise that gives Piłsudski personal powers goes through the agreement with him, not through this card.
+The post gives oversight of one group of the army. A compromise that gives Piłsudski personal powers goes through the agreement with him, not through this card.
 
 [+ pl_gc_budget +]
 

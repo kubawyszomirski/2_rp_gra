@@ -348,7 +348,7 @@
       agreement.law_id = null;
       Q.pl_pils_result = L('Piłsudski accepts the premiership on the programme of a legal cabinet. He becomes a candidate of the next formation of a ' +
         'cabinet (8.8), which costs no second action; the relief comes only after his real appointment.', 'Piłsudski przyjmuje premierostwo na programie ' +
-        'legalnego gabinetu. Staje się kandydatem przy następnym formowaniu gabinetu (8.8), które nie kosztuje drugiej akcji; złagodzenie przychodzi dopiero ' +
+        'legalnego gabinetu. Staje się kandydatem przy następnym formowaniu gabinetu, które nie kosztuje drugiej akcji; złagodzenie przychodzi dopiero ' +
         'po jego rzeczywistym powołaniu.');
     }
     party.writeMirrors(Q);
@@ -1120,9 +1120,10 @@
     'only a military function under civilian control': 'tylko funkcja wojskowa pod kontrolą cywilną',
     'an agreement with Piłsudski already exists': 'porozumienie z Piłsudskim już istnieje',
     'civilian control of the army and the responsibility of the government before the Sejm': 'cywilna kontrola nad wojskiem i odpowiedzialność rządu przed Sejmem',
-    'concessions_to_pps: the winner owes the recorded conditions of PPS': 'concessions_to_pps: zwycięzca jest winien PPS zapisane warunki',
+    'prolonged_conflict': 'konflikt się przeciąga',
+    'concessions_to_pps: the winner owes the recorded conditions of PPS': 'zwycięzca jest winien PPS uzgodnione warunki',
     'cabinet_formation: a prime minister accepted by the camp of Piłsudski, appointed by the procedure of 8.8':
-      'cabinet_formation: premier akceptowany przez obóz Piłsudskiego, powołany w procedurze 8.8',
+      'nowym premierem zostanie ktoś akceptowany przez obóz Piłsudskiego',
   });
   rules.registerStoredText(text => {
     if (STORED_PL[text]) return STORED_PL[text];
@@ -1135,9 +1136,9 @@
     m = /^the obligations of the agreement (.+)$/.exec(text);
     if (m) return 'zobowiązania porozumienia ' + m[1];
     m = /^inspectorate_law: the law on the competences of an independent inspectorate, due by (\d+)\/(\d+) \(P\)$/.exec(text);
-    if (m) return 'inspectorate_law: ustawa o kompetencjach niezależnego inspektoratu, w terminie do ' + rules.monthYear(rules.timeOf(+m[2], +m[1]), 'gen') + ' (P)';
+    if (m) return 'ustawa o kompetencjach niezależnego inspektoratu wojska, w terminie do ' + rules.monthYear(rules.timeOf(+m[2], +m[1]), 'gen');
     m = /^settlement_clauses: the troops return to their garrisons; amnesty and no repression of the participants; the Sejm and the calendar of elections are kept(; the mobilisation of PPS ends)?$/.exec(text);
-    if (m) return 'settlement_clauses: wojska wracają do garnizonów; amnestia i brak represji wobec uczestników; Sejm i kalendarz wyborczy zostają zachowane' +
+    if (m) return 'wojska wracają do garnizonów; amnestia i brak represji wobec uczestników; Sejm i kalendarz wyborczy zostają zachowane' +
       (m[1] ? '; mobilizacja PPS się kończy' : '');
     return undefined;
   });

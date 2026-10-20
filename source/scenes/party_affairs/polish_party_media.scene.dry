@@ -55,7 +55,7 @@ go-to: result
 
 @investigation
 title: A press investigation
-subtitle: 1 resource; the credibility of the press rises (+4) and the revealed fact is recorded once. No invented scandal.
+subtitle: 1 resource; the credibility of the press rises (+4). We reveal only true facts, each only once.
 choose-if: {! return PolishParty.pressInvestigationStatus(Q).available !}
 unavailable-subtitle: [+ pl_media_investigation_why +]
 on-arrival: {!

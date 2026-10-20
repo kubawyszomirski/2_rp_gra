@@ -1,6 +1,6 @@
 # Polska wersja: katalog kart do kodowania
 
-**Stan — referencja 0.79, 14 października 2026. Wszystkie partie przejrzane; brak otwartych pytań; wszystkie karty wdrożone (etapy 0–8 planu implementacji); teksty kart mają też wersję polską (referencja 23.23); obecną linię kart stanowisk, Składek i Programu gospodarczego można potwierdzić (referencja 23.24); doradcy występują w grze jako Centralny Komitet Wykonawczy (referencja 23.25); opisy wyborów podają skutki słowami, a liczby na życzenie (referencja 23.26); dziewięć uwag z gry zmienia m.in. pieniądze partii, organizacje, B2, reformę konstytucyjną, stosunek do rządu i program (referencja 23.29); trzynaście kolejnych uwag zmienia program, wspólną listę, karty przypięte, kontrolę wojska, strajki i opis wyborów prezydenta (referencja 23.30); od 0.58 TUR można założyć od startu, a wspólną listę partnerzy przyjmują od relacji 75 (referencja 23.31); od 0.59 B5 ma opcję rozbicia nabożeństw przez Milicję, a karta związków jest opisana słowami (referencja 23.32); od 0.60 trzy talie mają po dwa miejsca ręki, a kartę odrzuca się na niej samej (referencja 23.33); od 0.61 tworzenie gabinetu ma cztery kroki z jawną oceną partnerów i resortami za punkty wpływu (referencja 23.34); 0.62 nie zmienia kart: trasa miesiąca jest odporna na błąd wyświetlania (referencja 23.35); od 0.64 karta 7.6 ma dwie postaci: „Poparcie dla rządu” przy tolerowaniu i „Sprawy koalicji” w rządzie (referencja 23.37); od 0.66 karta 8.3 to dwie karty Skarbu, a każda karta ministerstwa ma znaczek resortu (referencja 23.39); od 0.67 po wyborach 1922 r. gabinet z PPS potrzebuje 185 posłów własnych klubów, a rząd bez Piasta na głosach mniejszości napotyka głosy przeciw (referencja 23.40); od 0.68 karta 5.3 nie ma kolportażu prasy, który zostaje w karcie 5.1 (referencja 23.41); 0.70 nie zmienia kart: z kodu usunięto nieużywane funkcje kolportażu (referencja 23.43); od 0.71 karta 7.1 jest kreatorem z planszą wstępną, wariantem z rolą PPS, premierem swojego okresu, resortami i podsumowaniem z rozwijanymi ocenami (referencja 23.44); od 0.72 wydarzenie 9.1 ma jedną odpowiedź, a PPS wybiera w karcie 7.1 (referencja 23.45); od 0.74 karty 7.3, 7.4 i 7.6 oraz przygotowane reformy są kartami pilnymi talii zamiast kart przypiętych (referencja 23.47); od 0.75 strona „Nowy skład CKW” pokazuje przy każdym kandydacie portret, pogrubioną frakcję, biogram i jego akcje (referencja 23.48); od 0.76 użyta karta partii odpoczywa 3 M (karty linii partyjnej razem 6 M, Agenda partii wcale), skład CKW wymaga trzech osób, a gabinet fachowców wbrew kandydatowi Naczelnika kosztuje relację z Piłsudskim −5 i 1 R (referencja 23.49); od 0.77 karta mediów to dwie karty — „Kampania” (pięć kampanii w sprawach) i „Prasa” — zwykłe karty rządu odpoczywają 3 M, a karta ostrzeżenia partnera tłumaczy sprawę (referencja 23.50); od 0.78 karta Organizacje składa jedną inwestycję, obecny skład CKW można zatwierdzić bez kosztu, praca organizacyjna to dwie opcje Agendy, a kursy TUR mają własną kartę (referencja 23.51); od 0.79 odrzucanie nie ma limitu, Kampania jest darmowa, kandydaci na premiera są opisani w linijkach, Ziemięcki ma nadzwyczajną zbiórkę, a karta jedności tłumaczy sprawę (referencja 23.52).** Katalog zbiera w jednym miejscu to, co [referencja techniczna](POLISH_TECHNICAL_REFERENCE.md) mówi o każdej karcie i wydarzeniu pierwszego rozdziału. Jest ściągą do kodowania: jedna tabela na kartę. Katalog powstał w całości w wersji 0.32. Wszystkie sześć partii użytkownik przejrzał w 0.33–0.38. Rozstrzygnięte pytania pogrupowano w rozdziale 10.
+**Stan — referencja 0.80, 20 października 2026. Wszystkie partie przejrzane; brak otwartych pytań; wszystkie karty wdrożone (etapy 0–8 planu implementacji); teksty kart mają też wersję polską (referencja 23.23); obecną linię kart stanowisk, Składek i Programu gospodarczego można potwierdzić (referencja 23.24); doradcy występują w grze jako Centralny Komitet Wykonawczy (referencja 23.25); opisy wyborów podają skutki słowami, a liczby na życzenie (referencja 23.26); dziewięć uwag z gry zmienia m.in. pieniądze partii, organizacje, B2, reformę konstytucyjną, stosunek do rządu i program (referencja 23.29); trzynaście kolejnych uwag zmienia program, wspólną listę, karty przypięte, kontrolę wojska, strajki i opis wyborów prezydenta (referencja 23.30); od 0.58 TUR można założyć od startu, a wspólną listę partnerzy przyjmują od relacji 75 (referencja 23.31); od 0.59 B5 ma opcję rozbicia nabożeństw przez Milicję, a karta związków jest opisana słowami (referencja 23.32); od 0.60 trzy talie mają po dwa miejsca ręki, a kartę odrzuca się na niej samej (referencja 23.33); od 0.61 tworzenie gabinetu ma cztery kroki z jawną oceną partnerów i resortami za punkty wpływu (referencja 23.34); 0.62 nie zmienia kart: trasa miesiąca jest odporna na błąd wyświetlania (referencja 23.35); od 0.64 karta 7.6 ma dwie postaci: „Poparcie dla rządu” przy tolerowaniu i „Sprawy koalicji” w rządzie (referencja 23.37); od 0.66 karta 8.3 to dwie karty Skarbu, a każda karta ministerstwa ma znaczek resortu (referencja 23.39); od 0.67 po wyborach 1922 r. gabinet z PPS potrzebuje 185 posłów własnych klubów, a rząd bez Piasta na głosach mniejszości napotyka głosy przeciw (referencja 23.40); od 0.68 karta 5.3 nie ma kolportażu prasy, który zostaje w karcie 5.1 (referencja 23.41); 0.70 nie zmienia kart: z kodu usunięto nieużywane funkcje kolportażu (referencja 23.43); od 0.71 karta 7.1 jest kreatorem z planszą wstępną, wariantem z rolą PPS, premierem swojego okresu, resortami i podsumowaniem z rozwijanymi ocenami (referencja 23.44); od 0.72 wydarzenie 9.1 ma jedną odpowiedź, a PPS wybiera w karcie 7.1 (referencja 23.45); od 0.74 karty 7.3, 7.4 i 7.6 oraz przygotowane reformy są kartami pilnymi talii zamiast kart przypiętych (referencja 23.47); od 0.75 strona „Nowy skład CKW” pokazuje przy każdym kandydacie portret, pogrubioną frakcję, biogram i jego akcje (referencja 23.48); od 0.76 użyta karta partii odpoczywa 3 M (karty linii partyjnej razem 6 M, Agenda partii wcale), skład CKW wymaga trzech osób, a gabinet fachowców wbrew kandydatowi Naczelnika kosztuje relację z Piłsudskim −5 i 1 R (referencja 23.49); od 0.77 karta mediów to dwie karty — „Kampania” (pięć kampanii w sprawach) i „Prasa” — zwykłe karty rządu odpoczywają 3 M, a karta ostrzeżenia partnera tłumaczy sprawę (referencja 23.50); od 0.78 karta Organizacje składa jedną inwestycję, obecny skład CKW można zatwierdzić bez kosztu, praca organizacyjna to dwie opcje Agendy, a kursy TUR mają własną kartę (referencja 23.51); od 0.79 odrzucanie nie ma limitu, Kampania jest darmowa, kandydaci na premiera są opisani w linijkach, Ziemięcki ma nadzwyczajną zbiórkę, a karta jedności tłumaczy sprawę (referencja 23.52); warianty rządu, Kampania i teksty scen mówią prostymi słowami, bez uwag warsztatowych (referencja 23.53).** Katalog zbiera w jednym miejscu to, co [referencja techniczna](POLISH_TECHNICAL_REFERENCE.md) mówi o każdej karcie i wydarzeniu pierwszego rozdziału. Jest ściągą do kodowania: jedna tabela na kartę. Katalog powstał w całości w wersji 0.32. Wszystkie sześć partii użytkownik przejrzał w 0.33–0.38. Rozstrzygnięte pytania pogrupowano w rozdziale 10.
 
 ## 1. Jak czytać katalog
 
@@ -441,6 +441,8 @@ Kampania mobilizacyjna i śledztwo prasowe należą do tej karty (Z — 0.34). �
 
 **Otwarte pytania:** brak.
 
+**Z — 0.80 (decyzja 1A użytkownika z 20 X 2026):** kampanie opisane słowami — „bardzo popularna wśród…”, „nielubiana wśród…”, zmiana w nawiasie według ustawienia liczb — bez sumy w kraju; opcji „Wiece przed wyborami” nie ma na karcie (referencja 5.3).
+
 ### 5.4. Składki — `party.dues`
 
 | Pole | Treść | Status |
@@ -566,6 +568,8 @@ Budowę samego TUR (`party.tur`) opisuje 5.1 katalogu.
 **Otwarte pytania:** brak.
 
 **Z — 0.78 (decyzja 5A użytkownika z 8 X 2026):** kursy mają własną kartę „Kursy TUR” (`polish_party_tur`), dostępną, gdy TUR działa; każdy kurs to jedno kliknięcie z celem wybranym przez grę (referencja 13.2).
+
+**Z — 0.80 (uwaga użytkownika z 20 X 2026):** w tekstach pełna nazwa „Towarzystwo Uniwersytetu Robotniczego”; skrót tylko w tytule karty „Kursy TUR” (referencja 13.2).
 
 ### 5.9. Uruchomienie spółdzielni — `party.cooperative`
 
@@ -893,6 +897,8 @@ Czerwonych linii, brakujących mandatów i bramki kryzysu nie można ominąć wy
 
 **Z — 0.79 (uwaga 3 użytkownika z 14 X 2026):** kandydat na premiera jest opisany linijkami: kim jest, kto za nim stoi i kto przeciw (z posłami), program, zysk i koszt wyboru, także wyszarzony; bez uwag historycznych (referencja 8.7).
 
+**Z — 0.80 (tekst użytkownika z 20 X 2026, decyzja 3):** warianty prostymi zdaniami — czym jest rząd, ilu ma posłów i co to znaczy, kto się zgadza, głosy i program — wariant niemożliwy mówi dlaczego; wynik „Poparli: … Nie poparli: …” bez ocen (referencja 8.7).
+
 ### 7.2. Zabezpieczenie bezrobotnych, D1 i D2 — `parliament.legislative_program`
 
 | Pole | Treść | Status |
@@ -1081,6 +1087,8 @@ Do jednego głosowania trafiają wszystkie podtrzymane kandydatury. Kworum ≥14
 
 **Otwarte pytania:** brak.
 
+**Z — 0.80 (uwagi użytkownika z 20 X 2026):** opcje mówią, co daje poparcie kandydata (relacja z jego partią, umowa Rataja o komisjach i regulaminie, wiarygodność przy wygranej Daszyńskiego); bez zdań o premii za zgłoszenie i o zapisie wyniku (referencja 7.5).
+
 ### 7.9. Wybór prezydenta — `presidency.election`
 
 | Pole | Treść | Status |
@@ -1106,6 +1114,8 @@ Do jednego głosowania trafiają wszystkie podtrzymane kandydatury. Kworum ≥14
 Finał dwóch kandydatów wygrywa większa liczba głosów; remis rozstrzyga losowanie 50/50; przy `no_election` urząd sprawuje marszałek, a nowe głosowanie odbywa się w następnym miesiącu (M06). Wybór prezydenta nie kończy rozdziału.
 
 **Otwarte pytania:** brak.
+
+**Z — 0.80 (uwagi użytkownika z 20 X 2026):** krótszy wstęp Zgromadzenia Narodowego i wynik bez uwag warsztatowych (referencja 7.3).
 
 ### 7.10. Ugoda i reakcja na represje — `parliament.strike_response`
 

@@ -5,7 +5,6 @@
   "title: Constitutional Reform": "title: Reforma konstytucyjna",
   "subtitle: Three separate projects, each with its own act.": "subtitle: Trzy osobne projekty, każdy z własną ustawą.",
   "= Constitutional reform": "= Reforma konstytucyjna",
-  "Each project is a separate alternative with its own act. After its promulgation and one month of implementation it costs 1 B once and changes the rules it names; no declaration alone changes the constitution.": "Każdy projekt to osobna alternatywa z własną ustawą. Po ogłoszeniu i miesiącu wdrażania kosztuje jednorazowo 1 B i zmienia wymienione w nim zasady; żadna sama deklaracja nie zmienia konstytucji.",
   "title: Democratic guarantees": "title: Gwarancje demokratyczne",
   "subtitle: Protection of associations, equal rights and self-government; relations with Wyzwolenie and both minority representations improve (+4); ZLN is against.": "subtitle: Ochrona stowarzyszeń, równych praw i samorządu; relacje z Wyzwoleniem i obiema reprezentacjami mniejszości się poprawiają (+4); ZLN jest przeciw.",
   "title: Constructive vote of no confidence": "title: Konstruktywne wotum nieufności",
@@ -17,6 +16,7 @@
   "title: File the motion: democratic guarantees": "title: Złóż wniosek: gwarancje demokratyczne",
   "subtitle: Two thirds of the valid votes in the Sejm now, then in the Senate after 30 days.": "subtitle: Dwie trzecie ważnych głosów w Sejmie teraz, potem w Senacie po 30 dniach.",
   "title: File the motion: constructive vote of no confidence": "title: Złóż wniosek: konstruktywne wotum nieufności",
-  "title: File the motion: presidential arbitration": "title: Złóż wniosek: arbitraż prezydencki"
+  "title: File the motion: presidential arbitration": "title: Złóż wniosek: arbitraż prezydencki",
+  "Each project is a separate act. After its promulgation and one month of implementation it costs 1 budget unit once and changes the rules it names; no declaration alone changes the constitution.": "Każdy projekt to osobna ustawa. Po ogłoszeniu i miesiącu wdrażania kosztuje jednorazowo 1 jednostkę budżetu i zmienia wymienione w nim zasady; żadna sama deklaracja nie zmienia konstytucji."
  }
 }

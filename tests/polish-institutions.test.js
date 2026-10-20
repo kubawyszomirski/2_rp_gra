@@ -132,7 +132,7 @@ test('Zapis losowania urzędu: a tied Marshal vote keeps one roll, one winner an
   const roll = Q.S.rng.rolls[run.tie_break.roll_id];
   assert.equal(typeof roll, 'number');
   assert.equal(run.tie_break.winner_id, roll < 0.5 ? 'eugeniusz_smiarowski' : 'maciej_rataj');
-  assert.match(content(engine), /decided by a recorded lot/);
+  assert.match(content(engine), /the office was decided by lot/);
   for (const restored of [dendry.saveAndRestore(engine)]) {
     const RQ = restored.state.qualities;
     restored.goToScene('polish_speaker_election');

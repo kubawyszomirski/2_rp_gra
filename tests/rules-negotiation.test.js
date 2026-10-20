@@ -743,7 +743,7 @@ test('Powołanie od razu 0.61: an accepted PPS offer is appointed even when the 
   gov.setDraft(Q, 'configuration_id', 'centre_left');
   const fallback = gov.fallbackCabinet(Q);
   assert.deepEqual([fallback.offer.configuration_id, fallback.offer.candidate_id], ['chjeno_piast', 'witos']);
-  assert.match(gov.formationView(Q).verdict, /after the commit the cabinet is appointed at once — Centre-left, prime minister Ignacy Daszyński/);
+  assert.match(gov.formationView(Q).verdict, /after the commit the cabinet is appointed at once — a cabinet of the centre-left: PPS, both peasant parties and the National Workers’ Party, prime minister Ignacy Daszyński/);
   const result = gov.submitFormation(Q);
   assert.deepEqual([result.appointed.configuration_id, result.appointed.by], ['centre_left', 'pps']);
   // In opposition PPS sees beforehand which cabinet the head of state would appoint.
@@ -791,15 +791,18 @@ test('Lista gabinetów 0.61: every cabinet in one line with its clubs, seats, pa
   const Q = centreLeft();
   const line = gov.coalitionLine(Q, 'centre_left');
   assert.equal(line.available, true);
-  assert.match(line.line, /^Chosen now\. PPS 100 \+ PSL Wyzwolenie 60 \+ PSL Piast 80 \+ NPR 40 = 280 MPs\. Partners: PSL Wyzwolenie ✓, PSL Piast ✓, NPR ✓\. Votes: majority \(280 for; 223 needed\)\./);
+  // Z — 0.80 (the user's text of 20 X 2026): the variant in plain sentences — what the cabinet is, its MPs and what that means,
+  // who agrees, the votes and the programme in words; no minorities' sentence when they have no MPs.
+  assert.match(line.line, /^Our present choice\. This is a cabinet of the centre-left: PPS, both peasant parties and the National Workers’ Party\. Together they have 280 of 444 MPs, so it would have a safe majority in the Sejm\. PSL Wyzwolenie, PSL Piast and the National Workers’ Party agree to enter it\. 280 MPs would vote for the cabinet and 0 against\. That is a majority of the Sejm\. Its programme: /);
+  assert.doesNotMatch(line.line, /national minorities \(0\)/);
   // Z — 0.67: after the election of 1922 the 160 MPs of PPS and PSL Wyzwolenie are below the 185 of decision 3A.
   const left = gov.coalitionLine(Q, 'left_minority');
   assert.equal(left.available, false);
-  assert.match(left.line, /^PPS 100 \+ PSL Wyzwolenie 60 = 160 MPs\. After the election of 1922 a cabinet with PPS needs 185 MPs/);
+  assert.match(left.line, /^This is a cabinet of PPS and PSL Wyzwolenie\. Together they have 160 of 444 MPs\. After the election of 1922 a cabinet with PPS must have at least 185 MPs of its own parties, without the minorities\./);
   const broad = gov.coalitionLine(Q, 'broad_centre');
   assert.equal(broad.available, false);
-  assert.match(broad.line, /= 280 MPs\. Only in a real crisis/);
-  assert.match(gov.oppositionLine(Q), /^No partner’s agreement is needed\. Then /);
+  assert.match(broad.line, /of 444 MPs.*The parties agree to such a cabinet only in a serious crisis of the state/);
+  assert.match(gov.oppositionLine(Q), /^The Naczelnik Państwa will then appoint .+ without us\.$/);
   // Choosing a cabinet from the list brings PPS back from opposition.
   gov.setDraft(Q, 'pps_mode', 'opposition');
   gov.chooseCoalition(Q, 'left_minority');

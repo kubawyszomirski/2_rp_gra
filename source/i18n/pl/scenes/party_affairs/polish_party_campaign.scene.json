@@ -10,9 +10,7 @@
   "title: Land for the peasants": "title: Ziemia dla chłopów",
   "title: In defence of the Republic": "title: W obronie Republiki",
   "title: Work and benefits for the unemployed": "title: Praca i zasiłek dla bezrobotnych",
-  "title: Rallies before the election": "title: Wiece przed wyborami",
   "- @root: Continue.": "- @root: Dalej.",
-  "Meetings, rallies and the unions. A campaign costs no money, only this month's action, and reaches several groups at once; the numbers are the expected change of PPS support in points. [+ pl_campaign_line +]": "Zebrania, wiece i związki. Kampania nie kosztuje pieniędzy, tylko akcję tego miesiąca, i trafia naraz do kilku grup; liczby to spodziewana zmiana poparcia PPS w punktach. [+ pl_campaign_line +]",
-  "subtitle: No money. More of our voters go to the polls: the turnout of [+ pl_rally_groups +] rises by 0.04 until the vote.": "subtitle: Bez pieniędzy. Więcej naszych wyborców pójdzie do urn: frekwencja [+ pl_rally_groups +] rośnie o 0,04 do dnia głosowania."
+  "Meetings, rallies and the unions. A campaign costs nothing but this month's action and reaches several groups of voters at once. [+ pl_campaign_line +]": "Zebrania, wiece i związki. Kampania nie kosztuje nic poza akcją tego miesiąca i trafia naraz do kilku grup wyborców. [+ pl_campaign_line +]"
  }
 }

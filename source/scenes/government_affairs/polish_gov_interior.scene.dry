@@ -21,7 +21,7 @@ Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_interior');
 
 [+ pl_police_line +]
 
-An investigation names a recorded case; its label points to the case, not to a proof of guilt. The autonomy delegates schools, the official language and cultural institutions of one area to its self-government; it is an alternative of the game.
+An investigation concerns a known case; it does not by itself prove anyone's guilt. The autonomy delegates schools, the official language and cultural institutions of one area to its self-government.
 
 [+ pl_gc_budget +]
 

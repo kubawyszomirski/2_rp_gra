@@ -39,9 +39,8 @@ const P = {
   // Z — 0.78: the card of the organisations takes one investment at once; a second one named here waits for another month.
   orgs: a => ['polish_party_organizations', 'polish_party_organizations.' + a],
   militia: step => ['polish_party_militia', 'polish_party_militia.' + step],
-  // Z — 0.77: a campaign on a matter and the rallies before an election are on the Campaign card; the Press card has the rest.
+  // Z — 0.77: a campaign on a matter is on the Campaign card; the Press card has the rest. Z — 0.80: the rallies before an election left the card.
   campaign: issue => ['polish_party_campaign', 'polish_party_campaign.' + issue],
-  rallies: () => ['polish_party_campaign', 'polish_party_campaign.rallies'],
   press: option => ['polish_party_media', 'polish_party_media.' + option],
   // The press distribution is offered only on the card of the organisations (the media card no longer has it).
   distribution: () => P.orgs('press_distribution'),
@@ -308,7 +307,7 @@ const STRATEGIES = {
   election_campaign: strategy('election_campaign', '21.2: active election campaign', {
     month: ctx => {
       const pre = (ctx.after(1922, 7) && ctx.before(1922, 11)) || (ctx.after(1927, 9) && ctx.before(1928, 2));
-      const extra = pre ? [P.campaign(['eight_hours', 'land', 'republic'][ctx.t % 3]), P.rallies()] : [];
+      const extra = pre ? [P.campaign(['eight_hours', 'land', 'republic'][ctx.t % 3])] : [];
       return plan.organised(ctx, [...extra, ...plan.wage(ctx), ...plan.support(ctx)]);
     },
     // Z — 0.57: the joint list with PSL Wyzwolenie is the answer to the event before the election.

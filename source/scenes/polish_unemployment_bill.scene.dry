@@ -23,9 +23,9 @@ Q.pl_bill_withdraw_why = PolishProjects.billD2Status(Q, 'withdraw').reason;
 
 = The protection of the unemployed
 
-[? if not pl_bill_d2 : **D1.** PPS can start its own bill for the protection of the unemployed: a ready project with its cost, its financing and its executor, Labour's administration. It is one initiative in the chapter; refusing closes the offer without a bonus. ?]
+[? if not pl_bill_d2 : PPS can start its own bill for the protection of the unemployed: a ready project with its cost, its financing and its executor, Labour's administration. We can do it only once; refusing closes this chance. ?]
 
-[? if pl_bill_d2 : **D2.** The bill is ready. The full variant costs 2 B a month once it is in force; the limited variant covers the same people with a lower benefit for 1 B. The Sejm votes at once; the Senate has 30 days to object and 30 more to return the bill. ?]
+[? if pl_bill_d2 : The bill is ready. The full variant costs 2 budget units a month once it is in force; the limited variant covers the same people with a lower benefit for 1 unit. The Sejm votes at once; the Senate has 30 days to object and 30 more to return the bill. ?]
 
 [? if pl_bill_d2 : Forecast of the full variant: [+ pl_bill_full_forecast +]. Of the limited variant: [+ pl_bill_limited_forecast +]. [? if pl_bill_compromise : Ready to support the limited variant: [+ pl_bill_compromise +]. ?] ?]
 

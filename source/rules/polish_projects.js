@@ -816,7 +816,7 @@
       return forecastWith(Q, {charge: 1}) >= -2 ? OK : no(forecastBlock());
     }
     if (CASE_LABELS[option]) {
-      if (!investigationTarget(S, CASE_LABELS[option])) return no(L('Needs an open, named case of this kind with its evidence; none is recorded.', 'Wymaga otwartej, wymienionej sprawy tego rodzaju wraz z dowodami; żadna nie jest zapisana.'));
+      if (!investigationTarget(S, CASE_LABELS[option])) return no(L('Needs an open, named case of this kind with its evidence; none is recorded.', 'Wymaga otwartej, wymienionej sprawy tego rodzaju wraz z dowodami; takiej sprawy teraz nie ma.'));
       return forecastWith(Q, {charge: 1}) >= -2 ? OK : no(forecastBlock());
     }
     if (option === 'police_protection') {
@@ -939,7 +939,7 @@
 
   // Plant records are written by PolishUnions (synthetic_plants_v1); the cards of 8.1 and 8.6 act on them.
   const PLANT_HINT = 'plants are recorded by a credit crisis, an active reaction of business or a strike ended by exhaustion';
-  const PLANT_HINT_PL = 'zakład zapisuje kryzys kredytowy, aktywna reakcja przedsiębiorców albo strajk zakończony wyczerpaniem';
+  const PLANT_HINT_PL = 'zakłady trafiają na listę resortu przy kryzysie kredytowym, aktywnej reakcji przedsiębiorców albo po strajku zakończonym wyczerpaniem';
   // P: Industry and Trade acts on the plants of industry and the railway workshops; an estate of farm labour is
   // not within its competence.
   const INDUSTRY_PLANT_BRANCHES = Object.freeze(['industry', 'rail']);
@@ -978,13 +978,13 @@
     const S = Q.S;
     if (projectsOf(S, 'plant_rescue', p => preparedProject(p) && p.sponsor === 'pps').length) return no(L('A rescue is already prepared; launch it from the card “Prepared Reforms”.', 'Ratunek jest już przygotowany; uruchom go z karty „Przygotowane reformy”.'));
     if (!rescueTarget(S)) return no(L('Needs a recorded plant of industry or a railway workshop that has lost capacity and has no rescue yet; ' + PLANT_HINT + '.',
-      'Wymaga zapisanego zakładu przemysłowego albo warsztatu kolejowego, który stracił moce i nie ma jeszcze ratunku; ' + PLANT_HINT_PL + '.'));
+      'Wymaga zakładu przemysłowego albo warsztatu kolejowego z listy resortu, który stracił moce i nie ma jeszcze ratunku; ' + PLANT_HINT_PL + '.'));
     return OK;
   }
 
   function publicControlStatus(Q) {
     if (!publicControlTarget(Q.S)) return no(L('Needs a recorded private plant of industry or a railway workshop without a pending act; ' + PLANT_HINT + '.',
-      'Wymaga zapisanego prywatnego zakładu przemysłowego albo warsztatu kolejowego bez toczącego się aktu; ' + PLANT_HINT_PL + '.'));
+      'Wymaga prywatnego zakładu przemysłowego albo warsztatu kolejowego z listy resortu, bez toczącego się aktu; ' + PLANT_HINT_PL + '.'));
     return OK;
   }
 
@@ -2449,7 +2449,7 @@
     if (!cardAvailable(Q, cardId)) return no(cardUnavailableReason(Q, cardId));
     const blockedLater = {
       expropriation: L('Needs a prior change of the constitutional guarantees of property; no card of this chapter creates it (12.6).',
-        'Wymaga wcześniejszej zmiany konstytucyjnych gwarancji własności; żadna karta tego rozdziału jej nie tworzy (12.6).'),
+        'Wymaga wcześniejszej zmiany konstytucyjnych gwarancji własności, której w tym okresie nie da się przeprowadzić.'),
     };
     if (blockedLater[option]) return no(blockedLater[option]);
     // Stage 5: a working cooperative of PPS is the cooperative executor of 8.5 and 8.9.

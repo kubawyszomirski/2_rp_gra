@@ -5,13 +5,13 @@
   "title: Military Affairs": "title: Sprawy wojskowe",
   "subtitle: Civilian control of the army: oversight, lawful changes of personnel, or a limited reform.": "subtitle: Cywilna kontrola nad wojskiem: nadzór, legalne zmiany personalne albo ograniczona reforma.",
   "= Military affairs": "= Sprawy wojskowe",
-  "The post and its scope are a marked synthetic function over one group of the army; the historical appointments are not reconstructed. A compromise that gives Piłsudski personal powers goes through the agreement with him, not through this card.": "Stanowisko i jego zakres to oznaczona syntetyczna funkcja nad jednym zgrupowaniem wojska; historyczne nominacje nie są odtwarzane. Kompromis dający Piłsudskiemu osobiste uprawnienia przechodzi przez porozumienie z nim, a nie przez tę kartę.",
   "title: Prepare full civilian oversight": "title: Przygotuj pełny nadzór cywilny",
   "subtitle: A law of full civilian oversight (+2 on the army scale from −2 to +2), then costs the budget 1 unit a month for three months; after it the group grows more loyal to the legal authorities (+0.05).": "subtitle: Ustawa o pełnym nadzorze cywilnym (+2 na skali spraw wojska od −2 do +2), potem obciąża budżet: 1 jednostka miesięcznie przez trzy miesiące; następnie zgrupowanie staje się bardziej lojalne wobec legalnych władz (+0,05).",
   "title: Prepare lawful changes of personnel": "title: Przygotuj legalne zmiany personalne",
   "subtitle: The same project with a named nomination: the group grows more loyal to the legal authorities (+0.05), its readiness falls for two months (−0.05), and a real conflict raises the pressure.": "subtitle: Ten sam projekt z wymienioną nominacją: zgrupowanie staje się bardziej lojalne wobec legalnych władz (+0,05), jego gotowość spada przez dwa miesiące (−0,05), a rzeczywisty konflikt podnosi presję.",
   "title: Prepare an organisational compromise limiting the reform": "title: Przygotuj kompromis organizacyjny ograniczający reformę",
   "subtitle: A law of limited reform (the middle of the army scale), then costs the budget 1 unit a month for two months; the group grows a little more loyal to the legal authorities (+0.025).": "subtitle: Ustawa o ograniczonej reformie (środek skali spraw wojska), potem obciąża budżet: 1 jednostka miesięcznie przez dwa miesiące; zgrupowanie staje się nieco bardziej lojalne wobec legalnych władz (+0,025).",
-  "- @root: Continue.": "- @root: Dalej."
+  "- @root: Continue.": "- @root: Dalej.",
+  "The post gives oversight of one group of the army. A compromise that gives Piłsudski personal powers goes through the agreement with him, not through this card.": "Stanowisko daje nadzór nad jednym zgrupowaniem wojska. Kompromis dający Piłsudskiemu osobiste uprawnienia przechodzi przez porozumienie z nim, a nie przez tę kartę."
  }
 }

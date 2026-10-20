@@ -327,7 +327,7 @@ test('Głosowanie rozstrzygające (Z — 0.57): three candidates on 20 December 
   engine.goToScene('polish_presidential_sequence.second_final');
   const outright = JSON.stringify(engine.ui.paragraphs).replace(/","/g, '');
   assert.ok(outright.includes('Decisive ballot (round 1): Stanisław Wojciechowski — 285 votes; Kazimierz Morawski — 214 votes; Ignacy Daszyński — 56 votes'));
-  assert.match(outright, /The winner had more than half of the valid ballots \(blank ones included\) in this round, so the election ended without a further round/);
+  assert.match(outright, /The winner had more than half of the valid votes in this round, so no further round was needed\./);
   assert.equal(Q.pl_pres_first_outright, 0, 'the first election of 9 December went to a final of two');
 });
 

@@ -8,7 +8,7 @@ go-to: start_menu_2
 
 = PPS: An Alternate History
 
-You play as the **PPS (Polska Partia Socjalistyczna)** in the first chapter of the Second Republic, from January 1922. The chapter ends when an attempted coup is resolved or with the next lawful Sejm election — on 19 February 1928 in the game's default legal calendar, not the historical election date — followed by a chapter report. Numbers are the game's working balance, not historical statistics.
+You play as the **PPS (Polska Partia Socjalistyczna)** in the first chapter of the Second Republic, from January 1922. The chapter ends when an attempted coup is resolved or with the next Sejm election in February 1928; a chapter report follows.
 
 @start_menu_2
 
@@ -891,9 +891,9 @@ Józef Piłsudski is **Naczelnik Państwa**, not President of the Republic. **An
 
 **We tolerate Ponikowski's government, but we are outside the cabinet and control no ministries.** Campaigning, party organization, the Central Executive Committee and Milicja PPS remain available under their existing rules. Toleration does not grant command of the state police or executive powers.
 
-The opening uses an approved **444-MP gameplay approximation**, calculated from rounded August 1922 club shares, not an exact January roster. Parliamentary representation is separate from changing public support.
+At the opening the Sejm has **444 MPs** — an approximation explained in the Library. Seats do not change with public support.
 
-Read the Library for the opening institutions and cabinet portfolios. **The first Sejm election is in November 1922: 444 MPs, with 223 needed for a majority.** The cabinet that follows is negotiated in the same sequence and consumes no extra monthly action. In December, the new Sejm elects its Marshal and the National Assembly elects the President without another action; the clubs' votes decide both offices. The chapter ends with a report: when an attempted coup is resolved, or with the certified result of the next lawful Sejm election, on 19 February 1928 in the game's legal calendar.
+Read the Library for the institutions and the cabinet portfolios. **The first Sejm election is in November 1922: 444 MPs, with 223 needed for a majority.** The cabinet that follows is negotiated right after the election and consumes no extra monthly action. In December, the new Sejm elects its Marshal and the National Assembly elects the President without another action; the clubs' votes decide both offices.
 
 - @1928_main: Begin
 
