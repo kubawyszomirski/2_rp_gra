@@ -165,9 +165,10 @@ test('Kursy TUR 0.78: a card of its own once TUR works; one click per course wit
   PolishParty.writeMirrors(Q);
   assert.ok(deck(engine).includes('polish_party_tur'));
   playFromHand(engine, 'polish_party_tur');
-  assert.deepEqual(ids(engine), ['polish_party_tur.civil_rights', 'polish_party_tur.union_cadres', 'polish_party_tur.social_reform',
-    'polish_party_tur.national_education', 'easy_discard']);
-  assert.match(plain(choice(engine, 'polish_party_tur.civil_rights').subtitle), /^For the workers, the first group of the character of the party\. /);
+  // Z — 0.91 (decisions 3A and 4A of 24 X 2026): three courses, no preparation of a reform.
+  assert.deepEqual(ids(engine), ['polish_party_tur.civil_rights', 'polish_party_tur.union_cadres', 'polish_party_tur.national_education',
+    'easy_discard']);
+  assert.match(plain(choice(engine, 'polish_party_tur.civil_rights').subtitle), /^For the workers\. Trust in PPS in this group rises for good/);
   assert.equal(choice(engine, 'polish_party_tur.union_cadres').canChoose, false, 'level 2');
   assert.equal(PolishParty.courseTarget(Q, 'union_cadres'), ['industry', 'rail', 'farm_labour'].sort((a, b) => Q.S.unions[a].trust - Q.S.unions[b].trust)[0]);
   choose(engine, 'polish_party_tur.civil_rights');

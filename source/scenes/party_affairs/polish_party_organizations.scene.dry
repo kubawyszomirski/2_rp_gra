@@ -34,7 +34,7 @@ go-to: result
 
 @tur
 title: [? if pl_tur_level = 0 : Found TUR ?][? if pl_tur_level > 0 : Start the next stage of TUR ?]
-subtitle: [? if pl_tur_level = 0 : 2 resources; after two months TUR starts its work and gains cadres (+10). ?][? if pl_tur_level > 0 : 2 resources; after two months TUR rises one level and gains cadres (+10). ?]
+subtitle: [? if pl_tur_level = 0 : 2 resources; after two months TUR starts its work, and our organisers work better (+5%). ?][? if pl_tur_level > 0 : 2 resources; after two months TUR rises one level, and our organisers work better (+5%). ?]
 choose-if: {! return PolishParty.selectionStatus(Q, ['tur']).available !}
 unavailable-subtitle: [+ pl_org_tur_why +]
 on-arrival: {!

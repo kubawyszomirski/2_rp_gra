@@ -29,7 +29,8 @@ test('a new game has the party of 13.1–13.3 and the factions of 10.1 in Q.S; t
   const S = Q.S;
   assert.deepEqual([S.party_orgs.cash, S.party_orgs.dues, S.party_orgs.apparatus.level, S.party_orgs.apparatus.member_index], [2, 2, 1, 100]);
   assert.deepEqual([S.party_orgs.press.reach, S.party_orgs.press.credibility, S.party_orgs.press.format], [30, 60, 'party_journal']);
-  assert.deepEqual([S.party_orgs.tur.level, S.party_orgs.tur.cadres, S.party_orgs.tur.available_from], [0, 0, 13]);
+  // Z — 0.91 (decision 1A of 24 X 2026): no cadres and no recorded date; the level alone works.
+  assert.deepEqual(S.party_orgs.tur, {level: 0, active_build: null, active_course: null, completed_courses: []});
   // Z — 0.89 (decisions 1 and 2A of 24 X 2026): members and training only; the fatigue, dissent, repression, alignment and
   // militarised mark of the Milicja left the state.
   assert.deepEqual([S.militia.strength, S.militia.militancy, S.militia.stage, PolishParty.militiaLevel(S.militia)], [200, 0.10, 1, 1]);
@@ -156,14 +157,12 @@ test('Zwrot aparatu: each level above the first adds 25% to every collection (Z 
   close(PolishParty.collectionGain(Q.S), 3.5);
 });
 
-// Z — 0.58 (the user's decision of 5 X 2026): TUR can be founded from the start; January 1923 stays only as the recorded
-// historical date.
-test('TUR od startu (Z — 0.58): in January 1922 PPS can found TUR; the historical date is recorded, not a gate', () => {
+// Z — 0.58 (the user's decision of 5 X 2026): TUR can be founded from the start; January 1923 is not a gate.
+test('TUR od startu (Z — 0.58): in January 1922 PPS can found TUR; the historical date is not a gate', () => {
   const Q = game();
   assert.equal(Q.time, 1);
   Q.S.party_orgs.cash = 2;
   assert.equal(PolishParty.packageStatus(Q, 'tur', 0).available, true);
-  assert.equal(Q.S.party_orgs.tur.available_from, 13, 'January 1923, the founding of the historical TUR');
   PolishParty.organizationsChoose(Q, ['tur']);
   assert.deepEqual(Q.S.party_orgs.tur.active_build, {target_level: 1, started_at: 1, paid_months: 0});
   PolishParty.partyDisplay(Q);
@@ -199,25 +198,50 @@ test('Podmenu i doradcy: a recruitment from the organisations card starts the sa
   assert.equal(PolishParty.militiaStatus(Q, 'militarize').available, true, 'another step of the same organisation has its own cooldown');
 });
 
-test('TUR: a course takes two months, with or without money (Z — 0.56); unfinished it gives no bonus; completed, its campaign bonus in one cell is used once', () => {
+// Z — 0.91 (decision 2A of 24 X 2026): a civic course raises the trust in PPS of its group by 4, never above 70 from the courses;
+// no radicalisation and no one-off campaign bonus.
+test('TUR 0.91: a civic course takes two months, with or without money; then the trust of its group rises (+4) up to 70', () => {
   const Q = game();
   at(Q, 1923, 1);
   Q.S.party_orgs.tur.level = 1;
+  const workers = Q.S.society.cells.filter(c => c.class_id === 'workers');
+  const others = Q.S.society.cells.filter(c => c.class_id !== 'workers');
+  workers[0].trust_pps = 50; workers[1].trust_pps = 68; workers[2].trust_pps = 75;
+  const before = others.map(c => c.trust_pps), radical = workers.map(c => c.radicalization);
   PolishParty.turCourse(Q, 'civil_rights', 'workers');
   PolishParty.settleParty(Q, Q.time);
   assert.equal(Q.S.party_orgs.tur.active_course.paid_months, 1);
-  assert.deepEqual(Q.S.party_orgs.tur.prepared_campaigns, [], 'an unfinished course gives no bonus');
+  assert.equal(workers[0].trust_pps, 50, 'an unfinished course gives nothing');
   // Z — 0.56: no upkeep, so an empty cash box does not stop the course.
   Q.S.party_orgs.cash = 0;
   PolishParty.settleParty(Q, Q.time + 1);
   assert.equal(Q.S.party_orgs.tur.active_course, null);
-  assert.equal(Q.S.party_orgs.tur.prepared_campaigns.length, 1);
-  const cell = Q.S.society.cells.find(c => c.class_id === 'workers');
-  assert.equal(PolishParty.takeCourseBonus(Q.S, cell, 'democracy', Q.time + 3), 0.10);
-  assert.equal(PolishParty.takeCourseBonus(Q.S, cell, 'democracy', Q.time + 3), 0, 'used once in this cell');
-  const other = Q.S.society.cells.filter(c => c.class_id === 'workers')[1];
-  assert.equal(PolishParty.takeCourseBonus(Q.S, other, 'democracy', Q.time + 3), 0.10, 'another covered cell has its own bonus');
-  assert.equal(PolishParty.takeCourseBonus(Q.S, other, 'class', Q.time + 3), 0, 'only the topic of the course');
+  assert.deepEqual(workers.slice(0, 3).map(c => c.trust_pps), [54, 70, 75], '+4, up to 70; a higher trust stays');
+  assert.deepEqual(others.map(c => c.trust_pps), before, 'only its group');
+  assert.deepEqual(workers.map(c => c.radicalization), radical, 'no radicalisation effect');
+  assert.equal(Q.S.party_orgs.tur.completed_courses.length, 1);
+  // With every cell of the group at 70 or more the course has nothing to do.
+  for (const c of workers) c.trust_pps = Math.max(c.trust_pps, 70);
+  Q.S.party_orgs.cash = 3;
+  free(Q);
+  delete Q.S.cooldowns['party.tur_course'];
+  assert.match(PolishParty.courseStatus(Q, 'civil_rights', 'workers').reason, /already as high as a course can raise it/);
+  Q.S.party_orgs.tur.level = 3;
+  assert.equal(PolishParty.courseStatus(Q, 'national_education', 'workers,rural,new_middle').available, true, 'the other groups still have room');
+});
+
+test('TUR 0.91: an older save loses the cadres, the date and the prepared campaigns; its preparation of a reform ends without an effect', () => {
+  const Q = game();
+  at(Q, 1923, 1);
+  Object.assign(Q.S.party_orgs.tur, {level: 2, cadres: 20, available_from: 13, prepared_campaigns: [],
+    active_course: {course: 'social_reform', target: 'prj-1', started_at: Q.time - 1, paid_months: 1, effect_id: 'tur:social_reform:t12'}});
+  PolishParty.partyDisplay(Q);
+  assert.match(Q.pl_party_tur, /^level 2; course: Preparation of a social reform \(1\/2 months\)$/);
+  PolishParty.settleParty(Q, Q.time);
+  assert.deepEqual(Object.keys(Q.S.party_orgs.tur).sort(), ['active_build', 'active_course', 'completed_courses', 'level']);
+  assert.equal(Q.S.party_orgs.tur.active_course, null);
+  assert.equal(Q.S.party_orgs.tur.completed_courses[0].course, 'social_reform');
+  assert.deepEqual(Object.keys(PolishParty.COURSES), ['civil_rights', 'union_cadres', 'national_education']);
 });
 
 test('Zmiana formatu prasy: popular, journal, popular again: one current modifier, no stacked +10 and no second penalty', () => {

@@ -58,9 +58,13 @@
   const APPARATUS_MAX = 4;
   const TUR_MAX = 3;
   // H — the TUR's own 1929 publication confirms its foundation in January 1923 (PL-CONTENT-1922-1926-2026-09);
-  // the pace of its levels is P (13.2). Z — 0.58 (the user's decision of 5 X 2026): the date stays recorded in
-  // `tur.available_from`, but it no longer blocks the founding; PPS may found TUR from the start (alternate history).
-  const TUR_AVAILABLE_FROM = T(1923, 1);
+  // the pace of its levels is P (13.2). Z — 0.58 (the user's decision of 5 X 2026): the date does not block the founding;
+  // PPS may found TUR from the start. Z — 0.91 (decision 1A of 24 X 2026): the unused date and the cadres left the state;
+  // each level of TUR adds 5% to the work of the organisers (P).
+  const TUR_ORGANISING = 0.05;
+  // Z — 0.91 (decision 2A): a civic course raises the trust in PPS of its classes by 4, never above 70 from the courses (P).
+  const TUR_TRUST = 4;
+  const TUR_TRUST_CAP = 70;
   const REACH_MULTIPLIER_CAP = 1.30; // 10.6: character of the party and TUR together
   const COOPERATIVE_CLASSES = Object.freeze(['workers', 'rural']);
   const COOPERATIVE_NAMES = Object.freeze({workers: 'a workers’ consumer cooperative', rural: 'a village cooperative of smallholders'});
@@ -89,8 +93,7 @@
         dues: clip(Math.round(Number(Q.dues) || 2), DUES_MIN, DUES_MAX),
         apparatus: {level: 1, member_index: 100, worker_support0: null, union_reach0: 20},
         press: {reach: 30, credibility: 60, format: 'party_journal', popular_adopted: false, campaigns: [], restrictions: []},
-        tur: {level: 0, cadres: 0, available_from: TUR_AVAILABLE_FROM, active_build: null, active_course: null,
-          prepared_campaigns: [], completed_courses: []},
+        tur: {level: 0, active_build: null, active_course: null, completed_courses: []},
         cooperatives: {projects: []},
         arrears: {apparatus: 0, press: 0, tur: 0, cooperatives: 0},
         last_ledger: null,
@@ -294,7 +297,7 @@
   // One month of the party's own finances (13.1–13.4, 14.1), in step 6 of 4.2 after the economy and the flows, before the
   // agreements. Z — 0.56: only the membership moves here; the organisations work without upkeep — the press keeps its
   // reach, a build or a course of TUR advances every month and the cooperatives give their relief while they operate.
-  // Arrears of an older save are written off; Z — 0.89: so are the fields the Milicja no longer has.
+  // Arrears of an older save are written off; Z — 0.89: so are the fields the Milicja no longer has; Z — 0.91: and those of TUR.
   function settleParty(Q, t) {
     const S = Q.S, orgs = S.party_orgs, militia = S.militia;
     // Membership approaches its target by 5% of the gap (13.1; the order of the approved M18 diagnostics).
@@ -305,6 +308,7 @@
     simplifyMilitia(militia);
     const press = orgs.press;
     for (const key of ['unpaid_months', 'paid_last', 'cases']) delete press[key];
+    for (const key of ['cadres', 'available_from', 'prepared_campaigns']) delete orgs.tur[key];
     // Z — 0.90 (decision 5A): a confiscated issue nobody revealed costs the press credibility when the confiscation ends.
     for (const r of press.restrictions) {
       if (r.status !== 'active' || t + 1 < r.expires_at) continue;
@@ -319,7 +323,6 @@
       tur.active_build.paid_months += 1;
       if (tur.active_build.paid_months >= 2) {
         tur.level = tur.active_build.target_level;
-        tur.cadres = Math.min(100, tur.cadres + 10);
         S.history.reasons.push({t: t, kind: 'tur_level', level: tur.level});
         tur.active_build = null;
       }
@@ -370,8 +373,7 @@
   }
 
   function expansionMultiplier(S, target) {
-    const tur = S.party_orgs.tur;
-    const value = 1 + (inEnvironment(S, target) ? 0.10 : 0) + 0.1 * Math.floor(tur.cadres / 20);
+    const value = 1 + (inEnvironment(S, target) ? 0.10 : 0) + TUR_ORGANISING * S.party_orgs.tur.level;
     return Math.min(REACH_MULTIPLIER_CAP, value);
   }
 
@@ -870,20 +872,26 @@
 
   // ---- TUR: levels and courses (13.2; cards 5.1 and 5.8) ----------------------------------------------
 
+  // Z — 0.91 (decisions 3A and 4A of 24 X 2026): three courses — the civic course, the course for trade unionists and the
+  // national education campaign; the preparation of a reform left the card.
   const COURSES = Object.freeze({
-    civil_rights: {level: 1, name: 'Civil rights and the practice of democracy', audience: 'class'},
-    union_cadres: {level: 2, name: 'Union cadres and the line of PPS', audience: 'branch'},
-    social_reform: {level: 2, name: 'Preparation of a social reform', audience: 'project'},
+    civil_rights: {level: 1, name: 'A civic course', audience: 'class'},
+    union_cadres: {level: 2, name: 'A course for trade unionists', audience: 'branch'},
     national_education: {level: 3, name: 'A national education campaign', audience: 'classes'},
   });
-  const COURSE_NAMES_PL = Object.freeze({civil_rights: 'Prawa obywatelskie i praktyka demokracji', union_cadres: 'Kadry związkowe i linia PPS',
-    social_reform: 'Przygotowanie reformy społecznej', national_education: 'Ogólnokrajowa kampania oświatowa'});
-  const courseName = id => L(COURSES[id].name, COURSE_NAMES_PL[id]);
-  const REFORM_TYPES = Object.freeze(['public_works', 'education_program', 'credit_instrument', 'minority_schools']);
+  const COURSE_NAMES_PL = Object.freeze({civil_rights: 'Kurs obywatelski', union_cadres: 'Kurs dla związkowców',
+    national_education: 'Ogólnokrajowa kampania oświatowa'});
+  // A running preparation of a reform of an older save keeps its name until it ends without an effect.
+  const courseName = id => COURSES[id] ? L(COURSES[id].name, COURSE_NAMES_PL[id]) : L('Preparation of a social reform', 'Przygotowanie reformy społecznej');
 
-  function reformProjects(S) {
-    return Object.keys(S.projects).sort().map(id => S.projects[id]).filter(p => p && REFORM_TYPES.indexOf(p.type) >= 0 &&
-      (p.status === 'idea' || p.status === 'prepared') && !p.tur_prepared && (p.klass === 'large'));
+  // The classes of a civic course: one for the civic course, three for the national campaign.
+  function courseClasses(courseId, target) {
+    return String(target || 'workers').split(',').filter(Boolean).slice(0, courseId === 'civil_rights' ? 1 : 3);
+  }
+
+  // A civic course has work to do while some cell of its classes trusts PPS less than the ceiling of the courses.
+  function trustRoom(S, classes) {
+    return !electorate.hasCells(S) || S.society.cells.some(c => classes.indexOf(c.class_id) >= 0 && (c.trust_pps || 0) < TUR_TRUST_CAP);
   }
 
   function courseStatus(Q, courseId, target) {
@@ -895,16 +903,16 @@
     const wait = waitReason(Q, 'party.tur_course');
     if (wait) return no(wait);
     if (S.party_orgs.cash + 1e-9 < 1) return no(L('Needs 1 resource.', 'Wymaga 1 jednostki środków.'));
-    if (course.audience === 'project' && !reformProjects(S).length) {
-      return no(L('Needs a large labour, education, housing or cooperative project that has not been launched.', 'Wymaga dużego projektu pracy, oświaty, mieszkalnictwa albo spółdzielczości, który nie został jeszcze uruchomiony.'));
-    }
     if (target !== undefined && course.audience === 'branch' && BRANCHES.indexOf(target) < 0) return no(L('Choose a union branch.', 'Wybierz branżę związkową.'));
+    if (course.audience !== 'branch' && !trustRoom(S, courseClasses(courseId, target === undefined ? courseTarget(Q, courseId) : target))) {
+      return no(L('Trust in PPS there is already as high as a course can raise it.', 'Zaufanie do PPS jest tam już tak wysokie, jak może je podnieść kurs.'));
+    }
     return OK;
   }
 
   // Z — 0.78 (decision 5A of 8 X 2026): the TUR courses have a card of their own, one click each; the game picks the target —
-  // civil rights for the first group of the character of the party (P), union cadres for the branch that trusts PPS least,
-  // the social reform for the first eligible project (as before), the national campaign for its three classes.
+  // the civic course for the first group of the character of the party (P), the course for trade unionists for the branch
+  // that trusts PPS least, the national campaign for its three classes.
   const CHARACTER_CLASS = Object.freeze({workers: 'workers', workers_peasants: 'workers', broad_democratic: 'new_middle'});
 
   function courseTarget(Q, courseId) {
@@ -916,15 +924,10 @@
   }
 
   function courseTargetText(Q, courseId) {
-    const S = Q.S, target = courseTarget(Q, courseId);
-    if (courseId === 'civil_rights') return L('For ' + electorate.CLASS_NAMES[target] + ', the first group of the character of the party.',
-      'Dla ' + electorate.CLASS_NAMES_PL_GENITIVE[target] + ' — pierwszej grupy z charakteru partii.');
-    if (courseId === 'union_cadres') return L('For the ' + BRANCH_NAMES[target].toLowerCase() + ' branch, which trusts PPS least (' + fmt(S.unions[target].trust) + ').',
-      'Dla branży ' + BRANCH_PL_GENITIVE[target] + ', która najmniej ufa PPS (' + fmt(S.unions[target].trust) + ').');
-    if (courseId === 'social_reform') {
-      const project = reformProjects(S)[0];
-      return project ? L('For ' + projects.projectName(project.type) + '.', 'Dla projektu: ' + projects.projectName(project.type) + '.') : '';
-    }
+    const target = courseTarget(Q, courseId);
+    if (courseId === 'civil_rights') return L('For ' + electorate.CLASS_NAMES[target] + '.', 'Dla ' + electorate.CLASS_NAMES_PL_GENITIVE[target] + '.');
+    if (courseId === 'union_cadres') return L('For the ' + BRANCH_NAMES[target].toLowerCase() + ' branch, which trusts the party least.',
+      'Dla branży ' + BRANCH_PL_GENITIVE[target] + ', która najmniej ufa partii.');
     return L('For the workers, the peasants and the intelligentsia.', 'Dla robotników, chłopów i inteligencji.');
   }
 
@@ -952,15 +955,14 @@
     const S = Q.S, tur = S.party_orgs.tur, t = Q.time;
     rules.commitMainAction(Q, 'party.tur_course', {course: courseId, target: target || null, resource_cost: {R: 1}});
     S.party_orgs.cash = Math.max(0, S.party_orgs.cash - 1);
-    let chosen = target || null;
-    if (COURSES[courseId].audience === 'project') chosen = chosen || reformProjects(S)[0].id;
-    tur.active_course = {course: courseId, target: chosen, started_at: t, paid_months: 0, effect_id: 'tur:' + courseId + ':t' + t};
+    tur.active_course = {course: courseId, target: target || null, started_at: t, paid_months: 0, effect_id: 'tur:' + courseId + ':t' + t};
     S.cooldowns['party.tur_course'] = t + 4;
     writeMirrors(Q);
     return result(Q, courseName(courseId) + L(': the course runs for two months.', ': kurs trwa dwa miesiące.'));
   }
 
-  // Its effect only after two financed months; a course interrupted by a shortfall waits (13.2).
+  // Its effect only after two months of work (13.2). Z — 0.91 (decision 2A of 24 X 2026): a civic course raises the trust in
+  // PPS of its classes (+4, up to 70); the preparation of a reform of an older save ends without an effect.
   function completeCourse(Q, t) {
     const S = Q.S, tur = S.party_orgs.tur, run = tur.active_course;
     tur.active_course = null;
@@ -968,28 +970,13 @@
     if (run.course === 'union_cadres' && S.unions[run.target]) {
       S.unions[run.target].trust = Math.min(100, S.unions[run.target].trust + 3);
       S.unions[run.target].dissent = Math.max(0, S.unions[run.target].dissent - 4);
-    } else if (run.course === 'social_reform') {
-      const project = S.projects[run.target];
-      if (project && (project.status === 'idea' || project.status === 'prepared') && !project.tur_prepared) {
-        project.tur_prepared = true;
-        project.preparation = 100;
-        project.duration_months = Math.max(1, (project.duration_months || 1) - 1);
+    } else if ((run.course === 'civil_rights' || run.course === 'national_education') && electorate.hasCells(S)) {
+      const classes = courseClasses(run.course, run.target);
+      for (const cell of S.society.cells) {
+        if (classes.indexOf(cell.class_id) >= 0 && cell.trust_pps < TUR_TRUST_CAP) cell.trust_pps = Math.min(TUR_TRUST_CAP, cell.trust_pps + TUR_TRUST);
       }
-    } else if (run.course === 'civil_rights' || run.course === 'national_education') {
-      const classes = String(run.target || 'workers').split(',').filter(Boolean).slice(0, run.course === 'civil_rights' ? 1 : 3);
-      if (electorate.hasCells(S)) electorate.changeCells(S, cell => classes.indexOf(cell.class_id) >= 0, {radicalization: -3});
-      tur.prepared_campaigns.push({id: run.effect_id, topic: 'democracy', classes: classes, expires_at: t + 1 + 6, used_by: []});
     }
     S.history.reasons.push({t: t, kind: 'tur_course', course: run.course, target: run.target});
-  }
-
-  // The prepared bonus of a completed course for one cell and topic, used once (13.2, 5.3).
-  function takeCourseBonus(S, cell, topic, t) {
-    const entry = S.party_orgs.tur.prepared_campaigns.find(e => e.topic === topic && t < e.expires_at &&
-      e.classes.indexOf(cell.class_id) >= 0 && e.used_by.indexOf(cell.id) < 0);
-    if (!entry) return 0;
-    entry.used_by.push(cell.id);
-    return 0.10;
   }
 
   // ---- Cooperatives (13.2; card 5.9) -------------------------------------------------------------------
@@ -1695,9 +1682,8 @@
     let moved = 0;
     for (const cell of cells) {
       const workers = cell.class_id === 'workers' ? activeEffect(S, 'workers_campaign_multiplier', t) : 1;
-      const tur = kind === 'polemic' ? 1 : 1 + takeCourseBonus(S, cell, topic, t);
       const programme = served && served(cell) ? PROGRAMME_CAMPAIGN_FACTOR : 1;
-      const gain = electorate.campaignGain(cell, cellReach(S, cell, kind), Q.dissent || 0, key, t) * pressFactor * factor * tur * press * workers * programme;
+      const gain = electorate.campaignGain(cell, cellReach(S, cell, kind), Q.dissent || 0, key, t) * pressFactor * factor * press * workers * programme;
       moved += cell.mass * electorate.gainForPps(cell, gain, parties, sources);
       electorate.recordCampaign(cell, key, t);
     }
@@ -1749,7 +1735,7 @@
       situation_text: ['stronger while a land reform is prepared or carried out', 'silniejsza, gdy reforma rolna jest przygotowywana albo wykonywana']}),
     republic: Object.freeze({name: ['In defence of the Republic', 'W obronie Republiki'],
       groups: Object.freeze({new_middle: 0.7, workers: 0.4, jewish: 0.4, other_minorities: 0.3}),
-      directions: Object.freeze(['democratic_movement']), tur_topic: 'democracy',
+      directions: Object.freeze(['democratic_movement']),
       situation: S => democraticThreat(S),
       situation_text: ['stronger while democracy is threatened (a coup threat, violence, a breach of the law)', 'silniejsza, gdy demokracji coś zagraża (zamach, przemoc, łamanie prawa)']}),
     unemployed: Object.freeze({name: ['Work and benefits for the unemployed', 'Praca i zasiłek dla bezrobotnych'],
@@ -1838,15 +1824,7 @@
     return plus > 0 ? plus : minus;
   }
 
-  // A TUR course prepares one topic for its classes (13.2); a preview does not use the bonus up.
-  function courseBonus(S, cell, topic, t, consume) {
-    if (!topic) return 0;
-    if (consume) return takeCourseBonus(S, cell, topic, t);
-    return S.party_orgs.tur.prepared_campaigns.some(e => e.topic === topic && t < e.expires_at && e.classes.indexOf(cell.class_id) >= 0 &&
-      e.used_by.indexOf(cell.id) < 0) ? 0.10 : 0;
-  }
-
-  // One campaign over a bundle of groups. spec: {key, channel ('unions' | 'press'), bundle, factor(cell), course_topic,
+  // One campaign over a bundle of groups. spec: {key, channel ('unions' | 'press'), bundle, factor(cell),
   // sources (parties the gain is partly taken from), source_share}. Returns the signed points moved in each cell; with apply
   // false nothing changes (the preview of the card), with apply true the cells change and the campaign is recorded.
   function bundleCampaign(Q, spec, apply) {
@@ -1858,9 +1836,8 @@
       if (!w) continue;
       const workers = cell.class_id === 'workers' ? activeEffect(S, 'workers_campaign_multiplier', t) : 1;
       const programme = served && served(cell) ? PROGRAMME_CAMPAIGN_FACTOR : 1;
-      const tur = 1 + courseBonus(S, cell, spec.course_topic, t, apply);
       const base = electorate.campaignGain(cell, cellReach(S, cell, spec.channel), Q.dissent || 0, spec.key, t) *
-        spec.factor(cell) * workers * programme * tur;
+        spec.factor(cell) * workers * programme;
       const amount = base * Math.abs(w);
       let value;
       if (w < 0) {
@@ -1931,7 +1908,7 @@
   function issueSpec(Q, id) {
     const issue = ISSUES[id], base = issueFactor(Q, id), boost = pressBoost(Q.S);
     const factor = cell => base(cell) * (bundleWeight(boost.groups, cell) > 0 ? 1 + boost.value : 1);
-    return {key: 'issue:' + id, channel: 'unions', bundle: issue.groups, factor: factor, course_topic: issue.tur_topic || null};
+    return {key: 'issue:' + id, channel: 'unions', bundle: issue.groups, factor: factor};
   }
 
   function issueCampaignStatus(Q, id) {
@@ -2055,7 +2032,7 @@
     const credibility = 0.5 + 0.5 * pressEffective(S).credibility / 100;
     const multiplier = activeEffect(S, 'press_campaign_multiplier', t);
     return {key: 'press', channel: 'press', bundle: PRESS_GROUPS[press.format === 'popular' ? 'popular' : 'party_journal'],
-      factor: () => credibility * multiplier, course_topic: null, sources: polemicAddressees(Q), source_share: OPPONENT_SHARE};
+      factor: () => credibility * multiplier, sources: polemicAddressees(Q), source_share: OPPONENT_SHARE};
   }
 
   function opponentText(Q) {
@@ -2992,7 +2969,7 @@
   function packageLine(Q, id) {
     const p = PACKAGES[id];
     const names = rules.getLanguage() === 'pl' ? {
-      organize: 'Zorganizuj branżę ' + (p.branch ? BRANCH_PL_ACCUSATIVE[p.branch] : '') + ' (+15 zasięgu, więcej przy linii robotniczej i z kadrami Towarzystwa Uniwersytetu Robotniczego)',
+      organize: 'Zorganizuj branżę ' + (p.branch ? BRANCH_PL_ACCUSATIVE[p.branch] : '') + ' (+15 zasięgu, więcej przy linii robotniczej i z Towarzystwem Uniwersytetu Robotniczego)',
       distribution: 'Poszerz kolportaż prasy (+10 zasięgu)',
       // Z — 0.57: at level 0 the first build founds TUR, a decision of the party.
       build: (Q.S.party_orgs.tur.level === 0 ? 'Załóż Towarzystwo Uniwersytetu Robotniczego' : 'Rozpocznij kolejny etap Towarzystwa Uniwersytetu Robotniczego') + ' (dwa miesiące)',
@@ -3000,7 +2977,7 @@
       militarize: 'Militaryzacja Milicji (sprawność +0,10, najwyżej 0,70)',
       prepare: 'Przygotuj ' + (p.class_id ? COOPERATIVE_NAMES_PL_ACCUSATIVE[p.class_id] : ''),
     } : {
-      organize: 'Organise the ' + (p.branch ? BRANCH_NAMES[p.branch].toLowerCase() : '') + ' branch (+15 reach, more under the workers’ line and with TUR cadres)',
+      organize: 'Organise the ' + (p.branch ? BRANCH_NAMES[p.branch].toLowerCase() : '') + ' branch (+15 reach, more under the workers’ line and with TUR)',
       distribution: 'Extend the distribution of the press (+10 reach)',
       build: (Q.S.party_orgs.tur.level === 0 ? 'Found TUR' : 'Start the next stage of TUR') + ' (two months)',
       recruit: 'Recruit into Milicja (+100 members)',
@@ -3078,7 +3055,7 @@
     Q.pl_party_tur = tur.level === 0 && !tur.active_build ? L('not founded; it can be founded with the card Organisations of PPS',
       'nie założone; można je założyć kartą Organizacje PPS') :
       tur.level === 0 ? L('being founded (', 'w trakcie zakładania (') + tur.active_build.paid_months + L('/2 months)', '/2 mies.)') :
-      L('level ', 'poziom ') + tur.level + L(', cadres ', ', kadry ') + tur.cadres + (tur.active_build ? L('; building level ', '; budowa poziomu ') +
+      L('level ', 'poziom ') + tur.level + (tur.active_build ? L('; building level ', '; budowa poziomu ') +
         tur.active_build.target_level + ' (' + tur.active_build.paid_months + L('/2 months)', '/2 mies.)') : '') +
       (tur.active_course ? L('; course: ', '; kurs: ') + courseName(tur.active_course.course) + ' (' + tur.active_course.paid_months +
         L('/2 months)', '/2 mies.)') : '');
@@ -3152,7 +3129,6 @@
     PACKAGE_ORDER: PACKAGE_ORDER,
     COURSES: COURSES,
     OPENING_STRATEGY: OPENING_STRATEGY,
-    TUR_AVAILABLE_FROM: TUR_AVAILABLE_FROM,
     createPartyState: createPartyState,
     attachPartyState: attachPartyState,
     partyReady: partyReady,
@@ -3217,8 +3193,6 @@
     turCardAvailable: turCardAvailable,
     turCardView: turCardView,
     turCardCourse: turCardCourse,
-    takeCourseBonus: takeCourseBonus,
-    reformProjects: reformProjects,
     cooperativeStatus: cooperativeStatus,
     launchCooperative: launchCooperative,
     cooperativeExecutor: cooperativeExecutor,

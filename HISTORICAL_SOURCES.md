@@ -1,5 +1,13 @@
 # Historical Source Register
 
+## PL-TUR-0.91 — TUR
+
+- **Authority:** the user's decisions of 24 October 2026 (technical reference 0.91, sections 13.2 and 23.64).
+- **Sources:** no new source; the card's sentence about reading rooms, libraries and courses rests on TUR's own *Cele, zadania i rozwój 1923–1929* (https://dlibra.umcs.lublin.pl/Content/43094/B89816.pdf), already recorded under PL-CONTENT-1922-1926-2026-09.
+- **Historical fact:** TUR was founded in January 1923 and ran reading rooms, libraries, self-education and specialist courses (the source above).
+- **Gameplay simplification (P):** +5% to the organisers per level of TUR, the trust in PPS +4 up to 70 from a civic course, the groups each course reaches, the course for trade unionists (+3 trust, −4 dissent), the cost and the rhythm of the courses.
+- **Unresolved:** how widely TUR reached workers, peasants and the intelligentsia in 1923–1926 and how far its courses trained trade unionists — TBD, historical research required.
+
 ## PL-PRESS-0.90 — the party press
 
 - **Authority:** the user's decisions of 24 October 2026 (technical reference 0.90, sections 13.2 and 23.63).
@@ -2672,6 +2680,7 @@ Add one row whenever an entry above is assigned a stable Source ID.
 | PL-1923-1926-CABINET-PPS | Cabinet / candidates / minorities | The non-party candidate of the left (Śliwiński), the period of Skrzyński and the minority concessions on the background of the ugoda of 1925 | Researched in part; the candidate and the concessions are gameplay simplifications | 0.88, 24 October 2026 |
 | PL-MILITIA-0.89 | Milicja / AS | The simplified Milicja PPS: members and five training levels, the balance of costs and gains | Gameplay simplification; no further research by the user's decision | 0.89, 24 October 2026 |
 | PL-PRESS-0.90 | Press | The party press: reach ceilings, sales, support of the campaigns, confiscations under a government of the right, credibility | Gameplay simplification; confiscations and circulation TBD | 0.90, 24 October 2026 |
+| PL-TUR-0.91 | TUR | TUR: +5% to the organisers per level, civic courses raise the trust in PPS, a course for trade unionists, no reform course | Gameplay simplification; founding and functions from TUR's own publication; reach by group TBD | 0.91, 24 October 2026 |
 | PL-STAGE8-NORMAL-SCENARIO-2026-10-04 | Implementation | Stage 8, the last stage: the Normal scenario with the dated inputs of 17.16 and of the 8f research, the opening calibrated to the M02 Sejm, rule 8.9 for the NPR, the military compromise carried out by the cabinet, Polish-only screens, thirteen strategy automata playing full campaigns, and the closing fixes | Implemented | Implemented, 4 October 2026 |
 | TBD | TBD | TBD | TBD | TBD |
 
