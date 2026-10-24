@@ -118,9 +118,13 @@ function formCabinet(engine, { configuration, mode, candidate, minorities, claim
     assert.ok(!claim, 'the portfolios of this variant cannot be chosen');
   }
   assert.equal(engine.state.sceneId, `${F}summary`);
-  if (minorities === true) choose(engine, `${F}minorities_on`);
-  if (minorities === false && (engine.getCurrentChoices() || []).some(c => c.id === `${F}minorities_off`)) {
-    choose(engine, `${F}minorities_off`);
+  // Z — 0.88 (decision 2A): one switch for each minority club; `true` asks both, `false` asks neither.
+  if (minorities === true || minorities === false) {
+    for (const club of ['jewish_rep', 'other_minorities_rep']) {
+      const on = engine.state.qualities['pl_form_min_' + club + '_mark'] === '■';
+      const c = (engine.getCurrentChoices() || []).find(item => item.id === `${F}min_${club}`);
+      if (c && c.canChoose !== false && on !== minorities) choose(engine, `${F}min_${club}`);
+    }
   }
   choose(engine, `${F}submit`);
   assert.equal(engine.state.sceneId, `${F}result`);

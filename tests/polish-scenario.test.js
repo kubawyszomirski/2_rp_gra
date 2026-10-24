@@ -324,12 +324,14 @@ test('Dymisja Grabskiego (A1): from XI 1925 Grabski resigns once if he governs d
   assert.deepEqual([Q3.S.cabinet.status, PolishEconomy.creditCrisis(Q3.S.economy, PolishRules.timeOf(1926, 2))], ['active', false], 'no crisis, no resignation');
 });
 
-test('Resort NPR (A2, 8.9): in the broad cabinet of Skrzyński NPR accepts Industry and Trade as well as Labour; in another cabinet only Labour', () => {
+test('Resort NPR (A2, 8.9): in the broad cabinet of Skrzyński NPR accepts Industry and Trade as well as Labour; since Z — 0.88 in every cabinet', () => {
   const portfolios = { labor: 'pps', economic: 'npr', agriculture: 'psl_piast', justice: 'pschd', finance: 'zln' };
   const members = ['pps', 'psl_piast', 'npr', 'pschd', 'zln'];
   assert.deepEqual(PolishGovernment.PORTFOLIO_ALTERNATIVES.skrzynski_broad.npr, ['economic']);
   assert.equal(PolishGovernment.portfolioFit('npr', { configuration_id: 'skrzynski_broad', members, portfolios }), 100);
-  assert.equal(PolishGovernment.portfolioFit('npr', { configuration_id: 'national_unity', members, portfolios }), 0);
+  // Z — 0.88 (decision 1A): Industry and Trade in every cabinet; PSL Wyzwolenie takes the Education instead of the Interior.
+  assert.equal(PolishGovernment.portfolioFit('npr', { configuration_id: 'national_unity', members, portfolios }), 100);
+  assert.deepEqual(PolishGovernment.PORTFOLIO_FALLBACKS, { npr: ['economic'], psl_wyzwolenie: ['education'] });
   assert.equal(PolishGovernment.portfolioFit('npr', { configuration_id: 'skrzynski_broad', members, portfolios: Object.assign({}, portfolios, { economic: 'zln' }) }), 0);
 });
 

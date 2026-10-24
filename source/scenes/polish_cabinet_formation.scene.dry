@@ -217,6 +217,8 @@ for (var id of PolishGovernment.CANDIDATE_ORDER.concat(['pilsudski'])) {
     Q['pl_cand_' + id + '_reason'] = why ? PolishGovernment.candidateNote(Q, id, why) : '';
     Q['pl_cand_' + id + '_note'] = PolishGovernment.candidateNote(Q, id);
     Q['pl_cand_' + id + '_show'] = PolishGovernment.candidateShown(Q, id) ? 1 : 0;
+    // Z — 0.88 (decision 5A): the title is the function of the candidate at this moment; the name opens its description.
+    Q['pl_cand_' + id + '_role'] = PolishGovernment.candidateRole(Q, id);
 }
 Q.pl_form_variant_name = PolishGovernment.formationView(Q).configuration;
 !}
@@ -240,7 +242,7 @@ The prime minister of [+ pl_form_variant_name +]. Only those who can lead this c
 - @back_variants
 
 @cand_daszynski
-title: Ignacy Daszyński
+title: [+ pl_cand_daszynski_role +]
 subtitle: [+ pl_cand_daszynski_note +]
 view-if: pl_cand_daszynski_show
 choose-if: {! return PolishGovernment.draftChoiceStatus(Q, 'candidate', 'daszynski').available !}
@@ -254,7 +256,7 @@ Q.pl_form_need_ports = st.portfolios ? 1 : 0;
 go-to: portfolio_menu if pl_form_need_ports; summary if not pl_form_need_ports
 
 @cand_moraczewski
-title: Jędrzej Moraczewski
+title: [+ pl_cand_moraczewski_role +]
 subtitle: [+ pl_cand_moraczewski_note +]
 view-if: pl_cand_moraczewski_show
 choose-if: {! return PolishGovernment.draftChoiceStatus(Q, 'candidate', 'moraczewski').available !}
@@ -268,7 +270,7 @@ Q.pl_form_need_ports = st.portfolios ? 1 : 0;
 go-to: portfolio_menu if pl_form_need_ports; summary if not pl_form_need_ports
 
 @cand_czapinski
-title: Kazimierz Czapiński
+title: [+ pl_cand_czapinski_role +]
 subtitle: [+ pl_cand_czapinski_note +]
 view-if: pl_cand_czapinski_show
 choose-if: {! return PolishGovernment.draftChoiceStatus(Q, 'candidate', 'czapinski').available !}
@@ -282,7 +284,7 @@ Q.pl_form_need_ports = st.portfolios ? 1 : 0;
 go-to: portfolio_menu if pl_form_need_ports; summary if not pl_form_need_ports
 
 @cand_thugutt
-title: Stanisław Thugutt
+title: [+ pl_cand_thugutt_role +]
 subtitle: [+ pl_cand_thugutt_note +]
 view-if: pl_cand_thugutt_show
 choose-if: {! return PolishGovernment.draftChoiceStatus(Q, 'candidate', 'thugutt').available !}
@@ -296,7 +298,7 @@ Q.pl_form_need_ports = st.portfolios ? 1 : 0;
 go-to: portfolio_menu if pl_form_need_ports; summary if not pl_form_need_ports
 
 @cand_witos
-title: Wincenty Witos
+title: [+ pl_cand_witos_role +]
 subtitle: [+ pl_cand_witos_note +]
 view-if: pl_cand_witos_show
 choose-if: {! return PolishGovernment.draftChoiceStatus(Q, 'candidate', 'witos').available !}
@@ -310,7 +312,7 @@ Q.pl_form_need_ports = st.portfolios ? 1 : 0;
 go-to: portfolio_menu if pl_form_need_ports; summary if not pl_form_need_ports
 
 @cand_sliwinski
-title: Artur Śliwiński
+title: [+ pl_cand_sliwinski_role +]
 subtitle: [+ pl_cand_sliwinski_note +]
 view-if: pl_cand_sliwinski_show
 choose-if: {! return PolishGovernment.draftChoiceStatus(Q, 'candidate', 'sliwinski').available !}
@@ -324,7 +326,7 @@ Q.pl_form_need_ports = st.portfolios ? 1 : 0;
 go-to: portfolio_menu if pl_form_need_ports; summary if not pl_form_need_ports
 
 @cand_nowak
-title: Julian Nowak
+title: [+ pl_cand_nowak_role +]
 subtitle: [+ pl_cand_nowak_note +]
 view-if: pl_cand_nowak_show
 choose-if: {! return PolishGovernment.draftChoiceStatus(Q, 'candidate', 'nowak').available !}
@@ -338,7 +340,7 @@ Q.pl_form_need_ports = st.portfolios ? 1 : 0;
 go-to: portfolio_menu if pl_form_need_ports; summary if not pl_form_need_ports
 
 @cand_sikorski
-title: Władysław Sikorski
+title: [+ pl_cand_sikorski_role +]
 subtitle: [+ pl_cand_sikorski_note +]
 view-if: pl_cand_sikorski_show
 choose-if: {! return PolishGovernment.draftChoiceStatus(Q, 'candidate', 'sikorski').available !}
@@ -352,7 +354,7 @@ Q.pl_form_need_ports = st.portfolios ? 1 : 0;
 go-to: portfolio_menu if pl_form_need_ports; summary if not pl_form_need_ports
 
 @cand_ponikowski
-title: Antoni Ponikowski
+title: [+ pl_cand_ponikowski_role +]
 subtitle: [+ pl_cand_ponikowski_note +]
 view-if: pl_cand_ponikowski_show
 choose-if: {! return PolishGovernment.draftChoiceStatus(Q, 'candidate', 'ponikowski').available !}
@@ -366,7 +368,7 @@ Q.pl_form_need_ports = st.portfolios ? 1 : 0;
 go-to: portfolio_menu if pl_form_need_ports; summary if not pl_form_need_ports
 
 @cand_grabski
-title: Władysław Grabski
+title: [+ pl_cand_grabski_role +]
 subtitle: [+ pl_cand_grabski_note +]
 view-if: pl_cand_grabski_show
 choose-if: {! return PolishGovernment.draftChoiceStatus(Q, 'candidate', 'grabski').available !}
@@ -380,7 +382,7 @@ Q.pl_form_need_ports = st.portfolios ? 1 : 0;
 go-to: portfolio_menu if pl_form_need_ports; summary if not pl_form_need_ports
 
 @cand_skrzynski
-title: Aleksander Skrzyński
+title: [+ pl_cand_skrzynski_role +]
 subtitle: [+ pl_cand_skrzynski_note +]
 view-if: pl_cand_skrzynski_show
 choose-if: {! return PolishGovernment.draftChoiceStatus(Q, 'candidate', 'skrzynski').available !}
@@ -394,7 +396,7 @@ Q.pl_form_need_ports = st.portfolios ? 1 : 0;
 go-to: portfolio_menu if pl_form_need_ports; summary if not pl_form_need_ports
 
 @cand_pilsudski
-title: Józef Piłsudski
+title: [+ pl_cand_pilsudski_role +]
 subtitle: [+ pl_cand_pilsudski_note +]
 view-if: {! return !!(Q.S && PolishGovernment.pilsudskiPremierAgreed(Q.S)) !}
 choose-if: {! return PolishGovernment.draftChoiceStatus(Q, 'candidate', 'pilsudski').available !}
@@ -658,6 +660,12 @@ Q.pl_form_is_opposition = neg.draft.pps_mode === 'opposition' ? 1 : 0;
 Q.pl_form_minority_allowed = view.minority_allowed && neg.draft.pps_mode !== 'opposition' ? 1 : 0;
 Q.pl_form_seek = neg.draft.seek_minority_support ? 1 : 0;
 Q.pl_form_minority_seats = view.minority_seats;
+// Z — 0.88 (decision 2A): one switch for each minority club, with the cheapest concession that secures its support.
+for (var club of view.minority_clubs) {
+    Q['pl_form_min_' + club.club + '_mark'] = club.on ? '■' : '□';
+    Q['pl_form_min_' + club.club + '_line'] = club.line;
+    Q['pl_form_min_' + club.club + '_ok'] = club.available ? 1 : 0;
+}
 Q.pl_form_votes = view.votes;
 Q.pl_form_verdict = view.verdict;
 Q.pl_form_submit_reason = submit.reason;
@@ -677,8 +685,8 @@ Q.pl_form_partners = view.partner_lines.join('');
 
 **Result:** [+ pl_form_verdict +]
 
-- @minorities_on
-- @minorities_off
+- @min_jewish_rep
+- @min_other_minorities_rep
 - @terms_menu: Set the terms of the stabilisation
 - view-if: pl_form_terms_open
 - @submit
@@ -686,20 +694,25 @@ Q.pl_form_partners = view.partner_lines.join('');
 - @easy_discard
 - view-if: not pl_form_mandatory
 
-@minorities_on
-title: Ask the minority representations for external support
-subtitle: Their [+ pl_form_minority_seats +] MPs may vote for the cabinet. Language, school and legal-equality rights enter the agreement; minorities receive no portfolios.
-view-if: pl_form_minority_allowed and not pl_form_seek
+@min_jewish_rep
+title: [+ pl_form_min_jewish_rep_mark +] The support of the Jewish representation
+subtitle: [+ pl_form_min_jewish_rep_line +]
+view-if: pl_form_minority_allowed
+choose-if: pl_form_min_jewish_rep_ok
+unavailable-subtitle: [+ pl_form_min_jewish_rep_line +]
 on-arrival: {!
-PolishGovernment.setDraft(Q, 'seek_minority_support', true);
+PolishGovernment.setDraft(Q, 'minority_club', 'jewish_rep');
 !}
 go-to: summary
 
-@minorities_off
-title: Do not ask the minority representations for support
-view-if: pl_form_minority_allowed and pl_form_seek
+@min_other_minorities_rep
+title: [+ pl_form_min_other_minorities_rep_mark +] The support of the other national minorities
+subtitle: [+ pl_form_min_other_minorities_rep_line +]
+view-if: pl_form_minority_allowed
+choose-if: pl_form_min_other_minorities_rep_ok
+unavailable-subtitle: [+ pl_form_min_other_minorities_rep_line +]
 on-arrival: {!
-PolishGovernment.setDraft(Q, 'seek_minority_support', false);
+PolishGovernment.setDraft(Q, 'minority_club', 'other_minorities_rep');
 !}
 go-to: summary
 

@@ -822,10 +822,12 @@
     if (agreement) agreement.history.push({t: t, kind: 'autonomy_executed', project_id: project.id});
   }
 
-  // The agreement that opens the autonomy (17.12.6): an agreed point with the representation of the other minorities.
+  // The agreement that opens the autonomy (17.12.6): an agreed point with the representation of the other minorities (since
+  // Z — 0.88 also the promise of self-government in the east, decision 2A).
   function autonomyAgreement(S) {
     return Object.keys(S.agreements).sort().map(id => S.agreements[id]).filter(a => (a.status === 'active' || a.status === 'breached') &&
-      a.parties.indexOf('other_minorities_rep') >= 0 && (a.obligations || []).some(o => o.topic === 'language_rights' || o.topic === 'school_rights'))[0] || null;
+      a.parties.indexOf('other_minorities_rep') >= 0 && (a.obligations || []).some(o => o.topic === 'language_rights' || o.topic === 'school_rights' ||
+      o.topic === 'territorial_autonomy'))[0] || null;
   }
 
   // Cases an investigation can take up: the label names the case, not a proof of guilt (Z — 0.37).

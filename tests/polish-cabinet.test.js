@@ -148,27 +148,30 @@ test('C1 0.71: the introduction, the variant, the prime minister, the portfolios
   assert.equal(engine.state.sceneId, 'polish_cabinet_formation.variants', 'Back returns to the previous step');
   choose(engine, 'polish_cabinet_formation.var_left_labour');
   choose(engine, 'polish_cabinet_formation.cand_daszynski');
-  // Z — 0.61: the portfolios are bought with influence points (62 = 52% of the cabinet's seats + 10); NPR keeps Labour.
+  // Z — 0.61: the portfolios are bought with influence points (62 = 52% of the cabinet's seats + 10). Z — 0.88 (decision 1A):
+  // PPS starts with Labour; NPR takes Industry and Trade instead.
   assert.equal(engine.state.sceneId, 'polish_cabinet_formation.portfolio_menu');
   assert.match(content(engine), /Influence points: 62 = PPS share of the cabinet’s seats 52% \+ 10/);
-  assert.equal(choice(engine, 'polish_cabinet_formation.take_labor').canChoose, false, 'NPR needs Labour');
+  assert.equal(choice(engine, 'polish_cabinet_formation.drop_labor').canChoose, true, 'PPS holds Labour');
   choose(engine, 'polish_cabinet_formation.take_interior');
   assert.equal(choice(engine, 'polish_cabinet_formation.drop_interior').canChoose, true, 'it can be given back');
   choose(engine, 'polish_cabinet_formation.ports_next');
   assert.equal(engine.state.sceneId, 'polish_cabinet_formation.summary');
   assert.deepEqual(Q.S.negotiation.draft, { configuration_id: 'left_labour', candidate_id: 'daszynski', pps_mode: 'member',
-    seek_minority_support: false, portfolio_claim: ['economic', 'interior'] });
+    seek_minority_support: false, portfolio_claim: ['labor', 'interior'] });
   // The summary: our offer apart from what follows from it; each club in one line, its parts open on a click.
-  assert.match(content(engine), /Our offer:"\]\}," ","A cabinet of PPS, PSL Wyzwolenie and the National Workers’ Party, PPS in the cabinet; prime minister Ignacy Daszyński; PPS portfolios: Interior, Industry and Trade\. Its programme: /);
+  assert.match(content(engine), /Our offer:"\]\}," ","A cabinet of PPS, PSL Wyzwolenie and the National Workers’ Party, PPS in the cabinet; prime minister: the candidate of PPS \(the Centre\), Ignacy Daszyński; PPS portfolios: Labour, Interior\. Its programme: /);
   assert.match(content(engine), /<details class=\\"pl-score\\"><summary>PSL Wyzwolenie — agrees · \d+\/60<\/summary>relation with PPS \+20 · programme of the cabinet and the club’s views/);
   assert.match(content(engine), /<details class=\\"pl-score\\"><summary>NPR — agrees · \d+\/60<\/summary>/);
-  assert.match(content(engine), /after the commit the cabinet is appointed at once — a cabinet of PPS, PSL Wyzwolenie and the National Workers’ Party, prime minister Ignacy Daszyński/);
+  assert.match(content(engine), /after the commit the cabinet is appointed at once — a cabinet of PPS, PSL Wyzwolenie and the National Workers’ Party, prime minister: the candidate of PPS \(the Centre\), Ignacy Daszyński/);
   choose(engine, 'polish_cabinet_formation.back_summary');
   assert.equal(engine.state.sceneId, 'polish_cabinet_formation.portfolio_menu', 'Back from the summary to the portfolios');
   choose(engine, 'polish_cabinet_formation.ports_next');
-  choose(engine, 'polish_cabinet_formation.minorities_on');
+  // Z — 0.88 (decision 2A): one switch for each minority club; asked and withdrawn again.
+  choose(engine, 'polish_cabinet_formation.min_other_minorities_rep');
   assert.equal(engine.state.sceneId, 'polish_cabinet_formation.summary');
-  choose(engine, 'polish_cabinet_formation.minorities_off');
+  assert.equal([].concat(choice(engine, 'polish_cabinet_formation.min_other_minorities_rep').title).join(''), '■ The support of the other national minorities');
+  choose(engine, 'polish_cabinet_formation.min_other_minorities_rep');
   assert.deepEqual([Q.time, Q.month_actions, Q.S.history.negotiations.length], [before.t, before.actions, before.negotiations]);
   assert.deepEqual(Q.S.cabinet, before.cabinet, 'nothing is decided before the offer is submitted');
   assert.equal(Q.S.turn.pending, null);
@@ -183,7 +186,7 @@ test('C1 0.71: the introduction, the variant, the prime minister, the portfolios
   assert.match(content(engine), /The Naczelnik Państwa appoints a cabinet of PPS, PSL Wyzwolenie and the National Workers’ Party; Ignacy Daszyński becomes prime minister\. 210 MPs back it\./);
   assert.match(content(engine), /This is a minority cabinet: it has less than half of the Sejm, but more supporters than opponents/, 'explained (Z — 0.56)');
   assert.equal(Q.S.cabinet.pm, 'daszynski');
-  assert.deepEqual([Q.S.cabinet.portfolios.labor, Q.S.cabinet.portfolios.interior, Q.S.cabinet.portfolios.economic], ['npr', 'pps', 'pps']);
+  assert.deepEqual([Q.S.cabinet.portfolios.labor, Q.S.cabinet.portfolios.interior, Q.S.cabinet.portfolios.economic], ['pps', 'pps', 'npr']);
   assert.equal(Q.S.cabinet.appointment_basis, 'naczelnik_panstwa', 'before the constitutional transfer');
   // Decision 5A: Daszyński strengthens the centre of PPS (+5 strength, −5 dissent); the other factions grumble (+3 dissent).
   assert.equal(Q.S.actors.pps.factions.centrum.dissent, Math.max(0, factions.centrum.dissent - 5));
@@ -230,7 +233,7 @@ test('Warianty 0.80: plain Polish variants, summary and result, without abbrevia
     choose(engine, 'polish_cabinet_formation.var_left_labour');
     choose(engine, 'polish_cabinet_formation.cand_daszynski');
     choose(engine, 'polish_cabinet_formation.ports_next');
-    assert.match(content(engine), /Rząd PPS, PSL „Wyzwolenie” i Narodowej Partii Robotniczej, PPS w rządzie; premier Ignacy Daszyński; resorty PPS: [^.]+\. W programie: szybsza reforma rolna z odszkodowaniem/);
+    assert.match(content(engine), /Rząd PPS, PSL „Wyzwolenie” i Narodowej Partii Robotniczej, PPS w rządzie; premier: kandydat PPS \(Centrum\), Ignacy Daszyński; resorty PPS: [^.]+\. W programie: szybsza reforma rolna z odszkodowaniem/);
     assert.doesNotMatch(plain(choice(engine, 'polish_cabinet_formation.submit').subtitle), /miesiąca/, 'the mandatory formation says nothing about the month');
     choose(engine, 'polish_cabinet_formation.submit');
     const result = content(engine);
@@ -671,6 +674,31 @@ test('leak 2: the German coalition counter and votes of no confidence have no ef
   assert.equal(PolishGovernment.brokerStatus(Q).mode, 'tension');
 });
 
+// Z — 0.88 (decisions 5A and 2A of 24 X 2026): in Polish, the step "Premier" titles each candidate by his function; the summary
+// has one switch for each minority club with the cheapest concession that secures its support.
+test('Funkcja kandydata w grze 0.88: Polish titles of the candidates by their function, the name first in the description; one switch per minority club', () => {
+  const engine = dendry.startGame(1922, 'pl');
+  const Q = engine.state.qualities;
+  november(engine, LEFT_SEJM_ROWS);
+  PolishGovernment.changeRelation(Q, 'npr', 60 - Q.S.actors.relations.npr, 'fixture');
+  strongLeft(engine);
+  choose(engine, 'polish_cabinet_formation');
+  choose(engine, 'polish_cabinet_formation.variants');
+  choose(engine, 'polish_cabinet_formation.var_left_labour');
+  const title = id => [].concat(choice(engine, id).title).join('');
+  assert.deepEqual(['daszynski', 'moraczewski', 'czapinski', 'thugutt'].map(id => title('polish_cabinet_formation.cand_' + id)),
+    ['Kandydat PPS (Centrum)', 'Kandydat piłsudczyków z PPS', 'Kandydat lewicy PPS', 'Kandydat PSL Wyzwolenie']);
+  assert.ok([].concat(choice(engine, 'polish_cabinet_formation.cand_daszynski').subtitle).join('').startsWith('<span class="pl-cand-note"><strong>Ignacy Daszyński</strong><br>'));
+  choose(engine, 'polish_cabinet_formation.cand_daszynski');
+  choose(engine, 'polish_cabinet_formation.ports_next');
+  assert.deepEqual(['min_jewish_rep', 'min_other_minorities_rep'].map(id => title('polish_cabinet_formation.' + id)),
+    ['□ Poparcie reprezentacji żydowskiej', '□ Poparcie pozostałych mniejszości narodowych']);
+  assert.match(JSON.stringify(choice(engine, 'polish_cabinet_formation.min_jewish_rep').subtitle),
+    /Za (równość wobec prawa|prawa językowe i szkoły mniejszości) — najmniejsze ustępstwo, za które ten klub \(\d+ posłów\) poprze rząd\. Przy powołaniu rządu: PSL Piast −\d+, PSChD −\d+, ZLN −\d+\./);
+  assert.match(content(engine), /premier: kandydat PPS \(Centrum\), Ignacy Daszyński/);
+  assert.match(content(engine), /Jego pierwszy budżet \(podatek progresywny\): \d+ za, \d+ przeciw — przejdzie\./);
+});
+
 test('save and load in the middle of the formation keeps the offer; the restored game submits it once', () => {
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
@@ -682,7 +710,7 @@ test('save and load in the middle of the formation keeps the offer; the restored
   choose(engine, 'polish_cabinet_formation.var_left_labour');
   choose(engine, 'polish_cabinet_formation.cand_daszynski');
   choose(engine, 'polish_cabinet_formation.ports_next');
-  choose(engine, 'polish_cabinet_formation.minorities_on');
+  choose(engine, 'polish_cabinet_formation.min_other_minorities_rep');
   const draft = clone(Q.S.negotiation.draft);
   const restored = dendry.saveAndRestore(engine);
   const R = restored.state.qualities;

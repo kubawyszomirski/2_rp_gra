@@ -90,7 +90,9 @@ test('Oferta: relation 100 and a crossed red line — refusal; no resources or l
 
 test('portfolio fit: a member needs one preferred portfolio; minorities need their terms; none gives 100 (8.3)', () => {
   const member = { by: 'pps', members: ['pps', 'npr'], programme: { fiscal: 0 }, portfolios: { labor: 'pps', economic: 'npr' } };
-  assert.equal(gov.portfolioFit('npr', member), 0, 'NPR prefers Labour');
+  // Z — 0.88 (decision 1A): NPR takes Industry and Trade when PPS has Labour; without both it has none.
+  assert.equal(gov.portfolioFit('npr', member), 100, 'NPR takes Industry and Trade');
+  assert.equal(gov.portfolioFit('npr', { ...member, portfolios: { labor: 'pps', economic: 'pps' } }), 0, 'PPS took both');
   assert.equal(gov.portfolioFit('npr', { ...member, portfolios: { labor: 'npr' } }), 100);
   assert.equal(gov.portfolioFit('jewish_rep', { members: ['pps'], minority_terms: [] }), 0);
   assert.equal(gov.portfolioFit('jewish_rep', { members: ['pps'], minority_terms: ['language_rights'] }), 100);
@@ -231,7 +233,8 @@ test('Gabinet po wyborach: after 1922 the broad and stabilising cabinets stay gr
   for (const id of ['broad_centre', 'skrzynski_broad', 'national_unity']) {
     const status = gov.draftChoiceStatus(Q, 'configuration', id);
     assert.equal(status.available, false, id);
-    assert.match(status.reason, /crisis/);
+    // Z — 0.88 (decision 3A): the broad cabinet of Skrzyński first needs his period.
+    assert.match(status.reason, id === 'skrzynski_broad' ? /Only while Aleksander Skrzyński stands: XI 1925 – V 1926\./ : /crisis/);
   }
   // Two real falls in six months still do not turn the post-election formation into a crisis (8.8).
   Q.S.history.cabinets.push({ id: 'a', pm: 'a', end_reason: 'fall', ended_at: 9 }, { id: 'b', pm: 'b', end_reason: 'fall', ended_at: 10 });
@@ -263,35 +266,48 @@ test('Poparcie mniejszości: one segment accepts, the other refuses; appointment
   const view = gov.formationView(Q);
   assert.equal(view.members_seats, 140);
   assert.equal(view.requested_seats, 230, 'the preview counts the requested support, not a vote');
-  // PPS broke an earlier promise to the other minorities; their relation is low.
-  gov.changeRelation(Q, 'other_minorities_rep', -50, 'fixture');
-  Q.S.agreements.old = { id: 'old', kind: 'support', parties: ['pps', 'other_minorities_rep'], status: 'breached',
+  // PPS broke an earlier promise to the Jewish representation; its relation is low. Z — 0.88 (decision 2A): each club gets
+  // the cheapest concession that secures its support — none secures the Jewish one now; the other minorities take
+  // self-government in the east, which secures their support whatever their score.
+  gov.changeRelation(Q, 'jewish_rep', -50, 'fixture');
+  Q.S.agreements.old = { id: 'old', kind: 'support', parties: ['pps', 'jewish_rep'], status: 'breached',
     obligations: [{ id: 'old:1', owner: 'pps', status: 'breached' }], history: [] };
+  assert.deepEqual(gov.formationView(Q).minority_clubs.map(c => [c.club, c.concession, c.accepts]),
+    [['jewish_rep', 'schools', false], ['other_minorities_rep', 'schools', true]]);
+  assert.match(gov.formationView(Q).minority_clubs[0].line, /This club \(30 MPs\) refuses even for language rights and minority schools: score \d+ is below 60\./);
+  gov.changeRelation(Q, 'other_minorities_rep', -50, 'fixture');
+  assert.equal(gov.formationView(Q).minority_clubs[1].concession, 'autonomy', 'a weaker relation needs the larger concession');
+  assert.match(gov.formationView(Q).minority_clubs[1].line, /For self-government in the east — the smallest concession after which this club \(60 MPs\) supports the cabinet\. When the cabinet is appointed: PSL Piast −8, PSChD −5, ZLN −10\./);
   const result = gov.submitFormation(Q);
   const answer = id => result.pps_offer.evaluations.find(e => e.actor === id);
-  assert.equal(answer('jewish_rep').accept, true);
-  assert.equal(answer('other_minorities_rep').accept, false);
+  assert.equal(answer('jewish_rep').accept, false);
+  assert.equal(answer('other_minorities_rep').accept, true);
   assert.equal(result.pps_offer.accepted, false);
   assert.match(result.pps_offer.reason, /too few votes/);
-  assert.equal(result.pps_offer.forecast.yes, 170, 'only accepted declarations count');
+  assert.equal(result.pps_offer.forecast.yes, 200, 'only accepted declarations count');
   assert.notEqual(Q.S.cabinet.configuration_id, 'left_minority');
   // With both segments the same offer is appointed; minorities receive no portfolio.
   const ok = chamber(seats, { time: 11, year: 1922, month: 11 });
   formation(ok, 'crisis');
   gov.setDraft(ok, 'configuration_id', 'left_minority');
   gov.setDraft(ok, 'seek_minority_support', true);
+  assert.deepEqual(gov.formationView(ok).minority_clubs.map(c => c.concession), ['equality', 'schools'], 'the cheapest concessions');
+  gov.changeRelation(ok, 'zln', 30, 'fixture: above the floor of 0');
+  const relations = ['psl_piast', 'pschd', 'zln'].map(id => ok.S.actors.relations[id]);
   const appointed = gov.submitFormation(ok);
   assert.equal(appointed.appointed.configuration_id, 'left_minority');
   assert.deepEqual([...ok.S.cabinet.supporter_ids].sort(), ['jewish_rep', 'other_minorities_rep']);
   assert.ok(Object.values(ok.S.cabinet.portfolios).every(owner => ['pps', 'psl_wyzwolenie', 'expert'].includes(owner)));
-  const terms = Object.values(ok.S.agreements).filter(a => a.parties.includes('jewish_rep'))[0].obligations.map(o => o.topic);
-  assert.deepEqual(terms.filter(t => gov.MINORITY_TERMS.includes(t)), [...gov.MINORITY_TERMS]);
-  // Stage 4 (decision 3 of stage 4): the programme points name projects, dates and rules; the minority
-  // terms are the school project by t+6 and a rule of legal equality.
+  // Z — 0.88 (decision 2A): the price of both concessions with PSL Piast and the right (−2−4, −2−3, −2−4), once.
+  assert.deepEqual(['psl_piast', 'pschd', 'zln'].map((id, i) => ok.S.actors.relations[id] - relations[i]), [-6, -5, -6]);
+  // Stage 4 (decision 3 of stage 4): the programme points name projects, dates and rules; the Jewish representation has the
+  // rule of legal equality, the other minorities the school project by t+6.
   const jewish = Object.values(ok.S.agreements).filter(a => a.parties.includes('jewish_rep'))[0];
-  const term = topic => jewish.obligations.find(o => o.topic === topic);
+  const other = Object.values(ok.S.agreements).filter(a => a.parties.includes('other_minorities_rep'))[0];
+  assert.deepEqual(jewish.obligations.map(o => o.topic).filter(t => gov.MINORITY_TERMS.includes(t)), ['legal_equality']);
+  assert.equal(jewish.obligations.find(o => o.topic === 'legal_equality').kind, 'constraint');
+  const term = topic => other.obligations.find(o => o.topic === topic);
   assert.deepEqual([term('school_rights').required_project, term('school_rights').due_at, term('school_rights').portfolio], ['minority_schools', 17, 'education']);
-  assert.equal(term('legal_equality').kind, 'constraint');
   const programme = Object.values(ok.S.agreements).filter(a => a.parties.includes('psl_wyzwolenie'))[0].obligations;
   const land = programme.find(o => o.topic === 'land');
   assert.deepEqual([land.required_project, land.required_variants, land.due_at, land.portfolio], ['land_program', ['accelerated'], 17, 'agriculture']);
@@ -700,19 +716,22 @@ test('Ocena partnera 0.61: four visible parts — 30% relation, 35% programme, 2
 
 test('Konieczny resort 0.61: a partner keeps its preferred portfolio when it would refuse without it; with a margin PPS may take it', () => {
   const Q = centreLeft();
-  // NPR wants Labour, PSL Piast Agriculture and PSL Wyzwolenie (the smaller peasant club) Interior: each would fall by 20.
-  assert.match(gov.portfolioStatus(Q, 'labor').reason, /Without it NPR refuses: its score falls from 76 to 56, below 60/);
+  // Z — 0.88 (decision 1A): NPR takes Industry and Trade instead of Labour and PSL Wyzwolenie the Education instead of the
+  // Interior; PSL Piast still needs Agriculture and would fall by 20 without it.
+  assert.equal(gov.portfolioStatus(Q, 'labor').available, true);
+  assert.equal(gov.portfolioStatus(Q, 'interior').available, true);
   assert.match(gov.portfolioStatus(Q, 'agriculture').reason, /Without it PSL Piast refuses: its score falls from 77 to 57/);
-  assert.match(gov.portfolioStatus(Q, 'interior').reason, /Without it PSL Wyzwolenie refuses: its score falls from 70 to 50/);
-  assert.deepEqual(Q.S.negotiation.draft.portfolio_claim, ['economic'], 'without Labour PPS starts with Industry and Trade');
-  assert.throws(() => gov.setDraft(Q, 'portfolio_take', 'labor'), /cannot be taken/);
-  // With relation 100 NPR keeps 69 without Labour: PPS may take it, and the screen says what NPR loses.
-  const R = centreLeft({ npr_relation: 100 });
-  assert.deepEqual(R.S.negotiation.draft.portfolio_claim, ['labor']);
-  gov.setDraft(R, 'portfolio_drop', 'labor');
-  const status = gov.portfolioStatus(R, 'labor');
+  assert.deepEqual(Q.S.negotiation.draft.portfolio_claim, ['labor'], 'PPS starts with Labour');
+  assert.throws(() => gov.setDraft(Q, 'portfolio_take', 'agriculture'), /cannot be taken/);
+  gov.setDraft(Q, 'portfolio_take', 'interior');
+  const offer = gov.buildCabinetOffer(Q, Q.S.negotiation.draft, {});
+  assert.deepEqual([offer.portfolios.labor, offer.portfolios.economic, offer.portfolios.interior, offer.portfolios.education],
+    ['pps', 'npr', 'pps', 'psl_wyzwolenie'], 'NPR and PSL Wyzwolenie take their second portfolios');
+  // With relation 100 PSL Piast keeps its agreement without Agriculture: PPS may take it, and the screen says what it loses.
+  const R = centreLeft({ psl_piast_relation: 100 });
+  const status = gov.portfolioStatus(R, 'agriculture');
   assert.equal(status.available, true);
-  assert.equal(status.note, 'NPR loses its portfolio: score 89 → 69.');
+  assert.match(status.note, /^PSL Piast loses its portfolio: score \d+ → \d+\.$/);
 });
 
 test('Punkty wpływu 0.61: the PPS share of the cabinet’s seats + 10 when it is indispensable; Labour 10, Interior and Treasury 20, others 10', () => {
@@ -743,7 +762,7 @@ test('Powołanie od razu 0.61: an accepted PPS offer is appointed even when the 
   gov.setDraft(Q, 'configuration_id', 'centre_left');
   const fallback = gov.fallbackCabinet(Q);
   assert.deepEqual([fallback.offer.configuration_id, fallback.offer.candidate_id], ['chjeno_piast', 'witos']);
-  assert.match(gov.formationView(Q).verdict, /after the commit the cabinet is appointed at once — a cabinet of the centre-left: PPS, both peasant parties and the National Workers’ Party, prime minister Ignacy Daszyński/);
+  assert.match(gov.formationView(Q).verdict, /after the commit the cabinet is appointed at once — a cabinet of the centre-left: PPS, both peasant parties and the National Workers’ Party, prime minister: the candidate of PPS \(the Centre\), Ignacy Daszyński/);
   const result = gov.submitFormation(Q);
   assert.deepEqual([result.appointed.configuration_id, result.appointed.by], ['centre_left', 'pps']);
   // In opposition PPS sees beforehand which cabinet the head of state would appoint.
@@ -765,7 +784,7 @@ test('Premier 0.71: a party cabinet is led by the leader of its largest club (Th
   assert.equal(gov.candidateStatus(Q, 'nowak', draft).reason, 'A party cabinet is led by the leader of its largest party.');
   // Z — 0.79 (decision 3 of 14 X 2026): the note is short labelled lines.
   const plainNote = text => text.replace(/<br>/g, ' | ').replace(/<[^>]+>/g, '');
-  assert.equal(plainNote(gov.candidateNote(Q, 'thugutt')), 'Who he is: the leader of PSL Wyzwolenie. | Behind him: PSL Wyzwolenie (' +
+  assert.equal(plainNote(gov.candidateNote(Q, 'thugutt')), 'Stanisław Thugutt | Who he is: the leader of PSL Wyzwolenie. | Behind him: PSL Wyzwolenie (' +
     gov.seatsOf(Q.S, 'psl_wyzwolenie') + ' MPs). | Gain: after the appointment +5 relation with his party. | Cost of choosing him: none.');
   assert.equal(gov.candidateShown(Q, 'witos'), true, 'the leader of a member party is shown, greyed with his reason');
   assert.equal(gov.candidateShown(Q, 'nowak'), false, 'an expert is no candidate of this party cabinet');
@@ -927,4 +946,100 @@ test('Próg po wyborach 1922 0.67: a cabinet with PPS needs 185 MPs of its own c
   formation(Q);
   assert.equal(gov.configurationStatus(Q, 'expert', Q.S.negotiation.context).available, true);
   assert.equal(Q.S.negotiation.draft.configuration_id, 'expert', 'the default offer after the election is the tolerated expert');
+});
+
+// ---- Z — 0.88: the cabinets with PPS (the user's decisions of 24 X 2026) ----
+
+const SEJM_1923 = { pps: 41, psl_wyzwolenie: 48, psl_piast: 71, npr: 19, pschd: 61, zln: 101, minorities_bloc: 91, other: 12 };
+const in1923 = (y, m, overrides = {}) => chamber(SEJM_1923, { time: rules.timeOf(y, m), year: y, month: m, ...overrides });
+const twoFalls = Q => Q.S.history.cabinets.push({ id: 'a', pm: 'a', end_reason: 'fall', ended_at: Q.time - 1 }, { id: 'b', pm: 'b', end_reason: 'fall', ended_at: Q.time - 2 });
+
+test('Okres Skrzyńskiego 0.88: his broad cabinet only in XI 1925 – V 1926, whatever the crisis (decision 3A)', () => {
+  const early = in1923(1923, 6);
+  twoFalls(early);
+  formation(early, 'crisis');
+  assert.equal(gov.crisisState(early, { reason: 'crisis' }).allowed, true, 'a real crisis');
+  assert.match(gov.configurationStatus(early, 'skrzynski_broad', { reason: 'crisis' }).reason, /^Only while Aleksander Skrzyński stands: XI 1925 – V 1926\.$/);
+  assert.equal(gov.candidateStatus(early, 'skrzynski', { configuration_id: 'skrzynski_broad', pps_mode: 'member' }).available, false);
+  const late = in1923(1925, 12);
+  twoFalls(late);
+  formation(late, 'crisis');
+  assert.doesNotMatch(gov.configurationStatus(late, 'skrzynski_broad', { reason: 'crisis' }).reason, /Only while/);
+  assert.equal(gov.candidateStatus(late, 'skrzynski', { configuration_id: 'skrzynski_broad', pps_mode: 'member' }).available, true);
+});
+
+test('Kandydat lewicy 0.88: a non-party man leads a party cabinet only when all its parties back him — Śliwiński for the left from 1923, never Grabski (decision 4A)', () => {
+  // PSL Wyzwolenie has more MPs than PPS, but its relation is below 60: neither Daszyński nor Thugutt can lead PPS,
+  // PSL Wyzwolenie and NPR.
+  const Q = in1923(1924, 3, { psl_wyzwolenie_relation: 55, npr_relation: 60 });
+  formation(Q, 'crisis');
+  const draft = { configuration_id: 'left_labour', pps_mode: 'member' };
+  assert.deepEqual(['daszynski', 'thugutt'].map(id => gov.candidateStatus(Q, id, draft).available), [false, false]);
+  assert.equal(gov.candidateStatus(Q, 'sliwinski', draft).available, true, 'the non-party candidate of the left');
+  assert.match(gov.candidateStatus(Q, 'grabski', draft).reason, /needs the backing of all its parties; not backed by: PPS, PSL Wyzwolenie\.$/);
+  // Grabski still leads his cabinet of experts; Śliwiński no longer does (his period as an expert was 1922).
+  const experts = { configuration_id: 'expert', pps_mode: 'external_support' };
+  assert.deepEqual(['grabski', 'sliwinski'].map(id => gov.candidateStatus(Q, id, experts).available), [true, false]);
+  // Also after the fall of his cabinet of 1922.
+  Q.S.history.cabinets.push({ id: 'expert_t6', pm: 'sliwinski', end_reason: 'fall', ended_at: 7 });
+  assert.equal(gov.candidateStatus(Q, 'sliwinski', draft).available, true);
+  // In 1922 he stands only as the Naczelnik's expert.
+  const before = in1923(1922, 11, { psl_wyzwolenie_relation: 55, npr_relation: 60 });
+  formation(before, 'crisis');
+  assert.equal(gov.candidateStatus(before, 'sliwinski', draft).available, false);
+});
+
+test('Funkcja kandydata 0.88: a candidate is shown by his function at this moment, his name second (decision 5A)', () => {
+  const Q = in1923(1924, 3);
+  const roles = ['daszynski', 'moraczewski', 'czapinski', 'thugutt', 'witos', 'sliwinski', 'sikorski', 'grabski', 'skrzynski', 'pilsudski']
+    .map(id => gov.candidateRole(Q, id));
+  assert.deepEqual(roles, ['The candidate of PPS (the Centre)', 'The candidate of the Piłsudczycy of PPS', 'The candidate of the Left of PPS',
+    'The candidate of PSL Wyzwolenie', 'The candidate of PSL Piast', 'The non-party candidate of the left', 'A general, the candidate for stabilising the state',
+    'The non-party candidate of the centre and the right', 'The candidate of the broad coalition from the National Democrats to PPS',
+    'Piłsudski at the head of a legal cabinet']);
+  assert.equal(gov.roleAndName(Q, 'witos'), 'the candidate of PSL Piast, Wincenty Witos');
+  assert.equal(gov.roleAndName(Q, 'pilsudski'), 'Piłsudski at the head of a legal cabinet');
+  // In June 1922 Śliwiński is the Naczelnik's candidate, Nowak the candidate of a compromise in the Sejm.
+  const june = in1923(1922, 6);
+  assert.deepEqual(['ponikowski', 'sliwinski', 'nowak'].map(id => gov.candidateRole(june, id)),
+    ['The candidate of Naczelnik Piłsudski', 'The candidate of Naczelnik Piłsudski', 'The candidate of a compromise in the Sejm']);
+  assert.equal(gov.candidateRole(in1923(1922, 11), 'nowak'), 'The candidate of Naczelnik Piłsudski', 'later the Naczelnik proposes him');
+  assert.match(gov.candidateNote(Q, 'thugutt'), /^<span class="pl-cand-note"><strong>Stanisław Thugutt<\/strong><br>/);
+});
+
+test('Pierwszy budżet 0.88: a cabinet of PPS must carry its first budget; without PSL Piast a cabinet of the left needs the minorities (decision 2A)', () => {
+  const Q = in1923(1924, 3, { psl_wyzwolenie_relation: 70, psl_piast_relation: 60, npr_relation: 60 });
+  formation(Q, 'crisis');
+  gov.setDraft(Q, 'configuration_id', 'left_labour');
+  const without = gov.assessDraft(Q).pps_offer;
+  assert.deepEqual([without.accepted, without.reason, without.budget.position, without.budget.passes],
+    [false, 'no majority for its first budget', 2, false]);
+  assert.ok(without.forecast.viable, 'the investiture alone would pass, as before 0.88');
+  assert.match(gov.formationView(Q).votes, /Its first budget \(a progressive tax\): \d+ for, \d+ against — it fails; the cabinet would resign over it\. It needs the votes of PSL Piast or of the minorities\./);
+  gov.setDraft(Q, 'seek_minority_support', true);
+  const withMinorities = gov.assessDraft(Q).pps_offer;
+  assert.deepEqual([withMinorities.accepted, withMinorities.budget.passes], [true, true]);
+  assert.match(gov.formationView(Q).votes, /Its first budget \(a progressive tax\): \d+ for, \d+ against — it passes\./);
+  // The centre-left with PSL Piast carries its budget without the minorities.
+  gov.setDraft(Q, 'configuration_id', 'centre_left');
+  assert.equal(gov.assessDraft(Q).pps_offer.budget.passes, true);
+});
+
+test('Samorząd na wschodzie 0.88: the largest concession secures the other minorities whatever their score; it is a promise of the limited autonomy by t+6 and costs PSL Piast and the right (decision 2A)', () => {
+  const Q = chamber({ pps: 120, psl_wyzwolenie: 60, minorities_bloc: 90, zln: 120, other: 54 }, { time: 25, year: 1924, month: 1, zln_relation: 50 });
+  formation(Q, 'crisis');
+  gov.setDraft(Q, 'configuration_id', 'left_minority');
+  gov.changeRelation(Q, 'other_minorities_rep', -50, 'fixture');
+  gov.setDraft(Q, 'minority_club', 'other_minorities_rep');
+  assert.deepEqual(gov.formationView(Q).minority_clubs.map(c => [c.club, c.on, c.concession]),
+    [['jewish_rep', false, 'equality'], ['other_minorities_rep', true, 'autonomy']]);
+  gov.setDraft(Q, 'minority_club', 'jewish_rep');
+  const before = ['psl_piast', 'pschd', 'zln'].map(id => Q.S.actors.relations[id]);
+  const result = gov.submitFormation(Q);
+  assert.equal(result.appointed.configuration_id, 'left_minority');
+  assert.deepEqual(['psl_piast', 'pschd', 'zln'].map((id, i) => Q.S.actors.relations[id] - before[i]), [-10, -7, -12], 'equality and self-government');
+  const other = Object.values(Q.S.agreements).filter(a => a.parties.includes('other_minorities_rep'))[0];
+  const promise = other.obligations.find(o => o.topic === 'territorial_autonomy');
+  assert.deepEqual([promise.required_project, promise.required_variants, promise.required_stage, promise.portfolio, promise.due_at],
+    ['limited_autonomy', ['autonomy', 'regional_sejm'], 'completed', 'interior', 31]);
 });

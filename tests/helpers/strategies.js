@@ -110,8 +110,12 @@ function form(engine, params) {
     pick(engine, F + 'ports_next');
   }
   if (!at('summary')) return false;
-  if (params.minorities === true) pick(engine, F + 'minorities_on');
-  if (params.minorities === false) pick(engine, F + 'minorities_off');
+  // Z — 0.88 (decision 2A): one switch for each minority club; `true` asks both, `false` asks neither.
+  if (params.minorities === true || params.minorities === false) {
+    for (const club of ['jewish_rep', 'other_minorities_rep']) {
+      if ((engine.state.qualities['pl_form_min_' + club + '_mark'] === '■') !== params.minorities) pick(engine, F + 'min_' + club);
+    }
+  }
   if (params.terms && pick(engine, F + 'terms_menu') && !pick(engine, F + 'terms_' + params.terms)) pick(engine, F + 'back');
   if (!pick(engine, F + 'submit')) {
     // The offer cannot be submitted as set: PPS stays out of the cabinet instead.

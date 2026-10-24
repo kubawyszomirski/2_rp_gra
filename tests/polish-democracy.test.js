@@ -119,12 +119,12 @@ test('B1/B2: the dispute of June 1922 leads into one free formation where PPS an
   assert.match(plain('cand_sliwinski'), /Who he is: a non-party expert; the candidate of the Naczelnik Państwa \(Piłsudski\) for this period\. \| Behind him: .* \| Against him: ZLN, PSChD \(\d+ MPs\)\. \| Programme: .* \| Cost of choosing him: none — supporting him costs nothing with Piłsudski\./);
   assert.doesNotMatch(plain('cand_nowak'), /candidate of the Naczelnik/);
   // Z — 0.76 (decision 5 of 8 X 2026): what Nowak gives and what going against the Naczelnik costs; Z — 0.79 without history.
-  assert.match(plain('cand_nowak'), /Who he is: a non-party expert; the candidate of a parliamentary compromise\. .* \| Gain: the right does not fight him, so he has a better chance of a majority in the Sejm\. \| Cost of choosing him: it goes against the Naczelnik’s candidate — when the offer is submitted, relation with Piłsudski −5 and 1 R for the talks\./);
+  assert.match(plain('cand_nowak'), /Who he is: a non-party expert; the candidate of a compromise in the Sejm\. .* \| Gain: the right does not fight him, so he has a better chance of a majority in the Sejm\. \| Cost of choosing him: it goes against the Naczelnik’s candidate — when the offer is submitted, relation with Piłsudski −5 and 1 R for the talks\./);
   assert.doesNotMatch(plain('cand_nowak'), /Historically/);
   PolishRules.setLanguage('pl');
   try {
     const pl = PolishGovernment.candidateNote(Q, 'nowak').replace(/<br>/g, ' | ').replace(/<[^>]+>/g, '');
-    assert.match(pl, /^Kim jest: bezpartyjny fachowiec; kandydat kompromisu parlamentu\. \| Za nim stoją: .* \| Przeciw niemu: nikt\. \| Program: .* \| Zysk: .* \| Koszt wyboru: idziemy wbrew kandydatowi Naczelnika/);
+    assert.match(pl, /^Julian Nowak \| Kim jest: bezpartyjny fachowiec; kandydat sejmowego kompromisu\. \| Za nim stoją: .* \| Przeciw niemu: nikt\. \| Program: .* \| Zysk: .* \| Koszt wyboru: idziemy wbrew kandydatowi Naczelnika/);
   } finally {
     PolishRules.setLanguage('en');
   }
