@@ -97,10 +97,11 @@
         last_ledger: null,
         mirror_base: {},
       },
+      // Z — 0.89 (decisions 1, 2A and 3A of 24 X 2026): members and training (`militancy`, five levels); the fatigue, the
+      // dissent, the repression, the alignment and the militarised mark of the Milicja left the state.
       militia: {strength: Math.max(0, Math.round(Number(Q.pps_militia_strength) || 200)),
         militancy: clip(Number(Q.pps_militia_militancy) || 0.10, 0, 1), stage: Q.pps_militia_stage === 2 ? 2 : 1,
-        militarized: false, militarized_once: false, fatigue: 0, arrears: 0, assignments: [], banned: false, repressed: false,
-        dissent: 0, alignment: {legal_institutions: 50}, unpaid_last: false},
+        militarized_once: false, assignments: [], banned: false},
       unions: unions,
       faction_cases: {},
     };
@@ -223,7 +224,6 @@
     Q.pps_militia_name = militia.stage === 2 ? 'Akcja Socjalistyczna' : 'Milicja PPS';
     Q.akcja_socjalistyczna_formed = militia.stage === 2 ? 1 : 0;
     Q.pps_militia_banned = militia.banned ? 1 : 0;
-    Q.pps_militia_repressed = militia.repressed ? 1 : 0;
     Q.rb_strength = militia.strength;
     Q.rb_militancy = Q.pps_militia_militancy;
     Q.rb_strength_compat_base = Q.rb_strength;
@@ -291,8 +291,8 @@
 
   // One month of the party's own finances (13.1–13.4, 14.1), in step 6 of 4.2 after the economy and the flows, before the
   // agreements. Z — 0.56: only the membership moves here; the organisations work without upkeep — the press keeps its
-  // reach, a build or a course of TUR advances every month, the cooperatives give their relief while they operate and
-  // Milicja recovers 5 fatigue a month. Arrears of an older save are written off.
+  // reach, a build or a course of TUR advances every month and the cooperatives give their relief while they operate.
+  // Arrears of an older save are written off; Z — 0.89: so are the fields the Milicja no longer has.
   function settleParty(Q, t) {
     const S = Q.S, orgs = S.party_orgs, militia = S.militia;
     // Membership approaches its target by 5% of the gap (13.1; the order of the approved M18 diagnostics).
@@ -300,7 +300,7 @@
     const target = memberTarget(Q);
     apparatus.member_index = clip(apparatus.member_index + 0.05 * (target - apparatus.member_index), 0, 150);
     for (const key of Object.keys(orgs.arrears)) orgs.arrears[key] = 0;
-    militia.arrears = 0;
+    simplifyMilitia(militia);
     const press = orgs.press;
     press.unpaid_months = 0;
     press.paid_last = true;
@@ -319,8 +319,6 @@
       if (tur.active_course.paid_months >= 2) completeCourse(Q, t);
     }
     for (const project of operatingCooperatives(S)) project.paid_last = true;
-    militia.fatigue = Math.max(0, militia.fatigue - 5);
-    militia.unpaid_last = false;
     // Since stage 6 the unions' own funds are settled by PolishUnions.beginMonth, before a strike draws on them
     // (14.1–14.2).
     orgs.last_ledger = {t: t, cash: round(orgs.cash, 4), member_index: round(apparatus.member_index, 4), member_target: round(target, 4)};
@@ -382,7 +380,7 @@
     press_distribution: {org: 'press', cost: 1, kind: 'distribution'},
     tur: {org: 'tur', cost: 2, kind: 'build'},
     militia_recruit: {org: 'militia', cost: 1, kind: 'recruit'},
-    militia_militarize: {org: 'militia', cost: 2, kind: 'militarize'},
+    militia_militarize: {org: 'militia', cost: 1, kind: 'militarize'},
     cooperative_workers: {org: 'cooperatives', cost: 1, kind: 'prepare', class_id: 'workers'},
     cooperative_rural: {org: 'cooperatives', cost: 1, kind: 'prepare', class_id: 'rural'},
   });
@@ -394,7 +392,7 @@
   const ORG_NAMES = Object.freeze({unions: 'trade unions', press: 'the press', tur: 'TUR', militia: 'Milicja', cooperatives: 'cooperatives'});
   const ORG_NAMES_PL_ACCUSATIVE = Object.freeze({unions: 'związki zawodowe', press: 'prasę', tur: 'Towarzystwo Uniwersytetu Robotniczego', militia: 'Milicję', cooperatives: 'spółdzielnie'});
   const ORGANIZATIONS_COOLDOWN = 2;
-  const SUBACTION_COOLDOWNS = Object.freeze({organize: 2, distribution: 2, recruit: 2, militarize: 3});
+  const SUBACTION_COOLDOWNS = Object.freeze({organize: 2, distribution: 2, recruit: 2, militarize: 2});
 
   function packageCooldownKey(id) {
     const p = PACKAGES[id];
@@ -428,7 +426,8 @@
     if (p.org === 'militia') {
       const m = S.militia;
       if (m.banned) return no(L('Milicja is banned.', 'Milicja jest zakazana.'));
-      if (p.kind === 'militarize' && m.militancy >= 0.70 - 1e-9) return no(L('Its efficiency has reached 0.70.', 'Jej sprawność osiągnęła 0,70.'));
+      if (p.kind === 'militarize' && militiaLevel(m) >= MILITIA_LEVELS.length) return no(L('Its training is at the highest level, 5.', 'Jej wyszkolenie jest na najwyższym poziomie, 5.'));
+      if (p.kind === 'recruit' && m.strength >= MILITIA_MAX) return no(L('Milicja has ' + MILITIA_MAX + ' members; the party cannot organise more.', 'Milicja ma ' + MILITIA_MAX + ' członków; więcej partia nie zorganizuje.'));
     }
     if (p.org === 'cooperatives') {
       if (S.party_orgs.cooperatives.projects.some(c => c.class_id === p.class_id && c.status === 'prepared')) {
@@ -517,26 +516,59 @@
 
   // ---- Milicja PPS and AS (13.3–13.4; card 5.2) --------------------------------------------------------
 
+  // Z — 0.89 (decisions 2A and 3A of 24 X 2026): the Milicja has members and a training of five levels; its force is
+  // members ÷ 100 × training, × 1.2 as Akcja Socjalistyczna. A recruitment brings 150 members, a training (1 R, two months'
+  // wait) one level, up to 800 members (the maximum of the approved table: 800 × 0.70 × 1.2 ≈ 6.7 F); AS needs 500 members and
+  // level 3. Every free member answers a call; the discipline that lowers the
+  // risk of a clash is fixed — 0.80 for the Milicja, 0.95 for AS (the hidden compliance of 10.3 left the Milicja).
+  const MILITIA_LEVELS = Object.freeze([0.10, 0.25, 0.40, 0.55, 0.70]);
+  const MILITIA_RECRUITS = 150, MILITIA_MAX = 800;
+  const AS_LEVEL = 3, AS_MEMBERS = 500, AS_FACTOR = 1.2;
+  const MILITIA_DISCIPLINE = Object.freeze({1: 0.80, 2: 0.95});
+
+  // The level of the training: the nearest of the five values (an older save may hold another number).
+  function militiaLevel(m) {
+    let best = 0;
+    for (let i = 1; i < MILITIA_LEVELS.length; i++) if (Math.abs(m.militancy - MILITIA_LEVELS[i]) < Math.abs(m.militancy - MILITIA_LEVELS[best]) - 1e-9) best = i;
+    return best + 1;
+  }
+  const militiaDiscipline = S => MILITIA_DISCIPLINE[S.militia.stage === 2 ? 2 : 1];
+
+  // An older save: the fields the Milicja no longer has are removed and the training takes its level's value.
+  function simplifyMilitia(m) {
+    if (m.militarized && !m.militarized_once) m.militarized_once = true;
+    for (const key of ['fatigue', 'dissent', 'repressed', 'alignment', 'militarized', 'arrears', 'unpaid_last']) delete m[key];
+    m.militancy = MILITIA_LEVELS[militiaLevel(m) - 1];
+  }
+
+  // The state of the Milicja in one plain sentence for its card (Z — 0.89).
+  function militiaCardLine(Q) {
+    const m = Q.S.militia, name = m.stage === 2 ? 'Akcja Socjalistyczna' : 'Milicja';
+    return L(name + ' has ' + m.strength + ' members; training level ' + militiaLevel(m) + ' of 5.',
+      name + ' ma ' + m.strength + ' ' + rules.plural(m.strength, 'członka', 'członków', 'członków') + '; wyszkolenie na poziomie ' + militiaLevel(m) + ' z 5.');
+  }
+
   function recruit(Q) {
-    Q.S.militia.strength += 100;
-    return L('Milicja gains 100 members', 'Milicja zyskuje 100 członków');
+    const m = Q.S.militia, gain = Math.max(0, Math.min(MILITIA_RECRUITS, MILITIA_MAX - m.strength));
+    m.strength += gain;
+    return L('Milicja gains ' + gain + ' members', 'Milicja zyskuje ' + gain + ' ' + rules.plural(gain, 'członka', 'członków', 'członków'));
   }
 
   function militarize(Q) {
     const S = Q.S, m = S.militia;
-    m.militancy = Math.min(0.70, m.militancy + 0.10);
-    m.militarized = true;
+    const level = Math.min(MILITIA_LEVELS.length, militiaLevel(m) + 1);
+    m.militancy = MILITIA_LEVELS[level - 1];
     if (!m.militarized_once) {
       m.militarized_once = true;
       // Z — 0.34: the Centre fears an uncontrolled militarisation; the Left gets no bonus (13.3).
       factionReaction(Q, 'centrum', {dissent: 3}, {id: 'militia.militarize', kind: 'militarization', reverse: null});
     }
-    return L('Milicja trains and disciplines its members: efficiency ', 'Milicja szkoli i dyscyplinuje członków: sprawność ') + fmt(m.militancy);
+    return L('Milicja trains its members: training level ' + level + ' of 5', 'Milicja szkoli członków: wyszkolenie na poziomie ' + level + ' z 5');
   }
 
   function canFormAS(S) {
     const m = S.militia;
-    return m.stage === 1 && m.militarized && m.strength >= 500 && !m.banned && !m.repressed && S.party_orgs.cash + 1e-9 >= 2;
+    return m.stage === 1 && militiaLevel(m) >= AS_LEVEL && m.strength >= AS_MEMBERS && !m.banned && S.party_orgs.cash + 1e-9 >= 2;
   }
 
   function militiaStatus(Q, option) {
@@ -547,9 +579,8 @@
     if (option === 'militarize') return packageStatus(Q, 'militia_militarize', 0);
     if (option === 'as') {
       if (m.stage === 2) return no(L('Akcja Socjalistyczna is already formed.', 'Akcja Socjalistyczna już istnieje.'));
-      if (!m.militarized) return no(L('Needs a militarised Milicja.', 'Wymaga zmilitaryzowanej Milicji.'));
-      if (m.strength < 500) return no(L('Needs at least 500 members; Milicja has ' + m.strength + '.', 'Wymaga co najmniej 500 członków; Milicja ma ' + m.strength + '.'));
-      if (m.repressed) return no(L('Milicja is under repression.', 'Milicja podlega represjom.'));
+      if (militiaLevel(m) < AS_LEVEL) return no(L('Needs training at level ' + AS_LEVEL + '; it is at ' + militiaLevel(m) + '.', 'Wymaga wyszkolenia na poziomie ' + AS_LEVEL + '; teraz ' + militiaLevel(m) + '.'));
+      if (m.strength < AS_MEMBERS) return no(L('Needs at least ' + AS_MEMBERS + ' members; Milicja has ' + m.strength + '.', 'Wymaga co najmniej ' + AS_MEMBERS + ' członków; Milicja ma ' + m.strength + '.'));
       // Z — 0.56: 2 for the change, with no reserve for upkeep.
       if (S.party_orgs.cash + 1e-9 < 2) return no(L('Needs 2 resources.', 'Wymaga 2 jednostek środków.'));
       return OK;
@@ -571,8 +602,8 @@
       rules.commitMainAction(Q, 'militia.as', {resource_cost: {R: 2}});
       S.party_orgs.cash = Math.max(0, S.party_orgs.cash - 2);
       S.militia.stage = 2;
-      text = L('Milicja is reorganised as Akcja Socjalistyczna: its members follow a call better (+0.15) and it can cover up to three cases at once before a coup.',
-        'Milicja zostaje przekształcona w Akcję Socjalistyczną: jej członkowie lepiej odpowiadają na wezwanie (+0,15) i przed zamachem może obsługiwać do trzech spraw naraz.');
+      text = L('Milicja becomes Akcja Socjalistyczna: stronger and more disciplined, it can protect three matters at once.',
+        'Milicja staje się Akcją Socjalistyczną: jest silniejsza i bardziej zdyscyplinowana, może chronić trzy sprawy naraz.');
     } else {
       const id = option === 'recruit' ? 'militia_recruit' : 'militia_militarize';
       rules.commitMainAction(Q, 'militia.' + option, {resource_cost: {R: PACKAGES[id].cost}});
@@ -589,13 +620,12 @@
     return clip(0.35 + 0.004 * alignment + 0.003 * cohesionValue - 0.003 * (organizationDissent || 0), 0, 1);
   }
 
+  // Z — 0.89: the force of the free members — members ÷ 100 × training, × 1.2 as AS.
   function militiaForce(S, options) {
     const m = S.militia, o = options || {};
-    const alignment = o.alignment === undefined ? (m.alignment.legal_institutions || 50) : o.alignment;
-    const base = compliance(alignment, o.cohesion === undefined ? cohesion(S) : o.cohesion, m.dissent);
-    const effective = m.stage === 2 ? Math.min(1, base + 0.15) : base;
     const people = Math.max(0, m.strength - (o.committed || 0) - (o.unavailable || 0));
-    return {compliance: base, effective_compliance: effective, force: (people / 100) * m.militancy * effective * (1 - m.fatigue / 100)};
+    return {people: people, level: militiaLevel(m), discipline: militiaDiscipline(S),
+      force: (people / 100) * m.militancy * (m.stage === 2 ? AS_FACTOR : 1)};
   }
 
   // 13.4 (M15): Milicja covers one case at a time; AS up to three before a coup. Each case receives force up
@@ -2785,10 +2815,9 @@
     } else if (key === 'advisor.niedzialkowski.defend_democracy') {
       // The +5 to democracy is applied by PolishPolitics at the next settlement (decision 4 of stage 4; leak 10: no pro_republic).
       (S.actors.pps.pending_effects = S.actors.pps.pending_effects || []).push({id: key + ':t' + t, system: 'democracy', stage: 7, value: 5});
-      S.militia.alignment.legal_institutions = Math.min(100, (S.militia.alignment.legal_institutions || 50) + 5);
       for (const id of BRANCHES) S.unions[id].alignment.legal_institutions = Math.min(100, (S.unions[id].alignment.legal_institutions || 50) + 5);
       addEffect(S, key, 'authoritarian_support_penalty', 5, t);
-      text = L('The organisations of PPS stand closer to the legal institutions (+5); attachment to democracy +5 at the next monthly settlement.', 'Organizacje PPS zbliżają się do legalnych instytucji (+5); przywiązanie do demokracji +5 przy następnym miesięcznym rozliczeniu.');
+      text = L('The trade unions stand closer to the legal institutions (+5); attachment to democracy +5 at the next monthly settlement.', 'Związki zawodowe zbliżają się do legalnych instytucji (+5); przywiązanie do demokracji +5 przy następnym miesięcznym rozliczeniu.');
     } else if (key === 'advisor.arciszewski.organize_workers') {
       const branch = option || 'industry';
       const gain = expandBranch(S, branch, 8);
@@ -2956,10 +2985,9 @@
     Q.pl_party_coops = L(coops + ' operating' + (prepared ? ', ' + prepared + ' prepared' : ''),
       coops + ' ' + rules.plural(coops, 'działająca', 'działające', 'działających') +
       (prepared ? ', ' + prepared + ' ' + rules.plural(prepared, 'przygotowana', 'przygotowane', 'przygotowanych') : ''));
-    Q.pl_party_militia = L(m.strength + ' members, efficiency ' + fmt(m.militancy) + (m.fatigue ? ', fatigue ' + m.fatigue : '') +
-      (m.militarized ? ', militarised' : '') + (m.stage === 2 ? '; Akcja Socjalistyczna' : ''),
-      m.strength + ' ' + rules.plural(m.strength, 'członek', 'członków', 'członków') + ', sprawność ' + fmt(m.militancy) +
-      (m.fatigue ? ', zmęczenie ' + m.fatigue : '') + (m.militarized ? ', zmilitaryzowana' : '') + (m.stage === 2 ? '; Akcja Socjalistyczna' : ''));
+    Q.pl_party_militia = L(m.strength + ' members, training ' + militiaLevel(m) + '/5' + (m.stage === 2 ? '; Akcja Socjalistyczna' : ''),
+      m.strength + ' ' + rules.plural(m.strength, 'członek', 'członków', 'członków') + ', wyszkolenie ' + militiaLevel(m) + '/5' +
+      (m.stage === 2 ? '; Akcja Socjalistyczna' : ''));
     Q.pl_party_unions = BRANCHES.map(id => branchName(id) + L(' reach ', ': zasięg ') + fmt(S.unions[id].reach)).join('; ');
     sidebarDisplay(Q);
   }
@@ -3060,6 +3088,12 @@
     militiaChoose: militiaChoose,
     compliance: compliance,
     militiaForce: militiaForce,
+    militiaLevel: militiaLevel,
+    militiaCardLine: militiaCardLine,
+    militiaDiscipline: militiaDiscipline,
+    MILITIA_LEVELS: MILITIA_LEVELS,
+    MILITIA_RECRUITS: MILITIA_RECRUITS,
+    MILITIA_MAX: MILITIA_MAX,
     allocateProtection: allocateProtection,
     duesStatus: duesStatus,
     duesAvailable: duesAvailable,

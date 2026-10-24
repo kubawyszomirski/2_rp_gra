@@ -1,5 +1,11 @@
 # Historical Source Register
 
+## PL-MILITIA-0.89 — the simplified Milicja PPS
+
+- **Authority:** the user's decisions of 24 October 2026 (technical reference 0.89, sections 13.3 and 23.62); the user decided that no further historical research is needed for the Milicja.
+- **Sources:** none consulted for this change; the historical basis of Milicja PPS and AS stays as recorded in `PPS-MILITIA-DESIGN-TBD`.
+- **Gameplay simplification (P):** the five training levels, the force formula, the AS factor 1.2, the fixed discipline 0.80 / 0.95, the recruitment of 150 members up to 800, the costs and waits, the AS conditions (500 members, level 3).
+
 ## PL-1923-1926-CABINET-PPS — the non-party candidate of the left, the period of Skrzyński and the minority concessions
 
 - **Authority:** the user's decisions of 24 October 2026 (technical reference 0.88, sections 8.3, 8.7, 8.8 and 23.61).
@@ -2657,6 +2663,7 @@ Add one row whenever an entry above is assigned a stable Source ID.
 | PL-UNIONS-FARM-LABOUR-1918-1922 | Unions / agricultural labour | The PPS initiative of the agricultural labourers' union, the rural strikes of 1918–1919 and the harvest strike of July 1922 behind the role of the agricultural branch | Researched in part; implemented with the gaps marked TBD | 0.86, 24 October 2026 |
 | PL-STRIKE-GOALS-0.87 | Unions / strikes | The goals of a strike, the threat and the works councils on the card of a dispute | Gameplay simplification; works councils and threats TBD | 0.87, 24 October 2026 |
 | PL-1923-1926-CABINET-PPS | Cabinet / candidates / minorities | The non-party candidate of the left (Śliwiński), the period of Skrzyński and the minority concessions on the background of the ugoda of 1925 | Researched in part; the candidate and the concessions are gameplay simplifications | 0.88, 24 October 2026 |
+| PL-MILITIA-0.89 | Milicja / AS | The simplified Milicja PPS: members and five training levels, the balance of costs and gains | Gameplay simplification; no further research by the user's decision | 0.89, 24 October 2026 |
 | PL-STAGE8-NORMAL-SCENARIO-2026-10-04 | Implementation | Stage 8, the last stage: the Normal scenario with the dated inputs of 17.16 and of the 8f research, the opening calibrated to the M02 Sejm, rule 8.9 for the NPR, the military compromise carried out by the cabinet, Polish-only screens, thirteen strategy automata playing full campaigns, and the closing fixes | Implemented | Implemented, 4 October 2026 |
 | TBD | TBD | TBD | TBD | TBD |
 

@@ -34,7 +34,7 @@ PolishParty.advisorAction(Q, 'niedzialkowski', 'build_centrolew');
 
 @defend_democracy
 title: Defend Constitutional Democracy
-subtitle: The organisations of PPS stand closer to the legal institutions (+5), and attachment to democracy grows at the next monthly settlement (+5). For six months supporting an openly authoritarian project raises Centrum dissent (+5).
+subtitle: The trade unions stand closer to the legal institutions (+5), and attachment to democracy grows at the next monthly settlement (+5). For six months supporting an openly authoritarian project raises Centrum dissent (+5).
 choose-if: {! return PolishParty.advisorActionStatus(Q, 'niedzialkowski', 'defend_democracy').available !}
 unavailable-subtitle: [+ pl_advact_defend_democracy_why +]
 call: polish_advisor_commit

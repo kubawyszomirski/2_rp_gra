@@ -946,7 +946,7 @@
             press_reach: S.party_orgs.press.reach, tur_level: S.party_orgs.tur.level,
             cooperatives: S.party_orgs.cooperatives.projects.filter(c => c.status === 'operating').length} : null,
           militia: S.militia && S.militia.stage ? {strength: S.militia.strength, militancy: S.militia.militancy, stage: S.militia.stage,
-            fatigue: S.militia.fatigue, banned: !!S.militia.banned, repressed: !!S.militia.repressed} : null,
+            banned: !!S.militia.banned} : null,
           credibility: S.actors.pps ? S.actors.pps.credibility : null,
           manifests: S.faction_cases && S.faction_cases.manifests ? copy(S.faction_cases.manifests) : [],
           unions: S.unions ? Object.keys(S.unions).sort().map(id => ({id: id, reach: S.unions[id].reach, fund: S.unions[id].fund,

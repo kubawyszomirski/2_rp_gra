@@ -498,22 +498,23 @@ test('Zero sił: with F = 0 on both sides there is no NaN, no division by zero a
   assert.equal(resolve(['neutral', 'neutral', 'neutral', 'neutral'], { democracy: 30 }).outcome, 'prolonged_conflict');
 });
 
-test('AS w zamachu: defending the government with the Milicja of 4 F and with AS of the same people, democracy 60: one task; F9 in 6.2% and 30.4% of the draws', () => {
+// Z — 0.89 (decision 2A of 24 X 2026): every free member answers; AS is the same people ×1.2 (before: the compliance +0.15).
+test('AS w zamachu: defending the government with the Milicja of 4 F and with AS of the same people (×1.2), democracy 60: one task; F9 in 6.2% and 30.4% of the draws', () => {
   const Q = declared();
   const S = Q.S;
   PolishSecurity.coupBegin(Q);
   PolishSecurity.coupStance(Q, 'defend_legal');
-  S.militia.militancy = 1; S.militia.fatigue = 0;
-  const compliance = PolishParty.compliance(50, PolishParty.cohesion(S), 0); // after the reactions of F4
-  S.militia.strength = Math.round(400 / compliance);
+  S.militia.militancy = 1;
+  S.militia.strength = 400;
   const milicja = PolishSecurity.militiaCall(S, 'defend_legal');
   close(milicja.force, 4, 0.02, 'the Milicja: 4 F');
+  assert.equal(milicja.executing, milicja.available, 'every free member answers');
   S.militia.stage = 2;
   const as = PolishSecurity.militiaCall(S, 'defend_legal');
   assert.equal(as.available, milicja.available, 'the same people');
-  close(as.force / milicja.force, Math.min(1, compliance + 0.15) / compliance, 0.01, 'only the compliance +0.15');
+  close(as.force / milicja.force, 1.2, 0.001, 'AS ×1.2');
   assert.deepEqual([pct(enumerate({ stance: 'legal', militia_F: 4, democracy: 60, f9: 'accept' }).f9),
-    pct(enumerate({ stance: 'legal', militia_F: 4 * (Math.min(1, compliance + 0.15) / compliance), democracy: 60, f9: 'accept' }).f9)], [6.2, 30.4]);
+    pct(enumerate({ stance: 'legal', militia_F: 4.8, democracy: 60, f9: 'accept' }).f9)], [6.2, 30.4]);
   PolishSecurity.coupCommit(Q, 'militia');
   const called = S.coup.attempt.organisations;
   assert.deepEqual([called.militia_task, called.militia.executing <= called.militia.available], ['confrontation', true], 'one task of the Milicja in the attempt');
@@ -624,7 +625,7 @@ test('Odrzucone F9: with a significant share and both sides ready, a rejection c
   const Q = declared();
   const S = Q.S;
   fixSides(Q, EXAMPLE);
-  S.militia.strength = 740; S.militia.militancy = 1; S.militia.fatigue = 0;
+  S.militia.strength = 620; S.militia.militancy = 1; // fixture: a Milicja of about 6 F (Z — 0.89: every member answers)
   S.politics.democracy = 75; S.coup.attempt.democracy = 75; // fixture: the democracy of the declaration
   PolishSecurity.coupBegin(Q);
   PolishSecurity.coupStance(Q, 'defend_legal');

@@ -325,12 +325,12 @@ test('the Milicja card recruits for 1 R and settles the month; the larger Milicj
   const cash = Q.S.party_orgs.cash;
   choose(engine, 'polish_party_militia.recruit');
   choose(engine, 'root');
-  assert.deepEqual([Q.time, Q.S.militia.strength, Q.pps_militia_strength], [2, 300, 300]);
+  assert.deepEqual([Q.time, Q.S.militia.strength, Q.pps_militia_strength], [2, 350, 350], 'Z — 0.89: +150 members');
   const ledger = Q.S.party_orgs.last_ledger;
   assert.equal(ledger.t, 1);
   assert.ok(Math.abs(Q.S.party_orgs.cash - (cash - 1)) < 1e-9, 'only the 1 R of the recruitment');
   engine.goToScene('status');
-  assert.match(content(engine), /300 members/);
+  assert.match(content(engine), /350 members, training 1\/5/);
 });
 
 test('a year of play keeps the party consistent: cash never negative, one ledger a month, valid S through saves', () => {
@@ -546,4 +546,16 @@ test('Program bez zmiany in the game (Z — 0.56, 0.57): six described prioritie
   choose(engine, 'root');
   assert.deepEqual(Q.S.actors.pps.strategy.economic_priorities, ['cooperatives_housing', 'public_works']);
   assert.equal(Q.S.cooldowns['party.economic_program'], Q.time + 5, 'the card waits six months from the month it was played');
+});
+
+// Z — 0.89 (the user's note of 24 X 2026 on the card): what the self-defence is for in plain words, its members and its training;
+// no forces and no foretelling of events.
+test('Karta Milicji 0.89: plain words, members and training; no forces and no foretelling (pl)', () => {
+  const engine = dendry.startGame(1922, 'pl');
+  playFromHand(engine, 'polish_party_militia');
+  const text = content(engine);
+  assert.match(text, /Samoobrona partii chroni strajki, wiece i lokale naszych organizacji, a gdy konflikt w kraju się zaostrzy, może stanąć po stronie, którą wybierze partia\. ","Milicja ma 200 członków; wyszkolenie na poziomie 1 z 5\./);
+  assert.doesNotMatch(text, /zamach|\d F\b|sprawnoś|zmęczeni/);
+  const title = id => [].concat(choice(engine, 'polish_party_militia.' + id).title).join('');
+  assert.deepEqual(['recruit', 'militarize', 'form_as'].map(title), ['Przeprowadź werbunek', 'Przeprowadź szkolenie', 'Przekształć w Akcję Socjalistyczną']);
 });

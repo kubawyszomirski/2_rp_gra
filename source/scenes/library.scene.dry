@@ -307,7 +307,7 @@ go-to: menu
 
 [? if polish_security_rules : **Organisations and forces of the state** ?]
 
-[? if polish_security_rules : **[+ pl_def_militia_name +]**: the self-defence organisation of PPS. It protects meetings, offices, demonstrations and strikes, and in a coup it can be committed with the railway workers. It begins as Milicja PPS and can be reorganised into Akcja Socjalistyczna (AS). [+ pl_def_militia +] Legal status: [+ pl_def_legal +]. Historical details remain **TBD — historical research required**. ?]
+[? if polish_security_rules : **[+ pl_def_militia_name +]**: the self-defence organisation of PPS. It protects meetings, offices, demonstrations and strikes, and if the conflict in the country turns sharp it can stand on the side the party chooses. It begins as Milicja PPS and can be reorganised into Akcja Socjalistyczna (AS). [+ pl_def_militia +] Legal status: [+ pl_def_legal +]. ?]
 
 [? if polish_security_rules : **Police**: [+ pl_def_police +] ?]
 

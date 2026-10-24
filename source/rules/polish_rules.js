@@ -442,7 +442,6 @@
     if (!Number.isInteger(militia.strength) || militia.strength < 0) problems.push('S.militia.strength is not a count');
     if (typeof militia.militancy !== 'number' || militia.militancy < 0 || militia.militancy > 1) problems.push('S.militia.militancy is outside 0–1');
     if (militia.stage !== 1 && militia.stage !== 2) problems.push('S.militia.stage is ' + militia.stage);
-    if (typeof militia.fatigue !== 'number' || militia.fatigue < 0 || militia.fatigue > 100) problems.push('S.militia.fatigue is outside 0–100');
     for (const id of Object.keys(S.unions)) {
       const branch = S.unions[id];
       if (!isPlainObject(branch) || typeof branch.reach !== 'number' || branch.reach < 0 || branch.reach > 100) problems.push('S.unions.' + id + '.reach is outside 0–100');

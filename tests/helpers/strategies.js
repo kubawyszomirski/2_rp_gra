@@ -344,7 +344,7 @@ const STRATEGIES = {
         // it still needs, then money saved for it — not a fixed rotation that misses the affordable month.
         const M = ctx.S.militia;
         if (globalThis.PolishParty.militiaStatus(ctx.Q, 'as').available) extra.push(P.militia('form_as'));
-        else if (!M.militarized) extra.push(P.militia('militarize'));
+        else if (globalThis.PolishParty.militiaLevel(M) < 3) extra.push(P.militia('militarize'));
         else if (M.strength < 500) extra.push(P.militia('recruit'));
         else extra.push(P.fundraise());
       }

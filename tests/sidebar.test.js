@@ -91,8 +91,9 @@ test('Pasek boczny: zakładka Obrona ma nagłówek dla każdej siły i jedną in
   const engine = dendry.startGame(1922, 'pl');
   const defense = display(engine, 'status.paramilitaries');
   const text = flat(defense);
-  assert.match(text, /\nMilicja PPS ?\nZorganizowani członkowie: 200 ?\nSprawność: 0,1 ?\n/);
-  assert.match(text, /\nStatus prawny: legalna ?\nPrzywiązanie do legalnych instytucji: 50\u00a0na\u00a0100 ?\n/);
+  // Z — 0.89: the training in levels; the condition and the attachment of the Milicja left the tab.
+  assert.match(text, /\nMilicja PPS ?\nZorganizowani członkowie: 200 ?\nWyszkolenie: poziom 1\u00a0z\u00a05 ?\nStatus prawny: legalna ?\n/);
+  assert.doesNotMatch(text, /Przywiązanie do legalnych instytucji|Sprawność/);
   assert.match(text, /\nPolicja ?\nPotencjał: 50 ?\nDowodzenie: 50 ?\nPraworządność: 50 ?\nOchrona jednego zgromadzenia: [\d,]+\u00a0na\u00a0100 ?\n/);
   assert.match(text, /\nZgrupowania wojska ?\n\s*Lojalność wobec Piłsudskiego, znana tylko w przedziale: ?\n/);
   for (const name of ['Stołeczny garnizon wierny rządowi', 'Oddziały stołeczne bliskie Piłsudskiemu', 'Bliski odwód', 'Daleki odwód (koleją)']) {

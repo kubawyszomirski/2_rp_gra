@@ -832,14 +832,15 @@
   function unionCompliance(S) {
     return average(Object.keys(S.unions).sort().map(id => party.compliance(S.unions[id].alignment.legal_institutions, party.cohesion(S), S.unions[id].dissent)));
   }
+  // Z — 0.89 (decision 2A of 24 X 2026): the fixed discipline of the Milicja (0.80) or of AS (0.95) in the clash test.
   function militiaCompliance(S) {
-    return party.compliance(S.militia.alignment.legal_institutions, party.cohesion(S), S.militia.dissent);
+    return party.militiaDiscipline(S);
   }
 
   // The Milicja takes one matter at a time before AS (13.4): it is free when it protects no active strike.
   function militiaFree(S) {
     const m = S.militia;
-    if (m.banned || m.repressed || !(m.strength > 0)) return false;
+    if (m.banned || !(m.strength > 0)) return false;
     const busy = unions.records(S, ['active', 'settlement_pending']).filter(r => r.protection).length;
     return busy < (m.stage === 2 ? 3 : 1);
   }

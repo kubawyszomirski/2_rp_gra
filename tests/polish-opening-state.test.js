@@ -251,8 +251,8 @@ test('external toleration preserves adviser diplomacy and playable militia devel
   // Stage 5: the Polish card Milicja PPS (card catalogue 5.2) replaces the inherited self-defence card.
   playEligibleFixture(engine, 'polish_party_militia');
   choose(engine, 'polish_party_militia.recruit');
-  assert.equal(Q.pps_militia_strength, 300);
-  assert.ok(Math.abs(Q.pps_militia_militancy - 0.10) < 1e-9, 'recruiting gives no efficiency bonus');
+  assert.equal(Q.pps_militia_strength, 350, 'Z — 0.89: a recruitment brings 150 members');
+  assert.ok(Math.abs(Q.pps_militia_militancy - 0.10) < 1e-9, 'recruiting gives no training');
   choose(engine, 'root');
   assert.equal(Q.month, month + 1);
   assert.equal(Q.polish_opening_government_active, 1);

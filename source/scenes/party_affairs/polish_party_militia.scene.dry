@@ -1,14 +1,16 @@
 title: Milicja PPS
-subtitle: Recruit, militarise, or reorganise the self-defence as Akcja Socjalistyczna.
+subtitle: Recruit, train, or reorganise the self-defence as Akcja Socjalistyczna.
 new-page: true
 is-card: true
 tags: party_affairs
 card-image: img/polish/polish_party_militia.jpg
 view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.militiaAvailable(Q) !}
 on-arrival: {!
-// Card party.militia (technical reference 13.3–13.4; card catalogue 5.2): two basic steps and a
-// conditional reorganisation; the same steps as in the card Organisations of PPS, with the same cooldowns.
+// Card party.militia (technical reference 13.3–13.4; card catalogue 5.2). Z — 0.89 (decisions 2A and 3A of 24 X 2026 and the
+// user's note on the card): what the self-defence is for in plain words, its members and its training; no forces and no
+// foretelling of events. Recruitment and training each wait two months; Akcja Socjalistyczna is a one-off reorganisation.
 PolishParty.partyDisplay(Q);
+Q.pl_mil_state = PolishParty.militiaCardLine(Q);
 Q.pl_mil_recruit_why = PolishParty.militiaStatus(Q, 'recruit').reason;
 Q.pl_mil_militarize_why = PolishParty.militiaStatus(Q, 'militarize').reason;
 Q.pl_mil_as_why = PolishParty.militiaStatus(Q, 'as').reason;
@@ -16,7 +18,7 @@ Q.pl_mil_as_why = PolishParty.militiaStatus(Q, 'as').reason;
 
 = Milicja PPS
 
-[+ pl_party_militia +]. Milicja needs no upkeep; every month its fatigue falls by 5.
+The self-defence of the party protects strikes, meetings and the offices of our organisations, and if the conflict in the country turns sharp it can stand on the side the party chooses. [+ pl_mil_state +]
 
 - @recruit
 - @militarize
@@ -24,8 +26,8 @@ Q.pl_mil_as_why = PolishParty.militiaStatus(Q, 'as').reason;
 - @easy_discard
 
 @recruit
-title: Recruit
-subtitle: 1 resource; Milicja gains members (+100), with no gain in efficiency. Waits two months.
+title: Carry out a recruitment
+subtitle: One unit of the party's money: the Milicja gains 150 members, up to 800. The next recruitment in two months.
 choose-if: {! return PolishParty.militiaStatus(Q, 'recruit').available !}
 unavailable-subtitle: [+ pl_mil_recruit_why +]
 on-arrival: {!
@@ -34,8 +36,8 @@ PolishParty.militiaChoose(Q, 'recruit');
 go-to: result
 
 @militarize
-title: Militarise
-subtitle: 2 resources; training and discipline raise efficiency (+0.10, up to 0.70). The first time Centrum dissent rises (+3). Waits three months.
+title: Carry out a training
+subtitle: One unit of the party's money: the training rises by one level. The first training worries the Centre of PPS: its dissent rises (+3). The next training in two months.
 choose-if: {! return PolishParty.militiaStatus(Q, 'militarize').available !}
 unavailable-subtitle: [+ pl_mil_militarize_why +]
 on-arrival: {!
@@ -45,7 +47,7 @@ go-to: result
 
 @form_as
 title: Reorganise as Akcja Socjalistyczna
-subtitle: 2 resources, once; needs a militarised Milicja of at least 500 and legality. Members follow a call better (+0.15); up to three cases at once before a coup.
+subtitle: Two units of the party's money, once: a stronger and more disciplined organisation that can protect three matters at once. Needs 500 members and training at level 3.
 choose-if: {! return PolishParty.militiaStatus(Q, 'as').available !}
 unavailable-subtitle: [+ pl_mil_as_why +]
 on-arrival: {!

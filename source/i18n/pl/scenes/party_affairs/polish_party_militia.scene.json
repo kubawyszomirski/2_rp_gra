@@ -3,15 +3,15 @@
  "status": "complete",
  "lines": {
   "title: Milicja PPS": "title: Milicja PPS",
-  "subtitle: Recruit, militarise, or reorganise the self-defence as Akcja Socjalistyczna.": "subtitle: Werbunek, militaryzacja albo przekształcenie samoobrony w Akcję Socjalistyczną.",
+  "subtitle: Recruit, train, or reorganise the self-defence as Akcja Socjalistyczna.": "subtitle: Werbunek, szkolenie albo przekształcenie samoobrony w Akcję Socjalistyczną.",
   "= Milicja PPS": "= Milicja PPS",
-  "[+ pl_party_militia +]. Milicja needs no upkeep; every month its fatigue falls by 5.": "[+ pl_party_militia +]. Milicja nie wymaga utrzymania; co miesiąc jej zmęczenie spada o 5.",
-  "title: Recruit": "title: Werbunek",
-  "subtitle: 1 resource; Milicja gains members (+100), with no gain in efficiency. Waits two months.": "subtitle: 1 jednostka środków; Milicja zyskuje członków (+100), bez wzrostu sprawności. Odnowienie: dwa miesiące.",
-  "title: Militarise": "title: Militaryzacja",
-  "subtitle: 2 resources; training and discipline raise efficiency (+0.10, up to 0.70). The first time Centrum dissent rises (+3). Waits three months.": "subtitle: 2 jednostki środków; szkolenie i dyscyplina podnoszą sprawność (+0,10, najwyżej 0,70). Za pierwszym razem rośnie sprzeciw Centrum (+3). Odnowienie: trzy miesiące.",
-  "title: Reorganise as Akcja Socjalistyczna": "title: Przekształcenie w Akcję Socjalistyczną",
-  "subtitle: 2 resources, once; needs a militarised Milicja of at least 500 and legality. Members follow a call better (+0.15); up to three cases at once before a coup.": "subtitle: 2 jednostki środków, jednorazowo; wymaga zmilitaryzowanej Milicji liczącej co najmniej 500 osób i legalności. Członkowie lepiej odpowiadają na wezwanie (+0,15); przed zamachem do trzech spraw jednocześnie.",
+  "The self-defence of the party protects strikes, meetings and the offices of our organisations, and if the conflict in the country turns sharp it can stand on the side the party chooses. [+ pl_mil_state +]": "Samoobrona partii chroni strajki, wiece i lokale naszych organizacji, a gdy konflikt w kraju się zaostrzy, może stanąć po stronie, którą wybierze partia. [+ pl_mil_state +]",
+  "title: Carry out a recruitment": "title: Przeprowadź werbunek",
+  "subtitle: One unit of the party's money: the Milicja gains 150 members, up to 800. The next recruitment in two months.": "subtitle: Jedna jednostka środków: Milicja zyskuje 150 członków, najwyżej do 800. Kolejny werbunek za dwa miesiące.",
+  "title: Carry out a training": "title: Przeprowadź szkolenie",
+  "subtitle: One unit of the party's money: the training rises by one level. The first training worries the Centre of PPS: its dissent rises (+3). The next training in two months.": "subtitle: Jedna jednostka środków: wyszkolenie rośnie o jeden poziom. Pierwsze szkolenie niepokoi Centrum PPS: jego sprzeciw rośnie (+3). Kolejne szkolenie za dwa miesiące.",
+  "title: Reorganise as Akcja Socjalistyczna": "title: Przekształć w Akcję Socjalistyczną",
+  "subtitle: Two units of the party's money, once: a stronger and more disciplined organisation that can protect three matters at once. Needs 500 members and training at level 3.": "subtitle: Dwie jednostki środków, jednorazowo: silniejsza i bardziej zdyscyplinowana organizacja, która może chronić trzy sprawy naraz. Wymaga 500 członków i wyszkolenia na poziomie 3.",
   "- @root: Continue.": "- @root: Dalej."
  }
 }

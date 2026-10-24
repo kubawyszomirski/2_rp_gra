@@ -30,7 +30,10 @@ test('a new game has the party of 13.1–13.3 and the factions of 10.1 in Q.S; t
   assert.deepEqual([S.party_orgs.cash, S.party_orgs.dues, S.party_orgs.apparatus.level, S.party_orgs.apparatus.member_index], [2, 2, 1, 100]);
   assert.deepEqual([S.party_orgs.press.reach, S.party_orgs.press.credibility, S.party_orgs.press.format], [30, 60, 'party_journal']);
   assert.deepEqual([S.party_orgs.tur.level, S.party_orgs.tur.cadres, S.party_orgs.tur.available_from], [0, 0, 13]);
-  assert.deepEqual([S.militia.strength, S.militia.militancy, S.militia.stage, S.militia.militarized], [200, 0.10, 1, false]);
+  // Z — 0.89 (decisions 1 and 2A of 24 X 2026): members and training only; the fatigue, dissent, repression, alignment and
+  // militarised mark of the Milicja left the state.
+  assert.deepEqual([S.militia.strength, S.militia.militancy, S.militia.stage, PolishParty.militiaLevel(S.militia)], [200, 0.10, 1, 1]);
+  assert.deepEqual(['fatigue', 'dissent', 'repressed', 'alignment', 'militarized', 'arrears', 'unpaid_last'].filter(k => k in S.militia), []);
   // Z — 0.86: PPS is strongest in the towns — the agricultural labourers start at reach 10; the unions have no funds.
   assert.deepEqual(PolishParty.BRANCHES.map(id => S.unions[id].reach), [20, 20, 10]);
   for (const id of PolishParty.BRANCHES) assert.deepEqual([S.unions[id].trust, S.unions[id].autonomy, S.unions[id].fund], [50, 60, 0]);
@@ -63,7 +66,7 @@ test('Brak gotówki: at 0 R no paid action is possible; organisational work and 
   const ledger = PolishParty.settleParty(Q, Q.time);
   assert.equal(Q.S.party_orgs.cash, 0);
   assert.deepEqual([ledger.income, ledger.paid, ledger.unpaid], [undefined, undefined, undefined], 'the ledger records only membership');
-  assert.ok(Object.values(Q.S.party_orgs.arrears).every(v => v === 0) && Q.S.militia.arrears === 0, 'no arrears');
+  assert.ok(Object.values(Q.S.party_orgs.arrears).every(v => v === 0) && !('arrears' in Q.S.militia), 'no arrears');
 });
 
 test('Składki: a rise at real wages 89 or 91 multiplies membership by 0.95 or 0.98; every option collects the dues at once (Z — 0.56)', () => {
@@ -189,7 +192,7 @@ test('Podmenu i doradcy: a recruitment from the organisations card starts the sa
   const Q = game();
   Q.S.party_orgs.cash = 5;
   PolishParty.organizationsChoose(Q, ['militia_recruit']);
-  assert.equal(Q.S.militia.strength, 300);
+  assert.equal(Q.S.militia.strength, 350);
   free(Q);
   assert.match(PolishParty.militiaStatus(Q, 'recruit').reason, /Available again in 2 months/);
   assert.match(PolishParty.packageStatus(Q, 'militia_recruit', 0).reason, /Available again in 2 months/);
@@ -251,12 +254,13 @@ test('Konfiskata: one restriction per ID, re-entry changes nothing, lifting remo
   assert.equal(PolishParty.liftPressRestriction(Q, 'conf-1'), false);
 });
 
-test('AS: 499 or 500 members, with and without militarisation: AS only from 500 after militarisation, with 2 R and legality (Z — 0.56: no reserve for upkeep)', () => {
+test('AS: 499 or 500 members, with and without training: AS only from 500 members at training level 3, with 2 R and legality (Z — 0.56: no reserve for upkeep; Z — 0.89: level 3)', () => {
   const Q = game();
   Q.S.party_orgs.cash = 10;
   Q.S.militia.strength = 500;
-  assert.match(PolishParty.militiaStatus(Q, 'as').reason, /militarised/);
-  Q.S.militia.militarized = true;
+  Q.S.militia.militancy = PolishParty.MILITIA_LEVELS[1];
+  assert.match(PolishParty.militiaStatus(Q, 'as').reason, /Needs training at level 3; it is at 2\./);
+  Q.S.militia.militancy = PolishParty.MILITIA_LEVELS[2];
   Q.S.militia.strength = 499;
   assert.match(PolishParty.militiaStatus(Q, 'as').reason, /500 members/);
   Q.S.militia.strength = 500;
@@ -270,20 +274,20 @@ test('AS: 499 or 500 members, with and without militarisation: AS only from 500 
   close(Q.S.party_orgs.cash, 8); // only the 2 R of the change
 });
 
-test('Posłuch AS: alignment 50 / 20 / 100 gives compliance 0.835→0.985 / 0.715→0.865 / 1→1 and force ×1.18 / ×1.21 / ×1', () => {
+// Z — 0.89 (decision 2A of 24 X 2026): the hidden compliance left the Milicja — the force is members ÷ 100 × training, ×1.2 as
+// AS, and its discipline in the clash test is fixed (0.80 / 0.95).
+test('Posłuch AS (Z — 0.89): the force is members ÷ 100 × training, ×1.2 as AS; the discipline is 0.80 for the Milicja and 0.95 for AS', () => {
   const Q = game();
   const S = Q.S;
-  S.militia.strength = 400; S.militia.militancy = 0.5;
-  const expected = [[50, 0.83575, 0.98575, 1.18], [20, 0.71575, 0.86575, 1.21], [100, 1, 1, 1]];
-  for (const [alignment, before, after, ratio] of expected) {
-    S.militia.stage = 1;
-    const militia = PolishParty.militiaForce(S, {alignment});
-    S.militia.stage = 2;
-    const as = PolishParty.militiaForce(S, {alignment});
-    close(militia.compliance, before);
-    close(as.effective_compliance, after);
-    close(as.force / militia.force, ratio, 0.005);
-  }
+  S.militia.strength = 400; S.militia.militancy = PolishParty.MILITIA_LEVELS[2];
+  S.militia.stage = 1;
+  const militia = PolishParty.militiaForce(S);
+  S.militia.stage = 2;
+  const as = PolishParty.militiaForce(S);
+  close(militia.force, 4 * 0.40);
+  close(as.force / militia.force, 1.2);
+  assert.deepEqual([militia.discipline, as.discipline], [0.80, 0.95]);
+  assert.equal(PolishParty.militiaForce(S, { committed: 100 }).people, 300, 'only the free members');
 });
 
 test('Jedna akcja Milicji and Mała AS i czwarta sprawa: 8 F in two cases 40/0 and 40/40; AS 3 F 30/0; AS 14 F in four cases 4/4/6/0 F', () => {
@@ -300,7 +304,7 @@ test('Militaryzacja a frakcje: only the first militarisation gives Centrum +3 di
   const lewica = Q.S.actors.pps.factions.lewica.dissent;
   PolishParty.militiaChoose(Q, 'militarize');
   assert.equal(Q.S.actors.pps.factions.centrum.dissent, 3);
-  close(Q.S.militia.militancy, 0.20);
+  close(Q.S.militia.militancy, 0.25, 1e-9, 'Z — 0.89: training level 2');
   free(Q);
   delete Q.S.cooldowns['militia.militarize'];
   PolishParty.militiaChoose(Q, 'militarize');
@@ -327,4 +331,64 @@ test('cooperatives: prepared in the organisations card, launched in the agenda f
   // Z — 0.56: no upkeep; the relief lasts while the cooperative operates.
   PolishParty.settleParty(Q, Q.time);
   assert.deepEqual([PolishParty.cooperativeRelief(Q.S, rural), Q.S.party_orgs.cash], [1, 2]);
+});
+
+// ---- Z — 0.89: the simplified Milicja (decisions 1, 2A and 3A of 24 X 2026) ----
+
+test('Milicja 0.89: a recruitment brings 150 members for 1 R, a training one level of five for 1 R, each waiting two months; AS needs 500 members and level 3', () => {
+  const Q = game();
+  const S = Q.S;
+  S.party_orgs.cash = 20;
+  const step = option => { PolishParty.militiaChoose(Q, option); free(Q); delete S.cooldowns['militia.' + option]; };
+  step('recruit');
+  assert.deepEqual([S.militia.strength, S.party_orgs.cash], [350, 19]);
+  assert.match(PolishParty.militiaStatus(Q, 'as').reason, /Needs training at level 3; it is at 1\./);
+  for (const level of [2, 3, 4, 5]) {
+    step('militarize');
+    assert.equal(PolishParty.militiaLevel(S.militia), level);
+  }
+  assert.deepEqual([S.militia.militancy, S.party_orgs.cash], [0.70, 15]);
+  assert.match(PolishParty.militiaStatus(Q, 'militarize').reason, /Its training is at the highest level, 5\./);
+  PolishParty.militiaChoose(Q, 'recruit');
+  assert.equal(PolishParty.militiaStatus(Q, 'militarize').available, false);
+  free(Q);
+  assert.match(PolishParty.militiaStatus(Q, 'recruit').reason, /Available again in 2 months/);
+  assert.equal(S.militia.strength, 500);
+  assert.equal(PolishParty.militiaStatus(Q, 'as').available, true);
+  // Up to 800 members: the last recruitment brings only what is missing.
+  S.militia.strength = 700;
+  delete S.cooldowns['militia.recruit'];
+  PolishParty.militiaChoose(Q, 'recruit');
+  free(Q);
+  delete S.cooldowns['militia.recruit'];
+  assert.equal(S.militia.strength, 800);
+  assert.match(PolishParty.militiaStatus(Q, 'recruit').reason, /Milicja has 800 members; the party cannot organise more\./);
+});
+
+test('Droga do 4 F 0.89: three recruitments, three trainings and AS — seven actions and 8 R — give a full protection of a strike', () => {
+  const Q = game();
+  const S = Q.S;
+  S.party_orgs.cash = 20;
+  const actions = ['recruit', 'militarize', 'recruit', 'militarize', 'recruit', 'militarize', 'as'];
+  for (const option of actions) {
+    PolishParty.militiaChoose(Q, option);
+    free(Q);
+    delete S.cooldowns['militia.' + option];
+  }
+  assert.deepEqual([S.militia.strength, PolishParty.militiaLevel(S.militia), S.militia.stage, S.party_orgs.cash], [650, 4, 2, 12]);
+  const force = PolishParty.militiaForce(S).force;
+  close(force, 6.5 * 0.55 * 1.2);
+  assert.equal(PolishParty.allocateProtection(2, force, 1)[0].protection, 0.40, 'the full protection');
+});
+
+test('Stary zapis 0.89: the fields the Milicja no longer has are removed at the next settlement; the training takes its nearest level', () => {
+  const Q = game();
+  const S = Q.S;
+  Object.assign(S.militia, { militancy: 0.32, fatigue: 10, dissent: 0, repressed: false, alignment: { legal_institutions: 55 }, militarized: true,
+    arrears: 0, unpaid_last: false });
+  delete S.militia.militarized_once;
+  PolishParty.settleParty(Q, Q.time);
+  assert.deepEqual(['fatigue', 'dissent', 'repressed', 'alignment', 'militarized', 'arrears', 'unpaid_last'].filter(k => k in S.militia), []);
+  assert.deepEqual([S.militia.militancy, PolishParty.militiaLevel(S.militia), S.militia.militarized_once], [0.25, 2, true]);
+  assert.deepEqual(PolishRules.validateState(S), []);
 });

@@ -834,19 +834,18 @@
   }
 
   // 16.8.2: the compliance of 10.3 for the line of F4 (P: support of Piłsudski reads the opposite of the alignment
-  // with the legal institutions); the Milicja has no separate dissent in chapter 1; AS adds 0.15 (13.4, M15).
+  // with the legal institutions) — since Z — 0.89 for the railway workers only; AS adds 0.15 (13.4, M15) to a stage 2.
   function coupCompliance(S, alignment, stance, dissent, stage) {
     const toward = stance === 'support_pils' ? 100 - alignment : alignment;
     const c = party.compliance(toward, party.cohesion(S), dissent);
     return stage === 2 ? Math.min(1, c + 0.15) : c;
   }
 
+  // Z — 0.89 (decision 2A of 24 X 2026): every free member answers the call; the force is that of 13.3 (×1.2 as AS).
   function militiaCall(S, stance) {
     const m = S.militia, available = militiaPeopleFree(S);
-    const compliance = coupCompliance(S, m.alignment.legal_institutions, stance, 0, m.stage);
-    const executing = Math.round(available * compliance);
-    const force = executing / 100 * m.militancy * (1 - (m.fatigue || 0) / 100);
-    return {available: available, compliance: round(compliance, 6), executing: executing, force: round(force, 6), stage: m.stage};
+    const force = party.militiaForce(S, {committed: m.strength - available}).force;
+    return {available: available, compliance: 1, executing: available, force: round(force, 6), stage: m.stage};
   }
 
   // 16.8.2: the railway call — the base share in every round; the plan is fixed at F5. Z — 0.86 (decision 9 of 24 X 2026): a
@@ -1161,7 +1160,7 @@
     }
     for (const c of COMMITMENTS) Q['pl_coup_' + c + '_why'] = coupCommitStatus(Q, c).reason;
     const militia = militiaCall(S, C.stance || 'defend_legal');
-    Q.pl_coup_militia_forecast = militia.available + ' free people, about ' + militia.executing + ' would answer (' + fmt(militia.force) + ' F)';
+    Q.pl_coup_militia_forecast = militia.available + ' free members (' + fmt(militia.force) + ' F)';
     const rail = railCall(S, C.stance || 'defend_legal');
     Q.pl_coup_rail_forecast = 'active share about ' + fmt(rail.base) + ' of the railway workers, branch readiness ' + fmt(rail.readiness);
     const res = A.resolution;
@@ -1196,7 +1195,7 @@
     }
     for (const c of COMMITMENTS) Q['pl_coup_' + c + '_why'] = coupCommitStatus(Q, c).reason;
     const militia = militiaCall(S, C.stance || 'defend_legal');
-    Q.pl_coup_militia_forecast = 'wolni ludzie: ' + militia.available + ', odpowiedziałoby około ' + militia.executing + ' (' + fmt(militia.force) + ' F)';
+    Q.pl_coup_militia_forecast = 'wolni członkowie: ' + militia.available + ' (' + fmt(militia.force) + ' F)';
     const rail = railCall(S, C.stance || 'defend_legal');
     Q.pl_coup_rail_forecast = 'aktywny udział kolejarzy około ' + fmt(rail.base) + ', gotowość branży ' + fmt(rail.readiness);
     const res = A.resolution;
@@ -1295,16 +1294,13 @@
     const S = Q.S, m = S.militia, P = S.politics;
     const ban = Object.keys(P.restrictions || {}).map(id => P.restrictions[id]).filter(r => r.kind === 'militia_ban' && r.status === 'active')[0];
     Q.pl_def_militia_name = m.stage === 2 ? 'Akcja Socjalistyczna' : 'Milicja PPS';
-    Q.pl_def_militia = L(m.strength + ' organised members; efficiency ' + fmt(m.militancy) + (m.militarized ? '; militarised' : '') +
-      (m.fatigue ? '; fatigue ' + fmt(m.fatigue) : '') + '.',
-      m.strength + ' zorganizowanych członków; sprawność ' + fmt(m.militancy) + (m.militarized ? '; zmilitaryzowana' : '') +
-      (m.fatigue ? '; zmęczenie ' + fmt(m.fatigue) : '') + '.');
+    const level = party.militiaLevel(m);
+    Q.pl_def_militia = L(m.strength + ' organised members; training level ' + level + ' of 5.',
+      m.strength + ' zorganizowanych członków; wyszkolenie na poziomie ' + level + ' z 5.');
     Q.pl_def_legal = ban ? L('banned by the cabinet since ' + dateOf(ban.imposed_at) + (ban.lawful ? ' (a lawful restriction after proven violence)' :
       ' (an unlawful restriction; the Justice review can lift it)'), 'zakazana przez gabinet od ' + rules.monthYear(ban.imposed_at, 'gen') +
       (ban.lawful ? ' (legalne ograniczenie po udowodnionej przemocy)' : ' (bezprawne ograniczenie; może je uchylić przegląd w resorcie Sprawiedliwości)')) :
       L('legal', 'legalna');
-    Q.pl_def_alignment = L('Attachment of the organisation to the legal institutions: ', 'Przywiązanie organizacji do legalnych instytucji: ') +
-      fmt(m.alignment.legal_institutions === undefined ? 50 : m.alignment.legal_institutions) + L(' of 100.', ' na 100.');
     Q.pl_def_police = policeLine(Q);
     Q.pl_def_forces = knownView(S).map(v => forceName(v.id).charAt(0).toUpperCase() + forceName(v.id).slice(1) +
       L(': loyalty to Piłsudski known as ', ': lojalność wobec Piłsudskiego znana w przedziale ') +
@@ -1322,11 +1318,8 @@
     // The Defense tab of the sidebar shows the same facts one per line with a bold label (Z — 0.55); the combined
     // lines above stay for the Library.
     Q.pl_def_members = String(m.strength);
-    Q.pl_def_efficiency = fmt(m.militancy);
-    Q.pl_def_condition = [m.militarized ? L('militarised', 'zmilitaryzowana') : '', m.fatigue ? L('fatigue ', 'zmęczenie ') + fmt(m.fatigue) : '']
-      .filter(Boolean).join('; ');
-    // No-break spaces and a word joiner after the dash keep a scale and an interval on one line.
-    Q.pl_def_attachment = fmt(m.alignment.legal_institutions === undefined ? 50 : m.alignment.legal_institutions) + L('\u00a0of\u00a0100', '\u00a0na\u00a0100');
+    // Z — 0.89: the training in levels; the condition and the attachment of the Milicja left the game.
+    Q.pl_def_efficiency = L('level ' + level + '\u00a0of\u00a05', 'poziom ' + level + '\u00a0z\u00a05');
     const police = S.security.police;
     Q.pl_def_police_capacity = fmt(police.capacity);
     Q.pl_def_police_command = fmt(police.command);

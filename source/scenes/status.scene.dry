@@ -189,13 +189,9 @@ if (Q.sa_strength) {
 
 [? if polish_security_rules : **Organised members:** [+ pl_def_members +] ?]
 
-[? if polish_security_rules : **Efficiency:** [+ pl_def_efficiency +] ?]
-
-[? if polish_security_rules and pl_def_condition : **Condition:** [+ pl_def_condition +] ?]
+[? if polish_security_rules : **Training:** [+ pl_def_efficiency +] ?]
 
 [? if polish_security_rules : **Legal status:** [+ pl_def_legal +] ?]
-
-[? if polish_security_rules : **Attachment to the legal institutions:** [+ pl_def_attachment +] ?]
 
 = [? if polish_security_rules : Police ?]
 

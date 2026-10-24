@@ -177,7 +177,7 @@ test('Zamach: identical forces with different last commitments of PPS — the ou
     choose(engine, 'polish_event_coup.begin');
     choose(engine, 'polish_event_coup.defend_legal');
     assert.deepEqual([S.coup.outcome, A.sides], [null, null], 'nothing is decided before F5');
-    S.militia.strength = 740; S.militia.militancy = 1; S.militia.fatigue = 0; // fixture: a Milicja of about 6 F
+    S.militia.strength = 620; S.militia.militancy = 1; // fixture: a Milicja of about 6 F (Z — 0.89: every member answers)
     choose(engine, `polish_event_coup.commit_${commitment}`);
     choose(engine, 'polish_event_coup.f67_seen');
     if (engine.state.sceneId === 'polish_event_coup.f9') choose(engine, 'polish_event_coup.f9_accept');
@@ -200,7 +200,7 @@ test('Wczytanie zamachu: a save after the stance and one round, at the pending F
   const Q = engine.state.qualities, S = Q.S;
   choose(engine, 'polish_event_coup.begin');
   choose(engine, 'polish_event_coup.defend_legal');
-  S.militia.strength = 740; S.militia.militancy = 1; S.militia.fatigue = 0;
+  S.militia.strength = 620; S.militia.militancy = 1;
   choose(engine, 'polish_event_coup.commit_militia');
   const res = S.coup.attempt.resolution;
   assert.deepEqual([res.pending && res.pending.kind, res.f9.completed_rounds, res.log.length], ['f9', 1, 1], 'F9 after one completed round');
