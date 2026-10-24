@@ -21,7 +21,7 @@ PolishUnions.caseView(Q);
 
 @negotiate
 title: Negotiate before the protest spreads
-subtitle: A limited wage offer (threshold 40); the government answers now. No strike spares the fund but weakens the pressure; a refusal is no concession.
+subtitle: A limited wage offer (threshold 40); the government answers now. Without a strike the party pays no strike pay, but the pressure is weaker; a refusal is no concession.
 choose-if: {! return PolishUnions.caseStatus(Q, 'negotiate').available !}
 unavailable-subtitle: [+ pl_case_negotiate_why +]
 on-arrival: {!
@@ -31,7 +31,7 @@ go-to: result
 
 @economic_strike
 title: A limited strike for wages and working conditions
-subtitle: The covered branches strike for the agreed demands (threshold 40); the union funds pay every active month.
+subtitle: The covered branches strike for the agreed demands (threshold 40); every month of the strike the party pays half a unit of strike pay for each branch.
 choose-if: {! return PolishUnions.caseStatus(Q, 'economic_strike').available !}
 unavailable-subtitle: [+ pl_case_economic_strike_why +]
 on-arrival: {!

@@ -57,22 +57,36 @@ test('Zgoda na ugodę: half of the demands and trust 50 give 40 with a full fund
   assert.deepEqual([consent(1, 50).score, consent(1, 50).accept], [50, true]);
 });
 
-test('Zgoda a fundusz: in the same case a growing fund never raises the consent; it raises the credible pressure', () => {
+// Z — 0.86 (decisions 7A and 8A of 24 X 2026): the unions have no funds; the threat before a strike does not read money.
+test('Groźba bez pieniędzy 0.86: the credible pressure before a strike is its participation alone, with or without money in the party', () => {
   const Q = game();
   const S = Q.S;
   S.unions.industry.reach = 60; S.unions.industry.readiness = 70;
-  const scores = [], pressures = [];
-  for (const fund of [0, 0.3, 0.6, 1.2, 3]) {
-    S.unions.industry.fund = fund;
-    const p = PolishUnions.potential(S, 'industry');
-    pressures.push(p.credible);
-    scores.push(PolishUnions.unionConsent({ fulfilment: 0.5, trust: 50, coverage: PolishUnions.fundCoverage(fund, p.cost), fatigue: 0 }).score);
-  }
-  for (let i = 1; i < scores.length; i++) {
-    assert.ok(scores[i] <= scores[i - 1], `consent ${scores}`);
-    assert.ok(pressures[i] >= pressures[i - 1], `pressure ${pressures}`);
-  }
-  assert.ok(pressures[4] > pressures[0] && scores[4] < scores[0]);
+  const p = PolishUnions.potential(S, 'industry');
+  assert.deepEqual([p.credible, p.cost], [p.participation, PolishUnions.STRIKE_COST]);
+  S.party_orgs.cash = 0;
+  assert.equal(PolishUnions.potential(S, 'industry').credible, p.credible, 'the threat does not depend on money');
+  assert.equal(PolishUnions.STRIKE_COST, 0.5);
+});
+
+// Z — 0.86 (decision 4 of 24 X 2026): the agricultural labourers strike only at the harvest, from the reach 40 of their union; a
+// harvest strike presses the government as the railways do.
+test('Strajk żniwny 0.86: no strike of the agricultural labourers below reach 40 or outside July and August; the harvest weight 70, else 40', () => {
+  const Q = game();
+  const S = Q.S, R = PolishRules;
+  const at = (y, m) => { Q.time = R.timeOf(y, m); Q.year = y; Q.month = m; free(Q); };
+  at(1923, 7);
+  PolishUnions.prepare(Q, 'farm_labour', 'limited');
+  free(Q);
+  assert.equal(S.unions.farm_labour.reach, 10, 'PPS is weaker in the countryside');
+  assert.match(PolishUnions.strikeStatus(Q, 'farm_labour').reason, /only at the harvest, once their union reaches 40 \(now 10\)/);
+  S.unions.farm_labour.reach = 40;
+  assert.equal(PolishUnions.strikeStatus(Q, 'farm_labour').available, true, 'July, reach 40');
+  at(1923, 9);
+  assert.match(PolishUnions.strikeStatus(Q, 'farm_labour').reason, /only at the harvest, in July and August/);
+  const w = PolishUnions.sectorImportance;
+  assert.deepEqual([w('farm_labour', R.timeOf(1923, 7)), w('farm_labour', R.timeOf(1923, 8)), w('farm_labour', R.timeOf(1923, 9)),
+    w('industry', R.timeOf(1923, 7)), w('rail', R.timeOf(1923, 8))], [70, 70, 40, 60, 90]);
 });
 
 test('Pełna oferta i czerwona linia: an offer meeting every demand is always accepted, one across a red line never', () => {
@@ -151,11 +165,12 @@ test('Zasięg i charakter partii: the rail branch under the workers’ line and 
   assert.equal(S.party_orgs.press.reach, press + 10);
 });
 
-test('a strike month: one draw from the branch fund, participation and fatigue, and the disruption the economy reads', () => {
+test('a strike month: half a unit of strike pay from the party, participation and fatigue, and the disruption the economy reads; a month without money halves the strikers (Z — 0.86)', () => {
   const Q = game();
   const S = Q.S;
   const branch = S.unions.industry;
   branch.reach = 50; branch.readiness = 60;
+  S.party_orgs.cash = 5;
   PolishUnions.prepare(Q, 'industry', 'limited');
   free(Q);
   PolishUnions.startStrike(Q, 'industry');
@@ -163,20 +178,25 @@ test('a strike month: one draw from the branch fund, participation and fatigue, 
   const rec = PolishUnions.branchRecord(S, 'industry');
   const t = Q.time;
   S.rng.rolls[`strike:${rec.id}:round:1`] = 0.99; // fixture: the government refuses the first round
-  const fund = branch.fund + Math.min(0.30, 0.05 * branch.reach / 20) - 0.02;
   const expected = PolishUnions.participation(S, 'industry');
-  const cost = PolishUnions.monthlyStrikeCost(expected);
   const inputs = PolishUnions.beginMonth(Q, { t });
-  close(branch.fund, Math.max(0, fund - Math.min(fund, cost)), 1e-6);
-  close(rec.participants.industry, expected * Math.min(1, fund / cost), 1e-9);
+  close(S.party_orgs.cash, 4.5, 1e-9);
+  close(rec.participants.industry, expected, 1e-9);
   assert.deepEqual([branch.fatigue, S.unions.rail.fatigue], [5, 0]);
   close(inputs.strike_disruption, 0.5 * rec.participants.industry * 60 / 100, 1e-9);
-  // A second visit of the same settlement draws nothing again.
-  const again = branch.fund;
+  // A second visit of the same settlement pays nothing again.
   PolishUnions.beginMonth(Q, { t });
-  assert.equal(branch.fund, again);
+  close(S.party_orgs.cash, 4.5, 1e-9);
   PolishUnions.endMonth(Q, { t });
   assert.deepEqual([rec.status, rec.rounds.length, rec.rejected], ['active', 1, true]);
+  // The next month the party has no money: no strike pay, half of the strikers stay away and the branch's dissent rises.
+  S.party_orgs.cash = 0.2;
+  const dissent = branch.dissent, next = PolishUnions.participation(S, 'industry');
+  S.rng.rolls[`strike:${rec.id}:round:2`] = 0.99;
+  PolishUnions.beginMonth(Q, { t: t + 1 });
+  close(S.party_orgs.cash, 0.2, 1e-9);
+  close(rec.participants.industry, next * PolishUnions.UNPAID_SHARE, 1e-9);
+  assert.deepEqual([rec.coverage.industry, branch.dissent], [0, dissent + 3]);
 });
 
 test('an accepted offer: the agreed end gives trust +5; the wage clause is executed next month and raises wages for two months, the relief waits for stage 7', () => {
@@ -277,7 +297,8 @@ function wageCase(Q, year, month) {
   return PolishUnions.records(S).find(r => r.kind === 'wage_case');
 }
 function strongBranches(S) {
-  for (const id of ['industry', 'rail']) { S.unions[id].reach = 60; S.unions[id].readiness = 70; S.unions[id].fund = 3; }
+  for (const id of ['industry', 'rail']) { S.unions[id].reach = 60; S.unions[id].readiness = 70; }
+  S.party_orgs.cash = 10; // Z — 0.86: the party pays the strike pay
 }
 function noSteps(Q) {
   if (PolishUnions.stepsStage(Q.S) === 'cooperation') PolishUnions.chooseCooperation(Q, 'none');

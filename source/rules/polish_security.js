@@ -849,24 +849,14 @@
     return {available: available, compliance: round(compliance, 6), executing: executing, force: round(force, 6), stage: m.stage};
   }
 
-  // 16.8.2: the railway call — the base share, a quarter of the monthly cost per round from the branch fund, and the
-  // active share of each round after that limit; the plan is fixed at F5 and paid for the rounds actually fought.
+  // 16.8.2: the railway call — the base share in every round; the plan is fixed at F5. Z — 0.86 (decision 9 of 24 X 2026): a
+  // political strike of one month costs nothing; the reach, readiness and compliance of the railway workers decide it.
   function railCall(S, stance) {
     const rail = S.unions.rail;
     const compliance = coupCompliance(S, rail.alignment.legal_institutions, stance, rail.dissent, 1);
     const base = rail.reach * rail.readiness * (1 - (rail.fatigue || 0) / 100) / 100 * compliance;
-    const cost = (0.10 + 0.01 * base) / 4;
-    let fund = rail.fund;
-    const byRound = [], paid = [];
-    for (let r = 0; r < 4; r++) {
-      const cover = cost > 0 ? Math.min(1, fund / cost) : 1;
-      byRound.push(round(base * cover, 6));
-      const pay = Math.min(fund, cost);
-      paid.push(round(pay, 6));
-      fund = Math.max(0, fund - pay);
-    }
-    return {base: round(base, 6), compliance: round(compliance, 6), round_cost: round(cost, 6), by_round: byRound, paid: paid,
-      fund_before: rail.fund, readiness: rail.readiness};
+    const byRound = [0, 1, 2, 3].map(() => round(base, 6));
+    return {base: round(base, 6), compliance: round(compliance, 6), by_round: byRound, readiness: rail.readiness};
   }
 
   function coupCommitStatus(Q, commitment) {
@@ -1022,13 +1012,8 @@
     P.democracy = clip(P.democracy + dDemocracy, 0, 100);
     P.violence = clip(P.violence + VIOLENCE_SERIOUS, 0, 100);
     effects.institutions = {violence: VIOLENCE_SERIOUS, democracy: dDemocracy, legal_cabinet_survived: keeps};
-    // The rounds fought: the paid railway rounds, the losses of the groups and of the Milicja.
+    // The rounds fought: the railway rounds, the losses of the groups and of the Milicja.
     const fought = res.round || 0;
-    if (organisations.rail && res.fighting) {
-      const used = organisations.rail.paid.slice(0, fought).reduce((n, v) => n + v, 0);
-      S.unions.rail.fund = Math.max(0, round(S.unions.rail.fund - used, 6));
-      effects.rail_fund_used = round(used, 6);
-    }
     if (organisations.militia && organisations.militia.executing > 0 && res.fighting && side !== 'neutral') {
       const lost = Math.min(organisations.militia.executing, Math.round(organisations.militia.executing * (1 - res.militia_share_kept)));
       S.militia.strength = Math.max(0, S.militia.strength - lost);
@@ -1178,8 +1163,7 @@
     const militia = militiaCall(S, C.stance || 'defend_legal');
     Q.pl_coup_militia_forecast = militia.available + ' free people, about ' + militia.executing + ' would answer (' + fmt(militia.force) + ' F)';
     const rail = railCall(S, C.stance || 'defend_legal');
-    Q.pl_coup_rail_forecast = 'active share about ' + fmt(rail.base) + ' of the railway workers, branch readiness ' + fmt(rail.readiness) +
-      ', fund ' + fmt(rail.fund_before) + ' R (' + fmt(rail.round_cost) + ' R a round)';
+    Q.pl_coup_rail_forecast = 'active share about ' + fmt(rail.base) + ' of the railway workers, branch readiness ' + fmt(rail.readiness);
     const res = A.resolution;
     Q.pl_coup_sides = A.sides ? Object.keys(A.sides).map(id => FORCE_NAMES[id] + ': ' + ({legal: 'with the government', pils: 'with Piłsudski',
       neutral: 'neutral'})[A.sides[id]]).join('; ') : '';
@@ -1214,8 +1198,7 @@
     const militia = militiaCall(S, C.stance || 'defend_legal');
     Q.pl_coup_militia_forecast = 'wolni ludzie: ' + militia.available + ', odpowiedziałoby około ' + militia.executing + ' (' + fmt(militia.force) + ' F)';
     const rail = railCall(S, C.stance || 'defend_legal');
-    Q.pl_coup_rail_forecast = 'aktywny udział kolejarzy około ' + fmt(rail.base) + ', gotowość branży ' + fmt(rail.readiness) +
-      ', fundusz ' + fmt(rail.fund_before) + ' R (' + fmt(rail.round_cost) + ' R na rundę)';
+    Q.pl_coup_rail_forecast = 'aktywny udział kolejarzy około ' + fmt(rail.base) + ', gotowość branży ' + fmt(rail.readiness);
     const res = A.resolution;
     Q.pl_coup_sides = A.sides ? Object.keys(A.sides).map(id => forceName(id) + ': ' + SIDES_PL[A.sides[id]]).join('; ') : '';
     Q.pl_coup_called = A.organisations ? [A.organisations.militia ? 'Milicja: ' + people(A.organisations.militia.executing) + ' (' +

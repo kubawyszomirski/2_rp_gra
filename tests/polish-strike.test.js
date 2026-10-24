@@ -59,7 +59,7 @@ function kppAmongWorkers(Q) {
   PolishElectorate.writeClassMirrors(Q);
 }
 
-test('the Trade Unions card: agreeing the demands and starting a strike each take the month; the month draws on the fund once', () => {
+test('the Trade Unions card: agreeing the demands and starting a strike each take the month; the month pays half a unit of strike pay from the party once (Z — 0.86)', () => {
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
   const S = Q.S;
@@ -71,14 +71,13 @@ test('the Trade Unions card: agreeing the demands and starting a strike each tak
   assert.equal(Q.time, 2, 'one month');
   assert.equal(S.unions.industry.readiness, 40);
   assert.equal(PolishRules.cooldownRemaining(Q, 'union.prepare.industry'), 1);
-  const fund = S.unions.industry.fund;
+  const cash = S.party_orgs.cash;
   unionStep(engine, 'industry', 'start');
   assert.equal(Q.time, 3);
   const rec = PolishUnions.records(S).find(r => r.branches.includes('industry'));
   assert.equal(rec.started_at, 2);
   assert.ok(rec.participants.industry > 0);
-  const income = Math.min(0.30, 0.05 * 50 / 20) - 0.02;
-  assert.ok(Math.abs(S.unions.industry.fund - (fund + income - rec.cost_paid)) < 1e-6, 'one draw from the fund after its income');
+  assert.deepEqual([rec.cost_paid, S.party_orgs.cash], [0.5, cash - 0.5], 'one strike pay from the party in the month');
   assert.equal(S.unions.industry.fatigue, 5);
   assert.equal(rec.rounds.length, 1, 'one round of talks in the month');
   assert.ok(S.strikes.inputs.strike_disruption > 0);
@@ -115,7 +114,7 @@ test('Opis karty związków (Z — 0.59): the card names its cause and its numbe
   assert.match(text, /What the numbers mean \(0–100\): reach — how widely the union reaches the workers of the branch;/);
   const line = choice(engine, 'polish_union_agenda.industry').subtitle;
   assert.equal(JSON.stringify(line).replace(/[\["\]]/g, '').replace(/ /g, ' '),
-    'reach 20 · readiness 25 · fatigue 0 · trust 50 · dissent 0 · fund 0.5 R. No dispute: start by agreeing the demands.');
+    'reach 20 · readiness 25 · fatigue 0 · trust 50 · dissent 0. No dispute: start by agreeing the demands.');
   S.unions.industry.reach = 50;
   choose(engine, 'polish_union_agenda.industry');
   choose(engine, 'polish_union_agenda.prepare_limited');

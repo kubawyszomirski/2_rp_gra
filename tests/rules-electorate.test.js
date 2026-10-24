@@ -105,7 +105,8 @@ test('the campaign formula of 5.3: gain = 4 × (0.5 + reach/200) × trust/100 ×
   const S = Q.S;
   const cell = S.society.cells.find(c => c.class_id === 'rural' && c.identity_id === 'polish');
   const share = cell.propensity.pps;
-  const reach = 0.5 * cell.base_reach_pps + 0.3 * PolishParty.pressEffective(S).reach + 0.2 * cell.base_reach_pps;
+  // Z — 0.86 (decision 3A): a rural cell takes 30% of its reach from the agricultural labourers' union.
+  const reach = 0.3 * S.unions.farm_labour.reach + 0.3 * PolishParty.pressEffective(S).reach + 0.4 * cell.base_reach_pps;
   close(PolishParty.cellReach(S, cell, 'press'), reach);
   const expected = 4 * (0.5 + reach / 200) * 0.5 * (1 - Q.dissent) * (1 - share / 100) * (0.5 + 0.5 * 60 / 100);
   PolishParty.campaign(Q, 'press', 'class', 'rural');

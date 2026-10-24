@@ -133,7 +133,6 @@ function context(engine) {
     holds: p => !!cab && cab.status === 'active' && cab.portfolios[p] === 'pps',
     cash: S.party_orgs.cash,
     reach: b => S.unions[b] ? S.unions[b].reach : 0,
-    fund: b => S.unions[b] ? S.unions[b].fund : 0,
     militiaStage: S.militia.stage,
     militaryCase, wageCase,
     pilsAgreement: S.actors.pilsudski ? S.actors.pilsudski.agreement_id : null,
@@ -233,7 +232,7 @@ const plan = {
     list.push(...(extra || []));
     const month = ctx.t % 6;
     if (month === 0) list.push(P.orgs('union_organize_industry', 'union_organize_rail'));
-    if (month === 1) list.push(P.orgs('union_fund_industry', 'union_fund_rail'));
+    if (month === 1) list.push(P.orgs('union_organize_rail'));
     if (month === 2) list.push(P.distribution());
     if (month === 3) list.push(P.talk(['psl_wyzwolenie', 'psl_piast', 'npr', 'other_minorities_rep', 'jewish_rep'][Math.floor(ctx.t / 6) % 5]));
     if (month === 4) list.push(P.orgs('tur', 'union_organize_farm_labour'));
@@ -346,7 +345,7 @@ const STRATEGIES = {
         else if (M.strength < 500) extra.push(P.militia('recruit'));
         else extra.push(P.fundraise());
       }
-      extra.push(P.orgs('union_organize_industry', 'union_fund_rail'), P.orgs('tur', 'cooperative_workers'), P.cooperative());
+      extra.push(P.orgs('union_organize_industry'), P.orgs('tur', 'cooperative_workers'), P.cooperative());
       return plan.organised(ctx, extra);
     },
   }),

@@ -50,6 +50,14 @@
     ids.map(id => BRANCH_NAMES[id].toLowerCase()).join(joiner || ' and '));
   // 14.4 (P): the importance of a sector in the talks.
   const SECTOR_IMPORTANCE = Object.freeze({industry: 60, rail: 90, farm_labour: 40});
+  // Z — 0.86 (decision 4 of 24 X 2026, P): the agricultural labourers strike only at the harvest, in July and August, and only from
+  // the reach 40 of their union; a harvest strike presses the government as the railways do. Historical background: the strikes on
+  // the estates of 1918–1919 and the harvest strike in Wielkopolska of July 1922 (HISTORICAL_SOURCES.md; TBD).
+  const HARVEST_MONTHS = Object.freeze([7, 8]);
+  const HARVEST_IMPORTANCE = 70;
+  const HARVEST_REACH = 40;
+  const harvestMonth = t => HARVEST_MONTHS.indexOf(rules.monthOf(t)) >= 0;
+  const sectorImportance = (branchId, t) => (branchId === 'farm_labour' && harvestMonth(t) ? HARVEST_IMPORTANCE : SECTOR_IMPORTANCE[branchId]);
   // 17.4: the weights of the branches in the disruption of production.
   const DISRUPTION_WEIGHTS = Object.freeze({industry: 0.5, rail: 0.3, farm_labour: 0.2});
   // P (archived M02 profile): the share of the modelled wage earners covered by a wage agreement of a branch.
@@ -245,15 +253,16 @@
     return branch.reach * (effectiveReadiness(branch) / 100) * callCompliance(S, branch, 'strike');
   }
 
-  const monthlyStrikeCost = value => 0.10 + 0.01 * value;
-  const fundAdequacy = (fund, cost) => Math.min(1, fund / (2 * cost));
-  const fundCoverage = (fund, cost) => Math.min(1, fund / cost);
+  // Z — 0.86 (decisions 7 and 8 of 24 X 2026): the unions have no funds of their own. Every active month of a strike costs the party
+  // half a unit of its money for each striking branch; a month the party cannot pay is a month without strike pay — half of the
+  // strikers stay away and the branch's dissent rises. Before a strike its credible pressure is its participation alone.
+  const STRIKE_COST = 0.5;
+  const UNPAID_SHARE = 0.5;
+  const strikePayable = S => S.party_orgs.cash + 1e-9 >= STRIKE_COST;
 
-  // Before a strike its credible pressure uses two months of upkeep (14.2).
   function potential(S, branchId) {
-    const branch = S.unions[branchId], value = participation(S, branchId), cost = monthlyStrikeCost(value);
-    const adequacy = fundAdequacy(branch.fund, cost);
-    return {participation: value, cost: cost, adequacy: adequacy, credible: value * adequacy};
+    const value = participation(S, branchId);
+    return {participation: value, cost: STRIKE_COST, credible: value};
   }
 
   // During a strike the credible pressure is the active participation of the month (14.2), plus the agreed and
@@ -275,11 +284,12 @@
   }
 
   // Every branch of the action must accept the same offer: the chance of a round is the smallest of theirs (P, M02).
-  function roundChance(S, rec, threshold) {
+  function roundChance(S, rec, threshold, t) {
     const fragility = government.governmentFragility(S);
+    const when = t === undefined ? S.turn.last_settled_time + 1 : t;
     const rows = rec.branches.map(b => {
       const credible = branchCredible(S, rec, b);
-      const pressure = negotiatingPressure(credible, SECTOR_IMPORTANCE[b], fragility);
+      const pressure = negotiatingPressure(credible, sectorImportance(b, when), fragility);
       return {branch: b, credible: credible, pressure: pressure, chance: successChance(pressure, threshold)};
     });
     return {fragility: fragility, threshold: threshold, rows: rows, chance: rows.length ? Math.min(...rows.map(r => r.chance)) : 0};
@@ -310,7 +320,8 @@
   function consentFor(S, rec, offer) {
     const rows = rec.branches.map(b => {
       const branch = S.unions[b];
-      const coverage = fundCoverage(branch.fund, monthlyStrikeCost(participation(S, b)));
+      // Z — 0.86: the strike pay of the next month comes from the party's money.
+      const coverage = strikePayable(S) ? 1 : 0;
       return Object.assign({branch: b}, unionConsent({fulfilment: offer.fulfilment, trust: branch.trust, coverage: coverage,
         fatigue: branch.fatigue, red_line: offer.red_line}));
     });
@@ -331,12 +342,12 @@
       return null;
     }
     const u = rules.roll(S, 'strike:' + rec.id + ':round:' + n);
-    const full = roundChance(S, rec, rec.threshold);
+    const full = roundChance(S, rec, rec.threshold, t);
     const economic = economicDemands(rec);
     let offer = null, reduced = null;
     if (economic.length && u < full.chance) offer = offerOf(rec, economic, t);
     else if (rec.threshold > THRESHOLDS.limited && economic.indexOf('wages') >= 0) {
-      reduced = roundChance(S, rec, THRESHOLDS.limited);
+      reduced = roundChance(S, rec, THRESHOLDS.limited, t);
       if (u < reduced.chance) offer = offerOf(rec, ['wages'], t);
     }
     // Z — 0.57 (item 13 of the play notes of 5 X 2026): an offer with the clauses PPS has just declined is no new offer.
@@ -516,26 +527,28 @@
       const branch = S.unions[b];
       // After PPS withdrew its support (17.5.1 „order”) those who follow the call to end leave the action.
       const followers = rec.pps_support ? 1 : 1 - callCompliance(S, branch, 'agreed_end');
-      const value = participation(S, b) * followers, cost = monthlyStrikeCost(value), coverage = fundCoverage(branch.fund, cost);
-      const draw = Math.min(branch.fund, cost);
-      branch.fund = Math.max(0, round(branch.fund - draw, 6));
-      rec.cost_paid = round(rec.cost_paid + draw, 6);
-      rec.participants[b] = value * coverage;
+      const value = participation(S, b) * followers;
+      // Z — 0.86: the party pays the strike pay of the branch for the month, or the strikers go without it.
+      const coverage = strikePayable(S) ? 1 : 0;
+      if (coverage) {
+        S.party_orgs.cash = Math.max(0, round(S.party_orgs.cash - STRIKE_COST, 6));
+        rec.cost_paid = round(rec.cost_paid + STRIKE_COST, 6);
+      }
+      rec.participants[b] = value * (coverage ? 1 : UNPAID_SHARE);
       rec.coverage[b] = coverage;
       if (coverage < 1) {
         branch.dissent = clip(branch.dissent + UNDERFUNDED_DISSENT, 0, 100);
         addCause(branch, 'underfunded:' + rec.id + ':t' + t, UNDERFUNDED_DISSENT);
       }
-      rec.disruption[b] = Math.min(100, rec.participants[b] + (rec.uncontrolled_participation || 0)) * SECTOR_IMPORTANCE[b] / 100;
+      rec.disruption[b] = Math.min(100, rec.participants[b] + (rec.uncontrolled_participation || 0)) * sectorImportance(b, t) / 100;
       striking[b] = true;
     }
     rec.last_processed_time = t;
     rec.history.push({t: t, kind: 'month', participants: copy(rec.participants), coverage: copy(rec.coverage)});
   }
 
-  // 4.2 step 4, before the economy of period t: the unions' own funds (14.1), due settlement clauses (14.5), one draw
-  // of each active strike on the fund of each of its branches (14.2–14.3), fatigue (17.4), and the inputs of strikes
-  // and wage agreements to the economy (17.4, 11.4).
+  // 4.2 step 4, before the economy of period t: due settlement clauses (14.5), the strike pay of each active strike from the
+  // party's money (14.2–14.3; Z — 0.86), fatigue (17.4), and the inputs of strikes and wage agreements to the economy (17.4, 11.4).
   function beginMonth(Q, settlement) {
     if (!ready(Q) || !settlement) return null;
     const S = Q.S, t = settlement.t;
@@ -545,10 +558,6 @@
     const clock = {time: Q.time, year: Q.year, month: Q.month};
     Q.time = t; Q.year = rules.yearOf(t); Q.month = rules.monthOf(t);
     try {
-      for (const id of BRANCHES) {
-        const branch = S.unions[id];
-        branch.fund = Math.max(0, round(branch.fund + Math.min(0.30, 0.05 * branch.reach / 20) - 0.02, 6));
-      }
       executeSettlements(Q, t);
       const striking = {};
       for (const rec of records(S, STRIKING)) if (rec.last_processed_time !== t) processStrike(Q, rec, t, striking);
@@ -835,9 +844,9 @@
         rec.agreed_end = true;
         endRecord(S, rec, 'agreement', t, Q);
         return result(Q, L('The talks succeed before any strike: ' + offer.clauses.map(c => CLAUSES[c.kind].name).join(', ') + ' (settlement ' +
-          settlement.id + ', due next month). The fund is spared.',
+          settlement.id + ', due next month). No strike pay is needed.',
           'Rozmowy kończą się sukcesem jeszcze przed strajkiem: ' + offer.clauses.map(c => clauseName(c.kind)).join(', ') + ' (ugoda ' +
-          settlement.id + ', wykonanie w przyszłym miesiącu). Fundusz zostaje oszczędzony.'));
+          settlement.id + ', wykonanie w przyszłym miesiącu). Zasiłek strajkowy nie jest potrzebny.'));
       }
       return result(Q, L('The government refuses the limited wage demand. The dispute stays open; a strike can still be started from the unions’ ' +
         'agenda (1 T). The refusal is not a concession.', 'Rząd odrzuca ograniczony postulat płacowy. Spór pozostaje otwarty; strajk można nadal ' +
@@ -1163,11 +1172,21 @@
     if (!rec || !rec.demands.length || !(rec.status === 'prepared' || (rec.status === 'negotiating' && rec.rejected && rec.pps_answered))) {
       return no(L('Needs an agreed goal, demands and a plan to end the action.', 'Wymaga uzgodnionego celu, postulatów i planu zakończenia akcji.'));
     }
+    return branchId === 'farm_labour' ? harvestStatus(Q) : OK;
+  }
+
+  // Z — 0.86: the harvest strike of the agricultural labourers, in July and August from the reach 40 of their union.
+  function harvestStatus(Q) {
+    const reach = Q.S.unions.farm_labour.reach;
+    if (reach + 1e-9 < HARVEST_REACH) return no(L('The agricultural labourers can strike only at the harvest, once their union reaches 40 (now ' + fmt(reach) + ').',
+      'Robotnicy rolni mogą strajkować tylko w żniwa, gdy ich związek osiągnie zasięg 40 (teraz ' + fmt(reach) + ').'));
+    if (!harvestMonth(Q.time)) return no(L('The agricultural labourers strike only at the harvest, in July and August.',
+      'Robotnicy rolni strajkują tylko w żniwa, w lipcu i sierpniu.'));
     return OK;
   }
 
-  // Start the protest (1 T): the record becomes an active strike; its costs come from the branch fund in every
-  // active month (14.2–14.3).
+  // Start the protest (1 T): the record becomes an active strike; since Z — 0.86 the party pays half a unit for each striking
+  // branch in every active month (14.2–14.3).
   function startStrike(Q, branchId) {
     party.syncMirrors(Q);
     const status = strikeStatus(Q, branchId);
@@ -1181,10 +1200,10 @@
     rec.history.push({t: t, kind: 'started'});
     openSteps(S, rec);
     const p = potential(S, branchId);
-    return result(Q, L(BRANCH_NAMES[branchId] + ': the strike begins. Expected participation ' + fmt(p.participation) + ', costing ' +
-      fmt(p.cost) + ' R a month from the branch fund (' + fmt(S.unions[branchId].fund) + ' R).',
-      branchName(branchId) + ': strajk się zaczyna. Oczekiwany udział ' + fmt(p.participation) + ', koszt ' + fmt(p.cost) +
-      ' R miesięcznie z funduszu branży (' + fmt(S.unions[branchId].fund) + ' R).'));
+    return result(Q, L(BRANCH_NAMES[branchId] + ': the strike begins. Expected participation ' + fmt(p.participation) + '. Every month of the strike the party pays ' +
+      rules.units(STRIKE_COST) + ' of strike pay (PPS has ' + fmt(S.party_orgs.cash) + ' R); without the money half of the strikers stay away.',
+      branchName(branchId) + ': strajk się zaczyna. Oczekiwany udział ' + fmt(p.participation) + '. W każdym miesiącu strajku partia płaci ' +
+      rules.units(STRIKE_COST, 'resources', 'acc') + ' zasiłku strajkowego (PPS ma ' + fmt(S.party_orgs.cash) + ' R); bez pieniędzy połowa strajkujących odejdzie.'));
   }
 
   // Answering an offer costs no month (14.3). Accepting signs the settlement: branches that agree end on the agreed
@@ -1343,9 +1362,9 @@
   function branchLine(S, id) {
     const branch = S.unions[id];
     return L('reach ' + fmt(branch.reach) + ' · readiness ' + fmt(branch.readiness) + ' · fatigue ' + fmt(branch.fatigue) + ' · trust ' +
-      fmt(branch.trust) + ' · dissent ' + fmt(branch.dissent) + ' · fund ' + fmt(branch.fund) + '\u00a0R. ',
+      fmt(branch.trust) + ' · dissent ' + fmt(branch.dissent) + '. ',
       'zasięg ' + fmt(branch.reach) + ' · gotowość ' + fmt(branch.readiness) + ' · zmęczenie ' + fmt(branch.fatigue) + ' · zaufanie ' +
-      fmt(branch.trust) + ' · sprzeciw ' + fmt(branch.dissent) + ' · fundusz ' + fmt(branch.fund) + '\u00a0R. ') + nextStepText(S, branchRecord(S, id));
+      fmt(branch.trust) + ' · sprzeciw ' + fmt(branch.dissent) + '. ') + nextStepText(S, branchRecord(S, id));
   }
 
   function nextStepText(S, rec) {
@@ -1544,9 +1563,13 @@
     effectiveReadiness: effectiveReadiness,
     callCompliance: callCompliance,
     participation: participation,
-    monthlyStrikeCost: monthlyStrikeCost,
-    fundAdequacy: fundAdequacy,
-    fundCoverage: fundCoverage,
+    STRIKE_COST: STRIKE_COST,
+    UNPAID_SHARE: UNPAID_SHARE,
+    HARVEST_MONTHS: HARVEST_MONTHS,
+    HARVEST_IMPORTANCE: HARVEST_IMPORTANCE,
+    HARVEST_REACH: HARVEST_REACH,
+    sectorImportance: sectorImportance,
+    harvestStatus: harvestStatus,
     potential: potential,
     negotiatingPressure: negotiatingPressure,
     successChance: successChance,

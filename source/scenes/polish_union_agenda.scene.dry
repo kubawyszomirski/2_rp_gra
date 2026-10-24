@@ -16,7 +16,7 @@ PolishUnions.agendaView(Q);
 
 [+ pl_un_intro +]
 
-What the numbers mean (0–100): reach — how widely the union reaches the workers of the branch; readiness — how ready they are for action; fatigue — it grows during a strike; trust — in PPS; dissent — discontent with the decisions of the PPS leadership. The fund is the union's money, from which a strike pays every month.
+What the numbers mean (0–100): reach — how widely the union reaches the workers of the branch; readiness — how ready they are for action; fatigue — it grows during a strike; trust — in PPS; dissent — discontent with the decisions of the PPS leadership. Every month of a strike the party pays half a unit of its money as strike pay for each striking branch.
 
 [+ pl_un_summary +]
 
@@ -121,7 +121,7 @@ go-to: result
 
 @start
 title: Start the protest
-subtitle: This month's action; a strike for the agreed demands; every active month draws on the branch fund.
+subtitle: This month's action; a strike for the agreed demands; every month of the strike the party pays half a unit of strike pay.
 choose-if: {! return PolishUnions.strikeStatus(Q, Q.pl_union_branch).available !}
 unavailable-subtitle: [+ pl_un_strike_why +]
 on-arrival: {!

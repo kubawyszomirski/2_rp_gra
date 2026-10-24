@@ -50,7 +50,9 @@
   // 'branży przemysłowej' and 'branżę przemysłową': the genitive or locative and the accusative of a branch in Polish.
   const BRANCH_PL_GENITIVE = Object.freeze({industry: 'przemysłowej', rail: 'kolejowej', farm_labour: 'robotników rolnych'});
   const BRANCH_PL_ACCUSATIVE = Object.freeze({industry: 'przemysłową', rail: 'kolejową', farm_labour: 'robotników rolnych'});
-  const BRANCH_FUNDS = Object.freeze({industry: 0.50, rail: 0.25, farm_labour: 0.25});
+  // Z — 0.86 (the user's note of 24 X 2026, P): PPS was strongest in the towns, so the agricultural labourers' union starts weaker.
+  // The unions have no funds of their own since Z — 0.86; the field `fund` stays at 0 for the records of older saves.
+  const BRANCH_REACH = Object.freeze({industry: 20, rail: 20, farm_labour: 10});
   const DUES_MIN = 1;
   const DUES_MAX = 4;
   const APPARATUS_MAX = 4;
@@ -77,7 +79,7 @@
     const unions = {};
     for (const id of BRANCHES) {
       // Stage 6: the lines of a strike call (10.3) and the causes of the branch's dissent.
-      unions[id] = {id: id, reach: 20, readiness: 25, trust: 50, autonomy: 60, dissent: 0, fatigue: 0, fund: BRANCH_FUNDS[id],
+      unions[id] = {id: id, reach: BRANCH_REACH[id], readiness: 25, trust: 50, autonomy: 60, dissent: 0, fatigue: 0, fund: 0,
         alignment: {legal_institutions: 50, strike: 50, agreed_end: 50}, agreements: [], strike: null, dissent_causes: []};
     }
     return {
@@ -251,11 +253,12 @@
     return total > 0 ? 100 * (Number(Q.workers_pps) || 0) / total : 0;
   }
 
+  // Z — 0.86 (decision 6A of 24 X 2026): the unions no longer move the membership target; strong unions add to every collection
+  // instead (unionCollectionBonus). The half of the target that read their reach stays at its opening value.
   function memberTarget(Q) {
     const S = Q.S, apparatus = S.party_orgs.apparatus;
     const support0 = apparatus.worker_support0 || ppsWorkerSupport(Q) || 1;
-    const reach0 = apparatus.union_reach0 || 20;
-    const ratio = (ppsWorkerSupport(Q) / support0 + averageUnionReach(S) / reach0) / 2;
+    const ratio = (ppsWorkerSupport(Q) / support0 + 1) / 2;
     return clip(100 * ratio * (1 - 0.05 * (S.party_orgs.dues - 2)), 50, 150);
   }
 
@@ -263,14 +266,18 @@
   // comes from collections — the card Party Dues and the extraordinary collection of the agenda — and from events. A
   // collection brings dues × membership / 100, and each level of the apparatus above the first adds 25% (decisions 1a, 1b).
   const APPARATUS_COLLECTION_BONUS = 0.25;
-  function collectionAt(dues, members, level) {
-    return dues * members / 100 * (1 + APPARATUS_COLLECTION_BONUS * (level - 1));
+  // Z — 0.86 (decision 6A of 24 X 2026): strong unions add 1% to every collection for each point of the average reach of the three
+  // branches above 20.
+  const UNION_COLLECTION_FLOOR = 20;
+  const unionCollectionBonus = S => Math.max(0, averageUnionReach(S) - UNION_COLLECTION_FLOOR) / 100;
+  function collectionAt(dues, members, level, unionBonus) {
+    return dues * members / 100 * (1 + APPARATUS_COLLECTION_BONUS * (level - 1)) * (1 + (unionBonus || 0));
   }
   // Z — 0.78 (decision 1A of 8 X 2026): money is counted as the page shows it, so a shown "1 R" is really 1 R and pays for a
   // 1 R option; since Z — 0.84 (the user's note of 24 X 2026) the collection is rounded to 0.1 R (MONEY_DIGITS).
   function collectionGain(S) {
     const orgs = S.party_orgs;
-    return round(collectionAt(orgs.dues, orgs.apparatus.member_index, orgs.apparatus.level), MONEY_DIGITS);
+    return round(collectionAt(orgs.dues, orgs.apparatus.member_index, orgs.apparatus.level, unionCollectionBonus(S)), MONEY_DIGITS);
   }
 
   const operatingCooperatives = S => S.party_orgs.cooperatives.projects.filter(p => p.status === 'operating');
@@ -372,9 +379,6 @@
     union_organize_industry: {org: 'unions', cost: 1, branch: 'industry', kind: 'organize'},
     union_organize_rail: {org: 'unions', cost: 1, branch: 'rail', kind: 'organize'},
     union_organize_farm_labour: {org: 'unions', cost: 1, branch: 'farm_labour', kind: 'organize'},
-    union_fund_industry: {org: 'unions', cost: 1, branch: 'industry', kind: 'fund'},
-    union_fund_rail: {org: 'unions', cost: 1, branch: 'rail', kind: 'fund'},
-    union_fund_farm_labour: {org: 'unions', cost: 1, branch: 'farm_labour', kind: 'fund'},
     press_distribution: {org: 'press', cost: 1, kind: 'distribution'},
     tur: {org: 'tur', cost: 2, kind: 'build'},
     militia_recruit: {org: 'militia', cost: 1, kind: 'recruit'},
@@ -473,10 +477,6 @@
     if (p.kind === 'organize') {
       const gain = fmt(expandBranch(S, p.branch, 15));
       return L('the ' + BRANCH_NAMES[p.branch].toLowerCase() + ' branch gains ' + gain + ' reach', 'zasięg branży ' + BRANCH_PL_GENITIVE[p.branch] + ' rośnie o ' + gain);
-    }
-    if (p.kind === 'fund') {
-      S.unions[p.branch].fund += 1;
-      return L('the ' + BRANCH_NAMES[p.branch].toLowerCase() + ' fund gains 1 R', 'fundusz branży ' + BRANCH_PL_GENITIVE[p.branch] + ' rośnie o 1 R');
     }
     if (p.kind === 'distribution') {
       S.party_orgs.press.reach = Math.min(100, S.party_orgs.press.reach + 10);
@@ -647,7 +647,7 @@
     const S = Q.S;
     for (const option of ['keep', 'raise', 'lower']) {
       const change = duesChange(S, option);
-      Q['pl_dues_' + option + '_gain'] = rules.units(round(collectionAt(change.dues, change.members, S.party_orgs.apparatus.level), MONEY_DIGITS));
+      Q['pl_dues_' + option + '_gain'] = rules.units(round(collectionAt(change.dues, change.members, S.party_orgs.apparatus.level, unionCollectionBonus(S)), MONEY_DIGITS));
     }
   }
 
@@ -1530,15 +1530,24 @@
     return 1;
   }
 
-  // The union reach that matches a cell (5.3, P): the workers' cells read the three branches alike; cells
-  // without a matching union use their own base reach.
+  // The union reach that matches a cell (5.3, P). Z — 0.86 (decisions 2A and 3A of 24 X 2026): the workers' cells read the industrial
+  // and the railway branches; the rural cells take 30% of their reach from the agricultural labourers' union; other cells use their
+  // own base reach.
+  const URBAN_BRANCHES = Object.freeze(['industry', 'rail']);
+  const RURAL_UNION_WEIGHT = 0.30;
+  const urbanUnionReach = S => URBAN_BRANCHES.reduce((n, id) => n + S.unions[id].reach, 0) / URBAN_BRANCHES.length;
   function matchingUnionReach(S, cell) {
-    if (cell.class_id === 'workers') return averageUnionReach(S);
+    if (cell.class_id === 'workers') return urbanUnionReach(S);
+    if (cell.class_id === 'rural') return S.unions.farm_labour.reach;
     return cell.base_reach_pps;
   }
 
   function cellReach(S, cell, kind) {
     const union = matchingUnionReach(S, cell);
+    if (cell.class_id === 'rural') {
+      if (kind === 'unions') return clip(RURAL_UNION_WEIGHT * union + (1 - RURAL_UNION_WEIGHT) * cell.base_reach_pps, 0, 100);
+      return clip(RURAL_UNION_WEIGHT * union + 0.30 * pressEffective(S).reach + 0.40 * cell.base_reach_pps, 0, 100);
+    }
     if (kind === 'unions') return clip(union, 0, 100);
     return clip(0.50 * union + 0.30 * pressEffective(S).reach + 0.20 * cell.base_reach_pps, 0, 100);
   }
@@ -2854,7 +2863,6 @@
     const p = PACKAGES[id];
     const names = rules.getLanguage() === 'pl' ? {
       organize: 'Zorganizuj branżę ' + (p.branch ? BRANCH_PL_ACCUSATIVE[p.branch] : '') + ' (+15 zasięgu, więcej przy linii robotniczej i z kadrami Towarzystwa Uniwersytetu Robotniczego)',
-      fund: 'Wesprzyj fundusz związkowy branży ' + (p.branch ? BRANCH_PL_GENITIVE[p.branch] : '') + ' (+1 R dla związku)',
       distribution: 'Poszerz kolportaż prasy (+10 zasięgu)',
       // Z — 0.57: at level 0 the first build founds TUR, a decision of the party.
       build: (Q.S.party_orgs.tur.level === 0 ? 'Załóż Towarzystwo Uniwersytetu Robotniczego' : 'Rozpocznij kolejny etap Towarzystwa Uniwersytetu Robotniczego') + ' (dwa miesiące)',
@@ -2863,7 +2871,6 @@
       prepare: 'Przygotuj ' + (p.class_id ? COOPERATIVE_NAMES_PL_ACCUSATIVE[p.class_id] : ''),
     } : {
       organize: 'Organise the ' + (p.branch ? BRANCH_NAMES[p.branch].toLowerCase() : '') + ' branch (+15 reach, more under the workers’ line and with TUR cadres)',
-      fund: 'Support the ' + (p.branch ? BRANCH_NAMES[p.branch].toLowerCase() : '') + ' union fund (+1 R to the union)',
       distribution: 'Extend the distribution of the press (+10 reach)',
       build: (Q.S.party_orgs.tur.level === 0 ? 'Found TUR' : 'Start the next stage of TUR') + ' (two months)',
       recruit: 'Recruit into Milicja (+100 members)',
@@ -2886,9 +2893,25 @@
   }
 
   // The union card: why each of its packages cannot be taken now (Z — 0.56).
+  // Z — 0.86 (decisions 1A and 6A of 24 X 2026): each branch with the reach it would reach and its purpose in one sentence, and the
+  // addition of strong unions to the collections.
+  const BRANCH_ROLES = Object.freeze({
+    industry: ['Support of the workers in the towns and the organisation of strikes.', 'Poparcie robotników w miastach i organizacja strajków.'],
+    rail: ['Pressure on the government and the control of strategic infrastructure.', 'Nacisk na rząd i kontrola strategicznej infrastruktury.'],
+    farm_labour: ['Votes in the countryside; from reach 40 the harvest strike.', 'Głosy na wsi; od zasięgu 40 strajk żniwny.']});
   function unionInvestmentsView(Q) {
     organizationsView(Q);
-    for (const id of PACKAGE_ORDER) if (cardOfPackage(id) === UNION_CARD) Q['pl_uni_' + id + '_why'] = selectionStatus(Q, [id], UNION_CARD).reason;
+    const S = Q.S;
+    for (const id of PACKAGE_ORDER) {
+      if (cardOfPackage(id) !== UNION_CARD) continue;
+      Q['pl_uni_' + id + '_why'] = selectionStatus(Q, [id], UNION_CARD).reason;
+      const p = PACKAGES[id], reach = S.unions[p.branch].reach;
+      const after = Math.min(100, reach + 15 * expansionMultiplier(S, {kind: 'branch', id: p.branch}));
+      Q['pl_uni_' + id + '_line'] = capitalise(rules.units(p.cost)) + L('; reach ', '; zasięg ') + fmt(reach) + ' → ' + fmt(after) + '. ' +
+        L(BRANCH_ROLES[p.branch][0], BRANCH_ROLES[p.branch][1]);
+    }
+    Q.pl_uni_bonus = L('Strong unions add 1% to every collection for each point of their average reach above 20; now +',
+      'Silne związki dodają do każdej zbiórki 1% za każdy punkt średniego zasięgu ponad 20; teraz +') + fmt(100 * unionCollectionBonus(S)) + '%.';
   }
 
   function organizationsSecondView(Q, first) {
@@ -2937,8 +2960,7 @@
       (m.militarized ? ', militarised' : '') + (m.stage === 2 ? '; Akcja Socjalistyczna' : ''),
       m.strength + ' ' + rules.plural(m.strength, 'członek', 'członków', 'członków') + ', sprawność ' + fmt(m.militancy) +
       (m.fatigue ? ', zmęczenie ' + m.fatigue : '') + (m.militarized ? ', zmilitaryzowana' : '') + (m.stage === 2 ? '; Akcja Socjalistyczna' : ''));
-    Q.pl_party_unions = BRANCHES.map(id => branchName(id) + L(' reach ', ': zasięg ') + fmt(S.unions[id].reach) + L(', fund ', ', fundusz ') +
-      fmt(S.unions[id].fund) + ' R').join('; ');
+    Q.pl_party_unions = BRANCHES.map(id => branchName(id) + L(' reach ', ': zasięg ') + fmt(S.unions[id].reach)).join('; ');
     sidebarDisplay(Q);
   }
 
@@ -2955,7 +2977,7 @@
     Q.pl_party_apparatus = orgs.apparatus.level + L(' of ', ' z ') + APPARATUS_MAX;
     Q.pl_party_cohesion = String(Math.round(cohesion(S)));
     for (const id of BRANCHES) {
-      Q['pl_party_union_' + id] = L('reach ', 'zasięg ') + fmt(S.unions[id].reach) + L(', fund ', ', fundusz ') + fmt(S.unions[id].fund) + '\u00a0R';
+      Q['pl_party_union_' + id] = L('reach ', 'zasięg ') + fmt(S.unions[id].reach);
     }
   }
 
@@ -3012,6 +3034,9 @@
     syncMirrors: syncMirrors,
     writeMirrors: writeMirrors,
     averageUnionReach: averageUnionReach,
+    urbanUnionReach: urbanUnionReach,
+    unionCollectionBonus: unionCollectionBonus,
+    BRANCH_REACH: BRANCH_REACH,
     ppsWorkerSupport: ppsWorkerSupport,
     memberTarget: memberTarget,
     APPARATUS_COLLECTION_BONUS: APPARATUS_COLLECTION_BONUS,

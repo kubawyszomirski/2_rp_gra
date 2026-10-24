@@ -1,5 +1,15 @@
 # Historical Source Register
 
+## PL-UNIONS-FARM-LABOUR-1918-1922 — the agricultural labourers' union and the harvest strike
+
+- **Authority:** the user's decisions of 24 October 2026 (technical reference 0.86, sections 14.1 and 23.59).
+- **Sources (accessed 24 October 2026):** H. Malinowski, *Przegląd Historyczny* 1962, t. 53, nr 3, pp. 474–501 (https://bazhum.muzhp.pl/media/texts/przeglad-historyczny/1962-tom-53-numer-3/przeglad_historyczny-r1962-t53-n3-s474-501.pdf); *Nowy Świat* 1953, nr 34 (https://www.wbc.poznan.pl//Content/490674/Nowy_%C5%9Awiat_1953_0034.pdf), a recollection in the press of 1953.
+- **Historical fact (medium, one scholarly article read through a search summary):** PPS initiated the Związek Zawodowy Robotników Rolnych, which competed for influence among the agricultural labourers with PPS, PSL "Wyzwolenie" and the communists; at the end of 1918 and in the spring of 1919 agricultural strikes covered more than forty counties of the former Kingdom, for collective agreements, higher wages and payments in kind (Malinowski).
+- **Low confidence:** a strike on the estates of Wielkopolska at the end of July 1922, at the harvest, demanding a pay rise of 100% (one recollection of 1953).
+- **Game use:** the agricultural branch of the unions with its own role (votes in the countryside, the harvest strike in July and August from reach 40, weight 70).
+- **Gameplay simplification (P):** the starting reach 10 of the agricultural branch against 20 in the towns (the user's note that PPS was strongest in the towns); the weight 30% of the union in the rural reach; the harvest months, the threshold 40 and the weight 70; the strike pay of 0.5 R a month from the party; the union collection bonus of 1% a point.
+- **Unresolved:** the PPS unions of 1922–1926 by branch (industry, railways, agricultural labour) and their strength; the harvest strikes of 1922–1926; the leaders of the agricultural union — TBD, historical research required.
+
 ## PL-CONSTITUTION-DEBATE-1924-1926 — the motions of the constitutional debate
 
 - **Authority:** the user's decisions of 21 October 2026 (technical reference 0.82, sections 7.1, 7.6 and 23.55).
@@ -2629,6 +2639,7 @@ Add one row whenever an entry above is assigned a stable Source ID.
 | PL-MINORITY-AUTONOMY-1922-1926 | Minorities / party programmes | Party positions on territorial autonomy; PPS autonomy bills of 1921 and 1925 | Researched and approved; implemented in `actor_profiles_v2` | Stage 8, part 8f, 4 October 2026 |
 | PL-LEGISLATIVE-INITIATIVE-1922-1926 | Laws / PPS initiatives | The acts, the PPS motion on tenants of 1925, the May Day demands of 1924 and the penal code of 1932 behind the twelve laws of the card Legislative Initiative | Researched; implemented with the gaps marked TBD | 0.81, 20 October 2026 |
 | PL-CONSTITUTION-DEBATE-1924-1926 | Constitution / debate | Art. 125, the left's demands (one chamber, Chamber of Labour, referendum, separation of the Church), the motions of 1926 and the August Novelization behind the seven motions of the debate | Researched; implemented with the gaps marked TBD | 0.82, 21 October 2026 |
+| PL-UNIONS-FARM-LABOUR-1918-1922 | Unions / agricultural labour | The PPS initiative of the agricultural labourers' union, the rural strikes of 1918–1919 and the harvest strike of July 1922 behind the role of the agricultural branch | Researched in part; implemented with the gaps marked TBD | 0.86, 24 October 2026 |
 | PL-STAGE8-NORMAL-SCENARIO-2026-10-04 | Implementation | Stage 8, the last stage: the Normal scenario with the dated inputs of 17.16 and of the 8f research, the opening calibrated to the M02 Sejm, rule 8.9 for the NPR, the military compromise carried out by the cabinet, Polish-only screens, thirteen strategy automata playing full campaigns, and the closing fixes | Implemented | Implemented, 4 October 2026 |
 | TBD | TBD | TBD | TBD | TBD |
 

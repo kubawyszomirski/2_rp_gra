@@ -77,7 +77,7 @@ test('Pasek boczny: pogrubione etykiety, rozbite wiersze i liczby bez zbędnych 
     assert.ok(bold(politics).includes(label), label);
   }
   // A union line no longer repeats its branch in the value; cohesion is a whole number.
-  assert.match(mainText, /\nPrzemysł: zasięg 20, fundusz 0,5\u00a0R ?\n/);
+  assert.match(mainText, /\nPrzemysł: zasięg 20 ?\n/, 'no union funds since Z — 0.86');
   assert.match(mainText, /\nSpójność: \d+ na 100 ?\n/);
   assert.match(mainText, /\nSprzeciw w partii: [^;\n]+\n/);
   // No space before the colon after the minority deputies; a dash after each faction name.

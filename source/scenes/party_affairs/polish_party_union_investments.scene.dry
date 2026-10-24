@@ -1,31 +1,29 @@
-title: Trade Unions: Organising and Funds
-subtitle: One investment in one action: organise a branch or support its union fund.
+title: Trade Unions: Organising
+subtitle: One investment in one action: organise a branch of the unions.
 new-page: true
 is-card: true
 tags: party_affairs
 card-image: img/polish/polish_party_union_investments.jpg
 view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.unionInvestmentsAvailable(Q) !}
 on-arrival: {!
-// Card party.union_investments (Z — 0.56, item 4 of 5 X 2026): the union packages of card 5.1 in a card of their own.
+// Card party.union_investments (Z — 0.56, item 4 of 5 X 2026): the union packages of card 5.1 in a card of their own. Since Z — 0.86 the
+// unions have no funds: the card only organises a branch, with its purpose and the reach it would reach.
 // One package in one action, its R and the month; the card waits two months. Unions stay one organisation, as in 5.1.
 PolishParty.unionInvestmentsView(Q);
 !}
 
-= Trade unions: organising and funds
+= Trade unions: organising
 
-PPS has [+ pl_org_cash +] R. Choose one investment for the unions; it costs this month's action, and the card waits two months before it comes back.
+PPS has [+ pl_org_cash +] R. [+ pl_uni_bonus +] Choose one branch to organise; it costs this month's action, and the card waits two months before it comes back.
 
 - @union_organize_industry
 - @union_organize_rail
 - @union_organize_farm_labour
-- @union_fund_industry
-- @union_fund_rail
-- @union_fund_farm_labour
 - @easy_discard
 
 @union_organize_industry
 title: Organise the industrial branch
-subtitle: 1 resource; the branch’s reach grows, more under the line of a workers’ party and with TUR cadres (+15; ×1.10 and up to ×1.30).
+subtitle: [+ pl_uni_union_organize_industry_line +]
 choose-if: {! return PolishParty.selectionStatus(Q, ['union_organize_industry'], 'party.union_investments').available !}
 unavailable-subtitle: [+ pl_uni_union_organize_industry_why +]
 on-arrival: {!
@@ -35,7 +33,7 @@ go-to: result
 
 @union_organize_rail
 title: Organise the railway branch
-subtitle: 1 resource; the branch’s reach grows, more under the line of a workers’ party and with TUR cadres (+15; ×1.10 and up to ×1.30).
+subtitle: [+ pl_uni_union_organize_rail_line +]
 choose-if: {! return PolishParty.selectionStatus(Q, ['union_organize_rail'], 'party.union_investments').available !}
 unavailable-subtitle: [+ pl_uni_union_organize_rail_why +]
 on-arrival: {!
@@ -45,7 +43,7 @@ go-to: result
 
 @union_organize_farm_labour
 title: Organise agricultural labour
-subtitle: 1 resource; the branch’s reach grows, more under the line of a workers’ party and with TUR cadres (+15; ×1.10 and up to ×1.30).
+subtitle: [+ pl_uni_union_organize_farm_labour_line +]
 choose-if: {! return PolishParty.selectionStatus(Q, ['union_organize_farm_labour'], 'party.union_investments').available !}
 unavailable-subtitle: [+ pl_uni_union_organize_farm_labour_why +]
 on-arrival: {!
@@ -53,40 +51,10 @@ PolishParty.organizationsChoose(Q, ['union_organize_farm_labour'], 'party.union_
 !}
 go-to: result
 
-@union_fund_industry
-title: Support the industrial union fund
-subtitle: 1 resource to the union; its money cannot be taken back.
-choose-if: {! return PolishParty.selectionStatus(Q, ['union_fund_industry'], 'party.union_investments').available !}
-unavailable-subtitle: [+ pl_uni_union_fund_industry_why +]
-on-arrival: {!
-PolishParty.organizationsChoose(Q, ['union_fund_industry'], 'party.union_investments');
-!}
-go-to: result
-
-@union_fund_rail
-title: Support the railway union fund
-subtitle: 1 resource to the union.
-choose-if: {! return PolishParty.selectionStatus(Q, ['union_fund_rail'], 'party.union_investments').available !}
-unavailable-subtitle: [+ pl_uni_union_fund_rail_why +]
-on-arrival: {!
-PolishParty.organizationsChoose(Q, ['union_fund_rail'], 'party.union_investments');
-!}
-go-to: result
-
-@union_fund_farm_labour
-title: Support the agricultural union fund
-subtitle: 1 resource to the union.
-choose-if: {! return PolishParty.selectionStatus(Q, ['union_fund_farm_labour'], 'party.union_investments').available !}
-unavailable-subtitle: [+ pl_uni_union_fund_farm_labour_why +]
-on-arrival: {!
-PolishParty.organizationsChoose(Q, ['union_fund_farm_labour'], 'party.union_investments');
-!}
-go-to: result
-
 @result
 new-page: true
 
-= Trade unions: organising and funds
+= Trade unions: organising
 
 [+ pl_party_result +]
 

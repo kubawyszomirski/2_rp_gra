@@ -390,7 +390,7 @@ Strength: [+ pilsudczycy_strength : strength +]
 
 Dissent: [+ pilsudczycy_dissent : dissent +]
 
-[? if polish_party_rules : **Trade unions close to PPS.** They are not a faction: three branches with their own reach and strike fund. [+ pl_party_unions +]. ?]
+[? if polish_party_rules : **Trade unions close to PPS.** They are not a faction: three branches with their own reach; the party pays the strike pay of a strike. [+ pl_party_unions +]. ?]
 
 [? if polish_party_rules : Faction strength and dissent change with the decisions of PPS, its line on the stance cards and the actions of the Central Executive Committee. A faction with dissent of 60 and a live cause opens a case: PPS accepts its demand or accepts a split. ?]
 

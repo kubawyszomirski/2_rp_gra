@@ -89,7 +89,7 @@ go-to: polish_event_coup
 
 @commit_rail
 title: Call the railway workers to strike
-subtitle: A quarter of a month's cost of the strike per round from the fund of the railway branch.
+subtitle: A political strike of the railway workers; it costs the party nothing.
 choose-if: {! return PolishSecurity.coupCommitStatus(Q, 'rail').available !}
 unavailable-subtitle: [+ pl_coup_rail_why +]
 on-arrival: {!

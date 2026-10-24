@@ -575,19 +575,17 @@ test('Nadchodząca rezerwa: an advantage after round 2 with the reserve of the o
   assert.deepEqual(delayed.groups.find(g => g.id === 'remote_reserve').delays, 2);
 });
 
-test('Pomiar strajku: a share of 80 in round 1 and a fund exhausted before the round before the arrival give no delay; that round decides the blockade', () => {
+test('Pomiar strajku: a share of 80 in round 1 that fades before the round before the arrival gives no delay; that round decides the blockade; the railway call costs nothing (Z — 0.86)', () => {
   const fading = resolve(EXAMPLE, { stance: 'pils', rail: { by_round: [80, 30, 30, 30], readiness: 100 }, democracy: 75, f9: 'accept' });
   assert.equal(fading.groups.find(g => g.id === 'remote_reserve').delays, 0);
-  // The same through the call of the game: a fund for one round only (a quarter of the monthly cost per round).
+  // The call of the game: the same base share in every round, without money (Z — 0.86, decision 9A).
   const Q = declared();
   const S = Q.S;
   Object.assign(S.unions.rail, { reach: 100, readiness: 100, fatigue: 0, dissent: 0 });
+  S.party_orgs.cash = 0;
   const call = PolishSecurity.railCall(S, 'support_pils');
-  S.unions.rail.fund = call.round_cost * 1.2;
-  const thin = PolishSecurity.railCall(S, 'support_pils');
-  assert.ok(thin.by_round[0] >= 40 && thin.by_round[1] < 40, 'the fund runs out after the first round');
-  const r = resolve(EXAMPLE, { stance: 'pils', rail: { by_round: thin.by_round, readiness: thin.readiness }, democracy: 75, f9: 'accept' });
-  assert.equal(r.groups.find(g => g.id === 'remote_reserve').delays, 0, 'measured in the round before the arrival (round 2)');
+  assert.deepEqual(call.by_round, [call.base, call.base, call.base, call.base]);
+  assert.ok(call.base >= 40, 'a strong railway branch blocks without money');
 });
 
 test('Istotny udział: the Milicja of 1 F beside a side of 45 F, of 6 F beside 45 F, a strike delaying a transport, a neutral protection: F9 no / yes / yes / no', () => {
@@ -652,7 +650,7 @@ test('Wkład kontrfaktyczny: the same draws with and without PPS give one class 
     PolishSecurity.checkCoupGates(Q, 50);
     Q.time = 51; Q.month = 3;
     fixSides(Q, EXAMPLE);
-    Object.assign(S.unions.rail, { reach: 100, readiness: 100, fatigue: 0, dissent: 0, fund: 10 });
+    Object.assign(S.unions.rail, { reach: 100, readiness: 100, fatigue: 0, dissent: 0 });
     PolishSecurity.coupBegin(Q);
     PolishSecurity.coupStance(Q, 'support_pils');
     PolishSecurity.coupCommit(Q, 'rail');

@@ -31,8 +31,9 @@ test('a new game has the party of 13.1–13.3 and the factions of 10.1 in Q.S; t
   assert.deepEqual([S.party_orgs.press.reach, S.party_orgs.press.credibility, S.party_orgs.press.format], [30, 60, 'party_journal']);
   assert.deepEqual([S.party_orgs.tur.level, S.party_orgs.tur.cadres, S.party_orgs.tur.available_from], [0, 0, 13]);
   assert.deepEqual([S.militia.strength, S.militia.militancy, S.militia.stage, S.militia.militarized], [200, 0.10, 1, false]);
-  for (const id of PolishParty.BRANCHES) assert.deepEqual([S.unions[id].reach, S.unions[id].trust, S.unions[id].autonomy], [20, 50, 60]);
-  assert.deepEqual(PolishParty.BRANCHES.map(id => S.unions[id].fund), [0.50, 0.25, 0.25]);
+  // Z — 0.86: PPS is strongest in the towns — the agricultural labourers start at reach 10; the unions have no funds.
+  assert.deepEqual(PolishParty.BRANCHES.map(id => S.unions[id].reach), [20, 20, 10]);
+  for (const id of PolishParty.BRANCHES) assert.deepEqual([S.unions[id].trust, S.unions[id].autonomy, S.unions[id].fund], [50, 60, 0]);
   assert.deepEqual(Object.keys(S.actors.pps.factions), ['centrum', 'lewica', 'pilsudczycy']);
   close(Q.dissent, 0.0475);
   close(PolishParty.cohesion(S), 95.25);
@@ -88,17 +89,22 @@ test('Składki: a rise at real wages 89 or 91 multiplies membership by 0.95 or 0
   close(lower.S.party_orgs.cash - l0, 1); // at dues 1 and membership 102: 1.02 R, kept to 0.1 R since Z — 0.84
 });
 
-test('Cel członkostwa: the target is 100 at the start, 137.5 with union reach ×1.75, 95 at dues 3, always within 50–150', () => {
+// Z — 0.86 (decision 6A of 24 X 2026): the unions no longer move the membership target; the support of the workers still does.
+test('Cel członkostwa: the target is 100 at the start, 137.5 when the support of the workers is ×1.75, 95 at dues 3, the same at any union reach, always within 50–150', () => {
   const Q = game();
   close(PolishParty.memberTarget(Q), 100);
-  for (const id of PolishParty.BRANCHES) Q.S.unions[id].reach = 35;
+  for (const id of PolishParty.BRANCHES) Q.S.unions[id].reach = 100;
+  close(PolishParty.memberTarget(Q), 100, 1e-9, 'the unions do not move the target');
+  const support = PolishParty.ppsWorkerSupport(Q);
+  Q.S.party_orgs.apparatus.worker_support0 = support / 1.75;
   close(PolishParty.memberTarget(Q), 137.5);
-  for (const id of PolishParty.BRANCHES) Q.S.unions[id].reach = 20;
+  Q.S.party_orgs.apparatus.worker_support0 = support;
   Q.S.party_orgs.dues = 3;
   close(PolishParty.memberTarget(Q), 95);
-  for (const id of PolishParty.BRANCHES) Q.S.unions[id].reach = 100;
+  Q.S.party_orgs.apparatus.worker_support0 = support / 3;
   Q.S.party_orgs.dues = 1;
   assert.equal(PolishParty.memberTarget(Q), 150);
+  Q.S.party_orgs.apparatus.worker_support0 = support;
   for (const id of PolishParty.BRANCHES) Q.S.unions[id].reach = 0;
   Q.S.party_orgs.dues = 4;
   for (const cell of Q.S.society.cells) if (cell.class_id === 'workers') { const p = cell.propensity.pps; cell.propensity.pps = 0; cell.propensity.other += p; }
@@ -107,14 +113,32 @@ test('Cel członkostwa: the target is 100 at the start, 137.5 with union reach �
 
 test('Zbliżanie członkostwa: 100 at a target of 137.5 becomes 101.875; 120 at a target of 100 becomes 119', () => {
   const Q = game();
-  for (const id of PolishParty.BRANCHES) Q.S.unions[id].reach = 35;
+  Q.S.party_orgs.apparatus.worker_support0 = PolishParty.ppsWorkerSupport(Q) / 1.75; // a target of 137.5
   PolishParty.settleParty(Q, Q.time);
-  // The union funds grow by their own income at the same settlement; the reach used is 35.
   close(Q.S.party_orgs.apparatus.member_index, 101.875);
   const R = game();
   R.S.party_orgs.apparatus.member_index = 120;
   PolishParty.settleParty(R, R.time);
   close(R.S.party_orgs.apparatus.member_index, 119);
+});
+
+// Z — 0.86 (decisions 2A, 3A and 6A of 24 X 2026): strong unions add to every collection; the towns read the industrial and the
+// railway branches, the countryside the agricultural labourers' union.
+test('Silne związki 0.86: +1% to every collection for each point of the average reach above 20; the workers read industry and rail, the countryside 30% of the agricultural union', () => {
+  const Q = game();
+  const S = Q.S;
+  assert.equal(PolishParty.unionCollectionBonus(S), 0, 'average 16.7 at the start');
+  const base = PolishParty.collectionGain(S);
+  for (const id of PolishParty.BRANCHES) S.unions[id].reach = 50;
+  close(PolishParty.unionCollectionBonus(S), 0.30);
+  close(PolishParty.collectionGain(S), Math.round(base * 1.3 * 10) / 10);
+  S.unions.industry.reach = 40; S.unions.rail.reach = 60; S.unions.farm_labour.reach = 0;
+  const worker = S.society.cells.find(c => c.class_id === 'workers'), rural = S.society.cells.find(c => c.class_id === 'rural');
+  close(PolishParty.cellReach(S, worker, 'unions'), 50);
+  close(PolishParty.cellReach(S, rural, 'unions'), 0.7 * rural.base_reach_pps);
+  S.unions.farm_labour.reach = 50;
+  close(PolishParty.cellReach(S, rural, 'unions'), 0.3 * 50 + 0.7 * rural.base_reach_pps);
+  close(PolishParty.cellReach(S, rural, 'press'), 0.3 * 50 + 0.3 * PolishParty.pressEffective(S).reach + 0.4 * rural.base_reach_pps);
 });
 
 test('Zwrot aparatu: each level above the first adds 25% to every collection (Z — 0.56); at dues 2 and full membership the second level pays back its 2 R in four collections', () => {

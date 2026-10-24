@@ -182,11 +182,11 @@ test('Kursy TUR 0.78: a card of its own once TUR works; one click per course wit
 test('Praca organizacyjna 0.78: two options on the agenda; the weakest branch and the groups of the character of the party', () => {
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
-  Q.S.unions.rail.reach = 12;
+  Q.S.unions.rail.reach = 8; // below the agricultural labourers, who start at 10 (Z — 0.86)
   playFromHand(engine, 'polish_party_agenda');
   assert.ok(ids(engine).includes('polish_party_agenda.organize_unions') && ids(engine).includes('polish_party_agenda.organize_voters'));
   assert.ok(!ids(engine).includes('polish_party_agenda.organize'), 'no second page');
-  assert.match(plain(choice(engine, 'polish_party_agenda.organize_unions').subtitle), /^No money\. The weakest branch: Railways — reach 12 → 14/);
+  assert.match(plain(choice(engine, 'polish_party_agenda.organize_unions').subtitle), /^No money\. The weakest branch: Railways — reach 8 → 10\.2/);
   assert.match(plain(choice(engine, 'polish_party_agenda.organize_voters').subtitle), /The workers — PPS reach [\d.]+ → [\d.]+\.$/);
   choose(engine, 'easy_discard');
   // A party of workers and peasants organises the peasants too.
@@ -255,7 +255,7 @@ test('Powody niedostępności 0.79: Czapiński names the missing ministry; socia
 });
 
 // Z — 0.56 (item 4 of 5 X 2026): the union packages have a card of their own; one investment in one action.
-test('Związki zawodowe — organizowanie i fundusze: a card of its own with seven choices; one investment costs the month', () => {
+test('Związki zawodowe — organizowanie (Z — 0.86): a card of its own with three branches, their reach and purpose and the addition to collections; one investment costs the month', () => {
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
   playFromHand(engine, 'polish_party_organizations');
@@ -264,15 +264,18 @@ test('Związki zawodowe — organizowanie i fundusze: a card of its own with sev
   choose(engine, 'easy_discard');
   playFromHand(engine, 'polish_party_union_investments');
   assert.deepEqual(ids(engine), ['polish_party_union_investments.union_organize_industry', 'polish_party_union_investments.union_organize_rail',
-    'polish_party_union_investments.union_organize_farm_labour', 'polish_party_union_investments.union_fund_industry',
-    'polish_party_union_investments.union_fund_rail', 'polish_party_union_investments.union_fund_farm_labour', 'easy_discard']);
+    'polish_party_union_investments.union_organize_farm_labour', 'easy_discard'], 'no union funds since Z — 0.86');
+  assert.match(plain(choice(engine, 'polish_party_union_investments.union_organize_farm_labour').subtitle),
+    /^1 resource; reach 10 → 26\.5\. Votes in the countryside; from reach 40 the harvest strike\.$/);
+  assert.match(plain(choice(engine, 'polish_party_union_investments.union_organize_rail').subtitle), /control of strategic infrastructure/);
+  assert.match(JSON.stringify(engine.ui.paragraphs), /Strong unions add 1% to every collection for each point of their average reach above 20; now \+0%\./);
   choose(engine, 'polish_party_union_investments.union_organize_rail');
   assert.ok(Math.abs(Q.S.unions.rail.reach - 36.5) < 1e-9, 'rail +15 × 1.10: the character of a workers’ party (10.6)');
   assert.equal(Q.month_actions, 1, 'the month is spent');
   assert.equal(Q.S.cooldowns['party.union_investments'], Q.time + 2, 'the card waits two months');
   assert.equal(Q.S.cooldowns['party.organizations'], undefined, 'the organisations card keeps its own wait');
-  assert.match(PolishParty.selectionStatus(Q, ['union_organize_rail', 'union_fund_rail'], 'party.union_investments').reason, /one investment for the unions/);
-  assert.match(PolishParty.selectionStatus(Q, ['press_distribution', 'union_fund_rail']).reason, /Unknown package/);
+  assert.match(PolishParty.selectionStatus(Q, ['union_organize_rail', 'union_organize_industry'], 'party.union_investments').reason, /one investment for the unions/);
+  assert.match(PolishParty.selectionStatus(Q, ['press_distribution', 'union_fund_rail']).reason, /Unknown package/, 'the fund packages are gone');
   choose(engine, 'root');
   assert.equal(Q.time, 2, 'one month');
 });
