@@ -1,5 +1,12 @@
 # Historical Source Register
 
+## PL-STRIKE-GOALS-0.87 — the goals of a strike on the card of a dispute
+
+- **Authority:** the user's decisions of 24 October 2026 (technical reference 0.87, sections 14.3 and 23.60); the user noted that this card need not rely closely on historical sources.
+- **Sources:** none consulted for this change.
+- **Gameplay simplification (P):** the three goals of a strike (wages and working conditions; wages, working conditions and works councils; the resignation of the cabinet), their thresholds 40, 60 and 80, the effects of works councils (grievance −8, trust +10, business pressure +3), the threat of a strike as one round of talks at half pressure, the trust cost −3 of not fighting and the support +1 of a won strike.
+- **Unresolved:** the legal and practical status of works councils (rady zakładowe) in Poland in 1922–1926 and whether PPS unions demanded them in strikes; the use of the threat of a general strike by PPS in 1922–1926 — TBD, historical research required.
+
 ## PL-UNIONS-FARM-LABOUR-1918-1922 — the agricultural labourers' union and the harvest strike
 
 - **Authority:** the user's decisions of 24 October 2026 (technical reference 0.86, sections 14.1 and 23.59).
@@ -2640,6 +2647,7 @@ Add one row whenever an entry above is assigned a stable Source ID.
 | PL-LEGISLATIVE-INITIATIVE-1922-1926 | Laws / PPS initiatives | The acts, the PPS motion on tenants of 1925, the May Day demands of 1924 and the penal code of 1932 behind the twelve laws of the card Legislative Initiative | Researched; implemented with the gaps marked TBD | 0.81, 20 October 2026 |
 | PL-CONSTITUTION-DEBATE-1924-1926 | Constitution / debate | Art. 125, the left's demands (one chamber, Chamber of Labour, referendum, separation of the Church), the motions of 1926 and the August Novelization behind the seven motions of the debate | Researched; implemented with the gaps marked TBD | 0.82, 21 October 2026 |
 | PL-UNIONS-FARM-LABOUR-1918-1922 | Unions / agricultural labour | The PPS initiative of the agricultural labourers' union, the rural strikes of 1918–1919 and the harvest strike of July 1922 behind the role of the agricultural branch | Researched in part; implemented with the gaps marked TBD | 0.86, 24 October 2026 |
+| PL-STRIKE-GOALS-0.87 | Unions / strikes | The goals of a strike, the threat and the works councils on the card of a dispute | Gameplay simplification; works councils and threats TBD | 0.87, 24 October 2026 |
 | PL-STAGE8-NORMAL-SCENARIO-2026-10-04 | Implementation | Stage 8, the last stage: the Normal scenario with the dated inputs of 17.16 and of the 8f research, the opening calibrated to the M02 Sejm, rule 8.9 for the NPR, the military compromise carried out by the cabinet, Polish-only screens, thirteen strategy automata playing full campaigns, and the closing fixes | Implemented | Implemented, 4 October 2026 |
 | TBD | TBD | TBD | TBD | TBD |
 

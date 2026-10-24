@@ -37,7 +37,7 @@ const COMPLETE = ['scenes/root.scene.dry', 'scenes/main.scene.dry', 'scenes/stat
     'ussr_position', 'economic_program', 'dues', 'militia', 'media', 'organizations', 'unity', 'advisers']
     .map(id => 'scenes/party_affairs/polish_party_' + id + '.scene.dry'),
   'scenes/party_affairs/inter_party_relationships.scene.dry', 'scenes/polish_agenda.scene.dry', 'scenes/polish_party_agenda.scene.dry',
-  'scenes/polish_union_agenda.scene.dry', 'scenes/polish_strike_steps.scene.dry', 'scenes/polish_event_strike_1923.scene.dry',
+  'scenes/polish_union_agenda.scene.dry', 'scenes/polish_strike_offer.scene.dry', 'scenes/polish_strike_steps.scene.dry', 'scenes/polish_event_strike_1923.scene.dry',
   'scenes/polish_event_strike_response.scene.dry', 'scenes/polish_event_strike_rejection.scene.dry', 'scenes/polish_event_faction_split.scene.dry',
   ...['arciszewski', 'czapinski', 'daszynski', 'drobner', 'dubois', 'jaworowski', 'malinowski', 'moraczewski', 'niedzialkowski', 'perl',
     'prochnik', 'puzak', 'zaremba', 'ziemiecki'].map(id => 'scenes/advisors/' + id + '.scene.dry'),
@@ -162,8 +162,9 @@ test('Pilotaż: ekran tytułowy, strona miesiąca i pasek boczny po polsku', () 
   for (const title of ['Sprawy partii', 'Sprawy rządu', 'Parlament']) assert.ok(titles.includes(title), title);
   assert.ok(!titles.includes('Odrzuć kartę'), 'a card is discarded on the card itself');
   // Z — 0.57: the party agenda and the unions are cards of the Party deck, no longer pinned on the month page.
-  for (const title of ['Agenda partii', 'Związki zawodowe']) assert.ok(!titles.includes(title), title);
-  assert.deepEqual(['polish_party_agenda', 'polish_union_agenda'].map(id => flat(engine.game.scenes[id].title)), ['Agenda partii', 'Związki zawodowe']);
+  for (const title of ['Agenda partii', 'Związki zawodowe: spór']) assert.ok(!titles.includes(title), title);
+  // Z — 0.87: the card of the unions is the card of a dispute.
+  assert.deepEqual(['polish_party_agenda', 'polish_union_agenda'].map(id => flat(engine.game.scenes[id].title)), ['Agenda partii', 'Związki zawodowe: spór']);
   // Z — 0.56: in January 1922 the Parliament deck has no card yet (the constitutional debate opens in XII 1924, the review of
   // the cabinet comes after half a year). Z — 0.60: it is shown but closed, with its reason.
   assert.equal(engine.getCurrentChoices().find(c => c.id === 'main.parliament').canChoose, false, 'the empty Parliament deck is closed');

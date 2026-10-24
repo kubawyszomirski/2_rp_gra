@@ -38,7 +38,9 @@ test('Obrazki: karty i karty CKW mają obrazek na karcie, wydarzenia na stronie;
   for (const f of polishFiles()) {
     const name = f.replace(/\.jpg$/, '');
     // Z — 0.60: the images of the three decks belong to the decks of main (polish_deck_party → main.party).
-    const id = name.startsWith('polish_deck_') ? 'main.' + name.slice('polish_deck_'.length) : name.replace(/_(wawel|zamek_krolewski)$/, '');
+    // Z — 0.87: the image of the retired 1923 event is the image of the card of a dispute that replaced it.
+    const id = name === 'polish_event_strike_1923' ? 'polish_union_agenda' :
+      name.startsWith('polish_deck_') ? 'main.' + name.slice('polish_deck_'.length) : name.replace(/_(wawel|zamek_krolewski)$/, '');
     const scene = games.en.scenes[id];
     assert.ok(scene, `${f}: scene ${id}`);
     const card = !!(scene.isCard || scene.isPinnedCard || scene.isDeck);

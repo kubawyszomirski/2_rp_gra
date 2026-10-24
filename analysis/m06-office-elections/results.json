@@ -1,9 +1,9 @@
 {
   "scope": "M06: office-election finals always resolve (more candidate votes; tie by the approved 50/50 lot), guaranteed quorum and candidacies, safety net with a retry next month (technical 7.1, 7.3, 7.5, 4.5). Unit checks; M02 scripts the 1922 offices.",
   "hashes": {
-    "docs/POLISH_TECHNICAL_REFERENCE.md": "f8d49d0777631c788b10035b590bcf74e67db6bd43f66f1ea81b7b47dddf8ab0",
-    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "0c85e933f8ffd82c56033e81b006396479f2e3e7ad4b5da8d99edc5fb3054b61",
-    "docs/POLISH_MECHANICS_AUDIT.md": "2be742dcb5db2bf853c3fec0013a54dcd01b3d9fbb38f7f62d59c18f562e120a",
+    "docs/POLISH_TECHNICAL_REFERENCE.md": "33d247061bb834c8d1412463bbbe73e7633eaee265cf216dcc004dab75c072ec",
+    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "bd67ee08d7da80acb6fb8a2b916e53313c1577ed71bbed6f2f955497447999bf",
+    "docs/POLISH_MECHANICS_AUDIT.md": "131b7cc46a464b7ea63dd54e631cb2e8d38b4be966ac963b28420c636fea4a47",
     "analysis/m02-robustness/engine.cjs": "e0b544d65a4381ed7698f3f649fd54e41714a3a1027852a7ea455d0ad49b43cd"
   },
   "cases": {

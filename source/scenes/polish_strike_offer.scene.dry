@@ -1,0 +1,54 @@
+title: The Government's Offer
+subtitle: An urgent card: the government makes an offer to the strikers, or the police act against them.
+new-page: true
+is-card: true
+tags: party_affairs
+view-if: {! return !!Q.S && !!Q.polish_union_rules && PolishUnions.offerCardActive(Q) !}
+on-arrival: {!
+// The answer of PPS to an offer of the government or to the repression of a strike (Z — 0.87, decision 5A of 24 X 2026; until
+// 0.86 the event The Strike and the Sejm): accept, strike on or end without a settlement; it costs no month. An accepted
+// settlement always ends the strike (6B).
+PolishUnions.offerCardView(Q);
+!}
+
+= The government's offer
+
+[+ pl_off_text +]
+
+- @accept
+- @continue
+- @end
+
+@accept
+title: Accept the offer
+subtitle: The strike ends on the agreed terms; the settlement is due next month. The workers' wages rise for two months.
+view-if: pl_off_has_offer = 1
+on-arrival: {!
+Q.pl_union_result = PolishUnions.offerCardChoose(Q, 'accept');
+!}
+go-to: result
+
+@continue
+title: Strike on
+subtitle: [+ pl_off_continue_line +]
+on-arrival: {!
+Q.pl_union_result = PolishUnions.offerCardChoose(Q, 'continue');
+!}
+go-to: result
+
+@end
+title: End the strike without a settlement
+subtitle: The unions feel let down: their dissent rises (+10) and their trust falls (−8).
+on-arrival: {!
+Q.pl_union_result = PolishUnions.offerCardChoose(Q, 'end');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= The government's offer
+
+[+ pl_union_result +]
+
+- @root: Continue.

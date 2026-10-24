@@ -230,7 +230,7 @@ test('an accepted offer: the agreed end gives trust +5; the wage clause is execu
   assert.equal(S.strikes.pending_effects.length, 1, 'the relief is recorded once');
 });
 
-test('a smaller offer reads the same draw; a branch that does not agree to the accepted offer opens E6, and upholding imposes the end on it', () => {
+test('a smaller offer reads the same draw; a branch that does not agree to the accepted offer has the end imposed at once — no card E6 since Z — 0.87', () => {
   const Q = game();
   const S = Q.S;
   const branch = S.unions.industry;
@@ -252,11 +252,9 @@ test('a smaller offer reads the same draw; a branch that does not agree to the a
   branch.fund = 5; branch.fatigue = 0;
   PolishUnions.answerOffer(Q, rec.id, 'accept');
   const settlement = rec.settlements[0];
-  assert.equal(rec.awaiting_rejection, settlement.id);
-  assert.equal(PolishUnions.rejectionDue(Q), true);
-  assert.equal(S.strikes.due.polish_event_strike_rejection, rec.id + ':' + settlement.id);
-  PolishUnions.rejectionChoose(Q, 'uphold');
-  assert.deepEqual([branch.dissent, branch.trust, rec.outcome, settlement.reaction, settlement.status], [10, 42, 'agreement', 'uphold', 'active']);
+  // Z — 0.87 (decision 6B): the accepted settlement ends the strike; the refusing branch has the end imposed.
+  assert.deepEqual([rec.awaiting_rejection, PolishUnions.rejectionDue(Q)], [null, false]);
+  assert.deepEqual([branch.dissent, branch.trust, rec.outcome, settlement.status], [10, 42, 'agreement', 'active']);
   assert.equal(branch.dissent_causes.length, 1);
 });
 

@@ -3,8 +3,9 @@ subtitle: PPS accepted a settlement, but part of the strikers will not end the a
 new-page: true
 tags: pl_event
 face-image: img/polish/polish_event_strike_rejection.jpg
-view-if: {! return !!Q.S && !!Q.polish_union_rules && PolishUnions.rejectionDue(Q) !}
+view-if: {! return false !}
 on-arrival: {!
+// Z — 0.87: the event left the game (view-if false): the card of a dispute and the card The Government's Offer replace it.
 // Event society.strike_settlement_rejection, E6 (technical reference 14.5, 17.15; card catalogue 9.9; Z — 0.38): only
 // after a real settlement accepted by PPS and a real refusal; one instance per strike and settlement, 0 T, two answers,
 // no renegotiation. The answer does not settle the signature again.

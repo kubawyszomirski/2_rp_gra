@@ -1,133 +1,162 @@
-title: Trade Unions
-subtitle: The steps of a union dispute: the demands, the line, mediation, a strike and its end.
+title: Trade Unions: a Dispute
+subtitle: The workers demand a rise; PPS decides whether to fight for it.
 is-card: true
 tags: party_affairs
-view-if: {! return !!Q.S && !!Q.polish_union_rules && PolishUnions.agendaCardAvailable(Q) !}
+card-image: img/polish/polish_event_strike_1923.jpg
+view-if: {! return !!Q.S && !!Q.polish_union_rules && PolishUnions.disputeCardAvailable(Q) !}
 new-page: true
 on-arrival: {!
-// The agenda of a branch or a dispute (technical reference 14.1–14.5; card catalogue 5.10). Each step costs this
-// month's action (1 T, 0 R). The character of a protest in a crisis is chosen by its event, not here, and an offer of
-// the government is answered in the answer of the Sejm (17.5.1), for no month (14.3). Since Z — 0.57 (item 11 of the
-// play notes of 5 X 2026) it is an ordinary card of the Party deck while a dispute is open or has a cause.
-PolishUnions.agendaView(Q);
+// The card of a dispute (Z — 0.87, the user's decisions of 24 X 2026; technical reference 14.1–14.5; card catalogue 5.10): it
+// describes the case that waits for PPS — the wage case of the towns or the harvest case of the agricultural labourers — and
+// offers a strike, a threat or not taking up the fight; it is urgent in the Party deck while a dispute waits. A dispute of a
+// branch with the leadership of PPS is mediated here too. The offer of the government comes on the card polish_strike_offer.
+PolishUnions.disputeView(Q);
 !}
 
-= The trade unions
+= [+ pl_dsp_title +]
 
-[+ pl_un_intro +]
+[+ pl_dsp_text +]
 
-What the numbers mean (0–100): reach — how widely the union reaches the workers of the branch; readiness — how ready they are for action; fatigue — it grows during a strike; trust — in PPS; dissent — discontent with the decisions of the PPS leadership. Every month of a strike the party pays half a unit of its money as strike pay for each striking branch.
+[? if pl_dsp_has_dispute : [+ pl_dsp_numbers +] ?]
 
-[+ pl_un_summary +]
+[? if pl_dsp_has_dispute : [+ pl_dsp_note +] ?]
 
-- @industry
-- @rail
-- @farm_labour
+- @start
+- @threaten
+- @drop
+- @mediate
 - @easy_discard
 
-@industry
-title: Industry
-subtitle: [+ pl_un_industry_line +]
+@start
+title: Start a strike
+subtitle: You choose the goal of the strike, the cooperation with the communists and the protection of the Milicja.
+view-if: pl_dsp_has_dispute = 1
+choose-if: {! return PolishUnions.startStatus(Q).available !}
+unavailable-subtitle: [+ pl_dsp_start_why +]
+go-to: setup
+
+@threaten
+title: Threaten a strike
+subtitle: [+ pl_dsp_threat_line +]
+view-if: pl_dsp_has_dispute = 1
+choose-if: {! return PolishUnions.threatStatus(Q).available !}
+unavailable-subtitle: [+ pl_dsp_threat_why +]
 on-arrival: {!
-PolishUnions.branchView(Q, 'industry');
-!}
-go-to: branch
-
-@rail
-title: Railways
-subtitle: [+ pl_un_rail_line +]
-on-arrival: {!
-PolishUnions.branchView(Q, 'rail');
-!}
-go-to: branch
-
-@farm_labour
-title: Agricultural labour
-subtitle: [+ pl_un_farm_labour_line +]
-on-arrival: {!
-PolishUnions.branchView(Q, 'farm_labour');
-!}
-go-to: branch
-
-@branch
-new-page: true
-on-arrival: {!
-PolishUnions.branchView(Q, Q.pl_union_branch);
-!}
-
-= [+ pl_un_branch_name +]
-
-[+ pl_un_branch_text +]
-
-[? if pl_un_offer : [+ pl_un_offer +] PPS answers it in the Sejm. ?]
-
-- @prepare_limited
-- @prepare_broad
-- @align_strike
-- @align_end
-- @mediate
-- @start
-- @polish_union_agenda: Back to the unions.
-
-@prepare_limited
-title: Agree the demands: wages and the return to work
-subtitle: This month's action; readiness grows (+15); one demand (threshold 40) with a plan to end the action; waits two months.
-choose-if: {! return PolishUnions.prepareStatus(Q, Q.pl_union_branch).available !}
-unavailable-subtitle: [+ pl_un_prepare_why +]
-on-arrival: {!
-PolishUnions.prepare(Q, Q.pl_union_branch, 'limited');
+Q.pl_union_result = PolishUnions.threaten(Q);
 !}
 go-to: result
 
-@prepare_broad
-title: Agree the demands: wages and working conditions
-subtitle: This month's action; readiness grows (+15); a broader package (threshold 60) with a plan to end the action; waits two months.
-choose-if: {! return PolishUnions.prepareStatus(Q, Q.pl_union_branch).available !}
-unavailable-subtitle: [+ pl_un_prepare_why +]
+@drop
+title: Do not take up the fight
+subtitle: [+ pl_dsp_drop_line +]
+view-if: pl_dsp_has_dispute = 1
 on-arrival: {!
-PolishUnions.prepare(Q, Q.pl_union_branch, 'broad');
-!}
-go-to: result
-
-@align_strike
-title: A joint meeting on the strike
-subtitle: This month's action; the branch aligns more with a strike call (+15), which raises compliance.
-choose-if: {! return PolishUnions.alignStatus(Q, Q.pl_union_branch, 'strike').available !}
-unavailable-subtitle: [+ pl_un_align_strike_why +]
-on-arrival: {!
-PolishUnions.align(Q, Q.pl_union_branch, 'strike');
-!}
-go-to: result
-
-@align_end
-title: A joint meeting on the agreed end
-subtitle: This month's action; the branch aligns more with a call to end on agreed terms (+15).
-choose-if: {! return PolishUnions.alignStatus(Q, Q.pl_union_branch, 'agreed_end').available !}
-unavailable-subtitle: [+ pl_un_align_end_why +]
-on-arrival: {!
-PolishUnions.align(Q, Q.pl_union_branch, 'agreed_end');
+Q.pl_union_result = PolishUnions.dropDispute(Q);
 !}
 go-to: result
 
 @mediate
 title: Mediate the dispute with the leadership
 subtitle: This month's action; the branch's dissent over a concrete change falls (−8).
-choose-if: {! return PolishUnions.mediateStatus(Q, Q.pl_union_branch).available !}
-unavailable-subtitle: [+ pl_un_mediate_why +]
+view-if: pl_dsp_has_leadership = 1
+choose-if: {! return PolishUnions.mediateStatus(Q, PolishUnions.disputeLeadershipBranch(Q)).available !}
+unavailable-subtitle: [+ pl_dsp_mediate_why +]
 on-arrival: {!
-PolishUnions.mediate(Q, Q.pl_union_branch);
+PolishUnions.mediate(Q, PolishUnions.disputeLeadershipBranch(Q));
 !}
 go-to: result
 
-@start
-title: Start the protest
-subtitle: This month's action; a strike for the agreed demands; every month of the strike the party pays half a unit of strike pay.
-choose-if: {! return PolishUnions.strikeStatus(Q, Q.pl_union_branch).available !}
-unavailable-subtitle: [+ pl_un_strike_why +]
+@setup
+new-page: true
 on-arrival: {!
-PolishUnions.startStrike(Q, Q.pl_union_branch);
+PolishUnions.setupView(Q);
 !}
-go-to: polish_strike_steps
+
+= [+ pl_su_title +]
+
+Mark the goal of the strike, the cooperation with the communists and the protection of the Milicja, then announce the strike.
+
+- @g_small
+- @g_big
+- @g_political
+- @c_no
+- @c_yes
+- @p_no
+- @p_yes
+- @launch
+- @polish_union_agenda: Back to the dispute.
+
+@g_small
+title: [+ pl_su_g_small_mark +] Wages and working conditions
+subtitle: The government gives way more easily (threshold 40). A win: wages in the branch rise for two months, the workers' grievance falls (−4) and the union's trust in PPS grows (+5).
+on-arrival: {!
+PolishUnions.setupChoose(Q, 'goal', 'small');
+!}
+go-to: setup
+
+@g_big
+title: [+ pl_su_g_big_mark +] Wages, working conditions and works councils
+subtitle: Harder (threshold 60). A win: wages in the branch rise for two months, and the crews elect works councils with a say in the affairs of the plant: the grievance falls more (−8), the trust grows more (+10), the employers press harder (+3). The government may offer only wages and working conditions, without the councils.
+on-arrival: {!
+PolishUnions.setupChoose(Q, 'goal', 'big');
+!}
+go-to: setup
+
+@g_political
+title: [+ pl_su_g_political_mark +] The resignation of the cabinet
+subtitle: A demonstrative strike: no cabinet resigns under the pressure of a strike, and the talks turn back to wages and working conditions. Under the line of independent class politics the dissent of the Left of PPS falls (−3); without it the Centre protests (+8).
+on-arrival: {!
+PolishUnions.setupChoose(Q, 'goal', 'political');
+!}
+go-to: setup
+
+@c_no
+title: [+ pl_su_c_no_mark +] Without the communists
+subtitle: PPS leads the strike alone; the communists act on their own.
+view-if: pl_su_communists = 1
+on-arrival: {!
+PolishUnions.setupChoose(Q, 'communists', false);
+!}
+go-to: setup
+
+@c_yes
+title: [+ pl_su_c_yes_mark +] Together with the communists
+subtitle: [+ pl_su_c_yes_line +]
+view-if: pl_su_communists = 1
+choose-if: {! return PolishUnions.setupWhy(Q, 'communists', true).available !}
+unavailable-subtitle: [+ pl_su_c_yes_why +]
+on-arrival: {!
+PolishUnions.setupChoose(Q, 'communists', true);
+!}
+go-to: setup
+
+@p_no
+title: [+ pl_su_p_no_mark +] Without the protection of the Milicja
+subtitle: The Milicja stays out of the strike.
+on-arrival: {!
+PolishUnions.setupChoose(Q, 'protection', false);
+!}
+go-to: setup
+
+@p_yes
+title: [+ pl_su_p_yes_mark +] Under the protection of the Milicja
+subtitle: Half a unit of the party's money; fewer injured and arrested strikers in a clash with the police.
+choose-if: {! return PolishUnions.setupWhy(Q, 'protection', true).available !}
+unavailable-subtitle: [+ pl_su_p_yes_why +]
+on-arrival: {!
+PolishUnions.setupChoose(Q, 'protection', true);
+!}
+go-to: setup
+
+@launch
+title: Announce the strike
+subtitle: [+ pl_su_launch_line +]
+choose-if: {! return PolishUnions.launchStatus(Q).available !}
+unavailable-subtitle: [+ pl_su_launch_why +]
+on-arrival: {!
+Q.pl_union_result = PolishUnions.launchStrike(Q);
+!}
+go-to: result
 
 @result
 new-page: true

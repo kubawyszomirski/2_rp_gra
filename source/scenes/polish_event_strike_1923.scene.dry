@@ -2,9 +2,10 @@ title: Wage Demands and Strikes
 subtitle: Real wages have stayed below 80 for three months; the workers demand a rise.
 new-page: true
 tags: pl_event
-face-image: img/polish/polish_event_strike_1923.jpg
-view-if: {! return !!Q.S && !!Q.polish_union_rules && PolishUnions.caseDue(Q) !}
+view-if: {! return false !}
 on-arrival: {!
+// Z — 0.87: the event left the game (view-if false): the card of a dispute and the card The Government's Offer replace it;
+// its image is now the image of the card of a dispute.
 // Event society.strike_1923, B8+B10 (technical reference 17.5, 17.16.5; card catalogue 9.8): one answer of PPS for
 // 0 T with the state's answer in the same phase. Three months of real wages below 80 open the case; the grievance
 // of 15.1 comes with stage 7 (decision 1A of stage 6). A strike then goes to its partner and protection steps.

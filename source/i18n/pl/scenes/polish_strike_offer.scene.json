@@ -1,0 +1,18 @@
+{
+ "source": "scenes/polish_strike_offer.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: The Government's Offer": "title: Oferta rządu",
+  "subtitle: An urgent card: the government makes an offer to the strikers, or the police act against them.": "subtitle: Karta pilna: rząd składa ofertę strajkującym albo policja działa przeciw nim.",
+  "= The government's offer": "= Oferta rządu",
+  "[+ pl_off_text +]": "[+ pl_off_text +]",
+  "title: Accept the offer": "title: Przyjmij ofertę",
+  "subtitle: The strike ends on the agreed terms; the settlement is due next month. The workers' wages rise for two months.": "subtitle: Strajk kończy się na uzgodnionych warunkach; ugoda zostanie wykonana w przyszłym miesiącu. Płace robotników rosną na dwa miesiące.",
+  "title: Strike on": "title: Strajkuj dalej",
+  "subtitle: [+ pl_off_continue_line +]": "subtitle: [+ pl_off_continue_line +]",
+  "title: End the strike without a settlement": "title: Zakończ strajk bez ugody",
+  "subtitle: The unions feel let down: their dissent rises (+10) and their trust falls (−8).": "subtitle: Związki czują się zawiedzione: ich sprzeciw rośnie (+10), a zaufanie spada (−8).",
+  "[+ pl_union_result +]": "[+ pl_union_result +]",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

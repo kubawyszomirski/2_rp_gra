@@ -308,7 +308,7 @@ const batch6Rules = [
 ];
 for (const [from, to, text] of batch6Rules) assert.ok(section(tr, from, to).includes(text), `reference ${from.trim()} has the 0.38 rule: ${text.slice(0, 50)}`);
 assert.ok(!section(tr, '### 17.3. ', '### 17.4. ').includes('Nowe finansowanie, mniejszy uzgodniony zakres, naruszenie albo wyjście PPS'), '17.3: stale austerity answers replaced');
-for (const name of ['Jedna karta E3', 'Klucz sprawy E6', 'Karta B2', 'Milczenie i kolejne wystąpienia B2', 'Sprzeczność odpowiedzi B2', 'Oszczędności 1926 przez 9.8']) assert.ok(tests.has(name), `21.1 test ${name}`);
+for (const name of ['Jedna karta E3', 'Ugoda kończy strajk 0.87', 'Karta B2', 'Milczenie i kolejne wystąpienia B2', 'Sprzeczność odpowiedzi B2', 'Oszczędności 1926 przez 9.8']) assert.ok(tests.has(name), `21.1 test ${name}`);
 // The Centre's total reaction: the answer's own +5 from the 10.7 table plus the +3 credibility dispute.
 const s107 = section(tr, '### 10.7. ', '### 10.8. ');
 const centreOwn = num(cells(s107.split('\n').find(l => l.startsWith('| Poprzeć krytykę parlamentaryzmu |')))[1].match(/Centrum ([+−]\d+)/)[1]);

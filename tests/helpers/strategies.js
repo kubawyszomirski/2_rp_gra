@@ -45,7 +45,9 @@ const P = {
   // The press distribution is offered only on the card of the organisations (the media card no longer has it).
   distribution: () => P.orgs('press_distribution'),
   talk: party => ['inter_party_relationships', 'inter_party_relationships.' + party],
-  union: (branch, step) => ['polish_union_agenda', 'polish_union_agenda.' + branch, 'polish_union_agenda.' + step],
+  // Z — 0.87: the card of a dispute; a strike goes through its page (the goal, no communists, no Milicja) to the announcement.
+  union: step => ['polish_union_agenda', 'polish_union_agenda.' + step],
+  strike: goal => ['polish_union_agenda', 'polish_union_agenda.start', 'polish_union_agenda.g_' + goal, 'polish_union_agenda.launch'],
   // Z — 0.81: the bill of the legislative initiative (the card replaced the bill D and the parliamentary control of the army).
   initiative: id => ['polish_legislative_initiative', 'polish_legislative_initiative.' + id],
   gov: (card, option) => [card, card + '.' + option],
@@ -162,9 +164,9 @@ const PASSIVE_EVENTS = {
   polish_event_pils_criticism: ['defend', 'reform', 'support'],
   polish_event_assassination_response: ['restraint'],
   polish_event_niewiadomski_cult: ['stay_out'],
-  polish_event_strike_1923: ['negotiate'],
-  polish_event_strike_response: ['settlement', 'demands', 'order'],
-  polish_event_strike_rejection: ['uphold'],
+  // Z — 0.87: the card of a dispute (urgent; tried before the month's plan) and the urgent card of the government's offer.
+  polish_union_agenda: ['drop'],
+  polish_strike_offer: ['accept', 'continue', 'end'],
   polish_event_stabilization: ['wait', 'gradual'],
   polish_event_credit_crisis: ['none'],
   polish_event_austerity_1926: ['maintain'],
@@ -180,7 +182,6 @@ const PASSIVE_EVENTS = {
   constitution_debate: [],
   polish_constitution_vote: ['resolve'],
   polish_government_response: ['maintain', 'motion_refuse', 'later'],
-  polish_strike_steps: ['none', 'no_protection', 'done'],
   coup_stance: 'mediate', coup_commit: 'none', coup_f9: 'accept',
 };
 
@@ -196,7 +197,7 @@ const ACTIVE_EVENTS = Object.assign({}, PASSIVE_EVENTS, {
   polish_speaker_election: ['rataj', 'daszynski'],
   polish_budget_package: ['protect', 'support', 'refuse', 'later'],
   polish_initiative_vote: ['passed', 'limited', 'rejected'],
-  polish_strike_steps: ['limited', 'protect', 'done'],
+  polish_union_agenda: ['threaten', 'small'],
   coup_stance: 'defend_legal', coup_commit: 'both', coup_f9: 'accept',
 });
 
@@ -239,10 +240,9 @@ const plan = {
     list.push(P.organize(lowest(ctx, ['industry', 'rail', 'farm_labour'])));
     return list.concat(plan.base(ctx));
   },
+  // Z — 0.87: the answer to a dispute comes from the strategy's events (playMonth); a dispute with the leadership is mediated.
   wage(ctx) {
-    if (!ctx.wageCase) return [];
-    const branch = (ctx.wageCase.branches || ['industry'])[0];
-    return [P.union(branch, 'prepare_limited'), P.union(branch, 'align_end'), P.union(branch, 'mediate')];
+    return ctx.wageCase ? [P.union('mediate')] : [];
   },
   military(ctx) {
     const current = ctx.pilsAgreement ? ctx.S.agreements[ctx.pilsAgreement] : null;
@@ -289,11 +289,10 @@ const STRATEGIES = {
   }),
   N_H: strategy('N_H', 'N-H: historical intentions', {
     events: Object.assign({}, ACTIVE_EVENTS, {
-      polish_event_strike_1923: ['cabinet_resignation', 'economic_strike'],
+      polish_union_agenda: ['political', 'small'],
       polish_event_stabilization: ['gradual', 'protected', 'wait'],
       polish_event_austerity_1926: ['withdraw'],
       polish_presidential_first: ['confirm_daszynski'],
-      polish_strike_steps: ['limited', 'no_protection', 'done'],
       coup_stance: 'support_pils', coup_commit: 'rail', coup_f9: 'accept',
     }),
     formation: FORMATION.lateCoalition,
@@ -364,8 +363,7 @@ const STRATEGIES = {
 // ---- Answers to a scene that is not the month's main page.
 const CONTINUE = ['root', 'polish_event_coup.begin', 'polish_event_coup.f67_seen', 'sejm_election.calculate', 'sejm_election.finish',
   'sejm_election.return_to_play', 'polish_speaker_election.finish', 'polish_presidential_sequence.first_done',
-  'polish_presidential_sequence.assassination', 'polish_presidential_sequence.finish', 'polish_cabinet_formation.done',
-  'polish_strike_steps.done'];
+  'polish_presidential_sequence.assassination', 'polish_presidential_sequence.finish', 'polish_cabinet_formation.done'];
 
 function answer(engine, strat) {
   const Q = engine.state.qualities, sid = engine.state.sceneId, ev = strat.events;
@@ -418,7 +416,8 @@ function playMonth(engine, strat, used) {
   const ctx = context(engine);
   // Z — 0.81: the vote on a bill of the legislative initiative is an urgent card that costs no month; it is answered first.
   // Z — 0.82: so is the vote on a motion of the constitutional debate.
-  for (const card of ['polish_initiative_vote', 'polish_constitution_vote']) if (runPath(engine, [card])) {
+  // Z — 0.87: so is the government's offer in a strike.
+  for (const card of ['polish_initiative_vote', 'polish_constitution_vote', 'polish_strike_offer']) if (runPath(engine, [card])) {
     while (engine.state.sceneId !== 'main' && Q.S.chapter.status !== 'ended' && Q.time === ctx.t) {
       if (!answer(engine, strat)) break;
     }
@@ -437,7 +436,10 @@ function playMonth(engine, strat, used) {
     }
   }
   const tried = [];
-  for (const path of strat.month(context(engine))) {
+  // Z — 0.87: a waiting dispute is answered first, in the order of the strategy (not taking up the fight costs no month).
+  const dispute = globalThis.PolishUnions.disputeUrgent(Q) ? (strat.events.polish_union_agenda || [])
+    .map(o => (['small', 'big', 'political'].includes(o) ? P.strike(o) : P.union(o))) : [];
+  for (const path of dispute.concat(strat.month(context(engine)))) {
     if (!R.mainActionAvailable(Q)) break;
     tried.push(path[path.length - 1]);
     if (!runPath(engine, path)) continue;
