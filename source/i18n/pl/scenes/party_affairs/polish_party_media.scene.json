@@ -2,20 +2,25 @@
  "source": "scenes/party_affairs/polish_party_media.scene.dry",
  "status": "complete",
  "lines": {
-  "title: Change the format of the press to [+ pl_media_format_next +]": "title: Zmień format prasy na: [+ pl_media_format_next +]",
   "title: A press investigation": "title: Śledztwo prasowe",
   "- @root: Continue.": "- @root: Dalej.",
   "title: Press": "title: Prasa",
   "subtitle: The party press: a campaign over several groups, reportage, an open debate, an investigation or its format.": "subtitle: Prasa partyjna: kampania w kilku grupach naraz, reportaże, otwarta dyskusja, śledztwo albo jej format.",
   "= Press": "= Prasa",
-  "[+ pl_press_state +]. Party money: [+ pl_party_cash +]. The press reaches several groups at once, more weakly than a campaign of meetings and unions; what it reaches depends on its format and its credibility.": "[+ pl_press_state +]. Pieniądze partii: [+ pl_party_cash +]. Prasa dociera do kilku grup naraz, słabiej niż kampania zebrań i związków; do kogo dociera, zależy od jej formatu i wiarygodności.",
   "title: The press in the service of the campaign": "title: Prasa w służbie kampanii",
-  "subtitle: 1 resource. [+ pl_press_campaign_effect +]": "subtitle: 1 jednostka środków. [+ pl_press_campaign_effect +]",
   "title: Reportage on the conditions of work and life": "title: Reportaże o warunkach pracy i życia",
-  "subtitle: 1 resource. No votes at once: the trust of the workers and the unemployed in PPS rises (+3), so the next campaigns among them are stronger.": "subtitle: 1 jednostka środków. Bez głosów od razu: zaufanie robotników i bezrobotnych do PPS rośnie (+3), więc następne kampanie w tych grupach są mocniejsze.",
   "title: An open debate in the columns of the press": "title: Otwarta dyskusja na łamach",
-  "subtitle: No resource. Every faction may speak: the dissent of each faction falls (−3). No votes.": "subtitle: Bez środków. Każda frakcja może zabrać głos: sprzeciw każdej frakcji spada (−3). Bez głosów.",
-  "subtitle: 1 resource. A popular format: the press reaches more people (+10) and also the intelligentsia and the petty bourgeoisie, but loses credibility (−5), and with a wide reach it earns from sales (0.10 resources a month at reach 50 or more); the first adoption raises Centrum dissent (+3). Waits six months.": "subtitle: 1 jednostka środków. Format popularny: prasa dociera do większej liczby ludzi (+10), także do inteligencji i drobnomieszczaństwa, ale traci wiarygodność (−5), a przy dużym zasięgu zarabia na sprzedaży (0,10 jednostki środków miesięcznie przy zasięgu 50 lub wyższym); pierwsze przejście na ten format zwiększa sprzeciw Centrum (+3). Odnowienie: sześć miesięcy.",
-  "subtitle: 1 resource; the credibility of the press rises (+4). We reveal only true facts, each only once.": "subtitle: 1 jednostka środków; wiarygodność prasy rośnie (+4). Ujawniamy tylko prawdziwe fakty, każdy tylko raz."
+  "[+ pl_press_intro +]": "[+ pl_press_intro +]",
+  "subtitle: One unit of the party's money. The workers and the unemployed trust PPS more (+3), so the next campaigns among them are stronger; the press gains credibility (+2).": "subtitle: Jedna jednostka środków. Robotnicy i bezrobotni bardziej ufają PPS (+3), więc następne kampanie wśród nich będą mocniejsze; prasa zyskuje na wiarygodności (+2).",
+  "subtitle: Costs no money. The factions argue in the columns of the press, and the dissent of each falls (−3).": "subtitle: Nie kosztuje pieniędzy. Frakcje spierają się na łamach prasy, a sprzeciw każdej z nich spada (−3).",
+  "subtitle: [+ pl_press_campaign_effect +]": "subtitle: [+ pl_press_campaign_effect +]",
+  "unavailable-subtitle: [+ pl_press_campaign_why +]": "unavailable-subtitle: [+ pl_press_campaign_why +]",
+  "unavailable-subtitle: [+ pl_press_reportage_why +]": "unavailable-subtitle: [+ pl_press_reportage_why +]",
+  "unavailable-subtitle: [+ pl_press_debate_why +]": "unavailable-subtitle: [+ pl_press_debate_why +]",
+  "subtitle: [+ pl_press_investigation_line +]": "subtitle: [+ pl_press_investigation_line +]",
+  "unavailable-subtitle: [+ pl_media_investigation_why +]": "unavailable-subtitle: [+ pl_media_investigation_why +]",
+  "title: [+ pl_media_format_title +]": "title: [+ pl_media_format_title +]",
+  "subtitle: [+ pl_media_format_line +]": "subtitle: [+ pl_media_format_line +]",
+  "unavailable-subtitle: [+ pl_media_format_why +]": "unavailable-subtitle: [+ pl_media_format_why +]"
  }
 }

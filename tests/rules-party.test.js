@@ -392,3 +392,83 @@ test('Stary zapis 0.89: the fields the Milicja no longer has are removed at the 
   assert.deepEqual([S.militia.militancy, PolishParty.militiaLevel(S.militia), S.militia.militarized_once], [0.25, 2, true]);
   assert.deepEqual(PolishRules.validateState(S), []);
 });
+
+// ---- Z — 0.90: the party press (decisions 1B, 2A, 5A, a, 4A and 6(ii) of 24 X 2026) ----
+
+test('Sufit prasy 0.90: the distribution brings the party journal up to 60 and the popular paper up to 100; a journal above 60 reaches only 60', () => {
+  const Q = game();
+  const S = Q.S, press = S.party_orgs.press;
+  S.party_orgs.cash = 20;
+  press.reach = 50;
+  assert.equal(PolishParty.packageStatus(Q, 'militia_recruit', 0).available, true);
+  PolishParty.organizationsChoose(Q, ['press_distribution']);
+  free(Q);
+  delete S.cooldowns['party.press_distribution'];
+  assert.equal(press.reach, 60);
+  assert.match(PolishParty.packageStatus(Q, 'press_distribution', 0).reason, /The party journal already has its highest reach, 60; only a popular paper reaches more\./);
+  press.format = 'popular';
+  assert.deepEqual([PolishParty.packageStatus(Q, 'press_distribution', 0).available, PolishParty.pressEffective(S).reach], [true, 70]);
+  press.reach = 90;
+  assert.deepEqual([PolishParty.pressEffective(S).reach, PolishParty.packageStatus(Q, 'press_distribution', 0).available], [100, false]);
+  press.format = 'party_journal';
+  assert.equal(PolishParty.pressEffective(S).reach, 60, 'an older save above the ceiling reaches only 60 as a journal');
+});
+
+test('Sprzedaż prasy 0.90: the popular paper earns a tenth of a unit a month from reach 50; the journal and a smaller paper earn nothing', () => {
+  const Q = game();
+  const S = Q.S, press = S.party_orgs.press;
+  const month = () => { const cash = S.party_orgs.cash; PolishParty.settleParty(Q, Q.time); return Math.round(10 * (S.party_orgs.cash - cash)) / 10; };
+  press.reach = 40;
+  assert.equal(month(), 0, 'the journal sells nothing');
+  press.format = 'popular';
+  assert.equal(month(), 0.1, 'reach 50 with the popular +10');
+  assert.equal(S.party_orgs.last_ledger.press_sales, 0.1);
+  press.reach = 30;
+  assert.equal(month(), 0, 'reach 40 is too small');
+  assert.deepEqual(['unpaid_months', 'paid_last', 'cases'].filter(k => k in press), [], 'the dead fields are gone');
+});
+
+test('Konfiskata 0.90: under a government of the right a press campaign may cost a confiscated issue (one in four), reach −10 for two months; revealed it costs nothing, unrevealed −2 credibility at its end', () => {
+  const Q = game();
+  const S = Q.S, press = S.party_orgs.press;
+  S.party_orgs.cash = 20;
+  const t = Q.time;
+  S.rng.rolls['press_confiscation:press_campaign:t' + t] = 0.10;
+  PolishParty.pressCampaign(Q);
+  free(Q);
+  assert.equal(press.restrictions.length, 0, 'no confiscation under the opening cabinet');
+  S.cabinet.configuration_id = 'chjeno_piast';
+  assert.equal(PolishParty.rightGovernment(S), true);
+  Q.S.cooldowns = {};
+  const reach = PolishParty.pressEffective(S).reach;
+  PolishParty.pressCampaign(Q);
+  free(Q);
+  assert.deepEqual(press.restrictions.map(r => [r.reach_penalty, r.expires_at - t, r.confiscation, r.lawful]), [[10, 2, true, false]]);
+  assert.equal(PolishParty.pressEffective(S).reach, reach - 10);
+  // The end of an unrevealed confiscation: credibility −2.
+  const credibility = press.credibility;
+  PolishParty.settleParty(Q, t + 1);
+  assert.deepEqual([press.restrictions[0].status, press.credibility], ['expired', credibility - 2]);
+  // A revealed one costs nothing at its end.
+  press.restrictions.push({id: 'confiscation:fixture', event_id: 'fixture', reach_penalty: 10, expires_at: t + 4, status: 'active', confiscation: true,
+    lawful: false, revealed: true});
+  PolishParty.settleParty(Q, t + 3);
+  assert.equal(press.credibility, credibility - 2, 'no second loss');
+});
+
+test('Prasa wzmacnia kampanię 0.90: the press makes a campaign of the Campaign card stronger among its readers — 25% × reach × credibility; not among the others', () => {
+  const Q = game();
+  const S = Q.S, press = S.party_orgs.press;
+  close(PolishParty.pressBoost(S).value, 0.25 * 0.30 * 0.60);
+  PolishParty.campaignView(Q);
+  assert.equal(Q.pl_campaign_press, 'The party press makes a campaign stronger among its readers, workers and the unemployed: by 5%.');
+  const spec = boost => { press.reach = boost; return PolishParty.issueSpec(Q, 'eight_hours'); };
+  const worker = S.society.cells.find(c => c.class_id === 'workers'), peasant = S.society.cells.find(c => c.class_id === 'rural');
+  const low = spec(30), high = spec(60);
+  close(high.factor(worker) / low.factor(worker), (1 + 0.25 * 0.6 * 0.6) / (1 + 0.25 * 0.3 * 0.6));
+  assert.equal(high.factor(peasant), low.factor(peasant), 'the party journal does not reach the countryside');
+  // The violence of a PPS organisation costs the press credibility (−5).
+  const before = press.credibility;
+  PolishPolitics.organisationViolence(Q, {id: 'fixture-violence', subject: 'a fixture'});
+  assert.equal(press.credibility, before - 5);
+});

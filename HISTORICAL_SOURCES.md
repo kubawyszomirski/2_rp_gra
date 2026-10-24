@@ -1,5 +1,12 @@
 # Historical Source Register
 
+## PL-PRESS-0.90 — the party press
+
+- **Authority:** the user's decisions of 24 October 2026 (technical reference 0.90, sections 13.2 and 23.63).
+- **Sources:** none consulted for this change.
+- **Gameplay simplification (P):** the reach ceilings 60 and 100, the sales of the popular paper (0.1 R from reach 50), the press support of the campaigns (25% × reach × credibility), the confiscation chance one in four under a government of the right and its two months, the moves of the credibility.
+- **Unresolved:** the confiscations of the PPS press in 1922–1926 (by which authorities, how often, under which cabinets) and the circulation and sales of its papers — TBD, historical research required.
+
 ## PL-MILITIA-0.89 — the simplified Milicja PPS
 
 - **Authority:** the user's decisions of 24 October 2026 (technical reference 0.89, sections 13.3 and 23.62); the user decided that no further historical research is needed for the Milicja.
@@ -2664,6 +2671,7 @@ Add one row whenever an entry above is assigned a stable Source ID.
 | PL-STRIKE-GOALS-0.87 | Unions / strikes | The goals of a strike, the threat and the works councils on the card of a dispute | Gameplay simplification; works councils and threats TBD | 0.87, 24 October 2026 |
 | PL-1923-1926-CABINET-PPS | Cabinet / candidates / minorities | The non-party candidate of the left (Śliwiński), the period of Skrzyński and the minority concessions on the background of the ugoda of 1925 | Researched in part; the candidate and the concessions are gameplay simplifications | 0.88, 24 October 2026 |
 | PL-MILITIA-0.89 | Milicja / AS | The simplified Milicja PPS: members and five training levels, the balance of costs and gains | Gameplay simplification; no further research by the user's decision | 0.89, 24 October 2026 |
+| PL-PRESS-0.90 | Press | The party press: reach ceilings, sales, support of the campaigns, confiscations under a government of the right, credibility | Gameplay simplification; confiscations and circulation TBD | 0.90, 24 October 2026 |
 | PL-STAGE8-NORMAL-SCENARIO-2026-10-04 | Implementation | Stage 8, the last stage: the Normal scenario with the dated inputs of 17.16 and of the 8f research, the opening calibrated to the M02 Sejm, rule 8.9 for the NPR, the military compromise carried out by the cabinet, Polish-only screens, thirteen strategy automata playing full campaigns, and the closing fixes | Implemented | Implemented, 4 October 2026 |
 | TBD | TBD | TBD | TBD | TBD |
 

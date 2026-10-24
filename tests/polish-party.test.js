@@ -365,7 +365,7 @@ test('Kampania bez odnowienia karty: the same matter twice in consecutive months
   assert.ok(gains[1] < gains[0], 'saturation of the matter among the same voters');
 });
 
-test('Konfiskata in the game: a restricted press weakens the press campaign; the Campaign card goes through the unions and ignores the press', () => {
+test('Konfiskata in the game: a restricted press weakens the press campaign; the Campaign card goes through the unions, and since Z — 0.90 its press support falls too', () => {
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
   const free = PolishParty.pressCampaignPreview(Q);
@@ -377,7 +377,10 @@ test('Konfiskata in the game: a restricted press weakens the press campaign; the
   // Z — 0.80: the preview in words, the change in parentheses ("It reaches workers (+0.5) …").
   const number = text => Number(text.match(/reaches workers \(\+([\d.]+)\)/)[1]);
   assert.ok(number(PolishParty.pressCampaignPreview(Q)) < number(free), 'the press campaign is weaker');
-  assert.equal(PolishParty.issuePreview(Q, 'eight_hours'), campaign, 'the campaign of meetings and unions is not');
+  // Z — 0.90 (decision 6(ii) of 24 X 2026): the press supports the campaigns of the Campaign card among its readers; a confiscation
+  // lowers that support too.
+  assert.notEqual(PolishParty.issuePreview(Q, 'eight_hours'), campaign, 'the press support of the campaign falls');
+  assert.equal(PolishParty.cellReach(Q.S, cell, 'unions'), 20, 'the campaign itself still goes through the unions');
   playFromHand(engine, 'polish_party_campaign');
   choose(engine, 'polish_party_campaign.eight_hours');
   assert.match(content(engine), /The campaign “In defence of the eight-hour day”: PPS gains among employed workers \(\+/);
@@ -434,7 +437,7 @@ test('Prasa 0.77: the press campaign follows the format and the main opponent; r
   PolishParty.writeMirrors(Q);
   playFromHand(engine, 'polish_party_media');
   assert.match(plain(choice(engine, 'polish_party_media.press_campaign').subtitle),
-    /^1 resource\. It reaches workers \(\+[\d.]+\) and the unemployed \(\+[\d.]+\); half of the new votes it takes from our main opponent: the National Democrats\./);
+    /^One unit of the party's money\. It reaches workers \(\+[\d.]+\) and the unemployed \(\+[\d.]+\); half of the new votes it takes from our main opponent: the National Democrats\./);
   const zln = () => PolishElectorate.aggregate(Q.S, c => c.class_id === 'workers', 'zln');
   const z0 = zln();
   choose(engine, 'polish_party_media.press_campaign');
@@ -449,8 +452,10 @@ test('Prasa 0.77: the press campaign follows the format and the main opponent; r
   const worker = Q.S.society.cells.find(c => c.class_id === 'workers');
   const trust = worker.trust_pps;
   playFromHand(engine, 'polish_party_media');
+  const credibility = Q.S.party_orgs.press.credibility;
   choose(engine, 'polish_party_media.reportage');
   assert.equal(worker.trust_pps, Math.min(100, trust + 3));
+  assert.equal(Q.S.party_orgs.press.credibility, credibility + 2, 'Z — 0.90 (decision 5A): honest reportage, credibility +2');
   choose(engine, 'root');
   // An open debate: no money, every faction's dissent −3.
   const dissent = Q.lewica_dissent, cash = Q.S.party_orgs.cash;
@@ -558,4 +563,20 @@ test('Karta Milicji 0.89: plain words, members and training; no forces and no fo
   assert.doesNotMatch(text, /zamach|\d F\b|sprawnoś|zmęczeni/);
   const title = id => [].concat(choice(engine, 'polish_party_militia.' + id).title).join('');
   assert.deepEqual(['recruit', 'militarize', 'form_as'].map(title), ['Przeprowadź werbunek', 'Przeprowadź szkolenie', 'Przekształć w Akcję Socjalistyczną']);
+});
+
+// Z — 0.90 (decision 4A of 24 X 2026 with the user's note that the descriptions were too terse): the press card in full sentences.
+test('Karta Prasy 0.90: full sentences about the press, its readers, their trust and the support of the campaigns (pl)', () => {
+  const engine = dendry.startGame(1922, 'pl');
+  const Q = engine.state.qualities;
+  Q.S.party_orgs.cash = 5;
+  PolishParty.writeMirrors(Q);
+  playFromHand(engine, 'polish_party_media');
+  // Z — 0.90 (the user's note: the full version was too long again): two sentences at the top, one or two for each option.
+  assert.match(content(engine), /Pismo partyjne dociera do 30 na 100 czytelników spośród robotników i bezrobotnych, a czytelnicy umiarkowanie mu ufają\. Wzmacnia każdą naszą kampanię wśród nich o 5%\./);
+  const sub = id => plain(choice(engine, 'polish_party_media.' + id).subtitle);
+  assert.match(sub('press_campaign'), /^Jedna jednostka środków\. Trafia do robotników/);
+  assert.equal(sub('reportage'), 'Jedna jednostka środków. Robotnicy i bezrobotni bardziej ufają PPS (+3), więc następne kampanie wśród nich będą mocniejsze; prasa zyskuje na wiarygodności (+2).');
+  assert.equal([].concat(choice(engine, 'polish_party_media.format').title).join(''), 'Zmień format na gazetę popularną');
+  assert.equal(sub('format'), 'Jedna jednostka środków. Więcej czytelników (+10), także wśród inteligencji i drobnomieszczaństwa, i dochód ze sprzedaży od zasięgu 50, ale mniej zaufania (−5). Za pierwszym razem sprzeciw Centrum PPS (+3).');
 });

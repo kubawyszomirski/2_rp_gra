@@ -88,8 +88,7 @@
         cash: Number(Q.resources) || 0,
         dues: clip(Math.round(Number(Q.dues) || 2), DUES_MIN, DUES_MAX),
         apparatus: {level: 1, member_index: 100, worker_support0: null, union_reach0: 20},
-        press: {reach: 30, credibility: 60, format: 'party_journal', popular_adopted: false, campaigns: [], restrictions: [],
-          unpaid_months: 0, paid_last: true, cases: []},
+        press: {reach: 30, credibility: 60, format: 'party_journal', popular_adopted: false, campaigns: [], restrictions: []},
         tur: {level: 0, cadres: 0, available_from: TUR_AVAILABLE_FROM, active_build: null, active_course: null,
           prepared_campaigns: [], completed_courses: []},
         cooperatives: {projects: []},
@@ -282,11 +281,14 @@
 
   const operatingCooperatives = S => S.party_orgs.cooperatives.projects.filter(p => p.status === 'operating');
 
+  // Z — 0.90 (decision a of 24 X 2026): the party journal reaches at most 60, the popular paper 100 (with its +10).
+  const PRESS_CAP = Object.freeze({party_journal: 60, popular: 100});
   function pressEffective(S) {
     const press = S.party_orgs.press, t = S.turn.last_settled_time + 1;
     const penalty = press.restrictions.filter(r => r.status === 'active' && t < r.expires_at).reduce((n, r) => n + r.reach_penalty, 0);
-    return {reach: clip(press.reach + (press.format === 'popular' ? 10 : 0) - penalty, 0, 100),
-      credibility: clip(press.credibility - (press.format === 'popular' ? 5 : 0), 0, 100), penalty: penalty};
+    const popular = press.format === 'popular';
+    return {reach: clip(Math.min(PRESS_CAP[popular ? 'popular' : 'party_journal'], press.reach + (popular ? 10 : 0)) - penalty, 0, 100),
+      credibility: clip(press.credibility - (popular ? 5 : 0), 0, 100), penalty: penalty};
   }
 
   // One month of the party's own finances (13.1–13.4, 14.1), in step 6 of 4.2 after the economy and the flows, before the
@@ -302,8 +304,16 @@
     for (const key of Object.keys(orgs.arrears)) orgs.arrears[key] = 0;
     simplifyMilitia(militia);
     const press = orgs.press;
-    press.unpaid_months = 0;
-    press.paid_last = true;
+    for (const key of ['unpaid_months', 'paid_last', 'cases']) delete press[key];
+    // Z — 0.90 (decision 5A): a confiscated issue nobody revealed costs the press credibility when the confiscation ends.
+    for (const r of press.restrictions) {
+      if (r.status !== 'active' || t + 1 < r.expires_at) continue;
+      r.status = 'expired';
+      if (r.confiscation && !r.revealed) changePressCredibility(S, PRESS_CREDIBILITY.unrevealed_confiscation);
+    }
+    // Z — 0.90 (decision 2A): the popular paper earns from its sales at reach 50 or more.
+    const sales = press.format === 'popular' && pressEffective(S).reach >= PRESS_SALES_REACH ? PRESS_SALES : 0;
+    if (sales) orgs.cash = round(orgs.cash + sales, MONEY_DIGITS);
     const tur = orgs.tur;
     if (tur.active_build) {
       tur.active_build.paid_months += 1;
@@ -321,7 +331,8 @@
     for (const project of operatingCooperatives(S)) project.paid_last = true;
     // Since stage 6 the unions' own funds are settled by PolishUnions.beginMonth, before a strike draws on them
     // (14.1–14.2).
-    orgs.last_ledger = {t: t, cash: round(orgs.cash, 4), member_index: round(apparatus.member_index, 4), member_target: round(target, 4)};
+    orgs.last_ledger = {t: t, cash: round(orgs.cash, 4), member_index: round(apparatus.member_index, 4), member_target: round(target, 4),
+      press_sales: sales};
     return orgs.last_ledger;
   }
 
@@ -429,6 +440,13 @@
       if (p.kind === 'militarize' && militiaLevel(m) >= MILITIA_LEVELS.length) return no(L('Its training is at the highest level, 5.', 'Jej wyszkolenie jest na najwyższym poziomie, 5.'));
       if (p.kind === 'recruit' && m.strength >= MILITIA_MAX) return no(L('Milicja has ' + MILITIA_MAX + ' members; the party cannot organise more.', 'Milicja ma ' + MILITIA_MAX + ' członków; więcej partia nie zorganizuje.'));
     }
+    if (p.org === 'press' && p.kind === 'distribution') {
+      const popular = S.party_orgs.press.format === 'popular';
+      if (S.party_orgs.press.reach >= distributionCap(S)) {
+        return no(popular ? L('The popular paper already has its highest reach, 100.', 'Gazeta popularna ma już najwyższy zasięg, 100.') :
+          L('The party journal already has its highest reach, 60; only a popular paper reaches more.', 'Pismo partyjne ma już najwyższy zasięg, 60; więcej osiągnie tylko gazeta popularna.'));
+      }
+    }
     if (p.org === 'cooperatives') {
       if (S.party_orgs.cooperatives.projects.some(c => c.class_id === p.class_id && c.status === 'prepared')) {
         return no(L('A cooperative for these recipients is already prepared; launch it from the party agenda.', 'Spółdzielnia dla tych odbiorców jest już przygotowana; uruchom ją z agendy partii.'));
@@ -478,7 +496,7 @@
       return L('the ' + BRANCH_NAMES[p.branch].toLowerCase() + ' branch gains ' + gain + ' reach', 'zasięg branży ' + BRANCH_PL_GENITIVE[p.branch] + ' rośnie o ' + gain);
     }
     if (p.kind === 'distribution') {
-      S.party_orgs.press.reach = Math.min(100, S.party_orgs.press.reach + 10);
+      S.party_orgs.press.reach = Math.min(distributionCap(S), S.party_orgs.press.reach + 10);
       return L('the press gains 10 reach', 'zasięg prasy rośnie o 10');
     }
     if (p.kind === 'build') {
@@ -1750,6 +1768,53 @@
   });
   const OPPONENT_SHARE = 0.5;
   const REPORTAGE_TRUST = 3;
+  // Z — 0.90 (decisions 1B, 2A, 5A, a and 6(ii) of 24 X 2026; P): the sales of the popular paper, the press support of the
+  // campaigns, the confiscations under a government of the right and the moves of the credibility.
+  const PRESS_SALES = 0.10, PRESS_SALES_REACH = 50;
+  const PRESS_BOOST = 0.25;
+  const CONFISCATION_CHANCE = 0.25, CONFISCATION_REACH = 10, CONFISCATION_MONTHS = 2;
+  const PRESS_CREDIBILITY = Object.freeze({investigation: 4, reportage: 2, violence: -5, unrevealed_confiscation: -2});
+  const PRESS_GROUP_NAMES = Object.freeze({workers: ['workers', 'robotników'], unemployed: ['the unemployed', 'bezrobotnych'],
+    new_middle: ['the intelligentsia', 'inteligencji'], old_middle: ['the petty bourgeoisie', 'drobnomieszczaństwa']});
+
+  function changePressCredibility(S, delta) {
+    const press = S.party_orgs.press;
+    press.credibility = clip(press.credibility + delta, 0, 100);
+    return press.credibility;
+  }
+  // The highest base reach the distribution can bring: 60 for the party journal, 90 (100 with its +10) for the popular paper.
+  const distributionCap = S => (S.party_orgs.press.format === 'popular' ? PRESS_CAP.popular - 10 : PRESS_CAP.party_journal);
+
+  // A government of the right: Chjeno-Piast (the repressive profile of 14.4) or a cabinet whose Interior ZLN or PSChD holds.
+  function rightGovernment(S) {
+    const c = S.cabinet;
+    if (!c || c.status === 'ended') return false;
+    return c.configuration_id === 'chjeno_piast' || ['zln', 'pschd'].indexOf((c.portfolios || {}).interior) >= 0;
+  }
+
+  // Z — 0.90 (decision 1B): a press campaign or investigation under a government of the right may cost a confiscated issue —
+  // one recorded roll, a chance of one in four; the reach falls by 10 for two months. The confiscation is not lawful: an
+  // investigation can reveal it.
+  function maybeConfiscate(Q, cause) {
+    const S = Q.S, t = Q.time;
+    if (!rightGovernment(S)) return '';
+    if (rules.roll(S, 'press_confiscation:' + cause + ':t' + t) >= CONFISCATION_CHANCE) return '';
+    addPressRestriction(Q, {id: 'confiscation:t' + t, event_id: cause, reach_penalty: CONFISCATION_REACH, expires_at: t + CONFISCATION_MONTHS});
+    const r = S.party_orgs.press.restrictions.find(x => x.id === 'confiscation:t' + t);
+    if (r) { r.confiscation = true; r.lawful = false; r.revealed = false; }
+    S.history.reasons.push({t: t, kind: 'press_confiscation', cause: cause});
+    return L(' The authorities confiscate this issue: the reach of the press is lower (−' + CONFISCATION_REACH + ') for two months.',
+      ' Władze konfiskują ten numer: zasięg prasy jest niższy (−' + CONFISCATION_REACH + ') przez dwa miesiące.');
+  }
+
+  // Z — 0.90 (decision 6(ii)): a campaign of the Campaign card is stronger among the readers of the press — up to +25% with a
+  // full reach and credibility.
+  function pressBoost(S) {
+    const e = pressEffective(S), groups = PRESS_GROUPS[S.party_orgs.press.format === 'popular' ? 'popular' : 'party_journal'];
+    return {value: PRESS_BOOST * e.reach / 100 * e.credibility / 100, groups: groups};
+  }
+  const pressReaders = S => Object.keys(pressBoost(S).groups);
+  const readerWords = S => andJoin(pressReaders(S).map(id => L(PRESS_GROUP_NAMES[id][0], PRESS_GROUP_NAMES[id][1])));
   const DEBATE_DISSENT = -3;
   const RALLY_TURNOUT = 0.04;
 
@@ -1864,8 +1929,9 @@
   }
 
   function issueSpec(Q, id) {
-    const issue = ISSUES[id];
-    return {key: 'issue:' + id, channel: 'unions', bundle: issue.groups, factor: issueFactor(Q, id), course_topic: issue.tur_topic || null};
+    const issue = ISSUES[id], base = issueFactor(Q, id), boost = pressBoost(Q.S);
+    const factor = cell => base(cell) * (bundleWeight(boost.groups, cell) > 0 ? 1 + boost.value : 1);
+    return {key: 'issue:' + id, channel: 'unions', bundle: issue.groups, factor: factor, course_topic: issue.tur_topic || null};
   }
 
   function issueCampaignStatus(Q, id) {
@@ -1965,11 +2031,14 @@
     Q.pl_rally_why = rallyStatus(Q).reason;
     Q.pl_rally_groups = rallyGroupsText(Q.S);
     Q.pl_campaign_line = L('The direction of the party: ', 'Kierunek partii: ') + stanceValue('direction', Q.S.actors.pps.strategy.direction) + '.';
+    const boost = Math.round(100 * pressBoost(Q.S).value);
+    Q.pl_campaign_press = boost > 0 ? L('The party press makes a campaign stronger among its readers, ' + readerWords(Q.S) + ': by ' + boost + '%.',
+      'Prasa partyjna wzmacnia kampanię wśród swoich czytelników — ' + readerWords(Q.S) + ' — o ' + boost + '%.') : '';
   }
 
   // The Press card. A working press is paid and reaches someone (13.2).
   function pressWorking(S) {
-    return !(S.party_orgs.press.unpaid_months >= 2 || S.party_orgs.press.reach <= 0);
+    return S.party_orgs.press.reach > 0;
   }
 
   function pressActionStatus(Q, option) {
@@ -2016,10 +2085,11 @@
     const total = Object.keys(moved).reduce((n, cellId) => n + (S.society.cells.find(c => c.id === cellId).mass * moved[cellId]), 0);
     S.party_orgs.press.campaigns.push({t: t, kind: 'press', topic: 'press', audience: 'press_groups'});
     S.history.reasons.push({t: t, kind: 'campaign', campaign: 'press', topic: 'press', audience: 'press_groups', moved: total});
+    const confiscated = maybeConfiscate(Q, 'press_campaign');
     electorate.writeClassMirrors(Q);
     writeMirrors(Q);
     return result(Q, L('The press campaign: ', 'Kampania prasowa: ') + changesWords(bundleChanges(S, spec.bundle, moved), 'result') + L('; ', '; ') +
-      opponentText(Q) + '.');
+      opponentText(Q) + '.' + confiscated);
   }
 
   // Reportage on the conditions of work and life: the trust of the workers and the unemployed in PPS +3 (P), so the next
@@ -2032,10 +2102,12 @@
     rules.commitMainAction(Q, 'party.press_reportage', {resource_cost: {R: 1}});
     S.party_orgs.cash = Math.max(0, S.party_orgs.cash - 1);
     electorate.changeCells(S, cell => cell.class_id === 'workers' || cell.employment === 'unemployed', {trust_pps: REPORTAGE_TRUST});
+    changePressCredibility(S, PRESS_CREDIBILITY.reportage);
     electorate.writeClassMirrors(Q);
     writeMirrors(Q);
-    return result(Q, L('Reportage on the conditions of work and life: the trust of the workers and the unemployed in PPS +3; the next campaigns among ' +
-      'them are stronger.', 'Reportaże o warunkach pracy i życia: zaufanie robotników i bezrobotnych do PPS +3; następne kampanie w tych grupach będą mocniejsze.'));
+    return result(Q, L('Reportage on the conditions of work and life: the workers and the unemployed trust PPS more, so the next campaigns among them ' +
+      'are stronger, and the readers trust the press more.', 'Reportaże o warunkach pracy i życia: robotnicy i bezrobotni bardziej ufają PPS, więc następne ' +
+      'kampanie wśród nich będą mocniejsze, a czytelnicy bardziej ufają prasie.'));
   }
 
   // An open debate in the columns of the press: every faction may speak; its dissent −3 (P, after the German Media card).
@@ -2050,19 +2122,42 @@
     return result(Q, L('An open debate in the party press: every faction’s dissent −3.', 'Otwarta dyskusja na łamach prasy partyjnej: sprzeciw każdej frakcji −3.'));
   }
 
+  // Z — 0.90 (decision 4A of 24 X 2026 with the user's note that the descriptions were too terse): the card says in full
+  // sentences what the press is, whom it reaches, how far its readers trust it and what each option does.
   function pressView(Q) {
     syncMirrors(Q);
     partyDisplay(Q);
-    const S = Q.S, press = S.party_orgs.press, effective = pressEffective(S);
-    Q.pl_media_format_why = pressFormatStatus(Q).reason;
-    Q.pl_media_format_next = press.format === 'popular' ? L('the party journal', 'pismo partyjne') : L('a popular format', 'format popularny');
-    Q.pl_press_state = (press.format === 'popular' ? L('A popular format', 'Format popularny') : L('The party journal', 'Pismo partyjne')) +
-      L(' · reach ', ' · zasięg ') + fmt(effective.reach) + L(' · credibility ', ' · wiarygodność ') + fmt(effective.credibility);
+    const S = Q.S, press = S.party_orgs.press, effective = pressEffective(S), popular = press.format === 'popular';
+    const it = popular ? 'jej' : 'mu';
+    const trust = effective.credibility >= 70 ? L('trust it well', 'dobrze ' + it + ' ufają') : effective.credibility >= 50 ? L('trust it moderately', 'umiarkowanie ' + it + ' ufają') :
+      L('trust it little', 'mało ' + it + ' ufają');
+    const boost = Math.round(100 * pressBoost(S).value);
+    const active = press.restrictions.filter(r => r.status === 'active' && r.confiscation && S.turn.last_settled_time + 1 < r.expires_at);
+    Q.pl_press_intro = L((popular ? 'The popular paper' : 'The party journal') + ' reaches ' + fmt(effective.reach) + ' of every 100 ' + readerWords(S) +
+      ', and its readers ' + trust + '. It makes every campaign of ours among them stronger by ' + boost + '%.',
+      (popular ? 'Gazeta popularna' : 'Pismo partyjne') + ' dociera do ' + fmt(effective.reach) + ' na 100 czytelników spośród ' + readerWords(S) +
+      ', a czytelnicy ' + trust + '. Wzmacnia każdą naszą kampanię wśród nich o ' + boost + '%.') +
+      (popular && effective.reach >= PRESS_SALES_REACH ? L(' Its sales bring a tenth of a unit of money a month.', ' Sprzedaż przynosi jedną dziesiątą jednostki środków miesięcznie.') : '') +
+      (active.length ? L(' An issue is confiscated until ' + rules.monthOf(active[0].expires_at) + '/' + rules.yearOf(active[0].expires_at) + '.',
+        ' Numer jest skonfiskowany do ' + rules.monthYear(active[0].expires_at, 'gen') + '.') : '');
+    const risk = rightGovernment(S) ? L(' The government of the right may confiscate the issue.', ' Rząd prawicy może skonfiskować numer.') : '';
+    Q.pl_press_campaign_effect = L('One unit of the party\'s money. ', 'Jedna jednostka środków. ') + pressCampaignPreview(Q) + risk;
     Q.pl_press_campaign_why = pressActionStatus(Q, 'campaign').reason;
-    Q.pl_press_campaign_effect = pressCampaignPreview(Q);
     Q.pl_press_reportage_why = pressActionStatus(Q, 'reportage').reason;
     Q.pl_press_debate_why = pressActionStatus(Q, 'debate').reason;
+    const target = pressInvestigationTarget(S);
+    Q.pl_press_investigation_line = target ? L('One unit of the party\'s money. We reveal ' + target.subject + '; the press gains credibility (+' + PRESS_CREDIBILITY.investigation + ').',
+      'Jedna jednostka środków. Ujawniamy sprawę: ' + rules.storedText(target.subject) + '; prasa zyskuje na wiarygodności (+' + PRESS_CREDIBILITY.investigation + ').') + risk : '';
     Q.pl_media_investigation_why = pressInvestigationStatus(Q).reason;
+    Q.pl_media_format_why = pressFormatStatus(Q).reason;
+    Q.pl_media_format_title = popular ? L('Return to the party journal', 'Wróć do pisma partyjnego') : L('Change to a popular paper', 'Zmień format na gazetę popularną');
+    Q.pl_media_format_line = popular ?
+      L('One unit of the party\'s money. Fewer readers (at most 60 of 100) and no sales, but more trust (+5).',
+        'Jedna jednostka środków. Mniej czytelników (najwyżej 60 na 100) i brak sprzedaży, ale więcej zaufania (+5).') :
+      L('One unit of the party\'s money. More readers (+10), also among the intelligentsia and the petty bourgeoisie, and sales from reach ' + PRESS_SALES_REACH +
+        ', but less trust (−5).' + (press.popular_adopted ? '' : ' The first time the Centre of PPS objects (+3).'),
+        'Jedna jednostka środków. Więcej czytelników (+10), także wśród inteligencji i drobnomieszczaństwa, i dochód ze sprzedaży od zasięgu ' + PRESS_SALES_REACH +
+        ', ale mniej zaufania (−5).' + (press.popular_adopted ? '' : ' Za pierwszym razem sprzeciw Centrum PPS (+3).'));
   }
 
   // A press investigation needs a real case and evidence (13.2). P (stage 7): the evidence is the record of the case
@@ -2074,8 +2169,9 @@
     const cases = Object.keys(P.cases).sort().map(id => P.cases[id])
       .filter(c => c.status === 'open' && !c.press_revealed_at && c.suspected !== 'pps' && c.kind !== 'military' && c.kind !== 'pps_violence');
     if (cases.length) return {kind: 'case', id: cases[0].id, subject: cases[0].subject};
+    // Z — 0.90 (decision 1B): an unlawful confiscation of our own press can be revealed as well.
     const restrictions = Object.keys(P.restrictions).sort().map(id => P.restrictions[id])
-      .filter(r => r.status === 'active' && !r.lawful && !r.press_revealed_at && r.kind !== 'press_confiscation');
+      .filter(r => r.status === 'active' && !r.lawful && !r.press_revealed_at);
     return restrictions.length ? {kind: 'restriction', id: restrictions[0].id, subject: 'the ' + restrictions[0].kind.replace(/_/g, ' ') + ' against ' +
       restrictions[0].target} : null;
   }
@@ -2096,13 +2192,18 @@
     const S = Q.S, target = pressInvestigationTarget(S), t = Q.time;
     rules.commitMainAction(Q, 'party.press_investigation', {target: target.id, resource_cost: {R: 1}});
     S.party_orgs.cash = Math.max(0, S.party_orgs.cash - 1);
-    S.party_orgs.press.credibility = clip(S.party_orgs.press.credibility + 4, 0, 100);
+    changePressCredibility(S, PRESS_CREDIBILITY.investigation);
     const record = target.kind === 'case' ? S.politics.cases[target.id] : S.politics.restrictions[target.id];
     record.press_revealed_at = t;
+    if (record.kind === 'press_confiscation' && record.source_id) {
+      const own = S.party_orgs.press.restrictions.find(r => r.id === record.source_id);
+      if (own) own.revealed = true;
+    }
     S.history.reasons.push({t: t, kind: 'press_investigation', target_kind: target.kind, target_id: target.id});
+    const confiscated = maybeConfiscate(Q, 'press_investigation');
     writeMirrors(Q);
-    return result(Q, L('The party press documents ' + target.subject + ': credibility +4. The fact is recorded once; nothing is invented.',
-      'Prasa partyjna dokumentuje sprawę: ' + rules.storedText(target.subject) + '. Wiarygodność prasy rośnie (+4). Ujawniamy tylko prawdziwe fakty.'));
+    return result(Q, L('The party press documents ' + target.subject + '; the readers trust it more. The fact is recorded once; nothing is invented.',
+      'Prasa partyjna dokumentuje sprawę: ' + rules.storedText(target.subject) + '. Czytelnicy bardziej jej ufają. Ujawniamy tylko prawdziwe fakty.') + confiscated);
   }
 
   function mediaView(Q) {
@@ -2758,7 +2859,7 @@
     const cost = ACTION_COSTS[actionId] || 0;
     if (cost && S.party_orgs.cash + 1e-9 < cost) return no(L('Needs ' + rules.units(cost) + '.', 'Wymaga ' + rules.units(cost, 'resources', 'gen') + '.'));
     if (advisorId === 'perl' && Q.time > ADVISERS.perl.last_time) return no(L('Perl is no longer active.', 'Perl nie jest już aktywny.'));
-    if (actionId === 'direct_party_press' && (S.party_orgs.press.unpaid_months >= 2 || S.party_orgs.press.reach <= 0)) return no(L('Needs a working party press.', 'Wymaga działającej prasy partyjnej.'));
+    if (actionId === 'direct_party_press' && !pressWorking(S)) return no(L('Needs a working party press.', 'Wymaga działającej prasy partyjnej.'));
     if (actionId === 'broker_coalition') return government.brokerStatus(Q);
     // Decision 5A of stage 8: the profile pilsudski_aligned of A10 belongs to the cabinets of Śliwiński and Piłsudski. Z — 0.79: the
     // rule stays, but Ziemięcki's card offers the emergency collection instead.
@@ -3203,6 +3304,12 @@
     ISSUES: ISSUES,
     ISSUE_ORDER: ISSUE_ORDER,
     PRESS_GROUPS: PRESS_GROUPS,
+    PRESS_CAP: PRESS_CAP,
+    PRESS_CREDIBILITY: PRESS_CREDIBILITY,
+    changePressCredibility: changePressCredibility,
+    pressBoost: pressBoost,
+    issueSpec: issueSpec,
+    rightGovernment: rightGovernment,
     issueCampaignStatus: issueCampaignStatus,
     issueCampaign: issueCampaign,
     issuePreview: issuePreview,

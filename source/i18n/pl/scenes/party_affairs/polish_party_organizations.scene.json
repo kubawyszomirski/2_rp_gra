@@ -5,7 +5,7 @@
   "title: Organisations of PPS": "title: Organizacje PPS",
   "= Organisations of PPS": "= Organizacje PPS",
   "title: Extend the distribution of the press": "title: Poszerz kolportaż prasy",
-  "subtitle: 1 resource; the press reaches more readers (+10).": "subtitle: 1 jednostka środków; prasa dociera do większej liczby czytelników (+10).",
+  "subtitle: 1 resource; the press reaches more readers (+10): the party journal up to 60 of 100, a popular paper up to 100.": "subtitle: 1 jednostka środków; prasa dociera do większej liczby czytelników (+10): pismo partyjne najwyżej do 60 na 100, gazeta popularna do 100.",
   "title: [? if pl_tur_level = 0 : Found TUR ?][? if pl_tur_level > 0 : Start the next stage of TUR ?]": "title: [? if pl_tur_level = 0 : Załóż Towarzystwo Uniwersytetu Robotniczego ?][? if pl_tur_level > 0 : Rozpocznij kolejny etap Towarzystwa Uniwersytetu Robotniczego ?]",
   "subtitle: [? if pl_tur_level = 0 : 2 resources; after two months TUR starts its work and gains cadres (+10). ?][? if pl_tur_level > 0 : 2 resources; after two months TUR rises one level and gains cadres (+10). ?]": "subtitle: [? if pl_tur_level = 0 : 2 jednostki środków; po dwóch miesiącach Towarzystwo zaczyna działać i zyskuje kadry (+10). ?][? if pl_tur_level > 0 : 2 jednostki środków; po dwóch miesiącach Towarzystwo wchodzi o poziom wyżej i zyskuje kadry (+10). ?]",
   "title: Prepare a workers’ consumer cooperative": "title: Przygotuj robotniczą spółdzielnię spożywców",

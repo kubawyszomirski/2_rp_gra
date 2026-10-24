@@ -11,6 +11,6 @@
   "title: In defence of the Republic": "title: W obronie Republiki",
   "title: Work and benefits for the unemployed": "title: Praca i zasiłek dla bezrobotnych",
   "- @root: Continue.": "- @root: Dalej.",
-  "Meetings, rallies and the unions. A campaign costs nothing but this month's action and reaches several groups of voters at once. [+ pl_campaign_line +]": "Zebrania, wiece i związki. Kampania nie kosztuje nic poza akcją tego miesiąca i trafia naraz do kilku grup wyborców. [+ pl_campaign_line +]"
+  "Meetings, rallies and the unions. A campaign costs nothing but this month's action and reaches several groups of voters at once. [+ pl_campaign_line +] [+ pl_campaign_press +]": "Zebrania, wiece i związki. Kampania nie kosztuje nic poza akcją tego miesiąca i trafia naraz do kilku grup wyborców. [+ pl_campaign_line +] [+ pl_campaign_press +]"
  }
 }

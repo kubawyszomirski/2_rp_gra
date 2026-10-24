@@ -14,7 +14,7 @@ PolishParty.campaignView(Q);
 
 = Campaign
 
-Meetings, rallies and the unions. A campaign costs nothing but this month's action and reaches several groups of voters at once. [+ pl_campaign_line +]
+Meetings, rallies and the unions. A campaign costs nothing but this month's action and reaches several groups of voters at once. [+ pl_campaign_line +] [+ pl_campaign_press +]
 
 - @eight_hours
 - @prices

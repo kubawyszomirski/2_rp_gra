@@ -24,7 +24,7 @@ PPS has [+ pl_org_cash +] R. Choose one investment; it is carried out at once. M
 
 @press_distribution
 title: Extend the distribution of the press
-subtitle: 1 resource; the press reaches more readers (+10).
+subtitle: 1 resource; the press reaches more readers (+10): the party journal up to 60 of 100, a popular paper up to 100.
 choose-if: {! return PolishParty.selectionStatus(Q, ['press_distribution']).available !}
 unavailable-subtitle: [+ pl_org_press_distribution_why +]
 on-arrival: {!

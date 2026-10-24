@@ -8,13 +8,14 @@ view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.partyReady(Q) 
 on-arrival: {!
 // Card party.media (technical reference 5.3, 10.6, 13.2; card catalogue 5.3). Z — 0.77 (decisions of 8 X 2026): the Press card;
 // the campaigns among chosen voters moved to the new Campaign card (polish_party_campaign). One option, 1 T; the debate costs no
-// resource. The card rests three months after use (Z — 0.76).
+// resource. The card rests three months after use (Z — 0.76). Z — 0.90 (decision 4A of 24 X 2026): full sentences about the press,
+// its readers and their trust; the press strengthens the campaigns of the Campaign card, a government of the right may confiscate.
 PolishParty.pressView(Q);
 !}
 
 = Press
 
-[+ pl_press_state +]. Party money: [+ pl_party_cash +]. The press reaches several groups at once, more weakly than a campaign of meetings and unions; what it reaches depends on its format and its credibility.
+[+ pl_press_intro +]
 
 - @press_campaign
 - @reportage
@@ -25,7 +26,7 @@ PolishParty.pressView(Q);
 
 @press_campaign
 title: The press in the service of the campaign
-subtitle: 1 resource. [+ pl_press_campaign_effect +]
+subtitle: [+ pl_press_campaign_effect +]
 choose-if: {! return PolishParty.pressActionStatus(Q, 'campaign').available !}
 unavailable-subtitle: [+ pl_press_campaign_why +]
 on-arrival: {!
@@ -35,7 +36,7 @@ go-to: result
 
 @reportage
 title: Reportage on the conditions of work and life
-subtitle: 1 resource. No votes at once: the trust of the workers and the unemployed in PPS rises (+3), so the next campaigns among them are stronger.
+subtitle: One unit of the party's money. The workers and the unemployed trust PPS more (+3), so the next campaigns among them are stronger; the press gains credibility (+2).
 choose-if: {! return PolishParty.pressActionStatus(Q, 'reportage').available !}
 unavailable-subtitle: [+ pl_press_reportage_why +]
 on-arrival: {!
@@ -45,7 +46,7 @@ go-to: result
 
 @debate
 title: An open debate in the columns of the press
-subtitle: No resource. Every faction may speak: the dissent of each faction falls (−3). No votes.
+subtitle: Costs no money. The factions argue in the columns of the press, and the dissent of each falls (−3).
 choose-if: {! return PolishParty.pressActionStatus(Q, 'debate').available !}
 unavailable-subtitle: [+ pl_press_debate_why +]
 on-arrival: {!
@@ -55,7 +56,7 @@ go-to: result
 
 @investigation
 title: A press investigation
-subtitle: 1 resource; the credibility of the press rises (+4). We reveal only true facts, each only once.
+subtitle: [+ pl_press_investigation_line +]
 choose-if: {! return PolishParty.pressInvestigationStatus(Q).available !}
 unavailable-subtitle: [+ pl_media_investigation_why +]
 on-arrival: {!
@@ -64,8 +65,8 @@ PolishParty.pressInvestigation(Q);
 go-to: result
 
 @format
-title: Change the format of the press to [+ pl_media_format_next +]
-subtitle: 1 resource. A popular format: the press reaches more people (+10) and also the intelligentsia and the petty bourgeoisie, but loses credibility (−5), and with a wide reach it earns from sales (0.10 resources a month at reach 50 or more); the first adoption raises Centrum dissent (+3). Waits six months.
+title: [+ pl_media_format_title +]
+subtitle: [+ pl_media_format_line +]
 choose-if: {! return PolishParty.pressFormatStatus(Q).available !}
 unavailable-subtitle: [+ pl_media_format_why +]
 on-arrival: {!

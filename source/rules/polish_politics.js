@@ -362,6 +362,8 @@
     const c = openCase(Q, {id: spec.id, kind: 'pps_violence', subject: spec.subject, suspected: 'pps', source_id: spec.source_id || null});
     if (spec.t !== undefined) c.opened_at = spec.t;
     c.assigned_party = 'pps';
+    // Z — 0.90 (decision 5A of 24 X 2026): violence of a PPS organisation costs its press the trust of the readers.
+    if (party.partyReady(Q)) party.changePressCredibility(S, party.PRESS_CREDIBILITY.violence);
     if (unions.cabinetProfile(S) === 'repress' && !S.militia.banned) {
       addRestriction(Q, {id: 'militia_ban:' + spec.id, kind: 'militia_ban', target: 'Milicja PPS', lawful: true, imposed_by: 'cabinet', case_id: c.id});
       S.militia.banned = true;

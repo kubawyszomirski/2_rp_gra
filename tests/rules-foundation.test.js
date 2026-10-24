@@ -58,12 +58,10 @@ test('the new-game state follows the domain register in 2.4', () => {
     society: { agrarian_pressure: 45, living_conditions_last: {}, rural_improvements: 0 },
     // Without the opening values of the party (PolishParty.attachPartyState) its domains start neutral.
     party_orgs: { profile_id: null, cash: 0, dues: 2, apparatus: { level: 1, member_index: 100, worker_support0: null, union_reach0: 20 },
-      press: { reach: 30, credibility: 60, format: 'party_journal', popular_adopted: false, campaigns: [], restrictions: [], unpaid_months: 0,
-        paid_last: true, cases: [] },
+      press: { reach: 30, credibility: 60, format: 'party_journal', popular_adopted: false, campaigns: [], restrictions: [] },
       tur: { level: 0, cadres: 0, available_from: 13, active_build: null, active_course: null, prepared_campaigns: [], completed_courses: [] },
       cooperatives: { projects: [] }, arrears: { apparatus: 0, press: 0, tur: 0, cooperatives: 0 }, last_ledger: null, mirror_base: {} },
-    militia: { strength: 0, militancy: 0, stage: 1, militarized: false, militarized_once: false, fatigue: 0, arrears: 0, assignments: [],
-      banned: false, repressed: false, dissent: 0, alignment: {}, unpaid_last: false },
+    militia: { strength: 0, militancy: 0, stage: 1, militarized_once: false, assignments: [], banned: false },
     unions: {},
     faction_cases: {},
     // Stage 6: no strike and no plant is recorded in a new game (14.3, 17.12).
