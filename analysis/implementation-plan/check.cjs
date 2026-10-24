@@ -251,7 +251,8 @@ assert.ok(!/\bcoalition_dissent\b/.test(read('source/scenes/advisors/malinowski.
 // ---- Stage 4 (0.45): done, its files exist, its decisions and findings are recorded; decision 4
 // moved nine tests to stages 5-7; the German economy is switched off by a guard, not deleted.
 assert.ok(stages[4].text.includes('**Stan:** wykonany'), 'stage 4 is marked as done');
-const stage4Files = ['source/rules/polish_economy.js', 'source/rules/polish_projects.js', 'source/scenes/polish_agenda.scene.dry',
+// Z — 0.93 (decision 4A of 24 X 2026): the scene of the prepared reforms (polish_agenda) was removed; reforms start in one decision.
+const stage4Files = ['source/rules/polish_economy.js', 'source/rules/polish_projects.js',
   'source/scenes/polish_unemployment_bill.scene.dry', 'source/scenes/polish_budget_package.scene.dry', 'source/scenes/polish_constitution_project.scene.dry',
   'source/scenes/polish_event_stabilization.scene.dry', 'source/scenes/polish_event_credit_crisis.scene.dry', 'source/scenes/polish_event_austerity_1926.scene.dry',
   'tests/rules-economy.test.js', 'tests/rules-projects.test.js', 'tests/polish-economy.test.js', 'tests/polish-government-cards.test.js'];

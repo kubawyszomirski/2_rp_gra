@@ -5,11 +5,11 @@
     "forcedConcessionRelation": -3
   },
   "hashes": {
-    "docs/POLISH_TECHNICAL_REFERENCE.md": "68e2dc0dd18542d2f34262d3abcfbffba2ab652fb8079a8db10e9c160c539966",
-    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "7a8f0105d0d8411edd0899d3e1099631bb6ba8e374902389d742a0d9c2a0e2cc",
-    "docs/POLISH_MECHANICS_AUDIT.md": "36a91bbe3e4f53458c0bf9ebf0d2a1bb32f436bd72003ccd0e41bfa0a5acace5",
+    "docs/POLISH_TECHNICAL_REFERENCE.md": "0dec6e451f69a8d7339af87f073801e4d5fb262890f07474f1b964ddcf7ca910",
+    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "4ba35e22efe8728316367d652568770082ef85c9a77d0ca660dd6eb6a871f6e9",
+    "docs/POLISH_MECHANICS_AUDIT.md": "95efc2976f3e7b9b4455ff16ef61af4aea0f855a36d513476edc9db9d2f968cd",
     "analysis/m02-robustness/engine.cjs": "e0b544d65a4381ed7698f3f649fd54e41714a3a1027852a7ea455d0ad49b43cd",
-    "analysis/m02-negotiations/results.json": "44c5114f2b6a867ec860686ff9d012faec76154de95b2edc0cda1b2c0cec2557"
+    "analysis/m02-negotiations/results.json": "15271c9e44ec7e23054dd49fdb6660ecc0029374ee2417bf1b9e18efb4bff12e"
   },
   "review": {
     "C|bargain": {

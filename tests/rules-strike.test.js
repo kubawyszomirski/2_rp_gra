@@ -756,7 +756,7 @@ test('Układ zbiorowy i odstępstwo: an agreement in one branch costs 0 B and mo
   assert.equal(S.economy.business_pressure, pressure - 4, 'the expiry does not undo the one-off change');
 });
 
-test('Ratunek zakładu: the general credit adds 5 to the credit target; the rescue of a recorded plant costs 2 B for 2 months, then 1 B, and restores its lost capacity once', () => {
+test('Ratunek zakładu: the general credit adds 5 to the credit target; the rescue of a recorded plant costs 1 B a month from its launch (Z — 0.93) and restores its lost capacity once', () => {
   const Q = withPortfolios(game(), 'economic');
   const S = Q.S;
   S.economy.budget_base = 10;  // a full execution in this fixture (11.3)
@@ -770,13 +770,11 @@ test('Ratunek zakładu: the general credit adds 5 to the credit target; the resc
   PolishProjects.chooseOption(Q, 'industrial_policy', 'rescue');
   free(Q);
   const rescue = Object.values(S.projects).find(p => p.type === 'plant_rescue');
+  // Z — 0.93 (decisions 3A and 4A of 24 X 2026): one cost of 1 B a month, started in the same decision.
   assert.deepEqual([rescue.status, rescue.klass, rescue.build_budget_B, rescue.upkeep_budget_B, rescue.duration_months, rescue.policy_choices.plant_id],
-    ['prepared', 'large', 2, 1, 2, plant.id], 'a large project: prepared by the card, launched in the agenda');
+    ['executing', 'large', 1, 1, 2, plant.id], 'a large project started by the card');
   assert.equal(plant.rescue_project_id, rescue.id);
-  assert.match(PolishProjects.optionStatus(Q, 'industrial_policy', 'rescue').reason, /already prepared/);
-  assert.ok(PolishProjects.agendaItemsFor(Q).includes('plant_rescue'));
-  PolishProjects.agendaChoose(Q, 'plant_rescue');
-  assert.deepEqual([rescue.status, rescue.authorized], ['executing', true], 'the owner’s agreement is the condition of the credit; no law');
+  assert.equal(rescue.authorized, true, 'the owner’s agreement is the condition of the credit; no law');
   // The rescue's own charge in each settlement (the cabinet may launch the prepared credit in the crisis, 17.16.4).
   const charges = [];
   for (let i = 0; i < 4; i++) {
@@ -784,7 +782,7 @@ test('Ratunek zakładu: the general credit adds 5 to the credit target; the resc
     settle(Q);
   }
   assert.equal(rescue.status, 'operating');
-  assert.deepEqual(charges, [2, 2, 1, 1], 'building 2 B for two months, then 1 B to run');
+  assert.deepEqual(charges, [1, 1, 1, 1], 'one cost of 1 B a month, while it is built and while it works');
   assert.deepEqual([plant.capacity, plant.lost_capacity, plant.status], [100, 0, 'rescued'], 'the recorded lost capacity is restored');
   assert.equal(rescue.effects_applied.filter(k => k === 'first').length, 1, 'once');
   free(Q);
@@ -819,9 +817,8 @@ test('Przejęcie i reprezentacja (stage-6 part): public control by an act gives 
   PolishProjects.chooseOption(Q, 'industrial_policy', 'worker_representation', { variant: 'decision_rights' });
   free(Q);
   const codecision = Object.values(S.projects).find(p => p.type === 'enterprise_representation' && p.variant === 'decision_rights');
-  assert.deepEqual([codecision.status, codecision.klass, codecision.build_budget_B, codecision.duration_months], ['prepared', 'large', 1, 2],
-    'two steps: prepared now, launched in the agenda');
-  PolishProjects.agendaChoose(Q, 'enterprise_representation');
+  assert.deepEqual([codecision.status, codecision.klass, codecision.build_budget_B, codecision.duration_months], ['executing', 'large', 1, 2],
+    'Z — 0.93: one decision files its law and starts it');
   const bill = S.parliament.laws.at(-1);
   assert.deepEqual([bill.project_id, bill.status], [codecision.id, 'enacted'], 'co-decision needs its own law');
   for (let i = 0; i < 3 && codecision.status !== 'completed'; i++) settle(Q);

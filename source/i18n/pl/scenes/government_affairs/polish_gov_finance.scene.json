@@ -2,20 +2,20 @@
  "source": "scenes/government_affairs/polish_gov_finance.scene.dry",
  "status": "complete",
  "lines": {
+  "title: Taxes and Loans": "title: Podatki i pożyczki",
+  "subtitle: Treasury: a progressive tax, indirect taxes, a domestic loan, emission or savings.": "subtitle: Resort Skarbu: podatek progresywny, podatki pośrednie, pożyczka wewnętrzna, emisja albo oszczędności.",
+  "= Taxes and loans": "= Podatki i pożyczki",
+  "One instrument per decision, voted by the Sejm at once; one instrument of each kind can be in force, and a temporary revenue ends when it expires.": "Jeden instrument na decyzję, nad którym Sejm głosuje od razu; naraz może działać jeden instrument każdego rodzaju, a dochód tymczasowy znika, gdy wygasa.",
   "title: Tax high incomes and wealth: a progressive tax": "title: Opodatkuj wysokie dochody i majątek: podatek progresywny",
-  "subtitle: Taxes rise one level, which brings the budget 1 unit a month; business pressure grows (+4); Lewica dissent falls (−3).": "subtitle: Podatki rosną o jeden poziom, co zasila budżet: 1 jednostka miesięcznie; presja przedsiębiorców rośnie (+4); sprzeciw Lewicy spada (−3).",
-  "title: Tax high incomes and wealth: an extraordinary wealth tax": "title: Opodatkuj wysokie dochody i majątek: nadzwyczajny podatek majątkowy",
-  "subtitle: Brings the budget 2 units a month for six months; business pressure grows (+8).": "subtitle: Zasila budżet: 2 jednostki miesięcznie przez sześć miesięcy; presja przedsiębiorców rośnie (+8).",
   "title: Tax broad groups: indirect taxes": "title: Opodatkuj szerokie grupy: podatki pośrednie",
   "subtitle: Taxes rise one level, which brings the budget 1 unit a month; the discontent of poor recipients grows (+3); Lewica dissent rises (+3).": "subtitle: Podatki rosną o jeden poziom, co zasila budżet: 1 jednostka miesięcznie; niezadowolenie ubogich odbiorców rośnie (+3); sprzeciw Lewicy rośnie (+3).",
-  "title: Tax broad groups: a broader tax base": "title: Opodatkuj szerokie grupy: szersza podstawa opodatkowania",
-  "subtitle: Taxes rise one level, which brings the budget 1 unit a month; business pressure grows (+4); the discontent of the middle class covered grows (+3).": "subtitle: Podatki rosną o jeden poziom, co zasila budżet: 1 jednostka miesięcznie; presja przedsiębiorców rośnie (+4); niezadowolenie objętej klasy średniej rośnie (+3).",
-  "title: Tax broad groups: fiscal customs duties": "title: Opodatkuj szerokie grupy: cła fiskalne",
-  "subtitle: Brings the budget 1 unit a month for six months; prices rise for two months (+1 percentage point) and the credit shock grows for six months (+3).": "subtitle: Zasila budżet: 1 jednostka miesięcznie przez sześć miesięcy; ceny rosną przez dwa miesiące (+1 punkt procentowy), a szok kredytowy rośnie przez sześć miesięcy (+3).",
+  "title: Domestic loan": "title: Pożyczka wewnętrzna",
+  "subtitle: Brings the budget 3 units a month for six months, then costs it 1 unit a month for twelve months. Needs credit of at least 40.": "subtitle: Zasila budżet: 3 jednostki miesięcznie przez sześć miesięcy, potem obciąża go: 1 jednostka miesięcznie przez dwanaście miesięcy. Wymaga kredytu co najmniej 40.",
+  "title: Savings in named administrative spending": "title: Oszczędności w wymienionych wydatkach administracyjnych",
+  "subtitle: Brings the budget 1 unit a month for six months; the discontent of the public employees named grows (+4).": "subtitle: Zasila budżet: 1 jednostka miesięcznie przez sześć miesięcy; niezadowolenie wymienionych pracowników publicznych rośnie (+4).",
+  "title: Emission financing": "title: Finansowanie emisją",
+  "subtitle: Before the złoty: printing within an authorised limit of 1–3 points; after it: transitional coinage, 1 point for three months.": "subtitle: Przed złotym: druk pieniądza w zatwierdzonym limicie 1–3 punktów; po nim: przejściowa emisja bilonu, 1 punkt przez trzy miesiące.",
   "- @root: Continue.": "- @root: Dalej.",
-  "title: Taxes": "title: Podatki",
-  "subtitle: Treasury: a progressive or wealth tax, indirect taxes, a broader tax base or customs duties.": "subtitle: Resort Skarbu: podatek progresywny albo majątkowy, podatki pośrednie, szersza podstawa opodatkowania albo cła.",
-  "= Taxes": "= Podatki",
-  "One instrument per decision, voted by the Sejm at once; one instrument of each kind can be in force, and a temporary revenue ends when it expires.": "Jeden instrument na decyzję, nad którym Sejm głosuje od razu; naraz może działać jeden instrument każdego rodzaju, a dochód tymczasowy znika, gdy wygasa."
+  "subtitle: Taxes rise one level, which brings the budget 1 unit a month; business pressure grows (+4); Lewica dissent falls (−3).": "subtitle: Podatki rosną o jeden poziom, co zasila budżet: 1 jednostka miesięcznie; presja przedsiębiorców rośnie (+4); sprzeciw Lewicy spada (−3)."
  }
 }

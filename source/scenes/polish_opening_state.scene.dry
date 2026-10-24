@@ -325,6 +325,7 @@ try {
     if (S && S.economy && typeof PolishProjects !== 'undefined') {
         var economyView = PolishEconomy.economyDisplay(Q);
         Q.pl_eco_budget = economyView.budget;
+        Q.pl_eco_budget_parts = economyView.budget_parts;
         Q.pl_eco_inflation = economyView.inflation;
         Q.pl_eco_wage = economyView.real_wage;
         Q.pl_eco_output = economyView.output;

@@ -65,12 +65,13 @@ function offered(engine, deck) {
   return (engine._compileChoices(engine.game.scenes[deck]) || []).filter(c => c.canChoose !== false).map(c => c.id);
 }
 
-test('Roboty pod Pracą in the game: the Government deck offers the Labour cards; a prepared programme comes back as the urgent card of prepared reforms; the launch costs its month', () => {
+// Z — 0.93 (decision 4A of 24 X 2026): the programme starts in the decision that chooses it; there is no card of prepared reforms.
+test('Roboty pod Pracą in the game: the Government deck offers the Labour cards; the chosen programme starts at once for one month and one cost', () => {
   const engine = dendry.startGame();
   const Q = leftCabinet(engine);
   const deck = offered(engine, 'main.govt');
   for (const id of ['polish_gov_public_works', 'polish_gov_social_welfare', 'polish_gov_labor_rights']) assert.ok(deck.includes(id), id);
-  for (const id of ['polish_gov_finance', 'polish_gov_finance_funding', 'polish_gov_land', 'polish_gov_education']) assert.ok(!deck.includes(id), id + ' needs another portfolio');
+  for (const id of ['polish_gov_finance', 'polish_gov_land', 'polish_gov_education']) assert.ok(!deck.includes(id), id + ' needs another portfolio');
   const t = Q.time;
   playFromHand(engine, 'polish_gov_public_works');
   assert.match(content(engine), /Budget this month/);
@@ -79,23 +80,14 @@ test('Roboty pod Pracą in the game: the Government deck offers the Labour cards
   assert.deepEqual(engine.state.currentHands.main.map(c => c.id), ['polish_gov_public_works'], 'the card goes back to the hand');
   engine.playCard('polish_gov_public_works');
   choose(engine, 'polish_gov_public_works.employment');
-  assert.match(content(engine), /Its launch waits in the card “Prepared Reforms”/);
+  assert.match(content(engine), /Started: Public works — 1 B a month while it works; first effects in 3 months\./);
   choose(engine, 'root');
-  assert.equal(Q.time, t + 1, 'the preparation spent the month');
+  assert.equal(Q.time, t + 1, 'one decision, one month');
   toMain(engine); // the December offices of 1922 come first
-  // Z — 0.74 (decision 2A of 8 X 2026): the prepared reforms come into the hand of the Government deck by themselves.
-  assert.ok(dendry.urgentCards(engine).includes('polish_agenda'), 'no lucky draw is needed');
-  assert.equal(dendry.urgentDeck(engine, 'polish_agenda'), 'main.govt');
-  assert.ok(!ids(engine).includes('polish_agenda'), 'no pinned card any more');
-  engine.playCard('polish_agenda');
-  assert.equal(choice(engine, 'polish_agenda.launch_public_works').canChoose, true);
-  choose(engine, 'polish_agenda.launch_public_works');
-  choose(engine, 'root');
-  assert.equal(Q.time, t + 2);
-  toMain(engine);
+  assert.deepEqual(dendry.urgentCards(engine), [], 'no card of prepared reforms');
   const works = Object.values(Q.S.projects).find(p => p.type === 'public_works');
   assert.equal(works.status, 'executing');
-  assert.equal(Q.S.economy.history.at(-1).project_charges, 2, 'building costs 2 B from its launch month');
+  assert.equal(Q.S.economy.history.at(-1).project_charges, 1, 'one cost of 1 B from its launch month');
   engine.goToScene('status.economy');
   assert.match(content(engine), /Public works \(quick employment of the unemployed\): being built/);
 });
@@ -103,7 +95,7 @@ test('Roboty pod Pracą in the game: the Government deck offers the Labour cards
 // Z — 0.77 (decisions 3A and 4A of 8 X 2026): an ordinary card of the Government deck rests 3 months after use, like a party
 // card; the deck says when the first resting card comes back. An urgent card takes a free place of its row, so with one
 // ordinary card the row is full and nothing is drawn; urgent cards never rest.
-test('Karty rządu 0.77: a used government card rests 3 months; an urgent card takes a free place of its row', () => {
+test('Karty rządu 0.77: a used government card rests 3 months; the deck says when the first resting card comes back', () => {
   const engine = dendry.startGame();
   const Q = leftCabinet(engine);
   const drawable = () => PolishEngineHooks.legalDeckCards(engine, 'main.govt').map(c => c.id);
@@ -114,19 +106,7 @@ test('Karty rządu 0.77: a used government card rests 3 months; an urgent card t
   toMain(engine);
   assert.ok(!drawable().includes('polish_gov_public_works'), 'not drawn while it rests');
   assert.ok(drawable().includes('polish_gov_social_welfare'), 'the other cards of the ministry can be drawn');
-  // The prepared reforms take the free place next to one ordinary card: the row is full.
-  engine.state.currentHands.main = [{ id: 'polish_gov_social_welfare', title: 'Welfare', deck: 'main.govt' }];
-  engine.syncUrgentCards();
-  const view = PolishEngineHooks.deckView(engine, 'main.govt');
-  assert.deepEqual(view.cards.map(c => [c.id, c.urgent]), [['polish_gov_social_welfare', false], ['polish_agenda', true]]);
-  assert.equal(view.available, false);
-  assert.match(view.reason, /Both places of this deck are taken/);
-  assert.equal(engine.drawCard('main.govt').title, 'no_space_in_hand');
-  engine.playCard('polish_agenda');
-  choose(engine, 'polish_agenda.launch_public_works');
-  assert.equal(PolishRules.cardRest(Q, 'polish_agenda'), 0, 'an urgent card never rests');
-  choose(engine, 'root');
-  toMain(engine);
+  // Z — 0.93: the card of prepared reforms is gone; urgent cards in a full row are tested with the Party deck (polish-turn).
   // When every card that could be drawn rests, the deck says when the first comes back.
   engine.state.currentHands.main = [];
   for (const id of drawable()) Q.S.cooldowns['rest:' + id] = Q.time + 2;
@@ -150,8 +130,8 @@ test('Jedno przekierowanie: Moraczewski opens the Public Works card; its one ste
   choose(engine, 'root');
   assert.equal(Q.time, t, 'the adviser step costs no month');
   assert.equal(PolishRules.cooldownRemaining(Q, 'advisor'), 6);
-  const prepared = Object.values(Q.S.projects).find(p => p.type === 'public_works');
-  assert.deepEqual([prepared.status, prepared.variant], ['prepared', 'infrastructure']);
+  const works = Object.values(Q.S.projects).find(p => p.type === 'public_works');
+  assert.deepEqual([works.status, works.variant], ['executing', 'infrastructure'], 'Z — 0.93: started at once');
   const txn = Q.S.history.actions.filter(a => a.source === 'advisor').at(-1);
   assert.equal(txn.redirect.action_id, 'government.public_works.infrastructure');
 });
@@ -305,33 +285,28 @@ test('Debata o konstytucji 0.82 w grze: one page of seven motions marked in orde
   }
 });
 
-// Z — 0.66 (decisions 1A and 2A of 7 X 2026): the Treasury card is split in two — the taxes, and the loan, savings and emission —
-// with the same rules of 11.9; every card of a ministry names its ministry, on its page and as a badge in the hand.
-test('Karty resortów 0.66: two Treasury cards with five instruments each; every government card names its ministry', () => {
+// Z — 0.66 (decision 2A of 7 X 2026): every card of a ministry names its ministry, on its page and as a badge in the hand.
+// Z — 0.93 (decision 3A of 24 X 2026): one Treasury card, “Taxes and Loans”, with five instruments.
+test('Karty resortów 0.93: one Treasury card with five instruments; every government card names its ministry', () => {
   const engine = dendry.startGame();
   const Q = leftCabinet(engine);
   const options = id => Object.keys(engine.game.scenes).filter(s => s.startsWith(id + '.') && !s.endsWith('.result')).map(s => s.slice(id.length + 1)).sort();
-  assert.deepEqual(options('polish_gov_finance'), ['broad', 'customs', 'indirect', 'progressive', 'wealth_tax']);
-  assert.deepEqual(options('polish_gov_finance_funding'), ['admin_cuts', 'benefit_cut', 'collection', 'emission', 'loan']);
-  assert.equal(engine.game.scenes.polish_gov_finance.title, 'Taxes');
-  assert.equal(engine.game.scenes.polish_gov_finance_funding.title, 'Loan, Savings and Emission');
-  // With the Treasury both cards are in the Government deck.
+  assert.deepEqual(options('polish_gov_finance'), ['admin_cuts', 'emission', 'indirect', 'loan', 'progressive']);
+  assert.ok(!engine.game.scenes.polish_gov_finance_funding, 'the second Treasury card is gone');
+  assert.equal(engine.game.scenes.polish_gov_finance.title, 'Taxes and Loans');
   Q.S.cabinet.portfolios.finance = 'pps';
-  const deck = offered(engine, 'main.govt');
-  for (const id of ['polish_gov_finance', 'polish_gov_finance_funding']) assert.ok(deck.includes(id), id);
-  playFromHand(engine, 'polish_gov_finance_funding');
+  assert.ok(offered(engine, 'main.govt').includes('polish_gov_finance'));
+  playFromHand(engine, 'polish_gov_finance');
   assert.match(content(engine), /pl-ministry-label\W{1,3}>Treasury ministry</, 'Z — 0.77: a printed label, not a sentence');
   assert.match(content(engine), /Budget this month/);
-  assert.equal(choice(engine, 'polish_gov_finance_funding.loan').canChoose, Q.S.economy.credit >= 40);
-  choose(engine, 'easy_discard');
-  playFromHand(engine, 'polish_gov_finance');
+  assert.equal(choice(engine, 'polish_gov_finance.loan').canChoose, Q.S.economy.credit >= 40);
   assert.match(content(engine), /One instrument per decision, voted by the Sejm at once/);
   assert.doesNotMatch(content(engine), /11\.9|No project of this card yet/, 'no section number and no empty project line on the taxes card');
   choose(engine, 'easy_discard');
   // The badge names the ministry of every government card; of two portfolios, the one PPS holds.
   const P = PolishProjects;
   const expect = { polish_gov_labor_rights: 'Labour', polish_gov_social_welfare: 'Labour', polish_gov_public_works: 'Labour',
-    polish_gov_finance: 'Treasury', polish_gov_finance_funding: 'Treasury', polish_gov_currency: 'Treasury', polish_gov_investment: 'Treasury',
+    polish_gov_finance: 'Treasury', polish_gov_currency: 'Treasury', polish_gov_investment: 'Treasury',
     polish_gov_industry: 'Industry and Trade', polish_gov_land: 'Agriculture', polish_gov_agriculture: 'Agriculture',
     polish_gov_education: 'Education', polish_gov_minority_schools: 'Education', polish_gov_heritage: 'Education',
     polish_gov_interior: 'Interior', polish_gov_justice: 'Justice', polish_gov_military: 'Military Affairs', polish_gov_pils_agreement: 'Military Affairs' };

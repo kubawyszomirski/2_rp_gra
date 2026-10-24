@@ -431,7 +431,7 @@ for (var key of PolishGovernment.PORTFOLIOS) {
 
 [+ pl_port_points +]
 
-Each portfolio costs influence points: Labour 10, Interior and the Treasury 20, the others 10. A partner keeps its preferred portfolio when it would refuse without it; the remaining portfolios go to non-party experts. Public works are part of Labour.
+Each portfolio costs influence points: Labour 10, Interior and the Treasury 20, the others 10. A partner keeps its preferred portfolio when it would refuse without it; the remaining portfolios go to non-party experts. Public works are part of Labour. PPS does not take Foreign Affairs.
 
 Now: [+ pl_port_allocation +].
 
@@ -451,8 +451,6 @@ Now: [+ pl_port_allocation +].
 - @drop_reichswehr
 - @take_education
 - @drop_education
-- @take_foreign
-- @drop_foreign
 - @ports_next
 - @back_ports
 
@@ -616,25 +614,7 @@ PolishGovernment.setDraft(Q, 'portfolio_drop', 'education');
 !}
 go-to: portfolio_menu
 
-@take_foreign
-title: Take Foreign Affairs
-subtitle: [+ pl_port_foreign_line +]
-view-if: not pl_port_foreign_held
-choose-if: {! return PolishGovernment.portfolioStatus(Q, 'foreign').available !}
-unavailable-subtitle: [+ pl_port_foreign_why +]
-on-arrival: {!
-PolishGovernment.setDraft(Q, 'portfolio_take', 'foreign');
-!}
-go-to: portfolio_menu
 
-@drop_foreign
-title: Give up Foreign Affairs
-subtitle: Returns 10 influence points.
-view-if: pl_port_foreign_held
-on-arrival: {!
-PolishGovernment.setDraft(Q, 'portfolio_drop', 'foreign');
-!}
-go-to: portfolio_menu
 
 @ports_next
 title: Next: the summary

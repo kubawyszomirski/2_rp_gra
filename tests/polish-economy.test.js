@@ -102,7 +102,8 @@ test('Status shows the Polish budget, currency, prices, output, credit, unemploy
   const engine = dendry.startGame();
   engine.goToScene('status.economy');
   const text = content(engine);
-  assert.match(text, /\+2\.0 B this month \(base \+2, taxes 0\); programmes run in full/, 'budget units to 0.1 (Z — 0.85)');
+  // Z — 0.93 (decision 3A of 24 X 2026): one number and what it allows; its parts are in the Library.
+  assert.match(text, /\+2\.0 B this month; programmes run in full; a new programme may cost up to 4\.0 B a month/, 'budget units to 0.1 (Z — 0.85)');
   assert.match(text, /"Polish mark"/);
   assert.match(text, /"4\.0% a month"/);
   assert.match(text, /Agrarian pressure \(0–100\):["\]}, ]+45\.0"/);

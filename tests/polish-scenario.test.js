@@ -390,7 +390,7 @@ test('Kredyt rządu (poprawka 3): a credit instrument that the cabinet prepared 
   Q.S.cabinet.pps_mode = 'member';
   Q.S.cabinet.portfolios.economic = 'pps';
   PolishProjects.prepareProject(Q, 'credit_instrument', 'public', { sponsor: 'cabinet', cabinet_id: Q.S.cabinet.id });
-  assert.match(PolishProjects.optionStatus(Q, 'industrial_policy', 'credit').reason, /The cabinet has prepared this financing/);
+  assert.match(PolishProjects.optionStatus(Q, 'industrial_policy', 'credit').reason, /The cabinet has prepared the credit instrument/);
 });
 
 test('Bez niemieckiej muzyki (poprawka 5): the Polish chapter starts without the music files of the German game', () => {

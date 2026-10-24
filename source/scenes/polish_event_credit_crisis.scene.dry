@@ -22,7 +22,7 @@ Credit has fallen below 35 for two months, or the scenario's credit shock of 192
 
 @credit
 title: A conditional credit for threatened activity
-subtitle: Prepares the credit instrument of Treasury or Industry; its launch waits in the card “Prepared Reforms”.
+subtitle: Starts the credit instrument of Treasury or Industry at once, when the budget allows.
 choose-if: {! return PolishProjects.eventStatus(Q, 'credit', 'credit').available !}
 unavailable-subtitle: [+ pl_ev_credit_why +]
 on-arrival: {!
@@ -31,8 +31,8 @@ PolishProjects.eventChoose(Q, 'credit', 'credit');
 go-to: result
 
 @orders
-title: Keep up employment through orders or prepared works
-subtitle: One package of public orders, or the launch of prepared public works.
+title: Keep up employment through orders or public works
+subtitle: One package of public orders, or quick public works for the unemployed.
 choose-if: {! return PolishProjects.eventStatus(Q, 'credit', 'orders').available !}
 unavailable-subtitle: [+ pl_ev_orders_why +]
 on-arrival: {!

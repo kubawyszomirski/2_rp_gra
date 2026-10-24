@@ -115,15 +115,16 @@ test('Niedobór budżetu: execution 1 / 0.5 / 0.5 / 0 at −2 / −2.01 / −5 /
   const Q = isolated(fixture());
   const project = proj.createProject(Q, 'public_works', 'employment', { sponsor: 'pps' });
   project.status = 'executing'; project.authorized = true; project.started_at = 1; project.charge_from = 1;
-  Q.S.economy.budget_base = -1;
+  Q.S.economy.budget_base = -2;
   const b = econ.budgetAt(Q.S, 1);
-  assert.equal(b.budget, -3, 'the building cost of 2 B stays in the budget while execution is limited');
+  assert.equal(b.budget, -3, 'the cost of 1 B (Z — 0.93) stays in the budget while execution is limited');
   proj.processProjects(Q, 1, b);
   close(project.progress, 100 / 3 * 0.5);
   assert.equal(econ.budgetAt(Q.S, 2).budget, -3, 'no second deduction and no automatic improvement from non-execution');
 });
 
-test('Budżet bez kumulacji: base 2, building 2 B for 3 M, upkeep 1: readings 0/0/0, then +1, without a reservation ledger', () => {
+// Z — 0.93 (decision 3A of 24 X 2026): one monthly cost from the launch, the same while the works are built and while they run.
+test('Budżet bez kumulacji: base 2, works for 1 B a month from the launch: readings +1 every month, without a reservation ledger', () => {
   const Q = isolated(fixture());
   Q.S.cabinet.status = 'active';
   const project = proj.createProject(Q, 'public_works', 'employment', { sponsor: 'cabinet' });
@@ -134,10 +135,10 @@ test('Budżet bez kumulacji: base 2, building 2 B for 3 M, upkeep 1: readings 0/
     readings.push(b.budget);
     proj.processProjects(Q, t, b);
   }
-  assert.deepEqual(readings, [0, 0, 0, 1, 1]);
+  assert.deepEqual(readings, [1, 1, 1, 1, 1]);
 });
 
-test('11.8: works prepared in November, launched in December: 0 B until February, then 1 B, 2 units, 0.5 pp of jobs and 0.30 pp of output', () => {
+test('11.8: works prepared in November, launched in December: 1 B a month from December (Z — 0.93), 2 units from March, 0.5 pp of jobs and 0.30 pp of output', () => {
   const Q = isolated(fixture());
   const nov = rules.timeOf(1925, 11), dec = nov + 1, mar = rules.timeOf(1926, 3);
   Q.time = nov;
@@ -152,7 +153,7 @@ test('11.8: works prepared in November, launched in December: 0 B until February
     const inputs = proj.processProjects(Q, t, b);
     seen[t] = { budget: b.budget, units: inputs.works_units, pp: inputs.works_output_pp };
   }
-  assert.deepEqual([seen[dec].budget, seen[dec + 1].budget, seen[dec + 2].budget, seen[mar].budget], [0, 0, 0, 1]);
+  assert.deepEqual([seen[dec].budget, seen[dec + 1].budget, seen[dec + 2].budget, seen[mar].budget], [1, 1, 1, 1]);
   assert.equal(seen[dec + 2].units, 0, 'no jobs in the month the building ends');
   assert.equal(seen[mar].units, 2, 'effects from March');
   close(seen[mar].pp, 0.30, 1e-12);
@@ -407,7 +408,8 @@ test('Pobór w karcie finansowej: 1 B for 2 M, then +1 B for good; a second time
     proj.processProjects(Q, t, b);
   }
   assert.deepEqual(readings, [1, 1, 3, 3, 3]);
-  assert.match(proj.optionStatus(Q, 'finance_package', 'collection').reason, /already been improved/);
+  // Z — 0.93 (decision 3A of 24 X 2026): the better collection left the Treasury card; the project of an older save still works.
+  assert.match(proj.optionStatus(Q, 'finance_package', 'collection').reason, /Unknown option/);
 });
 
 test('Stabilizacja i finanse: the złoty keeps the loan service and wages; it closes only the marka financing and impulses', () => {

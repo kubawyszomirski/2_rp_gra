@@ -30,7 +30,7 @@ The post gives oversight of one group of the army. A compromise that gives Piłs
 - @cancel_advisor_action
 
 @civilian_oversight
-title: Prepare full civilian oversight
+title: Introduce full civilian oversight
 subtitle: A law of full civilian oversight (+2 on the army scale from −2 to +2), then costs the budget 1 unit a month for three months; after it the group grows more loyal to the legal authorities (+0.05).
 choose-if: {! return PolishProjects.optionStatus(Q, 'military_policy', 'civilian_oversight').available !}
 unavailable-subtitle: [+ pl_military_policy_civilian_oversight_why +]
@@ -40,7 +40,7 @@ PolishProjects.chooseOption(Q, 'military_policy', 'civilian_oversight');
 go-to: result
 
 @personnel_changes
-title: Prepare lawful changes of personnel
+title: Make lawful changes of personnel
 subtitle: The same project with a named nomination: the group grows more loyal to the legal authorities (+0.05), its readiness falls for two months (−0.05), and a real conflict raises the pressure.
 choose-if: {! return PolishProjects.optionStatus(Q, 'military_policy', 'personnel_changes').available !}
 unavailable-subtitle: [+ pl_military_policy_personnel_changes_why +]
@@ -50,7 +50,7 @@ PolishProjects.chooseOption(Q, 'military_policy', 'personnel_changes');
 go-to: result
 
 @organizational_compromise
-title: Prepare an organisational compromise limiting the reform
+title: Agree an organisational compromise limiting the reform
 subtitle: A law of limited reform (the middle of the army scale), then costs the budget 1 unit a month for two months; the group grows a little more loyal to the legal authorities (+0.025).
 choose-if: {! return PolishProjects.optionStatus(Q, 'military_policy', 'organizational_compromise').available !}
 unavailable-subtitle: [+ pl_military_policy_organizational_compromise_why +]

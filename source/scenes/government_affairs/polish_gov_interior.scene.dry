@@ -76,8 +76,8 @@ PolishProjects.chooseOption(Q, 'internal_security', 'police_protection');
 go-to: result
 
 @limited_autonomy
-title: Prepare the execution of the act of 26 IX 1922 on the voivodeship self-government
-subtitle: Needs an agreed point with the representation of the other minorities; a law, then costs the budget 1 unit a month for three months.
+title: Carry out the act on the voivodeship self-government
+subtitle: Needs an agreed point with the representation of the other minorities; its law goes to the Sejm now, then it costs the budget 1 unit a month for three months.
 choose-if: {! return PolishProjects.optionStatus(Q, 'internal_security', 'limited_autonomy').available !}
 unavailable-subtitle: [+ pl_internal_security_limited_autonomy_why +]
 on-arrival: {!

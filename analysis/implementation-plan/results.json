@@ -1,9 +1,9 @@
 {
   "scope": "Implementation plan 0.40: stages 0-8, catalogue entries, 21.1 tests and 20.2 leaks each assigned once; scope sections, files and links exist; approved decisions recorded.",
   "hashes": {
-    "docs/POLISH_IMPLEMENTATION_PLAN.md": "431b4d0c4786ab47afcfc3e8d40c879f99d2b2d73b7014a758167d6acca183de",
-    "docs/POLISH_TECHNICAL_REFERENCE.md": "68e2dc0dd18542d2f34262d3abcfbffba2ab652fb8079a8db10e9c160c539966",
-    "docs/POLISH_CARD_CATALOGUE.md": "06624812d39275e12643ad1df893587ce590feee93f9fe55b147255d61337195"
+    "docs/POLISH_IMPLEMENTATION_PLAN.md": "03343a2dd9a4c5f430114bf3d231781771e7189aeb477a2ec8e8e6d93ba7adf6",
+    "docs/POLISH_TECHNICAL_REFERENCE.md": "0dec6e451f69a8d7339af87f073801e4d5fb262890f07474f1b964ddcf7ca910",
+    "docs/POLISH_CARD_CATALOGUE.md": "216cdfed62d23a88088f5366966ca16735bc2b4da7e92e4fda518000936b2cad"
   },
   "stages": 9,
   "cardsByStage": {
@@ -58,7 +58,7 @@
   },
   "manifestRows": 8,
   "files": {
-    "existingChecked": 298,
+    "existingChecked": 297,
     "plannedNewFiles": []
   },
   "links": 9,
@@ -119,7 +119,7 @@
   },
   "stage4": {
     "done": true,
-    "files": 26,
+    "files": 25,
     "movedTests": {
       "5": [
         "Populacja",

@@ -11,10 +11,10 @@
   "title: Investigate the named violence of the communists": "title: Zbadaj wymienioną przemoc komunistów",
   "title: Protect a named gathering or institution": "title: Chroń wymienione zgromadzenie albo instytucję",
   "subtitle: Costs the budget 1 unit for one month; the protection in this case grows this month (+10 times its execution).": "subtitle: Obciąża budżet: 1 jednostka przez jeden miesiąc; zdolność ochrony w tej sprawie rośnie w tym miesiącu (+10 razy stopień wykonania).",
-  "subtitle: Needs an agreed point with the representation of the other minorities; a law, then costs the budget 1 unit a month for three months.": "subtitle: Wymaga uzgodnionego punktu z reprezentacją pozostałych mniejszości; ustawa, potem obciąża budżet: 1 jednostka miesięcznie przez trzy miesiące.",
   "- @root: Continue.": "- @root: Dalej.",
   "subtitle: The Interior: the police, the investigation of named violence, protection, and the act of 1922 on the voivodeship self-government.": "subtitle: Resort Spraw Wewnętrznych: policja, śledztwo w sprawie wymienionej przemocy, ochrona i ustawa z 1922 roku o samorządzie wojewódzkim.",
   "An investigation concerns a known case; it does not by itself prove anyone's guilt. The execution of the act of 26 IX 1922 gives the voivodeships of Lwów, Stanisławów and Tarnopol their diets with a Polish and a Ruthenian chamber, schools in the language of the chamber and a Ruthenian university.": "Śledztwo dotyczy konkretnej, znanej sprawy i samo nie przesądza o niczyjej winie. Wykonanie ustawy z 26 IX 1922 daje województwom lwowskiemu, stanisławowskiemu i tarnopolskiemu sejmiki z izbą polską i ruską, szkoły w języku izby i uniwersytet ruski.",
-  "title: Prepare the execution of the act of 26 IX 1922 on the voivodeship self-government": "title: Przygotuj wykonanie ustawy z 26 IX 1922 o samorządzie wojewódzkim"
+  "title: Carry out the act on the voivodeship self-government": "title: Wykonaj ustawę o samorządzie wojewódzkim",
+  "subtitle: Needs an agreed point with the representation of the other minorities; its law goes to the Sejm now, then it costs the budget 1 unit a month for three months.": "subtitle: Wymaga uzgodnionego punktu z reprezentacją pozostałych mniejszości; ustawa trafia do Sejmu od razu, potem obciąża budżet: 1 jednostka miesięcznie przez trzy miesiące."
  }
 }

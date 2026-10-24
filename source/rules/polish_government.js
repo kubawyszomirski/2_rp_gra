@@ -1078,6 +1078,8 @@
     const S = Q.S;
     const claim = draft.portfolio_claim || [];
     if (claim.indexOf(key) >= 0) return {available: true, held: true, reason: '', note: ''};
+    // Z — 0.93 (decision 5A of 24 X 2026): PPS does not take Foreign Affairs; the ministry has no card of PPS (P).
+    if (key === 'foreign') return {available: false, held: false, note: '', reason: L('PPS does not take Foreign Affairs.', 'PPS nie bierze Spraw Zagranicznych.')};
     const left = influencePoints(Q, draft).points - claimCost(claim);
     const cost = PORTFOLIO_COSTS[key];
     if (cost > left) {

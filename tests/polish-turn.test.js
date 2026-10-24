@@ -301,7 +301,7 @@ test('Karty pilne 0.74: an urgent card enters the hand of its deck in an extra p
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
   engine.goToScene('main');
-  for (const id of ['polish_agenda', 'polish_budget_package', 'polish_government_response']) assert.ok(!choiceIds(engine).includes(id), `${id} is not pinned`);
+  for (const id of ['polish_budget_package', 'polish_government_response']) assert.ok(!choiceIds(engine).includes(id), `${id} is not pinned`);
   // Both ordinary places of Parliament are taken; the cabinet's package brings the budget card into a third, urgent place.
   engine.state.currentHands.main = [
     { id: 'inter_party_relationships', title: 'Talks', deck: 'main.parliament' },

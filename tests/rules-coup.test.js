@@ -141,12 +141,11 @@ test('Nominacja: without Military Affairs no card; the executed nomination moves
   const S = Q.S;
   assert.equal(PolishProjects.cardAvailable(Q, 'military_policy'), false, 'no competence');
   withPortfolios(ppsMajority(Q), 'reichswehr');
+  // Z — 0.93 (decision 4A of 24 X 2026): the law is filed in the same decision.
   PolishProjects.chooseOption(Q, 'military_policy', 'personnel_changes');
   const project = armyProject(S);
   assert.deepEqual([project.status, project.variant, project.policy_choices.force_id, project.policy_choices.position_id],
-    ['prepared', 'personnel_changes', 'near_reserve', 'synthetic_oversight_post'], 'the synthetic post over the near reserve');
-  free(Q);
-  PolishProjects.agendaChoose(Q, 'army_control');
+    ['executing', 'personnel_changes', 'near_reserve', 'synthetic_oversight_post'], 'the synthetic post over the near reserve');
   const law = S.parliament.laws.at(-1);
   assert.deepEqual([law.project_id, law.programme.army, law.status], [project.id, 2, 'enacted'], 'the law of civilian oversight');
   const near = force(S, 'near_reserve');
@@ -174,8 +173,6 @@ test('Nominacja: without Military Affairs no card; the executed nomination moves
   const R = withPortfolios(ppsMajority(quiet()), 'reichswehr');
   R.S.actors.relations.pilsudski = 30;
   PolishProjects.chooseOption(R, 'military_policy', 'personnel_changes');
-  free(R);
-  PolishProjects.agendaChoose(R, 'army_control');
   for (let i = 0; i < 4; i++) settle(R);
   assert.deepEqual(impulses(R.S, 'nomination_conflict').map(i => i.value), [8]);
 });
@@ -292,8 +289,6 @@ test('Ograniczona reforma wojska: for the same group full oversight gives legal 
     PolishProjects.chooseOption(Q, 'military_policy', option);
     const project = armyProject(S);
     assert.equal(project.variant, variant);
-    free(Q);
-    PolishProjects.agendaChoose(Q, 'army_control');
     const charges = [];
     for (let i = 0; i < 4; i++) {
       charges.push(PolishEconomy.projectCharge(project, Q.time));
@@ -390,12 +385,11 @@ test('Autonomia: after the law and before the end of the work no relief; at the 
     obligations: [{ id: 'agr-fixture-minorities:language_rights', topic: 'language_rights', position: null, owner: 'cabinet', kind: 'constraint',
       beneficiaries: ['other_minorities_rep'], required_project: null, required_variants: null, required_stage: null, portfolio: null, weight: 2,
       due_at: null, status: 'active', fulfillment: 1, last_checked: null }], history: [{ t: Q.time, kind: 'signed' }] };
+  // Z — 0.93 (decision 4A of 24 X 2026): the law is filed in the same decision.
   PolishProjects.chooseOption(Q, 'internal_security', 'limited_autonomy');
   const project = Object.values(S.projects).find(p => p.type === 'limited_autonomy');
   assert.deepEqual([project.status, project.policy_choices.territory_id, project.policy_choices.delegated_capabilities],
-    ['prepared', 'synthetic_autonomy_area', ['schools', 'official_language', 'culture']]);
-  free(Q);
-  PolishProjects.agendaChoose(Q, 'limited_autonomy');
+    ['executing', 'synthetic_autonomy_area', ['schools', 'official_language', 'culture']]);
   const law = S.parliament.laws.at(-1);
   assert.deepEqual([law.project_id, law.programme.autonomy, law.status], [project.id, 1, 'enacted']);
   const cells = S.society.cells.filter(c => c.identity_id === 'other_minorities');

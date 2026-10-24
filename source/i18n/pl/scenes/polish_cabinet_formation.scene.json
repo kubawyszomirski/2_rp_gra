@@ -17,7 +17,6 @@
   "Our offer: [+ pl_fres_offer +].": "Nasza oferta: [+ pl_fres_offer +].",
   "- @done: Continue.": "- @done: Dalej.",
   "**Result:** [+ pl_form_verdict +]": "**Wynik:** [+ pl_form_verdict +]",
-  "Each portfolio costs influence points: Labour 10, Interior and the Treasury 20, the others 10. A partner keeps its preferred portfolio when it would refuse without it; the remaining portfolios go to non-party experts. Public works are part of Labour.": "Każdy resort kosztuje punkty wpływu: Praca 10, Sprawy Wewnętrzne i Skarb po 20, pozostałe po 10. Partner zachowuje swój ulubiony resort, gdy bez niego by odmówił; pozostałe resorty obejmują bezpartyjni fachowcy. Roboty publiczne należą do resortu Pracy.",
   "Now: [+ pl_port_allocation +].": "Teraz: [+ pl_port_allocation +].",
   "title: Take Labour": "title: Weź Pracę",
   "title: Give up Labour": "title: Oddaj Pracę",
@@ -37,8 +36,6 @@
   "title: Give up Military Affairs": "title: Oddaj Sprawy Wojskowe",
   "title: Take Education": "title: Weź Oświatę",
   "title: Give up Education": "title: Oddaj Oświatę",
-  "title: Take Foreign Affairs": "title: Weź Sprawy Zagraniczne",
-  "title: Give up Foreign Affairs": "title: Oddaj Sprawy Zagraniczne",
   "subtitle: What is happening, then four steps: the variant of the cabinet with the role of PPS, the prime minister, the portfolios and the summary.": "subtitle: Co się dzieje, a potem cztery kroki: wariant rządu z rolą PPS, premier, resorty i podsumowanie.",
   "- @variants: Begin: choose the variant of the cabinet": "- @variants: Zacznij: wybierz wariant rządu",
   "title: Back": "title: Wstecz",
@@ -69,6 +66,7 @@
   "Grabski's stabilisation programme is part of this offer. Without our terms he stabilises quickly, with the named cuts and a wealth tax. Our toleration can ask for other terms; he may refuse them if he has enough support without us. Changing the terms is free.": "Program stabilizacji Grabskiego jest częścią tej oferty. Bez naszych warunków stabilizuje szybko, z wymienionymi cięciami i podatkiem majątkowym. Tolerując go, możemy żądać innych warunków; może je odrzucić, jeśli ma dość poparcia bez nas. Zmiana warunków nic nie kosztuje.",
   "subtitle: Grabski follows his own plan of stabilisation.": "subtitle: Grabski prowadzi stabilizację według własnego planu.",
   "title: [+ pl_form_min_jewish_rep_mark +] The support of the Jewish representation": "title: [+ pl_form_min_jewish_rep_mark +] Poparcie reprezentacji żydowskiej",
-  "title: [+ pl_form_min_other_minorities_rep_mark +] The support of the other national minorities": "title: [+ pl_form_min_other_minorities_rep_mark +] Poparcie pozostałych mniejszości narodowych"
+  "title: [+ pl_form_min_other_minorities_rep_mark +] The support of the other national minorities": "title: [+ pl_form_min_other_minorities_rep_mark +] Poparcie pozostałych mniejszości narodowych",
+  "Each portfolio costs influence points: Labour 10, Interior and the Treasury 20, the others 10. A partner keeps its preferred portfolio when it would refuse without it; the remaining portfolios go to non-party experts. Public works are part of Labour. PPS does not take Foreign Affairs.": "Każdy resort kosztuje punkty wpływu: Praca 10, Sprawy Wewnętrzne i Skarb po 20, pozostałe po 10. Partner zachowuje swój ulubiony resort, gdy bez niego by odmówił; pozostałe resorty obejmują bezpartyjni fachowcy. Roboty publiczne należą do resortu Pracy. PPS nie bierze Spraw Zagranicznych."
  }
 }

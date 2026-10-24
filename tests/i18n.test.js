@@ -36,13 +36,13 @@ const COMPLETE = ['scenes/root.scene.dry', 'scenes/main.scene.dry', 'scenes/stat
   ...['direction', 'main_opponent', 'pils_influence', 'form_of_power', 'electoral_base', 'slavic_autonomy', 'jewish_cooperation',
     'ussr_position', 'economic_program', 'dues', 'militia', 'media', 'organizations', 'unity', 'advisers']
     .map(id => 'scenes/party_affairs/polish_party_' + id + '.scene.dry'),
-  'scenes/party_affairs/inter_party_relationships.scene.dry', 'scenes/polish_agenda.scene.dry', 'scenes/polish_party_agenda.scene.dry',
+  'scenes/party_affairs/inter_party_relationships.scene.dry', 'scenes/polish_party_agenda.scene.dry',
   'scenes/polish_union_agenda.scene.dry', 'scenes/polish_strike_offer.scene.dry', 'scenes/polish_strike_steps.scene.dry', 'scenes/polish_event_strike_1923.scene.dry',
   'scenes/polish_event_strike_response.scene.dry', 'scenes/polish_event_strike_rejection.scene.dry', 'scenes/polish_event_faction_split.scene.dry',
   ...['arciszewski', 'czapinski', 'daszynski', 'drobner', 'dubois', 'jaworowski', 'malinowski', 'moraczewski', 'niedzialkowski', 'perl',
     'prochnik', 'puzak', 'zaremba', 'ziemiecki'].map(id => 'scenes/advisors/' + id + '.scene.dry'),
   // Part 4: the government cards, the projects, the economy, the budget and the bill D.
-  ...['labor_rights', 'social_welfare', 'public_works', 'finance', 'finance_funding', 'currency', 'investment', 'industry', 'agriculture', 'land', 'education',
+  ...['labor_rights', 'social_welfare', 'public_works', 'finance', 'currency', 'investment', 'industry', 'agriculture', 'land', 'education',
     'minority_schools', 'heritage', 'interior', 'justice', 'military', 'pils_agreement'].map(id => 'scenes/government_affairs/polish_gov_' + id + '.scene.dry'),
   'scenes/polish_budget_package.scene.dry', 'scenes/polish_unemployment_bill.scene.dry', 'scenes/polish_constitution_project.scene.dry',
   'scenes/polish_legislative_initiative.scene.dry', 'scenes/polish_initiative_vote.scene.dry', 'scenes/polish_constitution_vote.scene.dry',

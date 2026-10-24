@@ -115,9 +115,11 @@ test('Kontrola wojska bez pustych opcji: at an open military case the Parliament
   choose(engine, 'polish_parliament_army_oversight.limited_reform');
   choose(engine, 'root');
   const project = Object.values(S.projects).find(p => p.type === 'army_control');
-  assert.deepEqual([Q.time, project.variant, project.status, project.policy_choices.via, project.duration_months],
-    [t + 1, 'limited_reform', 'prepared', 'parliament', 2], '1 T: the one project, the limited reform');
-  assert.equal(PolishProjects.armyOversightAvailable(Q), false, 'the prepared project waits for its launch in the agenda');
+  // Z — 0.93 (decision 4A of 24 X 2026): the law goes to the Sejm in the same decision.
+  const law = S.parliament.laws.find(l => l.project_id === project.id);
+  assert.deepEqual([Q.time, project.variant, project.policy_choices.via, project.duration_months, project.status],
+    [t + 1, 'limited_reform', 'parliament', 2, law.status === 'rejected' ? 'prepared' : 'executing'], '1 T: the one project, the limited reform, filed at once');
+  if (law.status !== 'rejected') assert.equal(PolishProjects.armyOversightAvailable(Q), false, 'a reform under way does not bring the card back');
 });
 
 // ---- The coup F through the engine (16.4–16.8, 19.1; card catalogue 9.15) ----
@@ -292,8 +294,8 @@ test('Katalog rządowy: 16 families in the pool, the agenda and the triggers; no
     heritage_restoration: 'polish_gov_heritage',
   };
   assert.equal(Object.keys(FAMILIES).length, 16);
-  // Z — 0.66 (decision 1A of 7 X 2026): the Treasury family has a second card, the loan, savings and emission.
-  const polish = Object.values(FAMILIES).concat(['polish_gov_finance_funding']);
+  // Z — 0.93 (decision 3A of 24 X 2026): the Treasury family has one card again.
+  const polish = Object.values(FAMILIES);
   for (const id of polish) assert.ok(engine.game.scenes[id], id);
   // A fixture cabinet in which PPS holds all nine portfolios, in a financial crisis (the stabilisation).
   if (!S.cabinet.partner_ids.includes('pps')) S.cabinet.partner_ids.push('pps');
@@ -408,20 +410,21 @@ test('Karty 3–5 bez odnowienia: an answered budget package, a refused motion a
   S.parliament.clubs[0].seats = 1; S.parliament.clubs[1].seats = 443;
   S.actors.relations.pschd = 0; // fixture: the Christian Democrats vote against, not abstain
   const pils = S.actors.relations.pilsudski, pd = S.actors.pps.factions.pilsudczycy.dissent;
+  // Z — 0.93 (decision 4A of 24 X 2026): the law is filed in the same decision.
   PolishProjects.chooseOption(Q, 'military_policy', 'civilian_oversight');
   // Z — 0.81 (the user's note of 20 X 2026): full civilian oversight goes against Piłsudski and the Piłsudczycy of PPS at once.
   assert.equal(S.actors.relations.pilsudski, Math.max(0, pils - 10));
   assert.equal(S.actors.pps.factions.pilsudczycy.dissent, Math.min(100, pd + 8));
-  Q.month_actions = 0; S.turn.pending = null;
-  PolishProjects.agendaChoose(Q, 'army_control');
   assert.equal(S.parliament.laws.at(-1).status, 'rejected');
   Q.month_actions = 0; S.turn.pending = null;
-  assert.match(PolishProjects.agendaStatus(Q, 'army_control').reason, /same law was refused/);
+  assert.match(PolishProjects.optionStatus(Q, 'military_policy', 'civilian_oversight').reason, /same law was refused/);
   assert.equal(PolishProjects.armyOversightAvailable(Q), true, 'the card has no cooldown');
+  const filed = S.parliament.laws.length;
   PolishProjects.armyOversightChoose(Q, 'limited_reform');
   assert.equal(Q.month_actions, 1, '1 T');
+  assert.equal(S.parliament.laws.length, filed + 1, 'the changed offer is filed');
+  assert.match(S.parliament.laws.at(-1).title, /limited reform/);
   Q.month_actions = 0; S.turn.pending = null;
-  assert.equal(PolishProjects.agendaStatus(Q, 'army_control').available, true, 'the changed offer can be filed');
   // Card 4 (Z — 0.82, decision 3A of 21 X 2026): a motion of the constitutional debate that fails does not come back, even when the
   // situation changes.
   const C = quietGame().state.qualities;

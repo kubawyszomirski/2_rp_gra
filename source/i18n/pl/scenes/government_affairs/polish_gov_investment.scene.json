@@ -5,13 +5,13 @@
   "title: Capital for Investment": "title: Kapitał na inwestycje",
   "subtitle: Treasury or Industry: how the credit instrument is financed.": "subtitle: Resort Skarbu albo Przemysłu: jak finansować instrument kredytowy.",
   "= Capital for investment": "= Kapitał na inwestycje",
-  "The credit instrument is a large project: 2 B of building for 2 months, then 1 B to run, and +5 to the credit target while it works. The variants differ in who pays and who must agree: one financing, one cost, one effect.": "Instrument kredytowy to duży projekt: budowa kosztuje 2 jednostki budżetu miesięcznie przez 2 miesiące, potem utrzymanie 1 jednostkę miesięcznie; dopóki działa, podnosi docelowy kredyt (+5). Warianty różnią się tym, kto płaci i kto musi się zgodzić: jedno finansowanie, jeden koszt, jeden skutek.",
   "title: Public fund": "title: Fundusz publiczny",
-  "subtitle: The state pays everything: 2 budget units for the building and 1 to run it.": "subtitle: Państwo płaci za wszystko: 2 jednostki budżetu na budowę i 1 na utrzymanie.",
   "title: Agreement with banks and industry": "title: Porozumienie z bankami i przemysłem",
-  "subtitle: The state pays half of the building: 1 budget unit, then 1 more; business pressure falls (−8). Needs credit of at least 40.": "subtitle: Państwo płaci połowę budowy: 1 jednostka budżetu, potem jeszcze 1; presja przedsiębiorców spada (−8). Wymaga kredytu co najmniej 40.",
   "title: Cooperative financing": "title: Finansowanie spółdzielcze",
-  "subtitle: Credit for farms and small workshops through the cooperatives: 2 budget units for the building and 1 to run it.": "subtitle: Kredyt dla gospodarstw i małych warsztatów przez spółdzielnie: 2 jednostki budżetu na budowę i 1 na utrzymanie.",
-  "- @root: Continue.": "- @root: Dalej."
+  "- @root: Continue.": "- @root: Dalej.",
+  "The credit instrument costs 1 B a month from its launch and raises the credit target after two months, for as long as it works (+5). The variants differ in who pays and who must agree: one financing, one cost, one effect.": "Instrument kredytowy kosztuje 1 jednostkę budżetu miesięcznie od uruchomienia i po dwóch miesiącach podnosi docelowy kredyt, dopóki działa (+5). Warianty różnią się tym, kto płaci i kto musi się zgodzić: jedno finansowanie, jeden koszt, jeden skutek.",
+  "subtitle: The state pays everything: 1 budget unit a month.": "subtitle: Państwo płaci za wszystko: 1 jednostka budżetu miesięcznie.",
+  "subtitle: The banks share the risk: 1 budget unit a month; business pressure falls (−8). Needs credit of at least 40.": "subtitle: Banki dzielą ryzyko: 1 jednostka budżetu miesięcznie; presja przedsiębiorców spada (−8). Wymaga kredytu co najmniej 40.",
+  "subtitle: Credit for farms and small workshops through the cooperatives: 1 budget unit a month.": "subtitle: Kredyt dla gospodarstw i małych warsztatów przez spółdzielnie: 1 jednostka budżetu miesięcznie."
  }
 }

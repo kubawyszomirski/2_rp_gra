@@ -307,17 +307,12 @@ test('the plant cards in the game: Labour signs a collective agreement in the br
   assert.match(JSON.stringify(engine.ui.paragraphs), /Recorded plants/);
   assert.equal(choice(engine, 'polish_gov_industry.worker_representation').canChoose, false, 'a private plant has no representation');
   choose(engine, 'polish_gov_industry.rescue');
-  assert.match(JSON.stringify(engine.ui.paragraphs), /rescue of the industrial plant no\. 1 is prepared/);
-  choose(engine, 'root');
-  toMain(engine);
-  assert.equal(Q.time, 3);
-  engine.playCard('polish_agenda');
-  assert.ok(ids(engine).includes('polish_agenda.launch_plant_rescue'));
-  choose(engine, 'polish_agenda.launch_plant_rescue');
+  // Z — 0.93 (decision 4A of 24 X 2026): the rescue starts in the same decision.
+  assert.match(JSON.stringify(engine.ui.paragraphs), /rescue of the industrial plant no\. 1 is a conditional credit\. Started: Rescue of a plant/);
   choose(engine, 'root');
   toMain(engine);
   const rescue = Object.values(S.projects).find(p => p.type === 'plant_rescue');
-  assert.deepEqual([rescue.status, rescue.authorized, Q.time], ['executing', true, 4]);
+  assert.deepEqual([rescue.status, rescue.authorized, Q.time], ['executing', true, 3]);
 });
 
 test('B14 in the game: the stabilisation event without the Treasury leads to the formation card with Grabski and the protections for no month', () => {

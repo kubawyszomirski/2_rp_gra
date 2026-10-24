@@ -90,19 +90,21 @@
       investment: false, ongoing: true, on_launch: 'operating', caretaker_allowed: true, beneficiaries: ['unemployed'], law: null,
       variants: {full: {build: 0, upkeep: 2, share: 1, relief_start: -6, relief: 2}, focused: {build: 0, upkeep: 1, share: 0.5, relief_start: -6, relief: 2},
         limited: {build: 0, upkeep: 1, share: 1, relief_start: -3, relief: 1}}},
+    // Z — 0.93 (decision 3A of 24 X 2026): a programme that runs for good has one monthly cost from its launch, the same while it
+    // is built and while it works (P); its effects still start after its months of building.
     public_works: {name: 'Public works', card: 'public_works', portfolios: ['labor'], klass: 'large', investment: true, ongoing: true,
       beneficiaries: ['unemployed'], law: null,
-      variants: {employment: {build: 2, upkeep: 1, duration: 3, units: 2, output_pp: 0.15},
-        infrastructure: {build: 2, upkeep: 1, duration: 4, units: 2, output_pp: 0.25},
-        housing: {build: 2, upkeep: 1, duration: 4, units: 0, output_pp: 0, relief: 2, beneficiaries: ['workers']},
+      variants: {employment: {build: 1, upkeep: 1, duration: 3, units: 2, output_pp: 0.15},
+        infrastructure: {build: 1, upkeep: 1, duration: 4, units: 2, output_pp: 0.25},
+        housing: {build: 1, upkeep: 1, duration: 4, units: 0, output_pp: 0, relief: 2, beneficiaries: ['workers']},
         // Z — 0.81 (decision 4B): the limited variants of the legislative initiative.
-        employment_small: {build: 1, upkeep: 0.5, duration: 3, units: 1, output_pp: 0.15},
-        housing_coop: {build: 1, upkeep: 0.5, duration: 4, units: 0, output_pp: 0, relief: 1, beneficiaries: ['workers']}}},
+        employment_small: {build: 0.5, upkeep: 0.5, duration: 3, units: 1, output_pp: 0.15},
+        housing_coop: {build: 0.5, upkeep: 0.5, duration: 4, units: 0, output_pp: 0, relief: 1, beneficiaries: ['workers']}}},
     credit_instrument: {name: 'Credit instrument', card: 'investment_fund', portfolios: ['finance', 'economic'], klass: 'large',
       investment: true, ongoing: true, beneficiaries: ['workers', 'old_middle'], law: null,
-      variants: {public: {build: 2, upkeep: 1, duration: 2, credit_support: 5},
+      variants: {public: {build: 1, upkeep: 1, duration: 2, credit_support: 5},
         banks: {build: 1, upkeep: 1, duration: 2, credit_support: 5, business: -8},
-        cooperative: {build: 2, upkeep: 1, duration: 2, credit_support: 5, beneficiaries: ['rural', 'old_middle']}}},
+        cooperative: {build: 1, upkeep: 1, duration: 2, credit_support: 5, beneficiaries: ['rural', 'old_middle']}}},
     orders: {name: 'Public orders for industry', card: 'industrial_policy', portfolios: ['economic'], klass: 'small', investment: false,
       ongoing: true, on_launch: 'operating', beneficiaries: ['workers'], law: null,
       variants: {orders: {build: 0, upkeep: 1, months: 3, output_pp: 0.30}}},
@@ -140,7 +142,7 @@
     // Stage 6 (12.4, 17.12, 17.12.5): the rescue of one recorded plant is the rescue variant of the conditional credit,
     // under the owner's agreement that is the condition of the credit (P); representation of the workers of a public plant.
     plant_rescue: {name: 'Rescue of a plant', card: 'industrial_policy', portfolios: ['economic'], klass: 'large', investment: true,
-      ongoing: true, beneficiaries: ['workers'], law: null, variants: {rescue: {build: 2, upkeep: 1, duration: 2}}},
+      ongoing: true, beneficiaries: ['workers'], law: null, variants: {rescue: {build: 1, upkeep: 1, duration: 2}}},
     enterprise_representation: {name: 'Workers’ representation in a plant', card: 'industrial_policy', portfolios: ['economic'],
       klass: 'small', investment: false, beneficiaries: ['workers'], law: null,
       variants: {consultative: {build: 0, upkeep: 0, duration: 1},
@@ -872,9 +874,10 @@
       return forecastWith(Q, {charge: 1}) >= -2 ? OK : no(forecastBlock());
     }
     if (option === 'limited_autonomy') {
-      if (projectsOf(S, 'limited_autonomy').length) return no(L('The autonomy of this area is prepared, under way or in force.', 'Autonomia tego obszaru jest przygotowana, w toku albo już obowiązuje.'));
-      if (!autonomyAgreement(S)) return no(L('Needs an agreed point with the representation of the other national minorities (17.12.6).', 'Wymaga uzgodnionego punktu z reprezentacją pozostałych mniejszości narodowych (17.12.6).'));
-      return OK;
+      const prepared = projectsOf(S, 'limited_autonomy', p => preparedProject(p) && p.sponsor === 'pps')[0] || null;
+      if (!prepared && projectsOf(S, 'limited_autonomy').length) return no(L('The autonomy of this area is under way or in force.', 'Autonomia tego obszaru jest w toku albo już obowiązuje.'));
+      if (!prepared && !autonomyAgreement(S)) return no(L('Needs an agreed point with the representation of the other national minorities (17.12.6).', 'Wymaga uzgodnionego punktu z reprezentacją pozostałych mniejszości narodowych (17.12.6).'));
+      return launchStatus(Q, 'limited_autonomy', 'autonomy', prepared);
     }
     return no(L('Unknown option.', 'Nieznana opcja.'));
   }
@@ -903,11 +906,11 @@
       return result(Q, L('The police protect ' + target.name + ' this month: 1 B, the capacity of protection +10 times its execution.',
         'Policja chroni w tym miesiącu: ' + target.name + '. 1 B; zdolność ochrony +10 razy stopień wykonania.'));
     }
-    prepareProject(Q, 'limited_autonomy', 'autonomy', Object.assign({policy_choices: {territory_id: 'synthetic_autonomy_area',
+    const agreement = autonomyAgreement(S);
+    const project = prepareProject(Q, 'limited_autonomy', 'autonomy', Object.assign({policy_choices: {territory_id: 'synthetic_autonomy_area',
       recipient_authority_id: 'the self-government of the area', delegated_capabilities: AUTONOMY_CAPABILITIES.slice(),
-      agreement_id: autonomyAgreement(S).id}}, fields));
-    return result(Q, L('The execution of the act of 26 IX 1922 on the voivodeship self-government is prepared: its law and launch wait in the card “Prepared Reforms”, then 1 budget unit a month for three months.',
-      'Wykonanie ustawy z 26 IX 1922 o samorządzie wojewódzkim jest przygotowane: jego ustawa i uruchomienie czekają w karcie „Przygotowane reformy”, potem 1 jednostka budżetu miesięcznie przez trzy miesiące.'));
+      agreement_id: agreement ? agreement.id : null}}, fields), {match: p => p.sponsor === 'pps'});
+    return result(Q, launchPrepared(Q, project));
   }
 
   // Cards 7.5 and 8.14 share one project of civilian control for the one synthetic post over the near reserve.
@@ -922,8 +925,7 @@
     const S = Q.S, project = armyProject(S);
     if (!securityModule() || !S.security || !S.security.forces.length) return no(L('Needs the forces of the state of stage 7.', 'Wymaga sił państwa z etapu 7.'));
     if (project && !preparedProject(project)) return no(L('The reform of this scope is under way or done; its effects come once.', 'Reforma tego zakresu jest w toku albo zakończona; jej skutki przychodzą raz.'));
-    if (project && project.variant === variant) return no(L('This variant is already prepared; launch it from the card “Prepared Reforms”.', 'Ten wariant jest już przygotowany; uruchom go z karty „Przygotowane reformy”.'));
-    return OK;
+    return launchStatus(Q, 'army_control', variant, project && project.variant === variant ? project : null);
   }
 
   function armyOptionStatus(Q, option) {
@@ -946,9 +948,7 @@
       costText = L(' The dissent of the Piłsudczycy in PPS rises (+' + cost.dissent + ') and relations with Piłsudski worsen (−' + Math.abs(cost.relation) + ').',
         ' Sprzeciw piłsudczyków w PPS rośnie (+' + cost.dissent + '), a stosunki z Piłsudskim się pogarszają (−' + Math.abs(cost.relation) + ').');
     }
-    return result(Q, L('Civilian control of the army is prepared (' + VARIANT_NAMES[variant] + '): its law and launch wait in the card “Prepared Reforms”, then 1 budget unit a month for ' +
-      project.duration_months + ' months.', 'Cywilna kontrola nad wojskiem jest przygotowana (' + VARIANT_NAMES_PL[variant] + '): jej ustawa i uruchomienie ' +
-      'czekają w karcie „Przygotowane reformy”, potem 1 jednostka budżetu miesięcznie przez ' + months(project.duration_months) + '.') + costText);
+    return result(Q, launchPrepared(Q, project) + costText);
   }
 
   // The last law of a project failed and the project is prepared again (12.2): its variant can be changed (Z — 0.57).
@@ -1034,10 +1034,11 @@
 
   function rescueStatus(Q) {
     const S = Q.S;
-    if (projectsOf(S, 'plant_rescue', p => preparedProject(p) && p.sponsor === 'pps').length) return no(L('A rescue is already prepared; launch it from the card “Prepared Reforms”.', 'Ratunek jest już przygotowany; uruchom go z karty „Przygotowane reformy”.'));
+    const prepared = projectsOf(S, 'plant_rescue', p => preparedProject(p) && p.sponsor === 'pps')[0] || null;
+    if (prepared) return launchStatus(Q, 'plant_rescue', 'rescue', prepared);
     if (!rescueTarget(S)) return no(L('Needs a recorded plant of industry or a railway workshop that has lost capacity and has no rescue yet; ' + PLANT_HINT + '.',
       'Wymaga zakładu przemysłowego albo warsztatu kolejowego z listy resortu, który stracił moce i nie ma jeszcze ratunku; ' + PLANT_HINT_PL + '.'));
-    return OK;
+    return launchStatus(Q, 'plant_rescue', 'rescue', null);
   }
 
   function publicControlStatus(Q) {
@@ -1053,11 +1054,9 @@
     const variants = variant ? [variant] : ['consultative', 'decision_rights'];
     const reasons = [];
     for (const v of variants) {
-      if (v === 'decision_rights' && projectsOf(S, 'enterprise_representation', p => p.variant === 'decision_rights' && preparedProject(p)).length) {
-        reasons.push(L('Co-decision is already prepared; launch it from the card “Prepared Reforms”.', 'Współdecydowanie jest już przygotowane; uruchom je z karty „Przygotowane reformy”.'));
-        continue;
-      }
-      if (representationTarget(S, v)) return OK;
+      const prepared = v === 'decision_rights' ? projectsOf(S, 'enterprise_representation', p => p.variant === 'decision_rights' && preparedProject(p))[0] : null;
+      if (prepared) return launchStatus(Q, 'enterprise_representation', 'decision_rights', prepared);
+      if (representationTarget(S, v)) return v === 'decision_rights' ? launchStatus(Q, 'enterprise_representation', 'decision_rights', null) : OK;
       const any = plantList(S, p => industryPlant(p) && p.owner === 'public');
       reasons.push(!any.length ? L(REPRESENTATION_BLOCK, 'Wymaga zakładu publicznego, po akcie kontroli publicznej; porozumienia z właścicielem zakładu ' +
         'prywatnego nie da się jeszcze wynegocjować w tym rozdziale.') : v === 'consultative' ?
@@ -2857,8 +2856,8 @@
         return L('The ministry of agriculture carries out the reform in the next part of the countryside.', 'Resort Rolnictwa przeprowadza reformę w kolejnej części wsi.');
       }},
     {id: 'public_works', portfolio: 'labor', name: ['Public works for the unemployed', 'Roboty publiczne dla bezrobotnych'],
-      text: ['Work for the unemployed: 2 budget units a month for three months, then 1; two units of employment.',
-        'Praca dla bezrobotnych: 2 jednostki budżetu miesięcznie przez trzy miesiące, potem 1; dwie jednostki zatrudnienia.'],
+      text: ['Work for the unemployed: 1 budget unit a month while the works run; after three months two units of employment.',
+        'Praca dla bezrobotnych: 1 jednostka budżetu miesięcznie, dopóki trwają roboty; po trzech miesiącach dwie jednostki zatrudnienia.'],
       raise: ['A smaller programme runs today; the law enlarges it to two units of employment.', 'Dziś działa mniejszy program; ustawa powiększa go do dwóch jednostek zatrudnienia.'],
       variants: [{key: 'employment', name: ['two units of employment', 'dwie jednostki zatrudnienia'], programme: {fiscal: 1}},
         {key: 'employment_small', name: ['one unit of employment', 'jedna jednostka zatrudnienia'], programme: {fiscal: 0}}],
@@ -2871,8 +2870,8 @@
         return L('The labour administration starts the works.', 'Administracja resortu Pracy rozpoczyna roboty.');
       }},
     {id: 'workers_housing', portfolio: 'labor', name: ['Workers’ housing', 'Mieszkania robotnicze'],
-      text: ['Houses for workers: 2 budget units a month for four months, then 1; the discontent of the workers grows more slowly.',
-        'Domy dla robotników: 2 jednostki budżetu miesięcznie przez cztery miesiące, potem 1; niezadowolenie robotników rośnie wolniej.'],
+      text: ['Houses for workers: 1 budget unit a month while the programme runs; after four months the discontent of the workers grows more slowly.',
+        'Domy dla robotników: 1 jednostka budżetu miesięcznie, dopóki trwa program; po czterech miesiącach niezadowolenie robotników rośnie wolniej.'],
       raise: ['Cooperative houses are built today; the law brings the full programme of workers’ housing.', 'Dziś powstają domy spółdzielcze; ustawa wprowadza pełny program mieszkań robotniczych.'],
       variants: [{key: 'housing', name: ['the full programme', 'pełny program'], programme: {fiscal: 1}},
         {key: 'housing_coop', name: ['cooperative houses on state credit', 'domy spółdzielcze z kredytem państwa'], programme: {fiscal: 0}}],
@@ -3189,8 +3188,9 @@
   const CARDS = Object.freeze({
     labor_rights: {portfolios: ['labor'], options: ['inspection', 'collective', 'derogation']},
     social_welfare: {portfolios: ['labor'], options: ['expand', 'focus', 'limit']},
-    finance_package: {portfolios: ['finance'], options: ['progressive', 'wealth_tax', 'indirect', 'broad', 'customs', 'loan', 'admin_cuts',
-      'benefit_cut', 'emission', 'collection']},
+    // Z — 0.93 (decision 3A of 24 X 2026): one Treasury card, “Taxes and Loans”, with five instruments; the wealth tax, the broader
+    // base, the customs duties, the cut of the benefit (the Labour card has it) and the better collection left the card.
+    finance_package: {portfolios: ['finance'], options: ['progressive', 'indirect', 'loan', 'emission', 'admin_cuts']},
     currency_stabilisation: {portfolios: ['finance'], options: ['rapid_cuts', 'protected', 'gradual']},
     investment_fund: {portfolios: ['finance', 'economic'], options: ['public', 'banks', 'cooperative']},
     industrial_policy: {portfolios: ['economic'], options: ['credit', 'rescue', 'orders', 'public_control', 'worker_representation']},
@@ -3211,7 +3211,7 @@
   // and a first line on its page. The scenes of the cards (the Treasury family has two since decision 1A: taxes, and the
   // loan, savings and emission) and, for the agreement with Piłsudski of PolishSecurity, its portfolio.
   const CARD_SCENES = Object.freeze({polish_gov_labor_rights: 'labor_rights', polish_gov_social_welfare: 'social_welfare',
-    polish_gov_finance: 'finance_package', polish_gov_finance_funding: 'finance_package', polish_gov_currency: 'currency_stabilisation',
+    polish_gov_finance: 'finance_package', polish_gov_currency: 'currency_stabilisation',
     polish_gov_investment: 'investment_fund', polish_gov_industry: 'industrial_policy', polish_gov_public_works: 'public_works',
     polish_gov_land: 'land_program', polish_gov_agriculture: 'agriculture_development', polish_gov_education: 'education_program',
     polish_gov_minority_schools: 'minority_school_rights', polish_gov_justice: 'justice_policy', polish_gov_interior: 'internal_security',
@@ -3254,7 +3254,6 @@
     const holder = S.cabinet && S.cabinet.status === 'active' ? S.cabinet.portfolios[portfolio] : null;
     const sceneId = Object.keys(CARD_SCENES).filter(id => CARD_SCENES[id] === type.card)[0];
     const title = (sceneId && titleOf && titleOf(sceneId)) || projectName(o.required_project);
-    const agenda = (titleOf && titleOf('polish_agenda')) || L('Prepared Reforms', 'Przygotowane reformy');
     const ministry = L('the ' + PORTFOLIO_SHORT[portfolio] + ' ministry', 'resort ' + PORTFOLIO_SHORT_PL[portfolio]);
     const Ministry = L('The ' + PORTFOLIO_SHORT[portfolio] + ' ministry', 'Resort ' + PORTFOLIO_SHORT_PL[portfolio]);
     const variants = (o.required_variants || []).map(variantName).join(L(' or ', ' albo '));
@@ -3265,13 +3264,12 @@
     if (status === 'executing') {
       step = L('Its project is being carried out; the promise is met ' + done + '.', 'Projekt jest w realizacji; obietnica spełni się, ' + done + '.');
     } else if (status === 'prepared') {
-      step = L('Its project is prepared: launch it with the card “' + agenda + '”.', 'Projekt jest przygotowany: uruchom go kartą „' + agenda + '”.');
+      step = L('Its law was refused: file it again with the card “' + title + '” when the Sejm has changed.', 'Sejm odrzucił jego ustawę: zgłoś ją ponownie kartą „' + title + '”, gdy układ w Sejmie się zmieni.');
     } else if (status) {
       step = L('Its project already runs; the promise is counted at the next settlement.', 'Projekt już działa; obietnica zostanie zaliczona przy najbliższym rozliczeniu.');
     } else {
-      step = L('The project must be prepared with the card “' + title + '” (' + ministry + (variants ? ', variant: ' + variants : '') +
-        '), then launched with the card “' + agenda + '”.', 'Projekt trzeba przygotować kartą „' + title + '” (' + ministry +
-        (variants ? ', wariant: ' + variants : '') + '), a potem uruchomić kartą „' + agenda + '”.');
+      step = L('The project is launched with the card “' + title + '” (' + ministry + (variants ? ', variant: ' + variants : '') + ').',
+        'Projekt uruchamia się kartą „' + title + '” (' + ministry + (variants ? ', wariant: ' + variants : '') + ').');
     }
     const holderName = holder === 'expert' ? L('a non-party expert', 'bezpartyjny fachowiec') : holder ? government.describeParty(holder) : '';
     const who = holder === 'pps' ? L(Ministry + ' is held by PPS, so it is in our hands. ', Ministry + ' trzyma PPS, więc to w naszych rękach. ') :
@@ -3379,6 +3377,7 @@
   function optionStatus(Q, cardId, option, extra) {
     const S = Q.S, E = S.economy, t = Q.time;
     if (!cardAvailable(Q, cardId)) return no(cardUnavailableReason(Q, cardId));
+    if (CARDS[cardId].options.indexOf(option) < 0) return no(L('Unknown option.', 'Nieznana opcja.'));
     const blockedLater = {
       expropriation: L('Needs a prior change of the constitutional guarantees of property; no card of this chapter creates it (12.6).',
         'Wymaga wcześniejszej zmiany konstytucyjnych gwarancji własności, której w tym okresie nie da się przeprowadzić.'),
@@ -3420,9 +3419,7 @@
       case 'currency_stabilisation': {
         const reform = currencyProject(S);
         if (reform && !preparedProject(reform)) return no(L('The currency reform is already under way.', 'Reforma walutowa już trwa.'));
-        if (reform && reform.variant === option) return no(L('This variant is already prepared; launch it from the card “Prepared Reforms”.', 'Ten wariant jest już przygotowany; uruchom go z karty „Przygotowane reformy”.'));
-        if (option === 'protected' && !operatingProtection(S)) return no(L('Needs a full or an agreed limited protection for the unemployed.', 'Wymaga pełnej albo uzgodnionej ograniczonej osłony dla bezrobotnych.'));
-        return OK;
+        return launchStatus(Q, 'currency_reform', option, reform && reform.variant === option ? reform : null);
       }
       case 'investment_fund':
       case 'industrial_policy': {
@@ -3437,42 +3434,36 @@
         if (instrument && !preparedProject(instrument)) return no(L('The credit instrument is already running: one financing, one cost, one effect.', 'Instrument kredytowy już działa: jedno finansowanie, jeden koszt, jeden skutek.'));
         const financing = option === 'credit' ? 'public' : option;
         // Stage 8 (fix 3): an instrument prepared by the cabinet is not on the agenda of PPS; the cabinet launches it itself.
-        if (instrument && instrument.variant === financing) {
-          return no(instrument.sponsor === 'cabinet' ? L('The cabinet has prepared this financing; it launches it at one of its next reviews.',
-            'Gabinet przygotował to finansowanie; uruchomi je przy jednym z kolejnych przeglądów.') :
-            L('This financing is already prepared; launch it from the card “Prepared Reforms”.', 'To finansowanie jest już przygotowane; uruchom je z karty „Przygotowane reformy”.'));
-        }
+        if (instrument && instrument.sponsor === 'cabinet') return no(L('The cabinet has prepared the credit instrument; it launches it at one of its next reviews.',
+          'Gabinet przygotował instrument kredytowy; uruchomi go przy jednym z kolejnych przeglądów.'));
         if (financing === 'banks' && E.credit < 40) return no(L('Credit is below 40: the banks do not agree.', 'Kredyt jest poniżej 40: banki się nie zgadzają.'));
-        return OK;
+        return launchStatus(Q, 'credit_instrument', financing, instrument && instrument.variant === financing ? instrument : null);
       }
       case 'public_works': {
-        const prepared = projectsOf(S, 'public_works', p => preparedProject(p))[0];
-        if (prepared && prepared.variant === option) return no(L('This programme is already prepared; launch it from the card “Prepared Reforms”.', 'Ten program jest już przygotowany; uruchom go z karty „Przygotowane reformy”.'));
-        return OK;
+        const prepared = projectsOf(S, 'public_works', p => preparedProject(p) && p.sponsor === 'pps')[0];
+        return launchStatus(Q, 'public_works', option, prepared && prepared.variant === option ? prepared : null);
       }
       case 'land_program': {
-        const prepared = projectsOf(S, 'land_program', p => preparedProject(p))[0];
-        if (prepared && prepared.variant === option) return no(L('This variant is already prepared; launch it from the card “Prepared Reforms”.', 'Ten wariant jest już przygotowany; uruchom go z karty „Przygotowane reformy”.'));
-        const tranche = trancheBlocked(S, 'land_program', option);
-        return tranche ? no(tranche) : OK;
+        const prepared = projectsOf(S, 'land_program', p => preparedProject(p) && p.sponsor === 'pps')[0];
+        const same = prepared && prepared.variant === option ? prepared : null;
+        const tranche = same ? null : trancheBlocked(S, 'land_program', option);
+        return tranche ? no(tranche) : launchStatus(Q, 'land_program', option, same);
       }
       case 'agriculture_development': {
-        const prepared = projectsOf(S, 'agriculture_development', p => preparedProject(p) && p.variant === option)[0];
-        if (prepared) return no(L('This programme is already prepared; launch it from the card “Prepared Reforms”.', 'Ten program jest już przygotowany; uruchom go z karty „Przygotowane reformy”.'));
-        const tranche = trancheBlocked(S, 'agriculture_development', option);
-        return tranche ? no(tranche) : OK;
+        const prepared = projectsOf(S, 'agriculture_development', p => preparedProject(p) && p.variant === option)[0] || null;
+        const tranche = prepared ? null : trancheBlocked(S, 'agriculture_development', option);
+        return tranche ? no(tranche) : launchStatus(Q, 'agriculture_development', option, prepared);
       }
       case 'education_program': {
-        const prepared = projectsOf(S, 'education_program', p => preparedProject(p) && p.variant === option)[0];
-        if (prepared) return no(L('This programme is already prepared; launch it from the card “Prepared Reforms”.', 'Ten program jest już przygotowany; uruchom go z karty „Przygotowane reformy”.'));
-        const tranche = trancheBlocked(S, 'education_program', option);
+        const prepared = projectsOf(S, 'education_program', p => preparedProject(p) && p.variant === option)[0] || null;
+        const tranche = prepared ? null : trancheBlocked(S, 'education_program', option);
         return tranche ? no(option === 'secular' ? L('The secular school model is already adopted or under way.',
-          'Model szkoły świeckiej jest już przyjęty albo w toku.') : tranche) : OK;
+          'Model szkoły świeckiej jest już przyjęty albo w toku.') : tranche) : launchStatus(Q, 'education_program', option, prepared);
       }
       case 'minority_school_rights': {
         const running = projectsOf(S, 'minority_schools', p => liveProject(p) || p.status === 'completed');
         const prepared = projectsOf(S, 'minority_schools', p => preparedProject(p))[0];
-        if (prepared && prepared.variant === option) return no(L('This rule is already prepared; launch it from the card “Prepared Reforms”.', 'Ta zasada jest już przygotowana; uruchom ją z karty „Przygotowane reformy”.'));
+        if (prepared && prepared.variant === option) return launchStatus(Q, 'minority_schools', option, prepared);
         if (running.length) return no(L('A language rule is already carried out; a contrary rule would need a new law, not part of this chapter.', 'Zasada językowa jest już realizowana; przeciwna zasada wymagałaby nowej ustawy, której nie ma w tym rozdziale.'));
         if (option === 'agreed_bilingual' && !minorityAgreements(S).length) return no(L('Needs a voluntarily accepted agreement with a minority representation.', 'Wymaga dobrowolnie przyjętego porozumienia z reprezentacją mniejszości.'));
         if (option === 'polish_dominance' && reformsRecord(Q).democratic_guarantees) return no(L('The democratic guarantees in force forbid it.', 'Zakazują tego obowiązujące gwarancje demokratyczne.'));
@@ -3480,7 +3471,7 @@
           return no(L('The schools of the autonomous area are delegated to its self-government: a central order there is not a lawful act (17.12.6).',
             'Szkoły obszaru autonomicznego są przekazane jego samorządowi: centralne polecenie nie jest tam aktem legalnym (17.12.6).'));
         }
-        return OK;
+        return launchStatus(Q, 'minority_schools', option, null);
       }
       case 'justice_policy': {
         if (option === 'limited_redress') {
@@ -3502,8 +3493,9 @@
           'Projekt dotyczący ' + heritageName(object, 'gen') + ' już istnieje.'));
         if (existing && existing.variant === 'restoration') return no(L('The wider restoration of ' + HERITAGE_OBJECTS[object] + ' is already chosen.',
           'Szersza restauracja ' + heritageName(object, 'gen') + ' jest już wybrana.'));
-        if (existing && preparedProject(existing)) return no(L('Already prepared; launch it from the card “Prepared Reforms”.', 'Już przygotowane; uruchom z karty „Przygotowane reformy”.'));
-        const charge = scope === 'conservation' ? 1 : existing ? 1 : 0;
+        if (existing && preparedProject(existing)) return launchStatus(Q, 'heritage', 'restoration', existing);
+        // Z — 0.93: a new restoration starts at once, so its whole charge counts; extending a running conservation adds 1.
+        const charge = scope === 'conservation' ? 1 : existing ? 1 : 2;
         return forecastWith(Q, {charge: charge}) >= -2 ? OK : no(forecastBlock());
       }
     }
@@ -3618,21 +3610,21 @@
       }
       case 'currency_stabilisation': {
         const project = prepareProject(Q, 'currency_reform', option, ppsFields);
-        return result(Q, L('The currency reform is prepared (' + VARIANT_NAMES[option] + '). Its launch waits in the card “Prepared Reforms”.',
-          'Reforma walutowa jest przygotowana (' + VARIANT_NAMES_PL[option] + '). Jej uruchomienie czeka w karcie „Przygotowane reformy”.'));
+        return result(Q, launchPrepared(Q, project));
       }
       case 'investment_fund':
       case 'industrial_policy': {
         if (option === 'rescue') {
+          const prepared = projectsOf(S, 'plant_rescue', p => preparedProject(p) && p.sponsor === 'pps')[0];
+          if (prepared) return result(Q, launchPrepared(Q, prepared));
           const plant = rescueTarget(S);
           const project = prepareProject(Q, 'plant_rescue', 'rescue', Object.assign({policy_choices: {plant_id: plant.id, profile: plant.profile_id,
             owner_agreement: 'the condition of the credit: the owner keeps the plant working and its workers employed'}}, ppsFields),
             {match: p => p.policy_choices.plant_id === plant.id});
           plant.rescue_project_id = project.id;
           plant.history.push({t: t, kind: 'rescue_prepared', project_id: project.id});
-          return result(Q, L('The rescue of the ' + plantLabel(plant) + ' is prepared: a conditional credit of 2 B a month for two months, then 1 B to run. Its launch waits in the card “Prepared Reforms”.',
-            'Ratunek zakładu (' + plantLabel(plant) + ') jest przygotowany: warunkowy kredyt 2 B miesięcznie przez dwa miesiące, potem 1 B na utrzymanie. ' +
-            'Jego uruchomienie czeka w karcie „Przygotowane reformy”.'));
+          return result(Q, L('The rescue of the ' + plantLabel(plant) + ' is a conditional credit. ', 'Ratunek zakładu (' + plantLabel(plant) + ') to warunkowy kredyt. ') +
+            launchPrepared(Q, project));
         }
         if (option === 'public_control') {
           const plant = publicControlTarget(S);
@@ -3662,12 +3654,13 @@
               'Robotnicy zakładu (' + plantLabel(plant) + ') są informowani i konsultowani przed każdą zmianą swoich warunków, bez prawa weta; ' +
               'ich niezadowolenie −2 przy następnym miesięcznym rozliczeniu.'));
           }
+          const waiting = projectsOf(S, 'enterprise_representation', p => p.variant === 'decision_rights' && preparedProject(p))[0];
+          if (waiting) return result(Q, launchPrepared(Q, waiting));
           const project = prepareProject(Q, 'enterprise_representation', 'decision_rights', fields,
             {match: p => p.variant === 'decision_rights' && p.policy_choices.plant_id === plant.id});
           plant.codecision_project_id = project.id;
           plant.history.push({t: t, kind: 'codecision_prepared', project_id: project.id});
-          return result(Q, L('Co-decision in the ' + plantLabel(plant) + ' is prepared: its law and launch wait in the card “Prepared Reforms”, then 1 B a month for two months.',
-            'Współdecydowanie (' + plantLabel(plant) + ') jest przygotowane: jego ustawa i uruchomienie czekają w karcie „Przygotowane reformy”, potem 1 B miesięcznie przez dwa miesiące.'));
+          return result(Q, launchPrepared(Q, project));
         }
         if (option === 'orders') {
           const project = createProject(Q, 'orders', 'orders', Object.assign({policy_choices: {buyer: 'the state railways and administration',
@@ -3676,33 +3669,29 @@
           return result(Q, L('One package of public orders runs for three settlements: 1 B a month.', 'Jeden pakiet zamówień publicznych trwa przez trzy rozliczenia: 1 B miesięcznie.'));
         }
         const financing = option === 'credit' ? 'public' : option;
-        prepareProject(Q, 'credit_instrument', financing, ppsFields);
-        return result(Q, L('The credit instrument is prepared (' + VARIANT_NAMES[financing] + '). Its launch waits in the card “Prepared Reforms”.',
-          'Instrument kredytowy jest przygotowany (' + VARIANT_NAMES_PL[financing] + '). Jego uruchomienie czeka w karcie „Przygotowane reformy”.'));
+        const project = prepareProject(Q, 'credit_instrument', financing, ppsFields);
+        return result(Q, launchPrepared(Q, project));
       }
       case 'public_works': {
-        prepareProject(Q, 'public_works', option, ppsFields);
-        return result(Q, L('The works programme is prepared (' + VARIANT_NAMES[option] + '). Its launch waits in the card “Prepared Reforms”.',
-          'Program robót jest przygotowany (' + VARIANT_NAMES_PL[option] + '). Jego uruchomienie czeka w karcie „Przygotowane reformy”.'));
+        const project = prepareProject(Q, 'public_works', option, ppsFields, {match: p => p.sponsor === 'pps'});
+        return result(Q, launchPrepared(Q, project));
       }
       case 'land_program': {
         const access = (extra && extra.access) || 'equal';
-        const project = prepareProject(Q, 'land_program', option, Object.assign({policy_choices: {access: access}}, ppsFields));
+        const project = prepareProject(Q, 'land_program', option, Object.assign({policy_choices: {access: access}}, ppsFields), {match: p => p.sponsor === 'pps'});
         if (!project.tranche) project.tranche = nextTranche(S, 'land_program', option);
-        return result(Q, L('The land reform is prepared (' + VARIANT_NAMES[option] + ', ' + (access === 'equal' ? 'equal access by need and farm size' :
-          'preference for the Polish majority') + '). Its law and launch wait in the card “Prepared Reforms”.', 'Reforma rolna jest przygotowana (' + VARIANT_NAMES_PL[option] + ', ' +
-          (access === 'equal' ? 'równy dostęp według potrzeb i wielkości gospodarstwa' : 'pierwszeństwo dla polskiej większości') +
-          '). Jej ustawa i uruchomienie czekają w karcie „Przygotowane reformy”.'));
+        return result(Q, L('Access to the land: ' + (access === 'equal' ? 'equal, by need and farm size' : 'preference for the Polish majority') + '. ',
+          'Dostęp do ziemi: ' + (access === 'equal' ? 'równy, według potrzeb i wielkości gospodarstwa' : 'pierwszeństwo dla polskiej większości') + '. ') +
+          launchPrepared(Q, project));
       }
       case 'agriculture_development':
       case 'education_program':
       case 'minority_school_rights': {
         const typeId = cardId === 'agriculture_development' ? 'agriculture_development' : cardId === 'education_program' ? 'education_program' : 'minority_schools';
-        const project = prepareProject(Q, typeId, option, ppsFields, {match: p => p.variant === option || typeId === 'minority_schools'});
+        const project = prepareProject(Q, typeId, option, ppsFields, {match: p => p.sponsor === 'pps' && (p.variant === option || typeId === 'minority_schools')});
         if (PROJECT_TYPES[typeId].tranches && !project.tranche) project.tranche = nextTranche(S, typeId, option);
         if (option === 'polish_dominance') checkConstraints(Q, 'legal_equality', 'discrimination', {instrument: 'polish_dominance'});
-        return result(Q, L('The programme is prepared (' + VARIANT_NAMES[option] + '). Its launch waits in the card “Prepared Reforms”.',
-          'Program jest przygotowany (' + VARIANT_NAMES_PL[option] + '). Jego uruchomienie czeka w karcie „Przygotowane reformy”.'));
+        return result(Q, launchPrepared(Q, project));
       }
       case 'justice_policy':
         return null;
@@ -3725,9 +3714,8 @@
           return result(Q, L('The conservation of ' + HERITAGE_OBJECTS[object] + ' starts: 1 B for two months.',
             'Rusza konserwacja ' + heritageName(object, 'gen') + ': 1 B przez dwa miesiące.'));
         }
-        prepareProject(Q, 'heritage', 'restoration', fields, {match: p => p.policy_choices.object === object});
-        return result(Q, L('The wider restoration of ' + HERITAGE_OBJECTS[object] + ' is prepared; its launch waits in the card “Prepared Reforms”.',
-          'Szersza restauracja ' + heritageName(object, 'gen') + ' jest przygotowana; jej uruchomienie czeka w karcie „Przygotowane reformy”.'));
+        const project = prepareProject(Q, 'heritage', 'restoration', fields, {match: p => p.policy_choices.object === object});
+        return result(Q, launchPrepared(Q, project));
       }
     }
     throw new Error('chooseOption: unknown card ' + cardId);
@@ -3762,9 +3750,13 @@
     const S = Q.S, card = CARDS[cardId];
     const forecast = economy.budgetAt(S, Q.time);
     const delivery = economy.fiscalDelivery(forecast.budget);
+    // Z — 0.93 (decision 3A of 24 X 2026): the same reading as the sidebar — the budget, the execution and what a new programme may cost.
+    const room = round(forecast.budget + 2, 1);
     Q.pl_gc_budget = L('Budget this month: ', 'Budżet w tym miesiącu: ') + signed(round(forecast.budget, 1), 1) + ' B (' +
       (delivery === 1 ? L('programmes run in full', 'programy działają w pełni') : delivery === 0.5 ?
-        L('programmes run at half strength', 'programy działają w połowie') : L('programmes are stopped', 'programy są wstrzymane')) + ').';
+        L('programmes run at half strength', 'programy działają w połowie') : L('programmes are stopped', 'programy są wstrzymane')) + '); ' +
+      (room >= 0.05 ? L('a new programme may cost up to ' + num(room) + ' B a month.', 'nowy program może kosztować najwyżej ' + num(room) + ' B miesięcznie.') :
+        L('no new programme can start.', 'żaden nowy program nie ruszy.'));
     const types = Object.keys(PROJECT_TYPES).filter(id => PROJECT_TYPES[id].card === cardId || (cardId === 'industrial_policy' && id === 'credit_instrument') ||
       (cardId === 'finance_package' && id === 'collection'));
     const lines = projectsOf(S, null, p => types.indexOf(p.type) >= 0).map(p => describeProject(p, S));
@@ -3813,34 +3805,28 @@
     return name + ': ' + state + note + '.';
   }
 
-  // ---- The agenda: launching prepared reforms (12.2) -------------------------------------------------
+  // ---- Launching a reform (12.2) -------------------------------------------------------------------------
 
-  const AGENDA_TYPES = Object.freeze(['public_works', 'credit_instrument', 'land_program', 'agriculture_development', 'education_program',
-    'minority_schools', 'heritage', 'currency_reform', 'plant_rescue', 'enterprise_representation', 'army_control', 'limited_autonomy']);
-
+  // Z — 0.93 (decision 4A of 24 X 2026): a reform starts in the decision that chooses it — its law goes to the Sejm and its
+  // financing is checked at once; the card “Prepared Reforms” is gone. A reform stays prepared only when the Sejm rejects its
+  // law; choosing the same option again files it again.
   function agendaProject(S, typeId) {
     return projectsOf(S, typeId, p => p.status === 'prepared' && p.sponsor === 'pps')[0] || null;
   }
 
-  function agendaStatus(Q, item) {
-    const S = Q.S;
-    if (!S || S.chapter.status === 'ended') return no('');
-    const project = agendaProject(S, item);
-    if (!project) return no(L('Nothing prepared.', 'Nic nie jest przygotowane.'));
-    const type = PROJECT_TYPES[item];
-    // The parliamentary route of card 7.5 files the law without the portfolio; the cabinet executes it (8.5).
-    const viaParliament = item === 'army_control' && project.policy_choices.via === 'parliament';
-    if (!viaParliament && !ppsHoldsAny(S, type.portfolios)) return no(L('PPS no longer holds ' + type.portfolios.map(k => PORTFOLIO_SHORT[k]).join(' or ') + '.',
-      'PPS nie ma już resortu ' + type.portfolios.map(portfolioShort).join(' ani ') + '.'));
-    if (project.rejected_forecast && project.rejected_forecast === lawForecastKey(Q, project)) return no(L('The same law was refused and nothing has changed since.', 'Ta sama ustawa została odrzucona i od tego czasu nic się nie zmieniło.'));
-    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
-    const financing = item === 'currency_reform' ? launchFinancing(Q, project) : {kinds: [], policy: 0};
-    if (financing.blocked) return no(financing.blocked);
-    if (item === 'credit_instrument' && project.variant === 'banks' && S.economy.credit < 40) return no(L('Credit is below 40: the banks no longer agree.', 'Kredyt jest poniżej 40: banki już się nie zgadzają.'));
-    // P: the currency reform answers the financial crisis of 11.9 and is not a voluntary programme of 11.3,
-    // so, like the cabinet's necessary package, it may start below −2 B; its cost still limits execution.
-    if (item !== 'currency_reform' && forecastWith(Q, {charge: project.build_budget_B, policy: financing.policy, tax: financing.tax || 0}) < -2) return no(forecastBlock());
-    return OK;
+  // The conditions of a launch: the same law refused with nothing changed, the financing of the currency reform, and the
+  // forecast of 11.3 with the programme's monthly cost (the currency reform answers a crisis and may start below −2 B).
+  function launchStatus(Q, typeId, variantId, prepared) {
+    if (prepared && prepared.rejected_forecast && prepared.rejected_forecast === lawForecastKey(Q, prepared)) {
+      return no(L('The same law was refused and nothing has changed since.', 'Ta sama ustawa została odrzucona i od tego czasu nic się nie zmieniło.'));
+    }
+    if (typeId === 'currency_reform') {
+      const financing = launchFinancing(Q, prepared || {variant: variantId});
+      return financing.blocked ? no(financing.blocked) : OK;
+    }
+    const variant = PROJECT_TYPES[typeId].variants[variantId];
+    const cost = prepared ? prepared.build_budget_B : variant.build;
+    return forecastWith(Q, {charge: cost}) >= -2 ? OK : no(forecastBlock());
   }
 
   // The necessary package of the stabilisation is part of its launch (17.12): rapid cuts need adopted
@@ -3861,12 +3847,18 @@
     return {kinds: kinds, policy: policy};
   }
 
-  function agendaChoose(Q, item) {
-    const S = Q.S, t = Q.time;
-    const status = agendaStatus(Q, item);
-    if (!status.available) throw new Error('agendaChoose: ' + item + ': ' + status.reason);
-    const project = agendaProject(S, item);
-    rules.commitMainAction(Q, 'project.launch.' + item, {project_id: project.id});
+  // What the launch costs, in words: one monthly cost, for its months or for as long as it works (Z — 0.93).
+  function launchCostText(project) {
+    const cost = numB(project.build_budget_B), runs = project.upkeep_budget_B > 0 || PROJECT_TYPES[project.type].ongoing;
+    return runs ? L(cost + ' B a month while it works; first effects in ' + months(project.duration_months),
+      cost + ' B miesięcznie, dopóki działa; pierwsze skutki za ' + months(project.duration_months)) :
+      L(cost + ' B a month for ' + months(project.duration_months), cost + ' B miesięcznie przez ' + months(project.duration_months));
+  }
+
+  // The launch itself, in the same decision (and for an event, in the same answer). Returns the text of the result.
+  function launchPrepared(Q, project) {
+    const S = Q.S, t = Q.time, item = project.type;
+    const name = L(PROJECT_TYPES[item].name, PROJECT_NAMES_PL[item] || PROJECT_TYPES[item].name);
     if (item === 'currency_reform') {
       const financing = launchFinancing(Q, project);
       const law = projectLaw(project);
@@ -3886,48 +3878,17 @@
       if (bill.status === 'rejected') {
         project.status = 'prepared';
         project.started_at = null;
-        return result(Q, L('The Sejm rejects the currency law; the reform stays prepared.', 'Sejm odrzuca ustawę walutową; reforma pozostaje przygotowana.'));
+        return L('The Sejm rejects the currency law; the reform stays prepared and can be filed again.', 'Sejm odrzuca ustawę walutową; reforma pozostaje przygotowana i można ją zgłosić ponownie.');
       }
-      return result(Q, L('The currency reform is launched' + (kinds.length ? ' with ' + kinds.map(k => INSTRUMENTS[k].name).join(' and ') : '') + '.',
-        'Reforma walutowa zostaje uruchomiona' + (kinds.length ? ' wraz z: ' + kinds.map(instrumentName).join(' i ') : '') + '.') + lawNote(bill));
+      return L('The currency reform is launched (' + launchCostText(project) + ')' + (kinds.length ? ' with ' + kinds.map(k => INSTRUMENTS[k].name).join(' and ') : '') + '.',
+        'Reforma walutowa zostaje uruchomiona (' + launchCostText(project) + ')' + (kinds.length ? ' wraz z: ' + kinds.map(instrumentName).join(' i ') : '') + '.') + lawNote(bill);
     }
     const law = launchProject(Q, project, {sponsor: 'pps'});
-    if (law && law.status === 'rejected') return result(Q, L('The Sejm rejects the law; the programme stays prepared.', 'Sejm odrzuca ustawę; program pozostaje przygotowany.'));
-    return result(Q, L(PROJECT_TYPES[item].name + ' launched: ' + numB(project.build_budget_B) + ' B a month while it is built.',
-      PROJECT_NAMES_PL[item] + ': uruchomiono; ' + numB(project.build_budget_B) + ' B miesięcznie w czasie budowy.') + lawNote(law));
-  }
-
-  // Z — 0.74 (decision 2A of 8 X 2026): the prepared reforms of the ministries; a change of the constitution is a motion of the
-  // constitutional debate instead (Z — 0.82).
-  function agendaItemsFor(Q) {
-    const S = Q.S;
-    return AGENDA_TYPES.filter(type => agendaProject(S, type));
-  }
-
-  function agendaAvailable(Q) {
-    const S = Q.S;
-    if (!S || S.chapter.status === 'ended' || government.formationPending(Q)) return false;
-    return agendaItemsFor(Q).length > 0;
-  }
-
-  function agendaView(Q) {
-    const S = Q.S;
-    const lines = [];
-    for (const item of agendaItemsFor(Q)) {
-      const status = agendaStatus(Q, item);
-      Q['pl_agenda_' + item + '_why'] = status.reason;
-      const project = agendaProject(S, item);
-      lines.push(describeProject(project, S).replace(/\.$/, '') + L('; building costs ' + numB(project.build_budget_B) + ' B a month for ' + project.duration_months +
-        ' months' + (project.upkeep_budget_B ? ', then ' + numB(project.upkeep_budget_B) + ' B to run' : '') + '.',
-        '; budowa kosztuje ' + numB(project.build_budget_B) + ' B miesięcznie przez ' + months(project.duration_months) +
-        (project.upkeep_budget_B ? ', potem ' + numB(project.upkeep_budget_B) + ' B na utrzymanie' : '') + '.'));
+    if (law && law.status === 'rejected') {
+      return L(name + ': the Sejm rejects its law; the programme stays prepared and can be filed again.',
+        name + ': Sejm odrzuca ustawę; program pozostaje przygotowany i można go zgłosić ponownie.');
     }
-    for (const item of AGENDA_TYPES) {
-      if (Q['pl_agenda_' + item + '_why'] === undefined) Q['pl_agenda_' + item + '_why'] = '';
-    }
-    Q.pl_agenda_lines = lines.join(' ');
-    Q.pl_agenda_budget = L('Budget this month: ', 'Budżet w tym miesiącu: ') + signed(round(economy.budgetAt(S, Q.time).budget, 1), 1) + ' B.';
-    Q.pl_gc_result = '';
+    return L('Started: ' + name + ' — ' + launchCostText(project) + '.', 'Uruchomiono: ' + name + ' — ' + launchCostText(project) + '.') + lawNote(law);
   }
 
   // ---- Economic events (catalogue 9.11–9.13; 17.13) ----------------------------------------------
@@ -3984,14 +3945,14 @@
       if (option === 'credit') {
         if (!ppsHoldsAny(S, ['finance', 'economic'])) return no(L('Needs the Treasury or Industry and Trade.', 'Wymaga resortu Skarbu albo Przemysłu i Handlu.'));
         const instrument = projectsOf(S, 'credit_instrument')[0];
-        if (instrument) return no(L('The credit instrument already exists; it is launched from the card “Prepared Reforms”.', 'Instrument kredytowy już istnieje; uruchamia się go z karty „Przygotowane reformy”.'));
+        if (instrument) return no(L('The credit instrument already exists; the ministry card starts it.', 'Instrument kredytowy już istnieje; uruchamia go karta resortu.'));
         return OK;
       }
       if (option === 'orders') {
         if (ppsHolds(S, 'economic') && !projectsOf(S, 'orders', p => liveProject(p)).length) return OK;
-        const works = agendaProject(S, 'public_works');
-        if (ppsHolds(S, 'labor') && works) return OK;
-        return no(L('Needs Industry and Trade for orders, or Labour with prepared public works.', 'Wymaga resortu Przemysłu i Handlu dla zamówień albo resortu Pracy z przygotowanymi robotami publicznymi.'));
+        // Z — 0.93 (decision 4A): Labour answers with quick public works started at once, within the budget rule of 11.3.
+        if (ppsHolds(S, 'labor')) return launchStatus(Q, 'public_works', 'employment', agendaProject(S, 'public_works'));
+        return no(L('Needs Industry and Trade for orders, or Labour for public works.', 'Wymaga resortu Przemysłu i Handlu dla zamówień albo resortu Pracy dla robót publicznych.'));
       }
       if (option === 'protection') {
         if (!ppsHolds(S, 'labor')) return no(L('Needs Labour.', 'Wymaga resortu Pracy.'));
@@ -4003,6 +3964,15 @@
       return no(L('Unknown option.', 'Nieznana opcja.'));
     }
     return no(L('Unknown event.', 'Nieznane wydarzenie.'));
+  }
+
+  // Z — 0.93 (decision 4A): a reform chosen in the answer to an event starts at once when its conditions allow; otherwise it stays
+  // prepared and the ministry card starts it later.
+  function eventLaunch(Q, project) {
+    const status = launchStatus(Q, project.type, project.variant, project);
+    if (status.available) return launchPrepared(Q, project);
+    return L(PROJECT_TYPES[project.type].name + ' is prepared but cannot start yet: ' + status.reason + ' The ministry card starts it later.',
+      (PROJECT_NAMES_PL[project.type] || project.type) + ': przygotowane, ale nie może jeszcze ruszyć: ' + status.reason + ' Uruchomi je później karta resortu.');
   }
 
   // The first answer to an event costs 0 T; the costs of the intervention are the ordinary ones.
@@ -4018,13 +3988,10 @@
         government.openTolerationOffer(Q);
         return result(Q, L('PPS answers with a toleration offer to Grabski; its terms are set in the formation card.', 'PPS odpowiada ofertą tolerowania gabinetu Grabskiego; jej warunki ustala się w karcie formowania gabinetu.'));
       }
-      prepareProject(Q, 'currency_reform', option, ppsFields);
-      return result(Q, L('The currency reform is prepared (' + VARIANT_NAMES[option] + '). Its launch waits in the card “Prepared Reforms”.',
-        'Reforma walutowa jest przygotowana (' + VARIANT_NAMES_PL[option] + '). Jej uruchomienie czeka w karcie „Przygotowane reformy”.'));
+      return result(Q, eventLaunch(Q, prepareProject(Q, 'currency_reform', option, ppsFields)));
     }
     if (option === 'credit') {
-      prepareProject(Q, 'credit_instrument', 'public', ppsFields);
-      return result(Q, L('A conditional credit instrument is prepared; its launch waits in the card “Prepared Reforms”.', 'Warunkowy instrument kredytowy jest przygotowany; jego uruchomienie czeka w karcie „Przygotowane reformy”.'));
+      return result(Q, eventLaunch(Q, prepareProject(Q, 'credit_instrument', 'public', ppsFields)));
     }
     if (option === 'orders') {
       if (ppsHolds(S, 'economic') && !projectsOf(S, 'orders', p => liveProject(p)).length) {
@@ -4032,9 +3999,8 @@
         launchProject(Q, project, {sponsor: 'pps'});
         return result(Q, L('A package of public orders runs for three settlements.', 'Pakiet zamówień publicznych trwa przez trzy rozliczenia.'));
       }
-      const works = agendaProject(S, 'public_works');
-      launchProject(Q, works, {sponsor: 'pps'});
-      return result(Q, L('The prepared public works are launched.', 'Przygotowane roboty publiczne zostają uruchomione.'));
+      const works = agendaProject(S, 'public_works') || prepareProject(Q, 'public_works', 'employment', ppsFields, {match: p => p.sponsor === 'pps'});
+      return result(Q, launchPrepared(Q, works));
     }
     if (option === 'protection') {
       const protection = operatingProtection(S);
@@ -4169,18 +4135,9 @@
     return lines.join(' ');
   }
 
-  // Z — 0.74 (decisions 1A–3A of 8 X 2026): the urgent cards of this module (PolishRules.registerUrgentCard). The prepared
-  // reforms belong to the Government deck while PPS holds a portfolio that can launch one of them; a launch of civilian control by
-  // the parliamentary route alone (card 7.5) belongs to the Parliament deck. The budget card belongs to the Parliament deck until
-  // the vote of the package; the vote on a motion of the constitutional debate (Z — 0.82), from the month after the Committee
-  // brought it to the floor.
-  const viaParliamentOnly = (S, item) => item === 'army_control' && agendaProject(S, item).policy_choices.via === 'parliament';
-  function agendaUrgent(Q) {
-    const S = Q.S;
-    return agendaAvailable(Q) && agendaItemsFor(Q).some(item => viaParliamentOnly(S, item) || ppsHoldsAny(S, PROJECT_TYPES[item].portfolios));
-  }
-  rules.registerUrgentCard('polish_agenda', {active: agendaUrgent,
-    deck: Q => agendaItemsFor(Q).every(item => viaParliamentOnly(Q.S, item)) ? 'main.parliament' : 'main.govt'});
+  // Z — 0.74 (decisions 1A–3A of 8 X 2026): the urgent cards of this module (PolishRules.registerUrgentCard). The budget card
+  // belongs to the Parliament deck until the vote of the package; the vote on a motion of the constitutional debate (Z — 0.82),
+  // from the month after the Committee brought it to the floor. Z — 0.93 (decision 4A): the card of the prepared reforms is gone.
   rules.registerUrgentCard('polish_budget_package', {active: Q => budgetCardAvailable(Q), deck: () => 'main.parliament'});
   rules.registerCardDeadline('polish_budget_package', Q => Q.S && Q.S.economy && Q.S.economy.pending_package ? Q.S.economy.pending_package.vote_at : null);
   rules.registerUrgentCard('polish_constitution_vote', {deck: () => 'main.parliament', active: constitutionVoteActive});
@@ -4287,12 +4244,7 @@
     optionStatus: optionStatus,
     chooseOption: chooseOption,
     cardView: cardView,
-    agendaAvailable: agendaAvailable,
-    agendaUrgent: agendaUrgent,
-    agendaStatus: agendaStatus,
-    agendaChoose: agendaChoose,
-    agendaView: agendaView,
-    agendaItemsFor: agendaItemsFor,
+    launchStatus: launchStatus,
     stabilizationEventDue: stabilizationEventDue,
     creditEventDue: creditEventDue,
     austerityEventDue: austerityEventDue,

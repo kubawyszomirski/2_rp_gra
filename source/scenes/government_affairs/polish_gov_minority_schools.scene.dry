@@ -18,7 +18,7 @@ Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_minority_schools')
 
 *[+ pl_gc_ministry +]*
 
-One language rule, carried out by a large school project (1 B for 4 months, then 1 B). A carried-out agreement with a minority representation raises that club’s relation by 4; a declaration alone gives nothing.
+One language rule, carried out by a school project that costs 1 B a month from its launch; its schools work after four months. A carried-out agreement with a minority representation raises that club’s relation by 4; a declaration alone gives nothing.
 
 [+ pl_gc_budget +]
 

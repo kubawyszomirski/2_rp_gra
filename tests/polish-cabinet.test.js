@@ -483,8 +483,9 @@ test('Odpowiedź partnerowi 0.77: a warning says what happened, what is at stake
   const remedy = PolishProjects.responseRemedy(Q, id => (engine.game.scenes[id] || {}).title);
   assert.ok(remedy.includes('The Education ministry is held by ' + (Q.S.cabinet.portfolios.education === 'expert' ? 'a non-party expert' : holder) +
     ', so it is that ministry’s task, not ours'), remedy);
-  assert.ok(remedy.includes('The project must be prepared with the card “Language Rights and Minority Schools” (the Education ministry, variant: ' +
-    'teaching in the own language or agreed bilingualism), then launched with the card “Prepared Reforms”.'), remedy);
+  // Z — 0.93 (decision 4A of 24 X 2026): the ministry card launches the project in one decision.
+  assert.ok(remedy.includes('The project is launched with the card “Language Rights and Minority Schools” (the Education ministry, variant: ' +
+    'teaching in the own language or agreed bilingualism).'), remedy);
   PolishRules.setLanguage('pl');
   try {
     assert.match(PolishGovernment.responseBrief(Q).what, /^<strong>Co się stało\.<\/strong> NPR przypomina obietnicę z naszego porozumienia: .*prawa językowe i szkoły mniejszości do \w+ 1922\. Termin minął/);

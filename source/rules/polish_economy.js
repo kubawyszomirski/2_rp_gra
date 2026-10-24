@@ -471,8 +471,13 @@
     if (Math.abs(forecast.policy_budget) > 1e-9) parts.push(L('instruments ', 'instrumenty ') + signed(forecast.policy_budget, 0));
     if (Math.abs(forecast.project_charges) > 1e-9) parts.push(L('programmes −', 'programy −') + rules.num(round(forecast.project_charges, 1)));
     if (forecast.emission_used >= 0.05) parts.push(L('emission ', 'emisja ') + signed(forecast.emission_used, 1));
+    // Z — 0.93 (decision 3A of 24 X 2026): the sidebar shows one number and what it allows; its parts are in the Library.
+    const room = round(forecast.budget + 2, 1);
+    const roomText = room >= 0.05 ? L('a new programme may cost up to ' + rules.num(room, 1) + ' B a month', 'nowy program może kosztować najwyżej ' +
+      rules.num(room, 1) + ' B miesięcznie') : L('no new programme can start', 'żaden nowy program nie ruszy');
     return {
-      budget: signed(round(forecast.budget, 1), 1) + L(' B this month (', ' B w tym miesiącu (') + parts.join(', ') + '); ' + deliveryText,
+      budget: signed(round(forecast.budget, 1), 1) + L(' B this month; ', ' B w tym miesiącu; ') + deliveryText + '; ' + roomText,
+      budget_parts: parts.join(', '),
       inflation: rules.num(round(E.inflation_m, 1), 1) + L('% a month', '% miesięcznie'),
       real_wage: rules.num(round(E.real_wage, 1), 1),
       output: rules.num(round(E.output, 1), 1) + L(' (last month ', ' (w poprzednim miesiącu ') + signed(round(E.last_growth, 2), 2) + '%)',

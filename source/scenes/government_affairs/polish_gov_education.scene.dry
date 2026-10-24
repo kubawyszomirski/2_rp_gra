@@ -18,7 +18,7 @@ Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_education');
 
 *[+ pl_gc_ministry +]*
 
-A school programme is large: 1 B for 4 months of building, then 1 B to run, in up to three separate tranches. The same scope of schools is never financed twice.
+A school programme costs 1 B a month from its launch; its schools work after four months, in up to three separate tranches. The same scope of schools is never financed twice.
 
 [+ pl_gc_budget +]
 

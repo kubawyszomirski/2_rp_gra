@@ -428,7 +428,7 @@ test('Efekt projektu: a law, a lawful executor, no PPS minister, budget −3: ex
   proj.launchProject(Q, works, { sponsor: 'cabinet' });
   const protection = proj.createProject(Q, 'worker_protection', 'full', { sponsor: 'cabinet' });
   proj.launchProject(Q, protection, { sponsor: 'cabinet' });
-  Q.S.economy.budget_base = 1; // 1 − 2 (works) − 2 (protection) = −3
+  Q.S.economy.budget_base = 0; // 0 − 1 (works, Z — 0.93) − 2 (protection) = −3
   const b = econ.budgetAt(Q.S, 5);
   assert.equal(b.budget, -3);
   proj.processProjects(Q, 5, b);
@@ -522,19 +522,19 @@ function withPortfolio(Q, key) {
   return Q;
 }
 
-test('Kredyt B16: Labour only / Treasury only / the opposition: the right interventions, the others blocked; no menu in opposition; nothing ready is created', () => {
+test('Kredyt B16: Labour only / Treasury only / the opposition: the right interventions, the others blocked; no menu in opposition; the chosen instrument starts at once', () => {
   const t = rules.timeOf(1925, 7);
   const labour = withPortfolio(world({ time: t, isolated: false }), 'labor');
   assert.equal(proj.creditEventDue(labour), true);
   assert.equal(proj.eventStatus(labour, 'credit', 'credit').available, false);
   assert.equal(proj.eventStatus(labour, 'credit', 'protection').available, true);
-  assert.equal(proj.eventStatus(labour, 'credit', 'orders').available, false, 'no prepared works and no Industry');
+  assert.equal(proj.eventStatus(labour, 'credit', 'orders').available, true, 'Z — 0.93: Labour answers with quick public works');
   const treasury = withPortfolio(world({ time: t, isolated: false }), 'finance');
   assert.equal(proj.eventStatus(treasury, 'credit', 'credit').available, true);
   assert.equal(proj.eventStatus(treasury, 'credit', 'protection').available, false);
   proj.eventChoose(treasury, 'credit', 'credit');
-  const prepared = Object.values(treasury.S.projects).find(p => p.type === 'credit_instrument');
-  assert.equal(prepared.status, 'prepared', 'the answer prepares; the launch is an ordinary agenda step');
+  const started = Object.values(treasury.S.projects).find(p => p.type === 'credit_instrument');
+  assert.equal(started.status, 'executing', 'Z — 0.93 (decision 4A): the answer starts the instrument at once');
   const opposition = world({ time: t, isolated: false });
   gov.leaveCabinet(opposition, 'pps', 'fixture');
   assert.equal(proj.creditEventDue(opposition), false, 'no menu of interventions without executive access');
@@ -548,16 +548,16 @@ test('Roboty pod Pracą and Wariant robót: Labour and financing / Treasury only
   assert.equal(proj.cardAvailable(Q, 'public_works'), true);
   const treasury = withPortfolio(world({ time: 12 }), 'finance');
   assert.equal(proj.cardAvailable(treasury, 'public_works'), false, 'the Treasury alone gives no competence of Labour');
+  // Z — 0.93 (decisions 3A and 4A of 24 X 2026): one cost of 1 B a month, started in the same decision.
   proj.chooseOption(Q, 'public_works', 'housing');
   const housing = Object.values(Q.S.projects).find(p => p.type === 'public_works');
-  assert.deepEqual([housing.variant, housing.duration_months, housing.build_budget_B, housing.upkeep_budget_B], ['housing', 4, 2, 1]);
+  assert.deepEqual([housing.variant, housing.status, housing.duration_months, housing.build_budget_B, housing.upkeep_budget_B], ['housing', 'executing', 4, 1, 1]);
   assert.equal(proj.PROJECT_TYPES.public_works.variants.housing.units, 0, 'no employment units for housing');
   freeAction(Q);
-  Q.S.economy.budget_base = -1; // the launch would put the forecast at −3
-  assert.match(proj.agendaStatus(Q, 'public_works').reason, /deficit stays at 2 budget units or less/);
+  Q.S.economy.budget_base = -1; // −1 − 1 (housing) − 1 (new works) = −3
+  assert.match(proj.optionStatus(Q, 'public_works', 'employment').reason, /deficit stays at 2 budget units or less/);
   Q.S.economy.budget_base = 2;
-  assert.equal(proj.agendaStatus(Q, 'public_works').available, true);
-  proj.agendaChoose(Q, 'public_works');
+  assert.equal(proj.optionStatus(Q, 'public_works', 'employment').available, true);
   for (let i = 0; i < 5; i++) { month(Q); freeAction(Q); }
   assert.equal(housing.status, 'operating', 'the built housing stays recorded');
   assert.equal(econ.budgetAt(Q.S, Q.time).project_charges, 1);
@@ -633,7 +633,7 @@ test('Rozszerzyć i skupić osłony: a protection of 2 B extended to scope 2 cos
   assert.deepEqual([focused.variant, focused.upkeep_budget_B, proj.PROJECT_TYPES.worker_protection.variants.focused.share], ['focused', 1, 0.5]);
 });
 
-test('Warianty funduszu inwestycyjnego and Ratunek zakładu: public 2 B; banks blocked at credit 39, at 40 1 B and business −8; cooperatives need no PPS cooperative (Z — 0.92); no rescue without a recorded plant', () => {
+test('Warianty funduszu inwestycyjnego and Ratunek zakładu: 1 B a month for every financing (Z — 0.93); banks blocked at credit 39, at 40 and business −8; cooperatives need no PPS cooperative (Z — 0.92); no rescue without a recorded plant', () => {
   const Q = withPortfolio(world({ time: 12 }), 'finance');
   Q.S.economy.credit = 39;
   assert.match(proj.optionStatus(Q, 'investment_fund', 'banks').reason, /below 40/);
@@ -641,16 +641,15 @@ test('Warianty funduszu inwestycyjnego and Ratunek zakładu: public 2 B; banks b
   proj.chooseOption(Q, 'investment_fund', 'banks');
   freeAction(Q);
   const instrument = Object.values(Q.S.projects).find(p => p.type === 'credit_instrument');
-  assert.deepEqual([instrument.variant, instrument.build_budget_B, instrument.upkeep_budget_B], ['banks', 1, 1]);
-  proj.agendaChoose(Q, 'credit_instrument');
+  assert.deepEqual([instrument.variant, instrument.status, instrument.build_budget_B, instrument.upkeep_budget_B], ['banks', 'executing', 1, 1]);
   assert.equal(Q.S.economy.business_pressure, 10 - 8, 'the agreement lowers business pressure once');
-  // Z — 0.92: the cooperative variant uses the existing cooperative movement; it costs 2 B and gives credit to farms and
-  // small plants (the rural and petty-bourgeois recipients).
+  // Z — 0.92: the cooperative variant uses the existing cooperative movement; it gives credit to farms and small plants (the
+  // rural and petty-bourgeois recipients). Z — 0.93: 1 B a month, like the others.
   const C = withPortfolio(world({ time: 12 }), 'finance');
   assert.equal(proj.optionStatus(C, 'investment_fund', 'cooperative').available, true);
   proj.chooseOption(C, 'investment_fund', 'cooperative');
   const cooperative = Object.values(C.S.projects).find(p => p.type === 'credit_instrument');
-  assert.deepEqual([cooperative.variant, cooperative.build_budget_B, cooperative.beneficiaries], ['cooperative', 2, ['rural', 'old_middle']]);
+  assert.deepEqual([cooperative.variant, cooperative.build_budget_B, cooperative.beneficiaries], ['cooperative', 1, ['rural', 'old_middle']]);
   const I = withPortfolio(world({ time: 12 }), 'economic');
   // Stage 6: the rescue needs a recorded plant (tests/rules-strike.test.js, "Ratunek zakładu").
   assert.match(proj.optionStatus(I, 'industrial_policy', 'rescue').reason, /recorded plant/);
@@ -676,13 +675,10 @@ test('Szkoły and Szkoła świecka bez reakcji frakcji: separate projects with t
   const schools = Object.values(Q.S.projects).filter(p => p.type === 'education_program' || p.type === 'minority_schools');
   assert.equal(schools.length, 2, 'the language rule of the same scope is a separate project with its own costs');
   const lewica = Q.lewica_dissent;
+  // Z — 0.93 (decision 4A of 24 X 2026): each programme starts in its own decision; the village schools needed no law.
+  assert.equal(Q.S.parliament.laws.length, 0, 'village schools need no new law');
   proj.chooseOption(Q, 'education_program', 'secular');
   freeAction(Q);
-  // The agenda launches the prepared school programmes one at a time: first the village schools.
-  proj.agendaChoose(Q, 'education_program');
-  freeAction(Q);
-  assert.equal(Q.S.parliament.laws.length, 0, 'village schools need no new law');
-  proj.agendaChoose(Q, 'education_program');
   const secularLaw = Q.S.parliament.laws.at(-1);
   assert.equal(secularLaw.title.startsWith('Secular school'), true);
   assert.equal(secularLaw.status, 'enacted', 'no Senate yet in this fixture: the Sejm vote decides');
@@ -898,14 +894,11 @@ test('P: the currency reform answering a financial crisis may start below −2 B
   const Q = withPortfolio(world({ time: 20 }), 'finance');
   Q.S.cabinet.portfolios.labor = 'pps';
   Q.S.economy.history.push({ t: 18, inflation_m: 30, budget: -3, credit: 50 }, { t: 19, inflation_m: 40, budget: -3, credit: 50 });
-  proj.chooseOption(Q, 'currency_stabilisation', 'gradual');
-  freeAction(Q);
-  proj.chooseOption(Q, 'public_works', 'employment');
-  freeAction(Q);
+  // Z — 0.93 (decision 4A of 24 X 2026): the card starts the reform in the same decision; the rule is checked on the card.
   Q.S.economy.budget_base = -3;
-  assert.match(proj.agendaStatus(Q, 'public_works').reason, /deficit stays at 2 budget units or less/);
-  assert.equal(proj.agendaStatus(Q, 'currency_reform').available, true);
-  proj.agendaChoose(Q, 'currency_reform');
+  assert.match(proj.optionStatus(Q, 'public_works', 'employment').reason, /deficit stays at 2 budget units or less/);
+  assert.equal(proj.optionStatus(Q, 'currency_stabilisation', 'gradual').available, true);
+  proj.chooseOption(Q, 'currency_stabilisation', 'gradual');
   const reform = proj.currencyProject(Q.S);
   assert.equal(reform.status, 'executing', 'launched; its cost still limits execution');
   assert.equal(Q.S.economy.currency_regime, 'stabilizing');

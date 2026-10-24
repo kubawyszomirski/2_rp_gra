@@ -283,9 +283,8 @@ test('Reprezentacja: consultation −2, then co-decision only the missing −2, 
   S.parliament.clubs.find(c => c.id === 'pps').seats += 215;
   S.parliament.clubs.find(c => c.id === 'other').seats -= 215;
   free(Q);
+  // Z — 0.93 (decision 4A of 24 X 2026): co-decision is filed and started in the same decision.
   PolishProjects.chooseOption(Q, 'industrial_policy', 'worker_representation', { variant: 'decision_rights' });
-  free(Q);
-  PolishProjects.agendaChoose(Q, 'enterprise_representation');
   const project = Object.values(S.projects).find(p => p.type === 'enterprise_representation' && p.variant === 'decision_rights');
   // The months of execution without politics, so the effect waits until it is applied here.
   for (let i = 0; i < 3 && project.status !== 'completed'; i++) {

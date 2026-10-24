@@ -50,8 +50,6 @@ const P = {
   // Z — 0.81: the bill of the legislative initiative (the card replaced the bill D and the parliamentary control of the army).
   initiative: id => ['polish_legislative_initiative', 'polish_legislative_initiative.' + id],
   gov: (card, option) => [card, card + '.' + option],
-  // Z — 0.74: the prepared reforms are an urgent card in the hand, opened here directly (as a played card is).
-  agenda: option => ['polish_agenda', 'polish_agenda.' + option],
   support: option => ['polish_government_support', 'polish_government_support.' + option],
   // Z — 0.64: a PPS member raises the same demands on the coalition card of the Government deck.
   coalition: option => ['polish_coalition_affairs', 'polish_government_support.' + option],
@@ -261,8 +259,8 @@ const plan = {
   government(ctx) {
     const list = [];
     if (ctx.holds('labor')) {
+      // Z — 0.93 (decision 4A): the works start in the decision that chooses them.
       if (!ctx.projects('public_works').length) list.push(P.gov('polish_gov_public_works', 'employment'));
-      list.push(P.agenda('launch_public_works'));
       if (!ctx.projects('worker_protection', ['operating']).length) list.push(P.gov('polish_gov_social_welfare', 'expand'));
       list.push(P.gov('polish_gov_labor_rights', 'collective'));
     }

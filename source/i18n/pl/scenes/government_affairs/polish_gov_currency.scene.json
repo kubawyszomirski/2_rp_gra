@@ -3,15 +3,15 @@
  "status": "complete",
  "lines": {
   "title: Currency Stabilisation": "title: Stabilizacja waluty",
-  "subtitle: Treasury: one currency reform, prepared then launched.": "subtitle: Resort Skarbu: jedna reforma walutowa, najpierw przygotowana, potem uruchomiona.",
   "= Currency stabilisation": "= Stabilizacja waluty",
-  "A financial crisis — a budget below −2 B or inflation of at least 20% a month for two months — opens the one currency reform. Choosing a variant prepares it (1 T); its launch with the currency law and the necessary financing waits in the card “Prepared Reforms” (1 T). When it is completed the złoty ends the marka pressures and the ordinary emission.": "Kryzys finansowy — deficyt budżetu ponad 2 jednostki albo inflacja co najmniej 20% miesięcznie przez dwa miesiące — otwiera drogę do jednej reformy walutowej. Wybór wariantu ją przygotowuje (akcja miesiąca); uruchomienie wraz z ustawą walutową i niezbędnym finansowaniem czeka w karcie „Przygotowane reformy” (kolejna akcja miesiąca). Po zakończeniu reformy złoty kończy presje związane z marką i zwykłą emisję.",
   "title: Rapid stabilisation with savings": "title: Szybka stabilizacja z oszczędnościami",
   "subtitle: Costs the budget 2 units a month for three months; needs adopted cuts of at least 1 budget unit; the credit shock grows for three months from the launch (+10).": "subtitle: Obciąża budżet: 2 jednostki miesięcznie przez trzy miesiące; wymaga przyjętych cięć co najmniej 1 jednostki budżetu; szok kredytowy rośnie przez trzy miesiące od uruchomienia (+10).",
   "title: Stabilisation with protections and a burden on wealth": "title: Stabilizacja z osłonami i obciążeniem majątku",
   "subtitle: Costs the budget 2 units a month for three months; needs a protection for the unemployed and its financing; the same credit shock.": "subtitle: Obciąża budżet: 2 jednostki miesięcznie przez trzy miesiące; wymaga osłony dla bezrobotnych i jej finansowania; ten sam szok kredytowy.",
   "title: Gradual limitation of emission": "title: Stopniowe ograniczanie emisji",
   "subtitle: Costs the budget 1 unit a month for five months; the credit shock grows for five months (+5); the pressure on the marka lasts longer.": "subtitle: Obciąża budżet: 1 jednostka miesięcznie przez pięć miesięcy; szok kredytowy rośnie przez pięć miesięcy (+5); presja marki trwa dłużej.",
-  "- @root: Continue.": "- @root: Dalej."
+  "- @root: Continue.": "- @root: Dalej.",
+  "subtitle: Treasury: one currency reform, launched in one decision.": "subtitle: Resort Skarbu: jedna reforma walutowa, uruchamiana jedną decyzją.",
+  "A financial crisis — a budget below −2 B or inflation of at least 20% a month for two months — opens the one currency reform. Choosing a variant launches it in the same decision (1 T): the Sejm votes at once on the currency law with its necessary financing. When it is completed the złoty ends the marka pressures and the ordinary emission.": "Kryzys finansowy — deficyt budżetu ponad 2 jednostki albo inflacja co najmniej 20% miesięcznie przez dwa miesiące — otwiera drogę do jednej reformy walutowej. Wybór wariantu uruchamia ją w tej samej decyzji (akcja miesiąca): Sejm od razu głosuje nad ustawą walutową wraz z niezbędnym finansowaniem. Po zakończeniu reformy złoty kończy presje związane z marką i zwykłą emisję."
  }
 }
