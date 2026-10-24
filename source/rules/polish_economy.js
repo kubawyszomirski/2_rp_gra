@@ -465,13 +465,14 @@
     const deliveryText = delivery === 1 ? L('programmes run in full', 'programy działają w pełni') :
       delivery === 0.5 ? L('programmes run at half strength', 'programy działają w połowie') : L('programmes are stopped', 'programy są wstrzymane');
     const parts = [L('base ', 'podstawa ') + signed(E.budget_base, 0), L('taxes ', 'podatki ') + signed(forecast.tax_level, 0)];
-    if (Math.abs(forecast.cycle) >= 0.005) parts.push(L('business cycle ', 'koniunktura ') + signed(forecast.cycle, 2));
-    if (forecast.inflation_burden) parts.push(L('inflation −', 'inflacja −') + rules.num(forecast.inflation_burden));
+    // Z — 0.84/0.85 (the user's notes of 24 X 2026): budget units are shown to 0.1; the budget itself is not rounded.
+    if (Math.abs(forecast.cycle) >= 0.05) parts.push(L('business cycle ', 'koniunktura ') + signed(forecast.cycle, 1));
+    if (round(forecast.inflation_burden || 0, 1)) parts.push(L('inflation −', 'inflacja −') + rules.num(round(forecast.inflation_burden, 1)));
     if (Math.abs(forecast.policy_budget) > 1e-9) parts.push(L('instruments ', 'instrumenty ') + signed(forecast.policy_budget, 0));
-    if (Math.abs(forecast.project_charges) > 1e-9) parts.push(L('programmes −', 'programy −') + rules.num(round(forecast.project_charges, 2)));
-    if (forecast.emission_used >= 0.005) parts.push(L('emission ', 'emisja ') + signed(forecast.emission_used, 2));
+    if (Math.abs(forecast.project_charges) > 1e-9) parts.push(L('programmes −', 'programy −') + rules.num(round(forecast.project_charges, 1)));
+    if (forecast.emission_used >= 0.05) parts.push(L('emission ', 'emisja ') + signed(forecast.emission_used, 1));
     return {
-      budget: signed(round(forecast.budget, 2), 2) + L(' B this month (', ' B w tym miesiącu (') + parts.join(', ') + '); ' + deliveryText,
+      budget: signed(round(forecast.budget, 1), 1) + L(' B this month (', ' B w tym miesiącu (') + parts.join(', ') + '); ' + deliveryText,
       inflation: rules.num(round(E.inflation_m, 1), 1) + L('% a month', '% miesięcznie'),
       real_wage: rules.num(round(E.real_wage, 1), 1),
       output: rules.num(round(E.output, 1), 1) + L(' (last month ', ' (w poprzednim miesiącu ') + signed(round(E.last_growth, 2), 2) + '%)',

@@ -102,7 +102,7 @@ test('Status shows the Polish budget, currency, prices, output, credit, unemploy
   const engine = dendry.startGame();
   engine.goToScene('status.economy');
   const text = content(engine);
-  assert.match(text, /\+2\.00 B this month \(base \+2, taxes 0\); programmes run in full/);
+  assert.match(text, /\+2\.0 B this month \(base \+2, taxes 0\); programmes run in full/, 'budget units to 0.1 (Z — 0.85)');
   assert.match(text, /"Polish mark"/);
   assert.match(text, /"4\.0% a month"/);
   assert.match(text, /Agrarian pressure \(0–100\):["\]}, ]+45\.0"/);

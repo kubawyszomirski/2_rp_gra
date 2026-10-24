@@ -41,6 +41,8 @@
   const L = rules.L;
   const PL = () => rules.getLanguage() === 'pl';
   const num = value => (PL() ? String(value).replace('.', ',') : String(value));
+  // Z — 0.85 (the user's note of 24 X 2026): budget units on the screen to 0.1.
+  const numB = value => num(Math.round(value * 10) / 10);
   const signed = (value, digits) => {
     const text = Math.abs(value).toFixed(digits === undefined ? 1 : digits);
     return (value > 0 && +text !== 0 ? '+' : value < 0 && +text !== 0 ? '−' : '') + num(text);
@@ -1689,7 +1691,7 @@
         variantName(S.projects[pkg.project_id].variant) + ')' : '',
       reason: L(PACKAGE_REASONS[pkg.reason], PACKAGE_REASONS_PL[pkg.reason]) || pkg.reason,
       necessary: pkg.necessary,
-      forecast: signed(round(forecast.budget, 2), 2) + L(' B this month', ' B w tym miesiącu'),
+      forecast: signed(round(forecast.budget, 1), 1) + L(' B this month', ' B w tym miesiącu'),
       vote: monthText(pkg.vote_at, 'gen'),
     };
   }
@@ -2594,7 +2596,7 @@
       limited_forecast: L(limited.yes + ' for, ' + limited.no + ' against, ' + limited.abstain + ' abstaining',
         limited.yes + ' za, ' + limited.no + ' przeciw, ' + limited.abstain + ' wstrzymujących się'),
       compromise: compromiseClubs(Q).map(government.describeParty).join(', '),
-      budget: signed(round(forecast.budget, 2), 2) + L(' B now; the full variant would cost 2 B a month, the limited 1 B',
+      budget: signed(round(forecast.budget, 1), 1) + L(' B now; the full variant would cost 2 B a month, the limited 1 B',
         ' B obecnie; pełny wariant kosztowałby 2 B miesięcznie, ograniczony 1 B'),
     };
   }
@@ -3590,8 +3592,8 @@
           setVariant(protection, 'full');
           pend(protection, {system: 'grievance', stage: 7, value: -6, when: 'scope_' + protection.scope, note: 'newly covered recipients'});
           protection.history.push({t: t, kind: 'expanded', scope: protection.scope});
-          return result(Q, L('The protection now covers scope ' + protection.scope + ': ' + protection.upkeep_budget_B + ' B a month.',
-            'Osłona obejmuje teraz zakres ' + protection.scope + ': ' + num(protection.upkeep_budget_B) + ' B miesięcznie.'));
+          return result(Q, L('The protection now covers scope ' + protection.scope + ': ' + numB(protection.upkeep_budget_B) + ' B a month.',
+            'Osłona obejmuje teraz zakres ' + protection.scope + ': ' + numB(protection.upkeep_budget_B) + ' B miesięcznie.'));
         }
         if (option === 'focus') {
           if (!protection) {
@@ -3765,7 +3767,7 @@
     const S = Q.S, card = CARDS[cardId];
     const forecast = economy.budgetAt(S, Q.time);
     const delivery = economy.fiscalDelivery(forecast.budget);
-    Q.pl_gc_budget = L('Budget this month: ', 'Budżet w tym miesiącu: ') + signed(round(forecast.budget, 2), 2) + ' B (' +
+    Q.pl_gc_budget = L('Budget this month: ', 'Budżet w tym miesiącu: ') + signed(round(forecast.budget, 1), 1) + ' B (' +
       (delivery === 1 ? L('programmes run in full', 'programy działają w pełni') : delivery === 0.5 ?
         L('programmes run at half strength', 'programy działają w połowie') : L('programmes are stopped', 'programy są wstrzymane')) + ').';
     const types = Object.keys(PROJECT_TYPES).filter(id => PROJECT_TYPES[id].card === cardId || (cardId === 'industrial_policy' && id === 'credit_instrument') ||
@@ -3796,8 +3798,8 @@
         ' (' + VARIANT_NAMES_PL[p.variant] + (p.tranche ? ', transza ' + p.tranche : '') + (p.scope > 1 ? ', zakres ' + p.scope : '') + ')';
       let statePl;
       if (p.status === 'prepared' || p.status === 'idea') statePl = p.status === 'idea' ? 'w przygotowaniu' : 'przygotowanie zakończone, czeka na uruchomienie';
-      else if (p.status === 'executing') statePl = p.authorized ? 'w realizacji: ' + Math.round(p.progress) + '%, ' + num(p.build_budget_B) + ' B miesięcznie' : 'czeka na ustawę';
-      else if (p.status === 'operating') statePl = 'w działaniu: ' + num(p.upkeep_budget_B) + ' B miesięcznie' + (p.ends_at ? ' do ' + rules.monthYear(p.ends_at - 1, 'gen') : '');
+      else if (p.status === 'executing') statePl = p.authorized ? 'w realizacji: ' + Math.round(p.progress) + '%, ' + numB(p.build_budget_B) + ' B miesięcznie' : 'czeka na ustawę';
+      else if (p.status === 'operating') statePl = 'w działaniu: ' + numB(p.upkeep_budget_B) + ' B miesięcznie' + (p.ends_at ? ' do ' + rules.monthYear(p.ends_at - 1, 'gen') : '');
       else if (p.status === 'completed') statePl = 'realizacja zakończona';
       else statePl = p.status;
       const reason = p.interruption_reason && (p.status === 'executing' || p.status === 'operating') ? rules.storedText(p.interruption_reason).replace(/\.$/, '') : '';
@@ -3808,8 +3810,8 @@
       ' (' + VARIANT_NAMES[p.variant] + (p.tranche ? ', tranche ' + p.tranche : '') + (p.scope > 1 ? ', scope ' + p.scope : '') + ')';
     let state;
     if (p.status === 'prepared' || p.status === 'idea') state = p.status === 'idea' ? 'in preparation' : 'prepared, waiting for its launch';
-    else if (p.status === 'executing') state = p.authorized ? 'being built, ' + Math.round(p.progress) + '%, ' + p.build_budget_B + ' B a month' : 'waiting for its law';
-    else if (p.status === 'operating') state = 'operating, ' + p.upkeep_budget_B + ' B a month' + (p.ends_at ? ' until ' + rules.monthOf(p.ends_at - 1) + '/' + rules.yearOf(p.ends_at - 1) : '');
+    else if (p.status === 'executing') state = p.authorized ? 'being built, ' + Math.round(p.progress) + '%, ' + numB(p.build_budget_B) + ' B a month' : 'waiting for its law';
+    else if (p.status === 'operating') state = 'operating, ' + numB(p.upkeep_budget_B) + ' B a month' + (p.ends_at ? ' until ' + rules.monthOf(p.ends_at - 1) + '/' + rules.yearOf(p.ends_at - 1) : '');
     else if (p.status === 'completed') state = 'completed';
     else state = p.status;
     const note = p.interruption_reason && (p.status === 'executing' || p.status === 'operating') ? ' ' + p.interruption_reason.replace(/\.$/, '') : '';
@@ -3896,8 +3898,8 @@
     }
     const law = launchProject(Q, project, {sponsor: 'pps'});
     if (law && law.status === 'rejected') return result(Q, L('The Sejm rejects the law; the programme stays prepared.', 'Sejm odrzuca ustawę; program pozostaje przygotowany.'));
-    return result(Q, L(PROJECT_TYPES[item].name + ' launched: ' + project.build_budget_B + ' B a month while it is built.',
-      PROJECT_NAMES_PL[item] + ': uruchomiono; ' + num(project.build_budget_B) + ' B miesięcznie w czasie budowy.') + lawNote(law));
+    return result(Q, L(PROJECT_TYPES[item].name + ' launched: ' + numB(project.build_budget_B) + ' B a month while it is built.',
+      PROJECT_NAMES_PL[item] + ': uruchomiono; ' + numB(project.build_budget_B) + ' B miesięcznie w czasie budowy.') + lawNote(law));
   }
 
   // Z — 0.74 (decision 2A of 8 X 2026): the prepared reforms of the ministries; a change of the constitution is a motion of the
@@ -3920,16 +3922,16 @@
       const status = agendaStatus(Q, item);
       Q['pl_agenda_' + item + '_why'] = status.reason;
       const project = agendaProject(S, item);
-      lines.push(describeProject(project, S).replace(/\.$/, '') + L('; building costs ' + project.build_budget_B + ' B a month for ' + project.duration_months +
-        ' months' + (project.upkeep_budget_B ? ', then ' + project.upkeep_budget_B + ' B to run' : '') + '.',
-        '; budowa kosztuje ' + num(project.build_budget_B) + ' B miesięcznie przez ' + months(project.duration_months) +
-        (project.upkeep_budget_B ? ', potem ' + num(project.upkeep_budget_B) + ' B na utrzymanie' : '') + '.'));
+      lines.push(describeProject(project, S).replace(/\.$/, '') + L('; building costs ' + numB(project.build_budget_B) + ' B a month for ' + project.duration_months +
+        ' months' + (project.upkeep_budget_B ? ', then ' + numB(project.upkeep_budget_B) + ' B to run' : '') + '.',
+        '; budowa kosztuje ' + numB(project.build_budget_B) + ' B miesięcznie przez ' + months(project.duration_months) +
+        (project.upkeep_budget_B ? ', potem ' + numB(project.upkeep_budget_B) + ' B na utrzymanie' : '') + '.'));
     }
     for (const item of AGENDA_TYPES) {
       if (Q['pl_agenda_' + item + '_why'] === undefined) Q['pl_agenda_' + item + '_why'] = '';
     }
     Q.pl_agenda_lines = lines.join(' ');
-    Q.pl_agenda_budget = L('Budget this month: ', 'Budżet w tym miesiącu: ') + signed(round(economy.budgetAt(S, Q.time).budget, 2), 2) + ' B.';
+    Q.pl_agenda_budget = L('Budget this month: ', 'Budżet w tym miesiącu: ') + signed(round(economy.budgetAt(S, Q.time).budget, 1), 1) + ' B.';
     Q.pl_gc_result = '';
   }
 

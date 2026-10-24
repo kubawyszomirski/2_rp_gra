@@ -181,7 +181,7 @@ test('Pilotaż: ekran tytułowy, strona miesiąca i pasek boczny po polsku', () 
   assert.match(sidebar['status.politics'], /\nPPS: 35 posłów ?\n/);
   assert.match(sidebar['status.politics'], /\nPSL Piast: 99 posłów ?\n/);
   assert.doesNotMatch(sidebar['status.politics'], /mandatów/);
-  assert.match(sidebar['status.economy'], /Budżet: \+2,00 B w tym miesiącu/);
+  assert.match(sidebar['status.economy'], /Budżet: \+2,0 B w tym miesiącu/);
   assert.match(sidebar['status.paramilitaries'], /\nPolicja ?\n\s*Potencjał: 50 ?\n/);
   assert.match(sidebar['status.politics'], /PSL Wyzwolenie: przyjazne/);
   assert.deepEqual(errors, []);
