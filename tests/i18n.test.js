@@ -84,6 +84,24 @@ test('Immersja 0.80: polskie teksty scen bez uwag warsztatowych, a TUR tylko w t
   assert.ok(files.length > 90, 'the Polish scenes are read');
 });
 
+// Z — 0.83 (the user's notes of 24 X 2026): the opening page tells the situation of January 1922 in the voice of the game — who
+// supports Ponikowski, the Sejm Ustawodawczy since 1919 — without notes on the Library, approximations, actions or rules.
+test('Otwarcie 0.83: dwie strony otwarcia bez uwag o Bibliotece, przybliżeniach i akcjach; kto popiera rząd Ponikowskiego', () => {
+  const root = path.join(__dirname, '..', 'source', 'i18n', 'pl', 'scenes', 'root.scene.json');
+  const lines = Object.values(JSON.parse(fs.readFileSync(root, 'utf8')).lines);
+  const at = lines.findIndex(v => /^\*\*Józef Piłsudski\*\* jest Naczelnikiem Państwa\./.test(v));
+  assert.ok(at >= 0, 'the opening page');
+  const page = lines.slice(at, at + 4).join(' ');
+  assert.match(page, /Sejm Ustawodawczy\*\*, wybrany w styczniu 1919 roku/);
+  assert.match(page, /opiera się na poparciu Naczelnika, na centrum, a przede wszystkim na tolerancji lewicy, która nie chce rządu endecji/);
+  assert.match(page, /nowy Sejm będzie liczył 444 posłów, a do większości potrzeba 223/);
+  assert.doesNotMatch(page, /Bibliote|przybliżen|zwykłych zasad|a nie prezydentem|akcji|nadal/);
+  // The second page ("January 1922") opens the play without repeating the offices and the rules.
+  const second = lines.findIndex(v => /^Do wyborów zostało dziesięć miesięcy\./.test(v));
+  assert.ok(second > at);
+  assert.doesNotMatch(lines.slice(second, second + 2).join(' '), /Premier:|akcj|agend|Kampania zaczyna się/);
+});
+
 test('Wersja polska: te same sceny, jakości i logika co angielska', () => {
   const en = JSON.parse(fs.readFileSync(path.join(dendry.ROOT, 'out', 'game.json'), 'utf8'));
   let pl;

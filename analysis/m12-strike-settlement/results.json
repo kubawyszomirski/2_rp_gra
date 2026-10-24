@@ -12,9 +12,9 @@
     "tensionWeight": 0.5
   },
   "hashes": {
-    "docs/POLISH_TECHNICAL_REFERENCE.md": "0503d2e80c4b382e8ed578d2177fd2392f1eebddcb0c6df9f5365c9a1351e3ca",
-    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "6786f5e8790aa2cdf3eab7f439d94ef3d0b96a9509fd50e2261692b7e3e74f4f",
-    "docs/POLISH_MECHANICS_AUDIT.md": "4a52f318a752ffffda3b71d211124bdee1c45d53d4a86dbf3f75a2e27cff2363",
+    "docs/POLISH_TECHNICAL_REFERENCE.md": "2df61e69f089aec6e010b25c41a4b05444b7e94a8ea0c1ce14ce3d98b291b274",
+    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "1d5793615086142617f8b681f4f7bae382c62c08f6e5479c0b0dbaecfe13e284",
+    "docs/POLISH_MECHANICS_AUDIT.md": "85203d1dcfd9719e2ca3badc513d3c7aac541e3f60e81e044a8f284249c5a976",
     "analysis/m02-robustness/engine.cjs": "e0b544d65a4381ed7698f3f649fd54e41714a3a1027852a7ea455d0ad49b43cd"
   },
   "scenario": {

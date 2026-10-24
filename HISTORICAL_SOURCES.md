@@ -1880,6 +1880,7 @@ source location, and permitted use in its entry. Preserve
   supports “predominantly expert/administrative,” not “all personally non-party.”
   Secondary scholarly evidence, accessed 2026-09-02; no inference about PPS
   toleration follows from that classification.
+- **Support in the Sejm (added 24 October 2026, Z — 0.83):** Wikipedia (pl), "Pierwszy rząd Antoniego Ponikowskiego" (https://pl.wikipedia.org/wiki/Pierwszy_rząd_Antoniego_Ponikowskiego, accessed 2026-10-24): appointed by the Naczelnik on 19 IX 1921 after the resignation of Witos, the mission given on 16 IX to Ponikowski, rector of the Warsaw Polytechnic, who meant a "rząd bezpartyjny i fachowy"; without a majority in the Sejm, it rested on the centre and above all on the toleration of the left parties, who feared a National Democratic government, and on the backing of Piłsudski; it resigned on 5 III 1922 over the act of union of the Wilno region. Secondary, medium confidence; used in the opening page of the game.
 - **Gameplay use:** Opening PM and cautious Polish portfolio terminology.
   The ten-category display is the approved aggregation in `OPENING-1922-DESIGN`;
   no personal minister roster is implemented. Later cabinets remain planned.
