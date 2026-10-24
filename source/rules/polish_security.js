@@ -32,8 +32,9 @@
   // Polish version (decision 2A): the texts of this module are written in both languages and L picks the current
   // one; numbers get a decimal comma in Polish (decision 6A).
   const L = rules.L;
+  // Z — 0.84 (the user's note of 24 X 2026): the numbers of the texts are shown to 0.1 at most.
   const fmt = value => {
-    const text = Math.abs(value) < 0.005 ? '0' : value.toFixed(2).replace(/\.?0+$/, '');
+    const text = Math.abs(value) < 0.05 ? '0' : value.toFixed(1).replace(/\.0$/, '');
     return rules.getLanguage() === 'pl' ? text.replace('.', ',') : text;
   };
   const dateOf = t => rules.monthOf(t) + '/' + rules.yearOf(t);

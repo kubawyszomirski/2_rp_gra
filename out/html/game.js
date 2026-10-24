@@ -97,7 +97,7 @@
   // Texts of the page itself (index.html) and of the inherited interface code.
   var UI_TEXT = {
     game_title: {en: 'PPS: An Alternate History', pl: 'PPS: historia alternatywna'},
-    page_title: {en: 'PPS: An Alternate History - Autumn Chen', pl: 'PPS: historia alternatywna - Autumn Chen'},
+    page_title: {en: 'PPS: An Alternate History', pl: 'PPS: historia alternatywna'},
     library: {en: 'Library', pl: 'Biblioteka'},
     save_load: {en: 'Save/Load', pl: 'Zapis i odczyt'},
     options: {en: 'Options', pl: 'Opcje'},

@@ -125,6 +125,10 @@ header h2:before {
   font-style: italic;
   padding: 0 0.3em 0 0;
 }
+/* Z — 0.84: the header shows no byline; the original author is named on the Credits page. */
+header h2[hidden] {
+  display: none;
+}
 
 .button-image {
     vertical-align:-0.25em;

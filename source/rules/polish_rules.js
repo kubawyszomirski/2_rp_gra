@@ -975,7 +975,8 @@
   // abbreviations R and B. form: 'nom' (2 jednostki), 'acc' (kosztuje 1 jednostkę) or 'gen' (wymaga 2 jednostek); a
   // fraction takes the genitive singular (0,5 jednostki). English: 1 resource, 2 resources; 1 budget unit.
   function units(n, kind, form) {
-    const value = Math.round(Number(n) * 100) / 100;
+    // Z — 0.84: party money to 0.1, budget units to 0.01.
+    const value = kind === 'budget' ? Math.round(Number(n) * 100) / 100 : Math.round(Number(n) * 10) / 10;
     const text = num(value);
     if (language !== 'pl') return text + (kind === 'budget' ? ' budget unit' : ' resource') + (value === 1 ? '' : 's');
     let word;

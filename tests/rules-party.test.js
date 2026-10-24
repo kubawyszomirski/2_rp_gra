@@ -74,7 +74,8 @@ test('Składki: a rise at real wages 89 or 91 multiplies membership by 0.95 or 0
     PolishParty.duesChoose(Q, 'raise');
     assert.equal(Q.S.party_orgs.dues, 3);
     close(Q.S.party_orgs.apparatus.member_index, 100 * factor);
-    close(Q.S.party_orgs.cash - cash, 3 * factor); // the collection at the new dues and membership
+    // The collection at the new dues and membership, to 0.1 R since Z — 0.84 (2.85 → 2.9, 2.94 → 2.9).
+    close(Q.S.party_orgs.cash - cash, Math.round(30 * factor) / 10, 1e-9);
     assert.equal(PolishParty.duesStatus(Q, 'keep').available, false, 'after a change the month is used, so the level cannot be confirmed now');
     free(Q);
     assert.match(PolishParty.duesStatus(Q, 'lower').reason, /Available again in 6 months/);
@@ -84,7 +85,7 @@ test('Składki: a rise at real wages 89 or 91 multiplies membership by 0.95 or 0
   PolishParty.duesChoose(keep, 'keep');
   PolishParty.duesChoose(lower, 'lower');
   close(keep.S.party_orgs.cash - k0, 2); // keeping collects too, as in the original game
-  close(lower.S.party_orgs.cash - l0, 1 * 102 / 100); // at dues 1 and membership 102
+  close(lower.S.party_orgs.cash - l0, 1); // at dues 1 and membership 102: 1.02 R, kept to 0.1 R since Z — 0.84
 });
 
 test('Cel członkostwa: the target is 100 at the start, 137.5 with union reach ×1.75, 95 at dues 3, always within 50–150', () => {

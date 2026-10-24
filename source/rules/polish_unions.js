@@ -34,8 +34,9 @@
   // one; numbers get a decimal comma and dates a Polish month in Polish (decision 6A).
   const L = rules.L;
   const PL = () => rules.getLanguage() === 'pl';
+  // Z — 0.84 (the user's note of 24 X 2026): the numbers of the texts are shown to 0.1 at most.
   const fmt = value => {
-    const text = Math.abs(value) < 0.005 ? '0' : value.toFixed(2).replace(/\.?0+$/, '');
+    const text = Math.abs(value) < 0.05 ? '0' : value.toFixed(1).replace(/\.0$/, '');
     return PL() ? text.replace('.', ',') : text;
   };
   // 'until 3/1925' in English; 'do marca 1925' in Polish (every use of a date here follows 'until' or 'since').

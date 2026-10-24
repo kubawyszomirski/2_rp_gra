@@ -111,7 +111,7 @@ test('Opis karty związków (Z — 0.59): the card names its cause and its numbe
   S.economy.real_wage = 76.72;
   dendry.playCard(engine, 'polish_union_agenda');
   const text = JSON.stringify(engine.ui.paragraphs).replace(/","/g, '');
-  assert.match(text, /This card is the work of PPS in three union branches; each step costs the month’s action\. It is in the deck now because real wages have fallen below 80 \(now 76\.72\)\./);
+  assert.match(text, /This card is the work of PPS in three union branches; each step costs the month’s action\. It is in the deck now because real wages have fallen below 80 \(now 76\.7\)\./, 'the numbers to 0.1 (Z — 0.84)');
   assert.match(text, /What the numbers mean \(0–100\): reach — how widely the union reaches the workers of the branch;/);
   const line = choice(engine, 'polish_union_agenda.industry').subtitle;
   assert.equal(JSON.stringify(line).replace(/[\["\]]/g, '').replace(/ /g, ' '),

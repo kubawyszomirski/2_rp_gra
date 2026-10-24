@@ -24,14 +24,17 @@
   const copy = value => (value === undefined ? undefined : JSON.parse(JSON.stringify(value)));
   const clip = (value, low, high) => Math.max(low, Math.min(high, value));
   const round = (value, digits) => Math.round(value * Math.pow(10, digits)) / Math.pow(10, digits);
+  // Z — 0.84 (the user's note of 24 X 2026): the party's money is kept and shown to 0.1 R.
+  const MONEY_DIGITS = 1;
   const T = rules.timeOf;
   const OK = Object.freeze({available: true, reason: ''});
   const no = reason => ({available: false, reason: reason});
   // Polish version (decision 2A): the texts of this module are written in both languages and L picks the current
   // one; numbers get a decimal comma in Polish (decision 6A).
   const L = rules.L;
+  // Z — 0.84 (the user's note of 24 X 2026): the numbers of the texts are shown to 0.1 at most.
   const fmt = value => {
-    const text = Math.abs(value) < 0.005 ? '0' : value.toFixed(2).replace(/\.?0+$/, '');
+    const text = Math.abs(value) < 0.05 ? '0' : value.toFixed(1).replace(/\.0$/, '');
     return rules.getLanguage() === 'pl' ? text.replace('.', ',') : text;
   };
 
@@ -207,8 +210,9 @@
   function writeMirrors(Q) {
     if (!partyReady(Q)) return;
     const S = Q.S, orgs = S.party_orgs, militia = S.militia, base = orgs.mirror_base;
-    // Z — 0.78 (decision 1A): the party's cash is kept to the grosz (0.01 R) after every change, as the page shows it.
-    orgs.cash = Math.max(0, round(orgs.cash, 2));
+    // Z — 0.78 (decision 1A): the party's cash is kept as the page shows it after every change; since Z — 0.84 (the user's
+    // note of 24 X 2026) to 0.1 R.
+    orgs.cash = Math.max(0, round(orgs.cash, MONEY_DIGITS));
     Q.resources = orgs.cash;
     Q.dues = orgs.dues;
     Q.pps_militia_strength = militia.strength;
@@ -262,11 +266,11 @@
   function collectionAt(dues, members, level) {
     return dues * members / 100 * (1 + APPARATUS_COLLECTION_BONUS * (level - 1));
   }
-  // Z — 0.78 (decision 1A of 8 X 2026): money is counted to the grosz, as the page shows it — the collection is rounded to
-  // 0.01 R, so a shown "1 R" is really 1 R and pays for a 1 R option.
+  // Z — 0.78 (decision 1A of 8 X 2026): money is counted as the page shows it, so a shown "1 R" is really 1 R and pays for a
+  // 1 R option; since Z — 0.84 (the user's note of 24 X 2026) the collection is rounded to 0.1 R (MONEY_DIGITS).
   function collectionGain(S) {
     const orgs = S.party_orgs;
-    return round(collectionAt(orgs.dues, orgs.apparatus.member_index, orgs.apparatus.level), 2);
+    return round(collectionAt(orgs.dues, orgs.apparatus.member_index, orgs.apparatus.level), MONEY_DIGITS);
   }
 
   const operatingCooperatives = S => S.party_orgs.cooperatives.projects.filter(p => p.status === 'operating');
@@ -643,7 +647,7 @@
     const S = Q.S;
     for (const option of ['keep', 'raise', 'lower']) {
       const change = duesChange(S, option);
-      Q['pl_dues_' + option + '_gain'] = rules.units(round(collectionAt(change.dues, change.members, S.party_orgs.apparatus.level), 2));
+      Q['pl_dues_' + option + '_gain'] = rules.units(round(collectionAt(change.dues, change.members, S.party_orgs.apparatus.level), MONEY_DIGITS));
     }
   }
 
