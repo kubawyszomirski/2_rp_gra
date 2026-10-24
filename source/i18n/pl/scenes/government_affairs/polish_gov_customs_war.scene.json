@@ -1,0 +1,19 @@
+{
+ "source": "scenes/government_affairs/polish_gov_customs_war.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: The Customs War with Germany": "title: Wojna celna z Niemcami",
+  "subtitle: An urgent card of Industry and Trade: one answer to the customs war.": "subtitle: Karta pilna resortu Przemysłu i Handlu: jedna odpowiedź na wojnę celną.",
+  "= The customs war with Germany": "= Wojna celna z Niemcami",
+  "In June 1925 Germany closed its market to Polish coal, and Poland answered with bans on imports. Industry is losing its buyers, and credit and output are weakening.": "W czerwcu 1925 roku Niemcy zamknęły swój rynek dla polskiego węgla, a Polska odpowiedziała zakazami przywozu. Przemysł traci odbiorców, a kredyt i produkcja słabną.",
+  "title: Answer with retaliatory duties": "title: Odpowiedz cłami odwetowymi",
+  "subtitle: No cost to the budget; home industry keeps the home market and the fall of output weakens. Prices rise (+1 percentage point of inflation for two months).": "subtitle: Bez kosztu dla budżetu; krajowy przemysł zachowuje rynek wewnętrzny i spadek produkcji słabnie. Ceny rosną (+1 punkt procentowy inflacji przez dwa miesiące).",
+  "title: Seek new markets": "title: Szukaj nowych rynków zbytu",
+  "subtitle: Costs 1 budget unit a month for half a year (subsidies for coal exports). The fall of output is halved.": "subtitle: Kosztuje 1 jednostkę budżetu miesięcznie przez pół roku (dopłaty do wywozu węgla). Spadek produkcji słabnie o połowę.",
+  "title: Make concessions to Germany": "title: Pójdź na ustępstwa wobec Niemiec",
+  "subtitle: No cost to the budget; trade returns sooner and credit recovers. The National Democrats accuse the cabinet of weakness, and the relation with the National Popular Union worsens (−8).": "subtitle: Bez kosztu dla budżetu; handel szybciej wraca, a kredyt odbija. Endecja oskarża rząd o uległość, a relacja ze Związkiem Ludowo-Narodowym się pogarsza (−8).",
+  "title: Not now": "title: Nie teraz",
+  "subtitle: The card stays in the hand until PPS answers, at the latest until July 1926.": "subtitle: Karta zostaje w ręce, dopóki PPS nie odpowie, najdłużej do lipca 1926.",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

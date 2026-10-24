@@ -5,13 +5,13 @@
   "title: Public Works": "title: Roboty publiczne",
   "subtitle: Labour: employment, infrastructure or workers’ housing.": "subtitle: Resort Pracy: zatrudnienie, infrastruktura albo mieszkania robotnicze.",
   "= Public works": "= Roboty publiczne",
-  "title: Quick employment of the unemployed": "title: Szybkie zatrudnienie bezrobotnych",
-  "title: Transport and infrastructure": "title: Transport i infrastruktura",
-  "title: Workers’ housing": "title: Mieszkania robotnicze",
-  "- @root: Continue.": "- @root: Dalej.",
-  "Public works belong to Labour; the Treasury alone gives no access. A programme starts in the decision that chooses it and costs 1 budget unit a month for as long as it works; its public jobs come after its months of building, at most 8 units in the country.": "Roboty publiczne należą do resortu Pracy; sam resort Skarbu nie daje do nich dostępu. Program rusza w decyzji, która go wybiera, i kosztuje 1 jednostkę budżetu miesięcznie, dopóki działa; publiczne miejsca pracy przychodzą po miesiącach budowy, najwyżej 8 jednostek w kraju.",
-  "subtitle: Costs the budget 1 unit a month while it works; after three months two employment units raise output and give public jobs (+0.15 percentage points of output a unit).": "subtitle: Obciąża budżet: 1 jednostka miesięcznie, dopóki działa; po trzech miesiącach dwie jednostki zatrudnienia podnoszą produkcję i dają publiczne miejsca pracy (+0,15 punktu procentowego produkcji na jednostkę).",
-  "subtitle: Costs the budget 1 unit a month while it works; after four months two employment units raise output more (+0.25 percentage points of output a unit).": "subtitle: Obciąża budżet: 1 jednostka miesięcznie, dopóki działa; po czterech miesiącach dwie jednostki zatrudnienia mocniej podnoszą produkcję (+0,25 punktu procentowego produkcji na jednostkę).",
-  "subtitle: Costs the budget 1 unit a month while it works; after four months relief for the recipients, no employment units.": "subtitle: Obciąża budżet: 1 jednostka miesięcznie, dopóki działa; po czterech miesiącach ulga dla odbiorców, bez jednostek zatrudnienia."
+  "Public works give work to the unemployed with the money of the budget. Unemployment stands at [+ pl_gc_unemployment +]%.": "Roboty publiczne dają pracę bezrobotnym za pieniądze budżetu. Bezrobocie wynosi teraz [+ pl_gc_unemployment +]%.",
+  "title: Employ the unemployed on quick works": "title: Zatrudnij bezrobotnych przy szybkich robotach",
+  "subtitle: Costs 1 budget unit a month while they run. After three months unemployment falls (−0.5 percentage points) and output rises a little.": "subtitle: Kosztuje 1 jednostkę budżetu miesięcznie, dopóki trwają. Po trzech miesiącach bezrobocie spada (−0,5 punktu procentowego), a produkcja lekko rośnie.",
+  "title: Build roads, railways and bridges": "title: Buduj drogi, koleje i mosty",
+  "subtitle: Costs 1 budget unit a month, and the first jobs come only after four months. Unemployment falls as much, and output rises more.": "subtitle: Kosztuje 1 jednostkę budżetu miesięcznie, a pierwsze miejsca pracy przychodzą dopiero po czterech miesiącach. Bezrobocie spada tak samo, a produkcja rośnie mocniej.",
+  "title: Build workers’ housing": "title: Buduj mieszkania robotnicze",
+  "subtitle: Costs 1 budget unit a month and creates no new jobs. After four months the discontent of the workers grows more slowly.": "subtitle: Kosztuje 1 jednostkę budżetu miesięcznie i nie daje nowych miejsc pracy. Po czterech miesiącach niezadowolenie robotników rośnie wolniej.",
+  "- @root: Continue.": "- @root: Dalej."
  }
 }

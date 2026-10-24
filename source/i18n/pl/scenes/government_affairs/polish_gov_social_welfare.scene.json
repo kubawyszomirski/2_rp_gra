@@ -2,16 +2,16 @@
  "source": "scenes/government_affairs/polish_gov_social_welfare.scene.dry",
  "status": "complete",
  "lines": {
-  "title: Benefits and Aid for the Unemployed": "title: Zasiłki i pomoc dla bezrobotnych",
-  "subtitle: Labour: one protection programme for the unemployed.": "subtitle: Resort Pracy: jeden program osłony dla bezrobotnych.",
-  "= Benefits and aid for the unemployed": "= Zasiłki i pomoc dla bezrobotnych",
-  "There is one protection programme for these recipients. It pays from the month it starts, even under a caretaker cabinet. Each level of scope costs 2 B a month; a benefit does not lower unemployment itself.": "Dla tych odbiorców istnieje jeden program osłony. Wypłaca od miesiąca, w którym rusza, także pod gabinetem tymczasowym. Każdy poziom zakresu kosztuje 2 jednostki budżetu miesięcznie; zasiłek sam nie obniża bezrobocia.",
-  "title: Extend the protection": "title: Rozszerz osłonę",
-  "subtitle: Start the protection (2 budget units a month), or extend it by one level of scope for 2 more units a month, up to level 3.": "subtitle: Uruchom osłonę (2 jednostki budżetu miesięcznie) albo rozszerz ją o jeden poziom zakresu za kolejne 2 jednostki miesięcznie, najwyżej do poziomu 3.",
-  "title: Focus the aid on the most needy": "title: Skup pomoc na najbardziej potrzebujących",
-  "subtitle: Half of the recipients, the most needy, with the full relief: 1 budget unit instead of 2.": "subtitle: Połowa odbiorców, najbardziej potrzebujących, z pełną ulgą: 1 jednostka budżetu zamiast 2.",
+  "title: Benefits and Insurance": "title: Zasiłki i ubezpieczenia",
+  "subtitle: Labour: benefits for the unemployed and the insurance of workers.": "subtitle: Resort Pracy: zasiłki dla bezrobotnych i ubezpieczenia robotników.",
+  "= Benefits and insurance": "= Zasiłki i ubezpieczenia",
+  "The state can help the unemployed from the budget and insure the workers from contributions. [? if pl_gc_protection_level = 0 : There are no benefits for the unemployed yet. ?][? if pl_gc_protection_level > 0 : The benefits for the unemployed work at level [+ pl_gc_protection_level +] of 3. ?]": "Państwo może pomagać bezrobotnym z budżetu i ubezpieczać robotników ze składek. [? if pl_gc_protection_level = 0 : Zasiłków dla bezrobotnych jeszcze nie ma. ?][? if pl_gc_protection_level > 0 : Zasiłki dla bezrobotnych działają na poziomie [+ pl_gc_protection_level +] z 3. ?]",
+  "title: [? if pl_gc_protection_level = 0 : Introduce benefits for the unemployed ?][? if pl_gc_protection_level > 0 : Extend the benefits ?]": "title: [? if pl_gc_protection_level = 0 : Wprowadź zasiłki dla bezrobotnych ?][? if pl_gc_protection_level > 0 : Rozszerz zasiłki ?]",
+  "subtitle: Costs 2 budget units a month for each of three levels. The unemployed get real help and are less discontented (−6).": "subtitle: Kosztuje 2 jednostki budżetu miesięcznie za każdy z trzech poziomów. Bezrobotni dostają realną pomoc i są mniej niezadowoleni (−6).",
+  "title: Introduce the old-age insurance of workers": "title: Wprowadź ubezpieczenie robotników na starość",
+  "subtitle: Costs 1 budget unit a month and needs a law; employers and workers pay the rest in contributions. The workers are less discontented (−2), but business presses harder (+6).": "subtitle: Kosztuje 1 jednostkę budżetu miesięcznie i wymaga ustawy; resztę płacą składki pracodawców i robotników. Robotnicy są mniej niezadowoleni (−2), ale przedsiębiorcy mocniej naciskają (+6).",
   "title: Limit the benefits": "title: Ogranicz zasiłki",
-  "subtitle: A legal change of the benefit: only the difference, e.g. from 2 to 1 budget unit. Breaks the guarantee; Lewica dissent rises (+8).": "subtitle: Ustawowa zmiana zasiłku: tylko różnica, np. z 2 do 1 jednostki budżetu. Łamie gwarancję; sprzeciw Lewicy rośnie (+8).",
+  "subtitle: A change of the law saves the budget 1 unit a month. The unemployed get less, and the dissent of the Left of PPS rises (+8).": "subtitle: Zmiana ustawy oszczędza budżetowi 1 jednostkę miesięcznie. Bezrobotni dostają mniej, a sprzeciw Lewicy PPS rośnie (+8).",
   "- @root: Continue.": "- @root: Dalej."
  }
 }

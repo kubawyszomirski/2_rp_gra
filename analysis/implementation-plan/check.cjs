@@ -337,8 +337,9 @@ const unionsSource = read('source/rules/polish_unions.js');
 assert.ok(unionsSource.includes("const PLANT_PROFILE_ID = 'synthetic_plants_v1';") && unionsSource.includes("const STATE_PROFILE_ID = 'strike_state_profiles_v1';"),
   'decisions 2A and 3A: the synthetic plant profile and the state profile are named');
 const czapinski = read('source/scenes/advisors/czapinski.scene.dry');
-assert.ok((czapinski.match(/^go-to: polish_gov_industry$/gm) || []).length === 2 && !/choose-if: \{! return false !\}/.test(czapinski),
-  'Czapiński: public ownership and representation open the Industry card');
+// Z — 0.94 (the user's decisions of 24 X 2026): the representation became the law on works councils of the card Economic Democracy.
+assert.ok((czapinski.match(/^go-to: polish_gov_industry$/gm) || []).length === 1 && (czapinski.match(/^go-to: polish_gov_economic_democracy$/gm) || []).length === 1 &&
+  !/choose-if: \{! return false !\}/.test(czapinski), 'Czapiński: public ownership opens the Industry card and works councils the card Economic Democracy');
 
 // ---- Stage 7 (0.48): done, its files exist, its decisions and findings are recorded; the three dated inputs of decision 1,
 // the certain assassination of decision 2 and the legal profile of restrictions of decision 3; the coup engine keeps the

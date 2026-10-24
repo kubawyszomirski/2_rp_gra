@@ -700,18 +700,20 @@ test('Zakłady (decyzja 2A): a credit crisis, an active reaction of business and
   assert.deepEqual(PolishRules.validateState(S), []);
 });
 
-test('Układ zbiorowy i odstępstwo: an agreement in one branch costs 0 B and moves wages once through 11.4 with no reaction of business; a derogation in a threatened plant costs 0 B, business −4, grievance +3 and expires on its date', () => {
+// Z — 0.94 (decisions of 24 X 2026): the agreement goes to the strongest branch and the employers press harder (+3); a derogation needs
+// no inspection law, and the Left of PPS protests (+3).
+test('Układ zbiorowy i odstępstwo: an agreement in the strongest branch costs 0 B, moves wages once through 11.4 and business +3; a derogation in a threatened plant costs 0 B, business −4, grievance +3, Lewica +3 and expires on its date', () => {
   const Q = withPortfolios(game(), 'labor');
   const S = Q.S, t = Q.time;
   const before = { budget: budget(Q), business: S.economy.business_pressure };
   assert.equal(PolishProjects.optionStatus(Q, 'labor_rights', 'collective', { branch: 'industry' }).available, true);
-  assert.throws(() => PolishProjects.chooseOption(Q, 'labor_rights', 'collective'), /needs a branch/);
-  PolishProjects.chooseOption(Q, 'labor_rights', 'collective', { branch: 'industry' });
+  assert.equal(PolishUnions.collectiveTarget(Q), 'industry', 'the largest reach; ties by the order of the branches');
+  PolishProjects.chooseOption(Q, 'labor_rights', 'collective');
   assert.equal(Q.month_actions, 1, '1 T');
   const agreement = S.unions.industry.agreements.at(-1);
   assert.deepEqual([agreement.kind, agreement.employer, agreement.union, agreement.conditions, agreement.term_until],
     ['collective', 'employers:industry', 'industry', ['wages'], t + 12], 'employer, union, covered workers, conditions and term');
-  assert.deepEqual([budget(Q), S.economy.business_pressure], [before.budget, before.business], '0 B: the employers pay; no reaction of business');
+  assert.deepEqual([budget(Q), S.economy.business_pressure], [before.budget, before.business + 3], '0 B: the employers pay; they press harder');
   close(PolishUnions.wageAgreementInput(S, t), 2 * 0.6);
   close(PolishUnions.wageAgreementInput(S, t + 1), 1.2);
   assert.equal(PolishUnions.wageAgreementInput(S, t + 2), 0, 'the wage effect passes once, for two months');
@@ -720,7 +722,7 @@ test('Układ zbiorowy i odstępstwo: an agreement in one branch costs 0 B and mo
   const withAgreement = settle(Q), without = settle(twin);
   close(withAgreement.wage_agreement_pp, 1.2);
   assert.ok(withAgreement.real_wage > without.real_wage);
-  assert.equal(withAgreement.business_pressure, without.business_pressure);
+  assert.equal(withAgreement.business_pressure, without.business_pressure + 3);
   free(Q);
   assert.match(PolishProjects.optionStatus(Q, 'labor_rights', 'collective', { branch: 'industry' }).reason, /runs until/);
   assert.equal(PolishProjects.optionStatus(Q, 'labor_rights', 'collective', { branch: 'rail' }).available, true);
@@ -732,14 +734,14 @@ test('Układ zbiorowy i odstępstwo: an agreement in one branch costs 0 B and mo
   assert.match(PolishProjects.optionStatus(Q, 'labor_rights', 'collective', { branch: 'farm_labour' }).reason, /employers refuse/);
   S.economy.business_state = 'quiet';
 
-  // The derogation needs its legal basis — the law on working time — and a threatened plant.
-  assert.match(PolishProjects.optionStatus(Q, 'labor_rights', 'derogation').reason, /legal basis/);
+  // The derogation needs a threatened plant; the act on working time of 1919 is its basis (Z — 0.94).
+  assert.match(PolishProjects.optionStatus(Q, 'labor_rights', 'derogation').reason, /recorded plant in difficulty/);
   PolishProjects.chooseOption(Q, 'labor_rights', 'inspection');
   free(Q);
-  assert.match(PolishProjects.optionStatus(Q, 'labor_rights', 'derogation').reason, /recorded plant in difficulty/);
   const plant = creditCrisisPlant(Q);
-  const pressure = S.economy.business_pressure, room = budget(Q);
+  const pressure = S.economy.business_pressure, room = budget(Q), lewica = S.actors.pps.factions.lewica.dissent;
   PolishProjects.chooseOption(Q, 'labor_rights', 'derogation');
+  assert.equal(S.actors.pps.factions.lewica.dissent, Math.min(99, lewica + 3), 'the Left of PPS protests');
   const at = Q.time;
   assert.deepEqual([plant.exemption.status, plant.exemption.expires_at, plant.exemption.scope], ['active', at + 6, 'working time in this plant only']);
   assert.equal(S.economy.business_pressure, pressure - 4);
@@ -761,13 +763,16 @@ test('Ratunek zakładu: the general credit adds 5 to the credit target; the resc
   const S = Q.S;
   S.economy.budget_base = 10;  // a full execution in this fixture (11.3)
   assert.match(PolishProjects.optionStatus(Q, 'industrial_policy', 'rescue').reason, /recorded plant/);
-  PolishProjects.chooseOption(Q, 'industrial_policy', 'credit');
+  // Z — 0.94: the general credit is the card Capital for Investment.
+  PolishProjects.chooseOption(Q, 'investment_fund', 'public');
   free(Q);
   const credit = Object.values(S.projects).find(p => p.type === 'credit_instrument');
   assert.deepEqual([credit.variant, PolishProjects.PROJECT_TYPES.credit_instrument.variants.public.credit_support], ['public', 5]);
   const plant = creditCrisisPlant(Q);
   assert.equal(PolishProjects.optionStatus(Q, 'industrial_policy', 'rescue').available, true);
+  const calm = S.economy.business_pressure;
   PolishProjects.chooseOption(Q, 'industrial_policy', 'rescue');
+  assert.equal(S.economy.business_pressure, Math.max(0, calm - 4), 'Z — 0.94: a rescue calms the employers');
   free(Q);
   const rescue = Object.values(S.projects).find(p => p.type === 'plant_rescue');
   // Z — 0.93 (decisions 3A and 4A of 24 X 2026): one cost of 1 B a month, started in the same decision.
@@ -789,7 +794,8 @@ test('Ratunek zakładu: the general credit adds 5 to the credit target; the resc
   assert.match(PolishProjects.optionStatus(Q, 'industrial_policy', 'rescue').reason, /recorded plant/, 'no second rescue of the same plant');
 });
 
-test('Przejęcie i reprezentacja (stage-6 part): public control by an act gives business +15 once; consultation −2 and co-decision only the missing −2; a private plant has no representation', () => {
+// Z — 0.94: the representation in a public plant became the law on works councils (rules-politics, „Rady zakładowe 0.94”).
+test('Przejęcie (stage-6 part): public control by an act gives business +15 once; one act per plant', () => {
   const Q = withPortfolios(game(), 'economic');
   const S = Q.S;
   S.economy.budget_base = 10;
@@ -798,7 +804,6 @@ test('Przejęcie i reprezentacja (stage-6 part): public control by an act gives 
   S.parliament.clubs.find(c => c.id === 'other').seats -= 215;
   assert.match(PolishProjects.optionStatus(Q, 'industrial_policy', 'public_control').reason, /recorded private plant/);
   const plant = creditCrisisPlant(Q);
-  assert.match(PolishProjects.optionStatus(Q, 'industrial_policy', 'worker_representation').reason, /public plant/, 'a private plant has no representation');
   const pressure = S.economy.business_pressure;
   PolishProjects.chooseOption(Q, 'industrial_policy', 'public_control');
   free(Q);
@@ -807,27 +812,6 @@ test('Przejęcie i reprezentacja (stage-6 part): public control by an act gives 
   assert.deepEqual([plant.owner, plant.public_act_id, plant.management], ['public', law.id, 'a public board under Industry and Trade']);
   assert.equal(S.economy.business_pressure, pressure + 15, 'the prepared public control: +15 once (11.7)');
   assert.match(PolishProjects.optionStatus(Q, 'industrial_policy', 'public_control').reason, /recorded private plant/, 'one act per plant');
-  PolishProjects.chooseOption(Q, 'industrial_policy', 'worker_representation', { variant: 'consultative' });
-  free(Q);
-  assert.deepEqual([plant.representation.variant, plant.representation.worker_actor_id], ['consultative', 'union:industry'],
-    'the representative is the branch union, not PPS');
-  const consult = Object.values(S.projects).find(p => p.type === 'enterprise_representation' && p.variant === 'consultative');
-  assert.deepEqual([consult.status, consult.build_budget_B, consult.pending_effects.map(e => e.value)], ['completed', 0, [-2]], '1 T, 0 B, after the act');
-  assert.match(PolishProjects.optionStatus(Q, 'industrial_policy', 'worker_representation', { variant: 'consultative' }).reason, /already has/);
-  PolishProjects.chooseOption(Q, 'industrial_policy', 'worker_representation', { variant: 'decision_rights' });
-  free(Q);
-  const codecision = Object.values(S.projects).find(p => p.type === 'enterprise_representation' && p.variant === 'decision_rights');
-  assert.deepEqual([codecision.status, codecision.klass, codecision.build_budget_B, codecision.duration_months], ['executing', 'large', 1, 2],
-    'Z — 0.93: one decision files its law and starts it');
-  const bill = S.parliament.laws.at(-1);
-  assert.deepEqual([bill.project_id, bill.status], [codecision.id, 'enacted'], 'co-decision needs its own law');
-  for (let i = 0; i < 3 && codecision.status !== 'completed'; i++) settle(Q);
-  assert.equal(codecision.status, 'completed');
-  assert.deepEqual([plant.representation.variant, plant.representation.covered_decisions], ['decision_rights', ['mass dismissals', 'changes of the wage rules']]);
-  assert.deepEqual(codecision.pending_effects.map(e => e.value), [-2], 'only the missing difference after consultation');
-  free(Q);
-  assert.match(PolishProjects.optionStatus(Q, 'industrial_policy', 'worker_representation').reason, /already/, 'a repeated choice gives nothing');
-  assert.equal(S.economy.business_pressure, pressure + 15, 'the representation adds no second reaction of business');
 });
 
 // A formation with Grabski tolerated by PPS in his window (9.7): mandatory, or the player's own initiative.

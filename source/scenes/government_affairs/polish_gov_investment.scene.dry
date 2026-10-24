@@ -18,7 +18,7 @@ Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_investment');
 
 *[+ pl_gc_ministry +]*
 
-The credit instrument costs 1 B a month from its launch and raises the credit target after two months, for as long as it works (+5). The variants differ in who pays and who must agree: one financing, one cost, one effect.
+The credit instrument gives firms cheaper credit and raises the credit target of the economy while it works (+5). The variants differ in who pays and whom the credit helps.
 
 [+ pl_gc_budget +]
 
@@ -31,8 +31,8 @@ The credit instrument costs 1 B a month from its launch and raises the credit ta
 - @cancel_advisor_action
 
 @public
-title: Public fund
-subtitle: The state pays everything: 1 budget unit a month.
+title: Set up a public fund
+subtitle: Costs 1 budget unit a month; the state itself chooses whom it lends to. It helps the workers’ towns and the crafts.
 choose-if: {! return PolishProjects.optionStatus(Q, 'investment_fund', 'public').available !}
 unavailable-subtitle: [+ pl_investment_fund_public_why +]
 on-arrival: {!
@@ -41,8 +41,8 @@ PolishProjects.chooseOption(Q, 'investment_fund', 'public');
 go-to: result
 
 @banks
-title: Agreement with banks and industry
-subtitle: The banks share the risk: 1 budget unit a month; business pressure falls (−8). Needs credit of at least 40.
+title: Make an agreement with the banks
+subtitle: Costs only half a budget unit a month, and business presses less (−8). The Left of PPS protests against a deal with capital (+4); needs credit of at least 40.
 choose-if: {! return PolishProjects.optionStatus(Q, 'investment_fund', 'banks').available !}
 unavailable-subtitle: [+ pl_investment_fund_banks_why +]
 on-arrival: {!
@@ -51,8 +51,8 @@ PolishProjects.chooseOption(Q, 'investment_fund', 'banks');
 go-to: result
 
 @cooperative
-title: Cooperative financing
-subtitle: Credit for farms and small workshops through the cooperatives: 1 budget unit a month.
+title: Finance the credit through the cooperatives
+subtitle: Costs 1 budget unit a month. It helps peasant farms and workshops instead of the towns.
 choose-if: {! return PolishProjects.optionStatus(Q, 'investment_fund', 'cooperative').available !}
 unavailable-subtitle: [+ pl_investment_fund_cooperative_why +]
 on-arrival: {!

@@ -557,6 +557,8 @@ ChZJN (ZLN + PSChD) is a joint list; the parties remain separate for government 
 
 Recorded votes and election history are in Figures and charts; the Polls tab shows voting intentions, not the sitting parliament.
 
+[? if polish_economy_system : **Business pressure.** The pressure of business grows with the measures employers dislike and falls with those that calm them. In a month when nothing raised it, it eases by 1, but not below 10. From 40 business warns the cabinet, and from 60 it resists actively: credit and output suffer. ?]
+
 [? if polish_economy_system : **The budget.** The budget is the state's monthly room in budget units (B): [+ pl_eco_budget_parts +]. A new programme starts when the budget after its monthly cost stays at −2 or more. Below −2 the programmes run at half, below −5 they stop. Printing money covers a deficit only when the Treasury has authorised emission, and it raises inflation. ?]
 
 [? if polish_economy_system : The numbers are the game's working balance (economy_simple_v1), not historical statistics. ?]

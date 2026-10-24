@@ -1,0 +1,68 @@
+title: The Customs War with Germany
+subtitle: An urgent card of Industry and Trade: one answer to the customs war.
+new-page: true
+is-card: true
+view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'customs_war') !}
+on-arrival: {!
+// Card government.customs_war (technical reference 11.9, 17.11). Z — 0.94 (the user's decisions of 24 X 2026; P): an urgent card of
+// the Government deck from June 1925 while PPS holds Industry and Trade; one answer for the whole war, which costs no month.
+PolishProjects.cardView(Q, 'customs_war');
+Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_customs_war');
+!}
+
+= The customs war with Germany
+
+*[+ pl_gc_ministry +]*
+
+In June 1925 Germany closed its market to Polish coal, and Poland answered with bans on imports. Industry is losing its buyers, and credit and output are weakening.
+
+[+ pl_gc_budget +]
+
+- @retaliation
+- @new_markets
+- @concessions
+- @later
+
+@retaliation
+title: Answer with retaliatory duties
+subtitle: No cost to the budget; home industry keeps the home market and the fall of output weakens. Prices rise (+1 percentage point of inflation for two months).
+choose-if: {! return PolishProjects.optionStatus(Q, 'customs_war', 'retaliation').available !}
+unavailable-subtitle: [+ pl_customs_war_retaliation_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'customs_war', 'retaliation');
+!}
+go-to: result
+
+@new_markets
+title: Seek new markets
+subtitle: Costs 1 budget unit a month for half a year (subsidies for coal exports). The fall of output is halved.
+choose-if: {! return PolishProjects.optionStatus(Q, 'customs_war', 'new_markets').available !}
+unavailable-subtitle: [+ pl_customs_war_new_markets_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'customs_war', 'new_markets');
+!}
+go-to: result
+
+@concessions
+title: Make concessions to Germany
+subtitle: No cost to the budget; trade returns sooner and credit recovers. The National Democrats accuse the cabinet of weakness, and the relation with the National Popular Union worsens (−8).
+choose-if: {! return PolishProjects.optionStatus(Q, 'customs_war', 'concessions').available !}
+unavailable-subtitle: [+ pl_customs_war_concessions_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'customs_war', 'concessions');
+!}
+go-to: result
+
+@later
+title: Not now
+subtitle: The card stays in the hand until PPS answers, at the latest until July 1926.
+go-to: root
+
+@result
+new-page: true
+
+= The customs war with Germany
+
+[+ pl_gc_result +]
+
+- @root: Continue.

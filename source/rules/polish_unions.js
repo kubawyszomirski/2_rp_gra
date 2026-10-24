@@ -711,6 +711,13 @@
     return OK;
   }
 
+  // Z — 0.94 (the decisions of 24 X 2026): the Labour card signs in the branch where our union is strongest (the largest reach) among
+  // those that can sign now; ties by the order of the branches.
+  function collectiveTarget(Q) {
+    const S = Q.S;
+    return BRANCHES.filter(b => collectiveStatus(Q, b).available).sort((a, b) => S.unions[b].reach - S.unions[a].reach)[0] || null;
+  }
+
   function signCollective(Q, branch) {
     const status = collectiveStatus(Q, branch);
     if (!status.available) throw new Error('signCollective: ' + branch + ': ' + status.reason);
@@ -733,9 +740,10 @@
     return plants(S, p => p.status === 'threatened' && !(p.exemption && p.exemption.status === 'active'))[0] || null;
   }
 
+  // Z — 0.94 (the decisions of 24 X 2026): a derogation rests on the act on working time of 1919 itself (P), so it no longer needs the
+  // inspection of the Labour card; the inspection is still named as its basis when it is in force.
   function derogationStatus(Q) {
     const S = Q.S;
-    if (!workingTimeLaw(S)) return no(L('Needs a legal basis: the law enforcing working time (the inspection of this card) must be in force.', 'Wymaga podstawy prawnej: musi obowiązywać ustawa egzekwująca czas pracy (inspekcja z tej karty).'));
     if (!derogationTarget(S)) return no(L('Needs a recorded plant in difficulty without a derogation; ' + PLANT_HINT + '.',
       'Wymaga zakładu w trudnościach z listy resortu, bez odstępstwa; ' + PLANT_HINT_PL + '.'));
     return OK;
@@ -746,7 +754,7 @@
     if (!status.available) throw new Error('grantDerogation: ' + status.reason);
     const S = Q.S, t = Q.time, plant = derogationTarget(S), law = workingTimeLaw(S);
     const id = 'derogation-' + plant.id + '-t' + t;
-    plant.exemption = {restriction_id: id, basis: law.law_id || law.id, scope: 'working time in this plant only', starts_at: t,
+    plant.exemption = {restriction_id: id, basis: law ? law.law_id || law.id : 'the act of 18 XII 1919 on working time', scope: 'working time in this plant only', starts_at: t,
       expires_at: t + DEROGATION_MONTHS, status: 'active'};
     economy.changeBusinessPressure(S, DEROGATION_BUSINESS, id, t, 'derogation');
     plant.pending_effects.push({id: id + ':grievance', system: 'grievance', stage: 7, value: DEROGATION_GRIEVANCE,
@@ -2023,6 +2031,7 @@
     plantsLine: plantsLine,
     collectiveStatus: collectiveStatus,
     signCollective: signCollective,
+    collectiveTarget: collectiveTarget,
     derogationStatus: derogationStatus,
     grantDerogation: grantDerogation,
     expireRecords: expireRecords,

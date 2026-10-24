@@ -166,6 +166,7 @@
     if (caseId && E.business_cases.indexOf(caseId) >= 0) return false;
     if (caseId) E.business_cases.push(caseId);
     E.business_pressure = clip(E.business_pressure + delta, 0, 100);
+    if (delta > 0) E.business_rise_at = t;
     S.history.reasons.push({t: t, kind: 'business_pressure', delta: delta, case_id: caseId || null, reason: reason || '',
       pressure: E.business_pressure});
     return true;
@@ -197,8 +198,17 @@
   // execution: works units and their output, credit support, the orders contribution, newly executed land
   // units, other one-off agrarian changes, a price shock and negotiated wage agreements (none before
   // stage 6). `budget` is the executed reading of 11.2 for month t.
+  // Z — 0.94 (the user's decision c of 24 X 2026; P): the pressure of business eases by 1 in a settlement in which nothing raised it,
+  // down to its opening value of 10; a raise in the same month stops the easing.
+  const BUSINESS_BASELINE = 10, BUSINESS_EASING = 1;
+  function easeBusinessPressure(E, t) {
+    if (E.business_rise_at === t || E.business_pressure <= BUSINESS_BASELINE) return;
+    E.business_pressure = Math.max(BUSINESS_BASELINE, E.business_pressure - BUSINESS_EASING);
+  }
+
   function settleEconomy(S, t, budget, inputs) {
     const E = S.economy, society = S.society, x = inputs || {};
+    easeBusinessPressure(E, t);
     updateBusinessState(E, t);
     const capital = E.business_state === 'active' ? 1 : 0;
     const i0 = E.inflation_m, wage0 = E.real_wage, credit0 = E.credit, output0 = E.output;

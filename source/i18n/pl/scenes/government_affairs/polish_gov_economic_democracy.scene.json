@@ -1,0 +1,17 @@
+{
+ "source": "scenes/government_affairs/polish_gov_economic_democracy.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Economic Democracy": "title: Demokracja gospodarcza",
+  "subtitle: Industry and Trade: works councils, cooperatives and the socialisation of mining.": "subtitle: Resort Przemysłu i Handlu: rady zakładowe, spółdzielnie i uspołecznienie górnictwa.",
+  "= Economic democracy": "= Demokracja gospodarcza",
+  "Socialists want the workers to have a say in the plants and the economy to serve those who work. Every step in this direction meets the resistance of the employers.": "Socjaliści chcą, by robotnicy współdecydowali w zakładach, a gospodarka służyła pracującym. Każdy krok w tę stronę budzi opór przedsiębiorców.",
+  "title: Introduce the law on works councils": "title: Wprowadź ustawę o radach zakładowych",
+  "subtitle: A law in the Sejm: in the larger plants workers’ councils have a say on dismissals and the wage rules. The workers are less discontented (−3) and trust their unions more (+5), but business presses harder (+8).": "subtitle: Ustawa w Sejmie: w większych zakładach rady robotnicze współdecydują o zwolnieniach i regulaminie płac. Robotnicy są mniej niezadowoleni (−3) i bardziej ufają związkom (+5), ale przedsiębiorcy mocniej naciskają (+8).",
+  "title: Support the cooperatives with state credit": "title: Wesprzyj spółdzielnie kredytem państwa",
+  "subtitle: Costs 1 budget unit a month. The workers trust PPS more (+3), but the small traders whose customers the cooperatives take trust us less (−3).": "subtitle: Kosztuje 1 jednostkę budżetu miesięcznie. Robotnicy bardziej ufają PPS (+3), ale drobni kupcy, którym spółdzielnie zabierają klientów, ufają nam mniej (−3).",
+  "title: Socialise coal mining": "title: Uspołecznij górnictwo węglowe",
+  "subtitle: A law in the Sejm, once in the game; compensation for the owners costs 2 budget units a month for six months. The miners’ unions trust the party more and the dissent of the Left of PPS falls (−5), but business pressure jumps (+25).": "subtitle: Ustawa w Sejmie, raz w grze; odszkodowania dla właścicieli kosztują 2 jednostki budżetu miesięcznie przez sześć miesięcy. Związki górników bardziej ufają partii, a sprzeciw Lewicy PPS spada (−5), ale presja przedsiębiorców skacze (+25).",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

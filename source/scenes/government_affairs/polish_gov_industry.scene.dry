@@ -1,16 +1,15 @@
 title: Industrial Policy
-subtitle: Industry and Trade: credit, orders, public control, representation.
+subtitle: Industry and Trade: orders, the rescue or the public control of a plant.
 new-page: true
 is-card: true
 tags: govt_affairs
 card-image: img/polish/polish_gov_industry.jpg
 view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'industrial_policy') !}
 on-arrival: {!
-// Card government.industrial_policy (technical reference 17.11–17.12; card catalogue 8.6). Opening and closing
-// the card are free; a confirmed option costs this month's action, or the one free step of an adviser
-// who opened the card. The rescue, public control and representation act on the plant records of stage 6.
+// Card government.industrial_policy (technical reference 17.11–17.12; card catalogue 8.6). Opening and closing the card are free;
+// a confirmed option costs this month's action, or the one free step of an adviser who opened the card. Z — 0.94 (the user's notes
+// of 24 X 2026): orders and the two ways of a plant in difficulty — a rescue that calms business or public control that angers it.
 PolishProjects.cardView(Q, 'industrial_policy');
-// Z — 0.66 (decision 2A): the ministry of this card, on its page and as a badge in the hand.
 Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_industry');
 !}
 
@@ -18,45 +17,23 @@ Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_industry');
 
 *[+ pl_gc_ministry +]*
 
-Industry and Trade can start the credit instrument or run one package of public orders. It can also act on a recorded plant of industry or a railway workshop: rescue it by a conditional credit, take it under public control, or give its workers a representation once it is public. No intervention causes no arbitrary bankruptcy.
+Industry and Trade can place orders with home industry and decide the fate of plants in difficulty.
+
+[+ pl_gc_plants +]
 
 [+ pl_gc_budget +]
 
 [+ pl_gc_projects +]
 
-[+ pl_gc_plants +]
-
-- @credit
-- @rescue
 - @orders
+- @rescue
 - @public_control
-- @worker_representation
 - @easy_discard
 - @cancel_advisor_action
 
-@credit
-title: Conditional credit for the market
-subtitle: Starts the credit instrument (public fund): 1 budget unit a month; the credit target rises while it works (+5).
-choose-if: {! return PolishProjects.optionStatus(Q, 'industrial_policy', 'credit').available !}
-unavailable-subtitle: [+ pl_industrial_policy_credit_why +]
-on-arrival: {!
-PolishProjects.chooseOption(Q, 'industrial_policy', 'credit');
-!}
-go-to: result
-
-@rescue
-title: Conditional credit to rescue a named plant
-subtitle: Rescues the oldest recorded plant that lost capacity: costs the budget 1 unit a month; after two months its capacity is restored.
-choose-if: {! return PolishProjects.optionStatus(Q, 'industrial_policy', 'rescue').available !}
-unavailable-subtitle: [+ pl_industrial_policy_rescue_why +]
-on-arrival: {!
-PolishProjects.chooseOption(Q, 'industrial_policy', 'rescue');
-!}
-go-to: result
-
 @orders
-title: Public orders
-subtitle: One contract for three settlements: costs the budget 1 unit a month; output grows (+0.30 percentage points × execution).
+title: Place public orders
+subtitle: Costs 1 budget unit a month for three months. Output grows (+0.3 percentage points a month).
 choose-if: {! return PolishProjects.optionStatus(Q, 'industrial_policy', 'orders').available !}
 unavailable-subtitle: [+ pl_industrial_policy_orders_why +]
 on-arrival: {!
@@ -64,51 +41,23 @@ PolishProjects.chooseOption(Q, 'industrial_policy', 'orders');
 !}
 go-to: result
 
+@rescue
+title: Rescue a threatened plant with credit
+subtitle: Costs 1 budget unit a month; in return the owner keeps the plant and its jobs. Business presses less at once (−4), and after two months the plant works in full again.
+choose-if: {! return PolishProjects.optionStatus(Q, 'industrial_policy', 'rescue').available !}
+unavailable-subtitle: [+ pl_industrial_policy_rescue_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'industrial_policy', 'rescue');
+!}
+go-to: result
+
 @public_control
-title: Take an enterprise under public control
-subtitle: An act of public control of the oldest recorded private plant, voted now; business pressure grows when it takes effect (+15). A public board manages it.
+title: Take a plant under public control
+subtitle: The act goes to the Sejm, and a public board manages the plant. The workers keep their jobs, but business pressure rises sharply (+15).
 choose-if: {! return PolishProjects.optionStatus(Q, 'industrial_policy', 'public_control').available !}
 unavailable-subtitle: [+ pl_industrial_policy_public_control_why +]
 on-arrival: {!
 PolishProjects.chooseOption(Q, 'industrial_policy', 'public_control');
-!}
-go-to: result
-
-@worker_representation
-title: Workers’ representation in an enterprise
-subtitle: Consultation or co-decision in a public plant; the representative is the branch's union, not PPS.
-choose-if: {! return PolishProjects.optionStatus(Q, 'industrial_policy', 'worker_representation').available !}
-unavailable-subtitle: [+ pl_industrial_policy_worker_representation_why +]
-go-to: representation_menu
-
-@representation_menu
-new-page: true
-
-= Workers' representation
-
-Consultation informs the workers of a public plant and hears them before any change of their conditions, without a veto. Co-decision needs their consent to mass dismissals and to changes of the wage rules; it needs its own law. Moving from consultation to co-decision gives only the missing relief.
-
-- @rep_consultative
-- @rep_decision_rights
-- @polish_gov_industry: Back to the card.
-
-@rep_consultative
-title: Information and consultation
-subtitle: This month's action, nothing from the budget, by the act of the public owner; the workers' grievance falls (−2).
-choose-if: {! return PolishProjects.optionStatus(Q, 'industrial_policy', 'worker_representation', {variant: 'consultative'}).available !}
-unavailable-subtitle: [+ pl_rep_consultative_why +]
-on-arrival: {!
-PolishProjects.chooseOption(Q, 'industrial_policy', 'worker_representation', {variant: 'consultative'});
-!}
-go-to: result
-
-@rep_decision_rights
-title: Co-decision on mass dismissals and the wage rules
-subtitle: Its law goes to the Sejm now (this month's action), then it costs the budget 1 unit a month for two months; grievance falls (−4, or the missing −2 after consultation).
-choose-if: {! return PolishProjects.optionStatus(Q, 'industrial_policy', 'worker_representation', {variant: 'decision_rights'}).available !}
-unavailable-subtitle: [+ pl_rep_decision_rights_why +]
-on-arrival: {!
-PolishProjects.chooseOption(Q, 'industrial_policy', 'worker_representation', {variant: 'decision_rights'});
 !}
 go-to: result
 

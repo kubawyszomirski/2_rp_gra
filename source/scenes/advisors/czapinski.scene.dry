@@ -10,7 +10,8 @@ on-arrival: {!
 PolishParty.advisorView(Q, 'czapinski');
 // Stage 6: the two variants of the Industry card are checked without the month's action, which the adviser waives.
 Q.pl_czap_public_control_why = Q.S ? PolishProjects.optionStatus(Q, 'industrial_policy', 'public_control', {adviser: true}).reason : '';
-Q.pl_czap_representation_why = Q.S ? PolishProjects.optionStatus(Q, 'industrial_policy', 'worker_representation', {adviser: true}).reason : '';
+// Z — 0.94: the workers' representation became the law on works councils of the card Economic Democracy.
+Q.pl_czap_representation_why = Q.S ? PolishProjects.optionStatus(Q, 'economic_democracy', 'works_councils', {adviser: true}).reason : '';
 !}
 
 = Kazimierz Czapiński
@@ -42,13 +43,13 @@ on-arrival: advisor_action_timer = 6; last_advisor_action = 1
 go-to: polish_gov_industry
 
 @economic_representation
-title: Socialist Economic Programme: workers’ representation in management
-subtitle: Opens the Industry card for the workers' representation in a public plant; its one step costs no month (a law for co-decision remains).
-choose-if: {! return Q.advisor_action_timer <= 0 && !!Q.S && PolishProjects.optionStatus(Q, 'industrial_policy', 'worker_representation', {adviser: true}).available !}
+title: Socialist Economic Programme: works councils
+subtitle: Opens the card Economic Democracy for the law on works councils; its one step costs no month (the vote in the Sejm remains).
+choose-if: {! return Q.advisor_action_timer <= 0 && !!Q.S && PolishProjects.optionStatus(Q, 'economic_democracy', 'works_councils', {adviser: true}).available !}
 unavailable-subtitle: [? if advisor_action_timer = 1 : 1 month before the next Committee action. ?][? if advisor_action_timer > 1 : [+ advisor_action_timer +] months before the next Committee action. ?][? if advisor_action_timer <= 0 : [+ pl_czap_representation_why +] ?]
 call: polish_advisor_commit
 on-arrival: advisor_action_timer = 6; last_advisor_action = 1
-go-to: polish_gov_industry
+go-to: polish_gov_economic_democracy
 
 @socialist_education
 title: Socialist Education

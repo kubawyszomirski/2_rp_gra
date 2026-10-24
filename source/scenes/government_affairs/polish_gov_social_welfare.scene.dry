@@ -1,38 +1,37 @@
-title: Benefits and Aid for the Unemployed
-subtitle: Labour: one protection programme for the unemployed.
+title: Benefits and Insurance
+subtitle: Labour: benefits for the unemployed and the insurance of workers.
 new-page: true
 is-card: true
 tags: govt_affairs
 card-image: img/polish/polish_gov_social_welfare.jpg
 view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'social_welfare') !}
 on-arrival: {!
-// Card government.social_welfare (technical reference 17.11–17.12; card catalogue 8.2). Opening and closing
-// the card are free; a confirmed option costs this month's action, or the one free step of an adviser
-// who opened the card. Options that need a system of a later stage are shown with their reason.
+// Card government.social_welfare (technical reference 17.11–17.12; card catalogue 8.2). Opening and closing the card are free; a
+// confirmed option costs this month's action, or the one free step of an adviser who opened the card. Z — 0.94 (decisions of
+// 24 X 2026): benefits, the old-age insurance of workers and the cut of benefits; the focused variant left the card.
 PolishProjects.cardView(Q, 'social_welfare');
-// Z — 0.66 (decision 2A): the ministry of this card, on its page and as a badge in the hand.
 Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_social_welfare');
 !}
 
-= Benefits and aid for the unemployed
+= Benefits and insurance
 
 *[+ pl_gc_ministry +]*
 
-There is one protection programme for these recipients. It pays from the month it starts, even under a caretaker cabinet. Each level of scope costs 2 B a month; a benefit does not lower unemployment itself.
+The state can help the unemployed from the budget and insure the workers from contributions. [? if pl_gc_protection_level = 0 : There are no benefits for the unemployed yet. ?][? if pl_gc_protection_level > 0 : The benefits for the unemployed work at level [+ pl_gc_protection_level +] of 3. ?]
 
 [+ pl_gc_budget +]
 
 [+ pl_gc_projects +]
 
 - @expand
-- @focus
+- @insurance
 - @limit
 - @easy_discard
 - @cancel_advisor_action
 
 @expand
-title: Extend the protection
-subtitle: Start the protection (2 budget units a month), or extend it by one level of scope for 2 more units a month, up to level 3.
+title: [? if pl_gc_protection_level = 0 : Introduce benefits for the unemployed ?][? if pl_gc_protection_level > 0 : Extend the benefits ?]
+subtitle: Costs 2 budget units a month for each of three levels. The unemployed get real help and are less discontented (−6).
 choose-if: {! return PolishProjects.optionStatus(Q, 'social_welfare', 'expand').available !}
 unavailable-subtitle: [+ pl_social_welfare_expand_why +]
 on-arrival: {!
@@ -40,19 +39,19 @@ PolishProjects.chooseOption(Q, 'social_welfare', 'expand');
 !}
 go-to: result
 
-@focus
-title: Focus the aid on the most needy
-subtitle: Half of the recipients, the most needy, with the full relief: 1 budget unit instead of 2.
-choose-if: {! return PolishProjects.optionStatus(Q, 'social_welfare', 'focus').available !}
-unavailable-subtitle: [+ pl_social_welfare_focus_why +]
+@insurance
+title: Introduce the old-age insurance of workers
+subtitle: Costs 1 budget unit a month and needs a law; employers and workers pay the rest in contributions. The workers are less discontented (−2), but business presses harder (+6).
+choose-if: {! return PolishProjects.optionStatus(Q, 'social_welfare', 'insurance').available !}
+unavailable-subtitle: [+ pl_social_welfare_insurance_why +]
 on-arrival: {!
-PolishProjects.chooseOption(Q, 'social_welfare', 'focus');
+PolishProjects.chooseOption(Q, 'social_welfare', 'insurance');
 !}
 go-to: result
 
 @limit
 title: Limit the benefits
-subtitle: A legal change of the benefit: only the difference, e.g. from 2 to 1 budget unit. Breaks the guarantee; Lewica dissent rises (+8).
+subtitle: A change of the law saves the budget 1 unit a month. The unemployed get less, and the dissent of the Left of PPS rises (+8).
 choose-if: {! return PolishProjects.optionStatus(Q, 'social_welfare', 'limit').available !}
 unavailable-subtitle: [+ pl_social_welfare_limit_why +]
 on-arrival: {!
@@ -63,7 +62,7 @@ go-to: result
 @result
 new-page: true
 
-= Benefits and aid for the unemployed
+= Benefits and insurance
 
 [+ pl_gc_result +]
 

@@ -257,36 +257,31 @@ test('Rozszerzyć i skupić osłony: expanding a 2 B protection to scope 2 costs
   // Rising unemployment mixes new mass into the unemployed cell (5.1), so the second month differs by less than 0.01.
   close(gap() - before, 6 / 3 + 4 / 3, 0.01, 'the newly covered third gets the same −6, and the current relief doubles');
   assert.ok(protection.pending_effects.some(e => e.when === 'scope_2' && e.applied_at !== undefined));
-  const focused = run('focus');
-  settle(focused);
+  // Z — 0.94 (decisions of 24 X 2026): the focused variant left the card; a focused protection of an older save keeps its relief.
+  const focused = run('expand');
   const focus = PolishProjects.operatingProtection(focused.S);
+  Object.assign(focus, { variant: 'focused', upkeep_budget_B: 1 }); // fixture: the focused variant of an older save
+  settle(focused);
   assert.deepEqual([focus.variant, focus.upkeep_budget_B], ['focused', 1]);
   close(PolishPolitics.ongoingRelief(focused.S, unemployedCells(focused.S)[0]), 1 / 3, 1e-9, 'the full relief for half of the covered');
 });
 
-test('Reprezentacja: consultation −2, then co-decision only the missing −2, then nothing; a refusal of the representatives blocks a covered decision only under co-decision', () => {
+// Z — 0.94 (decisions of 24 X 2026): the workers' representation in a public plant became the law on works councils of the card
+// Economic Democracy; the representation of an older save keeps its own rules (PolishProjects.plantDecisionStatus).
+test('Reprezentacja: since 0.94 the law on works councils for the larger plants; business +8 when it takes effect; the unions of industry and the railways +5 and the workers −3 once', () => {
   const Q = withPortfolios(quiet(), 'economic');
   const S = Q.S;
   S.economy.budget_base = 10;
-  S.economy.history.push({ t: Q.time - 1, credit: 30 }, { t: Q.time, credit: 30 });
-  PolishUnions.recordPlants(Q, Q.time);
-  const plant = PolishUnions.plants(S)[0];
-  plant.owner = 'public'; plant.public_act_id = 'fixture-act';
-  const workers = S.society.cells.filter(c => c.class_id === 'workers' && c.employment === 'employed');
-  // The one-off effect alone: the recorded effects are applied, before the monthly equation of 15.1.
-  const oneOff = () => { const g0 = workers.map(c => c.grievance); PolishPolitics.applyRecordedEffects(Q, Q.time); return workers.map((c, i) => c.grievance - g0[i]); };
-  PolishProjects.chooseOption(Q, 'industrial_policy', 'worker_representation', { variant: 'consultative' });
-  for (const d of oneOff()) close(d, -2 * 0.10 * 0.6, 1e-9, 'consultation: −2 for the workers of the plant, a tenth of the industrial branch');
-  assert.deepEqual(oneOff(), workers.map(() => 0), 'once');
-  assert.deepEqual(PolishProjects.plantDecisionStatus(Q, plant.id, 'mass dismissals', false), { available: true, reason: '' },
-    'under consultation a refusal does not block');
   S.parliament.clubs.find(c => c.id === 'pps').seats += 215;
   S.parliament.clubs.find(c => c.id === 'other').seats -= 215;
-  free(Q);
-  // Z — 0.93 (decision 4A of 24 X 2026): co-decision is filed and started in the same decision.
-  PolishProjects.chooseOption(Q, 'industrial_policy', 'worker_representation', { variant: 'decision_rights' });
-  const project = Object.values(S.projects).find(p => p.type === 'enterprise_representation' && p.variant === 'decision_rights');
-  // The months of execution without politics, so the effect waits until it is applied here.
+  const workers = S.society.cells.filter(c => c.class_id === 'workers');
+  const oneOff = () => { const g0 = workers.map(c => c.grievance); PolishPolitics.applyRecordedEffects(Q, Q.time); return workers.map((c, i) => c.grievance - g0[i]); };
+  const pressure = S.economy.business_pressure, trust = ['industry', 'rail', 'farm_labour'].map(b => S.unions[b].trust);
+  PolishProjects.chooseOption(Q, 'economic_democracy', 'works_councils');
+  const project = Object.values(S.projects).find(p => p.type === 'works_councils');
+  const law = S.parliament.laws.at(-1);
+  assert.deepEqual([law.project_id, law.status], [project.id, 'enacted']);
+  assert.equal(S.economy.business_pressure, pressure + 8, 'the employers press harder when the law takes effect');
   for (let i = 0; i < 3 && project.status !== 'completed'; i++) {
     const t = Q.time;
     free(Q);
@@ -294,12 +289,12 @@ test('Reprezentacja: consultation −2, then co-decision only the missing −2, 
     PolishProjects.settleMonth(Q, { t });
   }
   assert.equal(project.status, 'completed');
-  for (const d of oneOff()) close(d, -2 * 0.10 * 0.6, 1e-9, 'co-decision gives only the missing −2');
-  assert.match(PolishProjects.plantDecisionStatus(Q, plant.id, 'mass dismissals', false).reason, /refuses its consent/);
-  assert.equal(PolishProjects.plantDecisionStatus(Q, plant.id, 'mass dismissals', true).available, true);
-  assert.equal(PolishProjects.plantDecisionStatus(Q, plant.id, 'the opening hours of the canteen', false).available, true, 'only the covered decisions');
+  assert.deepEqual(['industry', 'rail', 'farm_labour'].map(b => S.unions[b].trust), [trust[0] + 5, trust[1] + 5, trust[2]]);
+  const first = oneOff();
+  assert.ok(first.every(d => d < 0), 'the workers are relieved');
+  assert.deepEqual(oneOff(), workers.map(() => 0), 'once');
   free(Q);
-  assert.match(PolishProjects.optionStatus(Q, 'industrial_policy', 'worker_representation').reason, /already/, 'a repeated choice gives nothing');
+  assert.match(PolishProjects.optionStatus(Q, 'economic_democracy', 'works_councils').reason, /already in force/);
 });
 
 test('Mobilizacja i kult: a living President opens neither B4 nor B5; without the concrete commemoration of the assassin, and at an ordinary service, the cult does not appear', () => {

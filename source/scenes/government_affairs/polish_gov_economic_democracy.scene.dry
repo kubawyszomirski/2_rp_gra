@@ -1,0 +1,68 @@
+title: Economic Democracy
+subtitle: Industry and Trade: works councils, cooperatives and the socialisation of mining.
+new-page: true
+is-card: true
+tags: govt_affairs
+view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'economic_democracy') !}
+on-arrival: {!
+// Card government.economic_democracy (technical reference 17.11–17.12). Z — 0.94 (the user's decisions of 24 X 2026; P): a card
+// of Industry and Trade after the German card “Economic Democracy” — the law on works councils, the state credit of the cooperatives
+// and the socialisation of coal mining, once in the game.
+PolishProjects.cardView(Q, 'economic_democracy');
+Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_economic_democracy');
+!}
+
+= Economic democracy
+
+*[+ pl_gc_ministry +]*
+
+Socialists want the workers to have a say in the plants and the economy to serve those who work. Every step in this direction meets the resistance of the employers.
+
+[+ pl_gc_budget +]
+
+[+ pl_gc_projects +]
+
+- @works_councils
+- @cooperative_credit
+- @socialise_mining
+- @easy_discard
+- @cancel_advisor_action
+
+@works_councils
+title: Introduce the law on works councils
+subtitle: A law in the Sejm: in the larger plants workers’ councils have a say on dismissals and the wage rules. The workers are less discontented (−3) and trust their unions more (+5), but business presses harder (+8).
+choose-if: {! return PolishProjects.optionStatus(Q, 'economic_democracy', 'works_councils').available !}
+unavailable-subtitle: [+ pl_economic_democracy_works_councils_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'economic_democracy', 'works_councils');
+!}
+go-to: result
+
+@cooperative_credit
+title: Support the cooperatives with state credit
+subtitle: Costs 1 budget unit a month. The workers trust PPS more (+3), but the small traders whose customers the cooperatives take trust us less (−3).
+choose-if: {! return PolishProjects.optionStatus(Q, 'economic_democracy', 'cooperative_credit').available !}
+unavailable-subtitle: [+ pl_economic_democracy_cooperative_credit_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'economic_democracy', 'cooperative_credit');
+!}
+go-to: result
+
+@socialise_mining
+title: Socialise coal mining
+subtitle: A law in the Sejm, once in the game; compensation for the owners costs 2 budget units a month for six months. The miners’ unions trust the party more and the dissent of the Left of PPS falls (−5), but business pressure jumps (+25).
+choose-if: {! return PolishProjects.optionStatus(Q, 'economic_democracy', 'socialise_mining').available !}
+unavailable-subtitle: [+ pl_economic_democracy_socialise_mining_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'economic_democracy', 'socialise_mining');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= Economic democracy
+
+[+ pl_gc_result +]
+
+- @root: Continue.

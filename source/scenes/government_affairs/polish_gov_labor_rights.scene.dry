@@ -6,12 +6,10 @@ tags: govt_affairs
 card-image: img/polish/polish_gov_labor_rights.jpg
 view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'labor_rights') !}
 on-arrival: {!
-// Card government.labor_rights (technical reference 17.11–17.12; card catalogue 8.1). Opening and closing
-// the card are free; a confirmed option costs this month's action, or the one free step of an adviser
-// who opened the card. Collective agreements and derogations use the union branches and plant records of
-// stage 6 (PolishUnions).
+// Card government.labor_rights (technical reference 17.11–17.12; card catalogue 8.1). Opening and closing the card are free; a
+// confirmed option costs this month's action, or the one free step of an adviser who opened the card. Z — 0.94 (decisions of
+// 24 X 2026): every option has a gain and a cost; the collective agreement takes the branch where our union is strongest.
 PolishProjects.cardView(Q, 'labor_rights');
-// Z — 0.66 (decision 2A): the ministry of this card, on its page and as a badge in the hand.
 Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_labor_rights');
 !}
 
@@ -19,7 +17,7 @@ Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_labor_rights');
 
 *[+ pl_gc_ministry +]*
 
-Labour enforces the law on working time and oversees agreements between employers and unions. An inspection is a small reform: one decision, 1 B for two months of building, then 1 B to run. The Sejm votes on its law in the same decision. A collective agreement and a derogation cost the budget nothing.
+Labour enforces the statutory working time and the conditions in the plants. Every gain of the workers strengthens the pressure of business on the cabinet, which now stands at [+ pl_gc_business +] of 100.
 
 [+ pl_gc_budget +]
 
@@ -34,8 +32,8 @@ Labour enforces the law on working time and oversees agreements between employer
 - @cancel_advisor_action
 
 @inspection
-title: Inspection and enforcement of working time
-subtitle: Protection rises one level once it works; costs the budget 1 unit a month for two months, then 1 unit a month. Needs the law.
+title: Introduce a labour inspection
+subtitle: Costs 1 budget unit a month and needs a law in the Sejm. The workers are less discontented (−3), but business presses harder on the cabinet (+4).
 choose-if: {! return PolishProjects.optionStatus(Q, 'labor_rights', 'inspection').available !}
 unavailable-subtitle: [+ pl_labor_rights_inspection_why +]
 on-arrival: {!
@@ -44,57 +42,18 @@ PolishProjects.chooseOption(Q, 'labor_rights', 'inspection');
 go-to: result
 
 @collective
-title: Collective agreements
-subtitle: This month's action, nothing from the budget: the employers who sign pay. Wages rise once through the economy, with no reaction of business.
+title: Bring about a collective agreement
+subtitle: No cost to the budget; the agreement covers the branch where our union is strongest (now: [+ pl_gc_collective_branch +]). Wages rise for two months, most in industry (+1.2 percentage points), but business presses harder (+3).
 choose-if: {! return PolishProjects.optionStatus(Q, 'labor_rights', 'collective').available !}
 unavailable-subtitle: [+ pl_labor_rights_collective_why +]
-go-to: collective_menu
-
-@collective_menu
-new-page: true
-
-= Collective agreements
-
-A collective agreement binds the employers and the union of one branch for twelve months and sets the wage conditions. For two months it raises wages like a settled wage clause: by 2 percentage points times the branch's scope. A branch in an open dispute settles its wages there instead.
-
-- @collective_industry
-- @collective_rail
-- @collective_farm_labour
-- @polish_gov_labor_rights: Back to the card.
-
-@collective_industry
-title: Industry
-subtitle: Wages rise for two months (+1.2 percentage points; scope 0.6).
-choose-if: {! return PolishProjects.optionStatus(Q, 'labor_rights', 'collective', {branch: 'industry'}).available !}
-unavailable-subtitle: [+ pl_collective_industry_why +]
 on-arrival: {!
-PolishProjects.chooseOption(Q, 'labor_rights', 'collective', {branch: 'industry'});
-!}
-go-to: result
-
-@collective_rail
-title: Railways
-subtitle: Wages rise a little for two months (+0.4 percentage points; scope 0.2).
-choose-if: {! return PolishProjects.optionStatus(Q, 'labor_rights', 'collective', {branch: 'rail'}).available !}
-unavailable-subtitle: [+ pl_collective_rail_why +]
-on-arrival: {!
-PolishProjects.chooseOption(Q, 'labor_rights', 'collective', {branch: 'rail'});
-!}
-go-to: result
-
-@collective_farm_labour
-title: Agricultural labour
-subtitle: Wages rise a little for two months (+0.4 percentage points; scope 0.2).
-choose-if: {! return PolishProjects.optionStatus(Q, 'labor_rights', 'collective', {branch: 'farm_labour'}).available !}
-unavailable-subtitle: [+ pl_collective_farm_labour_why +]
-on-arrival: {!
-PolishProjects.chooseOption(Q, 'labor_rights', 'collective', {branch: 'farm_labour'});
+PolishProjects.chooseOption(Q, 'labor_rights', 'collective');
 !}
 go-to: result
 
 @derogation
-title: Limited derogations in threatened plants
-subtitle: This month's action, nothing from the budget, for the oldest recorded plant in difficulty, six months: business pressure falls (−4) and its workers' grievance rises (+3). Needs the law on working time.
+title: Agree to derogations from the eight-hour day
+subtitle: No cost to the budget, for half a year in a plant threatened with closure. Business presses less (−4), but the workers of the plant are more discontented (+3) and the Left of PPS protests (+3).
 choose-if: {! return PolishProjects.optionStatus(Q, 'labor_rights', 'derogation').available !}
 unavailable-subtitle: [+ pl_labor_rights_derogation_why +]
 on-arrival: {!

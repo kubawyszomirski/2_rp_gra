@@ -615,7 +615,7 @@ test('Remont Oświaty: a running conservation of Wawel extended once; one charge
   assert.equal(proj.optionStatus(Q, 'heritage_restoration', 'zamek_conservation').available, true, 'the other building remains');
 });
 
-test('Rozszerzyć i skupić osłony: a protection of 2 B extended to scope 2 costs 4 B; focused, 1 B for the most needy half', () => {
+test('Rozszerzyć osłony i ubezpieczenie: a protection of 2 B extended to scope 2 costs 4 B; the insurance of workers by a law, business +6 (Z — 0.94)', () => {
   const Q = withPortfolio(world({ time: 12 }), 'labor');
   proj.chooseOption(Q, 'social_welfare', 'expand');
   freeAction(Q);
@@ -625,15 +625,20 @@ test('Rozszerzyć i skupić osłony: a protection of 2 B extended to scope 2 cos
   freeAction(Q);
   assert.deepEqual([protection.scope, protection.upkeep_budget_B], [2, 4]);
   assert.ok(protection.pending_effects.some(e => e.when === 'scope_2'), 'the same relief for the newly covered (stage 7)');
-  const F = withPortfolio(world({ time: 12 }), 'labor');
-  proj.chooseOption(F, 'social_welfare', 'expand');
+  // Z — 0.94 (decisions of 24 X 2026): the focused variant left the card; the insurance of workers is filed by the card itself.
+  assert.match(proj.optionStatus(Q, 'social_welfare', 'focus').reason, /Unknown option/);
+  const F = withPortfolio(world({ seats: LEFT, time: 12 }), 'labor');
+  const pressure = F.S.economy.business_pressure;
+  proj.chooseOption(F, 'social_welfare', 'insurance');
+  const insurance = Object.values(F.S.projects).find(p => p.type === 'old_age_insurance');
+  const law = F.S.parliament.laws.at(-1);
+  assert.deepEqual([law.project_id, law.status, insurance.status, insurance.upkeep_budget_B], [insurance.id, 'enacted', 'operating', 1]);
+  assert.equal(F.S.economy.business_pressure, pressure + 6);
   freeAction(F);
-  proj.chooseOption(F, 'social_welfare', 'focus');
-  const focused = proj.operatingProtection(F.S);
-  assert.deepEqual([focused.variant, focused.upkeep_budget_B, proj.PROJECT_TYPES.worker_protection.variants.focused.share], ['focused', 1, 0.5]);
+  assert.match(proj.optionStatus(F, 'social_welfare', 'insurance').reason, /already in force/);
 });
 
-test('Warianty funduszu inwestycyjnego and Ratunek zakładu: 1 B a month for every financing (Z — 0.93); banks blocked at credit 39, at 40 and business −8; cooperatives need no PPS cooperative (Z — 0.92); no rescue without a recorded plant', () => {
+test('Warianty funduszu inwestycyjnego and Ratunek zakładu: 1 B a month, banks half (Z — 0.94); banks blocked at credit 39, at 40 business −8; cooperatives need no PPS cooperative (Z — 0.92); no rescue without a recorded plant', () => {
   const Q = withPortfolio(world({ time: 12 }), 'finance');
   Q.S.economy.credit = 39;
   assert.match(proj.optionStatus(Q, 'investment_fund', 'banks').reason, /below 40/);
@@ -641,7 +646,7 @@ test('Warianty funduszu inwestycyjnego and Ratunek zakładu: 1 B a month for eve
   proj.chooseOption(Q, 'investment_fund', 'banks');
   freeAction(Q);
   const instrument = Object.values(Q.S.projects).find(p => p.type === 'credit_instrument');
-  assert.deepEqual([instrument.variant, instrument.status, instrument.build_budget_B, instrument.upkeep_budget_B], ['banks', 'executing', 1, 1]);
+  assert.deepEqual([instrument.variant, instrument.status, instrument.build_budget_B, instrument.upkeep_budget_B], ['banks', 'executing', 0.5, 0.5]);
   assert.equal(Q.S.economy.business_pressure, 10 - 8, 'the agreement lowers business pressure once');
   // Z — 0.92: the cooperative variant uses the existing cooperative movement; it gives credit to farms and small plants (the
   // rural and petty-bourgeois recipients). Z — 0.93: 1 B a month, like the others.
@@ -653,8 +658,9 @@ test('Warianty funduszu inwestycyjnego and Ratunek zakładu: 1 B a month for eve
   const I = withPortfolio(world({ time: 12 }), 'economic');
   // Stage 6: the rescue needs a recorded plant (tests/rules-strike.test.js, "Ratunek zakładu").
   assert.match(proj.optionStatus(I, 'industrial_policy', 'rescue').reason, /recorded plant/);
-  proj.chooseOption(I, 'industrial_policy', 'credit');
+  proj.chooseOption(I, 'investment_fund', 'public');
   assert.equal(Object.values(I.S.projects).find(p => p.type === 'credit_instrument').variant, 'public', 'the general credit: +5 to the credit target');
+  assert.match(proj.optionStatus(I, 'industrial_policy', 'credit').reason, /Unknown option/, 'Z — 0.94: no second card of the same credit');
   assert.equal(proj.PROJECT_TYPES.credit_instrument.variants.public.credit_support, 5);
 });
 

@@ -5,13 +5,13 @@
   "title: Capital for Investment": "title: Kapitał na inwestycje",
   "subtitle: Treasury or Industry: how the credit instrument is financed.": "subtitle: Resort Skarbu albo Przemysłu: jak finansować instrument kredytowy.",
   "= Capital for investment": "= Kapitał na inwestycje",
-  "title: Public fund": "title: Fundusz publiczny",
-  "title: Agreement with banks and industry": "title: Porozumienie z bankami i przemysłem",
-  "title: Cooperative financing": "title: Finansowanie spółdzielcze",
   "- @root: Continue.": "- @root: Dalej.",
-  "The credit instrument costs 1 B a month from its launch and raises the credit target after two months, for as long as it works (+5). The variants differ in who pays and who must agree: one financing, one cost, one effect.": "Instrument kredytowy kosztuje 1 jednostkę budżetu miesięcznie od uruchomienia i po dwóch miesiącach podnosi docelowy kredyt, dopóki działa (+5). Warianty różnią się tym, kto płaci i kto musi się zgodzić: jedno finansowanie, jeden koszt, jeden skutek.",
-  "subtitle: The state pays everything: 1 budget unit a month.": "subtitle: Państwo płaci za wszystko: 1 jednostka budżetu miesięcznie.",
-  "subtitle: The banks share the risk: 1 budget unit a month; business pressure falls (−8). Needs credit of at least 40.": "subtitle: Banki dzielą ryzyko: 1 jednostka budżetu miesięcznie; presja przedsiębiorców spada (−8). Wymaga kredytu co najmniej 40.",
-  "subtitle: Credit for farms and small workshops through the cooperatives: 1 budget unit a month.": "subtitle: Kredyt dla gospodarstw i małych warsztatów przez spółdzielnie: 1 jednostka budżetu miesięcznie."
+  "The credit instrument gives firms cheaper credit and raises the credit target of the economy while it works (+5). The variants differ in who pays and whom the credit helps.": "Instrument kredytowy daje przedsiębiorstwom tańszy kredyt i podnosi docelowy kredyt w gospodarce, dopóki działa (+5). Warianty różnią się tym, kto płaci i komu kredyt pomaga.",
+  "title: Set up a public fund": "title: Załóż fundusz publiczny",
+  "subtitle: Costs 1 budget unit a month; the state itself chooses whom it lends to. It helps the workers’ towns and the crafts.": "subtitle: Kosztuje 1 jednostkę budżetu miesięcznie; państwo samo wybiera, komu daje kredyt. Pomaga robotniczym miastom i rzemiosłu.",
+  "title: Make an agreement with the banks": "title: Zawrzyj porozumienie z bankami",
+  "subtitle: Costs only half a budget unit a month, and business presses less (−8). The Left of PPS protests against a deal with capital (+4); needs credit of at least 40.": "subtitle: Kosztuje tylko pół jednostki budżetu miesięcznie, a przedsiębiorcy mniej naciskają (−8). Lewica PPS protestuje przeciw układowi z kapitałem (+4); wymaga kredytu co najmniej 40.",
+  "title: Finance the credit through the cooperatives": "title: Finansuj kredyt przez spółdzielnie",
+  "subtitle: Costs 1 budget unit a month. It helps peasant farms and workshops instead of the towns.": "subtitle: Kosztuje 1 jednostkę budżetu miesięcznie. Pomaga gospodarstwom chłopskim i warsztatom zamiast miastom."
  }
 }

@@ -84,8 +84,9 @@
       investment: false, ongoing: true, caretaker_allowed: true, beneficiaries: ['workers'],
       law: {title: 'Enforcement of working time', programme: {fiscal: 1}},
       // Z — 0.81 (decision 4B of 20 X 2026): the limited variant of the legislative initiative — inspection in large industry only.
-      variants: {inspection: {build: 1, upkeep: 1, duration: 2, relief: 3},
-        industry_only: {build: 1, upkeep: 0.5, duration: 1, relief: 1.5, law: {title: 'Enforcement of working time in large industry', programme: {fiscal: 0}}}}},
+      // Z — 0.94 (decision 2A of 24 X 2026): the employers press harder when the law on the inspection takes effect (P).
+      variants: {inspection: {build: 1, upkeep: 1, duration: 2, relief: 3, business: 4},
+        industry_only: {build: 1, upkeep: 0.5, duration: 1, relief: 1.5, business: 2, law: {title: 'Enforcement of working time in large industry', programme: {fiscal: 0}}}}},
     worker_protection: {name: 'Protection for the unemployed', card: 'social_welfare', portfolios: ['labor'], klass: 'small',
       investment: false, ongoing: true, on_launch: 'operating', caretaker_allowed: true, beneficiaries: ['unemployed'], law: null,
       variants: {full: {build: 0, upkeep: 2, share: 1, relief_start: -6, relief: 2}, focused: {build: 0, upkeep: 1, share: 0.5, relief_start: -6, relief: 2},
@@ -103,7 +104,8 @@
     credit_instrument: {name: 'Credit instrument', card: 'investment_fund', portfolios: ['finance', 'economic'], klass: 'large',
       investment: true, ongoing: true, beneficiaries: ['workers', 'old_middle'], law: null,
       variants: {public: {build: 1, upkeep: 1, duration: 2, credit_support: 5},
-        banks: {build: 1, upkeep: 1, duration: 2, credit_support: 5, business: -8},
+        // Z — 0.94 (decision 2A): the banks share the cost — half a unit — and the Left of PPS protests (chooseOption).
+        banks: {build: 0.5, upkeep: 0.5, duration: 2, credit_support: 5, business: -8},
         cooperative: {build: 1, upkeep: 1, duration: 2, credit_support: 5, beneficiaries: ['rural', 'old_middle']}}},
     orders: {name: 'Public orders for industry', card: 'industrial_policy', portfolios: ['economic'], klass: 'small', investment: false,
       ongoing: true, on_launch: 'operating', beneficiaries: ['workers'], law: null,
@@ -142,7 +144,8 @@
     // Stage 6 (12.4, 17.12, 17.12.5): the rescue of one recorded plant is the rescue variant of the conditional credit,
     // under the owner's agreement that is the condition of the credit (P); representation of the workers of a public plant.
     plant_rescue: {name: 'Rescue of a plant', card: 'industrial_policy', portfolios: ['economic'], klass: 'large', investment: true,
-      ongoing: true, beneficiaries: ['workers'], law: null, variants: {rescue: {build: 1, upkeep: 1, duration: 2}}},
+      // Z — 0.94 (the user's note of 24 X 2026): a rescued plant calms the employers (P).
+      ongoing: true, beneficiaries: ['workers'], law: null, variants: {rescue: {build: 1, upkeep: 1, duration: 2, business: -4}}},
     enterprise_representation: {name: 'Workers’ representation in a plant', card: 'industrial_policy', portfolios: ['economic'],
       klass: 'small', investment: false, beneficiaries: ['workers'], law: null,
       variants: {consultative: {build: 0, upkeep: 0, duration: 1},
@@ -177,7 +180,20 @@
         rent_suspension: {build: 0, upkeep: 0, relief_start: -2, relief: 0.5, months: 9, business: 1}}},
     old_age_insurance: {name: 'Old-age insurance of workers', card: 'legislative_initiative', portfolios: ['labor'], klass: 'small', investment: false,
       ongoing: true, on_launch: 'operating', caretaker_allowed: true, beneficiaries: ['workers'], law: null,
-      variants: {pension_all: {build: 0, upkeep: 1, relief_start: -2, business: 6}, pension_industry: {build: 0, upkeep: 0.5, relief_start: -1, business: 3}}},
+      // Z — 0.94: the card “Benefits and Insurance” of Labour files the law of the full insurance itself (the initiative starts it by its bill).
+      variants: {pension_all: {build: 0, upkeep: 1, relief_start: -2, business: 6, law: {title: 'Old-age insurance of workers', programme: {fiscal: 2}}},
+        pension_industry: {build: 0, upkeep: 0.5, relief_start: -1, business: 3}}},
+    // Z — 0.94 (the user's decisions of 24 X 2026): the card “Economic Democracy” of Industry and Trade (P). Works councils by a
+    // law for the larger plants; the state credit of the cooperatives; the socialisation of coal mining, once in the game.
+    works_councils: {name: 'Works councils', card: 'economic_democracy', portfolios: ['economic'], klass: 'small', investment: false,
+      beneficiaries: ['workers'], law: {title: 'Works councils', programme: {fiscal: 1}},
+      variants: {works_councils: {build: 0, upkeep: 0, duration: 1, relief: 3, union_trust: 5, business: 8}}},
+    cooperative_credit: {name: 'State credit for the cooperatives', card: 'economic_democracy', portfolios: ['economic'], klass: 'small',
+      investment: false, ongoing: true, on_launch: 'operating', beneficiaries: ['workers'], law: null,
+      variants: {cooperative_credit: {build: 0, upkeep: 1, trust: 3, trust_lost: -3}}},
+    mining_socialisation: {name: 'Socialisation of coal mining', card: 'economic_democracy', portfolios: ['economic'], klass: 'large',
+      investment: true, beneficiaries: ['workers'], law: {title: 'Socialisation of coal mining', programme: {fiscal: 2}},
+      variants: {socialise_mining: {build: 2, upkeep: 0, duration: 6, business: 25, lewica: -5, union_trust: 5}}},
     constitution: {name: 'Constitutional reform', card: 'constitution_project', portfolios: [], klass: 'constitutional', investment: true,
       beneficiaries: [], law: {constitutional: true},
       variants: {democratic_guarantees: {build: 1, upkeep: 0, duration: 1, programme: {institution: 2}},
@@ -212,11 +228,14 @@
     regional_sejm: 'autonomy of Eastern Galicia with a regional diet', employment_small: 'a smaller programme of employment',
     housing_coop: 'cooperative houses on state credit', rent_freeze: 'no further rent rises and protection against eviction',
     rent_suspension: 'rent rises suspended for nine months', pension_all: 'insurance of all workers', pension_industry: 'insurance of the workers of large industry and the railways',
+    works_councils: 'works councils in the larger plants', cooperative_credit: 'state credit for the cooperatives', socialise_mining: 'socialisation of coal mining',
     church_separation: 'the separation of the Church and the state', referendum: 'the popular referendum',
     labour_chamber: 'a Chamber of Labour in place of the Senate', unicameral: 'one chamber: the abolition of the Senate',
   });
   // 11.7: the prepared public control of an enterprise, once per plant.
   const PUBLIC_CONTROL_BUSINESS = 15;
+  // Z — 0.94 (decision 2A of 24 X 2026; P): the costs of the Labour and investment options that had none but the budget.
+  const COLLECTIVE_BUSINESS = 3, DEROGATION_LEWICA = 3, BANKS_LEWICA = 4;
 
   const HERITAGE_OBJECTS = Object.freeze({wawel: 'Wawel', zamek: 'the Royal Castle in Warsaw'});
 
@@ -230,7 +249,8 @@
     police_professionalization: 'Profesjonalizacja policji', police_investigation: 'Śledztwo w wymienionej sprawie',
     police_protection: 'Ochrona zgromadzenia albo instytucji', limited_autonomy: 'Ograniczona autonomia administracyjna i kulturalna',
     army_control: 'Cywilna kontrola nad wojskiem', justice_review: 'Rewizja wymienionego nadużycia', constitution: 'Reforma konstytucyjna',
-    tenant_protection: 'Ochrona lokatorów', old_age_insurance: 'Ubezpieczenie robotników na starość'});
+    tenant_protection: 'Ochrona lokatorów', old_age_insurance: 'Ubezpieczenie robotników na starość', works_councils: 'Rady zakładowe',
+    cooperative_credit: 'Kredyt państwa dla spółdzielni', mining_socialisation: 'Uspołecznienie górnictwa węglowego'});
   const VARIANT_NAMES_PL = Object.freeze({
     inspection: 'inspekcja i egzekwowanie czasu pracy', full: 'pełna osłona', focused: 'skupiona na najbardziej potrzebujących',
     limited: 'ograniczony zasiłek', employment: 'szybkie zatrudnienie bezrobotnych', infrastructure: 'transport i infrastruktura',
@@ -253,6 +273,7 @@
     housing_coop: 'domy spółdzielcze z kredytem państwa', rent_freeze: 'bez dalszych podwyżek czynszu i z ochroną przed eksmisją',
     rent_suspension: 'podwyżki czynszu zawieszone na dziewięć miesięcy', pension_all: 'ubezpieczenie wszystkich robotników',
     pension_industry: 'ubezpieczenie robotników wielkiego przemysłu i kolei',
+    works_councils: 'rady zakładowe w większych zakładach', cooperative_credit: 'kredyt państwa dla spółdzielni', socialise_mining: 'uspołecznienie górnictwa węglowego',
     church_separation: 'rozdział Kościoła od państwa', referendum: 'referendum ludowe', labour_chamber: 'Izba Pracy w miejsce Senatu',
     unicameral: 'jedna izba: zniesienie Senatu',
   });
@@ -301,7 +322,9 @@
     'Currency reform': 'Reforma walutowa', 'Workers’ co-decision in a public plant': 'Współdecydowanie robotników w zakładzie publicznym',
     'Limited administrative and cultural autonomy': 'Ograniczona autonomia administracyjna i kulturalna',
     'Civilian oversight of the army': 'Cywilny nadzór nad wojskiem', 'A limited reform of the command of the army': 'Ograniczona reforma dowodzenia wojskiem',
-    'Constitutional reform': 'Reforma konstytucyjna', 'Cut of the unemployment benefit': 'Cięcie zasiłku dla bezrobotnych'});
+    'Constitutional reform': 'Reforma konstytucyjna', 'Cut of the unemployment benefit': 'Cięcie zasiłku dla bezrobotnych',
+    'Old-age insurance of workers': 'Ubezpieczenie robotników na starość', 'Works councils': 'Rady zakładowe',
+    'Socialisation of coal mining': 'Uspołecznienie górnictwa węglowego'});
   const STORED_PL = Object.freeze({
     'The Sejm rejected the law; the preparation is kept.': 'Sejm odrzucił ustawę; przygotowanie zostaje zachowane.',
     'the law has not yet taken effect': 'ustawa jeszcze nie weszła w życie', 'there is no cabinet': 'nie ma gabinetu',
@@ -752,6 +775,17 @@
         enactReform(Q, project.variant, project, t);
       } else if (project.type === 'labor_inspection') {
         pend(project, {system: 'grievance', stage: 7, value: -(variant.relief || 3), when: 'first_operation', scale: coverage, note: 'recipients, × execution'});
+      } else if (project.type === 'works_councils' || project.type === 'mining_socialisation') {
+        // Z — 0.94: the workers' councils and the socialised mines: the unions of industry (and of the railways for the councils)
+        // trust them more, once; the councils relieve the workers, the socialisation satisfies the Left of PPS.
+        const branches = project.type === 'works_councils' ? ['industry', 'rail'] : ['industry'];
+        for (const b of branches) if (S.unions && S.unions[b]) S.unions[b].trust = Math.min(100, S.unions[b].trust + variant.union_trust);
+        if (variant.relief) pend(project, {system: 'grievance', stage: 7, value: -variant.relief, when: 'first_operation', note: 'recipients, once'});
+        if (variant.lewica) government.factionReaction(Q, 'lewica', {dissent: variant.lewica}, {id: project.id + ':lewica', kind: 'cabinet_policy', reverse: null});
+      } else if (project.type === 'cooperative_credit') {
+        // Z — 0.94: the workers trust PPS more, the small traders whom the cooperatives take customers from trust it less.
+        pend(project, {system: 'trust', stage: 5, value: variant.trust, when: 'first_effect'});
+        pend(project, {system: 'trust', stage: 5, value: variant.trust_lost, when: 'first_effect_traders', beneficiaries: ['old_middle']});
       } else if (project.type === 'tenant_protection' || project.type === 'old_age_insurance') {
         // Z — 0.81: the relief of the initiative laws of PPS on tenants and old age, once at their first effect.
         pend(project, {system: 'grievance', stage: 7, value: variant.relief_start, when: 'first_payment', scale: coverage, note: 'the initial relief, once'});
@@ -2723,8 +2757,8 @@
           L('The limited benefit is paid from the next settlement: 1 budget unit a month.', 'Ograniczony zasiłek będzie wypłacany od najbliższego rozliczenia: 1 jednostka budżetu miesięcznie.');
       }},
     {id: 'labor_inspection', portfolio: 'labor', name: ['Labour inspection and working time', 'Inspekcja pracy i czas pracy'],
-      text: ['Inspectors enforce the statutory working time: building costs 1 budget unit a month for two months, then the same to run it. The discontent of the workers falls.',
-        'Inspektorzy pilnują ustawowego czasu pracy: budowa kosztuje 1 jednostkę budżetu miesięcznie przez dwa miesiące, potem tyle samo na utrzymanie. Niezadowolenie robotników spada.'],
+      text: ['Inspectors enforce the statutory working time: 1 budget unit a month while it works. The discontent of the workers falls, and business presses harder (+4).',
+        'Inspektorzy pilnują ustawowego czasu pracy: 1 jednostka budżetu miesięcznie, dopóki działa. Niezadowolenie robotników spada, a przedsiębiorcy mocniej naciskają (+4).'],
       raise: ['The inspection works today only in large industry; the law extends it to all workplaces.', 'Dziś inspekcja działa tylko w wielkim przemyśle; ustawa obejmuje nią wszystkie zakłady.'],
       variants: [{key: 'inspection', name: ['inspection everywhere', 'inspekcja we wszystkich zakładach'], programme: {fiscal: 1}},
         {key: 'industry_only', name: ['inspection in large industry only', 'inspekcja tylko w wielkim przemyśle'], programme: {fiscal: 0}}],
@@ -3187,13 +3221,19 @@
 
   const CARDS = Object.freeze({
     labor_rights: {portfolios: ['labor'], options: ['inspection', 'collective', 'derogation']},
-    social_welfare: {portfolios: ['labor'], options: ['expand', 'focus', 'limit']},
+    // Z — 0.94 (decisions of 24 X 2026): “Benefits and Insurance” — benefits, the old-age insurance and the cut; no focused variant.
+    social_welfare: {portfolios: ['labor'], options: ['expand', 'insurance', 'limit']},
     // Z — 0.93 (decision 3A of 24 X 2026): one Treasury card, “Taxes and Loans”, with five instruments; the wealth tax, the broader
     // base, the customs duties, the cut of the benefit (the Labour card has it) and the better collection left the card.
     finance_package: {portfolios: ['finance'], options: ['progressive', 'indirect', 'loan', 'emission', 'admin_cuts']},
     currency_stabilisation: {portfolios: ['finance'], options: ['rapid_cuts', 'protected', 'gradual']},
     investment_fund: {portfolios: ['finance', 'economic'], options: ['public', 'banks', 'cooperative']},
-    industrial_policy: {portfolios: ['economic'], options: ['credit', 'rescue', 'orders', 'public_control', 'worker_representation']},
+    // Z — 0.94: orders and the two ways of a plant in difficulty — a rescue or public control; the general credit is the investment
+    // card's and the representation in a public plant became the law on works councils.
+    industrial_policy: {portfolios: ['economic'], options: ['orders', 'rescue', 'public_control']},
+    economic_democracy: {portfolios: ['economic'], options: ['works_councils', 'cooperative_credit', 'socialise_mining']},
+    // An event card of Industry and Trade: the customs war with Germany from June 1925, one decision (customsWarAvailable).
+    customs_war: {portfolios: ['economic'], options: ['retaliation', 'new_markets', 'concessions']},
     public_works: {portfolios: ['labor'], options: ['employment', 'infrastructure', 'housing']},
     land_program: {portfolios: ['agriculture'], options: ['compensated', 'accelerated', 'expropriation']},
     agriculture_development: {portfolios: ['agriculture'], options: ['advisory', 'consolidation', 'cooperative_processing_sales']},
@@ -3215,7 +3255,8 @@
     polish_gov_investment: 'investment_fund', polish_gov_industry: 'industrial_policy', polish_gov_public_works: 'public_works',
     polish_gov_land: 'land_program', polish_gov_agriculture: 'agriculture_development', polish_gov_education: 'education_program',
     polish_gov_minority_schools: 'minority_school_rights', polish_gov_justice: 'justice_policy', polish_gov_interior: 'internal_security',
-    polish_gov_military: 'military_policy', polish_gov_heritage: 'heritage_restoration'});
+    polish_gov_military: 'military_policy', polish_gov_heritage: 'heritage_restoration', polish_gov_economic_democracy: 'economic_democracy',
+    polish_gov_customs_war: 'customs_war'});
   const SCENE_PORTFOLIOS = Object.freeze({polish_gov_pils_agreement: Object.freeze(['reichswehr'])});
   const PORTFOLIO_BADGE_PL = Object.freeze({labor: 'Praca', interior: 'Sprawy Wewnętrzne', finance: 'Skarb', economic: 'Przemysł i Handel',
     justice: 'Sprawiedliwość', agriculture: 'Rolnictwo', reichswehr: 'Sprawy Wojskowe', education: 'Oświata', foreign: 'Sprawy Zagraniczne'});
@@ -3300,7 +3341,41 @@
     if (!S || !card || S.chapter.status === 'ended' || government.formationPending(Q)) return false;
     if (!ppsHoldsAny(S, card.portfolios)) return false;
     if (cardId === 'currency_stabilisation') return financialCrisis(S);
+    if (cardId === 'customs_war') return customsWarOpen(S, Q.time);
     return true;
+  }
+
+  // ---- The customs war with Germany (Z — 0.94; an event card of Industry and Trade) ------------------------------------
+
+  // H: in June 1925 Germany closed its market to Polish coal when the duty-free quota of the Geneva convention of 1922 ended;
+  // Poland answered with bans on imports (HISTORICAL_SOURCES.md, PL-GOV-CARDS-0.94). In the game the war is the fall of credit
+  // and output of VI 1925 – VII 1926 (SCENARIO_SHOCKS). One decision of PPS while it holds Industry and Trade (P).
+  const CUSTOMS_WAR_FROM = T(1925, 6), CUSTOMS_WAR_TO = T(1926, 7);
+  const customsWarOpen = (S, t) => t >= CUSTOMS_WAR_FROM && t < CUSTOMS_WAR_TO && !(S.economy.customs_war && S.economy.customs_war.decided_at !== undefined);
+  const CUSTOMS_WAR = Object.freeze({
+    retaliation: {price: 1, price_months: 2, output: 0.2, months: 6},
+    new_markets: {budget: -1, output: 0.2, months: 6},
+    concessions: {credit: -6, months: 6, zln: -8},
+  });
+
+  function customsWarChoose(Q, option) {
+    const S = Q.S, E = S.economy, t = Q.time, w = CUSTOMS_WAR[option];
+    E.customs_war = {decided_at: t, option: option};
+    if (w.price) economy.addShock(E, {id: 'customs_war:price', channel: 'price', value: w.price, starts_at: t, ends_at: t + w.price_months});
+    if (w.output) economy.addShock(E, {id: 'customs_war:output', channel: 'output', value: w.output, starts_at: t, ends_at: t + w.months});
+    if (w.credit) economy.addShock(E, {id: 'customs_war:credit', channel: 'credit', value: w.credit, starts_at: t, ends_at: t + w.months});
+    if (w.budget) E.policies.push({id: 'pol-customs-war-t' + t, kind: 'export_subsidy', variant: null, authorization_id: null, starts_at: t, ends_at: t + w.months,
+      budget_schedule: [{from: t, to: t + w.months, value: w.budget}], emission_points: 0, beneficiaries: [], effects_applied: [], sponsor: 'pps', status: 'active'});
+    if (w.zln) government.changeRelation(Q, 'zln', w.zln, 'customs_war:concessions');
+    S.history.reasons.push({t: t, kind: 'customs_war', option: option});
+    return {
+      retaliation: L('Poland answers with retaliatory duties: the home market is kept for home industry, and prices rise for two months.',
+        'Polska odpowiada cłami odwetowymi: rynek wewnętrzny zostaje dla krajowego przemysłu, a ceny rosną przez dwa miesiące.'),
+      new_markets: L('The state pays for coal sent to new markets over the sea: 1 B a month for six months; the fall of output is halved.',
+        'Państwo dopłaca do węgla wysyłanego na nowe rynki przez morze: 1 B miesięcznie przez sześć miesięcy; spadek produkcji słabnie o połowę.'),
+      concessions: L('The cabinet makes concessions to Germany: trade and credit recover sooner, and the National Democrats accuse it of weakness.',
+        'Rząd idzie na ustępstwa wobec Niemiec: handel i kredyt szybciej odbijają, a endecja oskarża rząd o uległość.'),
+    }[option];
   }
 
   function forecastWith(Q, extra) {
@@ -3369,6 +3444,7 @@
         'Wymaga PPS w gabinecie z resortem ' + card.portfolios.map(k => PORTFOLIO_SHORT_PL[k]).join(' albo ') + '.');
     }
     if (cardId === 'currency_stabilisation' && !financialCrisis(S)) return L('Needs a financial crisis.', 'Wymaga kryzysu finansowego.');
+    if (cardId === 'customs_war') return L('The customs war with Germany is decided once, from June 1925.', 'O wojnie celnej z Niemcami decyduje się raz, od czerwca 1925.');
     return L('The card is not available.', 'Karta jest niedostępna.');
   }
 
@@ -3385,12 +3461,29 @@
     if (blockedLater[option]) return no(blockedLater[option]);
     // Z — 0.92 (the user's decision of 24 X 2026): the cooperative variants of 8.5 and 8.9 use the existing cooperative movement
     // and need no cooperative of PPS.
-    if (!(extra && extra.adviser) && !rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
+    // Z — 0.94: the answer to the customs war is an answer to an event and costs no month.
+    if (!(extra && extra.adviser) && cardId !== 'customs_war' && !rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
     switch (cardId) {
       case 'labor_rights': {
         if (option === 'collective' || option === 'derogation') return unionOption(Q, option, extra);
         if (projectsOf(S, 'labor_inspection', p => liveProject(p)).length) return no(L('The inspection already works; the same variant points to the existing project.', 'Inspekcja już działa; ten sam wariant wskazuje na istniejący projekt.'));
-        return forecastWith(Q, {charge: 1}) >= -2 ? OK : no(forecastBlock());
+        return launchStatus(Q, 'labor_inspection', 'inspection', projectsOf(S, 'labor_inspection', p => preparedProject(p) && p.sponsor === 'pps')[0] || null);
+      }
+      case 'economic_democracy': {
+        const TYPES = {works_councils: ['works_councils', 'works_councils'], cooperative_credit: ['cooperative_credit', 'cooperative_credit'],
+          socialise_mining: ['mining_socialisation', 'socialise_mining']};
+        const [typeId, variantId] = TYPES[option];
+        const prepared = projectsOf(S, typeId, p => preparedProject(p) && p.sponsor === 'pps')[0] || null;
+        if (!prepared && projectsOf(S, typeId, p => liveProject(p) || p.status === 'completed').length) {
+          return no({works_councils: L('The law on works councils is already in force.', 'Ustawa o radach zakładowych już obowiązuje.'),
+            cooperative_credit: L('The state credit for the cooperatives already runs.', 'Kredyt państwa dla spółdzielni już działa.'),
+            socialise_mining: L('Coal mining is socialised once; this is under way or done.', 'Górnictwo uspołecznia się raz; to już trwa albo zostało zrobione.')}[option]);
+        }
+        return launchStatus(Q, typeId, variantId, prepared);
+      }
+      case 'customs_war': {
+        if (option === 'new_markets') return forecastWith(Q, {policy: CUSTOMS_WAR.new_markets.budget}) >= -2 ? OK : no(forecastBlock());
+        return OK;
       }
       case 'social_welfare': {
         const protection = operatingProtection(S);
@@ -3399,10 +3492,10 @@
           if (protection && protection.variant !== 'full') return no(L('The protection is focused or limited; expanding it means restoring the full benefit first.', 'Osłona jest skupiona albo ograniczona; jej rozszerzenie wymaga najpierw przywrócenia pełnego zasiłku.'));
           return forecastWith(Q, {charge: 2}) >= -2 ? OK : no(L('No financing: ', 'Brak finansowania: ') + forecastBlock());
         }
-        if (option === 'focus') {
-          if (protection && protection.variant !== 'full') return no(L('The protection is already focused or limited.', 'Osłona jest już skupiona albo ograniczona.'));
-          if (protection && (protection.scope || 1) > 1) return no(L('Focusing applies to a protection of scope 1.', 'Skupienie dotyczy osłony o zakresie 1.'));
-          return protection || forecastWith(Q, {charge: 1}) >= -2 ? OK : no(L('No financing: ', 'Brak finansowania: ') + forecastBlock());
+        if (option === 'insurance') {
+          const prepared = projectsOf(S, 'old_age_insurance', p => preparedProject(p) && p.sponsor === 'pps')[0] || null;
+          if (!prepared && projectsOf(S, 'old_age_insurance', p => liveProject(p)).length) return no(L('The insurance of workers is already in force.', 'Ubezpieczenie robotników już obowiązuje.'));
+          return launchStatus(Q, 'old_age_insurance', 'pension_all', prepared);
         }
         const blocked = instrumentBlocked(Q, 'benefit_cut');
         return blocked ? no(blocked) : OK;
@@ -3518,7 +3611,6 @@
   // for the agenda; a card opened by an adviser takes its one step for 0 T.
   function chooseOption(Q, cardId, option, extra) {
     const S = Q.S, E = S.economy, t = Q.time;
-    if (cardId === 'labor_rights' && option === 'collective' && !(extra && extra.branch)) throw new Error('chooseOption: a collective agreement needs a branch');
     const status = optionStatus(Q, cardId, option, extra && {branch: extra.branch, variant: extra.variant});
     if (!status.available) throw new Error('chooseOption: ' + cardId + '.' + option + ': ' + status.reason);
     government.syncRelations(Q);
@@ -3540,32 +3632,37 @@
       // The broad variant is the one motion of the democratic guarantees in the constitutional debate (17.12.3; Z — 0.82).
       return result(Q, justiceGuaranteesChoose(Q));
     }
+    if (cardId === 'customs_war') {
+      S.history.actions.push({t: t, action_id: actionId(cardId, option), cost_t: 0});
+      return result(Q, customsWarChoose(Q, option));
+    }
     rules.commitMainAction(Q, actionId(cardId, option), {card: cardId, option: option});
     const share = ppsShare(S, 'pps', CARDS[cardId].portfolios);
     const ppsFields = {sponsor: 'pps', responsibility: {pps: share}};
     switch (cardId) {
       case 'labor_rights': {
         if (option === 'collective') {
-          const unions = unionsModule(), agreement = unions.signCollective(Q, extra.branch);
-          return result(Q, L('The collective agreement of ' + unions.BRANCH_NAMES[extra.branch].toLowerCase() + ' is signed: wages +' +
-            round(agreement.wage_pp, 2) + ' pp for two months, paid by the employers who sign it, with no reaction of business. It runs for ' +
-            unions.COLLECTIVE_TERM + ' months.', 'Układ zbiorowy (' + unions.branchName(extra.branch).toLowerCase() + ') zostaje podpisany: płace +' +
-            num(round(agreement.wage_pp, 2)) + ' pkt proc. przez dwa miesiące, płacone przez pracodawców, którzy go podpisują, bez reakcji przedsiębiorców. ' +
-            'Obowiązuje przez ' + months(unions.COLLECTIVE_TERM) + '.'));
+          // Z — 0.94 (decisions of 24 X 2026): the branch where our union is strongest; the employers press harder (+3).
+          const unions = unionsModule(), branch = (extra && extra.branch) || unions.collectiveTarget(Q);
+          const agreement = unions.signCollective(Q, branch);
+          economy.changeBusinessPressure(S, COLLECTIVE_BUSINESS, agreement.id + ':business', t, 'collective_agreement');
+          return result(Q, L('The collective agreement of ' + unions.BRANCH_NAMES[branch].toLowerCase() + ' is signed: wages +' +
+            round(agreement.wage_pp, 2) + ' pp for two months, paid by the employers who sign it; business presses harder (+' + COLLECTIVE_BUSINESS + '). It runs for ' +
+            unions.COLLECTIVE_TERM + ' months.', 'Układ zbiorowy (' + unions.branchName(branch).toLowerCase() + ') zostaje podpisany: płace +' +
+            num(round(agreement.wage_pp, 2)) + ' pkt proc. przez dwa miesiące, płacone przez pracodawców, którzy go podpisują; przedsiębiorcy mocniej naciskają (+' +
+            COLLECTIVE_BUSINESS + '). Obowiązuje przez ' + months(unions.COLLECTIVE_TERM) + '.'));
         }
         if (option === 'derogation') {
           const unions = unionsModule(), plant = unions.grantDerogation(Q);
+          // Z — 0.94: the Left of PPS protests against a derogation from the eight-hour day (+3).
+          government.factionReaction(Q, 'lewica', {dissent: DEROGATION_LEWICA}, {id: 'derogation:' + plant.id + ':t' + t, kind: 'cabinet_policy', reverse: null});
           return result(Q, L('A limited derogation from working time is granted to the ' + unions.plantName(plant) + ' for ' +
-            unions.DEROGATION_MONTHS + ' months: business pressure −4; its workers’ grievance +3 at the next monthly settlement. It is no general end of the protection of working time.',
+            unions.DEROGATION_MONTHS + ' months: business pressure −4; its workers’ grievance +3 at the next monthly settlement; the Left of PPS protests (+3).',
             'Ograniczone odstępstwo od czasu pracy zostaje przyznane (' + unions.plantName(plant) + ') na ' + months(unions.DEROGATION_MONTHS) +
-            ': presja przedsiębiorców −4; niezadowolenie robotników zakładu +3 przy następnym miesięcznym rozliczeniu. Nie oznacza to ogólnego końca ochrony czasu pracy.'));
+            ': presja przedsiębiorców −4; niezadowolenie robotników zakładu +3 przy następnym miesięcznym rozliczeniu; Lewica PPS protestuje (+3).'));
         }
-        const project = createProject(Q, 'labor_inspection', 'inspection', ppsFields);
-        const law = launchProject(Q, project, {sponsor: 'pps'});
-        return result(Q, law && law.status === 'rejected' ? L('The Sejm rejects the enforcement law; the inspection stays prepared.',
-          'Sejm odrzuca ustawę o egzekwowaniu czasu pracy; inspekcja pozostaje przygotowana.') :
-          L('The inspection of working time starts: 1 B for two months, then 1 B to run.', 'Rusza inspekcja czasu pracy: 1 B przez dwa miesiące, potem 1 B na utrzymanie.') +
-          lawNote(law));
+        const project = prepareProject(Q, 'labor_inspection', 'inspection', ppsFields, {match: p => p.sponsor === 'pps'});
+        return result(Q, launchPrepared(Q, project));
       }
       case 'social_welfare': {
         const protection = operatingProtection(S);
@@ -3582,15 +3679,9 @@
           return result(Q, L('The protection now covers scope ' + protection.scope + ': ' + numB(protection.upkeep_budget_B) + ' B a month.',
             'Osłona obejmuje teraz zakres ' + protection.scope + ': ' + numB(protection.upkeep_budget_B) + ' B miesięcznie.'));
         }
-        if (option === 'focus') {
-          if (!protection) {
-            const project = createProject(Q, 'worker_protection', 'focused', ppsFields);
-            launchProject(Q, project, {sponsor: 'pps'});
-            return result(Q, L('A protection focused on the most needy half starts: 1 B a month.', 'Rusza osłona skupiona na najbardziej potrzebującej połowie: 1 B miesięcznie.'));
-          }
-          setVariant(protection, 'focused');
-          protection.history.push({t: t, kind: 'focused'});
-          return result(Q, L('The protection is focused on the most needy half of the recipients: 1 B instead of 2.', 'Osłona zostaje skupiona na najbardziej potrzebującej połowie odbiorców: 1 B zamiast 2.'));
+        if (option === 'insurance') {
+          const project = prepareProject(Q, 'old_age_insurance', 'pension_all', ppsFields, {match: p => p.sponsor === 'pps'});
+          return result(Q, launchPrepared(Q, project));
         }
         const law = adoptInstrument(Q, 'benefit_cut');
         return result(Q, law.status === 'rejected' ? L('The Sejm rejects the cut; the benefit stays.', 'Sejm odrzuca cięcie; zasiłek zostaje.') :
@@ -3670,7 +3761,13 @@
         }
         const financing = option === 'credit' ? 'public' : option;
         const project = prepareProject(Q, 'credit_instrument', financing, ppsFields);
-        return result(Q, launchPrepared(Q, project));
+        const text = launchPrepared(Q, project);
+        // Z — 0.94 (decision 2A): an agreement with the banks costs half, and the Left of PPS protests against it (+4).
+        if (financing === 'banks' && project.status !== 'prepared') {
+          government.factionReaction(Q, 'lewica', {dissent: BANKS_LEWICA}, {id: project.id + ':lewica', kind: 'cabinet_policy', reverse: null});
+          return result(Q, text + L(' The Left of PPS protests against a deal with capital (+' + BANKS_LEWICA + ').', ' Lewica PPS protestuje przeciw układowi z kapitałem (+' + BANKS_LEWICA + ').'));
+        }
+        return result(Q, text);
       }
       case 'public_works': {
         const project = prepareProject(Q, 'public_works', option, ppsFields, {match: p => p.sponsor === 'pps'});
@@ -3691,6 +3788,13 @@
         const project = prepareProject(Q, typeId, option, ppsFields, {match: p => p.sponsor === 'pps' && (p.variant === option || typeId === 'minority_schools')});
         if (PROJECT_TYPES[typeId].tranches && !project.tranche) project.tranche = nextTranche(S, typeId, option);
         if (option === 'polish_dominance') checkConstraints(Q, 'legal_equality', 'discrimination', {instrument: 'polish_dominance'});
+        return result(Q, launchPrepared(Q, project));
+      }
+      case 'economic_democracy': {
+        const TYPES = {works_councils: ['works_councils', 'works_councils'], cooperative_credit: ['cooperative_credit', 'cooperative_credit'],
+          socialise_mining: ['mining_socialisation', 'socialise_mining']};
+        const [typeId, variantId] = TYPES[option];
+        const project = prepareProject(Q, typeId, variantId, ppsFields, {match: p => p.sponsor === 'pps'});
         return result(Q, launchPrepared(Q, project));
       }
       case 'justice_policy':
@@ -3757,8 +3861,8 @@
         L('programmes run at half strength', 'programy działają w połowie') : L('programmes are stopped', 'programy są wstrzymane')) + '); ' +
       (room >= 0.05 ? L('a new programme may cost up to ' + num(room) + ' B a month.', 'nowy program może kosztować najwyżej ' + num(room) + ' B miesięcznie.') :
         L('no new programme can start.', 'żaden nowy program nie ruszy.'));
-    const types = Object.keys(PROJECT_TYPES).filter(id => PROJECT_TYPES[id].card === cardId || (cardId === 'industrial_policy' && id === 'credit_instrument') ||
-      (cardId === 'finance_package' && id === 'collection'));
+    const types = Object.keys(PROJECT_TYPES).filter(id => PROJECT_TYPES[id].card === cardId || (cardId === 'finance_package' && id === 'collection') ||
+      (cardId === 'social_welfare' && id === 'old_age_insurance'));
     const lines = projectsOf(S, null, p => types.indexOf(p.type) >= 0).map(p => describeProject(p, S));
     Q.pl_gc_projects = lines.length ? lines.join(' ') : L('No project of this card yet.', 'Ta karta nie ma jeszcze projektu.');
     for (const option of card.options) {
@@ -3766,12 +3870,14 @@
       Q['pl_' + cardId + '_' + option + '_why'] = status.reason;
     }
     const unions = unionsModule();
-    if (cardId === 'labor_rights' && unions && S.unions) {
-      for (const branch of unions.BRANCHES) Q['pl_collective_' + branch + '_why'] = optionStatus(Q, cardId, 'collective', {branch: branch}).reason;
+    // Z — 0.94: the state the cards name in their first sentences.
+    if (cardId === 'labor_rights') Q.pl_gc_business = String(Math.round(S.economy.business_pressure));
+    if (cardId === 'social_welfare') {
+      const protection = operatingProtection(S);
+      Q.pl_gc_protection_level = protection ? (protection.scope || 1) : 0;
     }
-    if (cardId === 'industrial_policy') {
-      for (const variant of ['consultative', 'decision_rights']) Q['pl_rep_' + variant + '_why'] = optionStatus(Q, cardId, 'worker_representation', {variant: variant}).reason;
-    }
+    if (cardId === 'public_works') Q.pl_gc_unemployment = num(round(S.economy.unemployment, 1));
+    if (cardId === 'labor_rights' && unions && S.unions) Q.pl_gc_collective_branch = unions.branchName(unions.collectiveTarget(Q) || 'industry').toLowerCase();
     Q.pl_gc_plants = unions && S.enterprises && (cardId === 'labor_rights' || cardId === 'industrial_policy') ? unions.plantsLine(S) : '';
     Q.pl_gc_result = '';
   }
@@ -3825,7 +3931,7 @@
       return financing.blocked ? no(financing.blocked) : OK;
     }
     const variant = PROJECT_TYPES[typeId].variants[variantId];
-    const cost = prepared ? prepared.build_budget_B : variant.build;
+    const cost = prepared ? Math.max(prepared.build_budget_B, prepared.upkeep_budget_B) : Math.max(variant.build || 0, variant.upkeep || 0);
     return forecastWith(Q, {charge: cost}) >= -2 ? OK : no(forecastBlock());
   }
 
@@ -3849,7 +3955,10 @@
 
   // What the launch costs, in words: one monthly cost, for its months or for as long as it works (Z — 0.93).
   function launchCostText(project) {
-    const cost = numB(project.build_budget_B), runs = project.upkeep_budget_B > 0 || PROJECT_TYPES[project.type].ongoing;
+    const value = Math.max(project.build_budget_B, project.upkeep_budget_B);
+    if (!value) return L('no cost to the budget; first effects in ' + months(project.duration_months || 1), 'bez kosztu dla budżetu; pierwsze skutki za ' + months(project.duration_months || 1));
+    if (!project.duration_months) return L(numB(value) + ' B a month while it works', numB(value) + ' B miesięcznie, dopóki działa');
+    const cost = numB(value), runs = project.upkeep_budget_B > 0 || PROJECT_TYPES[project.type].ongoing;
     return runs ? L(cost + ' B a month while it works; first effects in ' + months(project.duration_months),
       cost + ' B miesięcznie, dopóki działa; pierwsze skutki za ' + months(project.duration_months)) :
       L(cost + ' B a month for ' + months(project.duration_months), cost + ' B miesięcznie przez ' + months(project.duration_months));
@@ -4139,6 +4248,8 @@
   // belongs to the Parliament deck until the vote of the package; the vote on a motion of the constitutional debate (Z — 0.82),
   // from the month after the Committee brought it to the floor. Z — 0.93 (decision 4A): the card of the prepared reforms is gone.
   rules.registerUrgentCard('polish_budget_package', {active: Q => budgetCardAvailable(Q), deck: () => 'main.parliament'});
+  // Z — 0.94: the customs war with Germany is an urgent card of the Government deck while PPS holds Industry and Trade.
+  rules.registerUrgentCard('polish_gov_customs_war', {active: Q => !!(Q.S && Q.S.economy && Q.S.chapter) && cardAvailable(Q, 'customs_war'), deck: () => 'main.govt'});
   rules.registerCardDeadline('polish_budget_package', Q => Q.S && Q.S.economy && Q.S.economy.pending_package ? Q.S.economy.pending_package.vote_at : null);
   rules.registerUrgentCard('polish_constitution_vote', {deck: () => 'main.parliament', active: constitutionVoteActive});
 

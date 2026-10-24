@@ -1,5 +1,13 @@
 # Historical Source Register
 
+## PL-GOV-CARDS-0.94 — the cards of Labour and of Industry and Trade
+
+- **Authority:** the user's decisions of 24 October 2026 (technical reference 0.94, sections 11.9, 12.4 and 23.67).
+- **Sources (accessed 24 October 2026):** dzieje.pl, "Wojna celna" (https://dzieje.pl/aktualnosci/wojna-celna); the act of 23 September 1922 on the building of the port in Gdynia (Dz.U. 1922 poz. 824, https://eli.gov.pl/eli/DU/1922/824/ogl); Zintegrowana Platforma Edukacyjna, "Budowa Gdyni i inne osiągnięcia gospodarcze II RP" (https://zpe.gov.pl/a/budowa-gdyni-i-inne-osiagniecia-gospodarcze-ii-rp/D1Be8hWi4); Biuletyn Instytutu Zachodniego on the German works councils of 1920 (https://ksiegaria.iz.poznan.pl/plik,pobierz,3741,0151a7301f6142b0cd13c1d6c83771df/431.pdf); Ł. Baszak on the act of 18 December 1919 on working time (cited in the search of 24 October 2026).
+- **Historical fact:** the duty-free German quota for Upper Silesian coal under the Geneva convention of 15 May 1922 ended in June 1925; Germany closed its market to Polish coal and Poland answered with bans on imports; the customs war sped up the building of the port of Gdynia and the search for markets such as Scandinavia; it formally ended in 1930 and in practice in 1934. The Sejm passed the act on the port of Gdynia on 23 September 1922 (the Minister of Industry and Trade responsible). Germany gave its workers works councils in 1920.
+- **Gameplay simplification (P):** the three answers to the customs war and their numbers; the costs of the Labour options; the easing of the pressure of business by 1 a month down to 10; the works councils law, the state credit for the cooperatives and the socialisation of coal mining as proposals in debate.
+- **Unresolved:** a Polish law on works councils in 1919–1926 (none found); the PPS programme on the socialisation of mining — TBD, historical research required. The Gdynia port is kept for a later chapter.
+
 ## PL-GOV-CARDS-0.93 — government cards: the budget and one-step reforms
 
 - **Authority:** the user's decisions of 24 October 2026 (technical reference 0.93, sections 11.2, 11.9, 12.2 and 23.66).
@@ -2697,6 +2705,7 @@ Add one row whenever an entry above is assigned a stable Source ID.
 | PL-TUR-0.91 | TUR | TUR: +5% to the organisers per level, civic courses raise the trust in PPS, a course for trade unionists, no reform course | Gameplay simplification; founding and functions from TUR's own publication; reach by group TBD | 0.91, 24 October 2026 |
 | PL-COOP-0.92 | Cooperative | One workers' consumer cooperative that pays half of the strike pay; no relief; government cooperative variants without a PPS cooperative | Gameplay simplification; PPS ties to the cooperative movement TBD | 0.92, 24 October 2026 |
 | PL-GOV-CARDS-0.93 | Government cards | One budget number, one monthly cost per programme, one-step reforms, one Treasury card, no Foreign Affairs for PPS | Gameplay simplification; research for new cards to follow | 0.93, 24 October 2026 |
+| PL-GOV-CARDS-0.94 | Government cards | Labour and Industry and Trade with a gain and a cost per option; Economic Democracy; the customs war with Germany | Customs war and Gdynia act documented; works councils law and socialisation TBD | 0.94, 24 October 2026 |
 | PL-STAGE8-NORMAL-SCENARIO-2026-10-04 | Implementation | Stage 8, the last stage: the Normal scenario with the dated inputs of 17.16 and of the 8f research, the opening calibrated to the M02 Sejm, rule 8.9 for the NPR, the military compromise carried out by the cabinet, Polish-only screens, thirteen strategy automata playing full campaigns, and the closing fixes | Implemented | Implemented, 4 October 2026 |
 | TBD | TBD | TBD | TBD | TBD |
 

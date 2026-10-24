@@ -280,7 +280,9 @@ function playFromHand(engine, cardId) {
   engine.playCard(cardId);
 }
 
-test('the plant cards in the game: Labour signs a collective agreement in the branch submenu for one month; Industry shows the plants, prepares a rescue and the agenda launches it', () => {
+// Z — 0.94 (decisions of 24 X 2026): no branch submenu — the agreement goes to the branch where our union is strongest; the
+// derogation needs no inspection law; Industry has orders, the rescue and public control.
+test('the plant cards in the game: Labour signs a collective agreement in its strongest branch for one month; Industry shows the plants and starts a rescue', () => {
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
   const S = Q.S;
@@ -291,11 +293,9 @@ test('the plant cards in the game: Labour signs a collective agreement in the br
   PolishUnions.recordPlants(Q, Q.time);
   playFromHand(engine, 'polish_gov_labor_rights');
   assert.match(JSON.stringify(engine.ui.paragraphs), /industrial plant no\. 1 \(industry\): in difficulty, private owner, capacity 80%/);
-  assert.equal(choice(engine, 'polish_gov_labor_rights.derogation').canChoose, false, 'no law on working time yet');
+  assert.equal(choice(engine, 'polish_gov_labor_rights.derogation').canChoose, true, 'the act on working time of 1919 is enough');
+  assert.match([].concat(choice(engine, 'polish_gov_labor_rights.collective').subtitle).join(''), /where our union is strongest \(now: industry\)/);
   choose(engine, 'polish_gov_labor_rights.collective');
-  assert.deepEqual(ids(engine).filter(id => /collective_/.test(id)).length, 3);
-  assert.equal(Q.month_actions || 0, 0, 'the submenu is free');
-  choose(engine, 'polish_gov_labor_rights.collective_industry');
   assert.match(JSON.stringify(engine.ui.paragraphs), /collective agreement of industry is signed/);
   choose(engine, 'root');
   toMain(engine);
@@ -305,7 +305,8 @@ test('the plant cards in the game: Labour signs a collective agreement in the br
 
   playFromHand(engine, 'polish_gov_industry');
   assert.match(JSON.stringify(engine.ui.paragraphs), /Recorded plants/);
-  assert.equal(choice(engine, 'polish_gov_industry.worker_representation').canChoose, false, 'a private plant has no representation');
+  assert.deepEqual(ids(engine).filter(id => id.startsWith('polish_gov_industry.')), ['polish_gov_industry.orders', 'polish_gov_industry.rescue',
+    'polish_gov_industry.public_control']);
   choose(engine, 'polish_gov_industry.rescue');
   // Z — 0.93 (decision 4A of 24 X 2026): the rescue starts in the same decision.
   assert.match(JSON.stringify(engine.ui.paragraphs), /rescue of the industrial plant no\. 1 is a conditional credit\. Started: Rescue of a plant/);

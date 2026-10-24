@@ -6,11 +6,10 @@ tags: govt_affairs
 card-image: img/polish/polish_gov_public_works.jpg
 view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'public_works') !}
 on-arrival: {!
-// Card government.public_works (technical reference 17.11–17.12; card catalogue 8.7). Opening and closing
-// the card are free; a confirmed option costs this month's action, or the one free step of an adviser
-// who opened the card. Options that need a system of a later stage are shown with their reason.
+// Card government.public_works (technical reference 17.11–17.12; card catalogue 8.7). Opening and closing the card are free; a
+// confirmed option costs this month's action, or the one free step of an adviser who opened the card. Z — 0.93: a programme starts
+// in the decision that chooses it, for one monthly cost; Z — 0.94: the options are actions with their gain and cost.
 PolishProjects.cardView(Q, 'public_works');
-// Z — 0.66 (decision 2A): the ministry of this card, on its page and as a badge in the hand.
 Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_public_works');
 !}
 
@@ -18,7 +17,7 @@ Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_public_works');
 
 *[+ pl_gc_ministry +]*
 
-Public works belong to Labour; the Treasury alone gives no access. A programme starts in the decision that chooses it and costs 1 budget unit a month for as long as it works; its public jobs come after its months of building, at most 8 units in the country.
+Public works give work to the unemployed with the money of the budget. Unemployment stands at [+ pl_gc_unemployment +]%.
 
 [+ pl_gc_budget +]
 
@@ -31,8 +30,8 @@ Public works belong to Labour; the Treasury alone gives no access. A programme s
 - @cancel_advisor_action
 
 @employment
-title: Quick employment of the unemployed
-subtitle: Costs the budget 1 unit a month while it works; after three months two employment units raise output and give public jobs (+0.15 percentage points of output a unit).
+title: Employ the unemployed on quick works
+subtitle: Costs 1 budget unit a month while they run. After three months unemployment falls (−0.5 percentage points) and output rises a little.
 choose-if: {! return PolishProjects.optionStatus(Q, 'public_works', 'employment').available !}
 unavailable-subtitle: [+ pl_public_works_employment_why +]
 on-arrival: {!
@@ -41,8 +40,8 @@ PolishProjects.chooseOption(Q, 'public_works', 'employment');
 go-to: result
 
 @infrastructure
-title: Transport and infrastructure
-subtitle: Costs the budget 1 unit a month while it works; after four months two employment units raise output more (+0.25 percentage points of output a unit).
+title: Build roads, railways and bridges
+subtitle: Costs 1 budget unit a month, and the first jobs come only after four months. Unemployment falls as much, and output rises more.
 choose-if: {! return PolishProjects.optionStatus(Q, 'public_works', 'infrastructure').available !}
 unavailable-subtitle: [+ pl_public_works_infrastructure_why +]
 on-arrival: {!
@@ -51,8 +50,8 @@ PolishProjects.chooseOption(Q, 'public_works', 'infrastructure');
 go-to: result
 
 @housing
-title: Workers’ housing
-subtitle: Costs the budget 1 unit a month while it works; after four months relief for the recipients, no employment units.
+title: Build workers’ housing
+subtitle: Costs 1 budget unit a month and creates no new jobs. After four months the discontent of the workers grows more slowly.
 choose-if: {! return PolishProjects.optionStatus(Q, 'public_works', 'housing').available !}
 unavailable-subtitle: [+ pl_public_works_housing_why +]
 on-arrival: {!
