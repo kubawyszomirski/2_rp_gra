@@ -68,7 +68,7 @@ test('Pasek boczny: pogrubione etykiety, rozbite wiersze i liczby bez zbędnych 
   assert.match(mainText, /^\s*PPS ?\n/);
   assert.doesNotMatch(mainText, /Styczeń 1922/);
   for (const label of ['Kasa partii:', 'Zbiórka przynosi:', 'Składki:', 'Członkostwo (indeks):', 'Poziom aparatu:',
-    'Sprzeciw w partii:', 'Spójność:', 'Pozycja PPS:', 'Prasa:', 'Towarzystwo Uniwersytetu Robotniczego:', 'Spółdzielnie:', 'Milicja:', 'Przemysł:', 'Kolej:',
+    'Sprzeciw w partii:', 'Spójność:', 'Pozycja PPS:', 'Prasa:', 'Towarzystwo Uniwersytetu Robotniczego:', 'Spółdzielnia spożywców:', 'Milicja:', 'Przemysł:', 'Kolej:',
     'Robotnicy rolni:', 'Głowa państwa:', 'Premier:']) {
     assert.ok(bold(main).includes(label), label);
   }

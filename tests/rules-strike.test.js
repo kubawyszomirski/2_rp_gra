@@ -166,6 +166,32 @@ test('Zasięg i charakter partii: the rail branch under the workers’ line and 
   assert.equal(S.party_orgs.press.reach, press + 10);
 });
 
+// Z — 0.92 (the user's decision of 24 X 2026): with the workers' consumer cooperative the party pays a quarter of a unit.
+test('Spółdzielnia 0.92: a strike month with the workers’ consumer cooperative costs the party a quarter of a unit for each branch', () => {
+  const Q = game();
+  const S = Q.S;
+  S.unions.industry.reach = 50; S.unions.industry.readiness = 60;
+  S.party_orgs.cash = 5;
+  S.party_orgs.cooperatives.founded_at = 1;
+  assert.equal(PolishUnions.potential(S, 'industry').cost, 0.25);
+  PolishUnions.prepare(Q, 'industry', 'limited');
+  free(Q);
+  PolishUnions.startStrike(Q, 'industry');
+  free(Q);
+  const rec = PolishUnions.branchRecord(S, 'industry');
+  S.rng.rolls[`strike:${rec.id}:round:1`] = 0.99;
+  PolishUnions.beginMonth(Q, { t: Q.time });
+  close(S.party_orgs.cash, 4.75, 1e-9);
+  close(rec.cost_paid, 0.25, 1e-9);
+  // With 0.3 R the party can still pay its quarter.
+  S.party_orgs.cash = 0.3;
+  S.rng.rolls[`strike:${rec.id}:round:2`] = 0.99;
+  PolishUnions.endMonth(Q, { t: Q.time });
+  PolishUnions.beginMonth(Q, { t: Q.time + 1 });
+  assert.equal(rec.coverage.industry, 1);
+  close(S.party_orgs.cash, 0.05, 1e-9);
+});
+
 test('a strike month: half a unit of strike pay from the party, participation and fatigue, and the disruption the economy reads; a month without money halves the strikers (Z — 0.86)', () => {
   const Q = game();
   const S = Q.S;

@@ -944,7 +944,7 @@
           organisations: S.party_orgs && S.party_orgs.apparatus ? {cash: S.party_orgs.cash, dues: S.party_orgs.dues,
             member_index: S.party_orgs.apparatus.member_index, apparatus_level: S.party_orgs.apparatus.level,
             press_reach: S.party_orgs.press.reach, tur_level: S.party_orgs.tur.level,
-            cooperatives: S.party_orgs.cooperatives.projects.filter(c => c.status === 'operating').length} : null,
+            cooperative: S.party_orgs.cooperatives.founded_at !== undefined && S.party_orgs.cooperatives.founded_at !== null} : null,
           militia: S.militia && S.militia.stage ? {strength: S.militia.strength, militancy: S.militia.militancy, stage: S.militia.stage,
             banned: !!S.militia.banned} : null,
           credibility: S.actors.pps ? S.actors.pps.credibility : null,

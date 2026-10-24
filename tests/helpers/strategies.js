@@ -35,7 +35,6 @@ const P = {
   assess: () => ['polish_party_agenda', 'polish_party_agenda.assess_forces'],
   // Z — 0.78: the TUR courses are a card of their own; the game picks the branch (the one that trusts PPS least).
   cadres: () => ['polish_party_tur', 'polish_party_tur.union_cadres'],
-  cooperative: () => ['polish_party_agenda', 'polish_party_agenda.launch_cooperative'],
   // Z — 0.78: the card of the organisations takes one investment at once; a second one named here waits for another month.
   orgs: a => ['polish_party_organizations', 'polish_party_organizations.' + a],
   militia: step => ['polish_party_militia', 'polish_party_militia.' + step],
@@ -348,7 +347,8 @@ const STRATEGIES = {
         else if (M.strength < 500) extra.push(P.militia('recruit'));
         else extra.push(P.fundraise());
       }
-      extra.push(P.orgs('union_organize_industry'), P.orgs('tur', 'cooperative_workers'), P.cooperative());
+      // Z — 0.92: the cooperative is founded on the card of the organisations at once; the agenda no longer launches one.
+      extra.push(P.orgs('union_organize_industry'), P.orgs('tur', 'cooperative_workers'));
       return plan.organised(ctx, extra);
     },
   }),

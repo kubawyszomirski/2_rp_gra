@@ -1,5 +1,12 @@
 # Historical Source Register
 
+## PL-COOP-0.92 — the workers' consumer cooperative
+
+- **Authority:** the user's decisions of 24 October 2026 (technical reference 0.92, sections 13.2 and 23.65).
+- **Sources:** none consulted for this change.
+- **Gameplay simplification (P):** one workers' consumer cooperative of PPS that sells to strikers on credit and so pays half of the strike pay; its cost (1 resource); the cooperative variants of the government cards using the existing cooperative movement.
+- **Unresolved:** the ties of PPS with the workers' and consumer cooperative movement in 1922–1926 and whether cooperatives supported strikers — TBD, historical research required.
+
 ## PL-TUR-0.91 — TUR
 
 - **Authority:** the user's decisions of 24 October 2026 (technical reference 0.91, sections 13.2 and 23.64).
@@ -2681,6 +2688,7 @@ Add one row whenever an entry above is assigned a stable Source ID.
 | PL-MILITIA-0.89 | Milicja / AS | The simplified Milicja PPS: members and five training levels, the balance of costs and gains | Gameplay simplification; no further research by the user's decision | 0.89, 24 October 2026 |
 | PL-PRESS-0.90 | Press | The party press: reach ceilings, sales, support of the campaigns, confiscations under a government of the right, credibility | Gameplay simplification; confiscations and circulation TBD | 0.90, 24 October 2026 |
 | PL-TUR-0.91 | TUR | TUR: +5% to the organisers per level, civic courses raise the trust in PPS, a course for trade unionists, no reform course | Gameplay simplification; founding and functions from TUR's own publication; reach by group TBD | 0.91, 24 October 2026 |
+| PL-COOP-0.92 | Cooperative | One workers' consumer cooperative that pays half of the strike pay; no relief; government cooperative variants without a PPS cooperative | Gameplay simplification; PPS ties to the cooperative movement TBD | 0.92, 24 October 2026 |
 | PL-STAGE8-NORMAL-SCENARIO-2026-10-04 | Implementation | Stage 8, the last stage: the Normal scenario with the dated inputs of 17.16 and of the 8f research, the opening calibrated to the M02 Sejm, rule 8.9 for the NPR, the military compromise carried out by the cabinet, Polish-only screens, thirteen strategy automata playing full campaigns, and the closing fixes | Implemented | Implemented, 4 October 2026 |
 | TBD | TBD | TBD | TBD | TBD |
 

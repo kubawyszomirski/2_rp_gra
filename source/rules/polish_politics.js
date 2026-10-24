@@ -472,8 +472,8 @@
     return exposure;
   }
 
-  // The current relief of executed programmes in one cell (15.1): the protection for the unemployed, the workers'
-  // housing and the cooperatives of PPS, each times its execution; at most 6 in a cell (13.2).
+  // The current relief of executed programmes in one cell (15.1): the protection for the unemployed and the workers'
+  // housing, each times its execution; at most 6 in a cell (13.2). Z — 0.92: the cooperative of PPS gives no relief.
   function ongoingRelief(S, cell) {
     let relief = 0;
     for (const id of Object.keys(S.projects)) {
@@ -490,7 +490,6 @@
       // Z — 0.81: the protection of tenants keeps the unemployed in their homes (the initiative of PPS).
       if (p.type === 'tenant_protection' && cell.employment === 'unemployed') relief += (p.variant === 'rent_freeze' ? 1 : 0.5) * coverage;
     }
-    relief += party.cooperativeRelief ? party.cooperativeRelief(S, cell) : 0;
     return Math.min(RELIEF_CAP, relief);
   }
 

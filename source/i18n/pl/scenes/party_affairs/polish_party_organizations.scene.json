@@ -8,11 +8,10 @@
   "subtitle: 1 resource; the press reaches more readers (+10): the party journal up to 60 of 100, a popular paper up to 100.": "subtitle: 1 jednostka środków; prasa dociera do większej liczby czytelników (+10): pismo partyjne najwyżej do 60 na 100, gazeta popularna do 100.",
   "title: [? if pl_tur_level = 0 : Found TUR ?][? if pl_tur_level > 0 : Start the next stage of TUR ?]": "title: [? if pl_tur_level = 0 : Załóż Towarzystwo Uniwersytetu Robotniczego ?][? if pl_tur_level > 0 : Rozpocznij kolejny etap Towarzystwa Uniwersytetu Robotniczego ?]",
   "subtitle: [? if pl_tur_level = 0 : 2 resources; after two months TUR starts its work, and our organisers work better (+5%). ?][? if pl_tur_level > 0 : 2 resources; after two months TUR rises one level, and our organisers work better (+5%). ?]": "subtitle: [? if pl_tur_level = 0 : 2 jednostki środków; po dwóch miesiącach Towarzystwo zaczyna działać, a nasi organizatorzy pracują skuteczniej (+5%). ?][? if pl_tur_level > 0 : 2 jednostki środków; po dwóch miesiącach Towarzystwo wchodzi o poziom wyżej, a nasi organizatorzy pracują skuteczniej (+5%). ?]",
-  "title: Prepare a workers’ consumer cooperative": "title: Przygotuj robotniczą spółdzielnię spożywców",
-  "subtitle: 1 resource; its launch waits in the party agenda (2 resources).": "subtitle: 1 jednostka środków; jej uruchomienie czeka w agendzie partii (2 jednostki środków).",
-  "title: Prepare a village cooperative of smallholders": "title: Przygotuj wiejską spółdzielnię drobnych gospodarzy",
   "- @root: Continue.": "- @root: Dalej.",
   "subtitle: One investment in one action: the press, TUR or a cooperative.": "subtitle: Jedna inwestycja w jednej akcji: prasa, Towarzystwo Uniwersytetu Robotniczego albo spółdzielnia.",
-  "PPS has [+ pl_org_cash +] R. Choose one investment; it is carried out at once. Milicja has its own card.": "PPS ma [+ pl_org_cash +] R. Wybierz jedną inwestycję; zostanie wykonana od razu. Milicja ma własną kartę."
+  "PPS has [+ pl_org_cash +] R. Choose one investment; it is carried out at once. Milicja has its own card.": "PPS ma [+ pl_org_cash +] R. Wybierz jedną inwestycję; zostanie wykonana od razu. Milicja ma własną kartę.",
+  "title: Found a workers’ consumer cooperative": "title: Załóż robotniczą spółdzielnię spożywców",
+  "subtitle: 1 resource; the cooperative sells to strikers on credit, so the strike pay costs the party half as much.": "subtitle: 1 jednostka środków; spółdzielnia sprzedaje strajkującym na kredyt, więc zasiłek strajkowy kosztuje partię o połowę mniej."
  }
 }

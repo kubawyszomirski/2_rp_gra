@@ -66,11 +66,8 @@
   const TUR_TRUST = 4;
   const TUR_TRUST_CAP = 70;
   const REACH_MULTIPLIER_CAP = 1.30; // 10.6: character of the party and TUR together
-  const COOPERATIVE_CLASSES = Object.freeze(['workers', 'rural']);
-  const COOPERATIVE_NAMES = Object.freeze({workers: 'a workers’ consumer cooperative', rural: 'a village cooperative of smallholders'});
-  const COOPERATIVE_NAMES_PL = Object.freeze({workers: 'robotnicza spółdzielnia spożywców', rural: 'wiejska spółdzielnia drobnych gospodarzy'});
-  const COOPERATIVE_NAMES_PL_ACCUSATIVE = Object.freeze({workers: 'robotniczą spółdzielnię spożywców', rural: 'wiejską spółdzielnię drobnych gospodarzy'});
-  const RELIEF_CAP = 6; // 13.2: the current relief in one cell
+  // Z — 0.92 (the user's decision of 24 X 2026): one workers' consumer cooperative; it pays half of the strike pay (P).
+  const COOPERATIVE_STRIKE_SHARE = 0.5;
 
   // 10.5: the synthetic opening line of PPS, not a reconstruction of its programme of January 1922. Stage 8 (8f): the
   // line on the Slavic minorities is territorial autonomy, as in the PPS bill of Niedziałkowski of October 1921
@@ -94,7 +91,7 @@
         apparatus: {level: 1, member_index: 100, worker_support0: null, union_reach0: 20},
         press: {reach: 30, credibility: 60, format: 'party_journal', popular_adopted: false, campaigns: [], restrictions: []},
         tur: {level: 0, active_build: null, active_course: null, completed_courses: []},
-        cooperatives: {projects: []},
+        cooperatives: {founded_at: null},
         arrears: {apparatus: 0, press: 0, tur: 0, cooperatives: 0},
         last_ledger: null,
         mirror_base: {},
@@ -282,7 +279,17 @@
     return round(collectionAt(orgs.dues, orgs.apparatus.member_index, orgs.apparatus.level, unionCollectionBonus(S)), MONEY_DIGITS);
   }
 
-  const operatingCooperatives = S => S.party_orgs.cooperatives.projects.filter(p => p.status === 'operating');
+  // Z — 0.92: one workers' consumer cooperative, founded once (`founded_at`); an older save keeps its operating workers'
+  // cooperative and loses the prepared ones and the village cooperatives.
+  function cooperativeOf(S) {
+    const coops = S.party_orgs.cooperatives;
+    if (Array.isArray(coops.projects)) {
+      const old = coops.projects.find(p => p.class_id === 'workers' && p.status === 'operating');
+      S.party_orgs.cooperatives = {founded_at: old ? old.launched_at || 0 : null};
+    }
+    return S.party_orgs.cooperatives;
+  }
+  const cooperativeWorks = S => !!(S && S.party_orgs && S.party_orgs.cooperatives) && cooperativeOf(S).founded_at !== null;
 
   // Z — 0.90 (decision a of 24 X 2026): the party journal reaches at most 60, the popular paper 100 (with its +10).
   const PRESS_CAP = Object.freeze({party_journal: 60, popular: 100});
@@ -296,7 +303,7 @@
 
   // One month of the party's own finances (13.1–13.4, 14.1), in step 6 of 4.2 after the economy and the flows, before the
   // agreements. Z — 0.56: only the membership moves here; the organisations work without upkeep — the press keeps its
-  // reach, a build or a course of TUR advances every month and the cooperatives give their relief while they operate.
+  // reach and a build or a course of TUR advances every month.
   // Arrears of an older save are written off; Z — 0.89: so are the fields the Milicja no longer has; Z — 0.91: and those of TUR.
   function settleParty(Q, t) {
     const S = Q.S, orgs = S.party_orgs, militia = S.militia;
@@ -331,7 +338,7 @@
       tur.active_course.paid_months += 1;
       if (tur.active_course.paid_months >= 2) completeCourse(Q, t);
     }
-    for (const project of operatingCooperatives(S)) project.paid_last = true;
+    cooperativeOf(S);
     // Since stage 6 the unions' own funds are settled by PolishUnions.beginMonth, before a strike draws on them
     // (14.1–14.2).
     orgs.last_ledger = {t: t, cash: round(orgs.cash, 4), member_index: round(apparatus.member_index, 4), member_target: round(target, 4),
@@ -394,16 +401,15 @@
     tur: {org: 'tur', cost: 2, kind: 'build'},
     militia_recruit: {org: 'militia', cost: 1, kind: 'recruit'},
     militia_militarize: {org: 'militia', cost: 1, kind: 'militarize'},
-    cooperative_workers: {org: 'cooperatives', cost: 1, kind: 'prepare', class_id: 'workers'},
-    cooperative_rural: {org: 'cooperatives', cost: 1, kind: 'prepare', class_id: 'rural'},
+    cooperative_workers: {org: 'cooperatives', cost: 1, kind: 'found'},
   });
   const PACKAGE_ORDER = Object.freeze(Object.keys(PACKAGES));
   // Z — 0.56 (item 4 of 5 X 2026): the union packages have a card of their own, party.union_investments; the other packages
   // stay in party.organizations. Unions are one organisation, so their card takes one package in one action.
   const UNION_CARD = 'party.union_investments', ORGANIZATIONS_CARD = 'party.organizations';
   const cardOfPackage = id => (PACKAGES[id].org === 'unions' ? UNION_CARD : ORGANIZATIONS_CARD);
-  const ORG_NAMES = Object.freeze({unions: 'trade unions', press: 'the press', tur: 'TUR', militia: 'Milicja', cooperatives: 'cooperatives'});
-  const ORG_NAMES_PL_ACCUSATIVE = Object.freeze({unions: 'związki zawodowe', press: 'prasę', tur: 'Towarzystwo Uniwersytetu Robotniczego', militia: 'Milicję', cooperatives: 'spółdzielnie'});
+  const ORG_NAMES = Object.freeze({unions: 'trade unions', press: 'the press', tur: 'TUR', militia: 'Milicja', cooperatives: 'a cooperative'});
+  const ORG_NAMES_PL_ACCUSATIVE = Object.freeze({unions: 'związki zawodowe', press: 'prasę', tur: 'Towarzystwo Uniwersytetu Robotniczego', militia: 'Milicję', cooperatives: 'spółdzielnię'});
   const ORGANIZATIONS_COOLDOWN = 2;
   const SUBACTION_COOLDOWNS = Object.freeze({organize: 2, distribution: 2, recruit: 2, militarize: 2});
 
@@ -449,11 +455,7 @@
           L('The party journal already has its highest reach, 60; only a popular paper reaches more.', 'Pismo partyjne ma już najwyższy zasięg, 60; więcej osiągnie tylko gazeta popularna.'));
       }
     }
-    if (p.org === 'cooperatives') {
-      if (S.party_orgs.cooperatives.projects.some(c => c.class_id === p.class_id && c.status === 'prepared')) {
-        return no(L('A cooperative for these recipients is already prepared; launch it from the party agenda.', 'Spółdzielnia dla tych odbiorców jest już przygotowana; uruchom ją z agendy partii.'));
-      }
-    }
+    if (p.org === 'cooperatives' && cooperativeWorks(S)) return no(L('The cooperative already works.', 'Spółdzielnia już działa.'));
     return OK;
   }
 
@@ -509,12 +511,10 @@
     }
     if (p.kind === 'recruit') return recruit(Q);
     if (p.kind === 'militarize') return militarize(Q);
-    if (p.kind === 'prepare') {
-      const project = {id: 'coop-' + (S.party_orgs.cooperatives.projects.length + 1) + '-' + p.class_id + '-t' + t, class_id: p.class_id,
-        status: 'prepared', prepared_at: t, launched_at: null, relief: 1, paid_last: false};
-      S.party_orgs.cooperatives.projects.push(project);
-      return L(COOPERATIVE_NAMES[p.class_id] + ' is prepared; its launch waits in the party agenda',
-        'przygotowano: ' + COOPERATIVE_NAMES_PL[p.class_id] + '; jej uruchomienie czeka w agendzie partii');
+    if (p.kind === 'found') {
+      cooperativeOf(S).founded_at = t;
+      return L('the workers’ consumer cooperative starts work; from now on it pays half of the strike pay',
+        'robotnicza spółdzielnia spożywców zaczyna działać; odtąd płaci połowę zasiłku strajkowego');
     }
     throw new Error('applyPackage: unknown package ' + id);
   }
@@ -979,46 +979,10 @@
     S.history.reasons.push({t: t, kind: 'tur_course', course: run.course, target: run.target});
   }
 
-  // ---- Cooperatives (13.2; card 5.9) -------------------------------------------------------------------
+  // ---- The workers' consumer cooperative (13.2; card 5.1) ------------------------------------------------
 
-  function preparedCooperatives(S) {
-    return S.party_orgs.cooperatives.projects.filter(p => p.status === 'prepared');
-  }
-
-  function cooperativeStatus(Q, projectId) {
-    const S = Q.S, project = S.party_orgs.cooperatives.projects.find(p => p.id === projectId);
-    if (!project || project.status !== 'prepared') return no(L('No prepared cooperative.', 'Brak przygotowanej spółdzielni.'));
-    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
-    if (S.party_orgs.cash + 1e-9 < 2) return no(L('Needs 2 resources.', 'Wymaga 2 jednostek środków.'));
-    return OK;
-  }
-
-  function launchCooperative(Q, projectId) {
-    syncMirrors(Q);
-    const status = cooperativeStatus(Q, projectId);
-    if (!status.available) throw new Error('launchCooperative: ' + status.reason);
-    const S = Q.S, project = S.party_orgs.cooperatives.projects.find(p => p.id === projectId);
-    rules.commitMainAction(Q, 'party.cooperative', {project_id: projectId, resource_cost: {R: 2}});
-    S.party_orgs.cash = Math.max(0, S.party_orgs.cash - 2);
-    project.status = 'operating';
-    project.launched_at = Q.time;
-    project.paid_last = true;
-    writeMirrors(Q);
-    const coopName = L(COOPERATIVE_NAMES[project.class_id], COOPERATIVE_NAMES_PL[project.class_id]);
-    return result(Q, coopName.charAt(0).toUpperCase() + coopName.slice(1) + L(' starts work: relief +1 for its recipients while it operates.',
-      ' zaczyna działać: ulga +1 dla jej odbiorców, dopóki działa.'));
-  }
-
-  // A cooperative executor for the cooperative variants of the government cards (8.5, 8.9).
-  function cooperativeExecutor(S) {
-    return !!(S && S.party_orgs && operatingCooperatives(S).length);
-  }
-
-  // The relief of the operating cooperatives in one cell (13.2): +1 each while it operates (Z — 0.56), at most 6 in the cell.
-  function cooperativeRelief(S, cell) {
-    const relief = operatingCooperatives(S).filter(p => p.paid_last && p.class_id === cell.class_id).reduce((n, p) => n + p.relief, 0);
-    return Math.min(RELIEF_CAP, relief);
-  }
+  // Z — 0.92: the share of the strike pay the party itself pays — half while the cooperative works.
+  const strikePayShare = S => (cooperativeWorks(S) ? 1 - COOPERATIVE_STRIKE_SHARE : 1);
 
   // ---- The press (13.2): format and restrictions -------------------------------------------------------
 
@@ -2975,14 +2939,14 @@
       build: (Q.S.party_orgs.tur.level === 0 ? 'Załóż Towarzystwo Uniwersytetu Robotniczego' : 'Rozpocznij kolejny etap Towarzystwa Uniwersytetu Robotniczego') + ' (dwa miesiące)',
       recruit: 'Werbunek do Milicji (+100 członków)',
       militarize: 'Militaryzacja Milicji (sprawność +0,10, najwyżej 0,70)',
-      prepare: 'Przygotuj ' + (p.class_id ? COOPERATIVE_NAMES_PL_ACCUSATIVE[p.class_id] : ''),
+      found: 'Załóż robotniczą spółdzielnię spożywców',
     } : {
       organize: 'Organise the ' + (p.branch ? BRANCH_NAMES[p.branch].toLowerCase() : '') + ' branch (+15 reach, more under the workers’ line and with TUR)',
       distribution: 'Extend the distribution of the press (+10 reach)',
       build: (Q.S.party_orgs.tur.level === 0 ? 'Found TUR' : 'Start the next stage of TUR') + ' (two months)',
       recruit: 'Recruit into Milicja (+100 members)',
       militarize: 'Militarise Milicja (efficiency +0.10, up to 0.70)',
-      prepare: 'Prepare ' + (p.class_id ? COOPERATIVE_NAMES[p.class_id] : ''),
+      found: 'Found a workers’ consumer cooperative',
     };
     return names[p.kind] + ' — ' + L(String(p.cost), fmt(p.cost)) + ' R';
   }
@@ -3059,10 +3023,7 @@
         tur.active_build.target_level + ' (' + tur.active_build.paid_months + L('/2 months)', '/2 mies.)') : '') +
       (tur.active_course ? L('; course: ', '; kurs: ') + courseName(tur.active_course.course) + ' (' + tur.active_course.paid_months +
         L('/2 months)', '/2 mies.)') : '');
-    const coops = operatingCooperatives(S).length, prepared = preparedCooperatives(S).length;
-    Q.pl_party_coops = L(coops + ' operating' + (prepared ? ', ' + prepared + ' prepared' : ''),
-      coops + ' ' + rules.plural(coops, 'działająca', 'działające', 'działających') +
-      (prepared ? ', ' + prepared + ' ' + rules.plural(prepared, 'przygotowana', 'przygotowane', 'przygotowanych') : ''));
+    Q.pl_party_coops = cooperativeWorks(S) ? L('works', 'działa') : L('not founded', 'nie założona');
     Q.pl_party_militia = L(m.strength + ' members, training ' + militiaLevel(m) + '/5' + (m.stage === 2 ? '; Akcja Socjalistyczna' : ''),
       m.strength + ' ' + rules.plural(m.strength, 'członek', 'członków', 'członków') + ', wyszkolenie ' + militiaLevel(m) + '/5' +
       (m.stage === 2 ? '; Akcja Socjalistyczna' : ''));
@@ -3107,11 +3068,6 @@
       Q['pl_pa_org_' + kind + '_text'] = organizePreview(Q, kind);
     }
     for (const id of Object.keys(COURSES)) Q['pl_pa_course_' + id + '_why'] = courseStatus(Q, id).reason;
-    const prepared = preparedCooperatives(S);
-    Q.pl_pa_coop_count = prepared.length;
-    Q.pl_pa_coop_id = prepared.length ? prepared[0].id : '';
-    Q.pl_pa_coop_name = prepared.length ? L(COOPERATIVE_NAMES[prepared[0].class_id], COOPERATIVE_NAMES_PL[prepared[0].class_id]) : '';
-    Q.pl_pa_coop_why = prepared.length ? cooperativeStatus(Q, prepared[0].id).reason : '';
     Q.pl_pa_kpp_open = channelOpen(S) ? 1 : 0;
     if (channelOpen(S)) kppView(Q);
     Q.pl_pa_priorities = strategyOf(S).economic_priorities.map(priorityName).join('; ');
@@ -3193,10 +3149,8 @@
     turCardAvailable: turCardAvailable,
     turCardView: turCardView,
     turCardCourse: turCardCourse,
-    cooperativeStatus: cooperativeStatus,
-    launchCooperative: launchCooperative,
-    cooperativeExecutor: cooperativeExecutor,
-    cooperativeRelief: cooperativeRelief,
+    cooperativeWorks: cooperativeWorks,
+    strikePayShare: strikePayShare,
     pressFormatStatus: pressFormatStatus,
     pressFormatChoose: pressFormatChoose,
     addPressRestriction: addPressRestriction,

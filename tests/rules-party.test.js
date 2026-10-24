@@ -339,22 +339,38 @@ test('Militaryzacja a frakcje: only the first militarisation gives Centrum +3 di
   assert.deepEqual([reaction.cause, reaction.reverse], ['militia.militarize', null], 'a militarisation cannot be taken back');
 });
 
-test('cooperatives: prepared in the organisations card, launched in the agenda for 2 R; the operating one is the cooperative executor', () => {
+// Z — 0.92 (the user's decision of 24 X 2026): one workers' consumer cooperative, founded at once for 1 R; it pays half of the
+// strike pay and gives no relief.
+test('Spółdzielnia 0.92: one workers’ consumer cooperative, founded at once for 1 R; half of the strike pay; once only; no relief', () => {
   const Q = game();
   Q.S.party_orgs.cash = 5;
-  PolishParty.organizationsChoose(Q, ['cooperative_rural']);
+  assert.deepEqual(Q.S.party_orgs.cooperatives, {founded_at: null});
+  assert.deepEqual([PolishParty.cooperativeWorks(Q.S), PolishParty.strikePayShare(Q.S)], [false, 1]);
+  assert.ok(!PolishParty.PACKAGES.cooperative_rural, 'no village cooperative');
+  PolishParty.organizationsChoose(Q, ['cooperative_workers']);
+  assert.deepEqual([Q.S.party_orgs.cooperatives.founded_at, Q.S.party_orgs.cash, Q.month_actions], [Q.time, 4, 1]);
+  assert.deepEqual([PolishParty.cooperativeWorks(Q.S), PolishParty.strikePayShare(Q.S)], [true, 0.5]);
   free(Q);
-  assert.equal(PolishParty.cooperativeExecutor(Q.S), false, 'a prepared cooperative is not yet an executor');
-  const project = Q.S.party_orgs.cooperatives.projects[0];
-  PolishParty.launchCooperative(Q, project.id);
-  assert.deepEqual([project.status, Q.S.party_orgs.cash], ['operating', 2]);
-  assert.equal(PolishParty.cooperativeExecutor(Q.S), true);
-  const rural = Q.S.society.cells.find(c => c.class_id === 'rural');
+  delete Q.S.cooldowns['party.organizations'];
+  assert.match(PolishParty.selectionStatus(Q, ['cooperative_workers']).reason, /The cooperative already works/);
+  PolishParty.partyDisplay(Q);
+  assert.equal(Q.pl_party_coops, 'works');
   const workers = Q.S.society.cells.find(c => c.class_id === 'workers');
-  assert.deepEqual([PolishParty.cooperativeRelief(Q.S, rural), PolishParty.cooperativeRelief(Q.S, workers)], [1, 0]);
-  // Z — 0.56: no upkeep; the relief lasts while the cooperative operates.
+  assert.equal(PolishPolitics.ongoingRelief(Q.S, workers), 0, 'no relief of the workers');
+});
+
+test('Spółdzielnia 0.92: an older save keeps its operating workers’ cooperative and loses the prepared and village ones', () => {
+  const Q = game();
+  Q.S.party_orgs.cooperatives = {projects: [{id: 'coop-1-rural-t3', class_id: 'rural', status: 'operating', launched_at: 4},
+    {id: 'coop-2-workers-t5', class_id: 'workers', status: 'operating', launched_at: 6, relief: 1, paid_last: true},
+    {id: 'coop-3-workers-t7', class_id: 'workers', status: 'prepared', launched_at: null}]};
+  assert.deepEqual(PolishRules.validateState(Q.S).filter(p => /cooperative/.test(p)), [], 'the older save stays compatible');
   PolishParty.settleParty(Q, Q.time);
-  assert.deepEqual([PolishParty.cooperativeRelief(Q.S, rural), Q.S.party_orgs.cash], [1, 2]);
+  assert.deepEqual(Q.S.party_orgs.cooperatives, {founded_at: 6});
+  const R = game();
+  R.S.party_orgs.cooperatives = {projects: [{id: 'coop-1-rural-t3', class_id: 'rural', status: 'operating', launched_at: 4}]};
+  assert.equal(PolishParty.strikePayShare(R.S), 1, 'a village cooperative alone pays nothing');
+  assert.deepEqual(R.S.party_orgs.cooperatives, {founded_at: null});
 });
 
 // ---- Z — 0.89: the simplified Milicja (decisions 1, 2A and 3A of 24 X 2026) ----

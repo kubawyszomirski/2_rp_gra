@@ -5,14 +5,11 @@
   "title: Party Agenda": "title: Agenda partii",
   "= The party agenda": "= Agenda partii",
   "Party money: [+ pl_party_cash +]. A collection brings [+ pl_pa_fundraise_gain +] R now.": "Kasa partii: [+ pl_party_cash +]. Zbiórka przynosi teraz [+ pl_pa_fundraise_gain +] R.",
-  "TUR: [+ pl_party_tur +]. Cooperatives: [+ pl_party_coops +].": "Towarzystwo Uniwersytetu Robotniczego: [+ pl_party_tur +]. Spółdzielnie: [+ pl_party_coops +].",
   "[? if pl_pa_priorities : Economic priorities of PPS: [+ pl_pa_priorities +]. Each is prepared through its government card, with its own costs. ?]": "[? if pl_pa_priorities : Priorytety gospodarcze PPS: [+ pl_pa_priorities +]. Każdy z nich przygotowuje się przez właściwą kartę rządową, z jej własnymi kosztami. ?]",
   "title: An extraordinary collection": "title: Zbiórka nadzwyczajna",
   "subtitle: Brings [+ pl_pa_fundraise_gain +] resources (dues × membership / 100, with the bonus of the apparatus); waits three months.": "subtitle: Przynosi partii środki: [+ pl_pa_fundraise_gain +] (składki × członkostwo / 100, z dodatkiem za aparat); odnowienie: trzy miesiące.",
   "title: Build up the party apparatus": "title: Rozbuduj aparat partii",
   "subtitle: 2 resources; one level more (up to 4): every collection brings more (+25% for each level above the first).": "subtitle: 2 jednostki środków; poziom wyżej (najwyżej 4): każda zbiórka przynosi więcej (+25% za każdy poziom powyżej pierwszego).",
-  "title: Launch the prepared cooperative": "title: Uruchom przygotowaną spółdzielnię",
-  "subtitle: This month's action and 2 resources: [+ pl_pa_coop_name +] starts work and gives relief while it operates.": "subtitle: Akcja miesiąca i 2 jednostki środków: [+ pl_pa_coop_name +] rozpoczyna działalność i daje ulgę, dopóki działa.",
   "title: Cooperation with the KPP: agree on a trial": "title: Współpraca z KPP: uzgodnij próbę",
   "subtitle: This month's action; a trial of joint action for an existing demand, at a relation of 30 or more. Relation now [+ pl_kpp_relation +].": "subtitle: Akcja miesiąca; próba wspólnej akcji dla istniejącego postulatu, przy relacji co najmniej 30. Obecna relacja: [+ pl_kpp_relation +].",
   "title: Cooperation with the KPP: agree on the rules": "title: Współpraca z KPP: uzgodnij zasady",
@@ -22,10 +19,11 @@
   "title: Assess the forces of the state": "title: Oceń siły państwa",
   "subtitle: 1 resource; the known loyalty of the army groups becomes more precise (−10 percentage points of the interval, down to ±5); waits three months. The loyalties themselves do not change.": "subtitle: 1 jednostka środków; znana lojalność zgrupowań wojska staje się dokładniejsza (−10 punktów procentowych przedziału, najwyżej do ±5); odnowienie: trzy miesiące. Sama lojalność się nie zmienia.",
   "- @root: Continue.": "- @root: Dalej.",
-  "subtitle: Organisational work, collections, the apparatus and cooperatives.": "subtitle: Praca organizacyjna, zbiórki, aparat i spółdzielnie.",
   "title: Organisational work in the unions": "title: Praca organizacyjna w związkach",
   "subtitle: No money. [+ pl_pa_org_unions_text +]": "subtitle: Bez pieniędzy. [+ pl_pa_org_unions_text +]",
   "title: Organisational work among our voters": "title: Praca organizacyjna wśród naszych wyborców",
-  "subtitle: No money; the groups of the character of the party. [+ pl_pa_org_voters_text +]": "subtitle: Bez pieniędzy; grupy z charakteru partii. [+ pl_pa_org_voters_text +]"
+  "subtitle: No money; the groups of the character of the party. [+ pl_pa_org_voters_text +]": "subtitle: Bez pieniędzy; grupy z charakteru partii. [+ pl_pa_org_voters_text +]",
+  "TUR: [+ pl_party_tur +].": "Towarzystwo Uniwersytetu Robotniczego: [+ pl_party_tur +].",
+  "subtitle: Organisational work, collections and the apparatus.": "subtitle: Praca organizacyjna, zbiórki i aparat."
  }
 }

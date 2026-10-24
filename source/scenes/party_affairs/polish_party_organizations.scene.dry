@@ -9,6 +9,7 @@ on-arrival: {!
 // Card party.organizations (technical reference 13.5; card catalogue 5.1). Z — 0.78 (decision 2A of 8 X 2026): one investment
 // in one action, chosen on one page — the press, TUR or a cooperative; Milicja has its own card (polish_party_militia) and the
 // unions theirs (polish_party_union_investments). The choice is carried out at once for its R and this month's action.
+// Z — 0.92 (the user's decision of 24 X 2026): one workers' consumer cooperative, founded at once; it pays half of the strike pay.
 PolishParty.organizationsView(Q);
 !}
 
@@ -19,7 +20,6 @@ PPS has [+ pl_org_cash +] R. Choose one investment; it is carried out at once. M
 - @press_distribution
 - @tur
 - @cooperative_workers
-- @cooperative_rural
 - @easy_discard
 
 @press_distribution
@@ -43,22 +43,12 @@ PolishParty.organizationsChoose(Q, ['tur']);
 go-to: result
 
 @cooperative_workers
-title: Prepare a workers’ consumer cooperative
-subtitle: 1 resource; its launch waits in the party agenda (2 resources).
+title: Found a workers’ consumer cooperative
+subtitle: 1 resource; the cooperative sells to strikers on credit, so the strike pay costs the party half as much.
 choose-if: {! return PolishParty.selectionStatus(Q, ['cooperative_workers']).available !}
 unavailable-subtitle: [+ pl_org_cooperative_workers_why +]
 on-arrival: {!
 PolishParty.organizationsChoose(Q, ['cooperative_workers']);
-!}
-go-to: result
-
-@cooperative_rural
-title: Prepare a village cooperative of smallholders
-subtitle: 1 resource; its launch waits in the party agenda (2 resources).
-choose-if: {! return PolishParty.selectionStatus(Q, ['cooperative_rural']).available !}
-unavailable-subtitle: [+ pl_org_cooperative_rural_why +]
-on-arrival: {!
-PolishParty.organizationsChoose(Q, ['cooperative_rural']);
 !}
 go-to: result
 

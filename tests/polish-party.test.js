@@ -60,7 +60,7 @@ test('Jedna inwestycja w Organizacjach 0.78: one page, one investment at once, n
   PolishParty.writeMirrors(Q);
   playFromHand(engine, 'polish_party_organizations');
   assert.deepEqual(ids(engine), ['polish_party_organizations.press_distribution', 'polish_party_organizations.tur',
-    'polish_party_organizations.cooperative_workers', 'polish_party_organizations.cooperative_rural', 'easy_discard']);
+    'polish_party_organizations.cooperative_workers', 'easy_discard']);
   choose(engine, 'polish_party_organizations.press_distribution');
   assert.equal(engine.state.sceneId, 'polish_party_organizations.result', 'carried out at once');
   assert.match(content(engine), /the press gains 10 reach/);

@@ -3346,11 +3346,6 @@
     }
   }
 
-  // A working PPS cooperative is the cooperative executor (13.2; stage 5).
-  function cooperativeExecutor(S) {
-    return !!(S.party_orgs && S.party_orgs.cooperatives.projects.some(p => p.status === 'operating'));
-  }
-
   // Card 8.1 through the unions module (stage 6): the collective agreement of one branch, or of any branch when
   // no branch is named, and the derogation for the oldest threatened plant (P).
   function unionOption(Q, option, extra) {
@@ -3389,10 +3384,8 @@
         'Wymaga wcześniejszej zmiany konstytucyjnych gwarancji własności, której w tym okresie nie da się przeprowadzić.'),
     };
     if (blockedLater[option]) return no(blockedLater[option]);
-    // Stage 5: a working cooperative of PPS is the cooperative executor of 8.5 and 8.9.
-    if ((option === 'cooperative' || option === 'cooperative_processing_sales') && !cooperativeExecutor(S)) {
-      return no(L('Needs a cooperative executor: an operating PPS cooperative (Organisations of PPS, then the party agenda).', 'Wymaga wykonawcy spółdzielczego: działającej spółdzielni PPS (Organizacje PPS, potem agenda partii).'));
-    }
+    // Z — 0.92 (the user's decision of 24 X 2026): the cooperative variants of 8.5 and 8.9 use the existing cooperative movement
+    // and need no cooperative of PPS.
     if (!(extra && extra.adviser) && !rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
     switch (cardId) {
       case 'labor_rights': {

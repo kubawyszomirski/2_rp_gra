@@ -47,7 +47,7 @@ if (Q.polish_party_rules && typeof PolishParty !== 'undefined') {
 
 [? if polish_party_rules : **TUR:** [+ pl_party_tur +] ?]
 
-[? if polish_party_rules : **Cooperatives:** [+ pl_party_coops +] ?]
+[? if polish_party_rules : **Consumer cooperative:** [+ pl_party_coops +] ?]
 
 [? if polish_party_rules : **Milicja:** [+ pl_party_militia +] ?]
 

@@ -16,7 +16,6 @@
   "= Organisations": "= Organizacje",
   "[? if polish_party_rules : **Press:** [+ pl_party_press +] ?]": "[? if polish_party_rules : **Prasa:** [+ pl_party_press +] ?]",
   "[? if polish_party_rules : **TUR:** [+ pl_party_tur +] ?]": "[? if polish_party_rules : **Towarzystwo Uniwersytetu Robotniczego:** [+ pl_party_tur +] ?]",
-  "[? if polish_party_rules : **Cooperatives:** [+ pl_party_coops +] ?]": "[? if polish_party_rules : **Spółdzielnie:** [+ pl_party_coops +] ?]",
   "[? if polish_party_rules : **Milicja:** [+ pl_party_militia +] ?]": "[? if polish_party_rules : **Milicja:** [+ pl_party_militia +] ?]",
   "= Trade unions": "= Związki zawodowe",
   "[? if polish_party_rules : **Industry:** [+ pl_party_union_industry +] ?]": "[? if polish_party_rules : **Przemysł:** [+ pl_party_union_industry +] ?]",
@@ -130,6 +129,7 @@
   "[? if not polish_economy_system : **Inflation:** [+ inflation_2 +]% ?]": "[? if not polish_economy_system : **Inflacja:** [+ inflation_2 +]% ?]",
   "[? if not polish_economy_system and black_thursday_seen = 1 : **Unemployment:** [+ unemployed_2 +]% ?]": "[? if not polish_economy_system and black_thursday_seen = 1 : **Bezrobocie:** [+ unemployed_2 +]% ?]",
   "[? if not polish_economy_system : **Economic growth:** [+ economic_growth_2 +]% ?]": "[? if not polish_economy_system : **Wzrost gospodarczy:** [+ economic_growth_2 +]% ?]",
-  "*[? if not polish_party_rules : Inherited German cards feed them through a temporary compatibility bridge until each card receives a researched Polish response. ?][? if polish_party_rules : The strengths of the three currents add up to 100; the dissent of the party is their dissent weighted by strength. ?]*": "*[? if not polish_party_rules : Odziedziczone karty niemieckie zasilają je przez tymczasowy pomost zgodności, dopóki każda karta nie dostanie zbadanej polskiej odpowiedzi. ?][? if polish_party_rules : Siły trzech nurtów sumują się do 100; sprzeciw w partii to ich sprzeciw ważony siłą. ?]*"
+  "*[? if not polish_party_rules : Inherited German cards feed them through a temporary compatibility bridge until each card receives a researched Polish response. ?][? if polish_party_rules : The strengths of the three currents add up to 100; the dissent of the party is their dissent weighted by strength. ?]*": "*[? if not polish_party_rules : Odziedziczone karty niemieckie zasilają je przez tymczasowy pomost zgodności, dopóki każda karta nie dostanie zbadanej polskiej odpowiedzi. ?][? if polish_party_rules : Siły trzech nurtów sumują się do 100; sprzeciw w partii to ich sprzeciw ważony siłą. ?]*",
+  "[? if polish_party_rules : **Consumer cooperative:** [+ pl_party_coops +] ?]": "[? if polish_party_rules : **Spółdzielnia spożywców:** [+ pl_party_coops +] ?]"
  }
 }

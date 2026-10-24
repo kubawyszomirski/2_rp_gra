@@ -261,11 +261,14 @@
   // strikers stay away and the branch's dissent rises. Before a strike its credible pressure is its participation alone.
   const STRIKE_COST = 0.5;
   const UNPAID_SHARE = 0.5;
-  const strikePayable = S => S.party_orgs.cash + 1e-9 >= STRIKE_COST;
+  // Z — 0.92 (the user's decision of 24 X 2026): the workers' consumer cooperative pays half, so the party pays 0.25 (P).
+  const strikeCost = S => STRIKE_COST * party.strikePayShare(S);
+  const strikePayable = S => S.party_orgs.cash + 1e-9 >= strikeCost(S);
+  const coopPays = S => party.strikePayShare(S) < 1;
 
   function potential(S, branchId) {
     const value = participation(S, branchId);
-    return {participation: value, cost: STRIKE_COST, credible: value};
+    return {participation: value, cost: strikeCost(S), credible: value};
   }
 
   // During a strike the credible pressure is the active participation of the month (14.2), plus the agreed and
@@ -536,8 +539,8 @@
       // Z — 0.86: the party pays the strike pay of the branch for the month, or the strikers go without it.
       const coverage = strikePayable(S) ? 1 : 0;
       if (coverage) {
-        S.party_orgs.cash = Math.max(0, round(S.party_orgs.cash - STRIKE_COST, 6));
-        rec.cost_paid = round(rec.cost_paid + STRIKE_COST, 6);
+        S.party_orgs.cash = Math.max(0, round(S.party_orgs.cash - strikeCost(S), 6));
+        rec.cost_paid = round(rec.cost_paid + strikeCost(S), 6);
       }
       rec.participants[b] = value * (coverage ? 1 : UNPAID_SHARE);
       rec.coverage[b] = coverage;
@@ -1229,9 +1232,9 @@
     openSteps(S, rec);
     const p = potential(S, branchId);
     return result(Q, L(BRANCH_NAMES[branchId] + ': the strike begins. Expected participation ' + fmt(p.participation) + '. Every month of the strike the party pays ' +
-      rules.units(STRIKE_COST) + ' of strike pay (PPS has ' + fmt(S.party_orgs.cash) + ' R); without the money half of the strikers stay away.',
+      rules.units(strikeCost(S)) + ' of strike pay (PPS has ' + fmt(S.party_orgs.cash) + ' R); without the money half of the strikers stay away.',
       branchName(branchId) + ': strajk się zaczyna. Oczekiwany udział ' + fmt(p.participation) + '. W każdym miesiącu strajku partia płaci ' +
-      rules.units(STRIKE_COST, 'resources', 'acc') + ' zasiłku strajkowego (PPS ma ' + fmt(S.party_orgs.cash) + ' R); bez pieniędzy połowa strajkujących odejdzie.'));
+      rules.units(strikeCost(S), 'resources', 'acc') + ' zasiłku strajkowego (PPS ma ' + fmt(S.party_orgs.cash) + ' R); bez pieniędzy połowa strajkujących odejdzie.'));
   }
 
   // Answering an offer costs no month (14.3). Accepting signs the settlement: branches that agree end on the agreed
@@ -1443,8 +1446,11 @@
       Q.pl_dsp_title = disputeTitle(rec);
       Q.pl_dsp_text = disputeCause(S, rec) + (rec.pps_answered ? ' ' + L('The government has rejected the threat of a strike.', 'Rząd odrzucił groźbę strajku.') : '');
       Q.pl_dsp_numbers = rec.branches.map(b => unionNumbers(S, b)).join('. ') + '.';
-      Q.pl_dsp_note = L('A won strike: wages rise for two months, the workers’ grievance falls, and the unions’ trust and the support of PPS grow. Each month of a strike costs the party half a unit of its money for each branch.',
-          'Wygrany strajk: płace rosną na dwa miesiące, niezadowolenie robotników spada, a zaufanie związków i poparcie PPS rosną. Każdy miesiąc strajku kosztuje partię pół jednostki środków za każdą branżę.');
+      Q.pl_dsp_note = L('A won strike: wages rise for two months, the workers’ grievance falls, and the unions’ trust and the support of PPS grow. ',
+          'Wygrany strajk: płace rosną na dwa miesiące, niezadowolenie robotników spada, a zaufanie związków i poparcie PPS rosną. ') +
+        (coopPays(S) ? L('Each month of a strike costs the party a quarter of a unit of its money for each branch; the cooperative pays the other quarter.',
+          'Każdy miesiąc strajku kosztuje partię ćwierć jednostki środków za każdą branżę; drugą ćwierć płaci spółdzielnia.') :
+          L('Each month of a strike costs the party half a unit of its money for each branch.', 'Każdy miesiąc strajku kosztuje partię pół jednostki środków za każdą branżę.'));
     } else {
       Q.pl_dsp_title = L('A dispute with the leadership of PPS', 'Spór z kierownictwem PPS');
       Q.pl_dsp_text = lead ? L(BRANCH_NAMES[lead] + ' is in dispute with the leadership of PPS over a concrete change (dissent ' + fmt(S.unions[lead].dissent) + ').',
@@ -1631,8 +1637,11 @@
     party.writeMirrors(Q);
     const goalText = {small: L('wages and working conditions', 'płace i warunki pracy'), big: L('wages, working conditions and works councils', 'płace, warunki pracy i rady zakładowe'),
       political: L('the resignation of the cabinet', 'dymisję rządu')}[st.goal];
-    return result(Q, L('The strike begins (' + rec.branches.map(b => BRANCH_NAMES[b].toLowerCase()).join(' and ') + ') for ' + goalText + '. Every month of the strike the party pays half a unit of strike pay for each branch. ',
-      'Strajk się zaczyna (' + branchList(rec.branches) + '): o ' + goalText + '. W każdym miesiącu strajku partia płaci pół jednostki środków zasiłku strajkowego za każdą branżę. ') +
+    const pay = coopPays(S) ? L('Every month of the strike the party pays a quarter of a unit of strike pay for each branch, and the cooperative pays the other quarter. ',
+      'W każdym miesiącu strajku partia płaci ćwierć jednostki środków zasiłku strajkowego za każdą branżę, a drugą ćwierć płaci spółdzielnia. ') :
+      L('Every month of the strike the party pays half a unit of strike pay for each branch. ', 'W każdym miesiącu strajku partia płaci pół jednostki środków zasiłku strajkowego za każdą branżę. ');
+    return result(Q, L('The strike begins (' + rec.branches.map(b => BRANCH_NAMES[b].toLowerCase()).join(' and ') + ') for ' + goalText + '. ',
+      'Strajk się zaczyna (' + branchList(rec.branches) + '): o ' + goalText + '. ') + pay +
       (withCommunists ? parts[0] + ' ' : '') + (st.protection ? parts[parts.length - 1] : ''));
   }
 
@@ -1663,7 +1672,9 @@
     }
     Q.pl_off_text = text;
     Q.pl_off_has_offer = rec.offer ? 1 : 0;
-    Q.pl_off_continue_line = L('The strike goes on; next month costs half a unit of strike pay for each branch.', 'Strajk trwa; kolejny miesiąc kosztuje pół jednostki środków za każdą branżę.') +
+    Q.pl_off_continue_line = (coopPays(S) ? L('The strike goes on; next month costs a quarter of a unit of strike pay for each branch (the cooperative pays the other quarter).',
+      'Strajk trwa; kolejny miesiąc kosztuje ćwierć jednostki środków za każdą branżę (drugą ćwierć płaci spółdzielnia).') :
+      L('The strike goes on; next month costs half a unit of strike pay for each branch.', 'Strajk trwa; kolejny miesiąc kosztuje pół jednostki środków za każdą branżę.')) +
       (rec.offer ? ' ' + L('The offer lapses.', 'Oferta przepada.') : '');
   }
 

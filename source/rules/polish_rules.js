@@ -216,7 +216,7 @@
       party_orgs: {profile_id: null, cash: 0, dues: 2, apparatus: {level: 1, member_index: 100, worker_support0: null, union_reach0: 20},
         press: {reach: 30, credibility: 60, format: 'party_journal', popular_adopted: false, campaigns: [], restrictions: []},
         tur: {level: 0, active_build: null, active_course: null, completed_courses: []},
-        cooperatives: {projects: []}, arrears: {apparatus: 0, press: 0, tur: 0, cooperatives: 0}, last_ledger: null, mirror_base: {}},
+        cooperatives: {founded_at: null}, arrears: {apparatus: 0, press: 0, tur: 0, cooperatives: 0}, last_ledger: null, mirror_base: {}},
       militia: {strength: 0, militancy: 0, stage: 1, militarized_once: false, assignments: [], banned: false},
       unions: {},
       faction_cases: {},
@@ -435,7 +435,8 @@
     }
     if (!isPlainObject(orgs.press) || !Array.isArray(orgs.press.restrictions)) problems.push('S.party_orgs.press is invalid');
     if (!isPlainObject(orgs.tur) || !Number.isInteger(orgs.tur.level) || orgs.tur.level < 0 || orgs.tur.level > 3) problems.push('S.party_orgs.tur.level is outside 0–3');
-    if (!isPlainObject(orgs.cooperatives) || !Array.isArray(orgs.cooperatives.projects)) problems.push('S.party_orgs.cooperatives is invalid');
+    // Z — 0.92: one cooperative (`founded_at`); an older save with its list of cooperatives stays compatible and is converted.
+    if (!isPlainObject(orgs.cooperatives)) problems.push('S.party_orgs.cooperatives is invalid');
     const militia = S.militia;
     if (!Number.isInteger(militia.strength) || militia.strength < 0) problems.push('S.militia.strength is not a count');
     if (typeof militia.militancy !== 'number' || militia.militancy < 0 || militia.militancy > 1) problems.push('S.militia.militancy is outside 0–1');

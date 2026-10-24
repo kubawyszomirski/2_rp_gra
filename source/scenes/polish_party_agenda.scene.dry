@@ -1,5 +1,5 @@
 title: Party Agenda
-subtitle: Organisational work, collections, the apparatus and cooperatives.
+subtitle: Organisational work, collections and the apparatus.
 is-card: true
 tags: party_affairs
 view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.agendaAvailable(Q) !}
@@ -9,7 +9,7 @@ on-arrival: {!
 // month's action; organisational work needs no money. Since Z — 0.57 (item 11 of the play notes of 5 X 2026) it is an
 // ordinary card of the Party deck, no longer pinned: it has to be drawn and goes back to the hand unused. Z — 0.78 (decision 5A
 // of 8 X 2026): the TUR courses have their own card, polish_party_tur; organisational work is two options straight on this page,
-// the target picked by the game (decision 4A).
+// the target picked by the game (decision 4A). Z — 0.92: the cooperative is founded on the card Organisations of PPS at once.
 PolishParty.agendaView(Q);
 // Stage 7: the assessment of the forces of the state is a standing action of this agenda (card catalogue 6.8).
 if (Q.polish_security_rules && typeof PolishSecurity !== 'undefined' && PolishSecurity.ready(Q)) Q.pl_pa_assess_why = PolishSecurity.assessStatus(Q).reason;
@@ -19,7 +19,7 @@ if (Q.polish_security_rules && typeof PolishSecurity !== 'undefined' && PolishSe
 
 Party money: [+ pl_party_cash +]. A collection brings [+ pl_pa_fundraise_gain +] R now.
 
-TUR: [+ pl_party_tur +]. Cooperatives: [+ pl_party_coops +].
+TUR: [+ pl_party_tur +].
 
 [? if pl_pa_priorities : Economic priorities of PPS: [+ pl_pa_priorities +]. Each is prepared through its government card, with its own costs. ?]
 
@@ -27,7 +27,6 @@ TUR: [+ pl_party_tur +]. Cooperatives: [+ pl_party_coops +].
 - @organize_voters
 - @fundraise
 - @apparatus
-- @launch_cooperative
 - @kpp_rules
 - @kpp_agreement
 - @assess_forces
@@ -70,17 +69,6 @@ choose-if: {! return PolishParty.organizeStatusOf(Q, 'voters').available !}
 unavailable-subtitle: [+ pl_pa_org_voters_why +]
 on-arrival: {!
 PolishParty.organizeVoters(Q);
-!}
-go-to: result
-
-@launch_cooperative
-title: Launch the prepared cooperative
-subtitle: This month's action and 2 resources: [+ pl_pa_coop_name +] starts work and gives relief while it operates.
-view-if: pl_pa_coop_count > 0
-choose-if: {! return PolishParty.cooperativeStatus(Q, Q.pl_pa_coop_id).available !}
-unavailable-subtitle: [+ pl_pa_coop_why +]
-on-arrival: {!
-PolishParty.launchCooperative(Q, Q.pl_pa_coop_id);
 !}
 go-to: result
 

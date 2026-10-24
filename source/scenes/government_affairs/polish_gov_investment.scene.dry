@@ -52,7 +52,7 @@ go-to: result
 
 @cooperative
 title: Cooperative financing
-subtitle: Credit for farms and small workshops through cooperatives; needs an operating PPS cooperative.
+subtitle: Credit for farms and small workshops through the cooperatives: 2 budget units for the building and 1 to run it.
 choose-if: {! return PolishProjects.optionStatus(Q, 'investment_fund', 'cooperative').available !}
 unavailable-subtitle: [+ pl_investment_fund_cooperative_why +]
 on-arrival: {!

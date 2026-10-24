@@ -60,7 +60,7 @@ test('the new-game state follows the domain register in 2.4', () => {
     party_orgs: { profile_id: null, cash: 0, dues: 2, apparatus: { level: 1, member_index: 100, worker_support0: null, union_reach0: 20 },
       press: { reach: 30, credibility: 60, format: 'party_journal', popular_adopted: false, campaigns: [], restrictions: [] },
       tur: { level: 0, active_build: null, active_course: null, completed_courses: [] },
-      cooperatives: { projects: [] }, arrears: { apparatus: 0, press: 0, tur: 0, cooperatives: 0 }, last_ledger: null, mirror_base: {} },
+      cooperatives: { founded_at: null }, arrears: { apparatus: 0, press: 0, tur: 0, cooperatives: 0 }, last_ledger: null, mirror_base: {} },
     militia: { strength: 0, militancy: 0, stage: 1, militarized_once: false, assignments: [], banned: false },
     unions: {},
     faction_cases: {},

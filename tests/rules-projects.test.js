@@ -633,7 +633,7 @@ test('Rozszerzyć i skupić osłony: a protection of 2 B extended to scope 2 cos
   assert.deepEqual([focused.variant, focused.upkeep_budget_B, proj.PROJECT_TYPES.worker_protection.variants.focused.share], ['focused', 1, 0.5]);
 });
 
-test('Warianty funduszu inwestycyjnego and Ratunek zakładu: public 2 B; banks blocked at credit 39, at 40 1 B and business −8; cooperatives need a PPS cooperative; no rescue without a recorded plant', () => {
+test('Warianty funduszu inwestycyjnego and Ratunek zakładu: public 2 B; banks blocked at credit 39, at 40 1 B and business −8; cooperatives need no PPS cooperative (Z — 0.92); no rescue without a recorded plant', () => {
   const Q = withPortfolio(world({ time: 12 }), 'finance');
   Q.S.economy.credit = 39;
   assert.match(proj.optionStatus(Q, 'investment_fund', 'banks').reason, /below 40/);
@@ -644,11 +644,9 @@ test('Warianty funduszu inwestycyjnego and Ratunek zakładu: public 2 B; banks b
   assert.deepEqual([instrument.variant, instrument.build_budget_B, instrument.upkeep_budget_B], ['banks', 1, 1]);
   proj.agendaChoose(Q, 'credit_instrument');
   assert.equal(Q.S.economy.business_pressure, 10 - 8, 'the agreement lowers business pressure once');
-  assert.match(proj.optionStatus(Q, 'investment_fund', 'cooperative').reason, /cooperative executor/);
-  // Stage 5: an operating PPS cooperative is the cooperative executor; the variant then costs 2 B and
-  // gives credit to farms and small plants (the rural and petty-bourgeois recipients).
+  // Z — 0.92: the cooperative variant uses the existing cooperative movement; it costs 2 B and gives credit to farms and
+  // small plants (the rural and petty-bourgeois recipients).
   const C = withPortfolio(world({ time: 12 }), 'finance');
-  C.S.party_orgs = { cooperatives: { projects: [{ id: 'coop-1', class_id: 'rural', status: 'operating' }] } };
   assert.equal(proj.optionStatus(C, 'investment_fund', 'cooperative').available, true);
   proj.chooseOption(C, 'investment_fund', 'cooperative');
   const cooperative = Object.values(C.S.projects).find(p => p.type === 'credit_instrument');

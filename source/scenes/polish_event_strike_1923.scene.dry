@@ -32,7 +32,7 @@ go-to: result
 
 @economic_strike
 title: A limited strike for wages and working conditions
-subtitle: The covered branches strike for the agreed demands (threshold 40); every month of the strike the party pays half a unit of strike pay for each branch.
+subtitle: The covered branches strike for the agreed demands (threshold 40); every month of the strike the party pays the strike pay for each branch (half a unit, a quarter while the workers’ consumer cooperative works).
 choose-if: {! return PolishUnions.caseStatus(Q, 'economic_strike').available !}
 unavailable-subtitle: [+ pl_case_economic_strike_why +]
 on-arrival: {!

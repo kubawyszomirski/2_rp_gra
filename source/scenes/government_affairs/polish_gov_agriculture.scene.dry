@@ -52,7 +52,7 @@ go-to: result
 
 @cooperative_processing_sales
 title: Cooperative processing and sales
-subtitle: Needs a cooperative executor: an operating PPS cooperative.
+subtitle: Peasants process and sell their produce through cooperatives: better conditions of the farms covered.
 choose-if: {! return PolishProjects.optionStatus(Q, 'agriculture_development', 'cooperative_processing_sales').available !}
 unavailable-subtitle: [+ pl_agriculture_development_cooperative_processing_sales_why +]
 on-arrival: {!
