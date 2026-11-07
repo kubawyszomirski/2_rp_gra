@@ -3391,17 +3391,16 @@
     const limited = pending.offer === 'both' && law.variants[1] && !full.passed ? rolledCounts(Q, law, 1, base + ':limited') : null;
     return {law: law, full: full, limited: limited, outcome: full.passed ? 'full' : limited && limited.passed ? 'choice' : 'rejected'};
   }
-  // The words of a chance on the card; its size in parentheses (hidden without the numbers of descriptions).
+  // The words of a chance on the card. Z — 1.06 (the user's request of 7 XI 2026): the chance is no longer shown in per cent, only in
+  // words, as on the page of the constitutional debate (1.04) and in the coup (1.03).
   const chanceWords = chance => (chance >= 0.9 ? L('would almost surely pass', 'niemal na pewno by przeszła') :
     chance >= 0.6 ? L('would probably pass', 'raczej by przeszła') : chance > 0.4 ? L('would have an uncertain fate', 'miałaby niepewny los') :
       chance > 0.1 ? L('would probably fail', 'raczej by upadła') : L('would almost surely fail', 'prawie na pewno by upadła'));
-  const chancePct = chance => ' (' + L('about ', 'szansa ok. ') + Math.round(chance * 100) + '%)';
   function forecastText(Q, law, offer) {
     const full = passChance(initiativeCounts(Q, law, 0));
     const limited = offer === 'both' && law.variants[1] && full < 0.5 ? passChance(initiativeCounts(Q, law, 1)) : null;
-    if (limited === null || limited < 0.5) return L('Today it ', 'Dziś ') + chanceWords(full) + chancePct(full) + '.';
-    return L('Today the full version ', 'Dziś pełna wersja ') + chanceWords(full) + chancePct(full) + L(', the limited one ', ', a ograniczona ') +
-      chanceWords(limited) + chancePct(limited) + '.';
+    if (limited === null || limited < 0.5) return L('Today it ', 'Dziś ') + chanceWords(full) + '.';
+    return L('Today the full version ', 'Dziś pełna wersja ') + chanceWords(full) + L(', the limited one ', ', a ograniczona ') + chanceWords(limited) + '.';
   }
 
   // The card: one line per shown law.

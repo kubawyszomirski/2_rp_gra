@@ -176,6 +176,12 @@ test('Inicjatywa w grze 0.81: one card of the Parliament deck, the laws in plain
     assert.match(plain(choice(engine, 'polish_legislative_initiative.unemployment').subtitle),
       /^Zasiłek dla bezrobotnych z budżetu państwa: pełny kosztuje 3 jednostki budżetu, ograniczony 1\..* Samo wniesienie: sprzeciw Lewicy PPS spada \(−2\)\.$/);
     assert.equal(plain(choice(engine, 'polish_legislative_initiative.unemployment').title), 'Ochrona bezrobotnych');
+    // Z — 1.06 (the user's request of 7 XI 2026): the forecast of each law in words only, without a chance in per cent.
+    for (const id of shown) {
+      const line = plain(choice(engine, 'polish_legislative_initiative.' + id).subtitle);
+      assert.doesNotMatch(line, /%/, id);
+      assert.match(line, /Dziś (pełna wersja )?(niemal na pewno|raczej|miałaby|prawie na pewno)/, id);
+    }
     choose(engine, 'polish_legislative_initiative.unemployment');
     assert.match(content(engine), /PPS wnosi projekt ustawy „Ochrona bezrobotnych”; Sejm zagłosuje nad nim w przyszłym miesiącu/);
     choose(engine, 'root');
