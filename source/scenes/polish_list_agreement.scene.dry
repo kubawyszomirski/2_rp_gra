@@ -15,9 +15,9 @@ PolishGovernment.listEventView(Q);
 
 = A joint list?
 
-The Sejm election is held on [+ pl_list_vote +], and the lists close at the end of the month before the vote. Without an agreement PPS stands alone with its full programme and all its own candidates; refusing an alliance brings no bonus.
+The Sejm election is held on [+ pl_list_vote +]; the lists close at the end of the month before. We can stand on a joint list with partners, or alone.
 
-A joint list counts the votes of its parties together in the seat method, and shares its seats in proportion to their votes. Each party keeps its own club after the election and may vote differently; a list gives no ministry and binds nobody to a later cabinet. Each partner answers once, by the same evaluation as a cabinet offer. A proposal costs no action this month.
+A joint list adds up the votes of its parties when the seats are shared out, and divides its seats by their votes. After the election each party keeps its own club, and the list binds no one when a cabinet is formed. A proposal costs no action this month.
 
 - @left_peasant
 - @labour

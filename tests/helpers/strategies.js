@@ -191,8 +191,10 @@ const ACTIVE_EVENTS = Object.assign({}, PASSIVE_EVENTS, {
   polish_event_assassination_response: ['defend', 'restraint'],
   polish_event_assassination_response_protection: ['protected', 'unprotected'],
   polish_event_niewiadomski_cult: ['condemn', 'stay_out'],
-  polish_event_stabilization: ['protected', 'protections_terms', 'gradual', 'wait'],
-  polish_event_credit_crisis: ['protection', 'orders', 'credit', 'none'],
+  // Z — 1.04 (decisions 4A and 5A of the event audit): the toleration offer is no longer an answer of the event; without the
+  // portfolios an active PPS answers both crises with the party.
+  polish_event_stabilization: ['protected', 'gradual', 'campaign', 'wait'],
+  polish_event_credit_crisis: ['protection', 'orders', 'credit', 'unions', 'none'],
   polish_event_austerity_1926: ['bargain', 'persuade', 'maintain'],
   polish_event_austerity_1926_threat: ['back_down'],
   polish_speaker_election: ['rataj', 'daszynski'],
@@ -325,7 +327,7 @@ const STRATEGIES = {
   }),
   stabilization_protections: strategy('stabilization_protections', '21.2: stabilisation with protections', {
     formation: FORMATION.tolerate,
-    events: Object.assign({}, ACTIVE_EVENTS, { polish_event_stabilization: ['protections_terms', 'protected', 'gradual'] }),
+    events: Object.assign({}, ACTIVE_EVENTS, { polish_event_stabilization: ['protected', 'gradual', 'campaign'] }),
     month: ctx => plan.organised(ctx, [...plan.support(ctx), ...plan.wage(ctx)]),
   }),
   active_employment: strategy('active_employment', '21.2: active employment', {

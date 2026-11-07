@@ -514,23 +514,37 @@ function withPortfolio(Q, key) {
   return Q;
 }
 
-test('Kredyt B16: Labour only / Treasury only / the opposition: the right interventions, the others blocked; no menu in opposition; the chosen instrument starts at once', () => {
+test('Kredyt B16: Labour only / Treasury only / the opposition: the right interventions, the others blocked; the opposition answers with the party (Z — 1.04); the chosen instrument starts at once', () => {
   const t = rules.timeOf(1925, 7);
   const labour = withPortfolio(world({ time: t, isolated: false }), 'labor');
   assert.equal(proj.creditEventDue(labour), true);
   assert.equal(proj.eventStatus(labour, 'credit', 'credit').available, false);
   assert.equal(proj.eventStatus(labour, 'credit', 'protection').available, true);
   assert.equal(proj.eventStatus(labour, 'credit', 'orders').available, true, 'Z — 0.93: Labour answers with quick public works');
+  // Z — 1.04: the event shows only the answers of the portfolios PPS holds, and the party answers only without them.
+  assert.deepEqual(['credit', 'orders', 'protection', 'campaign', 'unions', 'none'].map(o => proj.creditOptionShown(labour, o)), [false, true, true, false, false, true]);
+  assert.equal(proj.eventStatus(labour, 'credit', 'campaign').available, false);
   const treasury = withPortfolio(world({ time: t, isolated: false }), 'finance');
   assert.equal(proj.eventStatus(treasury, 'credit', 'credit').available, true);
   assert.equal(proj.eventStatus(treasury, 'credit', 'protection').available, false);
+  assert.deepEqual(['credit', 'orders', 'protection', 'campaign', 'unions'].map(o => proj.creditOptionShown(treasury, o)), [true, false, false, false, false]);
   proj.eventChoose(treasury, 'credit', 'credit');
   const started = Object.values(treasury.S.projects).find(p => p.type === 'credit_instrument');
   assert.equal(started.status, 'executing', 'Z — 0.93 (decision 4A): the answer starts the instrument at once');
+  // Z — 1.04 (decision 5A of the event audit): the opposition meets the crisis too and answers with the party.
   const opposition = world({ time: t, isolated: false });
   gov.leaveCabinet(opposition, 'pps', 'fixture');
-  assert.equal(proj.creditEventDue(opposition), false, 'no menu of interventions without executive access');
-  assert.match(proj.economyNotices(opposition), /Credit crisis/);
+  assert.equal(proj.creditEventDue(opposition), true, 'every player meets the credit crisis');
+  assert.deepEqual(['credit', 'orders', 'protection', 'campaign', 'unions', 'none'].map(o => proj.creditOptionShown(opposition, o)), [false, false, false, true, true, true]);
+  opposition.S.party_orgs.cash = 0.5;
+  assert.match(proj.eventStatus(opposition, 'credit', 'unions').reason, /Needs 1 resource/);
+  opposition.S.party_orgs.cash = 3;
+  if (!opposition.S.unions || !opposition.S.unions.industry) opposition.S.unions = {industry: {trust: 50}, rail: {trust: 40}, farm_labour: {trust: 30}}; // the isolated world has no unions
+  const trust = ['industry', 'rail', 'farm_labour'].map(b => opposition.S.unions[b].trust);
+  proj.eventChoose(opposition, 'credit', 'unions');
+  assert.deepEqual(['industry', 'rail', 'farm_labour'].map(b => opposition.S.unions[b].trust), [trust[0] + 5, trust[1] + 5, trust[2]]);
+  assert.equal(opposition.S.party_orgs.cash, 2, 'the help of the unions costs 1 R');
+  assert.doesNotMatch(proj.economyNotices(opposition), /Credit crisis/, 'no workshop notice beside the event');
 });
 
 // ---- Government cards (17.11–17.12) ----
@@ -893,6 +907,8 @@ test('P: the currency reform answering a financial crisis may start with a pool 
   Q.S.cabinet.portfolios.labor = 'pps';
   Q.S.economy.history.push({ t: 18, inflation_m: 30, budget: -3, credit: 50 }, { t: 19, inflation_m: 40, budget: -3, credit: 50 });
   // Z — 0.93 (decision 4A of 24 X 2026): the card starts the reform in the same decision; the rule is checked on the card.
+  // Z — 1.04 (decision 4A of the event audit): the card comes after the event, here as if the reform had been postponed there.
+  Q.S.economy.stabilization_answered = 19;
   Q.S.economy.budget = -3;
   assert.match(proj.optionStatus(Q, 'public_works', 'employment').reason, /Not enough budget/);
   assert.equal(proj.optionStatus(Q, 'currency_stabilisation', 'gradual').available, true);

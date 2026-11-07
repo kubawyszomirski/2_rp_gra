@@ -1,5 +1,5 @@
 title: Part of a Faction Threatens to Leave
-subtitle: A faction's dissent has reached 60 over a concrete demand.
+subtitle: A faction of the party makes a demand and threatens to leave.
 new-page: true
 tags: pl_event
 face-image: img/polish/polish_event_faction_split.jpg
@@ -13,14 +13,14 @@ PolishParty.factionSplitView(Q);
 
 = Part of [+ pl_e3_faction +] threatens to leave
 
-The dissent of [+ pl_e3_faction +] is [+ pl_e3_dissent +]. Its leaders demand that PPS [+ pl_e3_demand +]. If PPS keeps its line: [+ pl_e3_preview +]
+The faction [+ pl_e3_faction +] is on the verge of a split. Its leaders demand that PPS [+ pl_e3_demand +]. If we keep our line, [+ pl_e3_preview +]
 
 - @accept
 - @refuse
 
 @accept
 title: Accept the demand and keep unity
-subtitle: PPS makes the change at once, without cost; the faction's dissent falls (−5). Partners react to the changed policy itself.
+subtitle: We make the change at once; the faction calms down (−5), and the other parties react to our new course.
 on-arrival: {!
 PolishParty.factionSplitAccept(Q);
 !}
@@ -28,7 +28,7 @@ go-to: result
 
 @refuse
 title: Keep the line of PPS and accept the split
-subtitle: A large part of the faction's base leaves with its voters and MPs (−40% of its base); the dissent of the rest falls (−20).
+subtitle: A large part of the faction leaves the party with its voters and deputies (−40%); those who stay calm down.
 on-arrival: {!
 PolishParty.factionSplitRefuse(Q);
 !}

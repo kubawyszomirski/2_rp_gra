@@ -1930,6 +1930,26 @@
       programmeCampaignNote(S, S.society.cells.filter(c => bundleWeight(ISSUES[id].groups, c) > 0)));
   }
 
+  // Z — 1.04 (decisions 4A and 5A of the event audit, 7 XI 2026): the answer to a crisis event can be a campaign of the Campaign
+  // card. It costs no action of the month, as every answer to an event, but it is paid with resources (P: 1 R).
+  function eventIssueCampaign(Q, id, cost) {
+    syncMirrors(Q);
+    const S = Q.S, t = Q.time;
+    if (!ISSUES[id] || !electorate.hasCells(S)) throw new Error('eventIssueCampaign: ' + id);
+    if (S.party_orgs.cash + 1e-9 < cost) throw new Error('eventIssueCampaign: needs ' + cost + ' R');
+    S.party_orgs.cash = Math.max(0, S.party_orgs.cash - cost);
+    const moved = bundleCampaign(Q, issueSpec(Q, id), true);
+    const changes = bundleChanges(S, ISSUES[id].groups, moved);
+    const total = Object.keys(moved).reduce((n, cellId) => n + (S.society.cells.find(c => c.id === cellId).mass * moved[cellId]), 0);
+    S.party_orgs.press.campaigns.push({t: t, kind: 'issue', topic: 'issue:' + id, audience: 'bundle', event: true});
+    S.history.reasons.push({t: t, kind: 'campaign', campaign: 'issue', topic: 'issue:' + id, audience: 'bundle', moved: total, event: true});
+    electorate.writeClassMirrors(Q);
+    writeMirrors(Q);
+    const boosts = issueBoosts(Q, id);
+    return L('The campaign “' + issueName(id) + '”: ', 'Kampania „' + issueName(id) + '”: ') + changesWords(changes, 'result') + '.' +
+      (boosts.length ? L(' It was stronger thanks to ', ' Wzmocniły ją: ') + boosts.join(L(' and ', ' i ')) + '.' : '');
+  }
+
   // Rallies before an election: in the last three months before the vote, the groups of the party — the workers and the groups
   // of the character of the party — turn out more (+0.04 up to 0.90) until the election (5.3).
   function rallyFilter(S) {
@@ -2466,12 +2486,11 @@
     Q.pl_e3_faction = FACTION_NAMES[c.faction];
     Q.pl_e3_dissent = fmt(factionsOf(S)[c.faction].dissent);
     Q.pl_e3_demand = describeDemand(Q, c.demand);
-    Q.pl_e3_preview = L(fmt(100 * preview.removed_share) + '% of the party’s base leaves; PPS support ' + fmt(preview.pps_before) + '% → ' +
-      fmt(preview.pps_after) + '%; membership ×' + fmt(1 - preview.removed_share) + '; ' + preview.mps + (preview.mps === 1 ? ' MP' : ' MPs') +
-      ' to a separate club; its voters go to ' + (preview.recipient === 'kpp' ? 'the KPP' : 'other lists') + '. No member of the Central Executive Committee leaves.',
-      fmt(100 * preview.removed_share) + '% bazy partii odchodzi; poparcie PPS ' + fmt(preview.pps_before) + '% → ' + fmt(preview.pps_after) +
-      '%; członkostwo ×' + fmt(1 - preview.removed_share) + '; do osobnego klubu przechodzi ' + mpsText(preview.mps) + '; jej wyborcy przechodzą do ' +
-      (preview.recipient === 'kpp' ? 'KPP' : 'innych list') + '. Żaden członek CKW nie odchodzi.');
+    // Z — 1.04 (decision 3A of the event audit): what the split means, in words; one number, the deputies.
+    Q.pl_e3_preview = L('part of the party leaves with the faction: ' + preview.mps + (preview.mps === 1 ? ' deputy forms' : ' deputies form') +
+      ' a separate club, and its voters go to ' + (preview.recipient === 'kpp' ? 'the KPP' : 'other lists') + '.',
+      'część partii odejdzie razem z frakcją: ' + mpsText(preview.mps) + ' utworzy osobny klub, a jej wyborcy przejdą do ' +
+      (preview.recipient === 'kpp' ? 'KPP' : 'innych list') + '.');
   }
 
   // ---- The unity card (10.5, 10.9; cards 6.3–6.4) ---------------------------------------------------------
@@ -3249,6 +3268,8 @@
     rightGovernment: rightGovernment,
     issueCampaignStatus: issueCampaignStatus,
     issueCampaign: issueCampaign,
+    eventIssueCampaign: eventIssueCampaign,
+    issueSituation: (Q, id) => !!(ISSUES[id] && ISSUES[id].situation(Q.S)),
     issuePreview: issuePreview,
     rallyStatus: rallyStatus,
     electionRallies: electionRallies,

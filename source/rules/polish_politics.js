@@ -917,7 +917,7 @@
     if (RESPONSES.indexOf(choice) < 0) return no(L('Unknown answer.', 'Nieznana odpowiedź.'));
     if (!responseDue(Q)) return no('');
     if (choice === 'defend') {
-      if (!unionLineAgreed(S) && !pressWorks(S)) return no(L('Needs an agreed line of a union branch or a working press.', 'Wymaga uzgodnionej linii branży związkowej albo działającej prasy.'));
+      if (!unionLineAgreed(S) && !pressWorks(S)) return no(L('Needs unions or a press that can call people out.', 'Wymaga związków albo prasy, które mogą wezwać ludzi.'));
       const cost = 1 + (protect ? 0.5 : 0);
       if (S.party_orgs.cash + 1e-9 < cost) return no(L('Needs ' + rules.units(cost) + '.', 'Wymaga ' + rules.units(cost, 'resources', 'gen') + '.'));
       if (protect && !militiaFree(S)) return no(L('The Milicja is banned, has no members or already protects another matter.', 'Milicja jest objęta zakazem, nie ma członków albo już chroni inną sprawę.'));
@@ -961,9 +961,9 @@
       if (!record.clash || !record.clash.clash) {
         democracyEffect(Q, 'presidency.assassination_response:' + key, 2, 'B4');
         record.democracy_effect = 2;
-        lines.push(L('The gathering passes peacefully: democracy +2 (once). It is not a general strike.', 'Zgromadzenie przebiega spokojnie: demokracja +2 (raz). To nie jest strajk generalny.'));
+        lines.push(L('The gathering passes peacefully and strengthens democracy (+2).', 'Zgromadzenie przebiega spokojnie i wzmacnia demokrację (+2).'));
       } else {
-        lines.push(L('The gathering ends in a clash: a serious act of violence and a case about who is responsible; democracy gains nothing.', 'Na zgromadzeniu dochodzi do starcia: poważny akt przemocy i sprawa o odpowiedzialność; demokracja nic nie zyskuje.'));
+        lines.push(L('The gathering ends in a clash; the authorities open a case against our organisations, and democracy gains nothing.', 'Na zgromadzeniu dochodzi do starcia; władze wszczynają sprawę przeciw naszym organizacjom, a demokracja nic nie zyskuje.'));
       }
     } else if (choice === 'restraint') {
       if (publicPromise(S, t)) {
@@ -1088,7 +1088,7 @@
       lines.push(party.campaignEffect(Q, pressWorks(S) ? 'press' : 'unions', 'democracy', 'workers').text);
       democracyEffect(Q, 'society.niewiadomski_cult:' + key, 2, 'B5');
       record.democracy_effect = 2;
-      lines.push(L('The mass for the defence of democracy is held once: democracy +2. No alliance with the Christian Democrats follows from it.', 'Msza w obronie demokracji zostaje odprawiona raz: demokracja +2. Nie wynika z niej żaden sojusz z chadecją.'));
+      lines.push(L('The mass for the defence of democracy is held and strengthens democracy (+2).', 'Msza w obronie demokracji zostaje odprawiona i wzmacnia demokrację (+2).'));
     } else if (choice === 'disrupt') {
       // The model of the retaliation of B4 (17.6): an authorised confrontation of the Milicja, the Centrum objects; a religious
       // service also outrages the Christian Democrats and Catholic opinion among the peasants and the petty bourgeoisie (P).

@@ -23,7 +23,7 @@ Eligiusz Niewiadomski, who killed President Narutowicz, was executed on 31 Janua
 
 @condemn
 title: Condemn the cult and order our members not to disturb the service
-subtitle: No resources; a clear instruction to the Milicja. The Centrum approves under the line of parliamentarism; the Christian Democrats join the condemnation only if they are close enough to us.
+subtitle: No cost. Our members keep away from the churches; the Christian Democrats may join the condemnation if they are close to us.
 choose-if: {! return PolishPolitics.cultStatus(Q, 'condemn').available !}
 unavailable-subtitle: [+ pl_b5_condemn_why +]
 on-arrival: {!
@@ -33,7 +33,7 @@ go-to: result
 
 @democracy_mass
 title: Organise a mass for the defence of democracy
-subtitle: 1 resource, if a clergyman and a host agree; a campaign on the defence of democracy, and once the mass is held democracy grows stronger (+2). No alliance with the Christian Democrats and no change of our programme on the Church.
+subtitle: Costs 1 resource, if a priest agrees to celebrate it. The mass in defence of democracy strengthens it (+2), without changing our view of the Church.
 choose-if: {! return PolishPolitics.cultStatus(Q, 'democracy_mass').available !}
 unavailable-subtitle: [+ pl_b5_democracy_mass_why +]
 on-arrival: {!
@@ -43,7 +43,7 @@ go-to: result
 
 @disrupt
 title: Break up the services with the Milicja
-subtitle: 0.5 resources and a free Milicja. The Centrum objects (+8), the Christian Democrats are outraged (−5) and PPS loses among the peasants and the petty bourgeoisie (−1). A risk of a clash: violence, a case against PPS and, under a repressive cabinet, a ban of the Milicja.
+subtitle: Costs half a resource and needs a free Milicja. The Centrum of the party protests (+8) and the Christian Democrats are outraged; a clash may bring a case against PPS and even a ban of the Milicja.
 choose-if: {! return PolishPolitics.cultStatus(Q, 'disrupt').available !}
 unavailable-subtitle: [+ pl_b5_disrupt_why +]
 on-arrival: {!
@@ -55,7 +55,7 @@ go-to: result
 
 @stay_out
 title: Do not engage our organisations
-subtitle: No resources; no campaign and no cost. The Left objects only if a public answer had been promised.
+subtitle: No cost. The Left of the party protests if we had promised a public answer.
 choose-if: {! return PolishPolitics.cultStatus(Q, 'stay_out').available !}
 unavailable-subtitle: [+ pl_b5_stay_out_why +]
 on-arrival: {!

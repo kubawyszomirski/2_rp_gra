@@ -217,7 +217,7 @@ test('the Budget card: a package of the cabinet before the Sejm; PPS as its supp
   assert.ok(!dendry.urgentCards(engine).includes('polish_budget_package'), 'one answer per package');
 });
 
-test('9.11 in the game: a financial crisis without a reform queues the stabilisation event; without the Treasury PPS leaves it to the cabinet', () => {
+test('9.11 in the game: a financial crisis without a reform queues the stabilisation event; without the Treasury PPS leaves it to the cabinet or answers with a campaign (Z — 1.04)', () => {
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
   Q.S.economy.history.push({ t: 0, inflation_m: 25, budget: 1, credit: 50 });
@@ -227,9 +227,14 @@ test('9.11 in the game: a financial crisis without a reform queues the stabilisa
   choose(engine, 'inter_party_relationships.psl_wyzwolenie');
   choose(engine, 'root');
   assert.equal(engine.state.sceneId, 'polish_event_stabilization');
-  assert.ok(ids(engine).includes('polish_event_stabilization.wait'));
-  assert.equal(choice(engine, 'polish_event_stabilization.protections_terms').canChoose, false);
+  // Z — 1.04 (decision 4A of the event audit): without the Treasury only the party answers are shown, both real choices.
+  assert.deepEqual(ids(engine).filter(id => id.startsWith('polish_event_stabilization.')),
+    ['polish_event_stabilization.campaign', 'polish_event_stabilization.wait']);
+  assert.match(content(engine), /The marka loses value from day to day/);
+  assert.doesNotMatch(content(engine), /20%|settlement|project/, 'no threshold and no workshop words on the page');
+  assert.equal(Q.S.economy.stabilization_answered, undefined);
   choose(engine, 'polish_event_stabilization.wait');
+  assert.equal(Q.S.economy.stabilization_answered, Q.time);
   choose(engine, 'root');
   assert.equal(Q.S.events.resolved.polish_event_stabilization !== undefined || engine.state.sceneId === 'main', true);
 });
@@ -248,7 +253,9 @@ test('Debata o konstytucji 0.82 w grze: one page of seven motions marked in orde
     Q.time = P.CONSTITUTION_DEBATE_AT;
     assert.equal(P.constitutionDebateDue(Q), true, 'due in December 1924');
     engine.goToScene('polish_event_constitution_debate');
-    assert.match(page(), /26 października 1924 r\. Związek Ludowo-Narodowy.*Debata nie oznacza głosowania.*pierwszy na naszej liście ma szansę ok\. 17%.*Nasza lista: na razie żaden wniosek\./);
+    // Z — 1.04 (decision 3A of the event audit): the page names no chance in numbers.
+    assert.match(page(), /26 października 1924 r\. Związek Ludowo-Narodowy.*Debata nie oznacza od razu głosowania.*im wyżej na liście, tym szybciej trafi pod obrady.*Nasza lista: na razie żaden wniosek\./);
+    assert.doesNotMatch(page(), /\d+(,\d+)?\s?%/, 'no percentage on the page of the debate');
     assert.deepEqual([P.constitutionDebateOpen(Q.S), P.constitutionDebateDue(Q)], [true, false], 'once');
     assert.deepEqual(ids(engine), [...P.MOTION_IDS.map(id => 'polish_event_constitution_debate.m_' + id), 'polish_event_constitution_debate.declare']);
     const arbitration = choice(engine, 'polish_event_constitution_debate.m_presidential_arbitration');
@@ -324,5 +331,50 @@ test('Karty resortów 0.93: one Treasury card with five instruments; every gover
     assert.equal(P.ministryLine(Q, 'polish_gov_pils_agreement'), '<span class="pl-ministry-label">Resort Spraw Wojskowych</span>');
   } finally {
     PolishRules.setLanguage('en');
+  }
+});
+
+// Z — 1.04 (decisions 3A and 5A of the event audit, 7 XI 2026): the events tell what happened and offer real choices — no
+// thresholds, chances or workshop words in their texts (an effect number in its parenthesis may stay); the credit crisis reaches
+// the opposition, which answers with the party.
+test('Wydarzenia 1.04: opisy wydarzeń bez progów, szans i słów warsztatowych; kryzys kredytowy w opozycji odpowiada partią', () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  dendry.createEngine(1922, 'en');
+  const R = globalThis.PolishRules;
+  const dir = path.join(__dirname, '..', 'source/i18n/pl/scenes');
+  const OFF = /router|strike_1923|strike_response|strike_rejection/;
+  const files = fs.readdirSync(dir).filter(f => (/^polish_event_/.test(f) || f === 'polish_list_agreement.scene.json') && !OFF.test(f));
+  assert.ok(files.length >= 11, 'the active events and the joint list');
+  const WORKSHOP = /%|profil|premi|projekt|rozlicze|próg|progu|ścieżk|instrument|scenariusz|ocen[ay]|0,5|\b\d+ T\b|\b\d+ R\b/;
+  const problems = [];
+  for (const f of files) {
+    for (const [en, pl] of Object.entries(JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8')).lines)) {
+      if (/Q\.|PolishGovernment/.test(en)) continue; // the inline scripts of a scene
+      const shown = R.withoutEffectNumbers(pl);
+      if (WORKSHOP.test(shown)) problems.push(f + ': ' + shown.slice(0, 120));
+    }
+  }
+  assert.deepEqual(problems, []);
+
+  const engine = dendry.startGame(1922, 'pl');
+  const Q = engine.state.qualities;
+  try {
+    Q.time = R.timeOf(1925, 7); Q.year = 1925; Q.month = 7;
+    assert.equal(['finance', 'economic', 'labor'].some(k => globalThis.PolishProjects.ppsHolds(Q.S, k)), false, 'PPS without the economic ministries');
+    assert.equal(globalThis.PolishProjects.creditEventDue(Q), true);
+    Q.S.party_orgs.cash = 2;
+    engine.goToScene('polish_event_credit_crisis');
+    const page = JSON.stringify(engine.ui.paragraphs);
+    assert.match(page, /Banki wstrzymują kredyt/);
+    assert.deepEqual((engine.getCurrentChoices() || []).map(c => c.id),
+      ['polish_event_credit_crisis.campaign', 'polish_event_credit_crisis.unions', 'polish_event_credit_crisis.none']);
+    const trust = Q.S.unions.industry.trust;
+    choose(engine, 'polish_event_credit_crisis.unions');
+    assert.equal(Q.S.unions.industry.trust, Math.min(100, trust + 5));
+    assert.equal(Q.S.party_orgs.cash, 1);
+    assert.equal(Q.month_actions || 0, 0, 'the answer to the event costs no action');
+  } finally {
+    R.setLanguage('en');
   }
 });

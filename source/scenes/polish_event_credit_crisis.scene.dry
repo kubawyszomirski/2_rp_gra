@@ -1,28 +1,35 @@
 title: Credit Crisis
-subtitle: Credit dries up; firms cut work.
+subtitle: The banks hold back credit; the firms dismiss workers.
 new-page: true
 tags: pl_event
 view-if: {! return !!Q.S && PolishProjects.creditEventDue(Q) !}
 on-arrival: {!
-// Event economy.credit_crisis (technical reference 17.13 B16, 17.16.2; card catalogue 9.12): shown only
-// with executive access of PPS. The first answer is free; the intervention has its ordinary costs.
-for (var option of ['credit', 'orders', 'protection']) {
+// Event economy.credit_crisis (technical reference 17.13; card catalogue 9.12), once. Z — 1.04 (decision 5A of the event audit,
+// 7 XI 2026): every player meets it. With the Treasury, Industry and Trade or Labour PPS answers through its ministries; without
+// them the party answers with the campaign for the unemployed or the help of the unions, each for 1 R and without this month's
+// action.
+for (var option of ['credit', 'orders', 'protection', 'campaign', 'unions']) {
     Q['pl_ev_' + option + '_why'] = PolishProjects.eventStatus(Q, 'credit', option).reason;
+    Q['pl_ev_' + option + '_shown'] = PolishProjects.creditOptionShown(Q, option) ? 1 : 0;
 }
+Q.pl_ev_strong = PolishParty.issueSituation(Q, 'unemployed') ? 1 : 0;
 !}
 
 = A credit crisis
 
-Credit has fallen below 35 for two months, or the scenario's credit shock of 1925 has begun. Credit and output fall; firms cut work. PPS can use the portfolios it holds.
+The banks hold back credit, and the factories cut work and dismiss people. Unemployment grows from month to month.
 
 - @credit
 - @orders
 - @protection
+- @campaign
+- @unions
 - @none
 
 @credit
-title: A conditional credit for threatened activity
-subtitle: Starts the credit instrument of Treasury or Industry at once, when the budget allows.
+title: Lend to the threatened firms
+subtitle: The state lends to the firms that would otherwise stop (2 budget units).
+view-if: pl_ev_credit_shown
 choose-if: {! return PolishProjects.eventStatus(Q, 'credit', 'credit').available !}
 unavailable-subtitle: [+ pl_ev_credit_why +]
 on-arrival: {!
@@ -31,8 +38,9 @@ PolishProjects.eventChoose(Q, 'credit', 'credit');
 go-to: result
 
 @orders
-title: Keep up employment through orders or public works
-subtitle: One package of public orders, or quick public works for the unemployed.
+title: Order public works or public orders
+subtitle: The unemployed get work (2 budget units).
+view-if: pl_ev_orders_shown
 choose-if: {! return PolishProjects.eventStatus(Q, 'credit', 'orders').available !}
 unavailable-subtitle: [+ pl_ev_orders_why +]
 on-arrival: {!
@@ -41,8 +49,9 @@ PolishProjects.eventChoose(Q, 'credit', 'orders');
 go-to: result
 
 @protection
-title: Concentrate the means on protection for those losing work
-subtitle: The protection for the unemployed; no automatic fall of unemployment.
+title: Strengthen the help for those losing work
+subtitle: The unemployed get more help, but no new jobs come of it.
+view-if: pl_ev_protection_shown
 choose-if: {! return PolishProjects.eventStatus(Q, 'credit', 'protection').available !}
 unavailable-subtitle: [+ pl_ev_protection_why +]
 on-arrival: {!
@@ -50,9 +59,31 @@ PolishProjects.eventChoose(Q, 'credit', 'protection');
 !}
 go-to: result
 
+@campaign
+title: Start the campaign “Work and benefits for the unemployed”
+subtitle: Costs 1 resource. It reaches the unemployed and the workers[? if pl_ev_strong : , and now more strongly than usual ?].
+view-if: pl_ev_campaign_shown
+choose-if: {! return PolishProjects.eventStatus(Q, 'credit', 'campaign').available !}
+unavailable-subtitle: [+ pl_ev_campaign_why +]
+on-arrival: {!
+PolishProjects.eventChoose(Q, 'credit', 'campaign');
+!}
+go-to: result
+
+@unions
+title: Let the unions help those losing work
+subtitle: Costs 1 resource. The unions of industry and the railways trust PPS more (+5).
+view-if: pl_ev_unions_shown
+choose-if: {! return PolishProjects.eventStatus(Q, 'credit', 'unions').available !}
+unavailable-subtitle: [+ pl_ev_unions_why +]
+on-arrival: {!
+PolishProjects.eventChoose(Q, 'credit', 'unions');
+!}
+go-to: result
+
 @none
-title: No new intervention
-subtitle: No expense and no bonus.
+title: Do nothing new
+subtitle: No cost; the crisis goes on.
 on-arrival: {!
 PolishProjects.eventChoose(Q, 'credit', 'none');
 !}

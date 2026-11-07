@@ -1,5 +1,13 @@
 # Historical Source Register
 
+## PL-EVENTS-1.04 — the audit of the event cards
+
+- **Authority:** the user’s decisions 2A–5A of 7 November 2026 after the audit of the event cards (technical reference 1.04, sections 17.5, 17.13 and 23.77).
+- **Sources:** no new source; the texts of the events keep their recorded facts (Narutowicz, Niewiadomski, the congresses of ZLN and PSL „Piast” in 1924).
+- **Historical fact:** none new.
+- **Gameplay simplification (P):** the party answers to the crises (a campaign for 1 resource without the month’s action; the help of the unions for 1 resource and +5 trust), the credit crisis for every player, the reform chosen or postponed in the event.
+- **Unresolved:** none new.
+
 ## PL-COUP-1.03 — the coup in one comparison
 
 - **Authority:** the user’s decisions of 7 November 2026 after the audit of the coup (technical reference 1.03, sections 16.1, 16.2, 16.6 and 23.76).
@@ -2760,6 +2768,7 @@ Add one row whenever an entry above is assigned a stable Source ID.
 | PL-PRESS-0.90 | Press | The party press: reach ceilings, sales, support of the campaigns, confiscations under a government of the right, credibility | Gameplay simplification; confiscations and circulation TBD | 0.90, 24 October 2026 |
 | PL-TUR-0.91 | TUR | TUR: +5% to the organisers per level, civic courses raise the trust in PPS, a course for trade unionists, no reform course | Gameplay simplification; founding and functions from TUR's own publication; reach by group TBD | 0.91, 24 October 2026 |
 | PL-COOP-0.92 | Cooperative | One workers' consumer cooperative that pays half of the strike pay; no relief; government cooperative variants without a PPS cooperative | Gameplay simplification; PPS ties to the cooperative movement TBD | 0.92, 24 October 2026 |
+| PL-EVENTS-1.04 | Events | The texts and answers of the event cards | Game model; no new historical claim | 1.04, 7 November 2026 |
 | PL-COUP-1.03 | Coup | The coup in one comparison; the army as one body | Game model; no new historical claim | 1.03, 7 November 2026 |
 | PL-GOV-CARDS-1.02 | Government cards | Military Affairs: Military Affairs, Piłsudski and the Army | Game content; no new historical claim | 1.02, 7 November 2026 |
 | PL-BUDGET-POOL-1.01 | Economy | The budget as one pool of units, as in the German original | Game model; no new historical claim | 1.01, 7 November 2026 |

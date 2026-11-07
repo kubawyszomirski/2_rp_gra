@@ -316,7 +316,7 @@ test('the plant cards in the game: Labour signs a collective agreement in its st
   assert.deepEqual([rescue.status, rescue.authorized, Q.time], ['operating', true, 3], 'Z — 1.01: carried out at the settlement of its month');
 });
 
-test('B14 in the game: the stabilisation event without the Treasury leads to the formation card with Grabski and the protections for no month', () => {
+test('B14 in the game: the toleration offer to Grabski with the protections is made on the formation screen; the stabilisation event no longer opens it (Z — 1.04)', () => {
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
   const S = Q.S;
@@ -326,10 +326,11 @@ test('B14 in the game: the stabilisation event without the Treasury leads to the
   Q.year = 1924; Q.month = 1; Q.time = PolishRules.timeOf(1924, 1);
   PolishGovernment.openCrisis(Q, 'fixture_fall', S.cabinet.id);
   engine.goToScene('polish_event_stabilization');
-  assert.equal(choice(engine, 'polish_event_stabilization.protections_terms').canChoose !== false, true);
-  choose(engine, 'polish_event_stabilization.protections_terms');
-  assert.equal(engine.state.sceneId, 'polish_cabinet_formation');
-  // Z — 0.71: the wizard opens on its introduction; the preset offer with the protections is on the summary.
+  assert.ok(!ids(engine).includes('polish_event_stabilization.protections_terms'), 'Z — 1.04 (decision 4A of the event audit)');
+  // The offer itself stays where it works: on the formation screen during the cabinet crisis, for no month.
+  assert.equal(PolishGovernment.tolerationOfferStatus(Q).available, true);
+  PolishGovernment.openTolerationOffer(Q);
+  engine.goToScene('polish_cabinet_formation');
   choose(engine, 'polish_cabinet_formation.variants');
   choose(engine, 'polish_cabinet_formation.var_expert');
   assert.equal(engine.state.sceneId, 'polish_cabinet_formation.summary');

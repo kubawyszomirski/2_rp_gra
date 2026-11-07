@@ -16,13 +16,13 @@ PolishPolitics.cabinet1922View(Q);
 
 After a dispute with the Naczelnik Państwa over the cabinet, Antoni Ponikowski hands in his resignation and stays as caretaker until a new cabinet is appointed. The Naczelnik prefers his own candidate, Artur Śliwiński, but any cabinet needs the support of the Sejm.
 
-PPS gives its answer in the formation card that follows: it can support the Naczelnik's candidate from outside, seek another cabinet, or stay in opposition.
+PPS answers on the next page, where the new cabinet is formed: it can support the Naczelnik’s candidate from outside, seek another cabinet, or stay in opposition.
 
 - @formation
 
 @formation
 title: Go to the formation of a cabinet
-subtitle: The mandatory formation costs no month.
+subtitle: Costs no action this month.
 choose-if: {! return PolishPolitics.cabinet1922Status(Q, 'formation').available !}
 on-arrival: {!
 PolishPolitics.cabinet1922Choose(Q, 'formation');

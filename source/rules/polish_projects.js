@@ -16,12 +16,13 @@
   if (typeof module === 'object' && module.exports) {
     module.exports = factory(require('./polish_rules.js'), require('./polish_institutions.js'), require('./polish_economy.js'),
       require('./polish_government.js'), require('./polish_electorate.js'), () => require('./polish_unions.js'),
-      () => require('./polish_politics.js'), () => require('./polish_security.js'));
+      () => require('./polish_politics.js'), () => require('./polish_security.js'), () => require('./polish_party.js'));
   } else {
     root.PolishProjects = factory(root.PolishRules, root.PolishInstitutions, root.PolishEconomy, root.PolishGovernment, root.PolishElectorate,
-      () => root.PolishUnions, () => root.PolishPolitics, () => root.PolishSecurity);
+      () => root.PolishUnions, () => root.PolishPolitics, () => root.PolishSecurity, () => root.PolishParty);
   }
-}(typeof self !== 'undefined' ? self : this, function (rules, institutions, economy, government, electorate, lateUnions, latePolitics, lateSecurity) {
+}(typeof self !== 'undefined' ? self : this, function (rules, institutions, economy, government, electorate, lateUnions, latePolitics, lateSecurity,
+    lateParty) {
   'use strict';
 
   if (!rules || !institutions || !economy || !government || !electorate) {
@@ -2603,7 +2604,8 @@
       Q['pl_con_' + id + '_why'] = status.reason || '';
       const chance = motionChance(motionCounts(Q, id));
       const support = (motion.support || []).map(filingText);
-      Q['pl_con_' + id + '_line'] = L(motion.text[0], motion.text[1]) + ' ' + L('Today it ', 'Dziś ') + motionChanceWords(chance) + chancePct(chance) + '.' +
+      // Z — 1.04 (decision 3A of the event audit): the forecast in words only, without a percentage.
+      Q['pl_con_' + id + '_line'] = L(motion.text[0], motion.text[1]) + ' ' + L('Today it ', 'Dziś ') + motionChanceWords(chance) + '.' +
         (support.length ? L(' Our support: ', ' Samo poparcie: ') + support.join(', ') + '.' : '');
     }
     Q.pl_con_draft_text = list.length ? list.map((id, i) => (i + 1) + '. ' + motionName(id)).join(', ') : L('no motion yet', 'na razie żaden wniosek');
@@ -3650,7 +3652,13 @@
     const S = Q.S, card = CARDS[cardId];
     if (!S || !card || S.chapter.status === 'ended' || government.formationPending(Q)) return false;
     if (!ppsHoldsAny(S, card.portfolios)) return false;
-    if (cardId === 'currency_stabilisation') return financialCrisis(S);
+    // Z — 1.04 (decision 4A of the event audit, 7 XI 2026): the crisis is decided on its event; the card comes only after it — when
+    // the reform was postponed or PPS took the Treasury later — and not while the reform is under way, so the same choice is never
+    // offered in two places at once.
+    if (cardId === 'currency_stabilisation') {
+      const reform = currencyProject(S);
+      return financialCrisis(S) && stabilizationAnswered(S) && !(reform && !preparedProject(reform));
+    }
     if (cardId === 'customs_war') return customsWarOpen(S, Q.time);
     return true;
   }
@@ -3755,6 +3763,8 @@
         'Wymaga PPS w gabinecie z resortem ' + card.portfolios.map(k => PORTFOLIO_SHORT_PL[k]).join(' albo ') + '.');
     }
     if (cardId === 'currency_stabilisation' && !financialCrisis(S)) return L('Needs a financial crisis.', 'Wymaga kryzysu finansowego.');
+    if (cardId === 'currency_stabilisation' && !stabilizationAnswered(S)) return L('The crisis is decided on its event first.', 'Najpierw o kryzysie decyduje jego wydarzenie.');
+    if (cardId === 'currency_stabilisation') return L('The currency reform is already under way.', 'Reforma walutowa już trwa.');
     if (cardId === 'customs_war') return L('The customs war with Germany is decided once, from June 1925.', 'O wojnie celnej z Niemcami decyduje się raz, od czerwca 1925.');
     return L('The card is not available.', 'Karta jest niedostępna.');
   }
@@ -4405,7 +4415,7 @@
     const kinds = [];
     if (project.variant === 'rapid_cuts' && !runningInstrument(E, 'admin_cuts', t) && !runningInstrument(E, 'benefit_cut', t)) kinds.push('admin_cuts');
     if (project.variant === 'protected') {
-      if (!operatingProtection(S)) return {blocked: L('Needs a full or an agreed limited protection for the unemployed.', 'Wymaga pełnej albo uzgodnionej ograniczonej osłony dla bezrobotnych.'), kinds: []};
+      if (!operatingProtection(S)) return {blocked: L('First a protection for the unemployed must be working.', 'Najpierw musi działać ochrona bezrobotnych.'), kinds: []};
       if (!runningInstrument(E, 'wealth_tax', t) && !runningInstrument(E, 'loan', t)) {
         const kind = !instrumentBlocked(Q, 'wealth_tax') ? 'wealth_tax' : !instrumentBlocked(Q, 'loan') ? 'loan' : null;
         if (!kind) return {blocked: L('No financing of the protection is available: neither a wealth tax nor a loan.', 'Brak finansowania osłony: nie ma ani podatku majątkowego, ani pożyczki.'), kinds: []};
@@ -4472,13 +4482,40 @@
     return economy.fiscalCrisis(S.economy) || economy.currencyCrisis(S.economy);
   }
 
-  // 9.12: the credit crisis, shown only with executive access of PPS (B16).
+  // Z — 1.04: the answer to the financial crisis is recorded on the economy; a save of an earlier version knows it from the
+  // resolved event.
+  function stabilizationAnswered(S) {
+    return (S.economy.stabilization_answered !== undefined && S.economy.stabilization_answered !== null) ||
+      !!(S.events && S.events.resolved && S.events.resolved.polish_event_stabilization);
+  }
+
+  // 9.12: the credit crisis. Z — 1.04 (decision 5A of the event audit, 7 XI 2026): every player meets it; PPS answers with the
+  // portfolios it holds, and without the economic ones with the party: a campaign or the help of the unions.
+  const CREDIT_PORTFOLIOS = Object.freeze(['finance', 'economic', 'labor']);
   function creditEventDue(Q) {
     const S = Q.S;
     if (!S || S.chapter.status === 'ended' || !S.economy) return false;
-    if (!economy.creditCrisis(S.economy, Q.time)) return false;
-    return ppsHoldsAny(S, ['finance', 'economic', 'labor']);
+    return economy.creditCrisis(S.economy, Q.time);
   }
+  // Z — 1.04: the party answers to the two crises (P): a campaign of the Campaign card started from the event, without this
+  // month's action but for 1 resource; the help of the unions for those losing work, 1 resource, the trust of the unions of
+  // industry and the railways +5.
+  const EVENT_CAMPAIGN_COST = 1;
+  const UNION_HELP = Object.freeze({cost: 1, trust: 5, branches: Object.freeze(['industry', 'rail'])});
+  function partyCashStatus(S, cost) {
+    return S.party_orgs.cash + 1e-9 >= cost ? OK : no(L('Needs ' + unitsWord(cost) + '.', 'Wymaga ' + unitsWordPl(cost) + '.'));
+  }
+  // Which answers the event shows: the ministry answers only with their portfolio, the party answers only without the three.
+  function creditOptionShown(Q, option) {
+    const S = Q.S, portfolio = ppsHoldsAny(S, CREDIT_PORTFOLIOS);
+    if (option === 'campaign' || option === 'unions') return !portfolio;
+    if (option === 'credit') return ppsHoldsAny(S, ['finance', 'economic']);
+    if (option === 'orders') return ppsHoldsAny(S, ['economic', 'labor']);
+    if (option === 'protection') return ppsHolds(S, 'labor');
+    return true;
+  }
+  const unitsWord = n => n === 1 ? '1 resource' : n + ' resources';
+  const unitsWordPl = n => n === 1 ? '1 jednostki środków' : n + ' jednostek środków';
 
   // 9.13: I–IV 1926, the review of the protection: the sixth month of Skrzyński's cabinet with a full
   // protection of 2 B, or a budget below −2 for two months with an operating protection; once.
@@ -4497,26 +4534,29 @@
   function eventStatus(Q, kind, option) {
     const S = Q.S;
     if (kind === 'stabilization') {
-      if (option === 'variants') return ppsHolds(S, 'finance') ? OK : no(L('Needs executive access: PPS does not hold the Treasury.', 'Wymaga dostępu wykonawczego: PPS nie ma resortu Skarbu.'));
+      // Z — 1.04 (decision 4A of the event audit): with the Treasury PPS chooses the reform here or postpones it to the card;
+      // without it the party answers with the campaign against high prices or leaves the reform to the cabinet. The toleration
+      // offer to Grabski is no longer an answer of the event: it stays on the formation screen, where it works.
+      const treasury = ppsHolds(S, 'finance');
       if (['rapid_cuts', 'protected', 'gradual'].indexOf(option) >= 0) {
-        if (!ppsHolds(S, 'finance')) return no(L('Needs the Treasury.', 'Wymaga resortu Skarbu.'));
-        if (option === 'protected' && !operatingProtection(S)) return no(L('Needs a full or an agreed limited protection for the unemployed.', 'Wymaga pełnej albo uzgodnionej ograniczonej osłony dla bezrobotnych.'));
-        return OK;
+        if (!treasury) return no(L('Needs the Treasury.', 'Wymaga resortu Skarbu.'));
+        return launchStatus(Q, 'currency_reform', option, null);
       }
-      // B14 (9.7): without the Treasury the answer is the toleration offer to Grabski in the formation card.
-      if (option === 'protections_terms') {
-        if (ppsHolds(S, 'finance')) return no(L('PPS holds the Treasury: it decides the reform itself.', 'PPS ma resort Skarbu: sama decyduje o reformie.'));
-        const offer = government.tolerationOfferStatus(Q);
-        return offer.available ? OK : no(offer.reason);
-      }
-      if (option === 'wait') return ppsHolds(S, 'finance') ? no(L('PPS holds the Treasury: it decides the reform itself.', 'PPS ma resort Skarbu: sama decyduje o reformie.')) : OK;
+      if (option === 'postpone') return treasury ? OK : no(L('Needs the Treasury.', 'Wymaga resortu Skarbu.'));
+      if (option === 'campaign') return treasury ? no(L('PPS holds the Treasury.', 'PPS ma resort Skarbu.')) : partyCashStatus(S, EVENT_CAMPAIGN_COST);
+      if (option === 'wait') return treasury ? no(L('PPS holds the Treasury.', 'PPS ma resort Skarbu.')) : OK;
       return no(L('Unknown option.', 'Nieznana opcja.'));
     }
     if (kind === 'credit') {
+      const portfolio = ppsHoldsAny(S, CREDIT_PORTFOLIOS);
+      if (option === 'campaign' || option === 'unions') {
+        if (portfolio) return no(L('PPS answers through its ministries.', 'PPS odpowiada przez swoje resorty.'));
+        return partyCashStatus(S, option === 'campaign' ? EVENT_CAMPAIGN_COST : UNION_HELP.cost);
+      }
       if (option === 'credit') {
         if (!ppsHoldsAny(S, ['finance', 'economic'])) return no(L('Needs the Treasury or Industry and Trade.', 'Wymaga resortu Skarbu albo Przemysłu i Handlu.'));
         const instrument = projectsOf(S, 'credit_instrument')[0];
-        if (instrument) return no(L('The credit instrument already exists; the ministry card starts it.', 'Instrument kredytowy już istnieje; uruchamia go karta resortu.'));
+        if (instrument) return no(L('The credit for the firms already exists; the ministry card takes care of it.', 'Kredyt dla zakładów już istnieje; zajmuje się nim karta resortu.'));
         return OK;
       }
       if (option === 'orders') {
@@ -4559,12 +4599,22 @@
     S.history.actions.push({t: t, action_id: 'event.' + kind + '.' + option, cost_t: 0});
     const ppsFields = {sponsor: 'pps', responsibility: {pps: 0.70}};
     if (kind === 'stabilization') {
-      if (option === 'wait') return result(Q, L('The cabinet prepares the reform itself; PPS can answer its package with the Budget card.', 'Gabinet sam przygotowuje reformę; PPS może odpowiedzieć na jego pakiet kartą „Budżet”.'));
-      if (option === 'protections_terms') {
-        government.openTolerationOffer(Q);
-        return result(Q, L('PPS answers with a toleration offer to Grabski; its terms are set in the formation card.', 'PPS odpowiada ofertą tolerowania gabinetu Grabskiego; jej warunki ustala się w karcie formowania gabinetu.'));
+      S.economy.stabilization_answered = t;
+      if (option === 'wait') return result(Q, L('The cabinet will prepare the reform itself.', 'Rząd sam przygotuje reformę.'));
+      if (option === 'postpone') {
+        return result(Q, L('We postpone the reform. The Treasury can start it later on the card “Currency Stabilisation”.',
+          'Odkładamy reformę. Skarb może ją rozpocząć później na karcie „Stabilizacja waluty”.'));
       }
+      if (option === 'campaign') return result(Q, lateParty().eventIssueCampaign(Q, 'prices', EVENT_CAMPAIGN_COST));
       return result(Q, eventLaunch(Q, prepareProject(Q, 'currency_reform', option, ppsFields)));
+    }
+    if (option === 'campaign') return result(Q, lateParty().eventIssueCampaign(Q, 'unemployed', EVENT_CAMPAIGN_COST));
+    if (option === 'unions') {
+      S.party_orgs.cash = Math.max(0, S.party_orgs.cash - UNION_HELP.cost);
+      for (const b of UNION_HELP.branches) if (S.unions && S.unions[b]) S.unions[b].trust = clip(S.unions[b].trust + UNION_HELP.trust, 0, 100);
+      S.history.reasons.push({t: t, kind: 'union_help', cost_R: UNION_HELP.cost, trust: UNION_HELP.trust});
+      return result(Q, L('The unions of industry and the railways help those losing work with money and advice. They trust PPS more (trust +' + UNION_HELP.trust + ').',
+        'Związki w przemyśle i na kolei pomagają zwalnianym pieniędzmi i radą. Bardziej ufają PPS (zaufanie +' + UNION_HELP.trust + ').'));
     }
     if (option === 'credit') {
       return result(Q, eventLaunch(Q, prepareProject(Q, 'credit_instrument', 'public', ppsFields)));
@@ -4587,9 +4637,9 @@
         protection.scope = (protection.scope || 1) + 1;
         setVariant(protection, protection.variant === 'full' ? 'full' : protection.variant);
       }
-      return result(Q, L('The protection for those losing work is strengthened; unemployment itself does not fall.', 'Osłona dla tracących pracę zostaje wzmocniona; samo bezrobocie nie spada.'));
+      return result(Q, L('The help for those losing work is strengthened, but no new jobs come of it.', 'Pomoc dla tracących pracę zostaje wzmocniona, ale miejsc pracy nie przybywa.'));
     }
-    return result(Q, L('No new intervention.', 'Bez nowej interwencji.'));
+    return result(Q, L('We do nothing new; the crisis goes on.', 'Nie podejmujemy nowych działań; kryzys toczy się dalej.'));
   }
 
   // 9.13 through the four answers of 9.8: the one compromise keeps 2 B with the existing financing.
@@ -4730,10 +4780,6 @@
     } else if (economy.fiscalCrisis(E)) {
       lines.push(L('Fiscal crisis: the budget has been below zero for two months.', 'Kryzys budżetowy: od dwóch miesięcy budżet jest poniżej zera.'));
     }
-    if (economy.creditCrisis(E, Q.time) && !creditEventDue(Q)) {
-      lines.push(L('Credit crisis: credit and output fall. Without an executive portfolio PPS acts through its relation to the government.',
-        'Kryzys kredytowy: kredyt i produkcja spadają. Bez resortu wykonawczego PPS działa przez swój stosunek do rządu.'));
-    }
     const bill = billRecord(S);
     if (bill && bill.status === 'in_procedure') {
       lines.push(L('The unemployment bill has passed the Sejm and waits for the Senate.', 'Ustawa o bezrobociu przeszła przez Sejm i czeka na Senat.'));
@@ -4868,6 +4914,10 @@
     cardView: cardView,
     launchStatus: launchStatus,
     stabilizationEventDue: stabilizationEventDue,
+    stabilizationAnswered: stabilizationAnswered,
+    creditOptionShown: creditOptionShown,
+    EVENT_CAMPAIGN_COST: EVENT_CAMPAIGN_COST,
+    UNION_HELP: UNION_HELP,
     creditEventDue: creditEventDue,
     austerityEventDue: austerityEventDue,
     eventStatus: eventStatus,

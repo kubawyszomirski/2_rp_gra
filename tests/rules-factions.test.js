@@ -393,8 +393,8 @@ test('Rozłam E3: Lewica (strength 15, dissent 65, 5 MPs) refused: 6% of the bas
   const seats = seatTotal(S);
   engine.goToScene('post_event');
   assert.equal(engine.state.sceneId, 'polish_event_faction_split');
-  assert.match(Q.pl_e3_preview, /6(\.0+)?% of the party’s base leaves/);
-  assert.match(Q.pl_e3_preview, /2 MPs to a separate club; its voters go to the KPP\. No member of the Central Executive Committee leaves\./);
+  // Z — 1.04 (decision 3A of the event audit): the preview in words, with one number — the deputies.
+  assert.equal(Q.pl_e3_preview, 'part of the party leaves with the faction: 2 deputies form a separate club, and its voters go to the KPP.');
   choose(engine, 'polish_event_faction_split.refuse');
   const manifest = S.faction_cases.manifests.at(-1);
   close(manifest.removed_share, 0.06);

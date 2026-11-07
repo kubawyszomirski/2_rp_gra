@@ -1,46 +1,49 @@
-title: Stabilisation
-subtitle: The budget or the currency is in crisis.
+title: A Financial Crisis
+subtitle: The marka collapses and the budget has no cover.
 new-page: true
 tags: pl_event
 face-image: img/polish/polish_event_stabilization.jpg
 view-if: {! return !!Q.S && PolishProjects.stabilizationEventDue(Q) !}
 on-arrival: {!
-// Event economy.stabilization (technical reference 17.3, 17.13 B14, 11.9; card catalogue 9.11): a
-// financial crisis without a currency reform. With the Treasury PPS chooses the variant of the one
-// reform (the answer is free; the launch costs the ordinary action and B); without it the cabinet may
-// prepare the reform itself (17.16.4) and PPS answers its package with the Budget card.
+// Event economy.stabilization (technical reference 17.3, 17.13 B14, 11.9; card catalogue 9.11): a financial crisis without a
+// currency reform, once. Z — 1.04 (decision 4A of the event audit, 7 XI 2026): with the Treasury PPS chooses the reform here
+// (the answer costs no action; the reform pays its price from the pool) or postpones it to the card "Currency Stabilisation";
+// without the Treasury the party answers with the campaign against high prices for 1 R or leaves the reform to the cabinet.
 Q.pl_ev_treasury = PolishProjects.ppsHolds(Q.S, 'finance') ? 1 : 0;
-Q.pl_ev_terms_why = PolishProjects.eventStatus(Q, 'stabilization', 'protections_terms').reason;
-Q.pl_ev_protected_why = PolishProjects.eventStatus(Q, 'stabilization', 'protected').reason;
+Q.pl_ev_currency = PolishEconomy.currencyCrisis(Q.S.economy) ? 1 : 0;
+Q.pl_ev_strong = PolishParty.issueSituation(Q, 'prices') ? 1 : 0;
+for (var option of ['rapid_cuts', 'protected', 'gradual', 'campaign']) {
+    Q['pl_ev_' + option + '_why'] = PolishProjects.eventStatus(Q, 'stabilization', option).reason;
+}
 !}
 
 = A financial crisis
 
-The budget has stayed below zero, or inflation at 20% a month or more, for two settlements. A currency reform is now possible: one project, launched with the currency law and its financing.
+[? if pl_ev_currency : The marka loses value from day to day, and prices rise faster than wages. The budget has no cover, and without a currency reform it will only get worse. ?]
 
-[? if pl_ev_treasury : PPS holds the Treasury and chooses the variant now; the reform starts at once when its financing allows. ?]
-
-[? if not pl_ev_treasury : PPS does not hold the Treasury. The cabinet may prepare the reform itself; its package will come before the Sejm, where PPS can answer it with the Budget card if it sits in the cabinet or supports it. ?]
+[? if not pl_ev_currency : The budget has had no cover for months, and the state lives on the printing press. Without a currency reform it will only get worse. ?]
 
 - @rapid_cuts
 - @protected
 - @gradual
-- @protections_terms
+- @postpone
+- @campaign
 - @wait
 
 @rapid_cuts
 title: Rapid stabilisation with savings
-subtitle: Costs 3 budget units, and the złoty comes after three months; needs cuts; the credit shock grows for three months (+10).
+subtitle: The złoty comes after three months (3 budget units), but the cuts and the lack of credit will hit the factories.
 view-if: pl_ev_treasury
 choose-if: {! return PolishProjects.eventStatus(Q, 'stabilization', 'rapid_cuts').available !}
+unavailable-subtitle: [+ pl_ev_rapid_cuts_why +]
 on-arrival: {!
 PolishProjects.eventChoose(Q, 'stabilization', 'rapid_cuts');
 !}
 go-to: result
 
 @protected
-title: Stabilisation with protections and a burden on wealth
-subtitle: Costs 3 budget units, and the złoty comes after three months; needs a protection for the unemployed and its financing.
+title: Stabilisation with protection for the unemployed and a tax on wealth
+subtitle: The złoty comes after three months (3 budget units); it needs a working protection for the unemployed.
 view-if: pl_ev_treasury
 choose-if: {! return PolishProjects.eventStatus(Q, 'stabilization', 'protected').available !}
 unavailable-subtitle: [+ pl_ev_protected_why +]
@@ -51,28 +54,38 @@ go-to: result
 
 @gradual
 title: Gradual limitation of emission
-subtitle: Costs 2 budget units, and the złoty comes after five months; the credit shock grows for five months (+5); the pressure on the marka lasts longer.
+subtitle: Cheaper (2 budget units), but the złoty comes only after five months.
 view-if: pl_ev_treasury
 choose-if: {! return PolishProjects.eventStatus(Q, 'stabilization', 'gradual').available !}
+unavailable-subtitle: [+ pl_ev_gradual_why +]
 on-arrival: {!
 PolishProjects.eventChoose(Q, 'stabilization', 'gradual');
 !}
 go-to: result
 
-@protections_terms
-title: Offer toleration for protections and a burden on wealth
-subtitle: Opens the formation card with Grabski tolerated by PPS; the terms, their conditions and the usual cost of the offer apply there.
-view-if: not pl_ev_treasury
-choose-if: {! return PolishProjects.eventStatus(Q, 'stabilization', 'protections_terms').available !}
-unavailable-subtitle: [+ pl_ev_terms_why +]
+@postpone
+title: Postpone the reform
+subtitle: No cost now; the reform can be started later with the card “Currency Stabilisation”.
+view-if: pl_ev_treasury
 on-arrival: {!
-PolishProjects.eventChoose(Q, 'stabilization', 'protections_terms');
+PolishProjects.eventChoose(Q, 'stabilization', 'postpone');
 !}
-go-to: polish_cabinet_formation
+go-to: result
+
+@campaign
+title: Start the campaign “Against high prices”
+subtitle: Costs 1 resource. It reaches the workers and the intelligentsia[? if pl_ev_strong : , and in this crisis more strongly than usual ?].
+view-if: not pl_ev_treasury
+choose-if: {! return PolishProjects.eventStatus(Q, 'stabilization', 'campaign').available !}
+unavailable-subtitle: [+ pl_ev_campaign_why +]
+on-arrival: {!
+PolishProjects.eventChoose(Q, 'stabilization', 'campaign');
+!}
+go-to: result
 
 @wait
 title: Leave the reform to the cabinet
-subtitle: PPS answers the cabinet's package when it comes.
+subtitle: No cost; the cabinet will prepare the reform itself.
 view-if: not pl_ev_treasury
 on-arrival: {!
 PolishProjects.eventChoose(Q, 'stabilization', 'wait');

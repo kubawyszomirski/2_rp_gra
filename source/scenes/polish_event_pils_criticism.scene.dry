@@ -17,7 +17,7 @@ PolishPolitics.criticismView(Q);
 
 “[+ pl_crit_quote +]”
 
-Józef Piłsudski again speaks out against the Sejm, this time over [+ pl_crit_topic +]. PPS may answer with this month's action; if we do not answer within three months, the card disappears and our silence will be remembered.
+Józef Piłsudski again attacks the Sejm, this time over [+ pl_crit_topic +]. If we do not answer within three months, our silence will be remembered.
 
 - @support
 - @defend
@@ -26,7 +26,7 @@ Józef Piłsudski again speaks out against the Sejm, this time over [+ pl_crit_t
 
 @support
 title: Support the criticism of parliamentarism
-subtitle: Costs this month's action. The relation with Piłsudski improves (+4); Piłsudczycy dissent falls (−3) and Centre dissent rises (+5). The authority of the Sejm falls for twelve months (−2). [+ pl_crit_warning +]
+subtitle: Costs this month’s action. Piłsudski and his followers in the party will appreciate it (+4), but the Centre will protest and the authority of the Sejm will weaken. [+ pl_crit_warning +]
 choose-if: {! return PolishPolitics.criticismStatus(Q, 'support').available !}
 unavailable-subtitle: [+ pl_crit_why +]
 on-arrival: {!
@@ -36,7 +36,7 @@ go-to: result
 
 @defend
 title: Defend parliament and the lawful change of governments
-subtitle: Costs this month's action. The relation with Piłsudski worsens (−4); Piłsudczycy dissent rises (+5) and Centre dissent falls (−3). The authority of the Sejm grows for twelve months (+1).
+subtitle: Costs this month’s action. The Centre will appreciate it and the authority of the Sejm will grow, but Piłsudski will move away from us (−4).
 choose-if: {! return PolishPolitics.criticismStatus(Q, 'defend').available !}
 unavailable-subtitle: [+ pl_crit_why +]
 on-arrival: {!
@@ -46,7 +46,7 @@ go-to: result
 
 @reform
 title: Parliament should be reformed to work better
-subtitle: Costs this month's action. No change of relation; Centre dissent falls (−2). It supports the line of reform but creates no project, path or votes.
+subtitle: Costs this month’s action. It calms the Centre without provoking Piłsudski.
 choose-if: {! return PolishPolitics.criticismStatus(Q, 'reform').available !}
 unavailable-subtitle: [+ pl_crit_why +]
 on-arrival: {!

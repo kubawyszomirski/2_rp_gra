@@ -3,13 +3,13 @@
  "status": "complete",
  "lines": {
   "title: Part of a Faction Threatens to Leave": "title: Część frakcji grozi odejściem",
-  "subtitle: A faction's dissent has reached 60 over a concrete demand.": "subtitle: Sprzeciw frakcji osiągnął 60 w sporze o konkretne żądanie.",
+  "subtitle: A faction of the party makes a demand and threatens to leave.": "subtitle: Frakcja partii stawia żądanie i grozi odejściem.",
   "= Part of [+ pl_e3_faction +] threatens to leave": "= Część frakcji [+ pl_e3_faction +] grozi odejściem",
-  "The dissent of [+ pl_e3_faction +] is [+ pl_e3_dissent +]. Its leaders demand that PPS [+ pl_e3_demand +]. If PPS keeps its line: [+ pl_e3_preview +]": "Sprzeciw frakcji [+ pl_e3_faction +] wynosi [+ pl_e3_dissent +]. Jej przywódcy stawiają PPS żądanie: [+ pl_e3_demand +]. Jeśli PPS utrzyma swoją linię: [+ pl_e3_preview +]",
+  "The faction [+ pl_e3_faction +] is on the verge of a split. Its leaders demand that PPS [+ pl_e3_demand +]. If we keep our line, [+ pl_e3_preview +]": "Frakcja [+ pl_e3_faction +] jest bliska rozłamu. Jej przywódcy stawiają PPS żądanie: [+ pl_e3_demand +]. Jeśli utrzymamy naszą linię, [+ pl_e3_preview +]",
   "title: Accept the demand and keep unity": "title: Przyjmij żądanie i zachowaj jedność",
-  "subtitle: PPS makes the change at once, without cost; the faction's dissent falls (−5). Partners react to the changed policy itself.": "subtitle: PPS wprowadza zmianę od razu, bez kosztów; sprzeciw frakcji spada (−5). Partnerzy reagują na samą zmienioną politykę.",
+  "subtitle: We make the change at once; the faction calms down (−5), and the other parties react to our new course.": "subtitle: Wprowadzamy zmianę od razu; frakcja się uspokaja (−5), a inne partie reagują na nasz nowy kurs.",
   "title: Keep the line of PPS and accept the split": "title: Utrzymaj linię PPS i pogódź się z rozłamem",
-  "subtitle: A large part of the faction's base leaves with its voters and MPs (−40% of its base); the dissent of the rest falls (−20).": "subtitle: Duża część bazy frakcji odchodzi z jej wyborcami i posłami (−40% bazy); sprzeciw pozostałej części frakcji spada (−20).",
+  "subtitle: A large part of the faction leaves the party with its voters and deputies (−40%); those who stay calm down.": "subtitle: Duża część frakcji odchodzi z partii razem ze swoimi wyborcami i posłami (−40%); ci, którzy zostają, się uspokajają.",
   "= The faction's answer": "= Odpowiedź frakcji",
   "- @root: Continue.": "- @root: Dalej."
  }

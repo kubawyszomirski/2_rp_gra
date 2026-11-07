@@ -931,21 +931,31 @@ test('Wspólna karta gabinetowa: Grabski, the protections, the role of PPS and t
     'Grabski is only a candidate of the one formation card');
 });
 
-test('B14 through the stabilisation event: without the Treasury the answer opens the one formation card with Grabski and the protections; without a crisis it is blocked with its reason', () => {
+test('B14 through the stabilisation event (Z — 1.04): the event answers by the Treasury — the three variants or postponing them — and without it by the campaign or the cabinet; the toleration offer to Grabski is opened on the formation screen', () => {
   const Q = game();
   const S = Q.S;
   preparedBase(Q);
   // Z — 0.71 (decision 4A): Grabski stands from XII 1923, so the fixture is in his period.
   Q.time = PolishRules.timeOf(1924, 1); Q.year = 1924; Q.month = 1;
-  assert.match(PolishProjects.eventStatus(Q, 'stabilization', 'protections_terms').reason, /open cabinet crisis/);
+  const open = o => PolishProjects.eventStatus(Q, 'stabilization', o).available;
+  const options = ['rapid_cuts', 'gradual', 'postpone', 'campaign', 'wait', 'protections_terms'];
+  S.party_orgs.cash = 2;
+  assert.deepEqual(options.map(open), [false, false, false, true, true, false], 'without the Treasury');
+  S.party_orgs.cash = 0;
+  assert.match(PolishProjects.eventStatus(Q, 'stabilization', 'campaign').reason, /Needs 1 resource/);
   withPortfolios(Q, 'finance');
-  assert.match(PolishProjects.eventStatus(Q, 'stabilization', 'protections_terms').reason, /holds the Treasury/);
+  assert.deepEqual(options.map(open), [true, true, true, false, false, false], 'with the Treasury');
+  assert.match(PolishProjects.eventStatus(Q, 'stabilization', 'protected').reason, /protection for the unemployed must be working/);
+  PolishProjects.eventChoose(Q, 'stabilization', 'postpone');
+  assert.equal(S.economy.stabilization_answered, Q.time);
+  assert.equal(PolishProjects.currencyProject(S), null, 'postponed: no reform yet');
+  assert.ok(S.history.actions.some(a => a.action_id === 'event.stabilization.postpone' && a.cost_t === 0));
+  // The offer to Grabski: without an open cabinet crisis it is blocked with its reason; in a crisis it presets the formation.
   S.cabinet.portfolios.finance = 'expert';
+  assert.match(PolishGovernment.tolerationOfferStatus(Q).reason, /open cabinet crisis/);
   PolishGovernment.openCrisis(Q, 'fixture_fall', S.cabinet.id);
-  assert.equal(PolishProjects.eventStatus(Q, 'stabilization', 'protections_terms').available, true);
-  PolishProjects.eventChoose(Q, 'stabilization', 'protections_terms');
+  PolishGovernment.openTolerationOffer(Q);
   const draft = S.negotiation.draft;
   assert.deepEqual([draft.configuration_id, draft.candidate_id, draft.pps_mode, draft.stabilisation_terms], ['expert', 'grabski', 'external_support', 'protections']);
-  assert.equal(Q.month_actions || 0, 0, 'the answer to the event costs no month; the formation keeps its own cost');
-  assert.ok(S.history.actions.some(a => a.action_id === 'event.stabilization.protections_terms' && a.cost_t === 0));
+  assert.equal(Q.month_actions || 0, 0);
 });
