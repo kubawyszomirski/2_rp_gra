@@ -378,18 +378,16 @@ test('a refused necessary package: one revision at the next review, then the pre
   assert.ok(Q.S.cabinet_crisis, 'the formation of a successor follows');
 });
 
-// ---- Promises of the programme (decision 3 of stage 4; 9.1, 5.4) ----
+// ---- The plan of the cabinet (decision 3 of stage 4; Z — Koalicja, decisions 1A–2A of 7 XI 2026) ----
 
-test('decision 3: the cabinet carries out a promise in its own portfolio; its failure there is not a broken PPS promise', () => {
+test('Plan rządu: the cabinet carries out a point of its programme in its own portfolio; a late point is no broken promise', () => {
   const Q = world({ seats: LEFT, time: 12 });
   const cabinet = formed(Q, { configuration_id: 'left_minority', pps_mode: 'member' });
   assert.equal(cabinet.portfolios.agriculture, 'psl_wyzwolenie');
-  const agreement = Q.S.agreements[cabinet.agreement_ids[0]];
-  const land = agreement.obligations.find(o => o.topic === 'land');
-  assert.deepEqual([land.required_variants, land.due_at, land.portfolio], [['accelerated'], 18, 'agriculture']);
-  assert.equal(gov.ppsResponsible(Q.S, agreement, land), false, '5.4: another ministry executes it');
-  const worker = agreement.obligations.find(o => o.topic === 'worker_protection');
-  assert.equal(gov.ppsResponsible(Q.S, agreement, worker), true, 'PPS holds Labour');
+  assert.deepEqual(Q.S.agreements[cabinet.agreement_ids[0]].obligations, [], 'the programme is no promise of the agreement');
+  const land = cabinet.plan.find(o => o.topic === 'land');
+  assert.deepEqual([land.required_variants, land.due_at, land.portfolio, land.kind], [['accelerated'], 18, 'agriculture', 'plan']);
+  const worker = cabinet.plan.find(o => o.topic === 'worker_protection');
   month(Q); // t=12: Wyzwolenie's ministry prepares the parcelation
   const reform = Object.values(Q.S.projects).find(p => p.type === 'land_program');
   assert.deepEqual([reform.status, reform.sponsor, reform.variant], ['prepared', 'cabinet', 'accelerated']);
@@ -397,28 +395,21 @@ test('decision 3: the cabinet carries out a promise in its own portfolio; its fa
   assert.equal(reform.status, 'executing');
   for (let i = 0; i < 4; i++) month(Q);
   assert.equal(land.status, 'fulfilled', 'the first tranche is executed by t+6');
-  // Worker protection was PPS's own task in Labour: overdue, a culpable breach, reputation −5.
-  assert.equal(worker.status, 'breached');
-  assert.equal(Q.S.actors.pps.credibility, 50 - 5);
-  assert.ok(Q.S.history.reasons.every(r => r.kind !== 'credibility' || r.id !== 'fulfilled:' + land.id), 'no reputation for another ministry’s work');
+  // Worker protection is PPS's own task in Labour: late, but neither a breach nor a loss of reputation.
+  assert.equal(worker.status, 'active');
+  assert.equal(Q.S.actors.pps.credibility, 50);
+  assert.equal(Q.S.agreements[cabinet.agreement_ids[0]].tension, 0);
 });
 
-test('decision 3: a package contrary to an agreed fiscal position is a red-line breach once; a rule of the church binds the school card', () => {
+test('Plan rządu: no rule of the programme binds a contrary package or the secular school; the rules stay only for the minority promises', () => {
   const Q = world({ seats: LEFT, time: 12 });
   const cabinet = formed(Q, { configuration_id: 'left_minority', pps_mode: 'member' });
   const agreement = Q.S.agreements[cabinet.agreement_ids[0]];
-  const fiscal = agreement.obligations.find(o => o.topic === 'fiscal' && o.kind === 'constraint');
-  assert.equal(fiscal.position, 1);
   proj.applyInstrument(Q, 'indirect', 12, { sponsor: 'cabinet' });
-  assert.equal(fiscal.status, 'breached');
-  assert.equal(agreement.history.filter(h => h.kind === 'red_line_breach').length, 1);
-  proj.applyInstrument(Q, 'admin_cuts', 12, { sponsor: 'cabinet' });
-  assert.equal(agreement.history.filter(h => h.kind === 'red_line_breach').length, 1, 'once');
-  const before = agreement.tension;
+  assert.equal(agreement.history.filter(h => h.kind === 'red_line_breach').length, 0);
   gov.settleAgreements(Q);
-  assert.ok(agreement.tension >= before + 15, '+15 tension for the breach');
-  assert.equal(proj.contradicts('fiscal', 0, 2), false, 'a shared burden allows a wealth tax (centre-left default)');
-  assert.equal(proj.contradicts('fiscal', 0, -2), true);
+  assert.equal(agreement.tension, 0);
+  assert.equal(proj.contradicts('fiscal', 0, -2), true, 'the comparison itself stays for the minority rule and old games');
   assert.equal(proj.contradicts('church', 0, 1), true);
 });
 

@@ -33,7 +33,7 @@ One instrument per decision, voted by the Sejm at once; one instrument of each k
 
 @progressive
 title: Tax high incomes and wealth: a progressive tax
-subtitle: Taxes rise one level, which brings the budget 1 unit a month; business pressure grows (+4); Lewica dissent falls (−3).
+subtitle: Taxes rise one level, which brings the budget 1 unit a month; business pressure grows (+4); Lewica dissent falls (−3). [+ pl_finance_package_progressive_coalition +]
 choose-if: {! return PolishProjects.optionStatus(Q, 'finance_package', 'progressive').available !}
 unavailable-subtitle: [+ pl_finance_package_progressive_why +]
 on-arrival: {!
@@ -43,7 +43,7 @@ go-to: result
 
 @indirect
 title: Tax broad groups: indirect taxes
-subtitle: Taxes rise one level, which brings the budget 1 unit a month; the discontent of poor recipients grows (+3); Lewica dissent rises (+3).
+subtitle: Taxes rise one level, which brings the budget 1 unit a month; the discontent of poor recipients grows (+3); Lewica dissent rises (+3). [+ pl_finance_package_indirect_coalition +]
 choose-if: {! return PolishProjects.optionStatus(Q, 'finance_package', 'indirect').available !}
 unavailable-subtitle: [+ pl_finance_package_indirect_why +]
 on-arrival: {!

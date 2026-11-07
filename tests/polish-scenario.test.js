@@ -56,7 +56,9 @@ test('Kompromis przez gabinet: a supporting PPS asks for a compromise with Piłs
   assert.equal(PolishSecurity.pilsCardAvailable(Q), false, '21.1 Pula ustępstw: no ordinary card under toleration');
   const record = PolishGovernment.supportDemand(Q, 'persuade', 'military_compromise', 'ordinary');
   assert.equal(record.accepted, true, JSON.stringify(record.evaluations));
-  const obligation = S.agreements.opening_toleration.obligations.find(o => o.required_military);
+  // Z — Koalicja (2A): the accepted demand is a point of the cabinet's plan, not a promise of the agreement.
+  assert.equal(S.agreements.opening_toleration.obligations.some(o => o.required_military), false);
+  const obligation = S.cabinet.plan.find(o => o.required_military);
   assert.equal(obligation.required_military, 'military_function');
   assert.equal(obligation.fulfillment, 0);
   const pressure = S.coup.impulses.filter(i => i.id.startsWith('pils_agreement')).length;
@@ -78,7 +80,7 @@ test('Kompromis przez gabinet: when Piłsudski refuses, the promise lapses with 
   PolishGovernment.supportDemand(Q, 'persuade', 'military_compromise', 'ordinary');
   S.actors.relations.pilsudski = 30;
   settle(Q);
-  const obligation = S.agreements.opening_toleration.obligations.find(o => o.required_military);
+  const obligation = S.cabinet.plan.find(o => o.required_military);
   assert.equal(obligation.status, 'void');
   assert.match(obligation.void_reason, /relation is below 40/);
   assert.equal(S.actors.pilsudski.agreement_id, null);

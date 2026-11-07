@@ -169,9 +169,9 @@ new-page: true
 
 [+ pl_sup_answers +]
 
-[? if pl_sup_accepted and pl_sup_postulate = "worker_protection" : **The government accepts.** Financed worker protection enters our agreement with the cabinet, due within four months. ?]
+[? if pl_sup_accepted and pl_sup_postulate = "worker_protection" : **The government accepts.** Financed worker protection enters the plan of the cabinet; its minister of Labour is to start it within four months. ?]
 
-[? if pl_sup_accepted and pl_sup_postulate = "military_compromise" : **The government accepts.** The compromise enters our agreement with the cabinet. The cabinet offers Piłsudski a military function under civilian control at its next review; if he refuses, the promise lapses without a breach. ?]
+[? if pl_sup_accepted and pl_sup_postulate = "military_compromise" : **The government accepts.** The compromise enters the plan of the cabinet. The cabinet offers Piłsudski a military function under civilian control at its next review; if he refuses, the plan drops it. ?]
 
 [? if not pl_sup_accepted and pl_sup_member : **Our coalition partners refuse.** We stay in the cabinet as before. ?]
 

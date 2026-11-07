@@ -19,9 +19,9 @@
     }
   },
   "hashes": {
-    "docs/POLISH_TECHNICAL_REFERENCE.md": "04affabdc3e921caf19d3ef8f3cb9dac662e04c6c9036a7d0f919286ec4833ad",
-    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "7b21036e324d5eae71977113fe3f14f22a522e6eeab1e282f2e96d97092afc90",
-    "docs/POLISH_MECHANICS_AUDIT.md": "5ab5cae5805cab9e1a6440cc36e9e4c75094abd52897a19508f6169b1b198e1d",
+    "docs/POLISH_TECHNICAL_REFERENCE.md": "f76494a33607a6ec9148682ea4dde6d88de017c820c7632ac05c6d146da3e04b",
+    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "caf8468ea96081d624c252bedc52f6bfe9b97814872caf26a6e9e8286cfa0ae7",
+    "docs/POLISH_MECHANICS_AUDIT.md": "d1f40ea95bc0df69dde346d565794cba66c2b6c6544d3b381d48834cc1b7943e",
     "analysis/m02-robustness/engine.cjs": "e0b544d65a4381ed7698f3f649fd54e41714a3a1027852a7ea455d0ad49b43cd"
   },
   "examples": {

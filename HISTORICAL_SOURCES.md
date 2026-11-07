@@ -1,5 +1,13 @@
 # Historical Source Register
 
+## PL-COALITION-0.98 — the coalition crisis
+
+- **Authority:** the user’s decisions of 7 November 2026 (technical reference 0.98, chapter 9 and 23.71).
+- **Sources:** game design modelled on the German original of this repository (`source/scenes/government_affairs/coalition_affairs.scene.dry`, `source/scenes/events/vote_of_no_confidence.scene.dry`); no new historical source.
+- **Historical fact:** none new. The existing rule stays that the fall of a cabinet leads to a new cabinet appointed by the head of state, not to an election.
+- **Gameplay simplification (P):** the plan of the cabinet instead of promises, the stances of the 18 options, +20 and +40 tension, the crisis at 60 and its options, the talks and the factions’ reactions.
+- **Unresolved:** the coalition crises of 1922–1926 (e.g. the departures of partners from cabinets) as event cards — TBD, historical research required.
+
 ## PL-GOV-CARDS-0.97 — the cards of Agriculture and Education
 
 - **Authority:** the user’s decisions of 7 November 2026 (technical reference 0.97, sections 12.4 and 23.70).
@@ -2712,6 +2720,7 @@ Add one row whenever an entry above is assigned a stable Source ID.
 | PL-PRESS-0.90 | Press | The party press: reach ceilings, sales, support of the campaigns, confiscations under a government of the right, credibility | Gameplay simplification; confiscations and circulation TBD | 0.90, 24 October 2026 |
 | PL-TUR-0.91 | TUR | TUR: +5% to the organisers per level, civic courses raise the trust in PPS, a course for trade unionists, no reform course | Gameplay simplification; founding and functions from TUR's own publication; reach by group TBD | 0.91, 24 October 2026 |
 | PL-COOP-0.92 | Cooperative | One workers' consumer cooperative that pays half of the strike pay; no relief; government cooperative variants without a PPS cooperative | Gameplay simplification; PPS ties to the cooperative movement TBD | 0.92, 24 October 2026 |
+| PL-COALITION-0.98 | Coalition | The plan of the cabinet, partners against reforms, the coalition crisis and the card Coalition Disputes | Game design; no new historical claim | 0.98, 7 November 2026 |
 | PL-GOV-CARDS-0.93 | Government cards | One budget number, one monthly cost per programme, one-step reforms, one Treasury card, no Foreign Affairs for PPS | Gameplay simplification; research for new cards to follow | 0.93, 24 October 2026 |
 | PL-GOV-CARDS-0.97 | Government cards | Agriculture and Education with a gain and a cost per option; Culture and Science | Land reform acts, compulsory schooling and Polskie Radio documented; settlers, school reactions and radio effect are game content | 0.97, 7 November 2026 |
 | PL-GOV-CARDS-0.94 | Government cards | Labour and Industry and Trade with a gain and a cost per option; Economic Democracy; the customs war with Germany | Customs war and Gdynia act documented; works councils law and socialisation TBD | 0.94, 24 October 2026 |

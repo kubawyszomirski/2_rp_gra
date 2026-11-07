@@ -1826,10 +1826,12 @@
   function dueObligationStep(Q, t) {
     const S = Q.S, cabinet = S.cabinet;
     const candidates = [];
-    for (const id of cabinet.agreement_ids) {
-      const agreement = S.agreements[id];
-      if (!agreement || (agreement.status !== 'active' && agreement.status !== 'breached')) continue;
-      for (const o of agreement.obligations) {
+    // Z — Koalicja: the promises of the agreements (the minority concessions) and the points of the cabinet's plan.
+    const sources = cabinet.agreement_ids.map(id => S.agreements[id])
+      .filter(agreement => agreement && (agreement.status === 'active' || agreement.status === 'breached')).map(agreement => agreement.obligations)
+      .concat([cabinet.plan || []]);
+    for (const list of sources) {
+      for (const o of list) {
         // Stage 8: an accepted compromise with Piłsudski is the cabinet's own initiative (16.7 accepted executor).
         if (o.required_military && government.liveObligation(o) && (o.fulfillment || 0) < 1 && o.status !== 'void') {
           candidates.push(o);
@@ -2036,6 +2038,24 @@
 
   function updateObligations(Q, t) {
     const S = Q.S;
+    // Z — Koalicja: the points of the sitting cabinet's plan are followed like promises and closed when met; nobody settles them.
+    const plan = S.cabinet && S.cabinet.plan ? S.cabinet.plan : [];
+    for (const o of plan) {
+      if (o.status !== 'active' && o.status !== 'open') continue;
+      let met;
+      if (o.required_military) {
+        const pils = S.actors.pilsudski && S.actors.pilsudski.agreement_id ? S.agreements[S.actors.pilsudski.agreement_id] : null;
+        met = !!pils && pils.status === 'active' && pils.execution_started_at !== null && pils.obligation_id === o.id;
+      } else {
+        met = !!o.required_project && obligationMet(Q, o, t);
+      }
+      o.fulfillment = met ? 1 : 0;
+      o.last_checked = t;
+      if (met) { o.status = 'fulfilled'; o.fulfilled_at = t; }
+      // A late point is no broken promise of PPS, but the Sejm's authority notes it (PolishPolitics.scanJournal).
+      // The settlement of period t precedes the month t+1, in which a promise of an agreement was found overdue (due_at < t+1).
+      else if (o.status === 'active' && o.due_at !== null && o.due_at !== undefined && o.due_at <= t && o.overdue_at === undefined) o.overdue_at = t + 1;
+    }
     for (const id of Object.keys(S.agreements).sort()) {
       const agreement = S.agreements[id];
       if (agreement.status !== 'active' && agreement.status !== 'breached') continue;
@@ -3675,7 +3695,93 @@
 
   // The chosen option (17.11): 1 T for the decision, a small reform launched at once, a large one prepared
   // for the agenda; a card opened by an adviser takes its one step for 0 T.
+  // ---- Z — Koalicja: a reform of PPS that its partners reject (the user's decisions 1A–5A of 7 XI 2026) ----------------------
+
+  // The disputed reform in the words of the crisis card ("Wstrzymaj …", "nie zgadza się na …").
+  const REFORM_NAMES = Object.freeze({
+    'labor_rights.inspection': ['the labour inspection', 'inspekcję pracy'], 'social_welfare.expand': ['the wider benefits', 'rozszerzenie zasiłków'],
+    'social_welfare.insurance': ['the old-age insurance', 'ubezpieczenie na starość'], 'social_welfare.limit': ['the cut of the benefits', 'ograniczenie zasiłków'],
+    'industrial_policy.public_control': ['the public control of a plant', 'kontrolę publiczną zakładu'],
+    'economic_democracy.works_councils': ['the works councils', 'rady zakładowe'], 'economic_democracy.socialise_mining': ['the socialisation of mining', 'uspołecznienie górnictwa'],
+    'finance_package.progressive': ['the progressive tax', 'podatek progresywny'], 'finance_package.indirect': ['the indirect taxes', 'podatki pośrednie'],
+    'currency_stabilisation.rapid_cuts': ['the stabilisation with savings', 'stabilizację z oszczędnościami'],
+    'currency_stabilisation.protected': ['the stabilisation with protections', 'stabilizację z osłonami'],
+    'land_program.accelerated': ['the fast parcellation', 'szybką parcelację'], 'education_program.secular': ['the secular school', 'szkołę świecką'],
+    'minority_school_rights.own_language': ['teaching in the mother tongue', 'naukę w języku ojczystym'],
+    'minority_school_rights.polish_dominance': ['the Polish school', 'szkołę polską'],
+    'internal_security.limited_autonomy': ['the self-government in the east', 'samorząd na wschodzie'],
+    'military_policy.civilian_oversight': ['the civilian oversight of the army', 'nadzór cywilny nad wojskiem'],
+    'justice_policy.broad_safeguards': ['the democratic guarantees', 'gwarancje demokratyczne'],
+  });
+  // A motion of the constitutional debate starts with the decision itself; it has nothing a concession could stop.
+  const MOTION_REFORMS = Object.freeze(['justice_policy.broad_safeguards']);
+
+  // What a decision started: a project that left preparation, or a new instrument of the budget.
+  function startedBy(S, before) {
+    for (const id of Object.keys(S.projects)) {
+      const p = S.projects[id];
+      if (!p || preparedProject(p) || before.projects[id] === p.status) continue;
+      return {kind: 'project', id: id};
+    }
+    const policy = S.economy.policies.slice(before.policies)[0];
+    return policy ? {kind: 'policy', id: policy.id} : null;
+  }
+
+  function withObjections(Q, key, run) {
+    const S = Q.S;
+    if (!government.REFORM_STANCES[key]) return run();
+    const before = {projects: Object.fromEntries(Object.keys(S.projects).map(id => [id, S.projects[id].status])), policies: S.economy.policies.length,
+      laws: S.parliament.laws.length};
+    const out = run();
+    const rejected = S.parliament.laws.slice(before.laws).some(b => b.status === 'rejected');
+    const started = startedBy(S, before);
+    if (started || (!rejected && MOTION_REFORMS.indexOf(key) >= 0)) {
+      const target = started ? Object.assign(started, {name: REFORM_NAMES[key].slice()}) : null;
+      const objections = government.applyReformObjections(Q, key, target);
+      if (objections.length && Q.pl_gc_result) {
+        Q.pl_gc_result += ' ' + objections.map(o => L(government.partyWords(o.party) + ' objects: tension +' + o.delta + '.',
+          'Sprzeciw: ' + government.partyWords(o.party) + ', napięcie +' + o.delta + '.')).join(' ');
+      }
+    }
+    return out;
+  }
+
+  // A disputed reform that a concession can still stop: a project that runs, or a tax that is still in force.
+  function stoppable(Q, target) {
+    const S = Q.S;
+    if (!target) return false;
+    if (target.kind === 'project') {
+      const p = S.projects[target.id];
+      return !!p && (liveProject(p) || preparedProject(p));
+    }
+    const policy = S.economy.policies.filter(x => x.id === target.id)[0];
+    return !!policy && policy.status === 'active' && !!INSTRUMENTS[policy.kind] && !!INSTRUMENTS[policy.kind].tax &&
+      (policy.ends_at === null || policy.ends_at > Q.time);
+  }
+
+  // The concession of the crisis card: the project stops with its costs and its further effects; a tax returns to its level.
+  function stopTarget(Q, target, reason) {
+    const S = Q.S, t = Q.time;
+    if (!stoppable(Q, target)) throw new Error('stopTarget: not stoppable');
+    if (target.kind === 'project') {
+      const p = S.projects[target.id];
+      p.status = 'stopped';
+      p.interruption_reason = 'Stopped as a concession to a coalition partner.';
+      p.history.push({t: t, kind: 'stopped', reason: reason || ''});
+    } else {
+      const policy = S.economy.policies.filter(x => x.id === target.id)[0];
+      S.economy.tax_level = clip(S.economy.tax_level - INSTRUMENTS[policy.kind].tax, -3, 3);
+      policy.status = 'cancelled';
+      policy.ends_at = t;
+    }
+    S.history.reasons.push({t: t, kind: 'reform_stopped', target: target, reason: reason || ''});
+  }
+
   function chooseOption(Q, cardId, option, extra) {
+    return withObjections(Q, cardId + '.' + option, () => chooseOptionRun(Q, cardId, option, extra));
+  }
+
+  function chooseOptionRun(Q, cardId, option, extra) {
     const S = Q.S, E = S.economy, t = Q.time;
     const status = optionStatus(Q, cardId, option, extra && {branch: extra.branch, variant: extra.variant});
     if (!status.available) throw new Error('chooseOption: ' + cardId + '.' + option + ': ' + status.reason);
@@ -3955,6 +4061,8 @@
     if (cardId === 'heritage_restoration') Q.pl_gc_heritage_object = heritageName(heritageTarget(S) || 'zamek', 'acc');
     if (cardId === 'labor_rights' && unions && S.unions) Q.pl_gc_collective_branch = unions.branchName(unions.collectiveTarget(Q) || 'industry').toLowerCase();
     Q.pl_gc_plants = unions && S.enterprises && (cardId === 'labor_rights' || cardId === 'industrial_policy') ? unions.plantsLine(S) : '';
+    // Z — Koalicja: an option that partners of this cabinet reject says so on the card.
+    for (const option of card.options) Q['pl_' + cardId + '_' + option + '_coalition'] = government.reformObjectionText(Q, cardId + '.' + option);
     Q.pl_gc_result = '';
   }
 
@@ -3970,6 +4078,7 @@
       else if (p.status === 'executing') statePl = p.authorized ? 'w realizacji: ' + Math.round(p.progress) + '%, ' + numB(p.build_budget_B) + ' B miesięcznie' : 'czeka na ustawę';
       else if (p.status === 'operating') statePl = 'w działaniu: ' + numB(p.upkeep_budget_B) + ' B miesięcznie' + (p.ends_at ? ' do ' + rules.monthYear(p.ends_at - 1, 'gen') : '');
       else if (p.status === 'completed') statePl = 'realizacja zakończona';
+      else if (p.status === 'stopped') statePl = 'wstrzymany jako ustępstwo wobec koalicjanta';
       else statePl = p.status;
       const reason = p.interruption_reason && (p.status === 'executing' || p.status === 'operating') ? rules.storedText(p.interruption_reason).replace(/\.$/, '') : '';
       return namePl + ': ' + statePl + (reason ? '; ' + reason.charAt(0).toLowerCase() + reason.slice(1) : '') + '.';
@@ -3982,6 +4091,7 @@
     else if (p.status === 'executing') state = p.authorized ? 'being built, ' + Math.round(p.progress) + '%, ' + numB(p.build_budget_B) + ' B a month' : 'waiting for its law';
     else if (p.status === 'operating') state = 'operating, ' + numB(p.upkeep_budget_B) + ' B a month' + (p.ends_at ? ' until ' + rules.monthOf(p.ends_at - 1) + '/' + rules.yearOf(p.ends_at - 1) : '');
     else if (p.status === 'completed') state = 'completed';
+    else if (p.status === 'stopped') state = 'stopped as a concession to a coalition partner';
     else state = p.status;
     const note = p.interruption_reason && (p.status === 'executing' || p.status === 'operating') ? ' ' + p.interruption_reason.replace(/\.$/, '') : '';
     return name + ': ' + state + note + '.';
@@ -4162,6 +4272,11 @@
 
   // The first answer to an event costs 0 T; the costs of the intervention are the ordinary ones.
   function eventChoose(Q, kind, option) {
+    return kind === 'stabilization' ? withObjections(Q, 'currency_stabilisation.' + option, () => eventChooseRun(Q, kind, option)) :
+      eventChooseRun(Q, kind, option);
+  }
+
+  function eventChooseRun(Q, kind, option) {
     const S = Q.S, t = Q.time;
     const status = eventStatus(Q, kind, option);
     if (!status.available) throw new Error('eventChoose: ' + kind + '.' + option + ': ' + status.reason);
@@ -4430,6 +4545,9 @@
     landAccessStatus: landAccessStatus,
     optionStatus: optionStatus,
     chooseOption: chooseOption,
+    stoppable: stoppable,
+    stopTarget: stopTarget,
+    REFORM_NAMES: REFORM_NAMES,
     cardView: cardView,
     launchStatus: launchStatus,
     stabilizationEventDue: stabilizationEventDue,

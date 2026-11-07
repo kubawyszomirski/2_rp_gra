@@ -267,7 +267,7 @@
       cabinet: {id: 'ponikowski_1', pm: 'ponikowski', pm_name: 'Antoni Ponikowski', party: null,
         configuration_id: 'expert', status: 'active', pps_mode: 'external_support', portfolios: portfolios,
         partner_ids: [], supporter_ids: ['pps'], appointment_basis: 'opening_profile', pps_threat_discounted: false,
-        programme: {fiscal: 0}, formed_at: Q.time, agreement_ids: ['opening_toleration'], accepted_postulates: [],
+        programme: {fiscal: 0}, formed_at: Q.time, agreement_ids: ['opening_toleration'], accepted_postulates: [], plan: [],
         dismissal_motion: null, pending_threat: null},
       negotiation: null,
       cabinet_crisis: null,
@@ -568,7 +568,8 @@
   const MINORITY_CONCESSIONS = Object.freeze({
     equality: Object.freeze({terms: Object.freeze(['legal_equality']), fit: 50, assured: false,
       costs: Object.freeze({psl_piast: -2, pschd: -2, zln: -2}), name: ['legal equality', 'równość wobec prawa']}),
-    schools: Object.freeze({terms: Object.freeze(['language_rights', 'school_rights']), fit: 100, assured: false,
+    // Z — Koalicja: the language rights and the schools are one promise (school_rights); language_rights stays readable in old games.
+    schools: Object.freeze({terms: Object.freeze(['school_rights']), fit: 100, assured: false,
       costs: Object.freeze({psl_piast: -4, pschd: -3, zln: -4}), name: ['language rights and minority schools', 'prawa językowe i szkoły mniejszości']}),
     autonomy: Object.freeze({terms: Object.freeze(['territorial_autonomy']), fit: 100, assured: true,
       costs: Object.freeze({psl_piast: -8, pschd: -5, zln: -10}), name: ['self-government in the east', 'samorząd na wschodzie']}),
@@ -2219,6 +2220,28 @@
     return parts.join('; ') + '.' + (programme ? L(' Its programme: ', ' W programie: ') + programme + '.' : '');
   }
 
+  // Z — Koalicja (the user's decisions of 7 XI 2026): what PPS promises in the offer — only the concessions that win the support
+  // of the minority clubs, with their dates; the programme itself is the plan of the cabinet and promises nothing.
+  const CLUB_TO = Object.freeze({jewish_rep: ['To the Jewish representation', 'Reprezentacji żydowskiej'],
+    other_minorities_rep: ['To the other national minorities', 'Pozostałym mniejszościom']});
+  function promisesText(Q, offer) {
+    const due = rules.monthYear(Q.time + 6, 'gen');
+    const lines = [];
+    for (const club of (offer.supporters || []).filter(id => SEGMENTS.indexOf(id) >= 0)) {
+      const concession = concessionOf(offer, club);
+      if (!concession) continue;
+      const id = (offer.minority_concessions || {})[club];
+      const what = id === 'equality' ? L('equality before the law, so we may give Poles no priority for land and impose no Polish school',
+        'równość wobec prawa, więc nie wolno nam dawać Polakom pierwszeństwa przy ziemi ani narzucać szkoły polskiej') :
+        id === 'autonomy' ? L('self-government in the east by the start of ' + rules.monthYear(Q.time + 6) + ' (Interior)',
+          'samorząd na wschodzie do początku ' + due + ' (Sprawy Wewnętrzne)') :
+        L('schools in their own language or bilingual ones by the start of ' + rules.monthYear(Q.time + 6) + ' (Education)',
+          'szkoły w ich języku albo dwujęzyczne do początku ' + due + ' (Oświata)');
+      lines.push(L(CLUB_TO[club][0], CLUB_TO[club][1]) + ': ' + what + '.');
+    }
+    return lines.join(' ');
+  }
+
   // Step 4: the influence points of PPS in words.
   function pointsText(Q, draft) {
     const config = CONFIGURATIONS[draft.configuration_id];
@@ -2296,6 +2319,7 @@
       minority_clubs: SEGMENTS.map(id => minorityClubView(Q, id)),
       verdict: verdict,
       programme: config.expert ? describeProgramme((CANDIDATES[draft.candidate_id] || {}).programme) : describeProgramme(offer.programme),
+      promises: offer.pps_mode === 'opposition' ? '' : promisesText(Q, offer),
     };
   }
 
@@ -2443,41 +2467,44 @@
   // rule for the school programme; institutions the matching constitutional project, without a date
   // because it needs two thirds of both chambers. No offer of this chapter has army or autonomy points (stage 8, decision of
   // 8c); the last branch only keeps such a point inert if a programme ever carried one.
-  function programmeObligations(offer, agreementId, beneficiaries, t) {
-    const config = CONFIGURATIONS[offer.configuration_id];
-    const partyCabinet = !config || !config.expert;
-    const list = [];
-    const base = (topic, extra) => Object.assign({id: agreementId + ':' + topic, topic: topic, position: offer.programme[topic],
-      owner: 'cabinet', kind: 'programme', beneficiaries: beneficiaries.slice(), required_project: null, required_variants: null,
-      required_stage: null, portfolio: null, weight: 1, due_at: null, status: 'active', fulfillment: 0, last_checked: null}, extra || {});
-    for (const topic of Object.keys(offer.programme || {})) {
-      const position = offer.programme[topic];
-      if (topic === 'land') {
-        if (position === 0 || position === 1) {
-          list.push(base('land', {required_project: 'land_program', required_variants: position === 1 ? ['accelerated'] : ['compensated', 'accelerated'],
-            required_stage: 'completed', portfolio: 'agriculture', due_at: t + 6}));
-        } else if (position >= 2) {
-          list.push(base('land', {status: 'awaiting_later_stage', note: 'Land reform without compensation needs a prior change of the property guarantees, which this chapter does not offer.'}));
-        } else {
-          list.push(base('land', {kind: 'constraint', portfolio: 'agriculture', fulfillment: 1}));
-        }
-      } else if (topic === 'fiscal') {
-        list.push(base('fiscal', {kind: 'constraint', portfolio: 'finance', fulfillment: 1}));
-        if (position >= 1 && partyCabinet) {
-          list.push(base('fiscal', {id: agreementId + ':worker_protection', topic: 'worker_protection', required_project: 'worker_protection',
-            required_variants: ['full'], required_stage: 'operating', portfolio: 'labor', weight: 2, due_at: t + 4}));
-        }
-      } else if (topic === 'institution') {
-        const reform = position >= 1 ? 'democratic_guarantees' : position <= -1 ? 'presidential_arbitration' : 'constructive_vonc';
-        list.push(base('institution', {required_project: 'constitution', required_variants: [reform], required_stage: 'enacted', status: 'open'}));
-      } else if (topic === 'church') {
-        list.push(base('church', {kind: 'constraint', portfolio: 'education', fulfillment: 1}));
-      } else {
-        list.push(base(topic, {status: 'awaiting_later_stage', note: 'Army and autonomy points are not part of cabinet programmes in this chapter.'}));
-      }
-    }
-    return list;
+  // Z — Koalicja (the user's decisions 1A–3A of 7 XI 2026): the points of an agreed programme are no longer promises of the
+  // agreements. They are the plan of the cabinet: the ministers of the other parties carry them out in their portfolios with the
+  // same projects and dates as before, but a late or missing point raises no tension and costs PPS nothing, and no point is a
+  // rule against contrary decisions any more. Only the concession that wins a minority club's support stays a promise.
+  function programmeObligations() {
+    return [];
   }
+
+  function planItem(cabinetId, topic, spec) {
+    return Object.assign({id: cabinetId + ':plan:' + topic, topic: topic, position: null, owner: 'cabinet', kind: 'plan', beneficiaries: [],
+      required_project: null, required_variants: null, required_stage: null, portfolio: null, weight: 1, due_at: null, status: 'active',
+      fulfillment: 0, last_checked: null}, spec);
+  }
+
+  // The plan of a new cabinet from its programme: land 0 or +1 the first tranche of the parcelation by t+6 (17.16.4); fiscal +1
+  // or +2 in a party cabinet the financed worker protection in full by t+4 (9.1); institutions the matching constitutional
+  // project, without a date. Army and autonomy points never enter a plan in this chapter.
+  function programmePlan(offer, cabinetId, t) {
+    const config = CONFIGURATIONS[offer.configuration_id];
+    const programme = (config && config.expert ? (CANDIDATES[offer.candidate_id] || {}).programme : offer.programme) || offer.programme || {};
+    const plan = [];
+    if (programme.land === 0 || programme.land === 1) {
+      plan.push(planItem(cabinetId, 'land', {position: programme.land, required_project: 'land_program',
+        required_variants: programme.land === 1 ? ['accelerated'] : ['compensated', 'accelerated'], required_stage: 'completed',
+        portfolio: 'agriculture', due_at: t + 6}));
+    }
+    if (programme.fiscal >= 1 && (!config || !config.expert)) {
+      plan.push(planItem(cabinetId, 'worker_protection', {required_project: 'worker_protection', required_variants: ['full'],
+        required_stage: 'operating', portfolio: 'labor', weight: 2, due_at: t + 4}));
+    }
+    if (programme.institution !== undefined && programme.institution !== null) {
+      const reform = programme.institution >= 1 ? 'democratic_guarantees' : programme.institution <= -1 ? 'presidential_arbitration' : 'constructive_vonc';
+      plan.push(planItem(cabinetId, 'institution', {position: programme.institution, required_project: 'constitution', required_variants: [reform],
+        required_stage: 'enacted', status: 'open'}));
+    }
+    return plan;
+  }
+
 
   // The terms of a minority representation that supports the cabinet (8.6): schools and language rights
   // by the school project in its own language or agreed bilingualism, operating by t+6 (P); legal
@@ -2549,21 +2576,17 @@
       supporter_ids: offer.supporters.slice(), appointment_basis: authority, pps_threat_discounted: false, programme: copy(offer.programme),
       formed_at: t, agreement_ids: agreementIds, support_seats: entry.forecast.yes, majority: entry.forecast.majority,
       previous_cabinet_id: previous ? previous.id : null, accepted_postulates: [], dismissal_motion: null, pending_threat: null,
-      stabilisation_terms: offer.stabilisation_terms || 'none'};
+      stabilisation_terms: offer.stabilisation_terms || 'none', plan: programmePlan(offer, cabinetId, t)};
     // The PPS toleration agreement: a PPS offer signs it as `pps_support`, a tolerated expert as `pps` (stage 6 fix).
     const support = agreementIds.map(id => S.agreements[id]).filter(a => a.kind === 'support' && a.parties.indexOf('pps') >= 0 &&
       (a.id === 'agr-' + cabinetId + '-pps_support' || a.id === 'agr-' + cabinetId + '-pps'))[0] || null;
     // The terms of 9.7 are rules of the toleration (P): the loan means no rapid stabilisation with cuts; the
     // protections add the full protection for the unemployed, operating by t+4, and the burden on wealth.
-    if (support && (offer.stabilisation_terms === 'loan' || offer.stabilisation_terms === 'protections')) {
-      support.obligations.push({id: support.id + ':stabilisation_terms', topic: 'stabilisation_terms', position: offer.stabilisation_terms,
-        owner: 'cabinet', kind: 'constraint', beneficiaries: ['pps'], required_project: null, required_variants: null, required_stage: null,
-        portfolio: 'finance', weight: 2, due_at: null, status: 'active', fulfillment: 1, last_checked: null});
-    }
-    if (support && offer.stabilisation_terms === 'protections') {
-      support.obligations.push({id: support.id + ':worker_protection', topic: 'worker_protection', position: null, owner: 'cabinet',
-        kind: 'programme', beneficiaries: ['pps'], required_project: 'worker_protection', required_variants: ['full'],
-        required_stage: 'operating', portfolio: 'labor', weight: 2, due_at: t + 4, status: 'active', fulfillment: 0, last_checked: null});
+    // Z — Koalicja (1A): the terms of the toleration are the plan of Grabski's cabinet, not promises — the loan is kept by its
+    // choice of the stabilisation (cabinet.stabilisation_terms), the protections add the full protection for the unemployed by t+4.
+    if (support && offer.stabilisation_terms === 'protections' && !S.cabinet.plan.some(o => o.topic === 'worker_protection')) {
+      S.cabinet.plan.push(planItem(cabinetId, 'worker_protection', {required_project: 'worker_protection', required_variants: ['full'],
+        required_stage: 'operating', portfolio: 'labor', weight: 2, due_at: t + 4, beneficiaries: ['pps']}));
     }
     // P (9.7): the toleration of Grabski is an agreement for six months with a review after three.
     if (support && offer.candidate_id === 'grabski' && offer.pps_mode === 'external_support') {
@@ -3030,7 +3053,8 @@
       const burdens = agreement.history.filter(h => h.kind === 'unagreed_burden' && !h.counted_at);
       for (const h of burdens) h.counted_at = t;
       const burdenPoints = Math.min(3, burdens.reduce((n, h) => n + (h.points || 0), 0));
-      const delta = Math.min(20, 8 * overdue.reduce((n, o) => n + o.weight, 0)) + 15 * redLines.length + 4 * burdenPoints - 12 * fulfilled;
+      // Z — Koalicja (decision 1A): a broken promise to a minority club raises its tension by 40 (it was 15).
+      const delta = Math.min(20, 8 * overdue.reduce((n, o) => n + o.weight, 0)) + MINORITY_BREACH_TENSION * redLines.length + 4 * burdenPoints - 12 * fulfilled;
       agreement.tension = clip(agreement.tension + delta, 0, 100);
       agreement.status = overdue.length ? 'breached' : 'active';
       if (delta) agreement.history.push({t: t, kind: 'tension', delta: delta, tension: agreement.tension});
@@ -3040,7 +3064,9 @@
           const o = findObligation(agreement, oid);
           return !!o && overdueObligation(o, t);
         });
-        if (!open.length) {
+        // Z — Koalicja: a crisis over reforms (no overdue promise) ends when the tension falls below 60.
+        const lifted = ultimatum.kind === 'tension' ? agreement.tension < TENSION_ULTIMATUM : !open.length;
+        if (lifted) {
           closeUltimatum(agreement, 'lifted', t);
           events.push({kind: 'ultimatum_lifted', agreement_id: id, by: ultimatum.by});
         } else if (t >= ultimatum.due_at) {
@@ -3067,19 +3093,23 @@
           events.push({kind: 'renewal', agreement_id: id, by: by});
         }
       }
-      const partner = aggrievedPartner(S, agreement, overdue);
+      // Z — Koalicja (decisions 1A–5A of 7 XI 2026): the partner angered by our reforms or by a broken minority promise warns
+      // and opens a coalition crisis too. While PPS sits in the cabinet the crisis is the urgent card „Kryzys koalicyjny”, so no
+      // answer card of 9.8 opens; the warning is a notice.
+      const partner = aggrievedPartner(S, agreement, overdue) || objectingPartner(S, agreement);
       if (!partner) continue;
+      const crisisCard = crisisAgreement(S, agreement);
       if (agreement.tension >= TENSION_WARNING && !agreement.warning_issued) {
         agreement.warning_issued = true;
         agreement.history.push({t: t, kind: 'warning', by: partner});
-        openResponse(agreement, 'warning', partner, t);
+        if (!crisisCard) openResponse(agreement, 'warning', partner, t);
         events.push({kind: 'warning', agreement_id: id, by: partner});
       }
       if (agreement.tension >= TENSION_ULTIMATUM && (!agreement.ultimatum || agreement.ultimatum.status !== 'open')) {
         agreement.ultimatum = {id: 'ult-' + id + '-t' + t, issued_at: t, due_at: t + ULTIMATUM_MONTHS, by: partner,
-          cause_ids: overdue.map(o => o.id), status: 'open'};
+          cause_ids: overdue.map(o => o.id), status: 'open', kind: overdue.length ? 'promise' : 'tension', persuaded: false};
         agreement.history.push({t: t, kind: 'ultimatum', ultimatum_id: agreement.ultimatum.id, by: partner, due_at: t + ULTIMATUM_MONTHS});
-        openResponse(agreement, 'ultimatum', partner, t);
+        if (!crisisCard) openResponse(agreement, 'ultimatum', partner, t);
         events.push({kind: 'ultimatum', agreement_id: id, by: partner});
       }
     }
@@ -3091,6 +3121,265 @@
     }
     S.history.reasons.push({t: t, kind: 'agreements_settled', events: events.length});
     return events;
+  }
+
+  // ---- Z — Koalicja: reforms against the partners and the coalition crisis (the user's decisions 1A–6A of 7 XI 2026) -----------
+
+  // A broken promise to a minority club (P, decision 1A).
+  const MINORITY_BREACH_TENSION = 40;
+  // The stance of a reform of a ministry card on the scales −2..+2 of the party profiles (8.6), the approved table of 7 XI 2026 (P).
+  // A reform in the middle of a scale (0) angers nobody; a partner two steps away has +20 tension, three or more +40.
+  const REFORM_STANCES = Object.freeze({
+    'labor_rights.inspection': {topic: 'fiscal', position: 1}, 'social_welfare.expand': {topic: 'fiscal', position: 1},
+    'social_welfare.insurance': {topic: 'fiscal', position: 2}, 'social_welfare.limit': {topic: 'fiscal', position: -2},
+    'industrial_policy.public_control': {topic: 'fiscal', position: 2}, 'economic_democracy.works_councils': {topic: 'fiscal', position: 1},
+    'economic_democracy.socialise_mining': {topic: 'fiscal', position: 2}, 'finance_package.progressive': {topic: 'fiscal', position: 2},
+    'finance_package.indirect': {topic: 'fiscal', position: -1}, 'currency_stabilisation.rapid_cuts': {topic: 'fiscal', position: -1},
+    'currency_stabilisation.protected': {topic: 'fiscal', position: 1}, 'land_program.accelerated': {topic: 'land', position: 1},
+    'education_program.secular': {topic: 'church', position: 1}, 'minority_school_rights.own_language': {topic: 'autonomy', position: 1},
+    'minority_school_rights.polish_dominance': {topic: 'autonomy', position: -2}, 'internal_security.limited_autonomy': {topic: 'autonomy', position: 1},
+    'military_policy.civilian_oversight': {topic: 'army', position: 2}, 'justice_policy.broad_safeguards': {topic: 'institution', position: 2},
+  });
+  const OBJECTION_STEP = 20, OBJECTION_MAX = 40;
+  // The crisis card: giving way stops the disputed reform (−40, the faction +10), talks cost 2 R (−20, once in a crisis); leaving
+  // the coalition pleases the faction that dislikes the concessions (−10).
+  const CRISIS_STOP_TENSION = 40, CRISIS_PERSUADE_TENSION = 20, CRISIS_PERSUADE_COST = 2, CRISIS_FACTION = 10;
+  const RIGHT_OF_PPS = Object.freeze(['psl_piast', 'npr', 'pschd', 'zln']);
+  const LEFT_CONFIGURATIONS = Object.freeze(['left_minority', 'left_labour', 'united_left', 'workers_front']);
+  const PARTY_WORDS = Object.freeze({psl_wyzwolenie: ['PSL Wyzwolenie', 'PSL „Wyzwolenie”'], psl_piast: ['PSL Piast', 'PSL „Piast”'],
+    npr: ['the National Workers’ Party', 'Narodowa Partia Robotnicza'], pschd: ['the Christian Democrats', 'chadecja'],
+    zln: ['the National Democrats', 'endecja'], kpp: ['the communists', 'komuniści'], jewish_rep: ['the Jewish representation', 'reprezentacja żydowska'],
+    other_minorities_rep: ['the other national minorities', 'pozostałe mniejszości']});
+  const partyWords = id => PARTY_WORDS[id] ? L(PARTY_WORDS[id][0], PARTY_WORDS[id][1]) : describeParty(id);
+  const capitalise1 = text => text.charAt(0).toUpperCase() + text.slice(1);
+
+  function stanceOf(party, topic) {
+    if (topic === 'church') return BILL_CHURCH_IDEALS[party] !== undefined ? BILL_CHURCH_IDEALS[party] : 0;
+    const ideals = (ACTOR_PROFILES[party] || {}).ideals || {};
+    return ideals[topic] !== undefined ? ideals[topic] : 0;
+  }
+
+  // The faction of PPS that dislikes concessions in this cabinet: the Centre in a coalition of the left, otherwise the Left.
+  function concessionFaction(S) {
+    return S.cabinet && LEFT_CONFIGURATIONS.indexOf(S.cabinet.configuration_id) >= 0 ? 'centrum' : 'lewica';
+  }
+
+  function concessionFactionName(S) {
+    return concessionFaction(S) === 'centrum' ? L('the Centre of PPS', 'Centrum PPS') : L('the Left of PPS', 'Lewica PPS');
+  }
+
+  // The partners of the sitting cabinet a reform of PPS would anger, with the rise of tension; only while PPS sits in the cabinet.
+  function reformObjections(Q, key) {
+    const S = Q.S, stance = REFORM_STANCES[key], cabinet = S && S.cabinet;
+    if (!stance || !stance.position || !cabinet || cabinet.status !== 'active' || cabinet.partner_ids.indexOf('pps') < 0) return [];
+    const partners = cabinet.partner_ids.concat(cabinet.supporter_ids).filter((id, i, all) => id !== 'pps' && ACTOR_PROFILES[id] && all.indexOf(id) === i);
+    return partners.map(id => {
+      const distance = Math.abs(stance.position - stanceOf(id, stance.topic));
+      return {party: id, delta: distance >= 3 ? OBJECTION_MAX : distance === 2 ? OBJECTION_STEP : 0};
+    }).filter(o => o.delta > 0).sort((a, b) => b.delta - a.delta || compareId(a.party, b.party));
+  }
+
+  // The agreement of the sitting cabinet that holds a party (one with PPS first).
+  function partnerAgreement(S, party) {
+    const list = (S.cabinet ? S.cabinet.agreement_ids : []).map(id => S.agreements[id])
+      .filter(a => a && (a.status === 'active' || a.status === 'breached') && a.parties.indexOf(party) >= 0);
+    return list.filter(a => a.parties.indexOf('pps') >= 0)[0] || list[0] || null;
+  }
+
+  // A reform of PPS has started: each partner that rejects it raises the tension of its agreement at once. `target` names what a
+  // concession in the crisis can stop: {kind: 'project'|'policy', id, name: [en, pl]}.
+  function applyReformObjections(Q, key, target) {
+    const S = Q.S, t = Q.time, applied = [];
+    for (const o of reformObjections(Q, key)) {
+      const agreement = partnerAgreement(S, o.party);
+      if (!agreement) continue;
+      const before = agreement.tension;
+      agreement.tension = clip(agreement.tension + o.delta, 0, 100);
+      agreement.history.push({t: t, kind: 'reform_objection', by: o.party, key: key, delta: agreement.tension - before, tension: agreement.tension,
+        target: target || null});
+      applied.push({party: o.party, agreement_id: agreement.id, delta: agreement.tension - before});
+    }
+    if (applied.length) S.history.reasons.push({t: t, kind: 'reform_objections', key: key, objections: applied});
+    writeGovernmentMirrors(Q);
+    return applied;
+  }
+
+  // The sentence a card adds to an option that some partners of this cabinet reject.
+  function reformObjectionText(Q, key) {
+    const list = reformObjections(Q, key);
+    if (!list.length) return '';
+    if (list.length === 1) {
+      return L('In this cabinet ' + partyWords(list[0].party) + ' will object, so the tension in the coalition will rise (+' + list[0].delta + ').',
+        'W tym rządzie sprzeciwi się temu ' + partyWords(list[0].party) + ', więc napięcie w koalicji wzrośnie (+' + list[0].delta + ').');
+    }
+    const names = list.map(o => partyWords(o.party) + ' (+' + o.delta + ')');
+    const joined = names.slice(0, -1).join(', ') + L(' and ', ' i ') + names[names.length - 1];
+    return L('In this cabinet ' + joined + ' will object; the tension in the coalition will rise.',
+      'W tym rządzie sprzeciwią się temu ' + joined + '; napięcie w koalicji wzrośnie.');
+  }
+
+  // The partner that the reforms or a broken minority promise angered last and that still sits in or supports the cabinet.
+  function objectingPartner(S, agreement) {
+    const cabinet = S.cabinet;
+    if (!cabinet || agreement.cabinet_id !== cabinet.id) return null;
+    const sides = cabinet.partner_ids.concat(cabinet.supporter_ids);
+    for (let i = agreement.history.length - 1; i >= 0; i--) {
+      const h = agreement.history[i];
+      const by = h.kind === 'reform_objection' ? h.by : h.kind === 'red_line_breach' ? agreement.parties.filter(p => p !== 'pps')[0] : null;
+      if (by && by !== 'pps' && sides.indexOf(by) >= 0) return by;
+    }
+    return null;
+  }
+
+  // A crisis of an agreement of the cabinet PPS sits in is answered on the crisis card, not on the answer card of 9.8.
+  function crisisAgreement(S, agreement) {
+    return !!S.cabinet && agreement.cabinet_id === S.cabinet.id && S.cabinet.status === 'active' && S.cabinet.partner_ids.indexOf('pps') >= 0;
+  }
+
+  // The open coalition crisis of the cabinet PPS sits in: the agreement, the partner and the kind (reforms or a promise).
+  function crisisCase(Q) {
+    const S = Q.S;
+    if (!S || !S.chapter || S.chapter.status === 'ended' || !S.cabinet || !crisisAgreement(S, {cabinet_id: S.cabinet.id})) return null;
+    for (const id of S.cabinet.agreement_ids) {
+      const agreement = S.agreements[id];
+      if (!agreement || (agreement.status !== 'active' && agreement.status !== 'breached')) continue;
+      const u = agreement.ultimatum;
+      if (u && u.status === 'open') return {agreement: agreement, partner: u.by, kind: u.kind || 'promise', ultimatum: u};
+    }
+    return null;
+  }
+
+  // What the concession in a crisis over reforms would stop: the last disputed reform of this partner that still runs.
+  function crisisTarget(Q, c) {
+    const proj = globalThis.PolishProjects;
+    for (let i = c.agreement.history.length - 1; i >= 0; i--) {
+      const h = c.agreement.history[i];
+      if (h.kind !== 'reform_objection' || h.by !== c.partner || !h.target) continue;
+      return proj && proj.stoppable(Q, h.target) ? h.target : null;
+    }
+    return null;
+  }
+
+  function crisisStatus(Q, option) {
+    const S = Q.S, c = crisisCase(Q);
+    if (!c) return {available: false, reason: L('There is no coalition crisis.', 'Nie ma kryzysu koalicyjnego.')};
+    if (option === 'stop') {
+      if (c.kind !== 'tension') return {available: false, reason: L('The partner waits for a promise, not for a concession.', 'Partner czeka na obietnicę, a nie na ustępstwo.')};
+      return crisisTarget(Q, c) ? {available: true, reason: ''} : {available: false, reason: L('The disputed reform can no longer be stopped.', 'Spornej reformy nie da się już wstrzymać.')};
+    }
+    if (option === 'persuade') {
+      if (c.ultimatum.persuaded) return {available: false, reason: L('We have already talked in this crisis.', 'W tym kryzysie już rozmawialiśmy.')};
+      if ((S.party_orgs.cash || 0) < CRISIS_PERSUADE_COST) return {available: false, reason: L('Needs 2 resources.', 'Wymaga 2 jednostek środków.')};
+      return {available: true, reason: ''};
+    }
+    if (option === 'break' || option === 'let_go') return {available: true, reason: ''};
+    return {available: false, reason: L('Unknown option.', 'Nieznana opcja.')};
+  }
+
+  function lowerCrisisTension(Q, c, value, reason) {
+    const before = c.agreement.tension;
+    c.agreement.tension = Math.max(0, c.agreement.tension - value);
+    c.agreement.history.push({t: Q.time, kind: 'tension', delta: c.agreement.tension - before, tension: c.agreement.tension, reason: reason});
+    if (c.agreement.tension < TENSION_ULTIMATUM && c.kind === 'tension') closeUltimatum(c.agreement, 'lifted', Q.time);
+  }
+
+  // The answer to the crisis costs no month (an urgent card); each option is final for this crisis but the talks.
+  function crisisChoose(Q, option) {
+    const S = Q.S, t = Q.time, status = crisisStatus(Q, option);
+    if (!status.available) throw new Error('crisisChoose: ' + option + ': ' + status.reason);
+    const c = crisisCase(Q), cause = {id: 'coalition_crisis:' + c.ultimatum.id + ':' + option, kind: 'coalition_crisis', reverse: null};
+    S.history.actions.push({t: t, action_id: 'coalition_crisis.' + option, cost_t: 0});
+    const out = {option: option, partner: c.partner};
+    if (option === 'stop') {
+      const target = crisisTarget(Q, c);
+      globalThis.PolishProjects.stopTarget(Q, target, 'coalition_crisis');
+      lowerCrisisTension(Q, c, CRISIS_STOP_TENSION, 'coalition_crisis_stop');
+      factionReaction(Q, RIGHT_OF_PPS.indexOf(c.partner) >= 0 ? 'lewica' : 'centrum', {dissent: CRISIS_FACTION}, cause);
+      out.target = target;
+    } else if (option === 'persuade') {
+      S.party_orgs.cash = Math.max(0, S.party_orgs.cash - CRISIS_PERSUADE_COST);
+      c.ultimatum.persuaded = true;
+      lowerCrisisTension(Q, c, CRISIS_PERSUADE_TENSION, 'coalition_crisis_talks');
+    } else if (option === 'break') {
+      closeUltimatum(c.agreement, 'void', t);
+      breakCoalition(Q, 'coalition_crisis');
+    } else if (option === 'let_go') {
+      closeUltimatum(c.agreement, 'executed', t);
+      withdrawAgreement(Q, c.agreement, c.partner, 'coalition_crisis');
+    }
+    S.history.reasons.push({t: t, kind: 'coalition_crisis_answer', option: option, partner: c.partner, agreement_id: c.agreement.id});
+    writeGovernmentMirrors(Q);
+    out.fell = !!S.cabinet && S.cabinet.status !== 'active';
+    return out;
+  }
+
+  // PPS leaves the coalition itself: the faction that dislikes the concessions is glad (−10 dissent).
+  function breakCoalition(Q, reason) {
+    const S = Q.S, faction = concessionFaction(S);
+    factionReaction(Q, faction, {dissent: -CRISIS_FACTION}, {id: 'break_coalition:' + S.cabinet.id, kind: 'break_coalition', reverse: null});
+    withdrawReactions(Q, S.cabinet.id, 'crisis');
+    const left = leaveCabinet(Q, 'pps', reason || 'withdraw');
+    writeGovernmentMirrors(Q);
+    return left;
+  }
+
+  // The words of the crisis card: the partner in the forms the sentences need, what it rejects, the seats without it.
+  const PARTY_FORMS_PL = Object.freeze({psl_wyzwolenie: {acc: 'PSL „Wyzwolenie”', dat: 'PSL „Wyzwolenie”'},
+    psl_piast: {acc: 'PSL „Piast”', dat: 'PSL „Piast”'}, npr: {acc: 'Narodową Partię Robotniczą', dat: 'Narodowej Partii Robotniczej'},
+    pschd: {acc: 'chadecję', dat: 'chadecji'}, zln: {acc: 'endecję', dat: 'endecji'}, kpp: {acc: 'komunistów', dat: 'komunistom'},
+    jewish_rep: {acc: 'reprezentację żydowską', dat: 'reprezentacji żydowskiej'},
+    other_minorities_rep: {acc: 'pozostałe mniejszości', dat: 'pozostałym mniejszościom'}});
+  const partyForm = (id, form) => L(PARTY_WORDS[id] ? PARTY_WORDS[id][0] : describeParty(id), (PARTY_FORMS_PL[id] || {})[form] || partyWords(id));
+  const FACTION_DISPLEASED = Object.freeze({lewica: ['the Left of PPS is displeased', 'Lewica PPS jest niezadowolona'],
+    centrum: ['the Centre of PPS is displeased', 'Centrum PPS jest niezadowolone']});
+  const FACTION_PLEASED = Object.freeze({lewica: ['the Left of PPS is glad', 'Lewica PPS jest zadowolona'],
+    centrum: ['the Centre of PPS is glad', 'Centrum PPS jest zadowolone']});
+
+  function crisisView(Q) {
+    const S = Q.S, c = crisisCase(Q);
+    if (!c) return null;
+    const who = capitalise1(partyWords(c.partner));
+    const supporter = S.cabinet.partner_ids.indexOf(c.partner) < 0;
+    const reasons = [];
+    for (const h of c.agreement.history) {
+      if (h.kind !== 'reform_objection' || h.by !== c.partner || !h.target) continue;
+      const name = L(h.target.name[0], h.target.name[1]);
+      if (reasons.indexOf(name) < 0) reasons.push(name);
+    }
+    const leave = supporter ? L('to end its support for the cabinet', 'wycofaniem poparcia dla rządu') : L('to leave the cabinet', 'wyjściem z rządu');
+    const what = c.kind === 'promise' ? L(who + ' threatens ' + leave + ' because our promise to it is overdue.',
+      who + ' grozi ' + leave + ', bo minął termin naszej obietnicy.') :
+      L(who + ' threatens ' + leave + ' because it rejects ' + (reasons.length ? reasons.join(', ') : 'our reforms') + '.',
+        who + ' grozi ' + leave + ', bo nie zgadza się na ' + (reasons.length ? reasons.join(', ') : 'nasze reformy') + '.');
+    const total = S.parliament.clubs.reduce((n, club) => n + club.seats, 0);
+    const seatsWithout = (S.cabinet.support_seats || 0) - seatsOf(S, c.partner);
+    const seats = L('Without this partner the cabinet would have ' + seatsWithout + ' of ' + total + ' MPs and would ' +
+      (seatsWithout < majorityRequired(S) ? 'lose its majority.' : 'keep its majority.'),
+      'Bez tego partnera rząd miałby ' + seatsWithout + ' posłów na ' + total + ' i ' + (seatsWithout < majorityRequired(S) ? 'straciłby większość.' : 'zachowałby większość.'));
+    const target = c.kind === 'tension' ? crisisTarget(Q, c) : null;
+    const stopFaction = RIGHT_OF_PPS.indexOf(c.partner) >= 0 ? 'lewica' : 'centrum', breakFaction = concessionFaction(S);
+    return {text: what + ' ' + seats, kind: c.kind, tension: Math.round(c.agreement.tension),
+      due: L(rules.monthYear(c.ultimatum.due_at), rules.monthYear(c.ultimatum.due_at, 'gen')),
+      target: target ? L(target.name[0], target.name[1]) : L('the disputed reform', 'sporną reformę'),
+      partner_acc: partyForm(c.partner, 'acc'), partner_dat: partyForm(c.partner, 'dat'),
+      stop_cost: L(FACTION_DISPLEASED[stopFaction][0], FACTION_DISPLEASED[stopFaction][1]),
+      break_gain: L(FACTION_PLEASED[breakFaction][0], FACTION_PLEASED[breakFaction][1])};
+  }
+
+  // The result of an answer in words.
+  function crisisResult(Q, out) {
+    const S = Q.S, who = capitalise1(partyWords(out.partner));
+    const agreement = partnerAgreement(S, out.partner);
+    const tension = agreement ? Math.round(agreement.tension) : 0;
+    const still = agreement && agreement.ultimatum && agreement.ultimatum.status === 'open';
+    const fell = out.fell ? L(' The cabinet has fallen; a new cabinet is being formed, and PPS can propose another coalition.',
+      ' Rząd upadł; trwa tworzenie nowego rządu, a PPS może zaproponować inną koalicję.') : '';
+    if (out.option === 'stop') return L(capitalise1(out.target.name[0]) + ' stops. The tension with ' + partyWords(out.partner) + ' is now ' + tension + ' of 100.',
+      capitalise1(out.target.name[1]) + ' — wstrzymane. Napięcie w umowie z partnerem wynosi teraz ' + tension + ' na 100.');
+    if (out.option === 'persuade') return L('The talks calm the partner: the tension is now ' + tension + ' of 100.', 'Rozmowy uspokajają partnera: napięcie wynosi teraz ' + tension + ' na 100.') +
+      (still ? L(' It is not enough: the crisis goes on.', ' To jeszcze za mało: kryzys trwa.') : '');
+    if (out.option === 'break') return L('Our ministers leave the cabinet, and PPS goes into opposition.', 'Nasi ministrowie odchodzą z rządu, a PPS przechodzi do opozycji.') + fell;
+    return L(who + ' leaves the cabinet.', who + ' odchodzi z rządu.') + fell;
   }
 
   // ---- Leaving a cabinet, dismissal and fall (9.4, 7.1) ----------------------------------------------
@@ -3361,8 +3650,12 @@
     return relationCardDue(Q, 'supporter');
   }
 
+  // Z — Koalicja (the card „Spory w koalicji”, approved on 7 XI 2026; like „Coalition Affairs” of the original): it comes only when a
+  // partner of the cabinet feels tension, or the cabinet acted against PPS, or a dispute about the army waits for a compromise.
   function coalitionCardAvailable(Q) {
-    return relationCardDue(Q, 'member');
+    if (!relationCardDue(Q, 'member')) return false;
+    return !!supportProvocation(Q) || cabinetAgreementsUnderTension(Q.S).length > 0 ||
+      (militaryCaseOpen(Q) && Q.S.cabinet.portfolios.reichswehr !== 'pps');
   }
 
   // Z — 0.64 (decision 1A, P; modelled on the "Coalition Affairs" card of the original): PPS gives way to its coalition
@@ -3371,9 +3664,10 @@
   const CONCESSION_TENSION = 20;
   const CONCESSION_LEFT_DISSENT = 5;
 
+  // Z — Koalicja: every agreement of the sitting cabinet (also of a cabinet another party leads, and of the clubs that support it).
   function cabinetAgreementsUnderTension(S) {
     return (S.cabinet ? S.cabinet.agreement_ids : []).map(id => S.agreements[id])
-      .filter(a => a && a.kind === 'cabinet' && a.parties.indexOf('pps') >= 0 && (a.status === 'active' || a.status === 'breached') && a.tension > 0);
+      .filter(a => a && (a.status === 'active' || a.status === 'breached') && a.tension > 0);
   }
 
   function concessionStatus(Q) {
@@ -3397,19 +3691,85 @@
       agreement.history.push({t: Q.time, kind: 'tension', delta: agreement.tension - before, tension: agreement.tension, reason: 'coalition_concession'});
     }
     const causeId = 'coalition_concession:' + S.cabinet.id + ':t' + Q.time;
-    factionReaction(Q, 'lewica', {dissent: CONCESSION_LEFT_DISSENT}, {id: causeId, kind: 'coalition_concession', reverse: null});
+    // Z — Koalicja (decision 6A with the user's note): the Left of PPS dislikes giving way to the centre and the right, the Centre
+    // of PPS giving way in a coalition of the left.
+    factionReaction(Q, concessionFaction(S), {dissent: CONCESSION_LEFT_DISSENT}, {id: causeId, kind: 'coalition_concession', reverse: null});
     S.history.reasons.push({t: Q.time, kind: 'coalition_concession', cabinet_id: S.cabinet.id, agreements: agreements.map(a => a.id)});
     return {agreements: agreements.map(a => ({id: a.id, partner: a.parties.filter(p => p !== 'pps')[0], tension: a.tension}))};
   }
 
   // The coalition partners and the tension of their agreements, for the coalition card.
+  // Z — Koalicja: the tension of each partner of the cabinet, with the reforms it rejects, and the promises to the minority clubs with
+  // their state — the one place where the player sees the agreements.
   function coalitionTensionText(Q) {
+    const S = Q.S, t = Q.time;
+    const parts = [];
+    const seen = [];
+    for (const id of S.cabinet ? S.cabinet.agreement_ids : []) {
+      const a = S.agreements[id];
+      if (!a || (a.status !== 'active' && a.status !== 'breached')) continue;
+      for (const party of a.parties.filter(p => p !== 'pps' && ACTOR_PROFILES[p] && seen.indexOf(p) < 0)) {
+        if (S.cabinet.partner_ids.indexOf(party) < 0 && S.cabinet.supporter_ids.indexOf(party) < 0) continue;
+        seen.push(party);
+        const reasons = [];
+        for (const h of a.history) {
+          if (h.kind === 'reform_objection' && h.by === party && h.target) {
+            const name = L(h.target.name[0], h.target.name[1]);
+            if (reasons.indexOf(name) < 0) reasons.push(name);
+          }
+        }
+        parts.push(capitalise1(partyWords(party)) + ' ' + Math.round(a.tension) + (reasons.length ? ' (' + reasons.join(', ') + ')' : ''));
+      }
+    }
+    let text = parts.length ? L('Tension in the coalition: ', 'Napięcie w koalicji: ') + parts.join(', ') +
+      L('; at 60 a partner threatens to leave the cabinet.', '; przy 60 partner grozi wyjściem z rządu.') : '';
+    const promises = [];
+    for (const id of S.cabinet ? S.cabinet.agreement_ids : []) {
+      const a = S.agreements[id];
+      if (!a || (a.status !== 'active' && a.status !== 'breached')) continue;
+      const club = a.parties.filter(p => SEGMENTS.indexOf(p) >= 0)[0];
+      if (!club) continue;
+      for (const o of a.obligations) {
+        if (o.topic === 'legal_equality') {
+          promises.push(L(CLUB_TO[club][0] + ': equality before the law — ' + (o.status === 'breached' ? 'broken' : 'kept'),
+            CLUB_TO[club][1] + ': równość wobec prawa — ' + (o.status === 'breached' ? 'złamana' : 'dotrzymana')));
+        } else if (o.due_at !== null && o.due_at !== undefined) {
+          const what = o.topic === 'territorial_autonomy' ? L('self-government in the east', 'samorząd na wschodzie') :
+            L('schools in their own language or bilingual ones', 'szkoły w ich języku albo dwujęzyczne');
+          const state = o.status === 'fulfilled' ? L('kept', 'spełniona') : o.due_at < t ? L('overdue', 'po terminie') : L('under way', 'w toku');
+          promises.push(L(CLUB_TO[club][0] + ': ' + what + ' by the start of ' + rules.monthYear(o.due_at) + ' — ' + state,
+            CLUB_TO[club][1] + ': ' + what + ' do początku ' + rules.monthYear(o.due_at, 'gen') + ' — ' + state));
+        }
+      }
+    }
+    if (promises.length) text += (text ? ' ' : '') + L('Our promises: ', 'Nasze obietnice: ') + promises.join('; ') + '.';
+    return text;
+  }
+
+  // Z — Koalicja: talks with all the partners for 2 R lower the tension of each agreement by 10 (an ordinary use of the card).
+  const COALITION_TALKS_COST = 2, COALITION_TALKS_TENSION = 10;
+  function talksStatus(Q) {
     const S = Q.S;
-    const lines = (S.cabinet ? S.cabinet.agreement_ids : []).map(id => S.agreements[id])
-      .filter(a => a && a.kind === 'cabinet' && a.parties.indexOf('pps') >= 0 && (a.status === 'active' || a.status === 'breached'))
-      .map(a => describeParty(a.parties.filter(p => p !== 'pps')[0]) + ' ' + Math.round(a.tension));
-    return lines.length ? L('Tension in our agreements (a warning at 40, an ultimatum at 60): ', 'Napięcie w naszych umowach (ostrzeżenie przy 40, ultimatum przy 60): ') +
-      lines.join(', ') + '.' : '';
+    if (ppsStance(S) !== 'member') return {available: false, reason: L('PPS is not in the cabinet.', 'PPS nie jest w gabinecie.')};
+    if ((Q.month_actions || 0) >= 1) return {available: false, reason: L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.')};
+    if (!cabinetAgreementsUnderTension(S).length) return {available: false, reason: L('There is no tension in our coalition.', 'W naszej koalicji nie ma napięcia.')};
+    if ((S.party_orgs.cash || 0) < COALITION_TALKS_COST) return {available: false, reason: L('Needs 2 resources.', 'Wymaga 2 jednostek środków.')};
+    return {available: true, reason: ''};
+  }
+
+  function coalitionTalks(Q) {
+    const S = Q.S, status = talksStatus(Q);
+    if (!status.available) throw new Error('coalitionTalks: ' + status.reason);
+    const agreements = cabinetAgreementsUnderTension(S);
+    commitSupport(Q, 'ordinary', 'talks');
+    S.party_orgs.cash = Math.max(0, S.party_orgs.cash - COALITION_TALKS_COST);
+    for (const agreement of agreements) {
+      const before = agreement.tension;
+      agreement.tension = Math.max(0, agreement.tension - COALITION_TALKS_TENSION);
+      agreement.history.push({t: Q.time, kind: 'tension', delta: agreement.tension - before, tension: agreement.tension, reason: 'coalition_talks'});
+    }
+    S.history.reasons.push({t: Q.time, kind: 'coalition_talks', cabinet_id: S.cabinet.id, agreements: agreements.map(a => a.id)});
+    return {agreements: agreements.map(a => a.id)};
   }
 
   function supportReviewDue(Q) {
@@ -3585,21 +3945,15 @@
     if (accepted) {
       cabinet.programme = offer.programme;
       cabinet.accepted_postulates.push(postulateId);
-      // The promise has its date from the acceptance (9.1; decision 3 of stage 4). When the agreed
-      // programme already promises it, that promise keeps its earlier date; the fiscal rule follows the
-      // new programme.
-      for (const id of ppsAgreements(S)) {
-        const agreement = S.agreements[id];
-        for (const o of agreement.obligations) if (o.kind === 'constraint' && o.topic === 'fiscal') o.position = offer.programme.fiscal;
-        const existing = findObligation(agreement, id + ':' + postulate.id);
-        if (existing) {
-          if (existing.beneficiaries.indexOf('pps') < 0) existing.beneficiaries.push('pps');
-          continue;
-        }
-        addObligation(Q, id, {id: postulate.id, topic: postulate.id, weight: postulate.weight, months: postulate.months,
-          required_project: postulate.required_project, required_variants: postulate.required_variants,
-          required_stage: postulate.required_stage, portfolio: postulate.portfolio, beneficiaries: ['pps'],
-          required_military: postulate.required_military});
+      // Z — Koalicja (2A): an accepted demand enters the plan of the cabinet with its date from the acceptance; the minister of
+      // its portfolio carries it out, but a late demand is no broken promise. A point the plan already has keeps its earlier date.
+      cabinet.plan = cabinet.plan || [];
+      if (!cabinet.plan.some(o => o.topic === postulate.id && o.status !== 'void')) {
+        const item = planItem(cabinet.id, postulate.id, {weight: postulate.weight, due_at: t + postulate.months, beneficiaries: ['pps'],
+          required_project: postulate.required_project || null, required_variants: postulate.required_variants ? postulate.required_variants.slice() : null,
+          required_stage: postulate.required_stage || null, portfolio: postulate.portfolio || null});
+        if (postulate.required_military) item.required_military = postulate.required_military;
+        cabinet.plan.push(item);
       }
       if (kind === 'bargain') {
         for (const e of evaluations) if (S.actors.relations[e.actor] !== undefined) changeRelation(Q, e.actor, FORCED_CONCESSION_RELATION, 'forced_concession:' + negotiationId);
@@ -3639,6 +3993,10 @@
     const status = supportOptionStatus(Q, 'withdraw', mode);
     if (!status.available) throw new Error('withdrawSupport: ' + status.reason);
     commitSupport(Q, mode, 'withdraw');
+    // Z — Koalicja: breaking a coalition pleases the faction of PPS that dislikes its concessions (−10 dissent).
+    if (ppsStance(Q.S) === 'member') {
+      factionReaction(Q, concessionFaction(Q.S), {dissent: -CRISIS_FACTION}, {id: 'break_coalition:' + Q.S.cabinet.id, kind: 'break_coalition', reverse: null});
+    }
     withdrawReactions(Q, Q.S.cabinet.id, mode);
     const left = leaveCabinet(Q, 'pps', 'withdraw');
     writeGovernmentMirrors(Q);
@@ -3663,6 +4021,7 @@
 
   // 9.3: one standard extension by 3 months, when the relation is at least 50, half of the weighted
   // obligations are met, none was extended before, no red line is open and the partner accepts.
+  // Z — Koalicja (the user's note of 7 XI 2026): the coalition crisis card has no extension; it stays on the answer card of 9.8.
   function extensionTarget(Q) {
     const S = Q.S, open = responseCase(Q);
     if (!open || !open.agreement_id) return null;
@@ -3825,13 +4184,23 @@
     return (S.parliament.alliances || []).filter(a => a.election_id === electionId && a.status === 'accepted');
   }
 
-  // Fulfilled obligations shared by PPS and one of the partners, each with its own ID (6.5).
+  // Fulfilled obligations shared by PPS and one of the partners, each with its own ID (6.5). Z — Koalicja: also the fulfilled points
+  // of the plan of a cabinet in which PPS sat with the partner, once for each partner of that cabinet (as one promise of each
+  // partner's agreement counted before).
   function fulfilledJointObligations(S, partners) {
     const ids = [];
     for (const id of Object.keys(S.agreements)) {
       const agreement = S.agreements[id];
       if (agreement.parties.indexOf('pps') < 0 || !partners.some(p => agreement.parties.indexOf(p) >= 0)) continue;
       for (const o of agreement.obligations) if (o.status === 'fulfilled' && ids.indexOf(o.id) < 0) ids.push(o.id);
+    }
+    for (const cabinet of S.history.cabinets.concat(S.cabinet ? [S.cabinet] : [])) {
+      const sides = (cabinet.partner_ids || []).concat(cabinet.supporter_ids || []);
+      if (sides.indexOf('pps') < 0) continue;
+      for (const o of cabinet.plan || []) {
+        if (o.status !== 'fulfilled') continue;
+        for (const partner of partners) if (sides.indexOf(partner) >= 0 && ids.indexOf(o.id + ':' + partner) < 0) ids.push(o.id + ':' + partner);
+      }
     }
     return ids.length;
   }
@@ -4174,6 +4543,9 @@
       '. Partner może mimo to odmówić.');
   }
 
+  // Z — Koalicja: the coalition crisis is an urgent card of the Government deck; unanswered, the partner leaves at its date.
+  rules.registerUrgentCard('polish_coalition_crisis', {active: Q => !!crisisCase(Q), deck: () => 'main.govt'});
+  rules.registerCardDeadline('polish_coalition_crisis', Q => { const c = Q.S ? crisisCase(Q) : null; return c ? c.ultimatum.due_at - 1 : null; });
   rules.registerUrgentCard('polish_government_response', {active: Q => !!responseCase(Q),
     deck: Q => ppsStance(Q.S) === 'member' ? 'main.govt' : 'main.parliament'});
   rules.registerCardDeadline('polish_government_response', responseDeadline);
@@ -4286,6 +4658,21 @@
     CANDIDATE_ORDER: CANDIDATE_ORDER,
     EXPERTS: EXPERTS,
     MINORITY_TERMS: MINORITY_TERMS,
+    REFORM_STANCES: REFORM_STANCES,
+    reformObjections: reformObjections,
+    reformObjectionText: reformObjectionText,
+    applyReformObjections: applyReformObjections,
+    crisisCase: crisisCase,
+    crisisStatus: crisisStatus,
+    crisisChoose: crisisChoose,
+    crisisView: crisisView,
+    crisisResult: crisisResult,
+    talksStatus: talksStatus,
+    coalitionTalks: coalitionTalks,
+    breakCoalition: breakCoalition,
+    concessionFaction: concessionFaction,
+    concessionFactionName: concessionFactionName,
+    partyWords: partyWords,
     inWindow: inWindow,
     crisisState: crisisState,
     candidateStatus: candidateStatus,

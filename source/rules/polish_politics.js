@@ -228,6 +228,15 @@
         if (o.status === 'breached' && o.breached_at !== undefined && o.breached_at !== null) addLogEntry(S, 'breach', o.id, o.breached_at);
       }
     }
+    // Z — Koalicja: a point of a cabinet's plan carried out late is still a broken commitment of the coalition for the authority of
+    // the Sejm (15.2) — once for each agreement of that cabinet, as when the point was a promise of each agreement — though it
+    // costs PPS nothing.
+    for (const cabinet of S.history.cabinets.concat(S.cabinet ? [S.cabinet] : [])) {
+      for (const o of cabinet.plan || []) {
+        if (o.overdue_at === undefined || o.overdue_at === null) continue;
+        for (const id of cabinet.agreement_ids || []) addLogEntry(S, 'breach', id + ':plan:' + o.topic, o.overdue_at);
+      }
+    }
     if (!S.cabinet || S.cabinet.status !== 'active') addLogEntry(S, 'gap', 't' + t, t);
   }
 
@@ -1139,6 +1148,12 @@
         P.civil_rewarded.push(o.id);
         found = true;
       }
+    }
+    // Z — Koalicja: a point of the cabinet's plan carried out in this period counts like a fulfilled civil obligation.
+    for (const o of (S.cabinet && S.cabinet.plan) || []) {
+      if (o.status !== 'fulfilled' || o.fulfilled_at !== t || P.civil_rewarded.indexOf(o.id) >= 0) continue;
+      P.civil_rewarded.push(o.id);
+      found = true;
     }
     return found ? 1 : 0;
   }

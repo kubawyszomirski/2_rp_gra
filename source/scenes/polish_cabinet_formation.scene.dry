@@ -653,11 +653,15 @@ Q.pl_form_terms_open = view.stabilisation_open ? 1 : 0;
 Q.pl_form_terms_protections_why = PolishGovernment.stabilisationTermsStatus('protections', Q).reason;
 // One block per club, all in one paragraph, so that no empty paragraphs are left when there are fewer clubs.
 Q.pl_form_partners = view.partner_lines.join('');
+// Z — Koalicja: only the minority concessions are promises.
+Q.pl_form_promises = view.promises;
 !}
 
 = The summary of our offer
 
 **Our offer:** [+ pl_form_recap +]
+
+[? if pl_form_promises : **What we promise.** [+ pl_form_promises +] ?]
 
 [? if not pl_form_is_opposition : **What follows from it — the clubs.** Each club agrees at 60 points or more; click a club for the parts of its score. [+ pl_form_partners +] ?]
 

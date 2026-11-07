@@ -1,0 +1,76 @@
+title: Coalition Crisis
+subtitle: A partner threatens to leave the cabinet; one answer, without the month's action.
+new-page: true
+is-card: true
+view-if: {! return !!Q.S && !!PolishGovernment.crisisCase(Q) !}
+on-arrival: {!
+// Card government.coalition_crisis (Z — Koalicja, the user's decisions 4A–5A of 7 XI 2026; modelled on the vote of no confidence of
+// the German original): at a tension of 60 a partner of the cabinet PPS sits in threatens to leave. An urgent card of the
+// Government deck; one answer costs no month, and without an answer the partner leaves at the date the card names.
+var view = PolishGovernment.crisisView(Q);
+Q.pl_cc_text = view ? view.text : '';
+Q.pl_cc_due = view ? view.due : '';
+Q.pl_cc_kind = view ? view.kind : '';
+Q.pl_cc_target = view ? view.target : '';
+Q.pl_cc_acc = view ? view.partner_acc : '';
+Q.pl_cc_dat = view ? view.partner_dat : '';
+Q.pl_cc_stop_cost = view ? view.stop_cost : '';
+Q.pl_cc_break_gain = view ? view.break_gain : '';
+Q.pl_cc_stop_why = PolishGovernment.crisisStatus(Q, 'stop').reason;
+Q.pl_cc_persuade_why = PolishGovernment.crisisStatus(Q, 'persuade').reason;
+!}
+
+= Coalition crisis
+
+[+ pl_cc_text +] Without our answer it leaves at the start of [+ pl_cc_due +].
+
+- @stop
+- @persuade
+- @break
+- @let_go
+
+@stop
+title: Stop [+ pl_cc_target +]
+subtitle: The reform stops and costs the budget nothing more. The partner calms down (−40), but [+ pl_cc_stop_cost +] (+10).
+view-if: pl_cc_kind = "tension"
+choose-if: {! return PolishGovernment.crisisStatus(Q, 'stop').available !}
+unavailable-subtitle: [+ pl_cc_stop_why +]
+on-arrival: {!
+Q.pl_cc_result = PolishGovernment.crisisResult(Q, PolishGovernment.crisisChoose(Q, 'stop'));
+!}
+go-to: done
+
+@persuade
+title: Persuade [+ pl_cc_acc +] in talks
+subtitle: Costs 2 resources. The tension falls (−20); in one crisis we can talk only once.
+choose-if: {! return PolishGovernment.crisisStatus(Q, 'persuade').available !}
+unavailable-subtitle: [+ pl_cc_persuade_why +]
+on-arrival: {!
+Q.pl_cc_result = PolishGovernment.crisisResult(Q, PolishGovernment.crisisChoose(Q, 'persuade'));
+!}
+go-to: done
+
+@break
+title: Break the coalition
+subtitle: Our ministers leave the cabinet, and PPS goes into opposition; [+ pl_cc_break_gain +] (−10).
+on-arrival: {!
+Q.pl_cc_result = PolishGovernment.crisisResult(Q, PolishGovernment.crisisChoose(Q, 'break'));
+!}
+go-to: done
+
+@let_go
+title: Let [+ pl_cc_dat +] leave
+subtitle: The partner leaves the cabinet. A cabinet without a majority can be dismissed by the Sejm; if it falls, PPS proposes another coalition.
+on-arrival: {!
+Q.pl_cc_result = PolishGovernment.crisisResult(Q, PolishGovernment.crisisChoose(Q, 'let_go'));
+!}
+go-to: done
+
+@done
+new-page: true
+
+= Coalition crisis
+
+[+ pl_cc_result +]
+
+- @root: Continue.

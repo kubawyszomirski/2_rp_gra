@@ -43,7 +43,7 @@ go-to: result
 
 @accelerated
 title: Divide the land quickly and compulsorily
-subtitle: Costs 3 budget units a month for three months and needs a law. The same effect comes a month earlier, but the resistance of business is greater (+12).
+subtitle: Costs 3 budget units a month for three months and needs a law. The same effect comes a month earlier, but the resistance of business is greater (+12). [+ pl_land_program_accelerated_coalition +]
 choose-if: {! return PolishProjects.optionStatus(Q, 'land_program', 'accelerated').available !}
 unavailable-subtitle: [+ pl_land_program_accelerated_why +]
 on-arrival: {!

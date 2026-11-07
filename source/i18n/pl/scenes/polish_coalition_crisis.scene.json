@@ -1,0 +1,19 @@
+{
+ "source": "scenes/polish_coalition_crisis.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Coalition Crisis": "title: Kryzys koalicyjny",
+  "subtitle: A partner threatens to leave the cabinet; one answer, without the month's action.": "subtitle: Partner grozi wyjściem z rządu; jedna odpowiedź, bez akcji miesiąca.",
+  "= Coalition crisis": "= Kryzys koalicyjny",
+  "[+ pl_cc_text +] Without our answer it leaves at the start of [+ pl_cc_due +].": "[+ pl_cc_text +] Bez naszej odpowiedzi odejdzie na początku [+ pl_cc_due +].",
+  "title: Stop [+ pl_cc_target +]": "title: Wstrzymaj [+ pl_cc_target +]",
+  "subtitle: The reform stops and costs the budget nothing more. The partner calms down (−40), but [+ pl_cc_stop_cost +] (+10).": "subtitle: Reforma przestaje działać i nie kosztuje już budżetu. Partner się uspokaja (−40), ale [+ pl_cc_stop_cost +] (+10).",
+  "title: Persuade [+ pl_cc_acc +] in talks": "title: Przekonaj [+ pl_cc_acc +] w rozmowach",
+  "subtitle: Costs 2 resources. The tension falls (−20); in one crisis we can talk only once.": "subtitle: Kosztuje 2 jednostki środków partii. Napięcie spada (−20); w jednym kryzysie można rozmawiać tylko raz.",
+  "title: Break the coalition": "title: Zerwij koalicję",
+  "subtitle: Our ministers leave the cabinet, and PPS goes into opposition; [+ pl_cc_break_gain +] (−10).": "subtitle: Nasi ministrowie odchodzą z rządu, a PPS przechodzi do opozycji; [+ pl_cc_break_gain +] (−10).",
+  "title: Let [+ pl_cc_dat +] leave": "title: Pozwól [+ pl_cc_dat +] odejść",
+  "subtitle: The partner leaves the cabinet. A cabinet without a majority can be dismissed by the Sejm; if it falls, PPS proposes another coalition.": "subtitle: Partner wychodzi z rządu. Rząd bez większości Sejm może odwołać; jeśli upadnie, PPS zaproponuje inną koalicję.",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

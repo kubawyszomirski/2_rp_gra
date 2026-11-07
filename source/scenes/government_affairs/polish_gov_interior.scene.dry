@@ -77,7 +77,7 @@ go-to: result
 
 @limited_autonomy
 title: Carry out the act on the voivodeship self-government
-subtitle: Needs an agreed point with the representation of the other minorities; its law goes to the Sejm now, then it costs the budget 1 unit a month for three months.
+subtitle: Needs an agreed point with the representation of the other minorities; its law goes to the Sejm now, then it costs the budget 1 unit a month for three months. [+ pl_internal_security_limited_autonomy_coalition +]
 choose-if: {! return PolishProjects.optionStatus(Q, 'internal_security', 'limited_autonomy').available !}
 unavailable-subtitle: [+ pl_internal_security_limited_autonomy_why +]
 on-arrival: {!

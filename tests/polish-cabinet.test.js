@@ -403,23 +403,19 @@ function agreementOf(Q, party) {
   return Q.S.agreements[Q.S.cabinet.agreement_ids.find(id => Q.S.agreements[id].parties.includes(party) && Q.S.agreements[id].parties.includes('pps'))];
 }
 
-test('Utrzymanie poparcia tylko w kryzysie: no Keep option outside a crisis; after an ultimatum, Keep for 0 T, once', () => {
+test('Kryzys koalicyjny: an overdue promise of a member opens the urgent crisis card (0 T, a deadline, no discard); talks once, then the crisis goes on', () => {
   const engine = dendry.startGame();
   const Q = centreLeft(engine);
-  // Z — 0.56: half a year after the formation, or at once after an act of the cabinet against PPS. Z — 0.64: PPS sits in the
-  // cabinet, so this is the coalition card of the Government deck, not the support card.
   assert.equal(PolishGovernment.coalitionCardAvailable(Q), false, 'not in the first half-year of the cabinet');
   Q.S.cabinet.formed_at = Q.time - 6;
-  assert.equal(PolishGovernment.coalitionCardAvailable(Q), true, 'PPS sits in the cabinet, half a year later');
+  // Z — Koalicja: the card „Spory w koalicji” comes only when a partner feels tension (or after an act against PPS).
+  assert.equal(PolishGovernment.coalitionCardAvailable(Q), false, 'no tension, no dispute');
+  agreementOf(Q, 'psl_wyzwolenie').tension = 10;
+  assert.equal(PolishGovernment.coalitionCardAvailable(Q), true, 'a partner feels tension');
   assert.equal(PolishGovernment.supportCardAvailable(Q), false, 'the support card is for a toleration only');
-  playFromHand(engine, 'polish_coalition_affairs');
-  assert.deepEqual(ids(engine).sort(), ['easy_discard', 'polish_coalition_affairs.concession', 'polish_government_support.bargain',
-    'polish_government_support.persuade', 'polish_government_support.withdraw']);
-  choose(engine, 'easy_discard');
-  assert.deepEqual([Q.time, Q.month_actions], [1, 0], 'closing is free');
-  // A partner's ultimatum: a test promise owed to NPR is overdue. The premier's own party (here PSL
-  // Wyzwolenie, Thugutt) sets no ultimatum to its own cabinet. Since stage 4 the cabinet executes a
-  // promise of a project in its own portfolios itself, so the test promise names no project.
+  agreementOf(Q, 'psl_wyzwolenie').tension = 0;
+  // A partner's ultimatum: a test promise owed to NPR is overdue. The premier's own party (here PSL Wyzwolenie, Thugutt) sets
+  // no ultimatum to its own cabinet; the test promise names no project, so no ministry carries it out.
   assert.equal(Q.S.cabinet.pm, 'thugutt');
   const agreement = agreementOf(Q, 'npr');
   PolishGovernment.addObligation(Q, agreement.id, { ...PolishGovernment.TEST_PROGRAMME, required_project: null, portfolio: null,
@@ -428,31 +424,32 @@ test('Utrzymanie poparcia tylko w kryzysie: no Keep option outside a crisis; aft
   spendMonth(engine);
   assert.equal(Q.time, 2);
   assert.equal(agreement.ultimatum.status, 'open');
-  // Z — 0.74 (decision 3A of 8 X 2026): the 0 T answer is an urgent card in the hand of the Government deck (PPS sits in the
-  // cabinet), with the month before the ultimatum expires as its last month.
-  assert.ok(dendry.urgentCards(engine).includes('polish_government_response'), 'the urgent 0 T answer');
-  assert.equal(dendry.urgentDeck(engine, 'polish_government_response'), 'main.govt');
-  assert.equal(PolishRules.cardDeadline(Q, 'polish_government_response'), agreement.ultimatum.due_at - 1);
-  assert.equal(PolishRules.discardStatus(Q, engine.state, 'polish_government_response').available, false, 'an urgent card cannot be discarded');
-  assert.match(content(engine), /Ultimatum from NPR/);
+  assert.ok(dendry.urgentCards(engine).includes('polish_coalition_crisis'), 'the urgent crisis card');
+  assert.ok(!dendry.urgentCards(engine).includes('polish_government_response'), 'no answer card of 9.8 for a member');
+  assert.equal(dendry.urgentDeck(engine, 'polish_coalition_crisis'), 'main.govt');
+  assert.equal(PolishRules.cardDeadline(Q, 'polish_coalition_crisis'), agreement.ultimatum.due_at - 1);
+  assert.equal(PolishRules.discardStatus(Q, engine.state, 'polish_coalition_crisis').available, false, 'an urgent card cannot be discarded');
   const restored = dendry.saveAndRestore(engine);
   restored.goToScene('main');
   const R = restored.state.qualities;
-  restored.playCard('polish_government_response');
-  assert.match(content(restored), /An ultimatum from/);
-  assert.equal(choice(restored, 'polish_government_support.maintain').canChoose, true);
-  choose(restored, 'polish_government_support.maintain');
+  R.S.party_orgs.cash = 5;
+  restored.playCard('polish_coalition_crisis');
+  assert.match(content(restored), /The National Workers’ Party threatens to leave the cabinet because our promise to it is overdue\./);
+  assert.match(content(restored), /Without this partner the cabinet would have \d+ of \d+ MPs/);
+  assert.deepEqual(ids(restored).sort(), ['polish_coalition_crisis.break', 'polish_coalition_crisis.let_go', 'polish_coalition_crisis.persuade'],
+    'a promise: no reform to stop and no extension (the user’s note of 7 XI 2026)');
+  const before = R.S.agreements[agreement.id].tension;
+  choose(restored, 'polish_coalition_crisis.persuade');
   choose(restored, 'root');
   assert.deepEqual([R.time, R.month_actions], [2, 0], 'the answer costs no month');
-  assert.equal(PolishGovernment.responseCase(R), null, 'one answer per case');
-  assert.equal(R.S.agreements[agreement.id].ultimatum.status, 'open', 'keeping support removes no breach');
-  assert.ok(!dendry.urgentCards(restored).includes('polish_government_response'), 'answered: the card leaves the hand');
+  assert.equal(R.S.party_orgs.cash, 3, 'the talks cost 2 resources');
+  assert.equal(R.S.agreements[agreement.id].tension, before - 20);
+  assert.equal(R.S.agreements[agreement.id].ultimatum.status, 'open', 'talks do not keep the promise');
+  assert.equal(PolishGovernment.crisisStatus(R, 'persuade').available, false, 'once in a crisis');
+  assert.ok(dendry.urgentCards(restored).includes('polish_coalition_crisis'), 'the crisis goes on');
 });
 
-// Z — 0.77 (decision 5A of 8 X 2026): the card of a warning says what happened, what is at stake and how to put it right, with the
-// numbers of the game; it offers only the answers that fit (no demand of worker protection), lists the conditions of the
-// extension with their present values and no longer repeats the notice of the main page.
-test('Odpowiedź partnerowi 0.77: a warning says what happened, what is at stake and how to put it right; only fitting answers', () => {
+test('Ostrzeżenie w koalicji (Z — Koalicja): a partner’s warning to a member is a notice, no answer card; the coalition card lists the tension', () => {
   const engine = dendry.startGame();
   const Q = centreLeft(engine);
   const agreement = agreementOf(Q, 'npr');
@@ -460,62 +457,30 @@ test('Odpowiedź partnerowi 0.77: a warning says what happened, what is at stake
     months: 0, beneficiaries: ['npr'] });
   agreement.tension = 30;
   spendMonth(engine);
-  assert.equal(PolishGovernment.responseCase(Q).kind, 'warning');
   assert.equal(Math.round(agreement.tension), 46);
-  engine.playCard('polish_government_response');
-  const text = content(engine);
-  assert.match(text, /<strong>What happened\.<\/strong> NPR reminds us of a promise of our agreement: financed protection for the unemployed in full by \w+ 1922\. The date has passed/);
-  assert.match(text, /<strong>What is at stake\.<\/strong> Tension in the agreement: 46 of 100; it rises by 16 at each settlement/);
-  assert.match(text, /At 60 NPR sets an ultimatum — at this pace at the start of \w+ 1922; two months later it leaves the cabinet with its ministers\./);
-  assert.match(text, /The cabinet would lose \d+ MPs and keep \d+ of 444 \(a majority is 223/);
-  assert.match(text, /<strong>How to put it right\.<\/strong> Or ask the partner for three more months/);
-  assert.doesNotMatch(text, /a promise of the agreement is overdue/, 'the notice of the main page is not repeated');
-  assert.deepEqual(ids(engine).sort(), ['polish_government_response.later', 'polish_government_support.extension',
-    'polish_government_support.maintain', 'polish_government_support.withdraw'], 'no demand of worker protection in a warning');
-  assert.match(JSON.stringify(choice(engine, 'polish_government_support.extension')),
-    /Conditions: relation with the partner at least 50 \(now \d+\) [✓✗]; at least half of the promises met \(now 0%\) ✗/);
-  // A promise with a project names its card, the ministry and who holds it.
-  const schools = PolishGovernment.addObligation(Q, agreement.id, { id: 'schools', topic: 'school_rights', required_project: 'minority_schools',
-    required_variants: ['own_language', 'agreed_bilingual'], required_stage: 'operating', portfolio: 'education', weight: 2, months: 0,
-    beneficiaries: ['npr'] });
-  schools.due_at = Q.time - 1;
-  const holder = PolishGovernment.describeParty(Q.S.cabinet.portfolios.education);
-  const remedy = PolishProjects.responseRemedy(Q, id => (engine.game.scenes[id] || {}).title);
-  assert.ok(remedy.includes('The Education ministry is held by ' + (Q.S.cabinet.portfolios.education === 'expert' ? 'a non-party expert' : holder) +
-    ', so it is that ministry’s task, not ours'), remedy);
-  // Z — 0.93 (decision 4A of 24 X 2026): the ministry card launches the project in one decision.
-  assert.ok(remedy.includes('The project is launched with the card “Language Rights and Minority Schools” (the Education ministry, variant: ' +
-    'teaching in the own language or agreed bilingualism).'), remedy);
-  PolishRules.setLanguage('pl');
-  try {
-    assert.match(PolishGovernment.responseBrief(Q).what, /^<strong>Co się stało\.<\/strong> NPR przypomina obietnicę z naszego porozumienia: .*prawa językowe i szkoły mniejszości do \w+ 1922\. Termin minął/);
-    assert.match(PolishGovernment.responseBrief(Q).risk, /Napięcie w porozumieniu: 46 na 100; rośnie o 20 przy każdym rozliczeniu/);
-  } finally {
-    PolishRules.setLanguage('en');
-  }
-  choose(engine, 'polish_government_response.later');
+  assert.ok(agreement.history.some(h => h.kind === 'warning' && h.by === 'npr'), 'the warning is recorded');
+  assert.equal(PolishGovernment.responseCase(Q), null, 'no answer card');
+  assert.equal(PolishGovernment.crisisCase(Q), null, 'no crisis below 60');
+  assert.match(PolishGovernment.coalitionTensionText(Q), /Tension in the coalition: [^.]*The National Workers’ Party 46/);
 });
 
-test('Poparcie gabinetu: a refused threat, then carrying it out and the vote; one offer, no counter-proposal', () => {
+test('Zerwij koalicję (Z — Koalicja): PPS leaves from the coalition card; the faction that dislikes concessions is glad; the motion and the vote follow', () => {
   const engine = dendry.startGame();
   const Q = centreLeft(engine);
-  PolishGovernment.changeRelation(Q, 'npr', -40, 'fixture'); // NPR will refuse the demand
-  // Z — 0.64: PPS sits in the cabinet, so the demand is an ultimatum in the Council of Ministers on the coalition card.
+  agreementOf(Q, 'npr').tension = 30; // a partner feels tension, so the card comes
+  Q.S.cabinet.formed_at = Q.time - 6;
+  const left = Q.S.actors.pps.factions.lewica.dissent;
   playFromHand(engine, 'polish_coalition_affairs');
-  assert.match(JSON.stringify(choice(engine, 'polish_government_support.bargain').title), /Put financed worker protection to the Council of Ministers, or we leave the cabinet/);
-  choose(engine, 'polish_government_support.bargain');
-  assert.equal(engine.state.sceneId, 'polish_government_support.threat');
-  assert.match(content(engine), /Our coalition partners refuse/);
-  assert.match(content(engine), /NPR: refuses/);
-  assert.match(JSON.stringify(choice(engine, 'polish_government_support.carry_out').title), /Carry out the threat: leave the cabinet/);
-  assert.deepEqual(ids(engine).sort(), ['polish_government_support.back_down', 'polish_government_support.carry_out'], 'no C2 counter-proposal');
-  assert.equal(Q.S.history.negotiations.filter(n => n.kind === 'support').length, 1, 'one offer, one answer');
-  choose(engine, 'polish_government_support.carry_out');
+  assert.deepEqual(ids(engine).sort(), ['easy_discard', 'polish_coalition_affairs.break', 'polish_coalition_affairs.concession',
+    'polish_coalition_affairs.talks'], 'no demands with a threat on the coalition card');
+  assert.match(JSON.stringify(choice(engine, 'polish_coalition_affairs.break').title), /Break the coalition/);
+  choose(engine, 'polish_coalition_affairs.break');
   assert.equal(engine.state.sceneId, 'polish_government_support.motion');
   assert.match(content(engine), /We have left the cabinet/);
   assert.equal(Q.S.cabinet.pps_mode, 'opposition');
   assert.ok(!Q.S.cabinet.partner_ids.includes('pps'));
   assert.equal(Q.S.cabinet.portfolios.economic, 'expert', 'PPS ministries pass to non-party experts');
+  assert.equal(Q.S.actors.pps.factions.lewica.dissent, Math.max(0, left - 10), 'the Left of PPS is glad (a centre-left coalition)');
   choose(engine, 'polish_government_support.own_motion_support');
   assert.equal(engine.state.sceneId, 'polish_government_support.vote_result');
   const ballot = Q.S.ballots.at(-1);
@@ -741,20 +706,16 @@ test('Sprawy koalicji 0.64: a member gets the coalition card with the concession
   const other = dendry.startGame();
   const Q = centreLeft(other);
   Q.S.cabinet.formed_at = Q.time - 6;
-  assert.deepEqual([PolishGovernment.supportCardAvailable(Q), PolishGovernment.coalitionCardAvailable(Q)], [false, true]);
-  playFromHand(other, 'polish_coalition_affairs');
-  assert.match(content(other), /Coalition affairs/);
-  assert.match(JSON.stringify(choice(other, 'polish_government_support.withdraw').title), /Leave the cabinet with our ministers/);
-  assert.doesNotMatch(JSON.stringify(choice(other, 'polish_government_support.withdraw').title), /End our support/);
-  assert.equal(choice(other, 'polish_coalition_affairs.concession').canChoose, false);
-  assert.match(JSON.stringify(choice(other, 'polish_coalition_affairs.concession').subtitle), /There is no tension in our coalition agreements/);
-  choose(other, 'easy_discard');
-  // Tension with NPR 30 and with PSL Wyzwolenie 10: giving way lowers each by 20 (not below 0); the Left of PPS +5.
+  // Z — Koalicja: the card „Spory w koalicji” comes when a partner feels tension. Tension with NPR 30 and with PSL Wyzwolenie 10:
+  // giving way lowers each by 20 (not below 0); in a centre-left coalition the Left of PPS +5.
   agreementOf(Q, 'npr').tension = 30;
   agreementOf(Q, 'psl_wyzwolenie').tension = 10;
+  assert.deepEqual([PolishGovernment.supportCardAvailable(Q), PolishGovernment.coalitionCardAvailable(Q)], [false, true]);
   const left = Q.S.actors.pps.factions.lewica.dissent;
   playFromHand(other, 'polish_coalition_affairs');
-  assert.match(content(other), /Tension in our agreements \(a warning at 40, an ultimatum at 60\): [^"]*NPR 30/);
+  assert.match(content(other), /Coalition disputes/);
+  assert.match([].concat(choice(other, 'polish_coalition_affairs.concession').subtitle).join(''), /the Left of PPS sees it as a retreat/);
+  assert.match(content(other), /Tension in the coalition: [^"]*The National Workers’ Party 30/);
   choose(other, 'polish_coalition_affairs.concession');
   assert.equal(other.state.sceneId, 'polish_coalition_affairs.conceded');
   assert.deepEqual([agreementOf(Q, 'npr').tension, agreementOf(Q, 'psl_wyzwolenie').tension], [10, 0]);
@@ -775,9 +736,12 @@ test('Nasz stosunek do rządu: every six months, and at once after an act of the
     instruments: ['progressive', 'benefit_cut'], status: 'pending' };
   assert.equal(PolishGovernment.coalitionCardAvailable(Q), true, 'a package with a cut of the benefit');
   assert.equal(PolishGovernment.supportReason(Q), 'The cabinet has proposed a package with a cut of the unemployment benefit.');
+  // Z — Koalicja: the ordinary use answers the act; talks need a partner that feels tension and 2 resources.
+  agreementOf(Q, 'npr').tension = 10;
+  Q.S.party_orgs.cash = 5;
   playFromHand(engine, 'polish_coalition_affairs');
   assert.match(content(engine), /The cabinet has proposed a package with a cut of the unemployment benefit\./);
-  choose(engine, 'polish_government_support.persuade');
+  choose(engine, 'polish_coalition_affairs.talks');
   assert.equal(Q.month_actions, 1, 'an ordinary use costs the month');
   assert.equal(Q.S.turn.pending.action_id, 'government.coalition_affairs', 'an action of the Government deck');
   assert.equal(Q.S.cabinet.support_reviewed_at, Q.time);
@@ -798,6 +762,7 @@ test('Nasz stosunek do rządu: every six months, and at once after an act of the
   assert.equal(PolishGovernment.supportProvocation(Q), null, 'an act counts for two months');
   Q.time += 3;
   delete Q.S.cooldowns['support.' + Q.S.cabinet.id];
+  agreement.tension = 5; // Z — Koalicja: the review comes while a partner feels tension
   assert.equal(PolishGovernment.coalitionCardAvailable(Q), true, 'the half-yearly review');
   assert.match(PolishGovernment.supportReason(Q), /^Half a year has passed/);
 });

@@ -890,9 +890,10 @@ test('Tolerowanie B14: apparatus 1/2, reach 39/40 and relation 39/40 only open t
   assert.deepEqual([A.S.cabinet.pm, A.S.cabinet.pps_mode, A.S.cabinet.stabilisation_terms], ['grabski', 'external_support', 'protections']);
   const support = Object.values(A.S.agreements).find(a => a.term);
   assert.deepEqual([support.id, support.term.review_at, support.term.expires_at], ['agr-' + A.S.cabinet.id + '-pps', t + 3, t + 6]);
-  const protection = support.obligations.find(o => o.topic === 'worker_protection');
+  // Z — Koalicja (1A): the terms are the plan of Grabski's cabinet — the full protection by t+4 — and no promise of the agreement.
+  const protection = A.S.cabinet.plan.find(o => o.topic === 'worker_protection');
   assert.deepEqual([protection.required_project, protection.required_variants, protection.due_at, protection.portfolio], ['worker_protection', ['full'], t + 4, 'labor']);
-  assert.ok(support.obligations.some(o => o.topic === 'stabilisation_terms' && o.position === 'protections'));
+  assert.deepEqual(support.obligations, []);
   const profile = PolishProjects.cabinetProfile(A.S.cabinet);
   assert.deepEqual([profile.stabilisation, profile.stabilisation_financing, profile.revenue[0]], ['protected', ['wealth_tax'], 'wealth_tax']);
   // The review after three months and the end of the six-month term each open the answer of 9.8 once.

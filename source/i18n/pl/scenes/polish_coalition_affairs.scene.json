@@ -2,16 +2,19 @@
  "source": "scenes/polish_coalition_affairs.scene.dry",
  "status": "complete",
  "lines": {
-  "title: Coalition Affairs": "title: Sprawy koalicji",
-  "subtitle: While PPS sits in the cabinet: raise a demand in the Council of Ministers, give way to our partners, or leave.": "subtitle: Gdy PPS jest w rządzie: postaw sprawę w Radzie Ministrów, ustąp koalicjantom albo wyjdź z rządu.",
-  "= Coalition affairs": "= Sprawy koalicji",
-  "Prime minister: [+ prime_minister_display +]. PPS position: [+ pps_government_position +].": "Premier: [+ prime_minister_display +]. Pozycja PPS: [+ pps_government_position +].",
-  "[? if pl_cabinet_support_display : Declared support: [+ pl_cabinet_support_display +]. ?]": "[? if pl_cabinet_support_display : Zadeklarowane poparcie: [+ pl_cabinet_support_display +]. ?]",
-  "Our ministers sit in the Council of Ministers with our partners. **An ultimatum** makes our demand a condition of staying in the cabinet: if the partners refuse, we must either leave or back down. **A proposal** asks without a threat and costs no relations. **Giving way** to the partners eases the tension in our coalition agreements, but the Left of PPS dislikes it.": "Nasi ministrowie zasiadają w Radzie Ministrów razem z koalicjantami. **Ultimatum** czyni nasze żądanie warunkiem pozostania w rządzie: jeśli koalicjanci odmówią, musimy wyjść albo się wycofać. **Propozycja** to prośba bez groźby, która nie kosztuje relacji. **Ustępstwo** wobec koalicjantów zmniejsza napięcie w naszych umowach koalicyjnych, ale nie podoba się Lewicy PPS.",
-  "title: Give way to our coalition partners": "title: Ustępujemy koalicjantom",
-  "subtitle: The tension in each of our coalition agreements falls by 20; the Left of PPS is displeased (+5 dissent).": "subtitle: Napięcie w każdej z naszych umów koalicyjnych spada o 20; Lewica PPS jest niezadowolona (+5 sprzeciwu).",
+  "title: Coalition Disputes": "title: Spory w koalicji",
+  "subtitle: While PPS sits in the cabinet: give way to the partners, talk them round, or break the coalition.": "subtitle: Gdy PPS jest w rządzie: ustąp koalicjantom, przekonaj ich albo zerwij koalicję.",
+  "= Coalition disputes": "= Spory w koalicji",
+  "title: Give way to our coalition partners": "title: Ustąp koalicjantom",
+  "subtitle: The tension with all the partners falls (−20), but [+ pl_coal_faction +] sees it as a retreat (+5).": "subtitle: Napięcie u wszystkich partnerów spada (−20), ale [+ pl_coal_faction +] widzi w tym odwrót (+5).",
+  "title: Talk the partners round": "title: Przekonaj ich w rozmowach",
+  "subtitle: Costs 2 resources. The tension with all the partners falls (−10).": "subtitle: Kosztuje 2 jednostki środków partii. Napięcie u wszystkich partnerów spada (−10).",
+  "title: Break the coalition": "title: Zerwij koalicję",
+  "subtitle: Our ministers leave, and PPS goes into opposition; without us the cabinet may lose its majority. [+ pl_coal_faction +] takes it with relief (−10).": "subtitle: Nasi ministrowie odchodzą, a PPS przechodzi do opozycji; bez nas rząd może stracić większość. [+ pl_coal_faction +] przyjmuje to z ulgą (−10).",
   "= We give way": "= Ustępujemy",
-  "PPS lets the partners have their way on the disputed points. [+ pl_coal_tension +] The Left of PPS sees it as a retreat.": "PPS ustępuje koalicjantom w spornych sprawach. [+ pl_coal_tension +] Lewica PPS widzi w tym odwrót.",
+  "PPS lets the partners have their way on the disputed points. [+ pl_coal_tension +]": "PPS ustępuje koalicjantom w spornych sprawach. [+ pl_coal_tension +]",
+  "= We talk": "= Rozmawiamy",
+  "Our ministers and the party leaders talk to the partners one by one. [+ pl_coal_tension +]": "Nasi ministrowie i przywódcy partii rozmawiają z każdym z partnerów. [+ pl_coal_tension +]",
   "- @root: Continue.": "- @root: Dalej."
  }
 }

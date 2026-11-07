@@ -9,9 +9,9 @@
   "title: Divide the land with compensation": "title: Parceluj ziemię z odszkodowaniem",
   "subtitle: Costs 2 budget units a month for four months and needs a law. The agrarian pressure falls (−3) and the peasants are less aggrieved (−4), but the landowners and business press on the cabinet (+8).": "subtitle: Kosztuje 2 jednostki budżetu miesięcznie przez cztery miesiące i wymaga ustawy. Nacisk agrarny spada (−3), a chłopi są mniej niezadowoleni (−4), ale ziemianie i przedsiębiorcy naciskają na rząd (+8).",
   "title: Divide the land quickly and compulsorily": "title: Parceluj szybko i przymusowo",
-  "subtitle: Costs 3 budget units a month for three months and needs a law. The same effect comes a month earlier, but the resistance of business is greater (+12).": "subtitle: Kosztuje 3 jednostki budżetu miesięcznie przez trzy miesiące i wymaga ustawy. Ten sam skutek przychodzi miesiąc wcześniej, ale opór przedsiębiorców jest większy (+12).",
   "title: Give priority to Polish settlers": "title: Daj pierwszeństwo polskim osadnikom",
   "subtitle: Like the parcellation with compensation, but the land goes first to Poles, and PSL Piast is pleased (+5). The minorities lose trust (−6); if we promised their clubs equality, we break that promise.": "subtitle: Jak zwykła parcelacja, ale ziemia trafia najpierw do Polaków, a PSL „Piast” jest zadowolone (+5). Mniejszości tracą zaufanie (−6); jeśli obiecaliśmy ich klubom równość, łamiemy tę obietnicę.",
-  "- @root: Continue.": "- @root: Dalej."
+  "- @root: Continue.": "- @root: Dalej.",
+  "subtitle: Costs 3 budget units a month for three months and needs a law. The same effect comes a month earlier, but the resistance of business is greater (+12). [+ pl_land_program_accelerated_coalition +]": "subtitle: Kosztuje 3 jednostki budżetu miesięcznie przez trzy miesiące i wymaga ustawy. Ten sam skutek przychodzi miesiąc wcześniej, ale opór przedsiębiorców jest większy (+12). [+ pl_land_program_accelerated_coalition +]"
  }
 }

@@ -33,7 +33,7 @@ Labour enforces the statutory working time and the conditions in the plants. Eve
 
 @inspection
 title: Introduce a labour inspection
-subtitle: Costs 1 budget unit a month and needs a law in the Sejm. The workers are less discontented (−3), but business presses harder on the cabinet (+4).
+subtitle: Costs 1 budget unit a month and needs a law in the Sejm. The workers are less discontented (−3), but business presses harder on the cabinet (+4). [+ pl_labor_rights_inspection_coalition +]
 choose-if: {! return PolishProjects.optionStatus(Q, 'labor_rights', 'inspection').available !}
 unavailable-subtitle: [+ pl_labor_rights_inspection_why +]
 on-arrival: {!

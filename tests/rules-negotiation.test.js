@@ -300,20 +300,24 @@ test('Poparcie mniejszości: one segment accepts, the other refuses; appointment
   assert.ok(Object.values(ok.S.cabinet.portfolios).every(owner => ['pps', 'psl_wyzwolenie', 'expert'].includes(owner)));
   // Z — 0.88 (decision 2A): the price of both concessions with PSL Piast and the right (−2−4, −2−3, −2−4), once.
   assert.deepEqual(['psl_piast', 'pschd', 'zln'].map((id, i) => ok.S.actors.relations[id] - relations[i]), [-6, -5, -6]);
-  // Stage 4 (decision 3 of stage 4): the programme points name projects, dates and rules; the Jewish representation has the
-  // rule of legal equality, the other minorities the school project by t+6.
+  // Stage 4 (decision 3 of stage 4): the programme points name projects and dates; the Jewish representation has the rule of
+  // legal equality, the other minorities the school project by t+6 (Z — Koalicja: one school promise).
   const jewish = Object.values(ok.S.agreements).filter(a => a.parties.includes('jewish_rep'))[0];
   const other = Object.values(ok.S.agreements).filter(a => a.parties.includes('other_minorities_rep'))[0];
   assert.deepEqual(jewish.obligations.map(o => o.topic).filter(t => gov.MINORITY_TERMS.includes(t)), ['legal_equality']);
   assert.equal(jewish.obligations.find(o => o.topic === 'legal_equality').kind, 'constraint');
   const term = topic => other.obligations.find(o => o.topic === topic);
+  assert.deepEqual(other.obligations.map(o => o.topic), ['school_rights'], 'the language rights and the schools are one promise');
   assert.deepEqual([term('school_rights').required_project, term('school_rights').due_at, term('school_rights').portfolio], ['minority_schools', 17, 'education']);
-  const programme = Object.values(ok.S.agreements).filter(a => a.parties.includes('psl_wyzwolenie'))[0].obligations;
+  // Z — Koalicja (1A): the programme is the plan of the cabinet — the same projects and dates, but no promise of an agreement
+  // and no rule against contrary decisions.
+  assert.deepEqual(Object.values(ok.S.agreements).filter(a => a.parties.includes('psl_wyzwolenie'))[0].obligations, []);
+  const programme = ok.S.cabinet.plan;
   const land = programme.find(o => o.topic === 'land');
-  assert.deepEqual([land.required_project, land.required_variants, land.due_at, land.portfolio], ['land_program', ['accelerated'], 17, 'agriculture']);
+  assert.deepEqual([land.required_project, land.required_variants, land.due_at, land.portfolio, land.kind], ['land_program', ['accelerated'], 17, 'agriculture', 'plan']);
   assert.deepEqual([programme.find(o => o.topic === 'worker_protection').due_at, programme.find(o => o.topic === 'worker_protection').weight], [15, 2]);
   assert.equal(programme.find(o => o.topic === 'institution').status, 'open', 'a constitutional project has no date');
-  assert.equal(programme.find(o => o.topic === 'fiscal').kind, 'constraint');
+  assert.equal(programme.some(o => o.topic === 'fiscal'), false, 'no rule of the programme');
 });
 
 test('Impas and C2: three failed rounds make an impasse; the same refused offer waits for a change; a new candidate returns', () => {
@@ -399,10 +403,12 @@ test('Umowa: breach, warning, ultimatum and payment are one conflict; removing t
   nextMonth(Q);
   assert.equal(agreement.tension, 32);
   assert.deepEqual(nextMonth(Q).map(e => e.kind), ['warning']);
-  assert.equal(gov.responseCase(Q).kind, 'warning');
+  // Z — Koalicja: PPS sits in the cabinet, so the warning is a notice and the ultimatum is the coalition crisis card.
+  assert.equal(gov.responseCase(Q), null);
   assert.deepEqual(nextMonth(Q).map(e => e.kind), ['ultimatum']); // t=19, tension 64
-  assert.deepEqual([agreement.ultimatum.due_at, agreement.ultimatum.by], [21, 'psl_wyzwolenie']);
-  assert.equal(gov.responseCase(Q).kind, 'ultimatum');
+  assert.deepEqual([agreement.ultimatum.due_at, agreement.ultimatum.by, agreement.ultimatum.kind], [21, 'psl_wyzwolenie', 'promise']);
+  assert.equal(gov.crisisCase(Q).kind, 'promise');
+  assert.equal(gov.responseCase(Q), null);
   nextMonth(Q); // t=20: one full turn to react
   assert.equal(agreement.ultimatum.status, 'open');
   gov.setFulfillment(Q, agreement.id, o.id, 1); // the promise is paid
@@ -467,9 +473,10 @@ test('Groźba przyjęta: four parties accept a threat; the concession is recorde
   for (const id of ['npr', 'pschd', 'psl_piast', 'psl_wyzwolenie']) assert.equal(Q.S.actors.relations[id], before[id] - 3, id);
   assert.equal(Q.S.cabinet.programme.fiscal, 2);
   assert.deepEqual(Q.S.cabinet.accepted_postulates, ['worker_protection']);
-  const promises = gov.ppsAgreements(Q.S).map(id => Q.S.agreements[id].obligations.find(o => o.topic === 'worker_protection'));
-  assert.ok(promises.length === 4 && promises.every(o => o.status === 'active' && o.due_at === Q.time + 4 && o.portfolio === 'labor'),
-    'decision 3 of stage 4: the promise is due in 4 months and executed by Labour');
+  // Z — Koalicja (2A): the accepted demand enters the cabinet's plan, due in 4 months and executed by Labour; no agreement holds it.
+  const point = Q.S.cabinet.plan.filter(o => o.topic === 'worker_protection');
+  assert.ok(point.length === 1 && point[0].status === 'active' && point[0].due_at === Q.time + 4 && point[0].portfolio === 'labor' && point[0].kind === 'plan');
+  assert.ok(gov.ppsAgreements(Q.S).every(id => !Q.S.agreements[id].obligations.some(o => o.topic === 'worker_protection')));
   assert.equal(Q.month_actions, 1, 'an ordinary use spends the month');
   assert.equal(rules.cooldownRemaining(Q, 'support.' + Q.S.cabinet.id), 6, 'renewal 6 months for this cabinet (Z — 0.56; it was 3)');
   assert.equal(gov.supportOptionStatus(Q, 'bargain', 'ordinary').available, false, 'the same demand cannot be taken twice');
@@ -634,9 +641,14 @@ test('Legalny kalendarz bez C8: a fall when the election is already set keeps it
 
 test('9.3: one extension by three months lifts the ultimatum; a second is not available', () => {
   const Q = cabinet(LEFT, { configuration_id: 'left_minority', pps_mode: 'member' });
+  // Z — Koalicja (the user's note of 7 XI 2026): the crisis card of a member has no extension; the answer card of a cabinet PPS
+  // only supports keeps it (games saved before Koalicja). The fixture moves PPS to the supporters.
+  Q.S.cabinet.partner_ids = Q.S.cabinet.partner_ids.filter(id => id !== 'pps');
+  Q.S.cabinet.supporter_ids.push('pps');
   const agreement = isolated(agreementWith(Q, 'psl_wyzwolenie'));
   const o = gov.addObligation(Q, agreement.id, { ...gov.TEST_PROGRAMME, beneficiaries: ['psl_wyzwolenie'] });
   while (!(agreement.ultimatum && agreement.ultimatum.status === 'open')) nextMonth(Q);
+  assert.equal(gov.crisisCase(Q), null);
   assert.equal(gov.responseCase(Q).kind, 'ultimatum');
   assert.match(gov.extensionStatus(Q).reason, /Less than half/);
   gov.setFulfillment(Q, agreement.id, o.id, 0.5); // the project runs, but not yet fully

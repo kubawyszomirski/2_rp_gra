@@ -7,11 +7,11 @@
   "= Language rights and minority schools": "= Prawa językowe i szkoły mniejszości",
   "The minorities want to teach their children in their own language, and the national democrats want a Polish school. The language rule we choose applies in the whole country.": "Mniejszości chcą uczyć dzieci we własnym języku, a endecja chce szkoły polskiej. Wybrana zasada językowa obowiązuje w całym kraju.",
   "title: Introduce teaching in the mother tongue": "title: Wprowadź naukę w języku ojczystym",
-  "subtitle: Costs 1 budget unit a month. The minorities trust PPS more (+4), but the national democrats protest, and our relations with them worsen (−5).": "subtitle: Kosztuje 1 jednostkę budżetu miesięcznie. Mniejszości bardziej ufają PPS (+4), ale endecja protestuje i nasze stosunki z nią się pogarszają (−5).",
   "title: Introduce agreed bilingualism": "title: Wprowadź uzgodnioną dwujęzyczność",
   "subtitle: Costs 1 budget unit a month and needs an agreement with a minority club; keeping it improves our relations with that club (+4). The minorities trust us a little more (+2), and the national democrats do not protest.": "subtitle: Kosztuje 1 jednostkę budżetu miesięcznie i wymaga porozumienia z klubem mniejszości; jego spełnienie poprawia nasze stosunki z tym klubem (+4). Mniejszości ufają nam nieco bardziej (+2), a endecja nie protestuje.",
   "title: Impose a school with Polish as its language": "title: Narzuć szkołę z językiem polskim",
-  "subtitle: Costs 1 budget unit a month. The national democrats are pleased (+5), but the minorities lose trust (−6); if we made agreements with them, we break them.": "subtitle: Kosztuje 1 jednostkę budżetu miesięcznie. Endecja jest zadowolona (+5), ale mniejszości tracą zaufanie (−6); jeśli zawarliśmy z nimi porozumienia, łamiemy je.",
-  "- @root: Continue.": "- @root: Dalej."
+  "- @root: Continue.": "- @root: Dalej.",
+  "subtitle: Costs 1 budget unit a month. The minorities trust PPS more (+4), but the national democrats protest, and our relations with them worsen (−5). [+ pl_minority_school_rights_own_language_coalition +]": "subtitle: Kosztuje 1 jednostkę budżetu miesięcznie. Mniejszości bardziej ufają PPS (+4), ale endecja protestuje i nasze stosunki z nią się pogarszają (−5). [+ pl_minority_school_rights_own_language_coalition +]",
+  "subtitle: Costs 1 budget unit a month. The national democrats are pleased (+5), but the minorities lose trust (−6); if we made agreements with them, we break them. [+ pl_minority_school_rights_polish_dominance_coalition +]": "subtitle: Kosztuje 1 jednostkę budżetu miesięcznie. Endecja jest zadowolona (+5), ale mniejszości tracą zaufanie (−6); jeśli zawarliśmy z nimi porozumienia, łamiemy je. [+ pl_minority_school_rights_polish_dominance_coalition +]"
  }
 }
