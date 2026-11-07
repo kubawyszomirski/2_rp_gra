@@ -1,58 +1,69 @@
-title: The Judiciary
-subtitle: Justice: the joint democratic guarantees, or the review of one abuse.
+title: Courts and Prisoners
+subtitle: Justice: an amnesty, jury courts and legal advice for workers.
 new-page: true
 is-card: true
 tags: govt_affairs
 card-image: img/polish/polish_gov_justice.jpg
 view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'justice_policy') !}
 on-arrival: {!
-// Card government.justice_policy (technical reference 17.11–17.12; card catalogue 8.13). Opening and closing
-// the card are free; a confirmed option costs this month's action, or the one free step of an adviser
-// who opened the card. Options that need a system of a later stage are shown with their reason.
+// Card government.justice_policy (technical reference 17.11–17.12; card catalogue 8.13). Opening and closing the card are free;
+// a confirmed option costs this month's action. Z — 1.00 (the sketch and the user's decisions of 7 XI 2026): three permanent
+// options; the democratic guarantees stay in the constitutional debate, the review of a named abuse left the card.
 PolishProjects.cardView(Q, 'justice_policy');
 // Z — 0.66 (decision 2A): the ministry of this card, on its page and as a badge in the hand.
 Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_justice');
 !}
 
-= The judiciary
+= Courts and prisoners
 
 *[+ pl_gc_ministry +]*
 
-The minister does not annul another authority’s judgement by naming a policy. The broad variant puts the democratic guarantees first among the motions of PPS in the constitutional debate.
+The courts judge by the different laws of the former partitions, and workers’ and minority activists sit in the prisons. Democracy stands at [+ pl_gc_democracy +] of 100.
 
 [+ pl_gc_budget +]
 
 [+ pl_gc_projects +]
 
-- @broad_safeguards
-- @limited_redress
+- @amnesty
+- @jury
+- @legal_aid
 - @easy_discard
 - @cancel_advisor_action
 
-@broad_safeguards
-title: A joint project of democratic guarantees
-subtitle: Costs this month's action. The democratic guarantees become the first motion of PPS in the constitutional debate; both chambers vote on them when the Constitutional Committee brings them to the floor. [? if pl_justice_policy_broad_safeguards_coalition : [+ pl_justice_policy_broad_safeguards_coalition +] ?]
-choose-if: {! return PolishProjects.optionStatus(Q, 'justice_policy', 'broad_safeguards').available !}
-unavailable-subtitle: [+ pl_justice_policy_broad_safeguards_why +]
+@amnesty
+title: Declare an amnesty for political prisoners
+subtitle: No cost to the budget; once in the chapter. The workers trust PPS more (+3), but squad members leave the prisons too, and political violence rises (+3). [? if pl_justice_policy_amnesty_coalition : [+ pl_justice_policy_amnesty_coalition +] ?]
+choose-if: {! return PolishProjects.optionStatus(Q, 'justice_policy', 'amnesty').available !}
+unavailable-subtitle: [+ pl_justice_policy_amnesty_why +]
 on-arrival: {!
-PolishProjects.chooseOption(Q, 'justice_policy', 'broad_safeguards');
+PolishProjects.chooseOption(Q, 'justice_policy', 'amnesty');
 !}
 go-to: result
 
-@limited_redress
-title: Review of a named abuse
-subtitle: Costs the budget 1 unit for a month; needs an active restriction of a named case. A confirmed unlawful act lifts only that restriction; without grounds the review ends without relief.
-choose-if: {! return PolishProjects.optionStatus(Q, 'justice_policy', 'limited_redress').available !}
-unavailable-subtitle: [+ pl_justice_policy_limited_redress_why +]
+@jury
+title: Introduce jury courts in political and press cases
+subtitle: Costs 1 budget unit a month. Democracy grows stronger (+2). [? if pl_justice_policy_jury_coalition : [+ pl_justice_policy_jury_coalition +] ?]
+choose-if: {! return PolishProjects.optionStatus(Q, 'justice_policy', 'jury').available !}
+unavailable-subtitle: [+ pl_justice_policy_jury_why +]
 on-arrival: {!
-PolishProjects.chooseOption(Q, 'justice_policy', 'limited_redress');
+PolishProjects.chooseOption(Q, 'justice_policy', 'jury');
+!}
+go-to: result
+
+@legal_aid
+title: Open free legal advice for workers
+subtitle: Costs 1 budget unit a month while it works. The trade unions trust PPS more (+5).
+choose-if: {! return PolishProjects.optionStatus(Q, 'justice_policy', 'legal_aid').available !}
+unavailable-subtitle: [+ pl_justice_policy_legal_aid_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'justice_policy', 'legal_aid');
 !}
 go-to: result
 
 @result
 new-page: true
 
-= The judiciary
+= Courts and prisoners
 
 [+ pl_gc_result +]
 

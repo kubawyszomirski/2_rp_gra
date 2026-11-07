@@ -343,7 +343,15 @@ test('Sprawiedliwość: a confirmed unlawful act lifts only its restriction (dem
   assert.match(PolishParty.militiaStatus(Q, 'recruit').reason, /banned/);
   PolishPolitics.addRestriction(Q, { id: 'a_repression', kind: 'strike_repression', target: 'fixture strikers', lawful: false });
   PolishPolitics.addRestriction(Q, { id: 'z_repression', kind: 'strike_repression', target: 'other fixture strikers', lawful: false });
-  PolishProjects.chooseOption(Q, 'justice_policy', 'limited_redress');
+  // Z — 1.00 (decision 1A of 7 XI 2026): the review left the card of Justice; the rules keep it for games saved before.
+  const review = () => {
+    const r = PolishProjects.reviewTarget(S);
+    const project = PolishProjects.createProject(Q, 'justice_review', 'limited_redress', { sponsor: 'pps', responsibility: { pps: 0.70 },
+      policy_choices: { restriction_id: r.id, case_id: r.case_id } });
+    PolishProjects.launchProject(Q, project, { sponsor: 'pps' });
+    return project;
+  };
+  review();
   const first = Object.values(S.projects).find(p => p.type === 'justice_review');
   assert.deepEqual([first.policy_choices.restriction_id, first.build_budget_B, first.duration_months], ['a_repression', 1, 1]);
   const d0 = S.politics.democracy;
@@ -352,13 +360,13 @@ test('Sprawiedliwość: a confirmed unlawful act lifts only its restriction (dem
   close(S.politics.democracy, d0 + 0.06 + 1, 1e-9, 'a legal defence: +1 once');
   assert.equal(S.politics.restrictions.z_repression.status, 'active', 'the other repression stays');
   free(Q);
-  PolishProjects.chooseOption(Q, 'justice_policy', 'limited_redress');
+  review();
   settle(Q);
   const second = Object.values(S.projects).filter(p => p.type === 'justice_review').at(-1);
   assert.deepEqual([second.policy_choices.restriction_id, second.policy_choices.result], [ban.id, 'no_grounds']);
   assert.deepEqual([ban.status, S.militia.banned], ['active', true], 'a lawful ban stays');
   free(Q);
-  PolishProjects.chooseOption(Q, 'justice_policy', 'limited_redress');
+  review();
   const third = Object.values(S.projects).filter(p => p.type === 'justice_review').at(-1);
   S.cabinet.status = 'caretaker';
   settle(Q);
@@ -366,12 +374,10 @@ test('Sprawiedliwość: a confirmed unlawful act lifts only its restriction (dem
   assert.equal(S.politics.restrictions.z_repression.status, 'active');
   S.cabinet.status = 'active';
   free(Q);
-  assert.match(PolishProjects.optionStatus(Q, 'justice_policy', 'limited_redress').reason, /not already under review/, 'the same material is not reviewed again');
-  // Z — 0.82: the broad variant puts the democratic guarantees first among the motions of PPS in the constitutional debate.
-  assert.match(PolishProjects.optionStatus(Q, 'justice_policy', 'broad_safeguards').reason, /constitutional debate/);
-  PolishProjects.openConstitutionDebate(Q);
-  PolishProjects.debateDeclare(Q);
-  assert.equal(PolishProjects.optionStatus(Q, 'justice_policy', 'broad_safeguards').available, true, 'the broad variant is the democratic_guarantees route');
+  assert.equal(PolishProjects.reviewTarget(S), null, 'the same material is not reviewed again');
+  assert.match(PolishProjects.optionStatus(Q, 'justice_policy', 'limited_redress').reason, /Unknown option/, 'the review is not on the card');
+  // Z — 1.00 (decision 2A): the democratic guarantees are a motion of the constitutional debate itself, not an option of the card.
+  assert.match(PolishProjects.optionStatus(Q, 'justice_policy', 'broad_safeguards').reason, /Unknown option/);
 });
 
 test('Autonomia: after the law and before the end of the work no relief; at the end −3 once for the covered population and a real limit of competence; the schools still cost separately', () => {

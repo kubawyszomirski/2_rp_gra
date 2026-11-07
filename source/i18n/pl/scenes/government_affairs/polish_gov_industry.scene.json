@@ -12,6 +12,6 @@
   "subtitle: Costs 1 budget unit a month; in return the owner keeps the plant and its jobs. Business presses less at once (−4), and after two months the plant works in full again.": "subtitle: Kosztuje 1 jednostkę budżetu miesięcznie; w zamian właściciel utrzymuje zakład i zatrudnienie. Przedsiębiorcy od razu mniej naciskają (−4), a po dwóch miesiącach zakład wraca do pełnej produkcji.",
   "title: Take a plant under public control": "title: Weź zakład pod kontrolę publiczną",
   "- @root: Continue.": "- @root: Dalej.",
-  "subtitle: The act goes to the Sejm, and a public board manages the plant. The workers keep their jobs, but business pressure rises sharply (+15). [? if pl_industrial_policy_public_control_coalition : [+ pl_industrial_policy_public_control_coalition +] ?]": "subtitle: Akt idzie do Sejmu, a zakładem zarządza zarząd publiczny. Robotnicy zachowują pracę, ale presja przedsiębiorców gwałtownie rośnie (+15). [? if pl_industrial_policy_public_control_coalition : [+ pl_industrial_policy_public_control_coalition +] ?]"
+  "subtitle: A public board takes over the management of the plant. The workers keep their jobs, but business pressure rises sharply (+15). [? if pl_industrial_policy_public_control_coalition : [+ pl_industrial_policy_public_control_coalition +] ?]": "subtitle: Zarządzanie zakładem przejmuje zarząd publiczny. Robotnicy zachowują pracę, ale presja przedsiębiorców gwałtownie rośnie (+15). [? if pl_industrial_policy_public_control_coalition : [+ pl_industrial_policy_public_control_coalition +] ?]"
  }
 }

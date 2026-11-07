@@ -31,7 +31,7 @@ The constitution guarantees the freedom of the press and of assembly, but the ad
 
 @press_freedom
 title: Limit the confiscation of the press
-subtitle: Needs a law. For a year the authorities confiscate no paper of PPS, even under a government of the right, and democracy grows stronger (+1). [? if pl_civil_liberties_press_freedom_coalition : [+ pl_civil_liberties_press_freedom_coalition +] ?]
+subtitle: No cost to the budget. For a year the authorities confiscate no paper of PPS, even under a government of the right, and democracy grows stronger (+1). [? if pl_civil_liberties_press_freedom_coalition : [+ pl_civil_liberties_press_freedom_coalition +] ?]
 choose-if: {! return PolishProjects.optionStatus(Q, 'civil_liberties', 'press_freedom').available !}
 unavailable-subtitle: [+ pl_civil_liberties_press_freedom_why +]
 on-arrival: {!

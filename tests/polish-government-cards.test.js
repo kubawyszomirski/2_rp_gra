@@ -300,7 +300,7 @@ test('Karty resortów 0.93: one Treasury card with five instruments; every gover
   assert.match(content(engine), /pl-ministry-label\W{1,3}>Treasury ministry</, 'Z — 0.77: a printed label, not a sentence');
   assert.match(content(engine), /Budget this month/);
   assert.equal(choice(engine, 'polish_gov_finance.loan').canChoose, Q.S.economy.credit >= 40);
-  assert.match(content(engine), /One instrument per decision, voted by the Sejm at once/);
+  assert.match(content(engine), /One instrument per decision, in force at once/);
   assert.doesNotMatch(content(engine), /11\.9|No project of this card yet/, 'no section number and no empty project line on the taxes card');
   choose(engine, 'easy_discard');
   // The badge names the ministry of every government card; of two portfolios, the one PPS holds.

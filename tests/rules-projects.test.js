@@ -702,25 +702,18 @@ test('Trzy reformy: only the constructive vote in force; no arbitration and no c
   assert.match(proj.motionStatus(Q, 'presidential_arbitration').reason, /stronger presidency/);
 });
 
-test('Sprawiedliwość (stage-4 part): the broad variant puts the democratic guarantees first among the motions of PPS; the review of an abuse needs a restriction case', () => {
+test('Sprawiedliwość (stage-4 part, Z — 1.00): the card has the amnesty, the jury courts and the legal advice; the democratic guarantees stay a motion of the debate', () => {
   const Q = withPortfolio(world({ time: 36, senate: true }), 'justice');
-  assert.match(proj.optionStatus(Q, 'justice_policy', 'broad_safeguards').reason, /constitutional debate/, 'not before the debate');
+  assert.deepEqual(proj.CARDS.justice_policy.options, ['amnesty', 'jury', 'legal_aid']);
+  assert.deepEqual(proj.CARDS.family_law.options, ['civil_marriage', 'women_rights']);
+  assert.match(proj.optionStatus(Q, 'justice_policy', 'broad_safeguards').reason, /Unknown option/);
+  assert.match(proj.optionStatus(Q, 'justice_policy', 'limited_redress').reason, /Unknown option/);
   proj.openConstitutionDebate(Q);
-  proj.debateToggle(Q, 'constructive_vonc');
+  proj.debateToggle(Q, 'democratic_guarantees');
   proj.debateDeclare(Q);
-  assert.equal(proj.optionStatus(Q, 'justice_policy', 'broad_safeguards').available, true);
-  proj.chooseOption(Q, 'justice_policy', 'broad_safeguards');
-  const debate = proj.debateState(Q.S);
-  assert.deepEqual([debate.ranking, debate.motions.democratic_guarantees.status, Q.month_actions], [['democratic_guarantees', 'constructive_vonc'], 'waiting', 1]);
-  assert.equal(Object.values(Q.S.projects).filter(p => p.type === 'constitution').length, 0, 'no project before the vote');
-  freeAction(Q);
-  assert.match(proj.optionStatus(Q, 'justice_policy', 'broad_safeguards').reason, /already the first motion/);
-  // Stage 7 records the restrictions (S.politics); without one the review has nothing to examine.
-  assert.match(proj.optionStatus(Q, 'justice_policy', 'limited_redress').reason, /active restriction of a named case/);
+  assert.equal(proj.debateState(Q.S).motions.democratic_guarantees.status, 'waiting', 'the debate itself offers the guarantees');
 });
 
-// Z — 0.82 (the user's decisions of 21 X 2026): the constitutional debate. The fixture parliament LEFT gives the guarantees 270 votes
-// for and 120 against (two thirds of the votes for and against), the constructive vote 150 for and none against.
 test('Debata 0.82: the list of PPS in its order; the lines of What Power Do We Want and the exclusion; the position costs no month and brings the effects of support once', () => {
   const Q = world({ seats: LEFT, time: 36, senate: true });
   assert.equal(proj.debateState(Q.S), null, 'no debate before its event');

@@ -19,7 +19,7 @@ Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_finance');
 
 *[+ pl_gc_ministry +]*
 
-One instrument per decision, voted by the Sejm at once; one instrument of each kind can be in force, and a temporary revenue ends when it expires.
+One instrument per decision, in force at once; one instrument of each kind can be in force, and a temporary revenue ends when it expires.
 
 [+ pl_gc_budget +]
 

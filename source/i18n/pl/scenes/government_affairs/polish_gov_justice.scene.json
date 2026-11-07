@@ -2,14 +2,16 @@
  "source": "scenes/government_affairs/polish_gov_justice.scene.dry",
  "status": "complete",
  "lines": {
-  "title: The Judiciary": "title: Sądownictwo",
-  "subtitle: Justice: the joint democratic guarantees, or the review of one abuse.": "subtitle: Resort Sprawiedliwości: wspólne gwarancje demokratyczne albo rewizja jednego nadużycia.",
-  "= The judiciary": "= Sądownictwo",
-  "title: A joint project of democratic guarantees": "title: Wspólny projekt gwarancji demokratycznych",
-  "title: Review of a named abuse": "title: Rewizja wymienionego nadużycia",
-  "subtitle: Costs the budget 1 unit for a month; needs an active restriction of a named case. A confirmed unlawful act lifts only that restriction; without grounds the review ends without relief.": "subtitle: Obciąża budżet: 1 jednostka przez miesiąc; wymaga aktywnego ograniczenia w wymienionej sprawie. Potwierdzony bezprawny akt znosi tylko to ograniczenie; bez podstaw rewizja kończy się bez ulgi.",
-  "- @root: Continue.": "- @root: Dalej.",
-  "The minister does not annul another authority’s judgement by naming a policy. The broad variant puts the democratic guarantees first among the motions of PPS in the constitutional debate.": "Minister nie uchyla cudzego orzeczenia samym ogłoszeniem polityki. Szeroki wariant stawia gwarancje demokratyczne na pierwszym miejscu wniosków PPS w debacie konstytucyjnej.",
-  "subtitle: Costs this month's action. The democratic guarantees become the first motion of PPS in the constitutional debate; both chambers vote on them when the Constitutional Committee brings them to the floor. [? if pl_justice_policy_broad_safeguards_coalition : [+ pl_justice_policy_broad_safeguards_coalition +] ?]": "subtitle: Zużywa akcję tego miesiąca. Gwarancje demokratyczne stają się pierwszym wnioskiem PPS w debacie konstytucyjnej; obie izby zagłosują nad nimi, kiedy Komisja Konstytucyjna skieruje je pod obrady. [? if pl_justice_policy_broad_safeguards_coalition : [+ pl_justice_policy_broad_safeguards_coalition +] ?]"
+  "title: Courts and Prisoners": "title: Sądy i więźniowie",
+  "subtitle: Justice: an amnesty, jury courts and legal advice for workers.": "subtitle: Resort Sprawiedliwości: amnestia, sądy przysięgłych i porady prawne dla robotników.",
+  "= Courts and prisoners": "= Sądy i więźniowie",
+  "The courts judge by the different laws of the former partitions, and workers’ and minority activists sit in the prisons. Democracy stands at [+ pl_gc_democracy +] of 100.": "Sądy orzekają według różnych praw dawnych zaborców, a w więzieniach siedzą działacze robotniczy i mniejszości. Demokracja wynosi teraz [+ pl_gc_democracy +] na 100.",
+  "title: Declare an amnesty for political prisoners": "title: Ogłoś amnestię dla więźniów politycznych",
+  "subtitle: No cost to the budget; once in the chapter. The workers trust PPS more (+3), but squad members leave the prisons too, and political violence rises (+3). [? if pl_justice_policy_amnesty_coalition : [+ pl_justice_policy_amnesty_coalition +] ?]": "subtitle: Bez kosztu dla budżetu, raz w rozdziale. Robotnicy bardziej ufają PPS (+3), ale na wolność wychodzą też bojówkarze, więc przemoc polityczna rośnie (+3). [? if pl_justice_policy_amnesty_coalition : [+ pl_justice_policy_amnesty_coalition +] ?]",
+  "title: Introduce jury courts in political and press cases": "title: Wprowadź sądy przysięgłych w sprawach politycznych i prasowych",
+  "subtitle: Costs 1 budget unit a month. Democracy grows stronger (+2). [? if pl_justice_policy_jury_coalition : [+ pl_justice_policy_jury_coalition +] ?]": "subtitle: Kosztuje 1 jednostkę budżetu miesięcznie. Demokracja się umacnia (+2). [? if pl_justice_policy_jury_coalition : [+ pl_justice_policy_jury_coalition +] ?]",
+  "title: Open free legal advice for workers": "title: Otwórz bezpłatne porady prawne dla robotników",
+  "subtitle: Costs 1 budget unit a month while it works. The trade unions trust PPS more (+5).": "subtitle: Kosztuje 1 jednostkę budżetu miesięcznie, dopóki działają. Związki zawodowe bardziej ufają PPS (+5).",
+  "- @root: Continue.": "- @root: Dalej."
  }
 }

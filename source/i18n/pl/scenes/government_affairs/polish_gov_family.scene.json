@@ -1,0 +1,15 @@
+{
+ "source": "scenes/government_affairs/polish_gov_family.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Law and the Family": "title: Prawo i rodzina",
+  "subtitle: Justice: civil marriage and divorce, equal rights of women.": "subtitle: Resort Sprawiedliwości: śluby cywilne i rozwody, równe prawa kobiet.",
+  "= Law and the family": "= Prawo i rodzina",
+  "Each part of the country has a different civil law, and marriages and divorces are mostly decided by the Churches. One modern law is an old demand of the left.": "W każdej dzielnicy kraju obowiązuje inne prawo cywilne, a o ślubach i rozwodach decydują w większości Kościoły. Jedno nowoczesne prawo to stary postulat lewicy.",
+  "title: Introduce civil marriage and divorce": "title: Wprowadź śluby cywilne i rozwody",
+  "subtitle: No cost to the budget. Workers and the intelligentsia trust PPS more (+3), but the Christian Democrats and the Church protest, and our relations with the Christian Democrats worsen (−8). [? if pl_family_law_civil_marriage_coalition : [+ pl_family_law_civil_marriage_coalition +] ?]": "subtitle: Bez kosztu dla budżetu. Robotnicy i inteligencja bardziej ufają PPS (+3), ale chadecja i Kościół protestują, a nasze stosunki z chadecją się pogarszają (−8). [? if pl_family_law_civil_marriage_coalition : [+ pl_family_law_civil_marriage_coalition +] ?]",
+  "title: Give women equal rights in civil law": "title: Daj kobietom równe prawa w prawie cywilnym",
+  "subtitle: No cost to the budget. The intelligentsia trusts PPS more (+2) and democracy grows stronger (+1), but the Christian Democrats protest (−5). [? if pl_family_law_women_rights_coalition : [+ pl_family_law_women_rights_coalition +] ?]": "subtitle: Bez kosztu dla budżetu. Inteligencja bardziej ufa PPS (+2), a demokracja się umacnia (+1), ale chadecja protestuje (−5). [? if pl_family_law_women_rights_coalition : [+ pl_family_law_women_rights_coalition +] ?]",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

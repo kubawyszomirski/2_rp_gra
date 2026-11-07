@@ -1,0 +1,57 @@
+title: Law and the Family
+subtitle: Justice: civil marriage and divorce, equal rights of women.
+new-page: true
+is-card: true
+tags: govt_affairs
+view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'family_law') !}
+on-arrival: {!
+// Card government.family_law. Opening and closing the card are free; a confirmed option costs this month's action. Z — 1.00 (the
+// sketch and the user's decisions of 7 XI 2026, 3: the equal rights of women gain the intelligentsia and democracy).
+PolishProjects.cardView(Q, 'family_law');
+// Z — 0.66 (decision 2A): the ministry of this card, on its page and as a badge in the hand.
+Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_family');
+!}
+
+= Law and the family
+
+*[+ pl_gc_ministry +]*
+
+Each part of the country has a different civil law, and marriages and divorces are mostly decided by the Churches. One modern law is an old demand of the left.
+
+[+ pl_gc_budget +]
+
+[+ pl_gc_projects +]
+
+- @civil_marriage
+- @women_rights
+- @easy_discard
+- @cancel_advisor_action
+
+@civil_marriage
+title: Introduce civil marriage and divorce
+subtitle: No cost to the budget. Workers and the intelligentsia trust PPS more (+3), but the Christian Democrats and the Church protest, and our relations with the Christian Democrats worsen (−8). [? if pl_family_law_civil_marriage_coalition : [+ pl_family_law_civil_marriage_coalition +] ?]
+choose-if: {! return PolishProjects.optionStatus(Q, 'family_law', 'civil_marriage').available !}
+unavailable-subtitle: [+ pl_family_law_civil_marriage_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'family_law', 'civil_marriage');
+!}
+go-to: result
+
+@women_rights
+title: Give women equal rights in civil law
+subtitle: No cost to the budget. The intelligentsia trusts PPS more (+2) and democracy grows stronger (+1), but the Christian Democrats protest (−5). [? if pl_family_law_women_rights_coalition : [+ pl_family_law_women_rights_coalition +] ?]
+choose-if: {! return PolishProjects.optionStatus(Q, 'family_law', 'women_rights').available !}
+unavailable-subtitle: [+ pl_family_law_women_rights_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'family_law', 'women_rights');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= Law and the family
+
+[+ pl_gc_result +]
+
+- @root: Continue.

@@ -3142,7 +3142,10 @@
     'minorities_kresy.official_languages': {topic: 'autonomy', position: 1}, 'minorities_kresy.self_government': {topic: 'autonomy', position: 1},
     'minorities_kresy.border': {topic: 'autonomy', position: -1}, 'civil_liberties.press_freedom': {topic: 'institution', position: 1},
     'civil_liberties.assembly': {topic: 'institution', position: 1},
-    'military_policy.civilian_oversight': {topic: 'army', position: 2}, 'justice_policy.broad_safeguards': {topic: 'institution', position: 2},
+    'military_policy.civilian_oversight': {topic: 'army', position: 2},
+    // Z — 1.00: the cards of Justice.
+    'justice_policy.amnesty': {topic: 'institution', position: 1}, 'justice_policy.jury': {topic: 'institution', position: 1},
+    'family_law.civil_marriage': {topic: 'church', position: 1}, 'family_law.women_rights': {topic: 'church', position: 1},
   });
   const OBJECTION_STEP = 20, OBJECTION_MAX = 40;
   // The crisis card: giving way stops the disputed reform (−40, the faction +10), talks cost 2 R (−20, once in a crisis); leaving

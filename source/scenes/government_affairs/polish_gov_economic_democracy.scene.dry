@@ -29,8 +29,8 @@ Socialists want the workers to have a say in the plants and the economy to serve
 - @cancel_advisor_action
 
 @works_councils
-title: Introduce the law on works councils
-subtitle: A law in the Sejm: in the larger plants workers’ councils have a say on dismissals and the wage rules. The workers are less discontented (−3) and trust their unions more (+5), but business presses harder (+8). [? if pl_economic_democracy_works_councils_coalition : [+ pl_economic_democracy_works_councils_coalition +] ?]
+title: Introduce works councils
+subtitle: In the larger plants workers’ councils have a say on dismissals and the wage rules. The workers are less discontented (−3) and trust their unions more (+5), but business presses harder (+8). [? if pl_economic_democracy_works_councils_coalition : [+ pl_economic_democracy_works_councils_coalition +] ?]
 choose-if: {! return PolishProjects.optionStatus(Q, 'economic_democracy', 'works_councils').available !}
 unavailable-subtitle: [+ pl_economic_democracy_works_councils_why +]
 on-arrival: {!
@@ -50,7 +50,7 @@ go-to: result
 
 @socialise_mining
 title: Socialise coal mining
-subtitle: A law in the Sejm, once in the game; compensation for the owners costs 2 budget units a month for six months. The miners’ unions trust the party more and the dissent of the Left of PPS falls (−5), but business pressure jumps (+25). [? if pl_economic_democracy_socialise_mining_coalition : [+ pl_economic_democracy_socialise_mining_coalition +] ?]
+subtitle: Once in the game; compensation for the owners costs 2 budget units a month for six months. The miners’ unions trust the party more and the dissent of the Left of PPS falls (−5), but business pressure jumps (+25). [? if pl_economic_democracy_socialise_mining_coalition : [+ pl_economic_democracy_socialise_mining_coalition +] ?]
 choose-if: {! return PolishProjects.optionStatus(Q, 'economic_democracy', 'socialise_mining').available !}
 unavailable-subtitle: [+ pl_economic_democracy_socialise_mining_why +]
 on-arrival: {!

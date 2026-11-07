@@ -48,7 +48,7 @@ PolishParty.programmeView(Q);
 
 = The new programme
 
-Chosen: [+ pl_prog_draft_text +]. Choose up to three priorities. The priorities prepare nothing by themselves; each programme still needs its card, its law, its money and its executor. Nothing is spent until you accept.
+Chosen: [+ pl_prog_draft_text +]. Choose up to three priorities. The priorities prepare nothing by themselves; each programme still needs its card, its money and its executor. Nothing is spent until you accept.
 
 - @toggle_stabilisation_with_protection
 - @toggle_public_works

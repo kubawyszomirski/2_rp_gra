@@ -1,5 +1,13 @@
 # Historical Source Register
 
+## PL-GOV-CARDS-1.00 — the cards of Justice
+
+- **Authority:** the user’s decisions of 7 November 2026 (technical reference 1.00, sections 12.4 and 23.73).
+- **Sources:** no new source; the options are game content of an alternate history.
+- **Historical fact:** none new.
+- **Gameplay simplification (P):** all options and numbers of the cards Courts and Prisoners and Law and the Family.
+- **Unresolved:** the civil and family law of each former partition in 1922–1926, and the PPS programme on civil marriage — TBD, historical research required.
+
 ## PL-GOV-CARDS-0.99 — the cards of the Interior
 
 - **Authority:** the user’s decisions of 7 November 2026 (technical reference 0.99, sections 12.4 and 23.72).
@@ -2728,6 +2736,7 @@ Add one row whenever an entry above is assigned a stable Source ID.
 | PL-PRESS-0.90 | Press | The party press: reach ceilings, sales, support of the campaigns, confiscations under a government of the right, credibility | Gameplay simplification; confiscations and circulation TBD | 0.90, 24 October 2026 |
 | PL-TUR-0.91 | TUR | TUR: +5% to the organisers per level, civic courses raise the trust in PPS, a course for trade unionists, no reform course | Gameplay simplification; founding and functions from TUR's own publication; reach by group TBD | 0.91, 24 October 2026 |
 | PL-COOP-0.92 | Cooperative | One workers' consumer cooperative that pays half of the strike pay; no relief; government cooperative variants without a PPS cooperative | Gameplay simplification; PPS ties to the cooperative movement TBD | 0.92, 24 October 2026 |
+| PL-GOV-CARDS-1.00 | Government cards | Justice: Courts and Prisoners, Law and the Family | Game content; no new historical claim | 1.00, 7 November 2026 |
 | PL-GOV-CARDS-0.99 | Government cards | The Interior: Police, Kresy and minorities, Civil liberties | Language acts 1924, press decree 1919 and KOP 1924 documented; options are game content | 0.99, 7 November 2026 |
 | PL-COALITION-0.98 | Coalition | The plan of the cabinet, partners against reforms, the coalition crisis and the card Coalition Disputes | Game design; no new historical claim | 0.98, 7 November 2026 |
 | PL-GOV-CARDS-0.93 | Government cards | One budget number, one monthly cost per programme, one-step reforms, one Treasury card, no Foreign Affairs for PPS | Gameplay simplification; research for new cards to follow | 0.93, 24 October 2026 |

@@ -42,7 +42,7 @@ go-to: result
 
 @consolidation
 title: Consolidate the land
-subtitle: Costs 1 budget unit a month for four months and needs a law. The agrarian pressure falls (−2), but the disputes over field borders first anger the peasants (+2).
+subtitle: Costs 1 budget unit a month for four months. The agrarian pressure falls (−2), but the disputes over field borders first anger the peasants (+2).
 choose-if: {! return PolishProjects.optionStatus(Q, 'agriculture_development', 'consolidation').available !}
 unavailable-subtitle: [+ pl_agriculture_development_consolidation_why +]
 on-arrival: {!

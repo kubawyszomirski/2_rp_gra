@@ -201,6 +201,21 @@
         limited_reform: {build: 1, upkeep: 0, duration: 2, law: {title: 'A limited reform of the command of the army', programme: {army: 0}}}}},
     justice_review: {name: 'Review of a named abuse', card: 'justice_policy', portfolios: ['justice'], klass: 'small', investment: false,
       beneficiaries: [], law: null, variants: {limited_redress: {build: 1, upkeep: 0, duration: 1}}},
+    // Z — 1.00 (the sketch and the user's decisions of 7 XI 2026): the cards „Sądy i więźniowie” and „Prawo i rodzina” of Justice
+    // (P: the costs and effects are simplifications of the game).
+    amnesty: {name: 'Amnesty for political prisoners', card: 'justice_policy', portfolios: ['justice'], klass: 'small', investment: false,
+      beneficiaries: ['workers'], law: null, variants: {political: {build: 0, upkeep: 0, duration: 1, trust: 3, violence: 3}}},
+    jury_courts: {name: 'Jury courts in political and press cases', card: 'justice_policy', portfolios: ['justice'], klass: 'large', investment: false,
+      ongoing: true, beneficiaries: [], law: {title: 'Jury courts in political and press cases', programme: {institution: 1}},
+      variants: {jury: {build: 1, upkeep: 1, duration: 2, democracy: 2}}},
+    legal_aid: {name: 'Free legal advice for workers', card: 'justice_policy', portfolios: ['justice'], klass: 'small', investment: false,
+      ongoing: true, beneficiaries: ['workers'], law: null, variants: {aid: {build: 1, upkeep: 1, duration: 2, union_trust: 5}}},
+    civil_marriage: {name: 'Civil marriage and divorce', card: 'family_law', portfolios: ['justice'], klass: 'large', investment: false,
+      beneficiaries: ['workers', 'new_middle'], law: {title: 'Civil marriage and divorce', programme: {church: 1}},
+      variants: {civil: {build: 0, upkeep: 0, duration: 1, trust: 3, relations: {pschd: -8}}}},
+    women_rights: {name: 'Equal rights of women in civil law', card: 'family_law', portfolios: ['justice'], klass: 'large', investment: false,
+      beneficiaries: ['new_middle'], law: {title: 'Equal rights of women in civil law', programme: {church: 1}},
+      variants: {equal: {build: 0, upkeep: 0, duration: 1, trust: 2, democracy: 1, relations: {pschd: -5}}}},
     // Z — 0.81 (the legislative initiative of PPS, 20 X 2026; P): the protection of tenants after the act of 11 IV 1924 (the PPS
     // motion of X 1925; the act of 27 III 1926 suspended the rises for nine months) and the old-age insurance of workers (a PPS
     // demand of 1924; introduced only in 1933). The courts apply the tenant law; no ministry card of PPS carries either.
@@ -249,6 +264,7 @@
     polish_dominance: 'dominance of the Polish language', conservation: 'limited conservation', restoration: 'wider restoration with public access',
     universities: 'universities and research', broadcasting: 'public broadcasting', training: 'training', prosecution: 'the pursuit of political violence',
     offices: 'minority languages in the offices', border: 'the eastern border', limits: 'limits on confiscation',
+    political: 'political prisoners', jury: 'jury courts', aid: 'legal advice', civil: 'civil marriage and divorce', equal: 'equal rights',
     rapid_cuts: 'rapid stabilisation with cuts', protected: 'stabilisation with protections and a burden on wealth', gradual: 'gradual limitation of emission',
     collection: 'better tax collection', democratic_guarantees: 'democratic guarantees', constructive_vonc: 'constructive vote of no confidence',
     presidential_arbitration: 'presidential arbitration', rescue: 'a conditional credit restoring its lost capacity',
@@ -281,6 +297,8 @@
     minority_schools: 'Prawa językowe i szkoły mniejszości', heritage: 'Odnowa zabytku', currency_reform: 'Reforma walutowa',
     science: 'Wsparcie nauki i uniwersytetów', radio: 'Publiczne radio', police_training: 'Szkolenie policji',
     official_languages: 'Języki mniejszości w urzędach', border_protection: 'Ochrona granicy wschodniej', press_law: 'Ograniczenie konfiskat prasy',
+    amnesty: 'Amnestia dla więźniów politycznych', jury_courts: 'Sądy przysięgłych w sprawach politycznych i prasowych',
+    legal_aid: 'Bezpłatne porady prawne dla robotników', civil_marriage: 'Śluby cywilne i rozwody', women_rights: 'Równe prawa kobiet w prawie cywilnym',
     collection: 'Lepszy pobór podatków', plant_rescue: 'Ratowanie zakładu', enterprise_representation: 'Przedstawicielstwo robotników w zakładzie',
     police_professionalization: 'Profesjonalizacja policji', police_investigation: 'Śledztwo w wymienionej sprawie',
     police_protection: 'Ochrona zgromadzenia albo instytucji', limited_autonomy: 'Ograniczona autonomia administracyjna i kulturalna',
@@ -299,6 +317,7 @@
     polish_dominance: 'dominacja języka polskiego', conservation: 'ograniczona konserwacja', restoration: 'szersza restauracja z dostępem publicznym',
     universities: 'uczelnie i badania', broadcasting: 'radiofonia publiczna', training: 'szkolenie', prosecution: 'ściganie przemocy politycznej',
     offices: 'języki mniejszości w urzędach', border: 'granica wschodnia', limits: 'ograniczenie konfiskat',
+    political: 'więźniowie polityczni', jury: 'sądy przysięgłych', aid: 'porady prawne', civil: 'śluby cywilne i rozwody', equal: 'równe prawa',
     rapid_cuts: 'szybka stabilizacja z cięciami', protected: 'stabilizacja z osłonami i obciążeniem majątku', gradual: 'stopniowe ograniczanie emisji',
     collection: 'lepszy pobór podatków', democratic_guarantees: 'gwarancje demokratyczne', constructive_vonc: 'konstruktywne wotum nieufności',
     presidential_arbitration: 'arbitraż prezydencki', rescue: 'warunkowy kredyt przywracający utracone moce',
@@ -358,6 +377,8 @@
   const LAW_TITLES_PL = Object.freeze({'Enforcement of working time': 'Egzekwowanie czasu pracy', 'Execution of the land reform': 'Wykonanie reformy rolnej',
     'Voluntary consolidation of land': 'Dobrowolna komasacja gruntów', 'Secular school with religious freedom': 'Szkoła świecka z wolnością religijną',
     'Minority languages in the offices': 'Języki mniejszości w urzędach', 'Limits on the confiscation of the press': 'Ograniczenie konfiskat prasy',
+    'Jury courts in political and press cases': 'Sądy przysięgłych w sprawach politycznych i prasowych', 'Civil marriage and divorce': 'Śluby cywilne i rozwody',
+    'Equal rights of women in civil law': 'Równe prawa kobiet w prawie cywilnym',
     'Currency reform': 'Reforma walutowa', 'Workers’ co-decision in a public plant': 'Współdecydowanie robotników w zakładzie publicznym',
     'Limited administrative and cultural autonomy': 'Ograniczona autonomia administracyjna i kulturalna',
     'Civilian oversight of the army': 'Cywilny nadzór nad wojskiem', 'A limited reform of the command of the army': 'Ograniczona reforma dowodzenia wojskiem',
@@ -717,7 +738,7 @@
     }
     const bill = submitLaw(Q, {kind: 'project', title: law.title + ' (' + VARIANT_NAMES[project.variant] + ')', project_id: project.id,
       sponsor: project.sponsor === 'pps' ? 'pps' : 'cabinet', programme: law.programme, constitutional: law.constitutional,
-      pps_vote: opts.pps_vote, flags: opts.flags});
+      pps_vote: opts.pps_vote, flags: opts.flags, decree: !!opts.decree});
     project.law_id = bill.id;
     project.authorization_id = bill.id;
     if (bill.status === 'rejected') {
@@ -857,6 +878,14 @@
         pend(project, {system: 'trust', stage: 5, value: variant.trust, when: 'first_effect', note: 'the minorities'});
       } else if (project.type === 'official_languages') {
         pend(project, {system: 'trust', stage: 5, value: variant.trust, when: 'first_effect', note: 'the minorities'});
+      } else if (project.type === 'amnesty') {
+        pend(project, {system: 'trust', stage: 5, value: variant.trust, when: 'first_effect', note: 'the workers'});
+        politicsModule().violenceEffect(Q, project.id + ':violence', variant.violence, 'amnesty');
+      } else if (project.type === 'jury_courts' || project.type === 'women_rights' || project.type === 'civil_marriage') {
+        if (variant.trust) pend(project, {system: 'trust', stage: 5, value: variant.trust, when: 'first_effect'});
+        if (variant.democracy) pend(project, {system: 'democracy', stage: 7, value: variant.democracy, when: 'first_effect', note: project.type});
+      } else if (project.type === 'legal_aid') {
+        for (const b of Object.keys(S.unions || {}).sort()) S.unions[b].trust = Math.min(100, S.unions[b].trust + variant.union_trust);
       } else if (project.type === 'police_protection') {
         securityModule().protectionExecuted(Q, project, coverage, t);
       } else if (project.type === 'army_control') {
@@ -1119,7 +1148,8 @@
       costText = L(' The dissent of the Piłsudczycy in PPS rises (+' + cost.dissent + ') and relations with Piłsudski worsen (−' + Math.abs(cost.relation) + ').',
         ' Sprzeciw piłsudczyków w PPS rośnie (+' + cost.dissent + '), a stosunki z Piłsudskim się pogarszają (−' + Math.abs(cost.relation) + ').');
     }
-    return result(Q, launchPrepared(Q, project) + costText);
+    // Z — 1.00: the ministry decides by decree; the old card of the Parliament deck (via 'parliament') still files a law.
+    return result(Q, launchPrepared(Q, project, {vote: via === 'parliament'}) + costText);
   }
 
   // The last law of a project failed and the project is prepared again (12.2): its variant can be changed (Z — 0.57).
@@ -1474,6 +1504,14 @@
     if (spec.plant_id) bill.plant_id = spec.plant_id;
     bill.pps_vote = spec.pps_vote || ppsDefaultVote(Q, bill);
     S.parliament.laws.push(bill);
+    // Z — 1.00 (the user's decision of 7 XI 2026, as in the German original): what a ministry of PPS decides takes effect at once,
+    // without a vote in the Sejm or the Senate; its price is the budget, the money of the party, business and the coalition.
+    if (spec.decree) {
+      bill.decree = true;
+      bill.senate = 'not_required';
+      enactLaw(Q, bill, bill.submitted_at, bill.variant);
+      return bill;
+    }
     // Z — 0.81: a bill of the legislative initiative brings the counts of its rolled vote.
     const counts = spec.counts ? copy(spec.counts) : sejmCounts(Q, bill);
     const ballot = recordBallot(Q, bill.rule === 'constitutional' ? 'constitutional_amendment_sejm' : 'ordinary_resolution', bill, counts, 'sejm');
@@ -3408,7 +3446,10 @@
     agriculture_development: {portfolios: ['agriculture'], options: ['advisory', 'consolidation', 'cooperative_processing_sales']},
     education_program: {portfolios: ['education'], options: ['rural_access', 'urban_worker_adult_access', 'secular']},
     minority_school_rights: {portfolios: ['education'], options: ['own_language', 'agreed_bilingual', 'polish_dominance']},
-    justice_policy: {portfolios: ['justice'], options: ['broad_safeguards', 'limited_redress']},
+    // Z — 1.00 (decisions 1A–2A of 7 XI 2026): the amnesty, the jury courts and the legal advice; the democratic guarantees stay in
+    // the constitutional debate and the review of a named abuse left the card. The card „Prawo i rodzina”.
+    justice_policy: {portfolios: ['justice'], options: ['amnesty', 'jury', 'legal_aid']},
+    family_law: {portfolios: ['justice'], options: ['civil_marriage', 'women_rights']},
     // Stage 7: cards 12 and 14 of 17.11 (catalogue 8.12, 8.14); the agreement with Piłsudski (card 15) is PolishSecurity's.
     // Z — 0.99 (the sketch of 7 XI 2026): three permanent cards of the Interior with three permanent options each.
     internal_security: {portfolios: ['interior'], options: ['training', 'prosecute', 'protect']},
@@ -3429,7 +3470,7 @@
     polish_gov_land: 'land_program', polish_gov_agriculture: 'agriculture_development', polish_gov_education: 'education_program',
     polish_gov_minority_schools: 'minority_school_rights', polish_gov_justice: 'justice_policy', polish_gov_interior: 'internal_security',
     polish_gov_military: 'military_policy', polish_gov_heritage: 'heritage_restoration', polish_gov_economic_democracy: 'economic_democracy',
-    polish_gov_customs_war: 'customs_war', polish_gov_kresy: 'minorities_kresy', polish_gov_liberties: 'civil_liberties'});
+    polish_gov_customs_war: 'customs_war', polish_gov_kresy: 'minorities_kresy', polish_gov_liberties: 'civil_liberties', polish_gov_family: 'family_law'});
   const SCENE_PORTFOLIOS = Object.freeze({polish_gov_pils_agreement: Object.freeze(['reichswehr'])});
   const PORTFOLIO_BADGE_PL = Object.freeze({labor: 'Praca', interior: 'Sprawy Wewnętrzne', finance: 'Skarb', economic: 'Przemysł i Handel',
     justice: 'Sprawiedliwość', agriculture: 'Rolnictwo', reichswehr: 'Sprawy Wojskowe', education: 'Oświata', foreign: 'Sprawy Zagraniczne'});
@@ -3739,15 +3780,8 @@
         }
         return launchStatus(Q, 'minority_schools', option, null);
       }
-      case 'justice_policy': {
-        if (option === 'limited_redress') {
-          if (!reviewTarget(S)) return no(L('Needs an active restriction of a named case that is not already under review.', 'Wymaga aktywnego ograniczenia w wymienionej sprawie, które nie jest jeszcze rozpatrywane.'));
-          return forecastWith(Q, {charge: 1}) >= -2 ? OK : no(forecastBlock());
-        }
-        // Z — 0.82 (decision 4A): the broad variant puts the democratic guarantees first among the motions of PPS in the debate.
-        const status = justiceGuaranteesStatus(Q);
-        return status.available ? OK : no(status.reason);
-      }
+      case 'justice_policy':
+      case 'family_law': return justiceOptionStatus(Q, option);
       case 'internal_security': return securityOptionStatus(Q, option);
       case 'minorities_kresy': return kresyOptionStatus(Q, option);
       case 'civil_liberties': return libertiesOptionStatus(Q, option);
@@ -3773,6 +3807,23 @@
       }
     }
     return no(L('Unknown option.', 'Nieznana opcja.'));
+  }
+
+  // Z — 1.00: the options of the cards of Justice → their project types; each is carried out once in the chapter.
+  const JUSTICE_TYPES = Object.freeze({amnesty: ['amnesty', 'political'], jury: ['jury_courts', 'jury'], legal_aid: ['legal_aid', 'aid'],
+    civil_marriage: ['civil_marriage', 'civil'], women_rights: ['women_rights', 'equal']});
+  const JUSTICE_DONE = Object.freeze({amnesty: ['The amnesty has already been declared.', 'Amnestię już ogłoszono.'],
+    jury: ['Jury courts already judge political and press cases.', 'Sądy przysięgłych już sądzą sprawy polityczne i prasowe.'],
+    legal_aid: ['The free legal advice already works.', 'Bezpłatne porady prawne już działają.'],
+    civil_marriage: ['Civil marriage and divorce are already the law.', 'Śluby cywilne i rozwody już obowiązują.'],
+    women_rights: ['Women already have equal rights in civil law.', 'Kobiety mają już równe prawa w prawie cywilnym.']});
+
+  function justiceOptionStatus(Q, option) {
+    const S = Q.S, spec = JUSTICE_TYPES[option];
+    if (!spec) return no(L('Unknown option.', 'Nieznana opcja.'));
+    const prepared = projectsOf(S, spec[0], p => preparedProject(p) && p.sponsor === 'pps')[0] || null;
+    if (!prepared && projectsOf(S, spec[0]).length) return no(L(JUSTICE_DONE[option][0], JUSTICE_DONE[option][1]));
+    return launchStatus(Q, spec[0], spec[1], prepared);
   }
 
   // The rule of access to land is a point of the same law (12.6): the preference for the Polish majority
@@ -3832,11 +3883,12 @@
     'civil_liberties.press_freedom': ['the limits on press confiscations', 'ograniczenie konfiskat prasy'],
     'civil_liberties.assembly': ['easier rallies and marches', 'łatwiejsze wiece i pochody'],
     'military_policy.civilian_oversight': ['the civilian oversight of the army', 'nadzór cywilny nad wojskiem'],
-    'justice_policy.broad_safeguards': ['the democratic guarantees', 'gwarancje demokratyczne'],
+    'justice_policy.amnesty': ['the amnesty', 'amnestię'], 'justice_policy.jury': ['the jury courts', 'sądy przysięgłych'],
+    'family_law.civil_marriage': ['civil marriage and divorce', 'śluby cywilne i rozwody'], 'family_law.women_rights': ['equal rights of women', 'równe prawa kobiet'],
   });
   // A motion of the constitutional debate starts with the decision itself; it has nothing a concession could stop.
   // Z — 0.99: easier rallies are a decision of the ministry that starts at once, like a motion.
-  const MOTION_REFORMS = Object.freeze(['justice_policy.broad_safeguards', 'civil_liberties.assembly']);
+  const MOTION_REFORMS = Object.freeze(['civil_liberties.assembly']);
 
   // What a decision started: a project that left preparation, or a new instrument of the budget.
   function startedBy(S, before) {
@@ -3908,25 +3960,11 @@
     const status = optionStatus(Q, cardId, option, extra && {branch: extra.branch, variant: extra.variant});
     if (!status.available) throw new Error('chooseOption: ' + cardId + '.' + option + ': ' + status.reason);
     government.syncRelations(Q);
-    if (cardId === 'justice_policy' && option === 'limited_redress') {
-      rules.commitMainAction(Q, actionId(cardId, option), {card: cardId, option: option});
-      const r = reviewTarget(S);
-      const project = createProject(Q, 'justice_review', 'limited_redress', {sponsor: 'pps', responsibility: {pps: 0.70},
-        policy_choices: {restriction_id: r.id, case_id: r.case_id}});
-      launchProject(Q, project, {sponsor: 'pps'});
-      return result(Q, L('The review of the named restriction (' + r.kind.replace(/_/g, ' ') + ') starts: 1 B for one month. The competent organ decides on its legal grounds.',
-        'Rusza rewizja wymienionego ograniczenia (' + ({strike_repression: 'represje wobec strajku', press_confiscation: 'konfiskata prasy',
-          militia_ban: 'zakaz działalności Milicji'}[r.kind] || r.kind) + '): 1 B przez jeden miesiąc. Właściwy organ rozstrzyga na podstawie przepisów.'));
-    }
     if (cardId === 'internal_security' || cardId === 'military_policy' || cardId === 'minorities_kresy' || cardId === 'civil_liberties') {
       rules.commitMainAction(Q, actionId(cardId, option), {card: cardId, option: option});
       if (cardId === 'minorities_kresy') return kresyChoose(Q, option);
       if (cardId === 'civil_liberties') return libertiesChoose(Q, option);
       return cardId === 'internal_security' ? securityChoose(Q, option) : armyChoose(Q, option);
-    }
-    if (cardId === 'justice_policy') {
-      // The broad variant is the one motion of the democratic guarantees in the constitutional debate (17.12.3; Z — 0.82).
-      return result(Q, justiceGuaranteesChoose(Q));
     }
     if (cardId === 'customs_war') {
       S.history.actions.push({t: t, action_id: actionId(cardId, option), cost_t: 0});
@@ -3993,7 +4031,7 @@
         const law = adoptInstrument(Q, kind);
         if (!law) return result(Q, L('The ' + INSTRUMENTS[kind].name + ' take effect this month.', capital(instrumentName(kind)) + ': wchodzą w życie w tym miesiącu.'));
         return result(Q, law.status === 'rejected' ? L('The Sejm rejects the ' + INSTRUMENTS[kind].name + '.', 'Sejm odrzuca: ' + instrumentName(kind) + '.') :
-          L('The Sejm adopts the ' + INSTRUMENTS[kind].name + '.', 'Sejm przyjmuje: ' + instrumentName(kind) + '.') + lawNote(law));
+          L('In force from this month: ' + INSTRUMENTS[kind].name + '.', 'Od tego miesiąca obowiązuje: ' + instrumentName(kind) + '.') + lawNote(law));
       }
       case 'currency_stabilisation': {
         const project = prepareProject(Q, 'currency_reform', option, ppsFields);
@@ -4016,7 +4054,7 @@
         if (option === 'public_control') {
           const plant = publicControlTarget(S);
           const bill = submitLaw(Q, {kind: 'public_control', title: 'Public control of the ' + plantLabel(plant, true), sponsor: 'pps',
-            programme: {fiscal: 2}, pps_vote: 'yes', plant_id: plant.id});
+            programme: {fiscal: 2}, pps_vote: 'yes', plant_id: plant.id, decree: true});
           if (bill.status !== 'rejected' && plant.owner !== 'public') plant.public_act_id = bill.id;
           plant.history.push({t: t, kind: 'public_control_submitted', law_id: bill.id});
           return result(Q, bill.status === 'rejected' ? L('The Sejm rejects the act; the ' + plantLabel(plant) + ' stays private.',
@@ -4102,7 +4140,10 @@
         return result(Q, launchPrepared(Q, project));
       }
       case 'justice_policy':
-        return null;
+      case 'family_law': {
+        const [typeId, variantId] = JUSTICE_TYPES[option];
+        return result(Q, launchPrepared(Q, prepareProject(Q, typeId, variantId, ppsFields, {match: p => p.sponsor === 'pps'})));
+      }
       case 'heritage_restoration': {
         if (option === 'science' || option === 'radio') {
           const typeId = option, variantId = option === 'science' ? 'universities' : 'broadcasting';
@@ -4133,7 +4174,7 @@
   }
 
   function lawNote(law) {
-    if (!law) return '';
+    if (!law || law.decree) return '';
     if (law.status === 'enacted') return L(' The law is in force.', ' Ustawa obowiązuje.');
     if (law.status === 'in_procedure') return L(' The Sejm has passed the law; it waits for the Senate (' + law.senate_notice_due + ').',
       ' Sejm uchwalił ustawę; czeka ona na Senat (' + isoText(law.senate_notice_due) + ').');
@@ -4148,7 +4189,7 @@
       return null;
     }
     return submitLaw(Q, {kind: 'instrument', title: spec.name.charAt(0).toUpperCase() + spec.name.slice(1), sponsor: 'pps',
-      programme: {fiscal: spec.position}, pps_vote: 'yes', instrument: kind, points: kind === 'emission' ? emissionPoints(Q) : 0});
+      programme: {fiscal: spec.position}, pps_vote: 'yes', instrument: kind, points: kind === 'emission' ? emissionPoints(Q) : 0, decree: true});
   }
 
   // Display fields of one card: the budget forecast, its running projects, and each option's reason.
@@ -4190,6 +4231,7 @@
     }
     if (cardId === 'minorities_kresy' && S.politics) Q.pl_gc_minorities = String(Math.round(politicsModule().grievanceOf(S, cell => cell.identity_id !== 'polish')));
     if (cardId === 'civil_liberties' && S.politics) Q.pl_gc_violence = String(Math.round(S.politics.violence));
+    if (cardId === 'justice_policy' && S.politics) Q.pl_gc_democracy = String(Math.round(S.politics.democracy));
     if (cardId === 'labor_rights' && unions && S.unions) Q.pl_gc_collective_branch = unions.branchName(unions.collectiveTarget(Q) || 'industry').toLowerCase();
     Q.pl_gc_plants = unions && S.enterprises && (cardId === 'labor_rights' || cardId === 'industrial_policy') ? unions.plantsLine(S) : '';
     // Z — Koalicja: an option that partners of this cabinet reject says so on the card.
@@ -4282,7 +4324,7 @@
   }
 
   // The launch itself, in the same decision (and for an event, in the same answer). Returns the text of the result.
-  function launchPrepared(Q, project) {
+  function launchPrepared(Q, project, opts) {
     const S = Q.S, t = Q.time, item = project.type;
     const name = L(PROJECT_TYPES[item].name, PROJECT_NAMES_PL[item] || PROJECT_TYPES[item].name);
     if (item === 'currency_reform') {
@@ -4298,7 +4340,7 @@
         pps_vote: 'yes', evaluations: [], position: packagePosition(kinds, 0), status: 'pending', law_id: null};
       S.economy.packages.push(pkg);
       const bill = submitLaw(Q, {kind: 'package', title: law.title + ' (' + VARIANT_NAMES[project.variant] + ')', package_id: pkg.id,
-        project_id: project.id, sponsor: 'pps', programme: Object.assign({}, law.programme, {fiscal: pkg.position}), pps_vote: 'yes'});
+        project_id: project.id, sponsor: 'pps', programme: Object.assign({}, law.programme, {fiscal: pkg.position}), pps_vote: 'yes', decree: true});
       pkg.law_id = bill.id;
       project.law_id = bill.id;
       if (bill.status === 'rejected') {
@@ -4309,7 +4351,7 @@
       return L('The currency reform is launched (' + launchCostText(project) + ')' + (kinds.length ? ' with ' + kinds.map(k => INSTRUMENTS[k].name).join(' and ') : '') + '.',
         'Reforma walutowa zostaje uruchomiona (' + launchCostText(project) + ')' + (kinds.length ? ' wraz z: ' + kinds.map(instrumentName).join(' i ') : '') + '.') + lawNote(bill);
     }
-    const law = launchProject(Q, project, {sponsor: 'pps'});
+    const law = launchProject(Q, project, {sponsor: 'pps', decree: !(opts && opts.vote)});
     if (law && law.status === 'rejected') {
       return L(name + ': the Sejm rejects its law; the programme stays prepared and can be filed again.',
         name + ': Sejm odrzuca ustawę; program pozostaje przygotowany i można go zgłosić ponownie.');

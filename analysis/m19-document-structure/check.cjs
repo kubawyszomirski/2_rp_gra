@@ -17,8 +17,8 @@ const read = f => fs.readFileSync(path.join(root, f), 'utf8');
 const lines = text => text.split('\n');
 const nonEmpty = text => lines(text).filter(l => l.trim());
 const count = (text, s) => text.split(s).length - 1;
-// The structure checked here holds from reference 0.31 on; later versions keep it.
-const VERSION = '0\\.(?:3[1-9]|[4-9]\\d)';
+// The structure checked here holds from reference 0.31 on; later versions keep it (from 1.00 on the version has a leading 1).
+const VERSION = '(?:0\\.(?:3[1-9]|[4-9]\\d)|[1-9]\\.\\d\\d)';
 const versionRe = (prefix, suffix = '') => new RegExp(prefix + VERSION + suffix);
 
 const TR = 'docs/POLISH_TECHNICAL_REFERENCE.md';
@@ -111,7 +111,7 @@ const structure = {};
   const top = gl.slice(1, gh[0].line - 1).filter(l => l.trim());
   assert.equal(top.length, 4, 'state paragraph and the three introductory paragraphs');
   assert.ok(versionRe('^\\*\\*Stan — referencja ', ', \\d{1,2} \\S+ \\d{4}\\.\\*\\*').test(top[0]));
-  const dated = /^\*\*[^*]*(referencja 0\.\d+|wersja 0\.\d+|\d{1,2} września 2026)[^*]*\*\*/;
+  const dated = /^\*\*[^*]*(referencja \d\.\d+|wersja \d\.\d+|\d{1,2} września 2026)[^*]*\*\*/;
   const body = gl.slice(gh[0].line - 1, gh[19].line - 1);
   assert.equal(body.filter(l => dated.test(l)).length, 0, 'no dated notes in chapters 1-19');
   const notes = gl.slice(gh[19].line).filter(l => l.startsWith('**'));
