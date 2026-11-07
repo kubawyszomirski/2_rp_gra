@@ -71,6 +71,12 @@ footer {
   font-size: 0.8em;
   position: relative;
 }
+/* Z — 0.96 (decision A of the user, 7 XI 2026): the game page is a column of 54rem, as wide as before the top bar, centred
+   under the wider bar like a newspaper column under its masthead; the cards keep their size and the lines stay readable. */
+#content, footer {
+  max-width: 54rem;
+  box-sizing: border-box;
+}
 footer a {
   padding-right: 1em;
 }
