@@ -1,26 +1,25 @@
-title: Execution of the Land Reform
-subtitle: Agriculture: how land is divided and who has access to it.
+title: Land Reform
+subtitle: Agriculture: parcellation with compensation, a faster parcellation or land first for Polish settlers.
 new-page: true
 is-card: true
 tags: govt_affairs
 card-image: img/polish/polish_gov_land.jpg
 view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'land_program') !}
 on-arrival: {!
-// Card government.land_program (technical reference 12.6, 17.11–17.12; card catalogue 8.8). One way of
-// dividing the land and one rule of access in the same law. Choosing prepares the programme (1 T); its
-// law and launch wait in the agenda. The political reaction comes when the law is adopted, the social
-// effect only when a tranche is executed.
+// Card government.land_program (technical reference 12.6, 17.11–17.12; card catalogue 8.8). Opening and closing the card are
+// free; a confirmed option costs this month's action and starts the parcellation at once, its law going to the Sejm. Z — 0.97 (the
+// sketch of 7 XI 2026, decision 1): the preference for Polish settlers is the third option instead of the page of access to land,
+// and the expropriation without compensation, blocked in this chapter, left the card.
 PolishProjects.cardView(Q, 'land_program');
-Q.pl_land_variant = '';
 // Z — 0.66 (decision 2A): the ministry of this card, on its page and as a badge in the hand.
 Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_land');
 !}
 
-= Execution of the land reform
+= Land reform
 
 *[+ pl_gc_ministry +]*
 
-Holding Agriculture does not change ownership by itself: the reform needs its law, its financing and one of three tranches of the country. Each executed tranche lowers the agrarian pressure by 3 once; it gives PPS no seats.
+The land reform divides the great estates among peasants and farm workers. Each parcellation covers one of three parts of the country. [+ pl_gc_land_left +]
 
 [+ pl_gc_budget +]
 
@@ -28,76 +27,44 @@ Holding Agriculture does not change ownership by itself: the reform needs its la
 
 - @compensated
 - @accelerated
-- @expropriation
+- @settlers
 - @easy_discard
 - @cancel_advisor_action
 
 @compensated
-title: Parcelation with compensation
-subtitle: Costs the budget 2 units a month for four months; one unit of reform. Business pressure grows when the law passes (+8); the easiest basis of an agreement with Piast.
+title: Divide the land with compensation
+subtitle: Costs 2 budget units a month for four months and needs a law. The agrarian pressure falls (−3) and the peasants are less aggrieved (−4), but the landowners and business press on the cabinet (+8).
 choose-if: {! return PolishProjects.optionStatus(Q, 'land_program', 'compensated').available !}
 unavailable-subtitle: [+ pl_land_program_compensated_why +]
 on-arrival: {!
-Q.pl_land_variant = 'compensated';
-!}
-go-to: access
-
-@accelerated
-title: Accelerated parcelation with compensation
-subtitle: The same unit faster, a bigger bill: costs the budget 3 units a month for three months; business pressure grows more (+12).
-choose-if: {! return PolishProjects.optionStatus(Q, 'land_program', 'accelerated').available !}
-unavailable-subtitle: [+ pl_land_program_accelerated_why +]
-on-arrival: {!
-Q.pl_land_variant = 'accelerated';
-!}
-go-to: access
-
-@expropriation
-title: Expropriation without compensation
-subtitle: Costs the budget 1 unit a month for four months; business pressure jumps once (+25).
-choose-if: {! return PolishProjects.optionStatus(Q, 'land_program', 'expropriation').available !}
-unavailable-subtitle: [+ pl_land_program_expropriation_why +]
-on-arrival: {!
-Q.pl_land_variant = 'expropriation';
-!}
-go-to: access
-
-@access
-new-page: true
-on-arrival: {!
-Q.pl_land_majority_why = PolishProjects.landAccessStatus(Q, 'polish_majority').reason;
-!}
-
-= Access to the land
-
-The same law sets who may receive land. Nothing is spent until you choose.
-
-- @equal
-- @polish_majority
-- @polish_gov_land: Choose another way of dividing the land.
-
-@equal
-title: Equal criteria of need and farm size
-subtitle: The rule of the same law; no national preference.
-on-arrival: {!
-PolishProjects.chooseOption(Q, 'land_program', Q.pl_land_variant, {access: 'equal'});
+PolishProjects.chooseOption(Q, 'land_program', 'compensated');
 !}
 go-to: result
 
-@polish_majority
-title: A preference for the Polish majority
-subtitle: The trust of the excluded groups falls (−6); a breach of the legal equality promised to minority partners.
-choose-if: {! return PolishProjects.landAccessStatus(Q, 'polish_majority').available !}
-unavailable-subtitle: [+ pl_land_majority_why +]
+@accelerated
+title: Divide the land quickly and compulsorily
+subtitle: Costs 3 budget units a month for three months and needs a law. The same effect comes a month earlier, but the resistance of business is greater (+12).
+choose-if: {! return PolishProjects.optionStatus(Q, 'land_program', 'accelerated').available !}
+unavailable-subtitle: [+ pl_land_program_accelerated_why +]
 on-arrival: {!
-PolishProjects.chooseOption(Q, 'land_program', Q.pl_land_variant, {access: 'polish_majority'});
+PolishProjects.chooseOption(Q, 'land_program', 'accelerated');
+!}
+go-to: result
+
+@settlers
+title: Give priority to Polish settlers
+subtitle: Like the parcellation with compensation, but the land goes first to Poles, and PSL Piast is pleased (+5). The minorities lose trust (−6); if we promised their clubs equality, we break that promise.
+choose-if: {! return PolishProjects.optionStatus(Q, 'land_program', 'settlers').available !}
+unavailable-subtitle: [+ pl_land_program_settlers_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'land_program', 'settlers');
 !}
 go-to: result
 
 @result
 new-page: true
 
-= Execution of the land reform
+= Land reform
 
 [+ pl_gc_result +]
 

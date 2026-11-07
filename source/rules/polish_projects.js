@@ -118,22 +118,37 @@
     agriculture_development: {name: 'Modernisation of agriculture', card: 'agriculture_development', portfolios: ['agriculture'],
       klass: 'large', investment: true, tranches: 3, beneficiaries: ['rural'], law: null,
       variants: {advisory: {build: 1, upkeep: 0, duration: 4, agrarian: -2, rural: 3},
-        consolidation: {build: 1, upkeep: 0, duration: 4, agrarian: -2, rural: 2, law: {title: 'Voluntary consolidation of land', programme: {land: 0}}},
-        cooperative_processing_sales: {build: 1, upkeep: 0, duration: 4, rural: 2}}},
+        // Z — 0.97 (the sketch of 7 XI 2026): the disputes over borders first anger the peasants (+2 grievance when the law takes
+        // effect); the cooperatives take the customers of the middlemen and small traders (−3 trust at the first effect).
+        consolidation: {build: 1, upkeep: 0, duration: 4, agrarian: -2, rural: 2, grievance_start: 2,
+          law: {title: 'Voluntary consolidation of land', programme: {land: 0}}},
+        cooperative_processing_sales: {build: 1, upkeep: 0, duration: 4, rural: 2, trust_lost: -3}}},
     education_program: {name: 'Schools and adult education', card: 'education_program', portfolios: ['education'], klass: 'large',
       investment: true, ongoing: true, tranches: 3, law: null, beneficiaries: ['rural'],
       variants: {rural_access: {build: 1, upkeep: 1, duration: 4, trust: 4, beneficiaries: ['rural']},
         urban_worker_adult_access: {build: 1, upkeep: 1, duration: 4, trust: 4, beneficiaries: ['workers']},
-        secular: {build: 1, upkeep: 1, duration: 4, tranches: 1, trust: 4, beneficiaries: ['workers', 'new_middle'],
+        // Z — 0.97: the Christian Democrats protest when the law takes effect (relation −8).
+        secular: {build: 1, upkeep: 1, duration: 4, tranches: 1, trust: 4, beneficiaries: ['workers', 'new_middle'], relations: {pschd: -8},
           law: {title: 'Secular school with religious freedom', programme: {church: 1}}}}},
     minority_schools: {name: 'Language rights and minority schools', card: 'minority_school_rights', portfolios: ['education'],
       klass: 'large', investment: true, ongoing: true, law: null, beneficiaries: ['national_minorities'],
-      variants: {own_language: {build: 1, upkeep: 1, duration: 4, trust: 4}, agreed_bilingual: {build: 1, upkeep: 1, duration: 4, trust: 4},
-        polish_dominance: {build: 1, upkeep: 1, duration: 4, trust: -6}}},
-    heritage: {name: 'Wawel or the Royal Castle', card: 'heritage_restoration', portfolios: ['education'], klass: 'small', investment: true,
+      // Z — 0.97 (decision 2 of the sketch, approved 7 XI 2026): the own language angers the national democrats (−5), the agreed
+      // bilingualism is the compromise (trust +2, no protest), the dominance of Polish pleases them (+5).
+      variants: {own_language: {build: 1, upkeep: 1, duration: 4, trust: 4, relations: {zln: -5}},
+        agreed_bilingual: {build: 1, upkeep: 1, duration: 4, trust: 2},
+        polish_dominance: {build: 1, upkeep: 1, duration: 4, trust: -6, relations: {zln: 5}}}},
+    heritage: {name: 'Restoration of a monument', card: 'heritage_restoration', portfolios: ['education'], klass: 'small', investment: true,
       law: null, beneficiaries: ['new_middle'],
       variants: {conservation: {klass: 'small', build: 1, upkeep: 0, duration: 2, credibility: 1},
         restoration: {klass: 'large', build: 2, upkeep: 0, duration: 4, credibility: 2, trust: 3}}},
+    // Z — 0.97 (the card Culture and Science of 7 XI 2026): the support of science and the universities while it runs, and the
+    // public radio (decision 3: it strengthens democracy, +2). P: the costs and the effects are simplifications of the game.
+    science: {name: 'Support of science and the universities', card: 'heritage_restoration', portfolios: ['education'], klass: 'small',
+      investment: false, ongoing: true, beneficiaries: ['new_middle'], law: null,
+      variants: {universities: {build: 1, upkeep: 1, duration: 3, trust: 3}}},
+    radio: {name: 'Public radio', card: 'heritage_restoration', portfolios: ['education'], klass: 'large', investment: true,
+      beneficiaries: [], law: null,
+      variants: {broadcasting: {build: 2, upkeep: 0, duration: 3, democracy: 2}}},
     currency_reform: {name: 'Currency reform', card: 'currency_stabilisation', portfolios: ['finance'], klass: 'large', investment: true,
       beneficiaries: [], law: {title: 'Currency reform', programme: {fiscal: 0}},
       variants: {rapid_cuts: {build: 2, upkeep: 0, duration: 3, credit_shock: 10, shock_months: 3},
@@ -217,6 +232,7 @@
     rural_access: 'village schools', urban_worker_adult_access: 'education of the poor and adults in workers’ centres',
     secular: 'secular school with religious freedom', own_language: 'teaching in the own language', agreed_bilingual: 'agreed bilingualism',
     polish_dominance: 'dominance of the Polish language', conservation: 'limited conservation', restoration: 'wider restoration with public access',
+    universities: 'universities and research', broadcasting: 'public broadcasting',
     rapid_cuts: 'rapid stabilisation with cuts', protected: 'stabilisation with protections and a burden on wealth', gradual: 'gradual limitation of emission',
     collection: 'better tax collection', democratic_guarantees: 'democratic guarantees', constructive_vonc: 'constructive vote of no confidence',
     presidential_arbitration: 'presidential arbitration', rescue: 'a conditional credit restoring its lost capacity',
@@ -236,6 +252,8 @@
   const PUBLIC_CONTROL_BUSINESS = 15;
   // Z — 0.94 (decision 2A of 24 X 2026; P): the costs of the Labour and investment options that had none but the budget.
   const COLLECTIVE_BUSINESS = 3, DEROGATION_LEWICA = 3, BANKS_LEWICA = 4;
+  // Z — 0.97 (decision 1 of the sketch of 7 XI 2026; P): PSL Piast welcomes the preference for Polish settlers.
+  const SETTLERS_PIAST = 5;
 
   const HERITAGE_OBJECTS = Object.freeze({wawel: 'Wawel', zamek: 'the Royal Castle in Warsaw'});
 
@@ -244,7 +262,8 @@
   const PROJECT_NAMES_PL = Object.freeze({labor_inspection: 'Inspekcja pracy i czas pracy', worker_protection: 'Osłona dla bezrobotnych',
     public_works: 'Roboty publiczne', credit_instrument: 'Instrument kredytowy', orders: 'Zamówienia publiczne dla przemysłu',
     land_program: 'Reforma rolna', agriculture_development: 'Modernizacja rolnictwa', education_program: 'Szkoły i oświata dorosłych',
-    minority_schools: 'Prawa językowe i szkoły mniejszości', heritage: 'Wawel czy Zamek Królewski', currency_reform: 'Reforma walutowa',
+    minority_schools: 'Prawa językowe i szkoły mniejszości', heritage: 'Odnowa zabytku', currency_reform: 'Reforma walutowa',
+    science: 'Wsparcie nauki i uniwersytetów', radio: 'Publiczne radio',
     collection: 'Lepszy pobór podatków', plant_rescue: 'Ratowanie zakładu', enterprise_representation: 'Przedstawicielstwo robotników w zakładzie',
     police_professionalization: 'Profesjonalizacja policji', police_investigation: 'Śledztwo w wymienionej sprawie',
     police_protection: 'Ochrona zgromadzenia albo instytucji', limited_autonomy: 'Ograniczona autonomia administracyjna i kulturalna',
@@ -261,6 +280,7 @@
     rural_access: 'szkoły wiejskie', urban_worker_adult_access: 'oświata ubogich i dorosłych w ośrodkach robotniczych',
     secular: 'szkoła świecka z wolnością religijną', own_language: 'nauczanie we własnym języku', agreed_bilingual: 'uzgodniona dwujęzyczność',
     polish_dominance: 'dominacja języka polskiego', conservation: 'ograniczona konserwacja', restoration: 'szersza restauracja z dostępem publicznym',
+    universities: 'uczelnie i badania', broadcasting: 'radiofonia publiczna',
     rapid_cuts: 'szybka stabilizacja z cięciami', protected: 'stabilizacja z osłonami i obciążeniem majątku', gradual: 'stopniowe ograniczanie emisji',
     collection: 'lepszy pobór podatków', democratic_guarantees: 'gwarancje demokratyczne', constructive_vonc: 'konstruktywne wotum nieufności',
     presidential_arbitration: 'arbitraż prezydencki', rescue: 'warunkowy kredyt przywracający utracone moce',
@@ -278,8 +298,8 @@
     unicameral: 'jedna izba: zniesienie Senatu',
   });
   // Wawel and the Royal Castle in the cases the sentences need: 'Wawel', 'konserwacja Wawelu', 'prace przy Wawelu'.
-  const HERITAGE_OBJECTS_PL = Object.freeze({wawel: {nom: 'Wawel', gen: 'Wawelu', loc: 'Wawelu'},
-    zamek: {nom: 'Zamek Królewski w Warszawie', gen: 'Zamku Królewskiego w Warszawie', loc: 'Zamku Królewskim w Warszawie'}});
+  const HERITAGE_OBJECTS_PL = Object.freeze({wawel: {nom: 'Wawel', gen: 'Wawelu', loc: 'Wawelu', acc: 'Wawel'},
+    zamek: {nom: 'Zamek Królewski w Warszawie', gen: 'Zamku Królewskiego w Warszawie', loc: 'Zamku Królewskim w Warszawie', acc: 'Zamek Królewski w Warszawie'}});
   const projectName = typeId => L(PROJECT_TYPES[typeId].name, PROJECT_NAMES_PL[typeId]);
   const variantName = variantId => L(VARIANT_NAMES[variantId], VARIANT_NAMES_PL[variantId]);
   const heritageName = (object, form) => L(HERITAGE_OBJECTS[object], HERITAGE_OBJECTS_PL[object][form || 'nom']);
@@ -756,6 +776,7 @@
         pend(project, {system: 'grievance', stage: 7, value: -4, when: 'first_effect', note: 'recipients of the tranche, once'});
       } else if (project.type === 'agriculture_development') {
         if (variant.agrarian) inputs.agrarian_delta += variant.agrarian;
+        if (variant.trust_lost) pend(project, {system: 'trust', stage: 5, value: variant.trust_lost, when: 'first_effect_traders', beneficiaries: ['old_middle']});
         // One tranche covers a third of the countryside (P): its conditions change the rural index by a third.
         if (variant.rural) S.society.rural_improvements = (S.society.rural_improvements || 0) + variant.rural / 3;
       } else if (project.type === 'education_program' || project.type === 'minority_schools') {
@@ -764,6 +785,10 @@
       } else if (project.type === 'heritage') {
         if (project.sponsor === 'pps') government.changeCredibility(Q, 'heritage:' + project.policy_choices.object, variant.credibility, 'heritage');
         if (variant.trust) pend(project, {system: 'trust', stage: 5, value: variant.trust, when: 'first_effect', note: 'intelligentsia covered'});
+      } else if (project.type === 'science') {
+        pend(project, {system: 'trust', stage: 5, value: variant.trust, when: 'first_effect', note: 'intelligentsia covered'});
+      } else if (project.type === 'radio') {
+        pend(project, {system: 'democracy', stage: 7, value: variant.democracy, when: 'first_effect', note: 'the public radio'});
       } else if (project.type === 'currency_reform') {
         // The regime changes at the start of the period, before the budget (startOfPeriod).
       } else if (project.type === 'collection') {
@@ -1483,8 +1508,17 @@
       if (project.type === 'land_program' && project.policy_choices.access === 'polish_majority') {
         checkConstraints(Q, 'legal_equality', 'discrimination', {instrument: 'land_access'});
         pend(project, {system: 'trust', stage: 5, value: -6, when: 'law', note: 'excluded cells'});
+        // Z — 0.97 (decision 1 of the sketch): the land goes first to Polish settlers, which pleases PSL Piast (+5).
+        applyOnce(project, 'relation:settlers', () => government.changeRelation(Q, 'psl_piast', SETTLERS_PIAST, 'land_settlers:' + project.id));
       }
       if (project.type === 'education_program' && project.variant === 'secular') checkConstraints(Q, 'church', 1, {instrument: 'secular_school'});
+      // The law of a reform is enacted once, but its hooks may be reached again in the same decision: each reaction once.
+      if (variant.relations && project.sponsor === 'pps' && project.type !== 'minority_schools') {
+        applyOnce(project, 'relations', () => {
+          for (const party of Object.keys(variant.relations).sort()) government.changeRelation(Q, party, variant.relations[party], project.type + ':' + project.id);
+        });
+      }
+      if (variant.grievance_start) pend(project, {system: 'grievance', stage: 7, value: variant.grievance_start, when: 'law', note: 'recipients, once'});
     }
     if (bill.package_id) applyPackage(Q, bill.package_id, m, bill.id);
     if (bill.kind === 'unemployment_bill') billEnacted(Q, bill, m);
@@ -3235,7 +3269,9 @@
     // An event card of Industry and Trade: the customs war with Germany from June 1925, one decision (customsWarAvailable).
     customs_war: {portfolios: ['economic'], options: ['retaliation', 'new_markets', 'concessions']},
     public_works: {portfolios: ['labor'], options: ['employment', 'infrastructure', 'housing']},
-    land_program: {portfolios: ['agriculture'], options: ['compensated', 'accelerated', 'expropriation']},
+    // Z — 0.97 (decision 1 of the sketch of 7 XI 2026): the preference for Polish settlers is the third option instead of the
+    // page of access to land, and the expropriation without compensation (always blocked in this chapter) left the card.
+    land_program: {portfolios: ['agriculture'], options: ['compensated', 'accelerated', 'settlers']},
     agriculture_development: {portfolios: ['agriculture'], options: ['advisory', 'consolidation', 'cooperative_processing_sales']},
     education_program: {portfolios: ['education'], options: ['rural_access', 'urban_worker_adult_access', 'secular']},
     minority_school_rights: {portfolios: ['education'], options: ['own_language', 'agreed_bilingual', 'polish_dominance']},
@@ -3244,7 +3280,9 @@
     internal_security: {portfolios: ['interior'], options: ['professionalization', 'investigate_far_right', 'investigate_communist', 'police_protection',
       'limited_autonomy']},
     military_policy: {portfolios: ['reichswehr'], options: ['civilian_oversight', 'personnel_changes', 'organizational_compromise']},
-    heritage_restoration: {portfolios: ['education'], options: ['wawel_conservation', 'wawel_restoration', 'zamek_conservation', 'zamek_restoration']},
+    // Z — 0.97: the card Culture and Science instead of “Wawel or the Royal Castle” — the restoration of Wawel and then of the
+    // Royal Castle, the support of the universities and the public radio.
+    heritage_restoration: {portfolios: ['education'], options: ['heritage', 'science', 'radio']},
   });
 
   // Z — 0.66 (decision 2A of 7 X 2026): every government card is marked with its ministry — a badge on the card in the hand
@@ -3454,11 +3492,6 @@
     const S = Q.S, E = S.economy, t = Q.time;
     if (!cardAvailable(Q, cardId)) return no(cardUnavailableReason(Q, cardId));
     if (CARDS[cardId].options.indexOf(option) < 0) return no(L('Unknown option.', 'Nieznana opcja.'));
-    const blockedLater = {
-      expropriation: L('Needs a prior change of the constitutional guarantees of property; no card of this chapter creates it (12.6).',
-        'Wymaga wcześniejszej zmiany konstytucyjnych gwarancji własności, której w tym okresie nie da się przeprowadzić.'),
-    };
-    if (blockedLater[option]) return no(blockedLater[option]);
     // Z — 0.92 (the user's decision of 24 X 2026): the cooperative variants of 8.5 and 8.9 use the existing cooperative movement
     // and need no cooperative of PPS.
     // Z — 0.94: the answer to the customs war is an answer to an event and costs no month.
@@ -3537,10 +3570,15 @@
         return launchStatus(Q, 'public_works', option, prepared && prepared.variant === option ? prepared : null);
       }
       case 'land_program': {
+        const {variant, access} = landChoice(option);
+        if (access !== 'equal') {
+          const allowed = landAccessStatus(Q, access);
+          if (!allowed.available) return allowed;
+        }
         const prepared = projectsOf(S, 'land_program', p => preparedProject(p) && p.sponsor === 'pps')[0];
-        const same = prepared && prepared.variant === option ? prepared : null;
-        const tranche = same ? null : trancheBlocked(S, 'land_program', option);
-        return tranche ? no(tranche) : launchStatus(Q, 'land_program', option, same);
+        const same = prepared && prepared.variant === variant && (prepared.policy_choices.access || 'equal') === access ? prepared : null;
+        const tranche = same ? null : trancheBlocked(S, 'land_program', variant);
+        return tranche ? no(tranche) : launchStatus(Q, 'land_program', variant, same);
       }
       case 'agriculture_development': {
         const prepared = projectsOf(S, 'agriculture_development', p => preparedProject(p) && p.variant === option)[0] || null;
@@ -3578,18 +3616,23 @@
       case 'internal_security': return securityOptionStatus(Q, option);
       case 'military_policy': return armyOptionStatus(Q, option);
       case 'heritage_restoration': {
-        const object = option.split('_')[0], scope = option.split('_')[1];
+        if (option === 'science') {
+          const prepared = projectsOf(S, 'science', p => preparedProject(p))[0] || null;
+          if (!prepared && projectsOf(S, 'science', p => liveProject(p)).length) return no(L('The universities already receive the support.', 'Uczelnie już dostają wsparcie.'));
+          return launchStatus(Q, 'science', 'universities', prepared);
+        }
+        if (option === 'radio') {
+          const prepared = projectsOf(S, 'radio', p => preparedProject(p))[0] || null;
+          if (!prepared && projectsOf(S, 'radio').length) return no(L('The public radio is being built or already broadcasts.', 'Publiczne radio jest już budowane albo nadaje.'));
+          return launchStatus(Q, 'radio', 'broadcasting', prepared);
+        }
+        // Z — 0.97: one option restores Wawel and then the Royal Castle; a running conservation of an older game is widened.
+        const object = heritageTarget(S);
+        if (!object) return no(L('Wawel and the Royal Castle are both restored or being restored.', 'Wawel i Zamek Królewski są już odnowione albo w odnowie.'));
         const existing = projectsOf(S, 'heritage', p => p.policy_choices.object === object)[0];
-        if (existing && existing.status === 'completed') return no(L('The works on ' + HERITAGE_OBJECTS[object] + ' are completed; they are not started again for a reward.',
-          'Prace przy ' + heritageName(object, 'loc') + ' są zakończone; nie rozpoczyna się ich ponownie dla nagrody.'));
-        if (existing && scope === 'conservation') return no(L('A project for ' + HERITAGE_OBJECTS[object] + ' already exists.',
-          'Projekt dotyczący ' + heritageName(object, 'gen') + ' już istnieje.'));
-        if (existing && existing.variant === 'restoration') return no(L('The wider restoration of ' + HERITAGE_OBJECTS[object] + ' is already chosen.',
-          'Szersza restauracja ' + heritageName(object, 'gen') + ' jest już wybrana.'));
         if (existing && preparedProject(existing)) return launchStatus(Q, 'heritage', 'restoration', existing);
         // Z — 0.93: a new restoration starts at once, so its whole charge counts; extending a running conservation adds 1.
-        const charge = scope === 'conservation' ? 1 : existing ? 1 : 2;
-        return forecastWith(Q, {charge: charge}) >= -2 ? OK : no(forecastBlock());
+        return forecastWith(Q, {charge: existing ? 1 : 2}) >= -2 ? OK : no(forecastBlock());
       }
     }
     return no(L('Unknown option.', 'Nieznana opcja.'));
@@ -3601,6 +3644,29 @@
     if (access === 'equal') return OK;
     if (reformsRecord(Q).democratic_guarantees) return no(L('The democratic guarantees in force forbid a discriminating rule of access.', 'Obowiązujące gwarancje demokratyczne zakazują dyskryminującej zasady dostępu.'));
     return OK;
+  }
+
+  // Z — 0.97: the option of the land card → the way of dividing the land and the rule of access of the same law.
+  function landChoice(option) {
+    return option === 'settlers' ? {variant: 'compensated', access: 'polish_majority'} : {variant: option, access: 'equal'};
+  }
+
+  // Z — 0.97: the building the restoration option works on — Wawel first, then the Royal Castle; null when both are done.
+  function heritageTarget(S) {
+    for (const object of ['wawel', 'zamek']) {
+      const existing = projectsOf(S, 'heritage', p => p.policy_choices.object === object)[0];
+      if (!existing || preparedProject(existing) || (existing.status === 'executing' && existing.variant === 'conservation')) return object;
+    }
+    return null;
+  }
+
+  // Z — 0.97: the parts of the country the land reform has not yet reached, in a sentence for the card.
+  function landTranchesLeft(S) {
+    const used = projectsOf(S, 'land_program', p => p.tranche).map(p => p.tranche).filter((n, i, all) => all.indexOf(n) === i).length;
+    const left = Math.max(0, (PROJECT_TYPES.land_program.tranches || 3) - used);
+    return [L('The land has been divided in all three parts.', 'Ziemia została już rozparcelowana we wszystkich trzech częściach.'),
+      L('One part is still left.', 'Została jeszcze jedna.'), L('Two parts are still left.', 'Zostały jeszcze dwie.'),
+      L('All three parts are still left.', 'Zostały jeszcze wszystkie trzy.')][Math.min(3, left)];
   }
 
   function actionId(cardId, option) {
@@ -3774,11 +3840,11 @@
         return result(Q, launchPrepared(Q, project));
       }
       case 'land_program': {
-        const access = (extra && extra.access) || 'equal';
-        const project = prepareProject(Q, 'land_program', option, Object.assign({policy_choices: {access: access}}, ppsFields), {match: p => p.sponsor === 'pps'});
-        if (!project.tranche) project.tranche = nextTranche(S, 'land_program', option);
-        return result(Q, L('Access to the land: ' + (access === 'equal' ? 'equal, by need and farm size' : 'preference for the Polish majority') + '. ',
-          'Dostęp do ziemi: ' + (access === 'equal' ? 'równy, według potrzeb i wielkości gospodarstwa' : 'pierwszeństwo dla polskiej większości') + '. ') +
+        const {variant, access} = landChoice(option);
+        const project = prepareProject(Q, 'land_program', variant, Object.assign({policy_choices: {access: access}}, ppsFields), {match: p => p.sponsor === 'pps'});
+        project.policy_choices.access = access;
+        if (!project.tranche) project.tranche = nextTranche(S, 'land_program', variant);
+        return result(Q, (access === 'equal' ? '' : L('The land goes first to Polish settlers. ', 'Ziemia trafia najpierw do polskich osadników. ')) +
           launchPrepared(Q, project));
       }
       case 'agriculture_development':
@@ -3788,7 +3854,15 @@
         const project = prepareProject(Q, typeId, option, ppsFields, {match: p => p.sponsor === 'pps' && (p.variant === option || typeId === 'minority_schools')});
         if (PROJECT_TYPES[typeId].tranches && !project.tranche) project.tranche = nextTranche(S, typeId, option);
         if (option === 'polish_dominance') checkConstraints(Q, 'legal_equality', 'discrimination', {instrument: 'polish_dominance'});
-        return result(Q, launchPrepared(Q, project));
+        const text = launchPrepared(Q, project);
+        // Z — 0.97 (decision 2): the national democrats react to the language rule when it starts.
+        const relations = PROJECT_TYPES[typeId].variants[option].relations;
+        if (typeId === 'minority_schools' && relations && project.status !== 'prepared') {
+          applyOnce(project, 'relations', () => {
+            for (const party of Object.keys(relations).sort()) government.changeRelation(Q, party, relations[party], typeId + ':' + project.id);
+          });
+        }
+        return result(Q, text);
       }
       case 'economic_democracy': {
         const TYPES = {works_councils: ['works_councils', 'works_councils'], cooperative_credit: ['cooperative_credit', 'cooperative_credit'],
@@ -3800,9 +3874,13 @@
       case 'justice_policy':
         return null;
       case 'heritage_restoration': {
-        const object = option.split('_')[0], scope = option.split('_')[1];
+        if (option === 'science' || option === 'radio') {
+          const typeId = option, variantId = option === 'science' ? 'universities' : 'broadcasting';
+          return result(Q, launchPrepared(Q, prepareProject(Q, typeId, variantId, ppsFields)));
+        }
+        const object = heritageTarget(S);
         const existing = projectsOf(S, 'heritage', p => p.policy_choices.object === object)[0];
-        if (existing && scope === 'restoration' && existing.status === 'executing') {
+        if (existing && existing.status === 'executing') {
           // A change of scope updates the charge of the remaining works; one reward at the end (12.8).
           const monthsDone = existing.progress / 100 * existing.duration_months;
           setVariant(existing, 'restoration');
@@ -3812,12 +3890,6 @@
             'Konserwacja ' + heritageName(object, 'gen') + ' staje się szerszą restauracją: 2 B miesięcznie za pozostałe prace.'));
         }
         const fields = Object.assign({policy_choices: {object: object}}, ppsFields);
-        if (scope === 'conservation') {
-          const project = createProject(Q, 'heritage', 'conservation', fields);
-          launchProject(Q, project, {sponsor: 'pps'});
-          return result(Q, L('The conservation of ' + HERITAGE_OBJECTS[object] + ' starts: 1 B for two months.',
-            'Rusza konserwacja ' + heritageName(object, 'gen') + ': 1 B przez dwa miesiące.'));
-        }
         const project = prepareProject(Q, 'heritage', 'restoration', fields, {match: p => p.policy_choices.object === object});
         return result(Q, launchPrepared(Q, project));
       }
@@ -3877,6 +3949,10 @@
       Q.pl_gc_protection_level = protection ? (protection.scope || 1) : 0;
     }
     if (cardId === 'public_works') Q.pl_gc_unemployment = num(round(S.economy.unemployment, 1));
+    // Z — 0.97: the state the cards of Agriculture and Education name in their first sentences.
+    if (cardId === 'agriculture_development') Q.pl_gc_agrarian = String(Math.round(S.society.agrarian_pressure));
+    if (cardId === 'land_program') Q.pl_gc_land_left = landTranchesLeft(S);
+    if (cardId === 'heritage_restoration') Q.pl_gc_heritage_object = heritageName(heritageTarget(S) || 'zamek', 'acc');
     if (cardId === 'labor_rights' && unions && S.unions) Q.pl_gc_collective_branch = unions.branchName(unions.collectiveTarget(Q) || 'industry').toLowerCase();
     Q.pl_gc_plants = unions && S.enterprises && (cardId === 'labor_rights' || cardId === 'industrial_policy') ? unions.plantsLine(S) : '';
     Q.pl_gc_result = '';

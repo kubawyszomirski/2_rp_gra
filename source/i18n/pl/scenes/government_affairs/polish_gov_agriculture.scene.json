@@ -3,15 +3,15 @@
  "status": "complete",
  "lines": {
   "title: Modernisation of Agriculture": "title: Modernizacja rolnictwa",
-  "subtitle: Agriculture: advice, consolidation, cooperative processing.": "subtitle: Resort Rolnictwa: doradztwo, komasacja, przetwórstwo spółdzielcze.",
+  "subtitle: Agriculture: advisers, consolidation of land, cooperatives.": "subtitle: Resort Rolnictwa: doradcy, komasacja gruntów, spółdzielnie.",
   "= Modernisation of agriculture": "= Modernizacja rolnictwa",
-  "Each project covers one of three tranches of the countryside and costs 1 B for 4 months, nothing after. The same area does not get the same improvement twice; land reform and modernisation may cover the same people.": "Każdy projekt obejmuje jedną z trzech części wsi i przez 4 miesiące kosztuje budżet 1 jednostkę miesięcznie, potem nic. Ten sam obszar nie dostaje dwa razy tej samej poprawy; reforma rolna i modernizacja mogą objąć tych samych ludzi.",
-  "title: Advice, tools and cooperative modernisation": "title: Doradztwo, narzędzia i modernizacja spółdzielcza",
-  "subtitle: Agrarian pressure falls (−2); better conditions of the farms covered.": "subtitle: Presja agrarna spada (−2); lepsze warunki objętych gospodarstw.",
-  "title: Voluntary consolidation of land": "title: Dobrowolna komasacja gruntów",
-  "subtitle: Agrarian pressure falls (−2); needs its law; a dispute over borders halts it.": "subtitle: Presja agrarna spada (−2); wymaga własnej ustawy; spór o granice ją wstrzymuje.",
-  "title: Cooperative processing and sales": "title: Spółdzielcze przetwórstwo i sprzedaż",
-  "subtitle: Peasants process and sell their produce through cooperatives: better conditions of the farms covered.": "subtitle: Chłopi przetwarzają i sprzedają plony przez spółdzielnie: lepsze warunki objętych gospodarstw.",
+  "The countryside needs better tools, consolidated fields and cooperatives of its own. The agrarian pressure now stands at [+ pl_gc_agrarian +] of 100.": "Wieś potrzebuje lepszych narzędzi, scalonych pól i własnych spółdzielni. Nacisk agrarny wynosi teraz [+ pl_gc_agrarian +] na 100.",
+  "title: Send advisers and tools to the countryside": "title: Wyślij doradców i narzędzia na wieś",
+  "subtitle: Costs 1 budget unit a month for four months. The agrarian pressure falls (−2), and the farms do better.": "subtitle: Kosztuje 1 jednostkę budżetu miesięcznie przez cztery miesiące. Nacisk agrarny spada (−2), a gospodarstwa lepiej sobie radzą.",
+  "title: Consolidate the land": "title: Przeprowadź komasację gruntów",
+  "subtitle: Costs 1 budget unit a month for four months and needs a law. The agrarian pressure falls (−2), but the disputes over field borders first anger the peasants (+2).": "subtitle: Kosztuje 1 jednostkę budżetu miesięcznie przez cztery miesiące i wymaga ustawy. Nacisk agrarny spada (−2), ale spory o miedze najpierw drażnią chłopów (+2).",
+  "title: Support cooperative processing and sales": "title: Wesprzyj spółdzielcze przetwórstwo i sprzedaż",
+  "subtitle: Costs 1 budget unit a month for four months. The peasants sell their crops better, but the middlemen and small traders trust us less (−3).": "subtitle: Kosztuje 1 jednostkę budżetu miesięcznie przez cztery miesiące. Chłopi lepiej sprzedają plony, ale pośrednicy i drobni kupcy ufają nam mniej (−3).",
   "- @root: Continue.": "- @root: Dalej."
  }
 }

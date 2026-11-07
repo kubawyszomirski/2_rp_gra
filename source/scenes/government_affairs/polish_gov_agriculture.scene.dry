@@ -1,14 +1,14 @@
 title: Modernisation of Agriculture
-subtitle: Agriculture: advice, consolidation, cooperative processing.
+subtitle: Agriculture: advisers, consolidation of land, cooperatives.
 new-page: true
 is-card: true
 tags: govt_affairs
 card-image: img/polish/polish_gov_agriculture.jpg
 view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'agriculture_development') !}
 on-arrival: {!
-// Card government.agriculture_development (technical reference 17.11–17.12; card catalogue 8.9). Opening and closing
-// the card are free; a confirmed option costs this month's action, or the one free step of an adviser
-// who opened the card. Options that need a system of a later stage are shown with their reason.
+// Card government.agriculture_development (technical reference 17.11–17.12; card catalogue 8.9). Opening and closing the card
+// are free; a confirmed option costs this month's action, or the one free step of an adviser who opened the card. Z — 0.97 (the
+// sketch of 7 XI 2026): two sentences on top and one gain and one cost per option.
 PolishProjects.cardView(Q, 'agriculture_development');
 // Z — 0.66 (decision 2A): the ministry of this card, on its page and as a badge in the hand.
 Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_agriculture');
@@ -18,7 +18,7 @@ Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_agriculture');
 
 *[+ pl_gc_ministry +]*
 
-Each project covers one of three tranches of the countryside and costs 1 B for 4 months, nothing after. The same area does not get the same improvement twice; land reform and modernisation may cover the same people.
+The countryside needs better tools, consolidated fields and cooperatives of its own. The agrarian pressure now stands at [+ pl_gc_agrarian +] of 100.
 
 [+ pl_gc_budget +]
 
@@ -31,8 +31,8 @@ Each project covers one of three tranches of the countryside and costs 1 B for 4
 - @cancel_advisor_action
 
 @advisory
-title: Advice, tools and cooperative modernisation
-subtitle: Agrarian pressure falls (−2); better conditions of the farms covered.
+title: Send advisers and tools to the countryside
+subtitle: Costs 1 budget unit a month for four months. The agrarian pressure falls (−2), and the farms do better.
 choose-if: {! return PolishProjects.optionStatus(Q, 'agriculture_development', 'advisory').available !}
 unavailable-subtitle: [+ pl_agriculture_development_advisory_why +]
 on-arrival: {!
@@ -41,8 +41,8 @@ PolishProjects.chooseOption(Q, 'agriculture_development', 'advisory');
 go-to: result
 
 @consolidation
-title: Voluntary consolidation of land
-subtitle: Agrarian pressure falls (−2); needs its law; a dispute over borders halts it.
+title: Consolidate the land
+subtitle: Costs 1 budget unit a month for four months and needs a law. The agrarian pressure falls (−2), but the disputes over field borders first anger the peasants (+2).
 choose-if: {! return PolishProjects.optionStatus(Q, 'agriculture_development', 'consolidation').available !}
 unavailable-subtitle: [+ pl_agriculture_development_consolidation_why +]
 on-arrival: {!
@@ -51,8 +51,8 @@ PolishProjects.chooseOption(Q, 'agriculture_development', 'consolidation');
 go-to: result
 
 @cooperative_processing_sales
-title: Cooperative processing and sales
-subtitle: Peasants process and sell their produce through cooperatives: better conditions of the farms covered.
+title: Support cooperative processing and sales
+subtitle: Costs 1 budget unit a month for four months. The peasants sell their crops better, but the middlemen and small traders trust us less (−3).
 choose-if: {! return PolishProjects.optionStatus(Q, 'agriculture_development', 'cooperative_processing_sales').available !}
 unavailable-subtitle: [+ pl_agriculture_development_cooperative_processing_sales_why +]
 on-arrival: {!

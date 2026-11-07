@@ -2,16 +2,16 @@
  "source": "scenes/government_affairs/polish_gov_heritage.scene.dry",
  "status": "complete",
  "lines": {
-  "title: Wawel or the Royal Castle": "title: Wawel czy Zamek Królewski",
-  "subtitle: Education: conservation work on one of two buildings.": "subtitle: Resort Oświaty: prace konserwatorskie przy jednym z dwóch budynków.",
-  "= Wawel or the Royal Castle": "= Wawel czy Zamek Królewski",
-  "Works in existing buildings, within the existing competences and the budget. Limited conservation is a small reform (1 T, 1 B for 2 months); a wider restoration with public access is a large one (2 B for 4 months). One project for each building; a completed one is not started again.": "Prace w istniejących budynkach, w ramach istniejących kompetencji i budżetu. Ograniczona konserwacja to mała reforma (akcja miesiąca; 1 jednostka budżetu miesięcznie przez 2 miesiące); szersza restauracja z dostępem publicznym to duża reforma (2 jednostki budżetu miesięcznie przez 4 miesiące). Jeden projekt dla każdego budynku; zakończonego nie rozpoczyna się ponownie.",
-  "title: Wawel: limited conservation": "title: Wawel: ograniczona konserwacja",
-  "subtitle: Costs the budget 1 unit a month for two months; the reputation of PPS grows if it was the open sponsor (+1).": "subtitle: Obciąża budżet: 1 jednostka miesięcznie przez dwa miesiące; wiarygodność PPS rośnie, jeśli była jawnym inicjatorem (+1).",
-  "title: Wawel: wider restoration and public access": "title: Wawel: szersza restauracja i dostęp publiczny",
-  "subtitle: Costs the budget 2 units a month for four months; the reputation of PPS (+2) and the trust of the intelligentsia (+3) grow. Extends a running conservation.": "subtitle: Obciąża budżet: 2 jednostki miesięcznie przez cztery miesiące; rośnie wiarygodność PPS (+2) i zaufanie inteligencji (+3). Rozszerza trwającą konserwację.",
-  "title: Royal Castle: limited conservation": "title: Zamek Królewski: ograniczona konserwacja",
-  "title: Royal Castle: wider restoration and public access": "title: Zamek Królewski: szersza restauracja i dostęp publiczny",
+  "title: Culture and Science": "title: Kultura i nauka",
+  "subtitle: Education: monuments, universities and radio.": "subtitle: Resort Oświaty: zabytki, uczelnie i radio.",
+  "= Culture and science": "= Kultura i nauka",
+  "The state can restore monuments, support the universities and build a radio. Each of these programmes costs the budget, but it builds the trust of the intelligentsia or the strength of democracy.": "Państwo może odnawiać zabytki, wspierać uczelnie i budować radio. Każdy z tych programów kosztuje budżet, ale buduje zaufanie inteligencji albo siłę demokracji.",
+  "title: Restore [+ pl_gc_heritage_object +] and open it to visitors": "title: Odnów [+ pl_gc_heritage_object +] i otwórz go dla zwiedzających",
+  "subtitle: Costs 2 budget units a month for four months. The intelligentsia trusts PPS more (+3), and the credibility of the party grows (+2).": "subtitle: Kosztuje 2 jednostki budżetu miesięcznie przez cztery miesiące. Inteligencja bardziej ufa PPS (+3), a wiarygodność partii rośnie (+2).",
+  "title: Support science and the universities": "title: Wesprzyj naukę i uniwersytety",
+  "subtitle: Costs 1 budget unit a month while it runs. After three months the intelligentsia trusts PPS more (+3).": "subtitle: Kosztuje 1 jednostkę budżetu miesięcznie, dopóki trwa. Po trzech miesiącach inteligencja bardziej ufa PPS (+3).",
+  "title: Build a public radio": "title: Zbuduj publiczne radio",
+  "subtitle: Costs 2 budget units a month for three months. People hear the news from the country and from the Sejm, and democracy grows stronger (+2).": "subtitle: Kosztuje 2 jednostki budżetu miesięcznie przez trzy miesiące. Ludzie słyszą wiadomości z kraju i z Sejmu, a demokracja się umacnia (+2).",
   "- @root: Continue.": "- @root: Dalej."
  }
 }

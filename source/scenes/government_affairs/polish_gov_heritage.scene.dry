@@ -1,5 +1,5 @@
-title: Wawel or the Royal Castle
-subtitle: Education: conservation work on one of two buildings.
+title: Culture and Science
+subtitle: Education: monuments, universities and radio.
 new-page: true
 is-card: true
 tags: govt_affairs
@@ -7,75 +7,65 @@ face-image: img/polish/polish_gov_heritage_zamek_krolewski.jpg
 card-image: img/polish/polish_gov_heritage_wawel.jpg
 view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'heritage_restoration') !}
 on-arrival: {!
-// Card government.heritage_restoration (technical reference 17.11–17.12; card catalogue 8.16). Opening and closing
-// the card are free; a confirmed option costs this month's action, or the one free step of an adviser
-// who opened the card. Options that need a system of a later stage are shown with their reason.
+// Card government.heritage_restoration (technical reference 17.11–17.12; card catalogue 8.16). Opening and closing the card
+// are free; a confirmed option costs this month's action, or the one free step of an adviser who opened the card. Z — 0.97 (the
+// sketch of 7 XI 2026): Culture and Science instead of “Wawel or the Royal Castle” — one restoration option (Wawel first, then
+// the Royal Castle), the support of the universities and the public radio (decision 3: democracy +2).
 PolishProjects.cardView(Q, 'heritage_restoration');
 // Z — 0.66 (decision 2A): the ministry of this card, on its page and as a badge in the hand.
 Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_heritage');
 !}
 
-= Wawel or the Royal Castle
+= Culture and science
 
 *[+ pl_gc_ministry +]*
 
-Works in existing buildings, within the existing competences and the budget. Limited conservation is a small reform (1 T, 1 B for 2 months); a wider restoration with public access is a large one (2 B for 4 months). One project for each building; a completed one is not started again.
+The state can restore monuments, support the universities and build a radio. Each of these programmes costs the budget, but it builds the trust of the intelligentsia or the strength of democracy.
 
 [+ pl_gc_budget +]
 
 [+ pl_gc_projects +]
 
-- @wawel_conservation
-- @wawel_restoration
-- @zamek_conservation
-- @zamek_restoration
+- @heritage
+- @science
+- @radio
 - @easy_discard
 - @cancel_advisor_action
 
-@wawel_conservation
-title: Wawel: limited conservation
-subtitle: Costs the budget 1 unit a month for two months; the reputation of PPS grows if it was the open sponsor (+1).
-choose-if: {! return PolishProjects.optionStatus(Q, 'heritage_restoration', 'wawel_conservation').available !}
-unavailable-subtitle: [+ pl_heritage_restoration_wawel_conservation_why +]
+@heritage
+title: Restore [+ pl_gc_heritage_object +] and open it to visitors
+subtitle: Costs 2 budget units a month for four months. The intelligentsia trusts PPS more (+3), and the credibility of the party grows (+2).
+choose-if: {! return PolishProjects.optionStatus(Q, 'heritage_restoration', 'heritage').available !}
+unavailable-subtitle: [+ pl_heritage_restoration_heritage_why +]
 on-arrival: {!
-PolishProjects.chooseOption(Q, 'heritage_restoration', 'wawel_conservation');
+PolishProjects.chooseOption(Q, 'heritage_restoration', 'heritage');
 !}
 go-to: result
 
-@wawel_restoration
-title: Wawel: wider restoration and public access
-subtitle: Costs the budget 2 units a month for four months; the reputation of PPS (+2) and the trust of the intelligentsia (+3) grow. Extends a running conservation.
-choose-if: {! return PolishProjects.optionStatus(Q, 'heritage_restoration', 'wawel_restoration').available !}
-unavailable-subtitle: [+ pl_heritage_restoration_wawel_restoration_why +]
+@science
+title: Support science and the universities
+subtitle: Costs 1 budget unit a month while it runs. After three months the intelligentsia trusts PPS more (+3).
+choose-if: {! return PolishProjects.optionStatus(Q, 'heritage_restoration', 'science').available !}
+unavailable-subtitle: [+ pl_heritage_restoration_science_why +]
 on-arrival: {!
-PolishProjects.chooseOption(Q, 'heritage_restoration', 'wawel_restoration');
+PolishProjects.chooseOption(Q, 'heritage_restoration', 'science');
 !}
 go-to: result
 
-@zamek_conservation
-title: Royal Castle: limited conservation
-subtitle: Costs the budget 1 unit a month for two months; the reputation of PPS grows if it was the open sponsor (+1).
-choose-if: {! return PolishProjects.optionStatus(Q, 'heritage_restoration', 'zamek_conservation').available !}
-unavailable-subtitle: [+ pl_heritage_restoration_zamek_conservation_why +]
+@radio
+title: Build a public radio
+subtitle: Costs 2 budget units a month for three months. People hear the news from the country and from the Sejm, and democracy grows stronger (+2).
+choose-if: {! return PolishProjects.optionStatus(Q, 'heritage_restoration', 'radio').available !}
+unavailable-subtitle: [+ pl_heritage_restoration_radio_why +]
 on-arrival: {!
-PolishProjects.chooseOption(Q, 'heritage_restoration', 'zamek_conservation');
-!}
-go-to: result
-
-@zamek_restoration
-title: Royal Castle: wider restoration and public access
-subtitle: Costs the budget 2 units a month for four months; the reputation of PPS (+2) and the trust of the intelligentsia (+3) grow. Extends a running conservation.
-choose-if: {! return PolishProjects.optionStatus(Q, 'heritage_restoration', 'zamek_restoration').available !}
-unavailable-subtitle: [+ pl_heritage_restoration_zamek_restoration_why +]
-on-arrival: {!
-PolishProjects.chooseOption(Q, 'heritage_restoration', 'zamek_restoration');
+PolishProjects.chooseOption(Q, 'heritage_restoration', 'radio');
 !}
 go-to: result
 
 @result
 new-page: true
 
-= Wawel or the Royal Castle
+= Culture and science
 
 [+ pl_gc_result +]
 

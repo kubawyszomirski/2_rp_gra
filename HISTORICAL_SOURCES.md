@@ -1,5 +1,13 @@
 # Historical Source Register
 
+## PL-GOV-CARDS-0.97 — the cards of Agriculture and Education
+
+- **Authority:** the user’s decisions of 7 November 2026 (technical reference 0.97, sections 12.4 and 23.70).
+- **Sources (accessed 24 October and 7 November 2026):** the act of 28 December 1925 on the execution of the land reform (https://eli.gov.pl/api/acts/DU/1926/1/text.html); Agro ICM on the land reform acts of 1920 and 1925 (https://agro.icm.edu.pl/agro/element/bwmeta1.element.dl-catalog-031297c3-ee29-42e6-8797-5f975ef645bb/c/8_4_2009_pl.pdf); Wikipedia, "Polskie Radio" (https://en.wikipedia.org/wiki/Polskie_Radio); dzieje.pl on Polskie Radio (https://dzieje.pl/node/112888); Wikipedia, "March Constitution (Poland)" (https://en.wikipedia.org/wiki/March_Constitution_(Poland)); P. Brzuszczak on free education in the March Constitution (https://repozytorium.uwb.edu.pl/jspui/bitstream/11320/17863/1/MHI_23_1_P_Brzuszczak_Zasada_bezplatnej_nauki_w_publicznych_szkolach_wyzszych_w_konstytucji_marcowej.pdf).
+- **Historical fact:** the land reform act of 1920 provided for compulsory parcellation at half price, which the constitutional protection of property later blocked; the act of 28 December 1925 introduced parcellation at market price and a yearly quota of 200,000 ha. Article 118 of the March Constitution of 1921 made primary (powszechna) schooling compulsory. Polskie Radio received its concession on 18 August 1925 and broadcast a regular programme from 18 April 1926.
+- **Gameplay simplification (P):** the options and numbers of the cards; the priority for Polish settlers, the national democrats’ reactions to the language rule and the public radio strengthening democracy as game content of an alternate history.
+- **Unresolved:** the reach of rural schooling and adult illiteracy by region in 1922–1926 — TBD, historical research required.
+
 ## PL-GOV-CARDS-0.94 — the cards of Labour and of Industry and Trade
 
 - **Authority:** the user's decisions of 24 October 2026 (technical reference 0.94, sections 11.9, 12.4 and 23.67).
@@ -2705,6 +2713,7 @@ Add one row whenever an entry above is assigned a stable Source ID.
 | PL-TUR-0.91 | TUR | TUR: +5% to the organisers per level, civic courses raise the trust in PPS, a course for trade unionists, no reform course | Gameplay simplification; founding and functions from TUR's own publication; reach by group TBD | 0.91, 24 October 2026 |
 | PL-COOP-0.92 | Cooperative | One workers' consumer cooperative that pays half of the strike pay; no relief; government cooperative variants without a PPS cooperative | Gameplay simplification; PPS ties to the cooperative movement TBD | 0.92, 24 October 2026 |
 | PL-GOV-CARDS-0.93 | Government cards | One budget number, one monthly cost per programme, one-step reforms, one Treasury card, no Foreign Affairs for PPS | Gameplay simplification; research for new cards to follow | 0.93, 24 October 2026 |
+| PL-GOV-CARDS-0.97 | Government cards | Agriculture and Education with a gain and a cost per option; Culture and Science | Land reform acts, compulsory schooling and Polskie Radio documented; settlers, school reactions and radio effect are game content | 0.97, 7 November 2026 |
 | PL-GOV-CARDS-0.94 | Government cards | Labour and Industry and Trade with a gain and a cost per option; Economic Democracy; the customs war with Germany | Customs war and Gdynia act documented; works councils law and socialisation TBD | 0.94, 24 October 2026 |
 | PL-STAGE8-NORMAL-SCENARIO-2026-10-04 | Implementation | Stage 8, the last stage: the Normal scenario with the dated inputs of 17.16 and of the 8f research, the opening calibrated to the M02 Sejm, rule 8.9 for the NPR, the military compromise carried out by the cabinet, Polish-only screens, thirteen strategy automata playing full campaigns, and the closing fixes | Implemented | Implemented, 4 October 2026 |
 | TBD | TBD | TBD | TBD | TBD |

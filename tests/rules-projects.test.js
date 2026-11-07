@@ -593,17 +593,18 @@ test('Parcelacja i komasacja: both projects for the same tranche; the same scope
     next.status = 'completed';
   }
   assert.match(proj.optionStatus(Q, 'agriculture_development', 'consolidation').reason, /no second reward/);
-  assert.match(proj.optionStatus(Q, 'land_program', 'expropriation').reason, /guarantees of property/);
+  // Z — 0.97 (decision 1 of 7 XI 2026): the expropriation without compensation, always blocked in this chapter, left the card.
+  assert.match(proj.optionStatus(Q, 'land_program', 'expropriation').reason, /Unknown option/);
 });
 
-test('Remont Oświaty: a running conservation of Wawel extended once; one charge for the rest and one reward at the end; no restart', () => {
+test('Remont Oświaty: a running conservation of Wawel (from an older game) widened once; one charge for the rest and one reward at the end; no restart', () => {
   const Q = withPortfolio(world({ time: 12 }), 'education');
-  proj.chooseOption(Q, 'heritage_restoration', 'wawel_conservation');
-  const wawel = Object.values(Q.S.projects).find(p => p.type === 'heritage');
-  freeAction(Q);
+  // Z — 0.97: the card has one restoration option; a conservation started before 0.97 is widened by it.
+  const wawel = proj.createProject(Q, 'heritage', 'conservation', { policy_choices: { object: 'wawel' }, sponsor: 'pps' });
+  proj.launchProject(Q, wawel, { sponsor: 'pps' });
   proj.processProjects(Q, 12, econ.budgetAt(Q.S, 12));
   close(wawel.progress, 50);
-  proj.chooseOption(Q, 'heritage_restoration', 'wawel_restoration');
+  proj.chooseOption(Q, 'heritage_restoration', 'heritage');
   freeAction(Q);
   assert.deepEqual([wawel.variant, wawel.build_budget_B, wawel.duration_months], ['restoration', 2, 4]);
   close(wawel.progress, 25, 1e-9, 'one month done of four');
@@ -611,8 +612,10 @@ test('Remont Oświaty: a running conservation of Wawel extended once; one charge
   assert.equal(wawel.status, 'completed');
   assert.equal(Q.S.actors.pps.credibility, 52, 'reputation +2 once, as the open sponsor');
   assert.equal(Object.values(Q.S.projects).filter(p => p.type === 'heritage').length, 1, 'one project for the building');
-  assert.match(proj.optionStatus(Q, 'heritage_restoration', 'wawel_restoration').reason, /completed/);
-  assert.equal(proj.optionStatus(Q, 'heritage_restoration', 'zamek_conservation').available, true, 'the other building remains');
+  assert.equal(proj.optionStatus(Q, 'heritage_restoration', 'heritage').available, true, 'the other building remains');
+  proj.chooseOption(Q, 'heritage_restoration', 'heritage');
+  const zamek = Object.values(Q.S.projects).find(p => p.type === 'heritage' && p.policy_choices.object === 'zamek');
+  assert.deepEqual([zamek.variant, zamek.status], ['restoration', 'executing'], 'the same option now restores the Royal Castle');
 });
 
 test('Rozszerzyć osłony i ubezpieczenie: a protection of 2 B extended to scope 2 costs 4 B; the insurance of workers by a law, business +6 (Z — 0.94)', () => {

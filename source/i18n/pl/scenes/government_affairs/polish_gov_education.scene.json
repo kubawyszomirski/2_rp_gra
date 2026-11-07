@@ -3,15 +3,15 @@
  "status": "complete",
  "lines": {
   "title: Education Policy": "title: Polityka oświatowa",
-  "subtitle: Education: village schools, adult education, a secular school.": "subtitle: Resort Oświaty: szkoły wiejskie, oświata dorosłych, szkoła świecka.",
+  "subtitle: Education: village schools, courses for adults, a secular school.": "subtitle: Resort Oświaty: szkoły na wsi, kursy dla dorosłych, szkoła świecka.",
   "= Education policy": "= Polityka oświatowa",
-  "title: Village schools": "title: Szkoły wiejskie",
-  "subtitle: Schools for the villages covered; the trust of the recipients grows when the schools work (+4).": "subtitle: Szkoły dla objętych wsi; zaufanie odbiorców rośnie, gdy szkoły działają (+4).",
-  "title: Education of the poor and adults in workers’ centres": "title: Oświata ubogich i dorosłych w ośrodkach robotniczych",
-  "subtitle: The trust of the recipients grows (+4); it does not replace TUR.": "subtitle: Zaufanie odbiorców rośnie (+4); nie zastępuje Towarzystwa Uniwersytetu Robotniczego.",
-  "title: A secular school with religious freedom": "title: Szkoła świecka z wolnością religijną",
-  "subtitle: Needs its law; PSChD judges the content by its programme. Against an agreed religious compromise it breaks that agreement.": "subtitle: Wymaga własnej ustawy; PSChD ocenia jej treść według swojego programu. Wbrew uzgodnionemu kompromisowi religijnemu łamie to porozumienie.",
-  "- @root: Continue.": "- @root: Dalej.",
-  "A school programme costs 1 B a month from its launch; its schools work after four months, in up to three separate tranches. The same scope of schools is never financed twice.": "Program szkolny kosztuje 1 jednostkę budżetu miesięcznie od uruchomienia; szkoły działają po czterech miesiącach, najwyżej w trzech osobnych częściach. Ten sam zakres szkół nigdy nie jest finansowany dwa razy."
+  "Primary school is compulsory, but the villages lack schools and many adult workers cannot read. Each programme covers one of three parts of the country.": "Szkoła powszechna jest obowiązkowa, ale na wsi brakuje szkół, a wielu dorosłych robotników nie umie czytać. Każdy program obejmuje jedną z trzech części kraju.",
+  "title: Build schools in the villages": "title: Buduj szkoły na wsi",
+  "subtitle: Costs 1 budget unit a month while the schools work. After four months the peasants trust PPS more (+4).": "subtitle: Kosztuje 1 jednostkę budżetu miesięcznie, dopóki szkoły działają. Po czterech miesiącach chłopi bardziej ufają PPS (+4).",
+  "title: Open courses for adults in the workers’ centres": "title: Otwórz kursy dla dorosłych w ośrodkach robotniczych",
+  "subtitle: Costs 1 budget unit a month while the courses run. After four months the workers trust PPS more (+4).": "subtitle: Kosztuje 1 jednostkę budżetu miesięcznie, dopóki kursy działają. Po czterech miesiącach robotnicy bardziej ufają PPS (+4).",
+  "title: Introduce the secular school": "title: Wprowadź szkołę świecką",
+  "subtitle: Needs a law and costs 1 budget unit a month. Workers and the intelligentsia trust PPS more (+4), but the Christian Democrats and the Church protest, and our relations with the Christian Democrats worsen (−8).": "subtitle: Wymaga ustawy i kosztuje 1 jednostkę budżetu miesięcznie. Robotnicy i inteligencja bardziej ufają PPS (+4), ale chadecja i Kościół protestują, a nasze stosunki z chadecją się pogarszają (−8).",
+  "- @root: Continue.": "- @root: Dalej."
  }
 }
