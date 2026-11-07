@@ -1,0 +1,48 @@
+title: The Concordat
+subtitle: An urgent card: the concordat with the Holy See comes before the Sejm.
+new-page: true
+is-card: true
+view-if: {! return !!Q.S && !!Q.polish_politics_rules && PolishPolitics.concordatParliamentActive(Q) !}
+on-arrival: {!
+// Card of Parliament (Z — 1.05, the user's decisions of 7 XI 2026): from II to III 1925 while PPS is outside the cabinet; a stance
+// that costs no action; the Sejm ratifies the concordat at the end of March (HISTORICAL_SOURCES.md, PL-EVENTS-1.05).
+PolishPolitics.concordatView(Q);
+!}
+
+= The concordat
+
+The cabinet has signed a concordat with the Holy See: Catholic instruction will be compulsory in public schools, and the clergy will swear an oath of loyalty to the state. The agreement comes before the Sejm.
+
+- @against
+- @abstain
+- @later
+
+@against
+title: Vote against and demand the separation of the Church and the state
+subtitle: The Left of the party is with us (−3), but we lose among Catholic voters in the countryside.
+on-arrival: {!
+Q.pl_conc_result = PolishPolitics.concordatChoose(Q, 'against');
+!}
+go-to: result
+
+@abstain
+title: Abstain, so as not to provoke the partners
+subtitle: PSL “Piast” will appreciate it (+3), but the Left of the party protests.
+on-arrival: {!
+Q.pl_conc_result = PolishPolitics.concordatChoose(Q, 'abstain');
+!}
+go-to: result
+
+@later
+title: Not now
+subtitle: The card stays in the hand until the vote at the end of March.
+go-to: root
+
+@result
+new-page: true
+
+= The concordat
+
+[+ pl_conc_result +]
+
+- @root: Continue.

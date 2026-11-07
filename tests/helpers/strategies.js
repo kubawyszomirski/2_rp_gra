@@ -170,6 +170,8 @@ const PASSIVE_EVENTS = {
   polish_strike_offer: ['accept', 'continue', 'end'],
   polish_event_stabilization: ['wait', 'gradual'],
   polish_event_credit_crisis: ['none'],
+  // Z — 1.05: the departure of Piłsudski in July 1923 — the bots stay silent.
+  polish_event_pils_departure: ['silent'],
   polish_event_austerity_1926: ['maintain'],
   polish_event_faction_split: ['accept'],
   // Z — 0.57: the joint list is an event two months before the vote.

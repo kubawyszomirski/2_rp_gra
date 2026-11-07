@@ -4610,6 +4610,7 @@
     dismissalBallot: dismissalBallot,
     decideDismissal: decideDismissal,
     ppsStance: ppsStance,
+    partnerAgreement: partnerAgreement,
     ppsAgreements: ppsAgreements,
     responseCase: responseCase,
     responseDeadline: responseDeadline,

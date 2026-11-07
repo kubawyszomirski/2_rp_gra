@@ -1,10 +1,10 @@
 {
   "hashes": {
-    "docs/POLISH_TECHNICAL_REFERENCE.md": "ea760fbd396349d89c4ddb0b42df54599498985d770d827d31cd92346e3b733f",
-    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "417b6c0fc36dc7e378449a653ef2c514e59a8ce1fbf68cff100be424e9342a01",
+    "docs/POLISH_TECHNICAL_REFERENCE.md": "37d487387b22891da11d902d23f15279669d0d9e0f5103edfa1cc2c2810d9c13",
+    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "cd8f881e0d7403513c38c7cd14b0ae8436ecc026cfd9ec943be329c8c7a54482",
     "analysis/m02-revision-13/monthly.csv": "843ffa5512922c53997a53d5e2b2473ae6804dd7be36d42589f8d9aba088ae6d",
-    "analysis/m02-revision-13/results.json": "1f103829b5497b418b5e0722943cd6228945692b3419d44de86532b0564bf7d2",
-    "analysis/m02-political-chain/results.json": "e670ddd504da3d0a599ba44ec0d3cdb5bb432f5f8bc48b300374c1171b1cea95"
+    "analysis/m02-revision-13/results.json": "082f0efabc98ff4adcb785f060a8280fe408c1036a7c9f87743a72e4be2dac00",
+    "analysis/m02-political-chain/results.json": "5f98b17d7fecca533aa39d8b3d70b19b733d5146c52f5f7bba22a884f1f5ae9d"
   },
   "archiveRowsChecked": 272,
   "scope": "pressure-only calibration with frozen cabinet/economy traces; not a new full campaign",

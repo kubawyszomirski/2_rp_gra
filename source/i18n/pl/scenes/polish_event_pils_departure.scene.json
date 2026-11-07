@@ -1,0 +1,15 @@
+{
+ "source": "scenes/polish_event_pils_departure.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Piłsudski Leaves": "title: Piłsudski odchodzi",
+  "subtitle: The Marshal resigns his last military function and takes his leave of politics.": "subtitle: Marszałek składa ostatnią funkcję wojskową i żegna się z polityką.",
+  "= Piłsudski leaves": "= Piłsudski odchodzi",
+  "Józef Piłsudski has resigned his last military function and, in the hotel Bristol, taken his leave of politics, attacking the right and its press. He has settled in Sulejówek, and his followers in the army and in the party wait for what we will say.": "Józef Piłsudski złożył ostatnią funkcję wojskową i w hotelu Bristol pożegnał się z polityką, atakując prawicę i jej prasę. Zamieszkał w Sulejówku, a jego zwolennicy w wojsku i w partii czekają, co powiemy.",
+  "title: Take leave of the Marshal with respect": "title: Pożegnaj Marszałka z szacunkiem",
+  "subtitle: The Piłsudczycy in the party are pleased (−5), but the Centre sees it as homage to an opponent of the Sejm.": "subtitle: Piłsudczycy w partii są zadowoleni (−5), ale Centrum widzi w tym hołd dla przeciwnika Sejmu.",
+  "title: Say nothing": "title: Nie zabieraj głosu",
+  "subtitle: No cost and no gain.": "subtitle: Bez kosztów i bez korzyści.",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

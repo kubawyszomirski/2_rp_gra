@@ -574,7 +574,119 @@
       const c = openCase(Q, {id: 'military_case', kind: 'military', subject: MILITARY_CASE_SUBJECT});
       c.opened_at = SCENARIO_INPUTS.military_case;
       c.profile_id = SCENARIO_INPUTS.profile_id;
-      scheduleSpeech(Q, 'speech_military_case', t);
+      // Z — 1.05 (decision 1A of the event audit, 7 XI 2026): the event "Piłsudski odchodzi" tells the opening of the case and
+      // replaces the card of criticism of July 1923; the speech `speech_military_case` is no longer recorded.
+    }
+  }
+
+  // ---- Z — 1.05 (decision 1A of the event audit, 7 XI 2026): Piłsudski leaves -----------------------------------------------
+  // H: on 2 VII 1923 Piłsudski resigned his last military function and on 3 VII took his leave of politics at a banquet in the
+  // hotel Bristol, attacking the right and its press; he settled in Sulejówek (HISTORICAL_SOURCES.md, PL-EVENTS-1.05). P: the event
+  // comes with the military case, once, in its first three months; two answers, without the month's action.
+  const DEPARTURE = Object.freeze({farewell: Object.freeze([{faction: 'pilsudczycy', dissent: -5}, {faction: 'centrum', dissent: 3}]),
+    silent: Object.freeze([])});
+  const DEPARTURE_WINDOW = 2;
+  function departureDue(Q) {
+    if (!ready(Q) || Q.S.chapter.status === 'ended') return false;
+    const S = Q.S, P = S.politics, c = P.cases.military_case;
+    return inputOn(S, 'military_case') && !!c && !P.pils_departure && Q.time <= SCENARIO_INPUTS.military_case + DEPARTURE_WINDOW;
+  }
+  function departureChoose(Q, choice) {
+    if (!DEPARTURE[choice]) throw new Error('departureChoose: unknown answer ' + choice);
+    if (!departureDue(Q)) throw new Error('departureChoose: the event is not due');
+    const S = Q.S;
+    party.syncMirrors(Q);
+    S.politics.pils_departure = {t: Q.time, choice: choice};
+    if (DEPARTURE[choice].length) government.factionReactions(Q, DEPARTURE[choice].map(r => Object.assign({}, r)), {id: 'pils_departure', kind: 'pils_departure', reverse: null});
+    S.history.actions.push({t: Q.time, action_id: 'event.pils_departure.' + choice, cost_t: 0});
+    party.writeMirrors(Q);
+    return choice === 'farewell' ?
+      L('PPS takes its leave of the Marshal with respect. The Piłsudczycy in the party are pleased; the Centre sees it as homage to an opponent of the Sejm.',
+        'PPS żegna Marszałka z szacunkiem. Piłsudczycy w partii są zadowoleni; Centrum widzi w tym hołd dla przeciwnika Sejmu.') :
+      L('PPS does not comment on the departure of Piłsudski.', 'PPS nie komentuje odejścia Piłsudskiego.');
+  }
+
+  // ---- Z — 1.05 (the user's decisions of 7 XI 2026): the concordat ---------------------------------------------------------
+  // H: the concordat with the Holy See was signed on 10 II 1925 and ratified by the Sejm at the end of March 1925; Catholic
+  // instruction became compulsory in public schools and the clergy swore an oath of loyalty to the state (HISTORICAL_SOURCES.md,
+  // PL-EVENTS-1.05). P: from II to III 1925 an urgent card that costs no action — of Parliament while PPS is outside the cabinet
+  // (a stance; the Sejm ratifies anyway), of the Government while PPS sits in it (the cabinet accepts or rejects it, without a
+  // vote, as every decision of a ministry). An unanswered card is settled at the end of March: the concordat is ratified.
+  const CONCORDAT_WINDOW = Object.freeze([T(1925, 2), T(1925, 3)]);
+  const CATHOLIC_PARTNERS = Object.freeze(['zln', 'pschd', 'psl_piast']);
+  const CONCORDAT = Object.freeze({
+    against: {mode: 'parliament', lewica: -3, rural_loss: 2},
+    abstain: {mode: 'parliament', lewica: 5, piast: 3},
+    accept: {mode: 'government', lewica: 8, tension: -10},
+    reject: {mode: 'government', lewica: -3, tension: 20, rural_loss: 2},
+  });
+  const concordatMode = S => (government.ppsStance(S) === 'member' ? 'government' : 'parliament');
+  function concordatOpen(Q) {
+    if (!ready(Q) || Q.S.chapter.status === 'ended') return false;
+    return Q.time >= CONCORDAT_WINDOW[0] && Q.time <= CONCORDAT_WINDOW[1] && !Q.S.politics.concordat;
+  }
+  const concordatParliamentActive = Q => concordatOpen(Q) && concordatMode(Q.S) === 'parliament';
+  const concordatGovernmentActive = Q => concordatOpen(Q) && concordatMode(Q.S) === 'government';
+  function catholicPartners(S) {
+    const cabinet = S.cabinet;
+    if (!cabinet || cabinet.status !== 'active' || cabinet.partner_ids.indexOf('pps') < 0) return [];
+    return CATHOLIC_PARTNERS.filter(id => cabinet.partner_ids.indexOf(id) >= 0);
+  }
+  function changeCatholicTension(Q, delta) {
+    const S = Q.S, seen = [];
+    for (const id of catholicPartners(S)) {
+      const agreement = government.partnerAgreement(S, id);
+      if (!agreement || seen.indexOf(agreement) >= 0) continue;
+      seen.push(agreement);
+      const before = agreement.tension;
+      agreement.tension = clip(agreement.tension + delta, 0, 100);
+      agreement.history.push({t: Q.time, kind: 'concordat', delta: agreement.tension - before, tension: agreement.tension});
+    }
+    government.writeGovernmentMirrors(Q);
+    return seen.length;
+  }
+  function concordatView(Q) {
+    Q.pl_conc_catholic = catholicPartners(Q.S).length ? 1 : 0;
+  }
+  function concordatChoose(Q, choice) {
+    const S = Q.S, spec = CONCORDAT[choice];
+    if (!spec) throw new Error('concordatChoose: unknown answer ' + choice);
+    if (!concordatOpen(Q) || concordatMode(S) !== spec.mode) throw new Error('concordatChoose: the card is not open for ' + choice);
+    party.syncMirrors(Q);
+    const cause = {id: 'concordat:' + choice, kind: 'concordat', reverse: null};
+    government.factionReaction(Q, 'lewica', {dissent: spec.lewica}, cause);
+    let lost = false;
+    if (spec.piast) government.changeRelation(Q, 'psl_piast', spec.piast, 'concordat:' + choice);
+    if (spec.tension) {
+      const partners = changeCatholicTension(Q, spec.tension);
+      lost = !partners && choice === 'reject';
+    }
+    if ((choice === 'against' || lost) && spec.rural_loss && electorate.hasCells(S)) {
+      for (const cell of S.society.cells.filter(c => c.class_id === 'rural')) electorate.lossForPps(cell, spec.rural_loss, S.society.parties);
+      electorate.writeClassMirrors(Q);
+    }
+    const status = choice === 'reject' ? 'rejected' : 'ratified';
+    S.politics.concordat = {t: Q.time, choice: choice, mode: spec.mode, status: status, settled_at: status === 'ratified' ? CONCORDAT_WINDOW[1] : Q.time};
+    S.history.actions.push({t: Q.time, action_id: 'event.concordat.' + choice, cost_t: 0});
+    party.writeMirrors(Q);
+    const ratify = L(' At the end of March the Sejm ratifies the concordat with the votes of the right and the centre.',
+      ' Pod koniec marca Sejm ratyfikuje konkordat głosami prawicy i centrum.');
+    if (choice === 'against') return L('PPS votes against and demands the separation of the Church and the state. The Left of the party is with us, but Catholic voters in the countryside turn away from PPS.',
+      'PPS głosuje przeciw i żąda rozdziału Kościoła od państwa. Lewica partii jest z nami, ale katoliccy wyborcy na wsi odwracają się od PPS.') + ratify;
+    if (choice === 'abstain') return L('PPS abstains. PSL “Piast” appreciates it, but the Left of the party protests.',
+      'PPS wstrzymuje się od głosu. PSL „Piast” to docenia, ale Lewica partii protestuje.') + ratify;
+    if (choice === 'accept') return L('The cabinet accepts the concordat. The Catholic partners are pleased, but the Left of the party protests.',
+      'Rząd przyjmuje konkordat. Katoliccy partnerzy są zadowoleni, ale Lewica partii protestuje.');
+    return lost ? L('The cabinet rejects the concordat. The Left of the party is with us, but Catholic voters in the countryside turn away from PPS.',
+      'Rząd odrzuca konkordat. Lewica partii jest z nami, ale katoliccy wyborcy na wsi odwracają się od PPS.') :
+      L('The cabinet rejects the concordat. The Left of the party is with us, but the Catholic partners in the cabinet are outraged.',
+        'Rząd odrzuca konkordat. Lewica partii jest z nami, ale katoliccy partnerzy w rządzie są oburzeni.');
+  }
+  // The end of March without an answer: the concordat is ratified, and PPS said nothing.
+  function settleConcordat(Q, t) {
+    const P = Q.S.politics;
+    if (t >= CONCORDAT_WINDOW[1] && !P.concordat) {
+      P.concordat = {t: t, choice: 'silent', mode: concordatMode(Q.S), status: 'ratified', settled_at: CONCORDAT_WINDOW[1]};
     }
   }
 
@@ -1178,6 +1290,7 @@
     Q.time = t; Q.year = rules.yearOf(t); Q.month = rules.monthOf(t);
     try {
       scenarioInputs(Q, t);
+      settleConcordat(Q, t);
       scanDispute(Q);
       scanGrabskiResignation(Q);
       scanCompeting(Q);
@@ -1245,6 +1358,9 @@
     return speech ? speech.t + SPEECH_WINDOW - 1 : null;
   }
   rules.registerCardDeadline('polish_event_pils_criticism', criticismUntil);
+  // Z — 1.05: the concordat is an urgent card of Parliament outside the cabinet and of the Government in it.
+  rules.registerUrgentCard('polish_concordat_parliament', {deck: () => 'main.parliament', active: concordatParliamentActive});
+  rules.registerUrgentCard('polish_concordat_government', {deck: () => 'main.govt', active: concordatGovernmentActive});
 
   function criticismStatus(Q, choice) {
     if (!CRITICISM[choice]) return {available: false, reason: L('Unknown answer.', 'Nieznana odpowiedź.')};
@@ -1395,6 +1511,13 @@
     militaryCases: militaryCases,
     openMilitaryCase: openMilitaryCase,
     scheduleSpeech: scheduleSpeech,
+    departureDue: departureDue,
+    departureChoose: departureChoose,
+    CONCORDAT_WINDOW: CONCORDAT_WINDOW,
+    concordatParliamentActive: concordatParliamentActive,
+    concordatGovernmentActive: concordatGovernmentActive,
+    concordatView: concordatView,
+    concordatChoose: concordatChoose,
     applyImpulse: applyImpulse,
     protectiveAgreement: protectiveAgreement,
     scanImpulses: scanImpulses,

@@ -137,3 +137,37 @@ test('Spory w koalicji: the talks lower every tension by 10 for 2 R and the mont
   assert.equal(wyzwolenie.tension, 0);
   assert.equal(Q.S.actors.pps.factions.centrum.dissent, centre + 5, 'the Centre of PPS dislikes giving way to the left');
 });
+
+// Z — 1.05 (the user's decisions of 7 XI 2026): the concordat — a stance in the Sejm outside the cabinet, a decision of the cabinet
+// inside it, without a vote; it costs no action.
+test('Konkordat 1.05: outside the cabinet a stance in the Sejm; in the cabinet accept or reject, with the tension of the Catholic partners or the loss in the countryside', () => {
+  const T = PolishRules.timeOf;
+  const opposition = dendry.startGame().state.qualities;
+  opposition.time = T(1925, 2); opposition.year = 1925; opposition.month = 2;
+  assert.equal(PolishPolitics.concordatParliamentActive(opposition), true);
+  const lewica = opposition.S.actors.pps.factions.lewica;
+  lewica.dissent = 20;
+  const rural = () => PolishElectorate.aggregate(opposition.S, c => c.class_id === 'rural', 'pps');
+  const before = rural();
+  assert.match(PolishPolitics.concordatChoose(opposition, 'against'), /ratifies the concordat/);
+  assert.equal(lewica.dissent, 17);
+  assert.ok(rural() < before, 'Catholic voters in the countryside turn away');
+  assert.deepEqual([opposition.S.politics.concordat.status, opposition.month_actions || 0], ['ratified', 0]);
+  assert.equal(PolishPolitics.concordatParliamentActive(opposition), false, 'answered once');
+
+  const Q = formed('centre_left', 'thugutt');
+  Q.time = T(1925, 2); Q.year = 1925; Q.month = 2;
+  assert.deepEqual([PolishPolitics.concordatGovernmentActive(Q), PolishPolitics.concordatParliamentActive(Q)], [true, false]);
+  assert.throws(() => PolishPolitics.concordatChoose(Q, 'against'), /not open/);
+  Q.S.actors.pps.factions.lewica.dissent = 20;
+  const tension = agreementOf(Q, 'psl_piast').tension;
+  assert.match(PolishPolitics.concordatChoose(Q, 'reject'), /Catholic partners in the cabinet are outraged/);
+  assert.equal(agreementOf(Q, 'psl_piast').tension, Math.min(100, tension + 20));
+  assert.equal(Q.S.actors.pps.factions.lewica.dissent, 17);
+  assert.equal(Q.S.politics.concordat.status, 'rejected');
+
+  const left = formed('centre_left', 'thugutt');
+  left.time = T(1925, 3); left.year = 1925; left.month = 3;
+  left.S.cabinet.partner_ids = left.S.cabinet.partner_ids.filter(id => !['zln', 'pschd', 'psl_piast'].includes(id));
+  assert.match(PolishPolitics.concordatChoose(left, 'reject'), /Catholic voters in the countryside/);
+});

@@ -1,5 +1,14 @@
 # Historical Source Register
 
+## PL-EVENTS-1.05 — Piłsudski leaves (VII 1923) and the concordat (1925)
+
+- **Authority:** the user’s decisions of 7 November 2026 after the audit of the event cards (technical reference 1.05, sections 10.7, 17.13 and 23.78).
+- **Sources (accessed 7 November 2026):** the resignation of 2 VII 1923 as in PL-MILITARY-CASE-1923-1926; J. Piłsudski, “Przemówienie wygłoszone na bankiecie w Hotelu Bristol (3 lipca 1923 roku)” (CEEOL, https://ceeol.com/search/article-detail?id=706226; *Pisma zbiorowe*, vol. 6); Wikipedia en, “Sulejówek” (https://en.wikipedia.org/wiki/Sulej%C3%B3wek); Wikipedia en, “Concordat of 1925” (https://en.wikipedia.org/wiki/Concordat_of_1925); dzieje.pl, “Ratyfikacja konkordatu” (https://dzieje.pl/node/3016).
+- **Historical fact:** Piłsudski resigned his last military function on 2 VII 1923, took his leave of politics at a banquet in the hotel Bristol on 3 VII 1923, attacking the right and its press, and lived in Sulejówek until 1926 (high for the dates; medium for the content of the speech, from secondary summaries). The concordat with the Holy See was signed on 10 II 1925 (Gasparri; Stanisław Grabski and Władysław Skrzyński) and ratified by the Sejm at the end of March 1925 (sources give 26 or 27 III; one gives 181 votes for and 110 against); Catholic instruction became compulsory in public schools and the clergy swore an oath of loyalty to the state; socialists, communists and deputies of the non-Catholic minorities criticised it (medium: encyclopaedic sources).
+- **Gameplay simplification (P):** the two answers to the departure and their effects; the concordat as a stance in the Sejm or a decision of a cabinet with PPS, the Catholic partners (ZLN, PSChD, PSL „Piast”), the effects and the ratification without an answer.
+- **Alternate-history outcome:** a cabinet with PPS may reject the concordat.
+- **Unresolved:** how PPS voted on the ratification in 1925 and its stance on the departure of Piłsudski — TBD, historical research required. Researched in the same audit but not used: the explosion in the Warsaw Citadel (13 X 1923), Kraków (6 XI 1923), the bomb in Lwów (5 IX 1924), Locarno (16 X 1925).
+
 ## PL-EVENTS-1.04 — the audit of the event cards
 
 - **Authority:** the user’s decisions 2A–5A of 7 November 2026 after the audit of the event cards (technical reference 1.04, sections 17.5, 17.13 and 23.77).
@@ -2768,6 +2777,7 @@ Add one row whenever an entry above is assigned a stable Source ID.
 | PL-PRESS-0.90 | Press | The party press: reach ceilings, sales, support of the campaigns, confiscations under a government of the right, credibility | Gameplay simplification; confiscations and circulation TBD | 0.90, 24 October 2026 |
 | PL-TUR-0.91 | TUR | TUR: +5% to the organisers per level, civic courses raise the trust in PPS, a course for trade unionists, no reform course | Gameplay simplification; founding and functions from TUR's own publication; reach by group TBD | 0.91, 24 October 2026 |
 | PL-COOP-0.92 | Cooperative | One workers' consumer cooperative that pays half of the strike pay; no relief; government cooperative variants without a PPS cooperative | Gameplay simplification; PPS ties to the cooperative movement TBD | 0.92, 24 October 2026 |
+| PL-EVENTS-1.05 | Events | Piłsudski leaves (VII 1923); the concordat (1925) | Dates sourced; PPS stances TBD | 1.05, 7 November 2026 |
 | PL-EVENTS-1.04 | Events | The texts and answers of the event cards | Game model; no new historical claim | 1.04, 7 November 2026 |
 | PL-COUP-1.03 | Coup | The coup in one comparison; the army as one body | Game model; no new historical claim | 1.03, 7 November 2026 |
 | PL-GOV-CARDS-1.02 | Government cards | Military Affairs: Military Affairs, Piłsudski and the Army | Game content; no new historical claim | 1.02, 7 November 2026 |

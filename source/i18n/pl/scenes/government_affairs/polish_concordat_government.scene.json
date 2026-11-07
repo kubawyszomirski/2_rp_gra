@@ -1,0 +1,17 @@
+{
+ "source": "scenes/government_affairs/polish_concordat_government.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: The Concordat": "title: Konkordat",
+  "subtitle: An urgent card of the cabinet: the concordat with the Holy See waits for its decision.": "subtitle: Pilna karta rządu: konkordat ze Stolicą Apostolską czeka na jego decyzję.",
+  "= The concordat": "= Konkordat",
+  "The talks with the Holy See are over. The concordat would make Catholic instruction compulsory in public schools, and the clergy would swear an oath of loyalty to the state; the decision belongs to the cabinet.": "Rokowania ze Stolicą Apostolską dobiegły końca. Konkordat uczyniłby religię katolicką obowiązkową w szkołach publicznych, a duchowni składaliby przysięgę wierności państwu; decyzja należy do rządu.",
+  "title: Accept the concordat": "title: Przyjmij konkordat",
+  "subtitle: [? if pl_conc_catholic : The Catholic partners in the cabinet are pleased, but ?][? if not pl_conc_catholic : No partner in the cabinet objects, but ?] the Left of the party protests (+8).": "subtitle: [? if pl_conc_catholic : Katoliccy partnerzy w rządzie są zadowoleni, ale ?][? if not pl_conc_catholic : Nikt w rządzie się nie sprzeciwia, ale ?] Lewica partii protestuje (+8).",
+  "title: Reject the concordat": "title: Odrzuć konkordat",
+  "subtitle: The Left of the party is with us, [? if pl_conc_catholic : but the Catholic partners in the cabinet are outraged (+20). ?][? if not pl_conc_catholic : but we lose among Catholic voters in the countryside. ?]": "subtitle: Lewica partii jest z nami, [? if pl_conc_catholic : ale katoliccy partnerzy w rządzie są oburzeni (+20). ?][? if not pl_conc_catholic : ale tracimy wśród katolickich wyborców na wsi. ?]",
+  "title: Not now": "title: Nie teraz",
+  "subtitle: The card stays in the hand until the end of March.": "subtitle: Karta zostaje w ręce do końca marca.",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

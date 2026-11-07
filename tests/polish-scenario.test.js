@@ -265,7 +265,7 @@ test('Żądanie dymisji przy niezadowoleniu 47 (21.2c): in an open rejected disp
 
 // Stage 8, part 8f: the dated inputs of the Normal scenario from the sources (HISTORICAL_SOURCES.md, PL-MILITARY-CASE-1923-1926,
 // PL-1922-CABINET-CRISIS, PL-NIEWIADOMSKI-CULT-1923).
-test('Daty ze źródeł (8f): the military case opens in VII 1923 with its speech; the public episode of military pressure waits for a cabinet crisis from XI 1925; the speech of 1922 is about the right to appoint the cabinet', () => {
+test('Daty ze źródeł (8f): the military case opens in VII 1923 with the event of Piłsudski leaving (Z — 1.05: no speech any more); the public episode of military pressure waits for a cabinet crisis from XI 1925; the speech of 1922 is about the right to appoint the cabinet', () => {
   const Q = quiet();
   const S = Q.S;
   const I = PolishPolitics.SCENARIO_INPUTS;
@@ -277,7 +277,9 @@ test('Daty ze źródeł (8f): the military case opens in VII 1923 with its speec
   assert.equal(PolishPolitics.openMilitaryCase(S), null, 'no case in VI 1923');
   settle(Q);
   const opened = PolishPolitics.openMilitaryCase(S);
-  assert.deepEqual([opened && opened.opened_at, S.politics.speeches.map(s => s.id)], [I.military_case, ['speech_military_case']]);
+  // Z — 1.05 (decision 1A of the event audit): the event „Piłsudski odchodzi” replaces the card of criticism of July 1923.
+  assert.deepEqual([opened && opened.opened_at, S.politics.speeches.map(s => s.id)], [I.military_case, []]);
+  assert.equal(PolishPolitics.departureDue(Q), true, 'the event of the departure is due with the case');
   // A cabinet crisis before XI 1925 brings no public episode.
   PolishGovernment.cabinetFalls(Q, 'fixture');
   PolishPolitics.afterEvents(Q);
@@ -399,4 +401,44 @@ test('Kredyt rządu (poprawka 3): a credit instrument that the cabinet prepared 
 test('Bez niemieckiej muzyki (poprawka 5): the Polish chapter starts without the music files of the German game', () => {
   const engine = dendry.startGame();
   assert.ok(!JSON.stringify(engine.game.scenes['root.1928_main']).includes('music/'));
+});
+
+// Z — 1.05 (decision 1A of the event audit, 7 XI 2026): the event „Piłsudski odchodzi” comes with the military case of July 1923,
+// once, in its first three months; two answers without the month's action. The concordat (the user's decisions of 7 XI 2026): an
+// unanswered card leaves the concordat ratified at the end of March 1925.
+test('Piłsudski odchodzi i konkordat 1.05: the departure with the military case, its two answers; the concordat ratified without an answer', () => {
+  const Q = quiet();
+  const S = Q.S;
+  S.scenario.inputs.military_case = true;
+  at(Q, 1923, 6);
+  settle(Q);
+  assert.equal(PolishPolitics.departureDue(Q), false, 'no departure before the case');
+  settle(Q);
+  assert.equal(PolishPolitics.departureDue(Q), true);
+  const f = S.actors.pps.factions;
+  f.pilsudczycy.dissent = 20; f.centrum.dissent = 20;
+  free(Q);
+  assert.match(PolishPolitics.departureChoose(Q, 'farewell'), /with respect/);
+  assert.deepEqual([f.pilsudczycy.dissent, f.centrum.dissent, Q.month_actions || 0], [15, 23, 0]);
+  assert.deepEqual(S.politics.pils_departure, { t: Q.time, choice: 'farewell' });
+  assert.equal(PolishPolitics.departureDue(Q), false, 'once');
+  // A save whose case opened long ago gets no late departure.
+  const late = quiet();
+  late.S.scenario.inputs.military_case = true;
+  at(late, 1923, 7);
+  settle(late);
+  at(late, 1923, 11);
+  assert.equal(PolishPolitics.departureDue(late), false, 'only in the first three months of the case');
+  // The concordat: the card is open from II to III 1925; without an answer the March settlement records the ratification.
+  const C = quiet();
+  at(C, 1925, 1);
+  assert.equal(PolishPolitics.concordatParliamentActive(C), false, 'not before February 1925');
+  at(C, 1925, 2);
+  assert.equal(PolishPolitics.concordatParliamentActive(C), true);
+  assert.equal(PolishPolitics.concordatGovernmentActive(C), false, 'PPS outside the cabinet answers in the Sejm');
+  settle(C);
+  assert.equal(C.S.politics.concordat, undefined, 'still open in March');
+  settle(C);
+  assert.deepEqual([C.S.politics.concordat.choice, C.S.politics.concordat.status], ['silent', 'ratified']);
+  assert.equal(PolishPolitics.concordatParliamentActive(C), false);
 });

@@ -1,0 +1,17 @@
+{
+ "source": "scenes/polish_concordat_parliament.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: The Concordat": "title: Konkordat",
+  "subtitle: An urgent card: the concordat with the Holy See comes before the Sejm.": "subtitle: Karta pilna: konkordat ze Stolicą Apostolską trafia do Sejmu.",
+  "= The concordat": "= Konkordat",
+  "The cabinet has signed a concordat with the Holy See: Catholic instruction will be compulsory in public schools, and the clergy will swear an oath of loyalty to the state. The agreement comes before the Sejm.": "Rząd podpisał konkordat ze Stolicą Apostolską: religia katolicka będzie obowiązkowa w szkołach publicznych, a duchowni złożą przysięgę wierności państwu. Umowa trafia do Sejmu.",
+  "title: Vote against and demand the separation of the Church and the state": "title: Głosuj przeciw i żądaj rozdziału Kościoła od państwa",
+  "subtitle: The Left of the party is with us (−3), but we lose among Catholic voters in the countryside.": "subtitle: Lewica partii jest z nami (−3), ale tracimy wśród katolickich wyborców na wsi.",
+  "title: Abstain, so as not to provoke the partners": "title: Wstrzymaj się od głosu, żeby nie drażnić partnerów",
+  "subtitle: PSL “Piast” will appreciate it (+3), but the Left of the party protests.": "subtitle: PSL „Piast” to doceni (+3), ale Lewica partii protestuje.",
+  "title: Not now": "title: Nie teraz",
+  "subtitle: The card stays in the hand until the vote at the end of March.": "subtitle: Karta zostaje w ręce do głosowania pod koniec marca.",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

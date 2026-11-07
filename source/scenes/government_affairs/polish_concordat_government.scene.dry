@@ -1,0 +1,48 @@
+title: The Concordat
+subtitle: An urgent card of the cabinet: the concordat with the Holy See waits for its decision.
+new-page: true
+is-card: true
+view-if: {! return !!Q.S && !!Q.polish_politics_rules && PolishPolitics.concordatGovernmentActive(Q) !}
+on-arrival: {!
+// Card of the Government (Z — 1.05, the user's decisions of 7 XI 2026): from II to III 1925 while PPS sits in the cabinet; the
+// cabinet accepts or rejects the concordat without a vote, as every decision of a ministry; it costs no action.
+PolishPolitics.concordatView(Q);
+!}
+
+= The concordat
+
+The talks with the Holy See are over. The concordat would make Catholic instruction compulsory in public schools, and the clergy would swear an oath of loyalty to the state; the decision belongs to the cabinet.
+
+- @accept
+- @reject
+- @later
+
+@accept
+title: Accept the concordat
+subtitle: [? if pl_conc_catholic : The Catholic partners in the cabinet are pleased, but ?][? if not pl_conc_catholic : No partner in the cabinet objects, but ?] the Left of the party protests (+8).
+on-arrival: {!
+Q.pl_conc_result = PolishPolitics.concordatChoose(Q, 'accept');
+!}
+go-to: result
+
+@reject
+title: Reject the concordat
+subtitle: The Left of the party is with us, [? if pl_conc_catholic : but the Catholic partners in the cabinet are outraged (+20). ?][? if not pl_conc_catholic : but we lose among Catholic voters in the countryside. ?]
+on-arrival: {!
+Q.pl_conc_result = PolishPolitics.concordatChoose(Q, 'reject');
+!}
+go-to: result
+
+@later
+title: Not now
+subtitle: The card stays in the hand until the end of March.
+go-to: root
+
+@result
+new-page: true
+
+= The concordat
+
+[+ pl_conc_result +]
+
+- @root: Continue.

@@ -99,6 +99,8 @@
     polish_event_cabinet_1922: Object.freeze({definition_id: 'opening.cabinet_1922', category: 2, keyed_by: 'politics'}),
     polish_event_assassination_response: Object.freeze({definition_id: 'presidency.assassination_response', category: 5, keyed_by: 'politics'}),
     polish_event_niewiadomski_cult: Object.freeze({definition_id: 'society.niewiadomski_cult', category: 6, keyed_by: 'politics'}),
+    // Z — 1.05 (decision 1A of the event audit): Piłsudski leaves in July 1923 — background (category 6), once.
+    polish_event_pils_departure: Object.freeze({definition_id: 'politics.pils_departure', category: 6}),
     // Stage 7d: the started confrontation of the coup (category 2), one instance per attempt and phase (card catalogue 9.15).
     polish_event_coup: Object.freeze({definition_id: 'coup.attempt', category: 2, keyed_by: 'coup'}),
     // Stage 6: the wage case of 1923 and the answer of the Sejm are conditional crises (category 5), one instance per

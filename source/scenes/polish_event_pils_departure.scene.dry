@@ -1,0 +1,41 @@
+title: Piłsudski Leaves
+subtitle: The Marshal resigns his last military function and takes his leave of politics.
+new-page: true
+tags: pl_event
+view-if: {! return !!Q.S && !!Q.polish_politics_rules && PolishPolitics.departureDue(Q) !}
+on-arrival: {!
+// Event politics.pils_departure (Z — 1.05, decision 1A of the event audit, 7 XI 2026): with the military case of July 1923, once;
+// it replaces the card of criticism of that month. Two answers, without the month's action (HISTORICAL_SOURCES.md, PL-EVENTS-1.05).
+!}
+
+= Piłsudski leaves
+
+Józef Piłsudski has resigned his last military function and, in the hotel Bristol, taken his leave of politics, attacking the right and its press. He has settled in Sulejówek, and his followers in the army and in the party wait for what we will say.
+
+- @farewell
+- @silent
+
+@farewell
+title: Take leave of the Marshal with respect
+subtitle: The Piłsudczycy in the party are pleased (−5), but the Centre sees it as homage to an opponent of the Sejm.
+on-arrival: {!
+Q.pl_dep_result = PolishPolitics.departureChoose(Q, 'farewell');
+!}
+go-to: result
+
+@silent
+title: Say nothing
+subtitle: No cost and no gain.
+on-arrival: {!
+Q.pl_dep_result = PolishPolitics.departureChoose(Q, 'silent');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= Piłsudski leaves
+
+[+ pl_dep_result +]
+
+- @root: Continue.
