@@ -331,7 +331,9 @@ test('the Milicja card recruits for 1 R and settles the month; the larger Milicj
   assert.equal(ledger.t, 1);
   assert.ok(Math.abs(Q.S.party_orgs.cash - (cash - 1)) < 1e-9, 'only the 1 R of the recruitment');
   engine.goToScene('status');
-  assert.match(content(engine), /350 members, training 1\/5/);
+  // The top bar (7 XI 2026): the Party tab shows the Milicja PPS under its own heading.
+  assert.match(content(engine), /Organised members:[^0-9]{0,20}350/);
+  assert.match(content(engine), /Training:[^0-9]{0,20}level 1\u00a0of\u00a05/);
 });
 
 test('a year of play keeps the party consistent: cash never negative, one ledger a month, valid S through saves', () => {

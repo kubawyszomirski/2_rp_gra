@@ -18,6 +18,7 @@ body {
   --hair-color: rgba(59, 42, 30, 0.3);
   --accent-color: #9c1a1c;
   --mount-color: #fcfaf4;
+  --shade-rgb: 59, 42, 30;
   font-family: "Minion Pro", Georgia, serif;
   background-color: var(--bg-color);
   padding: 0;
@@ -41,20 +42,20 @@ body.dark-mode {
   --hair-color: rgba(255, 255, 255, 0.28);
   --accent-color: #ff8a80;
   --mount-color: #2e2e2e;
+  --shade-rgb: 255, 255, 255;
 }
 body.dark-mode #content {
   border-style: double;
   border-width: 4px;
   border-color: #888;
 }
-body.dark-mode .tools {
+body.dark-mode .pl-topbar {
   border-style: double;
   border-width: 4px;
   border-color: #888;
 }
 header, #content, footer {
   color: var(--text-color);
-  max-width: 540px;
   margin: 0 auto;
   overflow: auto;
 }
@@ -225,43 +226,30 @@ blockquote + blockquote.attribution {
   margin-top: -1em;
 }
 /* This is mostly copied from undum. */
+/* The top bar (the user's decisions of 7 XI 2026): masthead, bar and play field in one centred column. */
 #mid_panel {
-  margin: 0 16rem;
-  margin-right: 13.5em;
+  max-width: 74rem;
+  margin: 0 auto;
+  padding: 0 1rem;
 }
 #page {
   margin: 0 auto;
   position: relative;
 }
-#tools_wrapper {
-  position: absolute;
-  width: 100%;
-  max-width: 69em;
-  left: 0;
-  right: 0;
-  margin: 0 auto;
-}
-.tools {
-  padding: 0.6em;
-  box-sizing: border-box;
-  width: 15.5rem;
+.pl-topbar {
   color: var(--text-color);
   background-color: var(--content-bg-color);
-  border: 1px solid var(--hair-color);
+  border: 1px solid var(--rule-color);
+  margin-bottom: 1.2em;
 }
-.tools.left {
-  float: left;
-  left: 0.4em;
+.pl-topbar.pl-idle {
+  display: none;
 }
-.tools.right {
-  float: right;
-  right: 0.4em;
-}
-#qualities {
+.pl-panel {
   text-indent: 0;
   line-height: 1.3em;
 }
-#qualities p {
+.pl-panel p {
   /* One fact per line in the sidebar (Z — 0.54): compact paragraphs. A wrapped line is indented under its bold
      label, so it does not run into the next fact (Z — 0.55). */
   margin: 0.25em 0;
@@ -269,19 +257,19 @@ blockquote + blockquote.attribution {
   text-indent: -0.9em;
 }
 /* A line or a heading whose condition is false stays empty; it takes no space (Z — 0.55). */
-#qualities p:empty,
-#qualities h1:empty {
+.pl-panel p:empty,
+.pl-panel h1:empty {
   display: none;
 }
-#qualities strong {
+.pl-panel strong {
   font-weight: bold;
 }
 /* The notes in italics are smaller than the facts (Z — 0.55). */
-#qualities p > em:only-child {
+.pl-panel p > em:only-child {
   font-size: 0.9em;
 }
 /* Z — 0.63: section headings in red small capitals over a rule; the date on top is set like a dateline. */
-#qualities h1 {
+.pl-panel h1 {
   font-size: 1em;
   margin: 1.1em 0 0.35em;
   padding-bottom: 0.15em;
@@ -292,10 +280,10 @@ blockquote + blockquote.attribution {
   font-variant: small-caps;
   letter-spacing: 0.08em;
 }
-#qualities h1 + p:first-line {
+.pl-panel h1 + p:first-line {
   font-weight: normal;
 }
-#qualities h1:first-child {
+.pl-panel h1:first-child {
   margin-top: 0.4em;
   padding-bottom: 0.25em;
   font-size: 1.15em;
@@ -305,42 +293,42 @@ blockquote + blockquote.attribution {
 }
 /* Z — 0.63 (decision 3A): ledger lines made by game.js — the label, a dotted leader and the value at the right end;
    a value too long for the line goes under its label. */
-#qualities p.pl-row {
+.pl-panel p.pl-row {
   display: flex;
   align-items: baseline;
   padding-left: 0;
   text-indent: 0;
 }
-#qualities p.pl-row > strong {
+.pl-panel p.pl-row > strong {
   flex: 0 1 auto;
 }
-#qualities .pl-dots {
+.pl-panel .pl-dots {
   flex: 1 0 0.8em;
   position: relative;
   top: -0.3em;
   margin: 0 0.3em;
   border-bottom: 1px dotted var(--hair-color);
 }
-#qualities .pl-val {
+.pl-panel .pl-val {
   flex: 0 1 auto;
   min-width: 0;
   text-align: right;
   font-variant-numeric: lining-nums tabular-nums;
 }
-#qualities p.pl-row.pl-long {
+.pl-panel p.pl-row.pl-long {
   display: block;
 }
-#qualities p.pl-long .pl-dots {
+.pl-panel p.pl-long .pl-dots {
   display: none;
 }
-#qualities p.pl-long .pl-val {
+.pl-panel p.pl-long .pl-val {
   display: block;
   padding-left: 0.9em;
   text-align: left;
 }
 /* Z — 0.63 (decision 3C): the polls by social group as a table — a row for each party, a column for each group with
    its name printed upwards, as in the statistical yearbooks. */
-#qualities table.pl-groups {
+.pl-panel table.pl-groups {
   width: 100%;
   margin: 0.3em 0 0.6em;
   border-collapse: collapse;
@@ -348,15 +336,15 @@ blockquote + blockquote.attribution {
   font-size: 0.85em;
   font-variant-numeric: lining-nums tabular-nums;
 }
-#qualities .pl-groups th, #qualities .pl-groups td {
+.pl-panel .pl-groups th, .pl-panel .pl-groups td {
   padding: 0.12em 0.25em;
 }
-#qualities .pl-groups thead th {
+.pl-panel .pl-groups thead th {
   vertical-align: bottom;
   font-weight: normal;
   border-bottom: 1px solid var(--rule-color);
 }
-#qualities .pl-groups thead th > span {
+.pl-panel .pl-groups thead th > span {
   display: inline-block;
   max-height: 7.2em;
   writing-mode: vertical-rl;
@@ -364,50 +352,61 @@ blockquote + blockquote.attribution {
   text-align: left;
   line-height: 1.1;
 }
-#qualities .pl-groups .pl-corner {
+.pl-panel .pl-groups .pl-corner {
   text-align: left;
   font-style: italic;
 }
-#qualities .pl-groups tbody th {
+.pl-panel .pl-groups tbody th {
   text-align: left;
   font-weight: normal;
   white-space: nowrap;
 }
-#qualities .pl-groups td {
+.pl-panel .pl-groups td {
   text-align: right;
 }
-#qualities .pl-groups tbody tr + tr > * {
+.pl-panel .pl-groups tbody tr + tr > * {
   border-top: 1px dotted var(--hair-color);
 }
-#qualities .pl-groups tr.pl-pps > * {
+.pl-panel .pl-groups tr.pl-pps > * {
   font-weight: bold;
   color: var(--accent-color);
 }
 
 
-/* tabs — Z — 0.63: one row of small-capital labels; the open tab is red and underlined. */
+/* tabs — Z — 0.63: small-capital labels; the open tab is red and underlined. The top bar puts the month on the left. */
 .tab_container {
     display: flex;
     flex-wrap: wrap;
-    margin-top: -0.6em;
-    margin-left: -0.6em;
-    margin-right: -0.6em;
-    border-bottom: 1px solid var(--rule-color);
+    align-items: stretch;
+    border-top: 1px solid var(--rule-color);
+    padding: 0 0.4em;
+}
+.pl-date {
+    display: flex;
+    align-items: center;
+    padding: 0 1.1em 0 0.5em;
+    margin-right: 0.3em;
+    border-right: 1px solid var(--rule-color);
+    font-weight: bold;
+    font-variant: small-caps;
+    letter-spacing: 0.05em;
+}
+.pl-date:empty {
+    display: none;
 }
 .tab_button {
-    flex: 1 1 auto;
     font-family: "Minion Pro", Georgia, serif;
-    font-size: 0.85em;
+    font-size: 0.9em;
     font-variant: small-caps;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.04em;
     background-color: transparent;
     color: var(--text-color);
     border: none;
     outline: none;
-    padding: 0.55em 0.25em;
+    padding: 0.5em 1em;
     cursor: pointer;
 }
-.tab_button + .tab_button {
+#pl-tabs .tab_button + .tab_button {
     border-left: 1px solid var(--hair-color);
 }
 .tab_button.active {
@@ -898,89 +897,314 @@ img {
     top: 50%;
 }
 
-/* smaller screens: hide left margin */
-@media screen and (max-width: 1200px) {
-  .tools {
-      margin-right: 0.4em;
-      margin-left: 0.4em;
+/* The top bar (the user's decisions of 7 XI 2026). The Overview is a row of columns (one for each heading), the
+   drawer a set of blocks in newspaper columns; on a narrower page the columns wrap. */
+.pl-overview {
+  display: grid;
+  grid-template-columns: 1.05fr 0.9fr 1.1fr 1.05fr 1.2fr 1.4fr 0.95fr;
+}
+.pl-overview .pl-block {
+  padding: 0.75em 1em 0.8em;
+  border-left: 1px solid var(--hair-color);
+  line-height: 1.45;
+  min-width: 0;
+}
+.pl-overview .pl-block:first-child {
+  border-left: none;
+}
+.pl-panel.pl-overview h1,
+.pl-panel.pl-overview h1:first-child {
+  margin: 0 0 0.45em;
+  padding-bottom: 0.15em;
+  font-size: 0.88em;
+  text-align: left;
+  color: var(--accent-color);
+  border-bottom: 1px solid var(--hair-color);
+}
+.pl-panel.pl-overview p {
+  margin: 0.2em 0;
+  padding-left: 0;
+  text-indent: 0;
+  font-size: 0.86em;
+}
+.pl-panel.pl-overview p.pl-row > strong {
+  font-weight: normal;
+}
+.pl-panel.pl-overview .pl-track {
+  min-width: 1.8em;
+}
+.pl-overview p > strong:only-child {
+  font-size: 1.1em;
+  line-height: 1.25;
+}
+.pl-overview .pl-block.pl-sejm {
+  text-align: center;
+}
+.pl-drawer {
+  column-width: 17em;
+  column-gap: 2em;
+  column-rule: 1px solid var(--hair-color);
+  padding: 0.8em 1.2em 1em;
+  border-top: 1px solid var(--rule-color);
+}
+.pl-drawer:empty {
+  display: none;
+}
+.pl-drawer .pl-block {
+  break-inside: avoid;
+  padding-bottom: 0.6em;
+}
+.pl-panel.pl-drawer h1,
+.pl-panel.pl-drawer h1:first-child {
+  margin: 0.2em 0 0.4em;
+  font-size: 1em;
+  text-align: left;
+  color: var(--accent-color);
+  border-bottom: 1px solid var(--rule-color);
+  padding-bottom: 0.15em;
+}
+/* A value of 0-100 is a thin bar with its number; an alarm (grievance, violence) is red. */
+.pl-panel p.pl-gauge-row .pl-val {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.45em;
+  min-width: 3.5em;
+}
+.pl-panel p.pl-gauge-row .pl-dots {
+  flex: 0 0 0.4em;
+  border-bottom: none;
+}
+.pl-track {
+  position: relative;
+  flex: 1 1 auto;
+  height: 6px;
+  min-width: 2.5em;
+  border: 1px solid var(--rule-color);
+  background-color: var(--mount-color);
+}
+.pl-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background-color: var(--text-color);
+}
+.pl-fill.pl-red {
+  background-color: var(--accent-color);
+}
+.pl-num {
+  flex: 0 0 auto;
+  min-width: 1.6em;
+  text-align: right;
+}
+/* The change since the month before: a small arrow after the number. */
+.pl-trend {
+  margin-left: 0.3em;
+  font-size: 0.82em;
+  color: var(--unavailable-color);
+  white-space: nowrap;
+}
+.pl-trend:empty {
+  display: none;
+}
+/* Relations: a point on the line from hostile (left) to friendly (right), and the word. */
+.pl-scale {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 3em;
+  height: 1px;
+  background-color: var(--rule-color);
+}
+.pl-scale::before, .pl-scale::after {
+  content: "";
+  position: absolute;
+  top: -4px;
+  height: 9px;
+  border-left: 1px solid var(--rule-color);
+}
+.pl-scale::before {
+  left: 0;
+}
+.pl-scale::after {
+  right: 0;
+}
+.pl-dot {
+  position: absolute;
+  top: -4px;
+  width: 9px;
+  height: 9px;
+  margin-left: -4px;
+  background-color: var(--text-color);
+}
+.pl-word {
+  flex: 0 0 6.5em;
+  text-align: right;
+}
+/* Polls: a bar in the colour of the party; the PPS line is red. */
+.pl-pollbar {
+  flex: 1 1 auto;
+  min-width: 3em;
+  height: 9px;
+}
+.pl-pollbar > span {
+  display: block;
+  height: 100%;
+}
+.pl-panel p.pl-pps > strong, .pl-panel p.pl-pps .pl-num {
+  color: var(--accent-color);
+  font-weight: bold;
+}
+/* The factions: one bar of the three currents and a legend. */
+.pl-facbar {
+  display: flex;
+  height: 12px;
+  margin: 0.3em 0 0.25em;
+  border: 1px solid var(--rule-color);
+}
+.pl-facbar > span {
+  flex-basis: 0;
+}
+.pl-f1 { background-color: #7a1c1c; }
+.pl-f2 { background-color: #c0614f; }
+.pl-f3 { background-color: #5b4636; }
+.pl-faclegend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2em 0.9em;
+  font-size: 0.85em;
+}
+.pl-faclegend i {
+  display: inline-block;
+  width: 0.7em;
+  height: 0.7em;
+  margin-right: 0.3em;
+}
+/* "2 z 4": small boxes. */
+.pl-boxes {
+  display: inline-flex;
+  gap: 3px;
+  margin-left: auto;
+}
+.pl-boxes i {
+  width: 0.65em;
+  height: 0.65em;
+  border: 1px solid var(--rule-color);
+}
+.pl-boxes i.pl-on {
+  background-color: var(--text-color);
+}
+/* The loyalty of the army: the known interval on a scale of 0-100. */
+.pl-range .pl-band {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background-color: var(--unavailable-color);
+}
+/* The table of social groups: the larger the share, the darker the cell. */
+.pl-panel table.pl-groups td.pl-shade {
+  background-color: rgba(var(--shade-rgb), calc(var(--shade) * 0.85));
+}
+.pl-panel table.pl-groups td.pl-deep {
+  color: var(--content-bg-color);
+}
+/* The position of PPS as a red stamp. */
+.pl-stamp {
+  display: inline-block;
+  padding: 0 0.3em;
+  border: 2px solid var(--accent-color);
+  color: var(--accent-color);
+  font-weight: bold;
+  font-variant: small-caps;
+  letter-spacing: 0.02em;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+/* The hemicycle of the Sejm: arcs in the colours of the lists, PPS outlined, a dashed line at the majority. */
+svg.pl-hemi {
+  display: block;
+  width: 100%;
+  max-width: 150px;
+  height: auto;
+  margin: 0.1em auto 0.2em;
+}
+.pl-hemi-seg {
+  stroke: var(--content-bg-color);
+  stroke-width: 0.8;
+}
+.pl-hemi-pps {
+  stroke: var(--text-color);
+  stroke-width: 1.8;
+}
+.pl-hemi-majority {
+  stroke: var(--text-color);
+  stroke-width: 1.4;
+  stroke-dasharray: 3 2;
+}
+/* Decision 2A: the short line at the top of the window once the bar has scrolled away. */
+.pl-ticker {
+  display: none;
+}
+body.pl-ticker-on .pl-ticker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  position: fixed;
+  z-index: 3;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 2rem);
+  max-width: 72rem;
+  font-size: 0.82em;
+  color: var(--text-color);
+  background-color: var(--content-bg-color);
+  border-top: 3px solid var(--rule-color);
+  border-bottom: 1px solid var(--rule-color);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.15);
+}
+.pl-tick {
+  padding: 0.4em 0.8em;
+  border-left: 1px solid var(--hair-color);
+  white-space: nowrap;
+}
+.pl-tick:first-child {
+  border-left: none;
+  font-variant: small-caps;
+  letter-spacing: 0.05em;
+}
+.pl-tick .pl-red {
+  color: var(--accent-color);
+}
+.pl-tick-tabs {
+  margin-left: auto;
+  padding: 0;
+  border-left: 1px solid var(--rule-color);
+}
+.pl-tick-tabs .tab_button {
+  font-size: 1em;
+  padding: 0.4em 0.8em;
+}
+.pl-tick-tabs .tab_button + .tab_button {
+  border-left: 1px solid var(--hair-color);
+}
+@media screen and (max-width: 1100px) {
+  .pl-overview {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
-  #mid_panel {
-      margin-right: 0.4em;
+  .pl-overview .pl-block:nth-child(n+5) {
+    border-top: 1px solid var(--hair-color);
+  }
+  .pl-overview .pl-block:nth-child(5) {
+    border-left: none;
   }
 }
-/* Z — 0.63 (decisions 1A and 2A): on a wide screen the sidebar and the play field stand side by side in one centred
-   grid under the masthead. The sidebar grows to the left, the play field to the right, and the sidebar stays in view
-   while the page scrolls (with its own scroll bar when it is longer than the window). Narrower screens keep the old
-   layout; phones keep the sidebar above the game. */
 @media screen and (min-width: 900px) {
-  #mid_panel {
-    display: grid;
-    grid-template-columns: 18rem minmax(0, 54rem);
-    grid-template-rows: auto 1fr auto;
-    grid-template-areas: "head head" "side main" "side foot";
-    justify-content: center;
-    column-gap: 1.25rem;
-    margin: 0 1rem;
-  }
   header {
-    grid-area: head;
-    max-width: none;
-    margin: 0.5em 0 1.3em;
-  }
-  #tools_wrapper {
-    grid-area: side;
-    position: static;
-    width: auto;
-    max-width: none;
-    margin: 0;
-  }
-  .tools, .tools.left {
-    float: none;
-    width: auto;
-    margin: 0;
-    padding: 0.6em 0.9em;
-    box-sizing: border-box;
-    position: sticky;
-    top: 0.75rem;
-    max-height: calc(100vh - 1.5rem);
-    overflow-y: auto;
-  }
-  .tab_container {
-    margin-left: -0.9em;
-    margin-right: -0.9em;
-    position: sticky;
-    top: -0.6em;
-    z-index: 1;
-    background-color: var(--content-bg-color);
-  }
-  .tab_button {
-    font-size: 0.76em;
-    letter-spacing: 0;
-    padding: 0.55em 0.15em;
+    margin: 0.5em 0 1.1em;
   }
   #content {
-    grid-area: main;
-    align-self: start;
-    max-width: none;
-    margin: 0;
     padding: 1.1em 2em 1.75em;
-  }
-  footer {
-    grid-area: foot;
-    max-width: none;
-    margin: 1em 0 0;
-  }
-}
-@media screen and (min-width: 1100px) {
-  #mid_panel {
-    grid-template-columns: 21rem minmax(0, 54rem);
-    column-gap: 1.5rem;
-    margin: 0 1.5rem;
-  }
-  .tab_button {
-    font-size: 0.85em;
-    letter-spacing: 0.02em;
-    padding: 0.55em 0.25em;
   }
 }
 /* mobile: move the stat box to the top if the screen is too small,
@@ -995,24 +1219,26 @@ img {
       line-height: 160%;
       padding: 1em 1em 1.5em 1em;
   }
-  #qualities {
-      font-size: 1em;
+  /* Two columns; the gauges of the country take the whole width, and the elections stand beside the economy. */
+  .pl-overview {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-auto-flow: row dense;
   }
-  #tools_wrapper {
-    position: static;
+  .pl-overview .pl-block {
+      border-top: 1px solid var(--hair-color);
   }
-  .tools {
-      width: 90%;
-      margin: 2em 0 1em 0;
-      margin: 0.4em;
+  .pl-overview .pl-block:nth-child(odd) {
+      border-left: none;
   }
-  .tools.left {
-      float: none;
-      left: 0;
+  .pl-overview .pl-block:nth-child(6) {
+      grid-column: 1 / -1;
+      border-left: none;
   }
-  .tools.right {
-      float: none;
-      right: 0;
+  .pl-overview .pl-block:nth-child(7) {
+      border-left: 1px solid var(--hair-color);
+  }
+  body.pl-ticker-on .pl-ticker {
+      width: 100%;
   }
   #mid_panel {
       margin: 0 auto;
@@ -1027,11 +1253,20 @@ img {
   #header-links a {
       padding: 0 0.5em;
   }
-  /* The five tabs in one row on a phone, with "Obronność" (Z — 0.65). */
+  /* On a phone the month has a line of its own and the four tabs share the line under it (the top bar, 7 XI 2026). */
+  .pl-date {
+      flex: 0 0 100%;
+      box-sizing: border-box;
+      padding: 0.35em 0.5em;
+      margin-right: 0;
+      border-right: none;
+      border-bottom: 1px solid var(--hair-color);
+  }
   .tab_button {
-      font-size: 0.8em;
+      flex: 1 1 auto;
+      font-size: 0.85em;
       letter-spacing: 0;
-      padding: 0.55em 0.15em;
+      padding: 0.55em 0.3em;
   }
   /* The results table fits a phone (Z — 0.73). */
   table.pl-result {

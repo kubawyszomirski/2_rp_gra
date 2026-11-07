@@ -63,38 +63,43 @@ test('Pasek boczny: pogrubione etykiety, rozbite wiersze i liczby bez zbędnych 
   const errors = dendry.watchEngineErrors();
   const engine = dendry.startGame(1922, 'pl');
   const main = display(engine, 'status'), politics = display(engine, 'status.politics');
-  const mainText = flat(main), politicsText = flat(politics).replace(/<[^>]*>/g, '');
+  const mainText = flat(main).replace(/<[^>]*>/g, ''), politicsText = flat(politics).replace(/<[^>]*>/g, '');
   // Z — 0.76: the tab "Partia" has no date heading; its first heading is PPS.
   assert.match(mainText, /^\s*PPS ?\n/);
   assert.doesNotMatch(mainText, /Styczeń 1922/);
   for (const label of ['Kasa partii:', 'Zbiórka przynosi:', 'Składki:', 'Członkostwo (indeks):', 'Poziom aparatu:',
-    'Sprzeciw w partii:', 'Spójność:', 'Pozycja PPS:', 'Prasa:', 'Towarzystwo Uniwersytetu Robotniczego:', 'Spółdzielnia spożywców:', 'Milicja:', 'Przemysł:', 'Kolej:',
-    'Robotnicy rolni:', 'Głowa państwa:', 'Premier:']) {
+    'Sprzeciw w partii:', 'Spójność:', 'Pozycja PPS:', 'Prasa:', 'Towarzystwo Uniwersytetu Robotniczego:', 'Spółdzielnia spożywców:', 'Przemysł:', 'Kolej:',
+    'Robotnicy rolni:', 'Głowa państwa:', 'Premier:', 'Zorganizowani członkowie:', 'Centrum PPS', 'Lewica PPS', 'Piłsudczycy']) {
     assert.ok(bold(main).includes(label), label);
   }
   for (const label of ['Demokracja:', 'Autorytet Sejmu:', 'Niezadowolenie:', 'Przemoc:', 'Presja na zamach:', 'PPS:',
-    'Posłowie mniejszości:', 'Następne wybory do Sejmu:', 'Wymagana większość:', 'ZLN:', 'Centrum PPS', 'Lewica PPS', 'Piłsudczycy']) {
+    'Posłowie mniejszości:', 'Następne wybory do Sejmu:', 'Wymagana większość:', 'ZLN:']) {
     assert.ok(bold(politics).includes(label), label);
   }
   // A union line no longer repeats its branch in the value; cohesion is a whole number.
   assert.match(mainText, /\nPrzemysł: zasięg 20 ?\n/, 'no union funds since Z — 0.86');
   assert.match(mainText, /\nSpójność: \d+ na 100 ?\n/);
   assert.match(mainText, /\nSprzeciw w partii: [^;\n]+\n/);
-  // No space before the colon after the minority deputies; a dash after each faction name.
+  // No space before the colon after the minority deputies; a dash after each faction name. The top bar (7 XI 2026): the
+  // Milicja PPS and the factions are in the Party tab, the politics of the state in the State tab.
   assert.match(politicsText, /\nPosłowie mniejszości: +\d+ posłów/);
-  assert.match(politicsText, /\nCentrum PPS — siła: [^,]+, sprzeciw: /);
+  assert.match(mainText, /\nCentrum PPS — siła: [^,]+, sprzeciw: /);
   assert.deepEqual(errors, []);
 });
 
-test('Pasek boczny: zakładka Obrona ma nagłówek dla każdej siły i jedną informację w wierszu (pl)', () => {
+// The top bar (7 XI 2026): the Milicja PPS is in the Party tab; the police and the army are in the State tab, which
+// draws the gauges of the police from markers in the lines.
+test('Pasek: Milicja PPS w zakładce Partia, policja i wojsko w zakładce Państwo, jedna informacja w wierszu (pl)', () => {
   const errors = dendry.watchEngineErrors();
   const engine = dendry.startGame(1922, 'pl');
   const defense = display(engine, 'status.paramilitaries');
-  const text = flat(defense);
+  const text = flat(defense).replace(/<[^>]*>/g, '');
+  const main = flat(display(engine, 'status'));
   // Z — 0.89: the training in levels; the condition and the attachment of the Milicja left the tab.
-  assert.match(text, /\nMilicja PPS ?\nZorganizowani członkowie: 200 ?\nWyszkolenie: poziom 1\u00a0z\u00a05 ?\nStatus prawny: legalna ?\n/);
-  assert.doesNotMatch(text, /Przywiązanie do legalnych instytucji|Sprawność/);
-  assert.match(text, /\nPolicja ?\nPotencjał: 50 ?\nDowodzenie: 50 ?\nPraworządność: 50 ?\nOchrona jednego zgromadzenia: [\d,]+\u00a0na\u00a0100 ?\n/);
+  assert.match(main, /\nMilicja PPS ?\nZorganizowani członkowie: 200 ?\nWyszkolenie: poziom 1\u00a0z\u00a05 ?\nStatus prawny: legalna ?\n/);
+  assert.doesNotMatch(main + text, /Przywiązanie do legalnych instytucji|Sprawność/);
+  assert.doesNotMatch(text, /Milicja/);
+  assert.match(text, /(?:^|\n)\s*Policja ?\n\s*Potencjał: 50 ?\nDowodzenie: 50 ?\nPraworządność: 50 ?\nOchrona jednego zgromadzenia: [\d,]+\u00a0na\u00a0100 ?\n/);
   assert.match(text, /\nZgrupowania wojska ?\n\s*Lojalność wobec Piłsudskiego, znana tylko w przedziale: ?\n/);
   for (const name of ['Stołeczny garnizon wierny rządowi', 'Oddziały stołeczne bliskie Piłsudskiemu', 'Bliski odwód', 'Daleki odwód (koleją)']) {
     assert.ok(bold(defense).includes(name + ':'), name);
@@ -119,7 +124,8 @@ test('Sondaże na starcie pokazują poparcie z otwarcia, nie zera (pl)', () => {
   const errors = dendry.watchEngineErrors();
   const engine = dendry.startGame(1922, 'pl');
   const text = sidebar(engine, 'status.polls');
-  assert.match(text, /\nPPS: [1-9]\d*%/);
+  // The top bar (7 XI 2026): a bar is drawn before each share from a marker in the line.
+  assert.match(text.replace(/<i [^>]*><\/i>/g, ''), /\nPPS: [1-9]\d*%/);
   // Z — 0.63: the social groups are one table (a row for each party); the first column is the workers.
   assert.match(text, /<th><span>Robotnicy<\/span><\/th>/);
   assert.match(text, /<tr class="pl-pps"><th>\s*PPS\s*<\/th><td>\s*[1-9]\d*\s*<\/td>/);

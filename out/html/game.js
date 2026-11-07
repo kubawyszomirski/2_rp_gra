@@ -107,6 +107,15 @@
     tab_economy: {en: 'Economy', pl: 'Gospodarka'},
     tab_defense: {en: 'Defense', pl: 'Obronność'},
     tab_polls: {en: 'Polls', pl: 'Sondaże'},
+    tab_overview: {en: 'Overview', pl: 'Przegląd'},
+    tab_state: {en: 'State', pl: 'Państwo'},
+    tick_government: {en: 'Cabinet', pl: 'Rząd'},
+    tick_budget: {en: 'Budget', pl: 'Budżet'},
+    tick_inflation: {en: 'Inflation', pl: 'Inflacja'},
+    tick_unemployment: {en: 'Unemployment', pl: 'Bezrobocie'},
+    tick_democracy: {en: 'Democracy', pl: 'Demokracja'},
+    tick_grievance: {en: 'Grievance', pl: 'Niezadowolenie'},
+    tick_elections: {en: 'Elections', pl: 'Wybory'},
     music: {en: 'Music', pl: 'Muzyka'},
     currently_playing: {en: 'Currently playing: ', pl: 'Teraz gra: '},
     volume: {en: 'Volume:', pl: 'Głośność:'},
@@ -827,7 +836,7 @@
   };
   // A value that wraps inside its line is moved under its label. Without a layout (a hidden page), the length decides.
   var fitLedgerRows = function(root) {
-    $(root).find('p.pl-row').each(function() {
+    $(root).find('p.pl-row').not('.pl-gauge-row').each(function() {
       var $row = $(this).removeClass('pl-long');
       var value = $row.children('.pl-val')[0];
       var lineHeight = parseFloat(window.getComputedStyle(this).lineHeight) || 20;
@@ -840,32 +849,316 @@
   if (typeof window.addEventListener === 'function') {
     window.addEventListener('resize', function() {
       clearTimeout(refitTimer);
-      refitTimer = setTimeout(function() { fitLedgerRows('#qualities'); }, 150);
+      refitTimer = setTimeout(function() { fitLedgerRows('.pl-panel'); alignCharts('.pl-panel'); }, 150);
     });
   }
 
-  // TODO: have some code for tabbed sidebar browsing.
+  // ---- The top bar (the user's decisions of 7 XI 2026: variant A with the hemicycle of the Sejm, decision 2A) --------
+  // The Overview (status.overview) is always drawn. A tab opens the drawer (#qualities) under it with the parts of the
+  // status scene that belong to that tab; the same tab, or Overview, closes it. Each heading of a part starts a block: a
+  // column of the Overview, a block of the drawer. The page draws the hemicycle of the Sejm and the bars of the 0-100
+  // scales, and keeps a short line at the top of the window once the bar has scrolled away.
+  // The State tab shows only the first block of status.politics, the indicators: the Sejm is the hemicycle of the
+  // Overview (the user's note: "górna część polityki ze wskaźnikami").
+  var TOPBAR_TABS = {party: ['status'], state: [{id: 'status.politics', blocks: 1}, 'status.economy', 'status.paramilitaries'],
+    polls: ['status.polls']};
+  var TAB_IDS = {overview: 'overview_tab', party: 'main_tab', state: 'state_tab', polls: 'poll_tab'};
+  // A heading and what follows it, up to the next heading, become one block; a block with nothing visible is left out.
+  // The block of the hemicycle is marked pl-sejm.
+  var groupBlocks = function(container) {
+    var box = $(container)[0], blocks = [], current = null;
+    $(box).children().toArray().forEach(function(el) {
+      if (el.tagName === 'H1' || !current) {
+        current = document.createElement('div');
+        current.className = 'pl-block';
+        blocks.push(current);
+      }
+      current.appendChild(el);
+    });
+    blocks.forEach(function(block) {
+      if (!$(block).text().trim() && !$(block).find('svg, table').length) {
+        return;
+      }
+      if ($(block).find('svg.pl-hemi').length) {
+        block.className += ' pl-sejm';
+      }
+      box.appendChild(block);
+    });
+  };
+  // A value of 0-100 becomes a bar with its number: a value "60 na 100" / "60 of 100", or one marked <i class="pl-gauge">
+  // in the scene (pl-red: an alarm such as grievance or violence).
+  // The text of a value without its arrow of change (span.pl-trend), which is put back after the drawing.
+  var valueParts = function($val) {
+    var $trend = $val.find('.pl-trend').detach();
+    if (!$trend.text().trim()) {
+      $trend = $();
+    }
+    return {text: $val.text().replace(/[ ⁠]/g, ' ').replace(/\s+/g, ' ').trim(), trend: $trend};
+  };
+  var drawGauges = function(container) {
+    $(container).find('p.pl-row').each(function() {
+      var $row = $(this), $val = $row.children('.pl-val');
+      var marker = $val.find('i.pl-gauge')[0];
+      var plain = $val.text().replace(/ /g, ' ').trim();
+      var of100 = /^(\d+(?:[.,]\d+)?)\s*(?:na|of)\s*100\b/.test(plain);
+      if (!marker && !of100) {
+        return;
+      }
+      var parts = valueParts($val);
+      var match = parts.text.match(/^(\d+(?:[.,]\d+)?)/);
+      var value = match ? parseFloat(match[1].replace(',', '.')) : NaN;
+      if (!isFinite(value)) {
+        return;
+      }
+      var fill = $('<span>').addClass('pl-fill').css('width', Math.max(0, Math.min(100, value)) + '%');
+      if (marker && / pl-red/.test(' ' + marker.className)) {
+        fill.addClass('pl-red');
+      }
+      $val.empty().append($('<span>').addClass('pl-track').append(fill)).append($('<span>').addClass('pl-num').text(match[1]))
+        .append(parts.trend);
+      $row.addClass('pl-gauge-row').removeClass('pl-long');
+    });
+  };
+  // The other pictures of the panel: the scale of relations, the poll bars, the bar of the factions, small boxes for
+  // "2 z 4", the intervals of the army's loyalty, and the shading of the table of social groups.
+  var drawExtras = function(container) {
+    var Q = window.dendryUI.dendryEngine.state.qualities, $box = $(container);
+    var mark = function($val) { $val.closest('p').addClass('pl-gauge-row').removeClass('pl-long'); };
+    // Relations: a point on the line from hostile (left) to friendly (right), with the word.
+    $box.find('i.pl-rel').each(function() {
+      var $val = $(this).closest('.pl-val'), value = Number(Q[this.getAttribute('data-q')]);
+      $(this).remove();
+      if (!$val.length || !isFinite(value)) {
+        return;
+      }
+      var word = valueParts($val).text;
+      $val.empty().append($('<span>').addClass('pl-scale').append($('<span>').addClass('pl-dot')
+        .css('left', Math.max(0, Math.min(100, value)) + '%'))).append($('<span>').addClass('pl-word').text(word));
+      mark($val);
+    });
+    // Polls: a bar in the colour of the party, scaled to the largest share shown.
+    var colors = Q.sejm_chart_colors || Q.party_colors || {};
+    var bars = $box.find('i.pl-bar').toArray().map(function(marker) {
+      var $val = $(marker).closest('.pl-val'), party = marker.getAttribute('data-k');
+      $(marker).remove();
+      var parts = valueParts($val);
+      return {$val: $val, party: party, parts: parts, value: parseFloat(parts.text.replace(',', '.'))};
+    });
+    var largest = bars.reduce(function(n, b) { return isFinite(b.value) ? Math.max(n, b.value) : n; }, 1);
+    bars.forEach(function(b) {
+      if (!isFinite(b.value)) {
+        return;
+      }
+      b.$val.empty().append($('<span>').addClass('pl-pollbar').append($('<span>').css({width: (100 * b.value / largest) + '%',
+        backgroundColor: colors[b.party] || '#a0a0a0'}))).append($('<span>').addClass('pl-num').text(b.parts.text)).append(b.parts.trend);
+      mark(b.$val);
+      if (b.party === 'pps') {
+        b.$val.closest('p').addClass('pl-pps');
+      }
+    });
+    // Factions: one bar of the three currents, which add up to 100, with a legend.
+    $box.find('.pl-factions').each(function() {
+      var currents = [['Centrum PPS', Q.centrum_strength, 'pl-f1'], ['Lewica PPS', Q.lewica_strength, 'pl-f2'],
+        ['Piłsudczycy', Q.pilsudczycy_strength, 'pl-f3']];
+      var $bar = $('<span>').addClass('pl-facbar'), $legend = $('<span>').addClass('pl-faclegend');
+      currents.forEach(function(c) {
+        var value = Math.max(0, Number(c[1]) || 0);
+        $bar.append($('<span>').addClass(c[2]).css('flex-grow', value).attr('title', c[0] + ': ' + Math.round(value)));
+        $legend.append($('<span>').append($('<i>').addClass(c[2])).append(document.createTextNode(c[0] + ' ' + Math.round(value))));
+      });
+      $(this).empty().append($bar).append($legend);
+    });
+    // "2 z 4", "poziom 1 z 5": small boxes; "0–42%": an interval on a scale of 0-100.
+    $box.find('p.pl-row').not('.pl-gauge-row').each(function() {
+      var $val = $(this).children('.pl-val'), text = $val.text().replace(/[ ⁠]/g, ' ').replace(/\s+/g, ' ').trim();
+      var steps = text.match(/^(?:poziom |level )?(\d+) (?:z|of) (\d+)$/i);
+      if (steps && Number(steps[2]) <= 6) {
+        var $boxes = $('<span>').addClass('pl-boxes').attr('title', text);
+        for (var i = 1; i <= Number(steps[2]); i++) {
+          $boxes.append($('<i>').toggleClass('pl-on', i <= Number(steps[1])));
+        }
+        $val.empty().append($boxes);
+        mark($val);
+        return;
+      }
+      var range = text.match(/^(\d+) ?[–-] ?(\d+) ?%$/);
+      if (range) {
+        var low = Number(range[1]), high = Number(range[2]);
+        $val.empty().append($('<span>').addClass('pl-track pl-range').append($('<span>').addClass('pl-band')
+          .css({left: low + '%', width: Math.max(1, high - low) + '%'}))).append($('<span>').addClass('pl-num').text(low + '–' + high + '%'));
+        mark($val);
+      }
+    });
+    // The table of social groups: the larger the share, the darker the cell.
+    $box.find('table.pl-groups td').each(function() {
+      var value = parseFloat($(this).text().replace(',', '.'));
+      if (isFinite(value)) {
+        this.style.setProperty('--shade', Math.min(1, value / 90).toFixed(2));
+        $(this).addClass('pl-shade').toggleClass('pl-deep', value >= 40);
+      }
+    });
+  };
+  // The hemicycle of the Sejm: one arc for each list, in the colours of the Library's chart, with a line at the majority.
+  var drawHemicycles = function(container) {
+    var Q = window.dendryUI.dendryEngine.state.qualities;
+    var rows = Q.sejm_display_rows || [], colors = Q.sejm_chart_colors || Q.party_colors || {};
+    var total = rows.reduce(function(n, row) { return n + (row.seats || 0); }, 0);
+    $(container).find('svg.pl-hemi').each(function() {
+      var svg = this, ns = 'http://www.w3.org/2000/svg', cx = 100, cy = 104, outer = 98, inner = 54, angle = Math.PI;
+      while (svg.firstChild) {
+        svg.removeChild(svg.firstChild);
+      }
+      if (!total) {
+        return;
+      }
+      var at = function(r, a) { return (cx + r * Math.cos(a)).toFixed(2) + ',' + (cy - r * Math.sin(a)).toFixed(2); };
+      rows.forEach(function(row) {
+        if (!row.seats) {
+          return;
+        }
+        var next = angle - Math.PI * row.seats / total;
+        var path = document.createElementNS(ns, 'path');
+        path.setAttribute('d', 'M' + at(outer, angle) + ' A' + outer + ',' + outer + ' 0 0 1 ' + at(outer, next) + ' L' + at(inner, next) +
+          ' A' + inner + ',' + inner + ' 0 0 0 ' + at(inner, angle) + ' Z');
+        path.setAttribute('fill', colors[row.id] || '#a0a0a0');
+        path.setAttribute('class', 'pl-hemi-seg' + (row.id === 'pps' ? ' pl-hemi-pps' : ''));
+        var title = document.createElementNS(ns, 'title');
+        title.textContent = row.name + ': ' + row.seats;
+        path.appendChild(title);
+        svg.appendChild(path);
+        angle = next;
+      });
+      var majority = Q.sejm_majority_required || Math.floor(total / 2) + 1, a = Math.PI - Math.PI * majority / total;
+      var line = document.createElementNS(ns, 'line');
+      line.setAttribute('x1', (cx + (inner - 6) * Math.cos(a)).toFixed(2));
+      line.setAttribute('y1', (cy - (inner - 6) * Math.sin(a)).toFixed(2));
+      line.setAttribute('x2', (cx + (outer + 5) * Math.cos(a)).toFixed(2));
+      line.setAttribute('y2', (cy - (outer + 5) * Math.sin(a)).toFixed(2));
+      line.setAttribute('class', 'pl-hemi-majority');
+      svg.appendChild(line);
+    });
+  };
+  // The parts of the status scene that belong to one place of the bar, drawn as blocks.
+  // The labels of the rows with a bar or a scale in one block get one width, so that the bars start at the same point
+  // and can be compared; a label wider than half of its line wraps between its words. Without a layout (a hidden page)
+  // nothing changes.
+  var alignCharts = function(container) {
+    $(container).find('.pl-block').each(function() {
+      var $labels = $(this).find('p.pl-gauge-row > strong');
+      $labels.css({width: '', flex: '', whiteSpace: ''});
+      var row = $labels.length > 1 ? $labels.first().parent()[0].clientWidth : 0;
+      if (!row) {
+        return;
+      }
+      // The widest label on one line, and the widest single word, which never wraps and so is the least width.
+      var widest = 0, longestWord = 0;
+      $labels.css({flex: '0 0 auto', whiteSpace: 'nowrap'});
+      $labels.each(function() { widest = Math.max(widest, this.getBoundingClientRect().width); });
+      $labels.css({whiteSpace: '', width: 'min-content'});
+      $labels.each(function() { longestWord = Math.max(longestWord, this.getBoundingClientRect().width); });
+      $labels.css({width: Math.ceil(Math.max(longestWord, Math.min(widest, row * 0.5)) + 1) + 'px'});
+    });
+  };
+  var renderScenes = function(container, sceneIds) {
+    var $box = $(container).empty();
+    sceneIds.forEach(function(entry) {
+      var id = entry.id || entry, scene = window.dendryUI.game.scenes[id];
+      if (!scene) {
+        return;
+      }
+      window.dendryUI.dendryEngine._runActions(scene.onArrival);
+      var displayContent = window.dendryUI.dendryEngine._makeDisplayContent(scene.content, true);
+      var $part = $('<div>').append(window.dendryUI.contentToHTML.convert(displayContent));
+      // A part limited to its first blocks loses the heading after them and everything that follows.
+      if (entry.blocks) {
+        $part.children('h1').eq(entry.blocks).nextAll().addBack().remove();
+      }
+      $box.append($part.children());
+    });
+    groupBlocks(container);
+    ledgerRows(container);
+    drawGauges(container);
+    drawExtras(container);
+    alignCharts(container);
+  };
+  // The short line at the top of the window: the month, the cabinet and PPS, the Sejm, the party line, three economic
+  // figures, democracy and grievance, the next election, and the tabs (a tab scrolls back up and opens its drawer).
+  var renderTicker = function() {
+    var Q = window.dendryUI.dendryEngine.state.qualities, $ticker = $('#pl-ticker').empty();
+    if (!Q.S || !Q.pl_top_pm) {
+      return;
+    }
+    var item = function() {
+      var $item = $('<span>').addClass('pl-tick');
+      for (var i = 0; i < arguments.length; i++) {
+        $item.append(arguments[i]);
+      }
+      $ticker.append($item);
+    };
+    var bold = function(text, cls) { return $('<b>').addClass(cls || '').text(text); };
+    var text = function(value) { return document.createTextNode(value); };
+    item(bold(Q.pl_top_date || ''));
+    // The surname of the prime minister keeps the line short.
+    item(text(uiText('tick_government') + ': '), bold(String(Q.pl_top_pm).split(' ').pop()), text(' — '), bold(Q.pl_top_pps_stamp, 'pl-red'));
+    item(bold(Q.pl_top_pps_seats, 'pl-red'), text('/' + (Q.sejm_total_seats || '')));
+    if (Q.pl_top_direction) {
+      item(text(Q.pl_top_direction));
+    }
+    item(text(uiText('tick_budget') + ' ' + Q.pl_top_budget + ' · ' + uiText('tick_inflation') + ' ' + Q.pl_top_inflation + ' · ' +
+      uiText('tick_unemployment') + ' ' + Q.pl_top_unemployment));
+    item(text(uiText('tick_democracy') + ' ' + Q.pl_top_democracy + ' · ' + uiText('tick_grievance') + ' ' + Q.pl_top_grievance));
+    item(text(uiText('tick_elections') + ': '), bold(Q.pl_top_election));
+    var $tabs = $('<span>').addClass('pl-tick pl-tick-tabs');
+    ['party', 'state', 'polls'].forEach(function(tab) {
+      $tabs.append($('<button>').attr('type', 'button').addClass('tab_button').text($('#' + TAB_IDS[tab]).text())
+        .on('click', function() {
+          window.scrollTo(0, 0);
+          if (window.statusTab !== tab) {
+            window.changeTab(tab, TAB_IDS[tab]);
+          }
+        }));
+    });
+    $ticker.append($tabs);
+  };
+  // One cheap measurement on each scroll; no animation frame, which a hidden or throttled page may never run.
+  var updateTicker = function() {
+    var bar = document.getElementById('stats_sidebar');
+    var away = !!bar && !!$('#pl-ticker').children().length && bar.getBoundingClientRect().bottom < 0;
+    $('body').toggleClass('pl-ticker-on', away);
+  };
+  if (typeof window.addEventListener === 'function') {
+    window.addEventListener('scroll', updateTicker, {passive: true});
+  }
+
   window.updateSidebar = function() {
-      $('#qualities').empty();
-      var scene = dendryUI.game.scenes[window.statusTab];
-      dendryUI.dendryEngine._runActions(scene.onArrival);
-      var displayContent = dendryUI.dendryEngine._makeDisplayContent(scene.content, true);
-      $('#qualities').append(dendryUI.contentToHTML.convert(displayContent));
-      ledgerRows('#qualities');
+      var Q = window.dendryUI.dendryEngine.state.qualities;
+      $('#stats_sidebar').toggleClass('pl-idle', !Q.S);
+      renderScenes('#pl-overview', ['status.overview']);
+      drawHemicycles('#pl-overview');
+      $('#pl-date').text(Q.pl_top_date || '');
+      var parts = TOPBAR_TABS[window.statusTab];
+      $('#stats_sidebar').toggleClass('pl-open', !!parts);
+      if (parts) {
+        renderScenes('#qualities', parts);
+      } else {
+        $('#qualities').empty();
+      }
+      renderTicker();
+      updateTicker();
   };
 
-  window.changeTab = function(newTab, tabId) {
-      if (tabId == 'poll_tab' && dendryUI.dendryEngine.state.qualities.historical_mode) {
+  // The same tab closes its drawer again; Overview closes any drawer.
+  window.changeTab = function(tab, tabId) {
+      if (tab === 'polls' && window.dendryUI.dendryEngine.state.qualities.historical_mode) {
           window.alert('Polls are not available in historical mode.');
           return;
       }
-      var tabButton = document.getElementById(tabId);
-      var tabButtons = document.getElementsByClassName('tab_button');
-      for (i = 0; i < tabButtons.length; i++) {
-        tabButtons[i].className = tabButtons[i].className.replace(' active', '');
+      if (!TOPBAR_TABS[tab] || window.statusTab === tab) {
+        tab = 'overview';
       }
-      tabButton.className += ' active';
-      window.statusTab = newTab;
+      window.statusTab = tab;
+      $('#pl-tabs .tab_button').removeClass('active');
+      $('#' + TAB_IDS[tab]).addClass('active');
       window.updateSidebar();
   };
 
@@ -906,7 +1199,7 @@
 
 
   window.justLoaded = true;
-  window.statusTab = "status";
+  window.statusTab = "overview";
   window.dendryModifyUI = main;
   console.log("Modifying stats: see dendryUI.dendryEngine.state.qualities");
 

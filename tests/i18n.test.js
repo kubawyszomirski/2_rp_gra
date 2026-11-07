@@ -183,8 +183,11 @@ test('Pilotaż: ekran tytułowy, strona miesiąca i pasek boczny po polsku', () 
   assert.match(sidebar['status.politics'], /\nPSL Piast: 99 posłów ?\n/);
   assert.doesNotMatch(sidebar['status.politics'], /mandatów/);
   assert.match(sidebar['status.economy'], /Budżet: \+2,0 B w tym miesiącu/);
-  assert.match(sidebar['status.paramilitaries'], /\nPolicja ?\n\s*Potencjał: 50 ?\n/);
-  assert.match(sidebar['status.politics'], /PSL Wyzwolenie: przyjazne/);
+  // The top bar (7 XI 2026): bars and scales are drawn from markers in the lines, and the relations are in the Party tab.
+  const plain = id => sidebar[id].replace(/<[^>]*>/g, '');
+  // The State tab begins with the police, so its heading is the first line.
+  assert.match(plain('status.paramilitaries'), /(?:^|\n)\s*Policja ?\n\s*Potencjał: 50 ?\n/);
+  assert.match(plain('status'), /PSL Wyzwolenie: przyjazne/);
   assert.deepEqual(errors, []);
 });
 

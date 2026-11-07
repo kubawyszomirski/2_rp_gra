@@ -185,7 +185,8 @@ test('the stylesheet and every local script of the page carry the same version',
   const css = html.match(/href="game\.css\?v=([0-9.]+)"/);
   assert.ok(css, 'the stylesheet has a version');
   const scripts = [...html.matchAll(/<script src="([^"?]+)(?:\?v=([0-9.]+))?"><\/script>/g)];
-  assert.equal(scripts.length, 17);
+  // The top bar (7 XI 2026) adds polish_topbar.js.
+  assert.equal(scripts.length, 18);
   for (const [, file, version] of scripts) {
     if (['jquery-1.11.1.min.js', 'd3.v7.min.js'].includes(file)) assert.equal(version, undefined, file + ' never changes');
     else assert.equal(version, css[1], file + ' carries the version of the stylesheet');
@@ -194,7 +195,7 @@ test('the stylesheet and every local script of the page carry the same version',
 
 test('the rules modules never draw their own random numbers', () => {
   for (const file of ['polish_rules.js', 'polish_institutions.js', 'polish_electorate.js', 'polish_economy.js', 'polish_government.js',
-    'polish_projects.js', 'polish_party.js', 'polish_unions.js']) {
+    'polish_projects.js', 'polish_party.js', 'polish_unions.js', 'polish_topbar.js']) {
     const source = fs.readFileSync(path.join(ROOT, 'source', 'rules', file), 'utf8');
     assert.ok(!source.includes('Math.random'), file + ': randomness comes from recorded rolls (4.6)');
   }

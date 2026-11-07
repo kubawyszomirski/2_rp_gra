@@ -17,6 +17,13 @@ if (Q.economic_growth) {
 if (Q.polish_party_rules && typeof PolishParty !== 'undefined') {
     PolishParty.sidebarDisplay(Q);
 }
+// The Party tab of the top bar also shows the Milicja PPS and the nine positions of the party line.
+if (Q.polish_security_rules && Q.S && typeof PolishSecurity !== 'undefined' && PolishSecurity.ready(Q)) {
+    PolishSecurity.defenseView(Q);
+}
+if (Q.S && typeof PolishTopbar !== 'undefined') {
+    PolishTopbar.lineView(Q);
+}
 !}
 
 # The sidebar: one fact per line under section headings (Z — 0.54), each with a bold label (Z — 0.55). Z — 0.76 (the user's
@@ -48,8 +55,6 @@ if (Q.polish_party_rules && typeof PolishParty !== 'undefined') {
 [? if polish_party_rules : **TUR:** [+ pl_party_tur +] ?]
 
 [? if polish_party_rules : **Consumer cooperative:** [+ pl_party_coops +] ?]
-
-[? if polish_party_rules : **Milicja:** [+ pl_party_militia +] ?]
 
 = Trade unions
 
@@ -83,7 +88,128 @@ if (Q.polish_party_rules && typeof PolishParty !== 'undefined') {
 
 [? if pl_chapter_ended : The first chapter has ended with the certified result of the next lawful Sejm election. The chapter report describes the final state. ?]
 
+= [? if polish_security_rules : [+ pl_def_militia_name +] ?]
+
+[? if polish_security_rules : **Organised members:** [+ pl_def_members +] ?]
+
+[? if polish_security_rules : **Training:** [+ pl_def_efficiency +] ?]
+
+[? if polish_security_rules : **Legal status:** [+ pl_def_legal +] ?]
+
+= Inter-party Relations
+
+**PSL Wyzwolenie:** {!<i class="pl-rel" data-q="psl_wyzwolenie_relation"></i>!}[+ psl_wyzwolenie_relation : relationships +]
+
+**Blok Mniejszości Narodowych:** {!<i class="pl-rel" data-q="minorities_bloc_relation"></i>!}[+ minorities_bloc_relation : relationships +]
+
+**PSL Piast:** {!<i class="pl-rel" data-q="psl_piast_relation"></i>!}[+ psl_piast_relation : relationships +]
+
+**NPR:** {!<i class="pl-rel" data-q="npr_relation"></i>!}[+ npr_relation : relationships +]
+
+**PSChD:** {!<i class="pl-rel" data-q="pschd_relation"></i>!}[+ pschd_relation : relationships +]
+
+**KPP:** {!<i class="pl-rel" data-q="kpp_relation"></i>!}[+ kpp_relation : relationships +]
+
+**ZLN:** {!<i class="pl-rel" data-q="zln_relation"></i>!}[+ zln_relation : relationships +]
+
+= Factions in the PPS
+
+*[? if not polish_party_rules : Inherited German cards feed them through a temporary compatibility bridge until each card receives a researched Polish response. ?][? if polish_party_rules : The strengths of the three currents add up to 100; the dissent of the party is their dissent weighted by strength. ?]*
+
+{!<div class="pl-factions"></div>!}
+
+{!<strong><span class="tooltip-text" title="The parliamentary mainstream: democratic socialism, reform, workers' rights, defence of democracy and Polish independence.">Centrum PPS</span></strong>!} — strength: [+ centrum_strength : strength +], dissent: [+ centrum_dissent : dissent +]
+
+{!<strong><span class="tooltip-text" title="The socialist left: stronger class politics, faster economic transformation and greater openness to cooperation on the left.">Lewica PPS</span></strong>!} — strength: [+ lewica_strength : strength +], dissent: [+ lewica_dissent : dissent +]
+
+{!<strong><span class="tooltip-text" title="The independence and Piłsudski-oriented current: a strong state, anti-communism and state-led social reform.">Piłsudczycy</span></strong>!} — strength: [+ pilsudczycy_strength : strength +], dissent: [+ pilsudczycy_dissent : dissent +]
+
+[? if not polish_party_rules : Affiliated trade unions — labor strength: [+ labor_strength : strength +], dissent: [+ labor_dissent : dissent +]. Labor remains a temporary inherited measure for the affiliated trade-union power centre. It is not normalized as a PPS faction and does not directly enter overall party dissent. ?]
+
+
+= Party line
+
+[? if polish_party_rules : **Direction:** [+ pl_line_direction +] ?]
+
+[? if polish_party_rules : **Main opponent:** [+ pl_line_main_opponent +] ?]
+
+[? if polish_party_rules : **Piłsudski's influence:** [+ pl_line_pils_influence +] ?]
+
+[? if polish_party_rules : **Form of power:** [+ pl_line_form_of_power +] ?]
+
+[? if polish_party_rules : **Character of the party:** [+ pl_line_electoral_base +] ?]
+
+[? if polish_party_rules : **Slavic minorities:** [+ pl_line_slavic_autonomy +] ?]
+
+[? if polish_party_rules : **Jewish organisations:** [+ pl_line_jewish_cooperation +] ?]
+
+[? if polish_party_rules : **The Soviet model:** [+ pl_line_ussr_position +] ?]
+
+[? if polish_party_rules : **Economic programme:** [+ pl_line_programme +] ?]
+
 # = Public Opinion
+
+@overview
+on-arrival: {!
+// The short texts of the Overview (source/rules/polish_topbar.js).
+if (Q.S && typeof PolishTopbar !== 'undefined') {
+    PolishTopbar.overviewView(Q);
+}
+!}
+
+# The Overview of the top bar (the user's decisions of 7 XI 2026). Each heading is one column of the bar; the page
+# (out/html/game.js) draws the stamp, the hemicycle of the Sejm and the bars.
+= Government
+
+**[+ pl_top_pm +]**
+
+[+ pl_top_cabinet +]
+
+[+ pl_top_head +]
+
+= PPS position
+
+{!<span class="pl-stamp">!}[+ pl_top_pps_stamp +]{!</span>!}
+
+[+ pl_top_pps_detail +]
+
+= [+ pl_top_sejm +]
+
+{!<svg class="pl-hemi" viewBox="0 0 200 108" role="img"></svg>!}
+
+**[+ pl_top_pps_seats +]** · [+ pl_top_majority +]
+
+= Party line
+
+**[+ pl_top_direction +]**
+
+[+ pl_top_opponent +]
+
+[+ pl_top_pilsudski +]
+
+= Economy
+
+**Budget:** [+ pl_top_budget +] [? if pl_top_budget_trend : {!<span class="pl-trend">!}[+ pl_top_budget_trend +]{!</span>!} ?]
+
+**Inflation:** [+ pl_top_inflation +] [? if pl_top_inflation_trend : {!<span class="pl-trend">!}[+ pl_top_inflation_trend +]{!</span>!} ?]
+
+**Unemployment:** [+ pl_top_unemployment +] [? if pl_top_unemployment_trend : {!<span class="pl-trend">!}[+ pl_top_unemployment_trend +]{!</span>!} ?]
+
+= Country
+
+**Democracy:** {!<i class="pl-gauge"></i>!}[+ pl_top_democracy +] [? if pl_top_democracy_trend : {!<span class="pl-trend">!}[+ pl_top_democracy_trend +]{!</span>!} ?]
+
+**Grievance:** {!<i class="pl-gauge pl-red"></i>!}[+ pl_top_grievance +] [? if pl_top_grievance_trend : {!<span class="pl-trend">!}[+ pl_top_grievance_trend +]{!</span>!} ?]
+
+**Violence:** {!<i class="pl-gauge pl-red"></i>!}[+ pl_top_violence +] [? if pl_top_violence_trend : {!<span class="pl-trend">!}[+ pl_top_violence_trend +]{!</span>!} ?]
+
+= Elections
+
+**[+ pl_top_election +]**
+
+[+ pl_top_election_in +]
+
+[+ pl_top_election_note +]
 
 @politics
 on-arrival: {!
@@ -99,11 +225,11 @@ if (Q.polish_politics_rules && typeof PolishPolitics !== 'undefined') {
 
 [? if polish_politics_rules : **Authority of the Sejm:** [+ pl_pol_authority +] ?]
 
-[? if polish_politics_rules : **Grievance:** [+ pl_pol_grievance +] ?]
+[? if polish_politics_rules : **Grievance:** {!<i class="pl-gauge pl-red"></i>!}[+ pl_pol_grievance +] ?]
 
-[? if polish_politics_rules : **Violence:** [+ pl_pol_violence +] ?]
+[? if polish_politics_rules : **Violence:** {!<i class="pl-gauge pl-red"></i>!}[+ pl_pol_violence +] ?]
 
-[? if polish_politics_rules : **Pressure towards a coup:** [+ pl_pol_pressure +] ?]
+[? if polish_politics_rules : **Pressure towards a coup:** {!<i class="pl-gauge pl-red"></i>!}[+ pl_pol_pressure +] ?]
 
 = [+ parliament_heading +]
 
@@ -131,35 +257,6 @@ if (Q.polish_politics_rules && typeof PolishPolitics !== 'undefined') {
 
 **Majority required:** [+ sejm_majority_required +] of [+ sejm_total_seats +] MPs.
 
-= Inter-party Relations
-
-**PSL Wyzwolenie:** [+ psl_wyzwolenie_relation : relationships +]
-
-**Blok Mniejszości Narodowych:** [+ minorities_bloc_relation : relationships +]
-
-**PSL Piast:** [+ psl_piast_relation : relationships +]
-
-**NPR:** [+ npr_relation : relationships +]
-
-**PSChD:** [+ pschd_relation : relationships +]
-
-**KPP:** [+ kpp_relation : relationships +]
-
-**ZLN:** [+ zln_relation : relationships +]
-
-= Factions in the PPS
-
-*[? if not polish_party_rules : Inherited German cards feed them through a temporary compatibility bridge until each card receives a researched Polish response. ?][? if polish_party_rules : The strengths of the three currents add up to 100; the dissent of the party is their dissent weighted by strength. ?]*
-
-{!<strong><span class="tooltip-text" title="The parliamentary mainstream: democratic socialism, reform, workers' rights, defence of democracy and Polish independence.">Centrum PPS</span></strong>!} — strength: [+ centrum_strength : strength +], dissent: [+ centrum_dissent : dissent +]
-
-{!<strong><span class="tooltip-text" title="The socialist left: stronger class politics, faster economic transformation and greater openness to cooperation on the left.">Lewica PPS</span></strong>!} — strength: [+ lewica_strength : strength +], dissent: [+ lewica_dissent : dissent +]
-
-{!<strong><span class="tooltip-text" title="The independence and Piłsudski-oriented current: a strong state, anti-communism and state-led social reform.">Piłsudczycy</span></strong>!} — strength: [+ pilsudczycy_strength : strength +], dissent: [+ pilsudczycy_dissent : dissent +]
-
-[? if not polish_party_rules : Affiliated trade unions — labor strength: [+ labor_strength : strength +], dissent: [+ labor_dissent : dissent +]. Labor remains a temporary inherited measure for the affiliated trade-union power centre. It is not normalized as a PPS faction and does not directly enter overall party dissent. ?]
-
-
 @paramilitaries
 on-arrival: {!
 if (Q.polish_security_rules && Q.S && typeof PolishSecurity !== 'undefined' && PolishSecurity.ready(Q)) {
@@ -179,27 +276,17 @@ if (Q.sa_strength) {
 }
 !}
 
-= Organisations and forces of the state
+# One fact per line with a bold label, under a heading for each force (Z — 0.55). A heading whose condition is false
+# stays empty and is hidden by the stylesheet.
+= [? if polish_security_rules : Police ?]
 
 [? if polish_security_rules and pl_def_crisis : **[+ pl_def_crisis +]** ?]
 
-# One fact per line with a bold label, under a heading for each force (Z — 0.55). A heading whose condition is false
-# stays empty and is hidden by the stylesheet.
-= [? if polish_security_rules : [+ pl_def_militia_name +] ?]
+[? if polish_security_rules : **Capacity:** {!<i class="pl-gauge"></i>!}[+ pl_def_police_capacity +] ?]
 
-[? if polish_security_rules : **Organised members:** [+ pl_def_members +] ?]
+[? if polish_security_rules : **Command:** {!<i class="pl-gauge"></i>!}[+ pl_def_police_command +] ?]
 
-[? if polish_security_rules : **Training:** [+ pl_def_efficiency +] ?]
-
-[? if polish_security_rules : **Legal status:** [+ pl_def_legal +] ?]
-
-= [? if polish_security_rules : Police ?]
-
-[? if polish_security_rules : **Capacity:** [+ pl_def_police_capacity +] ?]
-
-[? if polish_security_rules : **Command:** [+ pl_def_police_command +] ?]
-
-[? if polish_security_rules : **Lawful compliance:** [+ pl_def_police_lawful +] ?]
+[? if polish_security_rules : **Lawful compliance:** {!<i class="pl-gauge"></i>!}[+ pl_def_police_lawful +] ?]
 
 [? if polish_security_rules : **Protection of one gathering:** [+ pl_def_police_protection +] ?]
 
@@ -216,8 +303,6 @@ if (Q.sa_strength) {
 [? if polish_security_rules : **[+ pl_def_force_remote_reserve_name +]:** [+ pl_def_force_remote_reserve +] ?]
 
 [? if polish_security_rules and pl_def_agreement : [+ pl_def_agreement +] ?]
-
-*[? if polish_security_rules : [+ pl_def_note +] ?]*
 
 [? if not polish_security_rules : **Paramilitaries** ?]
 
@@ -260,29 +345,33 @@ Q.pro_republic_disp = Math.round(Q.pro_republic);
 Q.pl_democracy_disp = Q.polish_politics_rules && Q.S && Q.S.politics ? Math.round(Q.S.politics.democracy) : 0;
 Q.nationalism_disp = Math.round(Q.nationalism);
 Q.socialism_disp = Math.round(Q.socialism);
+// The arrow of the PPS line (source/rules/polish_topbar.js).
+if (Q.S && typeof PolishTopbar !== 'undefined') {
+    PolishTopbar.overviewView(Q);
+}
 !}
 
 = Voting intentions
 
 *Current party preferences, not seats or previously recorded votes:*
 
-**KPP:** [+ kpp_votes +]%
+**KPP:** {!<i class="pl-bar" data-k="kpp"></i>!}[+ kpp_votes +]%
 
-**PPS:** [+ pps_votes +]%
+**PPS:** {!<i class="pl-bar" data-k="pps"></i>!}[+ pps_votes +]% [? if pl_top_pps_poll_trend : {!<span class="pl-trend">!}[+ pl_top_pps_poll_trend +]{!</span>!} ?]
 
-**NPR:** [+ npr_votes +]%
+**NPR:** {!<i class="pl-bar" data-k="npr"></i>!}[+ npr_votes +]%
 
-**PSL Wyzwolenie:** [+ psl_wyzwolenie_votes +]%
+**PSL Wyzwolenie:** {!<i class="pl-bar" data-k="psl_wyzwolenie"></i>!}[+ psl_wyzwolenie_votes +]%
 
-**PSL Piast:** [+ psl_piast_votes +]%
+**PSL Piast:** {!<i class="pl-bar" data-k="psl_piast"></i>!}[+ psl_piast_votes +]%
 
-**PSChD:** [+ pschd_votes +]%
+**PSChD:** {!<i class="pl-bar" data-k="pschd"></i>!}[+ pschd_votes +]%
 
-**ZLN:** [+ zln_votes +]%
+**ZLN:** {!<i class="pl-bar" data-k="zln"></i>!}[+ zln_votes +]%
 
-**Blok Mniejszości Narodowych:** [+ minorities_bloc_votes +]%
+**Blok Mniejszości Narodowych:** {!<i class="pl-bar" data-k="minorities_bloc"></i>!}[+ minorities_bloc_votes +]%
 
-**Inne:** [+ other_votes +]%
+**Inne:** {!<i class="pl-bar" data-k="other"></i>!}[+ other_votes +]%
 
 = By social group
 
@@ -327,11 +416,11 @@ if (Q.economic_growth) {
 
 [? if polish_economy_system : **Output (index):** [+ pl_eco_output +] ?]
 
-[? if polish_economy_system : **Credit (0–100):** [+ pl_eco_credit +] ?]
+[? if polish_economy_system : **Credit (0–100):** {!<i class="pl-gauge"></i>!}[+ pl_eco_credit +] ?]
 
 [? if polish_economy_system : **Unemployment:** [+ pl_eco_unemployment +] ?]
 
-[? if polish_economy_system : **Agrarian pressure (0–100):** [+ pl_eco_agrarian +] ?]
+[? if polish_economy_system : **Agrarian pressure (0–100):** {!<i class="pl-gauge pl-red"></i>!}[+ pl_eco_agrarian +] ?]
 
 [? if polish_economy_system : **Business:** [+ pl_eco_business +] ?]
 

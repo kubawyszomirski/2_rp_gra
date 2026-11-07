@@ -21,6 +21,7 @@ const UNIONS_FILE = path.join(ROOT, 'out', 'html', 'polish_unions.js');
 const POLITICS_FILE = path.join(ROOT, 'out', 'html', 'polish_politics.js');
 const SECURITY_FILE = path.join(ROOT, 'out', 'html', 'polish_security.js');
 const HOOKS_FILE = path.join(ROOT, 'out', 'html', 'polish_engine_hooks.js');
+const TOPBAR_FILE = path.join(ROOT, 'out', 'html', 'polish_topbar.js');
 const clone = value => JSON.parse(JSON.stringify(value));
 
 // The English game is out/game.json; the Polish version is out/html/game_pl.json, built by tools/i18n/build.cjs
@@ -46,6 +47,7 @@ function loadRules() {
   globalThis.PolishUnions = require(UNIONS_FILE);
   globalThis.PolishPolitics = require(POLITICS_FILE);
   globalThis.PolishSecurity = require(SECURITY_FILE);
+  globalThis.PolishTopbar = require(TOPBAR_FILE);
   globalThis.PolishEngineHooks = require(HOOKS_FILE);
   globalThis.PolishEngineHooks.install(DendryEngine.prototype, globalThis.PolishRules);
   return globalThis.PolishRules;

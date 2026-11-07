@@ -106,7 +106,8 @@ test('Status shows the Polish budget, currency, prices, output, credit, unemploy
   assert.match(text, /\+2\.0 B this month; programmes run in full; a new programme may cost up to 4\.0 B a month/, 'budget units to 0.1 (Z — 0.85)');
   assert.match(text, /"Polish mark"/);
   assert.match(text, /"4\.0% a month"/);
-  assert.match(text, /Agrarian pressure \(0–100\):["\]}, ]+45\.0"/);
+  // The top bar (7 XI 2026): a marker for the bar of 0-100 stands between the label and the value.
+  assert.match(text, /Agrarian pressure \(0–100\):.{0,140}45\.0"/);
   assert.match(text, /"calm, pressure 10"/);
   assert.doesNotMatch(text, /Economic growth: /, 'the German growth line is hidden in the Polish game');
   engine.goToScene('library.sidebar_notes');

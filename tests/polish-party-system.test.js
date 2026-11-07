@@ -655,7 +655,8 @@ test('named split departures affect only advisers whose pool-entry date has arri
 });
 
 test('player-facing faction displays use Polish names and mark the union boundary', () => {
-  const status = JSON.stringify(game.scenes['status.politics'].content);
+  // The top bar (7 XI 2026): the factions are in the Party tab (the scene status).
+  const status = JSON.stringify(game.scenes.status.content);
   const library = JSON.stringify(game.scenes['library.factions'].content);
   for (const label of ['Centrum PPS', 'Lewica PPS', 'Piłsudczycy']) {
     assert.ok(status.includes(label), label);

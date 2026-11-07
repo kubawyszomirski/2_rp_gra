@@ -9,24 +9,25 @@
     <!-- The version makes the browser fetch changed files instead of cached copies (Z — 0.53, 0.54, 0.56). The stylesheet and
          every local script carry the same version, raised with each release: game_pl.json is always fetched fresh, so a
          cached older script next to newer scenes could stop the game. Only the two unchanged libraries have none. -->
-    <link rel="stylesheet" type="text/css" href="game.css?v=0.94">
+    <link rel="stylesheet" type="text/css" href="game.css?v=0.95">
     <script src="jquery-1.11.1.min.js"></script>
     <script src="d3.v7.min.js"></script>
-    <script src="d3-parliament.js?v=0.94"></script>
-    <script src="d3-linegraph.js?v=0.94"></script>
-    <script src="polish_rules.js?v=0.94"></script>
-    <script src="polish_institutions.js?v=0.94"></script>
-    <script src="polish_electorate.js?v=0.94"></script>
-    <script src="polish_economy.js?v=0.94"></script>
-    <script src="polish_government.js?v=0.94"></script>
-    <script src="polish_projects.js?v=0.94"></script>
-    <script src="polish_party.js?v=0.94"></script>
-    <script src="polish_unions.js?v=0.94"></script>
-    <script src="polish_politics.js?v=0.94"></script>
-    <script src="polish_security.js?v=0.94"></script>
-    <script src="polish_engine_hooks.js?v=0.94"></script>
-    <script src="core.js?v=0.94"></script>
-    <script src="game.js?v=0.94"></script>
+    <script src="d3-parliament.js?v=0.95"></script>
+    <script src="d3-linegraph.js?v=0.95"></script>
+    <script src="polish_rules.js?v=0.95"></script>
+    <script src="polish_institutions.js?v=0.95"></script>
+    <script src="polish_electorate.js?v=0.95"></script>
+    <script src="polish_economy.js?v=0.95"></script>
+    <script src="polish_government.js?v=0.95"></script>
+    <script src="polish_projects.js?v=0.95"></script>
+    <script src="polish_party.js?v=0.95"></script>
+    <script src="polish_unions.js?v=0.95"></script>
+    <script src="polish_politics.js?v=0.95"></script>
+    <script src="polish_security.js?v=0.95"></script>
+    <script src="polish_topbar.js?v=0.95"></script>
+    <script src="polish_engine_hooks.js?v=0.95"></script>
+    <script src="core.js?v=0.95"></script>
+    <script src="game.js?v=0.95"></script>
   </head>
   <body class="pl-hide-numbers">
     <div class="background" id="bg2">
@@ -402,19 +403,23 @@
                     <a id="language-link" onclick="window.toggleLanguage(); return false;" href="#" lang="pl" data-i18n="other_language">Polski</a>
                 </div>
             </header>
-            <div id="tools_wrapper">
-                <div id='stats_sidebar' class='tools left'>
-                    <div class="tab_container">
-                        <button class="tab_button active" id="main_tab" onclick="window.changeTab('status', 'main_tab');" data-i18n="tab_main">Main</button>
-                        <button class="tab_button" id="politics_tab" onclick="window.changeTab('status.politics', 'politics_tab');" data-i18n="tab_politics">Politics</button>
-                        <button class="tab_button" id="economy_tab" onclick="window.changeTab('status.economy', 'economy_tab');" data-i18n="tab_economy">Economy</button>
-                        <button class="tab_button" id="paramilitary_tab" onclick="window.changeTab('status.paramilitaries', 'paramilitary_tab');" data-i18n="tab_defense">Defense</button>
-                        <button class="tab_button" id="poll_tab" onclick="window.changeTab('status.polls', 'poll_tab');" data-i18n="tab_polls">Polls</button>
+            <!-- The top bar (the user's decisions of 7 XI 2026): the Overview, a row of tabs with the month and a drawer that
+                 opens under it; #pl-ticker is the short line that stays at the top after scrolling. The id stats_sidebar is
+                 kept for the font-size setting. -->
+            <div id="pl-topbar-wrap">
+                <div id="stats_sidebar" class="pl-topbar">
+                    <div id="pl-overview" class="pl-panel pl-overview"></div>
+                    <div class="tab_container" id="pl-tabs">
+                        <span class="pl-date" id="pl-date"></span>
+                        <button class="tab_button active" id="overview_tab" onclick="window.changeTab('overview', 'overview_tab');" data-i18n="tab_overview">Overview</button>
+                        <button class="tab_button" id="main_tab" onclick="window.changeTab('party', 'main_tab');" data-i18n="tab_main">Party</button>
+                        <button class="tab_button" id="state_tab" onclick="window.changeTab('state', 'state_tab');" data-i18n="tab_state">State</button>
+                        <button class="tab_button" id="poll_tab" onclick="window.changeTab('polls', 'poll_tab');" data-i18n="tab_polls">Polls</button>
                     </div>
-                    <div id="qualities">
-                    </div>
+                    <div id="qualities" class="pl-panel pl-drawer"></div>
                 </div>
             </div>
+            <div id="pl-ticker" class="pl-ticker" aria-hidden="true"></div>
 
             <div id='content'>
 

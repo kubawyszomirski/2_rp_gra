@@ -8,7 +8,7 @@ go-to: menu
 
 The Library explains the rules and the present state of the game: the constitutional order of 1922 and the presidency, a short timeline of 1919–1922, the government and its portfolios, the electorate and the parties, public opinion, the organisations of PPS and the forces of the state, the factions, the Central Executive Committee, and the charts of the campaign. Numbers called gameplay values are the game's working balance, not historical statistics.
 
-Units: **R** — the resources of PPS (its money); **B** — a unit of the state budget (budget figures are monthly); **T** — the main action of the month. The descriptions of choices write them in words; the sidebar and the results use these short forms. The Options setting “Numbers in choices” shows the size of each effect in parentheses.
+Units: **R** — the resources of PPS (its money); **B** — a unit of the state budget (budget figures are monthly); **T** — the main action of the month. The descriptions of choices write them in words; the top bar and the results use these short forms. The Options setting “Numbers in choices” shows the size of each effect in parentheses.
 
 @menu
 
@@ -23,7 +23,7 @@ Units: **R** — the resources of PPS (its money); **B** — a unit of the state
 - @factions: Internal factions
 - @advisers: Central Executive Committee
 - @figures: Figures and charts
-- @sidebar_notes: Notes to the sidebar
+- @sidebar_notes: Notes to the top bar
 - @backSpecialScene: Exit library.
 
 @government
@@ -532,12 +532,12 @@ if (typeof d3 !== 'undefined' && typeof window !== 'undefined') {
 # TODO: maybe add textual histories too? some accessibility stuff as well...
 
 @sidebar_notes
-title: Notes to the sidebar
+title: Notes to the top bar
 go-to: menu
 
-= Notes to the sidebar
+= Notes to the top bar
 
-The sidebar shows the current figures; these notes explain them.
+The top bar shows the current figures; these notes explain them.
 
 [? if polish_opening_government_active : March Constitution with transitional arrangements: the Sejm Ustawodawczy and Naczelnik Państwa remain in office. No operating Senate or presidential officeholder is simulated at the opening. ?]
 
