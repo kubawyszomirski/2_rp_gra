@@ -132,45 +132,28 @@ test('Policja 0.99: the training gives command and lawful compliance +5 at the s
   assert.deepEqual([restored.S.security.police.command, restored.S.security.police.lawful_compliance], [60, 60]);
 });
 
-test('Nominacja: without Military Affairs no card; the executed nomination moves +0.05 to the legal authorities in its group once (sum 1), readiness −0.05 for two months; +8 only for a real conflict', () => {
+test('Nominacja (awanse 1.02): without Military Affairs no card; the promotion moves 0.10 from Piłsudski to the legal authorities in the group most loyal to him, the known interval follows; 1 B, Piłsudski −10, the Piłsudczycy +8; the next one reaches the next group', () => {
   const Q = quiet();
   const S = Q.S;
   assert.equal(PolishProjects.cardAvailable(Q, 'military_policy'), false, 'no competence');
   withPortfolios(ppsMajority(Q), 'reichswehr');
-  // Z — 0.93 (decision 4A of 24 X 2026): the law is filed in the same decision.
-  PolishProjects.chooseOption(Q, 'military_policy', 'personnel_changes');
-  const project = armyProject(S);
-  assert.deepEqual([project.status, project.variant, project.policy_choices.force_id, project.policy_choices.position_id],
-    ['executing', 'personnel_changes', 'near_reserve', 'synthetic_oversight_post'], 'the synthetic post over the near reserve');
-  const law = S.parliament.laws.at(-1);
-  assert.deepEqual([law.project_id, law.programme.army, law.status], [project.id, 2, 'enacted'], 'the law of civilian oversight');
-  const near = force(S, 'near_reserve');
-  const before = [near.loyalty_legal, near.loyalty_pils, near.loyalty_neutral];
-  const capacity0 = PolishSecurity.capacity(S);
-  // Z — 1.01: carried out at the settlement of the month of the decision.
-  const done = settle(Q);
-  assert.equal(project.status, 'completed');
-  close(near.loyalty_legal, before[0] + 0.05, 1e-12, 'legal +0.05');
-  close(near.loyalty_pils, before[1] - 0.05 * before[1] / (before[1] + before[2]), 1e-12, 'taken proportionally');
-  close(near.loyalty_neutral, before[2] - 0.05 * before[2] / (before[1] + before[2]), 1e-12, 'taken proportionally');
-  close(sum(near), 1, 1e-12);
-  assert.deepEqual([PolishSecurity.readinessOf(near, done), PolishSecurity.readinessOf(near, done + 1), PolishSecurity.readinessOf(near, done + 2),
-    PolishSecurity.readinessOf(near, done + 3)].map(v => Math.round(v * 100) / 100), [0.70, 0.65, 0.65, 0.70], 'the two months after the act, then the end');
-  assert.ok(PolishSecurity.capacity(S, done + 1) < capacity0, 'the strength is read again by 16.2');
-  assert.deepEqual(impulses(S, 'nomination_conflict'), [], 'a consensual nomination (relation 60): no +8');
-  PolishSecurity.armyControlled(Q, project, Q.time);
-  close(near.loyalty_legal, before[0] + 0.05, 1e-12, 'a repeat adds nothing');
+  assert.deepEqual(PolishProjects.CARDS.military_policy.options, ['raise_spending', 'cut_spending', 'promote_officers']);
+  const target = force(S, 'capital_pils'), pils0 = target.loyalty_pils, legal0 = target.loyalty_legal, known0 = S.security.known.capital_pils.pils_center;
+  assert.equal(PolishSecurity.promotionTarget(S).id, 'capital_pils', 'the capital units close to Piłsudski first');
+  const pool0 = S.economy.budget, rel = S.actors.relations.pilsudski, dP = dissent(S, 'pilsudczycy'), laws = S.parliament.laws.length;
+  PolishProjects.chooseOption(Q, 'military_policy', 'promote_officers');
+  close(target.loyalty_pils, pils0 - 0.10, 1e-12, 'loyalty to Piłsudski −0.10');
+  close(target.loyalty_legal, legal0 + 0.10, 1e-12, 'to the legal authorities');
+  close(sum(target), 1, 1e-12);
+  close(S.security.known.capital_pils.pils_center, known0 - 0.10, 1e-12, 'the Status shows the change');
+  assert.deepEqual([S.economy.budget, S.actors.relations.pilsudski, dissent(S, 'pilsudczycy'), S.parliament.laws.length, Q.month_actions],
+    [pool0 - 1, Math.max(0, rel - 10), Math.min(100, dP + 8), laws, 1], 'one price, no law, 1 T');
+  assert.match(Q.pl_gc_result, /In the capital units close to Piłsudski the loyalty to Piłsudski falls \(−10 pp\)/);
+  for (const f of S.security.forces) if (f.id !== 'near_reserve') f.loyalty_pils = 0; // fixture: only the near reserve still leans to him
+  assert.equal(PolishSecurity.promotionTarget(S).id, 'near_reserve');
+  for (const f of S.security.forces) f.loyalty_pils = 0;
   free(Q);
-  assert.match(PolishProjects.optionStatus(Q, 'military_policy', 'civilian_oversight').reason, /under way or done/, 'one reform of this scope');
-  settle(Q); settle(Q);
-  assert.equal(near.modifiers.length, 0, 'the modifier ends and leaves the other values');
-
-  // The same nomination against a relation below 40 is a real conflict: +8 once.
-  const R = withPortfolios(ppsMajority(quiet()), 'reichswehr');
-  R.S.actors.relations.pilsudski = 30;
-  PolishProjects.chooseOption(R, 'military_policy', 'personnel_changes');
-  for (let i = 0; i < 4; i++) settle(R);
-  assert.deepEqual(impulses(R.S, 'nomination_conflict').map(i => i.value), [8]);
+  assert.match(PolishProjects.optionStatus(Q, 'military_policy', 'promote_officers').reason, /No group of the army leans towards Piłsudski/);
 });
 
 test('Śledztwo i adresat polemiki (Z — 0.99, the pursuit of violence): 1 B once (Z — 1.01); violence −5; the National Democrats and the communists −3; the latest case is investigated and a confirmed one names the addressee of the polemic', () => {
@@ -220,18 +203,19 @@ test('Ustępstwo Piłsudskiemu: the military function, then the inspectorate ren
   assert.equal(Q.month_actions, 1, 'an own initiative costs 1 T');
   free(Q);
   assert.match(PolishSecurity.concessionStatus(Q, 'military_function').reason, /already agreed/);
-  const p1 = S.coup.pressure, dC = dissent(S, 'centrum');
+  const p1 = S.coup.pressure, dC = dissent(S, 'centrum'), laws = S.parliament.laws.length, remote = force(S, 'remote_reserve'), remote0 = remote.loyalty_pils;
   PolishSecurity.concessionChoose(Q, 'inspectorate');
-  const law = S.parliament.laws.at(-1);
-  assert.deepEqual([law.kind, law.programme.army, law.status], ['pils_inspectorate', -2, 'enacted'], 'the change of the law, filed at once');
+  assert.equal(S.parliament.laws.length, laws, 'Z — 1.02: in force at once, without a law or a vote');
   assert.equal(PolishSecurity.pilsAgreement(S).id, agreement.id, 'the same agreement, renegotiated');
   assert.equal(agreement.variant, 'inspectorate');
   close(S.coup.pressure, p1, 1e-9, 'no second relief: −12 and −25 are not added');
   assert.equal(S.actors.relations.pilsudski, 64, 'no second +4');
   assert.equal(dissent(S, 'centrum'), dC + 8, 'the Centrum objects to the inspectorate itself');
-  close(near.loyalty_pils, pils0 + 0.10, 1e-12, 'the limit of the inspectorate counted over the whole agreement');
+  close(near.loyalty_pils, pils0 + 0.05, 1e-12, 'Z — 1.02: the limit of 0.05 for each group, counted over the whole agreement');
+  close(remote.loyalty_pils, remote0 + 0.05, 1e-12, 'the remote reserve moves too');
   PolishSecurity.executeAgreement(Q, agreement, Q.time);
-  close(near.loyalty_pils, pils0 + 0.10, 1e-12, 'a repeated execution moves nothing');
+  close(near.loyalty_pils, pils0 + 0.05, 1e-12, 'a repeated execution moves nothing');
+  close(remote.loyalty_pils, remote0 + 0.05, 1e-12);
   assert.deepEqual(impulses(S, 'pils_agreement').map(i => i.value), [-12]);
 });
 
@@ -272,29 +256,77 @@ test('Ustępstwa a linia: under support all concessions; under the conditional l
   const dSupport = dissent(lines.support.S, 'centrum'), dCond = dissent(lines.conditional.S, 'centrum');
   PolishSecurity.concessionChoose(lines.support, 'inspectorate');
   PolishSecurity.concessionChoose(lines.conditional, 'inspectorate');
-  assert.deepEqual(lines.support.S.parliament.laws.at(-1).programme, { army: -2, institution: 0 });
-  assert.deepEqual(lines.conditional.S.parliament.laws.at(-1).programme, { army: -2, institution: 1 }, 'the clause of responsibility before the Sejm');
+  assert.deepEqual([lines.support, lines.conditional].map(G => PolishSecurity.pilsAgreement(G.S).execution_started_at), [lines.support.time, lines.conditional.time],
+    'Z — 1.02: in force at once, without a law');
   assert.equal(dissent(lines.support.S, 'centrum'), dSupport, 'the line of support is the Centrum’s: no +8');
   assert.equal(dissent(lines.conditional.S, 'centrum'), dCond + 8);
 });
 
-test('Ograniczona reforma wojska: for the same group full oversight gives legal loyalty +0.05, 1 B once and army +2 in the offer; the limited reform +0.025, 1 B once and army 0 (Z — 1.01)', () => {
+test('Ograniczona reforma wojska (the old card of the Parliament deck, Z — 1.02): for the same group full oversight gives legal loyalty +0.05 and army +2 in its law; the limited reform +0.025 and army 0; 1 B once each', () => {
   const results = {};
-  for (const [option, variant] of [['civilian_oversight', 'civilian_oversight'], ['organizational_compromise', 'limited_reform']]) {
+  for (const variant of ['civilian_oversight', 'limited_reform']) {
     const Q = withPortfolios(ppsMajority(quiet()), 'reichswehr');
     const S = Q.S, near = force(S, 'near_reserve'), legal0 = near.loyalty_legal, pool0 = S.economy.budget;
-    PolishProjects.chooseOption(Q, 'military_policy', option);
+    PolishPolitics.openCase(Q, { id: 'military_case', kind: 'military', subject: 'the organisation of the supreme military authorities' });
+    PolishProjects.armyOversightChoose(Q, variant);
     const project = armyProject(S);
     assert.equal(project.variant, variant);
-    const paid = pool0 - S.economy.budget;
+    const law = S.parliament.laws.at(-1);
     settle(Q);
-    results[variant] = { army: S.parliament.laws.at(-1).programme.army, paid, legal: near.loyalty_legal - legal0, sum: sum(near), status: project.status };
+    results[variant] = { army: law.programme.army, decree: !!law.decree, paid: pool0 - S.economy.budget, legal: near.loyalty_legal - legal0, sum: sum(near), status: project.status };
   }
-  assert.deepEqual([results.civilian_oversight.paid, results.limited_reform.paid], [1, 1]);
   assert.deepEqual([results.civilian_oversight.army, results.limited_reform.army], [2, 0]);
+  assert.deepEqual([results.civilian_oversight.decree, results.limited_reform.decree], [false, false], 'the Parliament deck files a law for a vote');
+  assert.deepEqual([results.civilian_oversight.paid, results.limited_reform.paid], [1, 1]);
   close(results.civilian_oversight.legal, 0.05, 1e-12);
   close(results.limited_reform.legal, 0.025, 1e-12);
   for (const r of Object.values(results)) { close(r.sum, 1, 1e-12); assert.equal(r.status, 'completed'); }
+});
+
+test('Wydatki na wojsko 1.02: more money costs 2 B, the pressure towards a coup −5 and the Left of PPS +5; a cut brings +2 B and the pressure +5; more money needs 2 B in the pool', () => {
+  const Q = withPortfolios(ppsMajority(quiet()), 'reichswehr');
+  const S = Q.S;
+  S.coup.pressure = 20;
+  const pool0 = S.economy.budget, dL = dissent(S, 'lewica');
+  PolishProjects.chooseOption(Q, 'military_policy', 'raise_spending');
+  assert.deepEqual([S.economy.budget, S.coup.pressure, dissent(S, 'lewica')], [pool0 - 2, 15, Math.min(100, dL + 5)]);
+  free(Q);
+  PolishProjects.chooseOption(Q, 'military_policy', 'cut_spending');
+  assert.deepEqual([S.economy.budget, S.coup.pressure], [pool0, 20]);
+  free(Q);
+  S.economy.budget = 1;
+  assert.match(PolishProjects.optionStatus(Q, 'military_policy', 'raise_spending').reason, /Not enough budget: it needs 2, the pool has 1\./);
+  assert.equal(PolishProjects.optionStatus(Q, 'military_policy', 'cut_spending').available, true);
+});
+
+test('Piłsudski i wojsko 1.02: subordination moves both reserves 0.05 to the legal authorities, Piłsudski −15, the Piłsudczycy +10 and breaks an agreement; the cult of the Legions 1 B and +10; the status quo Centrum −3 and Piłsudski −3', () => {
+  const Q = withPortfolios(ppsMajority(quiet()), 'reichswehr');
+  const S = Q.S;
+  assert.deepEqual(PolishSecurity.PILS_OPTIONS, ['subordinate', 'legion_cult', 'military_function', 'inspectorate', 'status_quo']);
+  S.coup.pressure = 30;
+  PolishSecurity.pilsChoose(Q, 'military_function');
+  free(Q);
+  const near = force(S, 'near_reserve'), remote = force(S, 'remote_reserve'), n0 = near.loyalty_pils, r0 = remote.loyalty_pils;
+  const rel = S.actors.relations.pilsudski, dP = dissent(S, 'pilsudczycy'), p0 = S.coup.pressure;
+  PolishSecurity.pilsChoose(Q, 'subordinate');
+  close(near.loyalty_pils, n0 - 0.05, 1e-12); close(remote.loyalty_pils, r0 - 0.05, 1e-12); close(sum(near), 1, 1e-12);
+  assert.deepEqual([S.actors.relations.pilsudski, dissent(S, 'pilsudczycy')], [Math.max(0, rel - 15), Math.min(100, dP + 10)]);
+  assert.equal(PolishSecurity.pilsAgreement(S).status, 'breached', 'the agreement with him is broken');
+  assert.equal(S.coup.pressure, p0 + 8, 'a culpable break: +8');
+  assert.match(Q.pl_pils_result, /The agreement with him is broken/);
+  free(Q);
+  const pool0 = S.economy.budget, rel1 = S.actors.relations.pilsudski;
+  PolishSecurity.pilsChoose(Q, 'legion_cult');
+  assert.deepEqual([S.economy.budget, S.actors.relations.pilsudski, Q.month_actions], [pool0 - 1, Math.min(100, rel1 + 10), 1]);
+  free(Q);
+  const dC = dissent(S, 'centrum'), rel2 = S.actors.relations.pilsudski;
+  PolishSecurity.pilsChoose(Q, 'status_quo');
+  assert.deepEqual([dissent(S, 'centrum'), S.actors.relations.pilsudski], [Math.max(0, dC - 3), Math.max(0, rel2 - 3)]);
+  free(Q);
+  S.economy.budget = 0;
+  assert.match(PolishSecurity.pilsOptionStatus(Q, 'legion_cult').reason, /Not enough budget/);
+  for (const f of S.security.forces) f.loyalty_pils = 0;
+  assert.match(PolishSecurity.pilsOptionStatus(Q, 'subordinate').reason, /no longer lean towards Piłsudski/);
 });
 
 test('Przegląd ugody chroniącej: an agreement executed for 6 months is extended without a new relief when Piłsudski accepts, or expires without +8', () => {

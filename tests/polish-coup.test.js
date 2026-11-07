@@ -96,7 +96,7 @@ test('Kontrola wojska bez pustych opcji: at an open military case the Parliament
   engine.goToScene('main');
   playFromHand(engine, 'polish_gov_military');
   assert.deepEqual(ids(engine).filter(id => !['easy_discard', 'cancel_advisor_action'].includes(id)),
-    ['polish_gov_military.civilian_oversight', 'polish_gov_military.personnel_changes', 'polish_gov_military.organizational_compromise']);
+    ['polish_gov_military.raise_spending', 'polish_gov_military.cut_spending', 'polish_gov_military.promote_officers'], 'Z — 1.02: three permanent options');
   choose(engine, 'easy_discard');
   // Z — 0.57 (item 12 of the play notes): the card is in the deck only when there is something to choose.
   assert.equal(PolishProjects.armyOversightAvailable(Q), false, 'no military case and no project');
@@ -420,15 +420,12 @@ test('Karty 3–5 bez odnowienia: an answered budget package, a refused motion a
   hostile(Q);
   const pils = S.actors.relations.pilsudski, pd = S.actors.pps.factions.pilsudczycy.dissent;
   const laws = S.parliament.laws.length;
-  // Z — 1.00 (the user's decision of 7 XI 2026): the ministry decides by decree — full civilian oversight starts at once, even in a
-  // Sejm that would refuse it, and no law is put to a vote.
-  PolishProjects.chooseOption(Q, 'military_policy', 'civilian_oversight');
-  // Z — 0.81 (the user's note of 20 X 2026): full civilian oversight goes against Piłsudski and the Piłsudczycy of PPS at once.
+  // Z — 1.00/1.02 (the user's decisions of 7 XI 2026): the ministry decides at once, even in a Sejm that would refuse it: the promotion
+  // of officers loyal to the government files no law and goes against Piłsudski and the Piłsudczycy of PPS at once.
+  PolishProjects.chooseOption(Q, 'military_policy', 'promote_officers');
   assert.equal(S.actors.relations.pilsudski, Math.max(0, pils - 10));
   assert.equal(S.actors.pps.factions.pilsudczycy.dissent, Math.min(100, pd + 8));
-  assert.equal(S.parliament.laws.length, laws + 1);
-  assert.deepEqual([S.parliament.laws.at(-1).status, S.parliament.laws.at(-1).decree], ['enacted', true], 'a decree, not a vote');
-  assert.equal(Object.values(S.projects).find(p => p.type === 'army_control').status, 'executing');
+  assert.equal(S.parliament.laws.length, laws, 'no law, no vote');
   // The old card of the Parliament deck (out of the deck since 0.81) still files a law: refused, it is not filed again unchanged.
   const P = quietGame().state.qualities;
   hostile(P);

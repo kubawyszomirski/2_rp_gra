@@ -3,15 +3,15 @@
  "status": "complete",
  "lines": {
   "title: Military Affairs": "title: Sprawy wojskowe",
-  "subtitle: Civilian control of the army: oversight, lawful changes of personnel, or a limited reform.": "subtitle: Cywilna kontrola nad wojskiem: nadzór, legalne zmiany personalne albo ograniczona reforma.",
+  "subtitle: The army: more money, cuts, or the promotion of officers loyal to the government.": "subtitle: Wojsko: więcej pieniędzy, cięcia albo awanse oficerów wiernych rządowi.",
   "= Military affairs": "= Sprawy wojskowe",
-  "subtitle: The same project with a named nomination: the group grows more loyal to the legal authorities (+0.05), its readiness falls for two months (−0.05), and a real conflict raises the pressure.": "subtitle: Ten sam projekt z wymienioną nominacją: zgrupowanie staje się bardziej lojalne wobec legalnych władz (+0,05), jego gotowość spada przez dwa miesiące (−0,05), a rzeczywisty konflikt podnosi presję.",
-  "subtitle: A limited reform (the middle of the army scale) costs 1 budget unit; the group grows a little more loyal to the legal authorities (+0.025).": "subtitle: Ograniczona reforma (środek skali spraw wojska) kosztuje 1 jednostkę budżetu; zgrupowanie staje się nieco bardziej lojalne wobec legalnych władz (+0,025).",
+  "The army answers to the minister of military affairs, but many officers listen above all to Piłsudski. The pressure towards a coup stands at [+ pl_gc_coup_pressure +] of 100; the loyalty of the army groups to Piłsudski is shown on the State tab.": "Wojsko podlega ministrowi spraw wojskowych, ale wielu oficerów słucha przede wszystkim Piłsudskiego. Presja na zamach wynosi [+ pl_gc_coup_pressure +] ze 100; lojalność zgrupowań wobec Piłsudskiego widać w zakładce Państwo.",
   "- @root: Continue.": "- @root: Dalej.",
-  "The post gives oversight of one group of the army. A compromise that gives Piłsudski personal powers goes through the agreement with him, not through this card.": "Stanowisko daje nadzór nad jednym zgrupowaniem wojska. Kompromis dający Piłsudskiemu osobiste uprawnienia przechodzi przez porozumienie z nim, a nie przez tę kartę.",
-  "title: Introduce full civilian oversight": "title: Wprowadź pełny nadzór cywilny",
-  "title: Make lawful changes of personnel": "title: Przeprowadź legalne zmiany personalne",
-  "title: Agree an organisational compromise limiting the reform": "title: Uzgodnij kompromis organizacyjny ograniczający reformę",
-  "subtitle: Full civilian oversight (+2 on the army scale from −2 to +2) costs 1 budget unit; the group grows more loyal to the legal authorities (+0.05). [? if pl_military_policy_civilian_oversight_coalition : [+ pl_military_policy_civilian_oversight_coalition +] ?]": "subtitle: Pełny nadzór cywilny (+2 na skali spraw wojska od −2 do +2) kosztuje 1 jednostkę budżetu; zgrupowanie staje się bardziej lojalne wobec legalnych władz (+0,05). [? if pl_military_policy_civilian_oversight_coalition : [+ pl_military_policy_civilian_oversight_coalition +] ?]"
+  "title: Raise the spending on the army": "title: Zwiększ wydatki na wojsko",
+  "subtitle: Costs 2 budget units. The officers are content and the pressure towards a coup falls (−5), but the dissent of the Left of PPS rises (+5).": "subtitle: Kosztuje 2 jednostki budżetu. Oficerowie są zadowoleni i presja na zamach spada (−5), ale rośnie sprzeciw Lewicy w PPS (+5).",
+  "title: Cut the spending on the army": "title: Obetnij wydatki na wojsko",
+  "subtitle: Brings the budget 2 units at once. The officers are indignant and the pressure towards a coup rises (+5).": "subtitle: Od razu zasila budżet: 2 jednostki. Oficerowie są oburzeni i presja na zamach rośnie (+5).",
+  "title: Promote officers loyal to the government": "title: Awansuj oficerów wiernych rządowi",
+  "subtitle: Costs 1 budget unit. The group most loyal to Piłsudski leans less towards him (−10 percentage points), but relations with Piłsudski worsen (−10) and the Piłsudczycy in PPS protest (+8).": "subtitle: Kosztuje 1 jednostkę budżetu. Zgrupowanie najbardziej oddane Piłsudskiemu słabiej mu sprzyja (−10 punktów procentowych), ale stosunki z Piłsudskim się psują (−10), a piłsudczycy w PPS protestują (+8)."
  }
 }

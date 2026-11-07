@@ -3144,6 +3144,8 @@
     'minorities_kresy.border': {topic: 'autonomy', position: -1}, 'civil_liberties.press_freedom': {topic: 'institution', position: 1},
     'civil_liberties.assembly': {topic: 'institution', position: 1},
     'military_policy.civilian_oversight': {topic: 'army', position: 2},
+    // Z — 1.02: the card „Piłsudski i wojsko” — the army subordinated to the minister and the Sejm, or the independent inspectorate.
+    'pils_agreement.subordinate': {topic: 'army', position: 2}, 'pils_agreement.inspectorate': {topic: 'army', position: -2},
     // Z — 1.00: the cards of Justice.
     'justice_policy.amnesty': {topic: 'institution', position: 1}, 'justice_policy.jury': {topic: 'institution', position: 1},
     'family_law.civil_marriage': {topic: 'church', position: 1}, 'family_law.women_rights': {topic: 'church', position: 1},

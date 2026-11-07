@@ -1,78 +1,89 @@
-title: Agreement with Piłsudski
-subtitle: A concrete concession under a legal procedure, or a refusal and a civilian cabinet.
+title: Piłsudski and the Army
+subtitle: Curb his influence, win him over or give way to him: from the subordination of the army to an independent inspectorate.
 new-page: true
 is-card: true
 tags: govt_affairs
 card-image: img/polish/polish_gov_pils_agreement.jpg
 view-if: {! return !!Q.S && !!Q.polish_security_rules && PolishSecurity.pilsCardAvailable(Q) !}
 on-arrival: {!
-// Card government.pils_agreement (technical reference 16.7, 16.8.1; card catalogue 8.15): the card opens an offer,
-// it does not buy a relief of pressure. An own initiative costs this month's action; the answer in the political
-// crisis of a coup costs none. One agreement at a time; its relief comes once, when its execution starts.
+// Card government.pils_agreement (Z — 1.02, the user's decisions of 7 XI 2026; technical reference 16.7, 16.8.1; card catalogue 8.15):
+// five options from curbing the influence of Piłsudski to the independent inspectorate. An own initiative costs this month's
+// action; the answer in the political crisis of a coup costs none. One agreement at a time; its relief comes once.
 PolishSecurity.pilsView(Q);
 // Z — 0.66 (decision 2A): the ministry of this card, on its page and as a badge in the hand.
 Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_pils_agreement');
 !}
 
-= Agreement with Piłsudski
+= Piłsudski and the army
 
 *[+ pl_gc_ministry +]*
 
+Piłsudski demands command of the army independent of the minister and the Sejm; his followers are in the army and in PPS. We can curb his influence, win him over or give way to him.
+
 [+ pl_pils_line +]
 
-Piłsudski judges an offer by its programme, the real function it gives him and the credibility of PPS; good relations are needed, but they are not enough.
-
+- @subordinate
+- @legion_cult
 - @military_function
 - @inspectorate
-- @pils_premier
-- @refuse
+- @status_quo
 - @easy_discard
 - @cancel_advisor_action
 
+@subordinate
+title: Subordinate the army to the minister and the Sejm
+subtitle: Piłsudski loses his say in the nominations: the near and the remote reserve lean less towards him (−5 percentage points each). The Piłsudczycy in PPS rebel (+10) and relations with Piłsudski worsen (−15). [? if pl_pils_subordinate_coalition : [+ pl_pils_subordinate_coalition +] ?]
+choose-if: {! return PolishSecurity.pilsOptionStatus(Q, 'subordinate').available !}
+unavailable-subtitle: [+ pl_pils_subordinate_why +]
+on-arrival: {!
+PolishSecurity.pilsChoose(Q, 'subordinate');
+!}
+go-to: result
+
+@legion_cult
+title: Celebrate the deed of the Legions
+subtitle: Costs 1 budget unit: the anniversary of the march of the First Cadre Company and decorations for the legionnaires. Relations with Piłsudski improve (+10).
+choose-if: {! return PolishSecurity.pilsOptionStatus(Q, 'legion_cult').available !}
+unavailable-subtitle: [+ pl_pils_legion_cult_why +]
+on-arrival: {!
+PolishSecurity.pilsChoose(Q, 'legion_cult');
+!}
+go-to: result
+
 @military_function
-title: A military function under civilian control
-subtitle: Needs a relation of at least 40; once carried out: the coup pressure falls (−12), the relation improves (+4) and Piłsudczycy dissent falls (−5); nominations raise loyalty to him in the group under him (+0.05 at most).
-choose-if: {! return PolishSecurity.concessionStatus(Q, 'military_function').available !}
+title: Give Piłsudski a military function under civilian control
+subtitle: Needs relations of at least 40. He gets a post, but the minister and the Sejm keep their oversight. The pressure towards a coup falls (−12), but the near reserve grows more loyal to him (+5 percentage points).
+choose-if: {! return PolishSecurity.pilsOptionStatus(Q, 'military_function').available !}
 unavailable-subtitle: [+ pl_pils_military_function_why +]
 on-arrival: {!
-PolishSecurity.concessionChoose(Q, 'military_function');
+PolishSecurity.pilsChoose(Q, 'military_function');
 !}
 go-to: result
 
 @inspectorate
-title: An independent inspectorate with freer nominations
-subtitle: Needs a relation of at least 60 and a change of the law, filed now; once in force: the coup pressure falls (−25), the relation improves (+4), Piłsudczycy dissent falls (−8) and Centrum dissent rises unless it shares this line (+8); loyalty to him grows (+0.10 at most).
-choose-if: {! return PolishSecurity.concessionStatus(Q, 'inspectorate').available !}
+title: Give Piłsudski an independent inspectorate of the army
+subtitle: Needs relations of at least 60. Piłsudski commands the army and appoints its officers without the oversight of the minister and the Sejm. The pressure towards a coup falls sharply (−25), but the Centrum of PPS protests (+8), and the near and the remote reserve grow more loyal to him (+5 percentage points each). [? if pl_pils_inspectorate_coalition : [+ pl_pils_inspectorate_coalition +] ?]
+choose-if: {! return PolishSecurity.pilsOptionStatus(Q, 'inspectorate').available !}
 unavailable-subtitle: [+ pl_pils_inspectorate_why +]
 on-arrival: {!
-PolishSecurity.concessionChoose(Q, 'inspectorate');
+PolishSecurity.pilsChoose(Q, 'inspectorate');
 !}
 go-to: result
 
-@pils_premier
-title: Piłsudski as prime minister of a legal cabinet
-subtitle: Needs a relation of at least 65; he becomes a candidate of the next formation of a cabinet. After his real appointment: the coup pressure falls (−20), the relation improves (+4) and Piłsudczycy dissent falls (−5).
-choose-if: {! return PolishSecurity.concessionStatus(Q, 'pils_premier').available !}
-unavailable-subtitle: [+ pl_pils_pils_premier_why +]
+@status_quo
+title: Keep the present order in the army
+subtitle: Costs nothing. The Centrum of PPS is content (−3), but Piłsudski feels passed over and relations with him worsen (−3).
+choose-if: {! return PolishSecurity.pilsOptionStatus(Q, 'status_quo').available !}
+unavailable-subtitle: [+ pl_pils_status_quo_why +]
 on-arrival: {!
-PolishSecurity.concessionChoose(Q, 'pils_premier');
-!}
-go-to: result
-
-@refuse
-title: Refuse concessions and offer a civilian cabinet
-subtitle: No free relief of pressure; the first new civil obligation fulfilled may lower it once.
-choose-if: {! return PolishSecurity.concessionStatus(Q, 'refuse').available !}
-unavailable-subtitle: [+ pl_pils_refuse_why +]
-on-arrival: {!
-PolishSecurity.concessionChoose(Q, 'refuse');
+PolishSecurity.pilsChoose(Q, 'status_quo');
 !}
 go-to: result
 
 @result
 new-page: true
 
-= Agreement with Piłsudski
+= Piłsudski and the army
 
 [+ pl_pils_result +]
 

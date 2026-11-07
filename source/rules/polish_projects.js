@@ -1194,6 +1194,57 @@
     return result(Q, launchPrepared(Q, project, {vote: via === 'parliament'}) + costText);
   }
 
+  // ---- The card Sprawy wojskowe (Z — 1.02, the user's decisions of 7 XI 2026; P: the numbers are game values) ----------
+
+  // As the Military Policy of the German original: more money for the army, a cut, and the promotion of officers loyal to the
+  // government in the group most loyal to Piłsudski. Each takes effect at once; the card rests three months after its use.
+  const ARMY_SPENDING = Object.freeze({price: 2, pressure: -5, lewica: 5});
+  const ARMY_CUT = Object.freeze({pool: 2, pressure: 5});
+  const PROMOTION = Object.freeze({price: 1, loyalty: 0.10, relation: -10, pilsudczycy: 8});
+
+  function militaryOptionStatus(Q, option) {
+    const S = Q.S, security = securityModule();
+    if (!security || !S.security || !S.security.forces.length || !S.coup) return no(L('Needs the forces of the state of stage 7.', 'Wymaga sił państwa z etapu 7.'));
+    if (option === 'raise_spending') return affordStatus(Q, ARMY_SPENDING.price);
+    if (option === 'cut_spending') return OK;
+    if (option === 'promote_officers') {
+      if (!security.promotionTarget(S)) return no(L('No group of the army leans towards Piłsudski any more.', 'Żadne zgrupowanie wojska nie sprzyja już Piłsudskiemu.'));
+      return affordStatus(Q, PROMOTION.price);
+    }
+    return no(L('Unknown option.', 'Nieznana opcja.'));
+  }
+
+  function militaryChoose(Q, option) {
+    const S = Q.S, t = Q.time, pol = politicsModule(), security = securityModule(), id = 'army_' + option + ':t' + t;
+    if (option === 'raise_spending') {
+      economy.changePool(S, -ARMY_SPENDING.price, t, id, 'More money for the army', 'Więcej pieniędzy dla wojska');
+      pol.applyImpulse(Q, id, ARMY_SPENDING.pressure, 'army_spending');
+      government.factionReaction(Q, 'lewica', {dissent: ARMY_SPENDING.lewica}, {id: id, kind: 'cabinet_policy', reverse: null});
+      return result(Q, L('The army gets more money; it costs ' + unitsText(ARMY_SPENDING.price) + '. The officers are content and the pressure towards a coup falls (−' +
+        Math.abs(ARMY_SPENDING.pressure) + '), but the Left of PPS protests (+' + ARMY_SPENDING.lewica + ').', 'Wojsko dostaje więcej pieniędzy; kosztuje to ' +
+        unitsText(ARMY_SPENDING.price) + '. Oficerowie są zadowoleni i presja na zamach spada (−' + Math.abs(ARMY_SPENDING.pressure) + '), ale Lewica PPS ' +
+        'protestuje (+' + ARMY_SPENDING.lewica + ').'));
+    }
+    if (option === 'cut_spending') {
+      economy.changePool(S, ARMY_CUT.pool, t, id, 'Cuts in the army', 'Cięcia w wojsku');
+      pol.applyImpulse(Q, id, ARMY_CUT.pressure, 'army_spending');
+      return result(Q, L('The army gets less money; the budget gains ' + num(ARMY_CUT.pool) + ' units at once. The officers are indignant and the pressure towards a coup rises (+' +
+        ARMY_CUT.pressure + ').', 'Wojsko dostaje mniej pieniędzy; budżet od razu zyskuje ' + num(ARMY_CUT.pool) + ' jednostki. Oficerowie są oburzeni, a presja na ' +
+        'zamach rośnie (+' + ARMY_CUT.pressure + ').'));
+    }
+    const force = security.promotionTarget(S);
+    economy.changePool(S, -PROMOTION.price, t, id, 'Promotions of officers loyal to the government', 'Awanse oficerów wiernych rządowi');
+    const moved = security.promoteOfficers(Q, force, PROMOTION.loyalty);
+    government.changeRelation(Q, 'pilsudski', PROMOTION.relation, id);
+    government.factionReaction(Q, 'pilsudczycy', {dissent: PROMOTION.pilsudczycy}, {id: id, kind: 'cabinet_policy', reverse: null});
+    const name = security.forceName(force.id);
+    return result(Q, L('Officers loyal to the government are promoted; it costs ' + unitsText(PROMOTION.price) + '. In ' + name + ' the loyalty to Piłsudski falls (−' +
+      Math.round(100 * moved) + ' pp). Relations with Piłsudski worsen (−' + Math.abs(PROMOTION.relation) + ') and the Piłsudczycy of PPS protest (+' +
+      PROMOTION.pilsudczycy + ').', 'Awansują oficerowie wierni rządowi; kosztuje to ' + unitsText(PROMOTION.price) + '. W zgrupowaniu „' + name + '” lojalność wobec Piłsudskiego spada (−' +
+      Math.round(100 * moved) + ' pkt proc.). Stosunki z Piłsudskim się psują (−' + Math.abs(PROMOTION.relation) + '), a piłsudczycy w PPS protestują (+' +
+      PROMOTION.pilsudczycy + ').'));
+  }
+
   // The last law of a project failed and the project is prepared again (12.2): its variant can be changed (Z — 0.57).
   function lawFailed(project) {
     const last = project.history.filter(h => h.kind === 'prepared' || String(h.kind).indexOf('law_') === 0).slice(-1)[0];
@@ -3499,7 +3550,8 @@
     internal_security: {portfolios: ['interior'], options: ['training', 'prosecute', 'protect']},
     minorities_kresy: {portfolios: ['interior'], options: ['official_languages', 'self_government', 'border']},
     civil_liberties: {portfolios: ['interior'], options: ['press_freedom', 'assembly', 'squads']},
-    military_policy: {portfolios: ['reichswehr'], options: ['civilian_oversight', 'personnel_changes', 'organizational_compromise']},
+    // Z — 1.02 (the user's decisions of 7 XI 2026, as the German Military Policy): three permanent options.
+    military_policy: {portfolios: ['reichswehr'], options: ['raise_spending', 'cut_spending', 'promote_officers']},
     // Z — 0.97: the card Culture and Science instead of “Wawel or the Royal Castle” — the restoration of Wawel and then of the
     // Royal Castle, the support of the universities and the public radio.
     heritage_restoration: {portfolios: ['education'], options: ['heritage', 'science', 'radio']},
@@ -3831,7 +3883,7 @@
       case 'internal_security': return securityOptionStatus(Q, option);
       case 'minorities_kresy': return kresyOptionStatus(Q, option);
       case 'civil_liberties': return libertiesOptionStatus(Q, option);
-      case 'military_policy': return armyOptionStatus(Q, option);
+      case 'military_policy': return militaryOptionStatus(Q, option);
       case 'heritage_restoration': {
         if (option === 'science') {
           const prepared = projectsOf(S, 'science', p => preparedProject(p))[0] || null;
@@ -4011,7 +4063,7 @@
       rules.commitMainAction(Q, actionId(cardId, option), {card: cardId, option: option});
       if (cardId === 'minorities_kresy') return kresyChoose(Q, option);
       if (cardId === 'civil_liberties') return libertiesChoose(Q, option);
-      return cardId === 'internal_security' ? securityChoose(Q, option) : armyChoose(Q, option);
+      return cardId === 'internal_security' ? securityChoose(Q, option) : militaryChoose(Q, option);
     }
     if (cardId === 'customs_war') {
       S.history.actions.push({t: t, action_id: actionId(cardId, option), cost_t: 0});
@@ -4281,6 +4333,8 @@
     }
     if (cardId === 'minorities_kresy' && S.politics) Q.pl_gc_minorities = String(Math.round(politicsModule().grievanceOf(S, cell => cell.identity_id !== 'polish')));
     if (cardId === 'civil_liberties' && S.politics) Q.pl_gc_violence = String(Math.round(S.politics.violence));
+    // Z — 1.02: the card Sprawy wojskowe names the pressure towards a coup.
+    if (cardId === 'military_policy' && S.coup) Q.pl_gc_coup_pressure = String(Math.round(S.coup.pressure));
     if (cardId === 'justice_policy' && S.politics) Q.pl_gc_democracy = String(Math.round(S.politics.democracy));
     if (cardId === 'labor_rights' && unions && S.unions) Q.pl_gc_collective_branch = unions.branchName(unions.collectiveTarget(Q) || 'industry').toLowerCase();
     Q.pl_gc_plants = unions && S.enterprises && (cardId === 'labor_rights' || cardId === 'industrial_policy') ? unions.plantsLine(S) : '';
@@ -4703,6 +4757,10 @@
   rules.registerUrgentCard('polish_initiative_vote', {deck: () => 'main.parliament', active: initiativeVoteActive});
 
   return Object.freeze({
+    // Z — 1.02: a change of the budget pool for the other rules modules (the Piłsudski card of PolishSecurity).
+    poolChange: (Q, delta, id, en, pl) => economy.changePool(Q.S, delta, Q.time, id, en, pl),
+    poolLine: Q => L('Budget: ', 'Budżet: ') + economy.poolText(Q.S.economy.budget) + '.',
+    militaryOptionStatus: militaryOptionStatus,
     migratePool: migratePool,
     affordStatus: affordStatus,
     payPrice: payPrice,

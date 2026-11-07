@@ -1,13 +1,12 @@
 title: Military Affairs
-subtitle: Civilian control of the army: oversight, lawful changes of personnel, or a limited reform.
+subtitle: The army: more money, cuts, or the promotion of officers loyal to the government.
 new-page: true
 is-card: true
 tags: govt_affairs
 view-if: {! return !!Q.S && !!Q.polish_security_rules && PolishProjects.cardAvailable(Q, 'military_policy') !}
 on-arrival: {!
-// Card government.military_policy (technical reference 16.3, 17.12.4; card catalogue 8.14): one project of civilian
-// control for the one synthetic post over the near reserve. Preparing it costs this month's action, its launch in
-// the agenda another; its effects come once per scope of the reform.
+// Card government.military_policy (Z — 1.02, the user's decisions of 7 XI 2026; card catalogue 8.14): three permanent options, as
+// the Military Policy of the German original; each takes effect at once and pays from the budget pool (technical reference 11.2).
 PolishProjects.cardView(Q, 'military_policy');
 // Z — 0.66 (decision 2A): the ministry of this card, on its page and as a badge in the hand.
 Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_military');
@@ -17,45 +16,43 @@ Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_military');
 
 *[+ pl_gc_ministry +]*
 
-The post gives oversight of one group of the army. A compromise that gives Piłsudski personal powers goes through the agreement with him, not through this card.
+The army answers to the minister of military affairs, but many officers listen above all to Piłsudski. The pressure towards a coup stands at [+ pl_gc_coup_pressure +] of 100; the loyalty of the army groups to Piłsudski is shown on the State tab.
 
 [+ pl_gc_budget +]
 
-[+ pl_gc_projects +]
-
-- @civilian_oversight
-- @personnel_changes
-- @organizational_compromise
+- @raise_spending
+- @cut_spending
+- @promote_officers
 - @easy_discard
 - @cancel_advisor_action
 
-@civilian_oversight
-title: Introduce full civilian oversight
-subtitle: Full civilian oversight (+2 on the army scale from −2 to +2) costs 1 budget unit; the group grows more loyal to the legal authorities (+0.05). [? if pl_military_policy_civilian_oversight_coalition : [+ pl_military_policy_civilian_oversight_coalition +] ?]
-choose-if: {! return PolishProjects.optionStatus(Q, 'military_policy', 'civilian_oversight').available !}
-unavailable-subtitle: [+ pl_military_policy_civilian_oversight_why +]
+@raise_spending
+title: Raise the spending on the army
+subtitle: Costs 2 budget units. The officers are content and the pressure towards a coup falls (−5), but the dissent of the Left of PPS rises (+5).
+choose-if: {! return PolishProjects.optionStatus(Q, 'military_policy', 'raise_spending').available !}
+unavailable-subtitle: [+ pl_military_policy_raise_spending_why +]
 on-arrival: {!
-PolishProjects.chooseOption(Q, 'military_policy', 'civilian_oversight');
+PolishProjects.chooseOption(Q, 'military_policy', 'raise_spending');
 !}
 go-to: result
 
-@personnel_changes
-title: Make lawful changes of personnel
-subtitle: The same project with a named nomination: the group grows more loyal to the legal authorities (+0.05), its readiness falls for two months (−0.05), and a real conflict raises the pressure.
-choose-if: {! return PolishProjects.optionStatus(Q, 'military_policy', 'personnel_changes').available !}
-unavailable-subtitle: [+ pl_military_policy_personnel_changes_why +]
+@cut_spending
+title: Cut the spending on the army
+subtitle: Brings the budget 2 units at once. The officers are indignant and the pressure towards a coup rises (+5).
+choose-if: {! return PolishProjects.optionStatus(Q, 'military_policy', 'cut_spending').available !}
+unavailable-subtitle: [+ pl_military_policy_cut_spending_why +]
 on-arrival: {!
-PolishProjects.chooseOption(Q, 'military_policy', 'personnel_changes');
+PolishProjects.chooseOption(Q, 'military_policy', 'cut_spending');
 !}
 go-to: result
 
-@organizational_compromise
-title: Agree an organisational compromise limiting the reform
-subtitle: A limited reform (the middle of the army scale) costs 1 budget unit; the group grows a little more loyal to the legal authorities (+0.025).
-choose-if: {! return PolishProjects.optionStatus(Q, 'military_policy', 'organizational_compromise').available !}
-unavailable-subtitle: [+ pl_military_policy_organizational_compromise_why +]
+@promote_officers
+title: Promote officers loyal to the government
+subtitle: Costs 1 budget unit. The group most loyal to Piłsudski leans less towards him (−10 percentage points), but relations with Piłsudski worsen (−10) and the Piłsudczycy in PPS protest (+8).
+choose-if: {! return PolishProjects.optionStatus(Q, 'military_policy', 'promote_officers').available !}
+unavailable-subtitle: [+ pl_military_policy_promote_officers_why +]
 on-arrival: {!
-PolishProjects.chooseOption(Q, 'military_policy', 'organizational_compromise');
+PolishProjects.chooseOption(Q, 'military_policy', 'promote_officers');
 !}
 go-to: result
 
