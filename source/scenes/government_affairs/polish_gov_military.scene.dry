@@ -31,7 +31,7 @@ The post gives oversight of one group of the army. A compromise that gives Piłs
 
 @civilian_oversight
 title: Introduce full civilian oversight
-subtitle: A law of full civilian oversight (+2 on the army scale from −2 to +2), then costs the budget 1 unit a month for three months; after it the group grows more loyal to the legal authorities (+0.05). [+ pl_military_policy_civilian_oversight_coalition +]
+subtitle: A law of full civilian oversight (+2 on the army scale from −2 to +2), then costs the budget 1 unit a month for three months; after it the group grows more loyal to the legal authorities (+0.05). [? if pl_military_policy_civilian_oversight_coalition : [+ pl_military_policy_civilian_oversight_coalition +] ?]
 choose-if: {! return PolishProjects.optionStatus(Q, 'military_policy', 'civilian_oversight').available !}
 unavailable-subtitle: [+ pl_military_policy_civilian_oversight_why +]
 on-arrival: {!

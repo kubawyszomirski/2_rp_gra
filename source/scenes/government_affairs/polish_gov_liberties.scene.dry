@@ -1,0 +1,69 @@
+title: Civil Liberties
+subtitle: The Interior: the press, rallies and the party squads.
+new-page: true
+is-card: true
+tags: govt_affairs
+view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'civil_liberties') !}
+on-arrival: {!
+// Card government.civil_liberties. Opening and closing the card are free; a confirmed option costs this month's action.
+// Z — 0.99 (the sketch and the user's decisions of 7 XI 2026, 1A): the confiscations stop for a year; the squads of the far
+// right and the communists are dissolved, the PPS Militia stays; one gain and one cost each.
+PolishProjects.cardView(Q, 'civil_liberties');
+// Z — 0.66 (decision 2A): the ministry of this card, on its page and as a badge in the hand.
+Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_liberties');
+!}
+
+= Civil liberties
+
+*[+ pl_gc_ministry +]*
+
+The constitution guarantees the freedom of the press and of assembly, but the administration confiscates newspapers and party squads fight in the streets. Political violence stands at [+ pl_gc_violence +] of 100.
+
+[+ pl_gc_budget +]
+
+[+ pl_gc_projects +]
+
+- @press_freedom
+- @assembly
+- @squads
+- @easy_discard
+- @cancel_advisor_action
+
+@press_freedom
+title: Limit the confiscation of the press
+subtitle: Needs a law. For a year the authorities confiscate no paper of PPS, even under a government of the right, and democracy grows stronger (+1). [? if pl_civil_liberties_press_freedom_coalition : [+ pl_civil_liberties_press_freedom_coalition +] ?]
+choose-if: {! return PolishProjects.optionStatus(Q, 'civil_liberties', 'press_freedom').available !}
+unavailable-subtitle: [+ pl_civil_liberties_press_freedom_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'civil_liberties', 'press_freedom');
+!}
+go-to: result
+
+@assembly
+title: Make rallies and marches easier
+subtitle: No cost to the budget. The campaigns of PPS work better (+10%), but clashes in the streets become more frequent (+3). [? if pl_civil_liberties_assembly_coalition : [+ pl_civil_liberties_assembly_coalition +] ?]
+choose-if: {! return PolishProjects.optionStatus(Q, 'civil_liberties', 'assembly').available !}
+unavailable-subtitle: [+ pl_civil_liberties_assembly_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'civil_liberties', 'assembly');
+!}
+go-to: result
+
+@squads
+title: Dissolve the squads of the far right and the communists
+subtitle: No cost to the budget. Political violence falls (−10), but our relations with the National Democrats (−5) and the communists (−10) worsen; the PPS Militia stays.
+choose-if: {! return PolishProjects.optionStatus(Q, 'civil_liberties', 'squads').available !}
+unavailable-subtitle: [+ pl_civil_liberties_squads_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'civil_liberties', 'squads');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= Civil liberties
+
+[+ pl_gc_result +]
+
+- @root: Continue.

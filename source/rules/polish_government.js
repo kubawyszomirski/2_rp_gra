@@ -3137,7 +3137,11 @@
     'finance_package.indirect': {topic: 'fiscal', position: -1}, 'currency_stabilisation.rapid_cuts': {topic: 'fiscal', position: -1},
     'currency_stabilisation.protected': {topic: 'fiscal', position: 1}, 'land_program.accelerated': {topic: 'land', position: 1},
     'education_program.secular': {topic: 'church', position: 1}, 'minority_school_rights.own_language': {topic: 'autonomy', position: 1},
-    'minority_school_rights.polish_dominance': {topic: 'autonomy', position: -2}, 'internal_security.limited_autonomy': {topic: 'autonomy', position: 1},
+    'minority_school_rights.polish_dominance': {topic: 'autonomy', position: -2},
+    // Z — 0.99: the cards „Kresy i mniejszości” and „Wolności obywatelskie” of the Interior.
+    'minorities_kresy.official_languages': {topic: 'autonomy', position: 1}, 'minorities_kresy.self_government': {topic: 'autonomy', position: 1},
+    'minorities_kresy.border': {topic: 'autonomy', position: -1}, 'civil_liberties.press_freedom': {topic: 'institution', position: 1},
+    'civil_liberties.assembly': {topic: 'institution', position: 1},
     'military_policy.civilian_oversight': {topic: 'army', position: 2}, 'justice_policy.broad_safeguards': {topic: 'institution', position: 2},
   });
   const OBJECTION_STEP = 20, OBJECTION_MAX = 40;

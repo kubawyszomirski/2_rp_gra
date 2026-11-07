@@ -12,6 +12,6 @@
   "subtitle: Costs 1 budget unit a month while the courses run. After four months the workers trust PPS more (+4).": "subtitle: Kosztuje 1 jednostkę budżetu miesięcznie, dopóki kursy działają. Po czterech miesiącach robotnicy bardziej ufają PPS (+4).",
   "title: Introduce the secular school": "title: Wprowadź szkołę świecką",
   "- @root: Continue.": "- @root: Dalej.",
-  "subtitle: Needs a law and costs 1 budget unit a month. Workers and the intelligentsia trust PPS more (+4), but the Christian Democrats and the Church protest, and our relations with the Christian Democrats worsen (−8). [+ pl_education_program_secular_coalition +]": "subtitle: Wymaga ustawy i kosztuje 1 jednostkę budżetu miesięcznie. Robotnicy i inteligencja bardziej ufają PPS (+4), ale chadecja i Kościół protestują, a nasze stosunki z chadecją się pogarszają (−8). [+ pl_education_program_secular_coalition +]"
+  "subtitle: Needs a law and costs 1 budget unit a month. Workers and the intelligentsia trust PPS more (+4), but the Christian Democrats and the Church protest, and our relations with the Christian Democrats worsen (−8). [? if pl_education_program_secular_coalition : [+ pl_education_program_secular_coalition +] ?]": "subtitle: Wymaga ustawy i kosztuje 1 jednostkę budżetu miesięcznie. Robotnicy i inteligencja bardziej ufają PPS (+4), ale chadecja i Kościół protestują, a nasze stosunki z chadecją się pogarszają (−8). [? if pl_education_program_secular_coalition : [+ pl_education_program_secular_coalition +] ?]"
  }
 }

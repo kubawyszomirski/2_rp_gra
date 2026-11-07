@@ -2,19 +2,16 @@
  "source": "scenes/government_affairs/polish_gov_interior.scene.dry",
  "status": "complete",
  "lines": {
-  "title: Police and Internal Security": "title: Policja i bezpieczeństwo wewnętrzne",
-  "= Police and internal security": "= Policja i bezpieczeństwo wewnętrzne",
-  "title: Professionalise the police and subordinate it to lawful authorities": "title: Sprofesjonalizuj policję i podporządkuj ją legalnym władzom",
-  "subtitle: Costs the budget 1 unit a month for three months; then command and lawful compliance improve (+10, once in the chapter).": "subtitle: Obciąża budżet: 1 jednostka miesięcznie przez trzy miesiące; potem poprawia się dowodzenie i praworządność (+10, raz w rozdziale).",
-  "title: Investigate the named violence of the far right": "title: Zbadaj wymienioną przemoc skrajnej prawicy",
-  "subtitle: Costs the budget 1 unit for one month; needs a recorded case. A confirmed investigation assigns the case to a party.": "subtitle: Obciąża budżet: 1 jednostka przez jeden miesiąc; wymaga znanej sprawy. Potwierdzone śledztwo przypisuje sprawę partii.",
-  "title: Investigate the named violence of the communists": "title: Zbadaj wymienioną przemoc komunistów",
-  "title: Protect a named gathering or institution": "title: Chroń wymienione zgromadzenie albo instytucję",
-  "subtitle: Costs the budget 1 unit for one month; the protection in this case grows this month (+10 times its execution).": "subtitle: Obciąża budżet: 1 jednostka przez jeden miesiąc; zdolność ochrony w tej sprawie rośnie w tym miesiącu (+10 razy stopień wykonania).",
-  "- @root: Continue.": "- @root: Dalej.",
-  "subtitle: The Interior: the police, the investigation of named violence, protection, and the act of 1922 on the voivodeship self-government.": "subtitle: Resort Spraw Wewnętrznych: policja, śledztwo w sprawie wymienionej przemocy, ochrona i ustawa z 1922 roku o samorządzie wojewódzkim.",
-  "An investigation concerns a known case; it does not by itself prove anyone's guilt. The execution of the act of 26 IX 1922 gives the voivodeships of Lwów, Stanisławów and Tarnopol their diets with a Polish and a Ruthenian chamber, schools in the language of the chamber and a Ruthenian university.": "Śledztwo dotyczy konkretnej, znanej sprawy i samo nie przesądza o niczyjej winie. Wykonanie ustawy z 26 IX 1922 daje województwom lwowskiemu, stanisławowskiemu i tarnopolskiemu sejmiki z izbą polską i ruską, szkoły w języku izby i uniwersytet ruski.",
-  "title: Carry out the act on the voivodeship self-government": "title: Wykonaj ustawę o samorządzie wojewódzkim",
-  "subtitle: Needs an agreed point with the representation of the other minorities; its law goes to the Sejm now, then it costs the budget 1 unit a month for three months. [+ pl_internal_security_limited_autonomy_coalition +]": "subtitle: Wymaga uzgodnionego punktu z reprezentacją pozostałych mniejszości; ustawa trafia do Sejmu od razu, potem obciąża budżet: 1 jednostka miesięcznie przez trzy miesiące. [+ pl_internal_security_limited_autonomy_coalition +]"
+  "title: Police": "title: Policja",
+  "subtitle: The Interior: training, the pursuit of political violence, the protection of rallies and strikes.": "subtitle: Resort Spraw Wewnętrznych: szkolenie, ściganie przemocy politycznej, ochrona wieców i strajków.",
+  "= Police": "= Policja",
+  "The state police answer to the minister of the interior, but many commanders still remember the old order. The command of the police stands at [+ pl_gc_police_command +] and its lawfulness at [+ pl_gc_police_lawful +] of 100.": "Policja państwowa podlega ministrowi spraw wewnętrznych, ale wielu komendantów pamięta jeszcze dawne porządki. Dowodzenie policji wynosi teraz [+ pl_gc_police_command +], a jej praworządność [+ pl_gc_police_lawful +] na 100.",
+  "title: Train the police": "title: Wyszkol policję",
+  "subtitle: Costs 1 budget unit a month for three months. Then the command and the lawfulness of the police rise (+5); the training can be repeated.": "subtitle: Kosztuje 1 jednostkę budżetu miesięcznie przez trzy miesiące. Potem dowodzenie i praworządność policji rosną (+5); szkolenie można powtarzać.",
+  "title: Pursue the perpetrators of political violence": "title: Ścigaj sprawców przemocy politycznej",
+  "subtitle: Costs 1 budget unit a month for two months. Political violence falls (−5), but the National Democrats and the communists resent the pursuit of their people (−3).": "subtitle: Kosztuje 1 jednostkę budżetu miesięcznie przez dwa miesiące. Przemoc polityczna spada (−5), ale endecja i komuniści oburzają się na ściganie swoich ludzi (−3).",
+  "title: Protect rallies and strikes": "title: Chroń wiece i strajki",
+  "subtitle: No cost to the budget. For half a year the police guard lawful rallies and strikes, even if PPS loses the ministry, so there are fewer clashes; business presses harder on the cabinet (+3).": "subtitle: Bez kosztu dla budżetu. Przez pół roku policja pilnuje legalnych wieców i strajków, nawet gdyby PPS straciła resort, więc starć jest mniej, ale przedsiębiorcy mocniej naciskają na rząd (+3).",
+  "- @root: Continue.": "- @root: Dalej."
  }
 }

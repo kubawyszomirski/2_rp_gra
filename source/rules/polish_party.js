@@ -1642,12 +1642,13 @@
     const pressFactor = kind === 'unions' ? 1 : 0.5 + 0.5 * pressEffective(S).credibility / 100;
     const factor = kind === 'polemic' ? 1 : strategyFactor(Q, topic);
     const press = kind === 'unions' ? 1 : activeEffect(S, 'press_campaign_multiplier', t);
+    const assembly = S.politics && S.politics.assembly_freedom ? ASSEMBLY_CAMPAIGN : 1;
     const before = electorate.aggregate(S, filter, 'pps');
     let moved = 0;
     for (const cell of cells) {
       const workers = cell.class_id === 'workers' ? activeEffect(S, 'workers_campaign_multiplier', t) : 1;
       const programme = served && served(cell) ? PROGRAMME_CAMPAIGN_FACTOR : 1;
-      const gain = electorate.campaignGain(cell, cellReach(S, cell, kind), Q.dissent || 0, key, t) * pressFactor * factor * press * workers * programme;
+      const gain = electorate.campaignGain(cell, cellReach(S, cell, kind), Q.dissent || 0, key, t) * pressFactor * factor * press * workers * programme * assembly;
       moved += cell.mass * electorate.gainForPps(cell, gain, parties, sources);
       electorate.recordCampaign(cell, key, t);
     }
@@ -1727,6 +1728,14 @@
   const PRESS_GROUP_NAMES = Object.freeze({workers: ['workers', 'robotników'], unemployed: ['the unemployed', 'bezrobotnych'],
     new_middle: ['the intelligentsia', 'inteligencji'], old_middle: ['the petty bourgeoisie', 'drobnomieszczaństwa']});
 
+  // Z — 0.99 (the card „Wolności obywatelskie”): the law limiting the confiscation of the press protects our papers for a year.
+  function noConfiscation(S, t) {
+    const press = S.party_orgs && S.party_orgs.press;
+    return !!press && press.no_confiscation_until !== undefined && press.no_confiscation_until !== null && press.no_confiscation_until > t;
+  }
+  // Z — 0.99: easier rallies and marches make every campaign of PPS work better (×1.10).
+  const ASSEMBLY_CAMPAIGN = 1.10;
+
   function changePressCredibility(S, delta) {
     const press = S.party_orgs.press;
     press.credibility = clip(press.credibility + delta, 0, 100);
@@ -1747,7 +1756,7 @@
   // investigation can reveal it.
   function maybeConfiscate(Q, cause) {
     const S = Q.S, t = Q.time;
-    if (!rightGovernment(S)) return '';
+    if (!rightGovernment(S) || noConfiscation(S, t)) return '';
     if (rules.roll(S, 'press_confiscation:' + cause + ':t' + t) >= CONFISCATION_CHANCE) return '';
     addPressRestriction(Q, {id: 'confiscation:t' + t, event_id: cause, reach_penalty: CONFISCATION_REACH, expires_at: t + CONFISCATION_MONTHS});
     const r = S.party_orgs.press.restrictions.find(x => x.id === 'confiscation:t' + t);
@@ -2081,7 +2090,7 @@
       (popular && effective.reach >= PRESS_SALES_REACH ? L(' Its sales bring a tenth of a unit of money a month.', ' Sprzedaż przynosi jedną dziesiątą jednostki środków miesięcznie.') : '') +
       (active.length ? L(' An issue is confiscated until ' + rules.monthOf(active[0].expires_at) + '/' + rules.yearOf(active[0].expires_at) + '.',
         ' Numer jest skonfiskowany do ' + rules.monthYear(active[0].expires_at, 'gen') + '.') : '');
-    const risk = rightGovernment(S) ? L(' The government of the right may confiscate the issue.', ' Rząd prawicy może skonfiskować numer.') : '';
+    const risk = rightGovernment(S) && !noConfiscation(S, Q.time) ? L(' The government of the right may confiscate the issue.', ' Rząd prawicy może skonfiskować numer.') : '';
     Q.pl_press_campaign_effect = L('One unit of the party\'s money. ', 'Jedna jednostka środków. ') + pressCampaignPreview(Q) + risk;
     Q.pl_press_campaign_why = pressActionStatus(Q, 'campaign').reason;
     Q.pl_press_reportage_why = pressActionStatus(Q, 'reportage').reason;

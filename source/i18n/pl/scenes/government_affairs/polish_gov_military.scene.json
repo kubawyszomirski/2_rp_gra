@@ -12,6 +12,6 @@
   "title: Introduce full civilian oversight": "title: Wprowadź pełny nadzór cywilny",
   "title: Make lawful changes of personnel": "title: Przeprowadź legalne zmiany personalne",
   "title: Agree an organisational compromise limiting the reform": "title: Uzgodnij kompromis organizacyjny ograniczający reformę",
-  "subtitle: A law of full civilian oversight (+2 on the army scale from −2 to +2), then costs the budget 1 unit a month for three months; after it the group grows more loyal to the legal authorities (+0.05). [+ pl_military_policy_civilian_oversight_coalition +]": "subtitle: Ustawa o pełnym nadzorze cywilnym (+2 na skali spraw wojska od −2 do +2), potem obciąża budżet: 1 jednostka miesięcznie przez trzy miesiące; następnie zgrupowanie staje się bardziej lojalne wobec legalnych władz (+0,05). [+ pl_military_policy_civilian_oversight_coalition +]"
+  "subtitle: A law of full civilian oversight (+2 on the army scale from −2 to +2), then costs the budget 1 unit a month for three months; after it the group grows more loyal to the legal authorities (+0.05). [? if pl_military_policy_civilian_oversight_coalition : [+ pl_military_policy_civilian_oversight_coalition +] ?]": "subtitle: Ustawa o pełnym nadzorze cywilnym (+2 na skali spraw wojska od −2 do +2), potem obciąża budżet: 1 jednostka miesięcznie przez trzy miesiące; następnie zgrupowanie staje się bardziej lojalne wobec legalnych władz (+0,05). [? if pl_military_policy_civilian_oversight_coalition : [+ pl_military_policy_civilian_oversight_coalition +] ?]"
  }
 }

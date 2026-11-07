@@ -1,0 +1,69 @@
+title: The Borderlands and the Minorities
+subtitle: The Interior: minority languages in the offices, the voivodeship self-government, the eastern border.
+new-page: true
+is-card: true
+tags: govt_affairs
+view-if: {! return !!Q.S && PolishProjects.cardAvailable(Q, 'minorities_kresy') !}
+on-arrival: {!
+// Card government.minorities_kresy (technical reference 17.12.6). Opening and closing the card are free; a confirmed option
+// costs this month's action. Z — 0.99 (the sketch and the user's decisions of 7 XI 2026, 2B and 3A): the self-government needs no
+// promise to the minorities; one gain and one cost each.
+PolishProjects.cardView(Q, 'minorities_kresy');
+// Z — 0.66 (decision 2A): the ministry of this card, on its page and as a badge in the hand.
+Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_kresy');
+!}
+
+= The Borderlands and the minorities
+
+*[+ pl_gc_ministry +]*
+
+The minorities in the east want to deal with the offices in their own language and to govern themselves, and the eastern border has to be guarded. The discontent of the minorities stands at [+ pl_gc_minorities +] of 100.
+
+[+ pl_gc_budget +]
+
+[+ pl_gc_projects +]
+
+- @official_languages
+- @self_government
+- @border
+- @easy_discard
+- @cancel_advisor_action
+
+@official_languages
+title: Introduce minority languages in the offices
+subtitle: Needs a law and costs 1 budget unit a month. The minorities trust PPS more (+3), but the National Democrats protest (−5). [? if pl_minorities_kresy_official_languages_coalition : [+ pl_minorities_kresy_official_languages_coalition +] ?]
+choose-if: {! return PolishProjects.optionStatus(Q, 'minorities_kresy', 'official_languages').available !}
+unavailable-subtitle: [+ pl_minorities_kresy_official_languages_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'minorities_kresy', 'official_languages');
+!}
+go-to: result
+
+@self_government
+title: Carry out the act on the voivodeship self-government
+subtitle: Needs a law and costs 1 budget unit a month for three months. The discontent of the minorities of the area falls (−3), but the National Democrats protest (−5). [? if pl_minorities_kresy_self_government_coalition : [+ pl_minorities_kresy_self_government_coalition +] ?]
+choose-if: {! return PolishProjects.optionStatus(Q, 'minorities_kresy', 'self_government').available !}
+unavailable-subtitle: [+ pl_minorities_kresy_self_government_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'minorities_kresy', 'self_government');
+!}
+go-to: result
+
+@border
+title: Strengthen the protection of the eastern border
+subtitle: Costs 2 budget units a month for three months. Political violence falls (−3), but the minorities trust PPS less (−3). [? if pl_minorities_kresy_border_coalition : [+ pl_minorities_kresy_border_coalition +] ?]
+choose-if: {! return PolishProjects.optionStatus(Q, 'minorities_kresy', 'border').available !}
+unavailable-subtitle: [+ pl_minorities_kresy_border_why +]
+on-arrival: {!
+PolishProjects.chooseOption(Q, 'minorities_kresy', 'border');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= The Borderlands and the minorities
+
+[+ pl_gc_result +]
+
+- @root: Continue.

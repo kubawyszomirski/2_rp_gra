@@ -170,15 +170,30 @@
     // and PolishPolitics.
     police_professionalization: {name: 'Professionalisation of the police', card: 'internal_security', portfolios: ['interior'], klass: 'small',
       investment: false, beneficiaries: [], law: null, variants: {professionalization: {build: 1, upkeep: 0, duration: 3}}},
+    // Z — 0.99 (the sketch of 7 XI 2026): the pursuit of political violence (two months) also settles the latest recorded case.
     police_investigation: {name: 'Investigation of a named case', card: 'internal_security', portfolios: ['interior'], klass: 'small',
-      investment: false, beneficiaries: [], law: null, variants: {far_right: {build: 1, upkeep: 0, duration: 1}, communist: {build: 1, upkeep: 0, duration: 1}}},
+      investment: false, beneficiaries: [], law: null, variants: {far_right: {build: 1, upkeep: 0, duration: 1}, communist: {build: 1, upkeep: 0, duration: 1},
+        prosecution: {build: 1, upkeep: 0, duration: 2, violence: -5}}},
+    // Z — 0.99: a repeatable training of the police (+5 command and lawfulness each time) instead of the one professionalisation.
+    police_training: {name: 'Training of the police', card: 'internal_security', portfolios: ['interior'], klass: 'small', investment: false,
+      beneficiaries: [], law: null, variants: {training: {build: 1, upkeep: 0, duration: 3, command: 5}}},
+    // Z — 0.99: the cards „Kresy i mniejszości” and „Wolności obywatelskie” of the Interior (P: the costs and effects are simplifications).
+    official_languages: {name: 'Minority languages in the offices', card: 'minorities_kresy', portfolios: ['interior'], klass: 'large', investment: false,
+      ongoing: true, beneficiaries: ['national_minorities'], law: {title: 'Minority languages in the offices', programme: {autonomy: 1}},
+      variants: {offices: {build: 1, upkeep: 1, duration: 2, trust: 3, relations: {zln: -5}}}},
+    border_protection: {name: 'Protection of the eastern border', card: 'minorities_kresy', portfolios: ['interior'], klass: 'large', investment: false,
+      beneficiaries: ['national_minorities'], law: null, variants: {border: {build: 2, upkeep: 0, duration: 3, trust: -3, violence: -3}}},
+    press_law: {name: 'Limits on press confiscations', card: 'civil_liberties', portfolios: ['interior'], klass: 'small', investment: false,
+      beneficiaries: [], law: {title: 'Limits on the confiscation of the press', programme: {institution: 1}},
+      variants: {limits: {build: 0, upkeep: 0, duration: 1, democracy: 1, months: 12}}},
     police_protection: {name: 'Protection of a gathering or an institution', card: 'internal_security', portfolios: ['interior'], klass: 'small',
       investment: false, beneficiaries: [], law: null, variants: {protection: {build: 1, upkeep: 0, duration: 1}}},
-    limited_autonomy: {name: 'Limited administrative and cultural autonomy', card: 'internal_security', portfolios: ['interior'], klass: 'large',
+    limited_autonomy: {name: 'Limited administrative and cultural autonomy', card: 'minorities_kresy', portfolios: ['interior'], klass: 'large',
       investment: false, beneficiaries: ['other_minorities'], law: {title: 'Limited administrative and cultural autonomy', programme: {autonomy: 1}},
       // Z — 0.81: `autonomy` is the execution of the act of 26 IX 1922 on the voivodeship self-government; `regional_sejm` the
       // autonomy of Eastern Galicia with a regional diet, as in the PPS bills of 1921 and 1925 (HISTORICAL_SOURCES.md).
-      variants: {autonomy: {build: 1, upkeep: 0, duration: 3, relief: 3},
+      // Z — 0.99: the National Democrats protest when the law on the self-government takes effect (relation −5).
+      variants: {autonomy: {build: 1, upkeep: 0, duration: 3, relief: 3, relations: {zln: -5}},
         regional_sejm: {build: 1, upkeep: 0, duration: 3, relief: 6, law: {title: 'Autonomy of Eastern Galicia with a regional diet', programme: {autonomy: 2}}}}},
     army_control: {name: 'Civilian control of the army', card: 'military_policy', portfolios: ['reichswehr'], klass: 'large', investment: false,
       beneficiaries: [], law: {title: 'Civilian oversight of the army', programme: {army: 2}},
@@ -232,7 +247,8 @@
     rural_access: 'village schools', urban_worker_adult_access: 'education of the poor and adults in workers’ centres',
     secular: 'secular school with religious freedom', own_language: 'teaching in the own language', agreed_bilingual: 'agreed bilingualism',
     polish_dominance: 'dominance of the Polish language', conservation: 'limited conservation', restoration: 'wider restoration with public access',
-    universities: 'universities and research', broadcasting: 'public broadcasting',
+    universities: 'universities and research', broadcasting: 'public broadcasting', training: 'training', prosecution: 'the pursuit of political violence',
+    offices: 'minority languages in the offices', border: 'the eastern border', limits: 'limits on confiscation',
     rapid_cuts: 'rapid stabilisation with cuts', protected: 'stabilisation with protections and a burden on wealth', gradual: 'gradual limitation of emission',
     collection: 'better tax collection', democratic_guarantees: 'democratic guarantees', constructive_vonc: 'constructive vote of no confidence',
     presidential_arbitration: 'presidential arbitration', rescue: 'a conditional credit restoring its lost capacity',
@@ -263,7 +279,8 @@
     public_works: 'Roboty publiczne', credit_instrument: 'Instrument kredytowy', orders: 'Zamówienia publiczne dla przemysłu',
     land_program: 'Reforma rolna', agriculture_development: 'Modernizacja rolnictwa', education_program: 'Szkoły i oświata dorosłych',
     minority_schools: 'Prawa językowe i szkoły mniejszości', heritage: 'Odnowa zabytku', currency_reform: 'Reforma walutowa',
-    science: 'Wsparcie nauki i uniwersytetów', radio: 'Publiczne radio',
+    science: 'Wsparcie nauki i uniwersytetów', radio: 'Publiczne radio', police_training: 'Szkolenie policji',
+    official_languages: 'Języki mniejszości w urzędach', border_protection: 'Ochrona granicy wschodniej', press_law: 'Ograniczenie konfiskat prasy',
     collection: 'Lepszy pobór podatków', plant_rescue: 'Ratowanie zakładu', enterprise_representation: 'Przedstawicielstwo robotników w zakładzie',
     police_professionalization: 'Profesjonalizacja policji', police_investigation: 'Śledztwo w wymienionej sprawie',
     police_protection: 'Ochrona zgromadzenia albo instytucji', limited_autonomy: 'Ograniczona autonomia administracyjna i kulturalna',
@@ -280,7 +297,8 @@
     rural_access: 'szkoły wiejskie', urban_worker_adult_access: 'oświata ubogich i dorosłych w ośrodkach robotniczych',
     secular: 'szkoła świecka z wolnością religijną', own_language: 'nauczanie we własnym języku', agreed_bilingual: 'uzgodniona dwujęzyczność',
     polish_dominance: 'dominacja języka polskiego', conservation: 'ograniczona konserwacja', restoration: 'szersza restauracja z dostępem publicznym',
-    universities: 'uczelnie i badania', broadcasting: 'radiofonia publiczna',
+    universities: 'uczelnie i badania', broadcasting: 'radiofonia publiczna', training: 'szkolenie', prosecution: 'ściganie przemocy politycznej',
+    offices: 'języki mniejszości w urzędach', border: 'granica wschodnia', limits: 'ograniczenie konfiskat',
     rapid_cuts: 'szybka stabilizacja z cięciami', protected: 'stabilizacja z osłonami i obciążeniem majątku', gradual: 'stopniowe ograniczanie emisji',
     collection: 'lepszy pobór podatków', democratic_guarantees: 'gwarancje demokratyczne', constructive_vonc: 'konstruktywne wotum nieufności',
     presidential_arbitration: 'arbitraż prezydencki', rescue: 'warunkowy kredyt przywracający utracone moce',
@@ -339,6 +357,7 @@
   // Polish form on the screen (decision 5A). Composite titles are read back from their English parts.
   const LAW_TITLES_PL = Object.freeze({'Enforcement of working time': 'Egzekwowanie czasu pracy', 'Execution of the land reform': 'Wykonanie reformy rolnej',
     'Voluntary consolidation of land': 'Dobrowolna komasacja gruntów', 'Secular school with religious freedom': 'Szkoła świecka z wolnością religijną',
+    'Minority languages in the offices': 'Języki mniejszości w urzędach', 'Limits on the confiscation of the press': 'Ograniczenie konfiskat prasy',
     'Currency reform': 'Reforma walutowa', 'Workers’ co-decision in a public plant': 'Współdecydowanie robotników w zakładzie publicznym',
     'Limited administrative and cultural autonomy': 'Ograniczona autonomia administracyjna i kulturalna',
     'Civilian oversight of the army': 'Cywilny nadzór nad wojskiem', 'A limited reform of the command of the army': 'Ograniczona reforma dowodzenia wojskiem',
@@ -824,7 +843,20 @@
       } else if (project.type === 'police_professionalization') {
         securityModule().professionalized(Q, project, t);
       } else if (project.type === 'police_investigation') {
-        securityModule().investigated(Q, project, t);
+        if (project.policy_choices.case_id) securityModule().investigated(Q, project, t);
+        if (variant.violence) politicsModule().violenceEffect(Q, project.id + ':violence', variant.violence, 'police_prosecution');
+      } else if (project.type === 'police_training') {
+        const police = S.security && S.security.police;
+        if (police) {
+          police.command = Math.min(100, police.command + variant.command);
+          police.lawful_compliance = Math.min(100, police.lawful_compliance + variant.command);
+          S.history.reasons.push({t: t, kind: 'police_trained', project_id: project.id});
+        }
+      } else if (project.type === 'border_protection') {
+        politicsModule().violenceEffect(Q, project.id + ':violence', variant.violence, 'border_protection');
+        pend(project, {system: 'trust', stage: 5, value: variant.trust, when: 'first_effect', note: 'the minorities'});
+      } else if (project.type === 'official_languages') {
+        pend(project, {system: 'trust', stage: 5, value: variant.trust, when: 'first_effect', note: 'the minorities'});
       } else if (project.type === 'police_protection') {
         securityModule().protectionExecuted(Q, project, coverage, t);
       } else if (project.type === 'army_control') {
@@ -917,59 +949,139 @@
     return gathering ? {id: gathering.id, name: rules.storedText(gathering.subject)} : null;
   }
 
+  // ---- Z — 0.99: the three cards of the Interior (the sketch approved on 7 XI 2026) ------------------------------------------
+
+  // Police: the training (repeatable), the pursuit of political violence, the protection of rallies and strikes for half a year.
+  const POLICE_TRAINING = 5, PROSECUTION_RELATION = -3, POLICE_ORDERS_MONTHS = 6, POLICE_ORDERS_BUSINESS = 3;
+  // Civil liberties: easier rallies (campaigns ×1.10, violence +3 once), the squads of the far right and the communists dissolved
+  // (violence −10; the national democrats −5, the communists −10).
+  const ASSEMBLY_VIOLENCE = 3, SQUADS_VIOLENCE = -10, SQUADS_RELATIONS = Object.freeze({zln: -5, kpp: -10});
+
+  // The rallies and strikes guarded by the police (the order of the card „Policja”), until the month the order names.
+  function policeOrders(S, t) {
+    return !!(S && S.security && S.security.protect_until !== undefined && S.security.protect_until !== null && S.security.protect_until > t);
+  }
+
   function securityOptionStatus(Q, option) {
-    const S = Q.S;
+    const S = Q.S, t = Q.time;
     if (!securityModule() || !S.security || !S.politics) return no(L('Needs the forces of the state of stage 7.', 'Wymaga sił państwa z etapu 7.'));
-    if (option === 'professionalization') {
-      if (projectsOf(S, 'police_professionalization').length) return no(L('The professionalisation is done once in the chapter; it is under way or completed.', 'Profesjonalizację przeprowadza się raz w rozdziale; już trwa albo została zakończona.'));
+    if (option === 'training') {
+      if (projectsOf(S, 'police_training', p => liveProject(p)).length) return no(L('A training of the police is under way.', 'Szkolenie policji już trwa.'));
+      const police = S.security.police;
+      if (police.command >= 100 && police.lawful_compliance >= 100) return no(L('The police cannot be trained further.', 'Policji nie da się już lepiej wyszkolić.'));
       return forecastWith(Q, {charge: 1}) >= -2 ? OK : no(forecastBlock());
     }
-    if (CASE_LABELS[option]) {
-      if (!investigationTarget(S, CASE_LABELS[option])) return no(L('Needs an open, named case of this kind with its evidence; none is recorded.', 'Wymaga otwartej, wymienionej sprawy tego rodzaju wraz z dowodami; takiej sprawy teraz nie ma.'));
+    if (option === 'prosecute') {
+      if (projectsOf(S, 'police_investigation', p => p.variant === 'prosecution' && liveProject(p)).length) return no(L('The pursuit of political violence is under way.', 'Ściganie przemocy politycznej już trwa.'));
       return forecastWith(Q, {charge: 1}) >= -2 ? OK : no(forecastBlock());
     }
-    if (option === 'police_protection') {
-      if (!protectionTarget(Q)) return no(L('Needs a named gathering or institution to protect this month and a lawful task.', 'Wymaga wymienionego zgromadzenia albo instytucji do ochrony w tym miesiącu oraz legalnego zadania.'));
-      return forecastWith(Q, {charge: 1}) >= -2 ? OK : no(forecastBlock());
-    }
-    if (option === 'limited_autonomy') {
-      const prepared = projectsOf(S, 'limited_autonomy', p => preparedProject(p) && p.sponsor === 'pps')[0] || null;
-      if (!prepared && projectsOf(S, 'limited_autonomy').length) return no(L('The autonomy of this area is under way or in force.', 'Autonomia tego obszaru jest w toku albo już obowiązuje.'));
-      if (!prepared && !autonomyAgreement(S)) return no(L('Needs an agreed point with the representation of the other national minorities (17.12.6).', 'Wymaga uzgodnionego punktu z reprezentacją pozostałych mniejszości narodowych (17.12.6).'));
-      return launchStatus(Q, 'limited_autonomy', 'autonomy', prepared);
+    if (option === 'protect') {
+      if (policeOrders(S, t)) return no(L('The order is in force until ' + rules.monthYear(S.security.protect_until) + '.',
+        'Polecenie obowiązuje do ' + rules.monthYear(S.security.protect_until, 'gen') + '.'));
+      return OK;
     }
     return no(L('Unknown option.', 'Nieznana opcja.'));
   }
 
   function securityChoose(Q, option) {
+    const S = Q.S, t = Q.time, fields = {sponsor: 'pps', responsibility: {pps: 0.70}};
+    if (option === 'training') {
+      const project = createProject(Q, 'police_training', 'training', fields);
+      launchProject(Q, project, {sponsor: 'pps'});
+      return result(Q, L('The training of the police starts: 1 B a month for three months, then command and lawfulness +' + POLICE_TRAINING + '.',
+        'Rusza szkolenie policji: 1 B miesięcznie przez trzy miesiące, potem dowodzenie i praworządność +' + POLICE_TRAINING + '.'));
+    }
+    if (option === 'prosecute') {
+      // The pursuit settles the latest recorded case of political violence too, if there is one.
+      const c = investigationTarget(S, 'far_right') || investigationTarget(S, 'communist');
+      const project = createProject(Q, 'police_investigation', 'prosecution', Object.assign({policy_choices: {case_id: c ? c.id : null}}, fields));
+      launchProject(Q, project, {sponsor: 'pps'});
+      for (const party of ['zln', 'kpp']) government.changeRelation(Q, party, PROSECUTION_RELATION, 'police_prosecution:' + project.id);
+      return result(Q, L('The police pursue the perpetrators of political violence for two months (1 B a month). The National Democrats and the communists protest (−' +
+        Math.abs(PROSECUTION_RELATION) + ').', 'Policja przez dwa miesiące ściga sprawców przemocy politycznej (1 B miesięcznie). Endecja i komuniści protestują (−' +
+        Math.abs(PROSECUTION_RELATION) + ').') + (c ? L(' The investigation takes up: ' + c.subject + '.', ' Śledztwo obejmuje sprawę: ' + rules.storedText(c.subject) + '.') : ''));
+    }
+    S.security.protect_until = t + POLICE_ORDERS_MONTHS;
+    economy.changeBusinessPressure(S, POLICE_ORDERS_BUSINESS, 'police_orders:t' + t, t, 'police_orders');
+    S.history.reasons.push({t: t, kind: 'police_orders', until: S.security.protect_until});
+    return result(Q, L('Until ' + rules.monthYear(S.security.protect_until) + ' the police guard lawful rallies and strikes, whoever holds the ministry; business presses harder (+' +
+      POLICE_ORDERS_BUSINESS + ').', 'Do ' + rules.monthYear(S.security.protect_until, 'gen') + ' policja pilnuje legalnych wieców i strajków, kto by nie kierował resortem; przedsiębiorcy mocniej naciskają (+' +
+      POLICE_ORDERS_BUSINESS + ').'));
+  }
+
+  function kresyOptionStatus(Q, option) {
+    const S = Q.S;
+    if (option === 'official_languages') {
+      const prepared = projectsOf(S, 'official_languages', p => preparedProject(p) && p.sponsor === 'pps')[0] || null;
+      if (!prepared && projectsOf(S, 'official_languages').length) return no(L('The minority languages are already used in the offices.', 'Języki mniejszości są już w urzędach.'));
+      return launchStatus(Q, 'official_languages', 'offices', prepared);
+    }
+    if (option === 'self_government') {
+      // Z — 0.99 (decision 2B): PPS may carry out the act on its own initiative, without a promise to the minorities.
+      const prepared = projectsOf(S, 'limited_autonomy', p => preparedProject(p) && p.sponsor === 'pps')[0] || null;
+      if (!prepared && projectsOf(S, 'limited_autonomy').length) return no(L('The self-government of this area is under way or in force.', 'Samorząd tego obszaru jest w toku albo już obowiązuje.'));
+      return launchStatus(Q, 'limited_autonomy', 'autonomy', prepared);
+    }
+    if (option === 'border') {
+      if (projectsOf(S, 'border_protection').length) return no(L('The protection of the eastern border has already been strengthened.', 'Ochrona granicy wschodniej została już wzmocniona.'));
+      return forecastWith(Q, {charge: 2}) >= -2 ? OK : no(forecastBlock());
+    }
+    return no(L('Unknown option.', 'Nieznana opcja.'));
+  }
+
+  function kresyChoose(Q, option) {
     const S = Q.S, fields = {sponsor: 'pps', responsibility: {pps: 0.70}};
-    if (option === 'professionalization') {
-      const project = createProject(Q, 'police_professionalization', 'professionalization', fields);
-      launchProject(Q, project, {sponsor: 'pps'});
-      return result(Q, L('The professionalisation of the police starts: 1 B for three months, then command and lawful compliance +10 once.',
-        'Rusza profesjonalizacja policji: 1 B przez trzy miesiące, potem jednorazowo dowodzenie i praworządność +10.'));
+    if (option === 'official_languages') {
+      return result(Q, launchPrepared(Q, prepareProject(Q, 'official_languages', 'offices', fields, {match: p => p.sponsor === 'pps'})));
     }
-    if (CASE_LABELS[option]) {
-      const c = investigationTarget(S, CASE_LABELS[option]);
-      const project = createProject(Q, 'police_investigation', CASE_LABELS[option], Object.assign({policy_choices: {case_id: c.id}}, fields));
-      launchProject(Q, project, {sponsor: 'pps'});
-      return result(Q, L('The Interior investigates the case: ' + c.subject + '. 1 B for one month; the label names the case, not a proof of guilt.',
-        'Resort Spraw Wewnętrznych bada sprawę: ' + rules.storedText(c.subject) + '. 1 B przez jeden miesiąc; etykieta nazywa sprawę, a nie dowodzi winy.'));
+    if (option === 'self_government') {
+      const agreement = autonomyAgreement(S);
+      const project = prepareProject(Q, 'limited_autonomy', 'autonomy', Object.assign({policy_choices: {territory_id: 'synthetic_autonomy_area',
+        recipient_authority_id: 'the self-government of the area', delegated_capabilities: AUTONOMY_CAPABILITIES.slice(),
+        agreement_id: agreement ? agreement.id : null}}, fields), {match: p => p.sponsor === 'pps'});
+      return result(Q, launchPrepared(Q, project));
     }
-    if (option === 'police_protection') {
-      const target = protectionTarget(Q);
-      const project = createProject(Q, 'police_protection', 'protection', Object.assign({policy_choices: {case_id: target.id}}, fields));
-      launchProject(Q, project, {sponsor: 'pps'});
-      // It protects the gathering of this month at once; the settlement then measures its execution (× coverage).
-      securityModule().protectionExecuted(Q, project, 1, Q.time);
-      return result(Q, L('The police protect ' + target.name + ' this month: 1 B, the capacity of protection +10 times its execution.',
-        'Policja chroni w tym miesiącu: ' + target.name + '. 1 B; zdolność ochrony +10 razy stopień wykonania.'));
+    const project = createProject(Q, 'border_protection', 'border', fields);
+    launchProject(Q, project, {sponsor: 'pps'});
+    return result(Q, L('The protection of the eastern border is strengthened: 2 B a month for three months.', 'Ochrona granicy wschodniej zostaje wzmocniona: 2 B miesięcznie przez trzy miesiące.'));
+  }
+
+  function libertiesOptionStatus(Q, option) {
+    const S = Q.S, t = Q.time, press = S.party_orgs && S.party_orgs.press;
+    if (option === 'press_freedom') {
+      if (press && press.no_confiscation_until > t) return no(L('No paper of PPS is confiscated until ' + rules.monthYear(press.no_confiscation_until) + '.',
+        'Do ' + rules.monthYear(press.no_confiscation_until, 'gen') + ' władze nie konfiskują prasy PPS.'));
+      const prepared = projectsOf(S, 'press_law', p => preparedProject(p) && p.sponsor === 'pps')[0] || null;
+      return launchStatus(Q, 'press_law', 'limits', prepared);
     }
-    const agreement = autonomyAgreement(S);
-    const project = prepareProject(Q, 'limited_autonomy', 'autonomy', Object.assign({policy_choices: {territory_id: 'synthetic_autonomy_area',
-      recipient_authority_id: 'the self-government of the area', delegated_capabilities: AUTONOMY_CAPABILITIES.slice(),
-      agreement_id: agreement ? agreement.id : null}}, fields), {match: p => p.sponsor === 'pps'});
-    return result(Q, launchPrepared(Q, project));
+    if (option === 'assembly') return S.politics && S.politics.assembly_freedom ? no(L('Rallies and marches are already easier.', 'Wiece i pochody są już łatwiejsze.')) : OK;
+    if (option === 'squads') return S.politics && S.politics.squads_dissolved ? no(L('The squads are already dissolved.', 'Bojówki są już rozwiązane.')) : OK;
+    return no(L('Unknown option.', 'Nieznana opcja.'));
+  }
+
+  function libertiesChoose(Q, option) {
+    const S = Q.S, t = Q.time, politics = politicsModule();
+    if (option === 'press_freedom') {
+      return result(Q, launchPrepared(Q, prepareProject(Q, 'press_law', 'limits', {sponsor: 'pps', responsibility: {pps: 0.70}}, {match: p => p.sponsor === 'pps'})));
+    }
+    if (option === 'assembly') {
+      S.politics.assembly_freedom = {since: t};
+      politics.violenceEffect(Q, 'assembly_freedom', ASSEMBLY_VIOLENCE, 'assembly_freedom');
+      return result(Q, L('Rallies and marches become easier: the campaigns of PPS work better, and clashes in the streets become more frequent (+' + ASSEMBLY_VIOLENCE + ').',
+        'Wiece i pochody stają się łatwiejsze: kampanie PPS działają mocniej, a na ulicach częściej dochodzi do starć (+' + ASSEMBLY_VIOLENCE + ').'));
+    }
+    S.politics.squads_dissolved = {since: t};
+    politics.violenceEffect(Q, 'squads_dissolved', SQUADS_VIOLENCE, 'squads_dissolved');
+    for (const party of Object.keys(SQUADS_RELATIONS)) government.changeRelation(Q, party, SQUADS_RELATIONS[party], 'squads_dissolved');
+    return result(Q, L('The squads of the far right and the communists are dissolved: political violence falls (−' + Math.abs(SQUADS_VIOLENCE) + '); the National Democrats and the communists protest. The PPS Militia stays.',
+      'Bojówki skrajnej prawicy i komunistów zostają rozwiązane: przemoc polityczna spada (−' + Math.abs(SQUADS_VIOLENCE) + '); endecja i komuniści protestują. Milicja PPS zostaje.'));
+  }
+
+  // The law limiting the confiscation of the press: no paper of PPS is confiscated for a year; democracy +1 once.
+  function pressLawEnacted(Q, project, m) {
+    const S = Q.S, variant = PROJECT_TYPES.press_law.variants[project.variant];
+    S.party_orgs.press.no_confiscation_until = m + variant.months;
+    politicsModule().democracyEffect(Q, 'press_law:' + project.id, variant.democracy, 'press_law');
   }
 
   // Cards 7.5 and 8.14 share one project of civilian control for the one synthetic post over the near reserve.
@@ -1519,6 +1631,7 @@
         });
       }
       if (variant.grievance_start) pend(project, {system: 'grievance', stage: 7, value: variant.grievance_start, when: 'law', note: 'recipients, once'});
+      if (project.type === 'press_law') applyOnce(project, 'press_law', () => pressLawEnacted(Q, project, m));
     }
     if (bill.package_id) applyPackage(Q, bill.package_id, m, bill.id);
     if (bill.kind === 'unemployment_bill') billEnacted(Q, bill, m);
@@ -3297,8 +3410,10 @@
     minority_school_rights: {portfolios: ['education'], options: ['own_language', 'agreed_bilingual', 'polish_dominance']},
     justice_policy: {portfolios: ['justice'], options: ['broad_safeguards', 'limited_redress']},
     // Stage 7: cards 12 and 14 of 17.11 (catalogue 8.12, 8.14); the agreement with Piłsudski (card 15) is PolishSecurity's.
-    internal_security: {portfolios: ['interior'], options: ['professionalization', 'investigate_far_right', 'investigate_communist', 'police_protection',
-      'limited_autonomy']},
+    // Z — 0.99 (the sketch of 7 XI 2026): three permanent cards of the Interior with three permanent options each.
+    internal_security: {portfolios: ['interior'], options: ['training', 'prosecute', 'protect']},
+    minorities_kresy: {portfolios: ['interior'], options: ['official_languages', 'self_government', 'border']},
+    civil_liberties: {portfolios: ['interior'], options: ['press_freedom', 'assembly', 'squads']},
     military_policy: {portfolios: ['reichswehr'], options: ['civilian_oversight', 'personnel_changes', 'organizational_compromise']},
     // Z — 0.97: the card Culture and Science instead of “Wawel or the Royal Castle” — the restoration of Wawel and then of the
     // Royal Castle, the support of the universities and the public radio.
@@ -3314,7 +3429,7 @@
     polish_gov_land: 'land_program', polish_gov_agriculture: 'agriculture_development', polish_gov_education: 'education_program',
     polish_gov_minority_schools: 'minority_school_rights', polish_gov_justice: 'justice_policy', polish_gov_interior: 'internal_security',
     polish_gov_military: 'military_policy', polish_gov_heritage: 'heritage_restoration', polish_gov_economic_democracy: 'economic_democracy',
-    polish_gov_customs_war: 'customs_war'});
+    polish_gov_customs_war: 'customs_war', polish_gov_kresy: 'minorities_kresy', polish_gov_liberties: 'civil_liberties'});
   const SCENE_PORTFOLIOS = Object.freeze({polish_gov_pils_agreement: Object.freeze(['reichswehr'])});
   const PORTFOLIO_BADGE_PL = Object.freeze({labor: 'Praca', interior: 'Sprawy Wewnętrzne', finance: 'Skarb', economic: 'Przemysł i Handel',
     justice: 'Sprawiedliwość', agriculture: 'Rolnictwo', reichswehr: 'Sprawy Wojskowe', education: 'Oświata', foreign: 'Sprawy Zagraniczne'});
@@ -3634,6 +3749,8 @@
         return status.available ? OK : no(status.reason);
       }
       case 'internal_security': return securityOptionStatus(Q, option);
+      case 'minorities_kresy': return kresyOptionStatus(Q, option);
+      case 'civil_liberties': return libertiesOptionStatus(Q, option);
       case 'military_policy': return armyOptionStatus(Q, option);
       case 'heritage_restoration': {
         if (option === 'science') {
@@ -3709,12 +3826,17 @@
     'land_program.accelerated': ['the fast parcellation', 'szybką parcelację'], 'education_program.secular': ['the secular school', 'szkołę świecką'],
     'minority_school_rights.own_language': ['teaching in the mother tongue', 'naukę w języku ojczystym'],
     'minority_school_rights.polish_dominance': ['the Polish school', 'szkołę polską'],
-    'internal_security.limited_autonomy': ['the self-government in the east', 'samorząd na wschodzie'],
+    'minorities_kresy.official_languages': ['minority languages in the offices', 'języki mniejszości w urzędach'],
+    'minorities_kresy.self_government': ['the voivodeship self-government', 'samorząd wojewódzki'],
+    'minorities_kresy.border': ['the protection of the eastern border', 'ochronę granicy wschodniej'],
+    'civil_liberties.press_freedom': ['the limits on press confiscations', 'ograniczenie konfiskat prasy'],
+    'civil_liberties.assembly': ['easier rallies and marches', 'łatwiejsze wiece i pochody'],
     'military_policy.civilian_oversight': ['the civilian oversight of the army', 'nadzór cywilny nad wojskiem'],
     'justice_policy.broad_safeguards': ['the democratic guarantees', 'gwarancje demokratyczne'],
   });
   // A motion of the constitutional debate starts with the decision itself; it has nothing a concession could stop.
-  const MOTION_REFORMS = Object.freeze(['justice_policy.broad_safeguards']);
+  // Z — 0.99: easier rallies are a decision of the ministry that starts at once, like a motion.
+  const MOTION_REFORMS = Object.freeze(['justice_policy.broad_safeguards', 'civil_liberties.assembly']);
 
   // What a decision started: a project that left preparation, or a new instrument of the budget.
   function startedBy(S, before) {
@@ -3796,8 +3918,10 @@
         'Rusza rewizja wymienionego ograniczenia (' + ({strike_repression: 'represje wobec strajku', press_confiscation: 'konfiskata prasy',
           militia_ban: 'zakaz działalności Milicji'}[r.kind] || r.kind) + '): 1 B przez jeden miesiąc. Właściwy organ rozstrzyga na podstawie przepisów.'));
     }
-    if (cardId === 'internal_security' || cardId === 'military_policy') {
+    if (cardId === 'internal_security' || cardId === 'military_policy' || cardId === 'minorities_kresy' || cardId === 'civil_liberties') {
       rules.commitMainAction(Q, actionId(cardId, option), {card: cardId, option: option});
+      if (cardId === 'minorities_kresy') return kresyChoose(Q, option);
+      if (cardId === 'civil_liberties') return libertiesChoose(Q, option);
       return cardId === 'internal_security' ? securityChoose(Q, option) : armyChoose(Q, option);
     }
     if (cardId === 'justice_policy') {
@@ -4059,6 +4183,13 @@
     if (cardId === 'agriculture_development') Q.pl_gc_agrarian = String(Math.round(S.society.agrarian_pressure));
     if (cardId === 'land_program') Q.pl_gc_land_left = landTranchesLeft(S);
     if (cardId === 'heritage_restoration') Q.pl_gc_heritage_object = heritageName(heritageTarget(S) || 'zamek', 'acc');
+    // Z — 0.99: the cards of the Interior.
+    if (cardId === 'internal_security' && S.security) {
+      Q.pl_gc_police_command = String(Math.round(S.security.police.command));
+      Q.pl_gc_police_lawful = String(Math.round(S.security.police.lawful_compliance));
+    }
+    if (cardId === 'minorities_kresy' && S.politics) Q.pl_gc_minorities = String(Math.round(politicsModule().grievanceOf(S, cell => cell.identity_id !== 'polish')));
+    if (cardId === 'civil_liberties' && S.politics) Q.pl_gc_violence = String(Math.round(S.politics.violence));
     if (cardId === 'labor_rights' && unions && S.unions) Q.pl_gc_collective_branch = unions.branchName(unions.collectiveTarget(Q) || 'industry').toLowerCase();
     Q.pl_gc_plants = unions && S.enterprises && (cardId === 'labor_rights' || cardId === 'industrial_policy') ? unions.plantsLine(S) : '';
     // Z — Koalicja: an option that partners of this cabinet reject says so on the card.
@@ -4545,6 +4676,7 @@
     landAccessStatus: landAccessStatus,
     optionStatus: optionStatus,
     chooseOption: chooseOption,
+    policeOrders: policeOrders,
     stoppable: stoppable,
     stopTarget: stopTarget,
     REFORM_NAMES: REFORM_NAMES,

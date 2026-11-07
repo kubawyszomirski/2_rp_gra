@@ -313,6 +313,15 @@
     return true;
   }
 
+  // Z — 0.99: an explicit change of political violence (the cards of the Interior), once per ID, at the next settlement; a
+  // negative value lowers the violence of that month instead of the calm −2.
+  function violenceEffect(Q, id, value, cause) {
+    const P = Q.S.politics;
+    if (P.violence_episodes.some(e => e.id === id)) return false;
+    P.violence_episodes.push({id: id, value: value, cause: cause || '', recorded_at: Q.time, applied_at: null});
+    return true;
+  }
+
   // Restrictions from acts the game already models (decision 3A of stage 7): the named repressive measure in a
   // strike (unlawful against a lawful economic strike, P) and the confiscations of the press (unlawful, P).
   function scanRestrictions(Q) {
@@ -861,8 +870,10 @@
   // of PPS violence only when PPS authorised it); the Milicja on the spot loses 2% of its people, rounded once.
   function gatheringClash(Q, spec) {
     const S = Q.S, P = S.politics;
+    // Z — 0.99: while the police guard lawful rallies (the order of the card „Policja”), a clash is less likely (−0.10).
+    const guarded = S.security && S.security.protect_until !== undefined && S.security.protect_until !== null && S.security.protect_until > Q.time ? 0.10 : 0;
     const risk = clip(0.10 + 0.004 * (spec.uncontrolled || 0) + 0.25 * (spec.repressive ? 1 : 0) + 0.20 * (spec.authorised ? 1 : 0) -
-      0.20 * (spec.compliance || 0), 0, 0.90);
+      0.20 * (spec.compliance || 0) - guarded, 0, 0.90);
     const u = rules.roll(S, spec.id + ':clash');
     const out = {id: spec.id, risk: round(risk, 6), u: u, clash: u < risk, militia_lost: 0};
     if (!out.clash) return out;
@@ -1374,6 +1385,7 @@
     liftRestriction: liftRestriction,
     democracyEffect: democracyEffect,
     violenceEpisode: violenceEpisode,
+    violenceEffect: violenceEffect,
     applyRecordedEffects: applyRecordedEffects,
     ongoingRelief: ongoingRelief,
     wageIndex: wageIndex,

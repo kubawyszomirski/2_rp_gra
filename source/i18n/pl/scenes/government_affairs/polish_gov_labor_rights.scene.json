@@ -12,6 +12,6 @@
   "title: Agree to derogations from the eight-hour day": "title: Zgódź się na odstępstwa od ośmiogodzinnego dnia pracy",
   "subtitle: No cost to the budget, for half a year in a plant threatened with closure. Business presses less (−4), but the workers of the plant are more discontented (+3) and the Left of PPS protests (+3).": "subtitle: Bez kosztu dla budżetu, na pół roku w zakładzie zagrożonym upadkiem. Przedsiębiorcy mniej naciskają (−4), ale robotnicy zakładu są bardziej niezadowoleni (+3), a Lewica PPS protestuje (+3).",
   "- @root: Continue.": "- @root: Dalej.",
-  "subtitle: Costs 1 budget unit a month and needs a law in the Sejm. The workers are less discontented (−3), but business presses harder on the cabinet (+4). [+ pl_labor_rights_inspection_coalition +]": "subtitle: Kosztuje 1 jednostkę budżetu miesięcznie i wymaga ustawy w Sejmie. Robotnicy są mniej niezadowoleni (−3), ale przedsiębiorcy mocniej naciskają na rząd (+4). [+ pl_labor_rights_inspection_coalition +]"
+  "subtitle: Costs 1 budget unit a month and needs a law in the Sejm. The workers are less discontented (−3), but business presses harder on the cabinet (+4). [? if pl_labor_rights_inspection_coalition : [+ pl_labor_rights_inspection_coalition +] ?]": "subtitle: Kosztuje 1 jednostkę budżetu miesięcznie i wymaga ustawy w Sejmie. Robotnicy są mniej niezadowoleni (−3), ale przedsiębiorcy mocniej naciskają na rząd (+4). [? if pl_labor_rights_inspection_coalition : [+ pl_labor_rights_inspection_coalition +] ?]"
  }
 }

@@ -108,32 +108,29 @@ test('Zdolność a demokracja: for democracy 0–100 the synthetic capacity stay
   assert.doesNotMatch(PolishSecurity.statusLine(Q), /capacity|38/i, 'the interface shows the recognised interval, not the true values');
 });
 
-test('Policja: the finished professionalisation gives command and lawful compliance +10 once (protection 12.5 → 18); a save, a new cabinet or a repeat changes nothing', () => {
+test('Policja 0.99: the training gives command and lawful compliance +5 at its end (protection 12.5 → 15.125); it can be repeated; a save keeps it', () => {
   const engine = dendry.startGame();
   const Q = withPortfolios(quiet(engine), 'interior');
   const S = Q.S;
   close(PolishSecurity.protectionCapacity(S, null, Q.time), 12.5, 1e-9, 'capacity × command × lawful compliance at 50/50/50');
-  PolishProjects.chooseOption(Q, 'internal_security', 'professionalization');
-  const project = Object.values(S.projects).find(p => p.type === 'police_professionalization');
+  PolishProjects.chooseOption(Q, 'internal_security', 'training');
+  const project = Object.values(S.projects).find(p => p.type === 'police_training');
   assert.deepEqual([project.status, project.build_budget_B, project.duration_months], ['executing', 1, 3]);
   for (let i = 0; i < 2; i++) settle(Q);
-  assert.deepEqual([S.security.police.command, S.security.police.lawful_compliance], [50, 50], 'nothing before the end of the project');
+  assert.deepEqual([S.security.police.command, S.security.police.lawful_compliance], [50, 50], 'nothing before the end of the training');
+  free(Q);
+  assert.match(PolishProjects.optionStatus(Q, 'internal_security', 'training').reason, /under way/);
   settle(Q);
   assert.equal(project.status, 'completed');
-  assert.deepEqual([S.security.police.capacity, S.security.police.command, S.security.police.lawful_compliance], [50, 60, 60]);
-  close(PolishSecurity.protectionCapacity(S, null, Q.time), 18, 1e-9, 'a change of the parameters, not a bonus');
+  assert.deepEqual([S.security.police.capacity, S.security.police.command, S.security.police.lawful_compliance], [50, 55, 55]);
+  close(PolishSecurity.protectionCapacity(S, null, Q.time), 50 * 0.55 * 0.55, 1e-9, 'a change of the parameters, not a bonus');
   free(Q);
-  assert.match(PolishProjects.optionStatus(Q, 'internal_security', 'professionalization').reason, /once in the chapter/);
-  // A new cabinet with PPS at the Interior: the training stays, the limit is not renewed.
-  S.history.cabinets.push(Object.assign(JSON.parse(JSON.stringify(S.cabinet)), { ended_at: Q.time, end_reason: 'replaced' }));
-  S.cabinet.id = 'fixture_next_cabinet';
-  assert.match(PolishProjects.optionStatus(Q, 'internal_security', 'professionalization').reason, /once in the chapter/);
-  PolishSecurity.professionalized(Q, project, Q.time);
-  assert.deepEqual([S.security.police.command, S.security.police.lawful_compliance], [60, 60], 'a repeated call adds nothing');
+  // Z — 0.99: the training can be repeated.
+  PolishProjects.chooseOption(Q, 'internal_security', 'training');
+  for (let i = 0; i < 3; i++) settle(Q);
+  assert.deepEqual([S.security.police.command, S.security.police.lawful_compliance], [60, 60]);
   const restored = dendry.saveAndRestore(engine).state.qualities;
   assert.deepEqual([restored.S.security.police.command, restored.S.security.police.lawful_compliance], [60, 60]);
-  assert.deepEqual(restored.S.security.effects_applied, ['police_professionalization']);
-  assert.deepEqual(PolishRules.validateState(restored.S), []);
 });
 
 test('Nominacja: without Military Affairs no card; the executed nomination moves +0.05 to the legal authorities in its group once (sum 1), readiness −0.05 for two months; +8 only for a real conflict', () => {
@@ -177,31 +174,32 @@ test('Nominacja: without Military Affairs no card; the executed nomination moves
   assert.deepEqual(impulses(R.S, 'nomination_conflict').map(i => i.value), [8]);
 });
 
-test('Śledztwo i adresat polemiki: 1 T and 1 B for a month; a confirmed investigation assigns the case to the party it suspects, which becomes the addressee of the line against unconstitutional force', () => {
+test('Śledztwo i adresat polemiki (Z — 0.99, the pursuit of violence): 1 B for two months; violence −5; the National Democrats and the communists −3; the latest case is investigated and a confirmed one names the addressee of the polemic', () => {
   const Q = withPortfolios(quiet(), 'interior');
   const S = Q.S;
   S.actors.pps.strategy.main_opponent = 'unconstitutional_force';
-  assert.deepEqual(PolishParty.polemicAddressees(Q), [], 'no addressee without a recorded case');
-  assert.match(PolishProjects.optionStatus(Q, 'internal_security', 'investigate_communist').reason, /named case/);
+  assert.equal(PolishProjects.optionStatus(Q, 'internal_security', 'prosecute').available, true, 'a permanent option, also without a recorded case');
   PolishPolitics.openCase(Q, { id: 'fixture_clash', kind: 'communist_violence', subject: 'a fixture clash in a strike', suspected: 'kpp' });
   PolishPolitics.openCase(Q, { id: 'fixture_attack', kind: 'far_right_violence', subject: 'a fixture attack with no suspect', suspected: null });
   assert.deepEqual(PolishParty.polemicAddressees(Q), [], 'the label of a case is not a proof of guilt');
-  PolishProjects.chooseOption(Q, 'internal_security', 'investigate_communist');
+  const zln = S.actors.relations.zln, kpp = S.actors.relations.kpp;
+  PolishProjects.chooseOption(Q, 'internal_security', 'prosecute');
   const project = Object.values(S.projects).find(p => p.type === 'police_investigation');
-  assert.deepEqual([project.variant, project.build_budget_B, project.duration_months, project.policy_choices.case_id], ['communist', 1, 1, 'fixture_clash']);
+  assert.deepEqual([project.variant, project.build_budget_B, project.duration_months, project.policy_choices.case_id], ['prosecution', 1, 2, 'fixture_attack']);
+  assert.deepEqual([S.actors.relations.zln, S.actors.relations.kpp], [zln - 3, kpp - 3]);
   assert.equal(Q.month_actions, 1, '1 T');
-  settle(Q);
+  free(Q);
+  assert.match(PolishProjects.optionStatus(Q, 'internal_security', 'prosecute').reason, /under way/);
+  settle(Q); settle(Q);
+  const d = S.politics.cases.fixture_attack;
+  assert.deepEqual([d.investigation.confirmed, d.assigned_party], [false, null], 'a profile that suspects no party confirms none');
+  assert.ok(S.politics.violence_episodes.some(e => e.id === project.id + ':violence' && e.value === -5), 'violence −5 at the end');
+  free(Q);
+  PolishProjects.chooseOption(Q, 'internal_security', 'prosecute');
+  settle(Q); settle(Q);
   const c = S.politics.cases.fixture_clash;
   assert.deepEqual([c.investigation.confirmed, c.assigned_party], [true, 'kpp']);
   assert.deepEqual(PolishParty.polemicAddressees(Q), ['kpp']);
-  free(Q);
-  PolishProjects.chooseOption(Q, 'internal_security', 'investigate_far_right');
-  settle(Q);
-  const d = S.politics.cases.fixture_attack;
-  assert.deepEqual([d.investigation.confirmed, d.assigned_party], [false, null], 'a profile that suspects no party confirms none');
-  assert.deepEqual(PolishParty.polemicAddressees(Q), ['kpp']);
-  free(Q);
-  assert.match(PolishProjects.optionStatus(Q, 'internal_security', 'investigate_communist').reason, /named case/, 'one investigation per case');
 });
 
 test('Ustępstwo Piłsudskiemu: the military function, then the inspectorate renegotiated in the same crisis: one relief of pressure, only nominations really executed and never repeated', () => {
@@ -379,15 +377,18 @@ test('Sprawiedliwość: a confirmed unlawful act lifts only its restriction (dem
 test('Autonomia: after the law and before the end of the work no relief; at the end −3 once for the covered population and a real limit of competence; the schools still cost separately', () => {
   const Q = withPortfolios(ppsMajority(quiet()), 'interior', 'education');
   const S = Q.S;
-  assert.match(PolishProjects.optionStatus(Q, 'internal_security', 'limited_autonomy').reason, /agreed point/);
+  // Z — 0.99 (decision 2B): the card „Kresy i mniejszości” carries out the act also without a promise to the minorities.
+  assert.equal(PolishProjects.optionStatus(Q, 'minorities_kresy', 'self_government').available, true);
+  const zln = S.actors.relations.zln;
   S.agreements['agr-fixture-minorities'] = { id: 'agr-fixture-minorities', kind: 'support', parties: ['pps', 'other_minorities_rep'], cabinet_id: S.cabinet.id,
     signed_at: Q.time, status: 'active', tension: 0, warning_issued: false, ultimatum: null, extensions_used: 0, responsibility: { pps: 1 }, response: null,
     obligations: [{ id: 'agr-fixture-minorities:language_rights', topic: 'language_rights', position: null, owner: 'cabinet', kind: 'constraint',
       beneficiaries: ['other_minorities_rep'], required_project: null, required_variants: null, required_stage: null, portfolio: null, weight: 2,
       due_at: null, status: 'active', fulfillment: 1, last_checked: null }], history: [{ t: Q.time, kind: 'signed' }] };
   // Z — 0.93 (decision 4A of 24 X 2026): the law is filed in the same decision.
-  PolishProjects.chooseOption(Q, 'internal_security', 'limited_autonomy');
+  PolishProjects.chooseOption(Q, 'minorities_kresy', 'self_government');
   const project = Object.values(S.projects).find(p => p.type === 'limited_autonomy');
+  assert.equal(S.actors.relations.zln, zln - 5, 'the National Democrats protest when the law takes effect');
   assert.deepEqual([project.status, project.policy_choices.territory_id, project.policy_choices.delegated_capabilities],
     ['executing', 'synthetic_autonomy_area', ['schools', 'official_language', 'culture']]);
   const law = S.parliament.laws.at(-1);
@@ -409,7 +410,7 @@ test('Autonomia: after the law and before the end of the work no relief; at the 
   assert.match(PolishProjects.optionStatus(Q, 'minority_school_rights', 'polish_dominance').reason, /delegated to its self-government/,
     'a central order outside its competence is no lawful act');
   assert.equal(PolishProjects.optionStatus(Q, 'minority_school_rights', 'own_language').available, true, 'the schools are a separate programme');
-  assert.match(PolishProjects.optionStatus(Q, 'internal_security', 'limited_autonomy').reason, /in force/, 'the same area gets no second reward');
+  assert.match(PolishProjects.optionStatus(Q, 'minorities_kresy', 'self_government').reason, /in force/, 'the same area gets no second reward');
   assert.equal(S.agreements['agr-fixture-minorities'].history.at(-1).kind, 'autonomy_executed');
 });
 

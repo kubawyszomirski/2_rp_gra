@@ -53,7 +53,7 @@ go-to: result
 
 @public_control
 title: Take a plant under public control
-subtitle: The act goes to the Sejm, and a public board manages the plant. The workers keep their jobs, but business pressure rises sharply (+15). [+ pl_industrial_policy_public_control_coalition +]
+subtitle: The act goes to the Sejm, and a public board manages the plant. The workers keep their jobs, but business pressure rises sharply (+15). [? if pl_industrial_policy_public_control_coalition : [+ pl_industrial_policy_public_control_coalition +] ?]
 choose-if: {! return PolishProjects.optionStatus(Q, 'industrial_policy', 'public_control').available !}
 unavailable-subtitle: [+ pl_industrial_policy_public_control_why +]
 on-arrival: {!

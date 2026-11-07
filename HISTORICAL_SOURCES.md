@@ -1,5 +1,13 @@
 # Historical Source Register
 
+## PL-GOV-CARDS-0.99 — the cards of the Interior
+
+- **Authority:** the user’s decisions of 7 November 2026 (technical reference 0.99, sections 12.4 and 23.72).
+- **Sources (accessed 7 November 2026):** the act of 31 July 1924 on the state language and the language of administration (https://eli.gov.pl/eli/DU/1924/724/ogl); the act of 31 July 1924 on the language of the courts (https://eli.gov.pl/api/acts/DU/1924/757/text.html); the school act of 31 July 1924 (https://api.sejm.gov.pl/eli/acts/DU/1924/766/text.html); the press decree of 7 February 1919 (https://eli.gov.pl/eli/DU/1919/186/ogl) and confiscation documents of 1927 (https://jbc.bj.uj.edu.pl/Content/381689); Wikipedia, "Border Protection Corps" (https://en.wikipedia.org/wiki/Border_Protection_Corps) and "Soviet raid on Stołpce"; Straż Graniczna, "Tak narodził się Korpus Ochrony Pogranicza".
+- **Historical fact:** the language acts of 31 July 1924 made Polish the only official language and admitted Ruthenian, Belarusian and Lithuanian in the eastern voivodeships only as auxiliary languages; the press decree of 7 February 1919, prepared under Thugutt as minister of the interior, declared the press free, while confiscations under its art. 27 continued through the 1920s; after the raid on Stołpce (3/4 August 1924) the Border Protection Corps was formed in September 1924 under the Minister of Military Affairs.
+- **Gameplay simplification (P):** all options and numbers of the three cards are game content of an alternate history; the protection of the eastern border is placed with the Interior although the historical corps answered to Military Affairs.
+- **Unresolved:** the legal basis of assemblies and associations in each former partition in 1922–1926 — TBD, historical research required.
+
 ## PL-COALITION-0.98 — the coalition crisis
 
 - **Authority:** the user’s decisions of 7 November 2026 (technical reference 0.98, chapter 9 and 23.71).
@@ -2720,6 +2728,7 @@ Add one row whenever an entry above is assigned a stable Source ID.
 | PL-PRESS-0.90 | Press | The party press: reach ceilings, sales, support of the campaigns, confiscations under a government of the right, credibility | Gameplay simplification; confiscations and circulation TBD | 0.90, 24 October 2026 |
 | PL-TUR-0.91 | TUR | TUR: +5% to the organisers per level, civic courses raise the trust in PPS, a course for trade unionists, no reform course | Gameplay simplification; founding and functions from TUR's own publication; reach by group TBD | 0.91, 24 October 2026 |
 | PL-COOP-0.92 | Cooperative | One workers' consumer cooperative that pays half of the strike pay; no relief; government cooperative variants without a PPS cooperative | Gameplay simplification; PPS ties to the cooperative movement TBD | 0.92, 24 October 2026 |
+| PL-GOV-CARDS-0.99 | Government cards | The Interior: Police, Kresy and minorities, Civil liberties | Language acts 1924, press decree 1919 and KOP 1924 documented; options are game content | 0.99, 7 November 2026 |
 | PL-COALITION-0.98 | Coalition | The plan of the cabinet, partners against reforms, the coalition crisis and the card Coalition Disputes | Game design; no new historical claim | 0.98, 7 November 2026 |
 | PL-GOV-CARDS-0.93 | Government cards | One budget number, one monthly cost per programme, one-step reforms, one Treasury card, no Foreign Affairs for PPS | Gameplay simplification; research for new cards to follow | 0.93, 24 October 2026 |
 | PL-GOV-CARDS-0.97 | Government cards | Agriculture and Education with a gain and a cost per option; Culture and Science | Land reform acts, compulsory schooling and Polskie Radio documented; settlers, school reactions and radio effect are game content | 0.97, 7 November 2026 |

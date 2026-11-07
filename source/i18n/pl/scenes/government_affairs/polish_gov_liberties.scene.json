@@ -1,0 +1,17 @@
+{
+ "source": "scenes/government_affairs/polish_gov_liberties.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Civil Liberties": "title: Wolności obywatelskie",
+  "subtitle: The Interior: the press, rallies and the party squads.": "subtitle: Resort Spraw Wewnętrznych: prasa, wiece i bojówki.",
+  "= Civil liberties": "= Wolności obywatelskie",
+  "The constitution guarantees the freedom of the press and of assembly, but the administration confiscates newspapers and party squads fight in the streets. Political violence stands at [+ pl_gc_violence +] of 100.": "Konstytucja gwarantuje wolność prasy i zgromadzeń, ale władze administracyjne konfiskują gazety, a bojówki partyjne biją się na ulicach. Przemoc polityczna wynosi teraz [+ pl_gc_violence +] na 100.",
+  "title: Limit the confiscation of the press": "title: Ogranicz konfiskaty prasy",
+  "subtitle: Needs a law. For a year the authorities confiscate no paper of PPS, even under a government of the right, and democracy grows stronger (+1). [? if pl_civil_liberties_press_freedom_coalition : [+ pl_civil_liberties_press_freedom_coalition +] ?]": "subtitle: Wymaga ustawy. Przez rok władze nie konfiskują prasy PPS, także pod rządem prawicy, a demokracja się umacnia (+1). [? if pl_civil_liberties_press_freedom_coalition : [+ pl_civil_liberties_press_freedom_coalition +] ?]",
+  "title: Make rallies and marches easier": "title: Ułatw wiece i pochody",
+  "subtitle: No cost to the budget. The campaigns of PPS work better (+10%), but clashes in the streets become more frequent (+3). [? if pl_civil_liberties_assembly_coalition : [+ pl_civil_liberties_assembly_coalition +] ?]": "subtitle: Bez kosztu dla budżetu. Kampanie PPS działają mocniej (+10%), ale na ulicach częściej dochodzi do starć (+3). [? if pl_civil_liberties_assembly_coalition : [+ pl_civil_liberties_assembly_coalition +] ?]",
+  "title: Dissolve the squads of the far right and the communists": "title: Rozwiąż bojówki skrajnej prawicy i komunistów",
+  "subtitle: No cost to the budget. Political violence falls (−10), but our relations with the National Democrats (−5) and the communists (−10) worsen; the PPS Militia stays.": "subtitle: Bez kosztu dla budżetu. Przemoc polityczna spada (−10), ale stosunki z endecją (−5) i z komunistami (−10) się pogarszają; Milicja PPS zostaje.",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

@@ -410,7 +410,8 @@
   function authoritiesAfterRefusal(Q, rec, t, round) {
     const S = Q.S, response = rec.state_response || stateResponse(S);
     rec.state_response = response;
-    if (response.police !== 'repress') return null;
+    // Z — 0.99: the order of the card „Policja” keeps the police from repressing a lawful strike for half a year.
+    if (response.police !== 'repress' || (S.security && S.security.protect_until !== undefined && S.security.protect_until !== null && S.security.protect_until > t)) return null;
     let changed = false;
     if (!rec.repression) {
       rec.repression = {since: t, decided: false};

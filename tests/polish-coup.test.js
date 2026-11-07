@@ -282,7 +282,7 @@ test('Manifest parlamentu: the pool, the agenda and the events are the 10 famili
     [...PolishProjects.INITIATIVE_IDS, 'skip'], 'twelve laws and filing none');
 });
 
-test('Katalog rządowy: 17 families in the pool, the agenda and the triggers; no extra menus of B10 or B20; no cards for Foreign Affairs; the credit crisis leads to the proper policies', () => {
+test('Katalog rządowy: 19 families in the pool, the agenda and the triggers; no extra menus of B10 or B20; no cards for Foreign Affairs; the credit crisis leads to the proper policies', () => {
   const engine = dendry.startGame();
   const Q = engine.state.qualities, S = Q.S;
   const FAMILIES = {
@@ -294,8 +294,10 @@ test('Katalog rządowy: 17 families in the pool, the agenda and the triggers; no
     heritage_restoration: 'polish_gov_heritage',
     // Z — 0.94: the card Economic Democracy of Industry and Trade; the customs war is an urgent card, not in the pool.
     economic_democracy: 'polish_gov_economic_democracy',
+    // Z — 0.99: the cards „Kresy i mniejszości” and „Wolności obywatelskie” of the Interior.
+    minorities_kresy: 'polish_gov_kresy', civil_liberties: 'polish_gov_liberties',
   };
-  assert.equal(Object.keys(FAMILIES).length, 17);
+  assert.equal(Object.keys(FAMILIES).length, 19);
   // Z — 0.93 (decision 3A of 24 X 2026): the Treasury family has one card again.
   const polish = Object.values(FAMILIES);
   for (const id of polish) assert.ok(engine.game.scenes[id], id);
