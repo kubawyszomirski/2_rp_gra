@@ -16,7 +16,7 @@ Q.pl_ev_protected_why = PolishProjects.eventStatus(Q, 'stabilization', 'protecte
 
 = A financial crisis
 
-The budget has stayed below −2 B, or inflation at 20% a month or more, for two settlements. A currency reform is now possible: one project, launched with the currency law and its financing.
+The budget has stayed below zero, or inflation at 20% a month or more, for two settlements. A currency reform is now possible: one project, launched with the currency law and its financing.
 
 [? if pl_ev_treasury : PPS holds the Treasury and chooses the variant now; the reform starts at once when its financing allows. ?]
 
@@ -30,7 +30,7 @@ The budget has stayed below −2 B, or inflation at 20% a month or more, for two
 
 @rapid_cuts
 title: Rapid stabilisation with savings
-subtitle: Costs the budget 2 units a month for three months; needs cuts of at least 1 budget unit; the credit shock grows for three months (+10).
+subtitle: Costs 3 budget units, and the złoty comes after three months; needs cuts; the credit shock grows for three months (+10).
 view-if: pl_ev_treasury
 choose-if: {! return PolishProjects.eventStatus(Q, 'stabilization', 'rapid_cuts').available !}
 on-arrival: {!
@@ -40,7 +40,7 @@ go-to: result
 
 @protected
 title: Stabilisation with protections and a burden on wealth
-subtitle: Costs the budget 2 units a month for three months; needs a protection for the unemployed and its financing.
+subtitle: Costs 3 budget units, and the złoty comes after three months; needs a protection for the unemployed and its financing.
 view-if: pl_ev_treasury
 choose-if: {! return PolishProjects.eventStatus(Q, 'stabilization', 'protected').available !}
 unavailable-subtitle: [+ pl_ev_protected_why +]
@@ -51,7 +51,7 @@ go-to: result
 
 @gradual
 title: Gradual limitation of emission
-subtitle: Costs the budget 1 unit a month for five months; the credit shock grows for five months (+5); the pressure on the marka lasts longer.
+subtitle: Costs 2 budget units, and the złoty comes after five months; the credit shock grows for five months (+5); the pressure on the marka lasts longer.
 view-if: pl_ev_treasury
 choose-if: {! return PolishProjects.eventStatus(Q, 'stabilization', 'gradual').available !}
 on-arrival: {!

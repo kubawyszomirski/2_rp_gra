@@ -10,7 +10,7 @@ function quiet() {
   const Q = dendry.startGame().state.qualities;
   Q.S.scenario.inputs.dispute_1922 = false;
   Q.S.scenario.inputs.military_case = false;
-  Q.S.economy.budget_base = 10;
+  Q.S.economy.budget = 10; // Z — 1.01: a pool of 10 units
   return Q;
 }
 function free(Q) {
@@ -39,7 +39,7 @@ function withJustice(Q) {
 const project = (Q, type) => Object.values(Q.S.projects).find(p => p.type === type);
 const pending = (p, system) => p.pending_effects.filter(e => e.system === system).map(e => e.value);
 
-test('Sądy i więźniowie 1.00: the amnesty (workers +3, violence +3, once), the jury courts (a law, 1 B a month, democracy +2), the legal advice (unions +5)', () => {
+test('Sądy i więźniowie 1.00: the amnesty (workers +3, violence +3, once), the jury courts (1 B once — Z — 1.01, democracy +2), the legal advice (unions +5)', () => {
   const Q = withJustice(quiet());
   const S = Q.S;
   PolishProjects.chooseOption(Q, 'justice_policy', 'amnesty');
@@ -48,7 +48,7 @@ test('Sądy i więźniowie 1.00: the amnesty (workers +3, violence +3, once), th
   assert.match(PolishProjects.optionStatus(Q, 'justice_policy', 'amnesty').reason, /already been declared/);
   PolishProjects.chooseOption(Q, 'justice_policy', 'jury');
   const jury = project(Q, 'jury_courts');
-  assert.deepEqual([jury.authorized, jury.upkeep_budget_B], [true, 1]);
+  assert.deepEqual([jury.authorized, jury.price_B], [true, 1]);
   free(Q);
   const trust = Object.keys(S.unions).map(b => S.unions[b].trust);
   PolishProjects.chooseOption(Q, 'justice_policy', 'legal_aid');

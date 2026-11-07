@@ -539,8 +539,8 @@ test('post-election safeguards cover held cards, old coalition links and police 
   choose(engine, 'root');
   assert.equal(Q.month, 12);
   const protection = Object.values(Q.S.projects).find(p => p.type === 'worker_protection');
-  assert.deepEqual([protection.status, protection.upkeep_budget_B, protection.sponsor], ['operating', 2, 'pps']);
-  assert.equal(Q.S.economy.history.at(-1).project_charges, 2, 'the protection pays from the month it starts');
+  assert.deepEqual([protection.status, protection.price_B, protection.sponsor], ['operating', 3, 'pps']);
+  assert.ok(Q.S.economy.pool_log.some(e => e.id === 'price:' + protection.id && e.delta === -3), 'Z — 1.01: the protection pays its price once');
   assert.equal(Q.sejm_results.length, 1);
 });
 

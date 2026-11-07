@@ -19,7 +19,7 @@ function quiet(engine) {
   const Q = (engine || dendry.startGame()).state.qualities;
   Q.S.scenario.inputs.dispute_1922 = false;
   Q.S.scenario.inputs.military_case = false;
-  Q.S.economy.budget_base = 10;
+  Q.S.economy.budget = 10; // Z — 1.01: a pool of 10 units
   return Q;
 }
 function free(Q) {
@@ -108,16 +108,15 @@ test('Zdolność a demokracja: for democracy 0–100 the synthetic capacity stay
   assert.doesNotMatch(PolishSecurity.statusLine(Q), /capacity|38/i, 'the interface shows the recognised interval, not the true values');
 });
 
-test('Policja 0.99: the training gives command and lawful compliance +5 at its end (protection 12.5 → 15.125); it can be repeated; a save keeps it', () => {
+test('Policja 0.99: the training gives command and lawful compliance +5 at the settlement of its month (protection 12.5 → 15.125); it can be repeated; a save keeps it', () => {
   const engine = dendry.startGame();
   const Q = withPortfolios(quiet(engine), 'interior');
   const S = Q.S;
   close(PolishSecurity.protectionCapacity(S, null, Q.time), 12.5, 1e-9, 'capacity × command × lawful compliance at 50/50/50');
   PolishProjects.chooseOption(Q, 'internal_security', 'training');
   const project = Object.values(S.projects).find(p => p.type === 'police_training');
-  assert.deepEqual([project.status, project.build_budget_B, project.duration_months], ['executing', 1, 3]);
-  for (let i = 0; i < 2; i++) settle(Q);
-  assert.deepEqual([S.security.police.command, S.security.police.lawful_compliance], [50, 50], 'nothing before the end of the training');
+  assert.deepEqual([project.status, project.price_B, project.duration_months], ['executing', 1, 1], 'Z — 1.01: 1 B once, one settlement');
+  assert.deepEqual([S.security.police.command, S.security.police.lawful_compliance], [50, 50], 'nothing before the settlement');
   free(Q);
   assert.match(PolishProjects.optionStatus(Q, 'internal_security', 'training').reason, /under way/);
   settle(Q);
@@ -127,7 +126,7 @@ test('Policja 0.99: the training gives command and lawful compliance +5 at its e
   free(Q);
   // Z — 0.99: the training can be repeated.
   PolishProjects.chooseOption(Q, 'internal_security', 'training');
-  for (let i = 0; i < 3; i++) settle(Q);
+  settle(Q);
   assert.deepEqual([S.security.police.command, S.security.police.lawful_compliance], [60, 60]);
   const restored = dendry.saveAndRestore(engine).state.qualities;
   assert.deepEqual([restored.S.security.police.command, restored.S.security.police.lawful_compliance], [60, 60]);
@@ -148,8 +147,8 @@ test('Nominacja: without Military Affairs no card; the executed nomination moves
   const near = force(S, 'near_reserve');
   const before = [near.loyalty_legal, near.loyalty_pils, near.loyalty_neutral];
   const capacity0 = PolishSecurity.capacity(S);
-  let done = null;
-  for (let i = 0; i < 3; i++) done = settle(Q);
+  // Z — 1.01: carried out at the settlement of the month of the decision.
+  const done = settle(Q);
   assert.equal(project.status, 'completed');
   close(near.loyalty_legal, before[0] + 0.05, 1e-12, 'legal +0.05');
   close(near.loyalty_pils, before[1] - 0.05 * before[1] / (before[1] + before[2]), 1e-12, 'taken proportionally');
@@ -174,7 +173,7 @@ test('Nominacja: without Military Affairs no card; the executed nomination moves
   assert.deepEqual(impulses(R.S, 'nomination_conflict').map(i => i.value), [8]);
 });
 
-test('Śledztwo i adresat polemiki (Z — 0.99, the pursuit of violence): 1 B for two months; violence −5; the National Democrats and the communists −3; the latest case is investigated and a confirmed one names the addressee of the polemic', () => {
+test('Śledztwo i adresat polemiki (Z — 0.99, the pursuit of violence): 1 B once (Z — 1.01); violence −5; the National Democrats and the communists −3; the latest case is investigated and a confirmed one names the addressee of the polemic', () => {
   const Q = withPortfolios(quiet(), 'interior');
   const S = Q.S;
   S.actors.pps.strategy.main_opponent = 'unconstitutional_force';
@@ -185,7 +184,7 @@ test('Śledztwo i adresat polemiki (Z — 0.99, the pursuit of violence): 1 B fo
   const zln = S.actors.relations.zln, kpp = S.actors.relations.kpp;
   PolishProjects.chooseOption(Q, 'internal_security', 'prosecute');
   const project = Object.values(S.projects).find(p => p.type === 'police_investigation');
-  assert.deepEqual([project.variant, project.build_budget_B, project.duration_months, project.policy_choices.case_id], ['prosecution', 1, 2, 'fixture_attack']);
+  assert.deepEqual([project.variant, project.price_B, project.duration_months, project.policy_choices.case_id], ['prosecution', 1, 1, 'fixture_attack']);
   assert.deepEqual([S.actors.relations.zln, S.actors.relations.kpp], [zln - 3, kpp - 3]);
   assert.equal(Q.month_actions, 1, '1 T');
   free(Q);
@@ -279,23 +278,19 @@ test('Ustępstwa a linia: under support all concessions; under the conditional l
   assert.equal(dissent(lines.conditional.S, 'centrum'), dCond + 8);
 });
 
-test('Ograniczona reforma wojska: for the same group full oversight gives legal loyalty +0.05, 1 B for 3 months and army +2 in the offer; the limited reform +0.025, 1 B for 2 months and army 0', () => {
+test('Ograniczona reforma wojska: for the same group full oversight gives legal loyalty +0.05, 1 B once and army +2 in the offer; the limited reform +0.025, 1 B once and army 0 (Z — 1.01)', () => {
   const results = {};
   for (const [option, variant] of [['civilian_oversight', 'civilian_oversight'], ['organizational_compromise', 'limited_reform']]) {
     const Q = withPortfolios(ppsMajority(quiet()), 'reichswehr');
-    const S = Q.S, near = force(S, 'near_reserve'), legal0 = near.loyalty_legal;
+    const S = Q.S, near = force(S, 'near_reserve'), legal0 = near.loyalty_legal, pool0 = S.economy.budget;
     PolishProjects.chooseOption(Q, 'military_policy', option);
     const project = armyProject(S);
     assert.equal(project.variant, variant);
-    const charges = [];
-    for (let i = 0; i < 4; i++) {
-      charges.push(PolishEconomy.projectCharge(project, Q.time));
-      settle(Q);
-    }
-    results[variant] = { army: S.parliament.laws.at(-1).programme.army, charges, legal: near.loyalty_legal - legal0, sum: sum(near), status: project.status };
+    const paid = pool0 - S.economy.budget;
+    settle(Q);
+    results[variant] = { army: S.parliament.laws.at(-1).programme.army, paid, legal: near.loyalty_legal - legal0, sum: sum(near), status: project.status };
   }
-  assert.deepEqual(results.civilian_oversight.charges, [1, 1, 1, 0]);
-  assert.deepEqual(results.limited_reform.charges, [1, 1, 0, 0]);
+  assert.deepEqual([results.civilian_oversight.paid, results.limited_reform.paid], [1, 1]);
   assert.deepEqual([results.civilian_oversight.army, results.limited_reform.army], [2, 0]);
   close(results.civilian_oversight.legal, 0.05, 1e-12);
   close(results.limited_reform.legal, 0.025, 1e-12);
@@ -353,7 +348,7 @@ test('Sprawiedliwość: a confirmed unlawful act lifts only its restriction (dem
   };
   review();
   const first = Object.values(S.projects).find(p => p.type === 'justice_review');
-  assert.deepEqual([first.policy_choices.restriction_id, first.build_budget_B, first.duration_months], ['a_repression', 1, 1]);
+  assert.deepEqual([first.policy_choices.restriction_id, first.price_B, first.duration_months], ['a_repression', 1, 1]);
   const d0 = S.politics.democracy;
   settle(Q);
   assert.deepEqual([first.policy_choices.result, S.politics.restrictions.a_repression.status], ['unlawful', 'lifted']);
@@ -403,12 +398,10 @@ test('Autonomia: after the law and before the end of the work no relief; at the 
   const oneOff = () => { const g0 = cells.map(c => c.grievance); PolishPolitics.applyRecordedEffects(Q, Q.time); return cells.map((c, i) => c.grievance - g0[i]); };
   // The months of execution without politics, so that a one-off effect waits until it is applied here.
   const month = () => { const t = Q.time; free(Q); Q.time = t + 1; Q.year = PolishRules.yearOf(Q.time); Q.month = PolishRules.monthOf(Q.time); PolishProjects.settleMonth(Q, { t }); };
-  month(); month();
-  assert.equal(project.status, 'executing');
   assert.deepEqual(oneOff(), cells.map(() => 0), 'the law alone gives no relief');
   assert.equal(PolishProjects.delegation(S, 'schools'), null, 'nothing delegated before the execution');
   month();
-  assert.equal(project.status, 'completed');
+  assert.equal(project.status, 'completed', 'Z — 1.01: carried out at the settlement of the month of the decision');
   for (const d of oneOff()) close(d, -3 * 0.5, 1e-9, '−3 for the covered half of the other minorities');
   assert.deepEqual(oneOff(), cells.map(() => 0), 'once');
   assert.equal(PolishProjects.delegation(S, 'schools').territory_id, 'synthetic_autonomy_area');

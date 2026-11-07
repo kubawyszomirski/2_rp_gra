@@ -7,11 +7,11 @@
   "= Public works": "= Roboty publiczne",
   "Public works give work to the unemployed with the money of the budget. Unemployment stands at [+ pl_gc_unemployment +]%.": "Roboty publiczne dają pracę bezrobotnym za pieniądze budżetu. Bezrobocie wynosi teraz [+ pl_gc_unemployment +]%.",
   "title: Employ the unemployed on quick works": "title: Zatrudnij bezrobotnych przy szybkich robotach",
-  "subtitle: Costs 1 budget unit a month while they run. After three months unemployment falls (−0.5 percentage points) and output rises a little.": "subtitle: Kosztuje 1 jednostkę budżetu miesięcznie, dopóki trwają. Po trzech miesiącach bezrobocie spada (−0,5 punktu procentowego), a produkcja lekko rośnie.",
+  "subtitle: Costs 2 budget units. Unemployment falls (−0.5 percentage points) and output rises a little.": "subtitle: Kosztuje 2 jednostki budżetu. Bezrobocie spada (−0,5 punktu procentowego), a produkcja lekko rośnie.",
   "title: Build roads, railways and bridges": "title: Buduj drogi, koleje i mosty",
-  "subtitle: Costs 1 budget unit a month, and the first jobs come only after four months. Unemployment falls as much, and output rises more.": "subtitle: Kosztuje 1 jednostkę budżetu miesięcznie, a pierwsze miejsca pracy przychodzą dopiero po czterech miesiącach. Bezrobocie spada tak samo, a produkcja rośnie mocniej.",
+  "subtitle: Costs 3 budget units. Unemployment falls as much, and output rises more.": "subtitle: Kosztuje 3 jednostki budżetu. Bezrobocie spada tak samo, a produkcja rośnie mocniej.",
   "title: Build workers’ housing": "title: Buduj mieszkania robotnicze",
-  "subtitle: Costs 1 budget unit a month and creates no new jobs. After four months the discontent of the workers grows more slowly.": "subtitle: Kosztuje 1 jednostkę budżetu miesięcznie i nie daje nowych miejsc pracy. Po czterech miesiącach niezadowolenie robotników rośnie wolniej.",
+  "subtitle: Costs 2 budget units and creates no new jobs. The discontent of the workers grows more slowly.": "subtitle: Kosztuje 2 jednostki budżetu i nie daje nowych miejsc pracy. Niezadowolenie robotników rośnie wolniej.",
   "- @root: Continue.": "- @root: Dalej."
  }
 }

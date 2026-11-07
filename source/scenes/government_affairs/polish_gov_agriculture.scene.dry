@@ -32,7 +32,7 @@ The countryside needs better tools, consolidated fields and cooperatives of its 
 
 @advisory
 title: Send advisers and tools to the countryside
-subtitle: Costs 1 budget unit a month for four months. The agrarian pressure falls (−2), and the farms do better.
+subtitle: Costs 1 budget unit. The agrarian pressure falls (−2), and the farms do better.
 choose-if: {! return PolishProjects.optionStatus(Q, 'agriculture_development', 'advisory').available !}
 unavailable-subtitle: [+ pl_agriculture_development_advisory_why +]
 on-arrival: {!
@@ -42,7 +42,7 @@ go-to: result
 
 @consolidation
 title: Consolidate the land
-subtitle: Costs 1 budget unit a month for four months. The agrarian pressure falls (−2), but the disputes over field borders first anger the peasants (+2).
+subtitle: Costs 1 budget unit. The agrarian pressure falls (−2), but the disputes over field borders first anger the peasants (+2).
 choose-if: {! return PolishProjects.optionStatus(Q, 'agriculture_development', 'consolidation').available !}
 unavailable-subtitle: [+ pl_agriculture_development_consolidation_why +]
 on-arrival: {!
@@ -52,7 +52,7 @@ go-to: result
 
 @cooperative_processing_sales
 title: Support cooperative processing and sales
-subtitle: Costs 1 budget unit a month for four months. The peasants sell their crops better, but the middlemen and small traders trust us less (−3).
+subtitle: Costs 1 budget unit. The peasants sell their crops better, but the middlemen and small traders trust us less (−3).
 choose-if: {! return PolishProjects.optionStatus(Q, 'agriculture_development', 'cooperative_processing_sales').available !}
 unavailable-subtitle: [+ pl_agriculture_development_cooperative_processing_sales_why +]
 on-arrival: {!

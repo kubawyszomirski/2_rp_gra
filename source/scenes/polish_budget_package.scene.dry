@@ -70,7 +70,7 @@ go-to: result
 
 @loan
 title: Propose a loan instead of cuts
-subtitle: A domestic loan: brings the budget 3 units a month for six months, then costs it 1 unit a month for twelve months. Needs credit of at least 40.
+subtitle: A domestic loan: brings the budget 3 units at once; a year later it takes back 2. Needs credit of at least 40.
 choose-if: {! return PolishProjects.budgetOptionStatus(Q, 'loan').available !}
 unavailable-subtitle: [+ pl_bud_loan_why +]
 on-arrival: {!

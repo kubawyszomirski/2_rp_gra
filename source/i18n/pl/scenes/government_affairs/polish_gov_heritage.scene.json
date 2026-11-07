@@ -7,11 +7,11 @@
   "= Culture and science": "= Kultura i nauka",
   "The state can restore monuments, support the universities and build a radio. Each of these programmes costs the budget, but it builds the trust of the intelligentsia or the strength of democracy.": "Państwo może odnawiać zabytki, wspierać uczelnie i budować radio. Każdy z tych programów kosztuje budżet, ale buduje zaufanie inteligencji albo siłę demokracji.",
   "title: Restore [+ pl_gc_heritage_object +] and open it to visitors": "title: Odnów [+ pl_gc_heritage_object +] i otwórz go dla zwiedzających",
-  "subtitle: Costs 2 budget units a month for four months. The intelligentsia trusts PPS more (+3), and the credibility of the party grows (+2).": "subtitle: Kosztuje 2 jednostki budżetu miesięcznie przez cztery miesiące. Inteligencja bardziej ufa PPS (+3), a wiarygodność partii rośnie (+2).",
+  "subtitle: Costs 2 budget units. The intelligentsia trusts PPS more (+3), and the credibility of the party grows (+2).": "subtitle: Kosztuje 2 jednostki budżetu. Inteligencja bardziej ufa PPS (+3), a wiarygodność partii rośnie (+2).",
   "title: Support science and the universities": "title: Wesprzyj naukę i uniwersytety",
-  "subtitle: Costs 1 budget unit a month while it runs. After three months the intelligentsia trusts PPS more (+3).": "subtitle: Kosztuje 1 jednostkę budżetu miesięcznie, dopóki trwa. Po trzech miesiącach inteligencja bardziej ufa PPS (+3).",
+  "subtitle: Costs 1 budget unit. The intelligentsia trusts PPS more (+3).": "subtitle: Kosztuje 1 jednostkę budżetu. Inteligencja bardziej ufa PPS (+3).",
   "title: Build a public radio": "title: Zbuduj publiczne radio",
-  "subtitle: Costs 2 budget units a month for three months. People hear the news from the country and from the Sejm, and democracy grows stronger (+2).": "subtitle: Kosztuje 2 jednostki budżetu miesięcznie przez trzy miesiące. Ludzie słyszą wiadomości z kraju i z Sejmu, a demokracja się umacnia (+2).",
+  "subtitle: Costs 2 budget units. People hear the news from the country and from the Sejm, and democracy grows stronger (+2).": "subtitle: Kosztuje 2 jednostki budżetu. Ludzie słyszą wiadomości z kraju i z Sejmu, a demokracja się umacnia (+2).",
   "- @root: Continue.": "- @root: Dalej."
  }
 }

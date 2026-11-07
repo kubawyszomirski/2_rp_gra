@@ -40,7 +40,7 @@ go-to: result
 
 @cooperative_credit
 title: Support the cooperatives with state credit
-subtitle: Costs 1 budget unit a month. The workers trust PPS more (+3), but the small traders whose customers the cooperatives take trust us less (−3).
+subtitle: Costs 1 budget unit. The workers trust PPS more (+3), but the small traders whose customers the cooperatives take trust us less (−3).
 choose-if: {! return PolishProjects.optionStatus(Q, 'economic_democracy', 'cooperative_credit').available !}
 unavailable-subtitle: [+ pl_economic_democracy_cooperative_credit_why +]
 on-arrival: {!
@@ -50,7 +50,7 @@ go-to: result
 
 @socialise_mining
 title: Socialise coal mining
-subtitle: Once in the game; compensation for the owners costs 2 budget units a month for six months. The miners’ unions trust the party more and the dissent of the Left of PPS falls (−5), but business pressure jumps (+25). [? if pl_economic_democracy_socialise_mining_coalition : [+ pl_economic_democracy_socialise_mining_coalition +] ?]
+subtitle: Once in the game; compensation for the owners costs 3 budget units. The miners’ unions trust the party more and the dissent of the Left of PPS falls (−5), but business pressure jumps (+25). [? if pl_economic_democracy_socialise_mining_coalition : [+ pl_economic_democracy_socialise_mining_coalition +] ?]
 choose-if: {! return PolishProjects.optionStatus(Q, 'economic_democracy', 'socialise_mining').available !}
 unavailable-subtitle: [+ pl_economic_democracy_socialise_mining_why +]
 on-arrival: {!

@@ -7,17 +7,17 @@
   "= A financial crisis": "= Kryzys finansowy",
   "[? if not pl_ev_treasury : PPS does not hold the Treasury. The cabinet may prepare the reform itself; its package will come before the Sejm, where PPS can answer it with the Budget card if it sits in the cabinet or supports it. ?]": "[? if not pl_ev_treasury : PPS nie ma resortu Skarbu. Gabinet może sam przygotować reformę; jego pakiet trafi do Sejmu, gdzie PPS może na niego odpowiedzieć kartą „Budżet”, jeśli zasiada w gabinecie albo go popiera. ?]",
   "title: Rapid stabilisation with savings": "title: Szybka stabilizacja z oszczędnościami",
-  "subtitle: Costs the budget 2 units a month for three months; needs cuts of at least 1 budget unit; the credit shock grows for three months (+10).": "subtitle: Obciąża budżet: 2 jednostki miesięcznie przez trzy miesiące; wymaga cięć co najmniej 1 jednostki budżetu; szok kredytowy rośnie przez trzy miesiące (+10).",
+  "subtitle: Costs 3 budget units, and the złoty comes after three months; needs cuts; the credit shock grows for three months (+10).": "subtitle: Kosztuje 3 jednostki budżetu, a złoty wchodzi po trzech miesiącach; wymaga cięć; szok kredytowy rośnie przez trzy miesiące (+10).",
   "title: Stabilisation with protections and a burden on wealth": "title: Stabilizacja z osłonami i obciążeniem majątku",
-  "subtitle: Costs the budget 2 units a month for three months; needs a protection for the unemployed and its financing.": "subtitle: Obciąża budżet: 2 jednostki miesięcznie przez trzy miesiące; wymaga osłony dla bezrobotnych i jej finansowania.",
+  "subtitle: Costs 3 budget units, and the złoty comes after three months; needs a protection for the unemployed and its financing.": "subtitle: Kosztuje 3 jednostki budżetu, a złoty wchodzi po trzech miesiącach; wymaga osłony dla bezrobotnych i jej finansowania.",
   "title: Gradual limitation of emission": "title: Stopniowe ograniczanie emisji",
-  "subtitle: Costs the budget 1 unit a month for five months; the credit shock grows for five months (+5); the pressure on the marka lasts longer.": "subtitle: Obciąża budżet: 1 jednostka miesięcznie przez pięć miesięcy; szok kredytowy rośnie przez pięć miesięcy (+5); presja marki trwa dłużej.",
+  "subtitle: Costs 2 budget units, and the złoty comes after five months; the credit shock grows for five months (+5); the pressure on the marka lasts longer.": "subtitle: Kosztuje 2 jednostki budżetu, a złoty wchodzi po pięciu miesiącach; szok kredytowy rośnie przez pięć miesięcy (+5); presja marki trwa dłużej.",
   "title: Offer toleration for protections and a burden on wealth": "title: Zaproponuj tolerowanie w zamian za osłony i obciążenie majątku",
   "subtitle: Opens the formation card with Grabski tolerated by PPS; the terms, their conditions and the usual cost of the offer apply there.": "subtitle: Otwiera kartę formowania gabinetu z Grabskim tolerowanym przez PPS; obowiązują tam warunki, ich wymagania i zwykły koszt oferty.",
   "title: Leave the reform to the cabinet": "title: Zostaw reformę gabinetowi",
   "subtitle: PPS answers the cabinet's package when it comes.": "subtitle: PPS odpowie na pakiet gabinetu, gdy się pojawi.",
   "- @root: Continue.": "- @root: Dalej.",
-  "The budget has stayed below −2 B, or inflation at 20% a month or more, for two settlements. A currency reform is now possible: one project, launched with the currency law and its financing.": "Od dwóch rozliczeń deficyt budżetu przekracza 2 jednostki albo inflacja wynosi 20% miesięcznie lub więcej. Reforma walutowa jest teraz możliwa: jeden projekt, uruchamiany wraz z ustawą walutową i finansowaniem.",
+  "The budget has stayed below zero, or inflation at 20% a month or more, for two settlements. A currency reform is now possible: one project, launched with the currency law and its financing.": "Od dwóch rozliczeń budżet jest poniżej zera albo inflacja wynosi 20% miesięcznie lub więcej. Reforma walutowa jest teraz możliwa: jeden projekt, uruchamiany wraz z ustawą walutową i finansowaniem.",
   "[? if pl_ev_treasury : PPS holds the Treasury and chooses the variant now; the reform starts at once when its financing allows. ?]": "[? if pl_ev_treasury : PPS ma resort Skarbu i wybiera wariant teraz; reforma rusza od razu, jeśli pozwala na to jej finansowanie. ?]"
  }
 }

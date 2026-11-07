@@ -25,7 +25,7 @@ test('a new game owns the economy in S.economy; the inherited fields are its mir
   const Q = engine.state.qualities;
   assert.equal(Q.polish_economy_system, 1);
   assert.equal(Q.S.meta.schema_version, 8);
-  assert.deepEqual([Q.budget, Q.inflation, Q.economic_growth, Q.unemployed], [2, 4, 0, 3]);
+  assert.deepEqual([Q.budget, Q.inflation, Q.economic_growth, Q.unemployed], [4, 4, 0, 3], 'Z — 1.01: a budget pool of 4');
   assert.equal(Q.S.economy.currency_regime, 'marka');
   assert.deepEqual(PolishRules.validateState(Q.S), []);
 });
@@ -102,8 +102,9 @@ test('Status shows the Polish budget, currency, prices, output, credit, unemploy
   const engine = dendry.startGame();
   engine.goToScene('status.economy');
   const text = content(engine);
-  // Z — 0.93 (decision 3A of 24 X 2026): one number and what it allows; its parts are in the Library.
-  assert.match(text, /\+2\.0 B this month; programmes run in full; a new programme may cost up to 4\.0 B a month/, 'budget units to 0.1 (Z — 0.85)');
+  // Z — 1.01: the budget pool, one number; its last changes are in the Library.
+  assert.match(text, /"4 B"/, 'the pool of 4 units');
+  assert.doesNotMatch(text, /this month; programmes run/, 'no monthly room any more');
   assert.match(text, /"Polish mark"/);
   assert.match(text, /"4\.0% a month"/);
   // The top bar (7 XI 2026): a marker for the bar of 0-100 stands between the label and the value.

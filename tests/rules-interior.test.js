@@ -10,7 +10,7 @@ function quiet() {
   const Q = dendry.startGame().state.qualities;
   Q.S.scenario.inputs.dispute_1922 = false;
   Q.S.scenario.inputs.military_case = false;
-  Q.S.economy.budget_base = 10;
+  Q.S.economy.budget = 10; // Z — 1.01: a pool of 10 units
   return Q;
 }
 function free(Q) {
@@ -65,17 +65,17 @@ test('Chroń wiece i strajki: an order for half a year, business +3; it holds wh
   assert.equal(guarded.risk, 0, 'the base risk of 0.10 is guarded away');
 });
 
-test('Kresy i mniejszości: languages in the offices (law, the minorities +3, endecja −5); the border (2 B for three months, violence −3, the minorities −3)', () => {
+test('Kresy i mniejszości: languages in the offices (law, the minorities +3, endecja −5); the border (2 B once — Z — 1.01, violence −3, the minorities −3)', () => {
   const Q = ppsMajority(withPortfolios(quiet(), 'interior'));
   const S = Q.S, zln = S.actors.relations.zln;
   PolishProjects.chooseOption(Q, 'minorities_kresy', 'official_languages');
   const languages = project(Q, 'official_languages');
-  assert.deepEqual([languages.authorized, languages.upkeep_budget_B], [true, 1]);
+  assert.deepEqual([languages.authorized, languages.price_B], [true, 1]);
   assert.equal(S.actors.relations.zln, zln - 5);
   free(Q);
   PolishProjects.chooseOption(Q, 'minorities_kresy', 'border');
   const border = project(Q, 'border_protection');
-  assert.deepEqual([border.build_budget_B, border.duration_months], [2, 3]);
+  assert.deepEqual([border.price_B, border.duration_months], [2, 1]);
   for (let i = 0; i < 4; i++) settle(Q);
   assert.deepEqual(languages.pending_effects.filter(e => e.system === 'trust').map(e => e.value), [3]);
   assert.deepEqual(border.pending_effects.filter(e => e.system === 'trust').map(e => [e.value, e.beneficiaries]), [[-3, ['national_minorities']]]);

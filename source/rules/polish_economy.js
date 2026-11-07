@@ -52,6 +52,97 @@
     {id: 'recovery_1926_27', channel: 'output', value: 0.3, starts_at: T(1926, 7), ends_at: T(1927, 7), condition: null},
   ].map(entry => Object.freeze(Object.assign({source_status: 'P'}, entry))));
 
+  // ---- The budget pool (Z — 1.01) ------------------------------------------------------------------
+
+  // P (decision 1A): the pool in I 1922, as in the German original (budget 4).
+  const POOL_START = 4;
+  // P (decision 4A): what moves the pool besides the decisions — dated events of the Normal scenario and thresholds of
+  // output, each once. `marka` events apply only while the marka is still the currency. Simplifications of the game.
+  const POOL_EVENTS = Object.freeze([
+    {id: 'inflation_1923_summer', at: T(1923, 7), value: -1, condition: 'marka',
+      en: 'Inflation eats the revenue of the state', pl: 'Inflacja zjada dochody państwa'},
+    {id: 'inflation_1923_crisis', at: T(1923, 10), value: -2, condition: 'marka',
+      en: 'Hyperinflation: the taxes lose their value before they are paid', pl: 'Hiperinflacja: podatki tracą wartość, zanim wpłyną'},
+    {id: 'credit_1925', at: T(1925, 6), value: -1, condition: null,
+      en: 'The credit crisis and the customs war cut the revenue of the state', pl: 'Kryzys kredytowy i wojna celna obniżają wpływy państwa'},
+    {id: 'recovery_1926', at: T(1926, 7), value: 1, condition: null,
+      en: 'The recovery of the economy raises the revenue', pl: 'Ożywienie gospodarki podnosi wpływy'},
+  ].map(entry => Object.freeze(Object.assign({source_status: 'P'}, entry))));
+  const POOL_THRESHOLDS = Object.freeze([
+    {id: 'boom_105', above: 105, value: 1, en: 'Good business: output above 105 brings more taxes', pl: 'Dobra koniunktura: produkcja powyżej 105 przynosi więcej podatków'},
+    {id: 'boom_110', above: 110, value: 1, en: 'Good business: output above 110 brings more taxes', pl: 'Dobra koniunktura: produkcja powyżej 110 przynosi więcej podatków'},
+    {id: 'slump_95', below: 95, value: -1, en: 'A slump: output below 95 brings less taxes', pl: 'Zastój: produkcja poniżej 95 przynosi mniej podatków'},
+    {id: 'slump_90', below: 90, value: -1, en: 'A slump: output below 90 brings less taxes', pl: 'Zastój: produkcja poniżej 90 przynosi mniej podatków'},
+  ]);
+  // The złoty restores the revenue once (P).
+  const ZLOTY_POOL = Object.freeze({id: 'zloty', value: 2, en: 'The złoty restores the revenue of the state', pl: 'Złoty przywraca dochody państwa'});
+  // P: a pool below zero is covered by printing money, at most 3 points of emission a month.
+  const DEFICIT_PRINTING_MAX = 3;
+  const POOL_LOG_SIZE = 24;
+
+  // One change of the pool, with its reason in both languages for the reports.
+  function changePool(S, delta, t, id, en, pl) {
+    const E = S.economy;
+    if (!delta) return 0;
+    E.budget = Math.round((E.budget + delta) * 100) / 100;
+    if (!Array.isArray(E.pool_log)) E.pool_log = [];
+    E.pool_log.push({t: t, delta: delta, id: id || '', en: en || '', pl: pl || en || '', pool: E.budget});
+    if (E.pool_log.length > POOL_LOG_SIZE) E.pool_log.splice(0, E.pool_log.length - POOL_LOG_SIZE);
+    S.history.reasons.push({t: t, kind: 'budget_change', id: id || '', delta: delta, pool: E.budget});
+    return delta;
+  }
+
+  // A one-off change later (the repayment of a loan): applied by the settlement of its month.
+  function schedulePool(S, entry) {
+    const E = S.economy;
+    if (!Array.isArray(E.pool_schedule)) E.pool_schedule = [];
+    if (E.pool_schedule.some(e => e.id === entry.id)) return false;
+    E.pool_schedule.push(Object.assign({done: false}, entry));
+    return true;
+  }
+
+  // The events of the pool in the settlement of month t, after the output of the month (4A); returns the applied entries.
+  function settlePool(S, t) {
+    const E = S.economy, applied = [];
+    if (!Array.isArray(E.pool_events_done)) E.pool_events_done = [];
+    const done = id => E.pool_events_done.indexOf(id) >= 0;
+    const apply = (id, value, en, pl) => {
+      E.pool_events_done.push(id);
+      changePool(S, value, t, id, en, pl);
+      applied.push({id: id, value: value, en: en, pl: pl});
+    };
+    for (const event of POOL_EVENTS) {
+      if (done(event.id) || t < event.at) continue;
+      const holds = event.condition !== 'marka' || E.currency_regime === 'marka' || E.currency_regime === 'stabilizing';
+      if (!holds) { E.pool_events_done.push(event.id); continue; }
+      apply(event.id, event.value, event.en, event.pl);
+    }
+    for (const step of POOL_THRESHOLDS) {
+      if (done(step.id)) continue;
+      if ((step.above !== undefined && E.output >= step.above) || (step.below !== undefined && E.output <= step.below)) apply(step.id, step.value, step.en, step.pl);
+    }
+    for (const entry of E.pool_schedule || []) {
+      if (entry.done || t < entry.at) continue;
+      entry.done = true;
+      changePool(S, entry.value, t, entry.id, entry.en, entry.pl);
+      applied.push({id: entry.id, value: entry.value, en: entry.en, pl: entry.pl});
+    }
+    return applied;
+  }
+
+  function zlotyRevenue(S, t) {
+    const E = S.economy;
+    if (!Array.isArray(E.pool_events_done)) E.pool_events_done = [];
+    if (E.pool_events_done.indexOf(ZLOTY_POOL.id) >= 0) return 0;
+    E.pool_events_done.push(ZLOTY_POOL.id);
+    return changePool(S, ZLOTY_POOL.value, t, ZLOTY_POOL.id, ZLOTY_POOL.en, ZLOTY_POOL.pl);
+  }
+
+  // The pool's changes of the last settlement and decisions, newest first, for the reports and the sidebar.
+  function poolChanges(E, fromT) {
+    return (E.pool_log || []).filter(entry => entry.t >= fromT).slice().reverse();
+  }
+
   // ---- The new game (11.1, 2.4) --------------------------------------------------------------------
 
   const MAIN_CLASSES = Object.freeze(['workers', 'old_middle', 'new_middle', 'rural', 'bourgeois_landowners']);
@@ -63,8 +154,10 @@
     return {
       economy: {
         profile_id: ECONOMY_PROFILE_ID, currency_regime: 'marka', inflation_m: 4, real_wage: 100, output: 100, credit: 55,
-        market_unemployment: 3, unemployment: 3, budget_base: 2, tax_level: 0, tax_incidence: 'broad', policies: [],
-        budget: 2, business_pressure: 10, business_state: 'quiet', warning_since: null, calm_months: 0, business_cases: [],
+        market_unemployment: 3, unemployment: 3, budget_base: 0, tax_level: 0, tax_incidence: 'broad', policies: [],
+        // Z — 1.01 (decisions 1A–5A of 7 XI 2026, as in the German original): the budget is one pool of units, not a monthly
+        // balance. Decisions pay from it once and at once; taxes, cuts, loans, packages and events fill or drain it.
+        budget: POOL_START, budget_model: 'pool', pool_log: [], pool_schedule: [], pool_events_done: [], business_pressure: 10, business_state: 'quiet', warning_since: null, calm_months: 0, business_cases: [],
         shocks: SCENARIO_SHOCKS.map(copy), history: [], last_growth: 0,
         // A fiscal package waiting for its vote (decision 5 of stage 4), the ones already voted, and one
         // due revision of a refused necessary package (17.16.4).
@@ -123,34 +216,22 @@
     return activePolicies(E, kind, t).reduce((n, policy) => n + (policy.emission_points || 0), 0);
   }
 
-  // The charge of one project in month t (11.2, 12.3): building or upkeep, never both; the nominal cost
-  // stays while execution is limited or paused; nothing before the authorisation takes effect.
-  function projectCharge(project, t) {
-    if (!project || !project.authorized) return 0;
-    if (project.status === 'executing') return t >= (project.charge_from === undefined ? project.started_at : project.charge_from) ? project.build_budget_B : 0;
-    if (project.status === 'operating') {
-      if (project.ends_at !== null && project.ends_at !== undefined && t >= project.ends_at) return 0;
-      return project.upkeep_budget_B;
-    }
-    if (project.status === 'paused') return project.return_phase === 'operating' ? project.upkeep_budget_B : project.build_budget_B;
+  // Z — 1.01: under the pool a project pays its price once, when it is authorised (PolishProjects); no monthly charge
+  // of building or upkeep remains. Kept for the readers of the old interface.
+  function projectCharge() {
     return 0;
   }
 
-  // budgetAt(t, S) of 11.2: the reading of the financial room, never cash. `extra` adds the charge,
-  // policy, tax or emission of an offer for a forecast (11.3).
+  // budgetAt(t, S) of 11.2. Z — 1.01: the pool itself; `extra` adds the one-off price (`charge`) or revenue (`policy`) of an
+  // offer for a forecast. The emission of the month is the authorised emission plus the printing that covers a pool below
+  // zero (P, at most 3 points); it raises inflation and does not fill the pool.
   function budgetAt(S, t, extra) {
     const E = S.economy, x = extra || {};
-    const cycle = clip((E.output - 100) / 20, -3, 3);
-    const burden = Math.min(3, Math.floor(Math.max(0, E.inflation_m) / 20));
-    const policy = policyBudgetAt(E, t) + (x.policy || 0);
-    let charges = x.charge || 0;
-    for (const id of Object.keys(S.projects).sort()) charges += projectCharge(S.projects[id], t);
-    const taxLevel = clip(E.tax_level + (x.tax || 0), -3, 3);
-    const structural = E.budget_base + taxLevel + cycle - burden + policy - charges;
-    const authorized = emissionAuthorizedAt(E, t) + (x.emission || 0);
-    const emissionUsed = Math.min(authorized, Math.max(0, -structural));
-    return {t: t, budget: structural + emissionUsed, structural_room: structural, emission_used: emissionUsed, cycle: cycle,
-      inflation_burden: burden, policy_budget: policy, project_charges: charges, tax_level: taxLevel, base: E.budget_base};
+    const pool = E.budget + (x.policy || 0) - (x.charge || 0);
+    const printing = Math.min(DEFICIT_PRINTING_MAX, Math.max(0, -pool));
+    const emissionUsed = emissionAuthorizedAt(E, t) + (x.emission || 0) + printing;
+    return {t: t, budget: pool, structural_room: pool, emission_used: emissionUsed, printing: printing, cycle: 0,
+      inflation_burden: 0, policy_budget: 0, project_charges: 0, tax_level: clip(E.tax_level + (x.tax || 0), -3, 3), base: E.budget};
   }
 
   // One shared degree of fiscal execution (11.3): full at −2 B or more, limited to −5 B, stopped below.
@@ -238,13 +319,15 @@
       S.history.reasons.push({t: t, kind: 'calibration_warning', field: 'inflation_m', value: inflation});
     }
     Object.assign(E, {inflation_m: inflation, real_wage: wage, credit: credit, output: output, market_unemployment: market,
-      unemployment: unemployment, budget: budget.budget, last_growth: 100 * (output / output0 - 1)});
+      unemployment: unemployment, last_growth: 100 * (output / output0 - 1)});
     society.agrarian_pressure = agrarian;
+    // Z — 1.01 (decision 4A): the dated events and the output thresholds move the pool once each, after the output of the month.
+    const poolEvents = settlePool(S, t);
     const reading = {t: t, currency_regime: E.currency_regime, inflation_m: inflation, real_wage: wage, output: output,
       growth: E.last_growth, private_growth: privateGrowth, credit: credit, credit_target: creditTarget,
       market_unemployment: market, unemployment: unemployment, agrarian_pressure: agrarian,
-      budget: budget.budget, structural_room: budget.structural_room, emission_used: budget.emission_used, cycle: budget.cycle,
-      inflation_burden: budget.inflation_burden, policy_budget: budget.policy_budget, project_charges: budget.project_charges,
+      budget: E.budget, structural_room: E.budget, emission_used: budget.emission_used, printing: budget.printing || 0, cycle: 0,
+      inflation_burden: 0, policy_budget: 0, project_charges: 0, pool_events: poolEvents,
       tax_level: E.tax_level, delivery: fiscalDelivery(budget.budget), business_pressure: E.business_pressure,
       business_state: E.business_state, credit_support: creditSupport, works_units: x.works_units || 0,
       works_output_pp: x.works_output_pp || 0, orders_output_pp: x.orders_output_pp || 0, land_units: x.land_units || 0,
@@ -265,9 +348,10 @@
     return r.length === 2 && r.every(x => x.inflation_m >= 20);
   }
 
+  // Z — 1.01: two settlements with the pool below zero.
   function fiscalCrisis(E) {
     const r = lastReadings(E, 2);
-    return r.length === 2 && r.every(x => x.budget < -2);
+    return r.length === 2 && r.every(x => x.budget < 0);
   }
 
   // The scenario credit crisis: credit below 35 in two settlements, or the dated impulse of 1925.
@@ -468,26 +552,24 @@
   const BUSINESS_NAMES = Object.freeze({quiet: 'calm', warning: 'warning', active: 'active resistance (credit and output penalties)'});
   const BUSINESS_NAMES_PL = Object.freeze({quiet: 'spokój', warning: 'ostrzeżenie', active: 'aktywny opór (kary dla kredytu i produkcji)'});
 
+  // Z — 1.01: the pool in words — its units, and below zero the printing and the programmes it limits.
+  function poolText(pool) {
+    const value = (pool < -0.05 ? '−' : '') + rules.num(round(Math.abs(pool), 1)) + ' B';
+    if (pool >= 0) return value;
+    const delivery = fiscalDelivery(pool);
+    return value + L(': a deficit, the state prints money', ': deficyt, państwo dodrukowuje pieniądze') +
+      (delivery === 1 ? '' : delivery === 0.5 ? L(' and programmes run at half strength', ' i programy działają w połowie') :
+        L(' and programmes are stopped', ' i programy są wstrzymane'));
+  }
+
   function economyDisplay(Q) {
     const S = Q.S, E = S.economy;
     const forecast = budgetAt(S, Q.time);
-    const delivery = fiscalDelivery(forecast.budget);
-    const deliveryText = delivery === 1 ? L('programmes run in full', 'programy działają w pełni') :
-      delivery === 0.5 ? L('programmes run at half strength', 'programy działają w połowie') : L('programmes are stopped', 'programy są wstrzymane');
-    const parts = [L('base ', 'podstawa ') + signed(E.budget_base, 0), L('taxes ', 'podatki ') + signed(forecast.tax_level, 0)];
-    // Z — 0.84/0.85 (the user's notes of 24 X 2026): budget units are shown to 0.1; the budget itself is not rounded.
-    if (Math.abs(forecast.cycle) >= 0.05) parts.push(L('business cycle ', 'koniunktura ') + signed(forecast.cycle, 1));
-    if (round(forecast.inflation_burden || 0, 1)) parts.push(L('inflation −', 'inflacja −') + rules.num(round(forecast.inflation_burden, 1)));
-    if (Math.abs(forecast.policy_budget) > 1e-9) parts.push(L('instruments ', 'instrumenty ') + signed(forecast.policy_budget, 0));
-    if (Math.abs(forecast.project_charges) > 1e-9) parts.push(L('programmes −', 'programy −') + rules.num(round(forecast.project_charges, 1)));
-    if (forecast.emission_used >= 0.05) parts.push(L('emission ', 'emisja ') + signed(forecast.emission_used, 1));
-    // Z — 0.93 (decision 3A of 24 X 2026): the sidebar shows one number and what it allows; its parts are in the Library.
-    const room = round(forecast.budget + 2, 1);
-    const roomText = room >= 0.05 ? L('a new programme may cost up to ' + rules.num(room, 1) + ' B a month', 'nowy program może kosztować najwyżej ' +
-      rules.num(room, 1) + ' B miesięcznie') : L('no new programme can start', 'żaden nowy program nie ruszy');
+    // The last changes of the pool, newest first (Z — 1.01).
+    const parts = poolChanges(E, Q.time - 3).slice(0, 4).map(entry => L(entry.en, entry.pl) + ' ' + signed(entry.delta, 0));
     return {
-      budget: signed(round(forecast.budget, 1), 1) + L(' B this month; ', ' B w tym miesiącu; ') + deliveryText + '; ' + roomText,
-      budget_parts: parts.join(', '),
+      budget: poolText(E.budget),
+      budget_parts: parts.length ? parts.join('; ') : L('no change in the last months', 'bez zmian w ostatnich miesiącach'),
       inflation: rules.num(round(E.inflation_m, 1), 1) + L('% a month', '% miesięcznie'),
       real_wage: rules.num(round(E.real_wage, 1), 1),
       output: rules.num(round(E.output, 1), 1) + L(' (last month ', ' (w poprzednim miesiącu ') + signed(round(E.last_growth, 2), 2) + '%)',
@@ -507,6 +589,15 @@
     SCENARIO_SHOCKS: SCENARIO_SHOCKS,
     MAIN_CLASSES: MAIN_CLASSES,
     LIVING_CLASSES: LIVING_CLASSES,
+    POOL_START: POOL_START,
+    POOL_EVENTS: POOL_EVENTS,
+    POOL_THRESHOLDS: POOL_THRESHOLDS,
+    changePool: changePool,
+    schedulePool: schedulePool,
+    settlePool: settlePool,
+    zlotyRevenue: zlotyRevenue,
+    poolChanges: poolChanges,
+    poolText: poolText,
     createEconomyState: createEconomyState,
     shockAt: shockAt,
     addShock: addShock,

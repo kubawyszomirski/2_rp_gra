@@ -77,179 +77,181 @@
 
   // ---- Project profiles (12.4, 12.6–12.8, 17.12) ---------------------------------------------------
 
-  // build/upkeep: B charged while building / while operating; duration: settlements of full execution.
-  // `on_launch: 'operating'` programmes pay from the month their basis takes effect (12.3).
+  // Z — 1.01 (decisions 1A–5A of 7 XI 2026, as in the German original): `price` is what a project pays from the budget pool,
+  // once, when it is authorised (P: 1 for small matters, 2 for medium, 3 for large); its effects come at the settlement of the
+  // same month. Only the currency reform keeps its months of transition (`duration`); `months` is how long a temporary measure
+  // works. `on_launch: 'operating'` programmes work from the month their basis takes effect (12.3).
   const PROJECT_TYPES = Object.freeze({
     labor_inspection: {name: 'Labour inspection and working time', card: 'labor_rights', portfolios: ['labor'], klass: 'small',
       investment: false, ongoing: true, caretaker_allowed: true, beneficiaries: ['workers'],
       law: {title: 'Enforcement of working time', programme: {fiscal: 1}},
       // Z — 0.81 (decision 4B of 20 X 2026): the limited variant of the legislative initiative — inspection in large industry only.
       // Z — 0.94 (decision 2A of 24 X 2026): the employers press harder when the law on the inspection takes effect (P).
-      variants: {inspection: {build: 1, upkeep: 1, duration: 2, relief: 3, business: 4},
-        industry_only: {build: 1, upkeep: 0.5, duration: 1, relief: 1.5, business: 2, law: {title: 'Enforcement of working time in large industry', programme: {fiscal: 0}}}}},
+      variants: {inspection: {price: 1, relief: 3, business: 4},
+        industry_only: {price: 1, relief: 1.5, business: 2, law: {title: 'Enforcement of working time in large industry', programme: {fiscal: 0}}}}},
     worker_protection: {name: 'Protection for the unemployed', card: 'social_welfare', portfolios: ['labor'], klass: 'small',
       investment: false, ongoing: true, on_launch: 'operating', caretaker_allowed: true, beneficiaries: ['unemployed'], law: null,
-      variants: {full: {build: 0, upkeep: 2, share: 1, relief_start: -6, relief: 2}, focused: {build: 0, upkeep: 1, share: 0.5, relief_start: -6, relief: 2},
-        limited: {build: 0, upkeep: 1, share: 1, relief_start: -3, relief: 1}}},
+      variants: {full: {price: 3, share: 1, relief_start: -6, relief: 2}, focused: {price: 2, share: 0.5, relief_start: -6, relief: 2},
+        limited: {price: 1, share: 1, relief_start: -3, relief: 1}}},
     // Z — 0.93 (decision 3A of 24 X 2026): a programme that runs for good has one monthly cost from its launch, the same while it
     // is built and while it works (P); its effects still start after its months of building.
     public_works: {name: 'Public works', card: 'public_works', portfolios: ['labor'], klass: 'large', investment: true, ongoing: true,
       beneficiaries: ['unemployed'], law: null,
-      variants: {employment: {build: 1, upkeep: 1, duration: 3, units: 2, output_pp: 0.15},
-        infrastructure: {build: 1, upkeep: 1, duration: 4, units: 2, output_pp: 0.25},
-        housing: {build: 1, upkeep: 1, duration: 4, units: 0, output_pp: 0, relief: 2, beneficiaries: ['workers']},
+      variants: {employment: {price: 2, units: 2, output_pp: 0.15},
+        infrastructure: {price: 3, units: 2, output_pp: 0.25},
+        housing: {price: 2, units: 0, output_pp: 0, relief: 2, beneficiaries: ['workers']},
         // Z — 0.81 (decision 4B): the limited variants of the legislative initiative.
-        employment_small: {build: 0.5, upkeep: 0.5, duration: 3, units: 1, output_pp: 0.15},
-        housing_coop: {build: 0.5, upkeep: 0.5, duration: 4, units: 0, output_pp: 0, relief: 1, beneficiaries: ['workers']}}},
+        employment_small: {price: 1, units: 1, output_pp: 0.15},
+        housing_coop: {price: 1, units: 0, output_pp: 0, relief: 1, beneficiaries: ['workers']}}},
     credit_instrument: {name: 'Credit instrument', card: 'investment_fund', portfolios: ['finance', 'economic'], klass: 'large',
       investment: true, ongoing: true, beneficiaries: ['workers', 'old_middle'], law: null,
-      variants: {public: {build: 1, upkeep: 1, duration: 2, credit_support: 5},
+      variants: {public: {price: 2, credit_support: 5},
         // Z — 0.94 (decision 2A): the banks share the cost — half a unit — and the Left of PPS protests (chooseOption).
-        banks: {build: 0.5, upkeep: 0.5, duration: 2, credit_support: 5, business: -8},
-        cooperative: {build: 1, upkeep: 1, duration: 2, credit_support: 5, beneficiaries: ['rural', 'old_middle']}}},
+        banks: {price: 1, credit_support: 5, business: -8},
+        cooperative: {price: 2, credit_support: 5, beneficiaries: ['rural', 'old_middle']}}},
     orders: {name: 'Public orders for industry', card: 'industrial_policy', portfolios: ['economic'], klass: 'small', investment: false,
       ongoing: true, on_launch: 'operating', beneficiaries: ['workers'], law: null,
-      variants: {orders: {build: 0, upkeep: 1, months: 3, output_pp: 0.30}}},
+      variants: {orders: {price: 2, months: 3, output_pp: 0.30}}},
     land_program: {name: 'Land reform', card: 'land_program', portfolios: ['agriculture'], klass: 'large', investment: true, tranches: 3,
       beneficiaries: ['rural'], law: {title: 'Execution of the land reform'},
-      variants: {compensated: {build: 2, upkeep: 0, duration: 4, business: 8, programme: {land: 0}},
-        accelerated: {build: 3, upkeep: 0, duration: 3, business: 12, programme: {land: 1}},
-        expropriation: {build: 1, upkeep: 0, duration: 4, business: 25, programme: {land: 2}}}},
+      variants: {compensated: {price: 3, business: 8, programme: {land: 0}},
+        accelerated: {price: 2, business: 12, programme: {land: 1}},
+        expropriation: {price: 1, business: 25, programme: {land: 2}}}},
     agriculture_development: {name: 'Modernisation of agriculture', card: 'agriculture_development', portfolios: ['agriculture'],
       klass: 'large', investment: true, tranches: 3, beneficiaries: ['rural'], law: null,
-      variants: {advisory: {build: 1, upkeep: 0, duration: 4, agrarian: -2, rural: 3},
+      variants: {advisory: {price: 1, agrarian: -2, rural: 3},
         // Z — 0.97 (the sketch of 7 XI 2026): the disputes over borders first anger the peasants (+2 grievance when the law takes
         // effect); the cooperatives take the customers of the middlemen and small traders (−3 trust at the first effect).
-        consolidation: {build: 1, upkeep: 0, duration: 4, agrarian: -2, rural: 2, grievance_start: 2,
+        consolidation: {price: 1, agrarian: -2, rural: 2, grievance_start: 2,
           law: {title: 'Voluntary consolidation of land', programme: {land: 0}}},
-        cooperative_processing_sales: {build: 1, upkeep: 0, duration: 4, rural: 2, trust_lost: -3}}},
+        cooperative_processing_sales: {price: 1, rural: 2, trust_lost: -3}}},
     education_program: {name: 'Schools and adult education', card: 'education_program', portfolios: ['education'], klass: 'large',
       investment: true, ongoing: true, tranches: 3, law: null, beneficiaries: ['rural'],
-      variants: {rural_access: {build: 1, upkeep: 1, duration: 4, trust: 4, beneficiaries: ['rural']},
-        urban_worker_adult_access: {build: 1, upkeep: 1, duration: 4, trust: 4, beneficiaries: ['workers']},
+      variants: {rural_access: {price: 2, trust: 4, beneficiaries: ['rural']},
+        urban_worker_adult_access: {price: 2, trust: 4, beneficiaries: ['workers']},
         // Z — 0.97: the Christian Democrats protest when the law takes effect (relation −8).
-        secular: {build: 1, upkeep: 1, duration: 4, tranches: 1, trust: 4, beneficiaries: ['workers', 'new_middle'], relations: {pschd: -8},
+        secular: {price: 2, tranches: 1, trust: 4, beneficiaries: ['workers', 'new_middle'], relations: {pschd: -8},
           law: {title: 'Secular school with religious freedom', programme: {church: 1}}}}},
     minority_schools: {name: 'Language rights and minority schools', card: 'minority_school_rights', portfolios: ['education'],
       klass: 'large', investment: true, ongoing: true, law: null, beneficiaries: ['national_minorities'],
       // Z — 0.97 (decision 2 of the sketch, approved 7 XI 2026): the own language angers the national democrats (−5), the agreed
       // bilingualism is the compromise (trust +2, no protest), the dominance of Polish pleases them (+5).
-      variants: {own_language: {build: 1, upkeep: 1, duration: 4, trust: 4, relations: {zln: -5}},
-        agreed_bilingual: {build: 1, upkeep: 1, duration: 4, trust: 2},
-        polish_dominance: {build: 1, upkeep: 1, duration: 4, trust: -6, relations: {zln: 5}}}},
+      variants: {own_language: {price: 2, trust: 4, relations: {zln: -5}},
+        agreed_bilingual: {price: 2, trust: 2},
+        polish_dominance: {price: 2, trust: -6, relations: {zln: 5}}}},
     heritage: {name: 'Restoration of a monument', card: 'heritage_restoration', portfolios: ['education'], klass: 'small', investment: true,
       law: null, beneficiaries: ['new_middle'],
-      variants: {conservation: {klass: 'small', build: 1, upkeep: 0, duration: 2, credibility: 1},
-        restoration: {klass: 'large', build: 2, upkeep: 0, duration: 4, credibility: 2, trust: 3}}},
+      variants: {conservation: {price: 1, klass: 'small', credibility: 1},
+        restoration: {price: 2, klass: 'large', credibility: 2, trust: 3}}},
     // Z — 0.97 (the card Culture and Science of 7 XI 2026): the support of science and the universities while it runs, and the
     // public radio (decision 3: it strengthens democracy, +2). P: the costs and the effects are simplifications of the game.
     science: {name: 'Support of science and the universities', card: 'heritage_restoration', portfolios: ['education'], klass: 'small',
       investment: false, ongoing: true, beneficiaries: ['new_middle'], law: null,
-      variants: {universities: {build: 1, upkeep: 1, duration: 3, trust: 3}}},
+      variants: {universities: {price: 1, trust: 3}}},
     radio: {name: 'Public radio', card: 'heritage_restoration', portfolios: ['education'], klass: 'large', investment: true,
       beneficiaries: [], law: null,
-      variants: {broadcasting: {build: 2, upkeep: 0, duration: 3, democracy: 2}}},
+      variants: {broadcasting: {price: 2, democracy: 2}}},
     currency_reform: {name: 'Currency reform', card: 'currency_stabilisation', portfolios: ['finance'], klass: 'large', investment: true,
       beneficiaries: [], law: {title: 'Currency reform', programme: {fiscal: 0}},
-      variants: {rapid_cuts: {build: 2, upkeep: 0, duration: 3, credit_shock: 10, shock_months: 3},
-        protected: {build: 2, upkeep: 0, duration: 3, credit_shock: 10, shock_months: 3},
-        gradual: {build: 1, upkeep: 0, duration: 5, credit_shock: 5, shock_months: 5}}},
+      variants: {rapid_cuts: {price: 3, duration: 3, credit_shock: 10, shock_months: 3},
+        protected: {price: 3, duration: 3, credit_shock: 10, shock_months: 3},
+        gradual: {price: 2, duration: 5, credit_shock: 5, shock_months: 5}}},
     collection: {name: 'Better tax collection', card: 'finance_package', portfolios: ['finance'], klass: 'small', investment: false,
-      beneficiaries: [], law: null, variants: {collection: {build: 1, upkeep: 0, duration: 2, permanent: 1}}},
+      beneficiaries: [], law: null, variants: {collection: {price: 1, permanent: 1}}},
     // Stage 6 (12.4, 17.12, 17.12.5): the rescue of one recorded plant is the rescue variant of the conditional credit,
     // under the owner's agreement that is the condition of the credit (P); representation of the workers of a public plant.
     plant_rescue: {name: 'Rescue of a plant', card: 'industrial_policy', portfolios: ['economic'], klass: 'large', investment: true,
       // Z — 0.94 (the user's note of 24 X 2026): a rescued plant calms the employers (P).
-      ongoing: true, beneficiaries: ['workers'], law: null, variants: {rescue: {build: 1, upkeep: 1, duration: 2, business: -4}}},
+      ongoing: true, beneficiaries: ['workers'], law: null, variants: {rescue: {price: 2, business: -4}}},
     enterprise_representation: {name: 'Workers’ representation in a plant', card: 'industrial_policy', portfolios: ['economic'],
       klass: 'small', investment: false, beneficiaries: ['workers'], law: null,
-      variants: {consultative: {build: 0, upkeep: 0, duration: 1},
-        decision_rights: {klass: 'large', build: 1, upkeep: 0, duration: 2, law: {title: 'Workers’ co-decision in a public plant', programme: {fiscal: 1}}}}},
+      variants: {consultative: {price: 0},
+        decision_rights: {price: 1, klass: 'large', law: {title: 'Workers’ co-decision in a public plant', programme: {fiscal: 1}}}}},
     // Stage 7 (12.4, 16.3, 17.12.2–6): the police, civilian control of the army, the review of an abuse and the
     // limited autonomy; their effects on the forces, the police and the restrictions are applied by PolishSecurity
     // and PolishPolitics.
     police_professionalization: {name: 'Professionalisation of the police', card: 'internal_security', portfolios: ['interior'], klass: 'small',
-      investment: false, beneficiaries: [], law: null, variants: {professionalization: {build: 1, upkeep: 0, duration: 3}}},
+      investment: false, beneficiaries: [], law: null, variants: {professionalization: {price: 1}}},
     // Z — 0.99 (the sketch of 7 XI 2026): the pursuit of political violence (two months) also settles the latest recorded case.
     police_investigation: {name: 'Investigation of a named case', card: 'internal_security', portfolios: ['interior'], klass: 'small',
-      investment: false, beneficiaries: [], law: null, variants: {far_right: {build: 1, upkeep: 0, duration: 1}, communist: {build: 1, upkeep: 0, duration: 1},
-        prosecution: {build: 1, upkeep: 0, duration: 2, violence: -5}}},
+      investment: false, beneficiaries: [], law: null, variants: {far_right: {price: 1}, communist: {price: 1},
+        prosecution: {price: 1, violence: -5}}},
     // Z — 0.99: a repeatable training of the police (+5 command and lawfulness each time) instead of the one professionalisation.
     police_training: {name: 'Training of the police', card: 'internal_security', portfolios: ['interior'], klass: 'small', investment: false,
-      beneficiaries: [], law: null, variants: {training: {build: 1, upkeep: 0, duration: 3, command: 5}}},
+      beneficiaries: [], law: null, variants: {training: {price: 1, command: 5}}},
     // Z — 0.99: the cards „Kresy i mniejszości” and „Wolności obywatelskie” of the Interior (P: the costs and effects are simplifications).
     official_languages: {name: 'Minority languages in the offices', card: 'minorities_kresy', portfolios: ['interior'], klass: 'large', investment: false,
       ongoing: true, beneficiaries: ['national_minorities'], law: {title: 'Minority languages in the offices', programme: {autonomy: 1}},
-      variants: {offices: {build: 1, upkeep: 1, duration: 2, trust: 3, relations: {zln: -5}}}},
+      variants: {offices: {price: 1, trust: 3, relations: {zln: -5}}}},
     border_protection: {name: 'Protection of the eastern border', card: 'minorities_kresy', portfolios: ['interior'], klass: 'large', investment: false,
-      beneficiaries: ['national_minorities'], law: null, variants: {border: {build: 2, upkeep: 0, duration: 3, trust: -3, violence: -3}}},
+      beneficiaries: ['national_minorities'], law: null, variants: {border: {price: 2, trust: -3, violence: -3}}},
     press_law: {name: 'Limits on press confiscations', card: 'civil_liberties', portfolios: ['interior'], klass: 'small', investment: false,
       beneficiaries: [], law: {title: 'Limits on the confiscation of the press', programme: {institution: 1}},
-      variants: {limits: {build: 0, upkeep: 0, duration: 1, democracy: 1, months: 12}}},
+      variants: {limits: {price: 0, democracy: 1, months: 12}}},
     police_protection: {name: 'Protection of a gathering or an institution', card: 'internal_security', portfolios: ['interior'], klass: 'small',
-      investment: false, beneficiaries: [], law: null, variants: {protection: {build: 1, upkeep: 0, duration: 1}}},
+      investment: false, beneficiaries: [], law: null, variants: {protection: {price: 1}}},
     limited_autonomy: {name: 'Limited administrative and cultural autonomy', card: 'minorities_kresy', portfolios: ['interior'], klass: 'large',
       investment: false, beneficiaries: ['other_minorities'], law: {title: 'Limited administrative and cultural autonomy', programme: {autonomy: 1}},
       // Z — 0.81: `autonomy` is the execution of the act of 26 IX 1922 on the voivodeship self-government; `regional_sejm` the
       // autonomy of Eastern Galicia with a regional diet, as in the PPS bills of 1921 and 1925 (HISTORICAL_SOURCES.md).
       // Z — 0.99: the National Democrats protest when the law on the self-government takes effect (relation −5).
-      variants: {autonomy: {build: 1, upkeep: 0, duration: 3, relief: 3, relations: {zln: -5}},
-        regional_sejm: {build: 1, upkeep: 0, duration: 3, relief: 6, law: {title: 'Autonomy of Eastern Galicia with a regional diet', programme: {autonomy: 2}}}}},
+      variants: {autonomy: {price: 1, relief: 3, relations: {zln: -5}},
+        regional_sejm: {price: 1, relief: 6, law: {title: 'Autonomy of Eastern Galicia with a regional diet', programme: {autonomy: 2}}}}},
     army_control: {name: 'Civilian control of the army', card: 'military_policy', portfolios: ['reichswehr'], klass: 'large', investment: false,
       beneficiaries: [], law: {title: 'Civilian oversight of the army', programme: {army: 2}},
-      variants: {civilian_oversight: {build: 1, upkeep: 0, duration: 3}, personnel_changes: {build: 1, upkeep: 0, duration: 3},
-        limited_reform: {build: 1, upkeep: 0, duration: 2, law: {title: 'A limited reform of the command of the army', programme: {army: 0}}}}},
+      variants: {civilian_oversight: {price: 1}, personnel_changes: {price: 1},
+        limited_reform: {price: 1, law: {title: 'A limited reform of the command of the army', programme: {army: 0}}}}},
     justice_review: {name: 'Review of a named abuse', card: 'justice_policy', portfolios: ['justice'], klass: 'small', investment: false,
-      beneficiaries: [], law: null, variants: {limited_redress: {build: 1, upkeep: 0, duration: 1}}},
+      beneficiaries: [], law: null, variants: {limited_redress: {price: 1}}},
     // Z — 1.00 (the sketch and the user's decisions of 7 XI 2026): the cards „Sądy i więźniowie” and „Prawo i rodzina” of Justice
     // (P: the costs and effects are simplifications of the game).
     amnesty: {name: 'Amnesty for political prisoners', card: 'justice_policy', portfolios: ['justice'], klass: 'small', investment: false,
-      beneficiaries: ['workers'], law: null, variants: {political: {build: 0, upkeep: 0, duration: 1, trust: 3, violence: 3}}},
+      beneficiaries: ['workers'], law: null, variants: {political: {price: 0, trust: 3, violence: 3}}},
     jury_courts: {name: 'Jury courts in political and press cases', card: 'justice_policy', portfolios: ['justice'], klass: 'large', investment: false,
       ongoing: true, beneficiaries: [], law: {title: 'Jury courts in political and press cases', programme: {institution: 1}},
-      variants: {jury: {build: 1, upkeep: 1, duration: 2, democracy: 2}}},
+      variants: {jury: {price: 1, democracy: 2}}},
     legal_aid: {name: 'Free legal advice for workers', card: 'justice_policy', portfolios: ['justice'], klass: 'small', investment: false,
-      ongoing: true, beneficiaries: ['workers'], law: null, variants: {aid: {build: 1, upkeep: 1, duration: 2, union_trust: 5}}},
+      ongoing: true, beneficiaries: ['workers'], law: null, variants: {aid: {price: 1, union_trust: 5}}},
     civil_marriage: {name: 'Civil marriage and divorce', card: 'family_law', portfolios: ['justice'], klass: 'large', investment: false,
       beneficiaries: ['workers', 'new_middle'], law: {title: 'Civil marriage and divorce', programme: {church: 1}},
-      variants: {civil: {build: 0, upkeep: 0, duration: 1, trust: 3, relations: {pschd: -8}}}},
+      variants: {civil: {price: 0, trust: 3, relations: {pschd: -8}}}},
     women_rights: {name: 'Equal rights of women in civil law', card: 'family_law', portfolios: ['justice'], klass: 'large', investment: false,
       beneficiaries: ['new_middle'], law: {title: 'Equal rights of women in civil law', programme: {church: 1}},
-      variants: {equal: {build: 0, upkeep: 0, duration: 1, trust: 2, democracy: 1, relations: {pschd: -5}}}},
+      variants: {equal: {price: 0, trust: 2, democracy: 1, relations: {pschd: -5}}}},
     // Z — 0.81 (the legislative initiative of PPS, 20 X 2026; P): the protection of tenants after the act of 11 IV 1924 (the PPS
     // motion of X 1925; the act of 27 III 1926 suspended the rises for nine months) and the old-age insurance of workers (a PPS
     // demand of 1924; introduced only in 1933). The courts apply the tenant law; no ministry card of PPS carries either.
     tenant_protection: {name: 'Protection of tenants', card: 'legislative_initiative', portfolios: ['justice'], klass: 'small', investment: false,
       ongoing: true, on_launch: 'operating', caretaker_allowed: true, beneficiaries: ['workers', 'unemployed', 'new_middle'], law: null,
-      variants: {rent_freeze: {build: 0, upkeep: 0, relief_start: -3, relief: 1, business: 3},
-        rent_suspension: {build: 0, upkeep: 0, relief_start: -2, relief: 0.5, months: 9, business: 1}}},
+      variants: {rent_freeze: {price: 0, relief_start: -3, relief: 1, business: 3},
+        rent_suspension: {price: 0, relief_start: -2, relief: 0.5, months: 9, business: 1}}},
     old_age_insurance: {name: 'Old-age insurance of workers', card: 'legislative_initiative', portfolios: ['labor'], klass: 'small', investment: false,
       ongoing: true, on_launch: 'operating', caretaker_allowed: true, beneficiaries: ['workers'], law: null,
       // Z — 0.94: the card “Benefits and Insurance” of Labour files the law of the full insurance itself (the initiative starts it by its bill).
-      variants: {pension_all: {build: 0, upkeep: 1, relief_start: -2, business: 6, law: {title: 'Old-age insurance of workers', programme: {fiscal: 2}}},
-        pension_industry: {build: 0, upkeep: 0.5, relief_start: -1, business: 3}}},
+      variants: {pension_all: {price: 2, relief_start: -2, business: 6, law: {title: 'Old-age insurance of workers', programme: {fiscal: 2}}},
+        pension_industry: {price: 1, relief_start: -1, business: 3}}},
     // Z — 0.94 (the user's decisions of 24 X 2026): the card “Economic Democracy” of Industry and Trade (P). Works councils by a
     // law for the larger plants; the state credit of the cooperatives; the socialisation of coal mining, once in the game.
     works_councils: {name: 'Works councils', card: 'economic_democracy', portfolios: ['economic'], klass: 'small', investment: false,
       beneficiaries: ['workers'], law: {title: 'Works councils', programme: {fiscal: 1}},
-      variants: {works_councils: {build: 0, upkeep: 0, duration: 1, relief: 3, union_trust: 5, business: 8}}},
+      variants: {works_councils: {price: 0, relief: 3, union_trust: 5, business: 8}}},
     cooperative_credit: {name: 'State credit for the cooperatives', card: 'economic_democracy', portfolios: ['economic'], klass: 'small',
       investment: false, ongoing: true, on_launch: 'operating', beneficiaries: ['workers'], law: null,
-      variants: {cooperative_credit: {build: 0, upkeep: 1, trust: 3, trust_lost: -3}}},
+      variants: {cooperative_credit: {price: 1, trust: 3, trust_lost: -3}}},
     mining_socialisation: {name: 'Socialisation of coal mining', card: 'economic_democracy', portfolios: ['economic'], klass: 'large',
       investment: true, beneficiaries: ['workers'], law: {title: 'Socialisation of coal mining', programme: {fiscal: 2}},
-      variants: {socialise_mining: {build: 2, upkeep: 0, duration: 6, business: 25, lewica: -5, union_trust: 5}}},
+      variants: {socialise_mining: {price: 3, business: 25, lewica: -5, union_trust: 5}}},
     constitution: {name: 'Constitutional reform', card: 'constitution_project', portfolios: [], klass: 'constitutional', investment: true,
       beneficiaries: [], law: {constitutional: true},
-      variants: {democratic_guarantees: {build: 1, upkeep: 0, duration: 1, programme: {institution: 2}},
-        constructive_vonc: {build: 1, upkeep: 0, duration: 1, programme: {institution: 0}},
-        presidential_arbitration: {build: 1, upkeep: 0, duration: 1, programme: {institution: -2}},
+      variants: {democratic_guarantees: {price: 1, programme: {institution: 2}},
+        constructive_vonc: {price: 1, programme: {institution: 0}},
+        presidential_arbitration: {price: 1, programme: {institution: -2}},
         // Z — 0.82: the motions of the constitutional debate that PPS can support besides the three reforms of 7.6.
-        church_separation: {build: 1, upkeep: 0, duration: 1, programme: {institution: 1, church: 2}},
+        church_separation: {price: 1, programme: {institution: 1, church: 2}},
         // The referendum is a demand of "further democratisation" of the left (HISTORICAL_SOURCES.md): the democratisation of 7.6.
-        referendum: {build: 1, upkeep: 0, duration: 1, programme: {institution: 2}},
-        labour_chamber: {build: 1, upkeep: 0, duration: 1, programme: {institution: 2}},
-        unicameral: {build: 1, upkeep: 0, duration: 1, programme: {institution: 2}}}},
+        referendum: {price: 1, programme: {institution: 2}},
+        labour_chamber: {price: 1, programme: {institution: 2}},
+        unicameral: {price: 1, programme: {institution: 2}}}},
   });
 
   const VARIANT_NAMES = Object.freeze({
@@ -344,26 +346,27 @@
 
   // ---- Financing instruments (11.9; card 8.3) -------------------------------------------------------
 
-  // position: the fiscal position of the instrument on the scale of 8.1 (cuts −2 … burden on wealth +2);
-  // schedule: [months, B] windows from the effective month; tax: a change of tax_level by one level.
+  // position: the fiscal position of the instrument on the scale of 8.1 (cuts −2 … burden on wealth +2); tax: a change of
+  // tax_level by one level. Z — 1.01: pool — the units it brings to the pool at once (P); months — how long it stays in force,
+  // with no second one meanwhile; repay — what a loan takes back from the pool after its months.
   const INSTRUMENTS = Object.freeze({
-    progressive: {name: 'progressive tax on high incomes and wealth', position: 2, law: true, tax: 1, incidence: 'progressive', business: 4, lewica: -3},
+    progressive: {name: 'progressive tax on high incomes and wealth', position: 2, law: true, tax: 1, pool: 2, incidence: 'progressive', business: 4, lewica: -3},
     // Z — 0.81 (decision 4B): the limited variant of the legislative initiative and its later raise to the full tax; not on card 8.3.
-    progressive_top: {name: 'tax on the highest incomes only, without wealth', position: 1, law: true, tax: 0.5, incidence: 'progressive', business: 2, lewica: -1},
-    progressive_raise: {name: 'progressive tax raised to incomes and wealth', position: 2, law: true, tax: 0.5, incidence: 'progressive', business: 2, lewica: -2},
-    wealth_tax: {name: 'extraordinary wealth tax', position: 2, law: true, schedule: [[6, 2]], business: 8},
-    indirect: {name: 'indirect taxes', position: -1, law: true, tax: 1, incidence: 'indirect', lewica: 3,
+    progressive_top: {name: 'tax on the highest incomes only, without wealth', position: 1, law: true, tax: 0.5, pool: 1, incidence: 'progressive', business: 2, lewica: -1},
+    progressive_raise: {name: 'progressive tax raised to incomes and wealth', position: 2, law: true, tax: 0.5, pool: 1, incidence: 'progressive', business: 2, lewica: -2},
+    wealth_tax: {name: 'extraordinary wealth tax', position: 2, law: true, pool: 3, months: 6, business: 8},
+    indirect: {name: 'indirect taxes', position: -1, law: true, tax: 1, pool: 2, incidence: 'indirect', lewica: 3,
       pending: {system: 'grievance', stage: 7, value: 3, recipients: 'poor recipients'}},
-    broad: {name: 'a broader tax base', position: 0, law: true, tax: 1, incidence: 'broad', business: 4,
+    broad: {name: 'a broader tax base', position: 0, law: true, tax: 1, pool: 2, incidence: 'broad', business: 4,
       pending: {system: 'grievance', stage: 7, value: 3, recipients: 'the middle class covered'}},
-    customs: {name: 'fiscal customs duties', position: -1, law: true, schedule: [[6, 1]],
+    customs: {name: 'fiscal customs duties', position: -1, law: true, pool: 1, months: 6,
       shocks: [{channel: 'price', value: 1, months: 2}, {channel: 'credit', value: 3, months: 6}]},
-    loan: {name: 'domestic investment loan', position: 0, law: true, schedule: [[6, 3], [12, -1]], min_credit: 40},
-    admin_cuts: {name: 'cuts in named administrative spending', position: -1, law: false, schedule: [[6, 1]],
+    loan: {name: 'domestic investment loan', position: 0, law: true, pool: 3, months: 12, repay: 2, min_credit: 40},
+    admin_cuts: {name: 'cuts in named administrative spending', position: -1, law: false, pool: 1, months: 6,
       pending: {system: 'grievance', stage: 7, value: 4, recipients: 'the public employees named'}},
-    benefit_cut: {name: 'cut of the unemployment benefit', position: -2, law: true, lewica: 8},
-    emission: {name: 'emission financing', position: 0, law: true},
-    coinage: {name: 'transitional coinage', position: 0, law: true, months: 3},
+    benefit_cut: {name: 'cut of the unemployment benefit', position: -2, law: true, pool: 1, lewica: 8},
+    emission: {name: 'emission financing', position: 0, law: true, pool: 2, months: 3},
+    coinage: {name: 'transitional coinage', position: 0, law: true, pool: 1, months: 3},
   });
   const INSTRUMENT_NAMES_PL = Object.freeze({progressive: 'progresywny podatek od wysokich dochodów i majątku',
     progressive_top: 'podatek tylko od najwyższych dochodów, bez majątku', progressive_raise: 'podatek progresywny rozszerzony na dochody i majątek',
@@ -471,9 +474,12 @@
     return clip(Math.round(positions.reduce((n, p) => n + p, 0) / positions.length), -2, 2);
   }
 
-  function emissionPoints(Q) {
-    const forecast = economy.budgetAt(Q.S, Q.time).budget;
-    return clip(Math.ceil(-forecast), 1, 3);
+  // Z — 1.01: the emission of the Treasury prints 2 points a month for its three months (P).
+  const EMISSION_POINTS = 2;
+  // P (Z — 1.01): what a better tax collection brings to the pool at its first effect.
+  const COLLECTION_REVENUE = 2;
+  function emissionPoints() {
+    return EMISSION_POINTS;
   }
 
   // Applying an instrument from its effective month (11.9): one record per instrument, the tax level as
@@ -487,14 +493,15 @@
       E.tax_level = clip(E.tax_level + spec.tax, -3, 3);
       E.tax_incidence = spec.incidence;
     }
-    let from = m;
-    for (const window of spec.schedule || []) {
-      policy.budget_schedule.push({from: from, to: from + window[0], value: window[1]});
-      from += window[0];
+    // Z — 1.01: the instrument fills the pool once, at once, and stays in force for its months; a loan is repaid after them.
+    if (spec.months) policy.ends_at = m + spec.months;
+    if (kind === 'emission') policy.emission_points = ctx.points || EMISSION_POINTS;
+    if (kind === 'coinage') policy.emission_points = 1;
+    if (spec.pool) economy.changePool(S, spec.pool, m, id, capital(spec.name), capital(INSTRUMENT_NAMES_PL[kind] || spec.name));
+    if (spec.repay) {
+      economy.schedulePool(S, {id: id + ':repay', at: m + spec.months, value: -spec.repay, en: 'Repayment of the ' + spec.name,
+        pl: 'Spłata: ' + (INSTRUMENT_NAMES_PL[kind] || spec.name)});
     }
-    if (policy.budget_schedule.length) policy.ends_at = policy.budget_schedule[policy.budget_schedule.length - 1].to;
-    if (kind === 'emission') policy.emission_points = ctx.points || 1;
-    if (kind === 'coinage') { policy.emission_points = 1; policy.ends_at = m + spec.months; }
     for (const shock of spec.shocks || []) {
       economy.addShock(E, {id: id + ':' + shock.channel, channel: shock.channel, value: shock.value, starts_at: m, ends_at: m + shock.months});
     }
@@ -503,7 +510,7 @@
       if (protection) {
         const scope = protection.scope || 1;
         protection.variant = 'limited';
-        protection.upkeep_budget_B = PROJECT_TYPES.worker_protection.variants.limited.upkeep * scope;
+        protection.price_B = PROJECT_TYPES.worker_protection.variants.limited.price * scope;
         protection.history.push({t: m, kind: 'benefit_cut', policy_id: id});
         policy.project_id = protection.id;
       }
@@ -661,8 +668,8 @@
       sponsor: 'pps', cabinet_id: S.cabinet ? S.cabinet.id : null, responsibility: {pps: 0},
       beneficiaries: (variant.beneficiaries || type.beneficiaries || []).slice(), scope: 1, tranche: null, policy_choices: {},
       status: 'idea', preparation: 0, authorization_id: null, authorized: false, law_id: null, executor: type.portfolios[0] || 'parliament',
-      required_capabilities: type.portfolios.slice(), build_budget_B: variant.build, upkeep_budget_B: variant.upkeep || 0, party_cost_R: 0,
-      financing_policy_ids: [], progress: 0, duration_months: variant.duration || variant.months || 0, started_at: null, charge_from: null,
+      required_capabilities: type.portfolios.slice(), build_budget_B: 0, upkeep_budget_B: 0, price_B: variant.price || 0, price_paid: false,
+      party_cost_R: 0, financing_policy_ids: [], progress: 0, duration_months: durationOf(type, variant), started_at: null, charge_from: null,
       first_effect_time: null, last_processed_time: null, effects_applied: [], pending_effects: [], obligations_linked: [],
       caretaker_allowed: !!type.caretaker_allowed, interruption_reason: '', investment: !!type.investment, ends_at: null,
       created_at: Q.time, prepared_at: null, launched_at: null, completed_at: null, last_coverage: null, history: [{t: Q.time, kind: 'created'}]};
@@ -678,13 +685,21 @@
     return 0;
   }
 
+  // Z — 1.01: one settlement of execution, so the effects come at the end of the month of the decision; the currency reform keeps
+  // its months of transition; a programme that operates from its launch has no execution.
+  function durationOf(type, variant) {
+    if (variant.duration) return variant.duration;
+    return type.on_launch === 'operating' ? (variant.months || 0) : 1;
+  }
+
   function setVariant(project, variantId) {
     const type = PROJECT_TYPES[project.type], variant = type.variants[variantId];
     project.variant = variantId;
     project.klass = variant.klass || type.klass;
-    project.build_budget_B = variant.build * (project.scope || 1);
-    project.upkeep_budget_B = (variant.upkeep || 0) * (project.scope || 1);
-    project.duration_months = variant.duration || variant.months || 0;
+    project.build_budget_B = 0;
+    project.upkeep_budget_B = 0;
+    project.price_B = (variant.price || 0) * (project.scope || 1);
+    project.duration_months = durationOf(type, variant);
     project.beneficiaries = (variant.beneficiaries || type.beneficiaries || []).slice();
   }
 
@@ -753,8 +768,34 @@
     return bill;
   }
 
+  // Z — 1.01: a project pays its price from the pool once, when it is authorised — by the decision of a ministry, by its law or
+  // by the package that carries it; the projects of other parties' cabinets pay from the same pool (decision 5A).
+  const priceLabel = project => [PROJECT_TYPES[project.type].name + ' (' + VARIANT_NAMES[project.variant] + ')',
+    (PROJECT_NAMES_PL[project.type] || PROJECT_TYPES[project.type].name) + ' (' + (VARIANT_NAMES_PL[project.variant] || project.variant) + ')'];
+  function payPrice(Q, project, m) {
+    if (project.price_paid) return 0;
+    project.price_paid = true;
+    const price = project.price_B || 0;
+    if (!price) return 0;
+    const [en, pl] = priceLabel(project);
+    return economy.changePool(Q.S, -price, m, 'price:' + project.id, en, pl);
+  }
+
+  // A paid project that changes to a dearer variant or scope pays the difference (a raise, a restored or wider protection).
+  function repriceProject(Q, project, variantId, m) {
+    const before = project.price_B || 0;
+    setVariant(project, variantId);
+    const extra = (project.price_B || 0) - before;
+    if (project.price_paid && extra > 0) {
+      const [en, pl] = priceLabel(project);
+      economy.changePool(Q.S, -extra, m, 'price:' + project.id + ':' + variantId + ':t' + m, en, pl);
+    }
+    return extra;
+  }
+
   function authorize(Q, project, m, authorizationId, ppsVoted) {
     project.authorized = true;
+    payPrice(Q, project, m);
     project.authorization_id = authorizationId || project.authorization_id;
     if (project.started_at === null || project.started_at < m) {
       project.started_at = m;
@@ -789,8 +830,10 @@
     const type = PROJECT_TYPES[project.type];
     project.progress = 100;
     project.completed_at = t;
-    project.first_effect_time = project.investment ? t + 1 : t;
-    project.status = type.ongoing && (project.upkeep_budget_B > 0 || project.type === 'labor_inspection') ? 'operating' : 'completed';
+    // Z — 1.01: the effects come in the same settlement; a programme that works for good keeps operating. The złoty of a finished
+    // currency reform comes at the start of the next period (startOfPeriod).
+    project.first_effect_time = project.type === 'currency_reform' ? t + 1 : t;
+    project.status = type.ongoing ? 'operating' : 'completed';
     project.history.push({t: t, kind: 'completed', first_effect_time: project.first_effect_time});
   }
 
@@ -832,10 +875,8 @@
       } else if (project.type === 'currency_reform') {
         // The regime changes at the start of the period, before the budget (startOfPeriod).
       } else if (project.type === 'collection') {
-        const policy = {id: 'pol-collection-' + (S.economy.policies.length + 1) + '-t' + t, kind: 'collection', variant: null,
-          authorization_id: project.id, starts_at: t + 1, ends_at: null, budget_schedule: [{from: t + 1, to: null, value: 1}],
-          emission_points: 0, beneficiaries: [], effects_applied: [], sponsor: project.sponsor, status: 'active'};
-        S.economy.policies.push(policy);
+        // Z — 1.01: the better collection brings the pool its revenue once.
+        economy.changePool(S, COLLECTION_REVENUE, t, 'collection:' + project.id, 'Better tax collection', 'Lepszy pobór podatków');
       } else if (project.type === 'constitution') {
         enactReform(Q, project.variant, project, t);
       } else if (project.type === 'labor_inspection') {
@@ -998,11 +1039,11 @@
       if (projectsOf(S, 'police_training', p => liveProject(p)).length) return no(L('A training of the police is under way.', 'Szkolenie policji już trwa.'));
       const police = S.security.police;
       if (police.command >= 100 && police.lawful_compliance >= 100) return no(L('The police cannot be trained further.', 'Policji nie da się już lepiej wyszkolić.'));
-      return forecastWith(Q, {charge: 1}) >= -2 ? OK : no(forecastBlock());
+      return affordStatus(Q, 1);
     }
     if (option === 'prosecute') {
       if (projectsOf(S, 'police_investigation', p => p.variant === 'prosecution' && liveProject(p)).length) return no(L('The pursuit of political violence is under way.', 'Ściganie przemocy politycznej już trwa.'));
-      return forecastWith(Q, {charge: 1}) >= -2 ? OK : no(forecastBlock());
+      return affordStatus(Q, 1);
     }
     if (option === 'protect') {
       if (policeOrders(S, t)) return no(L('The order is in force until ' + rules.monthYear(S.security.protect_until) + '.',
@@ -1017,8 +1058,8 @@
     if (option === 'training') {
       const project = createProject(Q, 'police_training', 'training', fields);
       launchProject(Q, project, {sponsor: 'pps'});
-      return result(Q, L('The training of the police starts: 1 B a month for three months, then command and lawfulness +' + POLICE_TRAINING + '.',
-        'Rusza szkolenie policji: 1 B miesięcznie przez trzy miesiące, potem dowodzenie i praworządność +' + POLICE_TRAINING + '.'));
+      return result(Q, L('The police are trained; it costs ' + unitsText(project.price_B) + ', and command and lawfulness rise (+' + POLICE_TRAINING + ') at the end of the month.',
+        'Policja przechodzi szkolenie; kosztuje to ' + unitsText(project.price_B) + ', a dowodzenie i praworządność rosną (+' + POLICE_TRAINING + ') pod koniec miesiąca.'));
     }
     if (option === 'prosecute') {
       // The pursuit settles the latest recorded case of political violence too, if there is one.
@@ -1026,8 +1067,8 @@
       const project = createProject(Q, 'police_investigation', 'prosecution', Object.assign({policy_choices: {case_id: c ? c.id : null}}, fields));
       launchProject(Q, project, {sponsor: 'pps'});
       for (const party of ['zln', 'kpp']) government.changeRelation(Q, party, PROSECUTION_RELATION, 'police_prosecution:' + project.id);
-      return result(Q, L('The police pursue the perpetrators of political violence for two months (1 B a month). The National Democrats and the communists protest (−' +
-        Math.abs(PROSECUTION_RELATION) + ').', 'Policja przez dwa miesiące ściga sprawców przemocy politycznej (1 B miesięcznie). Endecja i komuniści protestują (−' +
+      return result(Q, L('The police pursue the perpetrators of political violence; it costs ' + unitsText(project.price_B) + '. The National Democrats and the communists protest (−' +
+        Math.abs(PROSECUTION_RELATION) + ').', 'Policja ściga sprawców przemocy politycznej; kosztuje to ' + unitsText(project.price_B) + '. Endecja i komuniści protestują (−' +
         Math.abs(PROSECUTION_RELATION) + ').') + (c ? L(' The investigation takes up: ' + c.subject + '.', ' Śledztwo obejmuje sprawę: ' + rules.storedText(c.subject) + '.') : ''));
     }
     S.security.protect_until = t + POLICE_ORDERS_MONTHS;
@@ -1053,7 +1094,7 @@
     }
     if (option === 'border') {
       if (projectsOf(S, 'border_protection').length) return no(L('The protection of the eastern border has already been strengthened.', 'Ochrona granicy wschodniej została już wzmocniona.'));
-      return forecastWith(Q, {charge: 2}) >= -2 ? OK : no(forecastBlock());
+      return affordStatus(Q, 2);
     }
     return no(L('Unknown option.', 'Nieznana opcja.'));
   }
@@ -1072,7 +1113,8 @@
     }
     const project = createProject(Q, 'border_protection', 'border', fields);
     launchProject(Q, project, {sponsor: 'pps'});
-    return result(Q, L('The protection of the eastern border is strengthened: 2 B a month for three months.', 'Ochrona granicy wschodniej zostaje wzmocniona: 2 B miesięcznie przez trzy miesiące.'));
+    return result(Q, L('The protection of the eastern border is strengthened; it costs ' + unitsText(project.price_B) + '.',
+      'Ochrona granicy wschodniej zostaje wzmocniona; kosztuje to ' + unitsText(project.price_B) + '.'));
   }
 
   function libertiesOptionStatus(Q, option) {
@@ -1388,6 +1430,8 @@
           if (policy.kind === 'emission' && (policy.ends_at === null || policy.ends_at > t)) policy.ends_at = t;
         }
         S.history.reasons.push({t: t, kind: 'currency_regime', regime: 'zloty', project_id: project.id});
+        // Z — 1.01 (decision 4A): the złoty restores the revenue of the state once.
+        economy.zlotyRevenue(S, t);
       }
     }
   }
@@ -1904,24 +1948,23 @@
   function budgetView(Q) {
     const S = Q.S, pkg = S.economy.pending_package;
     if (!pkg) return null;
-    const forecast = economy.budgetAt(S, Q.time);
     return {
       package: pkg.instruments.length ? pkg.instruments.map(instrumentName).join('; ') : L('no new instruments', 'brak nowych instrumentów'),
       project: pkg.project_id && S.projects[pkg.project_id] ? projectName(S.projects[pkg.project_id].type) + ' (' +
         variantName(S.projects[pkg.project_id].variant) + ')' : '',
       reason: L(PACKAGE_REASONS[pkg.reason], PACKAGE_REASONS_PL[pkg.reason]) || pkg.reason,
       necessary: pkg.necessary,
-      forecast: signed(round(forecast.budget, 1), 1) + L(' B this month', ' B w tym miesiącu'),
+      forecast: economy.poolText(S.economy.budget),
       vote: monthText(pkg.vote_at, 'gen'),
     };
   }
 
   const PACKAGE_REASONS = Object.freeze({
-    payments: 'current legal payments are not fully financed', deficit: 'the budget has fallen below −2 B', stabilisation: 'the currency reform',
+    payments: 'current legal payments are not fully financed', deficit: 'the budget has fallen below zero', stabilisation: 'the currency reform',
     credit: 'the credit crisis', revision: 'the revision of a refused package', obligation: 'a promise of the cabinet',
   });
   const PACKAGE_REASONS_PL = Object.freeze({
-    payments: 'bieżące płatności ustawowe nie są w pełni sfinansowane', deficit: 'budżet spadł poniżej −2 B', stabilisation: 'reforma walutowa',
+    payments: 'bieżące płatności ustawowe nie są w pełni sfinansowane', deficit: 'budżet spadł poniżej zera', stabilisation: 'reforma walutowa',
     credit: 'kryzys kredytowy', revision: 'rewizja odrzuconego pakietu', obligation: 'obietnica gabinetu',
   });
 
@@ -2085,8 +2128,8 @@
         return reviewReason(Q, t, {result: 'prepared', project_id: project.id});
       }
       if (preparedProject(instrument)) {
-        const forecast = economy.budgetAt(S, t, {charge: instrument.build_budget_B}).budget;
-        if (forecast >= -2) {
+        // Z — 1.01: the cabinet launches it when its price is in the pool.
+        if (E.budget >= (instrument.price_B || 0)) {
           launchProject(Q, instrument, {sponsor: 'cabinet'});
           cabinetTxn(Q, t, 'launch', {project_id: instrument.id});
           return reviewReason(Q, t, {result: 'launched', project_id: instrument.id});
@@ -2103,7 +2146,7 @@
       }
     }
     // 3c. Revenue at a deficit; necessary when promised programmes are limited.
-    if (npcHolds(S, 'finance') && last && last.budget < -2) {
+    if (npcHolds(S, 'finance') && last && last.budget < 0) {
       const kind = nextRevenue(Q, profile);
       if (kind) {
         const necessary = projectsOf(S, null, p => liveProject(p) && p.last_coverage !== null && p.last_coverage < 1).length > 0;
@@ -2147,7 +2190,7 @@
     // One protection project for the same recipients: an existing one is restored to the full benefit.
     const existing = step.type === 'worker_protection' ? operatingProtection(S) : null;
     if (existing) {
-      setVariant(existing, 'full');
+      repriceProject(Q, existing, 'full', t);
       existing.history.push({t: t, kind: 'restored_full', by: 'cabinet'});
       cabinetTxn(Q, t, 'restore', {project_id: existing.id, obligation_id: step.obligation.id});
       return reviewReason(Q, t, {result: 'restored', project_id: existing.id, obligation_id: step.obligation.id});
@@ -2805,7 +2848,7 @@
     const variant = bill.enacted_variant || bill.variant;
     let project = operatingProtection(S);
     if (project) {
-      if (project.variant !== 'full' && variant === 'full') setVariant(project, 'full');
+      if (project.variant !== 'full' && variant === 'full') repriceProject(Q, project, 'full', m);
       project.history.push({t: m, kind: 'unemployment_bill', variant: variant});
     } else {
       project = createProject(Q, 'worker_protection', variant, {sponsor: 'pps', executor: 'labor_administration', responsibility: {pps: 0.40},
@@ -2828,7 +2871,6 @@
   function billView(Q) {
     const S = Q.S, record = billRecord(S);
     const full = billSimulation(Q, 'full'), limited = billSimulation(Q, 'limited');
-    const forecast = economy.budgetAt(S, Q.time);
     return {
       status: record ? record.status : 'available',
       full_forecast: L(full.yes + ' for, ' + full.no + ' against, ' + full.abstain + ' abstaining',
@@ -2836,8 +2878,10 @@
       limited_forecast: L(limited.yes + ' for, ' + limited.no + ' against, ' + limited.abstain + ' abstaining',
         limited.yes + ' za, ' + limited.no + ' przeciw, ' + limited.abstain + ' wstrzymujących się'),
       compromise: compromiseClubs(Q).map(government.describeParty).join(', '),
-      budget: signed(round(forecast.budget, 1), 1) + L(' B now; the full variant would cost 2 B a month, the limited 1 B',
-        ' B obecnie; pełny wariant kosztowałby 2 B miesięcznie, ograniczony 1 B'),
+      budget: economy.poolText(S.economy.budget) + L(' now; the full variant would cost ' + unitsText(PROJECT_TYPES.worker_protection.variants.full.price) +
+        ', the limited ' + unitsText(PROJECT_TYPES.worker_protection.variants.limited.price),
+        ' obecnie; pełny wariant kosztowałby ' + unitsText(PROJECT_TYPES.worker_protection.variants.full.price) + ', ograniczony ' +
+        unitsText(PROJECT_TYPES.worker_protection.variants.limited.price)),
     };
   }
 
@@ -2932,7 +2976,7 @@
   function upgradeProject(Q, typeId, fromVariants, toVariant, m) {
     const project = projectsOf(Q.S, typeId, p => carried(p) && fromVariants.indexOf(p.variant) >= 0)[0] || null;
     if (!project) return null;
-    setVariant(project, toVariant);
+    repriceProject(Q, project, toVariant, m);
     project.ends_at = PROJECT_TYPES[typeId].variants[toVariant].months ? m + PROJECT_TYPES[typeId].variants[toVariant].months : null;
     if (project.status === 'completed' && PROJECT_TYPES[typeId].ongoing) project.status = 'operating';
     project.history.push({t: m, kind: 'raised', variant: toVariant, via: 'legislative_initiative'});
@@ -2949,21 +2993,21 @@
   // filing: the effects of taking it up; enact(Q, variant, bill, m, raise): the effects of the law, returning a sentence.
   const INITIATIVES = Object.freeze([
     {id: 'unemployment', portfolio: 'labor', name: ['Protection of the unemployed', 'Ochrona bezrobotnych'],
-      text: ['Benefits for the unemployed from the state budget: the full benefit costs 2 budget units a month, the limited one 1. The unemployed radicalise less and trust PPS more.',
-        'Zasiłek dla bezrobotnych z budżetu państwa: pełny kosztuje 2 jednostki budżetu miesięcznie, ograniczony 1. Bezrobotni mniej się radykalizują i bardziej ufają PPS.'],
-      raise: ['A limited benefit is paid today; the law raises it to the full benefit (2 budget units a month instead of 1).',
-        'Dziś wypłacany jest zasiłek ograniczony; ustawa podnosi go do pełnego (2 jednostki budżetu miesięcznie zamiast 1).'],
+      text: ['Benefits for the unemployed from the state budget: the full benefit costs 3 budget units, the limited one 1. The unemployed radicalise less and trust PPS more.',
+        'Zasiłek dla bezrobotnych z budżetu państwa: pełny kosztuje 3 jednostki budżetu, ograniczony 1. Bezrobotni mniej się radykalizują i bardziej ufają PPS.'],
+      raise: ['A limited benefit is paid today; the law raises it to the full benefit (2 more budget units).',
+        'Dziś wypłacany jest zasiłek ograniczony; ustawa podnosi go do pełnego (2 jednostki budżetu więcej).'],
       variants: [{key: 'full', name: ['the full benefit', 'pełny zasiłek'], programme: {fiscal: 2}}, {key: 'limited', name: ['the limited benefit', 'ograniczony zasiłek'], programme: {fiscal: 1}}],
       level: S => { const p = operatingProtection(S); return !p ? 'none' : p.variant === 'full' ? 'full' : 'limited'; },
       filing: [{type: 'faction', faction: 'lewica', dissent: -2}],
       enact: (Q, variant, bill, m) => {
         billEnacted(Q, {id: bill.id, variant: variant, enacted_variant: variant, sponsor: 'pps', pps_vote: 'yes', effective_at: bill.effective_at}, m);
-        return variant === 'full' ? L('The full benefit is paid from the next settlement: 2 budget units a month.', 'Pełny zasiłek będzie wypłacany od najbliższego rozliczenia: 2 jednostki budżetu miesięcznie.') :
-          L('The limited benefit is paid from the next settlement: 1 budget unit a month.', 'Ograniczony zasiłek będzie wypłacany od najbliższego rozliczenia: 1 jednostka budżetu miesięcznie.');
+        return variant === 'full' ? L('The full benefit is paid from the next settlement; it costs 3 budget units.', 'Pełny zasiłek będzie wypłacany od najbliższego rozliczenia; kosztuje 3 jednostki budżetu.') :
+          L('The limited benefit is paid from the next settlement; it costs 1 budget unit.', 'Ograniczony zasiłek będzie wypłacany od najbliższego rozliczenia; kosztuje 1 jednostkę budżetu.');
       }},
     {id: 'labor_inspection', portfolio: 'labor', name: ['Labour inspection and working time', 'Inspekcja pracy i czas pracy'],
-      text: ['Inspectors enforce the statutory working time: 1 budget unit a month while it works. The discontent of the workers falls, and business presses harder (+4).',
-        'Inspektorzy pilnują ustawowego czasu pracy: 1 jednostka budżetu miesięcznie, dopóki działa. Niezadowolenie robotników spada, a przedsiębiorcy mocniej naciskają (+4).'],
+      text: ['Inspectors enforce the statutory working time; it costs 1 budget unit. The discontent of the workers falls, and business presses harder (+4).',
+        'Inspektorzy pilnują ustawowego czasu pracy; kosztuje to 1 jednostkę budżetu. Niezadowolenie robotników spada, a przedsiębiorcy mocniej naciskają (+4).'],
       raise: ['The inspection works today only in large industry; the law extends it to all workplaces.', 'Dziś inspekcja działa tylko w wielkim przemyśle; ustawa obejmuje nią wszystkie zakłady.'],
       variants: [{key: 'inspection', name: ['inspection everywhere', 'inspekcja we wszystkich zakładach'], programme: {fiscal: 1}},
         {key: 'industry_only', name: ['inspection in large industry only', 'inspekcja tylko w wielkim przemyśle'], programme: {fiscal: 0}}],
@@ -2977,8 +3021,8 @@
         return L('The labour administration builds the inspection.', 'Administracja resortu Pracy buduje inspekcję.');
       }},
     {id: 'progressive_tax', portfolio: 'finance', name: ['Progressive tax on high incomes and wealth', 'Podatek progresywny od wysokich dochodów i majątku'],
-      text: ['The budget gains a lasting income (+1 a month), business presses harder on the cabinet (+4) and the Left of PPS is satisfied.',
-        'Budżet zyskuje stały dochód (+1 miesięcznie), przedsiębiorcy mocniej naciskają na rząd (+4), a Lewica PPS jest zadowolona.'],
+      text: ['The budget gains 2 units at once, business presses harder on the cabinet (+4) and the Left of PPS is satisfied.',
+        'Budżet od razu zyskuje 2 jednostki, przedsiębiorcy mocniej naciskają na rząd (+4), a Lewica PPS jest zadowolona.'],
       raise: ['Today only the highest incomes are taxed; the law extends the tax to high incomes and wealth.', 'Dziś opodatkowane są tylko najwyższe dochody; ustawa obejmuje podatkiem wysokie dochody i majątek.'],
       variants: [{key: 'progressive', name: ['the tax on high incomes and wealth', 'podatek od wysokich dochodów i majątku'], programme: {fiscal: 2}},
         {key: 'progressive_top', name: ['the tax on the highest incomes only, without wealth', 'podatek tylko od najwyższych dochodów, bez majątku'], programme: {fiscal: 1}}],
@@ -2993,8 +3037,8 @@
         return L('The tax is collected from the next settlement.', 'Podatek będzie pobierany od najbliższego rozliczenia.');
       }},
     {id: 'army_oversight', portfolio: 'reichswehr', name: ['Civilian oversight of the army', 'Cywilny nadzór nad wojskiem'],
-      text: ['The army under the control of the government and the Sejm: 1 budget unit a month for three months; one group of the army grows more loyal to the legal authorities.',
-        'Wojsko pod kontrolą rządu i Sejmu: 1 jednostka budżetu miesięcznie przez trzy miesiące; jedno zgrupowanie wojska staje się bardziej lojalne wobec legalnej władzy.'],
+      text: ['The army under the control of the government and the Sejm: it costs 1 budget unit; one group of the army grows more loyal to the legal authorities.',
+        'Wojsko pod kontrolą rządu i Sejmu: kosztuje 1 jednostkę budżetu; jedno zgrupowanie wojska staje się bardziej lojalne wobec legalnej władzy.'],
       raise: ['Today a limited reform of the command is in force; the law brings full civilian oversight.', 'Dziś obowiązuje ograniczona reforma dowództwa; ustawa wprowadza pełny nadzór cywilny.'],
       variants: [{key: 'civilian_oversight', name: ['full civilian oversight', 'pełny nadzór cywilny'], programme: {army: 2}, flags: ['army_against_pilsudski']},
         {key: 'limited_reform', name: ['a compromise on the command', 'kompromis w sprawie dowództwa'], programme: {army: 0}, flags: ['army_compromise']}],
@@ -3017,8 +3061,8 @@
         return L('The cabinet carries out the reform.', 'Rząd przeprowadza reformę.');
       }},
     {id: 'secular_school', portfolio: 'education', name: ['Secular school with religious freedom', 'Szkoła świecka z wolnością religijną'],
-      text: ['A secular school programme: 1 budget unit a month for four months, then 1 to run; the trust of workers and the intelligentsia in PPS grows.',
-        'Program szkoły świeckiej: 1 jednostka budżetu miesięcznie przez cztery miesiące, potem 1 na utrzymanie; rośnie zaufanie robotników i inteligencji do PPS.'],
+      text: ['A secular school programme: it costs 2 budget units; the trust of workers and the intelligentsia in PPS grows.',
+        'Program szkoły świeckiej: kosztuje 2 jednostki budżetu; rośnie zaufanie robotników i inteligencji do PPS.'],
       raise: ['Today parents may exempt their children from religion; the law brings the secular school.', 'Dziś rodzice mogą zwolnić dziecko z nauki religii; ustawa wprowadza szkołę świecką.'],
       variants: [{key: 'secular', name: ['the secular school', 'szkoła świecka'], programme: {church: 1}},
         {key: 'religion_exemption', name: ['exemption from religion at the parents’ request', 'zwolnienie z religii na wniosek rodziców'], programme: {church: 0}}],
@@ -3068,10 +3112,10 @@
         return L('The ministry of the interior carries out the autonomy.', 'Resort Spraw Wewnętrznych wprowadza autonomię.');
       }},
     {id: 'land_reform', portfolio: 'agriculture', name: ['Land reform', 'Reforma rolna'],
-      text: ['Full: the expropriation of large estates without compensation (1 budget unit a month for four months; a very strong reaction of business, +25). Limited: an accelerated reform with compensation (3 a month for three months; +12). It covers the first of three parts of the countryside.',
-        'Pełna: wywłaszczenie wielkiej własności bez odszkodowania (1 jednostka budżetu miesięcznie przez cztery miesiące; bardzo silna reakcja przedsiębiorców, +25). Ograniczona: przyspieszona reforma z odszkodowaniem (3 miesięcznie przez trzy miesiące; +12). Obejmuje pierwszą z trzech części wsi.'],
-      raise: ['A land reform with compensation is carried out today; the law turns it into expropriation without compensation (business +13, the cost falls to 1 a month).',
-        'Dziś trwa reforma z odszkodowaniem; ustawa zmienia ją w wywłaszczenie bez odszkodowania (przedsiębiorcy +13, koszt spada do 1 miesięcznie).'],
+      text: ['Full: the expropriation of large estates without compensation (1 budget unit; a very strong reaction of business, +25). Limited: an accelerated reform with compensation (2 budget units; +12). It covers the first of three parts of the countryside.',
+        'Pełna: wywłaszczenie wielkiej własności bez odszkodowania (1 jednostka budżetu; bardzo silna reakcja przedsiębiorców, +25). Ograniczona: przyspieszona reforma z odszkodowaniem (2 jednostki budżetu; +12). Obejmuje pierwszą z trzech części wsi.'],
+      raise: ['A land reform with compensation is carried out today; the law turns it into expropriation without compensation (business +13).',
+        'Dziś trwa reforma z odszkodowaniem; ustawa zmienia ją w wywłaszczenie bez odszkodowania (przedsiębiorcy +13).'],
       variants: [{key: 'expropriation', name: ['expropriation without compensation', 'wywłaszczenie bez odszkodowania'], programme: {land: 2}},
         {key: 'accelerated', name: ['an accelerated reform with compensation', 'przyspieszona reforma z odszkodowaniem'], programme: {land: 1}}],
       level: S => projectLevel(S, 'land_program', ['expropriation'], ['compensated', 'accelerated']),
@@ -3095,8 +3139,8 @@
         return L('The ministry of agriculture carries out the reform in the next part of the countryside.', 'Resort Rolnictwa przeprowadza reformę w kolejnej części wsi.');
       }},
     {id: 'public_works', portfolio: 'labor', name: ['Public works for the unemployed', 'Roboty publiczne dla bezrobotnych'],
-      text: ['Work for the unemployed: 1 budget unit a month while the works run; after three months two units of employment.',
-        'Praca dla bezrobotnych: 1 jednostka budżetu miesięcznie, dopóki trwają roboty; po trzech miesiącach dwie jednostki zatrudnienia.'],
+      text: ['Work for the unemployed: it costs 2 budget units; two units of employment from the end of the month.',
+        'Praca dla bezrobotnych: kosztuje 2 jednostki budżetu; dwie jednostki zatrudnienia od końca miesiąca.'],
       raise: ['A smaller programme runs today; the law enlarges it to two units of employment.', 'Dziś działa mniejszy program; ustawa powiększa go do dwóch jednostek zatrudnienia.'],
       variants: [{key: 'employment', name: ['two units of employment', 'dwie jednostki zatrudnienia'], programme: {fiscal: 1}},
         {key: 'employment_small', name: ['one unit of employment', 'jedna jednostka zatrudnienia'], programme: {fiscal: 0}}],
@@ -3109,8 +3153,8 @@
         return L('The labour administration starts the works.', 'Administracja resortu Pracy rozpoczyna roboty.');
       }},
     {id: 'workers_housing', portfolio: 'labor', name: ['Workers’ housing', 'Mieszkania robotnicze'],
-      text: ['Houses for workers: 1 budget unit a month while the programme runs; after four months the discontent of the workers grows more slowly.',
-        'Domy dla robotników: 1 jednostka budżetu miesięcznie, dopóki trwa program; po czterech miesiącach niezadowolenie robotników rośnie wolniej.'],
+      text: ['Houses for workers: it costs 2 budget units; from the end of the month the discontent of the workers grows more slowly.',
+        'Domy dla robotników: kosztuje 2 jednostki budżetu; od końca miesiąca niezadowolenie robotników rośnie wolniej.'],
       raise: ['Cooperative houses are built today; the law brings the full programme of workers’ housing.', 'Dziś powstają domy spółdzielcze; ustawa wprowadza pełny program mieszkań robotniczych.'],
       variants: [{key: 'housing', name: ['the full programme', 'pełny program'], programme: {fiscal: 1}},
         {key: 'housing_coop', name: ['cooperative houses on state credit', 'domy spółdzielcze z kredytem państwa'], programme: {fiscal: 0}}],
@@ -3138,8 +3182,8 @@
         return L('The courts apply the new rules at once.', 'Sądy stosują nowe przepisy od razu.');
       }},
     {id: 'old_age', portfolio: null, name: ['Old-age insurance of workers', 'Ubezpieczenie robotników na starość'],
-      text: ['Insurance of workers for old age, widows and orphans from the contributions of employers and workers with a state subsidy: 1 budget unit a month; business presses harder (+6).',
-        'Ubezpieczenie robotników na starość, wdów i sierot ze składek pracodawców i robotników z dopłatą państwa: 1 jednostka budżetu miesięcznie; przedsiębiorcy mocniej naciskają (+6).'],
+      text: ['Insurance of workers for old age, widows and orphans from the contributions of employers and workers with a state subsidy: it costs 2 budget units; business presses harder (+6).',
+        'Ubezpieczenie robotników na starość, wdów i sierot ze składek pracodawców i robotników z dopłatą państwa: kosztuje 2 jednostki budżetu; przedsiębiorcy mocniej naciskają (+6).'],
       raise: ['Only the workers of large industry and the railways are insured today; the law covers all workers.', 'Dziś ubezpieczeni są tylko robotnicy wielkiego przemysłu i kolei; ustawa obejmuje wszystkich robotników.'],
       variants: [{key: 'pension_all', name: ['the insurance of all workers', 'ubezpieczenie wszystkich robotników'], programme: {fiscal: 2}},
         {key: 'pension_industry', name: ['the insurance of large industry and the railways', 'ubezpieczenie wielkiego przemysłu i kolei'], programme: {fiscal: 1}}],
@@ -3568,7 +3612,7 @@
   const customsWarOpen = (S, t) => t >= CUSTOMS_WAR_FROM && t < CUSTOMS_WAR_TO && !(S.economy.customs_war && S.economy.customs_war.decided_at !== undefined);
   const CUSTOMS_WAR = Object.freeze({
     retaliation: {price: 1, price_months: 2, output: 0.2, months: 6},
-    new_markets: {budget: -1, output: 0.2, months: 6},
+    new_markets: {cost: 2, output: 0.2, months: 6},
     concessions: {credit: -6, months: 6, zln: -8},
   });
 
@@ -3578,27 +3622,28 @@
     if (w.price) economy.addShock(E, {id: 'customs_war:price', channel: 'price', value: w.price, starts_at: t, ends_at: t + w.price_months});
     if (w.output) economy.addShock(E, {id: 'customs_war:output', channel: 'output', value: w.output, starts_at: t, ends_at: t + w.months});
     if (w.credit) economy.addShock(E, {id: 'customs_war:credit', channel: 'credit', value: w.credit, starts_at: t, ends_at: t + w.months});
-    if (w.budget) E.policies.push({id: 'pol-customs-war-t' + t, kind: 'export_subsidy', variant: null, authorization_id: null, starts_at: t, ends_at: t + w.months,
-      budget_schedule: [{from: t, to: t + w.months, value: w.budget}], emission_points: 0, beneficiaries: [], effects_applied: [], sponsor: 'pps', status: 'active'});
+    if (w.cost) economy.changePool(S, -w.cost, t, 'customs_war:new_markets', 'Subsidies for coal sent to new markets', 'Dopłaty do węgla wysyłanego na nowe rynki');
     if (w.zln) government.changeRelation(Q, 'zln', w.zln, 'customs_war:concessions');
     S.history.reasons.push({t: t, kind: 'customs_war', option: option});
     return {
       retaliation: L('Poland answers with retaliatory duties: the home market is kept for home industry, and prices rise for two months.',
         'Polska odpowiada cłami odwetowymi: rynek wewnętrzny zostaje dla krajowego przemysłu, a ceny rosną przez dwa miesiące.'),
-      new_markets: L('The state pays for coal sent to new markets over the sea: 1 B a month for six months; the fall of output is halved.',
-        'Państwo dopłaca do węgla wysyłanego na nowe rynki przez morze: 1 B miesięcznie przez sześć miesięcy; spadek produkcji słabnie o połowę.'),
+      new_markets: L('The state pays for coal sent to new markets over the sea: it costs ' + unitsText(w.cost) + '; the fall of output is halved.',
+        'Państwo dopłaca do węgla wysyłanego na nowe rynki przez morze: kosztuje to ' + unitsText(w.cost) + '; spadek produkcji słabnie o połowę.'),
       concessions: L('The cabinet makes concessions to Germany: trade and credit recover sooner, and the National Democrats accuse it of weakness.',
         'Rząd idzie na ustępstwa wobec Niemiec: handel i kredyt szybciej odbijają, a endecja oskarża rząd o uległość.'),
     }[option];
   }
 
-  function forecastWith(Q, extra) {
-    return economy.budgetAt(Q.S, Q.time, extra).budget;
+  // Z — 1.01 (decision 2A, as in the German original): a decision of a ministry needs its price in the pool; it never makes a
+  // deficit by itself.
+  const unitsText = n => L(num(n) + (n === 1 ? ' budget unit' : ' budget units'), num(n) + ' ' + rules.plural(n, 'jednostkę', 'jednostki', 'jednostek') + ' budżetu');
+  function affordStatus(Q, price) {
+    const pool = Q.S.economy.budget;
+    if (!price || pool >= price - 1e-9) return OK;
+    return no(L('Not enough budget: it needs ' + num(price) + ', the pool has ' + numB(pool) + '.',
+      'Brakuje budżetu: potrzeba ' + num(price) + ', jest ' + numB(pool) + '.'));
   }
-
-  // The rule of 11.3 for new programmes, in words (Z — 0.53): a forecast budget of −2 B or more.
-  const FORECAST_BLOCK = 'A new programme starts only when the forecast budget deficit stays at 2 budget units or less.';
-  const forecastBlock = () => L(FORECAST_BLOCK, 'Nowy program rusza tylko wtedy, gdy prognozowany deficyt budżetu nie przekracza 2 jednostek.');
 
   function nextTranche(S, typeId, variantId) {
     const type = PROJECT_TYPES[typeId];
@@ -3691,7 +3736,7 @@
         return launchStatus(Q, typeId, variantId, prepared);
       }
       case 'customs_war': {
-        if (option === 'new_markets') return forecastWith(Q, {policy: CUSTOMS_WAR.new_markets.budget}) >= -2 ? OK : no(forecastBlock());
+        if (option === 'new_markets') return affordStatus(Q, CUSTOMS_WAR.new_markets.cost);
         return OK;
       }
       case 'social_welfare': {
@@ -3699,7 +3744,8 @@
         if (option === 'expand') {
           if (protection && (protection.scope || 1) >= 3) return no(L('The protection already covers its full scope of 3.', 'Osłona obejmuje już pełny zakres 3.'));
           if (protection && protection.variant !== 'full') return no(L('The protection is focused or limited; expanding it means restoring the full benefit first.', 'Osłona jest skupiona albo ograniczona; jej rozszerzenie wymaga najpierw przywrócenia pełnego zasiłku.'));
-          return forecastWith(Q, {charge: 2}) >= -2 ? OK : no(L('No financing: ', 'Brak finansowania: ') + forecastBlock());
+          // Z — 1.01: a new protection pays the full price; a wider scope pays the full price once more.
+          return affordStatus(Q, PROJECT_TYPES.worker_protection.variants.full.price);
         }
         if (option === 'insurance') {
           const prepared = projectsOf(S, 'old_age_insurance', p => preparedProject(p) && p.sponsor === 'pps')[0] || null;
@@ -3712,7 +3758,7 @@
       case 'finance_package': {
         if (option === 'collection') {
           if (projectsOf(S, 'collection').length) return no(L('Tax collection has already been improved in this chapter.', 'Pobór podatków został już w tym rozdziale usprawniony.'));
-          return forecastWith(Q, {charge: 1}) >= -2 ? OK : no(forecastBlock());
+          return affordStatus(Q, 1);
         }
         const kind = option === 'emission' && E.currency_regime === 'zloty' ? 'coinage' : option;
         const blocked = instrumentBlocked(Q, kind);
@@ -3730,7 +3776,7 @@
         if (option === 'worker_representation') return representationStatus(Q, extra && extra.variant);
         if (option === 'orders') {
           if (projectsOf(S, 'orders', p => liveProject(p)).length) return no(L('One package of orders is already running in the country.', 'W kraju realizowany jest już jeden pakiet zamówień.'));
-          return forecastWith(Q, {charge: 1}) >= -2 ? OK : no(forecastBlock());
+          return affordStatus(Q, 1);
         }
         const instrument = projectsOf(S, 'credit_instrument')[0];
         if (instrument && !preparedProject(instrument)) return no(L('The credit instrument is already running: one financing, one cost, one effect.', 'Instrument kredytowy już działa: jedno finansowanie, jeden koszt, jeden skutek.'));
@@ -3803,7 +3849,8 @@
         const existing = projectsOf(S, 'heritage', p => p.policy_choices.object === object)[0];
         if (existing && preparedProject(existing)) return launchStatus(Q, 'heritage', 'restoration', existing);
         // Z — 0.93: a new restoration starts at once, so its whole charge counts; extending a running conservation adds 1.
-        return forecastWith(Q, {charge: existing ? 1 : 2}) >= -2 ? OK : no(forecastBlock());
+        return affordStatus(Q, existing ? PROJECT_TYPES.heritage.variants.restoration.price - PROJECT_TYPES.heritage.variants.conservation.price :
+          PROJECT_TYPES.heritage.variants.restoration.price);
       }
     }
     return no(L('Unknown option.', 'Nieznana opcja.'));
@@ -4004,14 +4051,15 @@
           if (!protection) {
             const project = createProject(Q, 'worker_protection', 'full', ppsFields);
             launchProject(Q, project, {sponsor: 'pps'});
-            return result(Q, L('The protection for the unemployed starts this month: 2 B a month.', 'Osłona dla bezrobotnych rusza w tym miesiącu: 2 B miesięcznie.'));
+            return result(Q, L('The protection for the unemployed starts this month; it costs ' + unitsText(project.price_B) + '.',
+              'Osłona dla bezrobotnych rusza w tym miesiącu; kosztuje ' + unitsText(project.price_B) + '.'));
           }
           protection.scope = (protection.scope || 1) + 1;
-          setVariant(protection, 'full');
+          const extra = repriceProject(Q, protection, 'full', t);
           pend(protection, {system: 'grievance', stage: 7, value: -6, when: 'scope_' + protection.scope, note: 'newly covered recipients'});
           protection.history.push({t: t, kind: 'expanded', scope: protection.scope});
-          return result(Q, L('The protection now covers scope ' + protection.scope + ': ' + numB(protection.upkeep_budget_B) + ' B a month.',
-            'Osłona obejmuje teraz zakres ' + protection.scope + ': ' + numB(protection.upkeep_budget_B) + ' B miesięcznie.'));
+          return result(Q, L('The protection now covers scope ' + protection.scope + '; it costs ' + unitsText(extra) + '.',
+            'Osłona obejmuje teraz zakres ' + protection.scope + '; kosztuje ' + unitsText(extra) + '.'));
         }
         if (option === 'insurance') {
           const project = prepareProject(Q, 'old_age_insurance', 'pension_all', ppsFields, {match: p => p.sponsor === 'pps'});
@@ -4025,13 +4073,14 @@
         if (option === 'collection') {
           const project = createProject(Q, 'collection', 'collection', ppsFields);
           launchProject(Q, project, {sponsor: 'pps'});
-          return result(Q, L('Tax collection improves: 1 B for two months, then +1 B for good.', 'Pobór podatków się poprawia: 1 B przez dwa miesiące, potem trwale +1 B.'));
+          return result(Q, L('Tax collection improves: it costs ' + unitsText(project.price_B) + ' and brings ' + num(COLLECTION_REVENUE) + ' at the end of the month.',
+            'Pobór podatków się poprawia: kosztuje ' + unitsText(project.price_B) + ' i przynosi ' + num(COLLECTION_REVENUE) + ' pod koniec miesiąca.'));
         }
         const kind = option === 'emission' && E.currency_regime === 'zloty' ? 'coinage' : option;
         const law = adoptInstrument(Q, kind);
-        if (!law) return result(Q, L('The ' + INSTRUMENTS[kind].name + ' take effect this month.', capital(instrumentName(kind)) + ': wchodzą w życie w tym miesiącu.'));
+        if (!law) return result(Q, L('The ' + INSTRUMENTS[kind].name + ' take effect this month.', capital(instrumentName(kind)) + ': wchodzą w życie w tym miesiącu.') + poolNote(kind));
         return result(Q, law.status === 'rejected' ? L('The Sejm rejects the ' + INSTRUMENTS[kind].name + '.', 'Sejm odrzuca: ' + instrumentName(kind) + '.') :
-          L('In force from this month: ' + INSTRUMENTS[kind].name + '.', 'Od tego miesiąca obowiązuje: ' + instrumentName(kind) + '.') + lawNote(law));
+          L('In force from this month: ' + INSTRUMENTS[kind].name + '.', 'Od tego miesiąca obowiązuje: ' + instrumentName(kind) + '.') + poolNote(kind) + lawNote(law));
       }
       case 'currency_stabilisation': {
         const project = prepareProject(Q, 'currency_reform', option, ppsFields);
@@ -4091,7 +4140,8 @@
           const project = createProject(Q, 'orders', 'orders', Object.assign({policy_choices: {buyer: 'the state railways and administration',
             suppliers: 'domestic industry', profile: 'synthetic_orders_v1'}}, ppsFields));
           launchProject(Q, project, {sponsor: 'pps'});
-          return result(Q, L('One package of public orders runs for three settlements: 1 B a month.', 'Jeden pakiet zamówień publicznych trwa przez trzy rozliczenia: 1 B miesięcznie.'));
+          return result(Q, L('One package of public orders runs for three settlements; it costs ' + unitsText(project.price_B) + '.',
+            'Jeden pakiet zamówień publicznych trwa przez trzy rozliczenia; kosztuje ' + unitsText(project.price_B) + '.'));
         }
         const financing = option === 'credit' ? 'public' : option;
         const project = prepareProject(Q, 'credit_instrument', financing, ppsFields);
@@ -4154,11 +4204,11 @@
         if (existing && existing.status === 'executing') {
           // A change of scope updates the charge of the remaining works; one reward at the end (12.8).
           const monthsDone = existing.progress / 100 * existing.duration_months;
-          setVariant(existing, 'restoration');
+          const extra = repriceProject(Q, existing, 'restoration', t);
           existing.progress = 100 * monthsDone / existing.duration_months;
           existing.history.push({t: t, kind: 'extended', to: 'restoration'});
-          return result(Q, L('The conservation of ' + HERITAGE_OBJECTS[object] + ' becomes a wider restoration: 2 B a month for the remaining works.',
-            'Konserwacja ' + heritageName(object, 'gen') + ' staje się szerszą restauracją: 2 B miesięcznie za pozostałe prace.'));
+          return result(Q, L('The conservation of ' + HERITAGE_OBJECTS[object] + ' becomes a wider restoration; it costs ' + unitsText(extra) + ' more.',
+            'Konserwacja ' + heritageName(object, 'gen') + ' staje się szerszą restauracją; kosztuje o ' + unitsText(extra) + ' więcej.'));
         }
         const fields = Object.assign({policy_choices: {object: object}}, ppsFields);
         const project = prepareProject(Q, 'heritage', 'restoration', fields, {match: p => p.policy_choices.object === object});
@@ -4166,6 +4216,13 @@
       }
     }
     throw new Error('chooseOption: unknown card ' + cardId);
+  }
+
+  // Z — 1.01: what an instrument of the Treasury brought to the pool, in words.
+  function poolNote(kind) {
+    const value = INSTRUMENTS[kind].pool;
+    return value ? L(' The budget gains ' + unitsText(value).replace(/^(\d+) budget unit/, '$1 unit') + '.', ' Budżet zyskuje ' + num(value) + ' ' +
+      rules.plural(value, 'jednostkę', 'jednostki', 'jednostek') + '.') : '';
   }
 
   function result(Q, text) {
@@ -4195,15 +4252,8 @@
   // Display fields of one card: the budget forecast, its running projects, and each option's reason.
   function cardView(Q, cardId) {
     const S = Q.S, card = CARDS[cardId];
-    const forecast = economy.budgetAt(S, Q.time);
-    const delivery = economy.fiscalDelivery(forecast.budget);
-    // Z — 0.93 (decision 3A of 24 X 2026): the same reading as the sidebar — the budget, the execution and what a new programme may cost.
-    const room = round(forecast.budget + 2, 1);
-    Q.pl_gc_budget = L('Budget this month: ', 'Budżet w tym miesiącu: ') + signed(round(forecast.budget, 1), 1) + ' B (' +
-      (delivery === 1 ? L('programmes run in full', 'programy działają w pełni') : delivery === 0.5 ?
-        L('programmes run at half strength', 'programy działają w połowie') : L('programmes are stopped', 'programy są wstrzymane')) + '); ' +
-      (room >= 0.05 ? L('a new programme may cost up to ' + num(room) + ' B a month.', 'nowy program może kosztować najwyżej ' + num(room) + ' B miesięcznie.') :
-        L('no new programme can start.', 'żaden nowy program nie ruszy.'));
+    // Z — 1.01: the same reading as the top bar — the budget pool from which the options pay.
+    Q.pl_gc_budget = L('Budget: ', 'Budżet: ') + economy.poolText(S.economy.budget) + '.';
     const types = Object.keys(PROJECT_TYPES).filter(id => PROJECT_TYPES[id].card === cardId || (cardId === 'finance_package' && id === 'collection') ||
       (cardId === 'social_welfare' && id === 'old_age_insurance'));
     const lines = projectsOf(S, null, p => types.indexOf(p.type) >= 0).map(p => describeProject(p, S));
@@ -4248,8 +4298,9 @@
         ' (' + VARIANT_NAMES_PL[p.variant] + (p.tranche ? ', transza ' + p.tranche : '') + (p.scope > 1 ? ', zakres ' + p.scope : '') + ')';
       let statePl;
       if (p.status === 'prepared' || p.status === 'idea') statePl = p.status === 'idea' ? 'w przygotowaniu' : 'przygotowanie zakończone, czeka na uruchomienie';
-      else if (p.status === 'executing') statePl = p.authorized ? 'w realizacji: ' + Math.round(p.progress) + '%, ' + numB(p.build_budget_B) + ' B miesięcznie' : 'czeka na ustawę';
-      else if (p.status === 'operating') statePl = 'w działaniu: ' + numB(p.upkeep_budget_B) + ' B miesięcznie' + (p.ends_at ? ' do ' + rules.monthYear(p.ends_at - 1, 'gen') : '');
+      else if (p.status === 'executing') statePl = !p.authorized ? 'czeka na ustawę' : p.duration_months === 1 && !p.progress ? 'skutki pod koniec miesiąca' :
+        'w realizacji: ' + Math.round(p.progress) + '%';
+      else if (p.status === 'operating') statePl = 'w działaniu' + (p.ends_at ? ' do ' + rules.monthYear(p.ends_at - 1, 'gen') : '');
       else if (p.status === 'completed') statePl = 'realizacja zakończona';
       else if (p.status === 'stopped') statePl = 'wstrzymany jako ustępstwo wobec koalicjanta';
       else statePl = p.status;
@@ -4261,8 +4312,9 @@
       ' (' + VARIANT_NAMES[p.variant] + (p.tranche ? ', tranche ' + p.tranche : '') + (p.scope > 1 ? ', scope ' + p.scope : '') + ')';
     let state;
     if (p.status === 'prepared' || p.status === 'idea') state = p.status === 'idea' ? 'in preparation' : 'prepared, waiting for its launch';
-    else if (p.status === 'executing') state = p.authorized ? 'being built, ' + Math.round(p.progress) + '%, ' + numB(p.build_budget_B) + ' B a month' : 'waiting for its law';
-    else if (p.status === 'operating') state = 'operating, ' + numB(p.upkeep_budget_B) + ' B a month' + (p.ends_at ? ' until ' + rules.monthOf(p.ends_at - 1) + '/' + rules.yearOf(p.ends_at - 1) : '');
+    else if (p.status === 'executing') state = !p.authorized ? 'waiting for its law' : p.duration_months === 1 && !p.progress ? 'effects at the end of the month' :
+      'under way, ' + Math.round(p.progress) + '%';
+    else if (p.status === 'operating') state = 'operating' + (p.ends_at ? ' until ' + rules.monthOf(p.ends_at - 1) + '/' + rules.yearOf(p.ends_at - 1) : '');
     else if (p.status === 'completed') state = 'completed';
     else if (p.status === 'stopped') state = 'stopped as a concession to a coalition partner';
     else state = p.status;
@@ -4279,8 +4331,8 @@
     return projectsOf(S, typeId, p => p.status === 'prepared' && p.sponsor === 'pps')[0] || null;
   }
 
-  // The conditions of a launch: the same law refused with nothing changed, the financing of the currency reform, and the
-  // forecast of 11.3 with the programme's monthly cost (the currency reform answers a crisis and may start below −2 B).
+  // The conditions of a launch: the same law refused with nothing changed, the financing of the currency reform, and its price in
+  // the pool (Z — 1.01; the currency reform answers a crisis and may start with an empty pool).
   function launchStatus(Q, typeId, variantId, prepared) {
     if (prepared && prepared.rejected_forecast && prepared.rejected_forecast === lawForecastKey(Q, prepared)) {
       return no(L('The same law was refused and nothing has changed since.', 'Ta sama ustawa została odrzucona i od tego czasu nic się nie zmieniło.'));
@@ -4289,9 +4341,7 @@
       const financing = launchFinancing(Q, prepared || {variant: variantId});
       return financing.blocked ? no(financing.blocked) : OK;
     }
-    const variant = PROJECT_TYPES[typeId].variants[variantId];
-    const cost = prepared ? Math.max(prepared.build_budget_B, prepared.upkeep_budget_B) : Math.max(variant.build || 0, variant.upkeep || 0);
-    return forecastWith(Q, {charge: cost}) >= -2 ? OK : no(forecastBlock());
+    return affordStatus(Q, prepared ? (prepared.price_B || 0) : (PROJECT_TYPES[typeId].variants[variantId].price || 0));
   }
 
   // The necessary package of the stabilisation is part of its launch (17.12): rapid cuts need adopted
@@ -4308,19 +4358,18 @@
         kinds.push(kind);
       }
     }
-    const policy = kinds.reduce((n, kind) => n + ((INSTRUMENTS[kind].schedule || [[0, 0]])[0][1]), 0);
+    const policy = kinds.reduce((n, kind) => n + (INSTRUMENTS[kind].pool || 0), 0);
     return {kinds: kinds, policy: policy};
   }
 
-  // What the launch costs, in words: one monthly cost, for its months or for as long as it works (Z — 0.93).
+  // What the launch costs, in words (Z — 1.01): its price, paid once, and its effects at the end of the month — for the currency
+  // reform, the months until the złoty.
   function launchCostText(project) {
-    const value = Math.max(project.build_budget_B, project.upkeep_budget_B);
-    if (!value) return L('no cost to the budget; first effects in ' + months(project.duration_months || 1), 'bez kosztu dla budżetu; pierwsze skutki za ' + months(project.duration_months || 1));
-    if (!project.duration_months) return L(numB(value) + ' B a month while it works', numB(value) + ' B miesięcznie, dopóki działa');
-    const cost = numB(value), runs = project.upkeep_budget_B > 0 || PROJECT_TYPES[project.type].ongoing;
-    return runs ? L(cost + ' B a month while it works; first effects in ' + months(project.duration_months),
-      cost + ' B miesięcznie, dopóki działa; pierwsze skutki za ' + months(project.duration_months)) :
-      L(cost + ' B a month for ' + months(project.duration_months), cost + ' B miesięcznie przez ' + months(project.duration_months));
+    const price = project.price_B || 0;
+    const cost = price ? L('costs ' + unitsText(price), 'kosztuje ' + unitsText(price)) : L('no cost to the budget', 'bez kosztu dla budżetu');
+    const when = project.type === 'currency_reform' ? L('the złoty comes in ' + months(project.duration_months), 'złoty wejdzie za ' + months(project.duration_months)) :
+      L('the effects come at the end of the month', 'skutki pod koniec miesiąca');
+    return cost + '; ' + when;
   }
 
   // The launch itself, in the same decision (and for an event, in the same answer). Returns the text of the result.
@@ -4386,7 +4435,7 @@
     const stance = government.ppsStance(S);
     if (stance !== 'member' && stance !== 'supporter') return false;
     const protection = operatingProtection(S);
-    if (!protection || protection.variant !== 'full' || protection.upkeep_budget_B < 2) return false;
+    if (!protection || protection.variant !== 'full') return false;
     const review = S.cabinet.pm === 'skrzynski' && t >= S.cabinet.formed_at + 5;
     return review || economy.fiscalCrisis(S.economy);
   }
@@ -4560,6 +4609,39 @@
     return bill;
   }
 
+  // ---- Saves from before the pool (Z — 1.01) -----------------------------------------------------------
+
+  // A game saved before the pool keeps going: the pool starts from the last monthly reading (not below 0), the events already
+  // past and the thresholds already crossed do not fire, the projects under way finish at the next settlement, and nothing that
+  // was already authorised pays again. Idempotent; main calls it when a game is shown.
+  function migratePool(Q) {
+    const S = Q && Q.S;
+    if (!S || !S.economy || S.economy.budget_model === 'pool') return false;
+    const E = S.economy, t = Q.time;
+    E.budget_model = 'pool';
+    E.budget = Math.max(0, Math.round(E.budget || 0));
+    E.pool_log = [];
+    E.pool_schedule = [];
+    E.pool_events_done = [];
+    for (const event of economy.POOL_EVENTS) if (event.at <= t) E.pool_events_done.push(event.id);
+    for (const step of economy.POOL_THRESHOLDS) {
+      if ((step.above !== undefined && E.output >= step.above) || (step.below !== undefined && E.output <= step.below)) E.pool_events_done.push(step.id);
+    }
+    if (E.currency_regime === 'zloty') E.pool_events_done.push('zloty');
+    for (const id of Object.keys(S.projects).sort()) {
+      const project = S.projects[id];
+      if (!project || !PROJECT_TYPES[project.type]) continue;
+      const variant = PROJECT_TYPES[project.type].variants[project.variant] || {};
+      project.price_B = (variant.price || 0) * (project.scope || 1);
+      project.price_paid = !!project.authorized;
+      project.build_budget_B = 0;
+      project.upkeep_budget_B = 0;
+      if (project.status === 'executing' && project.type !== 'currency_reform') project.duration_months = 1;
+    }
+    S.history.reasons.push({t: t, kind: 'budget_pool_migrated', pool: E.budget});
+    return true;
+  }
+
   // ---- Displays -------------------------------------------------------------------------------------
 
   function projectsDisplay(Q) {
@@ -4592,7 +4674,7 @@
       lines.push(L('Currency crisis: inflation has been at least 20% a month for two months.',
         'Kryzys walutowy: od dwóch miesięcy inflacja wynosi co najmniej 20% miesięcznie.'));
     } else if (economy.fiscalCrisis(E)) {
-      lines.push(L('Fiscal crisis: the budget has been below −2 B for two months.', 'Kryzys budżetowy: od dwóch miesięcy budżet jest poniżej −2 B.'));
+      lines.push(L('Fiscal crisis: the budget has been below zero for two months.', 'Kryzys budżetowy: od dwóch miesięcy budżet jest poniżej zera.'));
     }
     if (economy.creditCrisis(E, Q.time) && !creditEventDue(Q)) {
       lines.push(L('Credit crisis: credit and output fall. Without an executive portfolio PPS acts through its relation to the government.',
@@ -4621,6 +4703,9 @@
   rules.registerUrgentCard('polish_initiative_vote', {deck: () => 'main.parliament', active: initiativeVoteActive});
 
   return Object.freeze({
+    migratePool: migratePool,
+    affordStatus: affordStatus,
+    payPrice: payPrice,
     PROGRAMME_LINKS: PROGRAMME_LINKS,
     INITIATIVE_IDS: Object.freeze(INITIATIVES.map(law => law.id)),
     INITIATIVE_CARD: INITIATIVE_CARD,

@@ -98,18 +98,18 @@ test('Szkoła świecka i szkoły mniejszości 0.97: the secular school costs the
   assert.equal(PolishProjects.PROJECT_TYPES.minority_schools.variants.agreed_bilingual.trust, 2);
 });
 
-test('Kultura i nauka 0.97: the universities cost 1 B while they run and the intelligentsia trusts PPS more (+3); the public radio 2 B for three months and democracy +2 once', () => {
+test('Kultura i nauka 0.97: the universities cost 1 B once (Z — 1.01) and the intelligentsia trusts PPS more (+3); the public radio 2 B once and democracy +2 once', () => {
   const Q = withPortfolios(game(), 'education');
   PolishProjects.cardView(Q, 'heritage_restoration');
   assert.equal(Q.pl_gc_heritage_object, 'Wawel');
   PolishProjects.chooseOption(Q, 'heritage_restoration', 'science');
   const science = project(Q, 'science');
-  assert.deepEqual([science.status, science.build_budget_B, science.upkeep_budget_B], ['executing', 1, 1]);
+  assert.deepEqual([science.status, science.price_B], ['executing', 1]);
   free(Q);
   assert.match(PolishProjects.optionStatus(Q, 'heritage_restoration', 'science').reason, /already receive/);
   PolishProjects.chooseOption(Q, 'heritage_restoration', 'radio');
   const radio = project(Q, 'radio');
-  assert.deepEqual([radio.build_budget_B, radio.duration_months], [2, 3]);
+  assert.deepEqual([radio.price_B, radio.duration_months], [2, 1]);
   for (let i = 0; i < 5; i++) settle(Q);
   assert.equal(science.status, 'operating');
   assert.deepEqual(pending(science, 'trust'), [3]);

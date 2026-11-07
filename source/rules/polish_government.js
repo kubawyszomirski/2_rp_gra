@@ -1581,8 +1581,9 @@
     if (operating) return {ok: true, kind: 'existing', reason: ''};
     const wealth = E.policies.some(p => p.kind === 'wealth_tax' && p.status !== 'cancelled' && (p.ends_at === null || p.ends_at === undefined || t < p.ends_at));
     if (wealth) return {ok: false, kind: null, reason: 'no money for the protection: the wealth tax is already in force, so the terms bring no new burden on wealth'};
-    if (economy.budgetAt(S, t, {charge: 2, policy: 2}).budget < -2) {
-      return {ok: false, kind: null, reason: 'no money for the protection: the forecast budget would stay below −2 B'};
+    // Z — 1.01: the wealth tax fills the pool and the full protection pays its price; the pool must not fall below zero.
+    if (economy.budgetAt(S, t, {charge: 3, policy: 3}).budget < 0) {
+      return {ok: false, kind: null, reason: 'no money for the protection: the budget would fall below zero'};
     }
     return {ok: true, kind: 'wealth_tax', reason: ''};
   }
@@ -1681,7 +1682,7 @@
     'no minister of Labour would carry out the protection': 'żaden minister Pracy nie wykonałby osłony',
     'no money for the protection: the wealth tax is already in force, so the terms bring no new burden on wealth':
       'brak pieniędzy na osłonę: podatek majątkowy już obowiązuje, więc warunki nie dają nowego obciążenia majątku',
-    'no money for the protection: the forecast budget would stay below −2 B': 'brak pieniędzy na osłonę: prognozowany budżet pozostałby poniżej −2 B',
+    'no money for the protection: the budget would fall below zero': 'brak pieniędzy na osłonę: budżet spadłby poniżej zera',
     'Land reform without compensation needs a prior change of the property guarantees, which this chapter does not offer.':
       'Reforma rolna bez odszkodowania wymaga wcześniejszej zmiany gwarancji własności, której ten rozdział nie przewiduje.',
     'Army and autonomy points are not part of cabinet programmes in this chapter.':

@@ -135,7 +135,7 @@ test('Inicjatywa 0.81: five laws after the 1922 election; filing costs the month
   proj.initiativeResolve(Q, 'limited');
   assert.equal(Q.month_actions, 0, 'the vote costs no month');
   const protection = proj.operatingProtection(Q.S);
-  assert.deepEqual([protection.variant, protection.upkeep_budget_B, protection.sponsor, protection.responsibility.pps], ['limited', 1, 'pps', 0.40]);
+  assert.deepEqual([protection.variant, protection.price_B, protection.sponsor, protection.responsibility.pps], ['limited', 1, 'pps', 0.40]);
   assert.equal(proj.initiativeStatus(Q, 'unemployment').eligible, false, 'back only after nine months');
   assert.ok(proj.initiativeShown(Q).includes('workers_housing'), 'the next law takes the free place');
   // Nine months later only the full benefit is offered; the gain of the Left came with the first filing only.
@@ -337,9 +337,9 @@ test('Opcje karty Budżet: protect drops the cut; wealth brings a progressive or
 
 test('one initiative a month outside the PPS portfolios: a deficit brings the profile’s revenue, voted the next month', () => {
   const Q = world({ seats: OPENING, time: 3 });
-  Q.S.economy.budget_base = -3; // a deficit below −2 B
+  Q.S.economy.budget = -1; // Z — 1.01: a pool below zero
   month(Q); // t=3: the reading of the deficit
-  assert.ok(Q.S.economy.history.at(-1).budget < -2);
+  assert.ok(Q.S.economy.history.at(-1).budget < 0);
   month(Q); // t=4: Ponikowski proposes the broader tax base
   const pkg = Q.S.economy.pending_package;
   assert.deepEqual([pkg.instruments, pkg.vote_at], [['broad'], 5]);
@@ -347,7 +347,7 @@ test('one initiative a month outside the PPS portfolios: a deficit brings the pr
   assert.equal(initiatives.length, 1, 'at most one initiative a month');
   assert.equal(initiatives[0].consumes_month, false);
   month(Q); // t=5: the vote; without a Senate the law takes effect at once
-  assert.equal(Q.S.economy.tax_level, 1);
+  assert.deepEqual([Q.S.economy.tax_level, Q.S.economy.budget], [1, 1], 'the tax fills the pool at once (+2)');
   assert.equal(Q.S.economy.packages.at(-1).status, 'passed');
   assert.equal(Q.S.scenario.npc_reviewed_time, 5);
 });
@@ -360,7 +360,7 @@ test('a refused necessary package: one revision at the next review, then the pre
   for (const id of cabinet.agreement_ids) Q.S.agreements[id].obligations = []; // isolate from the programme dates
   const protection = proj.createProject(Q, 'worker_protection', 'full', { sponsor: 'pps' });
   proj.launchProject(Q, protection, { sponsor: 'pps' });
-  Q.S.economy.budget_base = -3; // the protection is paid only at half: its legal payments are threatened
+  Q.S.economy.budget = -3; // the protection is paid only at half: its legal payments are threatened
   month(Q); // t=12: the first reading
   month(Q); // t=13: the left profile proposes a progressive tax, necessary for the payments
   const first = Q.S.economy.pending_package;
@@ -391,9 +391,9 @@ test('Plan rządu: the cabinet carries out a point of its programme in its own p
   month(Q); // t=12: Wyzwolenie's ministry prepares the parcelation
   const reform = Object.values(Q.S.projects).find(p => p.type === 'land_program');
   assert.deepEqual([reform.status, reform.sponsor, reform.variant], ['prepared', 'cabinet', 'accelerated']);
-  month(Q); // t=13: launched with its law (no Senate yet in this fixture)
-  assert.equal(reform.status, 'executing');
-  for (let i = 0; i < 4; i++) month(Q);
+  month(Q); // t=13: launched with its law (no Senate yet in this fixture); Z — 1.01: carried out in the same settlement
+  assert.equal(reform.status, 'completed');
+  month(Q);
   assert.equal(land.status, 'fulfilled', 'the first tranche is executed by t+6');
   // Worker protection is PPS's own task in Labour: late, but neither a breach nor a loss of reputation.
   assert.equal(worker.status, 'active');
@@ -419,7 +419,8 @@ test('Efekt projektu: a law, a lawful executor, no PPS minister, budget −3: ex
   proj.launchProject(Q, works, { sponsor: 'cabinet' });
   const protection = proj.createProject(Q, 'worker_protection', 'full', { sponsor: 'cabinet' });
   proj.launchProject(Q, protection, { sponsor: 'cabinet' });
-  Q.S.economy.budget_base = 0; // 0 − 1 (works, Z — 0.93) − 2 (protection) = −3
+  assert.equal(Q.S.economy.budget, 4 - 2 - 3, 'Z — 1.01: the cabinet paid both prices from the pool');
+  Q.S.economy.budget = -3; // a deeper deficit
   const b = econ.budgetAt(Q.S, 5);
   assert.equal(b.budget, -3);
   proj.processProjects(Q, 5, b);
@@ -444,7 +445,7 @@ test('Grabski and the credit crisis: the credit instrument first; without room a
   month(Q);
   const instrument = Object.values(Q.S.projects).find(p => p.type === 'credit_instrument');
   assert.deepEqual([instrument.status, instrument.variant, instrument.sponsor], ['prepared', 'public', 'cabinet']);
-  Q.S.economy.budget_base = -2; // no room: 2 B of building would put the forecast below −2
+  Q.S.economy.budget = 1; // Z — 1.01: no room: the pool holds less than the price of 2 B
   month(Q);
   const pkg = Q.S.economy.pending_package;
   assert.deepEqual([pkg.instruments, pkg.project_id, pkg.necessary], [['wealth_tax'], instrument.id, true]);
@@ -498,7 +499,7 @@ test('Oszczędności 1926 przez 9.8: the sixth month of Skrzyński with a protec
   const out = proj.austerityChoose(Q, 'maintain');
   assert.equal(out.cut.status === 'enacted' || out.cut.status === 'rejected', true);
   if (out.cut.status === 'enacted') {
-    assert.deepEqual([protection.variant, protection.upkeep_budget_B], ['limited', 1], 'only +1 B from 2 → 1');
+    assert.deepEqual([protection.variant, protection.price_B], ['limited', 1], 'the limited benefit; the cut brings the pool +1 once');
   }
   assert.equal(proj.austerityEventDue(Q), false, 'once');
   assert.deepEqual(['bargain', 'persuade', 'maintain', 'withdraw'].length, 4, 'the four answers of 9.8, no separate "new financing" option');
@@ -539,19 +540,19 @@ test('Roboty pod Pracą and Wariant robót: Labour and financing / Treasury only
   assert.equal(proj.cardAvailable(Q, 'public_works'), true);
   const treasury = withPortfolio(world({ time: 12 }), 'finance');
   assert.equal(proj.cardAvailable(treasury, 'public_works'), false, 'the Treasury alone gives no competence of Labour');
-  // Z — 0.93 (decisions 3A and 4A of 24 X 2026): one cost of 1 B a month, started in the same decision.
+  // Z — 1.01 (decisions 1A–5A of 7 XI 2026): the price of 2 B paid once, in the same decision; the effects at the end of the month.
   proj.chooseOption(Q, 'public_works', 'housing');
   const housing = Object.values(Q.S.projects).find(p => p.type === 'public_works');
-  assert.deepEqual([housing.variant, housing.status, housing.duration_months, housing.build_budget_B, housing.upkeep_budget_B], ['housing', 'executing', 4, 1, 1]);
+  assert.deepEqual([housing.variant, housing.status, housing.duration_months, housing.price_B, Q.S.economy.budget], ['housing', 'executing', 1, 2, 2]);
   assert.equal(proj.PROJECT_TYPES.public_works.variants.housing.units, 0, 'no employment units for housing');
   freeAction(Q);
-  Q.S.economy.budget_base = -1; // −1 − 1 (housing) − 1 (new works) = −3
-  assert.match(proj.optionStatus(Q, 'public_works', 'employment').reason, /deficit stays at 2 budget units or less/);
-  Q.S.economy.budget_base = 2;
+  Q.S.economy.budget = 1;
+  assert.match(proj.optionStatus(Q, 'public_works', 'employment').reason, /Not enough budget: it needs 2, the pool has 1\./);
+  Q.S.economy.budget = 2;
   assert.equal(proj.optionStatus(Q, 'public_works', 'employment').available, true);
-  for (let i = 0; i < 5; i++) { month(Q); freeAction(Q); }
-  assert.equal(housing.status, 'operating', 'the built housing stays recorded');
-  assert.equal(econ.budgetAt(Q.S, Q.time).project_charges, 1);
+  month(Q); freeAction(Q);
+  assert.equal(housing.status, 'operating', 'the housing works from the end of the month and stays recorded');
+  assert.equal(econ.budgetAt(Q.S, Q.time).project_charges, 0, 'no monthly charge');
 });
 
 test('Zamówienia: one contract for 3 M, 1 B a month, 0.30/0.15/0 pp × execution, then 0; no second package', () => {
@@ -568,6 +569,7 @@ test('Zamówienia: one contract for 3 M, 1 B a month, 0.30/0.15/0 pp × executio
 
 test('Parcelacja i komasacja: both projects for the same tranche; the same scope of consolidation is not rewarded twice', () => {
   const Q = withPortfolio(world({ time: 12 }), 'agriculture');
+  Q.S.economy.budget = 20; // fixture: a pool for five decisions
   proj.chooseOption(Q, 'land_program', 'compensated', { access: 'equal' });
   freeAction(Q);
   proj.chooseOption(Q, 'agriculture_development', 'consolidation');
@@ -593,13 +595,14 @@ test('Remont Oświaty: a running conservation of Wawel (from an older game) wide
   // Z — 0.97: the card has one restoration option; a conservation started before 0.97 is widened by it.
   const wawel = proj.createProject(Q, 'heritage', 'conservation', { policy_choices: { object: 'wawel' }, sponsor: 'pps' });
   proj.launchProject(Q, wawel, { sponsor: 'pps' });
+  assert.equal(Q.S.economy.budget, 3, 'Z — 1.01: the conservation paid 1 B');
+  wawel.duration_months = 2; // fixture: a conservation of an older game, with two months of works
   proj.processProjects(Q, 12, econ.budgetAt(Q.S, 12));
   close(wawel.progress, 50);
   proj.chooseOption(Q, 'heritage_restoration', 'heritage');
   freeAction(Q);
-  assert.deepEqual([wawel.variant, wawel.build_budget_B, wawel.duration_months], ['restoration', 2, 4]);
-  close(wawel.progress, 25, 1e-9, 'one month done of four');
-  for (let t = 13; t <= 16; t++) proj.processProjects(Q, t, econ.budgetAt(Q.S, t));
+  assert.deepEqual([wawel.variant, wawel.price_B, wawel.duration_months, Q.S.economy.budget], ['restoration', 2, 1, 2], 'the widening pays the difference of 1 B');
+  proj.processProjects(Q, 13, econ.budgetAt(Q.S, 13));
   assert.equal(wawel.status, 'completed');
   assert.equal(Q.S.actors.pps.credibility, 52, 'reputation +2 once, as the open sponsor');
   assert.equal(Object.values(Q.S.projects).filter(p => p.type === 'heritage').length, 1, 'one project for the building');
@@ -611,13 +614,14 @@ test('Remont Oświaty: a running conservation of Wawel (from an older game) wide
 
 test('Rozszerzyć osłony i ubezpieczenie: a protection of 2 B extended to scope 2 costs 4 B; the insurance of workers by a law, business +6 (Z — 0.94)', () => {
   const Q = withPortfolio(world({ time: 12 }), 'labor');
+  Q.S.economy.budget = 20; // fixture: a pool for two decisions
   proj.chooseOption(Q, 'social_welfare', 'expand');
   freeAction(Q);
   const protection = proj.operatingProtection(Q.S);
-  assert.equal(protection.upkeep_budget_B, 2);
+  assert.deepEqual([protection.price_B, Q.S.economy.budget], [3, 17]);
   proj.chooseOption(Q, 'social_welfare', 'expand');
   freeAction(Q);
-  assert.deepEqual([protection.scope, protection.upkeep_budget_B], [2, 4]);
+  assert.deepEqual([protection.scope, protection.price_B, Q.S.economy.budget], [2, 6, 14], 'the wider scope pays the full price once more');
   assert.ok(protection.pending_effects.some(e => e.when === 'scope_2'), 'the same relief for the newly covered (stage 7)');
   // Z — 0.94 (decisions of 24 X 2026): the focused variant left the card; the insurance of workers is filed by the card itself.
   assert.match(proj.optionStatus(Q, 'social_welfare', 'focus').reason, /Unknown option/);
@@ -626,7 +630,7 @@ test('Rozszerzyć osłony i ubezpieczenie: a protection of 2 B extended to scope
   proj.chooseOption(F, 'social_welfare', 'insurance');
   const insurance = Object.values(F.S.projects).find(p => p.type === 'old_age_insurance');
   const law = F.S.parliament.laws.at(-1);
-  assert.deepEqual([law.project_id, law.status, insurance.status, insurance.upkeep_budget_B], [insurance.id, 'enacted', 'operating', 1]);
+  assert.deepEqual([law.project_id, law.status, insurance.status, insurance.price_B], [insurance.id, 'enacted', 'operating', 2]);
   assert.equal(F.S.economy.business_pressure, pressure + 6);
   freeAction(F);
   assert.match(proj.optionStatus(F, 'social_welfare', 'insurance').reason, /already in force/);
@@ -640,7 +644,7 @@ test('Warianty funduszu inwestycyjnego and Ratunek zakładu: 1 B a month, banks 
   proj.chooseOption(Q, 'investment_fund', 'banks');
   freeAction(Q);
   const instrument = Object.values(Q.S.projects).find(p => p.type === 'credit_instrument');
-  assert.deepEqual([instrument.variant, instrument.status, instrument.build_budget_B, instrument.upkeep_budget_B], ['banks', 'executing', 0.5, 0.5]);
+  assert.deepEqual([instrument.variant, instrument.status, instrument.price_B], ['banks', 'executing', 1]);
   assert.equal(Q.S.economy.business_pressure, 10 - 8, 'the agreement lowers business pressure once');
   // Z — 0.92: the cooperative variant uses the existing cooperative movement; it gives credit to farms and small plants (the
   // rural and petty-bourgeois recipients). Z — 0.93: 1 B a month, like the others.
@@ -648,7 +652,7 @@ test('Warianty funduszu inwestycyjnego and Ratunek zakładu: 1 B a month, banks 
   assert.equal(proj.optionStatus(C, 'investment_fund', 'cooperative').available, true);
   proj.chooseOption(C, 'investment_fund', 'cooperative');
   const cooperative = Object.values(C.S.projects).find(p => p.type === 'credit_instrument');
-  assert.deepEqual([cooperative.variant, cooperative.build_budget_B, cooperative.beneficiaries], ['cooperative', 1, ['rural', 'old_middle']]);
+  assert.deepEqual([cooperative.variant, cooperative.price_B, cooperative.beneficiaries], ['cooperative', 2, ['rural', 'old_middle']]);
   const I = withPortfolio(world({ time: 12 }), 'economic');
   // Stage 6: the rescue needs a recorded plant (tests/rules-strike.test.js, "Ratunek zakładu").
   assert.match(proj.optionStatus(I, 'industrial_policy', 'rescue').reason, /recorded plant/);
@@ -665,6 +669,7 @@ test('Szkoły and Szkoła świecka bez reakcji frakcji: separate projects with t
   const cabinet = formed(Q, { configuration_id: 'left_labour', pps_mode: 'member', portfolio_claim: ['education'] });
   assert.equal(cabinet.portfolios.education, 'pps');
   cabinet.programme.church = 0;
+  Q.S.economy.budget = 20; // fixture: a pool for three decisions
   const npr = Q.S.agreements[cabinet.agreement_ids.find(id => Q.S.agreements[id].parties.includes('npr'))];
   npr.obligations.push({ id: npr.id + ':church', topic: 'church', position: 0, owner: 'cabinet', kind: 'constraint', beneficiaries: ['npr'],
     required_project: null, required_variants: null, required_stage: null, portfolio: 'education', weight: 1, due_at: null, status: 'active', fulfillment: 1 });
@@ -800,7 +805,7 @@ test('Głosowanie konstytucyjne 0.82: both chambers on the same day by two third
   assert.equal(proj.reformsRecord(Q).democratic_guarantees, true, 'in force at once');
   assert.equal(Q.S.actors.relations.psl_wyzwolenie, wyzwolenie + 4);
   const project = proj.projectsOf(Q.S, 'constitution')[0];
-  assert.deepEqual([project.variant, project.status, project.build_budget_B, project.duration_months], ['democratic_guarantees', 'executing', 1, 1]);
+  assert.deepEqual([project.variant, project.status, project.price_B, project.duration_months], ['democratic_guarantees', 'executing', 1, 1]);
   month(Q);
   assert.equal(project.status, 'completed', '1 B for one month');
   // The constructive vote has 150 for and none against (95%); a roll of 0.99 turns it over.
@@ -883,13 +888,13 @@ test('Wspólna karta gabinetowa (stage-4 part): Grabski’s terms belong to the 
   assert.equal(proj.CARDS.grabski_terms, undefined, 'no separate Grabski card');
 });
 
-test('P: the currency reform answering a financial crisis may start below −2 B; other programmes keep the threshold of 11.3', () => {
+test('P: the currency reform answering a financial crisis may start with a pool below zero; other programmes need their price in the pool (Z — 1.01)', () => {
   const Q = withPortfolio(world({ time: 20 }), 'finance');
   Q.S.cabinet.portfolios.labor = 'pps';
   Q.S.economy.history.push({ t: 18, inflation_m: 30, budget: -3, credit: 50 }, { t: 19, inflation_m: 40, budget: -3, credit: 50 });
   // Z — 0.93 (decision 4A of 24 X 2026): the card starts the reform in the same decision; the rule is checked on the card.
-  Q.S.economy.budget_base = -3;
-  assert.match(proj.optionStatus(Q, 'public_works', 'employment').reason, /deficit stays at 2 budget units or less/);
+  Q.S.economy.budget = -3;
+  assert.match(proj.optionStatus(Q, 'public_works', 'employment').reason, /Not enough budget/);
   assert.equal(proj.optionStatus(Q, 'currency_stabilisation', 'gradual').available, true);
   proj.chooseOption(Q, 'currency_stabilisation', 'gradual');
   const reform = proj.currencyProject(Q.S);

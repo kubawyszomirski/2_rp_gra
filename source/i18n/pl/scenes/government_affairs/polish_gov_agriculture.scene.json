@@ -7,11 +7,11 @@
   "= Modernisation of agriculture": "= Modernizacja rolnictwa",
   "The countryside needs better tools, consolidated fields and cooperatives of its own. The agrarian pressure now stands at [+ pl_gc_agrarian +] of 100.": "Wieś potrzebuje lepszych narzędzi, scalonych pól i własnych spółdzielni. Nacisk agrarny wynosi teraz [+ pl_gc_agrarian +] na 100.",
   "title: Send advisers and tools to the countryside": "title: Wyślij doradców i narzędzia na wieś",
-  "subtitle: Costs 1 budget unit a month for four months. The agrarian pressure falls (−2), and the farms do better.": "subtitle: Kosztuje 1 jednostkę budżetu miesięcznie przez cztery miesiące. Nacisk agrarny spada (−2), a gospodarstwa lepiej sobie radzą.",
+  "subtitle: Costs 1 budget unit. The agrarian pressure falls (−2), and the farms do better.": "subtitle: Kosztuje 1 jednostkę budżetu. Nacisk agrarny spada (−2), a gospodarstwa lepiej sobie radzą.",
   "title: Consolidate the land": "title: Przeprowadź komasację gruntów",
-  "subtitle: Costs 1 budget unit a month for four months. The agrarian pressure falls (−2), but the disputes over field borders first anger the peasants (+2).": "subtitle: Kosztuje 1 jednostkę budżetu miesięcznie przez cztery miesiące. Nacisk agrarny spada (−2), ale spory o miedze najpierw drażnią chłopów (+2).",
+  "subtitle: Costs 1 budget unit. The agrarian pressure falls (−2), but the disputes over field borders first anger the peasants (+2).": "subtitle: Kosztuje 1 jednostkę budżetu. Nacisk agrarny spada (−2), ale spory o miedze najpierw drażnią chłopów (+2).",
   "title: Support cooperative processing and sales": "title: Wesprzyj spółdzielcze przetwórstwo i sprzedaż",
-  "subtitle: Costs 1 budget unit a month for four months. The peasants sell their crops better, but the middlemen and small traders trust us less (−3).": "subtitle: Kosztuje 1 jednostkę budżetu miesięcznie przez cztery miesiące. Chłopi lepiej sprzedają plony, ale pośrednicy i drobni kupcy ufają nam mniej (−3).",
+  "subtitle: Costs 1 budget unit. The peasants sell their crops better, but the middlemen and small traders trust us less (−3).": "subtitle: Kosztuje 1 jednostkę budżetu. Chłopi lepiej sprzedają plony, ale pośrednicy i drobni kupcy ufają nam mniej (−3).",
   "- @root: Continue.": "- @root: Dalej."
  }
 }

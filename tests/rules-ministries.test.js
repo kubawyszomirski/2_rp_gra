@@ -64,19 +64,19 @@ test('Inspekcja i banki 0.94: the inspection law makes business press harder (+4
   const lewica = S.actors.pps.factions.lewica.dissent, before = S.economy.business_pressure;
   PolishProjects.chooseOption(Q, 'investment_fund', 'banks');
   const banks = Object.values(S.projects).find(p => p.type === 'credit_instrument');
-  assert.deepEqual([banks.variant, banks.build_budget_B, banks.upkeep_budget_B], ['banks', 0.5, 0.5]);
+  assert.deepEqual([banks.variant, banks.price_B], ['banks', 1], 'Z — 1.01: half the price of the public fund');
   assert.equal(S.economy.business_pressure, Math.max(0, before - 8));
   assert.equal(S.actors.pps.factions.lewica.dissent, Math.min(99, lewica + 4));
   assert.match(Q.pl_gc_result, /Left of PPS protests/);
 });
 
-test('Spółdzielnie 0.94: state credit for the cooperatives costs 1 B a month; the workers trust PPS more (+3), the small traders less (−3)', () => {
+test('Spółdzielnie 0.94: state credit for the cooperatives costs 1 B once (Z — 1.01); the workers trust PPS more (+3), the small traders less (−3)', () => {
   const Q = withPortfolios(game(), 'economic');
   const S = Q.S;
-  S.economy.budget_base = 10;
+  S.economy.budget = 10; // Z — 1.01: a pool of 10 units
   PolishProjects.chooseOption(Q, 'economic_democracy', 'cooperative_credit');
   const project = Object.values(S.projects).find(p => p.type === 'cooperative_credit');
-  assert.deepEqual([project.status, project.upkeep_budget_B, project.authorized], ['operating', 1, true]);
+  assert.deepEqual([project.status, project.price_B, project.authorized], ['operating', 1, true]);
   settle(Q);
   const trust = project.pending_effects.filter(e => e.system === 'trust').map(e => [e.value, e.beneficiaries.join(',')]);
   assert.deepEqual(trust, [[3, 'workers'], [-3, 'old_middle']]);
@@ -84,18 +84,17 @@ test('Spółdzielnie 0.94: state credit for the cooperatives costs 1 B a month; 
   assert.match(PolishProjects.optionStatus(Q, 'economic_democracy', 'cooperative_credit').reason, /already runs/);
 });
 
-test('Uspołecznienie 0.94: coal mining is socialised once by a law; business +25 when it takes effect; 2 B for six months; then Lewica −5 and the union of industry +5', () => {
+test('Uspołecznienie 0.94: coal mining is socialised once by a decree; business +25 when it takes effect; 3 B once (Z — 1.01); then Lewica −5 and the union of industry +5', () => {
   const Q = ppsMajority(withPortfolios(game(), 'economic'));
   const S = Q.S;
-  S.economy.budget_base = 10;
+  S.economy.budget = 10; // Z — 1.01: a pool of 10 units
   const pressure = S.economy.business_pressure, trust = S.unions.industry.trust, lewica = S.actors.pps.factions.lewica.dissent;
   PolishProjects.chooseOption(Q, 'economic_democracy', 'socialise_mining');
   const project = Object.values(S.projects).find(p => p.type === 'mining_socialisation');
   assert.deepEqual([S.parliament.laws.at(-1).project_id, S.parliament.laws.at(-1).status], [project.id, 'enacted']);
   assert.equal(S.economy.business_pressure, Math.min(100, pressure + 25));
-  const charges = [];
-  for (let i = 0; i < 7; i++) { charges.push(PolishEconomy.projectCharge(project, Q.time)); settle(Q); }
-  assert.deepEqual(charges, [2, 2, 2, 2, 2, 2, 0], 'compensation for the owners for six months');
+  assert.equal(S.economy.budget, 10 - 3, 'the compensation for the owners, once');
+  settle(Q);
   assert.equal(project.status, 'completed');
   assert.equal(S.unions.industry.trust, Math.min(100, trust + 5));
   assert.ok(S.actors.pps.factions.lewica.dissent <= lewica, 'the Left of PPS is satisfied');
@@ -118,10 +117,9 @@ test('Wojna celna 0.94: an urgent card of Industry and Trade from VI 1925 to VI 
   assert.equal(PolishProjects.cardAvailable(Q, 'customs_war'), false, 'one decision for the whole war');
 
   const M = withPortfolios(at(game(), 1925, 8), 'economic');
-  const budget = PolishEconomy.budgetAt(M.S, M.time).budget;
+  const budget = M.S.economy.budget;
   PolishProjects.chooseOption(M, 'customs_war', 'new_markets');
-  close(PolishEconomy.budgetAt(M.S, M.time).budget, budget - 1);
-  close(PolishEconomy.budgetAt(M.S, M.time + 6).budget - PolishEconomy.budgetAt(M.S, M.time + 6).policy_budget, PolishEconomy.budgetAt(M.S, M.time + 6).budget, 1e-9);
+  close(M.S.economy.budget, budget - 2, 1e-9, 'Z — 1.01: the subsidies cost 2 B once');
 
   const C = withPortfolios(at(game(), 1926, 6), 'economic');
   const zln = C.S.actors.relations.zln;

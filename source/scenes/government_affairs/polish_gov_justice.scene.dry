@@ -42,7 +42,7 @@ go-to: result
 
 @jury
 title: Introduce jury courts in political and press cases
-subtitle: Costs 1 budget unit a month. Democracy grows stronger (+2). [? if pl_justice_policy_jury_coalition : [+ pl_justice_policy_jury_coalition +] ?]
+subtitle: Costs 1 budget unit. Democracy grows stronger (+2). [? if pl_justice_policy_jury_coalition : [+ pl_justice_policy_jury_coalition +] ?]
 choose-if: {! return PolishProjects.optionStatus(Q, 'justice_policy', 'jury').available !}
 unavailable-subtitle: [+ pl_justice_policy_jury_why +]
 on-arrival: {!
@@ -52,7 +52,7 @@ go-to: result
 
 @legal_aid
 title: Open free legal advice for workers
-subtitle: Costs 1 budget unit a month while it works. The trade unions trust PPS more (+5).
+subtitle: Costs 1 budget unit. The trade unions trust PPS more (+5).
 choose-if: {! return PolishProjects.optionStatus(Q, 'justice_policy', 'legal_aid').available !}
 unavailable-subtitle: [+ pl_justice_policy_legal_aid_why +]
 on-arrival: {!

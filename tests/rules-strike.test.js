@@ -758,10 +758,10 @@ test('Układ zbiorowy i odstępstwo: an agreement in the strongest branch costs 
   assert.equal(S.economy.business_pressure, pressure - 4, 'the expiry does not undo the one-off change');
 });
 
-test('Ratunek zakładu: the general credit adds 5 to the credit target; the rescue of a recorded plant costs 1 B a month from its launch (Z — 0.93) and restores its lost capacity once', () => {
+test('Ratunek zakładu: the general credit adds 5 to the credit target; the rescue of a recorded plant costs 2 B once (Z — 1.01) and restores its lost capacity once', () => {
   const Q = withPortfolios(game(), 'economic');
   const S = Q.S;
-  S.economy.budget_base = 10;  // a full execution in this fixture (11.3)
+  S.economy.budget = 10; // Z — 1.01: a pool of 10 units
   assert.match(PolishProjects.optionStatus(Q, 'industrial_policy', 'rescue').reason, /recorded plant/);
   // Z — 0.94: the general credit is the card Capital for Investment.
   PolishProjects.chooseOption(Q, 'investment_fund', 'public');
@@ -775,19 +775,15 @@ test('Ratunek zakładu: the general credit adds 5 to the credit target; the resc
   assert.equal(S.economy.business_pressure, Math.max(0, calm - 4), 'Z — 0.94: a rescue calms the employers');
   free(Q);
   const rescue = Object.values(S.projects).find(p => p.type === 'plant_rescue');
-  // Z — 0.93 (decisions 3A and 4A of 24 X 2026): one cost of 1 B a month, started in the same decision.
-  assert.deepEqual([rescue.status, rescue.klass, rescue.build_budget_B, rescue.upkeep_budget_B, rescue.duration_months, rescue.policy_choices.plant_id],
-    ['executing', 'large', 1, 1, 2, plant.id], 'a large project started by the card');
+  // Z — 1.01: the price of 2 B once, in the same decision; the effects at the end of the month.
+  assert.deepEqual([rescue.status, rescue.klass, rescue.price_B, rescue.duration_months, rescue.policy_choices.plant_id],
+    ['executing', 'large', 2, 1, plant.id], 'a large project started by the card');
   assert.equal(plant.rescue_project_id, rescue.id);
   assert.equal(rescue.authorized, true, 'the owner’s agreement is the condition of the credit; no law');
   // The rescue's own charge in each settlement (the cabinet may launch the prepared credit in the crisis, 17.16.4).
-  const charges = [];
-  for (let i = 0; i < 4; i++) {
-    charges.push(PolishEconomy.projectCharge(rescue, Q.time));
-    settle(Q);
-  }
+  settle(Q);
   assert.equal(rescue.status, 'operating');
-  assert.deepEqual(charges, [1, 1, 1, 1], 'one cost of 1 B a month, while it is built and while it works');
+  assert.equal(PolishEconomy.projectCharge(rescue, Q.time), 0, 'no monthly charge');
   assert.deepEqual([plant.capacity, plant.lost_capacity, plant.status], [100, 0, 'rescued'], 'the recorded lost capacity is restored');
   assert.equal(rescue.effects_applied.filter(k => k === 'first').length, 1, 'once');
   free(Q);
@@ -798,7 +794,7 @@ test('Ratunek zakładu: the general credit adds 5 to the credit target; the resc
 test('Przejęcie (stage-6 part): public control by an act gives business +15 once; one act per plant', () => {
   const Q = withPortfolios(game(), 'economic');
   const S = Q.S;
-  S.economy.budget_base = 10;
+  S.economy.budget = 10; // Z — 1.01: a pool of 10 units
   // A fixture Sejm in which PPS carries its acts (250 of 444 MPs).
   S.parliament.clubs.find(c => c.id === 'pps').seats += 215;
   S.parliament.clubs.find(c => c.id === 'other').seats -= 215;

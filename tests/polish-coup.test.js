@@ -26,7 +26,7 @@ function quietGame() {
   const Q = engine.state.qualities;
   Q.S.scenario.inputs.dispute_1922 = false;
   Q.S.scenario.inputs.military_case = false;
-  Q.S.economy.budget_base = 10;
+  Q.S.economy.budget = 10; // Z — 1.01: a pool of 10 units
   return engine;
 }
 // Z — 0.57: the question of a joint list comes as an event two months before the vote; PPS goes alone.
@@ -118,7 +118,7 @@ test('Kontrola wojska bez pustych opcji: at an open military case the Parliament
   // Z — 0.93 (decision 4A of 24 X 2026): the law goes to the Sejm in the same decision.
   const law = S.parliament.laws.find(l => l.project_id === project.id);
   assert.deepEqual([Q.time, project.variant, project.policy_choices.via, project.duration_months, project.status],
-    [t + 1, 'limited_reform', 'parliament', 2, law.status === 'rejected' ? 'prepared' : 'executing'], '1 T: the one project, the limited reform, filed at once');
+    [t + 1, 'limited_reform', 'parliament', 1, law.status === 'rejected' ? 'prepared' : 'completed'], '1 T: the one project, the limited reform, filed at once and carried out in its month (Z — 1.01)');
   if (law.status !== 'rejected') assert.equal(PolishProjects.armyOversightAvailable(Q), false, 'a reform under way does not bring the card back');
 });
 

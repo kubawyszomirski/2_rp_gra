@@ -14,7 +14,7 @@ afterEach(() => assert.deepEqual(errors, [], 'Dendry must not swallow script or 
 function quiet() {
   const Q = dendry.startGame().state.qualities;
   for (const key of Object.keys(Q.S.scenario.inputs)) Q.S.scenario.inputs[key] = false;
-  Q.S.economy.budget_base = 10;
+  Q.S.economy.budget = 10; // Z — 1.01: a pool of 10 units
   return Q;
 }
 function free(Q) {

@@ -67,7 +67,9 @@ test('schema 5: the new game has the economy and society of 11.1 and 5.6 and an 
   const E = Q.S.economy;
   assert.deepEqual([E.currency_regime, E.inflation_m, E.real_wage, E.output, E.credit, E.market_unemployment, E.unemployment,
     E.budget_base, E.tax_level, E.tax_incidence, E.budget, E.business_pressure, E.business_state],
-  ['marka', 4, 100, 100, 55, 3, 3, 2, 0, 'broad', 2, 10, 'quiet']);
+  ['marka', 4, 100, 100, 55, 3, 3, 0, 0, 'broad', 4, 10, 'quiet']);
+  // Z — 1.01 (decision 1A): the budget is a pool of 4 units, as in the German original.
+  assert.deepEqual([E.budget_model, E.pool_log, E.pool_schedule, E.pool_events_done], ['pool', [], [], []]);
   assert.equal(Q.S.society.agrarian_pressure, 45);
   assert.deepEqual(Object.values(Q.S.society.living_conditions_last), [100, 100, 100, 100, 100, 100, 100]);
   assert.deepEqual(Q.S.parliament.laws, []);
@@ -97,7 +99,7 @@ test('17.16.2: one marka interval at a time, the złoty ends it, the non-monetar
 test('the first months follow the M02 calculator: inflation, wages, credit, output and the countryside (11.4–11.6)', () => {
   const Q = fixture();
   const b1 = econ.budgetAt(Q.S, 1);
-  assert.equal(b1.budget, 2);
+  assert.equal(b1.budget, 4);
   const r1 = econ.settleEconomy(Q.S, 1, b1, {});
   // analysis/m02-revision-13/monthly.csv, run A, 1922-01 (start-of-month snapshot, marka pressure 8).
   close(r1.inflation_m, 5.2, 1e-12, 'inflation');
@@ -110,53 +112,56 @@ test('the first months follow the M02 calculator: inflation, wages, credit, outp
   close(r2.market_unemployment, 3 - 0.35 * r2.private_growth, 1e-12);
 });
 
-test('Niedobór budżetu: execution 1 / 0.5 / 0.5 / 0 at −2 / −2.01 / −5 / −5.01; the nominal cost stays', () => {
+test('Niedobór budżetu: execution 1 / 0.5 / 0.5 / 0 at −2 / −2.01 / −5 / −5.01; a project under way pays nothing more (Z — 1.01)', () => {
   assert.deepEqual([-2, -2.01, -5, -5.01].map(econ.fiscalDelivery), [1, 0.5, 0.5, 0]);
   const Q = isolated(fixture());
   const project = proj.createProject(Q, 'public_works', 'employment', { sponsor: 'pps' });
-  project.status = 'executing'; project.authorized = true; project.started_at = 1; project.charge_from = 1;
-  Q.S.economy.budget_base = -2;
+  project.status = 'executing'; project.authorized = true; project.price_paid = true; project.started_at = 1; project.charge_from = 1;
+  Q.S.economy.budget = -3;
   const b = econ.budgetAt(Q.S, 1);
-  assert.equal(b.budget, -3, 'the cost of 1 B (Z — 0.93) stays in the budget while execution is limited');
+  assert.equal(b.budget, -3);
+  assert.equal(b.emission_used, 3, 'a pool below zero is covered by printing, at most 3 points');
   proj.processProjects(Q, 1, b);
-  close(project.progress, 100 / 3 * 0.5);
-  assert.equal(econ.budgetAt(Q.S, 2).budget, -3, 'no second deduction and no automatic improvement from non-execution');
+  close(project.progress, 100 * 0.5);
+  assert.equal(econ.budgetAt(Q.S, 2).budget, -3, 'no monthly charge and no automatic improvement from non-execution');
 });
 
 // Z — 0.93 (decision 3A of 24 X 2026): one monthly cost from the launch, the same while the works are built and while they run.
-test('Budżet bez kumulacji: base 2, works for 1 B a month from the launch: readings +1 every month, without a reservation ledger', () => {
+// Z — 1.01 (decisions 1A–5A of 7 XI 2026): a project pays its price from the pool once, when it starts; nothing more each month.
+test('Pula budżetu: works pay their price of 2 B once when the cabinet starts them; the pool keeps it, with no monthly charge', () => {
   const Q = isolated(fixture());
   Q.S.cabinet.status = 'active';
   const project = proj.createProject(Q, 'public_works', 'employment', { sponsor: 'cabinet' });
   proj.launchProject(Q, project, { sponsor: 'cabinet' });
+  assert.equal(Q.S.economy.budget, 2, 'the price of 2 B, paid by the cabinet from the same pool (decision 5A)');
+  assert.deepEqual(Q.S.economy.pool_log.map(e => [e.delta, e.pool]), [[-2, 2]]);
   const readings = [];
   for (let t = 1; t <= 5; t++) {
     const b = frozenBudget(Q, t);
     readings.push(b.budget);
     proj.processProjects(Q, t, b);
   }
-  assert.deepEqual(readings, [1, 1, 1, 1, 1]);
+  assert.deepEqual(readings, [2, 2, 2, 2, 2]);
 });
 
-test('11.8: works prepared in November, launched in December: 1 B a month from December (Z — 0.93), 2 units from March, 0.5 pp of jobs and 0.30 pp of output', () => {
+test('11.8 (Z — 1.01): works prepared in November and launched in December pay 2 B once and give 2 units and 0.30 pp of output from the settlement of December', () => {
   const Q = isolated(fixture());
-  const nov = rules.timeOf(1925, 11), dec = nov + 1, mar = rules.timeOf(1926, 3);
+  const nov = rules.timeOf(1925, 11), dec = nov + 1;
   Q.time = nov;
   const project = proj.prepareProject(Q, 'public_works', 'employment', { sponsor: 'cabinet' });
   assert.equal(project.status, 'prepared');
-  assert.equal(econ.budgetAt(Q.S, nov).budget, 2, 'preparation has no budget cost');
+  assert.equal(econ.budgetAt(Q.S, nov).budget, 4, 'preparation has no budget cost');
   Q.time = dec;
   proj.launchProject(Q, project, { sponsor: 'cabinet' });
   const seen = {};
-  for (let t = dec; t <= mar + 1; t++) {
+  for (let t = dec; t <= dec + 2; t++) {
     const b = frozenBudget(Q, t);
     const inputs = proj.processProjects(Q, t, b);
     seen[t] = { budget: b.budget, units: inputs.works_units, pp: inputs.works_output_pp };
   }
-  assert.deepEqual([seen[dec].budget, seen[dec + 1].budget, seen[dec + 2].budget, seen[mar].budget], [1, 1, 1, 1]);
-  assert.equal(seen[dec + 2].units, 0, 'no jobs in the month the building ends');
-  assert.equal(seen[mar].units, 2, 'effects from March');
-  close(seen[mar].pp, 0.30, 1e-12);
+  assert.deepEqual([seen[dec].budget, seen[dec + 1].budget, seen[dec + 2].budget], [2, 2, 2]);
+  assert.deepEqual([seen[dec].units, seen[dec + 2].units], [2, 2], 'the jobs come in the settlement of the decision and stay');
+  close(seen[dec].pp, 0.30, 1e-12);
 });
 
 test('Zatrudnienie: the same 2 units for 6 M are a level of 0.5 pp of jobs, not −0.5 pp a month', () => {
@@ -348,29 +353,33 @@ function ppsTreasury(Q) {
   return Q;
 }
 
-test('Czasowy dochód: a wealth tax from t for 6 M gives +2 B only in t..t+5, once; a save and load changes nothing', () => {
+test('Podatek majątkowy (Z — 1.01): +3 B to the pool at once and business +8 once; in force for 6 M, then a new one may follow', () => {
   const Q = isolated(ppsTreasury(fixture()));
   Q.time = 5;
   const policy = proj.applyInstrument(Q, 'wealth_tax', 5, { sponsor: 'pps' });
-  const readings = [4, 5, 10, 11].map(t => econ.budgetAt(Q.S, t).budget);
-  assert.deepEqual(readings, [2, 4, 4, 2]);
+  assert.equal(Q.S.economy.budget, 7);
+  assert.deepEqual([4, 5, 10, 11].map(t => econ.budgetAt(Q.S, t).budget), [7, 7, 7, 7], 'the pool, not a monthly revenue');
   assert.equal(Q.S.economy.business_pressure, 18, 'business pressure +8 once');
-  const copy = JSON.parse(JSON.stringify(Q.S));
-  assert.equal(econ.budgetAt(copy, 7).budget, 4);
   assert.match(proj.instrumentBlocked(Q, 'wealth_tax'), /already in force/);
   Q.time = 11;
   assert.equal(proj.instrumentBlocked(Q, 'wealth_tax'), '', 'after it expires an extension needs a new decision');
   assert.equal(policy.ends_at, 11);
 });
 
-test('Pożyczka inwestycyjna: +3 B in t..t+5, −1 B in t+6..t+17, then 0; a new loan waits for the end of the service', () => {
+test('Pożyczka inwestycyjna (Z — 1.01): +3 B at once, −2 B twelve months later; a new loan waits for the repayment', () => {
   const Q = isolated(ppsTreasury(fixture()));
   Q.time = 3;
   proj.applyInstrument(Q, 'loan', 3, { sponsor: 'pps' });
-  assert.deepEqual([3, 8, 9, 20, 21].map(t => econ.budgetAt(Q.S, t).budget), [5, 5, 1, 1, 2]);
+  assert.equal(Q.S.economy.budget, 7);
+  assert.deepEqual(Q.S.economy.pool_schedule.map(e => [e.at, e.value]), [[15, -2]]);
+  econ.settlePool(Q.S, 14);
+  assert.equal(Q.S.economy.budget, 7, 'not before its month');
+  econ.settlePool(Q.S, 15);
+  econ.settlePool(Q.S, 16);
+  assert.equal(Q.S.economy.budget, 5, 'the repayment, once');
   Q.time = 10;
   assert.match(proj.instrumentBlocked(Q, 'loan'), /still being serviced/);
-  Q.time = 21;
+  Q.time = 15;
   assert.equal(proj.instrumentBlocked(Q, 'loan'), '');
   Q.S.economy.credit = 39;
   assert.match(proj.instrumentBlocked(Q, 'loan'), /below 40/);
@@ -386,10 +395,13 @@ test('Szerokie grupy i emisja: three broad variants with the costs of 11.9; emis
   assert.equal(econ.shockAt(Q.S.economy, 'price', 3), 1);
   assert.equal(econ.shockAt(Q.S.economy, 'price', 4), 0, 'the price shock lasts 2 M');
   assert.equal(econ.shockAt(Q.S.economy, 'credit', 7), 3, 'the credit shock lasts 6 M');
-  Q.S.economy.budget_base = -6;
+  // Z — 1.01: the taxes filled the pool once (+2 each), the duties +1; the emission +2 at once and its points for three months.
+  assert.equal(Q.S.economy.budget, 9);
   proj.applyInstrument(Q, 'emission', 1, { sponsor: 'pps', points: 3 });
-  const b = econ.budgetAt(Q.S, 2);
-  assert.equal(b.emission_used, Math.min(3, -b.structural_room));
+  assert.equal(Q.S.economy.budget, 11);
+  assert.deepEqual([1, 3, 4].map(t => econ.budgetAt(Q.S, t).emission_used), [3, 3, 0], 'the authorised points print for three months');
+  Q.S.economy.budget = -1;
+  assert.equal(econ.budgetAt(Q.S, 4).emission_used, 1, 'a pool below zero prints too');
   assert.equal(proj.instrumentBlocked(Q, 'coinage'), 'Transitional coinage exists only after the stabilisation.');
   Q.S.economy.currency_regime = 'zloty';
   assert.equal(econ.emissionAuthorizedAt(Q.S.economy, 2), 0, 'the złoty closes the ordinary emission');
@@ -397,17 +409,16 @@ test('Szerokie grupy i emisja: three broad variants with the costs of 11.9; emis
   assert.deepEqual([2, 4, 5].map(t => econ.emissionAuthorizedAt(Q.S.economy, t)), [1, 1, 0]);
 });
 
-test('Pobór w karcie finansowej: 1 B for 2 M, then +1 B for good; a second time is blocked', () => {
+test('Pobór w karcie finansowej (Z — 1.01): 1 B once, +2 B at its first effect in the same settlement; no longer on the Treasury card', () => {
   const Q = isolated(ppsTreasury(fixture()));
   const project = proj.createProject(Q, 'collection', 'collection', { sponsor: 'pps' });
   proj.launchProject(Q, project, { sponsor: 'pps' });
   const readings = [];
-  for (let t = 1; t <= 5; t++) {
-    const b = econ.budgetAt(Q.S, t);
-    readings.push(b.budget);
-    proj.processProjects(Q, t, b);
+  for (let t = 1; t <= 3; t++) {
+    readings.push(Q.S.economy.budget);
+    proj.processProjects(Q, t, econ.budgetAt(Q.S, t));
   }
-  assert.deepEqual(readings, [1, 1, 3, 3, 3]);
+  assert.deepEqual(readings, [3, 5, 5]);
   // Z — 0.93 (decision 3A of 24 X 2026): the better collection left the Treasury card; the project of an older save still works.
   assert.match(proj.optionStatus(Q, 'finance_package', 'collection').reason, /Unknown option/);
 });
@@ -431,7 +442,84 @@ test('Stabilizacja i finanse: the złoty keeps the loan service and wages; it cl
   assert.equal(Q.S.economy.currency_regime, 'zloty');
   assert.equal(econ.shockAt(Q.S.economy, 'monetary', t0 + 6), 0);
   assert.equal(econ.emissionAuthorizedAt(Q.S.economy, t0 + 6), 0);
-  assert.equal(econ.policyBudgetAt(Q.S.economy, t0 + 6), -1, 'the loan service continues');
+  assert.deepEqual(Q.S.economy.pool_schedule.map(e => [e.at, e.value, e.done]), [[t0 + 12, -2, false]], 'the repayment of the loan still waits');
+  assert.equal(Q.S.economy.pool_events_done.indexOf('zloty') >= 0, true, 'the złoty restored the revenue once (+2)');
   assert.equal(Q.S.economy.real_wage, 70, 'no reset of wages');
   assert.equal(law.status, 'enacted');
+});
+
+// ---- The budget pool (Z — 1.01, decisions 1A–5A of 7 XI 2026, as in the German original) ----
+
+test('Pula 1.01: the dated events move the pool once each; a marka event passes by after the złoty; the złoty brings +2 once', () => {
+  const Q = isolated(fixture());
+  const E = Q.S.economy, T = rules.timeOf;
+  econ.settlePool(Q.S, T(1923, 6));
+  assert.equal(E.budget, 4, 'nothing before VII 1923');
+  econ.settlePool(Q.S, T(1923, 7));
+  econ.settlePool(Q.S, T(1923, 8));
+  assert.equal(E.budget, 3, 'inflation eats the revenue: −1, once');
+  E.currency_regime = 'zloty';
+  econ.settlePool(Q.S, T(1923, 10));
+  assert.equal(E.budget, 3, 'the hyperinflation of X 1923 does not come after the złoty');
+  assert.ok(E.pool_events_done.includes('inflation_1923_crisis'), 'and it does not come later either');
+  assert.equal(econ.zlotyRevenue(Q.S, T(1923, 10)), 2);
+  assert.equal(econ.zlotyRevenue(Q.S, T(1923, 11)), 0, 'once');
+  econ.settlePool(Q.S, T(1925, 6));
+  econ.settlePool(Q.S, T(1926, 7));
+  assert.equal(E.budget, 3 + 2 - 1 + 1, 'the credit crisis −1 and the recovery +1');
+  assert.deepEqual(E.pool_log.map(e => e.delta), [-1, 2, -1, 1]);
+  assert.match(econ.economyDisplay(Object.assign(Q, { time: T(1926, 7) })).budget_parts, /recovery of the economy raises the revenue \+1/);
+});
+
+test('Pula 1.01: the thresholds of output +1 at 105 and 110, −1 at 95 and 90, once each; the pool is not recomputed every month', () => {
+  const Q = isolated(fixture());
+  const E = Q.S.economy;
+  E.output = 106;
+  econ.settlePool(Q.S, 5);
+  econ.settlePool(Q.S, 6);
+  assert.equal(E.budget, 5, 'good business: +1 once');
+  E.output = 111;
+  econ.settlePool(Q.S, 7);
+  E.output = 94;
+  econ.settlePool(Q.S, 8);
+  E.output = 89;
+  econ.settlePool(Q.S, 9);
+  assert.equal(E.budget, 5 + 1 - 1 - 1);
+  for (let t = 10; t < 15; t++) econ.settleEconomy(Q.S, t, econ.budgetAt(Q.S, t), {});
+  assert.equal(E.budget, 4, 'the months themselves add nothing');
+});
+
+test('Pula 1.01: a pool below zero prints money (at most 3 points) and two settlements below zero are a fiscal crisis; a ministry option needs its price in the pool', () => {
+  const Q = isolated(fixture());
+  const E = Q.S.economy;
+  E.budget = -2;
+  assert.deepEqual([econ.budgetAt(Q.S, 1).emission_used, econ.budgetAt(Q.S, 1).printing], [2, 2]);
+  E.budget = -7;
+  assert.equal(econ.budgetAt(Q.S, 1).emission_used, 3, 'at most 3 points');
+  econ.settleEconomy(Q.S, 1, econ.budgetAt(Q.S, 1), {});
+  econ.settleEconomy(Q.S, 2, econ.budgetAt(Q.S, 2), {});
+  assert.equal(econ.fiscalCrisis(E), true);
+  assert.equal(econ.poolText(-7), '−7 B: a deficit, the state prints money and programmes are stopped');
+  E.budget = 1;
+  assert.match(proj.affordStatus(Q, 2).reason, /^Not enough budget: it needs 2, the pool has 1\.$/);
+  assert.equal(proj.affordStatus(Q, 1).available, true);
+});
+
+test('Stare zapisy 1.01: a game saved before the pool gets a pool from its last reading, its works finish at the next settlement and nothing pays twice', () => {
+  const Q = isolated(fixture());
+  const E = Q.S.economy, t = rules.timeOf(1923, 9);
+  Q.time = t;
+  delete E.budget_model; delete E.pool_log; delete E.pool_schedule; delete E.pool_events_done;
+  E.budget = 1.6;
+  E.output = 106;
+  const works = proj.createProject(Q, 'public_works', 'employment', { sponsor: 'cabinet' });
+  Object.assign(works, { status: 'executing', authorized: true, started_at: t - 1, progress: 25, duration_months: 4, build_budget_B: 1, upkeep_budget_B: 1 });
+  delete works.price_paid;
+  assert.equal(proj.migratePool(Q), true);
+  assert.equal(proj.migratePool(Q), false, 'once');
+  assert.deepEqual([E.budget_model, E.budget, works.price_paid, works.duration_months, works.build_budget_B], ['pool', 2, true, 1, 0]);
+  assert.deepEqual(E.pool_events_done.sort(), ['boom_105', 'inflation_1923_summer'], 'past events and crossed thresholds do not fire at once');
+  proj.processProjects(Q, t, econ.budgetAt(Q.S, t));
+  assert.equal(works.status, 'operating', 'the works finish at the next settlement');
+  assert.equal(E.budget, 2, 'no second price');
 });

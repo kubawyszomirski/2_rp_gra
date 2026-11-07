@@ -8,10 +8,10 @@
   "- @root: Continue.": "- @root: Dalej.",
   "The credit instrument gives firms cheaper credit and raises the credit target of the economy while it works (+5). The variants differ in who pays and whom the credit helps.": "Instrument kredytowy daje przedsiębiorstwom tańszy kredyt i podnosi docelowy kredyt w gospodarce, dopóki działa (+5). Warianty różnią się tym, kto płaci i komu kredyt pomaga.",
   "title: Set up a public fund": "title: Załóż fundusz publiczny",
-  "subtitle: Costs 1 budget unit a month; the state itself chooses whom it lends to. It helps the workers’ towns and the crafts.": "subtitle: Kosztuje 1 jednostkę budżetu miesięcznie; państwo samo wybiera, komu daje kredyt. Pomaga robotniczym miastom i rzemiosłu.",
+  "subtitle: Costs 2 budget units; the state itself chooses whom it lends to. It helps the workers’ towns and the crafts.": "subtitle: Kosztuje 2 jednostki budżetu; państwo samo wybiera, komu daje kredyt. Pomaga robotniczym miastom i rzemiosłu.",
   "title: Make an agreement with the banks": "title: Zawrzyj porozumienie z bankami",
-  "subtitle: Costs only half a budget unit a month, and business presses less (−8). The Left of PPS protests against a deal with capital (+4); needs credit of at least 40.": "subtitle: Kosztuje tylko pół jednostki budżetu miesięcznie, a przedsiębiorcy mniej naciskają (−8). Lewica PPS protestuje przeciw układowi z kapitałem (+4); wymaga kredytu co najmniej 40.",
+  "subtitle: Costs only 1 budget unit, and business presses less (−8). The Left of PPS protests against a deal with capital (+4); needs credit of at least 40.": "subtitle: Kosztuje tylko 1 jednostkę budżetu, a przedsiębiorcy mniej naciskają (−8). Lewica PPS protestuje przeciw układowi z kapitałem (+4); wymaga kredytu co najmniej 40.",
   "title: Finance the credit through the cooperatives": "title: Finansuj kredyt przez spółdzielnie",
-  "subtitle: Costs 1 budget unit a month. It helps peasant farms and workshops instead of the towns.": "subtitle: Kosztuje 1 jednostkę budżetu miesięcznie. Pomaga gospodarstwom chłopskim i warsztatom zamiast miastom."
+  "subtitle: Costs 2 budget units. It helps peasant farms and workshops instead of the towns.": "subtitle: Kosztuje 2 jednostki budżetu. Pomaga gospodarstwom chłopskim i warsztatom zamiast miastom."
  }
 }

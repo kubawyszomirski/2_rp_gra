@@ -230,13 +230,13 @@ test('B18/B19/B21: the return of Chjeno-Piast after a stabilising cabinet with a
 test('Rozszerzyć i skupić osłony: expanding a 2 B protection to scope 2 costs 4 B and relieves the newly covered too; focusing costs 1 B and gives the full relief to the neediest half', () => {
   const run = option => {
     const Q = withPortfolios(quiet(), 'labor');
-    Q.S.economy.budget_base = 10;
+    Q.S.economy.budget = 10; // Z — 1.01: a pool of 10 units
     PolishProjects.chooseOption(Q, 'social_welfare', option);
     return Q;
   };
   // The same unemployed cell in a twin game without the protection: every other term of 15.1 is equal there.
   const twin = quiet();
-  twin.S.economy.budget_base = 10;
+  twin.S.economy.budget = 10; // Z — 1.01: a pool of 10 units
   const expanded = run('expand');
   const S = expanded.S;
   const id = unemployedCells(S)[0].id;
@@ -245,12 +245,12 @@ test('Rozszerzyć i skupić osłony: expanding a 2 B protection to scope 2 costs
   settle(expanded);
   settle(twin);
   const protection = PolishProjects.operatingProtection(S);
-  assert.deepEqual([protection.variant, protection.scope, protection.upkeep_budget_B], ['full', 1, 2]);
+  assert.deepEqual([protection.variant, protection.scope, protection.price_B], ['full', 1, 3]);
   close(PolishPolitics.ongoingRelief(S, cellOf(expanded)), 2 / 3, 1e-9, 'one level covers a third of the unemployed');
   close(gap(), 6 / 3 + 2 / 3, 1e-9, 'the initial relief −6 and the current relief 2 of the covered third');
   free(expanded);
   PolishProjects.chooseOption(expanded, 'social_welfare', 'expand');
-  assert.deepEqual([protection.scope, protection.upkeep_budget_B], [2, 4]);
+  assert.deepEqual([protection.scope, protection.price_B], [2, 6], 'Z — 1.01: the wider scope pays the full price once more');
   const before = gap();
   settle(expanded);
   settle(twin);
@@ -260,9 +260,9 @@ test('Rozszerzyć i skupić osłony: expanding a 2 B protection to scope 2 costs
   // Z — 0.94 (decisions of 24 X 2026): the focused variant left the card; a focused protection of an older save keeps its relief.
   const focused = run('expand');
   const focus = PolishProjects.operatingProtection(focused.S);
-  Object.assign(focus, { variant: 'focused', upkeep_budget_B: 1 }); // fixture: the focused variant of an older save
+  Object.assign(focus, { variant: 'focused', price_B: 2 }); // fixture: the focused variant of an older save
   settle(focused);
-  assert.deepEqual([focus.variant, focus.upkeep_budget_B], ['focused', 1]);
+  assert.deepEqual([focus.variant, focus.price_B], ['focused', 2]);
   close(PolishPolitics.ongoingRelief(focused.S, unemployedCells(focused.S)[0]), 1 / 3, 1e-9, 'the full relief for half of the covered');
 });
 
@@ -271,7 +271,7 @@ test('Rozszerzyć i skupić osłony: expanding a 2 B protection to scope 2 costs
 test('Reprezentacja: since 0.94 the law on works councils for the larger plants; business +8 when it takes effect; the unions of industry and the railways +5 and the workers −3 once', () => {
   const Q = withPortfolios(quiet(), 'economic');
   const S = Q.S;
-  S.economy.budget_base = 10;
+  S.economy.budget = 10; // Z — 1.01: a pool of 10 units
   S.parliament.clubs.find(c => c.id === 'pps').seats += 215;
   S.parliament.clubs.find(c => c.id === 'other').seats -= 215;
   const workers = S.society.cells.filter(c => c.class_id === 'workers');

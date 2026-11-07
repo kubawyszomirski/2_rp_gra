@@ -18,7 +18,7 @@ Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_currency');
 
 *[+ pl_gc_ministry +]*
 
-A financial crisis — a budget below −2 B or inflation of at least 20% a month for two months — opens the one currency reform. Choosing a variant launches it in the same decision (1 T), with its necessary financing. When it is completed the złoty ends the marka pressures and the ordinary emission.
+A financial crisis — a budget below zero or inflation of at least 20% a month for two months — opens the one currency reform. Choosing a variant launches it in the same decision (1 T), with its necessary financing. When it is completed the złoty ends the marka pressures and the ordinary emission.
 
 [+ pl_gc_budget +]
 
@@ -32,7 +32,7 @@ A financial crisis — a budget below −2 B or inflation of at least 20% a mont
 
 @rapid_cuts
 title: Rapid stabilisation with savings
-subtitle: Costs the budget 2 units a month for three months; needs adopted cuts of at least 1 budget unit; the credit shock grows for three months from the launch (+10). [? if pl_currency_stabilisation_rapid_cuts_coalition : [+ pl_currency_stabilisation_rapid_cuts_coalition +] ?]
+subtitle: Costs 3 budget units, and the złoty comes after three months; needs adopted cuts; the credit shock grows for three months from the launch (+10). [? if pl_currency_stabilisation_rapid_cuts_coalition : [+ pl_currency_stabilisation_rapid_cuts_coalition +] ?]
 choose-if: {! return PolishProjects.optionStatus(Q, 'currency_stabilisation', 'rapid_cuts').available !}
 unavailable-subtitle: [+ pl_currency_stabilisation_rapid_cuts_why +]
 on-arrival: {!
@@ -42,7 +42,7 @@ go-to: result
 
 @protected
 title: Stabilisation with protections and a burden on wealth
-subtitle: Costs the budget 2 units a month for three months; needs a protection for the unemployed and its financing; the same credit shock. [? if pl_currency_stabilisation_protected_coalition : [+ pl_currency_stabilisation_protected_coalition +] ?]
+subtitle: Costs 3 budget units, and the złoty comes after three months; needs a protection for the unemployed and its financing; the same credit shock. [? if pl_currency_stabilisation_protected_coalition : [+ pl_currency_stabilisation_protected_coalition +] ?]
 choose-if: {! return PolishProjects.optionStatus(Q, 'currency_stabilisation', 'protected').available !}
 unavailable-subtitle: [+ pl_currency_stabilisation_protected_why +]
 on-arrival: {!
@@ -52,7 +52,7 @@ go-to: result
 
 @gradual
 title: Gradual limitation of emission
-subtitle: Costs the budget 1 unit a month for five months; the credit shock grows for five months (+5); the pressure on the marka lasts longer.
+subtitle: Costs 2 budget units, and the złoty comes after five months; the credit shock grows for five months (+5); the pressure on the marka lasts longer.
 choose-if: {! return PolishProjects.optionStatus(Q, 'currency_stabilisation', 'gradual').available !}
 unavailable-subtitle: [+ pl_currency_stabilisation_gradual_why +]
 on-arrival: {!

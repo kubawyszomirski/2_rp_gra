@@ -93,7 +93,8 @@
     // Three figures of the economy, with their change since the month before.
     const E = S && S.economy;
     if (E) {
-      Q.pl_top_budget = signed(E.budget) + ' B';
+      // Z — 1.01: the budget pool, without a plus sign; below zero it is a deficit.
+      Q.pl_top_budget = (E.budget < -0.05 ? '−' : '') + rules.num(Math.round(Math.abs(E.budget) * 10) / 10) + ' B';
       Q.pl_top_inflation = one(E.inflation_m) + L('% a month', '% mies.');
       Q.pl_top_unemployment = one(E.unemployment) + '%';
       Q.pl_top_budget_trend = trend(change(E.history, 'budget', E.budget), 1);

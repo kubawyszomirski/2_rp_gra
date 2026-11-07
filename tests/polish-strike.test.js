@@ -313,7 +313,7 @@ test('the plant cards in the game: Labour signs a collective agreement in its st
   choose(engine, 'root');
   toMain(engine);
   const rescue = Object.values(S.projects).find(p => p.type === 'plant_rescue');
-  assert.deepEqual([rescue.status, rescue.authorized, Q.time], ['executing', true, 3]);
+  assert.deepEqual([rescue.status, rescue.authorized, Q.time], ['operating', true, 3], 'Z — 1.01: carried out at the settlement of its month');
 });
 
 test('B14 in the game: the stabilisation event without the Treasury leads to the formation card with Grabski and the protections for no month', () => {

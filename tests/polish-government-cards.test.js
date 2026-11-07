@@ -74,22 +74,22 @@ test('Roboty pod Pracą in the game: the Government deck offers the Labour cards
   for (const id of ['polish_gov_finance', 'polish_gov_land', 'polish_gov_education']) assert.ok(!deck.includes(id), id + ' needs another portfolio');
   const t = Q.time;
   playFromHand(engine, 'polish_gov_public_works');
-  assert.match(content(engine), /Budget this month/);
+  assert.match(content(engine), /Budget: 4 B/);
   choose(engine, 'easy_discard');
   assert.equal(Q.time, t, 'closing the card is free');
   assert.deepEqual(engine.state.currentHands.main.map(c => c.id), ['polish_gov_public_works'], 'the card goes back to the hand');
   engine.playCard('polish_gov_public_works');
   choose(engine, 'polish_gov_public_works.employment');
-  assert.match(content(engine), /Started: Public works — 1 B a month while it works; first effects in 3 months\./);
+  assert.match(content(engine), /Started: Public works — costs 2 budget units; the effects come at the end of the month\./);
   choose(engine, 'root');
   assert.equal(Q.time, t + 1, 'one decision, one month');
   toMain(engine); // the December offices of 1922 come first
   assert.deepEqual(dendry.urgentCards(engine), [], 'no card of prepared reforms');
   const works = Object.values(Q.S.projects).find(p => p.type === 'public_works');
-  assert.equal(works.status, 'executing');
-  assert.equal(Q.S.economy.history.at(-1).project_charges, 1, 'one cost of 1 B from its launch month');
+  assert.equal(works.status, 'operating', 'Z — 1.01: the works run from the settlement of their month');
+  assert.ok(Q.S.economy.pool_log.some(e => e.id === 'price:' + works.id && e.delta === -2), 'the price of 2 B once');
   engine.goToScene('status.economy');
-  assert.match(content(engine), /Public works \(quick employment of the unemployed\): being built/);
+  assert.match(content(engine), /Public works \(quick employment of the unemployed\): operating/);
 });
 
 // Z — 0.77 (decisions 3A and 4A of 8 X 2026): an ordinary card of the Government deck rests 3 months after use, like a party
@@ -174,7 +174,7 @@ test('Inicjatywa w grze 0.81: one card of the Parliament deck, the laws in plain
     for (const id of shown) assert.ok(ids(engine).includes('polish_legislative_initiative.' + id), id);
     assert.ok(ids(engine).includes('polish_legislative_initiative.skip'));
     assert.match(plain(choice(engine, 'polish_legislative_initiative.unemployment').subtitle),
-      /^Zasiłek dla bezrobotnych z budżetu państwa: pełny kosztuje 2 jednostki budżetu miesięcznie, ograniczony 1\..* Samo wniesienie: sprzeciw Lewicy PPS spada \(−2\)\.$/);
+      /^Zasiłek dla bezrobotnych z budżetu państwa: pełny kosztuje 3 jednostki budżetu, ograniczony 1\..* Samo wniesienie: sprzeciw Lewicy PPS spada \(−2\)\.$/);
     assert.equal(plain(choice(engine, 'polish_legislative_initiative.unemployment').title), 'Ochrona bezrobotnych');
     choose(engine, 'polish_legislative_initiative.unemployment');
     assert.match(content(engine), /PPS wnosi projekt ustawy „Ochrona bezrobotnych”; Sejm zagłosuje nad nim w przyszłym miesiącu/);
@@ -298,9 +298,9 @@ test('Karty resortów 0.93: one Treasury card with five instruments; every gover
   assert.ok(offered(engine, 'main.govt').includes('polish_gov_finance'));
   playFromHand(engine, 'polish_gov_finance');
   assert.match(content(engine), /pl-ministry-label\W{1,3}>Treasury ministry</, 'Z — 0.77: a printed label, not a sentence');
-  assert.match(content(engine), /Budget this month/);
+  assert.match(content(engine), /Budget: /);
   assert.equal(choice(engine, 'polish_gov_finance.loan').canChoose, Q.S.economy.credit >= 40);
-  assert.match(content(engine), /One instrument per decision, in force at once/);
+  assert.match(content(engine), /One instrument per decision; each fills the budget at once/);
   assert.doesNotMatch(content(engine), /11\.9|No project of this card yet/, 'no section number and no empty project line on the taxes card');
   choose(engine, 'easy_discard');
   // The badge names the ministry of every government card; of two portfolios, the one PPS holds.

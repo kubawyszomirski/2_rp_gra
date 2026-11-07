@@ -1,5 +1,13 @@
 # Historical Source Register
 
+## PL-BUDGET-POOL-1.01 — the budget as one pool
+
+- **Authority:** the user’s decisions 1A–5A of 7 November 2026 (technical reference 1.01, sections 11.2, 11.3, 12.4 and 23.74).
+- **Sources:** no new source; the model follows the German original game (one budget number changed once by decisions and events).
+- **Historical fact:** none new. The dated events follow the scenario pressures already recorded in the game (the marka inflation of 1923, the złoty, the credit crisis and the customs war of 1925, the recovery of 1926 — technical reference 17.16.2 and PL-GOV-CARDS-0.94).
+- **Gameplay simplification (P):** the pool of 4 units, the prices 1/2/3 of the options, the values of taxes, loans, emission and cuts, the size of each dated event and the output thresholds; a unit of the pool is not an amount of złoty or marka.
+- **Unresolved:** the real budget deficits of Poland in 1922–1926 in the units of the game — TBD, historical research required.
+
 ## PL-GOV-CARDS-1.00 — the cards of Justice
 
 - **Authority:** the user’s decisions of 7 November 2026 (technical reference 1.00, sections 12.4 and 23.73).
@@ -2736,6 +2744,7 @@ Add one row whenever an entry above is assigned a stable Source ID.
 | PL-PRESS-0.90 | Press | The party press: reach ceilings, sales, support of the campaigns, confiscations under a government of the right, credibility | Gameplay simplification; confiscations and circulation TBD | 0.90, 24 October 2026 |
 | PL-TUR-0.91 | TUR | TUR: +5% to the organisers per level, civic courses raise the trust in PPS, a course for trade unionists, no reform course | Gameplay simplification; founding and functions from TUR's own publication; reach by group TBD | 0.91, 24 October 2026 |
 | PL-COOP-0.92 | Cooperative | One workers' consumer cooperative that pays half of the strike pay; no relief; government cooperative variants without a PPS cooperative | Gameplay simplification; PPS ties to the cooperative movement TBD | 0.92, 24 October 2026 |
+| PL-BUDGET-POOL-1.01 | Economy | The budget as one pool of units, as in the German original | Game model; no new historical claim | 1.01, 7 November 2026 |
 | PL-GOV-CARDS-1.00 | Government cards | Justice: Courts and Prisoners, Law and the Family | Game content; no new historical claim | 1.00, 7 November 2026 |
 | PL-GOV-CARDS-0.99 | Government cards | The Interior: Police, Kresy and minorities, Civil liberties | Language acts 1924, press decree 1919 and KOP 1924 documented; options are game content | 0.99, 7 November 2026 |
 | PL-COALITION-0.98 | Coalition | The plan of the cabinet, partners against reforms, the coalition crisis and the card Coalition Disputes | Game design; no new historical claim | 0.98, 7 November 2026 |
