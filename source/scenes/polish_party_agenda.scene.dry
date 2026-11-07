@@ -109,7 +109,7 @@ go-to: result
 
 @assess_forces
 title: Assess the forces of the state
-subtitle: 1 resource; the known loyalty of the army groups becomes more precise (−10 percentage points of the interval, down to ±5); waits three months. The loyalties themselves do not change.
+subtitle: 1 resource. Our people in the army find out what the officers really think; it can be repeated after three months.
 view-if: {! return !!Q.polish_security_rules && PolishSecurity.ready(Q) !}
 choose-if: {! return PolishSecurity.assessStatus(Q).available !}
 unavailable-subtitle: [+ pl_pa_assess_why +]

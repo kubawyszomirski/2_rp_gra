@@ -19,7 +19,7 @@ if (report) {
     Q.pl_report_coup = coup ? 1 : 0;
     Q.pl_report_coup_line = coup ? ({pils_victory: 'Piłsudski won', legal_victory: 'the legal government prevailed',
         constitutional_compromise: 'a constitutional compromise was reached', prolonged_conflict: 'the conflict continues without a winner'})[coup.outcome] +
-        ' after ' + coup.round + (coup.round === 1 ? ' round' : ' rounds') + '; the contribution of PPS: ' + coup.pps_contribution : '';
+        (coup.pps_contribution === 'decisive' ? '; it was PPS that tipped the balance' : coup.pps_contribution === 'adverse' ? '; PPS harmed the side it supported' : '') : '';
     Q.pl_report_continuation = report.continuation_requirements.join('; ');
     Q.pl_report_seats = order.map(function(party) {
         var now = point.party_seats[party] || 0;

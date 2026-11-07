@@ -1,5 +1,13 @@
 # Historical Source Register
 
+## PL-COUP-1.03 — the coup in one comparison
+
+- **Authority:** the user’s decisions of 7 November 2026 after the audit of the coup (technical reference 1.03, sections 16.1, 16.2, 16.6 and 23.76).
+- **Sources:** no new source; the model follows the March on Berlin of the German original.
+- **Historical fact:** none new; the pattern of May 1926 already recorded (the railway strike, the mediation of the Marshal of the Sejm) stays the frame of the scene.
+- **Gameplay simplification (P):** the army as one body with its loyalties, the hidden turnout of 80–120%, the factors of the Milicja and of the strike, the threshold of 1.2, the democracy of 45 for a settlement, the military case of +1.7 a month.
+- **Unresolved:** none new.
+
 ## PL-GOV-CARDS-1.02 — the cards of Military Affairs
 
 - **Authority:** the user’s decisions of 7 November 2026 (technical reference 1.02, sections 16.7, 17.12.4 and 23.75).
@@ -2752,6 +2760,7 @@ Add one row whenever an entry above is assigned a stable Source ID.
 | PL-PRESS-0.90 | Press | The party press: reach ceilings, sales, support of the campaigns, confiscations under a government of the right, credibility | Gameplay simplification; confiscations and circulation TBD | 0.90, 24 October 2026 |
 | PL-TUR-0.91 | TUR | TUR: +5% to the organisers per level, civic courses raise the trust in PPS, a course for trade unionists, no reform course | Gameplay simplification; founding and functions from TUR's own publication; reach by group TBD | 0.91, 24 October 2026 |
 | PL-COOP-0.92 | Cooperative | One workers' consumer cooperative that pays half of the strike pay; no relief; government cooperative variants without a PPS cooperative | Gameplay simplification; PPS ties to the cooperative movement TBD | 0.92, 24 October 2026 |
+| PL-COUP-1.03 | Coup | The coup in one comparison; the army as one body | Game model; no new historical claim | 1.03, 7 November 2026 |
 | PL-GOV-CARDS-1.02 | Government cards | Military Affairs: Military Affairs, Piłsudski and the Army | Game content; no new historical claim | 1.02, 7 November 2026 |
 | PL-BUDGET-POOL-1.01 | Economy | The budget as one pool of units, as in the German original | Game model; no new historical claim | 1.01, 7 November 2026 |
 | PL-GOV-CARDS-1.00 | Government cards | Justice: Courts and Prisoners, Law and the Family | Game content; no new historical claim | 1.00, 7 November 2026 |

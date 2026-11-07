@@ -290,17 +290,9 @@ if (Q.sa_strength) {
 
 [? if polish_security_rules : **Protection of one gathering:** [+ pl_def_police_protection +] ?]
 
-= [? if polish_security_rules : Army groups ?]
+= [? if polish_security_rules : The army ?]
 
-*[? if polish_security_rules : Loyalty to Piłsudski, known only as an interval: ?]*
-
-[? if polish_security_rules : **[+ pl_def_force_capital_legal_name +]:** [+ pl_def_force_capital_legal +] ?]
-
-[? if polish_security_rules : **[+ pl_def_force_capital_pils_name +]:** [+ pl_def_force_capital_pils +] ?]
-
-[? if polish_security_rules : **[+ pl_def_force_near_reserve_name +]:** [+ pl_def_force_near_reserve +] ?]
-
-[? if polish_security_rules : **[+ pl_def_force_remote_reserve_name +]:** [+ pl_def_force_remote_reserve +] ?]
+[? if polish_security_rules : [+ pl_def_army +] ?]
 
 [? if polish_security_rules and pl_def_agreement : [+ pl_def_agreement +] ?]
 

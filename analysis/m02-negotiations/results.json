@@ -1,9 +1,9 @@
 {
   "scope": "M02 step 1: isolated consent calculations; NOT an integrated campaign",
   "hashes": {
-    "docs/POLISH_TECHNICAL_REFERENCE.md": "2debe1bdc7a82e17c2bdef31abf89a91f9ca3529ce3d28a094d165e240c7b2bf",
-    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "d268db24455da4e32f1e01009561776afe25fd0b6d27a613d3d5388a504187a5",
-    "analysis/m02-revision-13/results.json": "edf286be3c6c06b096199a42731a5a265ccbf6bd7b62720852da1b77cc74279b",
+    "docs/POLISH_TECHNICAL_REFERENCE.md": "2760e51454e59d10ef32790fc2613d418a42a9a0787a1d3e52f53fa5331d0c54",
+    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "24a02f1f75e65a584d4c2a5171b67ab2df4d5a41ef93b05164e8e743cf42a908",
+    "analysis/m02-revision-13/results.json": "0d1a08b5cbcf142792125e253960f1bf4856c36dc1dfb6c0b09800f731871dee",
     "analysis/m02-revision-13/monthly.csv": "843ffa5512922c53997a53d5e2b2473ae6804dd7be36d42589f8d9aba088ae6d"
   },
   "assumptions": [

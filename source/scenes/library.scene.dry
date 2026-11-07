@@ -311,7 +311,7 @@ go-to: menu
 
 [? if polish_security_rules : **Police**: [+ pl_def_police +] ?]
 
-[? if polish_security_rules : **Army groups**: [+ pl_def_forces +] [+ pl_def_note +] ?]
+[? if polish_security_rules : **The army**: [+ pl_def_forces +] [+ pl_def_note +] ?]
 
 [? if polish_security_rules : Communist and nationalist militias are not separate forces in this chapter: acts of violence enter the record of violence, cases and restrictions. ?]
 

@@ -379,7 +379,8 @@ assert.ok(read('source/scenes/polish_presidential_sequence.scene.dry').includes(
   'decision 2B: the election of Narutowicz, and only it, ends in the assassination');
 assert.ok(politicsSource.includes("kind: 'strike_repression'") && politicsSource.includes("kind: 'press_confiscation'") &&
   politicsSource.includes("kind: 'militia_ban', target: 'Milicja PPS', lawful: true"), 'decision 3A: restrictions come from existing actions, each with a legal profile');
-assert.ok(securitySource.includes("const COUP_PROFILE_ID = 'coup_f_v1';") && securitySource.includes("const FORCE_PROFILE_ID = 'synthetic_test_v2';"),
+// Z — 1.03 (decision 1B of 7 XI 2026): the four synthetic groups of synthetic_test_v2 became one army, synthetic_army_v1.
+assert.ok(securitySource.includes("const COUP_PROFILE_ID = 'coup_f_v1';") && securitySource.includes("const FORCE_PROFILE_ID = 'synthetic_army_v1';"),
   'the coup engine and the synthetic force profile are named');
 assert.ok(!/\bcoup_progress\b/.test(politicsSource + securitySource), 'leak 3: the Polish coup never reads the German coup_progress');
 const guarded7 = ['advisors/leber', 'advisors/rosenfeld', 'advisors/sender', 'advisors/seydewitz', 'events/all_quiet', 'events/austrian_civil_war',

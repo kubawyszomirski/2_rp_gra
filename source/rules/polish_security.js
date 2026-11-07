@@ -47,12 +47,12 @@
 
   // ---- The synthetic force profile (16.1, Z — 0.20, M08) ----------------------------------------------------
 
-  const FORCE_PROFILE_ID = 'synthetic_test_v2';
+  // Z — 1.03 (decision 1B of 7 XI 2026): the army is one body, the strength-weighted sum of the four synthetic groups of
+  // synthetic_test_v2 (160 F; loyalty to the government 0.43, to Piłsudski 0.45, neutral 0.12). P: game values.
+  const FORCE_PROFILE_ID = 'synthetic_army_v1';
+  const ARMY = 'army';
   const FORCES = Object.freeze([
-    {id: 'capital_legal', base_strength_F: 45, readiness: 0.80, command: 0.80, loyalty: [0.90, 0.05, 0.05], available_from_phase: 0, transport_route: 'road', rail_delay_cap: 0},
-    {id: 'capital_pils', base_strength_F: 55, readiness: 0.85, command: 0.85, loyalty: [0.05, 0.90, 0.05], available_from_phase: 0, transport_route: 'road', rail_delay_cap: 0},
-    {id: 'near_reserve', base_strength_F: 25, readiness: 0.70, command: 0.70, loyalty: [0.30, 0.50, 0.20], available_from_phase: 1, transport_route: 'road', rail_delay_cap: 0},
-    {id: 'remote_reserve', base_strength_F: 35, readiness: 0.70, command: 0.70, loyalty: [0.50, 0.25, 0.25], available_from_phase: 2, transport_route: 'rail', rail_delay_cap: 2},
+    {id: ARMY, base_strength_F: 160, readiness: 0.80, command: 0.81, loyalty: [0.43, 0.45, 0.12], available_from_phase: 0, transport_route: 'road', rail_delay_cap: 0},
   ]);
   const LOGISTICS = 0.80;         // 16.2 (P)
   const KNOWN_START = 30;         // 16.8.1: ±30 pp around the loyalties
@@ -60,8 +60,8 @@
   const KNOWN_FLOOR = 5;          // to at least ±5 pp
   const ASSESS_COOLDOWN = 3;      // 6.8 (Z — 0.35): 1 T, 1 R, cd 3 M
   const ASSESS_COST_R = 1;
-  // 17.12.4 (P): the one synthetic post under civilian oversight commands the near reserve.
-  const OVERSIGHT_FORCE = 'near_reserve';
+  // 17.12.4 (P): the one synthetic post under civilian oversight; since Z — 1.03 it acts on the whole army.
+  const OVERSIGHT_FORCE = ARMY;
 
   function ready(Q) {
     return !!(Q && Q.S && Q.polish_security_rules && !Q.polish_save_incompatible && Q.S.security && Array.isArray(Q.S.security.forces) &&
@@ -159,9 +159,8 @@
     }
     S.security.assessments.push({n: n, t: t, radius: S.security.known[S.security.forces[0].id].radius});
     party.writeMirrors(Q);
-    Q.pl_security_result = L('The assessment of the forces narrows the interval of their loyalty to ±' + S.security.known[S.security.forces[0].id].radius +
-      ' pp; the loyalties themselves do not change.', 'Ocena sił zawęża przedział ich lojalności do ±' + S.security.known[S.security.forces[0].id].radius +
-      ' pkt proc.; sama lojalność się nie zmienia.');
+    // Z — 1.03 (decision 4A): what the assessment learned, in words.
+    Q.pl_security_result = L('Our people in the army report: ', 'Nasi ludzie w wojsku donoszą: ') + armyWords(S).charAt(0).toLowerCase() + armyWords(S).slice(1);
     return S.security.known;
   }
 
@@ -273,10 +272,11 @@
   const CONCESSIONS = Object.freeze({
     // Z — 1.02 (the user's decisions of 7 XI 2026): the inspectorate takes effect at once, without a vote, and moves the near and the
     // remote reserve towards Piłsudski by 0.05 each instead of 0.10 in one group; `forces` are the groups, `loyalty_limit` per group.
-    military_function: {name: 'a military function under civilian control', relation: 40, relief: 12, pilsudczycy: -5, loyalty_limit: 0.05,
-      forces: ['near_reserve'], programme: {army: 0, institution: 0}, law: false},
+    // Z — 1.03: the one army; the military function +0.03 and the inspectorate +0.05 of loyalty to Piłsudski.
+    military_function: {name: 'a military function under civilian control', relation: 40, relief: 12, pilsudczycy: -5, loyalty_limit: 0.03,
+      forces: [ARMY], programme: {army: 0, institution: 0}, law: false},
     inspectorate: {name: 'an independent inspectorate with freer nominations', relation: 60, relief: 25, pilsudczycy: -8, centrum: 8,
-      loyalty_limit: 0.05, forces: ['near_reserve', 'remote_reserve'], programme: {army: -2, institution: 0}, law: false},
+      loyalty_limit: 0.05, forces: [ARMY], programme: {army: -2, institution: 0}, law: false},
     pils_premier: {name: 'Piłsudski as prime minister of a legal cabinet', relation: 65, relief: 20, pilsudczycy: -5, loyalty_limit: 0,
       programme: {army: 0, institution: 0}, law: false},
   });
@@ -554,173 +554,54 @@
   const COUP_GATES = Object.freeze({crisis: 55, cancel: 40, attempt: 65, capacity: 30, cooldown: 3});
   const STANCE_SIDE = Object.freeze({support_pils: 'pils', defend_legal: 'legal', mediate: 'neutral'});
   const COMMITMENTS = Object.freeze(['none', 'rail', 'militia', 'both']);
-  // 16.8.5: the ideals of the two required sides on the scale of 8.6; a demand is met (distance 0) or not (4 × weight).
-  const COUP_IDEALS = Object.freeze({
-    pils: {army: {v: -2, w: 1}, institution: {v: -2, w: 1}, fn: {v: 2, w: 3}, removal: {v: 2, w: 3}},
-    legal: {army: {v: 2, w: 1}, institution: {v: 0, w: 1}, cabinet: {v: 2, w: 3}},
-  });
   const COUP_OFFERS = Object.freeze([
     {id: 'coup.offer.military_function', army: 0, institution: 0, fn: 2, removal: -2, cabinet: 2, keeps_cabinet: true, needs_sejm: false},
     {id: 'coup.offer.inspectorate_law', army: -2, institution: 0, fn: 2, removal: -2, cabinet: 2, keeps_cabinet: true, needs_sejm: true},
     {id: 'coup.offer.cabinet_change', army: -1, institution: 0, fn: 2, removal: 2, cabinet: -2, keeps_cabinet: false, needs_sejm: false},
   ]);
 
-  function offerFit(ideal, offer) {
-    let num = 0, den = 0;
-    for (const topic of Object.keys(ideal)) { num += ideal[topic].w * Math.abs(offer[topic] - ideal[topic].v); den += ideal[topic].w; }
-    return 100 * (1 - num / (4 * den));
-  }
-  const OFFER_SCORES = Object.freeze(COUP_OFFERS.map(o => Object.freeze({id: o.id, pils: offerFit(COUP_IDEALS.pils, o), legal: offerFit(COUP_IDEALS.legal, o)})));
-
   const oppSide = side => (side === 'pils' ? 'legal' : 'pils');
 
-  // A resolution (16.8.4–16.8.6) as one plain record. `groups`: {id, base, readiness, command, phase, rail, rail_cap,
-  // side}; `cfg`: stance ('pils'|'legal'|'neutral'|null), rail {by_round[4], readiness}, militia_F, democracy, offers
-  // (the feasible ones, with their acceptability), objective {pils, legal}, no_pps (the counterfactual of 16.8.7) and
-  // f9 ('accept'|'reject', an answer given in advance: the counterfactual and the diagnostics). A strike delays the
-  // opposing rail transports, measured in the round before each arrival (16.8.3).
-  function newResolution(groups, cfg) {
-    const stance = cfg.stance || null;
-    const fighting = !cfg.no_pps && (stance === 'pils' || stance === 'legal');
-    const railIn = fighting && cfg.rail ? cfg.rail : null;
-    const res = {profile_id: COUP_PROFILE_ID, stance: stance, fighting: fighting, militia_F: fighting ? (cfg.militia_F || 0) : 0,
-      rail: railIn ? {by_round: railIn.by_round.slice(0, 4), readiness: railIn.readiness} : {by_round: [0, 0, 0, 0], readiness: 0},
-      democracy: cfg.democracy, offers: (cfg.offers || OFFER_SCORES).map(o => ({id: o.id, pils: o.pils, legal: o.legal})),
-      objective: cfg.objective ? {pils: !!cfg.objective.pils, legal: !!cfg.objective.legal} : {pils: true, legal: true},
-      no_pps: !!cfg.no_pps, auto_f9: cfg.f9 || null,
-      groups: groups.map(g => ({id: g.id, base: g.base, readiness: g.readiness, command: g.command, phase: g.phase, rail: !!g.rail,
-        rail_cap: g.rail_cap || 0, side: g.side, loss: 0, arrival: g.phase, delay_known_at: null, delays: 0})),
-      initial: {pils: 0, legal: 0}, streak: {pils: 0, legal: 0}, next_round: 0, stage: 'round', settled_step: false, fought: 0,
-      militia_share_kept: 1, f9: null, pending: null, log: [], outcome: null, round: null, offer: null, final: false, crushing: false};
-    for (const g of res.groups) {
-      if (!fighting || !g.rail || g.side !== oppSide(stance) || g.phase < 1) continue;
-      if (g.rail_cap >= 1 && res.rail.by_round[g.arrival - 1] >= 40 && res.rail.readiness >= 50) {
-        g.delay_known_at = g.arrival - 1;
-        g.arrival += 1;
-        g.delays = 1;
-        if (g.rail_cap >= 2 && res.rail.by_round[g.arrival - 1] >= 65 && res.rail.readiness >= 70) { g.arrival += 1; g.delays = 2; }
-      }
+  // ---- The coup in one comparison (Z — 1.03, the user's decisions 1B, 2B, 3B and 4A of 7 XI 2026; P) ---------------------
+  // As the March on Berlin of the German original: the forces of the two sides are compared once. The army is one body; a
+  // hidden draw decides how many of the officers loyal to each side really move (80–120%), and the player never sees it. The
+  // organisations of PPS join the side it supports: the Milicja with 1.5 times its force of 13.3, and the strike of the
+  // railway workers that holds back the trains of the other side. A side with 1.2 times the force of the other wins; between
+  // them the two sides reach a settlement while the institutions still work, else the conflict drags on.
+  const COUP_TURNOUT = Object.freeze({low: 0.80, span: 0.40});
+  const COUP_VICTORY = 1.20;
+  const COUP_SETTLEMENT_DEMOCRACY = 45;
+  const MILITIA_COUP_FACTOR = 1.5;
+  const STRIKE_FACTOR = 1 / 200, STRIKE_CAP = 0.25;
+
+  // cfg: strength, readiness, command, loyalty {pils, legal}, turnout {pils, legal}, stance ('pils'|'legal'|'neutral'), militia_F,
+  // rail_base, settlement (institutions able to carry one), offers (feasible ids), objective {pils, legal}, no_pps (the
+  // counterfactual without the organisations of PPS).
+  function resolveCoup(cfg) {
+    const army = Math.max(0, cfg.strength) * cfg.readiness * cfg.command;
+    const F = {pils: army * cfg.loyalty.pils * cfg.turnout.pils, legal: army * cfg.loyalty.legal * cfg.turnout.legal};
+    const side = cfg.stance === 'pils' || cfg.stance === 'legal' ? cfg.stance : null;
+    const fighting = !cfg.no_pps && !!side;
+    const militiaF = fighting ? (cfg.militia_F || 0) * MILITIA_COUP_FACTOR : 0;
+    const strike = fighting ? Math.min(STRIKE_CAP, (cfg.rail_base || 0) * STRIKE_FACTOR) : 0;
+    if (fighting) {
+      F[side] += militiaF;
+      F[oppSide(side)] *= 1 - strike;
     }
-    for (const g of res.groups) if (g.side !== 'neutral') res.initial[g.side] += g.base;
-    return res;
-  }
-
-  // 16.6: F of each side from the groups already arrived (strength × readiness × command) and the Milicja of the side.
-  function sideForce(res, r) {
-    const F = {pils: 0, legal: 0};
-    if (res.fighting && res.militia_F) F[res.stance] += res.militia_F;
-    for (const g of res.groups) if (g.side !== 'neutral' && g.arrival <= r) F[g.side] += (g.base - g.loss) * g.readiness * g.command;
-    return F;
-  }
-
-  function nextArrivals(res, side, r) {
-    return res.groups.filter(g => g.side === side && g.arrival === r + 1).reduce((n, g) => n + (g.base - g.loss) * g.readiness * g.command, 0);
-  }
-
-  // 16.8.6: a significant share of PPS — a delay of a transport known by this round, or a Milicja of at least a tenth
-  // of the supported side.
-  function significantAt(res, F, r) {
-    return res.fighting && (res.groups.some(g => g.delay_known_at !== null && g.delay_known_at <= r) ||
-      (res.militia_F > 0 && res.militia_F >= 0.10 * F[res.stance]));
-  }
-
-  // 16.6 and 16.8.4–16.8.5: the best offer that every required side scores ≥60, by the highest lowest score; a side
-  // with an advantage above 1.20 does not bargain, except in the final assessment.
-  function bestOffer(res, F, completed) {
-    let best = null;
-    for (const offer of res.offers) {
-      const score = {};
-      for (const side of ['pils', 'legal']) {
-        const own = F[side], other = F[oppSide(side)];
-        if (completed < 4 && own > 1.2 * other) { score[side] = null; continue; }
-        const disadvantage = own + other === 0 ? 50 : 100 * other / (own + other);
-        const lossPct = 100 * res.groups.filter(g => g.side === side).reduce((n, g) => n + g.loss, 0) / Math.max(1, res.initial[side]);
-        const exhaustion = Math.min(100, 20 * completed + lossPct);
-        score[side] = 0.40 * (0.5 * disadvantage + 0.5 * exhaustion) + 0.30 * offer[side] + 0.30 * res.democracy;
-      }
-      if (score.pils === null || score.legal === null) continue;
-      const min = Math.min(score.pils, score.legal);
-      if (min >= 60 && (!best || min > best.min)) best = {offer: offer.id, min: min, score: score};
+    // No force on either side is no military advantage of anyone.
+    const ratio = F.legal > 0 ? F.pils / F.legal : F.pils > 0 ? Infinity : 1;
+    let outcome, offer = null;
+    if (ratio >= COUP_VICTORY && cfg.objective.pils) outcome = 'pils_victory';
+    else if (ratio <= 1 / COUP_VICTORY && cfg.objective.legal) outcome = 'legal_victory';
+    else if (cfg.settlement && cfg.offers.length) {
+      outcome = 'constitutional_compromise';
+      const prefer = F.pils >= F.legal ? 'coup.offer.cabinet_change' : 'coup.offer.inspectorate_law';
+      offer = cfg.offers.indexOf(prefer) >= 0 ? prefer : cfg.offers[0];
+    } else {
+      outcome = 'prolonged_conflict';
     }
-    return best;
-  }
-
-  // The settlement of one assessment: none before a completed round or after a rejected F9; with a significant PPS
-  // the one F9 (asked, or answered in advance).
-  function settlementStep(res, F, completed) {
-    if (completed < 1 || (res.f9 && res.f9.response === 'rejected')) return null;
-    const best = bestOffer(res, F, completed);
-    if (!best) return null;
-    if (significantAt(res, F, completed === 4 ? 3 : completed)) {
-      if (res.f9) return null; // F9 at most once
-      res.f9 = {completed_rounds: completed, offer_id: best.offer, response: null};
-      if (!res.auto_f9) { res.pending = {kind: 'f9', offer: best.offer, min: best.min, score: best.score}; return 'ask'; }
-      res.f9.response = res.auto_f9 === 'reject' ? 'rejected' : 'accepted';
-      if (res.f9.response === 'rejected') return null;
-    }
-    return best;
-  }
-
-  function finishResolution(res, outcome, round, offerId, final) {
-    res.outcome = outcome;
-    res.round = round;
-    res.offer = offerId || null;
-    res.final = !!final;
-  }
-
-  // Up to four rounds (arrivals → settlement → comparison → losses), then the final assessment; it stops at an
-  // unanswered F9. The outcome stays null until the last decision that has an effect (16.6).
-  function advanceResolution(res) {
-    while (res.outcome === null && res.pending === null) {
-      const final = res.stage === 'final';
-      const r = final ? 3 : res.next_round;
-      const F = sideForce(res, r);
-      if (!res.settled_step) {
-        res.settled_step = true;
-        const s = settlementStep(res, F, final ? 4 : r);
-        if (s === 'ask') return res;
-        if (s) { finishResolution(res, 'constitutional_compromise', final ? 4 : r + 1, s.offer, final); break; }
-      }
-      res.settled_step = false;
-      if (final) { finishResolution(res, 'prolonged_conflict', 4, null, false); break; }
-      let winner = null;
-      for (const side of ['pils', 'legal']) {
-        const effOpp = F[oppSide(side)] + nextArrivals(res, oppSide(side), r);
-        const crushing = F[side] > 0 && F[side] >= 2 * effOpp;
-        res.streak[side] = F[side] > 1.2 * effOpp ? res.streak[side] + 1 : 0;
-        if (!winner && res.objective[side] && (crushing || res.streak[side] >= 2)) winner = {side: side, crushing: crushing};
-      }
-      res.fought += 1;
-      res.log.push({round: r + 1, pils: round(F.pils, 6), legal: round(F.legal, 6), streak: {pils: res.streak.pils, legal: res.streak.legal},
-        arrivals: res.groups.filter(g => g.side !== 'neutral' && g.arrival === r).map(g => g.id),
-        delayed: res.groups.filter(g => g.delays > 0 && g.phase <= r && g.arrival > r).map(g => g.id)});
-      if (winner) { finishResolution(res, winner.side + '_victory', r + 1, null, false); res.crushing = winner.crushing; break; }
-      for (const g of res.groups) {
-        if (g.side !== 'neutral' && g.arrival <= r) g.loss += (g.base - g.loss) * 0.08 * F[oppSide(g.side)] / Math.max(1, F.pils + F.legal);
-      }
-      if (res.fighting && res.militia_F) res.militia_share_kept *= 1 - 0.08 * F[oppSide(res.stance)] / Math.max(1, F.pils + F.legal);
-      res.next_round = r + 1;
-      if (res.next_round >= 4) res.stage = 'final';
-    }
-    return res;
-  }
-
-  function answerF9(res, response) {
-    if (!res.pending || res.pending.kind !== 'f9') throw new Error('answerF9: no F9 is open');
-    const pending = res.pending;
-    res.pending = null;
-    res.f9.response = response === 'accepted' ? 'accepted' : 'rejected';
-    if (res.f9.response === 'accepted') {
-      const final = res.stage === 'final';
-      finishResolution(res, 'constitutional_compromise', final ? 4 : res.next_round + 1, pending.offer, final);
-      return res;
-    }
-    return advanceResolution(res); // the round goes on from its comparison; no later settlement in this attempt
-  }
-
-  // A whole resolution with an answer given in advance (the counterfactual and the diagnostics of M08).
-  function resolveAttempt(groups, cfg) {
-    return advanceResolution(newResolution(groups, cfg));
+    return {stance: cfg.stance || null, fighting: fighting, F: {pils: round(F.pils, 6), legal: round(F.legal, 6)}, ratio: round(ratio, 6),
+      militia_F: round(militiaF, 6), strike: round(strike, 6), outcome: outcome, offer: offer, fought: outcome === 'prolonged_conflict' ? 4 : 2};
   }
 
   // 16.8.7: the outcomes ordered by the benefit of the side PPS supports.
@@ -729,12 +610,12 @@
     legal: {legal_victory: 3, constitutional_compromise: 2, prolonged_conflict: 1, pils_victory: 0},
   });
 
+  // The contribution of PPS: the same draw without its organisations (16.8.7).
   function contributionOf(res, without) {
     if (res.stance !== 'pils' && res.stance !== 'legal') return 'none';
     const rank = COUP_RANK[res.stance];
     if (rank[res.outcome] > rank[without.outcome]) return 'decisive';
     if (rank[res.outcome] < rank[without.outcome]) return 'adverse';
-    if (res.outcome === without.outcome && res.round < without.round) return 'accelerating';
     return 'none';
   }
 
@@ -746,13 +627,12 @@
     return (a.obligations || []).some(o => o.due_at !== null && o.due_at !== undefined && o.due_at < t && o.status !== 'fulfilled' && o.fulfillment < 1);
   }
 
-  // 16.8.1: a force ready to strike at once (effective loyalty); the window of the Normal scenario from 1 III 1926.
+  // 16.8.1: a force ready to strike (Z — 1.03: at least a quarter of the army follows Piłsudski); the window from 1 III 1926.
+  const STRIKE_FORCE_SHARE = 0.25;
   function initialStrikeForce(S, t) {
     const democracy = S.politics ? S.politics.democracy : 60;
-    return S.security.forces.some(f => {
-      const e = effectiveLoyalty(f, democracy);
-      return f.available_from_phase === 0 && e.pils > e.legal && readinessOf(f, t) >= 0.50 && f.base_strength_F - f.losses_F > 0;
-    });
+    return S.security.forces.some(f => effectiveLoyalty(f, democracy).pils >= STRIKE_FORCE_SHARE && readinessOf(f, t) >= 0.50 &&
+      f.base_strength_F - f.losses_F > 0);
   }
 
   function coupGates(Q, now) {
@@ -917,22 +797,15 @@
     return OK;
   }
 
-  function coupGroups(S, t) {
-    return S.security.forces.map(f => ({id: f.id, base: Math.max(0, f.base_strength_F - f.losses_F), readiness: readinessOf(f, t), command: f.command,
-      phase: f.available_from_phase, rail: f.transport_route === 'rail', rail_cap: f.rail_delay_cap}));
-  }
-
   // 16.8.5: the offers the institutions can carry now.
   function feasibleOffers(Q) {
     const S = Q.S, head = Q.polish_presidency && Q.polish_presidency.current;
     const headOk = !!head && !!head.holder_id;
     const cabinetOk = !!S.cabinet && (S.cabinet.status === 'active' || S.cabinet.status === 'caretaker');
-    return COUP_OFFERS.filter(o => headOk && (o.keeps_cabinet ? cabinetOk : true) && !(o.needs_sejm && S.parliament.dissolved_at))
-      .map(o => OFFER_SCORES.filter(s => s.id === o.id)[0]);
+    return COUP_OFFERS.filter(o => headOk && (o.keeps_cabinet ? cabinetOk : true) && !(o.needs_sejm && S.parliament.dissolved_at)).map(o => o.id);
   }
 
-  // F5: the commitment of the organisations; then the sides of the groups, drawn once with the democracy of the
-  // declaration, and the automatic rounds up to F9 or the end.
+  // F5: the commitment of the organisations; then the hidden draw and the one comparison, and the outcome at once (Z — 1.03).
   function coupCommit(Q, commitment) {
     const status = coupCommitStatus(Q, commitment);
     if (!status.available) throw new Error('coupCommit: ' + commitment + ': ' + status.reason);
@@ -949,47 +822,26 @@
       S.militia.assignments = (S.militia.assignments || []).filter(a => a.id !== 'coup:' + C.attempt_id)
         .concat([{id: 'coup:' + C.attempt_id, task: A.organisations.militia_task, people: militia.executing}]);
     }
-    // The sides: one recorded roll per group, from the effective loyalty at the declaration (16.1, M10).
-    A.sides = {};
-    for (const f of S.security.forces) {
-      const rollId = 'coup_' + C.attempt_id + ':' + f.id + ':allegiance';
+    // The hidden draw: how many of the officers loyal to each side really move (recorded, never shown).
+    const army = forceOf(S, ARMY), e = effectiveLoyalty(army, A.democracy), turnout = {};
+    for (const s of ['pils', 'legal']) {
+      const rollId = 'coup_' + C.attempt_id + ':' + s + ':turnout';
       const u = rules.roll(S, rollId);
-      const e = effectiveLoyalty(f, A.democracy);
-      const allegiance = u < e.legal ? 'legal' : u < e.legal + e.pils ? 'pils' : 'neutral';
-      A.sides[f.id] = allegiance;
       A.rolls[rollId] = u;
-      f.committed_side = allegiance;
+      turnout[s] = round(COUP_TURNOUT.low + COUP_TURNOUT.span * u, 6);
     }
     const head = Q.polish_presidency && Q.polish_presidency.current;
     const cabinetOk = !!S.cabinet && (S.cabinet.status === 'active' || S.cabinet.status === 'caretaker');
-    const cfg = {stance: side, rail: rail ? {by_round: rail.by_round, readiness: rail.readiness} : null,
-      militia_F: militia && side !== 'neutral' ? militia.force : 0, democracy: A.democracy, offers: feasibleOffers(Q),
+    const cfg = {strength: Math.max(0, army.base_strength_F - army.losses_F), readiness: readinessOf(army, t), command: army.command,
+      loyalty: {pils: round(e.pils, 6), legal: round(e.legal, 6)}, turnout: turnout, stance: side,
+      militia_F: militia && side !== 'neutral' ? militia.force : 0, rail_base: rail ? rail.base : 0,
+      settlement: A.democracy >= COUP_SETTLEMENT_DEMOCRACY, offers: feasibleOffers(Q),
       objective: {pils: cabinetOk, legal: !!head && !!head.holder_id && cabinetOk}};
     A.cfg = cfg;
-    const groups = coupGroups(S, t).map(g => Object.assign(g, {side: A.sides[g.id]}));
-    A.groups_at_start = groups;
-    A.resolution = advanceResolution(newResolution(groups, cfg));
+    A.resolution = resolveCoup(cfg);
     C.phase = 'execution_and_transport';
     S.history.actions.push({t: t, action_id: 'coup.commitment.' + commitment, attempt_id: C.attempt_id, cost_t: 0});
-    if (A.resolution.outcome !== null) finishCoup(Q);
-    else if (A.resolution.pending) C.f9 = {completed_rounds: A.resolution.f9.completed_rounds, offer_id: A.resolution.f9.offer_id, response: null};
-    return A;
-  }
-
-  // F9: the one voice of PPS on the offer, only with its significant share (16.8.6).
-  function coupF9Status(Q) {
-    const C = Q.S.coup, A = C.attempt;
-    if (!coupDue(Q) || C.phase !== 'execution_and_transport' || !A || !A.resolution || !A.resolution.pending) return no('');
-    return OK;
-  }
-
-  function coupF9(Q, response) {
-    if (!coupF9Status(Q).available) throw new Error('coupF9: no offer awaits the answer of PPS');
-    const S = Q.S, C = S.coup, A = C.attempt;
-    answerF9(A.resolution, response === 'accept' || response === 'accepted' ? 'accepted' : 'rejected');
-    C.f9 = {completed_rounds: A.resolution.f9.completed_rounds, offer_id: A.resolution.f9.offer_id, response: A.resolution.f9.response};
-    S.history.actions.push({t: Q.time, action_id: 'coup.f9.' + C.f9.response, attempt_id: C.attempt_id, cost_t: 0});
-    if (A.resolution.outcome !== null) finishCoup(Q);
+    finishCoup(Q);
     return A;
   }
 
@@ -1018,8 +870,8 @@
     if (C.effects_complete) return A;
     const side = res.stance;
     // The same rolls without the organisations of PPS: no Milicja, no delays, no F9 (the settlement is automatic).
-    const without = resolveAttempt(A.groups_at_start, Object.assign({}, A.cfg, {no_pps: true}));
-    A.counterfactual = {outcome: without.outcome, round: without.round, offer: without.offer};
+    const without = resolveCoup(Object.assign({}, A.cfg, {no_pps: true}));
+    A.counterfactual = {outcome: without.outcome, offer: without.offer};
     C.pps_contribution = contributionOf(res, without);
     const organisations = A.organisations || {};
     const executed = !!((organisations.militia && organisations.militia.executing > 0 && side !== 'neutral') ||
@@ -1059,35 +911,35 @@
     P.democracy = clip(P.democracy + dDemocracy, 0, 100);
     P.violence = clip(P.violence + VIOLENCE_SERIOUS, 0, 100);
     effects.institutions = {violence: VIOLENCE_SERIOUS, democracy: dDemocracy, legal_cabinet_survived: keeps};
-    // The rounds fought: the railway rounds, the losses of the groups and of the Milicja.
-    const fought = res.round || 0;
+    // Z — 1.03: the days of fighting (2, or 4 when the conflict drags on), the losses of the army and of the Milicja.
+    const fought = res.fought;
+    const opp = side === 'pils' ? 'legal' : 'pils';
     if (organisations.militia && organisations.militia.executing > 0 && res.fighting && side !== 'neutral') {
-      const lost = Math.min(organisations.militia.executing, Math.round(organisations.militia.executing * (1 - res.militia_share_kept)));
+      const share = res.F[opp] / Math.max(1, res.F.pils + res.F.legal);
+      const lost = Math.min(organisations.militia.executing, Math.round(organisations.militia.executing * 0.08 * fought * share));
       S.militia.strength = Math.max(0, S.militia.strength - lost);
       effects.militia_lost = lost;
     }
-    for (const g of res.groups) {
-      const f = forceOf(S, g.id);
-      f.losses_F = round((f.losses_F || 0) + g.loss, 6);
-      effects.forces.push({id: g.id, side: g.side, loss: round(g.loss, 6), planned_arrival: g.phase, arrival: g.arrival, delays: g.delays});
-    }
-    // Production (16.6): one change after the fighting, −min(8, 0.5 × rounds + 0.02 × mean disruption) %.
-    const railShare = organisations.rail && res.fighting ? organisations.rail.by_round.slice(0, fought) : [];
-    const disruption = railShare.length ? railShare.reduce((n, v) => n + v, 0) / railShare.length * unions.SECTOR_IMPORTANCE.rail / 100 : 0;
-    const drop = Math.min(8, 0.5 * res.fought + 0.02 * disruption);
+    const army = forceOf(S, ARMY), loss = round(0.02 * fought * (res.F.pils + res.F.legal), 6);
+    army.losses_F = round((army.losses_F || 0) + loss, 6);
+    army.committed_side = res.outcome === 'pils_victory' ? 'pils' : res.outcome === 'legal_victory' ? 'legal' : 'neutral';
+    effects.forces.push({id: ARMY, loss: loss, pils: res.F.pils, legal: res.F.legal});
+    // Production (16.6): one change after the fighting, −min(8, 0.5 × days + 0.02 × disruption) %.
+    const disruption = organisations.rail && res.fighting ? organisations.rail.base * unions.SECTOR_IMPORTANCE.rail / 100 : 0;
+    const drop = Math.min(8, 0.5 * fought + 0.02 * disruption);
     if (S.economy) S.economy.output = round(S.economy.output * (1 - drop / 100), 6);
-    effects.production = {percent: round(-drop, 6), fighting_rounds: res.fought, mean_disruption: round(disruption, 6)};
+    effects.production = {percent: round(-drop, 6), fighting_rounds: fought, mean_disruption: round(disruption, 6)};
     // The executed settlement (16.8.5).
     if (res.outcome === 'constitutional_compromise') settlementExecuted(Q, res.offer, A);
     if (res.outcome === 'prolonged_conflict') A.continuation_requirements.push('prolonged_conflict');
     if (S.militia.assignments) S.militia.assignments = S.militia.assignments.filter(a => a.id !== 'coup:' + C.attempt_id);
     A.effects = effects;
     C.outcome = res.outcome;
-    C.round = res.round;
+    C.round = fought;
     C.settlement = res.offer;
     C.phase = 'resolved';
     C.effects_complete = true;
-    C.log.push({t: t, kind: 'resolved', attempt_id: C.attempt_id, outcome: res.outcome, round: res.round});
+    C.log.push({t: t, kind: 'resolved', attempt_id: C.attempt_id, outcome: res.outcome, round: fought});
     party.writeMirrors(Q);
     return A;
   }
@@ -1125,9 +977,9 @@
   const OFFER_NAMES = Object.freeze({'coup.offer.military_function': 'a military function for Piłsudski under civilian control; the cabinet stays',
     'coup.offer.inspectorate_law': 'an independent inspectorate by a law; the cabinet stays',
     'coup.offer.cabinet_change': 'the dismissal of the attacked cabinet and a premier accepted by Piłsudski’s camp'});
-  const FORCE_NAMES = Object.freeze({capital_legal: 'the capital garrison loyal to the government', capital_pils: 'the capital units close to Piłsudski',
+  const FORCE_NAMES = Object.freeze({army: 'the army', capital_legal: 'the capital garrison loyal to the government', capital_pils: 'the capital units close to Piłsudski',
     near_reserve: 'the near reserve', remote_reserve: 'the remote reserve (by rail)'});
-  const FORCE_NAMES_PL = Object.freeze({capital_legal: 'stołeczny garnizon wierny rządowi', capital_pils: 'oddziały stołeczne bliskie Piłsudskiemu',
+  const FORCE_NAMES_PL = Object.freeze({army: 'wojsko', capital_legal: 'stołeczny garnizon wierny rządowi', capital_pils: 'oddziały stołeczne bliskie Piłsudskiemu',
     near_reserve: 'bliski odwód', remote_reserve: 'daleki odwód (koleją)'});
   const forceName = id => L(FORCE_NAMES[id], FORCE_NAMES_PL[id]);
   const OUTCOME_NAMES_PL = Object.freeze({pils_victory: 'Piłsudski zwycięża', legal_victory: 'Legalny rząd utrzymuje się',
@@ -1176,21 +1028,57 @@
     return undefined;
   });
 
-  // The page of the sequence: F6+F7 once after F5, then F9 when it waits, else F10+F11.
+  // Z — 1.03: the pages of the sequence — F3, the stance, the organisations and the outcome; no rounds and no offer to answer.
   function coupStep(S) {
     const C = S.coup, A = C.attempt;
     if (!A) return '';
     if (C.phase === 'attempt_declared') return 'f3';
     if (C.phase === 'pps_stance') return 'f4';
     if (C.phase === 'organization_commitment') return 'f5';
-    if (!A.f67_seen) return 'f67';
-    if (C.phase === 'execution_and_transport' && A.resolution && A.resolution.pending) return 'f9';
-    return C.phase === 'resolved' ? 'f10' : 'f67';
+    return 'f10';
   }
 
-  function coupStepSeen(Q, step) {
-    const A = Q.S.coup.attempt;
-    if (A && step === 'f67') A.f67_seen = true;
+  // The army in words (Z — 1.03, decision 4A): what PPS believes of the mood of the officers, from its estimate, never a number.
+  function armyWords(S) {
+    const army = forceOf(S, ARMY) || S.security.forces[0];
+    const known = army ? S.security.known[army.id] : null;
+    const pils = known ? known.pils_center : 0.45;
+    if (pils >= 0.50) return L('Most officers lean towards Piłsudski.', 'Większość oficerów sprzyja Piłsudskiemu.');
+    if (pils >= 0.35) return L('The army is divided; many officers lean towards Piłsudski.', 'Wojsko jest podzielone; wielu oficerów sprzyja Piłsudskiemu.');
+    if (pils >= 0.20) return L('Most of the army is loyal to the government.', 'Większość wojska jest wierna rządowi.');
+    return L('The army is loyal to the government.', 'Wojsko jest wierne rządowi.');
+  }
+
+  const OUTCOME_STORY = Object.freeze({
+    pils_victory: ['The rebels took the capital, and the government stepped down.', 'Zamachowcy zajęli stolicę, a rząd ustąpił.'],
+    legal_victory: ['The coup collapsed, and the government held on.', 'Zamach się załamał, a rząd się utrzymał.'],
+    'coup.offer.cabinet_change': ['After two days of fighting the two sides reached a settlement: the government steps down, and a prime minister accepted by the camp of Piłsudski takes its place.',
+      'Po dwóch dniach walk obie strony zawarły ugodę: rząd ustępuje, a jego miejsce zajmie premier akceptowany przez obóz Piłsudskiego.'],
+    'coup.offer.inspectorate_law': ['After two days of fighting the two sides reached a settlement: the government stays, and Piłsudski gets an independent inspectorate of the army.',
+      'Po dwóch dniach walk obie strony zawarły ugodę: rząd zostaje, a Piłsudski dostaje niezależny inspektorat armii.'],
+    'coup.offer.military_function': ['After two days of fighting the two sides reached a settlement: the government stays, and Piłsudski gets a military function under civilian control.',
+      'Po dwóch dniach walk obie strony zawarły ugodę: rząd zostaje, a Piłsudski dostaje funkcję wojskową pod kontrolą cywilną.'],
+    prolonged_conflict: ['The fighting goes on, and neither side can prevail.', 'Walki trwają, a żadna strona nie może przeważyć.'],
+  });
+
+  // What happened, told without numbers: the army, the strike, the Milicja, the outcome and what PPS changed.
+  function coupStory(Q) {
+    const S = Q.S, C = S.coup, A = C.attempt, res = A.resolution, o = A.organisations || {};
+    const parts = [res.F.pils > res.F.legal ? L('More soldiers followed Piłsudski than stayed with the government.', 'Za Piłsudskim poszło więcej żołnierzy, niż zostało przy rządzie.') :
+      L('More soldiers stayed with the government than followed Piłsudski.', 'Przy rządzie zostało więcej żołnierzy, niż poszło za Piłsudskim.')];
+    if (res.fighting && o.rail && o.rail.base > 0) {
+      parts.push(res.strike >= 0.10 ? L('The strike of the railway workers stopped many trains with troops of the other side.', 'Strajk kolejarzy zatrzymał wiele pociągów z wojskiem przeciwnika.') :
+        L('The strike of the railway workers held back only a few trains.', 'Strajk kolejarzy zatrzymał tylko nieliczne pociągi.'));
+    }
+    if (o.militia && o.militia.executing > 0) {
+      parts.push(res.fighting ? L('The Milicja of PPS fought on the side of ' + (res.stance === 'legal' ? 'the government' : 'Piłsudski') + '.',
+        'Milicja PPS walczyła po stronie ' + (res.stance === 'legal' ? 'rządu' : 'Piłsudskiego') + '.') : L('The Milicja protected our own people.', 'Milicja chroniła naszych ludzi.'));
+    }
+    const story = OUTCOME_STORY[C.outcome === 'constitutional_compromise' ? C.settlement : C.outcome];
+    if (story) parts.push(L(story[0], story[1]));
+    if (C.pps_contribution === 'decisive') parts.push(L('It was our organisations that tipped the balance.', 'To nasze organizacje przechyliły szalę.'));
+    else if (C.pps_contribution === 'adverse') parts.push(L('Our engagement harmed the side we supported.', 'Nasze zaangażowanie zaszkodziło stronie, którą poparliśmy.'));
+    return parts.join(' ');
   }
 
   function coupView(Q) {
@@ -1198,72 +1086,68 @@
     if (!A) return;
     Q.pl_coup_phase = C.phase;
     Q.pl_coup_step = coupStep(S);
-    if (PL()) return coupViewPl(Q);
-    Q.pl_coup_known = knownView(S).map(v => FORCE_NAMES[v.id] + ' ' + Math.round(100 * v.low) + '–' + Math.round(100 * v.high) + '%').join('; ');
-    Q.pl_coup_democracy = fmt(A.democracy);
+    Q.pl_coup_army = armyWords(S);
     for (const stance of Object.keys(STANCE_SIDE)) {
-      const p = stancePreview(S, stance);
-      Q['pl_coup_' + stance + '_preview'] = p.reactions.map(reactionText).join(', ') +
-        (p.split_risk.length ? '; split risk: ' + p.split_risk.map(f => FACTION_SHORT_EN[f] || f).join(', ') : '');
+      const pv = stancePreview(S, stance);
+      Q['pl_coup_' + stance + '_preview'] = pv.reactions.map(reactionText).join(', ') +
+        (pv.split_risk.length ? L('; split risk: ', '; ryzyko rozłamu: ') + pv.split_risk.map(f => L(FACTION_SHORT_EN[f] || f, FACTION_SHORT_PL[f] || f)).join(', ') : '');
     }
     for (const c of COMMITMENTS) Q['pl_coup_' + c + '_why'] = coupCommitStatus(Q, c).reason;
     const militia = militiaCall(S, C.stance || 'defend_legal');
-    Q.pl_coup_militia_forecast = militia.available + ' free members (' + fmt(militia.force) + ' F)';
+    Q.pl_coup_militia_forecast = militia.available > 0 ? L('The Milicja has ' + militia.available + ' people at hand.', 'Milicja ma do dyspozycji ' + people(militia.available) + '.') :
+      L('The Milicja has no free people.', 'Milicja nie ma wolnych ludzi.');
     const rail = railCall(S, C.stance || 'defend_legal');
-    Q.pl_coup_rail_forecast = 'active share about ' + fmt(rail.base) + ' of the railway workers, branch readiness ' + fmt(rail.readiness);
-    const res = A.resolution;
-    Q.pl_coup_sides = A.sides ? Object.keys(A.sides).map(id => FORCE_NAMES[id] + ': ' + ({legal: 'with the government', pils: 'with Piłsudski',
-      neutral: 'neutral'})[A.sides[id]]).join('; ') : '';
-    Q.pl_coup_called = A.organisations ? [A.organisations.militia ? 'Milicja: ' + A.organisations.militia.executing + ' people (' +
-      fmt(A.organisations.militia.force) + ' F, ' + A.organisations.militia_task + ')' : '', A.organisations.rail ? 'railway workers: active share ' +
-      A.organisations.rail.by_round.map(fmt).join(' / ') + ' by round' : ''].filter(Boolean).join('; ') || 'no organisation of PPS' : '';
-    Q.pl_coup_arrivals = res ? res.groups.filter(g => g.side !== 'neutral').map(g => FORCE_NAMES[g.id] + ' round ' + (g.phase + 1) +
-      (g.arrival !== g.phase ? ' → ' + (g.arrival <= 3 ? 'round ' + (g.arrival + 1) : 'too late') + ' (the strike)' : '')).join('; ') : '';
-    Q.pl_coup_rounds = res ? res.log.map(l => 'Round ' + l.round + ': Piłsudski ' + fmt(l.pils) + ' F, government ' + fmt(l.legal) + ' F').join('. ') : '';
-    Q.pl_coup_f9 = res && res.pending ? OFFER_NAMES[res.pending.offer] : '';
-    Q.pl_coup_outcome = C.outcome ? OUTCOME_NAMES[C.outcome] + (C.settlement ? ': ' + OFFER_NAMES[C.settlement] : '') : '';
-    Q.pl_coup_contribution = C.pps_contribution || '';
-    const e = A.effects;
-    Q.pl_coup_effects = e ? 'Democracy ' + (e.institutions.democracy > 0 ? '+' : '') + e.institutions.democracy + ', violence +' + e.institutions.violence +
-      '; production ' + fmt(e.production.percent) + '%' + (e.splits.length ? '; splits: ' + e.splits.map(s => s.faction).join(', ') : '') +
-      (e.relations.length ? '; relations: ' + e.relations.map(r => r.actor + ' ' + (r.delta > 0 ? '+' : '') + r.delta).join(', ') : '') +
-      (e.militia_lost ? '; Milicja lost ' + e.militia_lost + ' people' : '') + (e.rail_fund_used ? '; railway fund used ' + fmt(e.rail_fund_used) + ' R' : '') +
-      (C.concessions_to_pps.length ? '; the winner owes the conditions of PPS' : '') : '';
+    Q.pl_coup_rail_forecast = rail.base >= 30 ? L('The railway workers are well organised and ready to strike.', 'Kolejarze są dobrze zorganizowani i gotowi do strajku.') :
+      rail.base >= 15 ? L('Part of the railway workers will follow the call.', 'Część kolejarzy pójdzie za wezwaniem.') :
+        L('Few railway workers will answer the call.', 'Niewielu kolejarzy odpowie na wezwanie.');
+    Q.pl_coup_outcome = C.outcome ? L(OUTCOME_NAMES[C.outcome], OUTCOME_NAMES_PL[C.outcome]) : '';
+    Q.pl_coup_story = C.outcome && A.resolution ? coupStory(Q) : '';
+    const e = A.effects, sign = n => (n > 0 ? '+' : n < 0 ? '−' : '') + Math.abs(n);
+    Q.pl_coup_effects = e ? L('Democracy ', 'Demokracja ') + sign(e.institutions.democracy) + L(', violence +', ', przemoc +') + e.institutions.violence +
+      L('; production ', '; produkcja ') + (e.production.percent < 0 ? '−' : '') + fmt(Math.abs(e.production.percent)) + '%' +
+      (e.splits.length ? L('; splits: ', '; rozłamy: ') + e.splits.map(x => L(FACTION_SHORT_EN[x.faction] || x.faction, FACTION_SHORT_PL[x.faction] || x.faction)).join(', ') : '') +
+      (e.relations.length ? L('; relations: ', '; stosunki: ') + e.relations.map(r => government.describeParty(r.actor) + ' ' + sign(r.delta)).join(', ') : '') +
+      (e.militia_lost ? L('; the Milicja lost ' + e.militia_lost + ' people', '; Milicja straciła ' + people(e.militia_lost)) : '') +
+      (C.concessions_to_pps.length ? L('; the winner owes the conditions of PPS', '; zwycięzca jest winien PPS jej warunki') : '') + '.' : '';
   }
 
-  // The same fields in Polish (decision 2A): what PPS knows, the call of its organisations, the course and the outcome.
-  function coupViewPl(Q) {
-    const S = Q.S, C = S.coup, A = C.attempt;
-    Q.pl_coup_known = knownView(S).map(v => forceName(v.id) + ' ' + Math.round(100 * v.low) + '–' + Math.round(100 * v.high) + '%').join('; ');
-    Q.pl_coup_democracy = fmt(A.democracy);
-    for (const stance of Object.keys(STANCE_SIDE)) {
-      const p = stancePreview(S, stance);
-      Q['pl_coup_' + stance + '_preview'] = p.reactions.map(reactionText).join(', ') +
-        (p.split_risk.length ? '; ryzyko rozłamu: ' + p.split_risk.map(f => FACTION_SHORT_PL[f] || f).join(', ') : '');
+  // Z — 1.03: a game saved with the four groups of synthetic_test_v2 gets the one army: the strength-weighted loyalties, the
+  // losses, the known estimate, the agreements and the projects that named a group; an attempt between F5 and its outcome goes
+  // back to the choice of the organisations. Idempotent; main calls it when a game is shown.
+  function migrateArmy(Q) {
+    const S = Q && Q.S;
+    if (!S || !S.security || !Array.isArray(S.security.forces) || S.security.forces.length <= 1) return false;
+    const forces = S.security.forces, total = forces.reduce((n, f) => n + f.base_strength_F, 0) || 1;
+    const sum = fn => forces.reduce((n, f) => n + fn(f) * f.base_strength_F / total, 0);
+    const army = {id: ARMY, kind: 'army_group', base_strength_F: total, readiness: round(sum(f => f.readiness), 6), command: round(sum(f => f.command), 6),
+      loyalty_legal: round(sum(f => f.loyalty_legal), 6), loyalty_pils: round(sum(f => f.loyalty_pils), 6), loyalty_neutral: 0,
+      available_from_phase: 0, transport_route: 'road', rail_delay_cap: 0, committed_side: null,
+      losses_F: round(forces.reduce((n, f) => n + (f.losses_F || 0), 0), 6), source_status: 'P', modifiers: []};
+    army.loyalty_neutral = round(Math.max(0, 1 - army.loyalty_legal - army.loyalty_pils), 6);
+    const known = forces.map(f => S.security.known[f.id]).filter(Boolean);
+    const center = known.length ? round(sum(f => (S.security.known[f.id] || {pils_center: f.loyalty_pils}).pils_center), 6) : army.loyalty_pils;
+    const radius = known.length ? Math.min.apply(null, known.map(k => k.radius)) : KNOWN_START;
+    S.security.forces = [army];
+    S.security.known = {army: {pils_center: center, radius: radius, at: S.turn.last_settled_time, roll_id: 'army:known:migrated'}};
+    S.security.profile_id = FORCE_PROFILE_ID;
+    for (const id of Object.keys(S.agreements || {})) {
+      const a = S.agreements[id];
+      if (!a || a.kind !== 'pilsudski') continue;
+      const moved = a.loyalty_moved || 0;
+      a.force_ids = a.force_ids && a.force_ids.length ? [ARMY] : [];
+      a.loyalty_moved_by = a.force_ids.length ? {army: moved} : {};
     }
-    for (const c of COMMITMENTS) Q['pl_coup_' + c + '_why'] = coupCommitStatus(Q, c).reason;
-    const militia = militiaCall(S, C.stance || 'defend_legal');
-    Q.pl_coup_militia_forecast = 'wolni członkowie: ' + militia.available + ' (' + fmt(militia.force) + ' F)';
-    const rail = railCall(S, C.stance || 'defend_legal');
-    Q.pl_coup_rail_forecast = 'aktywny udział kolejarzy około ' + fmt(rail.base) + ', gotowość branży ' + fmt(rail.readiness);
-    const res = A.resolution;
-    Q.pl_coup_sides = A.sides ? Object.keys(A.sides).map(id => forceName(id) + ': ' + SIDES_PL[A.sides[id]]).join('; ') : '';
-    Q.pl_coup_called = A.organisations ? [A.organisations.militia ? 'Milicja: ' + people(A.organisations.militia.executing) + ' (' +
-      fmt(A.organisations.militia.force) + ' F, ' + (TASKS_PL[A.organisations.militia_task] || A.organisations.militia_task) + ')' : '',
-    A.organisations.rail ? 'kolejarze: aktywny udział ' + A.organisations.rail.by_round.map(fmt).join(' / ') + ' w kolejnych rundach' : '']
-      .filter(Boolean).join('; ') || 'żadna organizacja PPS' : '';
-    Q.pl_coup_arrivals = res ? res.groups.filter(g => g.side !== 'neutral').map(g => forceName(g.id) + ' runda ' + (g.phase + 1) +
-      (g.arrival !== g.phase ? ' → ' + (g.arrival <= 3 ? 'runda ' + (g.arrival + 1) : 'za późno') + ' (strajk)' : '')).join('; ') : '';
-    Q.pl_coup_rounds = res ? res.log.map(l => 'Runda ' + l.round + ': Piłsudski ' + fmt(l.pils) + ' F, rząd ' + fmt(l.legal) + ' F').join('. ') : '';
-    Q.pl_coup_f9 = res && res.pending ? OFFER_NAMES_PL[res.pending.offer] : '';
-    Q.pl_coup_outcome = C.outcome ? OUTCOME_NAMES_PL[C.outcome] + (C.settlement ? ': ' + OFFER_NAMES_PL[C.settlement] : '') : '';
-    Q.pl_coup_contribution = C.pps_contribution ? CONTRIBUTION_PL[C.pps_contribution] || C.pps_contribution : '';
-    const e = A.effects;
-    Q.pl_coup_effects = e ? 'Demokracja ' + (e.institutions.democracy > 0 ? '+' : '') + e.institutions.democracy + ', przemoc +' + e.institutions.violence +
-      '; produkcja ' + fmt(e.production.percent) + '%' + (e.splits.length ? '; rozłamy: ' + e.splits.map(s => FACTION_SHORT_PL[s.faction] || s.faction).join(', ') : '') +
-      (e.relations.length ? '; relacje: ' + e.relations.map(r => government.describeParty(r.actor) + ' ' + (r.delta > 0 ? '+' : '') + r.delta).join(', ') : '') +
-      (e.militia_lost ? '; Milicja straciła ' + people(e.militia_lost) : '') + (e.rail_fund_used ? '; wykorzystany fundusz kolejarzy ' + fmt(e.rail_fund_used) + ' R' : '') +
-      (C.concessions_to_pps.length ? '; zwycięzca jest winien PPS jej warunki' : '') : '';
+    for (const id of Object.keys(S.projects || {})) {
+      const pr = S.projects[id];
+      if (pr && pr.policy_choices && pr.policy_choices.force_id) pr.policy_choices.force_id = ARMY;
+    }
+    const C = S.coup;
+    if (C && C.phase === 'execution_and_transport' && !C.effects_complete) {
+      C.phase = 'organization_commitment';
+      if (C.attempt) C.attempt.resolution = null;
+    }
+    S.history.reasons.push({t: Q.time, kind: 'army_migrated', loyalty_pils: army.loyalty_pils});
+    return true;
   }
 
   // ---- One month (4.2 step 6, after politics) --------------------------------------------------------------
@@ -1314,7 +1198,7 @@
   // Z — 1.02 (the user's decisions of 7 XI 2026): the card „Piłsudski i wojsko” from curbing his influence to the independent
   // inspectorate; the premiership and the refusal left the card (their rules stay for older games). P: the numbers are game values.
   const PILS_OPTIONS = Object.freeze(['subordinate', 'legion_cult', 'military_function', 'inspectorate', 'status_quo']);
-  const SUBORDINATE = Object.freeze({forces: ['near_reserve', 'remote_reserve'], loyalty: 0.05, relation: -15, pilsudczycy: 10});
+  const SUBORDINATE = Object.freeze({forces: [ARMY], loyalty: 0.05, relation: -15, pilsudczycy: 10});
   const LEGION_CULT = Object.freeze({price: 1, relation: 10});
   const STATUS_QUO = Object.freeze({centrum: -3, relation: -3});
 
@@ -1325,7 +1209,7 @@
     if (!inCrisis(S) && !rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
     if (option === 'subordinate') {
       return SUBORDINATE.forces.some(id => forceOf(S, id).loyalty_pils > 0.001) ? OK :
-        no(L('The reserves no longer lean towards Piłsudski.', 'Odwody nie sprzyjają już Piłsudskiemu.'));
+        no(L('The army no longer leans towards Piłsudski.', 'Wojsko nie sprzyja już Piłsudskiemu.'));
     }
     if (option === 'legion_cult') return projects.affordStatus(Q, LEGION_CULT.price);
     if (option === 'status_quo') return OK;
@@ -1348,11 +1232,14 @@
       for (const id of SUBORDINATE.forces) moveLoyalty(S, forceOf(S, id), 'loyalty_pils', 'loyalty_legal', SUBORDINATE.loyalty);
       government.changeRelation(Q, 'pilsudski', SUBORDINATE.relation, 'pils_subordinate:t' + t);
       government.factionReactions(Q, [{faction: 'pilsudczycy', dissent: SUBORDINATE.pilsudczycy}], {id: 'pils_subordinate:t' + t, kind: 'cabinet_policy', reverse: null});
+      // Z — 1.03 (decision 1A of the coup audit): the subordination settles the open military cases, so they no longer feed the
+      // pressure; breaking an agreement with Piłsudski opens a new one (16.7).
+      for (let open = politics.openMilitaryCase(S); open; open = politics.openMilitaryCase(S)) politics.closeCase(Q, open.id, 'subordinate:t' + t);
       const broke = breakAgreement(Q, 'the army subordinated to the minister and the Sejm');
-      Q.pl_pils_result = L('The army answers to the minister and the Sejm: Piłsudski loses his say in the nominations, and both reserves lean less towards him. ' +
+      Q.pl_pils_result = L('The army answers to the minister and the Sejm: Piłsudski loses his say in the nominations, and the army leans less towards him. ' +
         'The Piłsudczycy in PPS rebel (+' + SUBORDINATE.pilsudczycy + ') and relations with Piłsudski worsen (−' + Math.abs(SUBORDINATE.relation) + ').' +
         (broke ? ' The agreement with him is broken: the pressure towards a coup rises.' : ''),
-        'Wojsko odpowiada przed ministrem i Sejmem: Piłsudski traci wpływ na nominacje, a bliski i daleki odwód słabiej mu sprzyjają. Piłsudczycy w PPS ' +
+        'Wojsko odpowiada przed ministrem i Sejmem: Piłsudski traci wpływ na nominacje, a wojsko słabiej mu sprzyja. Piłsudczycy w PPS ' +
         'się burzą (+' + SUBORDINATE.pilsudczycy + '), a stosunki z Piłsudskim się psują (−' + Math.abs(SUBORDINATE.relation) + ').' +
         (broke ? ' Porozumienie z nim zostaje zerwane: presja na zamach rośnie.' : ''));
       pilsObjections(Q, option);
@@ -1425,13 +1312,11 @@
       (ban.lawful ? ' (legalne ograniczenie po udowodnionej przemocy)' : ' (bezprawne ograniczenie)')) :
       L('legal', 'legalna');
     Q.pl_def_police = policeLine(Q);
-    Q.pl_def_forces = knownView(S).map(v => forceName(v.id).charAt(0).toUpperCase() + forceName(v.id).slice(1) +
-      L(': loyalty to Piłsudski known as ', ': lojalność wobec Piłsudskiego znana w przedziale ') +
-      Math.round(100 * v.low) + '–' + Math.round(100 * v.high) + '%').join('. ') + '.';
-    Q.pl_def_note = L('The four groups are the synthetic test profile ' + S.security.profile_id + ', not the historical army of 1926. The intervals narrow with ' +
-      'the assessment of the forces on the Party agenda; the loyalties themselves do not change by looking.',
-      'Cztery zgrupowania to syntetyczny profil testowy ' + S.security.profile_id + ', a nie historyczna armia z 1926 roku. Przedziały zawężają się ' +
-      'dzięki ocenie sił w agendzie partii; samo przyglądanie się nie zmienia lojalności.');
+    // Z — 1.03 (decision 4A of 7 XI 2026): the army in words, without numbers.
+    Q.pl_def_army = armyWords(S);
+    Q.pl_def_forces = Q.pl_def_army;
+    Q.pl_def_note = L('PPS knows the mood of the officers only from reports; the assessment of the forces on the Party agenda gives a surer picture.',
+      'PPS zna nastroje oficerów tylko z doniesień; ocena sił w agendzie partii daje pewniejszy obraz.');
     const a = pilsAgreement(S);
     Q.pl_def_agreement = a && a.status === 'active' ? L('Agreement with Piłsudski: ' + concessionName(a.variant) +
       (a.execution_started_at === null ? ' (not yet executed).' : ', review ' + dateOf(a.review_at) + '.'), 'Porozumienie z Piłsudskim: ' +
@@ -1448,31 +1333,32 @@
     Q.pl_def_police_command = fmt(police.command);
     Q.pl_def_police_lawful = fmt(police.lawful_compliance);
     Q.pl_def_police_protection = fmt(protectionCapacity(S, null, Q.time)) + L('\u00a0of\u00a0100', '\u00a0na\u00a0100');
-    for (const id of Object.keys(FORCE_NAMES)) {
-      const v = knownView(S).find(f => f.id === id);
-      Q['pl_def_force_' + id + '_name'] = forceName(id).charAt(0).toUpperCase() + forceName(id).slice(1);
-      Q['pl_def_force_' + id] = v ? Math.round(100 * v.low) + '–\u2060' + Math.round(100 * v.high) + '%' : '';
-    }
   }
 
   function statusLine(Q) {
     const S = Q.S, police = S.security.police;
     const warning = S.coup.phase === 'political_crisis' ? L('Political crisis: preparations for a coup are reported. ',
       'Kryzys polityczny: napływają doniesienia o przygotowaniach do zamachu. ') : '';
-    const view = knownView(S);
-    const range = view.map(v => Math.round(100 * v.low) + '–' + Math.round(100 * v.high) + '%').join(', ');
     const a = pilsAgreement(S);
-    return warning + L('the loyalty of the four army groups to Piłsudski is known only as ' + range + ' (±' + view[0].radius + ' pp). Police: command ' +
+    // Z — 1.03 (decision 4A): the army in words.
+    return warning + L(armyWords(S) + ' Police: command ' +
       fmt(police.command) + ', lawful compliance ' + fmt(police.lawful_compliance) + '.' +
       (a && a.status === 'active' ? ' Agreement with Piłsudski: ' + concessionName(a.variant) + (a.execution_started_at === null ? ' (not yet executed).' :
         ', review ' + dateOf(a.review_at) + '.') : ''),
-      'lojalność czterech zgrupowań wojska wobec Piłsudskiego jest znana tylko w przedziałach ' + range + ' (±' + view[0].radius +
-      ' pkt proc.). Policja: dowodzenie ' + fmt(police.command) + ', praworządność ' + fmt(police.lawful_compliance) + '.' +
+      armyWords(S) + ' Policja: dowodzenie ' + fmt(police.command) + ', praworządność ' + fmt(police.lawful_compliance) + '.' +
       (a && a.status === 'active' ? ' Porozumienie z Piłsudskim: ' + concessionName(a.variant) + (a.execution_started_at === null ?
         ' (jeszcze niewykonane).' : ', przegląd w ' + rules.monthYear(a.review_at, 'loc') + '.') : ''));
   }
 
   return Object.freeze({
+    ARMY: ARMY,
+    armyWords: armyWords,
+    migrateArmy: migrateArmy,
+    resolveCoup: resolveCoup,
+    feasibleOffers: feasibleOffers,
+    initialStrikeForce: initialStrikeForce,
+    COUP_VICTORY: COUP_VICTORY,
+    MILITIA_COUP_FACTOR: MILITIA_COUP_FACTOR,
     FORCE_PROFILE_ID: FORCE_PROFILE_ID,
     FORCES: FORCES,
     LOGISTICS: LOGISTICS,
@@ -1518,13 +1404,7 @@
     COUP_GATES: COUP_GATES,
     STANCE_SIDE: STANCE_SIDE,
     COMMITMENTS: COMMITMENTS,
-    OFFER_SCORES: OFFER_SCORES,
-    newResolution: newResolution,
-    advanceResolution: advanceResolution,
-    answerF9: answerF9,
-    resolveAttempt: resolveAttempt,
     contributionOf: contributionOf,
-    initialStrikeForce: initialStrikeForce,
     coupGates: coupGates,
     checkCoupGates: checkCoupGates,
     coupDue: coupDue,
@@ -1537,16 +1417,9 @@
     railCall: railCall,
     coupCommitStatus: coupCommitStatus,
     coupCommit: coupCommit,
-    coupF9Status: coupF9Status,
-    coupF9: coupF9,
     finishCoup: finishCoup,
     coupView: coupView,
     coupStep: coupStep,
-    coupGroups: coupGroups,
-    bestOffer: bestOffer,
-    significantAt: significantAt,
-    sideForce: sideForce,
-    coupStepSeen: coupStepSeen,
 
     policeLine: policeLine,
     pilsView: pilsView,

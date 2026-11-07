@@ -49,7 +49,7 @@ test('Rozpoznanie w agendzie: three assessments of the forces every 3 months nar
   const engine = quietGame();
   const Q = engine.state.qualities, S = Q.S;
   const loyalties = S.security.forces.map(f => [f.loyalty_legal, f.loyalty_pils, f.loyalty_neutral]);
-  const radii = [S.security.known.capital_legal.radius];
+  const radii = [S.security.known.army.radius];
   S.party_orgs.cash = 5; // Z — 0.56: no monthly income, so the three assessments get their money at the start
   PolishParty.writeMirrors(Q);
   for (let n = 0; n < 3; n++) {
@@ -58,11 +58,11 @@ test('Rozpoznanie w agendzie: three assessments of the forces every 3 months nar
     const cash = S.party_orgs.cash, t = Q.time;
     choose(engine, 'polish_party_agenda.assess_forces');
     assert.ok(Math.abs(S.party_orgs.cash - (cash - 1)) < 1e-6, '1 R');
-    assert.match(JSON.stringify(engine.ui.paragraphs), /narrows the interval/);
+    assert.match(JSON.stringify(engine.ui.paragraphs), /Our people in the army report/, 'Z — 1.03: the assessment in words');
     choose(engine, 'root');
     answerList(engine);
     assert.equal(Q.time, t + 1, '1 T: the month is spent');
-    radii.push(S.security.known.capital_legal.radius);
+    radii.push(S.security.known.army.radius);
     for (const view of PolishSecurity.knownView(S)) {
       const f = S.security.forces.find(g => g.id === view.id);
       const effective = PolishSecurity.effectiveLoyalty(f, S.politics.democracy).pils;
@@ -125,12 +125,10 @@ test('Kontrola wojska bez pustych opcji: at an open military case the Parliament
 // ---- The coup F through the engine (16.4–16.8, 19.1; card catalogue 9.15) ----
 
 const HISTORICAL_LIKE = { zln: 22, pschd: 10, psl_piast: 13, psl_wyzwolenie: 11, pps: 10, npr: 5, minorities_bloc: 16, kpp: 1.5, other: 11.5 };
-// The recorded draws that give each group a chosen side (see tests/rules-coup.test.js).
-const U = { capital_legal: { legal: 0.1, neutral: 0.99 }, capital_pils: { legal: 0.01, pils: 0.5, neutral: 0.99 },
-  near_reserve: { legal: 0.1, pils: 0.5, neutral: 0.95 }, remote_reserve: { legal: 0.1, pils: 0.6, neutral: 0.95 } };
+// Z — 1.03: the two hidden draws of the turnout (80–120%) fixed for a test: u = (turnout − 0.8) / 0.4.
 // The November election and the December offices of 1922 (the historical branch), then February 1926 with a pressure
 // above the gates: the settlement of that month declares the attempt and the queue brings F3 (16.8.1).
-function toCoup({ democracy = null, sides = null } = {}) {
+function toCoup({ democracy = null, turnout = null } = {}) {
   const engine = quietGame();
   const Q = engine.state.qualities, S = Q.S;
   S.scenario.inputs.niewiadomski_cult = false;
@@ -165,77 +163,68 @@ function toCoup({ democracy = null, sides = null } = {}) {
   choose(engine, 'polish_party_agenda.organize_unions');
   choose(engine, 'root');
   assert.equal(engine.state.sceneId, 'polish_event_coup.f3', 'the queue brings the declared attempt at once (category 2)');
-  if (sides) S.security.forces.forEach((f, i) => { S.rng.rolls[`coup_${S.coup.attempt_id}:${f.id}:allegiance`] = U[f.id][sides[i]]; });
+  if (turnout) ['pils', 'legal'].forEach((side, i) => { S.rng.rolls[`coup_${S.coup.attempt_id}:${side}:turnout`] = (turnout[i] - 0.8) / 0.4; });
   return engine;
 }
 
 test('Zamach: identical forces with different last commitments of PPS — the outcome is computed only after the commitments; the German coup counter and scenes change nothing', () => {
   const run = commitment => {
-    const engine = toCoup({ sides: ['legal', 'pils', 'pils', 'legal'] });
+    const engine = toCoup({ turnout: [1.2, 0.97] });
     const Q = engine.state.qualities, S = Q.S;
     Q.coup_progress = 10; // the inherited German counter (leak 3): read by no Polish rule
     const A = S.coup.attempt;
     assert.ok(A.capacity >= 30 && A.pressure >= 65, 'a Polish intention and capacity');
     choose(engine, 'polish_event_coup.begin');
     choose(engine, 'polish_event_coup.defend_legal');
-    assert.deepEqual([S.coup.outcome, A.sides], [null, null], 'nothing is decided before F5');
+    assert.deepEqual([S.coup.outcome, A.resolution], [null, null], 'nothing is decided before F5');
     S.militia.strength = 620; S.militia.militancy = 1; // fixture: a Milicja of about 6 F (Z — 0.89: every member answers)
     choose(engine, `polish_event_coup.commit_${commitment}`);
-    choose(engine, 'polish_event_coup.f67_seen');
-    if (engine.state.sceneId === 'polish_event_coup.f9') choose(engine, 'polish_event_coup.f9_accept');
-    assert.equal(engine.state.sceneId, 'polish_event_coup.f10');
-    return { S, A };
+    assert.equal(engine.state.sceneId, 'polish_event_coup.f10', 'Z — 1.03: the outcome right after the organisations');
+    return { S, A, engine };
   };
   const none = run('none'), militia = run('militia');
-  assert.deepEqual(none.A.sides, militia.A.sides, 'the same draws of the groups');
-  assert.ok(none.S.coup.outcome && militia.S.coup.outcome, 'both resolved after the commitments');
+  assert.deepEqual(none.A.cfg.turnout, militia.A.cfg.turnout, 'the same draws');
+  assert.deepEqual([none.S.coup.outcome, militia.S.coup.outcome], ['pils_victory', 'constitutional_compromise'], 'the Milicja tips the balance');
   assert.deepEqual([none.A.organisations.militia, militia.A.organisations.militia.executing > 0], [null, true]);
-  assert.equal(none.S.coup.pps_contribution, 'none', 'without organisations no contribution');
+  assert.deepEqual([none.S.coup.pps_contribution, militia.S.coup.pps_contribution], ['none', 'decisive']);
+  assert.match(JSON.stringify(militia.engine.ui.paragraphs), /The Milicja of PPS fought on the side of the government\. .*tipped the balance/);
+  assert.doesNotMatch(JSON.stringify(militia.engine.ui.paragraphs), /\bF\b|round|draw/i, 'no numbers of forces, rounds or draws on the page');
   for (const r of [none, militia]) {
     assert.deepEqual([r.S.chapter.status, r.S.chapter.reason], ['ended', 'coup'], 'the chapter ends after the coup');
     assert.ok(!Object.values(r.S.coup).some(v => v === undefined));
   }
 });
 
-test('Wczytanie zamachu: a save after the stance and one round, at the pending F9, loads the same sides, losses and draws; only the next open phase remains', () => {
-  const engine = toCoup({ democracy: 100, sides: ['legal', 'pils', 'neutral', 'neutral'] });
+test('Wczytanie zamachu: a save after the stance, at the choice of the organisations, loads the same attempt; the same commitment then gives the same outcome and draws', () => {
+  const engine = toCoup({ turnout: [1.0, 1.0] }); // Z — 1.03: at democracy 100 the army is too loyal for an attempt
   const Q = engine.state.qualities, S = Q.S;
   choose(engine, 'polish_event_coup.begin');
   choose(engine, 'polish_event_coup.defend_legal');
-  S.militia.strength = 620; S.militia.militancy = 1;
-  choose(engine, 'polish_event_coup.commit_militia');
-  const res = S.coup.attempt.resolution;
-  assert.deepEqual([res.pending && res.pending.kind, res.f9.completed_rounds, res.log.length], ['f9', 1, 1], 'F9 after one completed round');
-  choose(engine, 'polish_event_coup.f67_seen');
-  assert.equal(engine.state.sceneId, 'polish_event_coup.f9');
+  assert.equal(engine.state.sceneId, 'polish_event_coup.f5');
   const restored = dendry.saveAndRestore(engine);
   const R = restored.state.qualities;
-  assert.equal(restored.state.sceneId, 'polish_event_coup.f9');
-  assert.deepEqual(R.S.coup.attempt.sides, S.coup.attempt.sides);
-  assert.deepEqual(R.S.coup.attempt.rolls, S.coup.attempt.rolls);
-  assert.deepEqual(R.S.coup.attempt.resolution.groups.map(g => g.loss), res.groups.map(g => g.loss));
-  assert.deepEqual(Object.keys(R.S.rng.rolls).length, Object.keys(S.rng.rolls).length, 'no new draw');
-  choose(restored, 'polish_event_coup.f9_accept');
-  choose(engine, 'polish_event_coup.f9_accept');
+  assert.equal(restored.state.sceneId, 'polish_event_coup.f5');
+  assert.deepEqual([R.S.coup.stance, R.S.coup.phase], ['defend_legal', 'organization_commitment']);
+  choose(restored, 'polish_event_coup.commit_rail');
+  choose(engine, 'polish_event_coup.commit_rail');
   assert.deepEqual([R.S.coup.outcome, R.S.coup.settlement], [S.coup.outcome, S.coup.settlement]);
-  assert.equal(R.S.coup.outcome, 'constitutional_compromise');
-  assert.deepEqual(R.S.coup.f9, { completed_rounds: 1, offer_id: S.coup.settlement, response: 'accepted' });
+  assert.deepEqual(R.S.coup.attempt.rolls, S.coup.attempt.rolls);
+  assert.equal(R.S.coup.f9, null, 'no F9 any more');
 });
 
-test('Brak zwycięzcy: a stalemate after four rounds at democracy 30 without an offer of 60 is a prolonged conflict, a report of handover and the end of the chapter', () => {
-  const engine = toCoup({ democracy: 30, sides: ['legal', 'pils', 'pils', 'legal'] });
+test('Brak zwycięzcy: a close fight at democracy 30, below the level of a settlement, is a prolonged conflict, a report of handover and the end of the chapter', () => {
+  const engine = toCoup({ democracy: 30, turnout: [1.0, 1.1] });
   const Q = engine.state.qualities, S = Q.S;
   choose(engine, 'polish_event_coup.begin');
   choose(engine, 'polish_event_coup.mediate');
   choose(engine, 'polish_event_coup.commit_none');
-  choose(engine, 'polish_event_coup.f67_seen');
   assert.equal(engine.state.sceneId, 'polish_event_coup.f10');
   assert.deepEqual([S.coup.outcome, S.coup.round, S.coup.phase, S.coup.effects_complete], ['prolonged_conflict', 4, 'resolved', true]);
   assert.deepEqual([S.chapter.status, S.chapter.reason, S.chapter.trigger_id], ['ended', 'coup', S.coup.attempt_id]);
   const report = S.chapter.report;
   assert.equal(report.state.turning_point.outcome, 'prolonged_conflict');
-  assert.equal(report.state.turning_point.rounds.length, 4, 'the last balance of the rounds');
-  assert.ok(report.state.turning_point.effects.forces.every(f => f.side), 'the sides and losses of the groups');
+  assert.ok(report.state.turning_point.balance.pils > 0 && report.state.turning_point.balance.legal > 0, 'the balance of the two forces');
+  assert.ok(report.state.turning_point.effects.forces.every(f => f.id === 'army'), 'the losses of the army');
   assert.deepEqual(report.continuation_requirements, ['prolonged_conflict']);
   assert.equal(report.state.last_election.sequence_after_opening, 1, 'the Sejm of 1922 stays in the report');
   choose(engine, 'polish_chapter_report');
@@ -361,8 +350,9 @@ test('Izolacja Polski: with the new models of the economy and the coup active, n
     for (let m = 0; m < 4; m++) spendMonth(engine);
     const S = Q.S;
     return { economy: [S.economy.inflation_m, S.economy.output, S.economy.unemployment, S.economy.budget], politics: [S.politics.democracy, S.politics.violence, S.coup.pressure],
-      forces: PolishSecurity.capacity(S), resolution: PolishSecurity.resolveAttempt(PolishSecurity.coupGroups(S, Q.time).map((g, i) => Object.assign(g, { side: ['legal', 'pils', 'pils', 'legal'][i] })),
-        { democracy: S.politics.democracy }).outcome, Q, engine };
+      forces: PolishSecurity.capacity(S), resolution: PolishSecurity.resolveCoup({ strength: 160, readiness: 0.8, command: 0.81,
+        loyalty: PolishSecurity.effectiveLoyalty(S.security.forces[0], S.politics.democracy), turnout: { pils: 1, legal: 1 }, stance: 'neutral',
+        settlement: S.politics.democracy >= 45, offers: PolishSecurity.feasibleOffers(Q), objective: { pils: true, legal: true } }).outcome, Q, engine };
   };
   const clean = run(false), poisoned = run(true);
   assert.deepEqual(poisoned.economy, clean.economy, 'the economy');
@@ -379,12 +369,11 @@ test('Izolacja Polski: with the new models of the economy and the coup active, n
 });
 
 test('Kolejność i zakres: after the report of a coup no new action and no month; Sanacja and SL are not formed and Drobner is not in the pool before 1928', () => {
-  const engine = toCoup({ sides: ['neutral', 'pils', 'pils', 'legal'] });
+  const engine = toCoup({ turnout: [1.2, 0.8] });
   const Q = engine.state.qualities, S = Q.S;
   choose(engine, 'polish_event_coup.begin');
   choose(engine, 'polish_event_coup.mediate');
   choose(engine, 'polish_event_coup.commit_none');
-  choose(engine, 'polish_event_coup.f67_seen');
   assert.equal(S.chapter.status, 'ended');
   const time = Q.time, months = S.history.months.length, actions = S.history.actions.length;
   for (const scene of ['main', 'post_event', 'root']) {

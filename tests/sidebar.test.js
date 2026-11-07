@@ -100,11 +100,9 @@ test('Pasek: Milicja PPS w zakładce Partia, policja i wojsko w zakładce Państ
   assert.doesNotMatch(main + text, /Przywiązanie do legalnych instytucji|Sprawność/);
   assert.doesNotMatch(text, /Milicja/);
   assert.match(text, /(?:^|\n)\s*Policja ?\n\s*Potencjał: 50 ?\nDowodzenie: 50 ?\nPraworządność: 50 ?\nOchrona jednego zgromadzenia: [\d,]+\u00a0na\u00a0100 ?\n/);
-  assert.match(text, /\nZgrupowania wojska ?\n\s*Lojalność wobec Piłsudskiego, znana tylko w przedziale: ?\n/);
-  for (const name of ['Stołeczny garnizon wierny rządowi', 'Oddziały stołeczne bliskie Piłsudskiemu', 'Bliski odwód', 'Daleki odwód (koleją)']) {
-    assert.ok(bold(defense).includes(name + ':'), name);
-    assert.match(text, new RegExp('\\n' + name.replace(/[()]/g, '\\$&') + ': \\d+–\u2060\\d+% ?\\n'), name);
-  }
+  // Z — 1.03 (decision 4A of 7 XI 2026): the army in words, without numbers.
+  assert.match(text, /\nWojsko ?\n\s*(Większość oficerów sprzyja Piłsudskiemu|Wojsko jest podzielone; wielu oficerów sprzyja Piłsudskiemu|Większość wojska jest wierna rządowi|Wojsko jest wierne rządowi)\. ?\n/);
+  assert.doesNotMatch(text, /Zgrupowania wojska|odwód|\d+–\u2060\d+%/);
   assert.deepEqual(errors, []);
 });
 

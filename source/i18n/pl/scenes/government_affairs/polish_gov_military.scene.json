@@ -5,13 +5,13 @@
   "title: Military Affairs": "title: Sprawy wojskowe",
   "subtitle: The army: more money, cuts, or the promotion of officers loyal to the government.": "subtitle: Wojsko: więcej pieniędzy, cięcia albo awanse oficerów wiernych rządowi.",
   "= Military affairs": "= Sprawy wojskowe",
-  "The army answers to the minister of military affairs, but many officers listen above all to Piłsudski. The pressure towards a coup stands at [+ pl_gc_coup_pressure +] of 100; the loyalty of the army groups to Piłsudski is shown on the State tab.": "Wojsko podlega ministrowi spraw wojskowych, ale wielu oficerów słucha przede wszystkim Piłsudskiego. Presja na zamach wynosi [+ pl_gc_coup_pressure +] ze 100; lojalność zgrupowań wobec Piłsudskiego widać w zakładce Państwo.",
+  "The army answers to the minister of military affairs, but many officers listen above all to Piłsudski. The pressure towards a coup stands at [+ pl_gc_coup_pressure +] of 100; the mood of the officers is described on the State tab.": "Wojsko podlega ministrowi spraw wojskowych, ale wielu oficerów słucha przede wszystkim Piłsudskiego. Presja na zamach wynosi [+ pl_gc_coup_pressure +] ze 100; nastroje oficerów opisuje zakładka Państwo.",
   "- @root: Continue.": "- @root: Dalej.",
   "title: Raise the spending on the army": "title: Zwiększ wydatki na wojsko",
   "subtitle: Costs 2 budget units. The officers are content and the pressure towards a coup falls (−5), but the dissent of the Left of PPS rises (+5).": "subtitle: Kosztuje 2 jednostki budżetu. Oficerowie są zadowoleni i presja na zamach spada (−5), ale rośnie sprzeciw Lewicy w PPS (+5).",
   "title: Cut the spending on the army": "title: Obetnij wydatki na wojsko",
   "subtitle: Brings the budget 2 units at once. The officers are indignant and the pressure towards a coup rises (+5).": "subtitle: Od razu zasila budżet: 2 jednostki. Oficerowie są oburzeni i presja na zamach rośnie (+5).",
   "title: Promote officers loyal to the government": "title: Awansuj oficerów wiernych rządowi",
-  "subtitle: Costs 1 budget unit. The group most loyal to Piłsudski leans less towards him (−10 percentage points), but relations with Piłsudski worsen (−10) and the Piłsudczycy in PPS protest (+8).": "subtitle: Kosztuje 1 jednostkę budżetu. Zgrupowanie najbardziej oddane Piłsudskiemu słabiej mu sprzyja (−10 punktów procentowych), ale stosunki z Piłsudskim się psują (−10), a piłsudczycy w PPS protestują (+8)."
+  "subtitle: Costs 1 budget unit. The army leans less towards Piłsudski (−3 percentage points), but relations with Piłsudski worsen (−10) and the Piłsudczycy in PPS protest (+8).": "subtitle: Kosztuje 1 jednostkę budżetu. Wojsko słabiej sprzyja Piłsudskiemu (−3 punkty procentowe), ale stosunki z Piłsudskim się psują (−10), a piłsudczycy w PPS protestują (+8)."
  }
 }

@@ -16,7 +16,7 @@ Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_military');
 
 *[+ pl_gc_ministry +]*
 
-The army answers to the minister of military affairs, but many officers listen above all to Piłsudski. The pressure towards a coup stands at [+ pl_gc_coup_pressure +] of 100; the loyalty of the army groups to Piłsudski is shown on the State tab.
+The army answers to the minister of military affairs, but many officers listen above all to Piłsudski. The pressure towards a coup stands at [+ pl_gc_coup_pressure +] of 100; the mood of the officers is described on the State tab.
 
 [+ pl_gc_budget +]
 
@@ -48,7 +48,7 @@ go-to: result
 
 @promote_officers
 title: Promote officers loyal to the government
-subtitle: Costs 1 budget unit. The group most loyal to Piłsudski leans less towards him (−10 percentage points), but relations with Piłsudski worsen (−10) and the Piłsudczycy in PPS protest (+8).
+subtitle: Costs 1 budget unit. The army leans less towards Piłsudski (−3 percentage points), but relations with Piłsudski worsen (−10) and the Piłsudczycy in PPS protest (+8).
 choose-if: {! return PolishProjects.optionStatus(Q, 'military_policy', 'promote_officers').available !}
 unavailable-subtitle: [+ pl_military_policy_promote_officers_why +]
 on-arrival: {!

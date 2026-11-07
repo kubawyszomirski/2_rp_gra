@@ -909,8 +909,9 @@
     return {type: 'coup', attempt_id: coup.attempt_id, date: monthIso(A.declared_at || 0), outcome: coup.outcome, round: coup.round,
       offer: coup.settlement, f9: copy(coup.f9), pps_stance: coup.stance, commitment: A.commitment || null,
       pps_contribution: coup.pps_contribution, concessions_to_pps: copy(coup.concessions_to_pps || []),
-      democracy_at_declaration: A.democracy, loyalty_shift: A.loyalty_shift, sides: copy(A.sides || null), rolls: copy(A.rolls || {}),
-      rounds: copy(A.resolution ? A.resolution.log : []), counterfactual: copy(A.counterfactual || null), effects: copy(A.effects || null),
+      // Z — 1.03: one comparison — the balance of the two forces instead of the rounds and the sides of the groups.
+      democracy_at_declaration: A.democracy, loyalty_shift: A.loyalty_shift, rolls: copy(A.rolls || {}),
+      balance: copy(A.resolution ? A.resolution.F : null), counterfactual: copy(A.counterfactual || null), effects: copy(A.effects || null),
       organisations: copy(A.organisations || null)};
   }
 

@@ -1196,7 +1196,9 @@
       // 15.3: the monthly accrual reads democracy from the start of the period, before its update.
       const democracy0 = P.democracy;
       const parts = {no_cabinet: !S.cabinet || S.cabinet.status !== 'active' ? 3 : 0, authority: P.parliament_authority < 40 ? 2 : 0,
-        grievance: P.national_grievance >= 60 ? 2 : 0, military_case: openMilitaryCase(S) ? 2 : 0, civil: newFulfilledCivil(S, t) ? -2 : 0,
+        // Z — 1.03 (decision 1A of the coup audit and the user's calibration of 7 XI 2026): the open military case +1.7 a month
+        // instead of +2.
+        grievance: P.national_grievance >= 60 ? 2 : 0, military_case: openMilitaryCase(S) ? 1.7 : 0, civil: newFulfilledCivil(S, t) ? -2 : 0,
         democracy: clip(0.01 * (60 - democracy0), -0.5, 0.5)};
       const delta = Object.keys(parts).reduce((n, k) => n + parts[k], 0);
       C.pressure = clip(C.pressure + delta, 0, 100);

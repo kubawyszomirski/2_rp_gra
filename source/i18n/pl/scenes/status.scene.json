@@ -55,8 +55,6 @@
   "[? if polish_security_rules : **Legal status:** [+ pl_def_legal +] ?]": "[? if polish_security_rules : **Status prawny:** [+ pl_def_legal +] ?]",
   "= [? if polish_security_rules : Police ?]": "= [? if polish_security_rules : Policja ?]",
   "[? if polish_security_rules : **Protection of one gathering:** [+ pl_def_police_protection +] ?]": "[? if polish_security_rules : **Ochrona jednego zgromadzenia:** [+ pl_def_police_protection +] ?]",
-  "= [? if polish_security_rules : Army groups ?]": "= [? if polish_security_rules : Zgrupowania wojska ?]",
-  "*[? if polish_security_rules : Loyalty to Piłsudski, known only as an interval: ?]*": "*[? if polish_security_rules : Lojalność wobec Piłsudskiego, znana tylko w przedziale: ?]*",
   "[? if not polish_security_rules : **Paramilitaries** ?]": "[? if not polish_security_rules : **Organizacje zbrojne** ?]",
   "[? if not polish_security_rules : [+ pps_militia_name +] — active organized members: [+ pps_militia_strength_2 +] ?]": "[? if not polish_security_rules : [+ pps_militia_name +] — aktywni zorganizowani członkowie: [+ pps_militia_strength_2 +] ?]",
   "[? if not polish_security_rules : Militancy: [+ pps_militia_militancy : militancy +] ?]": "[? if not polish_security_rules : Bojowość: [+ pps_militia_militancy : militancy +] ?]",
@@ -150,6 +148,7 @@
   "[? if polish_party_rules : **Slavic minorities:** [+ pl_line_slavic_autonomy +] ?]": "[? if polish_party_rules : **Mniejszości słowiańskie:** [+ pl_line_slavic_autonomy +] ?]",
   "[? if polish_party_rules : **Jewish organisations:** [+ pl_line_jewish_cooperation +] ?]": "[? if polish_party_rules : **Organizacje żydowskie:** [+ pl_line_jewish_cooperation +] ?]",
   "[? if polish_party_rules : **The Soviet model:** [+ pl_line_ussr_position +] ?]": "[? if polish_party_rules : **Wzór sowiecki:** [+ pl_line_ussr_position +] ?]",
-  "[? if polish_party_rules : **Economic programme:** [+ pl_line_programme +] ?]": "[? if polish_party_rules : **Program gospodarczy:** [+ pl_line_programme +] ?]"
+  "[? if polish_party_rules : **Economic programme:** [+ pl_line_programme +] ?]": "[? if polish_party_rules : **Program gospodarczy:** [+ pl_line_programme +] ?]",
+  "= [? if polish_security_rules : The army ?]": "= [? if polish_security_rules : Wojsko ?]"
  }
 }

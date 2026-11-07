@@ -1,28 +1,25 @@
 title: The Coup
-subtitle: An armed attempt against the government; PPS decides its stance and the part of its organisations.
+subtitle: An armed attempt against the government; PPS decides where it stands and what its organisations do.
 new-page: true
 tags: pl_event
 face-image: img/polish/polish_event_coup.jpg
 view-if: {! return !!Q.S && !!Q.polish_security_rules && PolishSecurity.coupDue(Q) !}
 on-arrival: {!
-// Event coup.attempt (technical reference 16.4–16.8, 19.1; card catalogue 9.15; profile coup_f_v1 of M08): the
-// sequence F3, F4, F5, F6+F7, F9 only with a significant share of PPS, and F10+F11. No month is spent; the four
-// rounds are computed by the engine, without menus of routes, units or tasks. The army groups are synthetic; they
-// follow the pattern of May 1926 recorded in HISTORICAL_SOURCES.md, not its units and numbers (stage 8, 8f).
+// Event coup.attempt (Z — 1.03, the user's decisions 1B, 2B, 3B and 4A of 7 XI 2026; technical reference 16.4–16.8, 19.1; card
+// catalogue 9.15): the stance of PPS, the call of its organisations and the outcome. One comparison of the forces with a hidden
+// draw, as in the March on Berlin of the German original; no month is spent.
 PolishSecurity.coupView(Q);
 !}
-go-to: f3 if pl_coup_step = "f3"; f4 if pl_coup_step = "f4"; f5 if pl_coup_step = "f5"; f67 if pl_coup_step = "f67"; f9 if pl_coup_step = "f9"; f10 if pl_coup_step = "f10"
+go-to: f3 if pl_coup_step = "f3"; f4 if pl_coup_step = "f4"; f5 if pl_coup_step = "f5"; f10 if pl_coup_step = "f10"
 
 @f3
 new-page: true
 
 = An attempt against the government
 
-Units close to Józef Piłsudski march on the capital; the government refuses to step down.
+Units loyal to Józef Piłsudski march on the capital and demand that the government step down; the government refuses. [+ pl_coup_army +]
 
-What PPS knows of the loyalty of the groups to Piłsudski is only an interval: [+ pl_coup_known +]. Democracy stands at [+ pl_coup_democracy +]; it shifts how many soldiers are ready to join. No month is spent until the attempt is resolved.
-
-- @begin: Decide the stance of PPS.
+- @begin: Decide where PPS stands.
 
 @begin
 on-arrival: {!
@@ -33,9 +30,9 @@ go-to: polish_event_coup
 @f4
 new-page: true
 
-= The stance of PPS
+= Where PPS stands
 
-The factions react to the stance as soon as it is confirmed; a faction whose dissent reaches 60 may leave in part when the attempt is over.
+The factions of the party react as soon as we decide; a faction that is too angry may leave in part when the attempt is over.
 
 - @support_pils
 - @defend_legal
@@ -73,7 +70,7 @@ new-page: true
 
 = The organisations of PPS
 
-We call our organisations; how many answer depends on their readiness and discipline, not on this choice alone. Milicja: [+ pl_coup_militia_forecast +]. Railways: [+ pl_coup_rail_forecast +]. A strike delays only the rail transports of the side we oppose, and only when enough workers keep it up in the round before a transport arrives.
+[+ pl_coup_militia_forecast +] [+ pl_coup_rail_forecast +] A strike of the railway workers holds back the trains with troops of the side we oppose; the Milicja fights on the side we support, or protects our own people if we stay neutral.
 
 - @commit_none
 - @commit_rail
@@ -116,51 +113,6 @@ PolishSecurity.coupCommit(Q, 'both');
 !}
 go-to: polish_event_coup
 
-@f67
-new-page: true
-
-= The call and the transports
-
-Who answered the call: [+ pl_coup_called +].
-
-The army groups, one draw each: [+ pl_coup_sides +].
-
-Arrivals: [+ pl_coup_arrivals +].
-
-[+ pl_coup_rounds +].
-
-- @f67_seen: Continue.
-
-@f67_seen
-on-arrival: {!
-PolishSecurity.coupStepSeen(Q, 'f67');
-!}
-go-to: polish_event_coup
-
-@f9
-new-page: true
-
-= An offer of settlement
-
-The Marshal of the Sejm presents a settlement: [+ pl_coup_f9 +]. Every settlement also returns the troops to their garrisons, gives an amnesty without repression of the participants, keeps the Sejm and the calendar of elections, and ends the mobilisation of PPS. Because our share in the fighting is significant, the settlement needs our voice. If we reject it, no settlement is possible until the end of this attempt, also in the final assessment; the rejection breaks no agreement and does not change our reputation.
-
-- @f9_accept
-- @f9_reject
-
-@f9_accept
-title: Support the settlement
-on-arrival: {!
-PolishSecurity.coupF9(Q, 'accept');
-!}
-go-to: polish_event_coup
-
-@f9_reject
-title: Reject it and keep our organisations engaged
-on-arrival: {!
-PolishSecurity.coupF9(Q, 'reject');
-!}
-go-to: polish_event_coup
-
 @f10
 new-page: true
 on-arrival: {!
@@ -172,8 +124,8 @@ PolishInstitutions.endChapterIfDue(Q);
 
 **[+ pl_coup_outcome +].**
 
-[+ pl_coup_rounds +].
+[+ pl_coup_story +]
 
-The contribution of PPS, compared with the same draws without our organisations: [+ pl_coup_contribution +]. [+ pl_coup_effects +].
+[+ pl_coup_effects +]
 
 - @polish_chapter_report: Continue to the report of the chapter.

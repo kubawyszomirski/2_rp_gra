@@ -1200,7 +1200,8 @@
   // government in the group most loyal to Piłsudski. Each takes effect at once; the card rests three months after its use.
   const ARMY_SPENDING = Object.freeze({price: 2, pressure: -5, lewica: 5});
   const ARMY_CUT = Object.freeze({pool: 2, pressure: 5});
-  const PROMOTION = Object.freeze({price: 1, loyalty: 0.10, relation: -10, pilsudczycy: 8});
+  // Z — 1.03 (decision 1B): the promotions act on the one army, 0.03 of its loyalty from Piłsudski to the government.
+  const PROMOTION = Object.freeze({price: 1, loyalty: 0.03, relation: -10, pilsudczycy: 8});
 
   function militaryOptionStatus(Q, option) {
     const S = Q.S, security = securityModule();
@@ -1208,7 +1209,7 @@
     if (option === 'raise_spending') return affordStatus(Q, ARMY_SPENDING.price);
     if (option === 'cut_spending') return OK;
     if (option === 'promote_officers') {
-      if (!security.promotionTarget(S)) return no(L('No group of the army leans towards Piłsudski any more.', 'Żadne zgrupowanie wojska nie sprzyja już Piłsudskiemu.'));
+      if (!security.promotionTarget(S)) return no(L('The army no longer leans towards Piłsudski.', 'Wojsko nie sprzyja już Piłsudskiemu.'));
       return affordStatus(Q, PROMOTION.price);
     }
     return no(L('Unknown option.', 'Nieznana opcja.'));
@@ -1237,10 +1238,9 @@
     const moved = security.promoteOfficers(Q, force, PROMOTION.loyalty);
     government.changeRelation(Q, 'pilsudski', PROMOTION.relation, id);
     government.factionReaction(Q, 'pilsudczycy', {dissent: PROMOTION.pilsudczycy}, {id: id, kind: 'cabinet_policy', reverse: null});
-    const name = security.forceName(force.id);
-    return result(Q, L('Officers loyal to the government are promoted; it costs ' + unitsText(PROMOTION.price) + '. In ' + name + ' the loyalty to Piłsudski falls (−' +
+    return result(Q, L('Officers loyal to the government are promoted; it costs ' + unitsText(PROMOTION.price) + '. The army leans less towards Piłsudski (−' +
       Math.round(100 * moved) + ' pp). Relations with Piłsudski worsen (−' + Math.abs(PROMOTION.relation) + ') and the Piłsudczycy of PPS protest (+' +
-      PROMOTION.pilsudczycy + ').', 'Awansują oficerowie wierni rządowi; kosztuje to ' + unitsText(PROMOTION.price) + '. W zgrupowaniu „' + name + '” lojalność wobec Piłsudskiego spada (−' +
+      PROMOTION.pilsudczycy + ').', 'Awansują oficerowie wierni rządowi; kosztuje to ' + unitsText(PROMOTION.price) + '. Wojsko słabiej sprzyja Piłsudskiemu (−' +
       Math.round(100 * moved) + ' pkt proc.). Stosunki z Piłsudskim się psują (−' + Math.abs(PROMOTION.relation) + '), a piłsudczycy w PPS protestują (+' +
       PROMOTION.pilsudczycy + ').'));
   }

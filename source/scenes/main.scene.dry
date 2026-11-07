@@ -11,6 +11,8 @@ if (typeof PolishRules === 'undefined' || !PolishRules.isSaveCompatible(Q)) {
 }
 // Z — 1.01: a game saved before the budget pool keeps going with a pool (technical reference 11.2).
 if (PolishProjects.migratePool) PolishProjects.migratePool(Q);
+// Z — 1.03: a game saved with the four army groups keeps going with one army.
+if (typeof PolishSecurity !== 'undefined' && PolishSecurity.migrateArmy) PolishSecurity.migrateArmy(Q);
 // Z — 0.74 (decisions 1A–3A of 8 X 2026): the urgent cards — the prepared reforms, the answer to the cabinet's budget package,
 // the answer to a partner and the filing of a constitutional motion — go into the hand of their deck by themselves.
 if (this.syncUrgentCards) this.syncUrgentCards();
