@@ -65,13 +65,16 @@ test('Chroń wiece i strajki: an order for half a year, business +3; it holds wh
   assert.equal(guarded.risk, 0, 'the base risk of 0.10 is guarded away');
 });
 
-test('Kresy i mniejszości: languages in the offices (law, the minorities +3, endecja −5); the border (2 B once — Z — 1.01, violence −3, the minorities −3)', () => {
+test('Kresy i mniejszości: languages in the offices (law, no budget since 1.13, the minorities +3, endecja −8, chadecja −4, the right +20); the border (2 B once — Z — 1.01, violence −3, the minorities −3)', () => {
   const Q = ppsMajority(withPortfolios(quiet(), 'interior'));
-  const S = Q.S, zln = S.actors.relations.zln;
+  const S = Q.S, zln = S.actors.relations.zln, pschd = S.actors.relations.pschd, pool = S.economy.budget;
   PolishProjects.chooseOption(Q, 'minorities_kresy', 'official_languages');
   const languages = project(Q, 'official_languages');
-  assert.deepEqual([languages.authorized, languages.price_B], [true, 1]);
-  assert.equal(S.actors.relations.zln, zln - 5);
+  // Z — 1.13 (the user's note of 8 XI 2026): no budget, a political price, and the right grows restless.
+  assert.deepEqual([languages.authorized, languages.price_B, S.economy.budget], [true, 0, pool]);
+  assert.equal(S.actors.relations.zln, Math.max(0, zln - 8));
+  assert.equal(S.actors.relations.pschd, Math.max(0, pschd - 4));
+  assert.equal(S.politics.right.mobilisation, 20);
   free(Q);
   PolishProjects.chooseOption(Q, 'minorities_kresy', 'border');
   const border = project(Q, 'border_protection');

@@ -153,6 +153,7 @@
     "= [? if polish_party_rules : Characteristics ?]": "= [? if polish_party_rules : Charakterystyka ?]",
     "[? if pl_top_cash : **Resources:** [+ pl_top_cash +] [? if pl_top_cash_trend : {!<span class=\"pl-trend\">!}[+ pl_top_cash_trend +]{!</span>!} ?] ?]": "[? if pl_top_cash : **Środki:** [+ pl_top_cash +] [? if pl_top_cash_trend : {!<span class=\"pl-trend\">!}[+ pl_top_cash_trend +]{!</span>!} ?] ?]",
     "[? if pl_top_economy : **State:** [+ pl_top_economy +] ?]": "[? if pl_top_economy : **Stan:** [+ pl_top_economy +] ?]",
-    "[? if pl_top_army : **Army:** [+ pl_top_army +] ?]": "[? if pl_top_army : **Wojsko:** [+ pl_top_army +] ?]"
+    "[? if pl_top_army : **Army:** [+ pl_top_army +] ?]": "[? if pl_top_army : **Wojsko:** [+ pl_top_army +] ?]",
+    "[? if pl_top_right : **Right:** [+ pl_top_right +] ?]": "[? if pl_top_right : **Prawica:** [+ pl_top_right +] ?]"
   }
 }

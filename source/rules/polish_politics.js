@@ -322,6 +322,131 @@
     return true;
   }
 
+  // ---- Z — 1.13 (decisions 1A, 2B, 3A and 4A of 8 XI 2026): the mobilisation of the right ------------------------------------
+  // The reforms of PPS for the minorities and in the matters of the Church raise the mobilisation of the right (a hidden value of
+  // 0–100; the Overview shows it in a word: calm, agitated, on the streets); it falls by 5 a month. While PPS governs and the right
+  // is on the streets (50 or more), the urgent card "Prawica na ulicach": concessions (−35 and half a year without such reforms;
+  // the minorities trust PPS less), waiting (violence and tension with the partners on the right; after three months on the streets
+  // the cabinet falls), or force (−30; violence, democracy −2, the National and the Christian Democrats −10). P: game values.
+  const RIGHT = Object.freeze({streets: 50, agitated: 25, decay: 5, concession: 35, pause_months: 6, minority_trust: -3, wait_violence: 3,
+    wait_tension: 10, street_violence: 2, fall_months: 3, fall_drop: 30, force: 30, force_violence: 5, force_democracy: -2, force_relation: -10});
+  const RIGHT_PARTNERS = Object.freeze(['zln', 'pschd', 'psl_piast', 'npr']);
+  function rightState(S) {
+    const P = S.politics;
+    if (!P.right) P.right = {mobilisation: 0, streets_months: 0, pause_until: null, answered_at: null, history: []};
+    return P.right;
+  }
+  function rightMobilise(Q, value, cause) {
+    const S = Q.S;
+    if (!S || !S.politics) return 0;
+    const R = rightState(S), before = R.mobilisation;
+    R.mobilisation = clip(R.mobilisation + value, 0, 100);
+    R.history.push({t: Q.time, delta: round(R.mobilisation - before, 2), cause: cause || ''});
+    if (R.history.length > 40) R.history.splice(0, R.history.length - 40);
+    return R.mobilisation - before;
+  }
+  function rightLevel(S) {
+    if (!S || !S.politics) return 0;
+    const m = rightState(S).mobilisation;
+    return m >= RIGHT.streets ? 2 : m >= RIGHT.agitated ? 1 : 0;
+  }
+  const RIGHT_WORDS = Object.freeze([['calm', 'spokojna'], ['agitated', 'wzburzona'], ['on the streets', 'na ulicach']]);
+  const rightWord = S => L(RIGHT_WORDS[rightLevel(S)][0], RIGHT_WORDS[rightLevel(S)][1]);
+  function rightPaused(S, t) {
+    const R = S && S.politics ? rightState(S) : null;
+    return !!R && R.pause_until !== null && t < R.pause_until;
+  }
+  function rightPauseReason(S) {
+    const R = rightState(S);
+    return L('The government promised a pause in such reforms until ' + rules.monthYear(R.pause_until) + '.',
+      'Rząd obiecał przerwę w takich reformach do ' + rules.monthYear(R.pause_until, 'gen') + '.');
+  }
+  const ppsGoverns = S => government.ppsStance(S) === 'member';
+  function rightCardAvailable(Q) {
+    const S = Q.S;
+    return ready(Q) && S.chapter.status !== 'ended' && ppsGoverns(S) && rightLevel(S) === 2 && rightState(S).answered_at !== Q.time;
+  }
+  function rightView(Q) {
+    const S = Q.S, R = rightState(S), months = R.streets_months;
+    Q.pl_right_text = L('The right has led crowds into the streets of the great cities: the National Democrats and their allies demand that our reforms for the minorities and in the matters of the Church be undone, and our partners in the government begin to waver.',
+      'Prawica wyprowadziła tłumy na ulice wielkich miast: endecja i jej sojusznicy żądają cofnięcia naszych reform dla mniejszości i w sprawach Kościoła, a partnerzy w rządzie zaczynają się wahać.') + ' ' +
+      (months > 0 ? L('The demonstrations have gone on for ' + (months === 1 ? 'a month' : months + ' months') + '; if they go on for three, the government falls.',
+        'Demonstracje trwają już ' + (months === 1 ? 'miesiąc' : months + ' miesiące') + '; jeśli potrwają trzy, rząd upadnie.') :
+        L('If the demonstrations go on for three months, the government falls.', 'Jeśli demonstracje potrwają trzy miesiące, rząd upadnie.'));
+  }
+  function rightTension(Q, t) {
+    const S = Q.S;
+    let partners = 0;
+    for (const id of S.cabinet ? S.cabinet.agreement_ids : []) {
+      const a = S.agreements[id];
+      if (!a || (a.status !== 'active' && a.status !== 'breached') || a.parties.indexOf('pps') < 0) continue;
+      if (!a.parties.some(p => RIGHT_PARTNERS.indexOf(p) >= 0 && S.cabinet.partner_ids.indexOf(p) >= 0)) continue;
+      const before = a.tension;
+      a.tension = clip(a.tension + RIGHT.wait_tension, 0, 100);
+      a.history.push({t: t, kind: 'tension', delta: a.tension - before, tension: a.tension, reason: 'right_protests'});
+      partners += 1;
+    }
+    return partners;
+  }
+  function rightChoose(Q, option) {
+    const S = Q.S, t = Q.time, R = rightState(S), id = 'right_protests:' + option + ':t' + t;
+    if (!rightCardAvailable(Q)) throw new Error('rightChoose: the right is not on the streets');
+    R.answered_at = t;
+    S.history.actions.push({t: t, action_id: 'government.right_protests.' + option, cost_t: 0});
+    if (option === 'concede') {
+      rightMobilise(Q, -RIGHT.concession, 'concession');
+      R.pause_until = t + RIGHT.pause_months;
+      R.streets_months = 0;
+      if (electorate.hasCells(S)) {
+        electorate.changeCells(S, cell => cell.identity_id !== 'polish', {trust_pps: RIGHT.minority_trust});
+        electorate.writeClassMirrors(Q);
+      }
+      return L('The government gives way: no new reforms for the minorities or in the matters of the Church until ' + rules.monthYear(R.pause_until) +
+        '. The crowds go home, but the minorities trust PPS less (' + RIGHT.minority_trust + ').',
+        'Rząd idzie na ustępstwa: do ' + rules.monthYear(R.pause_until, 'gen') + ' żadnych nowych reform dla mniejszości ani w sprawach Kościoła. ' +
+        'Tłumy się rozchodzą, ale mniejszości mniej ufają PPS (−' + Math.abs(RIGHT.minority_trust) + ').').replace('(-', '(−');
+    }
+    if (option === 'wait') {
+      violenceEffect(Q, id, RIGHT.wait_violence, 'right_protests');
+      const partners = rightTension(Q, t);
+      return L('The government waits. Clashes in the streets bring more violence (+' + RIGHT.wait_violence + ')' +
+        (partners ? ', and the tension with our partners on the right grows (+' + RIGHT.wait_tension + ')' : '') + '. The card comes back next month.',
+        'Rząd czeka. Starcia na ulicach przynoszą więcej przemocy (+' + RIGHT.wait_violence + ')' +
+        (partners ? ', a napięcie z partnerami z prawej strony rośnie (+' + RIGHT.wait_tension + ')' : '') + '. Karta wróci w przyszłym miesiącu.');
+    }
+    rightMobilise(Q, -RIGHT.force, 'force');
+    R.streets_months = 0;
+    violenceEffect(Q, id, RIGHT.force_violence, 'right_protests_force');
+    democracyEffect(Q, id, RIGHT.force_democracy, 'right_protests_force');
+    for (const party of ['zln', 'pschd']) government.changeRelation(Q, party, RIGHT.force_relation, id);
+    return L('The police disperse the demonstrations. The right withdraws, but there is more violence (+' + RIGHT.force_violence + '), democracy weakens (' +
+      RIGHT.force_democracy + '), and the National and the Christian Democrats turn against us (' + RIGHT.force_relation + ').',
+      'Policja rozpędza demonstracje. Prawica się cofa, ale przemocy jest więcej (+' + RIGHT.force_violence + '), demokracja słabnie (−' +
+      Math.abs(RIGHT.force_democracy) + '), a endecja i chadecja stają przeciw nam (−' + Math.abs(RIGHT.force_relation) + ').').replace(/\((-)(\d)/g, '(−$2');
+  }
+  // The month: the mobilisation falls; while PPS governs and the right stays on the streets, violence grows, and after three
+  // months the cabinet falls.
+  function settleRight(Q, t) {
+    const S = Q.S, R = rightState(S);
+    if (R.mobilisation > 0) {
+      R.mobilisation = Math.max(0, R.mobilisation - RIGHT.decay);
+    }
+    if (!ppsGoverns(S) || rightLevel(S) < 2) {
+      R.streets_months = 0;
+      return;
+    }
+    R.streets_months += 1;
+    violenceEffect(Q, 'right_streets:t' + t, RIGHT.street_violence, 'right_protests');
+    if (R.streets_months >= RIGHT.fall_months) {
+      R.history.push({t: t, delta: 0, cause: 'cabinet_falls'});
+      R.streets_months = 0;
+      R.mobilisation = Math.max(0, R.mobilisation - RIGHT.fall_drop);
+      S.history.reasons.push({t: t, kind: 'cabinet_falls_over_right_protests', cabinet_id: S.cabinet ? S.cabinet.id : null});
+      government.cabinetFalls(Q, 'right_protests');
+      government.writeGovernmentMirrors(Q);
+    }
+  }
+
   // Restrictions from acts the game already models (decision 3A of stage 7): the named repressive measure in a
   // strike (unlawful against a lawful economic strike, P) and the confiscations of the press (unlawful, P).
   function scanRestrictions(Q) {
@@ -1326,6 +1451,8 @@
       const delta = Object.keys(parts).reduce((n, k) => n + parts[k], 0);
       C.pressure = clip(C.pressure + delta, 0, 100);
       C.history.push({t: t, pressure: C.pressure, delta: delta, parts: parts});
+      // Z — 1.13: the mobilisation of the right after the pressure of the month.
+      settleRight(Q, t);
       // 15.2: democracy from the authority, the national grievance and new unlawful acts and legal defences.
       const acts = Object.keys(P.cases).map(id => P.cases[id]).filter(c => c.institutional && c.counted_at === null);
       for (const c of acts) c.counted_at = t;
@@ -1371,6 +1498,8 @@
   // Z — 1.05: the concordat is an urgent card of Parliament outside the cabinet and of the Government in it.
   rules.registerUrgentCard('polish_concordat_parliament', {deck: () => 'main.parliament', active: concordatParliamentActive});
   rules.registerUrgentCard('polish_concordat_government', {deck: () => 'main.govt', active: concordatGovernmentActive});
+  // Z — 1.13 (decisions 1A–4A of 8 XI 2026): the right on the streets, an urgent card of the Government deck while PPS governs.
+  rules.registerUrgentCard('polish_gov_right_protests', {deck: () => 'main.govt', active: Q => rightCardAvailable(Q)});
 
   function criticismStatus(Q, choice) {
     if (!CRITICISM[choice]) return {available: false, reason: L('Unknown answer.', 'Nieznana odpowiedź.')};
@@ -1518,6 +1647,16 @@
     democracyEffect: democracyEffect,
     violenceEpisode: violenceEpisode,
     violenceEffect: violenceEffect,
+    RIGHT: RIGHT,
+    rightMobilise: rightMobilise,
+    rightLevel: rightLevel,
+    rightWord: rightWord,
+    rightPaused: rightPaused,
+    rightPauseReason: rightPauseReason,
+    rightCardAvailable: rightCardAvailable,
+    rightView: rightView,
+    rightChoose: rightChoose,
+    settleRight: settleRight,
     applyRecordedEffects: applyRecordedEffects,
     ongoingRelief: ongoingRelief,
     wageIndex: wageIndex,

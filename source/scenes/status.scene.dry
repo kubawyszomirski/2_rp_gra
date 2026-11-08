@@ -222,6 +222,8 @@ if (Q.S && Q.polish_party_rules && typeof PolishParty !== 'undefined') {
 
 [? if pl_top_army : **Army:** [+ pl_top_army +] ?]
 
+[? if pl_top_right : **Right:** [+ pl_top_right +] ?]
+
 = Elections
 
 **[+ pl_top_election +]**

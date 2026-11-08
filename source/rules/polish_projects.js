@@ -183,7 +183,8 @@
     // Z — 0.99: the cards „Kresy i mniejszości” and „Wolności obywatelskie” of the Interior (P: the costs and effects are simplifications).
     official_languages: {name: 'Minority languages in the offices', card: 'minorities_kresy', portfolios: ['interior'], klass: 'large', investment: false,
       ongoing: true, beneficiaries: ['national_minorities'], law: {title: 'Minority languages in the offices', programme: {autonomy: 1}},
-      variants: {offices: {price: 1, trust: 3, relations: {zln: -5}}}},
+      // Z — 1.13 (the user's note of 8 XI 2026): no budget, a political price — the National and the Christian Democrats.
+      variants: {offices: {price: 0, trust: 3, relations: {zln: -8, pschd: -4}}}},
     border_protection: {name: 'Protection of the eastern border', card: 'minorities_kresy', portfolios: ['interior'], klass: 'large', investment: false,
       beneficiaries: ['national_minorities'], law: null, variants: {border: {price: 2, trust: -3, violence: -3}}},
     press_law: {name: 'Limits on press confiscations', card: 'civil_liberties', portfolios: ['interior'], klass: 'small', investment: false,
@@ -196,7 +197,8 @@
       // Z — 0.81: `autonomy` is the execution of the act of 26 IX 1922 on the voivodeship self-government; `regional_sejm` the
       // autonomy of Eastern Galicia with a regional diet, as in the PPS bills of 1921 and 1925 (HISTORICAL_SOURCES.md).
       // Z — 0.99: the National Democrats protest when the law on the self-government takes effect (relation −5).
-      variants: {autonomy: {price: 1, relief: 3, relations: {zln: -5}},
+      // Z — 1.13: the self-government costs no budget either; the National and the Christian Democrats protest.
+      variants: {autonomy: {price: 0, relief: 3, relations: {zln: -8, pschd: -4}},
         regional_sejm: {price: 1, relief: 6, law: {title: 'Autonomy of Eastern Galicia with a regional diet', programme: {autonomy: 2}}}}},
     army_control: {name: 'Civilian control of the army', card: 'military_policy', portfolios: ['reichswehr'], klass: 'large', investment: false,
       beneficiaries: [], law: {title: 'Civilian oversight of the army', programme: {army: 2}},
@@ -3740,6 +3742,8 @@
   function initiativeEnacted(Q, bill, m) {
     const law = INITIATIVE_BY_ID[bill.initiative && bill.initiative.id];
     if (!law) return;
+    const pol = politicsModule();
+    if (RIGHT_LAWS[law.id] && pol) pol.rightMobilise(Q, RIGHT_LAWS[law.id], 'initiative:' + law.id);
     lastInitiativeText = law.enact(Q, bill.variant, bill, m, !!bill.initiative.raise) || '';
   }
 
@@ -4001,10 +4005,17 @@
 
   // Status of one option of a government card (the reason is shown under the option). `extra` names the branch,
   // the variant of representation, or `adviser` when an adviser checks the option before opening the card.
+  // Z — 1.13 (decision 8A of 8 XI 2026): the reforms of PPS for the minorities and in the matters of the Church raise the mobilisation of
+  // the right (PolishPolitics); after concessions to the right they wait half a year.
+  const RIGHT_TRIGGERS = Object.freeze({'minorities_kresy.official_languages': 20, 'minorities_kresy.self_government': 25,
+    'minority_school_rights.own_language': 20, 'education_program.secular': 20, 'family_law.civil_marriage': 20});
+  const RIGHT_LAWS = Object.freeze({autonomy: 25, secular_school: 20, abortion: 25});
   function optionStatus(Q, cardId, option, extra) {
     const S = Q.S, E = S.economy, t = Q.time;
     if (!cardAvailable(Q, cardId)) return no(cardUnavailableReason(Q, cardId));
     if (CARDS[cardId].options.indexOf(option) < 0) return no(L('Unknown option.', 'Nieznana opcja.'));
+    const pol = politicsModule();
+    if (RIGHT_TRIGGERS[cardId + '.' + option] && pol && pol.rightPaused(S, t)) return no(pol.rightPauseReason(S));
     if (SAVINGS[cardId] && SAVINGS[cardId].option === option) return rules.mainActionAvailable(Q) ? OK :
       no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
     // Z — 0.92 (the user's decision of 24 X 2026): the cooperative variants of 8.5 and 8.9 use the existing cooperative movement
@@ -4295,7 +4306,10 @@
   const CARD_PROFILE_SEEDS = Object.freeze({minority_school_rights: ['federalism', 2], minorities_kresy: ['federalism', 2],
     land_program: ['worker_peasant', 2], 'economic_democracy.works_councils': ['radicalism', 3], 'economic_democracy.socialise_mining': ['radicalism', 3]});
   function chooseOption(Q, cardId, option, extra) {
-    return withObjections(Q, cardId + '.' + option, () => chooseOptionRun(Q, cardId, option, extra));
+    const out = withObjections(Q, cardId + '.' + option, () => chooseOptionRun(Q, cardId, option, extra));
+    const pol = politicsModule(), right = RIGHT_TRIGGERS[cardId + '.' + option];
+    if (right && pol) pol.rightMobilise(Q, right, cardId + '.' + option);
+    return out;
   }
 
   function chooseOptionRun(Q, cardId, option, extra) {
@@ -4566,6 +4580,24 @@
     Q.pl_cost_soc = word(soc, false);
     Q.pl_cost_socn = word(soc, true);
   }
+  const MINORITY_PROMISES = Object.freeze({territorial_autonomy: ['self-government in the east', 'samorząd na wschodzie'],
+    school_rights: ['schools in the languages of the minorities', 'szkoły w językach mniejszości'],
+    language_rights: ['schools in the languages of the minorities', 'szkoły w językach mniejszości']});
+  function minorityPromiseText(Q) {
+    const S = Q.S, out = [];
+    for (const id of S.cabinet && S.cabinet.status === 'active' ? S.cabinet.agreement_ids : []) {
+      const a = S.agreements[id];
+      if (!a || (a.status !== 'active' && a.status !== 'breached') || a.parties.indexOf('pps') < 0) continue;
+      for (const o of a.obligations || []) {
+        if (!MINORITY_PROMISES[o.topic] || o.status !== 'active' || o.fulfillment >= 1) continue;
+        const name = L(MINORITY_PROMISES[o.topic][0], MINORITY_PROMISES[o.topic][1]);
+        const text = name + (o.due_at !== null && o.due_at !== undefined ? L(' by ' + rules.monthYear(o.due_at), ' do ' + rules.monthYear(o.due_at, 'gen')) : '');
+        if (out.indexOf(text) < 0) out.push(text);
+      }
+    }
+    return out.length ? L('We promised the minorities: ', 'Obiecaliśmy mniejszościom: ') + out.join('; ') + '.' : '';
+  }
+
   // Z — 1.11 (decision 5A): the card warns when a decision could take the pool below zero.
   function deficitWarning(pool) {
     if (pool >= 3) return '';
@@ -4605,6 +4637,8 @@
       Q.pl_gc_police_lawful = String(Math.round(S.security.police.lawful_compliance));
     }
     if (cardId === 'minorities_kresy' && S.politics) Q.pl_gc_minorities = String(Math.round(politicsModule().grievanceOf(S, cell => cell.identity_id !== 'polish')));
+    // Z — 1.13 (the user's note of 8 XI 2026): the card names the promise to the minorities.
+    Q.pl_gc_promise = (cardId === 'minorities_kresy' || cardId === 'minority_school_rights') ? minorityPromiseText(Q) : '';
     if (cardId === 'civil_liberties' && S.politics) Q.pl_gc_violence = String(Math.round(S.politics.violence));
     // Z — 1.02: the card Sprawy wojskowe names the pressure towards a coup.
     if (cardId === 'military_policy' && S.coup) Q.pl_gc_coup_pressure = String(Math.round(S.coup.pressure));

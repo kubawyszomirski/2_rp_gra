@@ -30,7 +30,7 @@ Each part of the country has a different civil law, and marriages and divorces a
 
 @civil_marriage
 title: Introduce civil marriage and divorce
-subtitle: No cost to the budget. Workers and the intelligentsia trust PPS more (+3), but the Christian Democrats and the Church protest, and our relations with the Christian Democrats worsen (−8). [? if pl_family_law_civil_marriage_coalition : [+ pl_family_law_civil_marriage_coalition +] ?]
+subtitle: No cost to the budget. Workers and the intelligentsia trust PPS more (+3), but the Christian Democrats and the Church protest, and our relations with the Christian Democrats worsen (−8). The right grows restless. [? if pl_family_law_civil_marriage_coalition : [+ pl_family_law_civil_marriage_coalition +] ?]
 choose-if: {! return PolishProjects.optionStatus(Q, 'family_law', 'civil_marriage').available !}
 unavailable-subtitle: [+ pl_family_law_civil_marriage_why +]
 on-arrival: {!

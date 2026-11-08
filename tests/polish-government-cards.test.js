@@ -436,3 +436,68 @@ test('Nasz plan 1.11: an urgent card of the Government deck while PPS holds the 
     PolishRules.setLanguage('en');
   }
 });
+
+// Z — 1.13 (decisions 1A, 2B, 3A, 4A and 8A of 8 XI 2026): the right on the streets.
+test('Prawica na ulicach 1.13: the reforms raise the right; the word on the Overview; the urgent card with concessions, waiting and force; three months on the streets bring the cabinet down; the promise on the cards', () => {
+  const engine = dendry.startGame(1922, 'pl');
+  const Q = leftCabinet(engine);
+  const S = Q.S, POL = PolishPolitics;
+  const plain = x => (x == null ? '' : typeof x === 'string' ? x : Array.isArray(x) ? x.map(plain).join('') : plain(x.content));
+  try {
+    S.cabinet.portfolios.interior = 'pps';
+    S.cabinet.portfolios.education = 'pps';
+    // The promise to the minorities of a cabinet with the minority clubs (leftCabinet clears the obligations; one is put back).
+    const agreement = S.agreements[S.cabinet.agreement_ids[0]];
+    agreement.obligations.push({id: 'fixture:territorial_autonomy', topic: 'territorial_autonomy', kind: 'programme', status: 'active', fulfillment: 0, due_at: Q.time + 6});
+    PolishProjects.cardView(Q, 'minorities_kresy');
+    assert.match(Q.pl_gc_promise, /^Obiecaliśmy mniejszościom: samorząd na wschodzie do [a-ząćęłńóśźż]+ 19\d\d\.$/);
+    agreement.obligations = [];
+    // A reform of the minorities raises the right; no budget for the languages.
+    const pool = S.economy.budget;
+    PolishProjects.chooseOption(Q, 'minorities_kresy', 'official_languages');
+    assert.equal(S.economy.budget, pool, 'no budget');
+    assert.equal(S.politics.right.mobilisation, 20);
+    PolishTopbar.overviewView(Q);
+    assert.equal(Q.pl_top_right, 'spokojna');
+    POL.rightMobilise(Q, 10, 'test');
+    PolishTopbar.overviewView(Q);
+    assert.equal(Q.pl_top_right, 'wzburzona');
+    assert.equal(POL.rightCardAvailable(Q), false, 'not yet on the streets');
+    POL.rightMobilise(Q, 25, 'test');
+    PolishTopbar.overviewView(Q);
+    assert.equal(Q.pl_top_right, '<span class="pl-army-alarm">na ulicach</span>');
+    engine.goToScene('main');
+    assert.ok(dendry.urgentCards(engine).includes('polish_gov_right_protests'));
+    dendry.playCard(engine, 'polish_gov_right_protests');
+    assert.deepEqual(ids(engine), ['polish_gov_right_protests.concede', 'polish_gov_right_protests.wait', 'polish_gov_right_protests.force']);
+    assert.match(content(engine), /Prawica wyprowadziła tłumy na ulice wielkich miast/);
+    assert.equal(plain(choice(engine, 'polish_gov_right_protests.concede').title), 'Idź na ustępstwa');
+    choose(engine, 'polish_gov_right_protests.concede');
+    assert.match(content(engine), /Rząd idzie na ustępstwa: do .* żadnych nowych reform dla mniejszości ani w sprawach Kościoła/);
+    assert.equal(S.politics.right.mobilisation, 20, '55 − 35');
+    assert.match(PolishProjects.optionStatus(Q, 'minority_school_rights', 'own_language').reason, /^Rząd obiecał przerwę w takich reformach do /);
+    assert.doesNotMatch(PolishProjects.optionStatus(Q, 'minority_school_rights', 'agreed_bilingual').reason || '', /przerwę/, 'the agreed bilingual school angers no one');
+    choose(engine, 'root');
+    // Force: −30, violence and democracy, the right parties turn against us.
+    S.politics.right.answered_at = null;
+    POL.rightMobilise(Q, 40, 'test');
+    const zln = S.actors.relations.zln, before = S.politics.right.mobilisation;
+    assert.ok(before >= 50);
+    POL.rightChoose(Q, 'force');
+    assert.equal(S.politics.right.mobilisation, before - 30);
+    assert.ok(S.politics.violence_episodes.some(e => e.cause === 'right_protests_force' && e.value === 5));
+    assert.ok(S.politics.democracy_effects.some(e => e.cause === 'right_protests_force' && e.value === -2));
+    assert.equal(S.actors.relations.zln, Math.max(0, zln - 10));
+    // Waiting: three months on the streets bring the cabinet down.
+    S.politics.right.answered_at = null;
+    POL.rightMobilise(Q, 60, 'test');
+    POL.rightChoose(Q, 'wait');
+    assert.equal(POL.rightCardAvailable(Q), false, 'back next month');
+    const cabinet = S.cabinet.id;
+    for (let i = 0; i < 3; i++) { S.politics.right.mobilisation = Math.max(S.politics.right.mobilisation, 70); POL.settleRight(Q, Q.time + i); }
+    assert.ok(S.cabinet.id !== cabinet || S.cabinet.status !== 'active', 'the cabinet falls');
+    assert.ok(S.history.reasons.some(r => r.kind === 'cabinet_falls_over_right_protests'));
+  } finally {
+    PolishRules.setLanguage('en');
+  }
+});

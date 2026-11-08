@@ -1,0 +1,52 @@
+title: The Right on the Streets
+subtitle: An urgent card: the right protests against our reforms for the minorities and in the matters of the Church.
+new-page: true
+is-card: true
+view-if: {! return !!Q.S && typeof PolishPolitics !== 'undefined' && PolishPolitics.rightCardAvailable(Q) !}
+on-arrival: {!
+// Card government.right_protests (Z — 1.13, decisions 1A, 2B, 3A and 4A of 8 XI 2026; P): while PPS governs and the mobilisation of
+// the right is 50 or more. Concessions (half a year without such reforms), waiting (after three months on the streets the cabinet
+// falls) or force. The answer costs no month; waiting brings the card back next month.
+PolishPolitics.rightView(Q);
+!}
+
+= The right on the streets
+
+[+ pl_right_text +]
+
+- @concede
+- @wait
+- @force
+
+@concede
+title: Make concessions
+subtitle: No new reforms for the minorities or in the matters of the Church for half a year; the crowds go home, but the minorities trust PPS less.
+on-arrival: {!
+Q.pl_right_result = PolishPolitics.rightChoose(Q, 'concede');
+!}
+go-to: result
+
+@wait
+title: Wait it out
+subtitle: Clashes in the streets bring more violence, and the tension with our partners on the right grows; after three months on the streets the government falls.
+on-arrival: {!
+Q.pl_right_result = PolishPolitics.rightChoose(Q, 'wait');
+!}
+go-to: result
+
+@force
+title: Disperse the demonstrations by force
+subtitle: The right withdraws, but there is more violence, democracy weakens, and the National and the Christian Democrats turn against us.
+on-arrival: {!
+Q.pl_right_result = PolishPolitics.rightChoose(Q, 'force');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= The right on the streets
+
+[+ pl_right_result +]
+
+- @root: Continue.

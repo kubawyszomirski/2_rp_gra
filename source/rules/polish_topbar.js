@@ -128,6 +128,14 @@
     } else {
       Q.pl_top_army = '';
     }
+    // Z — 1.13 (decision 1A of 8 XI 2026): the mobilisation of the right in one word, in red on the streets.
+    const pol = typeof PolishPolitics !== 'undefined' ? PolishPolitics : null;
+    if (S && S.politics && pol && pol.rightWord) {
+      const word = pol.rightWord(S);
+      Q.pl_top_right = pol.rightLevel(S) >= 2 ? '<span class="pl-army-alarm">' + word + '</span>' : word;
+    } else {
+      Q.pl_top_right = '';
+    }
     // The support of PPS in the polls, with its change since the month before (the monthly records of the polls).
     const records = Q.party_support_records || [];
     Q.pl_top_pps_poll_trend = records.length >= 2 ? trend(records[records.length - 1].pps - records[records.length - 2].pps, 1) : '';

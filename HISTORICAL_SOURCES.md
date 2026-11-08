@@ -25,6 +25,14 @@
 - **Gameplay simplification (P):** the party answers to the crises (a campaign for 1 resource without the month’s action; the help of the unions for 1 resource and +5 trust), the credit crisis for every player, the reform chosen or postponed in the event.
 - **Unresolved:** none new.
 
+## PL-RIGHT-PROTESTS-1.13 — the resistance of the right to the reforms of PPS
+
+- **Authority:** the user’s note of 8 November 2026 (reforms for the minorities that bring the right into the streets) and decisions 1A, 2B, 3A, 4A and 8A (technical reference 1.13, section 23.86).
+- **Sources:** no new source.
+- **Historical fact:** none new; the National Democrats’ opposition to minority rights and the Christian Democrats’ to secular reforms are the game’s existing club views (PL-LEGISLATIVE-INITIATIVE-1922-1926, the clubs’ views on the Church).
+- **Gameplay simplification (P):** the mobilisation of the right (its values, the monthly fall of 5, the thresholds 25 and 50), the card “The Right on the Streets” and its texts (crowds in the great cities), the half-year pause after concessions, the fall of the cabinet after three months on the streets and all effects are game mechanics and narration, not documented episodes; the removal of the budget cost of the languages in the offices and of the self-government is a design decision of the user.
+- **Unresolved:** the actual street protests of the right against minority or secular reforms in 1922–1926 and their effect on cabinets — TBD, historical research required.
+
 ## PL-ARMY-MOOD-1.10 — the mood of the army before a coup
 
 - **Authority:** the user’s decision 4A of 8 November 2026 and the note that the army’s mood must be an event on the screen (technical reference 1.10, section 23.83).

@@ -54,7 +54,7 @@ go-to: result
 
 @secular
 title: Introduce the secular school
-subtitle: Cost: [+ pl_cost2 +]. Workers and the intelligentsia trust PPS more (+4), but the Christian Democrats and the Church protest, and our relations with the Christian Democrats worsen (−8). [? if pl_education_program_secular_coalition : [+ pl_education_program_secular_coalition +] ?]
+subtitle: Cost: [+ pl_cost2 +]. Workers and the intelligentsia trust PPS more (+4), but the Christian Democrats and the Church protest, and our relations with the Christian Democrats worsen (−8). The right grows restless. [? if pl_education_program_secular_coalition : [+ pl_education_program_secular_coalition +] ?]
 choose-if: {! return PolishProjects.optionStatus(Q, 'education_program', 'secular').available !}
 unavailable-subtitle: [+ pl_education_program_secular_why +]
 on-arrival: {!

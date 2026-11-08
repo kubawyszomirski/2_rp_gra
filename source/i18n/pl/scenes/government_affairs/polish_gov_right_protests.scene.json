@@ -1,0 +1,16 @@
+{
+  "source": "scenes/government_affairs/polish_gov_right_protests.scene.dry",
+  "status": "complete",
+  "lines": {
+    "title: The Right on the Streets": "title: Prawica na ulicach",
+    "subtitle: An urgent card: the right protests against our reforms for the minorities and in the matters of the Church.": "subtitle: Karta pilna: prawica protestuje przeciw naszym reformom dla mniejszości i w sprawach Kościoła.",
+    "= The right on the streets": "= Prawica na ulicach",
+    "title: Make concessions": "title: Idź na ustępstwa",
+    "subtitle: No new reforms for the minorities or in the matters of the Church for half a year; the crowds go home, but the minorities trust PPS less.": "subtitle: Przez pół roku żadnych nowych reform dla mniejszości ani w sprawach Kościoła; tłumy się rozchodzą, ale mniejszości mniej ufają PPS.",
+    "title: Wait it out": "title: Przeczekaj",
+    "subtitle: Clashes in the streets bring more violence, and the tension with our partners on the right grows; after three months on the streets the government falls.": "subtitle: Starcia na ulicach przynoszą więcej przemocy, a napięcie z partnerami z prawej strony rośnie; po trzech miesiącach demonstracji rząd upada.",
+    "title: Disperse the demonstrations by force": "title: Rozwiąż demonstracje siłą",
+    "subtitle: The right withdraws, but there is more violence, democracy weakens, and the National and the Christian Democrats turn against us.": "subtitle: Prawica się cofa, ale przemocy jest więcej, demokracja słabnie, a endecja i chadecja stają przeciw nam.",
+    "- @root: Continue.": "- @root: Dalej."
+  }
+}

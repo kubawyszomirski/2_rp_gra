@@ -182,6 +182,8 @@ const PASSIVE_EVENTS = {
   polish_budget_package: ['refuse', 'later'],
   // Z — 1.12: a strike while PPS governs — a passive PPS does nothing.
   polish_gov_strike: ['nothing'],
+  // Z — 1.13: the right on the streets while PPS governs — the bots make concessions.
+  polish_gov_right_protests: ['concede'],
   polish_initiative_vote: ['passed', 'rejected', 'withdraw'],
   // Z — 0.82: the motions PPS supports in the constitutional debate, in its order (none by default); the vote card has one answer.
   constitution_debate: [],
@@ -207,6 +209,7 @@ const ACTIVE_EVENTS = Object.assign({}, PASSIVE_EVENTS, {
   polish_speaker_election: ['rataj', 'daszynski'],
   polish_budget_package: ['protect', 'support', 'refuse', 'later'],
   polish_gov_strike: ['arbitration', 'meet', 'nothing'],
+  polish_gov_right_protests: ['concede'],
   polish_initiative_vote: ['passed', 'limited', 'rejected'],
   polish_union_agenda: ['threaten', 'small'],
   coup_stance: 'defend_legal', coup_commit: 'both', coup_f9: 'accept',
@@ -430,7 +433,7 @@ function playMonth(engine, strat, used) {
   // Z — 0.82: so is the vote on a motion of the constitutional debate.
   // Z — 0.87: so is the government's offer in a strike.
   // Z — 1.12: so is the answer of a government of PPS to a strike.
-  for (const card of ['polish_initiative_vote', 'polish_constitution_vote', 'polish_strike_offer', 'polish_gov_strike']) if (runPath(engine, [card])) {
+  for (const card of ['polish_initiative_vote', 'polish_constitution_vote', 'polish_strike_offer', 'polish_gov_strike', 'polish_gov_right_protests']) if (runPath(engine, [card])) {
     while (engine.state.sceneId !== 'main' && Q.S.chapter.status !== 'ended' && Q.time === ctx.t) {
       if (!answer(engine, strat)) break;
     }
