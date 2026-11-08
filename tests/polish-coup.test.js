@@ -218,7 +218,8 @@ test('Manifest parlamentu: the pool, the agenda and the events are the 10 famili
   const FAMILIES = {
     'parliament.cabinet_formation': ['polish_cabinet_formation'],
     // Z — 0.81: the card Legislative Initiative and its vote; the bill D and the army control left the deck (their scenes stay).
-    'parliament.legislative_program': ['polish_legislative_initiative', 'polish_initiative_vote', 'polish_unemployment_bill'],
+    // Z — 1.09 (decision 6aA): the initiative on two cards, labour and the economy, and the state and society.
+    'parliament.legislative_program': ['polish_legislative_initiative', 'polish_legislative_initiative_state', 'polish_initiative_vote', 'polish_unemployment_bill'],
     'parliament.finance_amendment': ['polish_budget_package'],
     // Z — 0.82: the changes of the constitution are motions of the debate event; their vote is a card, the old card left the deck.
     'parliament.constitution_project': ['polish_constitution_project', 'polish_constitution_vote'],
@@ -237,8 +238,11 @@ test('Manifest parlamentu: the pool, the agenda and the events are the 10 famili
   assert.deepEqual(tagged(engine, 'parliament_affairs').filter(id => !all.includes(id)), [], 'every card of the Parliament deck belongs to a family');
   assert.ok(!topScenes(engine).some(id => /early_election|zyrardow|dissolution/.test(id)), 'no card of early elections (C8) and no Żyrardów (B15)');
   assert.deepEqual(optionIds(engine, 'polish_event_strike_response'), ['demands', 'settlement', 'order'], 'one menu for B11+B12');
-  assert.deepEqual(optionIds(engine, 'polish_legislative_initiative').filter(id => !['easy_discard'].includes(id)),
-    [...PolishProjects.INITIATIVE_IDS, 'skip'], 'twelve laws and filing none');
+  const lawsOf = card => optionIds(engine, card).filter(id => !['easy_discard', 'skip', 'result'].includes(id));
+  assert.deepEqual(lawsOf('polish_legislative_initiative'), PolishProjects.INITIATIVE_IDS.filter(id => PolishProjects.initiativeGroup(id) === 'economy'));
+  assert.deepEqual(lawsOf('polish_legislative_initiative_state'), ['army_oversight', 'secular_school', 'autonomy', 'land_reform', 'abortion']);
+  assert.deepEqual([...lawsOf('polish_legislative_initiative'), ...lawsOf('polish_legislative_initiative_state')].sort(), [...PolishProjects.INITIATIVE_IDS].sort(), 'twelve laws on two cards');
+  for (const card of ['polish_legislative_initiative', 'polish_legislative_initiative_state']) assert.ok(optionIds(engine, card).includes('skip'), card + ': filing none');
 });
 
 test('Katalog rządowy: 20 families in the pool, the agenda and the triggers; no extra menus of B10 or B20; no cards for Foreign Affairs; the credit crisis leads to the proper policies', () => {

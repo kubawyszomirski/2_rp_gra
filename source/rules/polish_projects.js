@@ -1519,6 +1519,8 @@
     // Z — 0.81: the special votes of the legislative initiative (the army, the autonomy).
     const special = initiativeVote(S, clubId, bill);
     if (special) return special;
+    const governing = governingVote(S, clubId, bill, offer);
+    if (governing) return governing;
     if (bill.sponsor === 'cabinet' && bound.indexOf(clubId) >= 0) return 'yes';
     const stance = government.programmeStance(S, clubId, offer);
     return stance >= 60 ? 'yes' : stance < 40 ? 'no' : 'abstain';
@@ -2955,8 +2957,14 @@
   // passes, or only its limited variant would pass (then the limited variant or a withdrawal), or it is rejected. A law passed in
   // full leaves the card; one passed in its limited variant, rejected or withdrawn comes back after nine months — after a limited
   // one only in full. A law the cabinet already carries out (or prepares) is not offered; nor one held by a ministry card of PPS.
-  const INITIATIVE_CARD = 'polish_legislative_initiative';
-  const INITIATIVE_SHOWN = 5;
+  // Z — 1.09 (decision 6aA of 8 XI 2026): two cards — the laws of labour and the economy, and the laws of the state and society —
+  // each showing at most four laws of its fixed order; one bill waits for its vote at a time on both.
+  const INITIATIVE_CARDS = Object.freeze({economy: 'polish_legislative_initiative', state: 'polish_legislative_initiative_state'});
+  const STATE_LAWS = Object.freeze(['army_oversight', 'secular_school', 'autonomy', 'land_reform', 'abortion']);
+  const groupOf = id => (STATE_LAWS.indexOf(id) >= 0 ? 'state' : 'economy');
+  const INITIATIVE_SHOWN = 4;
+  // Z — 1.09 (decision 6b): filing a bill always costs 1 unit of the party's resources.
+  const INITIATIVE_COST = 1;
   const INITIATIVE_RETURN_MONTHS = 9;
   const INITIATIVE_REST_MONTHS = 3;
   const HIGH_UNEMPLOYMENT_WORKS = 10;
@@ -2970,6 +2978,9 @@
   // Lanckorona pact of 1923, HISTORICAL_SOURCES.md).
   function initiativeVote(S, clubId, bill) {
     const flags = bill.flags || [];
+    // Z — 1.09 (decision 6c of 8 XI 2026; P): PSL Piast votes against a land reform of PPS unless both sit in one cabinet — it
+    // wants to carry the reform itself (a gameplay rule of the user; for now only Piast has such a matter of its own).
+    if (flags.indexOf('pps_land_reform') >= 0 && clubId === 'psl_piast' && !inCabinetWithPps(S, clubId)) return 'no';
     const t = bill.submitted_t !== undefined ? bill.submitted_t : bill.t;
     if (flags.indexOf('army_against_pilsudski') >= 0 && pilsFriendly(t).indexOf(clubId) >= 0) return 'no';
     if (flags.indexOf('army_compromise') >= 0 && pilsFriendly(t).indexOf(clubId) >= 0) return 'abstain';
@@ -2981,6 +2992,19 @@
         cabinet.partner_ids.indexOf(clubId) >= 0) return 'no';
     }
     return null;
+  }
+
+  const cabinetSits = S => !!S.cabinet && (S.cabinet.status === 'active' || S.cabinet.status === 'caretaker');
+  const inCabinetWithPps = (S, clubId) => cabinetSits(S) && S.cabinet.partner_ids.indexOf(clubId) >= 0 && S.cabinet.partner_ids.indexOf('pps') >= 0;
+  // Z — 1.09 (decision 6c of 8 XI 2026; P): the parties of a cabinet without PPS vote against a bill of PPS in opposition (PPS neither
+  // in the cabinet nor supporting it) unless the bill is very close to their own programme (a stance of 75 or more; 60 is the usual
+  // threshold of a vote for).
+  const GOVERNING_CLOSE = 75;
+  function governingVote(S, clubId, bill, offer) {
+    if (!bill.initiative_bill || bill.sponsor !== 'pps' || !cabinetSits(S)) return null;
+    const cabinet = S.cabinet;
+    if (cabinet.partner_ids.indexOf(clubId) < 0 || cabinet.partner_ids.indexOf('pps') >= 0 || (cabinet.supporter_ids || []).indexOf('pps') >= 0) return null;
+    return government.programmeStance(S, clubId, offer) >= GOVERNING_CLOSE ? 'yes' : 'no';
   }
 
   function initiativeState(S) {
@@ -3179,12 +3203,13 @@
         'Pełna: wywłaszczenie wielkiej własności bez odszkodowania (1 jednostka budżetu; bardzo silna reakcja przedsiębiorców, +25). Ograniczona: przyspieszona reforma z odszkodowaniem (2 jednostki budżetu; +12). Obejmuje pierwszą z trzech części wsi.'],
       raise: ['A land reform with compensation is carried out today; the law turns it into expropriation without compensation (business +13).',
         'Dziś trwa reforma z odszkodowaniem; ustawa zmienia ją w wywłaszczenie bez odszkodowania (przedsiębiorcy +13).'],
-      variants: [{key: 'expropriation', name: ['expropriation without compensation', 'wywłaszczenie bez odszkodowania'], programme: {land: 2}},
-        {key: 'accelerated', name: ['an accelerated reform with compensation', 'przyspieszona reforma z odszkodowaniem'], programme: {land: 1}}],
+      variants: [{key: 'expropriation', name: ['expropriation without compensation', 'wywłaszczenie bez odszkodowania'], programme: {land: 2}, flags: ['pps_land_reform']},
+        {key: 'accelerated', name: ['an accelerated reform with compensation', 'przyspieszona reforma z odszkodowaniem'], programme: {land: 1}, flags: ['pps_land_reform']}],
       level: S => projectLevel(S, 'land_program', ['expropriation'], ['compensated', 'accelerated']),
       available: Q => nextTranche(Q.S, 'land_program', 'accelerated') !== null || projectsOf(Q.S, 'land_program', liveProject).length ? '' :
         L('The whole countryside is already covered.', 'Reforma objęła już całą wieś.'),
-      filing: [{type: 'relation', actor: 'psl_wyzwolenie', value: 6}, {type: 'relation', actor: 'psl_piast', value: 2}, {type: 'relation', actor: 'zln', value: -5}, {type: 'business', value: 2}],
+      // Z — 1.09: no gain with PSL Piast at the filing, as it votes against a land reform of PPS outside a cabinet with it (decision 6c).
+      filing: [{type: 'relation', actor: 'psl_wyzwolenie', value: 6}, {type: 'relation', actor: 'zln', value: -5}, {type: 'business', value: 2}],
       enact: (Q, variant, bill, m, raise) => {
         const S = Q.S;
         if (raise) {
@@ -3353,21 +3378,26 @@
     const offer = level === 'limited' || record.level === 'limited' ? 'full' : 'both';
     const blocked = law.blocked ? law.blocked(Q) : '';
     if (!rules.mainActionAvailable(Q)) return {eligible: true, available: false, offer: offer, reason: L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.')};
+    if (S.party_orgs.cash + 1e-9 < INITIATIVE_COST) return {eligible: true, available: false, offer: offer,
+      reason: L('Needs ' + rules.units(INITIATIVE_COST) + '.', 'Wymaga ' + rules.units(INITIATIVE_COST, 'resources', 'gen') + '.')};
     return {eligible: true, available: !blocked, offer: offer, reason: blocked};
   }
-  function initiativeShown(Q) {
+  // The laws shown on one card (group 'economy' or 'state'); without a group, those of both cards.
+  function initiativeShown(Q, group) {
     if (!initiativeCardBase(Q)) return [];
-    return INITIATIVES.map(law => law.id).filter(id => initiativeStatus(Q, id).eligible).slice(0, INITIATIVE_SHOWN);
+    if (!group) return initiativeShown(Q, 'economy').concat(initiativeShown(Q, 'state'));
+    return INITIATIVES.map(law => law.id).filter(id => groupOf(id) === group && initiativeStatus(Q, id).eligible).slice(0, INITIATIVE_SHOWN);
   }
-  const initiativeIsShown = (Q, id) => initiativeShown(Q).indexOf(id) >= 0;
-  function initiativeCardAvailable(Q) {
-    return initiativeCardBase(Q) && rules.cardRest(Q, INITIATIVE_CARD) === 0 && initiativeShown(Q).length > 0;
+  const initiativeIsShown = (Q, id) => initiativeShown(Q, groupOf(id)).indexOf(id) >= 0;
+  function initiativeCardAvailable(Q, group) {
+    if (!group) return initiativeCardAvailable(Q, 'economy') || initiativeCardAvailable(Q, 'state');
+    return initiativeCardBase(Q) && rules.cardRest(Q, INITIATIVE_CARDS[group]) === 0 && initiativeShown(Q, group).length > 0;
   }
 
   // How the Sejm would vote on one variant now (the preview equals the vote: the rules of 7.1 are deterministic).
   function initiativeCounts(Q, law, index) {
     const v = law.variants[index];
-    const counts = sejmCounts(Q, {sponsor: 'pps', programme: v.programme, flags: v.flags || [], pps_vote: 'yes', t: Q.time});
+    const counts = sejmCounts(Q, {sponsor: 'pps', programme: v.programme, flags: v.flags || [], pps_vote: 'yes', t: Q.time, initiative_bill: true});
     const ballot = institutions.resolveBallot('ordinary_resolution', counts);
     return {yes: counts.yes, no: counts.no, abstain: counts.abstain, present: counts.present, eligible: counts.eligible, club_votes: counts.club_votes,
       passed: ballot.result === 'passed',
@@ -3428,7 +3458,8 @@
       const what = status.offer === 'full' ? L(law.raise[0], law.raise[1]) : L(law.text[0], law.text[1]);
       const today = forecastText(Q, law, status.offer);
       const filing = filingEffects(S, law).map(filingText);
-      Q['pl_ini_' + law.id + '_line'] = what + ' ' + today + (filing.length ? L(' Taking it up: ', ' Samo wniesienie: ') + filing.join(', ') + '.' : '');
+      const cost = L('Cost: ' + rules.units(INITIATIVE_COST) + '. ', 'Koszt: ' + rules.units(INITIATIVE_COST, 'resources', 'nom') + '. ');
+      Q['pl_ini_' + law.id + '_line'] = cost + what + ' ' + today + (filing.length ? L(' Taking it up: ', ' Samo wniesienie: ') + filing.join(', ') + '.' : '');
     }
     Q.pl_ini_shown = initiativeShown(Q).join(' ');
   }
@@ -3436,8 +3467,9 @@
   // Taking a law up: this month's action, the effects of filing, the vote next month.
   function initiativeFile(Q, id) {
     const S = Q.S, law = INITIATIVE_BY_ID[id], status = initiativeStatus(Q, id);
-    if (!status.available || initiativeShown(Q).indexOf(id) < 0) throw new Error('initiativeFile: ' + id + ': ' + status.reason);
+    if (!status.available || !initiativeIsShown(Q, id)) throw new Error('initiativeFile: ' + id + ': ' + status.reason);
     rules.commitMainAction(Q, 'parliament.legislative_initiative.' + id, {law: id});
+    S.party_orgs.cash = Math.max(0, S.party_orgs.cash - INITIATIVE_COST);
     rules.seedProfile(Q, 'parliamentarism', 2, 'initiative:' + id);
     if (id === 'autonomy') rules.seedProfile(Q, 'federalism', 2, 'initiative:autonomy');
     const effects = filingEffects(S, law).map(filingText);
@@ -3450,8 +3482,9 @@
       (effects.length ? ' ' + L('At once: ', 'Od razu: ') + effects.join(', ') + '.' : '');
   }
   // Not taking any law up: the card is played, no month is spent, it comes back after three months.
-  function initiativeSkip(Q) {
-    Q.S.cooldowns['rest:' + INITIATIVE_CARD] = Math.max(Q.S.cooldowns['rest:' + INITIATIVE_CARD] || 0, Q.time + INITIATIVE_REST_MONTHS);
+  function initiativeSkip(Q, group) {
+    const card = INITIATIVE_CARDS[group || 'economy'];
+    Q.S.cooldowns['rest:' + card] = Math.max(Q.S.cooldowns['rest:' + card] || 0, Q.time + INITIATIVE_REST_MONTHS);
     return L('PPS files no bill now; the card comes back in three months.', 'PPS nie wnosi teraz żadnej ustawy; karta wróci za trzy miesiące.');
   }
 
@@ -4851,7 +4884,10 @@
     payPrice: payPrice,
     PROGRAMME_LINKS: PROGRAMME_LINKS,
     INITIATIVE_IDS: Object.freeze(INITIATIVES.map(law => law.id)),
-    INITIATIVE_CARD: INITIATIVE_CARD,
+    INITIATIVE_CARDS: INITIATIVE_CARDS,
+    initiativeGroup: groupOf,
+    initiativeCardOf: id => INITIATIVE_CARDS[groupOf(id)],
+    INITIATIVE_CARD: INITIATIVE_CARDS.economy,
     initiativeState: initiativeState,
     initiativeStatus: initiativeStatus,
     initiativeShown: initiativeShown,

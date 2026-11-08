@@ -47,7 +47,8 @@ const P = {
   union: step => ['polish_union_agenda', 'polish_union_agenda.' + step],
   strike: goal => ['polish_union_agenda', 'polish_union_agenda.start', 'polish_union_agenda.g_' + goal, 'polish_union_agenda.launch'],
   // Z — 0.81: the bill of the legislative initiative (the card replaced the bill D and the parliamentary control of the army).
-  initiative: id => ['polish_legislative_initiative', 'polish_legislative_initiative.' + id],
+  // Z — 1.09: the laws are on two cards (labour and the economy; the state and society).
+  initiative: id => { const card = globalThis.PolishProjects.initiativeCardOf(id); return [card, card + '.' + id]; },
   gov: (card, option) => [card, card + '.' + option],
   support: option => ['polish_government_support', 'polish_government_support.' + option],
   // Z — 0.64: a PPS member raises the same demands on the coalition card of the Government deck.

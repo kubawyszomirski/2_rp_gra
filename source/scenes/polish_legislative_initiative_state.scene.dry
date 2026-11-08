@@ -1,0 +1,97 @@
+title: Initiative: the State and Society
+subtitle: A bill of PPS: the Sejm votes on it next month.
+new-page: true
+is-card: true
+tags: parliament_affairs
+view-if: {! return !!Q.S && PolishProjects.initiativeCardAvailable(Q, 'state') !}
+on-arrival: {!
+// Card parliament.legislative_initiative, its second part (Z — 1.09, decision 6aA of 8 XI 2026): the laws of the state and
+// society; the laws of labour and the economy are on polish_legislative_initiative.
+// At most four laws of a fixed order; taking one up costs 1 resource and this month's action and
+// moves relations at once; the next month the urgent card polish_initiative_vote puts it to the Sejm (technical reference 7.2).
+PolishProjects.initiativeView(Q);
+!}
+
+= Initiative: the State and Society
+
+The club of PPS can file a bill of its own on the state, the army, the school, the minorities and the land. We choose one matter, and next month the Sejm votes on it. A law passed in full leaves this card; one passed only in its limited version, rejected or withdrawn comes back after nine months.
+
+- @army_oversight
+- @secular_school
+- @autonomy
+- @land_reform
+- @abortion
+- @skip
+- @easy_discard
+
+@army_oversight
+title: Civilian oversight of the army
+subtitle: [+ pl_ini_army_oversight_line +]
+view-if: {! return PolishProjects.initiativeIsShown(Q, 'army_oversight') !}
+choose-if: {! return PolishProjects.initiativeStatus(Q, 'army_oversight').available !}
+unavailable-subtitle: [+ pl_ini_army_oversight_why +] [+ pl_ini_army_oversight_line +]
+on-arrival: {!
+Q.pl_ini_result = PolishProjects.initiativeFile(Q, 'army_oversight');
+!}
+go-to: result
+
+@secular_school
+title: Secular school with religious freedom
+subtitle: [+ pl_ini_secular_school_line +]
+view-if: {! return PolishProjects.initiativeIsShown(Q, 'secular_school') !}
+choose-if: {! return PolishProjects.initiativeStatus(Q, 'secular_school').available !}
+unavailable-subtitle: [+ pl_ini_secular_school_why +] [+ pl_ini_secular_school_line +]
+on-arrival: {!
+Q.pl_ini_result = PolishProjects.initiativeFile(Q, 'secular_school');
+!}
+go-to: result
+
+@autonomy
+title: Autonomy of the minorities
+subtitle: [+ pl_ini_autonomy_line +]
+view-if: {! return PolishProjects.initiativeIsShown(Q, 'autonomy') !}
+choose-if: {! return PolishProjects.initiativeStatus(Q, 'autonomy').available !}
+unavailable-subtitle: [+ pl_ini_autonomy_why +] [+ pl_ini_autonomy_line +]
+on-arrival: {!
+Q.pl_ini_result = PolishProjects.initiativeFile(Q, 'autonomy');
+!}
+go-to: result
+
+@land_reform
+title: Land reform
+subtitle: [+ pl_ini_land_reform_line +]
+view-if: {! return PolishProjects.initiativeIsShown(Q, 'land_reform') !}
+choose-if: {! return PolishProjects.initiativeStatus(Q, 'land_reform').available !}
+unavailable-subtitle: [+ pl_ini_land_reform_why +] [+ pl_ini_land_reform_line +]
+on-arrival: {!
+Q.pl_ini_result = PolishProjects.initiativeFile(Q, 'land_reform');
+!}
+go-to: result
+
+@abortion
+title: Termination of pregnancy
+subtitle: [+ pl_ini_abortion_line +]
+view-if: {! return PolishProjects.initiativeIsShown(Q, 'abortion') !}
+choose-if: {! return PolishProjects.initiativeStatus(Q, 'abortion').available !}
+unavailable-subtitle: [+ pl_ini_abortion_why +] [+ pl_ini_abortion_line +]
+on-arrival: {!
+Q.pl_ini_result = PolishProjects.initiativeFile(Q, 'abortion');
+!}
+go-to: result
+
+@skip
+title: We file no bill
+subtitle: The card is played and comes back in three months.
+on-arrival: {!
+Q.pl_ini_result = PolishProjects.initiativeSkip(Q, 'state');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= Initiative: the State and Society
+
+[+ pl_ini_result +]
+
+- @root: Continue.

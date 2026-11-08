@@ -109,10 +109,14 @@ test('before the Senate exists a law takes effect with the Sejm vote; a constitu
 // Z — 0.81 (decisions of 20 X 2026): the card Legislative Initiative replaces the cards D1/D2 and of the parliamentary control of
 // the army: at most five laws, taking one up costs the month and moves relations at once, the vote the next month; a law passed
 // in its limited variant, rejected or withdrawn comes back after nine months, after a limited one only in full.
-test('Inicjatywa 0.81: five laws after the 1922 election; filing costs the month; the vote next month; limited, rejected and back after nine months', () => {
+test('Inicjatywa 0.81/1.09: two cards of at most four laws after the 1922 election; filing costs the month and 1 resource; the vote next month; limited, rejected and back after nine months', () => {
   const Q = world({ seats: OPENING, time: 13, senate: true });
   Q.sejm_first_election_completed = 1;
-  assert.deepEqual(proj.initiativeShown(Q), ['unemployment', 'labor_inspection', 'progressive_tax', 'secular_school', 'land_reform']);
+  Q.S.party_orgs.cash = 3;
+  // Z — 1.09 (decision 6aA): two cards of at most four laws each.
+  assert.deepEqual(proj.initiativeShown(Q, 'economy'), ['unemployment', 'labor_inspection', 'progressive_tax', 'workers_housing']);
+  assert.deepEqual(proj.initiativeShown(Q, 'state'), ['secular_school', 'land_reform', 'abortion']);
+  assert.equal(proj.initiativeCardOf('land_reform'), 'polish_legislative_initiative_state');
   assert.equal(proj.initiativeStatus(Q, 'army_oversight').eligible, false, 'the army only at an open military case');
   assert.equal(proj.initiativeStatus(Q, 'tenants').eligible, false, 'the tenants from VI 1924');
   // The rolls of a vote are recorded; the test fixes them (0.81: the chance of a vote, see "Los głosowania 0.81").
@@ -124,6 +128,7 @@ test('Inicjatywa 0.81: five laws after the 1922 election; filing costs the month
   proj.initiativeFile(Q, 'unemployment');
   fix(0.99, 0);
   assert.equal(Q.month_actions, 1, 'taking a law up costs this month’s action');
+  assert.equal(Q.S.party_orgs.cash, 2, 'and 1 unit of resources (1.09, decision 6b)');
   assert.equal(proj.initiativeState(Q.S).records.unemployment.plus_used, true, 'the gain of filing is used up');
   assert.deepEqual(proj.initiativeShown(Q), [], 'one initiative at a time');
   assert.equal(proj.initiativeVoteActive(Q), false, 'the vote only next month');
@@ -137,7 +142,7 @@ test('Inicjatywa 0.81: five laws after the 1922 election; filing costs the month
   const protection = proj.operatingProtection(Q.S);
   assert.deepEqual([protection.variant, protection.price_B, protection.sponsor, protection.responsibility.pps], ['limited', 1, 'pps', 0.40]);
   assert.equal(proj.initiativeStatus(Q, 'unemployment').eligible, false, 'back only after nine months');
-  assert.ok(proj.initiativeShown(Q).includes('workers_housing'), 'the next law takes the free place');
+  assert.deepEqual(proj.initiativeShown(Q, 'economy'), ['labor_inspection', 'progressive_tax', 'workers_housing', 'old_age'], 'the next law takes the free place');
   // Nine months later only the full benefit is offered; the gain of the Left came with the first filing only.
   Q.time += 9; Q.year = rules.yearOf(Q.time); Q.month = rules.monthOf(Q.time);
   const status = proj.initiativeStatus(Q, 'unemployment');
@@ -165,7 +170,13 @@ test('Inicjatywa 0.81: five laws after the 1922 election; filing costs the month
   freeAction(Q);
   proj.initiativeSkip(Q);
   assert.equal(rules.cardRest(Q, proj.INITIATIVE_CARD), 3);
+  assert.equal(rules.cardRest(Q, proj.INITIATIVE_CARDS.state), 0, 'each card rests on its own');
+  proj.initiativeSkip(Q, 'state');
+  assert.equal(rules.cardRest(Q, proj.INITIATIVE_CARDS.state), 3);
   assert.equal(Q.month_actions, 0);
+  // Without a unit of resources no bill can be filed.
+  Q.S.party_orgs.cash = 0.5;
+  assert.deepEqual([proj.initiativeStatus(Q, 'progressive_tax').available, proj.initiativeStatus(Q, 'progressive_tax').reason], [false, 'Needs 1 resource.']);
 });
 
 // Z — 0.81 (P): the special votes of the initiative — the friends of Piłsudski against full civilian oversight, the Lanckorona
@@ -200,11 +211,49 @@ test('Głosowania inicjatywy 0.81: the friends of Piłsudski, the Lanckorona rul
   assert.deepEqual([secular.passed, exemption.passed, exemption.no], [false, true, 0], 'the exemption from religion passes');
 });
 
+// Z — 1.09 (decision 6c of 8 XI 2026): the parties of a cabinet without PPS vote against a bill of PPS in opposition unless it is
+// very close to their programme (75); PSL Piast votes against a land reform of PPS unless both sit in one cabinet.
+test('Głosowania inicjatywy 1.09: the governing parties against a bill of the opposition; Piast against a land reform of PPS outside a cabinet with it', () => {
+  const Q = world({ seats: OPENING, time: rules.timeOf(1924, 1), senate: true });
+  Q.sejm_first_election_completed = 1;
+  const vote = (id, index, club) => proj.initiativeCounts(Q, id, index).club_votes[club].vote;
+  const setCabinet = (partners, supporters) => {
+    Q.S.cabinet = Object.assign({}, Q.S.cabinet || {}, { id: 'fixture-' + partners.join('-'), status: 'active', partner_ids: partners, supporter_ids: supporters,
+      party: partners[0], portfolios: Q.S.cabinet ? Q.S.cabinet.portfolios : {}, configuration_id: 'fixture' });
+  };
+  setCabinet([], ['pps', 'npr', 'psl_piast']);
+  const free = { benefit: vote('unemployment', 1, 'psl_piast'), smallWorks: vote('public_works', 1, 'psl_piast') };
+  assert.deepEqual(free, { benefit: 'yes', smallWorks: 'yes' }, 'outside a party cabinet Piast votes by its programme');
+  assert.equal(vote('land_reform', 1, 'psl_piast'), 'no', 'but against a land reform of PPS');
+  // A cabinet of ZLN, the Christian Democrats and Piast without PPS: against everything but what is very close to them.
+  setCabinet(['zln', 'pschd', 'psl_piast'], []);
+  const stance = club => gov.programmeStance(Q.S, club, { by: 'pps', kind: 'bill', programme: { fiscal: 0 }, flags: [], members: Q.S.cabinet.partner_ids,
+    supporters: [], lead_party: 'zln', minority_terms: [], portfolios: {}, configuration_id: 'fixture' });
+  assert.ok(stance('psl_piast') >= 75 && stance('zln') < 75, 'the small public works are very close to Piast only');
+  assert.equal(vote('unemployment', 1, 'psl_piast'), 'no', 'the limited benefit is not close enough');
+  assert.equal(vote('public_works', 1, 'psl_piast'), 'yes', 'the small public works are');
+  assert.equal(vote('public_works', 1, 'zln'), 'no');
+  assert.equal(vote('public_works', 1, 'npr'), 'yes', 'a party outside the cabinet votes by its programme');
+  assert.equal(proj.initiativeCounts(Q, 'unemployment', 1).passed, false, 'the cabinet majority sinks the limited benefit');
+  // PPS supporting the cabinet is no opposition: the rule does not apply.
+  setCabinet(['zln', 'pschd', 'psl_piast'], ['pps']);
+  assert.equal(vote('unemployment', 1, 'psl_piast'), 'yes');
+  // In a cabinet with PPS, Piast votes for the land reform by its programme (the limited, accelerated one).
+  setCabinet(['pps', 'psl_wyzwolenie', 'psl_piast'], []);
+  assert.equal(vote('land_reform', 1, 'psl_piast'), 'yes');
+  // Only the bills of the initiative: an ordinary bill of PPS is voted as before.
+  setCabinet(['zln', 'pschd', 'psl_piast'], []);
+  const bill = proj.submitLaw(Q, { kind: 'test', title: 'An ordinary bill', sponsor: 'pps', programme: { fiscal: 1 }, pps_vote: 'yes' });
+  const ballot = Q.S.ballots.find(b => b.law_id === bill.id);
+  assert.equal(ballot.club_votes.psl_piast.vote, 'yes');
+});
+
 // Z — 0.81 (the user's note of 20 X 2026, "lekka losowość"): the chance of a vote is 50% plus half the margin, between 5% and 95%;
 // one recorded roll per filing and variant; a turned-over vote shows the deputies who stayed away, and the law follows the roll.
 test('Los głosowania 0.81: a majority can fail and a minority can pass; the counts and the record follow the roll', () => {
   const Q = world({ seats: OPENING, time: 13, senate: true });
   Q.sejm_first_election_completed = 1;
+  Q.S.party_orgs.cash = 3;
   const key = v => { const p = proj.initiativeState(Q.S).pending; return 'initiative:' + p.id + ':t' + p.filed_at + ':' + v; };
   // The inspection has a clear majority (198 against 83, chance 95%); a roll of 0.97 makes it fail.
   proj.initiativeFile(Q, 'labor_inspection');
