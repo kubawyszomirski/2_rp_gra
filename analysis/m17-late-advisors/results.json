@@ -13,9 +13,9 @@
     "sympatheticGain": 5
   },
   "hashes": {
-    "docs/POLISH_TECHNICAL_REFERENCE.md": "42db88d6e71ef947b4063a1b870403f244d0e7a16fab9e5aa72033f0204e724f",
-    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "a4d44b610330cde9faea25c2662dff84f87fcfb37fe4d9560f9e25d1c6662a95",
-    "docs/POLISH_MECHANICS_AUDIT.md": "a3570e704489168fcfdd1c06612c3b98ab690788f833491f810f87b2f7c3b0cf",
+    "docs/POLISH_TECHNICAL_REFERENCE.md": "e05ce379dac0ee56b5b748203ef22ccfdb44bb12a7ea137fe79d10418e0977c8",
+    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "0f234b0e717776cc75d033ad5a34542f85a3386e1f0f892a458d99db2ad81a80",
+    "docs/POLISH_MECHANICS_AUDIT.md": "a28627dc94389fd0b0ef8cdc3031a7d8e2da0960b8918c149dfa275b837fb5b2",
     "analysis/m02-robustness/engine.cjs": "e0b544d65a4381ed7698f3f649fd54e41714a3a1027852a7ea455d0ad49b43cd"
   },
   "roster": {

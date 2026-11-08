@@ -416,3 +416,17 @@ test('Związki słowami 1.14: no numbers of the mechanics on the union cards', (
     PolishRules.setLanguage('en');
   }
 });
+
+// Z — 1.15 (the user's request of 8 XI 2026): the reach of the unions on the Party tab in words.
+test('Związki w zakładce Partia 1.15: the reach of each branch in a word', () => {
+  const engine = dendry.startGame(1922, 'pl');
+  const Q = engine.state.qualities, S = Q.S;
+  try {
+    S.unions.industry.reach = 50; S.unions.rail.reach = 10; S.unions.farm_labour.reach = 85;
+    engine.goToScene('status');
+    assert.deepEqual([Q.pl_party_union_industry, Q.pl_party_union_rail, Q.pl_party_union_farm_labour], ['zasięg średni', 'zasięg bardzo słaby', 'zasięg bardzo mocny']);
+    assert.match(JSON.stringify(engine.ui.paragraphs), /Przemysł:.*zasięg średni/);
+  } finally {
+    PolishRules.setLanguage('en');
+  }
+});

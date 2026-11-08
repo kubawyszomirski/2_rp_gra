@@ -3308,7 +3308,8 @@
     Q.pl_party_apparatus = orgs.apparatus.level + L(' of ', ' z ') + APPARATUS_MAX;
     Q.pl_party_cohesion = String(Math.round(cohesion(S)));
     for (const id of BRANCHES) {
-      Q['pl_party_union_' + id] = L('reach ', 'zasięg ') + fmt(S.unions[id].reach);
+      // Z — 1.15 (the user's request of 8 XI 2026): the reach of a branch in a word, as on the cards.
+      Q['pl_party_union_' + id] = L('reach ', 'zasięg ') + reachWord(S.unions[id].reach);
     }
   }
 
