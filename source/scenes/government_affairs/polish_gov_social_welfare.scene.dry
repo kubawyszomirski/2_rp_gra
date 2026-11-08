@@ -31,7 +31,7 @@ The state can help the unemployed from the budget and insure the workers from co
 
 @expand
 title: [? if pl_gc_protection_level = 0 : Introduce benefits for the unemployed ?][? if pl_gc_protection_level > 0 : Extend the benefits ?]
-subtitle: Costs 3 budget units for each of three levels. The unemployed get real help and are less discontented (−6). [? if pl_social_welfare_expand_coalition : [+ pl_social_welfare_expand_coalition +] ?]
+subtitle: Costs [+ pl_cost3 +] for each of three levels. The unemployed get real help and are less discontented (−6). [? if pl_social_welfare_expand_coalition : [+ pl_social_welfare_expand_coalition +] ?]
 choose-if: {! return PolishProjects.optionStatus(Q, 'social_welfare', 'expand').available !}
 unavailable-subtitle: [+ pl_social_welfare_expand_why +]
 on-arrival: {!
@@ -41,7 +41,7 @@ go-to: result
 
 @insurance
 title: Introduce the old-age insurance of workers
-subtitle: Costs 2 budget units; employers and workers pay the rest in contributions. The workers are less discontented (−2), but business presses harder (+6). [? if pl_social_welfare_insurance_coalition : [+ pl_social_welfare_insurance_coalition +] ?]
+subtitle: Costs [+ pl_cost2 +]; employers and workers pay the rest in contributions. The workers are less discontented (−2), but business presses harder (+6). [? if pl_social_welfare_insurance_coalition : [+ pl_social_welfare_insurance_coalition +] ?]
 choose-if: {! return PolishProjects.optionStatus(Q, 'social_welfare', 'insurance').available !}
 unavailable-subtitle: [+ pl_social_welfare_insurance_why +]
 on-arrival: {!

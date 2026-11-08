@@ -149,6 +149,7 @@
   "[? if polish_party_rules : **Jewish organisations:** [+ pl_line_jewish_cooperation +] ?]": "[? if polish_party_rules : **Organizacje żydowskie:** [+ pl_line_jewish_cooperation +] ?]",
   "[? if polish_party_rules : **The Soviet model:** [+ pl_line_ussr_position +] ?]": "[? if polish_party_rules : **Wzór sowiecki:** [+ pl_line_ussr_position +] ?]",
   "[? if polish_party_rules : **Economic programme:** [+ pl_line_programme +] ?]": "[? if polish_party_rules : **Program gospodarczy:** [+ pl_line_programme +] ?]",
-  "= [? if polish_security_rules : The army ?]": "= [? if polish_security_rules : Wojsko ?]"
+  "= [? if polish_security_rules : The army ?]": "= [? if polish_security_rules : Wojsko ?]",
+  "= [? if polish_party_rules : Characteristics ?]": "= [? if polish_party_rules : Charakterystyka ?]"
  }
 }

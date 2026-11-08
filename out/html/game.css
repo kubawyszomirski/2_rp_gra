@@ -1463,3 +1463,17 @@ ul.choices li.pl-portrait-choice.unavailable .pl-portrait {
   opacity: 0.6;
   filter: grayscale(1);
 }
+
+/* Z — 1.07 (the user's decisions of 7–8 XI 2026): the characteristics of the party on the Party tab — the adopted ones in the red
+   ink, the others grey; a tooltip says what builds and what gives each one. */
+.pl-profile-on {
+  color: var(--accent-color);
+  font-weight: bold;
+  font-variant: small-caps;
+  letter-spacing: 0.04em;
+}
+.pl-profile-off {
+  color: var(--unavailable-color);
+  font-variant: small-caps;
+  letter-spacing: 0.04em;
+}

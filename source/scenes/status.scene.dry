@@ -16,6 +16,8 @@ if (Q.economic_growth) {
 // The party lines are computed here as well, so a save from before 0.54 shows them at once (Z — 0.54).
 if (Q.polish_party_rules && typeof PolishParty !== 'undefined') {
     PolishParty.sidebarDisplay(Q);
+    // Z — 1.07: the characteristics of the party (the section of the Party tab and the line of the Overview).
+    PolishParty.profileView(Q);
 }
 // The Party tab of the top bar also shows the Milicja PPS and the nine positions of the party line.
 if (Q.polish_security_rules && Q.S && typeof PolishSecurity !== 'undefined' && PolishSecurity.ready(Q)) {
@@ -147,6 +149,10 @@ if (Q.S && typeof PolishTopbar !== 'undefined') {
 
 [? if polish_party_rules : **Economic programme:** [+ pl_line_programme +] ?]
 
+= [? if polish_party_rules : Characteristics ?]
+
+[? if polish_party_rules : [+ pl_profile_html +] ?]
+
 # = Public Opinion
 
 @overview
@@ -154,6 +160,10 @@ on-arrival: {!
 // The short texts of the Overview (source/rules/polish_topbar.js).
 if (Q.S && typeof PolishTopbar !== 'undefined') {
     PolishTopbar.overviewView(Q);
+}
+// Z — 1.07: the adopted characteristics of the party under the party line.
+if (Q.S && Q.polish_party_rules && typeof PolishParty !== 'undefined') {
+    PolishParty.profileView(Q);
 }
 !}
 
@@ -186,6 +196,8 @@ if (Q.S && typeof PolishTopbar !== 'undefined') {
 [+ pl_top_opponent +]
 
 [+ pl_top_pilsudski +]
+
+[? if pl_top_profile : [+ pl_top_profile +] ?]
 
 = Economy
 

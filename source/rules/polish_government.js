@@ -2541,6 +2541,8 @@
   // Appointment by the head of state: the Naczelnik before the constitutional transfer, then the
   // President. Agreements record the programme; since stage 4 its points name projects, dates and
   // rules (programmeObligations).
+  // Z — 1.07 (decision 5A of the characteristics): a decision against the line of the party angers the faction that holds it.
+  const LINE_CONTRARY_DISSENT = 3;
   function appointCabinet(Q, entry, context) {
     const S = Q.S, offer = entry.offer, t = Q.time;
     const previous = S.cabinet;
@@ -2578,6 +2580,15 @@
       formed_at: t, agreement_ids: agreementIds, support_seats: entry.forecast.yes, majority: entry.forecast.majority,
       previous_cabinet_id: previous ? previous.id : null, accepted_postulates: [], dismissal_motion: null, pending_threat: null,
       stabilisation_terms: offer.stabilisation_terms || 'none', plan: programmePlan(offer, cabinetId, t)};
+    // Z — 1.07 (the characteristics of the party): a concession to a minority club builds federalism; entering a cabinet against
+    // the line of independent class politics angers the Left (decision 5A).
+    if (offer.by === 'pps') {
+      const clubs = Object.keys(offer.minority_concessions || {}).filter(c => offer.minority_concessions[c]);
+      if (clubs.length) rules.seedProfile(Q, 'federalism', 2 * Math.min(2, clubs.length), 'minority_concession:' + cabinetId);
+      if (offer.pps_mode === 'member' && S.actors.pps.strategy && S.actors.pps.strategy.direction === 'class_independence') {
+        factionReaction(Q, 'lewica', {dissent: LINE_CONTRARY_DISSENT}, {id: 'line_contrary:cabinet:' + cabinetId, kind: 'line_contrary', reverse: null});
+      }
+    }
     // The PPS toleration agreement: a PPS offer signs it as `pps_support`, a tolerated expert as `pps` (stage 6 fix).
     const support = agreementIds.map(id => S.agreements[id]).filter(a => a.kind === 'support' && a.parties.indexOf('pps') >= 0 &&
       (a.id === 'agr-' + cabinetId + '-pps_support' || a.id === 'agr-' + cabinetId + '-pps'))[0] || null;
@@ -3185,7 +3196,9 @@
     const partners = cabinet.partner_ids.concat(cabinet.supporter_ids).filter((id, i, all) => id !== 'pps' && ACTOR_PROFILES[id] && all.indexOf(id) === i);
     return partners.map(id => {
       const distance = Math.abs(stance.position - stanceOf(id, stance.topic));
-      return {party: id, delta: distance >= 3 ? OBJECTION_MAX : distance === 2 ? OBJECTION_STEP : 0};
+      const delta = distance >= 3 ? OBJECTION_MAX : distance === 2 ? OBJECTION_STEP : 0;
+      // Z — 1.07: reformism halves the objections of the partners to a reform of PPS.
+      return {party: id, delta: rules.profileActive(S, 'reformism') ? Math.round(delta / 2) : delta};
     }).filter(o => o.delta > 0).sort((a, b) => b.delta - a.delta || compareId(a.party, b.party));
   }
 
@@ -4291,6 +4304,7 @@
       election_id: window.election_id, t: t, cost_t: 0, profile_id: LIST_PROFILE_ID, evaluations: evaluations, accepted: accepted,
       snapshot: listSnapshot(Q, optionId)};
     if (accepted) {
+      if (option.members.indexOf('psl_wyzwolenie') >= 0) rules.seedProfile(Q, 'worker_peasant', 3, 'list:' + optionId);
       S.parliament.alliances.push({id: optionId + '_' + window.election_id, election_id: window.election_id, name: option.name,
         members: option.members.slice(), accepted_by: partners.slice(), nomination_terms: 'proportional_to_votes',
         valid_until: window.vote_time, withdrawal_rules: 'closed_when_lists_close', status: 'accepted', option_id: optionId,

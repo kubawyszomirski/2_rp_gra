@@ -9,7 +9,7 @@
   "title: Answer with retaliatory duties": "title: Odpowiedz cłami odwetowymi",
   "subtitle: No cost to the budget; home industry keeps the home market and the fall of output weakens. Prices rise (+1 percentage point of inflation for two months).": "subtitle: Bez kosztu dla budżetu; krajowy przemysł zachowuje rynek wewnętrzny i spadek produkcji słabnie. Ceny rosną (+1 punkt procentowy inflacji przez dwa miesiące).",
   "title: Seek new markets": "title: Szukaj nowych rynków zbytu",
-  "subtitle: Costs 2 budget units (subsidies for coal exports for half a year). The fall of output is halved.": "subtitle: Kosztuje 2 jednostki budżetu (dopłaty do wywozu węgla przez pół roku). Spadek produkcji słabnie o połowę.",
+  "subtitle: Costs [+ pl_cost2 +] (subsidies for coal exports for half a year). The fall of output is halved.": "subtitle: Kosztuje [+ pl_cost2 +] (dopłaty do wywozu węgla przez pół roku). Spadek produkcji słabnie o połowę.",
   "title: Make concessions to Germany": "title: Pójdź na ustępstwa wobec Niemiec",
   "subtitle: No cost to the budget; trade returns sooner and credit recovers. The National Democrats accuse the cabinet of weakness, and the relation with the National Popular Union worsens (−8).": "subtitle: Bez kosztu dla budżetu; handel szybciej wraca, a kredyt odbija. Endecja oskarża rząd o uległość, a relacja ze Związkiem Ludowo-Narodowym się pogarsza (−8).",
   "title: Not now": "title: Nie teraz",

@@ -7,11 +7,11 @@
   "= Education policy": "= Polityka oświatowa",
   "Primary school is compulsory, but the villages lack schools and many adult workers cannot read. Each programme covers one of three parts of the country.": "Szkoła powszechna jest obowiązkowa, ale na wsi brakuje szkół, a wielu dorosłych robotników nie umie czytać. Każdy program obejmuje jedną z trzech części kraju.",
   "title: Build schools in the villages": "title: Buduj szkoły na wsi",
-  "subtitle: Costs 2 budget units. The peasants trust PPS more (+4).": "subtitle: Kosztuje 2 jednostki budżetu. Chłopi bardziej ufają PPS (+4).",
+  "subtitle: Costs [+ pl_cost2 +]. The peasants trust PPS more (+4).": "subtitle: Kosztuje [+ pl_cost2 +]. Chłopi bardziej ufają PPS (+4).",
   "title: Open courses for adults in the workers’ centres": "title: Otwórz kursy dla dorosłych w ośrodkach robotniczych",
-  "subtitle: Costs 2 budget units. The workers trust PPS more (+4).": "subtitle: Kosztuje 2 jednostki budżetu. Robotnicy bardziej ufają PPS (+4).",
+  "subtitle: Costs [+ pl_cost2 +]. The workers trust PPS more (+4).": "subtitle: Kosztuje [+ pl_cost2 +]. Robotnicy bardziej ufają PPS (+4).",
   "title: Introduce the secular school": "title: Wprowadź szkołę świecką",
   "- @root: Continue.": "- @root: Dalej.",
-  "subtitle: Costs 2 budget units. Workers and the intelligentsia trust PPS more (+4), but the Christian Democrats and the Church protest, and our relations with the Christian Democrats worsen (−8). [? if pl_education_program_secular_coalition : [+ pl_education_program_secular_coalition +] ?]": "subtitle: Kosztuje 2 jednostki budżetu. Robotnicy i inteligencja bardziej ufają PPS (+4), ale chadecja i Kościół protestują, a nasze stosunki z chadecją się pogarszają (−8). [? if pl_education_program_secular_coalition : [+ pl_education_program_secular_coalition +] ?]"
+  "subtitle: Costs [+ pl_cost2 +]. Workers and the intelligentsia trust PPS more (+4), but the Christian Democrats and the Church protest, and our relations with the Christian Democrats worsen (−8). [? if pl_education_program_secular_coalition : [+ pl_education_program_secular_coalition +] ?]": "subtitle: Kosztuje [+ pl_cost2 +]. Robotnicy i inteligencja bardziej ufają PPS (+4), ale chadecja i Kościół protestują, a nasze stosunki z chadecją się pogarszają (−8). [? if pl_education_program_secular_coalition : [+ pl_education_program_secular_coalition +] ?]"
  }
 }

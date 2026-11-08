@@ -1,5 +1,13 @@
 # Historical Source Register
 
+## PL-PROFILES-1.07 — the characteristics of the party and the congress of PPS
+
+- **Authority:** the user’s decisions of 7–8 November 2026 (technical reference 1.07, sections 10.5 and 23.80).
+- **Sources:** no new source; the eight profiles name currents and methods already recorded in the game (unions, strikes, the Milicja and AS, the alliance with the peasant movement, the minorities, the Sejm, reform, class politics).
+- **Historical fact:** PPS had congresses as its highest body; nothing more is claimed.
+- **Gameplay simplification (P):** the profiles, their seeds and effects, the congress as an urgent card at most once a year, two profiles in the first chapter.
+- **Unresolved:** the dates, places and resolutions of the congresses of PPS 1922–1926 — TBD, historical research required.
+
 ## PL-EVENTS-1.05 — Piłsudski leaves (VII 1923) and the concordat (1925)
 
 - **Authority:** the user’s decisions of 7 November 2026 after the audit of the event cards (technical reference 1.05, sections 10.7, 17.13 and 23.78).
@@ -2777,6 +2785,7 @@ Add one row whenever an entry above is assigned a stable Source ID.
 | PL-PRESS-0.90 | Press | The party press: reach ceilings, sales, support of the campaigns, confiscations under a government of the right, credibility | Gameplay simplification; confiscations and circulation TBD | 0.90, 24 October 2026 |
 | PL-TUR-0.91 | TUR | TUR: +5% to the organisers per level, civic courses raise the trust in PPS, a course for trade unionists, no reform course | Gameplay simplification; founding and functions from TUR's own publication; reach by group TBD | 0.91, 24 October 2026 |
 | PL-COOP-0.92 | Cooperative | One workers' consumer cooperative that pays half of the strike pay; no relief; government cooperative variants without a PPS cooperative | Gameplay simplification; PPS ties to the cooperative movement TBD | 0.92, 24 October 2026 |
+| PL-PROFILES-1.07 | Party | The characteristics of the party; the congress of PPS | Game model; congress dates TBD | 1.07, 8 November 2026 |
 | PL-EVENTS-1.05 | Events | Piłsudski leaves (VII 1923); the concordat (1925) | Dates sourced; PPS stances TBD | 1.05, 7 November 2026 |
 | PL-EVENTS-1.04 | Events | The texts and answers of the event cards | Game model; no new historical claim | 1.04, 7 November 2026 |
 | PL-COUP-1.03 | Coup | The coup in one comparison; the army as one body | Game model; no new historical claim | 1.03, 7 November 2026 |

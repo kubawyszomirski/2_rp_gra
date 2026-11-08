@@ -51,7 +51,7 @@ go-to: result
 
 @border
 title: Strengthen the protection of the eastern border
-subtitle: Costs 2 budget units. Political violence falls (−3), but the minorities trust PPS less (−3). [? if pl_minorities_kresy_border_coalition : [+ pl_minorities_kresy_border_coalition +] ?]
+subtitle: Costs [+ pl_cost2 +]. Political violence falls (−3), but the minorities trust PPS less (−3). [? if pl_minorities_kresy_border_coalition : [+ pl_minorities_kresy_border_coalition +] ?]
 choose-if: {! return PolishProjects.optionStatus(Q, 'minorities_kresy', 'border').available !}
 unavailable-subtitle: [+ pl_minorities_kresy_border_why +]
 on-arrival: {!

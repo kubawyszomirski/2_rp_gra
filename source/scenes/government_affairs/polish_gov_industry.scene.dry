@@ -33,7 +33,7 @@ Industry and Trade can place orders with home industry and decide the fate of pl
 
 @orders
 title: Place public orders
-subtitle: Costs 2 budget units. Output grows for three months (+0.3 percentage points a month).
+subtitle: Costs [+ pl_cost2 +]. Output grows for three months (+0.3 percentage points a month).
 choose-if: {! return PolishProjects.optionStatus(Q, 'industrial_policy', 'orders').available !}
 unavailable-subtitle: [+ pl_industrial_policy_orders_why +]
 on-arrival: {!
@@ -43,7 +43,7 @@ go-to: result
 
 @rescue
 title: Rescue a threatened plant with credit
-subtitle: Costs 2 budget units; in return the owner keeps the plant and its jobs. Business presses less at once (−4), and the plant works in full again.
+subtitle: Costs [+ pl_cost2 +]; in return the owner keeps the plant and its jobs. Business presses less at once (−4), and the plant works in full again.
 choose-if: {! return PolishProjects.optionStatus(Q, 'industrial_policy', 'rescue').available !}
 unavailable-subtitle: [+ pl_industrial_policy_rescue_why +]
 on-arrival: {!

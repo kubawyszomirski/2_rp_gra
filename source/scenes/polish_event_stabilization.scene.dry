@@ -12,6 +12,7 @@ on-arrival: {!
 Q.pl_ev_treasury = PolishProjects.ppsHolds(Q.S, 'finance') ? 1 : 0;
 Q.pl_ev_currency = PolishEconomy.currencyCrisis(Q.S.economy) ? 1 : 0;
 Q.pl_ev_strong = PolishParty.issueSituation(Q, 'prices') ? 1 : 0;
+PolishProjects.costWords(Q);
 for (var option of ['rapid_cuts', 'protected', 'gradual', 'campaign']) {
     Q['pl_ev_' + option + '_why'] = PolishProjects.eventStatus(Q, 'stabilization', option).reason;
 }
@@ -32,7 +33,7 @@ for (var option of ['rapid_cuts', 'protected', 'gradual', 'campaign']) {
 
 @rapid_cuts
 title: Rapid stabilisation with savings
-subtitle: The złoty comes after three months (3 budget units), but the cuts and the lack of credit will hit the factories.
+subtitle: The złoty comes after three months ([+ pl_cost3 +]), but the cuts and the lack of credit will hit the factories.
 view-if: pl_ev_treasury
 choose-if: {! return PolishProjects.eventStatus(Q, 'stabilization', 'rapid_cuts').available !}
 unavailable-subtitle: [+ pl_ev_rapid_cuts_why +]
@@ -43,7 +44,7 @@ go-to: result
 
 @protected
 title: Stabilisation with protection for the unemployed and a tax on wealth
-subtitle: The złoty comes after three months (3 budget units); it needs a working protection for the unemployed.
+subtitle: The złoty comes after three months ([+ pl_cost3 +]); it needs a working protection for the unemployed.
 view-if: pl_ev_treasury
 choose-if: {! return PolishProjects.eventStatus(Q, 'stabilization', 'protected').available !}
 unavailable-subtitle: [+ pl_ev_protected_why +]
@@ -54,7 +55,7 @@ go-to: result
 
 @gradual
 title: Gradual limitation of emission
-subtitle: Cheaper (2 budget units), but the złoty comes only after five months.
+subtitle: Cheaper ([+ pl_cost2 +]), but the złoty comes only after five months.
 view-if: pl_ev_treasury
 choose-if: {! return PolishProjects.eventStatus(Q, 'stabilization', 'gradual').available !}
 unavailable-subtitle: [+ pl_ev_gradual_why +]

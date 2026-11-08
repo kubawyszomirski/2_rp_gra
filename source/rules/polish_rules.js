@@ -907,6 +907,57 @@
   }
 
   // Called by the event router when it enters the chosen event.
+  // ---- Z — 1.07 (the user's decisions of 7–8 XI 2026): the characteristics of the party ----------------------------------
+  // Eight profiles grow from the decisions that build them (their seeds) and are adopted by a resolution of a congress of PPS
+  // (PolishParty). The seeds live here, at the foundation, so that every module can add to them without depending on the party
+  // module. A line of the party that matches a profile makes its seeds grow half as fast again (decision 5A; P).
+  const PROFILE_IDS = Object.freeze(['unionism', 'worker_peasant', 'federalism', 'parliamentarism', 'strike_action', 'militarism',
+    'reformism', 'radicalism']);
+  const PROFILE_LINE = Object.freeze({
+    direction: Object.freeze({parliamentary_socialism: ['parliamentarism', 'reformism'], class_independence: ['radicalism', 'strike_action'],
+      workers_gains: ['unionism', 'strike_action'], democratic_movement: ['federalism', 'worker_peasant']}),
+    form_of_power: Object.freeze({parliamentarism: ['parliamentarism'], workers_councils: ['radicalism']}),
+    electoral_base: Object.freeze({workers: ['unionism'], workers_peasants: ['worker_peasant'], broad_democratic: ['federalism']}),
+    slavic_autonomy: Object.freeze({federation: ['federalism'], regional_autonomy: ['federalism']}),
+    jewish_cooperation: Object.freeze({broad: ['federalism']}),
+    pils_influence: Object.freeze({support: ['militarism']}),
+    main_opponent: Object.freeze({capital_land: ['radicalism'], unconstitutional_force: ['militarism']}),
+  });
+  const PROFILE_LINE_FACTOR = 1.5;
+  function profileState(S) {
+    const pps = S && S.actors && S.actors.pps;
+    if (!pps) return null;
+    if (!pps.profile) {
+      const seeds = {};
+      for (const id of PROFILE_IDS) seeds[id] = 0;
+      pps.profile = {seeds: seeds, adopted: [], dropped: [], congresses: [], log: []};
+    }
+    return pps.profile;
+  }
+  function profileLineMatch(S, id) {
+    const strategy = S && S.actors && S.actors.pps && S.actors.pps.strategy;
+    if (!strategy) return false;
+    return Object.keys(PROFILE_LINE).some(field => {
+      const list = PROFILE_LINE[field][strategy[field]];
+      return !!list && list.indexOf(id) >= 0;
+    });
+  }
+  const profileActive = (S, id) => {
+    const P = S && S.actors && S.actors.pps && S.actors.pps.profile;
+    return !!P && P.adopted.some(a => a.id === id);
+  };
+  // Adds seeds to a profile not yet adopted; the line of the party makes them grow faster. Returns the points added.
+  function seedProfile(Q, id, points, cause) {
+    if (PROFILE_IDS.indexOf(id) < 0) throw new Error('seedProfile: unknown profile ' + id);
+    const S = Q && Q.S, P = profileState(S);
+    if (!P || !(points > 0) || profileActive(S, id)) return 0;
+    const added = points * (profileLineMatch(S, id) ? PROFILE_LINE_FACTOR : 1);
+    P.seeds[id] = Math.round((P.seeds[id] + added) * 100) / 100;
+    P.log.push({t: Q.time, id: id, points: added, cause: cause || null});
+    if (P.log.length > 200) P.log.splice(0, P.log.length - 200);
+    return added;
+  }
+
   function markEventEntered(Q) {
     if (Q.S && Q.S.events.active) Q.S.events.active.phase = 'entered';
   }
@@ -1089,6 +1140,12 @@
     agendaItems: agendaItems,
     nextEvent: nextEvent,
     markEventEntered: markEventEntered,
+    PROFILE_IDS: PROFILE_IDS,
+    PROFILE_LINE: PROFILE_LINE,
+    profileState: profileState,
+    profileLineMatch: profileLineMatch,
+    profileActive: profileActive,
+    seedProfile: seedProfile,
     setLanguage: setLanguage,
     inLanguage: inLanguage,
     getLanguage: getLanguage,

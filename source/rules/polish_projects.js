@@ -773,10 +773,19 @@
   // by the package that carries it; the projects of other parties' cabinets pay from the same pool (decision 5A).
   const priceLabel = project => [PROJECT_TYPES[project.type].name + ' (' + VARIANT_NAMES[project.variant] + ')',
     (PROJECT_NAMES_PL[project.type] || PROJECT_TYPES[project.type].name) + ' (' + (VARIANT_NAMES_PL[project.variant] || project.variant) + ')'];
+  // Z — 1.07 (the characteristics of the party; P): reformism makes a programme of a PPS ministry that costs 2 or 3 one unit
+  // cheaper; radicalism the socialisation of the mines. The price is applied when it is paid and checked.
+  function profilePrice(S, typeId, price, sponsor) {
+    if (sponsor && sponsor !== 'pps') return price;
+    let p = price;
+    if (p >= 2 && rules.profileActive(S, 'reformism')) p -= 1;
+    if (typeId === 'socialise_mining' && p > 0 && rules.profileActive(S, 'radicalism')) p -= 1;
+    return p;
+  }
   function payPrice(Q, project, m) {
     if (project.price_paid) return 0;
     project.price_paid = true;
-    const price = project.price_B || 0;
+    const price = profilePrice(Q.S, project.type, project.price_B || 0, project.sponsor);
     if (!price) return 0;
     const [en, pl] = priceLabel(project);
     return economy.changePool(Q.S, -price, m, 'price:' + project.id, en, pl);
@@ -789,7 +798,7 @@
     const extra = (project.price_B || 0) - before;
     if (project.price_paid && extra > 0) {
       const [en, pl] = priceLabel(project);
-      economy.changePool(Q.S, -extra, m, 'price:' + project.id + ':' + variantId + ':t' + m, en, pl);
+      economy.changePool(Q.S, -profilePrice(Q.S, project.type, extra, project.sponsor), m, 'price:' + project.id + ':' + variantId + ':t' + m, en, pl);
     }
     return extra;
   }
@@ -1059,8 +1068,8 @@
     if (option === 'training') {
       const project = createProject(Q, 'police_training', 'training', fields);
       launchProject(Q, project, {sponsor: 'pps'});
-      return result(Q, L('The police are trained; it costs ' + unitsText(project.price_B) + ', and command and lawfulness rise (+' + POLICE_TRAINING + ') at the end of the month.',
-        'Policja przechodzi szkolenie; kosztuje to ' + unitsText(project.price_B) + ', a dowodzenie i praworządność rosną (+' + POLICE_TRAINING + ') pod koniec miesiąca.'));
+      return result(Q, L('The police are trained; it costs ' + unitsText(profilePrice(Q.S, project.type, project.price_B || 0, project.sponsor)) + ', and command and lawfulness rise (+' + POLICE_TRAINING + ') at the end of the month.',
+        'Policja przechodzi szkolenie; kosztuje to ' + unitsText(profilePrice(Q.S, project.type, project.price_B || 0, project.sponsor)) + ', a dowodzenie i praworządność rosną (+' + POLICE_TRAINING + ') pod koniec miesiąca.'));
     }
     if (option === 'prosecute') {
       // The pursuit settles the latest recorded case of political violence too, if there is one.
@@ -1068,8 +1077,8 @@
       const project = createProject(Q, 'police_investigation', 'prosecution', Object.assign({policy_choices: {case_id: c ? c.id : null}}, fields));
       launchProject(Q, project, {sponsor: 'pps'});
       for (const party of ['zln', 'kpp']) government.changeRelation(Q, party, PROSECUTION_RELATION, 'police_prosecution:' + project.id);
-      return result(Q, L('The police pursue the perpetrators of political violence; it costs ' + unitsText(project.price_B) + '. The National Democrats and the communists protest (−' +
-        Math.abs(PROSECUTION_RELATION) + ').', 'Policja ściga sprawców przemocy politycznej; kosztuje to ' + unitsText(project.price_B) + '. Endecja i komuniści protestują (−' +
+      return result(Q, L('The police pursue the perpetrators of political violence; it costs ' + unitsText(profilePrice(Q.S, project.type, project.price_B || 0, project.sponsor)) + '. The National Democrats and the communists protest (−' +
+        Math.abs(PROSECUTION_RELATION) + ').', 'Policja ściga sprawców przemocy politycznej; kosztuje to ' + unitsText(profilePrice(Q.S, project.type, project.price_B || 0, project.sponsor)) + '. Endecja i komuniści protestują (−' +
         Math.abs(PROSECUTION_RELATION) + ').') + (c ? L(' The investigation takes up: ' + c.subject + '.', ' Śledztwo obejmuje sprawę: ' + rules.storedText(c.subject) + '.') : ''));
     }
     S.security.protect_until = t + POLICE_ORDERS_MONTHS;
@@ -1114,8 +1123,8 @@
     }
     const project = createProject(Q, 'border_protection', 'border', fields);
     launchProject(Q, project, {sponsor: 'pps'});
-    return result(Q, L('The protection of the eastern border is strengthened; it costs ' + unitsText(project.price_B) + '.',
-      'Ochrona granicy wschodniej zostaje wzmocniona; kosztuje to ' + unitsText(project.price_B) + '.'));
+    return result(Q, L('The protection of the eastern border is strengthened; it costs ' + unitsText(profilePrice(Q.S, project.type, project.price_B || 0, project.sponsor)) + '.',
+      'Ochrona granicy wschodniej zostaje wzmocniona; kosztuje to ' + unitsText(profilePrice(Q.S, project.type, project.price_B || 0, project.sponsor)) + '.'));
   }
 
   function libertiesOptionStatus(Q, option) {
@@ -1219,7 +1228,7 @@
   function militaryChoose(Q, option) {
     const S = Q.S, t = Q.time, pol = politicsModule(), security = securityModule(), id = 'army_' + option + ':t' + t;
     if (option === 'raise_spending') {
-      economy.changePool(S, -ARMY_SPENDING.price, t, id, 'More money for the army', 'Więcej pieniędzy dla wojska');
+      economy.changePool(S, -profilePrice(S, null, ARMY_SPENDING.price, 'pps'), t, id, 'More money for the army', 'Więcej pieniędzy dla wojska');
       pol.applyImpulse(Q, id, ARMY_SPENDING.pressure, 'army_spending');
       government.factionReaction(Q, 'lewica', {dissent: ARMY_SPENDING.lewica}, {id: id, kind: 'cabinet_policy', reverse: null});
       return result(Q, L('The army gets more money; it costs ' + unitsText(ARMY_SPENDING.price) + '. The officers are content and the pressure towards a coup falls (−' +
@@ -2618,6 +2627,7 @@
     const ranking = debate.draft.filter(id => MOTION_BY_ID[id] && !reformsRecord(Q)[id]);
     debate.ranking = ranking.slice();
     debate.declared_at = t;
+    rules.seedProfile(Q, 'parliamentarism', Math.min(3, ranking.length), 'constitution_debate');
     debate.draft = [];
     const effects = [];
     ranking.forEach((id, i) => {
@@ -3372,8 +3382,13 @@
   function passChance(counts) {
     return clip(0.5 + (counts.yes - counts.no) / 200, INITIATIVE_CHANCE_MIN, INITIATIVE_CHANCE_MAX);
   }
+  // Z — 1.07: parliamentarism makes a bill of our initiative pass more easily (+10 points of chance; P).
+  const PARLIAMENTARISM_CHANCE = 0.10;
+  function initiativeChance(S, counts) {
+    return clip(passChance(counts) + (rules.profileActive(S, 'parliamentarism') ? PARLIAMENTARISM_CHANCE : 0), INITIATIVE_CHANCE_MIN, INITIATIVE_CHANCE_MAX);
+  }
   function rolledCounts(Q, law, index, key) {
-    const counts = initiativeCounts(Q, law, index), chance = passChance(counts);
+    const counts = initiativeCounts(Q, law, index), chance = initiativeChance(Q.S, counts);
     const passes = rules.roll(Q.S, key) < chance;
     const out = Object.assign({}, counts, {chance: chance, passed: passes, absent: 0, forecast_passed: counts.passed});
     if (passes !== counts.passed) {
@@ -3397,8 +3412,8 @@
     chance >= 0.6 ? L('would probably pass', 'raczej by przeszła') : chance > 0.4 ? L('would have an uncertain fate', 'miałaby niepewny los') :
       chance > 0.1 ? L('would probably fail', 'raczej by upadła') : L('would almost surely fail', 'prawie na pewno by upadła'));
   function forecastText(Q, law, offer) {
-    const full = passChance(initiativeCounts(Q, law, 0));
-    const limited = offer === 'both' && law.variants[1] && full < 0.5 ? passChance(initiativeCounts(Q, law, 1)) : null;
+    const full = initiativeChance(Q.S, initiativeCounts(Q, law, 0));
+    const limited = offer === 'both' && law.variants[1] && full < 0.5 ? initiativeChance(Q.S, initiativeCounts(Q, law, 1)) : null;
     if (limited === null || limited < 0.5) return L('Today it ', 'Dziś ') + chanceWords(full) + '.';
     return L('Today the full version ', 'Dziś pełna wersja ') + chanceWords(full) + L(', the limited one ', ', a ograniczona ') + chanceWords(limited) + '.';
   }
@@ -3423,6 +3438,8 @@
     const S = Q.S, law = INITIATIVE_BY_ID[id], status = initiativeStatus(Q, id);
     if (!status.available || initiativeShown(Q).indexOf(id) < 0) throw new Error('initiativeFile: ' + id + ': ' + status.reason);
     rules.commitMainAction(Q, 'parliament.legislative_initiative.' + id, {law: id});
+    rules.seedProfile(Q, 'parliamentarism', 2, 'initiative:' + id);
+    if (id === 'autonomy') rules.seedProfile(Q, 'federalism', 2, 'initiative:autonomy');
     const effects = filingEffects(S, law).map(filingText);
     applyFiling(Q, law, Q.time);
     const record = initiativeRecord(S, id);
@@ -3504,6 +3521,7 @@
       record.until = null;
     }
     record.history.push({t: t, kind: 'enacted', variant: choice === 'limited' ? law.variants[1].key : law.variants[0].key, law_id: bill.id});
+    rules.seedProfile(Q, 'parliamentarism', 4, 'enacted:' + law.id);
     const effect = lastInitiativeText;
     lastInitiativeText = '';
     return L('The law is in force from this month. ', 'Ustawa obowiązuje od tego miesiąca. ') + effect +
@@ -3681,7 +3699,7 @@
     if (w.price) economy.addShock(E, {id: 'customs_war:price', channel: 'price', value: w.price, starts_at: t, ends_at: t + w.price_months});
     if (w.output) economy.addShock(E, {id: 'customs_war:output', channel: 'output', value: w.output, starts_at: t, ends_at: t + w.months});
     if (w.credit) economy.addShock(E, {id: 'customs_war:credit', channel: 'credit', value: w.credit, starts_at: t, ends_at: t + w.months});
-    if (w.cost) economy.changePool(S, -w.cost, t, 'customs_war:new_markets', 'Subsidies for coal sent to new markets', 'Dopłaty do węgla wysyłanego na nowe rynki');
+    if (w.cost) economy.changePool(S, -profilePrice(S, null, w.cost, 'pps'), t, 'customs_war:new_markets', 'Subsidies for coal sent to new markets', 'Dopłaty do węgla wysyłanego na nowe rynki');
     if (w.zln) government.changeRelation(Q, 'zln', w.zln, 'customs_war:concessions');
     S.history.reasons.push({t: t, kind: 'customs_war', option: option});
     return {
@@ -3697,7 +3715,9 @@
   // Z — 1.01 (decision 2A, as in the German original): a decision of a ministry needs its price in the pool; it never makes a
   // deficit by itself.
   const unitsText = n => L(num(n) + (n === 1 ? ' budget unit' : ' budget units'), num(n) + ' ' + rules.plural(n, 'jednostkę', 'jednostki', 'jednostek') + ' budżetu');
-  function affordStatus(Q, price) {
+  // Z — 1.07: the price a PPS decision really pays (reformism; radicalism for the socialisation of the mines).
+  function affordStatus(Q, price, typeId) {
+    price = profilePrice(Q.S, typeId || null, price, 'pps');
     const pool = Q.S.economy.budget;
     if (!price || pool >= price - 1e-9) return OK;
     return no(L('Not enough budget: it needs ' + num(price) + ', the pool has ' + numB(pool) + '.',
@@ -4059,6 +4079,8 @@
     S.history.reasons.push({t: t, kind: 'reform_stopped', target: target, reason: reason || ''});
   }
 
+  const CARD_PROFILE_SEEDS = Object.freeze({minority_school_rights: ['federalism', 2], minorities_kresy: ['federalism', 2],
+    land_program: ['worker_peasant', 2], 'economic_democracy.works_councils': ['radicalism', 3], 'economic_democracy.socialise_mining': ['radicalism', 3]});
   function chooseOption(Q, cardId, option, extra) {
     return withObjections(Q, cardId + '.' + option, () => chooseOptionRun(Q, cardId, option, extra));
   }
@@ -4067,6 +4089,10 @@
     const S = Q.S, E = S.economy, t = Q.time;
     const status = optionStatus(Q, cardId, option, extra && {branch: extra.branch, variant: extra.variant});
     if (!status.available) throw new Error('chooseOption: ' + cardId + '.' + option + ': ' + status.reason);
+    // Z — 1.07: every decision of a PPS ministry builds reformism; some build another characteristic as well.
+    rules.seedProfile(Q, 'reformism', 1, cardId + '.' + option);
+    const extraSeed = CARD_PROFILE_SEEDS[cardId + '.' + option] || CARD_PROFILE_SEEDS[cardId];
+    if (extraSeed) rules.seedProfile(Q, extraSeed[0], extraSeed[1], cardId + '.' + option);
     government.syncRelations(Q);
     if (cardId === 'internal_security' || cardId === 'military_policy' || cardId === 'minorities_kresy' || cardId === 'civil_liberties') {
       rules.commitMainAction(Q, actionId(cardId, option), {card: cardId, option: option});
@@ -4112,8 +4138,8 @@
           if (!protection) {
             const project = createProject(Q, 'worker_protection', 'full', ppsFields);
             launchProject(Q, project, {sponsor: 'pps'});
-            return result(Q, L('The protection for the unemployed starts this month; it costs ' + unitsText(project.price_B) + '.',
-              'Osłona dla bezrobotnych rusza w tym miesiącu; kosztuje ' + unitsText(project.price_B) + '.'));
+            return result(Q, L('The protection for the unemployed starts this month; it costs ' + unitsText(profilePrice(Q.S, project.type, project.price_B || 0, project.sponsor)) + '.',
+              'Osłona dla bezrobotnych rusza w tym miesiącu; kosztuje ' + unitsText(profilePrice(Q.S, project.type, project.price_B || 0, project.sponsor)) + '.'));
           }
           protection.scope = (protection.scope || 1) + 1;
           const extra = repriceProject(Q, protection, 'full', t);
@@ -4134,8 +4160,8 @@
         if (option === 'collection') {
           const project = createProject(Q, 'collection', 'collection', ppsFields);
           launchProject(Q, project, {sponsor: 'pps'});
-          return result(Q, L('Tax collection improves: it costs ' + unitsText(project.price_B) + ' and brings ' + num(COLLECTION_REVENUE) + ' at the end of the month.',
-            'Pobór podatków się poprawia: kosztuje ' + unitsText(project.price_B) + ' i przynosi ' + num(COLLECTION_REVENUE) + ' pod koniec miesiąca.'));
+          return result(Q, L('Tax collection improves: it costs ' + unitsText(profilePrice(Q.S, project.type, project.price_B || 0, project.sponsor)) + ' and brings ' + num(COLLECTION_REVENUE) + ' at the end of the month.',
+            'Pobór podatków się poprawia: kosztuje ' + unitsText(profilePrice(Q.S, project.type, project.price_B || 0, project.sponsor)) + ' i przynosi ' + num(COLLECTION_REVENUE) + ' pod koniec miesiąca.'));
         }
         const kind = option === 'emission' && E.currency_regime === 'zloty' ? 'coinage' : option;
         const law = adoptInstrument(Q, kind);
@@ -4201,8 +4227,8 @@
           const project = createProject(Q, 'orders', 'orders', Object.assign({policy_choices: {buyer: 'the state railways and administration',
             suppliers: 'domestic industry', profile: 'synthetic_orders_v1'}}, ppsFields));
           launchProject(Q, project, {sponsor: 'pps'});
-          return result(Q, L('One package of public orders runs for three settlements; it costs ' + unitsText(project.price_B) + '.',
-            'Jeden pakiet zamówień publicznych trwa przez trzy rozliczenia; kosztuje ' + unitsText(project.price_B) + '.'));
+          return result(Q, L('One package of public orders runs for three settlements; it costs ' + unitsText(profilePrice(Q.S, project.type, project.price_B || 0, project.sponsor)) + '.',
+            'Jeden pakiet zamówień publicznych trwa przez trzy rozliczenia; kosztuje ' + unitsText(profilePrice(Q.S, project.type, project.price_B || 0, project.sponsor)) + '.'));
         }
         const financing = option === 'credit' ? 'public' : option;
         const project = prepareProject(Q, 'credit_instrument', financing, ppsFields);
@@ -4311,7 +4337,18 @@
   }
 
   // Display fields of one card: the budget forecast, its running projects, and each option's reason.
+  // Z — 1.07: the prices of 2 and 3 units in the texts of the cards, as reformism changes them (pl_cost2n: the nominative of Polish).
+  function costWords(Q) {
+    const S = Q.S, word = (n, nom) => n === 1 ? L('1 budget unit', nom ? '1 jednostka budżetu' : '1 jednostkę budżetu') :
+      L(n + ' budget units', n + ' jednostki budżetu');
+    const two = S ? profilePrice(S, null, 2, 'pps') : 2, three = S ? profilePrice(S, null, 3, 'pps') : 3;
+    Q.pl_cost2 = word(two, false);
+    Q.pl_cost2n = word(two, true);
+    Q.pl_cost3 = word(three, false);
+    Q.pl_cost_soc = word(S ? profilePrice(S, 'socialise_mining', 3, 'pps') : 3, false);
+  }
   function cardView(Q, cardId) {
+    costWords(Q);
     const S = Q.S, card = CARDS[cardId];
     // Z — 1.01: the same reading as the top bar — the budget pool from which the options pay.
     Q.pl_gc_budget = L('Budget: ', 'Budżet: ') + economy.poolText(S.economy.budget) + '.';
@@ -4404,7 +4441,7 @@
       const financing = launchFinancing(Q, prepared || {variant: variantId});
       return financing.blocked ? no(financing.blocked) : OK;
     }
-    return affordStatus(Q, prepared ? (prepared.price_B || 0) : (PROJECT_TYPES[typeId].variants[variantId].price || 0));
+    return affordStatus(Q, prepared ? (prepared.price_B || 0) : (PROJECT_TYPES[typeId].variants[variantId].price || 0), typeId);
   }
 
   // The necessary package of the stabilisation is part of its launch (17.12): rapid cuts need adopted
@@ -4427,8 +4464,8 @@
 
   // What the launch costs, in words (Z — 1.01): its price, paid once, and its effects at the end of the month — for the currency
   // reform, the months until the złoty.
-  function launchCostText(project) {
-    const price = project.price_B || 0;
+  function launchCostText(project, S) {
+    const price = S ? profilePrice(S, project.type, project.price_B || 0, project.sponsor) : project.price_B || 0;
     const cost = price ? L('costs ' + unitsText(price), 'kosztuje ' + unitsText(price)) : L('no cost to the budget', 'bez kosztu dla budżetu');
     const when = project.type === 'currency_reform' ? L('the złoty comes in ' + months(project.duration_months), 'złoty wejdzie za ' + months(project.duration_months)) :
       L('the effects come at the end of the month', 'skutki pod koniec miesiąca');
@@ -4460,15 +4497,15 @@
         project.started_at = null;
         return L('The Sejm rejects the currency law; the reform stays prepared and can be filed again.', 'Sejm odrzuca ustawę walutową; reforma pozostaje przygotowana i można ją zgłosić ponownie.');
       }
-      return L('The currency reform is launched (' + launchCostText(project) + ')' + (kinds.length ? ' with ' + kinds.map(k => INSTRUMENTS[k].name).join(' and ') : '') + '.',
-        'Reforma walutowa zostaje uruchomiona (' + launchCostText(project) + ')' + (kinds.length ? ' wraz z: ' + kinds.map(instrumentName).join(' i ') : '') + '.') + lawNote(bill);
+      return L('The currency reform is launched (' + launchCostText(project, Q.S) + ')' + (kinds.length ? ' with ' + kinds.map(k => INSTRUMENTS[k].name).join(' and ') : '') + '.',
+        'Reforma walutowa zostaje uruchomiona (' + launchCostText(project, Q.S) + ')' + (kinds.length ? ' wraz z: ' + kinds.map(instrumentName).join(' i ') : '') + '.') + lawNote(bill);
     }
     const law = launchProject(Q, project, {sponsor: 'pps', decree: !(opts && opts.vote)});
     if (law && law.status === 'rejected') {
       return L(name + ': the Sejm rejects its law; the programme stays prepared and can be filed again.',
         name + ': Sejm odrzuca ustawę; program pozostaje przygotowany i można go zgłosić ponownie.');
     }
-    return L('Started: ' + name + ' — ' + launchCostText(project) + '.', 'Uruchomiono: ' + name + ' — ' + launchCostText(project) + '.') + lawNote(law);
+    return L('Started: ' + name + ' — ' + launchCostText(project, Q.S) + '.', 'Uruchomiono: ' + name + ' — ' + launchCostText(project, Q.S) + '.') + lawNote(law);
   }
 
   // ---- Economic events (catalogue 9.11–9.13; 17.13) ----------------------------------------------
@@ -4609,6 +4646,7 @@
     }
     if (option === 'campaign') return result(Q, lateParty().eventIssueCampaign(Q, 'unemployed', EVENT_CAMPAIGN_COST));
     if (option === 'unions') {
+      rules.seedProfile(Q, 'unionism', 2, 'union_help');
       S.party_orgs.cash = Math.max(0, S.party_orgs.cash - UNION_HELP.cost);
       for (const b of UNION_HELP.branches) if (S.unions && S.unions[b]) S.unions[b].trust = clip(S.unions[b].trust + UNION_HELP.trust, 0, 100);
       S.history.reasons.push({t: t, kind: 'union_help', cost_R: UNION_HELP.cost, trust: UNION_HELP.trust});
@@ -4911,8 +4949,11 @@
     stopTarget: stopTarget,
     REFORM_NAMES: REFORM_NAMES,
     cardView: cardView,
+    costWords: costWords,
     launchStatus: launchStatus,
     stabilizationEventDue: stabilizationEventDue,
+    profilePrice: profilePrice,
+    initiativeChance: initiativeChance,
     stabilizationAnswered: stabilizationAnswered,
     creditOptionShown: creditOptionShown,
     EVENT_CAMPAIGN_COST: EVENT_CAMPAIGN_COST,

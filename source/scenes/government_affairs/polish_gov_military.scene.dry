@@ -28,7 +28,7 @@ The army answers to the minister of military affairs, but many officers listen a
 
 @raise_spending
 title: Raise the spending on the army
-subtitle: Costs 2 budget units. The officers are content and the pressure towards a coup falls (−5), but the dissent of the Left of PPS rises (+5).
+subtitle: Costs [+ pl_cost2 +]. The officers are content and the pressure towards a coup falls (−5), but the dissent of the Left of PPS rises (+5).
 choose-if: {! return PolishProjects.optionStatus(Q, 'military_policy', 'raise_spending').available !}
 unavailable-subtitle: [+ pl_military_policy_raise_spending_why +]
 on-arrival: {!

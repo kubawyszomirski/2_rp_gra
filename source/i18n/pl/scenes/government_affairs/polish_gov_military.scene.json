@@ -8,7 +8,7 @@
   "The army answers to the minister of military affairs, but many officers listen above all to Piłsudski. The pressure towards a coup stands at [+ pl_gc_coup_pressure +] of 100; the mood of the officers is described on the State tab.": "Wojsko podlega ministrowi spraw wojskowych, ale wielu oficerów słucha przede wszystkim Piłsudskiego. Presja na zamach wynosi [+ pl_gc_coup_pressure +] ze 100; nastroje oficerów opisuje zakładka Państwo.",
   "- @root: Continue.": "- @root: Dalej.",
   "title: Raise the spending on the army": "title: Zwiększ wydatki na wojsko",
-  "subtitle: Costs 2 budget units. The officers are content and the pressure towards a coup falls (−5), but the dissent of the Left of PPS rises (+5).": "subtitle: Kosztuje 2 jednostki budżetu. Oficerowie są zadowoleni i presja na zamach spada (−5), ale rośnie sprzeciw Lewicy w PPS (+5).",
+  "subtitle: Costs [+ pl_cost2 +]. The officers are content and the pressure towards a coup falls (−5), but the dissent of the Left of PPS rises (+5).": "subtitle: Kosztuje [+ pl_cost2 +]. Oficerowie są zadowoleni i presja na zamach spada (−5), ale rośnie sprzeciw Lewicy w PPS (+5).",
   "title: Cut the spending on the army": "title: Obetnij wydatki na wojsko",
   "subtitle: Brings the budget 2 units at once. The officers are indignant and the pressure towards a coup rises (+5).": "subtitle: Od razu zasila budżet: 2 jednostki. Oficerowie są oburzeni i presja na zamach rośnie (+5).",
   "title: Promote officers loyal to the government": "title: Awansuj oficerów wiernych rządowi",

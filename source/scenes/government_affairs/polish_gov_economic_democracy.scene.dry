@@ -50,7 +50,7 @@ go-to: result
 
 @socialise_mining
 title: Socialise coal mining
-subtitle: Once in the game; compensation for the owners costs 3 budget units. The miners’ unions trust the party more and the dissent of the Left of PPS falls (−5), but business pressure jumps (+25). [? if pl_economic_democracy_socialise_mining_coalition : [+ pl_economic_democracy_socialise_mining_coalition +] ?]
+subtitle: Once in the game; compensation for the owners costs [+ pl_cost_soc +]. The miners’ unions trust the party more and the dissent of the Left of PPS falls (−5), but business pressure jumps (+25). [? if pl_economic_democracy_socialise_mining_coalition : [+ pl_economic_democracy_socialise_mining_coalition +] ?]
 choose-if: {! return PolishProjects.optionStatus(Q, 'economic_democracy', 'socialise_mining').available !}
 unavailable-subtitle: [+ pl_economic_democracy_socialise_mining_why +]
 on-arrival: {!

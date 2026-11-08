@@ -270,18 +270,18 @@ test('Cele ustrojowe: councils and federation are written into the report as a p
   assert.ok(!report.not_modelled.some(line => /stage 5/.test(line)), 'the party of stage 5 is modelled');
 });
 
-test('Demokracja zależna od sytuacji: the democratic movement gives ×1.00 without a threat and ×1.15 under one; no lasting bonus to democracy', () => {
+test('Demokracja zależna od sytuacji: the democratic movement gives ×1.00 without a threat and ×1.30 under one (Z — 1.07; ×1.15 until 1.06); no lasting bonus to democracy', () => {
   const Q = game();
   const democracy = Q.S.politics.democracy;
   PolishParty.stanceChoose(Q, 'direction', 'democratic_movement');
   assert.equal(PolishParty.strategyFactor(Q, 'democracy'), 1);
   Q.S.coup.pressure = 45;
-  assert.equal(PolishParty.strategyFactor(Q, 'democracy'), 1.15);
+  assert.equal(PolishParty.strategyFactor(Q, 'democracy'), 1.30);
   assert.equal(PolishParty.strategyFactor(Q, 'class'), 1);
   // Stage 7: an open case of unlawful violence against institutions is a threat as well (10.6).
   Q.S.coup.pressure = 10;
   PolishPolitics.openCase(Q, { id: 'fixture_emergency', kind: 'unconstitutional_violence', institutional: true });
-  assert.equal(PolishParty.strategyFactor(Q, 'democracy'), 1.15);
+  assert.equal(PolishParty.strategyFactor(Q, 'democracy'), 1.30);
   assert.equal(Q.S.politics.democracy, democracy, 'the line gives no lasting bonus to democracy');
 });
 

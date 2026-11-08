@@ -13,6 +13,7 @@ for (var option of ['credit', 'orders', 'protection', 'campaign', 'unions']) {
     Q['pl_ev_' + option + '_shown'] = PolishProjects.creditOptionShown(Q, option) ? 1 : 0;
 }
 Q.pl_ev_strong = PolishParty.issueSituation(Q, 'unemployed') ? 1 : 0;
+PolishProjects.costWords(Q);
 !}
 
 = A credit crisis
@@ -28,7 +29,7 @@ The banks hold back credit, and the factories cut work and dismiss people. Unemp
 
 @credit
 title: Lend to the threatened firms
-subtitle: The state lends to the firms that would otherwise stop (2 budget units).
+subtitle: The state lends to the firms that would otherwise stop ([+ pl_cost2 +]).
 view-if: pl_ev_credit_shown
 choose-if: {! return PolishProjects.eventStatus(Q, 'credit', 'credit').available !}
 unavailable-subtitle: [+ pl_ev_credit_why +]
@@ -39,7 +40,7 @@ go-to: result
 
 @orders
 title: Order public works or public orders
-subtitle: The unemployed get work (2 budget units).
+subtitle: The unemployed get work ([+ pl_cost2 +]).
 view-if: pl_ev_orders_shown
 choose-if: {! return PolishProjects.eventStatus(Q, 'credit', 'orders').available !}
 unavailable-subtitle: [+ pl_ev_orders_why +]

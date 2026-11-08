@@ -356,6 +356,7 @@
     try {
       const ledger = settleParty(Q, t);
       settleRewards(Q, t);
+      profileMonth(Q);
       updateFactionCases(Q, t);
       expireAdvisorEffects(Q.S, t + 1);
       return ledger;
@@ -386,7 +387,8 @@
 
   function expandBranch(S, branchId, amount) {
     const branch = S.unions[branchId];
-    const gain = amount * expansionMultiplier(S, {kind: 'branch', id: branchId});
+    // Z — 1.07: unionism makes the unions grow a quarter faster.
+    const gain = amount * expansionMultiplier(S, {kind: 'branch', id: branchId}) * (rules.profileActive(S, 'unionism') ? 1.25 : 1);
     branch.reach = Math.min(100, branch.reach + gain);
     return gain;
   }
@@ -495,6 +497,11 @@
     S.party_orgs.cash = Math.max(0, S.party_orgs.cash - p.cost);
     const key = packageCooldownKey(id);
     if (key) S.cooldowns[key] = t + SUBACTION_COOLDOWNS[p.kind];
+    // Z — 1.07: building the unions and the Milicja builds the characteristics of the party. Militarism grows more slowly (the
+    // user's note: a steady building of the Milicja makes it ready in about a year, not in a few months).
+    if (p.kind === 'organize') rules.seedProfile(Q, 'unionism', 2, 'organize:' + p.branch);
+    if (p.kind === 'recruit') rules.seedProfile(Q, 'militarism', 0.5, 'militia_recruit');
+    if (p.kind === 'militarize') rules.seedProfile(Q, 'militarism', 1.5, 'militia_training');
     if (p.kind === 'organize') {
       const gain = fmt(expandBranch(S, p.branch, 15));
       return L('the ' + BRANCH_NAMES[p.branch].toLowerCase() + ' branch gains ' + gain + ' reach', 'zasięg branży ' + BRANCH_PL_GENITIVE[p.branch] + ' rośnie o ' + gain);
@@ -622,6 +629,7 @@
       rules.commitMainAction(Q, 'militia.as', {resource_cost: {R: 2}});
       S.party_orgs.cash = Math.max(0, S.party_orgs.cash - 2);
       S.militia.stage = 2;
+      rules.seedProfile(Q, 'militarism', 3, 'militia_as');
       text = L('Milicja becomes Akcja Socjalistyczna: stronger and more disciplined, it can protect three matters at once.',
         'Milicja staje się Akcją Socjalistyczną: jest silniejsza i bardziej zdyscyplinowana, może chronić trzy sprawy naraz.');
     } else {
@@ -956,6 +964,7 @@
     rules.commitMainAction(Q, 'party.tur_course', {course: courseId, target: target || null, resource_cost: {R: 1}});
     S.party_orgs.cash = Math.max(0, S.party_orgs.cash - 1);
     tur.active_course = {course: courseId, target: target || null, started_at: t, paid_months: 0, effect_id: 'tur:' + courseId + ':t' + t};
+    if (courseId === 'union_cadres') rules.seedProfile(Q, 'unionism', 2, 'tur_union_cadres');
     S.cooldowns['party.tur_course'] = t + 4;
     writeMirrors(Q);
     return result(Q, courseName(courseId) + L(': the course runs for two months.', ': kurs trwa dwa miesiące.'));
@@ -1429,6 +1438,11 @@
     if (!status.available) throw new Error('kppStep: ' + status.reason);
     const S = Q.S, cc = S.actors.communist_cooperation, t = Q.time;
     rules.commitMainAction(Q, 'kpp.' + step, step === 'agreement' ? {resource_cost: {R: 1}} : {});
+    rules.seedProfile(Q, 'radicalism', 2, 'kpp.' + step);
+    // Z — 1.07 (decision 5A of the characteristics): a step with the KPP while the communists are our main opponent angers the Centre.
+    if (S.actors.pps.strategy.main_opponent === 'communists') {
+      government.factionReaction(Q, 'centrum', {dissent: 3}, {id: 'line_contrary:kpp.' + step + ':t' + t, kind: 'line_contrary', reverse: null});
+    }
     if (step === 'trial') {
       const demand = openDemands(S)[0];
       demand.status = 'agreed';
@@ -1515,17 +1529,19 @@
 
   // One strategyFactor of 10.6 (P): the dominant topic of the direction 1.10 with an existing addressee or
   // demand; the defence of a threatened gain 1.15; the democratic movement 1.15 only under a threat.
+  // Z — 1.07 (decision 5A of the characteristics): the direction of the party strengthens matching campaigns by 25% (until 1.06
+  // by 10%), and by 30% in the situation that calls for it (until 1.06 15%).
   function strategyFactor(Q, topic) {
     const S = Q.S, direction = S.actors.pps.strategy.direction;
-    if (direction === 'parliamentary_socialism' && topic === 'parliamentary') return lawInProcedureByPps(S) ? 1.10 : 1;
-    if (direction === 'class_independence' && topic === 'class') return 1.10;
+    if (direction === 'parliamentary_socialism' && topic === 'parliamentary') return lawInProcedureByPps(S) ? 1.25 : 1;
+    if (direction === 'class_independence' && topic === 'class') return 1.25;
     if (direction === 'workers_gains' && topic === 'workers_gains') {
       const gain = projects.operatingProtection(S) || Object.keys(S.projects).some(id => S.projects[id].type === 'labor_inspection' &&
         S.projects[id].status === 'operating');
       if (!gain) return 1;
-      return gainUnderThreat(S) ? 1.15 : 1.10;
+      return gainUnderThreat(S) ? 1.30 : 1.25;
     }
-    if (direction === 'democratic_movement' && topic === 'democracy') return democraticThreat(S) ? 1.15 : 1;
+    if (direction === 'democratic_movement' && topic === 'democracy') return democraticThreat(S) ? 1.30 : 1;
     return 1;
   }
 
@@ -1648,7 +1664,9 @@
     for (const cell of cells) {
       const workers = cell.class_id === 'workers' ? activeEffect(S, 'workers_campaign_multiplier', t) : 1;
       const programme = served && served(cell) ? PROGRAMME_CAMPAIGN_FACTOR : 1;
-      const gain = electorate.campaignGain(cell, cellReach(S, cell, kind), Q.dissent || 0, key, t) * pressFactor * factor * press * workers * programme * assembly;
+      // Z — 1.07: an adopted characteristic strengthens campaigns in its groups (+25%).
+      const gain = electorate.campaignGain(cell, cellReach(S, cell, kind), Q.dissent || 0, key, t) * pressFactor * factor * press * workers * programme * assembly *
+        profileCampaignFactor(S, cell);
       moved += cell.mass * electorate.gainForPps(cell, gain, parties, sources);
       electorate.recordCampaign(cell, key, t);
     }
@@ -1676,7 +1694,7 @@
   // once with its own weight (P), negative where the matter puts voters off, through meetings, rallies and the unions (the reach
   // of the unions and of the party's base, no press). The line of the party and the state of the country make a campaign
   // stronger (P: the direction ×1.10, the character of the party ×1.10 in its own groups, the situation ×1.25); they do not choose it.
-  const LINE_FACTOR = 1.10;
+  const LINE_FACTOR = 1.25; // Z — 1.07 (decision 5A of the characteristics); 1.10 until 1.06
   const CHARACTER_FACTOR = 1.10;
   const SITUATION_FACTOR = 1.25;
   const HIGH_UNEMPLOYMENT = 10;
@@ -1810,7 +1828,7 @@
       const workers = cell.class_id === 'workers' ? activeEffect(S, 'workers_campaign_multiplier', t) : 1;
       const programme = served && served(cell) ? PROGRAMME_CAMPAIGN_FACTOR : 1;
       const base = electorate.campaignGain(cell, cellReach(S, cell, spec.channel), Q.dissent || 0, spec.key, t) *
-        spec.factor(cell) * workers * programme;
+        spec.factor(cell) * workers * programme * (w > 0 ? profileCampaignFactor(S, cell) : 1);
       const amount = base * Math.abs(w);
       let value;
       if (w < 0) {
@@ -1917,6 +1935,7 @@
     if (!status.available) throw new Error('issueCampaign: ' + status.reason);
     const S = Q.S, t = Q.time;
     rules.commitMainAction(Q, 'party.campaign', {kind: 'issue', topic: id, audience: 'bundle', resource_cost: {R: 0}});
+    if (id === 'land') rules.seedProfile(Q, 'worker_peasant', 2, 'campaign_land');
     const moved = bundleCampaign(Q, issueSpec(Q, id), true);
     const changes = bundleChanges(S, ISSUES[id].groups, moved);
     const total = Object.keys(moved).reduce((n, cellId) => n + (S.society.cells.find(c => c.id === cellId).mass * moved[cellId]), 0);
@@ -1938,6 +1957,7 @@
     if (!ISSUES[id] || !electorate.hasCells(S)) throw new Error('eventIssueCampaign: ' + id);
     if (S.party_orgs.cash + 1e-9 < cost) throw new Error('eventIssueCampaign: needs ' + cost + ' R');
     S.party_orgs.cash = Math.max(0, S.party_orgs.cash - cost);
+    if (id === 'land') rules.seedProfile(Q, 'worker_peasant', 2, 'campaign_land');
     const moved = bundleCampaign(Q, issueSpec(Q, id), true);
     const changes = bundleChanges(S, ISSUES[id].groups, moved);
     const total = Object.keys(moved).reduce((n, cellId) => n + (S.society.cells.find(c => c.id === cellId).mass * moved[cellId]), 0);
@@ -1949,6 +1969,195 @@
     return L('The campaign “' + issueName(id) + '”: ', 'Kampania „' + issueName(id) + '”: ') + changesWords(changes, 'result') + '.' +
       (boosts.length ? L(' It was stronger thanks to ', ' Wzmocniły ją: ') + boosts.join(L(' and ', ' i ')) + '.' : '');
   }
+
+  // ---- Z — 1.07: the characteristics of the party (the user's decisions of 7–8 XI 2026; P) --------------------------------
+  // A profile grows from the decisions that build it (rules.seedProfile) and is adopted by a resolution of the congress of PPS
+  // (an urgent card of the party, at most once a year, the action of the month). Two profiles in the first chapter, one per
+  // congress; reformism and radicalism exclude each other; a profile can be left at a congress for the dissent of its patron.
+  // The congress is a device of the game: the dates and resolutions of the congresses of PPS 1922–1926 are TBD.
+  const PROFILE_READY = 10;
+  const PROFILE_SLOTS = 2;
+  const CONGRESS_INTERVAL = 12;
+  const PROFILE_PATRON_STRENGTH = 5;
+  const PROFILE_DROP_DISSENT = 8;
+  const PROFILE_FACTOR = 1.25;
+  const PROFILE_EXCLUSIVE = Object.freeze({reformism: 'radicalism', radicalism: 'reformism'});
+  const PROFILES = Object.freeze({
+    unionism: {name: ['Unionism', 'Uzwiązkowienie'], acc: ['unionism', 'uzwiązkowienie'], patron: 'centrum', rivals: {lewica: 5},
+      builds: ['building the unions, courses for trade unionists, the help of the unions and won strikes', 'budowa związków, kursy dla związkowców, pomoc związków i wygrane strajki'],
+      gives: ['the unions grow faster and lose half as much trust after a defeat', 'związki rosną szybciej i tracą o połowę mniej zaufania po porażce'],
+      resolution: ['Resolution on the trade unions', 'Uchwała o związkach zawodowych'],
+      text: ['The party stakes on the unions: they grow faster and bear lost strikes better. The Centre grows stronger, and the Left finds it too cautious.',
+        'Partia stawia na związki: rosną szybciej i lepiej znoszą przegrane strajki. Centrum się wzmacnia, a Lewica uważa to za zbyt ostrożne.']},
+    worker_peasant: {name: ['The worker-peasant alliance', 'Sojusz robotniczo-włościański'], acc: ['the worker-peasant alliance', 'sojusz robotniczo-włościański'],
+      patron: 'centrum', rivals: {}, relations: {psl_wyzwolenie: 10, zln: -5},
+      builds: ['the campaign “Land for the peasants”, a joint list or a cabinet with PSL “Wyzwolenie” and the land reform', 'kampania „Ziemia dla chłopów”, wspólna lista albo rząd z PSL „Wyzwolenie” i reforma rolna'],
+      gives: ['stronger campaigns in the countryside and closer relations with PSL “Wyzwolenie”', 'mocniejsze kampanie na wsi i bliższe stosunki z PSL „Wyzwolenie”'],
+      resolution: ['Resolution on the worker-peasant alliance', 'Uchwała o sojuszu robotniczo-włościańskim'],
+      text: ['The party goes to the villages together with the peasant movement: campaigns in the countryside are stronger and PSL “Wyzwolenie” comes closer; the landowners and the National Democrats turn hostile.',
+        'Partia idzie na wieś razem z ruchem ludowym: kampanie na wsi są mocniejsze, a PSL „Wyzwolenie” bliższe; ziemianie i endecja stają się wrodzy.']},
+    federalism: {name: ['Federalism', 'Federalizm'], acc: ['federalism', 'federalizm'], patron: 'lewica', rivals: {centrum: 3}, relations: {minorities_bloc: 10, zln: -5},
+      builds: ['the rights of language and schools of the minorities, concessions to their clubs and autonomy', 'prawa języka i szkoły mniejszości, ustępstwa wobec ich klubów i autonomia'],
+      gives: ['stronger campaigns among the minorities and closer relations with their clubs', 'mocniejsze kampanie wśród mniejszości i bliższe stosunki z ich klubami'],
+      resolution: ['Resolution on the nationalities', 'Uchwała w sprawie narodowościowej'],
+      text: ['The party stands for equal rights and self-government of the nationalities: the minorities trust it more; the National Democrats attack, and the Centre is uneasy.',
+        'Partia staje za równymi prawami i samorządem narodowości: mniejszości bardziej jej ufają; endecja atakuje, a Centrum jest zaniepokojone.']},
+    parliamentarism: {name: ['Parliamentarism', 'Parlamentaryzm'], acc: ['parliamentarism', 'parlamentaryzm'], patron: 'centrum', rivals: {lewica: 3, pilsudczycy: 3},
+      builds: ['bills of the legislative initiative (adopted ones count twice), constitutional motions and the defence of the Sejm', 'ustawy z inicjatywy (przyjęte liczą się podwójnie), wnioski konstytucyjne i obrona Sejmu'],
+      gives: ['the bills of our initiative pass more easily', 'ustawy z naszej inicjatywy łatwiej przechodzą'],
+      resolution: ['Resolution on the parliamentary road', 'Uchwała o drodze parlamentarnej'],
+      text: ['The party binds its fate to the Sejm: the bills of our initiative pass more easily. The Centre grows stronger; the Left and the Piłsudczycy grow impatient.',
+        'Partia wiąże swój los z Sejmem: ustawy z naszej inicjatywy łatwiej przechodzą. Centrum się wzmacnia, a Lewica i Piłsudczycy się niecierpliwią.']},
+    strike_action: {name: ['Strike action', 'Akcja strajkowa'], acc: ['strike action', 'akcję strajkową'], patron: 'lewica', rivals: {centrum: 5}, business: 5,
+      builds: ['strikes (won ones count twice) and threats of a strike', 'strajki (wygrane liczą się podwójnie) i groźby strajku'],
+      gives: ['a stronger threat of a strike and workers who are ready to fight sooner', 'skuteczniejsza groźba strajku i robotnicy szybciej gotowi do walki'],
+      resolution: ['Resolution on mass action', 'Uchwała o akcji masowej'],
+      text: ['The party makes the strike its main weapon: the threat of a strike carries more weight, and the workers are ready sooner. The Left grows stronger; the Centre and the employers are alarmed.',
+        'Partia czyni strajk swoją główną bronią: groźba strajku waży więcej, a robotnicy szybciej są gotowi. Lewica się wzmacnia, a Centrum i przedsiębiorcy są zaniepokojeni.']},
+    militarism: {name: ['Militarism', 'Militaryzm'], acc: ['militarism', 'militaryzm'], patron: 'pilsudczycy', rivals: {centrum: 5},
+      builds: ['recruiting and training the Milicja, the Akcja Socjalistyczna and guarding rallies', 'werbunek i szkolenie Milicji, Akcja Socjalistyczna i ochrona wieców'],
+      gives: ['a stronger Milicja when it comes to a fight in a coup', 'mocniejsza Milicja, gdy dojdzie do walki w czasie zamachu'],
+      resolution: ['Resolution on the self-defence of the workers', 'Uchwała o samoobronie robotniczej'],
+      text: ['The party arms its self-defence: the Milicja counts for more when it comes to a fight. The Piłsudczycy grow stronger, and the Centre fears the authorities’ suspicion.',
+        'Partia zbroi swoją samoobronę: Milicja liczy się bardziej, gdy dojdzie do walki. Piłsudczycy się wzmacniają, a Centrum obawia się podejrzliwości władz.']},
+    reformism: {name: ['Reformism', 'Reformizm'], acc: ['reformism', 'reformizm'], patron: 'centrum', rivals: {lewica: 8},
+      builds: ['the decisions of our ministries and the months in the cabinet', 'decyzje naszych resortów i miesiące w rządzie'],
+      gives: ['dearer decisions of the ministries cost one unit less, and the partners object half as much', 'droższe decyzje resortów kosztują o jedną jednostkę mniej, a partnerzy sprzeciwiają się o połowę słabiej'],
+      resolution: ['Resolution on social reform', 'Uchwała o reformie społecznej'],
+      text: ['The party chooses reform step by step through the state: our ministries do more for less, and the partners accept it more easily. The Centre grows stronger; the Left protests loudly.',
+        'Partia wybiera reformę krok po kroku przez państwo: nasze resorty robią więcej za mniej, a partnerzy łatwiej to przyjmują. Centrum się wzmacnia, a Lewica głośno protestuje.']},
+    radicalism: {name: ['Radicalism', 'Radykalizm'], acc: ['radicalism', 'radykalizm'], patron: 'lewica', rivals: {centrum: 8}, relations: {kpp: 10}, business: 5,
+      builds: ['the line of independent class politics or of workers’ councils, the cooperation with the KPP, a strike for the cabinet’s resignation and works councils', 'linia niezależnej polityki klasowej albo rad robotniczych, współpraca z KPP, strajk o dymisję rządu i rady zakładowe'],
+      gives: ['stronger campaigns among the workers and the unemployed, closer relations with the KPP and a cheaper socialisation', 'mocniejsze kampanie wśród robotników i bezrobotnych, bliższe stosunki z KPP i tańsze uspołecznienie'],
+      resolution: ['Resolution on the class struggle', 'Uchwała o walce klasowej'],
+      text: ['The party breaks with reformism and bets on the class struggle and the councils: the workers and the unemployed listen more readily, and the communists come closer. The Left grows stronger; the Centre and the employers are alarmed.',
+        'Partia zrywa z reformizmem i stawia na walkę klasową i rady: robotnicy i bezrobotni chętniej słuchają, a komuniści się zbliżają. Lewica się wzmacnia, a Centrum i przedsiębiorcy są zaniepokojeni.']},
+  });
+  const profileName = id => L(PROFILES[id].name[0], PROFILES[id].name[1]);
+  const profileAcc = id => L(PROFILES[id].acc[0], PROFILES[id].acc[1]);
+  const adoptedProfiles = S => (rules.profileState(S) ? rules.profileState(S).adopted.map(a => a.id) : []);
+  function profileExcluded(S, id) {
+    const other = PROFILE_EXCLUSIVE[id];
+    return !!other && rules.profileActive(S, other);
+  }
+  function readyProfiles(S) {
+    const P = rules.profileState(S);
+    if (!P) return [];
+    return rules.PROFILE_IDS.filter(id => P.seeds[id] >= PROFILE_READY && !rules.profileActive(S, id) && !profileExcluded(S, id));
+  }
+  function lastCongress(S) {
+    const P = rules.profileState(S);
+    return P && P.congresses.length ? P.congresses[P.congresses.length - 1].t : null;
+  }
+  function congressAvailable(Q) {
+    if (!partyReady(Q) || Q.S.chapter.status === 'ended') return false;
+    const last = lastCongress(Q.S);
+    if (last !== null && Q.time - last < CONGRESS_INTERVAL) return false;
+    return readyProfiles(Q.S).length > 0;
+  }
+  function congressStatus(Q, option) {
+    const S = Q.S;
+    if (!congressAvailable(Q)) return no(L('No congress is due.', 'Kongres nie jest teraz zwołany.'));
+    if (option === 'none') return OK;
+    const [kind, id] = [option.split(':')[0], option.split(':')[1]];
+    if (!PROFILES[id]) return no(L('Unknown resolution.', 'Nieznana uchwała.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
+    if (kind === 'drop') return rules.profileActive(S, id) ? OK : no(L('The party has not adopted it.', 'Partia jej nie przyjęła.'));
+    if (kind !== 'adopt') return no(L('Unknown resolution.', 'Nieznana uchwała.'));
+    if (readyProfiles(S).indexOf(id) < 0) return no(L('Not ready for a resolution.', 'Nie dojrzała do uchwały.'));
+    if (adoptedProfiles(S).length >= PROFILE_SLOTS) {
+      return no(L('The party already has two characteristics; a congress can first leave one of them.', 'Partia ma już dwie cechy; kongres może najpierw odejść od jednej z nich.'));
+    }
+    return OK;
+  }
+  function congressView(Q) {
+    const S = Q.S, ready = readyProfiles(S);
+    for (const id of rules.PROFILE_IDS) {
+      Q['pl_cg_' + id + '_ready'] = ready.indexOf(id) >= 0 ? 1 : 0;
+      Q['pl_cg_' + id + '_on'] = rules.profileActive(S, id) ? 1 : 0;
+      Q['pl_cg_' + id + '_why'] = congressStatus(Q, 'adopt:' + id).reason || '';
+      Q['pl_cg_' + id + '_title'] = L(PROFILES[id].resolution[0], PROFILES[id].resolution[1]);
+      Q['pl_cg_' + id + '_text'] = L('Costs this month’s action. ', 'Kosztuje akcję tego miesiąca. ') + L(PROFILES[id].text[0], PROFILES[id].text[1]);
+      Q['pl_cg_' + id + '_drop'] = L('Leave ' + profileAcc(id), 'Odejdź od cechy: ' + profileAcc(id));
+      Q['pl_cg_' + id + '_drop_text'] = L('Costs this month’s action. The party gives up this course; ' + FACTION_WORDS[PROFILES[id].patron][0] + ' protests (+' + PROFILE_DROP_DISSENT + ').',
+        'Kosztuje akcję tego miesiąca. Partia rezygnuje z tego kursu; ' + FACTION_WORDS[PROFILES[id].patron][1] + ' protestuje (+' + PROFILE_DROP_DISSENT + ').');
+    }
+    const own = adoptedProfiles(S);
+    Q.pl_cg_intro = own.length ? L('The party is known today for ' + own.map(profileAcc).join(' and ') + '.', 'Dziś partię wyróżnia ' + own.map(profileAcc).join(' i ') + '.') : '';
+  }
+  const FACTION_WORDS = Object.freeze({centrum: ['the Centre', 'Centrum'], lewica: ['the Left', 'Lewica'], pilsudczycy: ['the Piłsudczycy', 'Piłsudczycy']});
+  function congressChoose(Q, option) {
+    const status = congressStatus(Q, option);
+    if (!status.available) throw new Error('congressChoose: ' + status.reason);
+    syncMirrors(Q);
+    const S = Q.S, t = Q.time, P = rules.profileState(S);
+    if (option === 'none') {
+      P.congresses.push({t: t, resolution: null});
+      return L('The congress ends without new resolutions; the next one meets in a year at the earliest.',
+        'Kongres kończy się bez nowych uchwał; następny zbierze się najwcześniej za rok.');
+    }
+    const [kind, id] = option.split(':');
+    const spec = PROFILES[id], cause = {id: 'congress:' + kind + ':' + id + ':t' + t, kind: 'congress', reverse: null};
+    rules.commitMainAction(Q, 'party.congress', {option: option});
+    P.congresses.push({t: t, resolution: option});
+    if (kind === 'drop') {
+      P.adopted = P.adopted.filter(a => a.id !== id);
+      P.dropped.push({id: id, t: t});
+      P.seeds[id] = 0;
+      government.factionReaction(Q, spec.patron, {dissent: PROFILE_DROP_DISSENT}, cause);
+      writeMirrors(Q);
+      return L('The congress leaves ' + profileAcc(id) + '. ' + FACTION_WORDS[spec.patron][0] + ' protests.',
+        'Kongres odchodzi od cechy: ' + profileAcc(id) + '. ' + FACTION_WORDS[spec.patron][1] + ' protestuje.');
+    }
+    P.adopted.push({id: id, t: t});
+    government.factionReaction(Q, spec.patron, {strength: PROFILE_PATRON_STRENGTH}, cause);
+    for (const f of Object.keys(spec.rivals || {})) government.factionReaction(Q, f, {dissent: spec.rivals[f]}, cause);
+    for (const actor of Object.keys(spec.relations || {})) government.changeRelation(Q, actor, spec.relations[actor], cause.id);
+    if (spec.business) economy.changeBusinessPressure(S, spec.business, cause.id, t, 'congress');
+    writeMirrors(Q);
+    return L('The congress adopts the ' + spec.resolution[0].charAt(0).toLowerCase() + spec.resolution[0].slice(1) + '. ', 'Kongres przyjmuje ' +
+      spec.resolution[1].replace(/^Uchwała/, 'uchwałę') + '. ') + L(spec.text[0], spec.text[1]);
+  }
+
+  // The views: the overview line, the section of the Party tab (active profiles in red, the others grey, a tooltip with what
+  // builds and what gives each one), the page of the library and the sentence of the chapter report.
+  const escapeAttr = text => String(text).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+  function profileTooltip(id) {
+    return L('Built by: ' + PROFILES[id].builds[0] + '. Gives: ' + PROFILES[id].gives[0] + '.', 'Buduje: ' + PROFILES[id].builds[1] + '. Daje: ' + PROFILES[id].gives[1] + '.');
+  }
+  function profileView(Q) {
+    const S = Q.S, own = adoptedProfiles(S);
+    Q.pl_profile_html = rules.PROFILE_IDS.map(id => '<span class="tooltip-text ' + (own.indexOf(id) >= 0 ? 'pl-profile-on' : 'pl-profile-off') +
+      '" title="' + escapeAttr(profileTooltip(id)) + '">' + profileName(id) + '</span>').join(' · ');
+    Q.pl_top_profile = own.length ? L('Characteristics: ', 'Charakterystyka: ') + own.map(id => profileAcc(id)).join(', ') : '';
+  }
+  function profileLibrary(Q) {
+    Q.pl_profile_library = rules.PROFILE_IDS.map(id => '<strong>' + profileName(id) + (rules.profileActive(Q.S, id) ? L(' (adopted)', ' (przyjęta)') : '') +
+      '.</strong> ' + profileTooltip(id) +
+      (PROFILE_EXCLUSIVE[id] ? L(' It excludes ' + profileAcc(PROFILE_EXCLUSIVE[id]) + '.', ' Wyklucza ' + profileAcc(PROFILE_EXCLUSIVE[id]) + '.') : '')).join('<br><br>');
+  }
+  function profileSummary(S) {
+    const P = rules.profileState(S);
+    const own = P ? P.adopted : [];
+    if (!own.length) return L('PPS adopted no characteristic in this chapter.', 'W tym rozdziale PPS nie przyjęła żadnej cechy.');
+    return L('PPS adopted ', 'PPS przyjęła ') + own.map(a => profileAcc(a.id) + ' (' + rules.yearOf(a.t) + ')').join(L(' and ', ' i ')) + '.';
+  }
+  // The effects on campaigns: +25% in the cells of an adopted profile's groups.
+  function profileCampaignFactor(S, cell) {
+    let factor = 1;
+    if (rules.profileActive(S, 'worker_peasant') && cell.class_id === 'rural') factor *= PROFILE_FACTOR;
+    if (rules.profileActive(S, 'federalism') && (cell.identity_id === 'jewish' || cell.identity_id === 'other_minorities')) factor *= PROFILE_FACTOR;
+    if (rules.profileActive(S, 'radicalism') && (cell.class_id === 'workers' || cell.class_id === 'unemployed')) factor *= PROFILE_FACTOR;
+    return factor;
+  }
+  // The months that build a profile: reformism for each month in the cabinet, the alliance for a cabinet with PSL "Wyzwolenie".
+  function profileMonth(Q) {
+    const S = Q.S, cabinet = S.cabinet;
+    if (!cabinet || cabinet.status !== 'active' || cabinet.partner_ids.indexOf('pps') < 0) return;
+    rules.seedProfile(Q, 'reformism', 0.5, 'month_in_cabinet');
+    if (cabinet.partner_ids.indexOf('psl_wyzwolenie') >= 0) rules.seedProfile(Q, 'worker_peasant', 0.5, 'cabinet_with_wyzwolenie');
+  }
+  rules.registerUrgentCard('polish_party_congress', {deck: () => 'main.party', active: congressAvailable});
 
   // Rallies before an election: in the last three months before the vote, the groups of the party — the workers and the groups
   // of the character of the party — turn out more (+0.04 up to 0.90) until the election (5.3).
@@ -3268,6 +3477,18 @@
     rightGovernment: rightGovernment,
     issueCampaignStatus: issueCampaignStatus,
     issueCampaign: issueCampaign,
+    PROFILES: PROFILES,
+    PROFILE_READY: PROFILE_READY,
+    PROFILE_SLOTS: PROFILE_SLOTS,
+    readyProfiles: readyProfiles,
+    congressAvailable: congressAvailable,
+    congressStatus: congressStatus,
+    congressView: congressView,
+    congressChoose: congressChoose,
+    profileView: profileView,
+    profileLibrary: profileLibrary,
+    profileSummary: profileSummary,
+    profileCampaignFactor: profileCampaignFactor,
     eventIssueCampaign: eventIssueCampaign,
     issueSituation: (Q, id) => !!(ISSUES[id] && ISSUES[id].situation(Q.S)),
     issuePreview: issuePreview,

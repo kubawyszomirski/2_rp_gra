@@ -44,6 +44,10 @@
 
   const BRANCHES = party.BRANCHES;
   const BRANCH_NAMES = Object.freeze({industry: 'Industry', rail: 'Railways', farm_labour: 'Agricultural labour'});
+  // Z — 1.07 (the characteristics of the party; P): unionism halves the trust the unions lose after a defeat; strike action makes
+  // the workers ready a quarter sooner and the threat of a strike a quarter stronger.
+  const trustLoss = (S, n) => (S && rules.profileActive(S, 'unionism') ? n / 2 : n);
+  const readinessGain = (S, n) => (S && rules.profileActive(S, 'strike_action') ? n * 1.25 : n);
   const branchName = id => L(BRANCH_NAMES[id], party.BRANCH_NAMES_PL[id]);
   // A list of branches inside a sentence: 'industry and railways'; in Polish 'przemysł i kolej'.
   const branchList = (ids, joiner) => (PL() ? ids.map(id => party.BRANCH_NAMES_PL[id].toLowerCase()).join(' i ') :
@@ -524,9 +528,9 @@
   }
 
   // The end imposed without the agreed conditions: dissent +10 and trust −8 (14.5).
-  function imposeEnd(branch, rec, t) {
+  function imposeEnd(branch, rec, t, S) {
     branch.dissent = clip(branch.dissent + 10, 0, 100);
-    branch.trust = clip(branch.trust - 8, 0, 100);
+    branch.trust = clip(branch.trust - trustLoss(S, 8), 0, 100);
     addCause(branch, 'imposed_end:' + rec.id + ':t' + t, 10);
   }
 
@@ -1090,7 +1094,7 @@
       for (const b of rec.branches) {
         const branch = S.unions[b];
         branch.dissent = clip(branch.dissent + 10, 0, 100);
-        branch.trust = clip(branch.trust - 8, 0, 100);
+        branch.trust = clip(branch.trust - trustLoss(S, 8), 0, 100);
         addCause(branch, 'order:' + rec.id, 10);
       }
     }
@@ -1144,7 +1148,7 @@
     if (level !== 'limited' && level !== 'broad') throw new Error('prepare: unknown level ' + level);
     const S = Q.S, t = Q.time, branch = S.unions[branchId];
     rules.commitMainAction(Q, 'union.prepare', {branch: branchId, level: level});
-    branch.readiness = clip(branch.readiness + READINESS_STEP, 0, 100);
+    branch.readiness = clip(branch.readiness + readinessGain(S, READINESS_STEP), 0, 100);
     S.cooldowns['union.prepare.' + branchId] = t + PREPARE_COOLDOWN;
     let rec = branchRecord(S, branchId);
     if (rec) {
@@ -1298,9 +1302,15 @@
     settlement.refusing = refusing.reduce((m, b) => Object.assign(m, {[b]: rec.participants[b] || 0}), {});
     settlement.partner_refusing = 0;
     rec.agreed_end = !refusing.length;
-    for (const b of refusing) imposeEnd(S.unions[b], rec, t);
+    for (const b of refusing) imposeEnd(S.unions[b], rec, t, S);
     if (councils) economy.changeBusinessPressure(S, COUNCILS_BUSINESS, settlement.id + ':councils', t, 'works_councils');
     const gained = wonSupport(Q, rec.branches.filter(b => refusing.indexOf(b) < 0));
+    // Z — 1.07: a won strike builds strike action and unionism; works councils build radicalism.
+    if (rec.started_at !== null && rec.started_at !== undefined) {
+      rules.seedProfile(Q, 'strike_action', 3, 'won_strike:' + rec.id);
+      rules.seedProfile(Q, 'unionism', 1, 'won_strike:' + rec.id);
+    }
+    if (councils) rules.seedProfile(Q, 'radicalism', 2, 'councils:' + rec.id);
     endRecord(S, rec, 'agreement', t, Q);
     const names = offer.clauses.map(c => clauseName(c.kind)).join(', ');
     const text = (refusing.length ? L(refusing.map(b => BRANCH_NAMES[b]).join(' and ') + ' did not agree, and the end is imposed on ' + (refusing.length > 1 ? 'them' : 'it') + ' (dissent +10, trust −8). ',
@@ -1358,7 +1368,7 @@
       let continuing = 0;
       for (const b of Object.keys(settlement.refusing)) {
         continuing += settlement.refusing[b] * (1 - callCompliance(S, S.unions[b], 'agreed_end'));
-        imposeEnd(S.unions[b], rec, t);
+        imposeEnd(S.unions[b], rec, t, S);
       }
       continuing += settlement.partner_refusing || 0;
       settlement.continuing = continuing;
@@ -1480,8 +1490,9 @@
   // The chance that the government gives way to a threat now (half the pressure of a strike, the small goal).
   function threatChance(S, rec) {
     const fragility = government.governmentFragility(S);
-    return Math.min(...rec.branches.map(b => successChance(negotiatingPressure(potential(S, b).credible * THREAT_SHARE, sectorImportance(b, S.turn.last_settled_time + 1), fragility),
+    const chance = Math.min(...rec.branches.map(b => successChance(negotiatingPressure(potential(S, b).credible * THREAT_SHARE, sectorImportance(b, S.turn.last_settled_time + 1), fragility),
       THRESHOLDS.limited)));
+    return rules.profileActive(S, 'strike_action') ? Math.min(1, chance * 1.25) : chance;
   }
 
   function startStatus(Q) {
@@ -1510,7 +1521,8 @@
     rec.pps_answered = true;
     rec.strategy = 'threat';
     rec.state_response = stateResponse(S);
-    for (const b of rec.branches) S.unions[b].readiness = clip(S.unions[b].readiness + THREAT_READINESS, 0, 100);
+    for (const b of rec.branches) S.unions[b].readiness = clip(S.unions[b].readiness + readinessGain(S, THREAT_READINESS), 0, 100);
+    rules.seedProfile(Q, 'strike_action', 1, 'threat:' + rec.id);
     rec.history.push({t: t, kind: 'threat'});
     rec.threat = true;
     const offer = negotiationRound(Q, rec, t);
@@ -1532,7 +1544,7 @@
     const S = Q.S, t = Q.time, rec = disputeRecord(S);
     if (!rec) throw new Error('dropDispute: no dispute waits');
     S.history.actions.push({t: t, action_id: 'union.drop', strike_id: rec.id, cost_t: 0});
-    for (const b of rec.branches) S.unions[b].trust = clip(S.unions[b].trust - DROP_TRUST, 0, 100);
+    for (const b of rec.branches) S.unions[b].trust = clip(S.unions[b].trust - trustLoss(S, DROP_TRUST), 0, 100);
     endRecord(S, rec, 'dropped', t, Q);
     // A wage case can come back three months later if the cause lasts (CASE_COOLDOWN of watchWages).
     if (rec.kind === 'wage_case') S.strikes.wage_watch.latched = false;
@@ -1636,6 +1648,10 @@
     rec.status = 'active';
     rec.started_at = t;
     rec.history.push({t: t, kind: 'started', goal: st.goal});
+    // Z — 1.07: a strike builds strike action; a strike for the cabinet's resignation or with the communists builds radicalism.
+    rules.seedProfile(Q, 'strike_action', 3, 'strike:' + rec.id);
+    if (st.goal === 'political') rules.seedProfile(Q, 'radicalism', 3, 'political_strike:' + rec.id);
+    if (withCommunists) rules.seedProfile(Q, 'radicalism', 2, 'strike_with_kpp:' + rec.id);
     openSteps(S, rec);
     const parts = [];
     parts.push(applyCooperation(Q, rec, withCommunists ? cooperationMode(S, rec) || 'none' : 'none'));
@@ -1708,7 +1724,7 @@
     for (const b of rec.branches) {
       const branch = S.unions[b];
       branch.dissent = clip(branch.dissent + 10, 0, 100);
-      branch.trust = clip(branch.trust - 8, 0, 100);
+      branch.trust = clip(branch.trust - trustLoss(S, 8), 0, 100);
       addCause(branch, 'order:' + rec.id, 10);
     }
     endRecord(S, rec, 'withdrawn', t, Q);

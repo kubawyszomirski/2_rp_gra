@@ -1,0 +1,225 @@
+title: The Congress of PPS
+subtitle: An urgent card: the delegates gather, and the congress can adopt a resolution.
+new-page: true
+is-card: true
+view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.congressAvailable(Q) !}
+on-arrival: {!
+// Card party.congress (Z — 1.07, the user's decisions of 7–8 XI 2026; P): an urgent card of the party when a characteristic of the
+// party is ready, at most once a year. A resolution adopts a ready characteristic or leaves an adopted one and costs the action
+// of the month; "No new resolutions" closes the congress for a year without cost. The congress is a device of the game: the dates
+// and resolutions of the congresses of PPS 1922–1926 are TBD (HISTORICAL_SOURCES.md, PL-PROFILES-1.07).
+PolishParty.congressView(Q);
+!}
+
+= The congress of PPS
+
+Delegates from the whole country gather in Warsaw. The congress can adopt a resolution that will define for years what the party is. [? if pl_cg_intro : [+ pl_cg_intro +] ?]
+
+- @adopt_unionism
+- @adopt_worker_peasant
+- @adopt_federalism
+- @adopt_parliamentarism
+- @adopt_strike_action
+- @adopt_militarism
+- @adopt_reformism
+- @adopt_radicalism
+- @drop_unionism
+- @drop_worker_peasant
+- @drop_federalism
+- @drop_parliamentarism
+- @drop_strike_action
+- @drop_militarism
+- @drop_reformism
+- @drop_radicalism
+- @none
+- @later
+
+@adopt_unionism
+title: [+ pl_cg_unionism_title +]
+subtitle: [+ pl_cg_unionism_text +]
+view-if: pl_cg_unionism_ready = 1
+choose-if: {! return PolishParty.congressStatus(Q, 'adopt:unionism').available !}
+unavailable-subtitle: [+ pl_cg_unionism_why +]
+on-arrival: {!
+Q.pl_cg_result = PolishParty.congressChoose(Q, 'adopt:unionism');
+!}
+go-to: result
+
+@adopt_worker_peasant
+title: [+ pl_cg_worker_peasant_title +]
+subtitle: [+ pl_cg_worker_peasant_text +]
+view-if: pl_cg_worker_peasant_ready = 1
+choose-if: {! return PolishParty.congressStatus(Q, 'adopt:worker_peasant').available !}
+unavailable-subtitle: [+ pl_cg_worker_peasant_why +]
+on-arrival: {!
+Q.pl_cg_result = PolishParty.congressChoose(Q, 'adopt:worker_peasant');
+!}
+go-to: result
+
+@adopt_federalism
+title: [+ pl_cg_federalism_title +]
+subtitle: [+ pl_cg_federalism_text +]
+view-if: pl_cg_federalism_ready = 1
+choose-if: {! return PolishParty.congressStatus(Q, 'adopt:federalism').available !}
+unavailable-subtitle: [+ pl_cg_federalism_why +]
+on-arrival: {!
+Q.pl_cg_result = PolishParty.congressChoose(Q, 'adopt:federalism');
+!}
+go-to: result
+
+@adopt_parliamentarism
+title: [+ pl_cg_parliamentarism_title +]
+subtitle: [+ pl_cg_parliamentarism_text +]
+view-if: pl_cg_parliamentarism_ready = 1
+choose-if: {! return PolishParty.congressStatus(Q, 'adopt:parliamentarism').available !}
+unavailable-subtitle: [+ pl_cg_parliamentarism_why +]
+on-arrival: {!
+Q.pl_cg_result = PolishParty.congressChoose(Q, 'adopt:parliamentarism');
+!}
+go-to: result
+
+@adopt_strike_action
+title: [+ pl_cg_strike_action_title +]
+subtitle: [+ pl_cg_strike_action_text +]
+view-if: pl_cg_strike_action_ready = 1
+choose-if: {! return PolishParty.congressStatus(Q, 'adopt:strike_action').available !}
+unavailable-subtitle: [+ pl_cg_strike_action_why +]
+on-arrival: {!
+Q.pl_cg_result = PolishParty.congressChoose(Q, 'adopt:strike_action');
+!}
+go-to: result
+
+@adopt_militarism
+title: [+ pl_cg_militarism_title +]
+subtitle: [+ pl_cg_militarism_text +]
+view-if: pl_cg_militarism_ready = 1
+choose-if: {! return PolishParty.congressStatus(Q, 'adopt:militarism').available !}
+unavailable-subtitle: [+ pl_cg_militarism_why +]
+on-arrival: {!
+Q.pl_cg_result = PolishParty.congressChoose(Q, 'adopt:militarism');
+!}
+go-to: result
+
+@adopt_reformism
+title: [+ pl_cg_reformism_title +]
+subtitle: [+ pl_cg_reformism_text +]
+view-if: pl_cg_reformism_ready = 1
+choose-if: {! return PolishParty.congressStatus(Q, 'adopt:reformism').available !}
+unavailable-subtitle: [+ pl_cg_reformism_why +]
+on-arrival: {!
+Q.pl_cg_result = PolishParty.congressChoose(Q, 'adopt:reformism');
+!}
+go-to: result
+
+@adopt_radicalism
+title: [+ pl_cg_radicalism_title +]
+subtitle: [+ pl_cg_radicalism_text +]
+view-if: pl_cg_radicalism_ready = 1
+choose-if: {! return PolishParty.congressStatus(Q, 'adopt:radicalism').available !}
+unavailable-subtitle: [+ pl_cg_radicalism_why +]
+on-arrival: {!
+Q.pl_cg_result = PolishParty.congressChoose(Q, 'adopt:radicalism');
+!}
+go-to: result
+
+@drop_unionism
+title: [+ pl_cg_unionism_drop +]
+subtitle: [+ pl_cg_unionism_drop_text +]
+view-if: pl_cg_unionism_on = 1
+choose-if: {! return PolishParty.congressStatus(Q, 'drop:unionism').available !}
+on-arrival: {!
+Q.pl_cg_result = PolishParty.congressChoose(Q, 'drop:unionism');
+!}
+go-to: result
+
+@drop_worker_peasant
+title: [+ pl_cg_worker_peasant_drop +]
+subtitle: [+ pl_cg_worker_peasant_drop_text +]
+view-if: pl_cg_worker_peasant_on = 1
+choose-if: {! return PolishParty.congressStatus(Q, 'drop:worker_peasant').available !}
+on-arrival: {!
+Q.pl_cg_result = PolishParty.congressChoose(Q, 'drop:worker_peasant');
+!}
+go-to: result
+
+@drop_federalism
+title: [+ pl_cg_federalism_drop +]
+subtitle: [+ pl_cg_federalism_drop_text +]
+view-if: pl_cg_federalism_on = 1
+choose-if: {! return PolishParty.congressStatus(Q, 'drop:federalism').available !}
+on-arrival: {!
+Q.pl_cg_result = PolishParty.congressChoose(Q, 'drop:federalism');
+!}
+go-to: result
+
+@drop_parliamentarism
+title: [+ pl_cg_parliamentarism_drop +]
+subtitle: [+ pl_cg_parliamentarism_drop_text +]
+view-if: pl_cg_parliamentarism_on = 1
+choose-if: {! return PolishParty.congressStatus(Q, 'drop:parliamentarism').available !}
+on-arrival: {!
+Q.pl_cg_result = PolishParty.congressChoose(Q, 'drop:parliamentarism');
+!}
+go-to: result
+
+@drop_strike_action
+title: [+ pl_cg_strike_action_drop +]
+subtitle: [+ pl_cg_strike_action_drop_text +]
+view-if: pl_cg_strike_action_on = 1
+choose-if: {! return PolishParty.congressStatus(Q, 'drop:strike_action').available !}
+on-arrival: {!
+Q.pl_cg_result = PolishParty.congressChoose(Q, 'drop:strike_action');
+!}
+go-to: result
+
+@drop_militarism
+title: [+ pl_cg_militarism_drop +]
+subtitle: [+ pl_cg_militarism_drop_text +]
+view-if: pl_cg_militarism_on = 1
+choose-if: {! return PolishParty.congressStatus(Q, 'drop:militarism').available !}
+on-arrival: {!
+Q.pl_cg_result = PolishParty.congressChoose(Q, 'drop:militarism');
+!}
+go-to: result
+
+@drop_reformism
+title: [+ pl_cg_reformism_drop +]
+subtitle: [+ pl_cg_reformism_drop_text +]
+view-if: pl_cg_reformism_on = 1
+choose-if: {! return PolishParty.congressStatus(Q, 'drop:reformism').available !}
+on-arrival: {!
+Q.pl_cg_result = PolishParty.congressChoose(Q, 'drop:reformism');
+!}
+go-to: result
+
+@drop_radicalism
+title: [+ pl_cg_radicalism_drop +]
+subtitle: [+ pl_cg_radicalism_drop_text +]
+view-if: pl_cg_radicalism_on = 1
+choose-if: {! return PolishParty.congressStatus(Q, 'drop:radicalism').available !}
+on-arrival: {!
+Q.pl_cg_result = PolishParty.congressChoose(Q, 'drop:radicalism');
+!}
+go-to: result
+
+@none
+title: No new resolutions
+subtitle: Costs no action. The congress ends, and the next one meets in a year at the earliest.
+on-arrival: {!
+Q.pl_cg_result = PolishParty.congressChoose(Q, 'none');
+!}
+go-to: result
+
+@later
+title: Not now
+subtitle: The card stays in the hand until the congress is held.
+go-to: root
+
+@result
+new-page: true
+
+= The congress of PPS
+
+[+ pl_cg_result +]
+
+- @root: Continue.

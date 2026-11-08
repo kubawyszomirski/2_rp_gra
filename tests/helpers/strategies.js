@@ -196,6 +196,9 @@ const ACTIVE_EVENTS = Object.assign({}, PASSIVE_EVENTS, {
   // Z — 1.04 (decisions 4A and 5A of the event audit): the toleration offer is no longer an answer of the event; without the
   // portfolios an active PPS answers both crises with the party.
   polish_event_stabilization: ['protected', 'gradual', 'campaign', 'wait'],
+  // Z — 1.07: an active PPS holds a congress when a characteristic is ready and adopts the first ready one.
+  polish_party_congress: ['adopt_unionism', 'adopt_parliamentarism', 'adopt_reformism', 'adopt_worker_peasant', 'adopt_strike_action',
+    'adopt_militarism', 'adopt_federalism', 'adopt_radicalism', 'none'],
   polish_event_credit_crisis: ['protection', 'orders', 'credit', 'unions', 'none'],
   polish_event_austerity_1926: ['bargain', 'persuade', 'maintain'],
   polish_event_austerity_1926_threat: ['back_down'],
@@ -427,6 +430,14 @@ function playMonth(engine, strat, used) {
     while (engine.state.sceneId !== 'main' && Q.S.chapter.status !== 'ended' && Q.time === ctx.t) {
       if (!answer(engine, strat)) break;
     }
+    if (engine.state.sceneId !== 'main') engine.goToScene('main');
+  }
+  // Z — 1.07: the congress of PPS is an urgent card that costs the month; a strategy with an answer for it holds it when it is due.
+  if (strat.events.polish_party_congress && globalThis.PolishParty.congressAvailable(Q) && runPath(engine, ['polish_party_congress'])) {
+    while (engine.state.sceneId !== 'main' && Q.S.chapter.status !== 'ended' && Q.time === ctx.t) {
+      if (!answer(engine, strat)) break;
+    }
+    if (Q.time !== ctx.t || Q.S.chapter.status === 'ended') return 'moved';
     if (engine.state.sceneId !== 'main') engine.goToScene('main');
   }
   for (const path of strat.free(ctx)) {

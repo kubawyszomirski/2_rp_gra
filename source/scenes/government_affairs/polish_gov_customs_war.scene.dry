@@ -35,7 +35,7 @@ go-to: result
 
 @new_markets
 title: Seek new markets
-subtitle: Costs 2 budget units (subsidies for coal exports for half a year). The fall of output is halved.
+subtitle: Costs [+ pl_cost2 +] (subsidies for coal exports for half a year). The fall of output is halved.
 choose-if: {! return PolishProjects.optionStatus(Q, 'customs_war', 'new_markets').available !}
 unavailable-subtitle: [+ pl_customs_war_new_markets_why +]
 on-arrival: {!

@@ -33,7 +33,7 @@ The land reform divides the great estates among peasants and farm workers. Each 
 
 @compensated
 title: Divide the land with compensation
-subtitle: Costs 3 budget units. The agrarian pressure falls (−3) and the peasants are less aggrieved (−4), but the landowners and business press on the cabinet (+8).
+subtitle: Costs [+ pl_cost3 +]. The agrarian pressure falls (−3) and the peasants are less aggrieved (−4), but the landowners and business press on the cabinet (+8).
 choose-if: {! return PolishProjects.optionStatus(Q, 'land_program', 'compensated').available !}
 unavailable-subtitle: [+ pl_land_program_compensated_why +]
 on-arrival: {!
@@ -43,7 +43,7 @@ go-to: result
 
 @accelerated
 title: Divide the land quickly and compulsorily
-subtitle: Costs 2 budget units. The same effect at a lower price, but the resistance of business is greater (+12). [? if pl_land_program_accelerated_coalition : [+ pl_land_program_accelerated_coalition +] ?]
+subtitle: Costs [+ pl_cost2 +]. The same effect at a lower price, but the resistance of business is greater (+12). [? if pl_land_program_accelerated_coalition : [+ pl_land_program_accelerated_coalition +] ?]
 choose-if: {! return PolishProjects.optionStatus(Q, 'land_program', 'accelerated').available !}
 unavailable-subtitle: [+ pl_land_program_accelerated_why +]
 on-arrival: {!

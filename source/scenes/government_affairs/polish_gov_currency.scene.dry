@@ -32,7 +32,7 @@ The financial crisis goes on, and the reform of the currency has not begun. Choo
 
 @rapid_cuts
 title: Rapid stabilisation with savings
-subtitle: Costs 3 budget units, and the złoty comes after three months; needs adopted cuts; the credit shock grows for three months from the launch (+10). [? if pl_currency_stabilisation_rapid_cuts_coalition : [+ pl_currency_stabilisation_rapid_cuts_coalition +] ?]
+subtitle: Costs [+ pl_cost3 +], and the złoty comes after three months; needs adopted cuts; the credit shock grows for three months from the launch (+10). [? if pl_currency_stabilisation_rapid_cuts_coalition : [+ pl_currency_stabilisation_rapid_cuts_coalition +] ?]
 choose-if: {! return PolishProjects.optionStatus(Q, 'currency_stabilisation', 'rapid_cuts').available !}
 unavailable-subtitle: [+ pl_currency_stabilisation_rapid_cuts_why +]
 on-arrival: {!
@@ -42,7 +42,7 @@ go-to: result
 
 @protected
 title: Stabilisation with protections and a burden on wealth
-subtitle: Costs 3 budget units, and the złoty comes after three months; needs a protection for the unemployed and its financing; the same credit shock. [? if pl_currency_stabilisation_protected_coalition : [+ pl_currency_stabilisation_protected_coalition +] ?]
+subtitle: Costs [+ pl_cost3 +], and the złoty comes after three months; needs a protection for the unemployed and its financing; the same credit shock. [? if pl_currency_stabilisation_protected_coalition : [+ pl_currency_stabilisation_protected_coalition +] ?]
 choose-if: {! return PolishProjects.optionStatus(Q, 'currency_stabilisation', 'protected').available !}
 unavailable-subtitle: [+ pl_currency_stabilisation_protected_why +]
 on-arrival: {!
@@ -52,7 +52,7 @@ go-to: result
 
 @gradual
 title: Gradual limitation of emission
-subtitle: Costs 2 budget units, and the złoty comes after five months; the credit shock grows for five months (+5); the pressure on the marka lasts longer.
+subtitle: Costs [+ pl_cost2 +], and the złoty comes after five months; the credit shock grows for five months (+5); the pressure on the marka lasts longer.
 choose-if: {! return PolishProjects.optionStatus(Q, 'currency_stabilisation', 'gradual').available !}
 unavailable-subtitle: [+ pl_currency_stabilisation_gradual_why +]
 on-arrival: {!

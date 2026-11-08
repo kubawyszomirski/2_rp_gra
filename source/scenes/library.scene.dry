@@ -21,6 +21,7 @@ Units: **R** — the resources of PPS (its money); **B** — a unit of the state
 - @public_opinion: Public opinion (voting intentions, not seats)
 - @paramilitaries: Paramilitary groups
 - @factions: Internal factions
+- @characteristics: Characteristics of the party
 - @advisers: Central Executive Committee
 - @figures: Figures and charts
 - @sidebar_notes: Notes to the top bar
@@ -397,6 +398,21 @@ Dissent: [+ pilsudczycy_dissent : dissent +]
 [? if not polish_party_rules : **Affiliated trade unions — temporary compatibility model** ?]
 
 [? if not polish_party_rules : The inherited Labor values temporarily represent the trade-union power centre. Strength: [+ labor_strength : strength +]; dissent: [+ labor_dissent : dissent +]. ?]
+
+@characteristics
+go-to: menu
+on-arrival: {!
+// Z — 1.07 (the user's decisions of 7–8 XI 2026): what builds and what gives each characteristic of the party.
+if (Q.S && Q.polish_party_rules && typeof PolishParty !== 'undefined') {
+    PolishParty.profileLibrary(Q);
+}
+!}
+
+**Characteristics of the party**
+
+A characteristic grows from the decisions that build it. When it is ready, a congress of PPS can adopt it with a resolution. In the first chapter the party can have two characteristics, at most one new one at a congress; reformism and radicalism exclude each other. A line of the party that matches a characteristic makes it grow faster.
+
+[? if polish_party_rules : [+ pl_profile_library +] ?]
 
 @advisers
 title: Central Executive Committee

@@ -11,7 +11,7 @@
   "title: Carry out the act on the voivodeship self-government": "title: Wykonaj ustawę o samorządzie wojewódzkim",
   "subtitle: Costs 1 budget unit. The discontent of the minorities of the area falls (−3), but the National Democrats protest (−5). [? if pl_minorities_kresy_self_government_coalition : [+ pl_minorities_kresy_self_government_coalition +] ?]": "subtitle: Kosztuje 1 jednostkę budżetu. Niezadowolenie mniejszości na tym obszarze spada (−3), ale endecja protestuje (−5). [? if pl_minorities_kresy_self_government_coalition : [+ pl_minorities_kresy_self_government_coalition +] ?]",
   "title: Strengthen the protection of the eastern border": "title: Wzmocnij ochronę granicy wschodniej",
-  "subtitle: Costs 2 budget units. Political violence falls (−3), but the minorities trust PPS less (−3). [? if pl_minorities_kresy_border_coalition : [+ pl_minorities_kresy_border_coalition +] ?]": "subtitle: Kosztuje 2 jednostki budżetu. Przemoc polityczna spada (−3), ale mniejszości mniej ufają PPS (−3). [? if pl_minorities_kresy_border_coalition : [+ pl_minorities_kresy_border_coalition +] ?]",
+  "subtitle: Costs [+ pl_cost2 +]. Political violence falls (−3), but the minorities trust PPS less (−3). [? if pl_minorities_kresy_border_coalition : [+ pl_minorities_kresy_border_coalition +] ?]": "subtitle: Kosztuje [+ pl_cost2 +]. Przemoc polityczna spada (−3), ale mniejszości mniej ufają PPS (−3). [? if pl_minorities_kresy_border_coalition : [+ pl_minorities_kresy_border_coalition +] ?]",
   "- @root: Continue.": "- @root: Dalej."
  }
 }

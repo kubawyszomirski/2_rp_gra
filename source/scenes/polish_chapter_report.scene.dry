@@ -16,6 +16,8 @@ if (report) {
         return (point.party_seats[b] || 0) - (point.party_seats[a] || 0) || (a < b ? -1 : a > b ? 1 : 0);
     });
     Q.pl_report_date = report.date;
+    // Z — 1.07: the characteristics the party adopted in the chapter.
+    Q.pl_report_profile = typeof PolishParty !== 'undefined' ? PolishParty.profileSummary(Q.S) : '';
     Q.pl_report_coup = coup ? 1 : 0;
     Q.pl_report_coup_line = coup ? ({pils_victory: 'Piłsudski won', legal_victory: 'the legal government prevailed',
         constitutional_compromise: 'a constitutional compromise was reached', prolonged_conflict: 'the conflict continues without a winner'})[coup.outcome] +
@@ -83,6 +85,8 @@ if (report) {
 [? if pl_report_ready and pl_report_coup : **What the continuation owes.** [+ pl_report_continuation +]. ?]
 
 [? if pl_report_ready : **PPS.** [+ pl_report_pps +]. Factions: [+ pl_report_factions +]. ?]
+
+[? if pl_report_ready and pl_report_profile : **Characteristics.** [+ pl_report_profile +] ?]
 
 [? if pl_report_ready : **Institutions.** President: [+ pl_report_president +]. [+ pl_report_speaker_label +]: [+ pl_report_speaker +]. Senate: [+ pl_report_senate +]. ?]
 

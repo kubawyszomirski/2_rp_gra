@@ -1,0 +1,15 @@
+{
+ "source": "scenes/party_affairs/polish_party_congress.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: The Congress of PPS": "title: Kongres PPS",
+  "subtitle: An urgent card: the delegates gather, and the congress can adopt a resolution.": "subtitle: Karta pilna: zbierają się delegaci, a kongres może przyjąć uchwałę.",
+  "= The congress of PPS": "= Kongres PPS",
+  "Delegates from the whole country gather in Warsaw. The congress can adopt a resolution that will define for years what the party is. [? if pl_cg_intro : [+ pl_cg_intro +] ?]": "Do Warszawy zjeżdżają delegaci z całego kraju. Kongres może przyjąć uchwałę, która na lata określi, czym jest partia. [? if pl_cg_intro : [+ pl_cg_intro +] ?]",
+  "title: No new resolutions": "title: Bez nowych uchwał",
+  "subtitle: Costs no action. The congress ends, and the next one meets in a year at the earliest.": "subtitle: Nie zużywa akcji. Kongres się kończy, a następny zbierze się najwcześniej za rok.",
+  "title: Not now": "title: Nie teraz",
+  "subtitle: The card stays in the hand until the congress is held.": "subtitle: Karta zostaje w ręce, dopóki kongres się nie odbędzie.",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

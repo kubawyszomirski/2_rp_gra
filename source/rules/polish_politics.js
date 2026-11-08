@@ -579,6 +579,14 @@
     }
   }
 
+  // Z — 1.07 (decision 5A of the characteristics): a decision against the line of the party angers the faction that holds it (+3).
+  function lineContrary(Q, field, value, faction, cause) {
+    const strategy = Q.S.actors.pps.strategy;
+    if (!strategy || strategy[field] !== value) return false;
+    government.factionReaction(Q, faction, {dissent: 3}, {id: 'line_contrary:' + cause, kind: 'line_contrary', reverse: null});
+    return true;
+  }
+
   // ---- Z — 1.05 (decision 1A of the event audit, 7 XI 2026): Piłsudski leaves -----------------------------------------------
   // H: on 2 VII 1923 Piłsudski resigned his last military function and on 3 VII took his leave of politics at a banquet in the
   // hotel Bristol, attacking the right and its press; he settled in Sulejówek (HISTORICAL_SOURCES.md, PL-EVENTS-1.05). P: the event
@@ -598,6 +606,7 @@
     party.syncMirrors(Q);
     S.politics.pils_departure = {t: Q.time, choice: choice};
     if (DEPARTURE[choice].length) government.factionReactions(Q, DEPARTURE[choice].map(r => Object.assign({}, r)), {id: 'pils_departure', kind: 'pils_departure', reverse: null});
+    if (choice === 'farewell') lineContrary(Q, 'pils_influence', 'oppose_military_interference', 'lewica', 'pils_departure');
     S.history.actions.push({t: Q.time, action_id: 'event.pils_departure.' + choice, cost_t: 0});
     party.writeMirrors(Q);
     return choice === 'farewell' ?
@@ -1055,6 +1064,7 @@
     const repressive = unions.cabinetProfile(S) === 'repress';
     if (choice === 'defend') {
       record.cost_R = 1 + (protect ? 0.5 : 0);
+      if (protect) rules.seedProfile(Q, 'militarism', 1, 'guard_gathering');
       S.party_orgs.cash = Math.max(0, round(S.party_orgs.cash - record.cost_R, 6));
       const kind = pressWorks(S) ? 'press' : 'unions';
       record.organisations = [kind === 'press' ? 'press' : 'unions'].concat(protect ? ['militia'] : []);
@@ -1403,6 +1413,10 @@
     if (criticismContradicts(S, choice)) reactions.filter(r => r.faction === 'centrum')[0].dissent += 3;
     government.factionReactions(Q, reactions, {id: 'criticism:' + speech.id, kind: 'criticism_answer', reverse: null});
     if (spec.log) addLogEntry(S, spec.log, speech.id, Q.time);
+    // Z — 1.07: defending the Sejm builds parliamentarism; supporting the criticism against the line that opposes the army's
+    // interference angers the Left (decision 5A of the characteristics).
+    if (choice === 'defend') rules.seedProfile(Q, 'parliamentarism', 2, 'criticism_defend:' + speech.id);
+    if (choice === 'support') lineContrary(Q, 'pils_influence', 'oppose_military_interference', 'lewica', 'criticism:' + speech.id);
     // Z — 0.56: an answer is the action of the month.
     rules.commitMainAction(Q, 'politics.pils_parliament_criticism', {option: choice, speech_id: speech.id});
     party.writeMirrors(Q);
