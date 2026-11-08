@@ -1,5 +1,5 @@
 title: Coalition Crisis
-subtitle: A partner threatens to leave the cabinet; one answer, without the month's action.
+subtitle: A partner threatens to leave the cabinet; one answer.
 new-page: true
 is-card: true
 view-if: {! return !!Q.S && !!PolishGovernment.crisisCase(Q) !}
@@ -42,7 +42,7 @@ go-to: done
 
 @persuade
 title: Persuade [+ pl_cc_acc +] in talks
-subtitle: Costs 2 resources. The tension falls (−20); in one crisis we can talk only once.
+subtitle: Cost: 2 resources. The tension falls (−20); in one crisis we can talk only once.
 choose-if: {! return PolishGovernment.crisisStatus(Q, 'persuade').available !}
 unavailable-subtitle: [+ pl_cc_persuade_why +]
 on-arrival: {!

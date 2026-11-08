@@ -204,7 +204,7 @@ go-to: result
 
 @none
 title: No new resolutions
-subtitle: Costs no action. The congress ends, and the next one meets in a year at the earliest.
+subtitle: The congress ends, and the next one meets in a year at the earliest.
 on-arrival: {!
 Q.pl_cg_result = PolishParty.congressChoose(Q, 'none');
 !}

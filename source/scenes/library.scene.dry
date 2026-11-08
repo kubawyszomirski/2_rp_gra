@@ -557,7 +557,7 @@ The top bar shows the current figures; these notes explain them.
 
 [? if polish_opening_government_active : March Constitution with transitional arrangements: the Sejm Ustawodawczy and Naczelnik Państwa remain in office. No operating Senate or presidential officeholder is simulated at the opening. ?]
 
-The presidential succession of December 1922 does not spend another monthly action.
+The presidential succession of December 1922 is a separate sequence after the election of the Sejm.
 
 [? if polish_presidential_sequence_completed : March Constitution: the President is elected by the Sejm and Senate together as the National Assembly. Government acts require countersignature. ?]
 
@@ -567,7 +567,7 @@ ChZJN (ZLN + PSChD) is a joint list; the parties remain separate for government 
 
 [? if not sejm_first_election_completed : The first Sejm election is in November 1922. It allocates 444 MPs from voting intentions; ChZJN combines ZLN and PSChD on the ballot. ?]
 
-[? if sejm_first_election_completed and not polish_presidential_sequence_completed : In December the Sejm elects its Marshal and the National Assembly elects the President, without another monthly action. ?]
+[? if sejm_first_election_completed and not polish_presidential_sequence_completed : In December the Sejm elects its Marshal and the National Assembly elects the President. ?]
 
 [? if polish_presidential_sequence_completed : The 111-seat Senate is derived once from the Sejm result (a simplification); it has no separate campaign. There are no early elections without a lawful act, so the next election follows the default legal calendar. An ordinary law takes effect with the vote of the Sejm; the Senate votes only on a change of the constitution (a simplification of the game). A change of the constitution needs two thirds of the votes for and against in both chambers, voted on the same day; the signatures of 111 MPs that art. 125 requires for a motion are left out (a simplification of the game). ?]
 

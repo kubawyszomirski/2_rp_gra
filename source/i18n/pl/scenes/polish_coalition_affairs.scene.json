@@ -8,7 +8,7 @@
   "title: Give way to our coalition partners": "title: Ustąp koalicjantom",
   "subtitle: The tension with all the partners falls (−20), but [+ pl_coal_faction +] sees it as a retreat (+5).": "subtitle: Napięcie u wszystkich partnerów spada (−20), ale [+ pl_coal_faction +] widzi w tym odwrót (+5).",
   "title: Talk the partners round": "title: Przekonaj ich w rozmowach",
-  "subtitle: Costs 2 resources. The tension with all the partners falls (−10).": "subtitle: Kosztuje 2 jednostki środków partii. Napięcie u wszystkich partnerów spada (−10).",
+  "subtitle: Cost: 2 resources. The tension with all the partners falls (−10).": "subtitle: Koszt: 2 jednostki środków. Napięcie u wszystkich partnerów spada (−10).",
   "title: Break the coalition": "title: Zerwij koalicję",
   "subtitle: Our ministers leave, and PPS goes into opposition; without us the cabinet may lose its majority. [+ pl_coal_faction +] takes it with relief (−10).": "subtitle: Nasi ministrowie odchodzą, a PPS przechodzi do opozycji; bez nas rząd może stracić większość. [+ pl_coal_faction +] przyjmuje to z ulgą (−10).",
   "= We give way": "= Ustępujemy",

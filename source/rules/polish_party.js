@@ -838,21 +838,23 @@
     return mass > 0 ? cells.reduce((n, cell) => n + cell.mass * cell.base_reach_pps, 0) / mass : 0;
   }
 
+  // Z — 1.08 (the user's note): the strength of a reach in a word instead of numbers.
+  const reachWord = r => (r < 20 ? L('very weak', 'bardzo słaby') : r < 40 ? L('weak', 'słaby') : r < 60 ? L('medium', 'średni') :
+    r < 80 ? L('strong', 'mocny') : L('very strong', 'bardzo mocny'));
   function organizePreview(Q, kind) {
     const S = Q.S;
     if (kind === 'unions') {
-      const id = weakestBranch(S), reach = S.unions[id].reach;
-      const gain = 2 * expansionMultiplier(S, {kind: 'branch', id: id});
-      return L('The weakest branch: ' + BRANCH_NAMES[id] + ' — reach ' + fmt(reach) + ' → ' + fmt(Math.min(100, reach + gain)) + '.',
-        'Najsłabsza branża: ' + BRANCH_NAMES_PL[id] + ' — zasięg ' + fmt(reach) + ' → ' + fmt(Math.min(100, reach + gain)) + '.');
+      const id = weakestBranch(S);
+      return L('The activists strengthen the weakest union, ' + BRANCH_NAMES[id].toLowerCase() + '; its reach is ' + reachWord(S.unions[id].reach) + ' today.',
+        'Działacze wzmacniają najsłabszy związek: ' + BRANCH_PL_GENITIVE_NAME(id) + '; jego zasięg jest dziś ' + reachWord(S.unions[id].reach) + '.');
     }
     if (!electorate.hasCells(S)) return '';
-    return characterClasses(S).map(c => {
-      const reach = baseReachOf(S, c), gain = 2 * expansionMultiplier(S, {kind: 'class', class_id: c});
-      return capitalise(L(electorate.CLASS_NAMES[c], electorate.CLASS_NAMES_PL[c] || electorate.CLASS_NAMES_PL_GENITIVE[c])) +
-        L(' — PPS reach ', ' — zasięg PPS ') + fmt(reach) + ' → ' + fmt(Math.min(100, reach + gain));
-    }).join('; ') + '.';
+    const groups = characterClasses(S);
+    return L('The activists reach our voters: ', 'Działacze docierają do naszych wyborców: ') + groups.map(c => {
+      return L(electorate.CLASS_NAMES[c], electorate.CLASS_NAMES_PL_GENITIVE[c] || electorate.CLASS_NAMES_PL[c]) + L(' (reach ', ' (zasięg ') + reachWord(baseReachOf(S, c)) + ')';
+    }).join(', ') + '.';
   }
+  const BRANCH_PL_GENITIVE_NAME = id => ({industry: 'robotników przemysłu', rail: 'kolejarzy', farm_labour: 'robotników rolnych'})[id] || id;
 
   function organizeStatusOf(Q, kind) {
     return kind === 'unions' ? organizeStatus(Q, 'branch:' + weakestBranch(Q.S)) : organizeStatus(Q, 'class:' + characterClasses(Q.S)[0]);
@@ -2077,10 +2079,10 @@
       Q['pl_cg_' + id + '_on'] = rules.profileActive(S, id) ? 1 : 0;
       Q['pl_cg_' + id + '_why'] = congressStatus(Q, 'adopt:' + id).reason || '';
       Q['pl_cg_' + id + '_title'] = L(PROFILES[id].resolution[0], PROFILES[id].resolution[1]);
-      Q['pl_cg_' + id + '_text'] = L('Costs this month’s action. ', 'Kosztuje akcję tego miesiąca. ') + L(PROFILES[id].text[0], PROFILES[id].text[1]);
+      Q['pl_cg_' + id + '_text'] = L(PROFILES[id].text[0], PROFILES[id].text[1]);
       Q['pl_cg_' + id + '_drop'] = L('Leave ' + profileAcc(id), 'Odejdź od cechy: ' + profileAcc(id));
-      Q['pl_cg_' + id + '_drop_text'] = L('Costs this month’s action. The party gives up this course; ' + FACTION_WORDS[PROFILES[id].patron][0] + ' protests (+' + PROFILE_DROP_DISSENT + ').',
-        'Kosztuje akcję tego miesiąca. Partia rezygnuje z tego kursu; ' + FACTION_WORDS[PROFILES[id].patron][1] + ' protestuje (+' + PROFILE_DROP_DISSENT + ').');
+      Q['pl_cg_' + id + '_drop_text'] = L('The party gives up this course; ' + FACTION_WORDS[PROFILES[id].patron][0] + ' protests (+' + PROFILE_DROP_DISSENT + ').',
+        'Partia rezygnuje z tego kursu; ' + FACTION_WORDS[PROFILES[id].patron][1] + ' protestuje (+' + PROFILE_DROP_DISSENT + ').');
     }
     const own = adoptedProfiles(S);
     Q.pl_cg_intro = own.length ? L('The party is known today for ' + own.map(profileAcc).join(' and ') + '.', 'Dziś partię wyróżnia ' + own.map(profileAcc).join(' i ') + '.') : '';
@@ -2320,22 +2322,22 @@
       (active.length ? L(' An issue is confiscated until ' + rules.monthOf(active[0].expires_at) + '/' + rules.yearOf(active[0].expires_at) + '.',
         ' Numer jest skonfiskowany do ' + rules.monthYear(active[0].expires_at, 'gen') + '.') : '');
     const risk = rightGovernment(S) && !noConfiscation(S, Q.time) ? L(' The government of the right may confiscate the issue.', ' Rząd prawicy może skonfiskować numer.') : '';
-    Q.pl_press_campaign_effect = L('One unit of the party\'s money. ', 'Jedna jednostka środków. ') + pressCampaignPreview(Q) + risk;
+    Q.pl_press_campaign_effect = L('Cost: 1 resource. ', 'Koszt: 1 jednostka środków. ') + pressCampaignPreview(Q) + risk;
     Q.pl_press_campaign_why = pressActionStatus(Q, 'campaign').reason;
     Q.pl_press_reportage_why = pressActionStatus(Q, 'reportage').reason;
     Q.pl_press_debate_why = pressActionStatus(Q, 'debate').reason;
     const target = pressInvestigationTarget(S);
-    Q.pl_press_investigation_line = target ? L('One unit of the party\'s money. We reveal ' + target.subject + '; the press gains credibility (+' + PRESS_CREDIBILITY.investigation + ').',
-      'Jedna jednostka środków. Ujawniamy sprawę: ' + rules.storedText(target.subject) + '; prasa zyskuje na wiarygodności (+' + PRESS_CREDIBILITY.investigation + ').') + risk : '';
+    Q.pl_press_investigation_line = target ? L('Cost: 1 resource. We reveal ' + target.subject + '; the press gains credibility (+' + PRESS_CREDIBILITY.investigation + ').',
+      'Koszt: 1 jednostka środków. Ujawniamy sprawę: ' + rules.storedText(target.subject) + '; prasa zyskuje na wiarygodności (+' + PRESS_CREDIBILITY.investigation + ').') + risk : '';
     Q.pl_media_investigation_why = pressInvestigationStatus(Q).reason;
     Q.pl_media_format_why = pressFormatStatus(Q).reason;
     Q.pl_media_format_title = popular ? L('Return to the party journal', 'Wróć do pisma partyjnego') : L('Change to a popular paper', 'Zmień format na gazetę popularną');
     Q.pl_media_format_line = popular ?
-      L('One unit of the party\'s money. Fewer readers (at most 60 of 100) and no sales, but more trust (+5).',
-        'Jedna jednostka środków. Mniej czytelników (najwyżej 60 na 100) i brak sprzedaży, ale więcej zaufania (+5).') :
-      L('One unit of the party\'s money. More readers (+10), also among the intelligentsia and the petty bourgeoisie, and sales from reach ' + PRESS_SALES_REACH +
+      L('Cost: 1 resource. Fewer readers (at most 60 of 100) and no sales, but more trust (+5).',
+        'Koszt: 1 jednostka środków. Mniej czytelników (najwyżej 60 na 100) i brak sprzedaży, ale więcej zaufania (+5).') :
+      L('Cost: 1 resource. More readers (+10), also among the intelligentsia and the petty bourgeoisie, and sales from reach ' + PRESS_SALES_REACH +
         ', but less trust (−5).' + (press.popular_adopted ? '' : ' The first time the Centre of PPS objects (+3).'),
-        'Jedna jednostka środków. Więcej czytelników (+10), także wśród inteligencji i drobnomieszczaństwa, i dochód ze sprzedaży od zasięgu ' + PRESS_SALES_REACH +
+        'Koszt: 1 jednostka środków. Więcej czytelników (+10), także wśród inteligencji i drobnomieszczaństwa, i dochód ze sprzedaży od zasięgu ' + PRESS_SALES_REACH +
         ', ale mniej zaufania (−5).' + (press.popular_adopted ? '' : ' Za pierwszym razem sprzeciw Centrum PPS (+3).'));
   }
 
@@ -2989,9 +2991,9 @@
     Q.pl_adv_draft_text = draft.map(id => ADVISERS[id].name).join(', ') || L('nobody', 'nikt');
     Q.pl_adv_confirm_why = advisersStatus(Q, draft).reason;
     // Z — 0.78: confirming the present Committee keeps it for free; a change costs this month's action.
-    Q.pl_adv_confirm_note = sameSet(draft, current) ? L('No change: the present Committee stays; this costs no month.',
-      'Bez zmian: obecny skład zostaje; to nie kosztuje miesiąca.') : L('A change costs this month’s action; the next change waits six months.',
-      'Zmiana kosztuje akcję tego miesiąca; następna zmiana czeka sześć miesięcy.');
+    Q.pl_adv_confirm_note = sameSet(draft, current) ? L('No change: the present Committee stays.',
+      'Bez zmian: obecny skład zostaje.') : L('After a change the next one waits six months.',
+      'Po zmianie następna czeka sześć miesięcy.');
   }
 
   function advisersToggle(Q, id) {
@@ -3237,8 +3239,7 @@
 
   function selectionSummary(Q, ids) {
     const total = ids.reduce((n, id) => n + PACKAGES[id].cost, 0);
-    Q.pl_org_summary = ids.map(id => packageLine(Q, id)).join('; ') + L('. Together ' + total + ' R and this month’s action.',
-      '. Razem ' + fmt(total) + ' R i akcja tego miesiąca.');
+    Q.pl_org_summary = L('Cost: ' + rules.units(total) + '. ', 'Koszt: ' + rules.units(total, 'resources', 'nom') + '. ') + ids.map(id => packageLine(Q, id)).join('; ') + '.';
     Q.pl_org_confirm_why = selectionStatus(Q, ids).reason;
     return selectionStatus(Q, ids).available;
   }

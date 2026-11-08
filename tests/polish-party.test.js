@@ -60,7 +60,7 @@ test('Jedna inwestycja w Organizacjach 0.78: one page, one investment at once, n
   PolishParty.writeMirrors(Q);
   playFromHand(engine, 'polish_party_organizations');
   assert.deepEqual(ids(engine), ['polish_party_organizations.press_distribution', 'polish_party_organizations.tur',
-    'polish_party_organizations.cooperative_workers', 'easy_discard']);
+    'polish_party_organizations.cooperative_workers', 'polish_party_organizations.nothing', 'easy_discard']); // Z — 1.08: do nothing
   choose(engine, 'polish_party_organizations.press_distribution');
   assert.equal(engine.state.sceneId, 'polish_party_organizations.result', 'carried out at once');
   assert.match(content(engine), /the press gains 10 reach/);
@@ -134,7 +134,7 @@ test('Obecny skład CKW 0.78: confirming the present Committee is possible, free
   choose(engine, 'polish_party_advisers.compose');
   const confirm = choice(engine, 'polish_party_advisers.confirm');
   assert.equal(confirm.canChoose, true, 'the present Committee can be accepted');
-  assert.match(plain(confirm.subtitle), /No change: the present Committee stays; this costs no month\./);
+  assert.match(plain(confirm.subtitle), /No change: the present Committee stays\./);
   choose(engine, 'polish_party_advisers.confirm');
   assert.match(content(engine), /The Central Executive Committee stays as it is: /);
   choose(engine, 'root');
@@ -148,7 +148,7 @@ test('Obecny skład CKW 0.78: confirming the present Committee is possible, free
   choose(other, 'polish_party_advisers.compose');
   choose(other, 'polish_party_advisers.toggle_daszynski');
   choose(other, 'polish_party_advisers.toggle_zaremba');
-  assert.match(plain(choice(other, 'polish_party_advisers.confirm').subtitle), /A change costs this month’s action/);
+  assert.match(plain(choice(other, 'polish_party_advisers.confirm').subtitle), /After a change the next one waits six months/);
 });
 
 // Z — 0.78 (decision 5A of 8 X 2026): the TUR courses are a card of their own once TUR works, one click each; the game picks
@@ -167,7 +167,7 @@ test('Kursy TUR 0.78: a card of its own once TUR works; one click per course wit
   playFromHand(engine, 'polish_party_tur');
   // Z — 0.91 (decisions 3A and 4A of 24 X 2026): three courses, no preparation of a reform.
   assert.deepEqual(ids(engine), ['polish_party_tur.civil_rights', 'polish_party_tur.union_cadres', 'polish_party_tur.national_education',
-    'easy_discard']);
+    'polish_party_tur.nothing', 'easy_discard']);
   assert.match(plain(choice(engine, 'polish_party_tur.civil_rights').subtitle), /^For the workers\. Trust in PPS in this group rises for good/);
   assert.equal(choice(engine, 'polish_party_tur.union_cadres').canChoose, false, 'level 2');
   assert.equal(PolishParty.courseTarget(Q, 'union_cadres'), ['industry', 'rail', 'farm_labour'].sort((a, b) => Q.S.unions[a].trust - Q.S.unions[b].trust)[0]);
@@ -187,8 +187,8 @@ test('Praca organizacyjna 0.78: two options on the agenda; the weakest branch an
   playFromHand(engine, 'polish_party_agenda');
   assert.ok(ids(engine).includes('polish_party_agenda.organize_unions') && ids(engine).includes('polish_party_agenda.organize_voters'));
   assert.ok(!ids(engine).includes('polish_party_agenda.organize'), 'no second page');
-  assert.match(plain(choice(engine, 'polish_party_agenda.organize_unions').subtitle), /^No money\. The weakest branch: Railways — reach 8 → 10\.2/);
-  assert.match(plain(choice(engine, 'polish_party_agenda.organize_voters').subtitle), /The workers — PPS reach [\d.]+ → [\d.]+\.$/);
+  assert.match(plain(choice(engine, 'polish_party_agenda.organize_unions').subtitle), /^No money\. The activists strengthen the weakest union, railways; its reach is very weak today\./); // Z — 1.08: in words
+  assert.match(plain(choice(engine, 'polish_party_agenda.organize_voters').subtitle), /^No money\. The activists reach our voters: the workers \(reach (very weak|weak|medium|strong|very strong)\)\.$/); // Z — 1.08: in words
   choose(engine, 'easy_discard');
   // A party of workers and peasants organises the peasants too.
   Q.S.actors.pps.strategy.electoral_base = 'workers_peasants';
@@ -265,7 +265,7 @@ test('Związki zawodowe — organizowanie (Z — 0.86): a card of its own with t
   choose(engine, 'easy_discard');
   playFromHand(engine, 'polish_party_union_investments');
   assert.deepEqual(ids(engine), ['polish_party_union_investments.union_organize_industry', 'polish_party_union_investments.union_organize_rail',
-    'polish_party_union_investments.union_organize_farm_labour', 'easy_discard'], 'no union funds since Z — 0.86');
+    'polish_party_union_investments.union_organize_farm_labour', 'polish_party_union_investments.nothing', 'easy_discard'], 'no union funds since Z — 0.86');
   assert.match(plain(choice(engine, 'polish_party_union_investments.union_organize_farm_labour').subtitle),
     /^1 resource; reach 10 → 26\.5\. Votes in the countryside; from reach 40 the harvest strike\.$/);
   assert.match(plain(choice(engine, 'polish_party_union_investments.union_organize_rail').subtitle), /control of strategic infrastructure/);
@@ -290,7 +290,7 @@ test('Bez płatnego braku wyboru: the organisations card returned to the hand co
   assert.deepEqual(engine.state.currentHands.main.map(c => c.id), ['polish_party_organizations'], 'the card goes back to the hand');
   playFromHand(engine, 'polish_party_dues');
   assert.equal(choice(engine, 'polish_party_dues.keep').canChoose, true);
-  assert.match(plain(choice(engine, 'polish_party_dues.keep').subtitle), /^Present level Costs this month's action; the dues stay at 2, the collection brings 2 resources now, and the card waits six months\.$/);
+  assert.match(plain(choice(engine, 'polish_party_dues.keep').subtitle), /^Present level The dues stay at 2, the collection brings 2 resources now, and the card waits six months\.$/);
   assert.deepEqual(bold(choice(engine, 'polish_party_dues.keep').subtitle), ['Present level']);
   assert.equal([].concat(choice(engine, 'easy_discard').title).join(''), 'Return to hand');
   choose(engine, 'easy_discard');
@@ -440,7 +440,7 @@ test('Prasa 0.77: the press campaign follows the format and the main opponent; r
   PolishParty.writeMirrors(Q);
   playFromHand(engine, 'polish_party_media');
   assert.match(plain(choice(engine, 'polish_party_media.press_campaign').subtitle),
-    /^One unit of the party's money\. It reaches workers \(\+[\d.]+\) and the unemployed \(\+[\d.]+\); half of the new votes it takes from our main opponent: the National Democrats\./);
+    /^Cost: 1 resource\. It reaches workers \(\+[\d.]+\) and the unemployed \(\+[\d.]+\); half of the new votes it takes from our main opponent: the National Democrats\./);
   const zln = () => PolishElectorate.aggregate(Q.S, c => c.class_id === 'workers', 'zln');
   const z0 = zln();
   choose(engine, 'polish_party_media.press_campaign');
@@ -478,7 +478,7 @@ test('Obecna linia in the game: the present line can be confirmed for the month;
     'polish_party_economic_program']) assert.ok(deck(engine).includes(id), id);
   playFromHand(engine, 'polish_party_pils_influence');
   assert.equal(choice(engine, 'polish_party_pils_influence.conditional').canChoose, true);
-  assert.match(plain(choice(engine, 'polish_party_pils_influence.conditional').subtitle), /^Present line Confirming it costs this month's action/);
+  assert.match(plain(choice(engine, 'polish_party_pils_influence.conditional').subtitle), /^Present line Confirming it changes nothing/);
   assert.deepEqual(bold(choice(engine, 'polish_party_pils_influence.conditional').subtitle), ['Present line'], 'the label is bold');
   assert.doesNotMatch(plain(choice(engine, 'polish_party_pils_influence.support').subtitle), /present line/i);
   choose(engine, 'easy_discard');
@@ -517,7 +517,7 @@ test('Program bez zmiany in the game (Z — 0.56, 0.57): six described prioritie
   assert.equal(empty.canChoose, false, 'no programme and nothing chosen');
   assert.equal(plain(empty.subtitle), 'Choose at least one priority.');
   choose(engine, 'polish_party_economic_program.toggle_public_works');
-  assert.match(plain(choice(engine, 'polish_party_economic_program.confirm').subtitle), /^Costs this month's action; the card then waits six months\.$/);
+  assert.match(plain(choice(engine, 'polish_party_economic_program.confirm').subtitle), /^The card then waits six months\.$/);
   choose(engine, 'polish_party_economic_program');
   choose(engine, 'easy_discard');
   assert.deepEqual([Q.time, Q.month_actions], [1, 0], 'returning the card is free');
@@ -578,8 +578,8 @@ test('Karta Prasy 0.90: full sentences about the press, its readers, their trust
   // Z — 0.90 (the user's note: the full version was too long again): two sentences at the top, one or two for each option.
   assert.match(content(engine), /Pismo partyjne dociera do 30 na 100 czytelników spośród robotników i bezrobotnych, a czytelnicy umiarkowanie mu ufają\. Wzmacnia każdą naszą kampanię wśród nich o 5%\./);
   const sub = id => plain(choice(engine, 'polish_party_media.' + id).subtitle);
-  assert.match(sub('press_campaign'), /^Jedna jednostka środków\. Trafia do robotników/);
-  assert.equal(sub('reportage'), 'Jedna jednostka środków. Robotnicy i bezrobotni bardziej ufają PPS (+3), więc następne kampanie wśród nich będą mocniejsze; prasa zyskuje na wiarygodności (+2).');
+  assert.match(sub('press_campaign'), /^Koszt: 1 jednostka środków\. Trafia do robotników/);
+  assert.equal(sub('reportage'), 'Koszt: 1 jednostka środków. Robotnicy i bezrobotni bardziej ufają PPS (+3), więc następne kampanie wśród nich będą mocniejsze; prasa zyskuje na wiarygodności (+2).');
   assert.equal([].concat(choice(engine, 'polish_party_media.format').title).join(''), 'Zmień format na gazetę popularną');
-  assert.equal(sub('format'), 'Jedna jednostka środków. Więcej czytelników (+10), także wśród inteligencji i drobnomieszczaństwa, i dochód ze sprzedaży od zasięgu 50, ale mniej zaufania (−5). Za pierwszym razem sprzeciw Centrum PPS (+3).');
+  assert.equal(sub('format'), 'Koszt: 1 jednostka środków. Więcej czytelników (+10), także wśród inteligencji i drobnomieszczaństwa, i dochód ze sprzedaży od zasięgu 50, ale mniej zaufania (−5). Za pierwszym razem sprzeciw Centrum PPS (+3).');
 });

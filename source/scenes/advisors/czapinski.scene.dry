@@ -26,7 +26,7 @@ Czapiński represents Lewica PPS and concentrates on socialist education and eco
 
 @economic_finance
 title: Socialist Economic Programme: progressive and wealth taxes
-subtitle: Opens the Treasury card; its one step costs no month (the law, the money and the executor remain).
+subtitle: Opens the Treasury card for one decision at once; the law, the money and the executor remain.
 choose-if: {! return Q.advisor_action_timer <= 0 && !!Q.S && PolishProjects.cardAvailable(Q, 'finance_package') !}
 unavailable-subtitle: [? if advisor_action_timer = 1 : 1 month before the next Committee action. ?][? if advisor_action_timer > 1 : [+ advisor_action_timer +] months before the next Committee action. ?][? if advisor_action_timer <= 0 : Needs PPS in the cabinet with the Treasury. ?]
 call: polish_advisor_commit
@@ -35,7 +35,7 @@ go-to: polish_gov_finance
 
 @economic_public_control
 title: Socialist Economic Programme: public ownership
-subtitle: Opens the Industry card for the public control of a recorded plant; its one step costs no month (the act and the vote remain).
+subtitle: Opens the Industry card for the public control of a recorded plant at once; the act and the vote remain.
 choose-if: {! return Q.advisor_action_timer <= 0 && !!Q.S && PolishProjects.optionStatus(Q, 'industrial_policy', 'public_control', {adviser: true}).available !}
 unavailable-subtitle: [? if advisor_action_timer = 1 : 1 month before the next Committee action. ?][? if advisor_action_timer > 1 : [+ advisor_action_timer +] months before the next Committee action. ?][? if advisor_action_timer <= 0 : [+ pl_czap_public_control_why +] ?]
 call: polish_advisor_commit
@@ -44,7 +44,7 @@ go-to: polish_gov_industry
 
 @economic_representation
 title: Socialist Economic Programme: works councils
-subtitle: Opens the card Economic Democracy for the law on works councils; its one step costs no month (the vote in the Sejm remains).
+subtitle: Opens the card Economic Democracy for the law on works councils at once; the vote in the Sejm remains.
 choose-if: {! return Q.advisor_action_timer <= 0 && !!Q.S && PolishProjects.optionStatus(Q, 'economic_democracy', 'works_councils', {adviser: true}).available !}
 unavailable-subtitle: [? if advisor_action_timer = 1 : 1 month before the next Committee action. ?][? if advisor_action_timer > 1 : [+ advisor_action_timer +] months before the next Committee action. ?][? if advisor_action_timer <= 0 : [+ pl_czap_representation_why +] ?]
 call: polish_advisor_commit
@@ -53,7 +53,7 @@ go-to: polish_gov_economic_democracy
 
 @socialist_education
 title: Socialist Education
-subtitle: 1 resource and a working TUR; Lewica grows stronger (+6) and its dissent falls (−5); for six months the flow of workers from PPS to the KPP is halved.
+subtitle: Cost: 1 resource. Needs a working TUR; Lewica grows stronger (+6) and its dissent falls (−5); for six months the flow of workers from PPS to the KPP is halved.
 choose-if: {! return PolishParty.advisorActionStatus(Q, 'czapinski', 'socialist_education').available !}
 unavailable-subtitle: [+ pl_advact_socialist_education_why +]
 call: polish_advisor_commit

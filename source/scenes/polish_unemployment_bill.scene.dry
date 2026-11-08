@@ -41,7 +41,7 @@ Q.pl_bill_withdraw_why = PolishProjects.billD2Status(Q, 'withdraw').reason;
 
 @start
 title: D1: Start the legislative initiative of PPS
-subtitle: This month's action; a full project with cost, financing and executor. The vote comes next month.
+subtitle: A full project with cost, financing and executor. The vote comes next month.
 view-if: not pl_bill_d2
 choose-if: {! return PolishRules.mainActionAvailable(Q) !}
 unavailable-subtitle: [+ pl_bill_start_why +]
@@ -53,7 +53,7 @@ go-to: result
 
 @decline
 title: D1: Do not take up the initiative
-subtitle: No month's action; the offer closes for the chapter, without a bonus.
+subtitle: The offer closes for the chapter, without a bonus.
 view-if: not pl_bill_d2
 on-arrival: {!
 PolishProjects.billD1Choose(Q, 'decline');
@@ -63,7 +63,7 @@ go-to: result
 
 @full
 title: D2: Keep the full project of PPS
-subtitle: No month's action; the Sejm votes now. Full variant: costs 3 budget units once in force. It may fall.
+subtitle: Cost: 3 budget units once in force. The Sejm votes now; the bill may fall.
 view-if: pl_bill_d2
 choose-if: {! return PolishProjects.billD2Status(Q, 'full').available !}
 on-arrival: {!
@@ -75,7 +75,7 @@ go-to: result
 
 @limited
 title: D2: Accept the limited variant for wider support
-subtitle: No month's action; the same recipients, a lower benefit: costs 1 budget unit.
+subtitle: Cost: 1 budget unit. The same recipients, a lower benefit.
 view-if: pl_bill_d2
 choose-if: {! return PolishProjects.billD2Status(Q, 'limited').available !}
 unavailable-subtitle: [+ pl_bill_limited_why +]

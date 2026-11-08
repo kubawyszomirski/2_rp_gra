@@ -33,7 +33,7 @@ go-to: result
 
 @democracy_mass
 title: Organise a mass for the defence of democracy
-subtitle: Costs 1 resource, if a priest agrees to celebrate it. The mass in defence of democracy strengthens it (+2), without changing our view of the Church.
+subtitle: Cost: 1 resource. It needs a priest who agrees to celebrate it; the mass in defence of democracy strengthens it (+2), without changing our view of the Church.
 choose-if: {! return PolishPolitics.cultStatus(Q, 'democracy_mass').available !}
 unavailable-subtitle: [+ pl_b5_democracy_mass_why +]
 on-arrival: {!
@@ -43,7 +43,7 @@ go-to: result
 
 @disrupt
 title: Break up the services with the Milicja
-subtitle: Costs half a resource and needs a free Milicja. The Centrum of the party protests (+8) and the Christian Democrats are outraged; a clash may bring a case against PPS and even a ban of the Milicja.
+subtitle: Cost: half a resource. It needs a free Milicja; the Centrum of the party protests (+8) and the Christian Democrats are outraged; a clash may bring a case against PPS and even a ban of the Milicja.
 choose-if: {! return PolishPolitics.cultStatus(Q, 'disrupt').available !}
 unavailable-subtitle: [+ pl_b5_disrupt_why +]
 on-arrival: {!

@@ -6,7 +6,7 @@
   "subtitle: A concession, a common line on the communists, a postponement, or a purge.": "subtitle: Ustępstwo, wspólna linia wobec komunistów, odroczenie albo czystka.",
   "= Unity and leadership": "= Jedność i kierownictwo",
   "title: A concession to Centrum PPS": "title: Ustępstwo wobec frakcji Centrum PPS",
-  "subtitle: 1 resource; the faction's dissent falls (−8). Waits three months for this faction.": "subtitle: 1 jednostka środków; sprzeciw frakcji spada (−8). Odnowienie dla tej frakcji: trzy miesiące.",
+  "subtitle: Cost: 1 resource. The faction's dissent falls (−8); this faction waits three months.": "subtitle: Koszt: 1 jednostka środków. Sprzeciw frakcji spada (−8); odnowienie dla tej frakcji: trzy miesiące.",
   "title: A concession to Lewica PPS": "title: Ustępstwo wobec frakcji Lewica PPS",
   "title: A concession to Piłsudczycy": "title: Ustępstwo wobec frakcji Piłsudczycy",
   "title: Agree on the line of cooperation with the communists": "title: Uzgodnij linię współpracy z komunistami",
@@ -16,7 +16,7 @@
   "title: Persuade Lewica PPS to wait": "title: Przekonaj frakcję Lewica PPS, by poczekała",
   "title: Persuade Piłsudczycy to wait": "title: Przekonaj frakcję Piłsudczycy, by poczekała",
   "title: Expel part of Centrum PPS": "title: Usuń część frakcji Centrum PPS",
-  "subtitle: 1 resource; a quarter of its base leaves with voters and MPs; its dissent falls (−15). Every purge waits twelve months.": "subtitle: 1 jednostka środków; jedna czwarta jej bazy odchodzi z wyborcami i posłami; jej sprzeciw spada (−15). Po każdej czystce odnowienie: dwanaście miesięcy.",
+  "subtitle: Cost: 1 resource. A quarter of its base leaves with voters and MPs; its dissent falls (−15). Every purge waits twelve months.": "subtitle: Koszt: 1 jednostka środków. Jedna czwarta jej bazy odchodzi z wyborcami i posłami; jej sprzeciw spada (−15). Po każdej czystce odnowienie: dwanaście miesięcy.",
   "title: Expel part of Lewica PPS": "title: Usuń część frakcji Lewica PPS",
   "title: Expel part of Piłsudczycy": "title: Usuń część frakcji Piłsudczycy",
   "- @root: Continue.": "- @root: Dalej."

@@ -14,11 +14,12 @@ PolishParty.turCardView(Q);
 
 = TUR courses
 
-The Workers' University Society runs reading rooms, libraries and courses for workers, and people who learn with us trust the party more. A course costs this month's action and 1 resource, and its result shows after two months.
+The Workers' University Society runs reading rooms, libraries and courses for workers, and people who learn with us trust the party more. A course costs 1 resource, and its result shows after two months.
 
 - @civil_rights
 - @union_cadres
 - @national_education
+- @nothing
 - @easy_discard
 
 @civil_rights
@@ -50,6 +51,14 @@ on-arrival: {!
 PolishParty.turCardCourse(Q, 'national_education');
 !}
 go-to: result
+
+@nothing
+title: Do nothing now
+subtitle: The card is played and comes back in three months.
+on-arrival: {!
+PolishRules.skipCard(Q);
+!}
+go-to: root
 
 @result
 new-page: true

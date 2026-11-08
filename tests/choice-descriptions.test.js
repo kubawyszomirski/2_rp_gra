@@ -81,3 +81,51 @@ test('Liczby w opisach: ustawienie w Opcjach, domyślnie ukryte, i oznaczanie te
   assert.match(css, /body\.pl-hide-numbers ul\.choices \.pl-fx \{\n\s*display: none;/);
   assert.match(css, /ul\.choices li div\.subtitle > strong:first-child \{\n\s*display: block;/, 'the bold label stands on its own line');
 });
+
+// Z — 1.08 (the user's notes after playing 1.07): the money a choice spends stands in its own line ("Koszt: …"); no text speaks of
+// the month's action; the cards whose every option spends resources have "Do nothing"; the Overview shows the party's resources and
+// the state of the economy in a word.
+test('Koszt w osobnej linijce 1.08: the cost sentence is its own line; no text mentions the month’s action; no description opens with a bare cost', () => {
+  dendry.createEngine(1922, 'en');
+  const R = rules();
+  assert.equal(R.markEffectNumbers('Koszt: 1 jednostka środków. Robotnicy bardziej ufają PPS (+3).'),
+    '<span class="pl-cost">Koszt: 1 jednostka środków.</span>Robotnicy bardziej ufają PPS<span class="pl-fx"> (+3)</span>.');
+  assert.equal(R.markEffectNumbers('Zysk: 1 jednostka.'), 'Zysk: 1 jednostka.', 'only a cost opens a line of its own');
+  const ACTION = /zużywa akcj|kosztuje akcję|Akcja miesiąca|akcji miesiąca|akcję miesiąca|akcji tego miesiąca|akcję tego miesiąca|kosztuje miesiąca|Bez akcji|Nie zużywa akcji/i;
+  const BARE = /^(unavailable-)?subtitle: (\[\?[^:]*: )?(Kosztuje|Jedna jednostka|Dwie jednostki|1 jednostka środków|2 jednostki środków|Pół jednostki|0,5 jednostki)/;
+  const problems = [];
+  for (const file of walk(path.join(ROOT, 'source/i18n/pl/scenes')).filter(f => f.endsWith('.json') && !/strike_1923|army_oversight/.test(f))) {
+    const j = JSON.parse(fs.readFileSync(file, 'utf8'));
+    for (const [en, pl] of Object.entries(j.lines)) {
+      if (typeof pl !== 'string' || /Q\./.test(en) || /główna akcja miesiąca/.test(pl)) continue; // the glossary of the Library names the unit T
+      if (ACTION.test(pl)) problems.push('action: ' + j.source + ': ' + pl.slice(0, 80));
+      if (BARE.test(pl)) problems.push('bare cost: ' + j.source + ': ' + pl.slice(0, 80));
+    }
+  }
+  assert.deepEqual(problems, []);
+});
+
+test('Przegląd i „Nic nie robimy” 1.08: the Overview shows the resources and the state of the economy; doing nothing plays the card and keeps the month', () => {
+  const engine = dendry.startGame(1922, 'pl');
+  const Q = engine.state.qualities, S = Q.S;
+  try {
+    globalThis.PolishTopbar.overviewView(Q);
+    assert.equal(Q.pl_top_cash, '2,0');
+    assert.equal(Q.pl_top_economy, 'zastój', 'no growth at the start');
+    S.economy.last_growth = 0.5;
+    globalThis.PolishTopbar.overviewView(Q);
+    assert.equal(Q.pl_top_economy, 'wzrost');
+    S.economy.last_growth = -1.5;
+    globalThis.PolishTopbar.overviewView(Q);
+    assert.equal(Q.pl_top_economy, 'kryzys');
+    engine.state.currentHands.main = [{ id: 'polish_party_militia', title: 'Milicja' }];
+    engine.playCard('polish_party_militia');
+    const ids = (engine.getCurrentChoices() || []).map(c => c.id);
+    assert.ok(ids.includes('polish_party_militia.nothing'));
+    dendry.choose(engine, 'polish_party_militia.nothing');
+    assert.equal(Q.month_actions || 0, 0, 'the month stays free');
+    assert.ok(globalThis.PolishRules.cardRest(Q, 'polish_party_militia') > 0, 'the card rests as after a use');
+  } finally {
+    rules().setLanguage('en');
+  }
+});

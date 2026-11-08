@@ -75,7 +75,7 @@ go-to: result
 
 @campaign
 title: Start the campaign “Against high prices”
-subtitle: Costs 1 resource. It reaches the workers and the intelligentsia[? if pl_ev_strong : , and in this crisis more strongly than usual ?].
+subtitle: Cost: 1 resource. It reaches the workers and the intelligentsia[? if pl_ev_strong : , and in this crisis more strongly than usual ?].
 view-if: not pl_ev_treasury
 choose-if: {! return PolishProjects.eventStatus(Q, 'stabilization', 'campaign').available !}
 unavailable-subtitle: [+ pl_ev_campaign_why +]

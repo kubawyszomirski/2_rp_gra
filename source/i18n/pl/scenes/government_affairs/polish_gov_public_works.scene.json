@@ -7,11 +7,11 @@
   "= Public works": "= Roboty publiczne",
   "Public works give work to the unemployed with the money of the budget. Unemployment stands at [+ pl_gc_unemployment +]%.": "Roboty publiczne dają pracę bezrobotnym za pieniądze budżetu. Bezrobocie wynosi teraz [+ pl_gc_unemployment +]%.",
   "title: Employ the unemployed on quick works": "title: Zatrudnij bezrobotnych przy szybkich robotach",
-  "subtitle: Costs [+ pl_cost2 +]. Unemployment falls (−0.5 percentage points) and output rises a little.": "subtitle: Kosztuje [+ pl_cost2 +]. Bezrobocie spada (−0,5 punktu procentowego), a produkcja lekko rośnie.",
+  "subtitle: Cost: [+ pl_cost2 +]. Unemployment falls (−0.5 percentage points) and output rises a little.": "subtitle: Koszt: [+ pl_cost2n +]. Bezrobocie spada (−0,5 punktu procentowego), a produkcja lekko rośnie.",
   "title: Build roads, railways and bridges": "title: Buduj drogi, koleje i mosty",
-  "subtitle: Costs [+ pl_cost3 +]. Unemployment falls as much, and output rises more.": "subtitle: Kosztuje [+ pl_cost3 +]. Bezrobocie spada tak samo, a produkcja rośnie mocniej.",
+  "subtitle: Cost: [+ pl_cost3 +]. Unemployment falls as much, and output rises more.": "subtitle: Koszt: [+ pl_cost3 +]. Bezrobocie spada tak samo, a produkcja rośnie mocniej.",
   "title: Build workers’ housing": "title: Buduj mieszkania robotnicze",
-  "subtitle: Costs [+ pl_cost2 +] and creates no new jobs. The discontent of the workers grows more slowly.": "subtitle: Kosztuje [+ pl_cost2 +] i nie daje nowych miejsc pracy. Niezadowolenie robotników rośnie wolniej.",
+  "subtitle: Cost: [+ pl_cost2 +]. It creates no new jobs, but the discontent of the workers grows more slowly.": "subtitle: Koszt: [+ pl_cost2n +]. Nie daje nowych miejsc pracy, ale niezadowolenie robotników rośnie wolniej.",
   "- @root: Continue.": "- @root: Dalej."
  }
 }

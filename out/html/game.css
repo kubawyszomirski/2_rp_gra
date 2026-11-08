@@ -1477,3 +1477,12 @@ ul.choices li.pl-portrait-choice.unavailable .pl-portrait {
   font-variant: small-caps;
   letter-spacing: 0.04em;
 }
+
+/* Z — 1.08 (decision 3A of the user's notes): the money a choice spends ("Koszt: 1 jednostka środków.") in its own line at the
+   start of the description, upright small capitals, so it is seen at once. */
+.pl-cost {
+  display: block;
+  font-style: normal;
+  font-variant: small-caps;
+  letter-spacing: 0.03em;
+}

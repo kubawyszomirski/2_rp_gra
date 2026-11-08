@@ -7,7 +7,7 @@
   "Arciszewski represents Centrum PPS while maintaining strong connections to workers and the affiliated trade-union movement.": "Arciszewski reprezentuje Centrum PPS i utrzymuje silne więzi z robotnikami oraz ze związanym z partią ruchem zawodowym.",
   "- @root: Return to main": "- @root: Wróć do głównego ekranu",
   "title: Organize the Workers": "title: Organizowanie robotników",
-  "subtitle: 1 resource; one union branch reaches more workers (+8), and PPS gains among the workers it covers (+3 base reach).": "subtitle: 1 jednostka środków; jedna branża związkowa dociera do większej liczby robotników (+8), a PPS zyskuje wśród objętych nią robotników (+3 zasięgu bazowego).",
+  "subtitle: Cost: 1 resource. One union branch reaches more workers (+8), and PPS gains among the workers it covers (+3 base reach).": "subtitle: Koszt: 1 jednostka środków. Jedna branża związkowa dociera do większej liczby robotników (+8), a PPS zyskuje wśród objętych nią robotników (+3 zasięgu bazowego).",
   "= Organize the workers: which branch?": "= Organizowanie robotników: która branża?",
   "- @arciszewski: Back.": "- @arciszewski: Wróć.",
   "title: Industry": "title: Przemysł",
@@ -15,9 +15,9 @@
   "title: Railways": "title: Kolej",
   "title: Agricultural labour": "title: Robotnicy rolni",
   "title: Labour Programme: workers’ rights": "title: Program pracy: prawa robotnicze",
-  "subtitle: Opens the Workers’ Rights card; its one step costs no month (the ordinary B costs and the law remain).": "subtitle: Otwiera kartę „Prawa robotnicze”; jej jeden krok nie kosztuje miesiąca (zwykłe koszty B i ustawa pozostają).",
+  "subtitle: Opens the Workers’ Rights card for one decision at once; its ordinary budget costs and the law remain.": "subtitle: Otwiera kartę „Prawa robotnicze” na jedną decyzję od razu; jej zwykłe koszty budżetu i ustawa pozostają.",
   "unavailable-subtitle: [? if advisor_action_timer = 1 : 1 month before the next Committee action. ?][? if advisor_action_timer > 1 : [+ advisor_action_timer +] months before the next Committee action. ?][? if advisor_action_timer <= 0 : Needs PPS in the cabinet with Labour. ?]": "unavailable-subtitle: [? if advisor_action_timer = 1 : Do następnej akcji CKW: 1 miesiąc. ?][? if advisor_action_timer >= 2 and advisor_action_timer <= 4 : Do następnej akcji CKW: [+ advisor_action_timer +] miesiące. ?][? if advisor_action_timer >= 5 : Do następnej akcji CKW: [+ advisor_action_timer +] miesięcy. ?][? if advisor_action_timer <= 0 : Wymaga PPS w gabinecie z resortem Pracy. ?]",
   "title: Labour Programme: benefits for the unemployed": "title: Program pracy: zasiłki dla bezrobotnych",
-  "subtitle: Opens the Benefits card; its one step costs no month (the ordinary B costs remain).": "subtitle: Otwiera kartę „Zasiłki i pomoc dla bezrobotnych”; jej jeden krok nie kosztuje miesiąca (zwykłe koszty B pozostają)."
+  "subtitle: Opens the Benefits card for one decision at once; its ordinary budget costs remain.": "subtitle: Otwiera kartę „Zasiłki i pomoc dla bezrobotnych” na jedną decyzję od razu; jej zwykłe koszty budżetu pozostają."
  }
 }

@@ -744,7 +744,6 @@ go-to: summary
 
 @submit
 title: Submit the offer
-subtitle: [? if not pl_form_mandatory : Spends this month's action. ?]
 choose-if: {! return PolishGovernment.submitStatus(Q).available !}
 unavailable-subtitle: [+ pl_form_submit_reason +]
 on-arrival: {!

@@ -33,7 +33,7 @@ The minorities want to teach their children in their own language, and the natio
 
 @own_language
 title: Introduce teaching in the mother tongue
-subtitle: Costs [+ pl_cost2 +]. The minorities trust PPS more (+4), but the national democrats protest, and our relations with them worsen (−5). [? if pl_minority_school_rights_own_language_coalition : [+ pl_minority_school_rights_own_language_coalition +] ?]
+subtitle: Cost: [+ pl_cost2 +]. The minorities trust PPS more (+4), but the national democrats protest, and our relations with them worsen (−5). [? if pl_minority_school_rights_own_language_coalition : [+ pl_minority_school_rights_own_language_coalition +] ?]
 choose-if: {! return PolishProjects.optionStatus(Q, 'minority_school_rights', 'own_language').available !}
 unavailable-subtitle: [+ pl_minority_school_rights_own_language_why +]
 on-arrival: {!
@@ -43,7 +43,7 @@ go-to: result
 
 @agreed_bilingual
 title: Introduce agreed bilingualism
-subtitle: Costs [+ pl_cost2 +] and needs an agreement with a minority club; keeping it improves our relations with that club (+4). The minorities trust us a little more (+2), and the national democrats do not protest.
+subtitle: Cost: [+ pl_cost2 +]. Needs an agreement with a minority club; keeping it improves our relations with that club (+4). The minorities trust us a little more (+2), and the national democrats do not protest.
 choose-if: {! return PolishProjects.optionStatus(Q, 'minority_school_rights', 'agreed_bilingual').available !}
 unavailable-subtitle: [+ pl_minority_school_rights_agreed_bilingual_why +]
 on-arrival: {!
@@ -53,7 +53,7 @@ go-to: result
 
 @polish_dominance
 title: Impose a school with Polish as its language
-subtitle: Costs [+ pl_cost2 +]. The national democrats are pleased (+5), but the minorities lose trust (−6); if we made agreements with them, we break them. [? if pl_minority_school_rights_polish_dominance_coalition : [+ pl_minority_school_rights_polish_dominance_coalition +] ?]
+subtitle: Cost: [+ pl_cost2 +]. The national democrats are pleased (+5), but the minorities lose trust (−6); if we made agreements with them, we break them. [? if pl_minority_school_rights_polish_dominance_coalition : [+ pl_minority_school_rights_polish_dominance_coalition +] ?]
 choose-if: {! return PolishProjects.optionStatus(Q, 'minority_school_rights', 'polish_dominance').available !}
 unavailable-subtitle: [+ pl_minority_school_rights_polish_dominance_why +]
 on-arrival: {!

@@ -45,7 +45,7 @@ go-to: conceded
 
 @talks
 title: Talk the partners round
-subtitle: Costs 2 resources. The tension with all the partners falls (−10).
+subtitle: Cost: 2 resources. The tension with all the partners falls (−10).
 choose-if: {! return PolishGovernment.talksStatus(Q).available !}
 unavailable-subtitle: [+ pl_coal_talks_reason +]
 on-arrival: {!

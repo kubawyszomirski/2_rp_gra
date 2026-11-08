@@ -5,13 +5,15 @@
   "title: TUR Courses": "title: Kursy TUR",
   "subtitle: Courses of the Workers' University Society; each goes where it is most needed.": "subtitle: Kursy Towarzystwa Uniwersytetu Robotniczego; każdy trafia tam, gdzie jest najbardziej potrzebny.",
   "= TUR courses": "= Kursy TUR",
-  "The Workers' University Society runs reading rooms, libraries and courses for workers, and people who learn with us trust the party more. A course costs this month's action and 1 resource, and its result shows after two months.": "Towarzystwo Uniwersytetu Robotniczego prowadzi czytelnie, biblioteki i kursy dla robotników, a ludzie, którzy się u nas uczą, bardziej ufają partii. Kurs kosztuje akcję tego miesiąca i 1 jednostkę środków, a jego wynik widać po dwóch miesiącach.",
+  "The Workers' University Society runs reading rooms, libraries and courses for workers, and people who learn with us trust the party more. A course costs 1 resource, and its result shows after two months.": "Towarzystwo Uniwersytetu Robotniczego prowadzi czytelnie, biblioteki i kursy dla robotników, a ludzie, którzy się u nas uczą, bardziej ufają partii. Kurs kosztuje 1 jednostkę środków, a jego wynik widać po dwóch miesiącach.",
   "title: Run a civic course": "title: Poprowadź kurs obywatelski",
   "subtitle: [+ pl_tur_civil_rights_target +] Trust in PPS in this group rises for good (+4), so our campaigns reach it better.": "subtitle: [+ pl_tur_civil_rights_target +] Zaufanie do PPS w tej grupie trwale rośnie (+4), więc nasze kampanie trafiają tam lepiej.",
   "title: Run a course for trade unionists": "title: Poprowadź kurs dla związkowców",
   "subtitle: [+ pl_tur_union_cadres_target +] The union trusts PPS more (+3) and objects less (−4).": "subtitle: [+ pl_tur_union_cadres_target +] Związek bardziej ufa PPS (+3) i mniej się sprzeciwia (−4).",
   "title: Run a national education campaign": "title: Poprowadź kampanię oświatową w całym kraju",
   "subtitle: [+ pl_tur_national_education_target +] Trust in PPS rises in all three groups (+4).": "subtitle: [+ pl_tur_national_education_target +] Zaufanie do PPS rośnie we wszystkich trzech grupach (+4).",
-  "- @root: Continue.": "- @root: Dalej."
+  "- @root: Continue.": "- @root: Dalej.",
+  "title: Do nothing now": "title: Nic nie robimy",
+  "subtitle: The card is played and comes back in three months.": "subtitle: Karta zostaje zagrana i wróci za trzy miesiące."
  }
 }

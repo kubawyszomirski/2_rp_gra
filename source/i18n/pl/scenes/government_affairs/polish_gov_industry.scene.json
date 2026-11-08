@@ -7,9 +7,9 @@
   "= Industrial policy": "= Polityka przemysłowa",
   "Industry and Trade can place orders with home industry and decide the fate of plants in difficulty.": "Resort Przemysłu i Handlu może zamawiać u krajowego przemysłu i decydować o losie zakładów, które mają kłopoty.",
   "title: Place public orders": "title: Złóż zamówienia publiczne",
-  "subtitle: Costs [+ pl_cost2 +]. Output grows for three months (+0.3 percentage points a month).": "subtitle: Kosztuje [+ pl_cost2 +]. Produkcja rośnie przez trzy miesiące (+0,3 punktu procentowego miesięcznie).",
+  "subtitle: Cost: [+ pl_cost2 +]. Output grows for three months (+0.3 percentage points a month).": "subtitle: Koszt: [+ pl_cost2n +]. Produkcja rośnie przez trzy miesiące (+0,3 punktu procentowego miesięcznie).",
   "title: Rescue a threatened plant with credit": "title: Uratuj zagrożony zakład kredytem",
-  "subtitle: Costs [+ pl_cost2 +]; in return the owner keeps the plant and its jobs. Business presses less at once (−4), and the plant works in full again.": "subtitle: Kosztuje [+ pl_cost2 +]; w zamian właściciel utrzymuje zakład i zatrudnienie. Przedsiębiorcy od razu mniej naciskają (−4), a zakład wraca do pełnej produkcji.",
+  "subtitle: Cost: [+ pl_cost2 +]. In return the owner keeps the plant and its jobs; business presses less at once (−4), and the plant works in full again.": "subtitle: Koszt: [+ pl_cost2n +]. W zamian właściciel utrzymuje zakład i zatrudnienie; przedsiębiorcy od razu mniej naciskają (−4), a zakład wraca do pełnej produkcji.",
   "title: Take a plant under public control": "title: Weź zakład pod kontrolę publiczną",
   "- @root: Continue.": "- @root: Dalej.",
   "subtitle: A public board takes over the management of the plant. The workers keep their jobs, but business pressure rises sharply (+15). [? if pl_industrial_policy_public_control_coalition : [+ pl_industrial_policy_public_control_coalition +] ?]": "subtitle: Zarządzanie zakładem przejmuje zarząd publiczny. Robotnicy zachowują pracę, ale presja przedsiębiorców gwałtownie rośnie (+15). [? if pl_industrial_policy_public_control_coalition : [+ pl_industrial_policy_public_control_coalition +] ?]"

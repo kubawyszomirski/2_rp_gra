@@ -34,7 +34,7 @@ PolishParty.advisorAction(Q, 'zaremba', 'worker_peasant_front');
 
 @class_campaign
 title: Class Campaign
-subtitle: 1 resource; PPS gains among employed workers (+4 base reach) and the unemployed (+3), loses among the petty bourgeoisie (−2); Lewica grows stronger (+4) and its dissent falls (−5).
+subtitle: Cost: 1 resource. PPS gains among employed workers (+4 base reach) and the unemployed (+3), loses among the petty bourgeoisie (−2); Lewica grows stronger (+4) and its dissent falls (−5).
 choose-if: {! return PolishParty.advisorActionStatus(Q, 'zaremba', 'class_campaign').available !}
 unavailable-subtitle: [+ pl_advact_class_campaign_why +]
 call: polish_advisor_commit

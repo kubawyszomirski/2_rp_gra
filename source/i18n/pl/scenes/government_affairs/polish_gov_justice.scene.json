@@ -9,9 +9,9 @@
   "title: Declare an amnesty for political prisoners": "title: Ogłoś amnestię dla więźniów politycznych",
   "subtitle: No cost to the budget; once in the chapter. The workers trust PPS more (+3), but squad members leave the prisons too, and political violence rises (+3). [? if pl_justice_policy_amnesty_coalition : [+ pl_justice_policy_amnesty_coalition +] ?]": "subtitle: Bez kosztu dla budżetu, raz w rozdziale. Robotnicy bardziej ufają PPS (+3), ale na wolność wychodzą też bojówkarze, więc przemoc polityczna rośnie (+3). [? if pl_justice_policy_amnesty_coalition : [+ pl_justice_policy_amnesty_coalition +] ?]",
   "title: Introduce jury courts in political and press cases": "title: Wprowadź sądy przysięgłych w sprawach politycznych i prasowych",
-  "subtitle: Costs 1 budget unit. Democracy grows stronger (+2). [? if pl_justice_policy_jury_coalition : [+ pl_justice_policy_jury_coalition +] ?]": "subtitle: Kosztuje 1 jednostkę budżetu. Demokracja się umacnia (+2). [? if pl_justice_policy_jury_coalition : [+ pl_justice_policy_jury_coalition +] ?]",
+  "subtitle: Cost: 1 budget unit. Democracy grows stronger (+2). [? if pl_justice_policy_jury_coalition : [+ pl_justice_policy_jury_coalition +] ?]": "subtitle: Koszt: 1 jednostka budżetu. Demokracja się umacnia (+2). [? if pl_justice_policy_jury_coalition : [+ pl_justice_policy_jury_coalition +] ?]",
   "title: Open free legal advice for workers": "title: Otwórz bezpłatne porady prawne dla robotników",
-  "subtitle: Costs 1 budget unit. The trade unions trust PPS more (+5).": "subtitle: Kosztuje 1 jednostkę budżetu. Związki zawodowe bardziej ufają PPS (+5).",
+  "subtitle: Cost: 1 budget unit. The trade unions trust PPS more (+5).": "subtitle: Koszt: 1 jednostka budżetu. Związki zawodowe bardziej ufają PPS (+5).",
   "- @root: Continue.": "- @root: Dalej."
  }
 }

@@ -8,10 +8,10 @@
   "- @root: Continue.": "- @root: Dalej.",
   "The credit instrument gives firms cheaper credit and raises the credit target of the economy while it works (+5). The variants differ in who pays and whom the credit helps.": "Instrument kredytowy daje przedsiębiorstwom tańszy kredyt i podnosi docelowy kredyt w gospodarce, dopóki działa (+5). Warianty różnią się tym, kto płaci i komu kredyt pomaga.",
   "title: Set up a public fund": "title: Załóż fundusz publiczny",
-  "subtitle: Costs [+ pl_cost2 +]; the state itself chooses whom it lends to. It helps the workers’ towns and the crafts.": "subtitle: Kosztuje [+ pl_cost2 +]; państwo samo wybiera, komu daje kredyt. Pomaga robotniczym miastom i rzemiosłu.",
+  "subtitle: Cost: [+ pl_cost2 +]. The state itself chooses whom it lends to; it helps the workers’ towns and the crafts.": "subtitle: Koszt: [+ pl_cost2n +]. Państwo samo wybiera, komu daje kredyt; pomaga robotniczym miastom i rzemiosłu.",
   "title: Make an agreement with the banks": "title: Zawrzyj porozumienie z bankami",
-  "subtitle: Costs only 1 budget unit, and business presses less (−8). The Left of PPS protests against a deal with capital (+4); needs credit of at least 40.": "subtitle: Kosztuje tylko 1 jednostkę budżetu, a przedsiębiorcy mniej naciskają (−8). Lewica PPS protestuje przeciw układowi z kapitałem (+4); wymaga kredytu co najmniej 40.",
+  "subtitle: Cost: 1 budget unit. Business presses less (−8); the Left of PPS protests against a deal with capital (+4); needs credit of at least 40.": "subtitle: Koszt: 1 jednostka budżetu. Przedsiębiorcy mniej naciskają (−8); Lewica PPS protestuje przeciw układowi z kapitałem (+4); wymaga kredytu co najmniej 40.",
   "title: Finance the credit through the cooperatives": "title: Finansuj kredyt przez spółdzielnie",
-  "subtitle: Costs [+ pl_cost2 +]. It helps peasant farms and workshops instead of the towns.": "subtitle: Kosztuje [+ pl_cost2 +]. Pomaga gospodarstwom chłopskim i warsztatom zamiast miastom."
+  "subtitle: Cost: [+ pl_cost2 +]. It helps peasant farms and workshops instead of the towns.": "subtitle: Koszt: [+ pl_cost2n +]. Pomaga gospodarstwom chłopskim i warsztatom zamiast miastom."
  }
 }

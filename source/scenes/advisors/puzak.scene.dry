@@ -34,7 +34,7 @@ PolishParty.advisorAction(Q, 'puzak', 'party_discipline');
 
 @mobilize_organization
 title: Mobilize the Organization
-subtitle: 1 resource; the base reach of PPS among the workers grows (+10), and campaigns among workers work better for six months (×1.20).
+subtitle: Cost: 1 resource. The base reach of PPS among the workers grows (+10), and campaigns among workers work better for six months (×1.20).
 choose-if: {! return PolishParty.advisorActionStatus(Q, 'puzak', 'mobilize_organization').available !}
 unavailable-subtitle: [+ pl_advact_mobilize_organization_why +]
 call: polish_advisor_commit

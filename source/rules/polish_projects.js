@@ -4345,7 +4345,9 @@
     Q.pl_cost2 = word(two, false);
     Q.pl_cost2n = word(two, true);
     Q.pl_cost3 = word(three, false);
-    Q.pl_cost_soc = word(S ? profilePrice(S, 'socialise_mining', 3, 'pps') : 3, false);
+    const soc = S ? profilePrice(S, 'socialise_mining', 3, 'pps') : 3;
+    Q.pl_cost_soc = word(soc, false);
+    Q.pl_cost_socn = word(soc, true);
   }
   function cardView(Q, cardId) {
     costWords(Q);

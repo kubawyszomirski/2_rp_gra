@@ -1,5 +1,5 @@
 title: Legislative Initiative
-subtitle: A bill of PPS: taking it up costs this month's action, and the Sejm votes on it next month.
+subtitle: A bill of PPS: the Sejm votes on it next month.
 new-page: true
 is-card: true
 tags: parliament_affairs
@@ -164,7 +164,7 @@ go-to: result
 
 @skip
 title: We file no bill
-subtitle: Nothing happens and the card is played; it comes back in three months. It costs no month.
+subtitle: Nothing happens and the card is played; it comes back in three months.
 on-arrival: {!
 Q.pl_ini_result = PolishProjects.initiativeSkip(Q);
 !}

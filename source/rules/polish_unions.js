@@ -1477,13 +1477,13 @@
     }
     Q.pl_dsp_start_why = startStatus(Q).reason;
     Q.pl_dsp_threat_why = threatStatus(Q).reason;
-    Q.pl_dsp_threat_line = rec ? L('This month’s action. The workers get ready to fight (readiness +' + THREAT_READINESS + '), and the government may give way at once (chance: ' +
+    Q.pl_dsp_threat_line = rec ? L('The workers get ready to fight (readiness +' + THREAT_READINESS + '), and the government may give way at once (chance: ' +
       chanceWord(threatChance(S, rec)) + '). If it refuses, you can start a strike next month.',
-      'Akcja miesiąca. Robotnicy szykują się do walki (gotowość +' + THREAT_READINESS + '), a rząd może ustąpić od razu (szansa: ' + chanceWord(threatChance(S, rec)) +
+      'Robotnicy szykują się do walki (gotowość +' + THREAT_READINESS + '), a rząd może ustąpić od razu (szansa: ' + chanceWord(threatChance(S, rec)) +
       '). Jeśli odmówi, w przyszłym miesiącu możesz zacząć strajk.') : '';
-    Q.pl_dsp_drop_line = rec ? (rec.kind === 'wage_case' ? L('Costs no action. The unions’ trust falls (−' + DROP_TRUST + '); the dispute can come back in three months if it lasts.',
-      'Nie zużywa akcji. Zaufanie związków spada (−' + DROP_TRUST + '); spór może wrócić za trzy miesiące, jeśli będzie trwał.') :
-      L('Costs no action. The union’s trust falls (−' + DROP_TRUST + ').', 'Nie zużywa akcji. Zaufanie związku spada (−' + DROP_TRUST + ').')) : '';
+    Q.pl_dsp_drop_line = rec ? (rec.kind === 'wage_case' ? L('The unions’ trust falls (−' + DROP_TRUST + '); the dispute can come back in three months if it lasts.',
+      'Zaufanie związków spada (−' + DROP_TRUST + '); spór może wrócić za trzy miesiące, jeśli będzie trwał.') :
+      L('The union’s trust falls (−' + DROP_TRUST + ').', 'Zaufanie związku spada (−' + DROP_TRUST + ').')) : '';
     Q.pl_dsp_mediate_why = lead ? mediateStatus(Q, lead).reason : '';
   }
 
@@ -1616,7 +1616,7 @@
     const rows = rec.branches.map(b => branchName(b) + ' ' + fmt(participation(S, b)));
     const chance = roundChance(S, Object.assign({}, rec, {status: 'active', participants: rec.branches.reduce((m, b) => Object.assign(m, {[b]: participation(S, b)}), {}),
       communist_cooperation: null}), st.goal === 'big' ? THRESHOLDS.broad : THRESHOLDS.limited, S.turn.last_settled_time + 1).chance;
-    Q.pl_su_launch_line = L('This month’s action. Expected participation: ', 'Akcja miesiąca. Oczekiwany udział: ') + rows.join(', ') +
+    Q.pl_su_launch_line = L('Expected participation: ', 'Oczekiwany udział: ') + rows.join(', ') +
       L('; the chance of a government offer in a month: ', '; szansa na ofertę rządu w miesiącu: ') + chanceWord(chance) + '.' +
       (st.goal === 'political' ? ' ' + L('The cabinet will refuse to resign; the talks then turn to wages and working conditions.', 'Rząd odmówi dymisji; potem rokowania wrócą do płac i warunków pracy.') : '');
     Q.pl_su_launch_why = launchStatus(Q).reason;
@@ -1820,8 +1820,8 @@
     const S = Q.S;
     for (const id of BRANCHES) Q['pl_un_' + id + '_line'] = branchLine(S, id);
     // Z — 0.59: what the card is, why it is in the deck now and where a dispute starts.
-    Q.pl_un_intro = L('This card is the work of PPS in three union branches; each step costs the month’s action. ',
-      'Ta karta to praca PPS w trzech branżach związkowych; każdy krok kosztuje akcję miesiąca. ') +
+    Q.pl_un_intro = L('This card is the work of PPS in three union branches. ',
+      'Ta karta to praca PPS w trzech branżach związkowych. ') +
       (disputeOpen(S) ? L('It is in the deck now because ' + disputeCauseText(S) + '. ', 'Jest teraz w talii, bo ' + disputeCauseText(S) + '. ') : '') +
       L('A dispute usually starts with agreeing the demands; a strike comes only after that.',
         'Zwykle zaczyna się od uzgodnienia postulatów, a dopiero potem przychodzi strajk.');

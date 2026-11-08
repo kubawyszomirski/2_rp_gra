@@ -36,7 +36,7 @@ go-to: result
 
 @reportage
 title: Reportage on the conditions of work and life
-subtitle: One unit of the party's money. The workers and the unemployed trust PPS more (+3), so the next campaigns among them are stronger; the press gains credibility (+2).
+subtitle: Cost: 1 resource. The workers and the unemployed trust PPS more (+3), so the next campaigns among them are stronger; the press gains credibility (+2).
 choose-if: {! return PolishParty.pressActionStatus(Q, 'reportage').available !}
 unavailable-subtitle: [+ pl_press_reportage_why +]
 on-arrival: {!

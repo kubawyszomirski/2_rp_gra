@@ -26,7 +26,7 @@ PPS must defend the constitutional order and keep grief and anger from turning i
 
 @defend
 title: A mass defence of the republic
-subtitle: Costs 1 resource. Our press and unions call people to a peaceful gathering in defence of the Republic, which strengthens democracy (+2).
+subtitle: Cost: 1 resource. Our press and unions call people to a peaceful gathering in defence of the Republic, which strengthens democracy (+2).
 choose-if: {! return PolishPolitics.responseStatus(Q, 'defend').available !}
 unavailable-subtitle: [+ pl_b4_defend_why +]
 go-to: protection
@@ -43,7 +43,7 @@ go-to: result
 
 @retaliation
 title: Allow our Milicja a retaliatory confrontation
-subtitle: Costs half a resource. The Centrum of the party protests (+8), and if it comes to a fight, the authorities will turn against our organisations.
+subtitle: Cost: half a resource. The Centrum of the party protests (+8), and if it comes to a fight, the authorities will turn against our organisations.
 choose-if: {! return PolishPolitics.responseStatus(Q, 'retaliation').available !}
 unavailable-subtitle: [+ pl_b4_retaliation_why +]
 on-arrival: {!
@@ -71,7 +71,7 @@ go-to: result
 
 @protected
 title: Protect the gathering with the Milicja
-subtitle: Costs half a resource more.
+subtitle: Cost: half a resource more.
 choose-if: {! return PolishPolitics.responseStatus(Q, 'defend', true).available !}
 unavailable-subtitle: [+ pl_b4_protect_why +]
 on-arrival: {!

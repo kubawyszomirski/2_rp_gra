@@ -11,8 +11,7 @@ on-arrival: {!
 // of 8 X 2026): the TUR courses have their own card, polish_party_tur; organisational work is two options straight on this page,
 // the target picked by the game (decision 4A). Z — 0.92: the cooperative is founded on the card Organisations of PPS at once.
 PolishParty.agendaView(Q);
-// Stage 7: the assessment of the forces of the state is a standing action of this agenda (card catalogue 6.8).
-if (Q.polish_security_rules && typeof PolishSecurity !== 'undefined' && PolishSecurity.ready(Q)) Q.pl_pa_assess_why = PolishSecurity.assessStatus(Q).reason;
+// Stage 7: the assessment of the forces of the state was a standing action of this agenda; Z — 1.08 (decision 7A) removed it.
 !}
 
 = The party agenda
@@ -29,7 +28,6 @@ TUR: [+ pl_party_tur +].
 - @apparatus
 - @kpp_rules
 - @kpp_agreement
-- @assess_forces
 - @easy_discard
 
 @fundraise
@@ -44,7 +42,7 @@ go-to: result
 
 @apparatus
 title: Build up the party apparatus
-subtitle: 2 resources; one level more (up to 4): every collection brings more (+25% for each level above the first).
+subtitle: Cost: 2 resources. One level more (up to 4): every collection brings more (+25% for each level above the first).
 choose-if: {! return PolishParty.apparatusStatus(Q).available !}
 unavailable-subtitle: [+ pl_pa_apparatus_why +]
 on-arrival: {!
@@ -64,7 +62,7 @@ go-to: result
 
 @organize_voters
 title: Organisational work among our voters
-subtitle: No money; the groups of the character of the party. [+ pl_pa_org_voters_text +]
+subtitle: No money. [+ pl_pa_org_voters_text +]
 choose-if: {! return PolishParty.organizeStatusOf(Q, 'voters').available !}
 unavailable-subtitle: [+ pl_pa_org_voters_why +]
 on-arrival: {!
@@ -76,7 +74,7 @@ go-to: result
 # communists (14.3, 9.6), so this option is not on the agenda's list; the scene stays for the rule PolishParty.kppStep.
 @kpp_trial
 title: Cooperation with the KPP: agree on a trial
-subtitle: This month's action; a trial of joint action for an existing demand, at a relation of 30 or more. Relation now [+ pl_kpp_relation +].
+subtitle: A trial of joint action for an existing demand, at a relation of 30 or more. Relation now [+ pl_kpp_relation +].
 view-if: pl_pa_kpp_open = 1
 choose-if: {! return PolishParty.kppStepStatus(Q, 'trial').available !}
 unavailable-subtitle: [+ pl_kpp_trial_why +]
@@ -87,7 +85,7 @@ go-to: result
 
 @kpp_rules
 title: Cooperation with the KPP: agree on the rules
-subtitle: This month's action; after two different successful joint actions, one of them full, at a relation of 50 or more.
+subtitle: After two different successful joint actions, one of them full, at a relation of 50 or more.
 view-if: pl_pa_kpp_open = 1
 choose-if: {! return PolishParty.kppStepStatus(Q, 'rules').available !}
 unavailable-subtitle: [+ pl_kpp_rules_why +]
@@ -98,24 +96,12 @@ go-to: result
 
 @kpp_agreement
 title: Cooperation with the KPP: a broader agreement
-subtitle: This month's action and 1 resource; needs rules accepted by both sides and the acceptance of 60 inside PPS (now [+ pl_kpp_acceptance +]).
+subtitle: Cost: 1 resource. Needs rules accepted by both sides and the acceptance of 60 inside PPS (now [+ pl_kpp_acceptance +]).
 view-if: pl_pa_kpp_open = 1
 choose-if: {! return PolishParty.kppStepStatus(Q, 'agreement').available !}
 unavailable-subtitle: [+ pl_kpp_agreement_why +]
 on-arrival: {!
 PolishParty.kppStep(Q, 'agreement');
-!}
-go-to: result
-
-@assess_forces
-title: Assess the forces of the state
-subtitle: 1 resource. Our people in the army find out what the officers really think; it can be repeated after three months.
-view-if: {! return !!Q.polish_security_rules && PolishSecurity.ready(Q) !}
-choose-if: {! return PolishSecurity.assessStatus(Q).available !}
-unavailable-subtitle: [+ pl_pa_assess_why +]
-on-arrival: {!
-PolishSecurity.assess(Q);
-Q.pl_party_result = Q.pl_security_result;
 !}
 go-to: result
 

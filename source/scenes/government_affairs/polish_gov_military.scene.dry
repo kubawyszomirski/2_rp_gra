@@ -28,7 +28,7 @@ The army answers to the minister of military affairs, but many officers listen a
 
 @raise_spending
 title: Raise the spending on the army
-subtitle: Costs [+ pl_cost2 +]. The officers are content and the pressure towards a coup falls (−5), but the dissent of the Left of PPS rises (+5).
+subtitle: Cost: [+ pl_cost2 +]. The officers are content and the pressure towards a coup falls (−5), but the dissent of the Left of PPS rises (+5).
 choose-if: {! return PolishProjects.optionStatus(Q, 'military_policy', 'raise_spending').available !}
 unavailable-subtitle: [+ pl_military_policy_raise_spending_why +]
 on-arrival: {!
@@ -48,7 +48,7 @@ go-to: result
 
 @promote_officers
 title: Promote officers loyal to the government
-subtitle: Costs 1 budget unit. The army leans less towards Piłsudski (−3 percentage points), but relations with Piłsudski worsen (−10) and the Piłsudczycy in PPS protest (+8).
+subtitle: Cost: 1 budget unit. The army leans less towards Piłsudski (−3 percentage points), but relations with Piłsudski worsen (−10) and the Piłsudczycy in PPS protest (+8).
 choose-if: {! return PolishProjects.optionStatus(Q, 'military_policy', 'promote_officers').available !}
 unavailable-subtitle: [+ pl_military_policy_promote_officers_why +]
 on-arrival: {!

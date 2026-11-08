@@ -7,9 +7,9 @@
   "= Police": "= Policja",
   "The state police answer to the minister of the interior, but many commanders still remember the old order. The command of the police stands at [+ pl_gc_police_command +] and its lawfulness at [+ pl_gc_police_lawful +] of 100.": "Policja państwowa podlega ministrowi spraw wewnętrznych, ale wielu komendantów pamięta jeszcze dawne porządki. Dowodzenie policji wynosi teraz [+ pl_gc_police_command +], a jej praworządność [+ pl_gc_police_lawful +] na 100.",
   "title: Train the police": "title: Wyszkol policję",
-  "subtitle: Costs 1 budget unit. The command and the lawfulness of the police rise (+5); the training can be repeated.": "subtitle: Kosztuje 1 jednostkę budżetu. Dowodzenie i praworządność policji rosną (+5); szkolenie można powtarzać.",
+  "subtitle: Cost: 1 budget unit. The command and the lawfulness of the police rise (+5); the training can be repeated.": "subtitle: Koszt: 1 jednostka budżetu. Dowodzenie i praworządność policji rosną (+5); szkolenie można powtarzać.",
   "title: Pursue the perpetrators of political violence": "title: Ścigaj sprawców przemocy politycznej",
-  "subtitle: Costs 1 budget unit. Political violence falls (−5), but the National Democrats and the communists resent the pursuit of their people (−3).": "subtitle: Kosztuje 1 jednostkę budżetu. Przemoc polityczna spada (−5), ale endecja i komuniści oburzają się na ściganie swoich ludzi (−3).",
+  "subtitle: Cost: 1 budget unit. Political violence falls (−5), but the National Democrats and the communists resent the pursuit of their people (−3).": "subtitle: Koszt: 1 jednostka budżetu. Przemoc polityczna spada (−5), ale endecja i komuniści oburzają się na ściganie swoich ludzi (−3).",
   "title: Protect rallies and strikes": "title: Chroń wiece i strajki",
   "subtitle: No cost to the budget. For half a year the police guard lawful rallies and strikes, even if PPS loses the ministry, so there are fewer clashes; business presses harder on the cabinet (+3).": "subtitle: Bez kosztu dla budżetu. Przez pół roku policja pilnuje legalnych wieców i strajków, nawet gdyby PPS straciła resort, więc starć jest mniej, ale przedsiębiorcy mocniej naciskają na rząd (+3).",
   "- @root: Continue.": "- @root: Dalej."

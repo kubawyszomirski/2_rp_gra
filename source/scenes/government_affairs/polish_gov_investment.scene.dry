@@ -32,7 +32,7 @@ The credit instrument gives firms cheaper credit and raises the credit target of
 
 @public
 title: Set up a public fund
-subtitle: Costs [+ pl_cost2 +]; the state itself chooses whom it lends to. It helps the workers’ towns and the crafts.
+subtitle: Cost: [+ pl_cost2 +]. The state itself chooses whom it lends to; it helps the workers’ towns and the crafts.
 choose-if: {! return PolishProjects.optionStatus(Q, 'investment_fund', 'public').available !}
 unavailable-subtitle: [+ pl_investment_fund_public_why +]
 on-arrival: {!
@@ -42,7 +42,7 @@ go-to: result
 
 @banks
 title: Make an agreement with the banks
-subtitle: Costs only 1 budget unit, and business presses less (−8). The Left of PPS protests against a deal with capital (+4); needs credit of at least 40.
+subtitle: Cost: 1 budget unit. Business presses less (−8); the Left of PPS protests against a deal with capital (+4); needs credit of at least 40.
 choose-if: {! return PolishProjects.optionStatus(Q, 'investment_fund', 'banks').available !}
 unavailable-subtitle: [+ pl_investment_fund_banks_why +]
 on-arrival: {!
@@ -52,7 +52,7 @@ go-to: result
 
 @cooperative
 title: Finance the credit through the cooperatives
-subtitle: Costs [+ pl_cost2 +]. It helps peasant farms and workshops instead of the towns.
+subtitle: Cost: [+ pl_cost2 +]. It helps peasant farms and workshops instead of the towns.
 choose-if: {! return PolishProjects.optionStatus(Q, 'investment_fund', 'cooperative').available !}
 unavailable-subtitle: [+ pl_investment_fund_cooperative_why +]
 on-arrival: {!

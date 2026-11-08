@@ -26,7 +26,7 @@ Józef Piłsudski again attacks the Sejm, this time over [+ pl_crit_topic +]. If
 
 @support
 title: Support the criticism of parliamentarism
-subtitle: Costs this month’s action. Piłsudski and his followers in the party will appreciate it (+4), but the Centre will protest and the authority of the Sejm will weaken. [+ pl_crit_warning +]
+subtitle: Piłsudski and his followers in the party will appreciate it (+4), but the Centre will protest and the authority of the Sejm will weaken. [+ pl_crit_warning +]
 choose-if: {! return PolishPolitics.criticismStatus(Q, 'support').available !}
 unavailable-subtitle: [+ pl_crit_why +]
 on-arrival: {!
@@ -36,7 +36,7 @@ go-to: result
 
 @defend
 title: Defend parliament and the lawful change of governments
-subtitle: Costs this month’s action. The Centre will appreciate it and the authority of the Sejm will grow, but Piłsudski will move away from us (−4).
+subtitle: The Centre will appreciate it and the authority of the Sejm will grow, but Piłsudski will move away from us (−4).
 choose-if: {! return PolishPolitics.criticismStatus(Q, 'defend').available !}
 unavailable-subtitle: [+ pl_crit_why +]
 on-arrival: {!
@@ -46,7 +46,7 @@ go-to: result
 
 @reform
 title: Parliament should be reformed to work better
-subtitle: Costs this month’s action. It calms the Centre without provoking Piłsudski.
+subtitle: It calms the Centre without provoking Piłsudski.
 choose-if: {! return PolishPolitics.criticismStatus(Q, 'reform').available !}
 unavailable-subtitle: [+ pl_crit_why +]
 on-arrival: {!

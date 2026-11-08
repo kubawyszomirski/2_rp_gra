@@ -34,7 +34,7 @@ The state can restore monuments, support the universities and build a radio. Eac
 
 @heritage
 title: Restore [+ pl_gc_heritage_object +] and open it to visitors
-subtitle: Costs [+ pl_cost2 +]. The intelligentsia trusts PPS more (+3), and the credibility of the party grows (+2).
+subtitle: Cost: [+ pl_cost2 +]. The intelligentsia trusts PPS more (+3), and the credibility of the party grows (+2).
 choose-if: {! return PolishProjects.optionStatus(Q, 'heritage_restoration', 'heritage').available !}
 unavailable-subtitle: [+ pl_heritage_restoration_heritage_why +]
 on-arrival: {!
@@ -44,7 +44,7 @@ go-to: result
 
 @science
 title: Support science and the universities
-subtitle: Costs 1 budget unit. The intelligentsia trusts PPS more (+3).
+subtitle: Cost: 1 budget unit. The intelligentsia trusts PPS more (+3).
 choose-if: {! return PolishProjects.optionStatus(Q, 'heritage_restoration', 'science').available !}
 unavailable-subtitle: [+ pl_heritage_restoration_science_why +]
 on-arrival: {!
@@ -54,7 +54,7 @@ go-to: result
 
 @radio
 title: Build a public radio
-subtitle: Costs [+ pl_cost2 +]. People hear the news from the country and from the Sejm, and democracy grows stronger (+2).
+subtitle: Cost: [+ pl_cost2 +]. People hear the news from the country and from the Sejm, and democracy grows stronger (+2).
 choose-if: {! return PolishProjects.optionStatus(Q, 'heritage_restoration', 'radio').available !}
 unavailable-subtitle: [+ pl_heritage_restoration_radio_why +]
 on-arrival: {!

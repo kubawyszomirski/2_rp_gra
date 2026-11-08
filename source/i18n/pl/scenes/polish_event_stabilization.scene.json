@@ -16,7 +16,7 @@
   "title: Postpone the reform": "title: Odłóż reformę",
   "subtitle: No cost now; the reform can be started later with the card “Currency Stabilisation”.": "subtitle: Bez kosztów teraz; reformę można zacząć później kartą „Stabilizacja waluty”.",
   "title: Start the campaign “Against high prices”": "title: Rozpocznij kampanię „Przeciw drożyźnie”",
-  "subtitle: Costs 1 resource. It reaches the workers and the intelligentsia[? if pl_ev_strong : , and in this crisis more strongly than usual ?].": "subtitle: Kosztuje 1 jednostkę środków. Trafia do robotników i inteligencji[? if pl_ev_strong : , a w tym kryzysie mocniej niż zwykle ?].",
+  "subtitle: Cost: 1 resource. It reaches the workers and the intelligentsia[? if pl_ev_strong : , and in this crisis more strongly than usual ?].": "subtitle: Koszt: 1 jednostka środków. Trafia do robotników i inteligencji[? if pl_ev_strong : , a w tym kryzysie mocniej niż zwykle ?].",
   "title: Leave the reform to the cabinet": "title: Zostaw reformę rządowi",
   "subtitle: No cost; the cabinet will prepare the reform itself.": "subtitle: Bez kosztów; rząd sam przygotuje reformę.",
   "- @root: Continue.": "- @root: Dalej."

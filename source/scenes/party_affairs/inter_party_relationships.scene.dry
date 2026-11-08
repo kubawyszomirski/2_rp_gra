@@ -18,7 +18,7 @@ Q.pl_out_kpp_contact_reason = PolishGovernment.kppContactStatus(Q).reason;
 
 = Talks with other parties
 
-PPS has no majority of its own. Regular talks with one party improve our relation with it: +4, or +2 once the relation is 70 or more. A talk costs this month's action but no party resources, and the same party can be approached again after three months. Talks alone create no votes, list agreements or cabinet posts; those are agreed in the parliamentary cards.
+PPS has no majority of its own. Regular talks with one party improve our relation with it: +4, or +2 once the relation is 70 or more. A talk costs no party resources, and the same party can be approached again after three months. Talks alone create no votes, list agreements or cabinet posts; those are agreed in the parliamentary cards.
 
 - @psl_wyzwolenie
 - @psl_piast

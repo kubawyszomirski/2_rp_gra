@@ -23,11 +23,12 @@ The self-defence of the party protects strikes, meetings and the offices of our 
 - @recruit
 - @militarize
 - @form_as
+- @nothing
 - @easy_discard
 
 @recruit
 title: Carry out a recruitment
-subtitle: One unit of the party's money: the Milicja gains 150 members, up to 800. The next recruitment in two months.
+subtitle: Cost: 1 resource. The Milicja gains 150 members, up to 800; the next recruitment in two months.
 choose-if: {! return PolishParty.militiaStatus(Q, 'recruit').available !}
 unavailable-subtitle: [+ pl_mil_recruit_why +]
 on-arrival: {!
@@ -37,7 +38,7 @@ go-to: result
 
 @militarize
 title: Carry out a training
-subtitle: One unit of the party's money: the training rises by one level. The first training worries the Centre of PPS: its dissent rises (+3). The next training in two months.
+subtitle: Cost: 1 resource. The training rises by one level; the first training worries the Centre of PPS (+3). The next training in two months.
 choose-if: {! return PolishParty.militiaStatus(Q, 'militarize').available !}
 unavailable-subtitle: [+ pl_mil_militarize_why +]
 on-arrival: {!
@@ -47,13 +48,21 @@ go-to: result
 
 @form_as
 title: Reorganise as Akcja Socjalistyczna
-subtitle: Two units of the party's money, once: a stronger and more disciplined organisation that can protect three matters at once. Needs 500 members and training at level 3.
+subtitle: Cost: 2 resources, once. A stronger and more disciplined organisation that can protect three matters at once; needs 500 members and training at level 3.
 choose-if: {! return PolishParty.militiaStatus(Q, 'as').available !}
 unavailable-subtitle: [+ pl_mil_as_why +]
 on-arrival: {!
 PolishParty.militiaChoose(Q, 'as');
 !}
 go-to: result
+
+@nothing
+title: Do nothing now
+subtitle: The card is played and comes back in three months.
+on-arrival: {!
+PolishRules.skipCard(Q);
+!}
+go-to: root
 
 @result
 new-page: true

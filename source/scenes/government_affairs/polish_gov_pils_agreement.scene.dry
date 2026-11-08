@@ -42,7 +42,7 @@ go-to: result
 
 @legion_cult
 title: Celebrate the deed of the Legions
-subtitle: Costs 1 budget unit: the anniversary of the march of the First Cadre Company and decorations for the legionnaires. Relations with Piłsudski improve (+10).
+subtitle: Cost: 1 budget unit. The anniversary of the march of the First Cadre Company and decorations for the legionnaires; relations with Piłsudski improve (+10).
 choose-if: {! return PolishSecurity.pilsOptionStatus(Q, 'legion_cult').available !}
 unavailable-subtitle: [+ pl_pils_legion_cult_why +]
 on-arrival: {!

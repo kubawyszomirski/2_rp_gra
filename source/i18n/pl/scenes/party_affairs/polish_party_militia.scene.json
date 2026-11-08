@@ -7,11 +7,13 @@
   "= Milicja PPS": "= Milicja PPS",
   "The self-defence of the party protects strikes, meetings and the offices of our organisations, and if the conflict in the country turns sharp it can stand on the side the party chooses. [+ pl_mil_state +]": "Samoobrona partii chroni strajki, wiece i lokale naszych organizacji, a gdy konflikt w kraju się zaostrzy, może stanąć po stronie, którą wybierze partia. [+ pl_mil_state +]",
   "title: Carry out a recruitment": "title: Przeprowadź werbunek",
-  "subtitle: One unit of the party's money: the Milicja gains 150 members, up to 800. The next recruitment in two months.": "subtitle: Jedna jednostka środków: Milicja zyskuje 150 członków, najwyżej do 800. Kolejny werbunek za dwa miesiące.",
+  "subtitle: Cost: 1 resource. The Milicja gains 150 members, up to 800; the next recruitment in two months.": "subtitle: Koszt: 1 jednostka środków. Milicja zyskuje 150 członków, najwyżej do 800; kolejny werbunek za dwa miesiące.",
   "title: Carry out a training": "title: Przeprowadź szkolenie",
-  "subtitle: One unit of the party's money: the training rises by one level. The first training worries the Centre of PPS: its dissent rises (+3). The next training in two months.": "subtitle: Jedna jednostka środków: wyszkolenie rośnie o jeden poziom. Pierwsze szkolenie niepokoi Centrum PPS: jego sprzeciw rośnie (+3). Kolejne szkolenie za dwa miesiące.",
+  "subtitle: Cost: 1 resource. The training rises by one level; the first training worries the Centre of PPS (+3). The next training in two months.": "subtitle: Koszt: 1 jednostka środków. Wyszkolenie rośnie o jeden poziom; pierwsze szkolenie niepokoi Centrum PPS (+3). Kolejne szkolenie za dwa miesiące.",
   "title: Reorganise as Akcja Socjalistyczna": "title: Przekształć w Akcję Socjalistyczną",
-  "subtitle: Two units of the party's money, once: a stronger and more disciplined organisation that can protect three matters at once. Needs 500 members and training at level 3.": "subtitle: Dwie jednostki środków, jednorazowo: silniejsza i bardziej zdyscyplinowana organizacja, która może chronić trzy sprawy naraz. Wymaga 500 członków i wyszkolenia na poziomie 3.",
-  "- @root: Continue.": "- @root: Dalej."
+  "subtitle: Cost: 2 resources, once. A stronger and more disciplined organisation that can protect three matters at once; needs 500 members and training at level 3.": "subtitle: Koszt: 2 jednostki środków, jednorazowo. Silniejsza i bardziej zdyscyplinowana organizacja, która może chronić trzy sprawy naraz; wymaga 500 członków i wyszkolenia na poziomie 3.",
+  "- @root: Continue.": "- @root: Dalej.",
+  "title: Do nothing now": "title: Nic nie robimy",
+  "subtitle: The card is played and comes back in three months.": "subtitle: Karta zostaje zagrana i wróci za trzy miesiące."
  }
 }

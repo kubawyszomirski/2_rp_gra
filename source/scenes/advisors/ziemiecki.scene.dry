@@ -35,7 +35,7 @@ PolishParty.advisorAction(Q, 'ziemiecki', 'emergency_fundraising');
 
 @municipal_socialism
 title: Municipal Socialism
-subtitle: 1 resource; in the large cities the base reach of PPS grows (+8) and PPS gains among workers, intelligentsia and petty bourgeoisie. No town hall or city budget.
+subtitle: Cost: 1 resource. In the large cities the base reach of PPS grows (+8) and PPS gains among workers, intelligentsia and petty bourgeoisie; no town hall or city budget.
 choose-if: {! return PolishParty.advisorActionStatus(Q, 'ziemiecki', 'municipal_socialism').available !}
 unavailable-subtitle: [+ pl_advact_municipal_socialism_why +]
 call: polish_advisor_commit

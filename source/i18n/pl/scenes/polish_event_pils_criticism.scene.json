@@ -7,11 +7,11 @@
   "= Piłsudski criticises parliament": "= Piłsudski krytykuje parlament",
   "“[+ pl_crit_quote +]”": "„[+ pl_crit_quote +]”",
   "title: Support the criticism of parliamentarism": "title: Poprzyj krytykę parlamentaryzmu",
-  "subtitle: Costs this month’s action. Piłsudski and his followers in the party will appreciate it (+4), but the Centre will protest and the authority of the Sejm will weaken. [+ pl_crit_warning +]": "subtitle: Kosztuje akcję tego miesiąca. Piłsudski i jego zwolennicy w partii to docenią (+4), ale Centrum zaprotestuje, a autorytet Sejmu osłabnie. [+ pl_crit_warning +]",
+  "subtitle: Piłsudski and his followers in the party will appreciate it (+4), but the Centre will protest and the authority of the Sejm will weaken. [+ pl_crit_warning +]": "subtitle: Piłsudski i jego zwolennicy w partii to docenią (+4), ale Centrum zaprotestuje, a autorytet Sejmu osłabnie. [+ pl_crit_warning +]",
   "title: Defend parliament and the lawful change of governments": "title: Broń parlamentu i legalnej zmiany rządów",
-  "subtitle: Costs this month’s action. The Centre will appreciate it and the authority of the Sejm will grow, but Piłsudski will move away from us (−4).": "subtitle: Kosztuje akcję tego miesiąca. Centrum to doceni, a autorytet Sejmu wzrośnie, ale Piłsudski odsunie się od nas (−4).",
+  "subtitle: The Centre will appreciate it and the authority of the Sejm will grow, but Piłsudski will move away from us (−4).": "subtitle: Centrum to doceni, a autorytet Sejmu wzrośnie, ale Piłsudski odsunie się od nas (−4).",
   "title: Parliament should be reformed to work better": "title: Parlament trzeba zreformować, by działał lepiej",
-  "subtitle: Costs this month’s action. It calms the Centre without provoking Piłsudski.": "subtitle: Kosztuje akcję tego miesiąca. Uspokaja Centrum, nie drażniąc Piłsudskiego.",
+  "subtitle: It calms the Centre without provoking Piłsudski.": "subtitle: Uspokaja Centrum, nie drażniąc Piłsudskiego.",
   "- @root: Continue.": "- @root: Dalej.",
   "Józef Piłsudski again attacks the Sejm, this time over [+ pl_crit_topic +]. If we do not answer within three months, our silence will be remembered.": "Józef Piłsudski znów atakuje Sejm, tym razem w sprawie: [+ pl_crit_topic +]. Jeśli nie odpowiemy w ciągu trzech miesięcy, nasze milczenie zostanie zapamiętane."
  }

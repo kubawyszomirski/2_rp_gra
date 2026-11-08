@@ -183,6 +183,8 @@ if (Q.S && Q.polish_party_rules && typeof PolishParty !== 'undefined') {
 
 [+ pl_top_pps_detail +]
 
+[? if pl_top_cash : **Resources:** [+ pl_top_cash +] [? if pl_top_cash_trend : {!<span class="pl-trend">!}[+ pl_top_cash_trend +]{!</span>!} ?] ?]
+
 = [+ pl_top_sejm +]
 
 {!<svg class="pl-hemi" viewBox="0 0 200 108" role="img"></svg>!}
@@ -200,6 +202,8 @@ if (Q.S && Q.polish_party_rules && typeof PolishParty !== 'undefined') {
 [? if pl_top_profile : [+ pl_top_profile +] ?]
 
 = Economy
+
+[? if pl_top_economy : **State:** [+ pl_top_economy +] ?]
 
 **Budget:** [+ pl_top_budget +] [? if pl_top_budget_trend : {!<span class="pl-trend">!}[+ pl_top_budget_trend +]{!</span>!} ?]
 

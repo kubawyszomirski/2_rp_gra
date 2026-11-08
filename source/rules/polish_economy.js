@@ -343,6 +343,18 @@
   const lastReadings = (E, n) => E.history.slice(-n);
 
   // The currency component of majorCrisis: inflation of at least 20% a month in the last two settlements.
+  // Z — 1.08 (decision 2B of the user's notes): the state of the economy in one word for the Overview — a crisis while the
+  // currency, the budget or credit is in crisis or output falls by a percent a month or more; otherwise by the monthly change of
+  // output (P: ±0.2% stagnation, 1% fast growth).
+  function economyWord(E, t) {
+    const g = E.last_growth || 0;
+    if (currencyCrisis(E) || fiscalCrisis(E) || creditCrisis(E, t) || g <= -1) return L('crisis', 'kryzys');
+    if (g < -0.2) return L('decline', 'spadek');
+    if (g <= 0.2) return L('stagnation', 'zastój');
+    if (g < 1) return L('growth', 'wzrost');
+    return L('fast growth', 'szybki wzrost');
+  }
+
   function currencyCrisis(E) {
     const r = lastReadings(E, 2);
     return r.length === 2 && r.every(x => x.inflation_m >= 20);
@@ -612,6 +624,7 @@
     updateBusinessState: updateBusinessState,
     settleEconomy: settleEconomy,
     currencyCrisis: currencyCrisis,
+    economyWord: economyWord,
     fiscalCrisis: fiscalCrisis,
     creditCrisis: creditCrisis,
     classConditions: classConditions,

@@ -662,6 +662,13 @@
     Q.S.cooldowns[key] = Math.max(Q.S.cooldowns[key] || 0, Q.time + months);
   }
 
+  // Z — 1.08 (the user's note): "Do nothing" on a card whose every option spends resources — the card is played and rests as after
+  // an action, and the month's action stays free.
+  function skipCard(Q) {
+    startCardRest(Q);
+    return L('Nothing happens now; the card comes back later.', 'Na razie nic się nie dzieje; karta wróci później.');
+  }
+
   // Months until a party or government card can be drawn again (0: it can).
   function cardRest(Q, cardId) {
     return Q.S && Q.S.cooldowns ? cooldownRemaining(Q, restKey(cardId)) : 0;
@@ -989,8 +996,12 @@
   // wraps such parentheses so that the Options setting "Numbers in choices" can hide them (hidden by default). Costs
   // (resources, budget, the month's action) and requirements are written outside them and always stay visible.
   const EFFECT_NUMBERS = /\s*\([+\-−±×][^()]*\)/g;
+  // Z — 1.08 (decision 3A of the user's notes): the money a choice spends stands in its own line at the start of its description.
+  const COST_LINE = /^(\s*)((?:Koszt|Cost): [^.]*\.)\s*/;
   function markEffectNumbers(text) {
-    return typeof text === 'string' ? text.replace(EFFECT_NUMBERS, m => '<span class="pl-fx">' + m + '</span>') : text;
+    if (typeof text !== 'string') return text;
+    return text.replace(EFFECT_NUMBERS, m => '<span class="pl-fx">' + m + '</span>')
+      .replace(COST_LINE, (m, space, cost) => space + '<span class="pl-cost">' + cost + '</span>');
   }
   function withoutEffectNumbers(text) {
     return typeof text === 'string' ? text.replace(EFFECT_NUMBERS, '') : text;
@@ -1141,6 +1152,7 @@
     nextEvent: nextEvent,
     markEventEntered: markEventEntered,
     PROFILE_IDS: PROFILE_IDS,
+    skipCard: skipCard,
     PROFILE_LINE: PROFILE_LINE,
     profileState: profileState,
     profileLineMatch: profileLineMatch,

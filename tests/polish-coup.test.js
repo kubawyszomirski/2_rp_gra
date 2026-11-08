@@ -45,47 +45,17 @@ function spendMonth(engine) {
   assert.equal(engine.state.sceneId, 'main');
 }
 
-test('Rozpoznanie w agendzie: three assessments of the forces every 3 months narrow the interval 30 → 20 → 10 → 5 pp, each for 1 T and 1 R; the loyalties themselves do not change', () => {
+test('Rozpoznanie w agendzie (Z — 1.08, decision 7A): the agenda no longer offers the assessment of the forces; the army is described in words from its real mood', () => {
   const engine = quietGame();
   const Q = engine.state.qualities, S = Q.S;
-  const loyalties = S.security.forces.map(f => [f.loyalty_legal, f.loyalty_pils, f.loyalty_neutral]);
-  const radii = [S.security.known.army.radius];
-  S.party_orgs.cash = 5; // Z — 0.56: no monthly income, so the three assessments get their money at the start
-  PolishParty.writeMirrors(Q);
-  for (let n = 0; n < 3; n++) {
-    engine.goToScene('main');
-    dendry.playCard(engine, 'polish_party_agenda');
-    const cash = S.party_orgs.cash, t = Q.time;
-    choose(engine, 'polish_party_agenda.assess_forces');
-    assert.ok(Math.abs(S.party_orgs.cash - (cash - 1)) < 1e-6, '1 R');
-    assert.match(JSON.stringify(engine.ui.paragraphs), /Our people in the army report/, 'Z — 1.03: the assessment in words');
-    choose(engine, 'root');
-    answerList(engine);
-    assert.equal(Q.time, t + 1, '1 T: the month is spent');
-    radii.push(S.security.known.army.radius);
-    for (const view of PolishSecurity.knownView(S)) {
-      const f = S.security.forces.find(g => g.id === view.id);
-      const effective = PolishSecurity.effectiveLoyalty(f, S.politics.democracy).pils;
-      assert.equal(view.radius, radii.at(-1), f.id);
-      assert.ok(view.low <= effective && effective <= view.high, f.id + ': the effective loyalty lies inside the recognised interval');
-    }
-    if (n < 2) {
-      engine.goToScene('main');
-      dendry.playCard(engine, 'polish_party_agenda');
-      assert.equal(choice(engine, 'polish_party_agenda.assess_forces').canChoose, false, 'waits 3 months');
-      assert.match(Q.pl_pa_assess_why, /months before the next assessment/);
-      spendMonth(engine);
-      spendMonth(engine);
-    }
-  }
-  assert.deepEqual(radii, [30, 20, 10, 5]);
-  assert.deepEqual(S.security.assessments.map(a => a.radius), [20, 10, 5]);
-  spendMonth(engine); spendMonth(engine);
   engine.goToScene('main');
   dendry.playCard(engine, 'polish_party_agenda');
-  assert.equal(choice(engine, 'polish_party_agenda.assess_forces').canChoose, false);
-  assert.match(Q.pl_pa_assess_why, /as precise as it can be/);
-  assert.deepEqual(S.security.forces.map(f => [f.loyalty_legal, f.loyalty_pils, f.loyalty_neutral]), loyalties);
+  assert.ok(!(engine.getCurrentChoices() || []).some(c => c.id === 'polish_party_agenda.assess_forces'), 'no assessment on the agenda');
+  const army = S.security.forces[0];
+  army.loyalty_pils = 0.55; army.loyalty_legal = 0.40; army.loyalty_neutral = 0.05;
+  assert.match(PolishSecurity.armyWords(S), /Most officers lean towards Piłsudski/);
+  army.loyalty_pils = 0.10; army.loyalty_legal = 0.85;
+  assert.match(PolishSecurity.armyWords(S), /The army is loyal to the government/);
 });
 
 test('Kontrola wojska bez pustych opcji: at an open military case the Parliament card has two options, full oversight and a limited reform; closing it costs nothing (0.36); a prepared project waits in the agenda (Z — 0.57)', () => {

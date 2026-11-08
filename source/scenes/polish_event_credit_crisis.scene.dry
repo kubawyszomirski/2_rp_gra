@@ -62,7 +62,7 @@ go-to: result
 
 @campaign
 title: Start the campaign “Work and benefits for the unemployed”
-subtitle: Costs 1 resource. It reaches the unemployed and the workers[? if pl_ev_strong : , and now more strongly than usual ?].
+subtitle: Cost: 1 resource. It reaches the unemployed and the workers[? if pl_ev_strong : , and now more strongly than usual ?].
 view-if: pl_ev_campaign_shown
 choose-if: {! return PolishProjects.eventStatus(Q, 'credit', 'campaign').available !}
 unavailable-subtitle: [+ pl_ev_campaign_why +]
@@ -73,7 +73,7 @@ go-to: result
 
 @unions
 title: Let the unions help those losing work
-subtitle: Costs 1 resource. The unions of industry and the railways trust PPS more (+5).
+subtitle: Cost: 1 resource. The unions of industry and the railways trust PPS more (+5).
 view-if: pl_ev_unions_shown
 choose-if: {! return PolishProjects.eventStatus(Q, 'credit', 'unions').available !}
 unavailable-subtitle: [+ pl_ev_unions_why +]

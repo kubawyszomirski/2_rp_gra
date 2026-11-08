@@ -13,7 +13,7 @@ PolishParty.stanceView(Q, 'jewish_cooperation');
 
 = Cooperation with Jewish Organisations
 
-The present line: **[+ pl_stance_current +]**. A new declaration costs this month's action; it changes no law in force and gives no reform by itself.
+The present line: **[+ pl_stance_current +]**. A new declaration changes no law in force and gives no reform by itself.
 
 - @broad
 - @labour_only
@@ -22,7 +22,7 @@ The present line: **[+ pl_stance_current +]**. A new declaration costs this mont
 
 @broad
 title: Broad cooperation and rights in the programme
-subtitle: [? if pl_stance_broad_present = 1 : **Present line** Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_broad_present = 0 : Agreements on rights and joint actions; the widest cooperation (+2 on the cooperation scale from −2 to +2). ?]
+subtitle: [? if pl_stance_broad_present = 1 : **Present line** Confirming it changes nothing, and the card waits as after a change. ?][? if pl_stance_broad_present = 0 : Agreements on rights and joint actions; the widest cooperation (+2 on the cooperation scale from −2 to +2). ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'jewish_cooperation', 'broad').available !}
 unavailable-subtitle: [+ pl_stance_broad_why +]
 on-arrival: {!
@@ -32,7 +32,7 @@ go-to: result
 
 @labour_only
 title: Cooperation of workers’ organisations
-subtitle: [? if pl_stance_labour_only_present = 1 : **Present line** Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_labour_only_present = 0 : Agreements of labour, above all with the Bund; the middle of the cooperation scale. ?]
+subtitle: [? if pl_stance_labour_only_present = 1 : **Present line** Confirming it changes nothing, and the card waits as after a change. ?][? if pl_stance_labour_only_present = 0 : Agreements of labour, above all with the Bund; the middle of the cooperation scale. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'jewish_cooperation', 'labour_only').available !}
 unavailable-subtitle: [+ pl_stance_labour_only_why +]
 on-arrival: {!
@@ -42,7 +42,7 @@ go-to: result
 
 @none
 title: No cooperation
-subtitle: [? if pl_stance_none_present = 1 : **Present line** Confirming it costs this month's action and the card waits as after a change; nothing else changes. ?][? if pl_stance_none_present = 0 : No new joint actions; existing rights of citizens stay; the far end of the cooperation scale (−2 on the scale from −2 to +2). ?]
+subtitle: [? if pl_stance_none_present = 1 : **Present line** Confirming it changes nothing, and the card waits as after a change. ?][? if pl_stance_none_present = 0 : No new joint actions; existing rights of citizens stay; the far end of the cooperation scale (−2 on the scale from −2 to +2). ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'jewish_cooperation', 'none').available !}
 unavailable-subtitle: [+ pl_stance_none_why +]
 on-arrival: {!

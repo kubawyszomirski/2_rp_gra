@@ -44,7 +44,7 @@ Q.pl_sup_extension_conditions = PolishGovernment.extensionConditions(Q);
 
 [? if pl_resp_kind = "renewal" : The six months of our toleration of [+ pl_resp_by +] are over. Keeping our support renews the agreement for six months, with a new review after three; without an answer the toleration goes on unchanged. ?]
 
-One answer costs no month. Leaving this card without an answer changes nothing.
+Leaving this card without an answer changes nothing.
 
 - @polish_government_support.maintain
 - view-if: pl_resp_kind != "motion"

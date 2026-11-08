@@ -14,11 +14,12 @@ PolishParty.unionInvestmentsView(Q);
 
 = Trade unions: organising
 
-PPS has [+ pl_org_cash +] R. [+ pl_uni_bonus +] Choose one branch to organise; it costs this month's action, and the card waits two months before it comes back.
+PPS has [+ pl_org_cash +] R. [+ pl_uni_bonus +] Choose one branch to organise; the card waits two months before it comes back.
 
 - @union_organize_industry
 - @union_organize_rail
 - @union_organize_farm_labour
+- @nothing
 - @easy_discard
 
 @union_organize_industry
@@ -50,6 +51,14 @@ on-arrival: {!
 PolishParty.organizationsChoose(Q, ['union_organize_farm_labour'], 'party.union_investments');
 !}
 go-to: result
+
+@nothing
+title: Do nothing now
+subtitle: The card is played and comes back in three months.
+on-arrival: {!
+PolishRules.skipCard(Q);
+!}
+go-to: root
 
 @result
 new-page: true

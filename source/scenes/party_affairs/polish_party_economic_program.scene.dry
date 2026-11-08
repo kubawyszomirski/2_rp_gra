@@ -27,7 +27,7 @@ The present programme: [+ pl_prog_current +]. [? if pl_prog_has = 1 : It makes t
 @confirm_present
 view-if: pl_prog_has = 1
 title: Confirm the present programme: [+ pl_prog_current +]
-subtitle: Costs this month's action; the card then waits six months; nothing else changes.
+subtitle: The card then waits six months; nothing else changes.
 choose-if: {! return PolishParty.programmeStatus(Q, Q.S.actors.pps.strategy.economic_priorities.slice()).available !}
 unavailable-subtitle: [+ pl_prog_present_why +]
 on-arrival: {!
@@ -109,7 +109,7 @@ go-to: menu
 
 @confirm
 title: Accept the new programme
-subtitle: Costs this month's action; the card then waits six months.
+subtitle: The card then waits six months.
 choose-if: {! return PolishParty.programmeChangeStatus(Q, String(Q.pl_prog_draft || '').split(',').filter(Boolean)).available !}
 unavailable-subtitle: [+ pl_prog_confirm_why +]
 on-arrival: {!

@@ -21,7 +21,7 @@ Arciszewski represents Centrum PPS while maintaining strong connections to worke
 
 @organize_workers
 title: Organize the Workers
-subtitle: 1 resource; one union branch reaches more workers (+8), and PPS gains among the workers it covers (+3 base reach).
+subtitle: Cost: 1 resource. One union branch reaches more workers (+8), and PPS gains among the workers it covers (+3 base reach).
 choose-if: {! return PolishParty.advisorActionStatus(Q, 'arciszewski', 'organize_workers').available !}
 unavailable-subtitle: [+ pl_advact_organize_workers_why +]
 go-to: organize_menu
@@ -71,7 +71,7 @@ PolishParty.advisorAction(Q, 'arciszewski', 'organize_workers', 'farm_labour');
 
 @labour_programme
 title: Labour Programme: workers’ rights
-subtitle: Opens the Workers’ Rights card; its one step costs no month (the ordinary B costs and the law remain).
+subtitle: Opens the Workers’ Rights card for one decision at once; its ordinary budget costs and the law remain.
 choose-if: {! return Q.advisor_action_timer <= 0 && !!Q.S && PolishProjects.cardAvailable(Q, 'labor_rights') !}
 unavailable-subtitle: [? if advisor_action_timer = 1 : 1 month before the next Committee action. ?][? if advisor_action_timer > 1 : [+ advisor_action_timer +] months before the next Committee action. ?][? if advisor_action_timer <= 0 : Needs PPS in the cabinet with Labour. ?]
 call: polish_advisor_commit
@@ -80,7 +80,7 @@ go-to: polish_gov_labor_rights
 
 @welfare_programme
 title: Labour Programme: benefits for the unemployed
-subtitle: Opens the Benefits card; its one step costs no month (the ordinary B costs remain).
+subtitle: Opens the Benefits card for one decision at once; its ordinary budget costs remain.
 choose-if: {! return Q.advisor_action_timer <= 0 && !!Q.S && PolishProjects.cardAvailable(Q, 'social_welfare') !}
 unavailable-subtitle: [? if advisor_action_timer = 1 : 1 month before the next Committee action. ?][? if advisor_action_timer > 1 : [+ advisor_action_timer +] months before the next Committee action. ?][? if advisor_action_timer <= 0 : Needs PPS in the cabinet with Labour. ?]
 call: polish_advisor_commit

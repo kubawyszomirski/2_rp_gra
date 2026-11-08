@@ -15,9 +15,9 @@
     "militiaCost": 0.1
   },
   "hashes": {
-    "docs/POLISH_TECHNICAL_REFERENCE.md": "49dd4b118da2ebd4471e2ee73aec7f06b512062b7739ceec224babbcd875c575",
-    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "a9a0970d0e6b9361bb5cca4e53b74bc4849be701189f2efd4205086bbf1d0d45",
-    "docs/POLISH_MECHANICS_AUDIT.md": "a81c25c66be3ec0836e06cc901d98c62910d3b87843612fc89c444971d311f3e",
+    "docs/POLISH_TECHNICAL_REFERENCE.md": "f84652e824f5a4cde36e78c257bfb0988d6a3c71066a20407cebd3393cd03fd1",
+    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "0efbf5a96370315ab2aa1f7fd26b843a9ce173c8d17ca1ac8109f1866b667316",
+    "docs/POLISH_MECHANICS_AUDIT.md": "376d516ab816db5ff9077929c2baa6996f7a69ee1b468be46ce79809230c7a8a",
     "analysis/m02-robustness/engine.cjs": "e0b544d65a4381ed7698f3f649fd54e41714a3a1027852a7ea455d0ad49b43cd"
   },
   "examples": {

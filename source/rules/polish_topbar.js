@@ -80,6 +80,12 @@
     const position = ppsPosition(S, Q);
     Q.pl_top_pps_stamp = position.stamp;
     Q.pl_top_pps_detail = position.detail;
+    // Z — 1.08 (the user's note): the resources of the party, with the change since the settlement that opened the month.
+    const orgs = S && S.party_orgs;
+    if (orgs) {
+      Q.pl_top_cash = one(orgs.cash);
+      Q.pl_top_cash_trend = orgs.last_ledger && typeof orgs.last_ledger.cash === 'number' ? trend(orgs.cash - orgs.last_ledger.cash, 1) : '';
+    }
     // The Sejm: the hemicycle is drawn by the page from Q.sejm_display_rows.
     const total = Q.sejm_total_seats || 0;
     Q.pl_top_sejm = L('Sejm · ' + total + ' MPs', 'Sejm · ' + total + ' ' + rules.plural(total, 'poseł', 'posłów', 'posłów'));
@@ -98,6 +104,9 @@
       Q.pl_top_inflation = one(E.inflation_m) + L('% a month', '% mies.');
       Q.pl_top_unemployment = one(E.unemployment) + '%';
       Q.pl_top_budget_trend = trend(change(E.history, 'budget', E.budget), 1);
+      // Z — 1.08 (decision 2B): the state of the economy in one word.
+      const econ = typeof PolishEconomy !== 'undefined' ? PolishEconomy : (typeof require === 'function' ? require('./polish_economy.js') : null);
+      Q.pl_top_economy = econ && econ.economyWord ? econ.economyWord(E, Q.time) : '';
       Q.pl_top_inflation_trend = trend(change(E.history, 'inflation_m', E.inflation_m), 1);
       Q.pl_top_unemployment_trend = trend(change(E.history, 'unemployment', E.unemployment), 1);
     }

@@ -122,7 +122,6 @@ go-to: menu
 
 @declare
 title: We announce our position
-subtitle: Costs no action this month. Our support works at once; the votes come when the Constitutional Committee brings the motions to the floor.
 on-arrival: {!
 Q.pl_con_result = PolishProjects.debateDeclare(Q);
 !}

@@ -51,7 +51,7 @@ go-to: polish_strike_steps
 
 @protect
 title: Protect the strikers with Milicja PPS
-subtitle: 0.5 resources and the people of the Milicja; it lowers the exposure of the covered people, not the risk of a clash, and it can lose people.
+subtitle: Cost: half a resource. It needs the people of the Milicja; it lowers the exposure of the covered people, not the risk of a clash, and it can lose people.
 view-if: pl_st_stage = "protection"
 choose-if: {! return PolishUnions.protectionStatus(Q, 'protect').available !}
 unavailable-subtitle: [+ pl_st_protect_why +]

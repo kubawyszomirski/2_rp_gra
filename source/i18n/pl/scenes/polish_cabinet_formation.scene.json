@@ -62,7 +62,6 @@
   "title: We stay in opposition": "title: Zostajemy w opozycji",
   "= What cabinet do we want?": "= Jakiego rządu chcemy?",
   "Choose what kind of cabinet we want and what PPS does in it. A majority in the Sejm is [+ pl_form_majority +] MPs; a cabinet with less support can still govern if more MPs vote for it than against.": "Wybierz, jakiego rządu chcemy i co PPS w nim robi. Większość w Sejmie to [+ pl_form_majority +] posłów; rząd z mniejszym poparciem też może rządzić, jeśli więcej posłów jest za nim niż przeciw.",
-  "subtitle: [? if not pl_form_mandatory : Spends this month's action. ?]": "subtitle: [? if not pl_form_mandatory : Zużywa akcję tego miesiąca. ?]",
   "Grabski's stabilisation programme is part of this offer. Without our terms he stabilises quickly, with the named cuts and a wealth tax. Our toleration can ask for other terms; he may refuse them if he has enough support without us. Changing the terms is free.": "Program stabilizacji Grabskiego jest częścią tej oferty. Bez naszych warunków stabilizuje szybko, z wymienionymi cięciami i podatkiem majątkowym. Tolerując go, możemy żądać innych warunków; może je odrzucić, jeśli ma dość poparcia bez nas. Zmiana warunków nic nie kosztuje.",
   "subtitle: Grabski follows his own plan of stabilisation.": "subtitle: Grabski prowadzi stabilizację według własnego planu.",
   "title: [+ pl_form_min_jewish_rep_mark +] The support of the Jewish representation": "title: [+ pl_form_min_jewish_rep_mark +] Poparcie reprezentacji żydowskiej",

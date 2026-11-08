@@ -57,7 +57,7 @@ go-to: result
 
 @mediate
 title: Mediate the dispute with the leadership
-subtitle: This month's action; the branch's dissent over a concrete change falls (−8).
+subtitle: The branch's dissent over a concrete change falls (−8).
 view-if: pl_dsp_has_leadership = 1
 choose-if: {! return PolishUnions.mediateStatus(Q, PolishUnions.disputeLeadershipBranch(Q)).available !}
 unavailable-subtitle: [+ pl_dsp_mediate_why +]
@@ -140,7 +140,7 @@ go-to: setup
 
 @p_yes
 title: [+ pl_su_p_yes_mark +] Under the protection of the Milicja
-subtitle: Half a unit of the party's money; fewer injured and arrested strikers in a clash with the police.
+subtitle: Cost: half a resource. Fewer injured and arrested strikers in a clash with the police.
 choose-if: {! return PolishUnions.setupWhy(Q, 'protection', true).available !}
 unavailable-subtitle: [+ pl_su_p_yes_why +]
 on-arrival: {!

@@ -168,12 +168,19 @@ test('Reformizm w tekstach 1.07: the cards say the lower price; the pool check u
     PR.costWords(Q);
     assert.deepEqual([Q.pl_cost2, Q.pl_cost2n, Q.pl_cost3], ['2 jednostki budżetu', '2 jednostki budżetu', '3 jednostki budżetu']);
     engine.goToScene('polish_gov_public_works');
-    assert.match(subtitle('polish_gov_public_works.employment'), /^Kosztuje 2 jednostki budżetu\./);
+    assert.match(subtitle('polish_gov_public_works.employment'), /^Koszt: 2 jednostki budżetu\./);
     R().profileState(S).adopted.push({ id: 'reformism', t: Q.time });
     engine.goToScene('polish_gov_public_works');
-    assert.match(subtitle('polish_gov_public_works.employment'), /^Kosztuje 1 jednostkę budżetu\./);
-    assert.match(subtitle('polish_gov_public_works.infrastructure'), /^Kosztuje 2 jednostki budżetu\./);
+    assert.match(subtitle('polish_gov_public_works.employment'), /^Koszt: 1 jednostka budżetu\./);
+    assert.match(subtitle('polish_gov_public_works.infrastructure'), /^Koszt: 2 jednostki budżetu\./);
     assert.deepEqual([Q.pl_cost2n, Q.pl_cost3], ['1 jednostka budżetu', '2 jednostki budżetu']);
+    // Z — 1.08: every price word the Polish texts name is set by costWords (pl_cost_socn: the nominative after „Koszt:”).
+    const fs = require('node:fs'), path = require('node:path'), used = new Set();
+    const walk = d => fs.readdirSync(d, { withFileTypes: true }).flatMap(e => e.isDirectory() ? walk(path.join(d, e.name)) : [path.join(d, e.name)]);
+    for (const f of walk(path.join(__dirname, '..', 'source/i18n/pl/scenes')).filter(f => f.endsWith('.json')))
+      for (const m of fs.readFileSync(f, 'utf8').matchAll(/\[\+ (pl_cost\w*) \+\]/g)) used.add(m[1]);
+    assert.ok(used.has('pl_cost_socn'));
+    assert.deepEqual([...used].filter(v => typeof Q[v] !== 'string'), [], 'a price word without a value');
     S.economy.budget = 1;
     assert.equal(PR.affordStatus(Q, 2).available, true, 'the pool check uses the lower price');
     assert.equal(PR.affordStatus(Q, 3).available, false);

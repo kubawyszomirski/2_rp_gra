@@ -27,7 +27,7 @@ Dues are [+ dues +] (from 1 to 4). Every option collects the dues at once: dues 
 
 @keep
 title: Keep the present dues
-subtitle: **Present level** Costs this month's action; the dues stay at [+ dues +], the collection brings [+ pl_dues_keep_gain +] now, and the card waits six months.
+subtitle: **Present level** The dues stay at [+ dues +], the collection brings [+ pl_dues_keep_gain +] now, and the card waits six months.
 choose-if: {! return PolishParty.duesStatus(Q, 'keep').available !}
 unavailable-subtitle: [+ pl_dues_keep_why +]
 on-arrival: {!

@@ -20,7 +20,7 @@ go-to: results if sejm_forming_government; main if not sejm_election_in_progress
 
 [? if not sejm_first_election_completed : The day of the Sejm election, 5 November 1922, has come. The same result sets the 111-seat Senate in the same party proportions. The National Democrats and the Christian Democrats stand together as the list of the Christian Union of National Unity. ?]
 
-[? if not sejm_first_election_completed : The campaigns and events of the past months have shaped the voters' intentions. The votes will fill **444 seats**; a majority needs **223 MPs**. Then we turn to the government — the negotiations spend no extra monthly action. ?]
+[? if not sejm_first_election_completed : The campaigns and events of the past months have shaped the voters' intentions. The votes will fill **444 seats**; a majority needs **223 MPs**. Then we turn to the government. ?]
 
 [? if sejm_first_election_completed : The five-year term of the Sejm elected in 1922 has ended. The election is held on Sunday 19 February 1928. The same law applies: 444 seats, and every list stands on its own. ?]
 

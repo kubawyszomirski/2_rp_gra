@@ -22,7 +22,6 @@ PPS answers on the next page, where the new cabinet is formed: it can support th
 
 @formation
 title: Go to the formation of a cabinet
-subtitle: Costs no action this month.
 choose-if: {! return PolishPolitics.cabinet1922Status(Q, 'formation').available !}
 on-arrival: {!
 PolishPolitics.cabinet1922Choose(Q, 'formation');

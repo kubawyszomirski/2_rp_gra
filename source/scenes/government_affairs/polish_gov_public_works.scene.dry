@@ -31,7 +31,7 @@ Public works give work to the unemployed with the money of the budget. Unemploym
 
 @employment
 title: Employ the unemployed on quick works
-subtitle: Costs [+ pl_cost2 +]. Unemployment falls (−0.5 percentage points) and output rises a little.
+subtitle: Cost: [+ pl_cost2 +]. Unemployment falls (−0.5 percentage points) and output rises a little.
 choose-if: {! return PolishProjects.optionStatus(Q, 'public_works', 'employment').available !}
 unavailable-subtitle: [+ pl_public_works_employment_why +]
 on-arrival: {!
@@ -41,7 +41,7 @@ go-to: result
 
 @infrastructure
 title: Build roads, railways and bridges
-subtitle: Costs [+ pl_cost3 +]. Unemployment falls as much, and output rises more.
+subtitle: Cost: [+ pl_cost3 +]. Unemployment falls as much, and output rises more.
 choose-if: {! return PolishProjects.optionStatus(Q, 'public_works', 'infrastructure').available !}
 unavailable-subtitle: [+ pl_public_works_infrastructure_why +]
 on-arrival: {!
@@ -51,7 +51,7 @@ go-to: result
 
 @housing
 title: Build workers’ housing
-subtitle: Costs [+ pl_cost2 +] and creates no new jobs. The discontent of the workers grows more slowly.
+subtitle: Cost: [+ pl_cost2 +]. It creates no new jobs, but the discontent of the workers grows more slowly.
 choose-if: {! return PolishProjects.optionStatus(Q, 'public_works', 'housing').available !}
 unavailable-subtitle: [+ pl_public_works_housing_why +]
 on-arrival: {!

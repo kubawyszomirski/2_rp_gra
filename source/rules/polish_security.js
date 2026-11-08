@@ -1040,11 +1040,11 @@
     return 'f10';
   }
 
-  // The army in words (Z — 1.03, decision 4A): what PPS believes of the mood of the officers, from its estimate, never a number.
+  // The army in words (Z — 1.03, decision 4A), never a number. Z — 1.08 (decision 7A of the user's notes): the assessment of the
+  // forces left the agenda, so the words follow the real mood of the officers (their effective loyalty).
   function armyWords(S) {
     const army = forceOf(S, ARMY) || S.security.forces[0];
-    const known = army ? S.security.known[army.id] : null;
-    const pils = known ? known.pils_center : 0.45;
+    const pils = army ? effectiveLoyalty(army, S.politics ? S.politics.democracy : 50).pils : 0.45;
     if (pils >= 0.50) return L('Most officers lean towards Piłsudski.', 'Większość oficerów sprzyja Piłsudskiemu.');
     if (pils >= 0.35) return L('The army is divided; many officers lean towards Piłsudski.', 'Wojsko jest podzielone; wielu oficerów sprzyja Piłsudskiemu.');
     if (pils >= 0.20) return L('Most of the army is loyal to the government.', 'Większość wojska jest wierna rządowi.');

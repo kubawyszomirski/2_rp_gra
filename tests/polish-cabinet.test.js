@@ -285,7 +285,7 @@ test('the own initiative in a crisis: the Parliament deck, the same refused offe
   assert.equal(PolishGovernment.formationVisible(Q), true);
   playFromHand(engine, 'polish_cabinet_formation');
   assert.equal(Q.S.negotiation.cost_t, 1);
-  assert.match(content(engine), /PPS can make its own offer; submitting it spends this month’s action/);
+  assert.match(content(engine), /PPS can make its own offer\./); // Z — 1.08: no mention of the month's action
   choose(engine, 'polish_cabinet_formation.variants');
   choose(engine, 'polish_cabinet_formation.var_expert');
   assert.equal(engine.state.sceneId, 'polish_cabinet_formation.summary', 'one candidate of the period: no page of the prime minister');

@@ -1644,20 +1644,35 @@
     army: {'-2': 'autonomia dowództwa', '0': 'kompromis', '2': 'cywilna kontrola'},
   });
 
-  // A programme in words for the screen (Z — 0.53): the name of each position, its place on the scale −2..+2 in
-  // parentheses; a position without a name of its own (±1) lies between the middle and the end of its side.
+  // A programme in words for the screen. Z — 1.08 (the user's note: "Program: obciążenia fiskalne: wspólne obciążenie" said nothing):
+  // each position of a topic is one plain phrase, without the scale −2..+2.
+  const PROGRAMME_WORDS = Object.freeze({
+    land: {'-2': ['land only on the free market', 'ziemia tylko na wolnym rynku'], '-1': ['a slow land reform with compensation', 'powolna reforma rolna z odszkodowaniem'],
+      '0': ['a land reform with compensation', 'reforma rolna z odszkodowaniem'], '1': ['an accelerated land reform', 'przyspieszona reforma rolna'],
+      '2': ['land taken without compensation', 'wywłaszczenie ziemi bez odszkodowania']},
+    fiscal: {'-2': ['the budget saved by cuts in spending', 'budżet ratowany cięciami wydatków'], '-1': ['more cuts than taxes', 'więcej cięć niż podatków'],
+      '0': ['the costs shared by everyone', 'koszty dzielone między wszystkich'], '1': ['the well-off pay more', 'zamożni płacą więcej'],
+      '2': ['taxes on wealth', 'podatki od majątku']},
+    institution: {'-2': ['a strong president', 'silny prezydent'], '-1': ['a somewhat stronger president', 'nieco silniejszy prezydent'],
+      '0': ['the cabinet governs as now', 'rząd rządzi jak dotąd'], '1': ['somewhat more democracy', 'nieco więcej demokracji'], '2': ['more democracy', 'więcej demokracji']},
+    army: {'-2': ['the army decides about itself', 'wojsko samo o sobie decyduje'], '-1': ['more freedom for the command', 'więcej swobody dla dowództwa'],
+      '0': ['a compromise on the army', 'kompromis w sprawach wojska'], '1': ['more civilian control', 'więcej kontroli cywilnej'],
+      '2': ['civilian control of the army', 'cywilna kontrola nad wojskiem']},
+    church: {'-2': ['the Church above the state', 'Kościół ponad państwem'], '-1': ['more room for the Church', 'więcej miejsca dla Kościoła'],
+      '0': ['the Church as now', 'Kościół jak dotąd'], '1': ['less room for the Church', 'mniej miejsca dla Kościoła'],
+      '2': ['the separation of the Church and the state', 'rozdział Kościoła od państwa']},
+    autonomy: {'-2': ['Polonisation', 'polonizacja'], '-1': ['less room for the minorities', 'mniej swobód dla mniejszości'],
+      '0': ['the freedom of the minorities’ culture', 'swoboda kultury mniejszości'], '1': ['self-government of the minorities', 'samorząd mniejszości'],
+      '2': ['autonomy of the minorities', 'autonomia mniejszości']},
+  });
+  const PROGRAMME_TOPICS = Object.freeze({land: ['land', 'ziemia'], fiscal: ['finances', 'finanse'], institution: ['the system', 'ustrój'], army: ['the army', 'wojsko'],
+    church: ['the Church', 'Kościół'], autonomy: ['the minorities', 'mniejszości']});
   function describeProgramme(programme) {
-    const pl = rules.getLanguage() === 'pl';
     return Object.keys(programme || {}).map(topic => {
-      const position = programme[topic];
-      const names = (pl ? POSITION_NAMES_PL : POSITION_NAMES)[topic] || {};
-      let label = names[String(position)];
-      if (!label && Math.abs(position) === 1 && names['0'] && names[String(2 * position)]) {
-        label = pl ? 'między „' + names['0'] + '” a „' + names[String(2 * position)] + '”' : 'between ' + names['0'] + ' and ' + names[String(2 * position)];
-      }
-      if (!label && position === 0) label = pl ? 'pozycja środkowa' : 'the middle position';
-      const size = position === 0 ? '' : ' (' + (position > 0 ? '+' : '−') + Math.abs(position) + ')';
-      return L(TOPIC_NAMES[topic] || topic, TOPIC_NAMES_PL[topic] || topic) + (label ? ': ' + label : '') + size;
+      const position = Math.max(-2, Math.min(2, Math.round(programme[topic])));
+      const words = (PROGRAMME_WORDS[topic] || {})[String(position)];
+      const name = PROGRAMME_TOPICS[topic] ? L(PROGRAMME_TOPICS[topic][0], PROGRAMME_TOPICS[topic][1]) : topic;
+      return name + ': ' + (words ? L(words[0], words[1]) : String(position));
     }).join('; ');
   }
 
@@ -2082,7 +2097,7 @@
       who = L('Józef Piłsudski, as prime minister agreed with him (16.7): the programme of a legal cabinet and the usual parliamentary responsibility.',
         'Józef Piłsudski jako premier uzgodniony z nim: program legalnego gabinetu i zwykła odpowiedzialność przed Sejmem.');
       gain = L('the pressure eases after his real appointment.', 'nacisk słabnie po jego rzeczywistym powołaniu.');
-      cost = L('this formation costs no second action.', 'to formowanie nie kosztuje drugiej akcji.');
+      cost = L('none.', 'brak.');
     } else if (candidateId === 'daszynski') {
       who = L('the leader of PPS, of its Centrum: a prime minister of our own.', 'lider PPS z Centrum partii: premier z naszej partii.');
       behind = L('the partners take him as they take PPS.', 'partnerzy przyjmują go tak jak samą PPS.');
@@ -2132,9 +2147,10 @@
       }
       programme = describeProgramme(candidate.programme) + '.';
       if (candidateId === head && !president) cost = L('none — supporting him costs nothing with Piłsudski.', 'brak — poparcie go nic nie kosztuje u Piłsudskiego.');
-      else if (goesAgainst) cost = L('it goes against the Naczelnik’s candidate — when the offer is submitted, relation with Piłsudski −' + AGAINST_NACZELNIK.relation +
-        ' and ' + AGAINST_NACZELNIK.cash + ' R for the talks.', 'idziemy wbrew kandydatowi Naczelnika — po złożeniu oferty relacja z Piłsudskim −' +
-        AGAINST_NACZELNIK.relation + ' i ' + AGAINST_NACZELNIK.cash + ' R na rokowania.');
+      // Z — 1.08 (the user's note): the cost in plain words — the resources of the party for the talks, and the relation with Piłsudski.
+      else if (goesAgainst) cost = L(rules.units(AGAINST_NACZELNIK.cash) + ' for the talks, and the relation with Piłsudski worsens (−' + AGAINST_NACZELNIK.relation +
+        '), because we go against the choice of the Naczelnik.', rules.units(AGAINST_NACZELNIK.cash, 'resources', 'nom') + ' na rozmowy, a relacja z Piłsudskim spada (−' +
+        AGAINST_NACZELNIK.relation + '), bo idziemy wbrew wyborowi Naczelnika.');
     }
     const lines = [
       '<strong>' + candidate.name + '</strong>',
@@ -2168,8 +2184,8 @@
       why = L('The election has given the Sejm a new composition, and a new cabinet must be formed. Until then the cabinet of ' + fallen + ' governs as caretaker.',
         'Wybory dały Sejmowi nowy skład i trzeba powołać nowy rząd. Do tego czasu tymczasowo rządzi dotychczasowy gabinet (premier: ' + fallen + ').');
     } else if (reason === 'initiative') {
-      why = L('A cabinet crisis is open. PPS can make its own offer; submitting it spends this month’s action.',
-        'Trwa kryzys gabinetowy. PPS może złożyć własną ofertę; jej złożenie zużywa akcję tego miesiąca.');
+      why = L('A cabinet crisis is open. PPS can make its own offer.',
+        'Trwa kryzys gabinetowy. PPS może złożyć własną ofertę.');
     } else {
       why = L('The cabinet of ' + fallen + ' has fallen and governs as caretaker until a new one is appointed.',
         'Gabinet, na którego czele stał ' + fallen + ', upadł i rządzi tymczasowo, dopóki nie zostanie powołany nowy.');

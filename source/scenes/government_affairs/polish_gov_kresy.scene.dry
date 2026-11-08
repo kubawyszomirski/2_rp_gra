@@ -31,7 +31,7 @@ The minorities in the east want to deal with the offices in their own language a
 
 @official_languages
 title: Introduce minority languages in the offices
-subtitle: Costs 1 budget unit. The minorities trust PPS more (+3), but the National Democrats protest (−5). [? if pl_minorities_kresy_official_languages_coalition : [+ pl_minorities_kresy_official_languages_coalition +] ?]
+subtitle: Cost: 1 budget unit. The minorities trust PPS more (+3), but the National Democrats protest (−5). [? if pl_minorities_kresy_official_languages_coalition : [+ pl_minorities_kresy_official_languages_coalition +] ?]
 choose-if: {! return PolishProjects.optionStatus(Q, 'minorities_kresy', 'official_languages').available !}
 unavailable-subtitle: [+ pl_minorities_kresy_official_languages_why +]
 on-arrival: {!
@@ -41,7 +41,7 @@ go-to: result
 
 @self_government
 title: Carry out the act on the voivodeship self-government
-subtitle: Costs 1 budget unit. The discontent of the minorities of the area falls (−3), but the National Democrats protest (−5). [? if pl_minorities_kresy_self_government_coalition : [+ pl_minorities_kresy_self_government_coalition +] ?]
+subtitle: Cost: 1 budget unit. The discontent of the minorities of the area falls (−3), but the National Democrats protest (−5). [? if pl_minorities_kresy_self_government_coalition : [+ pl_minorities_kresy_self_government_coalition +] ?]
 choose-if: {! return PolishProjects.optionStatus(Q, 'minorities_kresy', 'self_government').available !}
 unavailable-subtitle: [+ pl_minorities_kresy_self_government_why +]
 on-arrival: {!
@@ -51,7 +51,7 @@ go-to: result
 
 @border
 title: Strengthen the protection of the eastern border
-subtitle: Costs [+ pl_cost2 +]. Political violence falls (−3), but the minorities trust PPS less (−3). [? if pl_minorities_kresy_border_coalition : [+ pl_minorities_kresy_border_coalition +] ?]
+subtitle: Cost: [+ pl_cost2 +]. Political violence falls (−3), but the minorities trust PPS less (−3). [? if pl_minorities_kresy_border_coalition : [+ pl_minorities_kresy_border_coalition +] ?]
 choose-if: {! return PolishProjects.optionStatus(Q, 'minorities_kresy', 'border').available !}
 unavailable-subtitle: [+ pl_minorities_kresy_border_why +]
 on-arrival: {!

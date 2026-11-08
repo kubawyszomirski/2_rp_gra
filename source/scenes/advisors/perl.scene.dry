@@ -34,7 +34,7 @@ PolishParty.advisorAction(Q, 'perl', 'define_party_line');
 
 @direct_party_press
 title: Direct the Party Press
-subtitle: 1 resource; the credibility of the press rises (+5) and press campaigns work better for six months (×1.25). Needs a working press.
+subtitle: Cost: 1 resource. The credibility of the press rises (+5) and press campaigns work better for six months (×1.25). Needs a working press.
 choose-if: {! return PolishParty.advisorActionStatus(Q, 'perl', 'direct_party_press').available !}
 unavailable-subtitle: [+ pl_advact_direct_party_press_why +]
 call: polish_advisor_commit

@@ -32,7 +32,7 @@ The state police answer to the minister of the interior, but many commanders sti
 
 @training
 title: Train the police
-subtitle: Costs 1 budget unit. The command and the lawfulness of the police rise (+5); the training can be repeated.
+subtitle: Cost: 1 budget unit. The command and the lawfulness of the police rise (+5); the training can be repeated.
 choose-if: {! return PolishProjects.optionStatus(Q, 'internal_security', 'training').available !}
 unavailable-subtitle: [+ pl_internal_security_training_why +]
 on-arrival: {!
@@ -42,7 +42,7 @@ go-to: result
 
 @prosecute
 title: Pursue the perpetrators of political violence
-subtitle: Costs 1 budget unit. Political violence falls (−5), but the National Democrats and the communists resent the pursuit of their people (−3).
+subtitle: Cost: 1 budget unit. Political violence falls (−5), but the National Democrats and the communists resent the pursuit of their people (−3).
 choose-if: {! return PolishProjects.optionStatus(Q, 'internal_security', 'prosecute').available !}
 unavailable-subtitle: [+ pl_internal_security_prosecute_why +]
 on-arrival: {!
