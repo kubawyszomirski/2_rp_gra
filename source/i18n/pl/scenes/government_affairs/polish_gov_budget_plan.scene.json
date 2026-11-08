@@ -1,0 +1,16 @@
+{
+  "source": "scenes/government_affairs/polish_gov_budget_plan.scene.dry",
+  "status": "complete",
+  "lines": {
+    "title: Budget in Crisis: Our Plan": "title: Budżet w kryzysie: nasz plan",
+    "subtitle: An urgent card of the Treasury: the budget is below zero, and our minister can put a budget law to the Sejm.": "subtitle: Karta pilna Skarbu: budżet jest poniżej zera, a nasz minister może przedstawić Sejmowi ustawę budżetową.",
+    "title: A higher tax on high incomes and wealth": "title: Wyższy podatek od wysokich dochodów i majątku",
+    "title: A domestic loan": "title: Pożyczka wewnętrzna",
+    "title: Cuts in the administration": "title: Cięcia w administracji",
+    "title: Print money": "title: Dodruk pieniędzy",
+    "title: Not now": "title: Nie teraz",
+    "subtitle: The card comes back next month while the budget is below zero.": "subtitle: Karta wróci w przyszłym miesiącu, jeśli budżet będzie poniżej zera.",
+    "= Budget in crisis: our plan": "= Budżet w kryzysie: nasz plan",
+    "- @root: Continue.": "- @root: Dalej."
+  }
+}

@@ -207,7 +207,7 @@ test('Reformizm w tekstach 1.07: the cards say the lower price; the pool check u
       for (const m of fs.readFileSync(f, 'utf8').matchAll(/\[\+ (pl_cost\w*) \+\]/g)) used.add(m[1]);
     assert.ok(used.has('pl_cost_socn'));
     assert.deepEqual([...used].filter(v => typeof Q[v] !== 'string'), [], 'a price word without a value');
-    S.economy.budget = 1;
+    S.economy.budget = -1.5; // Z — 1.11: down to −3 B
     assert.equal(PR.affordStatus(Q, 2).available, true, 'the pool check uses the lower price');
     assert.equal(PR.affordStatus(Q, 3).available, false);
   } finally {

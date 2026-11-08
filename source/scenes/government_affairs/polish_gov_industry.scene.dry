@@ -28,6 +28,7 @@ Industry and Trade can place orders with home industry and decide the fate of pl
 - @orders
 - @rescue
 - @public_control
+- @halt_orders
 - @nothing
 - @easy_discard
 - @cancel_advisor_action
@@ -59,6 +60,17 @@ choose-if: {! return PolishProjects.optionStatus(Q, 'industrial_policy', 'public
 unavailable-subtitle: [+ pl_industrial_policy_public_control_why +]
 on-arrival: {!
 PolishProjects.chooseOption(Q, 'industrial_policy', 'public_control');
+!}
+go-to: result
+
+@halt_orders
+title: Halt the state orders
+subtitle: The budget gains 1 unit at once. The plants lose their orders: output falls a little for three months, and unemployment rises.
+choose-if: {! return PolishProjects.optionStatus(Q, 'industrial_policy', 'halt_orders').available !}
+unavailable-subtitle: [+ pl_industrial_policy_halt_orders_why +]
+on-arrival: {!
+// Z — 1.11 (decisions 5A and 2A of 8 XI 2026): the saving of this ministry, +1 B with its political cost.
+PolishProjects.chooseOption(Q, 'industrial_policy', 'halt_orders');
 !}
 go-to: result
 

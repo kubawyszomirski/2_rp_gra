@@ -45,7 +45,7 @@ test('Karty Pracy i Przemysłu 0.94: the options of each card; the general credi
   assert.deepEqual(options('labor_rights'), ['inspection', 'collective', 'derogation']);
   assert.deepEqual(options('social_welfare'), ['expand', 'insurance', 'limit']);
   assert.deepEqual(options('public_works'), ['employment', 'infrastructure', 'housing']);
-  assert.deepEqual(options('industrial_policy'), ['orders', 'rescue', 'public_control']);
+  assert.deepEqual(options('industrial_policy'), ['orders', 'rescue', 'public_control', 'halt_orders'], 'Z — 1.11: and a saving');
   assert.deepEqual(options('economic_democracy'), ['works_councils', 'cooperative_credit', 'socialise_mining']);
   assert.deepEqual(options('investment_fund'), ['public', 'banks', 'cooperative']);
   assert.deepEqual(options('customs_war'), ['retaliation', 'new_markets', 'concessions']);

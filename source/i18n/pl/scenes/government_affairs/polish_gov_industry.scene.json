@@ -14,6 +14,8 @@
     "- @root: Continue.": "- @root: Dalej.",
     "subtitle: A public board takes over the management of the plant. The workers keep their jobs, but business pressure rises sharply (+15). [? if pl_industrial_policy_public_control_coalition : [+ pl_industrial_policy_public_control_coalition +] ?]": "subtitle: Zarządzanie zakładem przejmuje zarząd publiczny. Robotnicy zachowują pracę, ale presja przedsiębiorców gwałtownie rośnie (+15). [? if pl_industrial_policy_public_control_coalition : [+ pl_industrial_policy_public_control_coalition +] ?]",
     "title: Do nothing now": "title: Nic nie robimy",
-    "subtitle: The card is played and comes back in three months.": "subtitle: Karta zostaje zagrana i wróci za trzy miesiące."
+    "subtitle: The card is played and comes back in three months.": "subtitle: Karta zostaje zagrana i wróci za trzy miesiące.",
+    "title: Halt the state orders": "title: Wstrzymaj zamówienia państwowe",
+    "subtitle: The budget gains 1 unit at once. The plants lose their orders: output falls a little for three months, and unemployment rises.": "subtitle: Budżet od razu zyskuje 1 jednostkę. Zakłady tracą zamówienia: produkcja przez trzy miesiące lekko spada, a bezrobocie rośnie."
   }
 }

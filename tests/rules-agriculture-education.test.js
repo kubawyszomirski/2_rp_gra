@@ -43,8 +43,8 @@ const pending = (p, system) => p.pending_effects.filter(e => e.system === system
 test('Karty Rolnictwa i Oświaty 0.97: the options of each card; no expropriation and no Wawel-or-Castle menu', () => {
   game();
   assert.deepEqual(options('land_program'), ['compensated', 'accelerated', 'settlers']);
-  assert.deepEqual(options('agriculture_development'), ['advisory', 'consolidation', 'cooperative_processing_sales']);
-  assert.deepEqual(options('education_program'), ['rural_access', 'urban_worker_adult_access', 'secular']);
+  assert.deepEqual(options('agriculture_development'), ['advisory', 'consolidation', 'cooperative_processing_sales', 'farm_aid_cuts'], 'Z — 1.11: and a saving');
+  assert.deepEqual(options('education_program'), ['rural_access', 'urban_worker_adult_access', 'secular', 'delay_schools'], 'Z — 1.11: and a saving');
   assert.deepEqual(options('minority_school_rights'), ['own_language', 'agreed_bilingual', 'polish_dominance']);
   assert.deepEqual(options('heritage_restoration'), ['heritage', 'science', 'radio']);
 });

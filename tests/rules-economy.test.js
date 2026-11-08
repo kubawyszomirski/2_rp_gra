@@ -500,8 +500,12 @@ test('Pula 1.01: a pool below zero prints money (at most 3 points) and two settl
   econ.settleEconomy(Q.S, 2, econ.budgetAt(Q.S, 2), {});
   assert.equal(econ.fiscalCrisis(E), true);
   assert.equal(econ.poolText(-7), '−7 B: a deficit, the state prints money and programmes are stopped');
+  // Z — 1.11 (decision 5A of 8 XI 2026): a ministry of PPS can spend down to −3 B.
   E.budget = 1;
-  assert.match(proj.affordStatus(Q, 2).reason, /^Not enough budget: it needs 2, the pool has 1\.$/);
+  assert.equal(proj.affordStatus(Q, 2).available, true, 'deficit spending');
+  assert.equal(proj.affordStatus(Q, 4).available, true, 'down to −3 B');
+  E.budget = -1.5;
+  assert.match(proj.affordStatus(Q, 2).reason, /^The budget cannot go below −3 B: it needs 2, the pool has −1,5 B\.$|^The budget cannot go below −3 B: it needs 2, the pool has −1\.5 B\.$/);
   assert.equal(proj.affordStatus(Q, 1).available, true);
 });
 

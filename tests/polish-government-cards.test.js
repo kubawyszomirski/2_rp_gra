@@ -219,7 +219,11 @@ test('the Budget card: a package of the cabinet before the Sejm; PPS as its supp
   assert.match(content(engine), /The cabinet proposes a package/);
   const t = Q.time;
   engine.playCard('polish_budget_package');
-  assert.equal(choice(engine, 'polish_budget_package.protect').canChoose, false, 'no cut of benefits in this package');
+  // Z — 1.11 (decision 6A of 8 XI 2026): “Budget in Crisis” in plain words with four answers; the conditions of PPS left the card.
+  assert.deepEqual(ids(engine), ['polish_budget_package.support', 'polish_budget_package.refuse', 'polish_budget_package.abstain', 'polish_budget_package.later']);
+  assert.match(content(engine), /The state lacks money: the budget has fallen below zero\. The cabinet wants to solve it so: a broader tax base — the budget gains, business presses harder, and the middle class is discontented\./);
+  const plain = x => (x == null ? '' : typeof x === 'string' ? x : Array.isArray(x) ? x.map(plain).join('') : plain(x.content));
+  assert.match(plain(choice(engine, 'polish_budget_package.refuse').subtitle), /^PPS votes against\. (The package will probably pass all the same|Without our votes the package will probably fail)/);
   choose(engine, 'polish_budget_package.support');
   choose(engine, 'root');
   assert.equal(Q.time, t, 'the answer costs no month');
@@ -405,4 +409,30 @@ test('Rząd z PPS 1.10: no legislative initiative; "Do nothing" on a ministry ca
   assert.equal(Q.month_actions || 0, 0, 'the month stays free');
   assert.equal(Q.time, t);
   assert.ok(PolishRules.cardRest(Q, 'polish_gov_labor_rights') > 0, 'the card rests');
+});
+
+// Z — 1.11 (decision 1A of 8 XI 2026): with PPS at the Treasury and the budget below zero, the urgent card of our plan.
+test('Nasz plan 1.11: an urgent card of the Government deck while PPS holds the Treasury and the budget is below zero; the plan waits for the Sejm', () => {
+  const engine = dendry.startGame(1922, 'pl');
+  const Q = leftCabinet(engine);
+  const plain = x => (x == null ? '' : typeof x === 'string' ? x : Array.isArray(x) ? x.map(plain).join('') : plain(x.content));
+  try {
+    Q.S.cabinet.portfolios.finance = 'pps';
+    Q.S.economy.budget = -1;
+    engine.goToScene('main');
+    assert.ok(dendry.urgentCards(engine).includes('polish_gov_budget_plan'));
+    assert.equal(dendry.urgentDeck(engine, 'polish_gov_budget_plan'), 'main.govt');
+    engine.playCard('polish_gov_budget_plan');
+    assert.match(content(engine), /Budżet jest poniżej zera .*Nasz minister skarbu może przedstawić Sejmowi ustawę budżetową/);
+    assert.deepEqual(ids(engine), ['polish_gov_budget_plan.progressive', 'polish_gov_budget_plan.loan', 'polish_gov_budget_plan.admin_cuts',
+      'polish_gov_budget_plan.emission', 'polish_gov_budget_plan.later']);
+    assert.match(plain(choice(engine, 'polish_gov_budget_plan.emission').subtitle), /^Jeśli Sejm ją przyjmie, budżet zyska 3 jednostki; rośnie inflacja\. Dziś Sejm by ją (przyjął|odrzucił)\.$/);
+    choose(engine, 'polish_gov_budget_plan.emission');
+    assert.match(content(engine), /Nasz Skarb przedstawia Sejmowi ustawę budżetową: finansowanie emisją\. Sejm zagłosuje przy rozliczeniu/);
+    assert.equal(Q.S.economy.pending_package.pps_plan, true);
+    choose(engine, 'root');
+    assert.ok(!dendry.urgentCards(engine).includes('polish_gov_budget_plan'), 'one plan at a time');
+  } finally {
+    PolishRules.setLanguage('en');
+  }
 });

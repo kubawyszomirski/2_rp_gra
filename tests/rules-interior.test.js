@@ -45,7 +45,7 @@ const episode = (Q, id) => Q.S.politics.violence_episodes.find(e => e.id === id)
 
 test('Sprawy Wewnętrzne 0.99: three cards with three permanent options each', () => {
   quiet();
-  assert.deepEqual(options('internal_security'), ['training', 'prosecute', 'protect']);
+  assert.deepEqual(options('internal_security'), ['training', 'prosecute', 'protect', 'police_cuts'], 'Z — 1.11: and a saving');
   assert.deepEqual(options('minorities_kresy'), ['official_languages', 'self_government', 'border']);
   assert.deepEqual(options('civil_liberties'), ['press_freedom', 'assembly', 'squads']);
 });

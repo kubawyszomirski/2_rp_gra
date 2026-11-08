@@ -308,7 +308,7 @@ test('the plant cards in the game: Labour signs a collective agreement in its st
   playFromHand(engine, 'polish_gov_industry');
   assert.match(JSON.stringify(engine.ui.paragraphs), /Recorded plants/);
   assert.deepEqual(ids(engine).filter(id => id.startsWith('polish_gov_industry.')), ['polish_gov_industry.orders', 'polish_gov_industry.rescue',
-    'polish_gov_industry.public_control', 'polish_gov_industry.nothing']);
+    'polish_gov_industry.public_control', 'polish_gov_industry.halt_orders', 'polish_gov_industry.nothing']);
   choose(engine, 'polish_gov_industry.rescue');
   // Z — 0.93 (decision 4A of 24 X 2026): the rescue starts in the same decision.
   assert.match(JSON.stringify(engine.ui.paragraphs), /rescue of the industrial plant no\. 1 is a conditional credit\. Started: Rescue of a plant/);

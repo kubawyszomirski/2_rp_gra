@@ -1,8 +1,8 @@
 {
   "hashes": {
-    "docs/POLISH_TECHNICAL_REFERENCE.md": "2195c9ac131c80e1ecc7c2709ef1fa703e7b4e861bcd7d77079a5a5a81b4dcc4",
-    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "67657a859d5d589004028f2d9519d74cf5ccad77f4720f658f5ada457c71ca07",
-    "analysis/m02-negotiations/results.json": "8d29714270e9f1acebfb5bd3b67fc533f2052ef3bc6a0a17f7706a8d6aead52e"
+    "docs/POLISH_TECHNICAL_REFERENCE.md": "e0e68876dacf1bae9657a2eea2e40b43d3bccc1b1ed5a277772d46dfc1350162",
+    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "f625608b816c9f43b8d67648c6def4d1d66caa74925270f55fbc98182c9c7fcd",
+    "analysis/m02-negotiations/results.json": "94b9dec3c269112dffc20c32cd3d3005b48937ab3c6aa6526a45ef6c4040799f"
   },
   "scope": "political-chain diagnostic with controlled macro inputs",
   "runs": [

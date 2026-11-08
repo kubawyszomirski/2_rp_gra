@@ -27,6 +27,7 @@ The state police answer to the minister of the interior, but many commanders sti
 - @training
 - @prosecute
 - @protect
+- @police_cuts
 - @nothing
 - @easy_discard
 - @cancel_advisor_action
@@ -58,6 +59,17 @@ choose-if: {! return PolishProjects.optionStatus(Q, 'internal_security', 'protec
 unavailable-subtitle: [+ pl_internal_security_protect_why +]
 on-arrival: {!
 PolishProjects.chooseOption(Q, 'internal_security', 'protect');
+!}
+go-to: result
+
+@police_cuts
+title: Cut the police establishment
+subtitle: The budget gains 1 unit at once. The police are weaker, and there is a little more violence in the country (+2).
+choose-if: {! return PolishProjects.optionStatus(Q, 'internal_security', 'police_cuts').available !}
+unavailable-subtitle: [+ pl_internal_security_police_cuts_why +]
+on-arrival: {!
+// Z — 1.11 (decisions 5A and 2A of 8 XI 2026): the saving of this ministry, +1 B with its political cost.
+PolishProjects.chooseOption(Q, 'internal_security', 'police_cuts');
 !}
 go-to: result
 

@@ -283,8 +283,9 @@ test('Wydatki na wojsko 1.02: more money costs 2 B, the pressure towards a coup 
   PolishProjects.chooseOption(Q, 'military_policy', 'cut_spending');
   assert.deepEqual([S.economy.budget, S.coup.pressure], [pool0, 20]);
   free(Q);
-  S.economy.budget = 1;
-  assert.match(PolishProjects.optionStatus(Q, 'military_policy', 'raise_spending').reason, /Not enough budget: it needs 2, the pool has 1\./);
+  // Z — 1.11 (decision 5A): deficit spending down to −3 B.
+  S.economy.budget = -2;
+  assert.match(PolishProjects.optionStatus(Q, 'military_policy', 'raise_spending').reason, /The budget cannot go below −3 B: it needs 2, the pool has −2 B\./);
   assert.equal(PolishProjects.optionStatus(Q, 'military_policy', 'cut_spending').available, true);
 });
 
@@ -315,8 +316,8 @@ test('Piłsudski i wojsko 1.02: subordination moves the army 0.05 to the legal a
   PolishSecurity.pilsChoose(Q, 'status_quo');
   assert.deepEqual([dissent(S, 'centrum'), S.actors.relations.pilsudski], [Math.max(0, dC - 3), Math.max(0, rel2 - 3)]);
   free(Q);
-  S.economy.budget = 0;
-  assert.match(PolishSecurity.pilsOptionStatus(Q, 'legion_cult').reason, /Not enough budget/);
+  S.economy.budget = -2.5;
+  assert.match(PolishSecurity.pilsOptionStatus(Q, 'legion_cult').reason, /The budget cannot go below −3 B/);
   for (const f of S.security.forces) f.loyalty_pils = 0;
   assert.match(PolishSecurity.pilsOptionStatus(Q, 'subordinate').reason, /no longer leans towards Piłsudski/);
 });

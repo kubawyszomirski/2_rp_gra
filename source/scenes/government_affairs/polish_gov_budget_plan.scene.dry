@@ -1,0 +1,79 @@
+title: Budget in Crisis: Our Plan
+subtitle: An urgent card of the Treasury: the budget is below zero, and our minister can put a budget law to the Sejm.
+new-page: true
+is-card: true
+view-if: {! return !!Q.S && PolishProjects.budgetPlanAvailable(Q) !}
+on-arrival: {!
+// Card government.budget_plan (Z — 1.11, decision 1A of 8 XI 2026; P): an urgent card of the Government deck while PPS holds the
+// Treasury and the budget is below zero. One of four instruments as a budget law; the Sejm votes at the next settlement, and a law
+// that passes brings one unit more than the same decision on the card “Taxes and Loans”. The card costs the action of the month.
+PolishProjects.budgetPlanView(Q);
+Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_budget_plan');
+!}
+
+[+ pl_gc_ministry +]
+
+[+ pl_plan_intro +]
+
+- @progressive
+- @loan
+- @admin_cuts
+- @emission
+- @later
+
+@progressive
+title: A higher tax on high incomes and wealth
+subtitle: [+ pl_plan_progressive_line +]
+choose-if: {! return PolishProjects.budgetPlanStatus(Q, 'progressive').available !}
+unavailable-subtitle: [+ pl_plan_progressive_why +]
+on-arrival: {!
+Q.pl_plan_result = PolishProjects.budgetPlanChoose(Q, 'progressive');
+!}
+go-to: result
+
+@loan
+title: A domestic loan
+subtitle: [+ pl_plan_loan_line +]
+choose-if: {! return PolishProjects.budgetPlanStatus(Q, 'loan').available !}
+unavailable-subtitle: [+ pl_plan_loan_why +]
+on-arrival: {!
+Q.pl_plan_result = PolishProjects.budgetPlanChoose(Q, 'loan');
+!}
+go-to: result
+
+@admin_cuts
+title: Cuts in the administration
+subtitle: [+ pl_plan_admin_cuts_line +]
+choose-if: {! return PolishProjects.budgetPlanStatus(Q, 'admin_cuts').available !}
+unavailable-subtitle: [+ pl_plan_admin_cuts_why +]
+on-arrival: {!
+Q.pl_plan_result = PolishProjects.budgetPlanChoose(Q, 'admin_cuts');
+!}
+go-to: result
+
+@emission
+title: Print money
+subtitle: [+ pl_plan_emission_line +]
+choose-if: {! return PolishProjects.budgetPlanStatus(Q, 'emission').available !}
+unavailable-subtitle: [+ pl_plan_emission_why +]
+on-arrival: {!
+Q.pl_plan_result = PolishProjects.budgetPlanChoose(Q, 'emission');
+!}
+go-to: result
+
+@later
+title: Not now
+subtitle: The card comes back next month while the budget is below zero.
+on-arrival: {!
+PolishProjects.budgetPlanSkip(Q);
+!}
+go-to: root
+
+@result
+new-page: true
+
+= Budget in crisis: our plan
+
+[+ pl_plan_result +]
+
+- @root: Continue.

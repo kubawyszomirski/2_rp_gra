@@ -609,9 +609,9 @@ test('Roboty pod Pracą and Wariant robót: Labour and financing / Treasury only
   assert.deepEqual([housing.variant, housing.status, housing.duration_months, housing.price_B, Q.S.economy.budget], ['housing', 'executing', 1, 2, 2]);
   assert.equal(proj.PROJECT_TYPES.public_works.variants.housing.units, 0, 'no employment units for housing');
   freeAction(Q);
-  Q.S.economy.budget = 1;
-  assert.match(proj.optionStatus(Q, 'public_works', 'employment').reason, /Not enough budget: it needs 2, the pool has 1\./);
-  Q.S.economy.budget = 2;
+  Q.S.economy.budget = -2; // Z — 1.11 (decision 5A): down to −3 B
+  assert.match(proj.optionStatus(Q, 'public_works', 'employment').reason, /The budget cannot go below −3 B: it needs 2, the pool has −2 B\./);
+  Q.S.economy.budget = -1;
   assert.equal(proj.optionStatus(Q, 'public_works', 'employment').available, true);
   month(Q); freeAction(Q);
   assert.equal(housing.status, 'operating', 'the housing works from the end of the month and stays recorded');
@@ -772,7 +772,7 @@ test('Trzy reformy: only the constructive vote in force; no arbitration and no c
 
 test('Sprawiedliwość (stage-4 part, Z — 1.00): the card has the amnesty, the jury courts and the legal advice; the democratic guarantees stay a motion of the debate', () => {
   const Q = withPortfolio(world({ time: 36, senate: true }), 'justice');
-  assert.deepEqual(proj.CARDS.justice_policy.options, ['amnesty', 'jury', 'legal_aid']);
+  assert.deepEqual(proj.CARDS.justice_policy.options, ['amnesty', 'jury', 'legal_aid', 'court_savings']);
   assert.deepEqual(proj.CARDS.family_law.options, ['civil_marriage', 'women_rights']);
   assert.match(proj.optionStatus(Q, 'justice_policy', 'broad_safeguards').reason, /Unknown option/);
   assert.match(proj.optionStatus(Q, 'justice_policy', 'limited_redress').reason, /Unknown option/);
@@ -959,10 +959,83 @@ test('P: the currency reform answering a financial crisis may start with a pool 
   // Z — 1.04 (decision 4A of the event audit): the card comes after the event, here as if the reform had been postponed there.
   Q.S.economy.stabilization_answered = 19;
   Q.S.economy.budget = -3;
-  assert.match(proj.optionStatus(Q, 'public_works', 'employment').reason, /Not enough budget/);
+  assert.match(proj.optionStatus(Q, 'public_works', 'employment').reason, /The budget cannot go below −3 B/);
   assert.equal(proj.optionStatus(Q, 'currency_stabilisation', 'gradual').available, true);
   proj.chooseOption(Q, 'currency_stabilisation', 'gradual');
   const reform = proj.currencyProject(Q.S);
   assert.equal(reform.status, 'executing', 'launched; its cost still limits execution');
   assert.equal(Q.S.economy.currency_regime, 'stabilizing');
+});
+
+// ---- Z — 1.11 (decisions 5A, 6A, 1A and 2A of 8 XI 2026): the budget in government ----
+
+test('Budżet w rządzie 1.11: a ministry of PPS spends down to −3 B and the card warns; five ministries have a saving of +1 B with its political cost', () => {
+  const Q = withPortfolio(world({ time: 20, senate: true }), 'interior');
+  Q.S.economy.budget = 0;
+  assert.equal(proj.affordStatus(Q, 3).available, true, 'down to −3 B');
+  assert.equal(proj.affordStatus(Q, 4).available, false, 'not below −3 B');
+  proj.cardView(Q, 'internal_security');
+  assert.match(Q.pl_gc_budget, /A decision that takes the budget below zero is paid by printing money, and inflation rises; a ministry can spend down to −3 B\. Below −2 B the programmes run at half strength\./);
+  Q.S.economy.budget = 5;
+  proj.cardView(Q, 'internal_security');
+  assert.doesNotMatch(Q.pl_gc_budget, /printing/, 'no warning with enough money');
+  // The savings: one action, +1 B at once, the card rests as after any decision.
+  const cases = [['interior', 'internal_security', 'police_cuts'], ['economic', 'industrial_policy', 'halt_orders'],
+    ['agriculture', 'agriculture_development', 'farm_aid_cuts'], ['education', 'education_program', 'delay_schools'], ['justice', 'justice_policy', 'court_savings']];
+  for (const [portfolio, card, option] of cases) {
+    const R = withPortfolio(world({ time: 20, senate: true }), portfolio);
+    R.S.economy.budget = -2;
+    assert.equal(proj.optionStatus(R, card, option).available, true, option + ' needs no money');
+    const before = { pool: R.S.economy.budget, capacity: R.S.security.police.capacity, violence: R.S.politics.violence, wyzwolenie: R.S.actors.relations.psl_wyzwolenie,
+      shocks: R.S.economy.shocks.length };
+    const text = proj.chooseOption(R, card, option).text;
+    assert.equal(R.S.economy.budget, before.pool + 1, option + ': +1 B');
+    assert.equal(R.month_actions, 1, option + ': the action of the month');
+    assert.match(text, /^The budget gains 1 unit at once\./);
+    if (option === 'police_cuts') assert.ok(R.S.security.police.capacity < before.capacity, 'the police are weaker');
+    if (option === 'halt_orders') assert.ok(R.S.economy.shocks.some(s => s.channel === 'output' && s.value < 0), 'output falls');
+    if (option === 'farm_aid_cuts') assert.ok(R.S.actors.relations.psl_wyzwolenie < before.wyzwolenie, 'PSL is less friendly');
+  }
+});
+
+test('Budżet w kryzysie 1.11: the cabinet\'s package in plain words; PPS can abstain; the plan of a PPS Treasury is a budget law with one unit more', () => {
+  const Q = world({ seats: OPENING, time: 20, senate: true });
+  Q.sejm_first_election_completed = 1;
+  Q.S.cabinet.status = 'active';
+  Q.S.cabinet.supporter_ids = ['pps'];
+  proj.newPackage(Q, { instruments: ['indirect'], necessary: true, reason: 'deficit' });
+  proj.budgetCrisisView(Q);
+  assert.match(Q.pl_bud_intro, /^The state lacks money: the budget has fallen below zero\. The cabinet wants to solve it so: indirect taxes — the budget gains, but prices for the poorest rise and the Left of PPS protests\. The Sejm votes at the settlement of /);
+  assert.match(Q.pl_bud_necessary_text, /^The premier treats the package as necessary/);
+  assert.match(Q.pl_bud_support_line, /The Left of PPS will protest\./);
+  assert.doesNotMatch((Q.pl_bud_intro + Q.pl_bud_refuse_line + Q.pl_bud_abstain_line).replace(/\d+\/\d{4}/, ''), /\d/, 'no numbers but the month');
+  if (proj.budgetCardAvailable(Q)) {
+    proj.budgetAnswerText(Q, 'abstain');
+    assert.equal(Q.S.economy.pending_package.pps_vote, 'abstain');
+  }
+  // The plan of a PPS Treasury.
+  const T = withPortfolio(world({ seats: OPENING, time: 20, senate: true }), 'finance');
+  T.sejm_first_election_completed = 1;
+  T.S.economy.budget = 1;
+  assert.equal(proj.budgetPlanAvailable(T), false, 'only below zero');
+  T.S.economy.budget = -1;
+  assert.equal(proj.budgetPlanAvailable(T), true);
+  proj.budgetPlanView(T);
+  assert.match(T.pl_plan_progressive_line, /^If the Sejm passes it, the budget gains 3 units; business presses harder, and the Left of PPS is pleased\. Today the Sejm would (pass|refuse) it\.$/);
+  const text = proj.budgetPlanChoose(T, 'admin_cuts');
+  assert.match(text, /^Our Treasury puts a budget law to the Sejm: cuts in named administrative spending\. The Sejm votes at the settlement of /);
+  const pkg = T.S.economy.pending_package;
+  assert.deepEqual([pkg.pps_plan, pkg.pps_vote, T.month_actions], [true, 'yes', 1]);
+  assert.equal(proj.budgetCardAvailable(T), false, 'our own plan is not answered on the card of the cabinet');
+  assert.equal(proj.budgetPlanAvailable(T), false, 'one plan at a time');
+  const pool = T.S.economy.budget;
+  month(T);
+  assert.ok(T.S.economy.pending_package, 'the vote at the settlement of the next month');
+  month(T);
+  const done = T.S.economy.packages.find(p => p.id === pkg.id);
+  assert.ok(done.law_id, 'the cuts, which need no law on the Treasury card, go to the Sejm as a budget law');
+  const law = T.S.parliament.laws.find(l => l.id === done.law_id);
+  assert.equal(law.status, 'enacted', 'the cabinet of PPS carries its budget law in the fixture Sejm');
+  assert.ok(T.S.economy.pool_log.some(e => e.id === pkg.id + ':plan' && e.delta === 1), 'one unit more');
+  assert.ok(T.S.economy.pool_log.some(e => /^pol-admin_cuts/.test(e.id) && e.delta === 1), 'and the cuts themselves');
 });

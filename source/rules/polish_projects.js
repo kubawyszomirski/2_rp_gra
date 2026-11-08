@@ -1204,6 +1204,53 @@
     return result(Q, launchPrepared(Q, project, {vote: via === 'parliament'}) + costText);
   }
 
+  // ---- Z — 1.11 (decisions 5A and 2A of 8 XI 2026): one saving of 1 B on a card of each ministry that had no source of money, with
+  // its political cost, as the cuts of the German original (P: the numbers are game values). The Treasury, the Army (its cut) and
+  // Labour (the limit of the benefits) had theirs. Each takes effect at once; the card rests three months after its use.
+  const SAVING_POOL = 1;
+  const SAVINGS = Object.freeze({
+    internal_security: {option: 'police_cuts', name: ['Cuts in the police', 'Cięcia w policji']},
+    industrial_policy: {option: 'halt_orders', name: ['State orders halted', 'Wstrzymane zamówienia państwowe']},
+    agriculture_development: {option: 'farm_aid_cuts', name: ['Less help for agriculture', 'Mniej pomocy dla rolnictwa']},
+    education_program: {option: 'delay_schools', name: ['The building of schools postponed', 'Odłożona budowa szkół']},
+    justice_policy: {option: 'court_savings', name: ['Savings in the courts', 'Oszczędności w sądach']},
+  });
+  const SAVING_EFFECTS = Object.freeze({police_capacity: -5, violence: 2, output: -0.3, output_months: 3, trust: -3, peasant_relation: -3, democracy: -1});
+  function savingChoose(Q, cardId) {
+    const S = Q.S, t = Q.time, spec = SAVINGS[cardId], id = 'saving_' + spec.option + ':t' + t, pol = politicsModule();
+    economy.changePool(S, SAVING_POOL, t, id, spec.name[0], spec.name[1]);
+    const trust = labels => {
+      const filter = electorate.hasCells(S) ? electorate.filterOfList(labels) : null;
+      if (filter) { electorate.changeCells(S, filter, {trust_pps: SAVING_EFFECTS.trust}); electorate.writeClassMirrors(Q); }
+    };
+    const gain = L('The budget gains 1 unit at once. ', 'Budżet od razu zyskuje 1 jednostkę. ');
+    if (cardId === 'internal_security') {
+      if (S.security) S.security.police.capacity = Math.max(0, S.security.police.capacity + SAVING_EFFECTS.police_capacity);
+      if (pol) pol.violenceEffect(Q, id, SAVING_EFFECTS.violence, 'police_cuts');
+      return result(Q, gain + L('The police are weaker, and there is a little more violence in the country (+' + SAVING_EFFECTS.violence + ').',
+        'Policja słabnie, a przemocy w kraju trochę przybywa (+' + SAVING_EFFECTS.violence + ').'));
+    }
+    if (cardId === 'industrial_policy') {
+      economy.addShock(S.economy, {id: id + ':output', channel: 'output', value: SAVING_EFFECTS.output, starts_at: t, ends_at: t + SAVING_EFFECTS.output_months});
+      return result(Q, gain + L('The plants lose their orders: output falls a little for three months, and unemployment rises with it.',
+        'Zakłady tracą zamówienia: produkcja przez trzy miesiące lekko spada, a z nią rośnie bezrobocie.'));
+    }
+    if (cardId === 'agriculture_development') {
+      trust(['rural']);
+      for (const party of ['psl_wyzwolenie', 'psl_piast']) government.changeRelation(Q, party, SAVING_EFFECTS.peasant_relation, id);
+      return result(Q, gain + L('The peasants trust PPS less (' + SAVING_EFFECTS.trust + '), and relations with both PSL worsen (' + SAVING_EFFECTS.peasant_relation + ').',
+        'Chłopi mniej ufają PPS (' + SAVING_EFFECTS.trust + '), a stosunki z obydwoma PSL się pogarszają (' + SAVING_EFFECTS.peasant_relation + ').').replace(/\((-)/g, '(−'));
+    }
+    if (cardId === 'education_program') {
+      trust(['new_middle']);
+      return result(Q, gain + L('The teachers and the intelligentsia trust PPS less (−' + Math.abs(SAVING_EFFECTS.trust) + ').',
+        'Nauczyciele i inteligencja mniej ufają PPS (−' + Math.abs(SAVING_EFFECTS.trust) + ').'));
+    }
+    if (pol) pol.democracyEffect(Q, id, SAVING_EFFECTS.democracy, 'court_savings');
+    return result(Q, gain + L('Trials drag on, and democracy weakens a little (−' + Math.abs(SAVING_EFFECTS.democracy) + ').',
+      'Procesy się wloką, a demokracja trochę słabnie (−' + Math.abs(SAVING_EFFECTS.democracy) + ').'));
+  }
+
   // ---- The card Sprawy wojskowe (Z — 1.02, the user's decisions of 7 XI 2026; P: the numbers are game values) ----------
 
   // As the Military Policy of the German original: more money for the army, a cut, and the promotion of officers loyal to the
@@ -1843,7 +1890,7 @@
     }
     E.packages.push(pkg);
     const lawNeeded = pkg.project_id ? !!projectLaw(S.projects[pkg.project_id]) : true;
-    const needsVote = lawNeeded || pkg.instruments.some(kind => INSTRUMENTS[kind].law);
+    const needsVote = lawNeeded || pkg.instruments.some(kind => INSTRUMENTS[kind].law) || !!pkg.pps_plan;
     if (!needsVote) {
       pkg.status = 'passed';
       applyPackage(Q, pkg.id, t);
@@ -1891,8 +1938,10 @@
     pkg.status = 'passed';
     const ppsAnswers = pkg.pps_vote === 'yes' || (!pkg.pps_vote && government.ppsBound(S));
     for (const kind of pkg.instruments) {
-      applyInstrument(Q, kind, m, {law_id: pkg.law_id, sponsor: 'cabinet', points: kind === 'emission' ? 2 : 0, pps_answers: ppsAnswers});
+      applyInstrument(Q, kind, m, {law_id: pkg.law_id, sponsor: pkg.pps_plan ? 'pps' : 'cabinet', points: kind === 'emission' ? 2 : 0, pps_answers: ppsAnswers});
     }
+    // Z — 1.11 (decision 1A of 8 XI 2026): a budget law of a PPS Treasury brings one unit more than the same decision on its card.
+    if (pkg.pps_plan) economy.changePool(S, PLAN_BONUS, m, pkg.id + ':plan', 'Budget law of PPS', 'Ustawa budżetowa PPS');
     if (pkg.project_id && S.projects[pkg.project_id] && !S.projects[pkg.project_id].authorized) authorize(Q, S.projects[pkg.project_id], m, pkg.law_id || 'package', ppsAnswers);
     if (E.package_revision && (E.package_revision.original_id === pkg.revision_of || E.package_revision.original_id === pkg.id)) E.package_revision = null;
   }
@@ -1966,7 +2015,7 @@
   function budgetOptionStatus(Q, option) {
     const S = Q.S, E = S.economy, pkg = E.pending_package, t = Q.time;
     if (!budgetCardAvailable(Q)) return no(L('There is no package to answer.', 'Nie ma pakietu, na który trzeba odpowiedzieć.'));
-    if (option === 'support' || option === 'refuse') return OK;
+    if (option === 'support' || option === 'refuse' || option === 'abstain') return OK;
     if (option === 'protect') return pkg.instruments.indexOf('benefit_cut') >= 0 ? OK : no(L('The package cuts no benefits.', 'Pakiet nie tnie zasiłków.'));
     if (option === 'wealth') {
       if (!pkg.instruments.some(kind => REGRESSIVE.indexOf(kind) >= 0)) return no(L('The package puts no burden on broad groups to shift.', 'Pakiet nie nakłada na szerokie grupy obciążeń, które można by przenieść.'));
@@ -1993,6 +2042,8 @@
     S.history.actions.push({t: Q.time, action_id: 'parliament.finance_amendment.' + option, package_id: pkg.id, cost_t: 0});
     if (option === 'support') { pkg.pps_vote = 'yes'; return {accepted: true, option: option}; }
     if (option === 'refuse') { pkg.pps_vote = 'no'; return {accepted: false, option: option}; }
+    // Z — 1.11 (decision 6A): PPS can abstain — it takes no responsibility and does not vote against.
+    if (option === 'abstain') { pkg.pps_vote = 'abstain'; return {accepted: false, option: option}; }
     const kinds = conditionedInstruments(Q, option);
     const offer = budgetOffer(Q, kinds);
     const evaluations = government.demandEvaluators(S).map(id => government.evaluatePartner(S, id, offer, government.governmentNeed(Q, id, offer)));
@@ -2022,13 +2073,132 @@
     };
   }
 
+  // ---- Z — 1.11 (decision 6A of 8 XI 2026): the card “Budżet w kryzysie” in plain words ---------------------------------------
+  // What the cabinet wants and what each instrument does, without numbers; four answers: support, against, abstain, not now.
+  const INSTRUMENT_EFFECTS = Object.freeze({
+    progressive: ['the budget gains, business presses harder, and the Left of PPS is pleased', 'budżet zyskuje, przedsiębiorcy mocniej naciskają, a Lewica PPS jest zadowolona'],
+    progressive_top: ['the budget gains a little, and business presses harder', 'budżet trochę zyskuje, a przedsiębiorcy mocniej naciskają'],
+    progressive_raise: ['the budget gains, and business presses harder', 'budżet zyskuje, a przedsiębiorcy mocniej naciskają'],
+    wealth_tax: ['the budget gains quickly, but business is outraged', 'budżet szybko zyskuje, ale przedsiębiorcy są oburzeni'],
+    indirect: ['the budget gains, but prices for the poorest rise and the Left of PPS protests', 'budżet zyskuje, ale ceny dla najbiedniejszych rosną, a Lewica PPS protestuje'],
+    broad: ['the budget gains, business presses harder, and the middle class is discontented', 'budżet zyskuje, przedsiębiorcy mocniej naciskają, a klasa średnia jest niezadowolona'],
+    customs: ['the budget gains a little, but prices rise', 'budżet trochę zyskuje, ale ceny rosną'],
+    loan: ['the budget gains now, but in a year part of the loan must be repaid', 'budżet zyskuje teraz, ale za rok trzeba spłacić część pożyczki'],
+    admin_cuts: ['the budget gains a little, but the public employees are discontented', 'budżet trochę zyskuje, ale urzędnicy są niezadowoleni'],
+    benefit_cut: ['the budget gains a little, but the unemployed and the Left of PPS are furious', 'budżet trochę zyskuje, ale bezrobotni i Lewica PPS są wściekli'],
+    emission: ['the budget gains, but inflation rises', 'budżet zyskuje, ale rośnie inflacja'],
+    coinage: ['the budget gains a little', 'budżet trochę zyskuje'],
+  });
+  const CRISIS_REASONS = Object.freeze({
+    payments: ['the payments the laws require are not fully covered', 'nie starcza na płatności, których wymagają ustawy'],
+    deficit: ['the budget has fallen below zero', 'budżet spadł poniżej zera'],
+    stabilisation: ['the currency reform must be paid for', 'trzeba sfinansować reformę walutową'],
+    credit: ['the credit crisis needs the help of the state', 'kryzys kredytowy wymaga pomocy państwa'],
+    revision: ['the Sejm has refused the previous package', 'Sejm odrzucił poprzedni pakiet'],
+    obligation: ['the cabinet keeps a promise', 'rząd dotrzymuje obietnicy'],
+  });
+  const instrumentPhrase = kind => L(INSTRUMENTS[kind].name + ' — ' + INSTRUMENT_EFFECTS[kind][0], instrumentName(kind) + ' — ' + INSTRUMENT_EFFECTS[kind][1]);
+  // Would the package pass if PPS voted so (the vote of a package is deterministic)?
+  function packagePassesWith(Q, pkg, vote) {
+    const counts = sejmCounts(Q, {sponsor: 'cabinet', programme: {fiscal: pkg.position}, flags: [], pps_vote: vote, t: Q.time});
+    return institutions.resolveBallot('ordinary_resolution', counts).result === 'passed';
+  }
+  function budgetCrisisView(Q) {
+    const S = Q.S, pkg = S.economy.pending_package;
+    if (!pkg) return;
+    const reason = CRISIS_REASONS[pkg.reason] ? L(CRISIS_REASONS[pkg.reason][0], CRISIS_REASONS[pkg.reason][1]) : pkg.reason;
+    const project = pkg.project_id && S.projects[pkg.project_id] ? S.projects[pkg.project_id] : null;
+    const list = pkg.instruments.map(instrumentPhrase).join('; ');
+    const what = project ? L('The cabinet carries out the ' + projectName(project.type).toLowerCase() + ' (' + variantName(project.variant) + ')' +
+        (list ? ' and wants to pay for it so: ' + list : ' without new taxes'), 'Rząd przeprowadza: ' + projectName(project.type).toLowerCase() + ' (' + variantName(project.variant) + ')' +
+        (list ? ' i chce to sfinansować tak: ' + list : ' bez nowych podatków')) :
+      L('The cabinet wants to solve it so: ' + list, 'Rząd chce to rozwiązać tak: ' + list);
+    Q.pl_bud_intro = L('The state lacks money: ' + reason + '. ', 'Państwu brakuje pieniędzy: ' + reason + '. ') + what + '. ' +
+      L('The Sejm votes at the settlement of ' + monthText(pkg.vote_at, 'gen') + '.', 'Sejm głosuje przy rozliczeniu ' + monthText(pkg.vote_at, 'gen') + '.');
+    Q.pl_bud_necessary = pkg.necessary ? 1 : 0;
+    Q.pl_bud_necessary_text = pkg.revision_of ? L('This is already the revised version: if the Sejm refuses it too, the premier resigns.',
+      'To już poprawiona wersja: jeśli Sejm i ją odrzuci, premier poda się do dymisji.') :
+      L('The premier treats the package as necessary: if the Sejm refuses it, he presents one more version, and resigns if that fails too.',
+        'Premier uważa pakiet za konieczny: jeśli Sejm go odrzuci, przedstawi jeszcze jedną wersję, a gdy i ta upadnie, poda się do dymisji.');
+    const lewica = pkg.instruments.map(kind => INSTRUMENTS[kind].lewica || 0);
+    Q.pl_bud_support_line = L('PPS votes for and shares the responsibility for the package.', 'PPS głosuje za i współodpowiada za pakiet.') +
+      (lewica.some(v => v > 0) ? L(' The Left of PPS will protest.', ' Lewica PPS będzie protestować.') : lewica.some(v => v < 0) ? L(' The Left of PPS will be pleased.', ' Lewica PPS będzie zadowolona.') : '');
+    const fall = pkg.necessary ? L(', and the premier may resign.', ', a premier może podać się do dymisji.') : '.';
+    Q.pl_bud_refuse_line = L('PPS votes against. ', 'PPS głosuje przeciw. ') + (packagePassesWith(Q, pkg, 'no') ?
+      L('The package will probably pass all the same.', 'Pakiet i tak raczej przejdzie.') : L('Without our votes the package will probably fail', 'Bez naszych głosów pakiet raczej upadnie') + fall);
+    Q.pl_bud_abstain_line = L('PPS abstains: it takes no responsibility and does not vote against. ', 'PPS wstrzymuje się: nie bierze odpowiedzialności i nie głosuje przeciw. ') +
+      (packagePassesWith(Q, pkg, 'abstain') ? L('The package will probably pass all the same.', 'Pakiet i tak raczej przejdzie.') :
+        L('Without our votes for it the package will probably fail', 'Bez naszych głosów za pakiet raczej upadnie') + fall);
+  }
+  function budgetAnswerText(Q, option) {
+    answerBudget(Q, option);
+    return option === 'support' ? L('PPS will vote for the package.', 'PPS zagłosuje za pakietem.') : option === 'refuse' ?
+      L('PPS will vote against the package.', 'PPS zagłosuje przeciw pakietowi.') : L('PPS will abstain in the vote on the package.', 'PPS wstrzyma się od głosu nad pakietem.');
+  }
+
+  // ---- Z — 1.11 (decision 1A of 8 XI 2026): the plan of a PPS Treasury when the budget is below zero ---------------------------
+  // An urgent card of the Government deck: one of four instruments as a budget law; the Sejm votes at the next settlement, and a law
+  // that passes brings one unit more than the same decision on the card of the Treasury (P). After a plan the card rests three months.
+  const PLAN_KINDS = Object.freeze(['progressive', 'loan', 'admin_cuts', 'emission']);
+  const PLAN_EFFECTS = Object.freeze({progressive: ['business presses harder, and the Left of PPS is pleased', 'przedsiębiorcy mocniej naciskają, a Lewica PPS jest zadowolona'],
+    loan: ['in a year 2 of them must be repaid', 'za rok trzeba będzie spłacić 2 z nich'], admin_cuts: ['the public employees are discontented', 'urzędnicy są niezadowoleni'],
+    emission: ['inflation rises', 'rośnie inflacja']});
+  const PLAN_BONUS = 1;
+  const PLAN_REST = 3;
+  const PLAN_CARD = 'polish_gov_budget_plan';
+  function budgetPlanAvailable(Q) {
+    const S = Q.S;
+    if (!S || !S.economy || !S.chapter || S.chapter.status === 'ended' || !ppsHolds(S, 'finance')) return false;
+    const E = S.economy;
+    if (E.pending_package || E.budget >= 0) return false;
+    return Q.time >= (S.cooldowns['rest:' + PLAN_CARD] || 0);
+  }
+  function budgetPlanStatus(Q, kind) {
+    if (!budgetPlanAvailable(Q)) return no(L('The budget is not below zero.', 'Budżet nie jest poniżej zera.'));
+    if (PLAN_KINDS.indexOf(kind) < 0) return no(L('Unknown option.', 'Nieznana opcja.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
+    const blocked = instrumentBlocked(Q, kind);
+    return blocked ? no(blocked) : OK;
+  }
+  function budgetPlanView(Q) {
+    const S = Q.S;
+    Q.pl_plan_intro = L('The budget is below zero (' + economy.poolText(S.economy.budget) + '). Our minister of the Treasury can put a budget law to the Sejm; it votes at the settlement of ' +
+      monthText(Q.time + 1, 'gen') + '. A law that passes brings one unit more than the same decision on the card “Taxes and Loans”, but it can fail.',
+      'Budżet jest poniżej zera (' + economy.poolText(S.economy.budget) + '). Nasz minister skarbu może przedstawić Sejmowi ustawę budżetową; Sejm zagłosuje przy rozliczeniu ' +
+      monthText(Q.time + 1, 'gen') + '. Ustawa, która przejdzie, da o jedną jednostkę więcej niż ta sama decyzja na karcie „Podatki i pożyczki”, ale może upaść.');
+    for (const kind of PLAN_KINDS) {
+      const status = budgetPlanStatus(Q, kind), spec = INSTRUMENTS[kind], gain = (spec.pool || 0) + PLAN_BONUS;
+      const passes = packagePassesWith(Q, {position: spec.position}, 'yes');
+      Q['pl_plan_' + kind + '_line'] = L('If the Sejm passes it, the budget gains ' + num(gain) + ' units; ', 'Jeśli Sejm ją przyjmie, budżet zyska ' + num(gain) + ' jednostki; ') +
+        L(PLAN_EFFECTS[kind][0], PLAN_EFFECTS[kind][1]) + '. ' + (passes ? L('Today the Sejm would pass it.', 'Dziś Sejm by ją przyjął.') : L('Today the Sejm would refuse it.', 'Dziś Sejm by ją odrzucił.'));
+      Q['pl_plan_' + kind + '_why'] = status.reason || '';
+    }
+  }
+  function budgetPlanChoose(Q, kind) {
+    const S = Q.S, status = budgetPlanStatus(Q, kind);
+    if (!status.available) throw new Error('budgetPlanChoose: ' + kind + ': ' + status.reason);
+    rules.commitMainAction(Q, 'government.budget_plan.' + kind, {instrument: kind});
+    rules.seedProfile(Q, 'reformism', 1, 'budget_plan.' + kind);
+    const pkg = newPackage(Q, {instruments: [kind], necessary: false, reason: 'pps_plan', title: 'Budget law of PPS: ' + INSTRUMENTS[kind].name});
+    pkg.pps_plan = true;
+    pkg.pps_answer = 'plan';
+    pkg.pps_vote = 'yes';
+    S.cooldowns['rest:' + PLAN_CARD] = Q.time + PLAN_REST;
+    return L('Our Treasury puts a budget law to the Sejm: ' + INSTRUMENTS[kind].name + '. The Sejm votes at the settlement of ' + monthText(pkg.vote_at, 'gen') + '.',
+      'Nasz Skarb przedstawia Sejmowi ustawę budżetową: ' + instrumentName(kind) + '. Sejm zagłosuje przy rozliczeniu ' + monthText(pkg.vote_at, 'gen') + '.');
+  }
+  function budgetPlanSkip(Q) {
+    Q.S.cooldowns['rest:' + PLAN_CARD] = Q.time + 1;
+    return L('Not now; the card comes back next month while the budget is below zero.', 'Nie teraz; karta wróci w przyszłym miesiącu, jeśli budżet będzie poniżej zera.');
+  }
+
   const PACKAGE_REASONS = Object.freeze({
     payments: 'current legal payments are not fully financed', deficit: 'the budget has fallen below zero', stabilisation: 'the currency reform',
-    credit: 'the credit crisis', revision: 'the revision of a refused package', obligation: 'a promise of the cabinet',
+    credit: 'the credit crisis', revision: 'the revision of a refused package', obligation: 'a promise of the cabinet', pps_plan: 'the budget law of PPS',
   });
   const PACKAGE_REASONS_PL = Object.freeze({
     payments: 'bieżące płatności ustawowe nie są w pełni sfinansowane', deficit: 'budżet spadł poniżej zera', stabilisation: 'reforma walutowa',
-    credit: 'kryzys kredytowy', revision: 'rewizja odrzuconego pakietu', obligation: 'obietnica gabinetu',
+    credit: 'kryzys kredytowy', revision: 'rewizja odrzuconego pakietu', obligation: 'obietnica gabinetu', pps_plan: 'ustawa budżetowa PPS',
   });
 
   // ---- The cabinet's own initiative (17.16.4, economic part; decision 1 of stage 4) ------------------
@@ -3586,7 +3756,7 @@
     investment_fund: {portfolios: ['finance', 'economic'], options: ['public', 'banks', 'cooperative']},
     // Z — 0.94: orders and the two ways of a plant in difficulty — a rescue or public control; the general credit is the investment
     // card's and the representation in a public plant became the law on works councils.
-    industrial_policy: {portfolios: ['economic'], options: ['orders', 'rescue', 'public_control']},
+    industrial_policy: {portfolios: ['economic'], options: ['orders', 'rescue', 'public_control', 'halt_orders']},
     economic_democracy: {portfolios: ['economic'], options: ['works_councils', 'cooperative_credit', 'socialise_mining']},
     // An event card of Industry and Trade: the customs war with Germany from June 1925, one decision (customsWarAvailable).
     customs_war: {portfolios: ['economic'], options: ['retaliation', 'new_markets', 'concessions']},
@@ -3594,16 +3764,16 @@
     // Z — 0.97 (decision 1 of the sketch of 7 XI 2026): the preference for Polish settlers is the third option instead of the
     // page of access to land, and the expropriation without compensation (always blocked in this chapter) left the card.
     land_program: {portfolios: ['agriculture'], options: ['compensated', 'accelerated', 'settlers']},
-    agriculture_development: {portfolios: ['agriculture'], options: ['advisory', 'consolidation', 'cooperative_processing_sales']},
-    education_program: {portfolios: ['education'], options: ['rural_access', 'urban_worker_adult_access', 'secular']},
+    agriculture_development: {portfolios: ['agriculture'], options: ['advisory', 'consolidation', 'cooperative_processing_sales', 'farm_aid_cuts']},
+    education_program: {portfolios: ['education'], options: ['rural_access', 'urban_worker_adult_access', 'secular', 'delay_schools']},
     minority_school_rights: {portfolios: ['education'], options: ['own_language', 'agreed_bilingual', 'polish_dominance']},
     // Z — 1.00 (decisions 1A–2A of 7 XI 2026): the amnesty, the jury courts and the legal advice; the democratic guarantees stay in
     // the constitutional debate and the review of a named abuse left the card. The card „Prawo i rodzina”.
-    justice_policy: {portfolios: ['justice'], options: ['amnesty', 'jury', 'legal_aid']},
+    justice_policy: {portfolios: ['justice'], options: ['amnesty', 'jury', 'legal_aid', 'court_savings']},
     family_law: {portfolios: ['justice'], options: ['civil_marriage', 'women_rights']},
     // Stage 7: cards 12 and 14 of 17.11 (catalogue 8.12, 8.14); the agreement with Piłsudski (card 15) is PolishSecurity's.
     // Z — 0.99 (the sketch of 7 XI 2026): three permanent cards of the Interior with three permanent options each.
-    internal_security: {portfolios: ['interior'], options: ['training', 'prosecute', 'protect']},
+    internal_security: {portfolios: ['interior'], options: ['training', 'prosecute', 'protect', 'police_cuts']},
     minorities_kresy: {portfolios: ['interior'], options: ['official_languages', 'self_government', 'border']},
     civil_liberties: {portfolios: ['interior'], options: ['press_freedom', 'assembly', 'squads']},
     // Z — 1.02 (the user's decisions of 7 XI 2026, as the German Military Policy): three permanent options.
@@ -3623,7 +3793,7 @@
     polish_gov_minority_schools: 'minority_school_rights', polish_gov_justice: 'justice_policy', polish_gov_interior: 'internal_security',
     polish_gov_military: 'military_policy', polish_gov_heritage: 'heritage_restoration', polish_gov_economic_democracy: 'economic_democracy',
     polish_gov_customs_war: 'customs_war', polish_gov_kresy: 'minorities_kresy', polish_gov_liberties: 'civil_liberties', polish_gov_family: 'family_law'});
-  const SCENE_PORTFOLIOS = Object.freeze({polish_gov_pils_agreement: Object.freeze(['reichswehr'])});
+  const SCENE_PORTFOLIOS = Object.freeze({polish_gov_pils_agreement: Object.freeze(['reichswehr']), polish_gov_budget_plan: Object.freeze(['finance'])});
   const PORTFOLIO_BADGE_PL = Object.freeze({labor: 'Praca', interior: 'Sprawy Wewnętrzne', finance: 'Skarb', economic: 'Przemysł i Handel',
     justice: 'Sprawiedliwość', agriculture: 'Rolnictwo', reichswehr: 'Sprawy Wojskowe', education: 'Oświata', foreign: 'Sprawy Zagraniczne'});
 
@@ -3753,12 +3923,16 @@
   // deficit by itself.
   const unitsText = n => L(num(n) + (n === 1 ? ' budget unit' : ' budget units'), num(n) + ' ' + rules.plural(n, 'jednostkę', 'jednostki', 'jednostek') + ' budżetu');
   // Z — 1.07: the price a PPS decision really pays (reformism; radicalism for the socialisation of the mines).
+  // Z — 1.11 (decision 5A of 8 XI 2026, as the deficit spending of the German original): a decision of a PPS ministry can take the
+  // pool below zero, down to −3 B; below zero the state prints money (polish_economy.js), below −2 B the programmes run at half.
+  const DEFICIT_FLOOR = -3;
   function affordStatus(Q, price, typeId) {
     price = profilePrice(Q.S, typeId || null, price, 'pps');
     const pool = Q.S.economy.budget;
-    if (!price || pool >= price - 1e-9) return OK;
-    return no(L('Not enough budget: it needs ' + num(price) + ', the pool has ' + numB(pool) + '.',
-      'Brakuje budżetu: potrzeba ' + num(price) + ', jest ' + numB(pool) + '.'));
+    if (!price || pool - price >= DEFICIT_FLOOR - 1e-9) return OK;
+    const have = (pool < -0.05 ? '−' : '') + num(Math.abs(pool)) + ' B';
+    return no(L('The budget cannot go below −3 B: it needs ' + num(price) + ', the pool has ' + have + '.',
+      'Budżet nie może zejść niżej niż −3 B: potrzeba ' + num(price) + ', jest ' + have + '.'));
   }
 
   function nextTranche(S, typeId, variantId) {
@@ -3831,6 +4005,8 @@
     const S = Q.S, E = S.economy, t = Q.time;
     if (!cardAvailable(Q, cardId)) return no(cardUnavailableReason(Q, cardId));
     if (CARDS[cardId].options.indexOf(option) < 0) return no(L('Unknown option.', 'Nieznana opcja.'));
+    if (SAVINGS[cardId] && SAVINGS[cardId].option === option) return rules.mainActionAvailable(Q) ? OK :
+      no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
     // Z — 0.92 (the user's decision of 24 X 2026): the cooperative variants of 8.5 and 8.9 use the existing cooperative movement
     // and need no cooperative of PPS.
     // Z — 0.94: the answer to the customs war is an answer to an event and costs no month.
@@ -4131,6 +4307,10 @@
     const extraSeed = CARD_PROFILE_SEEDS[cardId + '.' + option] || CARD_PROFILE_SEEDS[cardId];
     if (extraSeed) rules.seedProfile(Q, extraSeed[0], extraSeed[1], cardId + '.' + option);
     government.syncRelations(Q);
+    if (SAVINGS[cardId] && SAVINGS[cardId].option === option) {
+      rules.commitMainAction(Q, actionId(cardId, option), {card: cardId, option: option});
+      return savingChoose(Q, cardId);
+    }
     if (cardId === 'internal_security' || cardId === 'military_policy' || cardId === 'minorities_kresy' || cardId === 'civil_liberties') {
       rules.commitMainAction(Q, actionId(cardId, option), {card: cardId, option: option});
       if (cardId === 'minorities_kresy') return kresyChoose(Q, option);
@@ -4386,11 +4566,18 @@
     Q.pl_cost_soc = word(soc, false);
     Q.pl_cost_socn = word(soc, true);
   }
+  // Z — 1.11 (decision 5A): the card warns when a decision could take the pool below zero.
+  function deficitWarning(pool) {
+    if (pool >= 3) return '';
+    return L(' A decision that takes the budget below zero is paid by printing money, and inflation rises; a ministry can spend down to −3 B.',
+      ' Wydatek, który sprowadzi budżet poniżej zera, państwo pokryje dodrukiem pieniędzy, a inflacja wzrośnie; resort może wydawać do −3 B.') +
+      (pool < 1 ? L(' Below −2 B the programmes run at half strength.', ' Poniżej −2 B programy działają w połowie.') : '');
+  }
   function cardView(Q, cardId) {
     costWords(Q);
     const S = Q.S, card = CARDS[cardId];
     // Z — 1.01: the same reading as the top bar — the budget pool from which the options pay.
-    Q.pl_gc_budget = L('Budget: ', 'Budżet: ') + economy.poolText(S.economy.budget) + '.';
+    Q.pl_gc_budget = L('Budget: ', 'Budżet: ') + economy.poolText(S.economy.budget) + '.' + deficitWarning(S.economy.budget);
     const types = Object.keys(PROJECT_TYPES).filter(id => PROJECT_TYPES[id].card === cardId || (cardId === 'finance_package' && id === 'collection') ||
       (cardId === 'social_welfare' && id === 'old_age_insurance'));
     const lines = projectsOf(S, null, p => types.indexOf(p.type) >= 0).map(p => describeProject(p, S));
@@ -4844,12 +5031,16 @@
   function economyNotices(Q) {
     const S = Q.S, E = S.economy, lines = [];
     const pkg = E.pending_package;
-    if (pkg) {
+    if (pkg && pkg.pps_plan) {
+      lines.push(L('Our budget law (' + pkg.instruments.map(kind => INSTRUMENTS[kind].name).join(', ') + ') waits for the vote of the Sejm at the settlement of ' +
+        rules.monthOf(pkg.vote_at) + '/' + rules.yearOf(pkg.vote_at) + '.', 'Nasza ustawa budżetowa (' + pkg.instruments.map(instrumentName).join(', ') +
+        ') czeka na głosowanie Sejmu przy rozliczeniu ' + rules.monthYear(pkg.vote_at, 'gen') + '.'));
+    } else if (pkg) {
       lines.push(L('The cabinet proposes a package (' + (pkg.instruments.map(kind => INSTRUMENTS[kind].name).join(', ') || 'a project and its law') +
         '); the Sejm votes at the settlement of ' + rules.monthOf(pkg.vote_at) + '/' + rules.yearOf(pkg.vote_at) + '.' +
-        (budgetCardAvailable(Q) ? ' PPS can answer it with the Budget card.' : ''),
+        (budgetCardAvailable(Q) ? ' PPS can answer it with the card Budget in Crisis.' : ''),
         'Gabinet proponuje pakiet (' + (pkg.instruments.map(instrumentName).join(', ') || 'projekt i jego ustawa') + '); Sejm głosuje przy rozliczeniu ' +
-        rules.monthYear(pkg.vote_at, 'gen') + '.' + (budgetCardAvailable(Q) ? ' PPS może odpowiedzieć kartą „Budżet”.' : '')));
+        rules.monthYear(pkg.vote_at, 'gen') + '.' + (budgetCardAvailable(Q) ? ' PPS może odpowiedzieć kartą „Budżet w kryzysie”.' : '')));
     }
     if (economy.currencyCrisis(E)) {
       lines.push(L('Currency crisis: inflation has been at least 20% a month for two months.',
@@ -4872,6 +5063,8 @@
   // from the month after the Committee brought it to the floor. Z — 0.93 (decision 4A): the card of the prepared reforms is gone.
   rules.registerUrgentCard('polish_budget_package', {active: Q => budgetCardAvailable(Q), deck: () => 'main.parliament'});
   // Z — 0.94: the customs war with Germany is an urgent card of the Government deck while PPS holds Industry and Trade.
+  // Z — 1.11 (decision 1A): the plan of a PPS Treasury while the budget is below zero, an urgent card of the Government deck.
+  rules.registerUrgentCard(PLAN_CARD, {active: Q => budgetPlanAvailable(Q), deck: () => 'main.govt'});
   rules.registerUrgentCard('polish_gov_customs_war', {active: Q => !!(Q.S && Q.S.economy && Q.S.chapter) && cardAvailable(Q, 'customs_war'), deck: () => 'main.govt'});
   rules.registerCardDeadline('polish_budget_package', Q => Q.S && Q.S.economy && Q.S.economy.pending_package ? Q.S.economy.pending_package.vote_at : null);
   rules.registerUrgentCard('polish_constitution_vote', {deck: () => 'main.parliament', active: constitutionVoteActive});
@@ -4942,6 +5135,16 @@
     budgetOptionStatus: budgetOptionStatus,
     answerBudget: answerBudget,
     budgetView: budgetView,
+    budgetCrisisView: budgetCrisisView,
+    budgetAnswerText: budgetAnswerText,
+    budgetPlanAvailable: budgetPlanAvailable,
+    budgetPlanStatus: budgetPlanStatus,
+    budgetPlanView: budgetPlanView,
+    budgetPlanChoose: budgetPlanChoose,
+    budgetPlanSkip: budgetPlanSkip,
+    PLAN_KINDS: PLAN_KINDS,
+    SAVINGS: SAVINGS,
+    DEFICIT_FLOOR: DEFICIT_FLOOR,
     cabinetReview: cabinetReview,
     cabinetProfile: cabinetProfile,
     financialCrisis: financialCrisis,

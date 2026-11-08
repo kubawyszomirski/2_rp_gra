@@ -27,6 +27,7 @@ Primary school is compulsory, but the villages lack schools and many adult worke
 - @rural_access
 - @urban_worker_adult_access
 - @secular
+- @delay_schools
 - @nothing
 - @easy_discard
 - @cancel_advisor_action
@@ -58,6 +59,17 @@ choose-if: {! return PolishProjects.optionStatus(Q, 'education_program', 'secula
 unavailable-subtitle: [+ pl_education_program_secular_why +]
 on-arrival: {!
 PolishProjects.chooseOption(Q, 'education_program', 'secular');
+!}
+go-to: result
+
+@delay_schools
+title: Postpone the building of schools
+subtitle: The budget gains 1 unit at once. The teachers and the intelligentsia trust PPS less (−3).
+choose-if: {! return PolishProjects.optionStatus(Q, 'education_program', 'delay_schools').available !}
+unavailable-subtitle: [+ pl_education_program_delay_schools_why +]
+on-arrival: {!
+// Z — 1.11 (decisions 5A and 2A of 8 XI 2026): the saving of this ministry, +1 B with its political cost.
+PolishProjects.chooseOption(Q, 'education_program', 'delay_schools');
 !}
 go-to: result
 

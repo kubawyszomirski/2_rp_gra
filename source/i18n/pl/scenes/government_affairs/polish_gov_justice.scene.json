@@ -14,6 +14,8 @@
     "subtitle: Cost: 1 budget unit. The trade unions trust PPS more (+5).": "subtitle: Koszt: 1 jednostka budżetu. Związki zawodowe bardziej ufają PPS (+5).",
     "- @root: Continue.": "- @root: Dalej.",
     "title: Do nothing now": "title: Nic nie robimy",
-    "subtitle: The card is played and comes back in three months.": "subtitle: Karta zostaje zagrana i wróci za trzy miesiące."
+    "subtitle: The card is played and comes back in three months.": "subtitle: Karta zostaje zagrana i wróci za trzy miesiące.",
+    "title: Make savings in the courts": "title: Oszczędzaj w sądach",
+    "subtitle: The budget gains 1 unit at once. Trials drag on, and democracy weakens a little (−1).": "subtitle: Budżet od razu zyskuje 1 jednostkę. Procesy się wloką, a demokracja trochę słabnie (−1)."
   }
 }
