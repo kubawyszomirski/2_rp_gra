@@ -981,14 +981,15 @@
     rec.steps.cooperation = 'done';
     S.history.actions.push({t: t, action_id: 'society.strike_communist_cooperation.' + mode, strike_id: rec.id, cost_t: 0});
     party.writeMirrors(Q);
+    // Z — 1.16 (the user's request of 8 XI 2026): the result without the chance in per cent.
     if (PL()) {
       return result(Q, mode === 'none' ? 'PPS zachowuje własne postulaty i sama prowadzi protest; komuniści działają na własną rękę.' :
         (mode === 'full' ? 'Wspólny komitet z komunistami na całą akcję' : 'Ograniczona koordynacja z komunistami') +
-        ': KPP ' + (coop.complied ? 'przestrzega uzgodnionych zasad' : 'łamie uzgodnione zasady') + ' (szansa ' + fmt(100 * compliance) + '%).');
+        ': KPP ' + (coop.complied ? 'przestrzega uzgodnionych zasad.' : 'łamie uzgodnione zasady.'));
     }
     return result(Q, mode === 'none' ? 'PPS keeps its own demands and leads the protest alone; the communists act on their own.' :
       (mode === 'full' ? 'A joint committee with the communists for the whole action' : 'Limited coordination with the communists') +
-      ': the KPP ' + (coop.complied ? 'keeps' : 'breaks') + ' the agreed rules (chance ' + fmt(100 * compliance) + '%).');
+      ': the KPP ' + (coop.complied ? 'keeps' : 'breaks') + ' the agreed rules.');
   }
 
   function protectionStatus(Q, choice) {

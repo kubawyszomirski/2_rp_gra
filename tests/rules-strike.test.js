@@ -492,7 +492,8 @@ test('Komuniści: one strike opened three times gives one trial; two different s
     const rec = PolishUnions.branchRecord(S, branch);
     for (let i = 0; i < 3; i++) PolishUnions.stepsView(Q); // the step is opened three times
     S.rng.rolls[`kpp_discipline:${rec.id}`] = 0.01; // fixture: the KPP keeps the rules
-    PolishUnions.chooseCooperation(Q, mode);
+    // Z — 1.16 (the user's request of 8 XI 2026): the result names what the KPP did, without a chance in per cent.
+    assert.match(PolishUnions.chooseCooperation(Q, mode), /: the KPP keeps the agreed rules\.$/);
     assert.throws(() => PolishUnions.chooseCooperation(Q, mode), /chooseCooperation/, 'no second choice of the partner');
     PolishUnions.chooseProtection(Q, 'none');
     const t = Q.time;
