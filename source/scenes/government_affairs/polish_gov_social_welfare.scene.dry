@@ -21,11 +21,12 @@ The state can help the unemployed from the budget and insure the workers from co
 
 [+ pl_gc_budget +]
 
-[+ pl_gc_projects +]
+[? if pl_gc_projects : [+ pl_gc_projects +] ?]
 
 - @expand
 - @insurance
 - @limit
+- @nothing
 - @easy_discard
 - @cancel_advisor_action
 
@@ -58,6 +59,14 @@ on-arrival: {!
 PolishProjects.chooseOption(Q, 'social_welfare', 'limit');
 !}
 go-to: result
+
+@nothing
+title: Do nothing now
+subtitle: The card is played and comes back in three months.
+on-arrival: {!
+PolishRules.skipCard(Q);
+!}
+go-to: root
 
 @result
 new-page: true

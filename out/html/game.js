@@ -153,6 +153,8 @@
     undiscardable: {en: 'cannot be discarded', pl: 'nie do odrzucenia'},
     free_place: {en: 'empty place', pl: 'wolne miejsce'},
     urgent: {en: 'urgent', pl: 'pilne'},
+    group_party: {en: 'Party', pl: 'Partia'},
+    group_state: {en: 'State', pl: 'Państwo'},
     pinned: {en: 'Central Executive Committee - actions are only usable once per 6 months.', pl: 'Centralny Komitet Wykonawczy — każda akcja raz na 6 miesięcy.'},
     continue_choice: {en: 'Continue...', pl: 'Dalej…'},
     load_failed: {en: 'The Polish version could not be loaded; the game continues in English.',
@@ -679,8 +681,9 @@
       for (var i = 0; i < places.length; i++) {
         var card = places[i];
         var $place = $('<li>').addClass('card-in-hand');
+        // Z — 1.10 (the user's note of 8 XI 2026): the word "urgent" stands under the card, in the line of "cannot be discarded".
         if (card && card.urgent) {
-          $place.addClass('pl-urgent').append($('<span>').addClass('pl-urgent-label').text(uiText('urgent')));
+          $place.addClass('pl-urgent');
         }
         if (card) {
           var $cardLink = $('<a>').addClass('card').attr({href: '#', 'card-id': card.id, title: card.title});
@@ -707,7 +710,11 @@
           var undiscardable = card.urgent || window.PolishRules.TIMED_CARDS.indexOf(card.id) >= 0 ||
             window.PolishRules.VISION_CARDS.indexOf(card.id) >= 0 || window.PolishRules.EVENT_CARDS.indexOf(card.id) >= 0;
           if (undiscardable) {
-            $place.append($('<span>').addClass('pl-undiscardable').attr('title', card.discard.reason).text(uiText('undiscardable')));
+            var $note = $('<span>').addClass('pl-undiscardable').attr('title', card.discard.reason);
+            if (card.urgent) {
+              $note.append($('<span>').addClass('pl-urgent-label').text(uiText('urgent'))).append(document.createTextNode(' · '));
+            }
+            $place.append($note.append(document.createTextNode(uiText('undiscardable'))));
           } else {
             var $button = $('<button>').addClass('pl-discard').attr({type: 'button', 'data-card-id': card.id}).text(uiText('discard'));
             if (!card.discard.available) {
@@ -1135,6 +1142,9 @@
       $('#stats_sidebar').toggleClass('pl-idle', !Q.S);
       renderScenes('#pl-overview', ['status.overview']);
       drawHemicycles('#pl-overview');
+      // Z — 1.10 (decision 2A of 8 XI 2026): the labels of the two groups of columns, the party and the state.
+      $('#pl-groups .pl-group-party').text(uiText('group_party'));
+      $('#pl-groups .pl-group-state').text(uiText('group_state'));
       $('#pl-date').text(Q.pl_top_date || '');
       var parts = TOPBAR_TABS[window.statusTab];
       $('#stats_sidebar').toggleClass('pl-open', !!parts);

@@ -6,7 +6,8 @@ view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.congressAvaila
 on-arrival: {!
 // Card party.congress (Z — 1.07, the user's decisions of 7–8 XI 2026; P): an urgent card of the party when a characteristic of the
 // party is ready, at most once a year. A resolution adopts a ready characteristic or leaves an adopted one and costs the action
-// of the month; "No new resolutions" closes the congress for a year without cost. The congress is a device of the game: the dates
+// of the month; "No new resolutions" closes the congress for a year without cost. Z — 1.10 (decision 3A): giving one up keeps the
+// congress open in the same month (it comes back to this page), so another one can be adopted within the same action. The congress is a device of the game: the dates
 // and resolutions of the congresses of PPS 1922–1926 are TBD (HISTORICAL_SOURCES.md, PL-PROFILES-1.07).
 PolishParty.congressView(Q);
 !}
@@ -14,6 +15,8 @@ PolishParty.congressView(Q);
 = The congress of PPS
 
 Delegates from the whole country gather in Warsaw. The congress can adopt a resolution that will define for years what the party is. [? if pl_cg_intro : [+ pl_cg_intro +] ?]
+
+[? if pl_cg_note : **[+ pl_cg_note +]** ?]
 
 - @adopt_unionism
 - @adopt_worker_peasant
@@ -130,7 +133,7 @@ choose-if: {! return PolishParty.congressStatus(Q, 'drop:unionism').available !}
 on-arrival: {!
 Q.pl_cg_result = PolishParty.congressChoose(Q, 'drop:unionism');
 !}
-go-to: result
+go-to: polish_party_congress
 
 @drop_worker_peasant
 title: [+ pl_cg_worker_peasant_drop +]
@@ -140,7 +143,7 @@ choose-if: {! return PolishParty.congressStatus(Q, 'drop:worker_peasant').availa
 on-arrival: {!
 Q.pl_cg_result = PolishParty.congressChoose(Q, 'drop:worker_peasant');
 !}
-go-to: result
+go-to: polish_party_congress
 
 @drop_federalism
 title: [+ pl_cg_federalism_drop +]
@@ -150,7 +153,7 @@ choose-if: {! return PolishParty.congressStatus(Q, 'drop:federalism').available 
 on-arrival: {!
 Q.pl_cg_result = PolishParty.congressChoose(Q, 'drop:federalism');
 !}
-go-to: result
+go-to: polish_party_congress
 
 @drop_parliamentarism
 title: [+ pl_cg_parliamentarism_drop +]
@@ -160,7 +163,7 @@ choose-if: {! return PolishParty.congressStatus(Q, 'drop:parliamentarism').avail
 on-arrival: {!
 Q.pl_cg_result = PolishParty.congressChoose(Q, 'drop:parliamentarism');
 !}
-go-to: result
+go-to: polish_party_congress
 
 @drop_strike_action
 title: [+ pl_cg_strike_action_drop +]
@@ -170,7 +173,7 @@ choose-if: {! return PolishParty.congressStatus(Q, 'drop:strike_action').availab
 on-arrival: {!
 Q.pl_cg_result = PolishParty.congressChoose(Q, 'drop:strike_action');
 !}
-go-to: result
+go-to: polish_party_congress
 
 @drop_militarism
 title: [+ pl_cg_militarism_drop +]
@@ -180,7 +183,7 @@ choose-if: {! return PolishParty.congressStatus(Q, 'drop:militarism').available 
 on-arrival: {!
 Q.pl_cg_result = PolishParty.congressChoose(Q, 'drop:militarism');
 !}
-go-to: result
+go-to: polish_party_congress
 
 @drop_reformism
 title: [+ pl_cg_reformism_drop +]
@@ -190,7 +193,7 @@ choose-if: {! return PolishParty.congressStatus(Q, 'drop:reformism').available !
 on-arrival: {!
 Q.pl_cg_result = PolishParty.congressChoose(Q, 'drop:reformism');
 !}
-go-to: result
+go-to: polish_party_congress
 
 @drop_radicalism
 title: [+ pl_cg_radicalism_drop +]
@@ -200,7 +203,7 @@ choose-if: {! return PolishParty.congressStatus(Q, 'drop:radicalism').available 
 on-arrival: {!
 Q.pl_cg_result = PolishParty.congressChoose(Q, 'drop:radicalism');
 !}
-go-to: result
+go-to: polish_party_congress
 
 @none
 title: No new resolutions

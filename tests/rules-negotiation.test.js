@@ -1027,11 +1027,12 @@ test('Pierwszy budżet 0.88: a cabinet of PPS must carry its first budget; witho
   assert.deepEqual([without.accepted, without.reason, without.budget.position, without.budget.passes],
     [false, 'no majority for its first budget', 2, false]);
   assert.ok(without.forecast.viable, 'the investiture alone would pass, as before 0.88');
-  assert.match(gov.formationView(Q).votes, /Its first budget \(a progressive tax\): \d+ for, \d+ against — it fails; the cabinet would resign over it\. It needs the votes of PSL Piast or of the minorities\./);
+  // Z — 1.10: no counts of the first budget, only the warning.
+  assert.match(gov.formationView(Q).votes, /Its first budget would fail without the votes of PSL Piast or of the minorities, and the cabinet would resign over it\./);
   gov.setDraft(Q, 'seek_minority_support', true);
   const withMinorities = gov.assessDraft(Q).pps_offer;
   assert.deepEqual([withMinorities.accepted, withMinorities.budget.passes], [true, true]);
-  assert.match(gov.formationView(Q).votes, /Its first budget \(a progressive tax\): \d+ for, \d+ against — it passes\./);
+  assert.doesNotMatch(gov.formationView(Q).votes, /first budget/, 'a budget that passes is not mentioned');
   // The centre-left with PSL Piast carries its budget without the minorities.
   gov.setDraft(Q, 'configuration_id', 'centre_left');
   assert.equal(gov.assessDraft(Q).pps_offer.budget.passes, true);

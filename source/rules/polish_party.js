@@ -2051,8 +2051,15 @@
     const P = rules.profileState(S);
     return P && P.congresses.length ? P.congresses[P.congresses.length - 1].t : null;
   }
+  // Z — 1.10 (decision 3A of 8 XI 2026): a congress that has given up a characteristic stays open in the same month, so it can adopt
+  // another one within the same action.
+  function congressOpen(S, t) {
+    const P = rules.profileState(S);
+    return !!P && P.open_congress === t;
+  }
   function congressAvailable(Q) {
     if (!partyReady(Q) || Q.S.chapter.status === 'ended') return false;
+    if (congressOpen(Q.S, Q.time)) return true;
     const last = lastCongress(Q.S);
     if (last !== null && Q.time - last < CONGRESS_INTERVAL) return false;
     return readyProfiles(Q.S).length > 0;
@@ -2063,12 +2070,12 @@
     if (option === 'none') return OK;
     const [kind, id] = [option.split(':')[0], option.split(':')[1]];
     if (!PROFILES[id]) return no(L('Unknown resolution.', 'Nieznana uchwała.'));
-    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
+    if (!rules.mainActionAvailable(Q) && !congressOpen(S, Q.time)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
     if (kind === 'drop') return rules.profileActive(S, id) ? OK : no(L('The party has not adopted it.', 'Partia jej nie przyjęła.'));
     if (kind !== 'adopt') return no(L('Unknown resolution.', 'Nieznana uchwała.'));
     if (readyProfiles(S).indexOf(id) < 0) return no(L('Not ready for a resolution.', 'Nie dojrzała do uchwały.'));
     if (adoptedProfiles(S).length >= PROFILE_SLOTS) {
-      return no(L('The party already has two characteristics; a congress can first leave one of them.', 'Partia ma już dwie cechy; kongres może najpierw odejść od jednej z nich.'));
+      return no(L('The party already has two characteristics; first give one of them up.', 'Partia ma już dwie charakterystyki; najpierw porzuć jedną z nich.'));
     }
     return OK;
   }
@@ -2078,38 +2085,47 @@
       Q['pl_cg_' + id + '_ready'] = ready.indexOf(id) >= 0 ? 1 : 0;
       Q['pl_cg_' + id + '_on'] = rules.profileActive(S, id) ? 1 : 0;
       Q['pl_cg_' + id + '_why'] = congressStatus(Q, 'adopt:' + id).reason || '';
-      Q['pl_cg_' + id + '_title'] = L(PROFILES[id].resolution[0], PROFILES[id].resolution[1]);
+      // Z — 1.10 (the user's note of 8 XI 2026): plain titles — "Adopt reformism", "Give up parliamentarism".
+      Q['pl_cg_' + id + '_title'] = L('Adopt ' + profileAcc(id), 'Przyjmij ' + profileAcc(id));
       Q['pl_cg_' + id + '_text'] = L(PROFILES[id].text[0], PROFILES[id].text[1]);
-      Q['pl_cg_' + id + '_drop'] = L('Leave ' + profileAcc(id), 'Odejdź od cechy: ' + profileAcc(id));
-      Q['pl_cg_' + id + '_drop_text'] = L('The party gives up this course; ' + FACTION_WORDS[PROFILES[id].patron][0] + ' protests (+' + PROFILE_DROP_DISSENT + ').',
-        'Partia rezygnuje z tego kursu; ' + FACTION_WORDS[PROFILES[id].patron][1] + ' protestuje (+' + PROFILE_DROP_DISSENT + ').');
+      Q['pl_cg_' + id + '_drop'] = L('Give up ' + profileAcc(id), 'Porzuć ' + profileAcc(id));
+      Q['pl_cg_' + id + '_drop_text'] = L('The party gives up this course; ' + FACTION_WORDS[PROFILES[id].patron][0] + ' protests (+' + PROFILE_DROP_DISSENT + '). The congress goes on: it can then adopt another characteristic.',
+        'Partia rezygnuje z tego kursu; ' + FACTION_WORDS[PROFILES[id].patron][1] + ' protestuje (+' + PROFILE_DROP_DISSENT + '). Kongres trwa dalej: potem może przyjąć inną charakterystykę.');
     }
     const own = adoptedProfiles(S);
     Q.pl_cg_intro = own.length ? L('The party is known today for ' + own.map(profileAcc).join(' and ') + '.', 'Dziś partię wyróżnia ' + own.map(profileAcc).join(' i ') + '.') : '';
+    const P = rules.profileState(S), last = P && P.congresses.length ? P.congresses[P.congresses.length - 1] : null;
+    const dropped = congressOpen(S, Q.time) && last && /^drop:/.test(last.resolution || '') ? last.resolution.split(':')[1] : null;
+    Q.pl_cg_note = dropped ? L('The congress has given up ' + profileAcc(dropped) + '. It can now adopt another characteristic or end.',
+      'Kongres porzucił ' + profileAcc(dropped) + '. Może teraz przyjąć inną charakterystykę albo zakończyć obrady.') : '';
   }
   const FACTION_WORDS = Object.freeze({centrum: ['the Centre', 'Centrum'], lewica: ['the Left', 'Lewica'], pilsudczycy: ['the Piłsudczycy', 'Piłsudczycy']});
   function congressChoose(Q, option) {
     const status = congressStatus(Q, option);
     if (!status.available) throw new Error('congressChoose: ' + status.reason);
     syncMirrors(Q);
-    const S = Q.S, t = Q.time, P = rules.profileState(S);
+    const S = Q.S, t = Q.time, P = rules.profileState(S), open = congressOpen(S, t);
     if (option === 'none') {
+      P.open_congress = null;
+      if (open) return L('The congress ends; the next one meets in a year at the earliest.', 'Kongres kończy obrady; następny zbierze się najwcześniej za rok.');
       P.congresses.push({t: t, resolution: null});
       return L('The congress ends without new resolutions; the next one meets in a year at the earliest.',
         'Kongres kończy się bez nowych uchwał; następny zbierze się najwcześniej za rok.');
     }
     const [kind, id] = option.split(':');
     const spec = PROFILES[id], cause = {id: 'congress:' + kind + ':' + id + ':t' + t, kind: 'congress', reverse: null};
-    rules.commitMainAction(Q, 'party.congress', {option: option});
+    // One action of the month for the whole congress (decision 3A): giving up and then adopting cost it once.
+    if (!open) rules.commitMainAction(Q, 'party.congress', {option: option});
     P.congresses.push({t: t, resolution: option});
+    P.open_congress = kind === 'drop' ? t : null;
     if (kind === 'drop') {
       P.adopted = P.adopted.filter(a => a.id !== id);
       P.dropped.push({id: id, t: t});
       P.seeds[id] = 0;
       government.factionReaction(Q, spec.patron, {dissent: PROFILE_DROP_DISSENT}, cause);
       writeMirrors(Q);
-      return L('The congress leaves ' + profileAcc(id) + '. ' + FACTION_WORDS[spec.patron][0] + ' protests.',
-        'Kongres odchodzi od cechy: ' + profileAcc(id) + '. ' + FACTION_WORDS[spec.patron][1] + ' protestuje.');
+      return L('The congress gives up ' + profileAcc(id) + '. ' + FACTION_WORDS[spec.patron][0] + ' protests.',
+        'Kongres porzuca ' + profileAcc(id) + '. ' + FACTION_WORDS[spec.patron][1] + ' protestuje.');
     }
     P.adopted.push({id: id, t: t});
     government.factionReaction(Q, spec.patron, {strength: PROFILE_PATRON_STRENGTH}, cause);
@@ -2117,8 +2133,7 @@
     for (const actor of Object.keys(spec.relations || {})) government.changeRelation(Q, actor, spec.relations[actor], cause.id);
     if (spec.business) economy.changeBusinessPressure(S, spec.business, cause.id, t, 'congress');
     writeMirrors(Q);
-    return L('The congress adopts the ' + spec.resolution[0].charAt(0).toLowerCase() + spec.resolution[0].slice(1) + '. ', 'Kongres przyjmuje ' +
-      spec.resolution[1].replace(/^Uchwała/, 'uchwałę') + '. ') + L(spec.text[0], spec.text[1]);
+    return L('The congress adopts ' + profileAcc(id) + '. ', 'Kongres przyjmuje ' + profileAcc(id) + '. ') + L(spec.text[0], spec.text[1]);
   }
 
   // The views: the overview line, the section of the Party tab (active profiles in red, the others grey, a tooltip with what
@@ -2129,8 +2144,9 @@
   }
   function profileView(Q) {
     const S = Q.S, own = adoptedProfiles(S);
-    Q.pl_profile_html = rules.PROFILE_IDS.map(id => '<span class="tooltip-text ' + (own.indexOf(id) >= 0 ? 'pl-profile-on' : 'pl-profile-off') +
-      '" title="' + escapeAttr(profileTooltip(id)) + '">' + profileName(id) + '</span>').join(' · ');
+    // Z — 1.10 (the user's note of 8 XI 2026): each characteristic on its own line with what builds it and what it gives.
+    Q.pl_profile_html = rules.PROFILE_IDS.map(id => '<span class="' + (own.indexOf(id) >= 0 ? 'pl-profile-on' : 'pl-profile-off') + '">' + profileName(id) +
+      (own.indexOf(id) >= 0 ? L(' (adopted)', ' (przyjęta)') : '') + '</span> — ' + escapeAttr(profileTooltip(id))).join('<br>');
     Q.pl_top_profile = own.length ? L('Characteristics: ', 'Charakterystyka: ') + own.map(id => profileAcc(id)).join(', ') : '';
   }
   function profileLibrary(Q) {
@@ -2141,7 +2157,7 @@
   function profileSummary(S) {
     const P = rules.profileState(S);
     const own = P ? P.adopted : [];
-    if (!own.length) return L('PPS adopted no characteristic in this chapter.', 'W tym rozdziale PPS nie przyjęła żadnej cechy.');
+    if (!own.length) return L('PPS adopted no characteristic in this chapter.', 'W tym rozdziale PPS nie przyjęła żadnej charakterystyki.');
     return L('PPS adopted ', 'PPS przyjęła ') + own.map(a => profileAcc(a.id) + ' (' + rules.yearOf(a.t) + ')').join(L(' and ', ' i ')) + '.';
   }
   // The effects on campaigns: +25% in the cells of an adopted profile's groups.

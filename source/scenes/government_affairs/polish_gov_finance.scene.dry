@@ -28,6 +28,7 @@ One instrument per decision; each fills the budget at once, and one instrument o
 - @loan
 - @emission
 - @admin_cuts
+- @nothing
 - @easy_discard
 - @cancel_advisor_action
 
@@ -80,6 +81,14 @@ on-arrival: {!
 PolishProjects.chooseOption(Q, 'finance_package', 'admin_cuts');
 !}
 go-to: result
+
+@nothing
+title: Do nothing now
+subtitle: The card is played and comes back in three months.
+on-arrival: {!
+PolishRules.skipCard(Q);
+!}
+go-to: root
 
 @result
 new-page: true

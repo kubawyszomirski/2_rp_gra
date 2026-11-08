@@ -1205,13 +1205,11 @@
     return {position: position, yes: yes, no: no, abstain: abstain, passes: yes > no};
   }
 
+  // Z — 1.10 (the user's note of 8 XI 2026): no counts of the first budget; only a warning when it would fail.
   function budgetText(budget) {
-    if (!budget) return '';
-    const what = budget.position >= 2 ? L('a progressive tax', 'podatek progresywny') : L('a broader tax base', 'szersza podstawa podatkowa');
-    return L(' Its first budget (' + what + '): ' + budget.yes + ' for, ' + budget.no + ' against — ' +
-      (budget.passes ? 'it passes.' : 'it fails; the cabinet would resign over it. It needs the votes of PSL Piast or of the minorities.'),
-      ' Jego pierwszy budżet (' + what + '): ' + budget.yes + ' za, ' + budget.no + ' przeciw — ' +
-      (budget.passes ? 'przejdzie.' : 'nie przejdzie i rząd podałby się do dymisji. Potrzebne są głosy PSL „Piast” albo mniejszości.'));
+    if (!budget || budget.passes) return '';
+    return L(' Its first budget would fail without the votes of PSL Piast or of the minorities, and the cabinet would resign over it.',
+      ' Jego pierwszy budżet nie przejdzie bez głosów PSL „Piast” albo mniejszości, a wtedy rząd poda się do dymisji.');
   }
   // Z — 0.67 (decision 3A of 7 X 2026; P): after the election of 1922 a cabinet with PPS needs a good election result — its
   // own clubs, without the minority representations, need 185 MPs (178 historically for PPS, PSL Wyzwolenie, PSL Piast
@@ -1988,9 +1986,8 @@
     }
     // Z — 0.88 (decision 2A): a cabinet that would not carry its first budget alone says so on the list of variants.
     const budget = record.budget;
-    const tax = budget && budget.position >= 2 ? L('a progressive tax', 'podatek progresywny') : L('a broader tax base', 'szersza podstawa podatkowa');
-    const budgetLine = budget && !budget.passes ? L(' But its first budget (' + tax + ': ' + budget.yes + ' for, ' + budget.no + ' against) needs the votes of PSL Piast or of the minorities.',
-      ' Jego pierwszy budżet (' + tax + ': ' + budget.yes + ' za, ' + budget.no + ' przeciw) wymaga jednak głosów PSL „Piast” albo mniejszości.') : '';
+    const budgetLine = budget && !budget.passes ? L(' But its first budget needs the votes of PSL Piast or of the minorities.',
+      ' Jego pierwszy budżet wymaga jednak głosów PSL „Piast” albo mniejszości.') : '';
     const programme = plainProgramme(config.programme);
     return {available: true, line: chosen + what + seats + agree + votesSentence(S, record.forecast) + budgetLine + minorities +
       (programme ? L(' Its programme: ' + programme + '.', ' W programie: ' + programme + '.') : '')};

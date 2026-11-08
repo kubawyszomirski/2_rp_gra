@@ -21,11 +21,12 @@ Public works give work to the unemployed with the money of the budget. Unemploym
 
 [+ pl_gc_budget +]
 
-[+ pl_gc_projects +]
+[? if pl_gc_projects : [+ pl_gc_projects +] ?]
 
 - @employment
 - @infrastructure
 - @housing
+- @nothing
 - @easy_discard
 - @cancel_advisor_action
 
@@ -58,6 +59,14 @@ on-arrival: {!
 PolishProjects.chooseOption(Q, 'public_works', 'housing');
 !}
 go-to: result
+
+@nothing
+title: Do nothing now
+subtitle: The card is played and comes back in three months.
+on-arrival: {!
+PolishRules.skipCard(Q);
+!}
+go-to: root
 
 @result
 new-page: true

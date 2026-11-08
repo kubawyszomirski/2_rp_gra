@@ -27,6 +27,7 @@ Piłsudski demands command of the army independent of the minister and the Sejm;
 - @military_function
 - @inspectorate
 - @status_quo
+- @nothing
 - @easy_discard
 - @cancel_advisor_action
 
@@ -79,6 +80,14 @@ on-arrival: {!
 PolishSecurity.pilsChoose(Q, 'status_quo');
 !}
 go-to: result
+
+@nothing
+title: Do nothing now
+subtitle: The card is played and comes back in three months.
+on-arrival: {!
+PolishRules.skipCard(Q);
+!}
+go-to: root
 
 @result
 new-page: true

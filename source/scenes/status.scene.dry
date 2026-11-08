@@ -167,16 +167,9 @@ if (Q.S && Q.polish_party_rules && typeof PolishParty !== 'undefined') {
 }
 !}
 
-# The Overview of the top bar (the user's decisions of 7 XI 2026). Each heading is one column of the bar; the page
+# The Overview of the top bar (the user's decisions of 7 XI 2026). Z — 1.10 (decision 2A of 8 XI 2026): the columns of the party
+# first, then those of the state, under the group labels drawn by the page. Each heading is one column of the bar; the page
 # (out/html/game.js) draws the stamp, the hemicycle of the Sejm and the bars.
-= Government
-
-**[+ pl_top_pm +]**
-
-[+ pl_top_cabinet +]
-
-[+ pl_top_head +]
-
 = PPS position
 
 {!<span class="pl-stamp">!}[+ pl_top_pps_stamp +]{!</span>!}
@@ -184,12 +177,6 @@ if (Q.S && Q.polish_party_rules && typeof PolishParty !== 'undefined') {
 [+ pl_top_pps_detail +]
 
 [? if pl_top_cash : **Resources:** [+ pl_top_cash +] [? if pl_top_cash_trend : {!<span class="pl-trend">!}[+ pl_top_cash_trend +]{!</span>!} ?] ?]
-
-= [+ pl_top_sejm +]
-
-{!<svg class="pl-hemi" viewBox="0 0 200 108" role="img"></svg>!}
-
-**[+ pl_top_pps_seats +]** · [+ pl_top_majority +]
 
 = Party line
 
@@ -200,6 +187,20 @@ if (Q.S && Q.polish_party_rules && typeof PolishParty !== 'undefined') {
 [+ pl_top_pilsudski +]
 
 [? if pl_top_profile : [+ pl_top_profile +] ?]
+
+= Government
+
+**[+ pl_top_pm +]**
+
+[+ pl_top_cabinet +]
+
+[+ pl_top_head +]
+
+= [+ pl_top_sejm +]
+
+{!<svg class="pl-hemi" viewBox="0 0 200 108" role="img"></svg>!}
+
+**[+ pl_top_pps_seats +]** · [+ pl_top_majority +]
 
 = Economy
 
@@ -218,6 +219,8 @@ if (Q.S && Q.polish_party_rules && typeof PolishParty !== 'undefined') {
 **Grievance:** {!<i class="pl-gauge pl-red"></i>!}[+ pl_top_grievance +] [? if pl_top_grievance_trend : {!<span class="pl-trend">!}[+ pl_top_grievance_trend +]{!</span>!} ?]
 
 **Violence:** {!<i class="pl-gauge pl-red"></i>!}[+ pl_top_violence +] [? if pl_top_violence_trend : {!<span class="pl-trend">!}[+ pl_top_violence_trend +]{!</span>!} ?]
+
+[? if pl_top_army : **Army:** [+ pl_top_army +] ?]
 
 = Elections
 

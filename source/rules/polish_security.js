@@ -1066,7 +1066,9 @@
   // What happened, told without numbers: the army, the strike, the Milicja, the outcome and what PPS changed.
   function coupStory(Q) {
     const S = Q.S, C = S.coup, A = C.attempt, res = A.resolution, o = A.organisations || {};
-    const parts = [res.F.pils > res.F.legal ? L('More soldiers followed Piłsudski than stayed with the government.', 'Za Piłsudskim poszło więcej żołnierzy, niż zostało przy rządzie.') :
+    // Z — 1.10 (the user's note of 8 XI 2026): the page first says what happened.
+    const parts = [L('Units loyal to Piłsudski marched on Warsaw to overthrow the government.', 'Oddziały wierne Piłsudskiemu ruszyły na Warszawę, by obalić rząd.'),
+      res.F.pils > res.F.legal ? L('More soldiers followed Piłsudski than stayed with the government.', 'Za Piłsudskim poszło więcej żołnierzy, niż zostało przy rządzie.') :
       L('More soldiers stayed with the government than followed Piłsudski.', 'Przy rządzie zostało więcej żołnierzy, niż poszło za Piłsudskim.')];
     if (res.fighting && o.rail && o.rail.base > 0) {
       parts.push(res.strike >= 0.10 ? L('The strike of the railway workers stopped many trains with troops of the other side.', 'Strajk kolejarzy zatrzymał wiele pociągów z wojskiem przeciwnika.') :
@@ -1081,6 +1083,28 @@
     if (C.pps_contribution === 'decisive') parts.push(L('It was our organisations that tipped the balance.', 'To nasze organizacje przechyliły szalę.'));
     else if (C.pps_contribution === 'adverse') parts.push(L('Our engagement harmed the side we supported.', 'Nasze zaangażowanie zaszkodziło stronie, którą poparliśmy.'));
     return parts.join(' ');
+  }
+
+  // Z — 1.10 (the user's note of 8 XI 2026): the effects of the coup in words; the numbers stay in brackets, hidden with the numbers.
+  function coupEffectsText(C, e) {
+    const sign = n => (n > 0 ? '+' : n < 0 ? '−' : '') + Math.abs(n);
+    const out = [];
+    const d = e.institutions.democracy, v = e.institutions.violence, pr = e.production.percent;
+    if (d < 0) out.push(L('democracy weakens (' + sign(d) + ')', 'demokracja słabnie (' + sign(d) + ')'));
+    if (d > 0) out.push(L('democracy grows stronger (' + sign(d) + ')', 'demokracja się wzmacnia (' + sign(d) + ')'));
+    if (v > 0) out.push(L('there is more violence in the country (+' + v + ')', 'w kraju jest więcej przemocy (+' + v + ')'));
+    if (pr < 0) out.push(L('production falls (−' + fmt(Math.abs(pr)) + '%)', 'produkcja spada (−' + fmt(Math.abs(pr)) + '%)'));
+    const faction = x => L(FACTION_SHORT_EN[x.faction] || x.faction, FACTION_SHORT_PL[x.faction] || x.faction);
+    if (e.splits.length) out.push(L('the party splits: ', 'od partii odłamują się: ') + e.splits.map(faction).join(', '));
+    const rel = r => government.describeParty(r.actor) + ' (' + sign(r.delta) + ')';
+    const worse = e.relations.filter(r => r.delta < 0), better = e.relations.filter(r => r.delta > 0);
+    if (worse.length) out.push(L('relations worsen: ', 'stosunki się pogarszają: ') + worse.map(rel).join(', '));
+    if (better.length) out.push(L('relations improve: ', 'stosunki się poprawiają: ') + better.map(rel).join(', '));
+    if (e.militia_lost) out.push(L('the Milicja lost ' + e.militia_lost + ' people', 'Milicja straciła ' + people(e.militia_lost)));
+    if (C.concessions_to_pps.length) out.push(L('the winner owes PPS its conditions', 'zwycięzca jest winien PPS jej warunki'));
+    if (!out.length) return '';
+    const text = out.join('; ');
+    return L('What follows: ', 'Skutki: ') + text + '.';
   }
 
   function coupView(Q) {
@@ -1104,13 +1128,7 @@
         L('Few railway workers will answer the call.', 'Niewielu kolejarzy odpowie na wezwanie.');
     Q.pl_coup_outcome = C.outcome ? L(OUTCOME_NAMES[C.outcome], OUTCOME_NAMES_PL[C.outcome]) : '';
     Q.pl_coup_story = C.outcome && A.resolution ? coupStory(Q) : '';
-    const e = A.effects, sign = n => (n > 0 ? '+' : n < 0 ? '−' : '') + Math.abs(n);
-    Q.pl_coup_effects = e ? L('Democracy ', 'Demokracja ') + sign(e.institutions.democracy) + L(', violence +', ', przemoc +') + e.institutions.violence +
-      L('; production ', '; produkcja ') + (e.production.percent < 0 ? '−' : '') + fmt(Math.abs(e.production.percent)) + '%' +
-      (e.splits.length ? L('; splits: ', '; rozłamy: ') + e.splits.map(x => L(FACTION_SHORT_EN[x.faction] || x.faction, FACTION_SHORT_PL[x.faction] || x.faction)).join(', ') : '') +
-      (e.relations.length ? L('; relations: ', '; stosunki: ') + e.relations.map(r => government.describeParty(r.actor) + ' ' + sign(r.delta)).join(', ') : '') +
-      (e.militia_lost ? L('; the Milicja lost ' + e.militia_lost + ' people', '; Milicja straciła ' + people(e.militia_lost)) : '') +
-      (C.concessions_to_pps.length ? L('; the winner owes the conditions of PPS', '; zwycięzca jest winien PPS jej warunki') : '') + '.' : '';
+    Q.pl_coup_effects = A.effects ? coupEffectsText(C, A.effects) : '';
   }
 
   // Z — 1.03: a game saved with the four groups of synthetic_test_v2 gets the one army: the strength-weighted loyalties, the
@@ -1184,6 +1202,74 @@
     reviewAgreements(Q, t);
     // 4.2 step 8: the gates of the coup after the pressure of this month (16.8.1).
     checkCoupGates(Q, t);
+    settleArmyMood(Q, t);
+  }
+
+  // ---- Z — 1.10 (decision 4A of 8 XI 2026 and the user's note): the mood of the army in words ----------------------------------
+  // From the pressure towards a coup: calm below 25, restless from 25, seething from 40, ready for a coup from 55 (the political
+  // crisis of 16.8.1) and during an attempt. The Overview shows it in the column of the country; a change is a note on the main
+  // screen, and the first rise to "seething" and to "ready for a coup" (again after the army has calmed down) is an event on the
+  // screen. In the test campaigns: restless about VIII 1924, seething about VI 1925, ready about XII 1925, the coup about III 1926.
+  const ARMY_MOOD_FROM = Object.freeze([25, 40, 55]);
+  const ARMY_MOOD_WORDS = Object.freeze([['calm', 'spokojne'], ['restless', 'niespokojne'], ['seething', 'wrze'], ['ready for a coup', 'gotowe do zamachu']]);
+  function armyMoodLevel(S) {
+    const C = S.coup;
+    if (!C) return 0;
+    if (C.phase !== 'dormant' && C.phase !== 'resolved') return 3;
+    return ARMY_MOOD_FROM.filter(v => C.pressure >= v).length;
+  }
+  const armyMoodWord = S => L(ARMY_MOOD_WORDS[armyMoodLevel(S)][0], ARMY_MOOD_WORDS[armyMoodLevel(S)][1]);
+  function settleArmyMood(Q, t) {
+    const S = Q.S, C = S.coup, level = armyMoodLevel(S), before = C.mood || 0;
+    C.mood = level;
+    if (level !== before) C.mood_change = {t: t, from: before, to: level};
+    if (level >= 2 && level > (C.mood_announced || 0)) {
+      C.mood_announced = level;
+      S.politics.due.polish_event_army_mood = 'army:' + level + ':t' + t;
+    }
+    if (level <= 1) C.mood_announced = level;
+  }
+  // The note of the main screen in the month after a change.
+  function armyNotice(Q) {
+    const S = Q.S, ch = S && S.coup && S.coup.mood_change;
+    if (!ch || ch.t !== Q.time - 1 || S.chapter.status === 'ended') return '';
+    if (ch.to < ch.from) return [L('The mood in the army calms down: the officers are calm.', 'Nastroje w wojsku się uspokajają: oficerowie są spokojni.'),
+      L('The mood in the army calms down, but the officers still criticise the government and the Sejm.', 'Nastroje w wojsku się uspokajają, ale oficerowie wciąż krytykują rząd i Sejm.'),
+      L('The mood in the army calms down a little, but it is still seething.', 'Nastroje w wojsku trochę się uspokajają, ale w wojsku wciąż wrze.')][ch.to];
+    return [L('The officers are calm.', 'Oficerowie są spokojni.'),
+      L('The mood in the army is restless: officers criticise the government and the Sejm more and more loudly.',
+        'Nastroje w wojsku są niespokojne: oficerowie coraz głośniej krytykują rząd i Sejm.'),
+      L('The army is seething: officers openly talk of a march on Warsaw.', 'W wojsku wrze: oficerowie otwarcie mówią o marszu na Warszawę.'),
+      L('The army is ready for a coup: reports of preparations come from the garrisons.', 'Wojsko jest gotowe do zamachu: z garnizonów napływają doniesienia o przygotowaniach.')][ch.to];
+  }
+  // The event of a rise to "seething" or "ready for a coup".
+  function armyMoodDue(Q) {
+    const S = Q.S;
+    if (!ready(Q) || S.chapter.status === 'ended') return false;
+    const key = S.politics && S.politics.due && S.politics.due.polish_event_army_mood;
+    return !!key && S.coup.mood_seen !== key;
+  }
+  const MOOD_CAUSES = Object.freeze({no_cabinet: ['the country has no government', 'kraj nie ma rządu'],
+    authority: ['the Sejm has lost its authority', 'Sejm stracił autorytet'], grievance: ['the bitterness in the country is great', 'rozgoryczenie w kraju jest wielkie'],
+    military_case: ['the dispute over the army is still open', 'spór o wojsko wciąż jest otwarty']});
+  function armyMoodView(Q) {
+    const S = Q.S, key = S.politics.due.polish_event_army_mood || '', level = Number(key.split(':')[1]) || armyMoodLevel(S);
+    const last = (S.coup.history || []).slice(-1)[0], parts = last ? last.parts || {} : {};
+    const causes = Object.keys(MOOD_CAUSES).filter(k => parts[k] > 0).map(k => L(MOOD_CAUSES[k][0], MOOD_CAUSES[k][1]));
+    const join = list => list.length < 2 ? list.join('') : list.slice(0, -1).join(', ') + L(' and ', ' i ') + list[list.length - 1];
+    Q.pl_army_title = level >= 3 ? L('The army is ready for a coup', 'Wojsko gotowe do zamachu') : L('The army is seething', 'Wojsko wrze');
+    Q.pl_army_text = (level >= 3 ?
+      L('From the garrisons come reports of preparations for a coup: units loyal to Piłsudski practise their march, and his circle looks for allies. A coup may come within months.',
+        'Z garnizonów napływają doniesienia o przygotowaniach do zamachu: oddziały wierne Piłsudskiemu ćwiczą wymarsz, a jego otoczenie szuka sojuszników. Zamach może przyjść w ciągu kilku miesięcy.') :
+      L('In the officers’ messes there is talk of a march on Warsaw. Officers loyal to Piłsudski openly attack the government and the Sejm, and the press writes about a possible coup.',
+        'W kasynach oficerskich mówi się o marszu na Warszawę. Oficerowie wierni Piłsudskiemu otwarcie atakują rząd i Sejm, a prasa pisze o możliwym zamachu.')) +
+      (causes.length ? ' ' + L('The officers are pushed by this: ', 'Oficerów popycha do tego to, że ') + join(causes) + '.' : '');
+    Q.pl_army_help = L('The tension eases when the country has a steady government, the Sejm regains its authority and the dispute over the army is settled. If it comes to a coup, the Milicja and a strike of the railwaymen count.',
+      'Napięcie słabnie, gdy kraj ma stały rząd, Sejm odzyskuje autorytet, a spór o wojsko zostaje rozstrzygnięty. Gdy dojdzie do zamachu, liczy się Milicja i strajk kolejarzy.');
+  }
+  function armyMoodSeen(Q) {
+    const S = Q.S;
+    S.coup.mood_seen = S.politics.due.polish_event_army_mood || null;
   }
 
   // ---- Views for the scenes ---------------------------------------------------------------------------------
@@ -1355,6 +1441,13 @@
   return Object.freeze({
     ARMY: ARMY,
     armyWords: armyWords,
+    armyMoodLevel: armyMoodLevel,
+    settleArmyMood: settleArmyMood,
+    armyMoodWord: armyMoodWord,
+    armyNotice: armyNotice,
+    armyMoodDue: armyMoodDue,
+    armyMoodView: armyMoodView,
+    armyMoodSeen: armyMoodSeen,
     migrateArmy: migrateArmy,
     resolveCoup: resolveCoup,
     feasibleOffers: feasibleOffers,

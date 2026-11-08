@@ -1,17 +1,19 @@
 {
- "source": "scenes/government_affairs/polish_gov_land.scene.dry",
- "status": "complete",
- "lines": {
-  "title: Land Reform": "title: Reforma rolna",
-  "subtitle: Agriculture: parcellation with compensation, a faster parcellation or land first for Polish settlers.": "subtitle: Resort Rolnictwa: parcelacja z odszkodowaniem, szybka parcelacja albo ziemia najpierw dla polskich osadników.",
-  "= Land reform": "= Reforma rolna",
-  "The land reform divides the great estates among peasants and farm workers. Each parcellation covers one of three parts of the country. [+ pl_gc_land_left +]": "Reforma rolna dzieli wielkie majątki między chłopów i robotników rolnych. Każda parcelacja obejmuje jedną z trzech części kraju. [+ pl_gc_land_left +]",
-  "title: Divide the land with compensation": "title: Parceluj ziemię z odszkodowaniem",
-  "subtitle: Cost: [+ pl_cost3 +]. The agrarian pressure falls (−3) and the peasants are less aggrieved (−4), but the landowners and business press on the cabinet (+8).": "subtitle: Koszt: [+ pl_cost3 +]. Nacisk agrarny spada (−3), a chłopi są mniej niezadowoleni (−4), ale ziemianie i przedsiębiorcy naciskają na rząd (+8).",
-  "title: Divide the land quickly and compulsorily": "title: Parceluj szybko i przymusowo",
-  "title: Give priority to Polish settlers": "title: Daj pierwszeństwo polskim osadnikom",
-  "subtitle: Like the parcellation with compensation, but the land goes first to Poles, and PSL Piast is pleased (+5). The minorities lose trust (−6); if we promised their clubs equality, we break that promise.": "subtitle: Jak zwykła parcelacja, ale ziemia trafia najpierw do Polaków, a PSL „Piast” jest zadowolone (+5). Mniejszości tracą zaufanie (−6); jeśli obiecaliśmy ich klubom równość, łamiemy tę obietnicę.",
-  "- @root: Continue.": "- @root: Dalej.",
-  "subtitle: Cost: [+ pl_cost2 +]. The same effect at a lower price, but the resistance of business is greater (+12). [? if pl_land_program_accelerated_coalition : [+ pl_land_program_accelerated_coalition +] ?]": "subtitle: Koszt: [+ pl_cost2n +]. Ten sam skutek taniej, ale opór przedsiębiorców jest większy (+12). [? if pl_land_program_accelerated_coalition : [+ pl_land_program_accelerated_coalition +] ?]"
- }
+  "source": "scenes/government_affairs/polish_gov_land.scene.dry",
+  "status": "complete",
+  "lines": {
+    "title: Land Reform": "title: Reforma rolna",
+    "subtitle: Agriculture: parcellation with compensation, a faster parcellation or land first for Polish settlers.": "subtitle: Resort Rolnictwa: parcelacja z odszkodowaniem, szybka parcelacja albo ziemia najpierw dla polskich osadników.",
+    "= Land reform": "= Reforma rolna",
+    "The land reform divides the great estates among peasants and farm workers. Each parcellation covers one of three parts of the country. [+ pl_gc_land_left +]": "Reforma rolna dzieli wielkie majątki między chłopów i robotników rolnych. Każda parcelacja obejmuje jedną z trzech części kraju. [+ pl_gc_land_left +]",
+    "title: Divide the land with compensation": "title: Parceluj ziemię z odszkodowaniem",
+    "subtitle: Cost: [+ pl_cost3 +]. The agrarian pressure falls (−3) and the peasants are less aggrieved (−4), but the landowners and business press on the cabinet (+8).": "subtitle: Koszt: [+ pl_cost3 +]. Nacisk agrarny spada (−3), a chłopi są mniej niezadowoleni (−4), ale ziemianie i przedsiębiorcy naciskają na rząd (+8).",
+    "title: Divide the land quickly and compulsorily": "title: Parceluj szybko i przymusowo",
+    "title: Give priority to Polish settlers": "title: Daj pierwszeństwo polskim osadnikom",
+    "subtitle: Like the parcellation with compensation, but the land goes first to Poles, and PSL Piast is pleased (+5). The minorities lose trust (−6); if we promised their clubs equality, we break that promise.": "subtitle: Jak zwykła parcelacja, ale ziemia trafia najpierw do Polaków, a PSL „Piast” jest zadowolone (+5). Mniejszości tracą zaufanie (−6); jeśli obiecaliśmy ich klubom równość, łamiemy tę obietnicę.",
+    "- @root: Continue.": "- @root: Dalej.",
+    "subtitle: Cost: [+ pl_cost2 +]. The same effect at a lower price, but the resistance of business is greater (+12). [? if pl_land_program_accelerated_coalition : [+ pl_land_program_accelerated_coalition +] ?]": "subtitle: Koszt: [+ pl_cost2n +]. Ten sam skutek taniej, ale opór przedsiębiorców jest większy (+12). [? if pl_land_program_accelerated_coalition : [+ pl_land_program_accelerated_coalition +] ?]",
+    "title: Do nothing now": "title: Nic nie robimy",
+    "subtitle: The card is played and comes back in three months.": "subtitle: Karta zostaje zagrana i wróci za trzy miesiące."
+  }
 }

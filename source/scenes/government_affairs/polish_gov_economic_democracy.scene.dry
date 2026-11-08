@@ -20,11 +20,12 @@ Socialists want the workers to have a say in the plants and the economy to serve
 
 [+ pl_gc_budget +]
 
-[+ pl_gc_projects +]
+[? if pl_gc_projects : [+ pl_gc_projects +] ?]
 
 - @works_councils
 - @cooperative_credit
 - @socialise_mining
+- @nothing
 - @easy_discard
 - @cancel_advisor_action
 
@@ -57,6 +58,14 @@ on-arrival: {!
 PolishProjects.chooseOption(Q, 'economic_democracy', 'socialise_mining');
 !}
 go-to: result
+
+@nothing
+title: Do nothing now
+subtitle: The card is played and comes back in three months.
+on-arrival: {!
+PolishRules.skipCard(Q);
+!}
+go-to: root
 
 @result
 new-page: true

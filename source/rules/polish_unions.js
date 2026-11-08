@@ -1452,8 +1452,17 @@
       L('The workers of ' + rec.branches.map(b => BRANCH_NAMES[b].toLowerCase()).join(' and ') + ' demand a rise and look to PPS.',
         'Robotnicy (' + branchList(rec.branches) + ') żądają podwyżek i patrzą na PPS.');
   }
-  const unionNumbers = (S, id) => branchName(id) + L(': reach ', ': zasięg ') + fmt(S.unions[id].reach) + L(' · readiness ', ' · gotowość ') +
-    fmt(S.unions[id].readiness) + L(' · trust ', ' · zaufanie ') + fmt(S.unions[id].trust);
+  // Z — 1.10 (the user's note of 8 XI 2026): the state of a branch on the dispute card in words, without numbers.
+  const fifth = (v, words) => words[v < 20 ? 0 : v < 40 ? 1 : v < 60 ? 2 : v < 80 ? 3 : 4];
+  const unionNumbers = (S, id) => {
+    const u = S.unions[id];
+    return branchName(id) + ': ' + L('reach ' + fifth(u.reach, ['very weak', 'weak', 'medium', 'strong', 'very strong']) + ', the workers ' +
+      fifth(u.readiness, ['do not want to fight', 'are hardly ready to fight', 'are ready to fight', 'are very ready to fight', 'are eager to fight']) + ', and ' +
+      fifth(u.trust, ['do not trust us', 'trust us little', 'trust us moderately', 'trust us', 'trust us very much']),
+      'zasięg ' + fifth(u.reach, ['bardzo słaby', 'słaby', 'średni', 'mocny', 'bardzo mocny']) + ', robotnicy ' +
+      fifth(u.readiness, ['nie chcą walczyć', 'są mało gotowi do walki', 'są gotowi do walki', 'są bardzo gotowi do walki', 'rwą się do walki']) + ' i ' +
+      fifth(u.trust, ['nie ufają nam', 'mało nam ufają', 'ufają nam średnio', 'ufają nam', 'bardzo nam ufają']));
+  };
   const chanceWord = chance => (chance >= 0.6 ? L('high', 'wysoka') : chance >= 0.35 ? L('medium', 'średnia') : chance >= 0.15 ? L('low', 'niska') : L('very low', 'bardzo niska'));
 
   function disputeView(Q) {

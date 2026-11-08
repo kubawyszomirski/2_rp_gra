@@ -21,11 +21,12 @@ The minorities in the east want to deal with the offices in their own language a
 
 [+ pl_gc_budget +]
 
-[+ pl_gc_projects +]
+[? if pl_gc_projects : [+ pl_gc_projects +] ?]
 
 - @official_languages
 - @self_government
 - @border
+- @nothing
 - @easy_discard
 - @cancel_advisor_action
 
@@ -58,6 +59,14 @@ on-arrival: {!
 PolishProjects.chooseOption(Q, 'minorities_kresy', 'border');
 !}
 go-to: result
+
+@nothing
+title: Do nothing now
+subtitle: The card is played and comes back in three months.
+on-arrival: {!
+PolishRules.skipCard(Q);
+!}
+go-to: root
 
 @result
 new-page: true

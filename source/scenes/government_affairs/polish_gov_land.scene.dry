@@ -23,11 +23,12 @@ The land reform divides the great estates among peasants and farm workers. Each 
 
 [+ pl_gc_budget +]
 
-[+ pl_gc_projects +]
+[? if pl_gc_projects : [+ pl_gc_projects +] ?]
 
 - @compensated
 - @accelerated
 - @settlers
+- @nothing
 - @easy_discard
 - @cancel_advisor_action
 
@@ -60,6 +61,14 @@ on-arrival: {!
 PolishProjects.chooseOption(Q, 'land_program', 'settlers');
 !}
 go-to: result
+
+@nothing
+title: Do nothing now
+subtitle: The card is played and comes back in three months.
+on-arrival: {!
+PolishRules.skipCard(Q);
+!}
+go-to: root
 
 @result
 new-page: true

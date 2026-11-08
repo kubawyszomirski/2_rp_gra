@@ -1,17 +1,19 @@
 {
- "source": "scenes/government_affairs/polish_gov_justice.scene.dry",
- "status": "complete",
- "lines": {
-  "title: Courts and Prisoners": "title: Sądy i więźniowie",
-  "subtitle: Justice: an amnesty, jury courts and legal advice for workers.": "subtitle: Resort Sprawiedliwości: amnestia, sądy przysięgłych i porady prawne dla robotników.",
-  "= Courts and prisoners": "= Sądy i więźniowie",
-  "The courts judge by the different laws of the former partitions, and workers’ and minority activists sit in the prisons. Democracy stands at [+ pl_gc_democracy +] of 100.": "Sądy orzekają według różnych praw dawnych zaborców, a w więzieniach siedzą działacze robotniczy i mniejszości. Demokracja wynosi teraz [+ pl_gc_democracy +] na 100.",
-  "title: Declare an amnesty for political prisoners": "title: Ogłoś amnestię dla więźniów politycznych",
-  "subtitle: No cost to the budget; once in the chapter. The workers trust PPS more (+3), but squad members leave the prisons too, and political violence rises (+3). [? if pl_justice_policy_amnesty_coalition : [+ pl_justice_policy_amnesty_coalition +] ?]": "subtitle: Bez kosztu dla budżetu, raz w rozdziale. Robotnicy bardziej ufają PPS (+3), ale na wolność wychodzą też bojówkarze, więc przemoc polityczna rośnie (+3). [? if pl_justice_policy_amnesty_coalition : [+ pl_justice_policy_amnesty_coalition +] ?]",
-  "title: Introduce jury courts in political and press cases": "title: Wprowadź sądy przysięgłych w sprawach politycznych i prasowych",
-  "subtitle: Cost: 1 budget unit. Democracy grows stronger (+2). [? if pl_justice_policy_jury_coalition : [+ pl_justice_policy_jury_coalition +] ?]": "subtitle: Koszt: 1 jednostka budżetu. Demokracja się umacnia (+2). [? if pl_justice_policy_jury_coalition : [+ pl_justice_policy_jury_coalition +] ?]",
-  "title: Open free legal advice for workers": "title: Otwórz bezpłatne porady prawne dla robotników",
-  "subtitle: Cost: 1 budget unit. The trade unions trust PPS more (+5).": "subtitle: Koszt: 1 jednostka budżetu. Związki zawodowe bardziej ufają PPS (+5).",
-  "- @root: Continue.": "- @root: Dalej."
- }
+  "source": "scenes/government_affairs/polish_gov_justice.scene.dry",
+  "status": "complete",
+  "lines": {
+    "title: Courts and Prisoners": "title: Sądy i więźniowie",
+    "subtitle: Justice: an amnesty, jury courts and legal advice for workers.": "subtitle: Resort Sprawiedliwości: amnestia, sądy przysięgłych i porady prawne dla robotników.",
+    "= Courts and prisoners": "= Sądy i więźniowie",
+    "The courts judge by the different laws of the former partitions, and workers’ and minority activists sit in the prisons. Democracy stands at [+ pl_gc_democracy +] of 100.": "Sądy orzekają według różnych praw dawnych zaborców, a w więzieniach siedzą działacze robotniczy i mniejszości. Demokracja wynosi teraz [+ pl_gc_democracy +] na 100.",
+    "title: Declare an amnesty for political prisoners": "title: Ogłoś amnestię dla więźniów politycznych",
+    "subtitle: No cost to the budget; once in the chapter. The workers trust PPS more (+3), but squad members leave the prisons too, and political violence rises (+3). [? if pl_justice_policy_amnesty_coalition : [+ pl_justice_policy_amnesty_coalition +] ?]": "subtitle: Bez kosztu dla budżetu, raz w rozdziale. Robotnicy bardziej ufają PPS (+3), ale na wolność wychodzą też bojówkarze, więc przemoc polityczna rośnie (+3). [? if pl_justice_policy_amnesty_coalition : [+ pl_justice_policy_amnesty_coalition +] ?]",
+    "title: Introduce jury courts in political and press cases": "title: Wprowadź sądy przysięgłych w sprawach politycznych i prasowych",
+    "subtitle: Cost: 1 budget unit. Democracy grows stronger (+2). [? if pl_justice_policy_jury_coalition : [+ pl_justice_policy_jury_coalition +] ?]": "subtitle: Koszt: 1 jednostka budżetu. Demokracja się umacnia (+2). [? if pl_justice_policy_jury_coalition : [+ pl_justice_policy_jury_coalition +] ?]",
+    "title: Open free legal advice for workers": "title: Otwórz bezpłatne porady prawne dla robotników",
+    "subtitle: Cost: 1 budget unit. The trade unions trust PPS more (+5).": "subtitle: Koszt: 1 jednostka budżetu. Związki zawodowe bardziej ufają PPS (+5).",
+    "- @root: Continue.": "- @root: Dalej.",
+    "title: Do nothing now": "title: Nic nie robimy",
+    "subtitle: The card is played and comes back in three months.": "subtitle: Karta zostaje zagrana i wróci za trzy miesiące."
+  }
 }

@@ -120,6 +120,14 @@
       Q.pl_top_grievance_trend = trend(change(P.history, 'national_grievance', P.national_grievance), 0);
       Q.pl_top_violence_trend = trend(change(P.history, 'violence', P.violence), 0);
     }
+    // Z — 1.10 (decision 4A of 8 XI 2026): the mood of the army in one word, in red from "seething".
+    const sec = typeof PolishSecurity !== 'undefined' ? PolishSecurity : (typeof require === 'function' ? require('./polish_security.js') : null);
+    if (S && S.coup && sec && sec.armyMoodWord) {
+      const word = sec.armyMoodWord(S);
+      Q.pl_top_army = sec.armyMoodLevel(S) >= 2 ? '<span class="pl-army-alarm">' + word + '</span>' : word;
+    } else {
+      Q.pl_top_army = '';
+    }
     // The support of PPS in the polls, with its change since the month before (the monthly records of the polls).
     const records = Q.party_support_records || [];
     Q.pl_top_pps_poll_trend = records.length >= 2 ? trend(records[records.length - 1].pps - records[records.length - 2].pps, 1) : '';

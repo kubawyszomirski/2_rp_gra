@@ -18,6 +18,7 @@ function free(Q) {
   Q.month_actions = 0;
 }
 const R = () => globalThis.PolishRules, P = () => globalThis.PolishParty;
+const plainText = x => (x == null ? '' : typeof x === 'string' ? x : Array.isArray(x) ? x.map(plainText).join('') : plainText(x.content));
 function ripen(Q, id) {
   R().profileState(Q.S).seeds[id] = P().PROFILE_READY;
 }
@@ -51,7 +52,7 @@ test('Kongres 1.07: a resolution adopts a characteristic for the action of the m
   const centrum = f.centrum.strength;
   ripen(Q, 'reformism');
   ripen(Q, 'radicalism');
-  assert.match(P().congressChoose(Q, 'adopt:reformism'), /social reform/);
+  assert.match(P().congressChoose(Q, 'adopt:reformism'), /^The congress adopts reformism\./);
   assert.ok(R().profileActive(S, 'reformism'));
   assert.ok(f.centrum.strength > centrum, 'the patron grows stronger');
   assert.equal(f.lewica.dissent, 28, 'the Left protests (+8)');
@@ -67,9 +68,21 @@ test('Kongres 1.07: a resolution adopts a characteristic for the action of the m
   assert.match(P().congressStatus(Q, 'adopt:militarism').reason, /already has two characteristics/);
   assert.equal(P().congressStatus(Q, 'drop:unionism').available, true);
   f.centrum.dissent = 20;
+  const actions = Q.month_actions;
   P().congressChoose(Q, 'drop:unionism');
   assert.deepEqual([R().profileActive(S, 'unionism'), f.centrum.dissent, R().profileState(S).seeds.unionism], [false, 28, 0]);
+  // Z — 1.10 (decision 3A): the congress goes on in the same month and adopts another one within the same action.
+  assert.equal(Q.month_actions, actions + 1, 'giving up costs the action once');
+  assert.equal(P().congressAvailable(Q), true, 'the congress is still open');
+  P().congressView(Q);
+  assert.match(Q.pl_cg_note, /given up unionism/);
+  assert.equal(P().congressStatus(Q, 'adopt:militarism').available, true);
+  P().congressChoose(Q, 'adopt:militarism');
+  assert.equal(Q.month_actions, actions + 1, 'adopting in the same congress costs nothing more');
+  assert.ok(R().profileActive(S, 'militarism'));
+  assert.equal(P().congressAvailable(Q), false, 'the congress has ended');
   Q.time += 12; free(Q);
+  ripen(Q, 'federalism');
   const before = Q.month_actions;
   assert.match(P().congressChoose(Q, 'none'), /without new resolutions/);
   assert.equal(Q.month_actions, before, 'no new resolutions cost no action');
@@ -125,11 +138,11 @@ test('Charakterystyka w grze 1.07: the Party tab shows the eight characteristics
   try {
     engine.goToScene('status');
     assert.match(content(), /Charakterystyka/);
-    assert.match(Q.pl_profile_html, /pl-profile-off[^>]*>Uzwiązkowienie/);
+    assert.match(Q.pl_profile_html, /pl-profile-off">Uzwiązkowienie<\/span> — Buduje:/);
     assert.equal(Q.pl_top_profile, '');
     R().profileState(Q.S).adopted.push({ id: 'unionism', t: Q.time });
     engine.goToScene('status');
-    assert.match(Q.pl_profile_html, /pl-profile-on[^>]*>Uzwiązkowienie/);
+    assert.match(Q.pl_profile_html, /pl-profile-on">Uzwiązkowienie \(przyjęta\)<\/span>/);
     assert.equal(Q.pl_top_profile, 'Charakterystyka: uzwiązkowienie');
     assert.equal(P().profileSummary(Q.S), 'PPS przyjęła uzwiązkowienie (1922).');
     engine.goToScene('library.characteristics');
@@ -143,9 +156,22 @@ test('Charakterystyka w grze 1.07: the Party tab shows the eight characteristics
     assert.ok(ids.includes('polish_party_congress.adopt_parliamentarism'));
     assert.ok(ids.includes('polish_party_congress.drop_unionism'));
     assert.ok(ids.includes('polish_party_congress.none') && ids.includes('polish_party_congress.later'));
+    // Z — 1.10 (the user's notes and decision 3A of 8 XI 2026): plain titles; giving one up keeps the congress open, and another
+    // one is adopted within the same action.
+    const title = id => plainText((engine.getCurrentChoices() || []).find(c => c.id === id).title);
+    assert.equal(title('polish_party_congress.adopt_parliamentarism'), 'Przyjmij parlamentaryzm');
+    assert.equal(title('polish_party_congress.drop_unionism'), 'Porzuć uzwiązkowienie');
+    dendry.choose(engine, 'polish_party_congress.drop_unionism');
+    assert.match(content(), /Kongres porzucił uzwiązkowienie\. Może teraz przyjąć inną charakterystykę albo zakończyć obrady\./);
+    assert.equal(Q.month_actions, 1);
     dendry.choose(engine, 'polish_party_congress.adopt_parliamentarism');
-    assert.match(content(), /Kongres przyjmuje uchwałę o drodze parlamentarnej/);
-    assert.ok(R().profileActive(Q.S, 'parliamentarism'));
+    assert.match(content(), /Kongres przyjmuje parlamentaryzm\. Partia wiąże swój los z Sejmem/);
+    assert.equal(Q.month_actions, 1, 'one action for the whole congress');
+    assert.ok(R().profileActive(Q.S, 'parliamentarism') && !R().profileActive(Q.S, 'unionism'));
+    // The Party tab: each characteristic with what builds it and what it gives.
+    engine.goToScene('status');
+    assert.match(Q.pl_profile_html, /pl-profile-on">Parlamentaryzm \(przyjęta\)<\/span> — Buduje: ustawy z inicjatywy/);
+    assert.equal((Q.pl_profile_html.match(/<br>/g) || []).length, 7, 'eight lines');
   } finally {
     R().setLanguage('en');
   }

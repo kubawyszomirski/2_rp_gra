@@ -25,6 +25,14 @@
 - **Gameplay simplification (P):** the party answers to the crises (a campaign for 1 resource without the month’s action; the help of the unions for 1 resource and +5 trust), the credit crisis for every player, the reform chosen or postponed in the event.
 - **Unresolved:** none new.
 
+## PL-ARMY-MOOD-1.10 — the mood of the army before a coup
+
+- **Authority:** the user’s decision 4A of 8 November 2026 and the note that the army’s mood must be an event on the screen (technical reference 1.10, section 23.83).
+- **Sources:** no new source.
+- **Historical fact:** none new; the coup of May 1926 is recorded under PL-COUP-1.03 and the earlier coup entries.
+- **Gameplay simplification (P):** the four words of the mood from the pressure towards a coup (25, 40, 55), the event of a rise and its texts (talk of a march on Warsaw in the officers’ messes, units practising their march, the causes of the last month) are narration of the game, not documented episodes; the opening sentence of the page after a coup (“units loyal to Piłsudski marched on Warsaw”) describes the game’s attempt in general words.
+- **Unresolved:** the mood of the officer corps month by month in 1924–1926 and the press reports of coup preparations before May 1926 — TBD, historical research required.
+
 ## PL-COUP-1.03 — the coup in one comparison
 
 - **Authority:** the user’s decisions of 7 November 2026 after the audit of the coup (technical reference 1.03, sections 16.1, 16.2, 16.6 and 23.76).

@@ -3253,8 +3253,8 @@
         return L('The labour administration starts building.', 'Administracja resortu Pracy rozpoczyna budowę.');
       }},
     {id: 'tenants', portfolio: null, name: ['Protection of tenants', 'Ochrona lokatorów'],
-      text: ['Full (the PPS motion of 1925): no further rent rises and protection against eviction for those without means. Limited (as the act of 1926): rent rises suspended for nine months, evictions postponed and arrears in instalments.',
-        'Pełna (wniosek klubu PPS z 1925 roku): bez dalszych podwyżek czynszu i z ochroną przed eksmisją ludzi bez środków do życia. Ograniczona (jak ustawa z 1926 roku): podwyżki zawieszone na dziewięć miesięcy, odroczone eksmisje i zaległy czynsz na raty.'],
+      text: ['Full: no further rent rises and protection against eviction for those without means. Limited: rent rises suspended for nine months, evictions postponed and arrears in instalments.',
+        'Pełna: bez dalszych podwyżek czynszu i z ochroną przed eksmisją ludzi bez środków do życia. Ograniczona: podwyżki zawieszone na dziewięć miesięcy, odroczone eksmisje i zaległy czynsz na raty.'],
       raise: ['The rises were suspended; the law stops them for good and protects those without means against eviction.', 'Podwyżki były zawieszone; ustawa wstrzymuje je na stałe i chroni ludzi bez środków przed eksmisją.'],
       variants: [{key: 'rent_freeze', name: ['no further rises and protection against eviction', 'bez dalszych podwyżek i z ochroną przed eksmisją'], programme: {fiscal: 2}},
         {key: 'rent_suspension', name: ['rises suspended for nine months', 'podwyżki zawieszone na dziewięć miesięcy'], programme: {fiscal: 1}}],
@@ -3284,8 +3284,8 @@
         return L('The insurance starts with the next settlement.', 'Ubezpieczenie rusza od najbliższego rozliczenia.');
       }},
     {id: 'abortion', portfolio: null, name: ['Termination of pregnancy', 'Przerwanie ciąży'],
-      text: ['Full: a termination of pregnancy by a doctor is no crime. Limited (as the penal code of 1932): allowed when the woman’s health needs it or when the pregnancy is the result of a crime.',
-        'Pełna: przerwanie ciąży przez lekarza przestaje być przestępstwem. Ograniczona (jak kodeks karny z 1932 roku): dopuszczalne, gdy wymaga tego zdrowie kobiety albo gdy ciąża jest wynikiem przestępstwa.'],
+      text: ['Full: a termination of pregnancy by a doctor is no crime. Limited: allowed when the woman’s health needs it or when the pregnancy is the result of a crime.',
+        'Pełna: przerwanie ciąży przez lekarza przestaje być przestępstwem. Ograniczona: dopuszczalne, gdy wymaga tego zdrowie kobiety albo gdy ciąża jest wynikiem przestępstwa.'],
       raise: ['Today a doctor may terminate a pregnancy for the woman’s health or after a crime; the law removes the penalty altogether.',
         'Dziś lekarz może przerwać ciążę ze względu na zdrowie kobiety albo po przestępstwie; ustawa znosi karę całkowicie.'],
       variants: [{key: 'decriminalised', name: ['no penalty for a termination by a doctor', 'bez kary za przerwanie ciąży przez lekarza'], programme: {church: 2}},
@@ -3362,6 +3362,9 @@
   function initiativeCardBase(Q) {
     const S = Q.S;
     if (!S || S.chapter.status === 'ended' || !Q.sejm_first_election_completed || government.formationPending(Q)) return false;
+    // Z — 1.10 (the user's note of 8 XI 2026): no initiative of the club while PPS sits in the cabinet — its laws go through its
+    // ministries and the cabinet.
+    if (cabinetSits(S) && S.cabinet.partner_ids.indexOf('pps') >= 0) return false;
     return !initiativeState(S).pending;
   }
   // One law now: its offer ('both' or 'full' only), whether it is on the card and the reason it cannot be chosen.
@@ -3501,7 +3504,8 @@
     // A vote the roll turned over says that some deputies stayed away.
     const absent = c => (c && c.absent ? ' ' + (c.passed ? L('Some of its opponents (' + c.absent + ') did not come to the vote.', 'Część przeciwników (' + c.absent + ' posłów) nie przyszła na głosowanie.') :
       L('Some of its supporters (' + c.absent + ') did not come to the vote.', 'Część zwolenników (' + c.absent + ' posłów) nie przyszła na głosowanie.')) : '');
-    const votes = c => L(c.yes + ' MPs for, ' + c.no + ' against', 'za ' + c.yes + ' posłów, przeciw ' + c.no);
+    // Z — 1.10 (decision 1A of 8 XI 2026): the counts add up to the chamber — for, against, abstaining, and those who stayed away.
+    const votes = c => L(c.yes + ' MPs for, ' + c.no + ' against, ' + c.abstain + ' abstaining', 'za ' + c.yes + ' posłów, przeciw ' + c.no + ', wstrzymało się ' + c.abstain);
     let line;
     if (outcome === 'full') line = L('The Sejm passes our bill: ', 'Sejm przyjął nasz projekt: ') + votes(full) + '.' + absent(full);
     else if (outcome === 'choice') {
@@ -4390,7 +4394,8 @@
     const types = Object.keys(PROJECT_TYPES).filter(id => PROJECT_TYPES[id].card === cardId || (cardId === 'finance_package' && id === 'collection') ||
       (cardId === 'social_welfare' && id === 'old_age_insurance'));
     const lines = projectsOf(S, null, p => types.indexOf(p.type) >= 0).map(p => describeProject(p, S));
-    Q.pl_gc_projects = lines.length ? lines.join(' ') : L('No project of this card yet.', 'Ta karta nie ma jeszcze projektu.');
+    // Z — 1.10: nothing is written when the card has no project yet (the user's note of 8 XI 2026).
+    Q.pl_gc_projects = lines.join(' ');
     for (const option of card.options) {
       const status = optionStatus(Q, cardId, option);
       Q['pl_' + cardId + '_' + option + '_why'] = status.reason;
@@ -4433,7 +4438,7 @@
         ' (' + VARIANT_NAMES_PL[p.variant] + (p.tranche ? ', transza ' + p.tranche : '') + (p.scope > 1 ? ', zakres ' + p.scope : '') + ')';
       let statePl;
       if (p.status === 'prepared' || p.status === 'idea') statePl = p.status === 'idea' ? 'w przygotowaniu' : 'przygotowanie zakończone, czeka na uruchomienie';
-      else if (p.status === 'executing') statePl = !p.authorized ? 'czeka na ustawę' : p.duration_months === 1 && !p.progress ? 'skutki pod koniec miesiąca' :
+      else if (p.status === 'executing') statePl = !p.authorized ? 'czeka na ustawę' : p.duration_months === 1 && !p.progress ? 'w realizacji' :
         'w realizacji: ' + Math.round(p.progress) + '%';
       else if (p.status === 'operating') statePl = 'w działaniu' + (p.ends_at ? ' do ' + rules.monthYear(p.ends_at - 1, 'gen') : '');
       else if (p.status === 'completed') statePl = 'realizacja zakończona';
@@ -4447,7 +4452,7 @@
       ' (' + VARIANT_NAMES[p.variant] + (p.tranche ? ', tranche ' + p.tranche : '') + (p.scope > 1 ? ', scope ' + p.scope : '') + ')';
     let state;
     if (p.status === 'prepared' || p.status === 'idea') state = p.status === 'idea' ? 'in preparation' : 'prepared, waiting for its launch';
-    else if (p.status === 'executing') state = !p.authorized ? 'waiting for its law' : p.duration_months === 1 && !p.progress ? 'effects at the end of the month' :
+    else if (p.status === 'executing') state = !p.authorized ? 'waiting for its law' : p.duration_months === 1 && !p.progress ? 'under way' :
       'under way, ' + Math.round(p.progress) + '%';
     else if (p.status === 'operating') state = 'operating' + (p.ends_at ? ' until ' + rules.monthOf(p.ends_at - 1) + '/' + rules.yearOf(p.ends_at - 1) : '');
     else if (p.status === 'completed') state = 'completed';
@@ -4502,9 +4507,9 @@
   function launchCostText(project, S) {
     const price = S ? profilePrice(S, project.type, project.price_B || 0, project.sponsor) : project.price_B || 0;
     const cost = price ? L('costs ' + unitsText(price), 'kosztuje ' + unitsText(price)) : L('no cost to the budget', 'bez kosztu dla budżetu');
-    const when = project.type === 'currency_reform' ? L('the złoty comes in ' + months(project.duration_months), 'złoty wejdzie za ' + months(project.duration_months)) :
-      L('the effects come at the end of the month', 'skutki pod koniec miesiąca');
-    return cost + '; ' + when;
+    // Z — 1.10: no note of the end of the month (the user's note of 8 XI 2026); only the currency reform names its months.
+    if (project.type !== 'currency_reform') return cost;
+    return cost + '; ' + L('the złoty comes in ' + months(project.duration_months), 'złoty wejdzie za ' + months(project.duration_months));
   }
 
   // The launch itself, in the same decision (and for an event, in the same answer). Returns the text of the result.

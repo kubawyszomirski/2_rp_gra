@@ -1,21 +1,23 @@
 {
- "source": "scenes/government_affairs/polish_gov_pils_agreement.scene.dry",
- "status": "complete",
- "lines": {
-  "title: Piłsudski and the Army": "title: Piłsudski i wojsko",
-  "subtitle: Curb his influence, win him over or give way to him: from the subordination of the army to an independent inspectorate.": "subtitle: Ograniczyć jego wpływy, zjednać go albo mu ustąpić: od podporządkowania wojska po niezależny inspektorat.",
-  "= Piłsudski and the army": "= Piłsudski i wojsko",
-  "Piłsudski demands command of the army independent of the minister and the Sejm; his followers are in the army and in PPS. We can curb his influence, win him over or give way to him.": "Piłsudski żąda władzy nad wojskiem niezależnej od ministra i Sejmu; jego zwolennicy są i w armii, i w PPS. Możemy ograniczyć jego wpływy, zjednać go albo mu ustąpić.",
-  "- @root: Continue.": "- @root: Dalej.",
-  "title: Subordinate the army to the minister and the Sejm": "title: Podporządkuj wojsko ministrowi i Sejmowi",
-  "subtitle: Piłsudski loses his say in the nominations, and the army leans less towards him (−5 percentage points). The Piłsudczycy in PPS rebel (+10) and relations with Piłsudski worsen (−15). [? if pl_pils_subordinate_coalition : [+ pl_pils_subordinate_coalition +] ?]": "subtitle: Piłsudski traci wpływ na nominacje, a wojsko słabiej mu sprzyja (−5 punktów procentowych). Piłsudczycy w PPS się burzą (+10), a stosunki z Piłsudskim się psują (−15). [? if pl_pils_subordinate_coalition : [+ pl_pils_subordinate_coalition +] ?]",
-  "title: Celebrate the deed of the Legions": "title: Uczcij czyn legionowy",
-  "subtitle: Cost: 1 budget unit. The anniversary of the march of the First Cadre Company and decorations for the legionnaires; relations with Piłsudski improve (+10).": "subtitle: Koszt: 1 jednostka budżetu. Rocznica wymarszu Kadrówki i odznaczenia dla legionistów; stosunki z Piłsudskim się poprawiają (+10).",
-  "title: Give Piłsudski a military function under civilian control": "title: Daj Piłsudskiemu funkcję wojskową pod kontrolą cywilną",
-  "subtitle: Needs relations of at least 40. He gets a post, but the minister and the Sejm keep their oversight. The pressure towards a coup falls (−12), but the army leans a little more towards him (+3 percentage points).": "subtitle: Wymaga stosunków co najmniej 40. Dostaje stanowisko, ale minister i Sejm zachowują nadzór. Presja na zamach spada (−12), ale wojsko trochę bardziej mu sprzyja (+3 punkty procentowe).",
-  "title: Give Piłsudski an independent inspectorate of the army": "title: Oddaj Piłsudskiemu niezależny inspektorat armii",
-  "subtitle: Needs relations of at least 60. Piłsudski commands the army and appoints its officers without the oversight of the minister and the Sejm. The pressure towards a coup falls sharply (−25), but the Centrum of PPS protests (+8), and the army leans more towards him (+5 percentage points). [? if pl_pils_inspectorate_coalition : [+ pl_pils_inspectorate_coalition +] ?]": "subtitle: Wymaga stosunków co najmniej 60. Piłsudski dowodzi wojskiem i mianuje oficerów bez nadzoru ministra i Sejmu. Presja na zamach mocno spada (−25), ale Centrum w PPS protestuje (+8), a wojsko bardziej mu sprzyja (+5 punktów procentowych). [? if pl_pils_inspectorate_coalition : [+ pl_pils_inspectorate_coalition +] ?]",
-  "title: Keep the present order in the army": "title: Zachowaj obecny układ w wojsku",
-  "subtitle: Costs nothing. The Centrum of PPS is content (−3), but Piłsudski feels passed over and relations with him worsen (−3).": "subtitle: Nic nie kosztuje. Centrum w PPS jest zadowolone (−3), ale Piłsudski czuje się pominięty i stosunki z nim się psują (−3)."
- }
+  "source": "scenes/government_affairs/polish_gov_pils_agreement.scene.dry",
+  "status": "complete",
+  "lines": {
+    "title: Piłsudski and the Army": "title: Piłsudski i wojsko",
+    "subtitle: Curb his influence, win him over or give way to him: from the subordination of the army to an independent inspectorate.": "subtitle: Ograniczyć jego wpływy, zjednać go albo mu ustąpić: od podporządkowania wojska po niezależny inspektorat.",
+    "= Piłsudski and the army": "= Piłsudski i wojsko",
+    "Piłsudski demands command of the army independent of the minister and the Sejm; his followers are in the army and in PPS. We can curb his influence, win him over or give way to him.": "Piłsudski żąda władzy nad wojskiem niezależnej od ministra i Sejmu; jego zwolennicy są i w armii, i w PPS. Możemy ograniczyć jego wpływy, zjednać go albo mu ustąpić.",
+    "- @root: Continue.": "- @root: Dalej.",
+    "title: Subordinate the army to the minister and the Sejm": "title: Podporządkuj wojsko ministrowi i Sejmowi",
+    "subtitle: Piłsudski loses his say in the nominations, and the army leans less towards him (−5 percentage points). The Piłsudczycy in PPS rebel (+10) and relations with Piłsudski worsen (−15). [? if pl_pils_subordinate_coalition : [+ pl_pils_subordinate_coalition +] ?]": "subtitle: Piłsudski traci wpływ na nominacje, a wojsko słabiej mu sprzyja (−5 punktów procentowych). Piłsudczycy w PPS się burzą (+10), a stosunki z Piłsudskim się psują (−15). [? if pl_pils_subordinate_coalition : [+ pl_pils_subordinate_coalition +] ?]",
+    "title: Celebrate the deed of the Legions": "title: Uczcij czyn legionowy",
+    "subtitle: Cost: 1 budget unit. The anniversary of the march of the First Cadre Company and decorations for the legionnaires; relations with Piłsudski improve (+10).": "subtitle: Koszt: 1 jednostka budżetu. Rocznica wymarszu Kadrówki i odznaczenia dla legionistów; stosunki z Piłsudskim się poprawiają (+10).",
+    "title: Give Piłsudski a military function under civilian control": "title: Daj Piłsudskiemu funkcję wojskową pod kontrolą cywilną",
+    "subtitle: Needs relations of at least 40. He gets a post, but the minister and the Sejm keep their oversight. The pressure towards a coup falls (−12), but the army leans a little more towards him (+3 percentage points).": "subtitle: Wymaga stosunków co najmniej 40. Dostaje stanowisko, ale minister i Sejm zachowują nadzór. Presja na zamach spada (−12), ale wojsko trochę bardziej mu sprzyja (+3 punkty procentowe).",
+    "title: Give Piłsudski an independent inspectorate of the army": "title: Oddaj Piłsudskiemu niezależny inspektorat armii",
+    "subtitle: Needs relations of at least 60. Piłsudski commands the army and appoints its officers without the oversight of the minister and the Sejm. The pressure towards a coup falls sharply (−25), but the Centrum of PPS protests (+8), and the army leans more towards him (+5 percentage points). [? if pl_pils_inspectorate_coalition : [+ pl_pils_inspectorate_coalition +] ?]": "subtitle: Wymaga stosunków co najmniej 60. Piłsudski dowodzi wojskiem i mianuje oficerów bez nadzoru ministra i Sejmu. Presja na zamach mocno spada (−25), ale Centrum w PPS protestuje (+8), a wojsko bardziej mu sprzyja (+5 punktów procentowych). [? if pl_pils_inspectorate_coalition : [+ pl_pils_inspectorate_coalition +] ?]",
+    "title: Keep the present order in the army": "title: Zachowaj obecny układ w wojsku",
+    "subtitle: Costs nothing. The Centrum of PPS is content (−3), but Piłsudski feels passed over and relations with him worsen (−3).": "subtitle: Nic nie kosztuje. Centrum w PPS jest zadowolone (−3), ale Piłsudski czuje się pominięty i stosunki z nim się psują (−3).",
+    "title: Do nothing now": "title: Nic nie robimy",
+    "subtitle: The card is played and comes back in three months.": "subtitle: Karta zostaje zagrana i wróci za trzy miesiące."
+  }
 }

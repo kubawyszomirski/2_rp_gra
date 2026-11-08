@@ -1,17 +1,19 @@
 {
- "source": "scenes/government_affairs/polish_gov_education.scene.dry",
- "status": "complete",
- "lines": {
-  "title: Education Policy": "title: Polityka oświatowa",
-  "subtitle: Education: village schools, courses for adults, a secular school.": "subtitle: Resort Oświaty: szkoły na wsi, kursy dla dorosłych, szkoła świecka.",
-  "= Education policy": "= Polityka oświatowa",
-  "Primary school is compulsory, but the villages lack schools and many adult workers cannot read. Each programme covers one of three parts of the country.": "Szkoła powszechna jest obowiązkowa, ale na wsi brakuje szkół, a wielu dorosłych robotników nie umie czytać. Każdy program obejmuje jedną z trzech części kraju.",
-  "title: Build schools in the villages": "title: Buduj szkoły na wsi",
-  "subtitle: Cost: [+ pl_cost2 +]. The peasants trust PPS more (+4).": "subtitle: Koszt: [+ pl_cost2n +]. Chłopi bardziej ufają PPS (+4).",
-  "title: Open courses for adults in the workers’ centres": "title: Otwórz kursy dla dorosłych w ośrodkach robotniczych",
-  "subtitle: Cost: [+ pl_cost2 +]. The workers trust PPS more (+4).": "subtitle: Koszt: [+ pl_cost2n +]. Robotnicy bardziej ufają PPS (+4).",
-  "title: Introduce the secular school": "title: Wprowadź szkołę świecką",
-  "- @root: Continue.": "- @root: Dalej.",
-  "subtitle: Cost: [+ pl_cost2 +]. Workers and the intelligentsia trust PPS more (+4), but the Christian Democrats and the Church protest, and our relations with the Christian Democrats worsen (−8). [? if pl_education_program_secular_coalition : [+ pl_education_program_secular_coalition +] ?]": "subtitle: Koszt: [+ pl_cost2n +]. Robotnicy i inteligencja bardziej ufają PPS (+4), ale chadecja i Kościół protestują, a nasze stosunki z chadecją się pogarszają (−8). [? if pl_education_program_secular_coalition : [+ pl_education_program_secular_coalition +] ?]"
- }
+  "source": "scenes/government_affairs/polish_gov_education.scene.dry",
+  "status": "complete",
+  "lines": {
+    "title: Education Policy": "title: Polityka oświatowa",
+    "subtitle: Education: village schools, courses for adults, a secular school.": "subtitle: Resort Oświaty: szkoły na wsi, kursy dla dorosłych, szkoła świecka.",
+    "= Education policy": "= Polityka oświatowa",
+    "Primary school is compulsory, but the villages lack schools and many adult workers cannot read. Each programme covers one of three parts of the country.": "Szkoła powszechna jest obowiązkowa, ale na wsi brakuje szkół, a wielu dorosłych robotników nie umie czytać. Każdy program obejmuje jedną z trzech części kraju.",
+    "title: Build schools in the villages": "title: Buduj szkoły na wsi",
+    "subtitle: Cost: [+ pl_cost2 +]. The peasants trust PPS more (+4).": "subtitle: Koszt: [+ pl_cost2n +]. Chłopi bardziej ufają PPS (+4).",
+    "title: Open courses for adults in the workers’ centres": "title: Otwórz kursy dla dorosłych w ośrodkach robotniczych",
+    "subtitle: Cost: [+ pl_cost2 +]. The workers trust PPS more (+4).": "subtitle: Koszt: [+ pl_cost2n +]. Robotnicy bardziej ufają PPS (+4).",
+    "title: Introduce the secular school": "title: Wprowadź szkołę świecką",
+    "- @root: Continue.": "- @root: Dalej.",
+    "subtitle: Cost: [+ pl_cost2 +]. Workers and the intelligentsia trust PPS more (+4), but the Christian Democrats and the Church protest, and our relations with the Christian Democrats worsen (−8). [? if pl_education_program_secular_coalition : [+ pl_education_program_secular_coalition +] ?]": "subtitle: Koszt: [+ pl_cost2n +]. Robotnicy i inteligencja bardziej ufają PPS (+4), ale chadecja i Kościół protestują, a nasze stosunki z chadecją się pogarszają (−8). [? if pl_education_program_secular_coalition : [+ pl_education_program_secular_coalition +] ?]",
+    "title: Do nothing now": "title: Nic nie robimy",
+    "subtitle: The card is played and comes back in three months.": "subtitle: Karta zostaje zagrana i wróci za trzy miesiące."
+  }
 }

@@ -662,7 +662,8 @@ test('Funkcja kandydata w grze 0.88: Polish titles of the candidates by their fu
   assert.match(JSON.stringify(choice(engine, 'polish_cabinet_formation.min_jewish_rep').subtitle),
     /Za (równość wobec prawa|prawa językowe i szkoły mniejszości) — najmniejsze ustępstwo, za które ten klub \(\d+ posłów\) poprze rząd\. Przy powołaniu rządu: PSL Piast −\d+, PSChD −\d+, ZLN −\d+\./);
   assert.match(content(engine), /premier: kandydat PPS \(Centrum\), Ignacy Daszyński/);
-  assert.match(content(engine), /Jego pierwszy budżet \(podatek progresywny\): \d+ za, \d+ przeciw — przejdzie\./);
+  // Z — 1.10 (the user's note of 8 XI 2026): no counts of the first budget; a budget that passes is not mentioned.
+  assert.doesNotMatch(content(engine), /pierwszy budżet/);
 });
 
 test('save and load in the middle of the formation keeps the offer; the restored game submits it once', () => {

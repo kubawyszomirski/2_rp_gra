@@ -1,17 +1,19 @@
 {
- "source": "scenes/government_affairs/polish_gov_labor_rights.scene.dry",
- "status": "complete",
- "lines": {
-  "title: Workers’ Rights": "title: Prawa pracownicze",
-  "subtitle: Labour: working time, collective agreements, derogations.": "subtitle: Resort Pracy: czas pracy, układy zbiorowe, odstępstwa.",
-  "= Workers’ rights": "= Prawa pracownicze",
-  "Labour enforces the statutory working time and the conditions in the plants. Every gain of the workers strengthens the pressure of business on the cabinet, which now stands at [+ pl_gc_business +] of 100.": "Resort Pracy pilnuje ustawowego czasu pracy i warunków w zakładach. Każda zdobycz robotników wzmacnia nacisk przedsiębiorców na rząd, który wynosi teraz [+ pl_gc_business +] na 100.",
-  "title: Introduce a labour inspection": "title: Wprowadź inspekcję pracy",
-  "title: Bring about a collective agreement": "title: Doprowadź do układu zbiorowego",
-  "subtitle: No cost to the budget; the agreement covers the branch where our union is strongest (now: [+ pl_gc_collective_branch +]). Wages rise for two months, most in industry (+1.2 percentage points), but business presses harder (+3).": "subtitle: Bez kosztu dla budżetu; układ obejmuje branżę, w której nasz związek jest najsilniejszy (teraz: [+ pl_gc_collective_branch +]). Płace rosną przez dwa miesiące, najbardziej w przemyśle (+1,2 punktu procentowego), ale przedsiębiorcy mocniej naciskają (+3).",
-  "title: Agree to derogations from the eight-hour day": "title: Zgódź się na odstępstwa od ośmiogodzinnego dnia pracy",
-  "subtitle: No cost to the budget, for half a year in a plant threatened with closure. Business presses less (−4), but the workers of the plant are more discontented (+3) and the Left of PPS protests (+3).": "subtitle: Bez kosztu dla budżetu, na pół roku w zakładzie zagrożonym upadkiem. Przedsiębiorcy mniej naciskają (−4), ale robotnicy zakładu są bardziej niezadowoleni (+3), a Lewica PPS protestuje (+3).",
-  "- @root: Continue.": "- @root: Dalej.",
-  "subtitle: Cost: 1 budget unit. The workers are less discontented (−3), but business presses harder on the cabinet (+4). [? if pl_labor_rights_inspection_coalition : [+ pl_labor_rights_inspection_coalition +] ?]": "subtitle: Koszt: 1 jednostka budżetu. Robotnicy są mniej niezadowoleni (−3), ale przedsiębiorcy mocniej naciskają na rząd (+4). [? if pl_labor_rights_inspection_coalition : [+ pl_labor_rights_inspection_coalition +] ?]"
- }
+  "source": "scenes/government_affairs/polish_gov_labor_rights.scene.dry",
+  "status": "complete",
+  "lines": {
+    "title: Workers’ Rights": "title: Prawa pracownicze",
+    "subtitle: Labour: working time, collective agreements, derogations.": "subtitle: Resort Pracy: czas pracy, układy zbiorowe, odstępstwa.",
+    "= Workers’ rights": "= Prawa pracownicze",
+    "Labour enforces the statutory working time and the conditions in the plants. Every gain of the workers strengthens the pressure of business on the cabinet, which now stands at [+ pl_gc_business +] of 100.": "Resort Pracy pilnuje ustawowego czasu pracy i warunków w zakładach. Każda zdobycz robotników wzmacnia nacisk przedsiębiorców na rząd, który wynosi teraz [+ pl_gc_business +] na 100.",
+    "title: Introduce a labour inspection": "title: Wprowadź inspekcję pracy",
+    "title: Bring about a collective agreement": "title: Doprowadź do układu zbiorowego",
+    "subtitle: No cost to the budget; the agreement covers the branch where our union is strongest (now: [+ pl_gc_collective_branch +]). Wages rise for two months, most in industry (+1.2 percentage points), but business presses harder (+3).": "subtitle: Bez kosztu dla budżetu; układ obejmuje branżę, w której nasz związek jest najsilniejszy (teraz: [+ pl_gc_collective_branch +]). Płace rosną przez dwa miesiące, najbardziej w przemyśle (+1,2 punktu procentowego), ale przedsiębiorcy mocniej naciskają (+3).",
+    "title: Agree to derogations from the eight-hour day": "title: Zgódź się na odstępstwa od ośmiogodzinnego dnia pracy",
+    "subtitle: No cost to the budget, for half a year in a plant threatened with closure. Business presses less (−4), but the workers of the plant are more discontented (+3) and the Left of PPS protests (+3).": "subtitle: Bez kosztu dla budżetu, na pół roku w zakładzie zagrożonym upadkiem. Przedsiębiorcy mniej naciskają (−4), ale robotnicy zakładu są bardziej niezadowoleni (+3), a Lewica PPS protestuje (+3).",
+    "- @root: Continue.": "- @root: Dalej.",
+    "subtitle: Cost: 1 budget unit. The workers are less discontented (−3), but business presses harder on the cabinet (+4). [? if pl_labor_rights_inspection_coalition : [+ pl_labor_rights_inspection_coalition +] ?]": "subtitle: Koszt: 1 jednostka budżetu. Robotnicy są mniej niezadowoleni (−3), ale przedsiębiorcy mocniej naciskają na rząd (+4). [? if pl_labor_rights_inspection_coalition : [+ pl_labor_rights_inspection_coalition +] ?]",
+    "title: Do nothing now": "title: Nic nie robimy",
+    "subtitle: The card is played and comes back in three months.": "subtitle: Karta zostaje zagrana i wróci za trzy miesiące."
+  }
 }

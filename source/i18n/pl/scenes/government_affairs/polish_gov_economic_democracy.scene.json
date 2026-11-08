@@ -1,17 +1,19 @@
 {
- "source": "scenes/government_affairs/polish_gov_economic_democracy.scene.dry",
- "status": "complete",
- "lines": {
-  "title: Economic Democracy": "title: Demokracja gospodarcza",
-  "subtitle: Industry and Trade: works councils, cooperatives and the socialisation of mining.": "subtitle: Resort Przemysłu i Handlu: rady zakładowe, spółdzielnie i uspołecznienie górnictwa.",
-  "= Economic democracy": "= Demokracja gospodarcza",
-  "Socialists want the workers to have a say in the plants and the economy to serve those who work. Every step in this direction meets the resistance of the employers.": "Socjaliści chcą, by robotnicy współdecydowali w zakładach, a gospodarka służyła pracującym. Każdy krok w tę stronę budzi opór przedsiębiorców.",
-  "title: Introduce works councils": "title: Wprowadź rady zakładowe",
-  "title: Support the cooperatives with state credit": "title: Wesprzyj spółdzielnie kredytem państwa",
-  "subtitle: Cost: 1 budget unit. The workers trust PPS more (+3), but the small traders whose customers the cooperatives take trust us less (−3).": "subtitle: Koszt: 1 jednostka budżetu. Robotnicy bardziej ufają PPS (+3), ale drobni kupcy, którym spółdzielnie zabierają klientów, ufają nam mniej (−3).",
-  "title: Socialise coal mining": "title: Uspołecznij górnictwo węglowe",
-  "- @root: Continue.": "- @root: Dalej.",
-  "subtitle: In the larger plants workers’ councils have a say on dismissals and the wage rules. The workers are less discontented (−3) and trust their unions more (+5), but business presses harder (+8). [? if pl_economic_democracy_works_councils_coalition : [+ pl_economic_democracy_works_councils_coalition +] ?]": "subtitle: W większych zakładach rady robotnicze współdecydują o zwolnieniach i regulaminie płac. Robotnicy są mniej niezadowoleni (−3) i bardziej ufają związkom (+5), ale przedsiębiorcy mocniej naciskają (+8). [? if pl_economic_democracy_works_councils_coalition : [+ pl_economic_democracy_works_councils_coalition +] ?]",
-  "subtitle: Cost: [+ pl_cost_soc +] (compensation for the owners), once in the game. The miners’ unions trust the party more and the dissent of the Left of PPS falls (−5), but business pressure jumps (+25). [? if pl_economic_democracy_socialise_mining_coalition : [+ pl_economic_democracy_socialise_mining_coalition +] ?]": "subtitle: Koszt: [+ pl_cost_socn +] (odszkodowania dla właścicieli), raz w grze. Związki górników bardziej ufają partii, a sprzeciw Lewicy PPS spada (−5), ale presja przedsiębiorców skacze (+25). [? if pl_economic_democracy_socialise_mining_coalition : [+ pl_economic_democracy_socialise_mining_coalition +] ?]"
- }
+  "source": "scenes/government_affairs/polish_gov_economic_democracy.scene.dry",
+  "status": "complete",
+  "lines": {
+    "title: Economic Democracy": "title: Demokracja gospodarcza",
+    "subtitle: Industry and Trade: works councils, cooperatives and the socialisation of mining.": "subtitle: Resort Przemysłu i Handlu: rady zakładowe, spółdzielnie i uspołecznienie górnictwa.",
+    "= Economic democracy": "= Demokracja gospodarcza",
+    "Socialists want the workers to have a say in the plants and the economy to serve those who work. Every step in this direction meets the resistance of the employers.": "Socjaliści chcą, by robotnicy współdecydowali w zakładach, a gospodarka służyła pracującym. Każdy krok w tę stronę budzi opór przedsiębiorców.",
+    "title: Introduce works councils": "title: Wprowadź rady zakładowe",
+    "title: Support the cooperatives with state credit": "title: Wesprzyj spółdzielnie kredytem państwa",
+    "subtitle: Cost: 1 budget unit. The workers trust PPS more (+3), but the small traders whose customers the cooperatives take trust us less (−3).": "subtitle: Koszt: 1 jednostka budżetu. Robotnicy bardziej ufają PPS (+3), ale drobni kupcy, którym spółdzielnie zabierają klientów, ufają nam mniej (−3).",
+    "title: Socialise coal mining": "title: Uspołecznij górnictwo węglowe",
+    "- @root: Continue.": "- @root: Dalej.",
+    "subtitle: In the larger plants workers’ councils have a say on dismissals and the wage rules. The workers are less discontented (−3) and trust their unions more (+5), but business presses harder (+8). [? if pl_economic_democracy_works_councils_coalition : [+ pl_economic_democracy_works_councils_coalition +] ?]": "subtitle: W większych zakładach rady robotnicze współdecydują o zwolnieniach i regulaminie płac. Robotnicy są mniej niezadowoleni (−3) i bardziej ufają związkom (+5), ale przedsiębiorcy mocniej naciskają (+8). [? if pl_economic_democracy_works_councils_coalition : [+ pl_economic_democracy_works_councils_coalition +] ?]",
+    "subtitle: Cost: [+ pl_cost_soc +] (compensation for the owners), once in the game. The miners’ unions trust the party more and the dissent of the Left of PPS falls (−5), but business pressure jumps (+25). [? if pl_economic_democracy_socialise_mining_coalition : [+ pl_economic_democracy_socialise_mining_coalition +] ?]": "subtitle: Koszt: [+ pl_cost_socn +] (odszkodowania dla właścicieli), raz w grze. Związki górników bardziej ufają partii, a sprzeciw Lewicy PPS spada (−5), ale presja przedsiębiorców skacze (+25). [? if pl_economic_democracy_socialise_mining_coalition : [+ pl_economic_democracy_socialise_mining_coalition +] ?]",
+    "title: Do nothing now": "title: Nic nie robimy",
+    "subtitle: The card is played and comes back in three months.": "subtitle: Karta zostaje zagrana i wróci za trzy miesiące."
+  }
 }

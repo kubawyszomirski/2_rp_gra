@@ -20,10 +20,11 @@ Each part of the country has a different civil law, and marriages and divorces a
 
 [+ pl_gc_budget +]
 
-[+ pl_gc_projects +]
+[? if pl_gc_projects : [+ pl_gc_projects +] ?]
 
 - @civil_marriage
 - @women_rights
+- @nothing
 - @easy_discard
 - @cancel_advisor_action
 
@@ -46,6 +47,14 @@ on-arrival: {!
 PolishProjects.chooseOption(Q, 'family_law', 'women_rights');
 !}
 go-to: result
+
+@nothing
+title: Do nothing now
+subtitle: The card is played and comes back in three months.
+on-arrival: {!
+PolishRules.skipCard(Q);
+!}
+go-to: root
 
 @result
 new-page: true

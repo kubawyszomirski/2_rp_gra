@@ -22,11 +22,12 @@ The countryside needs better tools, consolidated fields and cooperatives of its 
 
 [+ pl_gc_budget +]
 
-[+ pl_gc_projects +]
+[? if pl_gc_projects : [+ pl_gc_projects +] ?]
 
 - @advisory
 - @consolidation
 - @cooperative_processing_sales
+- @nothing
 - @easy_discard
 - @cancel_advisor_action
 
@@ -59,6 +60,14 @@ on-arrival: {!
 PolishProjects.chooseOption(Q, 'agriculture_development', 'cooperative_processing_sales');
 !}
 go-to: result
+
+@nothing
+title: Do nothing now
+subtitle: The card is played and comes back in three months.
+on-arrival: {!
+PolishRules.skipCard(Q);
+!}
+go-to: root
 
 @result
 new-page: true

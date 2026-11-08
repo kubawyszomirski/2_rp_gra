@@ -80,7 +80,7 @@ test('Roboty pod Pracą in the game: the Government deck offers the Labour cards
   assert.deepEqual(engine.state.currentHands.main.map(c => c.id), ['polish_gov_public_works'], 'the card goes back to the hand');
   engine.playCard('polish_gov_public_works');
   choose(engine, 'polish_gov_public_works.employment');
-  assert.match(content(engine), /Started: Public works — costs 2 budget units; the effects come at the end of the month\./);
+  assert.match(content(engine), /Started: Public works — costs 2 budget units\./, 'Z — 1.10: no note of the end of the month');
   choose(engine, 'root');
   assert.equal(Q.time, t + 1, 'one decision, one month');
   toMain(engine); // the December offices of 1922 come first
@@ -308,7 +308,7 @@ test('Karty resortów 0.93: one Treasury card with five instruments; every gover
   const engine = dendry.startGame();
   const Q = leftCabinet(engine);
   const options = id => Object.keys(engine.game.scenes).filter(s => s.startsWith(id + '.') && !s.endsWith('.result')).map(s => s.slice(id.length + 1)).sort();
-  assert.deepEqual(options('polish_gov_finance'), ['admin_cuts', 'emission', 'indirect', 'loan', 'progressive']);
+  assert.deepEqual(options('polish_gov_finance'), ['admin_cuts', 'emission', 'indirect', 'loan', 'nothing', 'progressive'], 'Z — 1.10: and doing nothing');
   assert.ok(!engine.game.scenes.polish_gov_finance_funding, 'the second Treasury card is gone');
   assert.equal(engine.game.scenes.polish_gov_finance.title, 'Taxes and Loans');
   Q.S.cabinet.portfolios.finance = 'pps';
@@ -387,4 +387,22 @@ test('Wydarzenia 1.04: opisy wydarzeń bez progów, szans i słów warsztatowych
   } finally {
     R.setLanguage('en');
   }
+});
+
+// Z — 1.10 (the user's notes of 8 XI 2026): with PPS in the cabinet there is no initiative of the club; a ministry card can be
+// played without doing anything, and it no longer says that it has no project yet.
+test('Rząd z PPS 1.10: no legislative initiative; "Do nothing" on a ministry card keeps the month and rests the card; no empty project line', () => {
+  const engine = dendry.startGame();
+  const Q = leftCabinet(engine);
+  Q.S.party_orgs.cash = 5;
+  assert.equal(PolishProjects.initiativeCardAvailable(Q), false, 'no initiative in the cabinet');
+  assert.deepEqual(PolishProjects.initiativeShown(Q), []);
+  dendry.playCard(engine, 'polish_gov_labor_rights');
+  assert.doesNotMatch(content(engine), /No project of this card yet/);
+  assert.ok(ids(engine).includes('polish_gov_labor_rights.nothing'));
+  const t = Q.time;
+  choose(engine, 'polish_gov_labor_rights.nothing');
+  assert.equal(Q.month_actions || 0, 0, 'the month stays free');
+  assert.equal(Q.time, t);
+  assert.ok(PolishRules.cardRest(Q, 'polish_gov_labor_rights') > 0, 'the card rests');
 });

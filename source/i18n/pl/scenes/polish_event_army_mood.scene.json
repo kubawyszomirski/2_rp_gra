@@ -1,0 +1,9 @@
+{
+  "source": "scenes/polish_event_army_mood.scene.dry",
+  "status": "complete",
+  "lines": {
+    "title: The Mood of the Army": "title: Nastroje w wojsku",
+    "subtitle: Reports from the garrisons about the officers loyal to Piłsudski.": "subtitle: Doniesienia z garnizonów o oficerach wiernych Piłsudskiemu.",
+    "title: Continue": "title: Dalej"
+  }
+}

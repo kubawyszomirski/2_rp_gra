@@ -1,17 +1,19 @@
 {
- "source": "scenes/government_affairs/polish_gov_military.scene.dry",
- "status": "complete",
- "lines": {
-  "title: Military Affairs": "title: Sprawy wojskowe",
-  "subtitle: The army: more money, cuts, or the promotion of officers loyal to the government.": "subtitle: Wojsko: więcej pieniędzy, cięcia albo awanse oficerów wiernych rządowi.",
-  "= Military affairs": "= Sprawy wojskowe",
-  "The army answers to the minister of military affairs, but many officers listen above all to Piłsudski. The pressure towards a coup stands at [+ pl_gc_coup_pressure +] of 100; the mood of the officers is described on the State tab.": "Wojsko podlega ministrowi spraw wojskowych, ale wielu oficerów słucha przede wszystkim Piłsudskiego. Presja na zamach wynosi [+ pl_gc_coup_pressure +] ze 100; nastroje oficerów opisuje zakładka Państwo.",
-  "- @root: Continue.": "- @root: Dalej.",
-  "title: Raise the spending on the army": "title: Zwiększ wydatki na wojsko",
-  "subtitle: Cost: [+ pl_cost2 +]. The officers are content and the pressure towards a coup falls (−5), but the dissent of the Left of PPS rises (+5).": "subtitle: Koszt: [+ pl_cost2n +]. Oficerowie są zadowoleni i presja na zamach spada (−5), ale rośnie sprzeciw Lewicy w PPS (+5).",
-  "title: Cut the spending on the army": "title: Obetnij wydatki na wojsko",
-  "subtitle: Brings the budget 2 units at once. The officers are indignant and the pressure towards a coup rises (+5).": "subtitle: Od razu zasila budżet: 2 jednostki. Oficerowie są oburzeni i presja na zamach rośnie (+5).",
-  "title: Promote officers loyal to the government": "title: Awansuj oficerów wiernych rządowi",
-  "subtitle: Cost: 1 budget unit. The army leans less towards Piłsudski (−3 percentage points), but relations with Piłsudski worsen (−10) and the Piłsudczycy in PPS protest (+8).": "subtitle: Koszt: 1 jednostka budżetu. Wojsko słabiej sprzyja Piłsudskiemu (−3 punkty procentowe), ale stosunki z Piłsudskim się psują (−10), a piłsudczycy w PPS protestują (+8)."
- }
+  "source": "scenes/government_affairs/polish_gov_military.scene.dry",
+  "status": "complete",
+  "lines": {
+    "title: Military Affairs": "title: Sprawy wojskowe",
+    "subtitle: The army: more money, cuts, or the promotion of officers loyal to the government.": "subtitle: Wojsko: więcej pieniędzy, cięcia albo awanse oficerów wiernych rządowi.",
+    "= Military affairs": "= Sprawy wojskowe",
+    "The army answers to the minister of military affairs, but many officers listen above all to Piłsudski. The pressure towards a coup stands at [+ pl_gc_coup_pressure +] of 100; the mood of the officers is described on the State tab.": "Wojsko podlega ministrowi spraw wojskowych, ale wielu oficerów słucha przede wszystkim Piłsudskiego. Presja na zamach wynosi [+ pl_gc_coup_pressure +] ze 100; nastroje oficerów opisuje zakładka Państwo.",
+    "- @root: Continue.": "- @root: Dalej.",
+    "title: Raise the spending on the army": "title: Zwiększ wydatki na wojsko",
+    "subtitle: Cost: [+ pl_cost2 +]. The officers are content and the pressure towards a coup falls (−5), but the dissent of the Left of PPS rises (+5).": "subtitle: Koszt: [+ pl_cost2n +]. Oficerowie są zadowoleni i presja na zamach spada (−5), ale rośnie sprzeciw Lewicy w PPS (+5).",
+    "title: Cut the spending on the army": "title: Obetnij wydatki na wojsko",
+    "subtitle: Brings the budget 2 units at once. The officers are indignant and the pressure towards a coup rises (+5).": "subtitle: Od razu zasila budżet: 2 jednostki. Oficerowie są oburzeni i presja na zamach rośnie (+5).",
+    "title: Promote officers loyal to the government": "title: Awansuj oficerów wiernych rządowi",
+    "subtitle: Cost: 1 budget unit. The army leans less towards Piłsudski (−3 percentage points), but relations with Piłsudski worsen (−10) and the Piłsudczycy in PPS protest (+8).": "subtitle: Koszt: 1 jednostka budżetu. Wojsko słabiej sprzyja Piłsudskiemu (−3 punkty procentowe), ale stosunki z Piłsudskim się psują (−10), a piłsudczycy w PPS protestują (+8).",
+    "title: Do nothing now": "title: Nic nie robimy",
+    "subtitle: The card is played and comes back in three months.": "subtitle: Karta zostaje zagrana i wróci za trzy miesiące."
+  }
 }

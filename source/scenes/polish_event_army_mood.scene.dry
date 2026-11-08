@@ -1,0 +1,26 @@
+title: The Mood of the Army
+subtitle: Reports from the garrisons about the officers loyal to Piłsudski.
+new-page: true
+tags: pl_event
+view-if: {! return !!Q.S && typeof PolishSecurity !== 'undefined' && PolishSecurity.armyMoodDue(Q) !}
+on-arrival: {!
+// Event coup.army_mood (Z — 1.10, decision 4A of 8 XI 2026 and the user's note): when the mood of the army first rises to
+// "seething" (pressure towards a coup from 40) and to "ready for a coup" (the political crisis from 55), the player learns it on
+// the screen, with the causes of the last month and what eases the tension. It changes nothing by itself.
+PolishSecurity.armyMoodView(Q);
+!}
+
+= [+ pl_army_title +]
+
+[+ pl_army_text +]
+
+[+ pl_army_help +]
+
+- @seen
+
+@seen
+title: Continue
+on-arrival: {!
+PolishSecurity.armyMoodSeen(Q);
+!}
+go-to: root

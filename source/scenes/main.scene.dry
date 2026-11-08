@@ -24,6 +24,8 @@ Q.polish_government_actions_available = this._compileChoices(this.game.scenes['m
     .some(function(choice) { return choice.canChoose && this.game.scenes[choice.id].isCard; }, this);
 // G4 (card catalogue 9.17): the reminder of the coming election, in the three months before it.
 Q.pl_election_reminder = PolishGovernment.electionReminder(Q);
+// Z — 1.10 (decision 4A): a change of the army's mood in the month after it.
+Q.pl_army_notice = typeof PolishSecurity !== 'undefined' && PolishSecurity.armyNotice ? PolishSecurity.armyNotice(Q) : '';
 // The Parliament deck (stage 3) opens only when one of its cards can be played.
 Q.polish_parliament_actions_available = this._compileChoices(this.game.scenes['main.parliament'])
     .some(function(choice) { return choice.canChoose && this.game.scenes[choice.id].isCard; }, this);
@@ -44,6 +46,8 @@ max-cards: 6
 [? if pl_agreement_notices : **Agreements:** [+ pl_agreement_notices +] ?]
 
 [? if pl_economy_notices : **Economy:** [+ pl_economy_notices +] ?]
+
+[? if pl_army_notice : **Army:** [+ pl_army_notice +] ?]
 
 [? if pl_election_reminder : **Elections approaching.** [+ pl_election_reminder +] [? if sejm_first_election_completed : This election ends the chapter. ?] ?]
 

@@ -66,7 +66,8 @@ test('Kontrola wojska bez pustych opcji: at an open military case the Parliament
   engine.goToScene('main');
   playFromHand(engine, 'polish_gov_military');
   assert.deepEqual(ids(engine).filter(id => !['easy_discard', 'cancel_advisor_action'].includes(id)),
-    ['polish_gov_military.raise_spending', 'polish_gov_military.cut_spending', 'polish_gov_military.promote_officers'], 'Z — 1.02: three permanent options');
+    ['polish_gov_military.raise_spending', 'polish_gov_military.cut_spending', 'polish_gov_military.promote_officers', 'polish_gov_military.nothing'],
+    'Z — 1.02: three permanent options; Z — 1.10: and doing nothing');
   choose(engine, 'easy_discard');
   // Z — 0.57 (item 12 of the play notes): the card is in the deck only when there is something to choose.
   assert.equal(PolishProjects.armyOversightAvailable(Q), false, 'no military case and no project');

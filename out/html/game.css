@@ -669,8 +669,8 @@ button.pl-discard.pl-disabled:hover {
   border-color: var(--accent-color);
 }
 .pl-urgent-label {
-  display: block;
-  font-size: 0.8em;
+  display: inline;
+  font-style: normal;
   font-variant: small-caps;
   letter-spacing: 0.06em;
   text-align: center;
@@ -905,9 +905,31 @@ img {
 
 /* The top bar (the user's decisions of 7 XI 2026). The Overview is a row of columns (one for each heading), the
    drawer a set of blocks in newspaper columns; on a narrower page the columns wrap. */
-.pl-overview {
+.pl-overview, .pl-groups {
   display: grid;
-  grid-template-columns: 1.05fr 0.9fr 1.1fr 1.05fr 1.2fr 1.4fr 0.95fr;
+  grid-template-columns: 0.9fr 1.05fr 1.05fr 1.1fr 1.2fr 1.4fr 0.95fr;
+}
+/* Z — 1.10 (decision 2A of 8 XI 2026): the two groups of columns, the party and the state, each under a small label. */
+.pl-groups {
+  padding: 0.45em 0 0;
+  font-size: 0.72em;
+  font-variant: small-caps;
+  letter-spacing: 0.12em;
+  color: var(--unavailable-color);
+}
+.pl-groups span {
+  margin: 0 1.3em;
+  padding-bottom: 0.1em;
+  border-bottom: 1px solid var(--rule-color);
+}
+.pl-groups .pl-group-party {
+  grid-column: 1 / span 2;
+}
+.pl-groups .pl-group-state {
+  grid-column: 3 / -1;
+}
+.pl-topbar.pl-idle .pl-groups {
+  display: none;
 }
 .pl-overview .pl-block {
   padding: 0.75em 1em 0.8em;
@@ -1198,6 +1220,9 @@ body.pl-ticker-on .pl-ticker {
   .pl-overview {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
+  .pl-groups {
+    display: none;
+  }
   .pl-overview .pl-block:nth-child(n+5) {
     border-top: 1px solid var(--hair-color);
   }
@@ -1485,4 +1510,9 @@ ul.choices li.pl-portrait-choice.unavailable .pl-portrait {
   font-style: normal;
   font-variant: small-caps;
   letter-spacing: 0.03em;
+}
+/* Z — 1.10 (decision 4A of 8 XI 2026): the mood of the army from "seething" on is printed in red. */
+.pl-army-alarm {
+  color: var(--accent-color);
+  font-weight: bold;
 }

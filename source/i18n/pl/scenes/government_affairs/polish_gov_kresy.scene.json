@@ -1,17 +1,19 @@
 {
- "source": "scenes/government_affairs/polish_gov_kresy.scene.dry",
- "status": "complete",
- "lines": {
-  "title: The Borderlands and the Minorities": "title: Kresy i mniejszości",
-  "subtitle: The Interior: minority languages in the offices, the voivodeship self-government, the eastern border.": "subtitle: Resort Spraw Wewnętrznych: języki mniejszości w urzędach, samorząd wojewódzki, granica wschodnia.",
-  "= The Borderlands and the minorities": "= Kresy i mniejszości",
-  "The minorities in the east want to deal with the offices in their own language and to govern themselves, and the eastern border has to be guarded. The discontent of the minorities stands at [+ pl_gc_minorities +] of 100.": "Mniejszości na wschodzie chcą załatwiać sprawy w urzędach we własnym języku i rządzić się same, a granicę wschodnią trzeba chronić. Niezadowolenie mniejszości wynosi teraz [+ pl_gc_minorities +] na 100.",
-  "title: Introduce minority languages in the offices": "title: Wprowadź języki mniejszości w urzędach",
-  "subtitle: Cost: 1 budget unit. The minorities trust PPS more (+3), but the National Democrats protest (−5). [? if pl_minorities_kresy_official_languages_coalition : [+ pl_minorities_kresy_official_languages_coalition +] ?]": "subtitle: Koszt: 1 jednostka budżetu. Mniejszości bardziej ufają PPS (+3), ale endecja protestuje (−5). [? if pl_minorities_kresy_official_languages_coalition : [+ pl_minorities_kresy_official_languages_coalition +] ?]",
-  "title: Carry out the act on the voivodeship self-government": "title: Wykonaj ustawę o samorządzie wojewódzkim",
-  "subtitle: Cost: 1 budget unit. The discontent of the minorities of the area falls (−3), but the National Democrats protest (−5). [? if pl_minorities_kresy_self_government_coalition : [+ pl_minorities_kresy_self_government_coalition +] ?]": "subtitle: Koszt: 1 jednostka budżetu. Niezadowolenie mniejszości na tym obszarze spada (−3), ale endecja protestuje (−5). [? if pl_minorities_kresy_self_government_coalition : [+ pl_minorities_kresy_self_government_coalition +] ?]",
-  "title: Strengthen the protection of the eastern border": "title: Wzmocnij ochronę granicy wschodniej",
-  "subtitle: Cost: [+ pl_cost2 +]. Political violence falls (−3), but the minorities trust PPS less (−3). [? if pl_minorities_kresy_border_coalition : [+ pl_minorities_kresy_border_coalition +] ?]": "subtitle: Koszt: [+ pl_cost2n +]. Przemoc polityczna spada (−3), ale mniejszości mniej ufają PPS (−3). [? if pl_minorities_kresy_border_coalition : [+ pl_minorities_kresy_border_coalition +] ?]",
-  "- @root: Continue.": "- @root: Dalej."
- }
+  "source": "scenes/government_affairs/polish_gov_kresy.scene.dry",
+  "status": "complete",
+  "lines": {
+    "title: The Borderlands and the Minorities": "title: Kresy i mniejszości",
+    "subtitle: The Interior: minority languages in the offices, the voivodeship self-government, the eastern border.": "subtitle: Resort Spraw Wewnętrznych: języki mniejszości w urzędach, samorząd wojewódzki, granica wschodnia.",
+    "= The Borderlands and the minorities": "= Kresy i mniejszości",
+    "The minorities in the east want to deal with the offices in their own language and to govern themselves, and the eastern border has to be guarded. The discontent of the minorities stands at [+ pl_gc_minorities +] of 100.": "Mniejszości na wschodzie chcą załatwiać sprawy w urzędach we własnym języku i rządzić się same, a granicę wschodnią trzeba chronić. Niezadowolenie mniejszości wynosi teraz [+ pl_gc_minorities +] na 100.",
+    "title: Introduce minority languages in the offices": "title: Wprowadź języki mniejszości w urzędach",
+    "subtitle: Cost: 1 budget unit. The minorities trust PPS more (+3), but the National Democrats protest (−5). [? if pl_minorities_kresy_official_languages_coalition : [+ pl_minorities_kresy_official_languages_coalition +] ?]": "subtitle: Koszt: 1 jednostka budżetu. Mniejszości bardziej ufają PPS (+3), ale endecja protestuje (−5). [? if pl_minorities_kresy_official_languages_coalition : [+ pl_minorities_kresy_official_languages_coalition +] ?]",
+    "title: Carry out the act on the voivodeship self-government": "title: Wykonaj ustawę o samorządzie wojewódzkim",
+    "subtitle: Cost: 1 budget unit. The discontent of the minorities of the area falls (−3), but the National Democrats protest (−5). [? if pl_minorities_kresy_self_government_coalition : [+ pl_minorities_kresy_self_government_coalition +] ?]": "subtitle: Koszt: 1 jednostka budżetu. Niezadowolenie mniejszości na tym obszarze spada (−3), ale endecja protestuje (−5). [? if pl_minorities_kresy_self_government_coalition : [+ pl_minorities_kresy_self_government_coalition +] ?]",
+    "title: Strengthen the protection of the eastern border": "title: Wzmocnij ochronę granicy wschodniej",
+    "subtitle: Cost: [+ pl_cost2 +]. Political violence falls (−3), but the minorities trust PPS less (−3). [? if pl_minorities_kresy_border_coalition : [+ pl_minorities_kresy_border_coalition +] ?]": "subtitle: Koszt: [+ pl_cost2n +]. Przemoc polityczna spada (−3), ale mniejszości mniej ufają PPS (−3). [? if pl_minorities_kresy_border_coalition : [+ pl_minorities_kresy_border_coalition +] ?]",
+    "- @root: Continue.": "- @root: Dalej.",
+    "title: Do nothing now": "title: Nic nie robimy",
+    "subtitle: The card is played and comes back in three months.": "subtitle: Karta zostaje zagrana i wróci za trzy miesiące."
+  }
 }

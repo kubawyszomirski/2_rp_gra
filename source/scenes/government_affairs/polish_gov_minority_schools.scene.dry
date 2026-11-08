@@ -23,11 +23,12 @@ The minorities want to teach their children in their own language, and the natio
 
 [+ pl_gc_budget +]
 
-[+ pl_gc_projects +]
+[? if pl_gc_projects : [+ pl_gc_projects +] ?]
 
 - @own_language
 - @agreed_bilingual
 - @polish_dominance
+- @nothing
 - @easy_discard
 - @cancel_advisor_action
 
@@ -60,6 +61,14 @@ on-arrival: {!
 PolishProjects.chooseOption(Q, 'minority_school_rights', 'polish_dominance');
 !}
 go-to: result
+
+@nothing
+title: Do nothing now
+subtitle: The card is played and comes back in three months.
+on-arrival: {!
+PolishRules.skipCard(Q);
+!}
+go-to: root
 
 @result
 new-page: true

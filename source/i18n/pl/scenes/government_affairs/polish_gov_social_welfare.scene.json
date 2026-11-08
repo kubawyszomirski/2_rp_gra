@@ -1,17 +1,19 @@
 {
- "source": "scenes/government_affairs/polish_gov_social_welfare.scene.dry",
- "status": "complete",
- "lines": {
-  "title: Benefits and Insurance": "title: Zasiłki i ubezpieczenia",
-  "subtitle: Labour: benefits for the unemployed and the insurance of workers.": "subtitle: Resort Pracy: zasiłki dla bezrobotnych i ubezpieczenia robotników.",
-  "= Benefits and insurance": "= Zasiłki i ubezpieczenia",
-  "The state can help the unemployed from the budget and insure the workers from contributions. [? if pl_gc_protection_level = 0 : There are no benefits for the unemployed yet. ?][? if pl_gc_protection_level > 0 : The benefits for the unemployed work at level [+ pl_gc_protection_level +] of 3. ?]": "Państwo może pomagać bezrobotnym z budżetu i ubezpieczać robotników ze składek. [? if pl_gc_protection_level = 0 : Zasiłków dla bezrobotnych jeszcze nie ma. ?][? if pl_gc_protection_level > 0 : Zasiłki dla bezrobotnych działają na poziomie [+ pl_gc_protection_level +] z 3. ?]",
-  "title: [? if pl_gc_protection_level = 0 : Introduce benefits for the unemployed ?][? if pl_gc_protection_level > 0 : Extend the benefits ?]": "title: [? if pl_gc_protection_level = 0 : Wprowadź zasiłki dla bezrobotnych ?][? if pl_gc_protection_level > 0 : Rozszerz zasiłki ?]",
-  "title: Introduce the old-age insurance of workers": "title: Wprowadź ubezpieczenie robotników na starość",
-  "title: Limit the benefits": "title: Ogranicz zasiłki",
-  "- @root: Continue.": "- @root: Dalej.",
-  "subtitle: Cost: [+ pl_cost3 +] for each of three levels. The unemployed get real help and are less discontented (−6). [? if pl_social_welfare_expand_coalition : [+ pl_social_welfare_expand_coalition +] ?]": "subtitle: Koszt: [+ pl_cost3 +] za każdy z trzech poziomów. Bezrobotni dostają realną pomoc i są mniej niezadowoleni (−6). [? if pl_social_welfare_expand_coalition : [+ pl_social_welfare_expand_coalition +] ?]",
-  "subtitle: Cost: [+ pl_cost2 +]. Employers and workers pay the rest in contributions; the workers are less discontented (−2), but business presses harder (+6). [? if pl_social_welfare_insurance_coalition : [+ pl_social_welfare_insurance_coalition +] ?]": "subtitle: Koszt: [+ pl_cost2n +]. Resztę płacą składki pracodawców i robotników; robotnicy są mniej niezadowoleni (−2), ale przedsiębiorcy mocniej naciskają (+6). [? if pl_social_welfare_insurance_coalition : [+ pl_social_welfare_insurance_coalition +] ?]",
-  "subtitle: Brings the budget 1 unit at once. The unemployed get less, and the dissent of the Left of PPS rises (+8). [? if pl_social_welfare_limit_coalition : [+ pl_social_welfare_limit_coalition +] ?]": "subtitle: Od razu oszczędza budżetowi 1 jednostkę. Bezrobotni dostają mniej, a sprzeciw Lewicy PPS rośnie (+8). [? if pl_social_welfare_limit_coalition : [+ pl_social_welfare_limit_coalition +] ?]"
- }
+  "source": "scenes/government_affairs/polish_gov_social_welfare.scene.dry",
+  "status": "complete",
+  "lines": {
+    "title: Benefits and Insurance": "title: Zasiłki i ubezpieczenia",
+    "subtitle: Labour: benefits for the unemployed and the insurance of workers.": "subtitle: Resort Pracy: zasiłki dla bezrobotnych i ubezpieczenia robotników.",
+    "= Benefits and insurance": "= Zasiłki i ubezpieczenia",
+    "The state can help the unemployed from the budget and insure the workers from contributions. [? if pl_gc_protection_level = 0 : There are no benefits for the unemployed yet. ?][? if pl_gc_protection_level > 0 : The benefits for the unemployed work at level [+ pl_gc_protection_level +] of 3. ?]": "Państwo może pomagać bezrobotnym z budżetu i ubezpieczać robotników ze składek. [? if pl_gc_protection_level = 0 : Zasiłków dla bezrobotnych jeszcze nie ma. ?][? if pl_gc_protection_level > 0 : Zasiłki dla bezrobotnych działają na poziomie [+ pl_gc_protection_level +] z 3. ?]",
+    "title: [? if pl_gc_protection_level = 0 : Introduce benefits for the unemployed ?][? if pl_gc_protection_level > 0 : Extend the benefits ?]": "title: [? if pl_gc_protection_level = 0 : Wprowadź zasiłki dla bezrobotnych ?][? if pl_gc_protection_level > 0 : Rozszerz zasiłki ?]",
+    "title: Introduce the old-age insurance of workers": "title: Wprowadź ubezpieczenie robotników na starość",
+    "title: Limit the benefits": "title: Ogranicz zasiłki",
+    "- @root: Continue.": "- @root: Dalej.",
+    "subtitle: Cost: [+ pl_cost3 +] for each of three levels. The unemployed get real help and are less discontented (−6). [? if pl_social_welfare_expand_coalition : [+ pl_social_welfare_expand_coalition +] ?]": "subtitle: Koszt: [+ pl_cost3 +] za każdy z trzech poziomów. Bezrobotni dostają realną pomoc i są mniej niezadowoleni (−6). [? if pl_social_welfare_expand_coalition : [+ pl_social_welfare_expand_coalition +] ?]",
+    "subtitle: Cost: [+ pl_cost2 +]. Employers and workers pay the rest in contributions; the workers are less discontented (−2), but business presses harder (+6). [? if pl_social_welfare_insurance_coalition : [+ pl_social_welfare_insurance_coalition +] ?]": "subtitle: Koszt: [+ pl_cost2n +]. Resztę płacą składki pracodawców i robotników; robotnicy są mniej niezadowoleni (−2), ale przedsiębiorcy mocniej naciskają (+6). [? if pl_social_welfare_insurance_coalition : [+ pl_social_welfare_insurance_coalition +] ?]",
+    "subtitle: Brings the budget 1 unit at once. The unemployed get less, and the dissent of the Left of PPS rises (+8). [? if pl_social_welfare_limit_coalition : [+ pl_social_welfare_limit_coalition +] ?]": "subtitle: Od razu oszczędza budżetowi 1 jednostkę. Bezrobotni dostają mniej, a sprzeciw Lewicy PPS rośnie (+8). [? if pl_social_welfare_limit_coalition : [+ pl_social_welfare_limit_coalition +] ?]",
+    "title: Do nothing now": "title: Nic nie robimy",
+    "subtitle: The card is played and comes back in three months.": "subtitle: Karta zostaje zagrana i wróci za trzy miesiące."
+  }
 }

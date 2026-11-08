@@ -79,6 +79,8 @@ test('Karta sporu 0.87: a wage case makes the card of a dispute urgent; it descr
   playDispute(engine);
   assert.deepEqual(ids(engine), ['polish_union_agenda.start', 'polish_union_agenda.threaten', 'polish_union_agenda.drop', 'easy_discard']);
   assert.match(JSON.stringify(engine.ui.paragraphs), /A dispute in industry and railways.*Real wages have fallen to 75\. The workers of industry and railways demand a rise.*A won strike: wages rise for two months/);
+  // Z — 1.10 (the user's note of 8 XI 2026): the state of the branches in words, without numbers.
+  assert.equal(Q.pl_dsp_numbers, 'Industry: reach medium, the workers are ready to fight, and trust us moderately. Railways: reach medium, the workers are ready to fight, and trust us moderately.');
   choose(engine, 'polish_union_agenda.start');
   assert.deepEqual(ids(engine), ['polish_union_agenda.g_small', 'polish_union_agenda.g_big', 'polish_union_agenda.g_political',
     'polish_union_agenda.p_no', 'polish_union_agenda.p_yes', 'polish_union_agenda.launch', 'polish_union_agenda'], 'no communists in these branches now');
@@ -306,7 +308,7 @@ test('the plant cards in the game: Labour signs a collective agreement in its st
   playFromHand(engine, 'polish_gov_industry');
   assert.match(JSON.stringify(engine.ui.paragraphs), /Recorded plants/);
   assert.deepEqual(ids(engine).filter(id => id.startsWith('polish_gov_industry.')), ['polish_gov_industry.orders', 'polish_gov_industry.rescue',
-    'polish_gov_industry.public_control']);
+    'polish_gov_industry.public_control', 'polish_gov_industry.nothing']);
   choose(engine, 'polish_gov_industry.rescue');
   // Z — 0.93 (decision 4A of 24 X 2026): the rescue starts in the same decision.
   assert.match(JSON.stringify(engine.ui.paragraphs), /rescue of the industrial plant no\. 1 is a conditional credit\. Started: Rescue of a plant/);

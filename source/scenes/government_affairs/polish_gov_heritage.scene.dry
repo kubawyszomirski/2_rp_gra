@@ -24,11 +24,12 @@ The state can restore monuments, support the universities and build a radio. Eac
 
 [+ pl_gc_budget +]
 
-[+ pl_gc_projects +]
+[? if pl_gc_projects : [+ pl_gc_projects +] ?]
 
 - @heritage
 - @science
 - @radio
+- @nothing
 - @easy_discard
 - @cancel_advisor_action
 
@@ -61,6 +62,14 @@ on-arrival: {!
 PolishProjects.chooseOption(Q, 'heritage_restoration', 'radio');
 !}
 go-to: result
+
+@nothing
+title: Do nothing now
+subtitle: The card is played and comes back in three months.
+on-arrival: {!
+PolishRules.skipCard(Q);
+!}
+go-to: root
 
 @result
 new-page: true

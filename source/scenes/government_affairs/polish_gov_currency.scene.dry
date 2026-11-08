@@ -22,11 +22,12 @@ The financial crisis goes on, and the reform of the currency has not begun. Choo
 
 [+ pl_gc_budget +]
 
-[+ pl_gc_projects +]
+[? if pl_gc_projects : [+ pl_gc_projects +] ?]
 
 - @rapid_cuts
 - @protected
 - @gradual
+- @nothing
 - @easy_discard
 - @cancel_advisor_action
 
@@ -59,6 +60,14 @@ on-arrival: {!
 PolishProjects.chooseOption(Q, 'currency_stabilisation', 'gradual');
 !}
 go-to: result
+
+@nothing
+title: Do nothing now
+subtitle: The card is played and comes back in three months.
+on-arrival: {!
+PolishRules.skipCard(Q);
+!}
+go-to: root
 
 @result
 new-page: true
