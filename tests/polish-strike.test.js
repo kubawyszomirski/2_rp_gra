@@ -392,3 +392,27 @@ test('Strajk w rządzie 1.12: no dispute card with PPS in the cabinet; the urgen
     PolishRules.setLanguage('en');
   }
 });
+
+// Z — 1.14 (the user's request of 8 XI 2026): the union cards in words — the expected participation, the communists, the Milicja,
+// the participation of a running strike and the organising card — without numbers of the mechanics.
+test('Związki słowami 1.14: no numbers of the mechanics on the union cards', () => {
+  const engine = dendry.startGame(1922, 'pl');
+  const Q = engine.state.qualities, S = Q.S;
+  try {
+    for (const id of ['industry', 'rail']) { S.unions[id].reach = 50; S.unions[id].readiness = 40; }
+    wageCase(Q);
+    engine.goToScene('main');
+    playDispute(engine);
+    choose(engine, 'polish_union_agenda.start');
+    assert.match(Q.pl_su_launch_line, /^Oczekiwany udział: Przemysł — średni, Kolej — średni; szansa na ofertę rządu w miesiącu: /);
+    assert.doesNotMatch(Q.pl_su_launch_line, /\d/);
+    PolishParty.unionInvestmentsView(Q);
+    for (const id of ['union_organize_industry', 'union_organize_rail', 'union_organize_farm_labour']) {
+      assert.match(Q['pl_uni_' + id + '_line'], /^Koszt: 1 jednostka środków\. Zasięg branży rośnie/);
+      assert.doesNotMatch(Q['pl_uni_' + id + '_line'].replace(/^Koszt: 1 jednostka środków\./, ''), /\d|→/);
+    }
+    assert.doesNotMatch(Q.pl_uni_bonus, /\d|%/);
+  } finally {
+    PolishRules.setLanguage('en');
+  }
+});

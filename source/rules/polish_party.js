@@ -841,6 +841,8 @@
   // Z — 1.08 (the user's note): the strength of a reach in a word instead of numbers.
   const reachWord = r => (r < 20 ? L('very weak', 'bardzo słaby') : r < 40 ? L('weak', 'słaby') : r < 60 ? L('medium', 'średni') :
     r < 80 ? L('strong', 'mocny') : L('very strong', 'bardzo mocny'));
+  // The genitive of a reach word after "z" (Z — 1.14): z bardzo słabego, ze słabego, ze średniego, z mocnego.
+  const REACH_GENITIVE = word => ({'bardzo słaby': 'bardzo słabego', 'słaby': 'słabego', 'średni': 'średniego', 'mocny': 'mocnego', 'bardzo mocny': 'bardzo mocnego'})[word] || word;
   function organizePreview(Q, kind) {
     const S = Q.S;
     if (kind === 'unions') {
@@ -3224,7 +3226,8 @@
   const BRANCH_ROLES = Object.freeze({
     industry: ['Support of the workers in the towns and the organisation of strikes.', 'Poparcie robotników w miastach i organizacja strajków.'],
     rail: ['Pressure on the government and the control of strategic infrastructure.', 'Nacisk na rząd i kontrola strategicznej infrastruktury.'],
-    farm_labour: ['Votes in the countryside; from reach 40 the harvest strike.', 'Głosy na wsi; od zasięgu 40 strajk żniwny.']});
+    // Z — 1.14: without the number of the threshold.
+    farm_labour: ['Votes in the countryside; a strong union can call a harvest strike.', 'Głosy na wsi; silny związek może ogłosić strajk żniwny.']});
   function unionInvestmentsView(Q) {
     organizationsView(Q);
     const S = Q.S;
@@ -3233,11 +3236,18 @@
       Q['pl_uni_' + id + '_why'] = selectionStatus(Q, [id], UNION_CARD).reason;
       const p = PACKAGES[id], reach = S.unions[p.branch].reach;
       const after = Math.min(100, reach + 15 * expansionMultiplier(S, {kind: 'branch', id: p.branch}));
-      Q['pl_uni_' + id + '_line'] = capitalise(rules.units(p.cost)) + L('; reach ', '; zasięg ') + fmt(reach) + ' → ' + fmt(after) + '. ' +
+      // Z — 1.14 (the user's request of 8 XI 2026): the cost first and the reach in words, without numbers.
+      const from = reachWord(reach), to = reachWord(after);
+      Q['pl_uni_' + id + '_line'] = L('Cost: ' + rules.units(p.cost) + '. ', 'Koszt: ' + rules.units(p.cost, 'resources', 'nom') + '. ') +
+        (from === to ? L('The reach of the branch grows but stays ' + to + '. ', 'Zasięg branży rośnie, ale zostaje ' + to + '. ') :
+          L('The reach of the branch grows from ' + from + ' to ' + to + '. ', 'Zasięg branży rośnie: ' + (/^s/.test(REACH_GENITIVE(from)) ? 'ze ' : 'z ') + REACH_GENITIVE(from) + ' na ' + to + '. ')) +
         L(BRANCH_ROLES[p.branch][0], BRANCH_ROLES[p.branch][1]);
     }
-    Q.pl_uni_bonus = L('Strong unions add 1% to every collection for each point of their average reach above 20; now +',
-      'Silne związki dodają do każdej zbiórki 1% za każdy punkt średniego zasięgu ponad 20; teraz +') + fmt(100 * unionCollectionBonus(S)) + '%.';
+    const bonus = unionCollectionBonus(S);
+    Q.pl_uni_bonus = L('Strong unions raise every collection of the party; ', 'Silne związki zwiększają każdą zbiórkę partii; ') +
+      (bonus <= 0 ? L('today they are too weak for it.', 'dziś są na to za słabe.') : bonus < 0.1 ? L('today a little.', 'dziś trochę.') :
+        bonus < 0.25 ? L('today clearly.', 'dziś wyraźnie.') : L('today strongly.', 'dziś mocno.'));
+    Q.pl_org_cash_words = rules.units(Math.round(S.party_orgs.cash * 10) / 10, 'resources', 'acc');
   }
 
   function organizationsSecondView(Q, first) {

@@ -14,7 +14,7 @@ PolishParty.unionInvestmentsView(Q);
 
 = Trade unions: organising
 
-PPS has [+ pl_org_cash +] R. [+ pl_uni_bonus +] Choose one branch to organise; the card waits two months before it comes back.
+PPS has [+ pl_org_cash_words +]. [+ pl_uni_bonus +] Choose one branch to organise; the card waits two months before it comes back.
 
 - @union_organize_industry
 - @union_organize_rail

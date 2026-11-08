@@ -1550,6 +1550,12 @@
   }
   // Z — 1.10 (the user's note of 8 XI 2026): the state of a branch on the dispute card in words, without numbers.
   const fifth = (v, words) => words[v < 20 ? 0 : v < 40 ? 1 : v < 60 ? 2 : v < 80 ? 3 : 4];
+  // Z — 1.14: participation, the influence of the communists and the relations in words.
+  // The participation of a branch is mostly 4–50 (reach × readiness × the call's compliance), so its words have their own steps.
+  const participationWord = v => (v < 5 ? L('very small', 'bardzo mały') : v < 12 ? L('small', 'mały') : v < 25 ? L('medium', 'średni') :
+    v < 40 ? L('large', 'duży') : L('very large', 'bardzo duży'));
+  const influenceWord = share => (share < 5 ? L('weak', 'słabe') : share < 15 ? L('noticeable', 'zauważalne') : L('strong', 'silne'));
+  const relationWord = v => fifth(v, [L('hostile', 'wrogie'), L('cool', 'chłodne'), L('neutral', 'neutralne'), L('good', 'dobre'), L('close', 'bliskie')]);
   const unionNumbers = (S, id) => {
     const u = S.unions[id];
     return branchName(id) + ': ' + L('reach ' + fifth(u.reach, ['very weak', 'weak', 'medium', 'strong', 'very strong']) + ', the workers ' +
@@ -1718,7 +1724,8 @@
     Q.pl_su_c_yes_why = setupWhy(Q, 'communists', true).reason;
     Q.pl_su_p_yes_why = setupWhy(Q, 'protection', true).reason;
     Q.pl_su_title = L('A strike: ', 'Strajk: ') + (rec.kind === 'harvest' ? L('the agricultural labourers', 'robotnicy rolni') : branchList(rec.branches));
-    const rows = rec.branches.map(b => branchName(b) + ' ' + fmt(participation(S, b)));
+    // Z — 1.14 (the user's request of 8 XI 2026): the expected participation in words.
+    const rows = rec.branches.map(b => branchName(b) + ' — ' + participationWord(participation(S, b)));
     const chance = roundChance(S, Object.assign({}, rec, {status: 'active', participants: rec.branches.reduce((m, b) => Object.assign(m, {[b]: participation(S, b)}), {}),
       communist_cooperation: null}), st.goal === 'big' ? THRESHOLDS.broad : THRESHOLDS.limited, S.turn.last_settled_time + 1).chance;
     Q.pl_su_launch_line = L('Expected participation: ', 'Oczekiwany udział: ') + rows.join(', ') +
@@ -1785,7 +1792,8 @@
     if (!rec) return;
     const active = rec.branches.reduce((n, b) => n + (rec.participants[b] || 0), 0);
     let text = L('The strike (' + rec.branches.map(b => BRANCH_NAMES[b].toLowerCase()).join(' and ') + ') has lasted since ' + rules.monthOf(rec.started_at) + '/' + rules.yearOf(rec.started_at) +
-      '; active participation ' + fmt(active) + '. ', 'Strajk (' + branchList(rec.branches) + ') trwa od ' + rules.monthYear(rec.started_at, 'gen') + '; aktywny udział ' + fmt(active) + '. ');
+      '; participation is ' + participationWord(active / Math.max(1, rec.branches.length)) + '. ', 'Strajk (' + branchList(rec.branches) + ') trwa od ' +
+      rules.monthYear(rec.started_at, 'gen') + '; udział jest ' + participationWord(active / Math.max(1, rec.branches.length)) + '. ');
     if (rec.offer) {
       const offer = rec.offer, consent = consentFor(S, rec, offer);
       const share = offer.fulfilment >= 1 ? L('all the demands', 'wszystkie postulaty') : L('part of the demands', 'część postulatów');
@@ -1864,9 +1872,9 @@
     const active = rec.branches.reduce((n, b) => n + (rec.participants[b] || 0), 0);
     if (rec.status === 'settlement_pending') return L('on strike, an offer to answer', 'strajk; oferta czeka na odpowiedź');
     return L('on strike for ' + demands + ' since ' + rules.monthOf(rec.started_at) + '/' + rules.yearOf(rec.started_at) +
-      (rec.last_processed_time !== null ? ', active participation ' + fmt(active) : ''),
+      (rec.last_processed_time !== null ? ', participation ' + participationWord(active / Math.max(1, rec.branches.length)) : ''),
       'strajk od ' + rules.monthYear(rec.started_at, 'gen') + ' (postulaty: ' + demands + ')' +
-      (rec.last_processed_time !== null ? ', aktywny udział ' + fmt(active) : ''));
+      (rec.last_processed_time !== null ? ', udział ' + participationWord(active / Math.max(1, rec.branches.length)) : ''));
   }
 
   // Z — 0.59 (the user's note of 6 X 2026, "explain the card"): the numbers of a branch in one short line, named as in the legend
@@ -2002,16 +2010,15 @@
     if (!rec) { Q.pl_st_title = L('The strike', 'Strajk'); Q.pl_st_text = L('The strike goes on.', 'Strajk trwa.'); return; }
     Q.pl_st_title = L('The strike of ' + rec.branches.map(b => BRANCH_NAMES[b].toLowerCase()).join(' and '), 'Strajk: ' + branchList(rec.branches));
     Q.pl_st_text = Q.pl_st_stage === 'cooperation' ?
-      L('The communists act in this strike (the KPP has ' + fmt(electorate.aggregate(S, c => c.class_id === 'workers', 'kpp')) +
-        '% among the workers). Their contribution is ' + PARTNER_CONTRIBUTION + ' points of participation; their goal is political: to bring down ' +
-        'the cabinet by a general strike. Relation ' +
-        fmt(S.actors.relations.kpp) + '.',
-        'Komuniści działają w tym strajku (KPP ma ' + fmt(electorate.aggregate(S, c => c.class_id === 'workers', 'kpp')) +
-        '% wśród robotników). Ich wkład to ' + PARTNER_CONTRIBUTION + ' pkt udziału; ich cel jest polityczny: obalić gabinet strajkiem ' +
-        'generalnym. Relacja ' + fmt(S.actors.relations.kpp) + '.') :
-      L('Milicja PPS can protect the strikers: ' + S.militia.strength + ' people, 0.5 R. Protection lowers the exposure of the people it covers; it ' +
-        'does not stop a clash.', 'Milicja PPS może chronić strajkujących: ' + S.militia.strength + ' ' +
-        rules.plural(S.militia.strength, 'osoba', 'osoby', 'osób') + ', 0,5 R. Ochrona zmniejsza narażenie osób, które obejmuje; nie zapobiega starciu.');
+      L('The communists act in this strike; their influence among the workers is ' + influenceWord(electorate.aggregate(S, c => c.class_id === 'workers', 'kpp')) +
+        '. Their people make the strike stronger, but their goal is political: to bring down the cabinet by a general strike. Our relations with the KPP are ' +
+        relationWord(S.actors.relations.kpp) + '.',
+        'Komuniści działają w tym strajku; ich wpływy wśród robotników są ' + influenceWord(electorate.aggregate(S, c => c.class_id === 'workers', 'kpp')) +
+        '. Ich ludzie wzmacniają strajk, ale ich cel jest polityczny: obalić gabinet strajkiem generalnym. Nasze stosunki z KPP są ' +
+        relationWord(S.actors.relations.kpp) + '.') :
+      L('Milicja PPS can protect the strikers with its ' + S.militia.strength + ' people; it costs half a unit of resources. Protection lowers the exposure of the people it covers; it ' +
+        'does not stop a clash.', 'Milicja PPS może chronić strajkujących swoimi ' + S.militia.strength + ' ' +
+        rules.plural(S.militia.strength, 'członkiem', 'członkami', 'członkami') + '; kosztuje to pół jednostki środków. Ochrona zmniejsza narażenie osób, które obejmuje; nie zapobiega starciu.');
     for (const mode of ['full', 'limited', 'none']) Q['pl_st_' + mode + '_why'] = cooperationStatus(Q, mode).reason;
     Q.pl_st_protect_why = protectionStatus(Q, 'protect').reason;
   }

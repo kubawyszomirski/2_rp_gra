@@ -1,19 +1,19 @@
 {
- "source": "scenes/party_affairs/polish_party_union_investments.scene.dry",
- "status": "complete",
- "lines": {
-  "title: Trade Unions: Organising": "title: Związki zawodowe: organizowanie",
-  "subtitle: One investment in one action: organise a branch of the unions.": "subtitle: Jedna inwestycja w jednej akcji: zorganizuj branżę związkową.",
-  "= Trade unions: organising": "= Związki zawodowe: organizowanie",
-  "PPS has [+ pl_org_cash +] R. [+ pl_uni_bonus +] Choose one branch to organise; the card waits two months before it comes back.": "PPS ma [+ pl_org_cash +] R. [+ pl_uni_bonus +] Wybierz jedną branżę do zorganizowania; karta wraca po dwóch miesiącach.",
-  "title: Organise the industrial branch": "title: Zorganizuj branżę przemysłową",
-  "title: Organise the railway branch": "title: Zorganizuj branżę kolejową",
-  "title: Organise agricultural labour": "title: Zorganizuj robotników rolnych",
-  "- @root: Continue.": "- @root: Dalej.",
-  "subtitle: [+ pl_uni_union_organize_industry_line +]": "subtitle: [+ pl_uni_union_organize_industry_line +]",
-  "subtitle: [+ pl_uni_union_organize_rail_line +]": "subtitle: [+ pl_uni_union_organize_rail_line +]",
-  "subtitle: [+ pl_uni_union_organize_farm_labour_line +]": "subtitle: [+ pl_uni_union_organize_farm_labour_line +]",
-  "title: Do nothing now": "title: Nic nie robimy",
-  "subtitle: The card is played and comes back in three months.": "subtitle: Karta zostaje zagrana i wróci za trzy miesiące."
- }
+  "source": "scenes/party_affairs/polish_party_union_investments.scene.dry",
+  "status": "complete",
+  "lines": {
+    "title: Trade Unions: Organising": "title: Związki zawodowe: organizowanie",
+    "subtitle: One investment in one action: organise a branch of the unions.": "subtitle: Jedna inwestycja w jednej akcji: zorganizuj branżę związkową.",
+    "= Trade unions: organising": "= Związki zawodowe: organizowanie",
+    "title: Organise the industrial branch": "title: Zorganizuj branżę przemysłową",
+    "title: Organise the railway branch": "title: Zorganizuj branżę kolejową",
+    "title: Organise agricultural labour": "title: Zorganizuj robotników rolnych",
+    "- @root: Continue.": "- @root: Dalej.",
+    "subtitle: [+ pl_uni_union_organize_industry_line +]": "subtitle: [+ pl_uni_union_organize_industry_line +]",
+    "subtitle: [+ pl_uni_union_organize_rail_line +]": "subtitle: [+ pl_uni_union_organize_rail_line +]",
+    "subtitle: [+ pl_uni_union_organize_farm_labour_line +]": "subtitle: [+ pl_uni_union_organize_farm_labour_line +]",
+    "title: Do nothing now": "title: Nic nie robimy",
+    "subtitle: The card is played and comes back in three months.": "subtitle: Karta zostaje zagrana i wróci za trzy miesiące.",
+    "PPS has [+ pl_org_cash_words +]. [+ pl_uni_bonus +] Choose one branch to organise; the card waits two months before it comes back.": "PPS ma [+ pl_org_cash_words +]. [+ pl_uni_bonus +] Wybierz jedną branżę do zorganizowania; karta wraca po dwóch miesiącach."
+  }
 }

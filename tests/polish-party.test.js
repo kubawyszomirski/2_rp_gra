@@ -267,9 +267,11 @@ test('Związki zawodowe — organizowanie (Z — 0.86): a card of its own with t
   assert.deepEqual(ids(engine), ['polish_party_union_investments.union_organize_industry', 'polish_party_union_investments.union_organize_rail',
     'polish_party_union_investments.union_organize_farm_labour', 'polish_party_union_investments.nothing', 'easy_discard'], 'no union funds since Z — 0.86');
   assert.match(plain(choice(engine, 'polish_party_union_investments.union_organize_farm_labour').subtitle),
-    /^1 resource; reach 10 → 26\.5\. Votes in the countryside; from reach 40 the harvest strike\.$/);
+    /^Cost: 1 resource\. The reach of the branch grows from very weak to weak\. Votes in the countryside; a strong union can call a harvest strike\.$/,
+    'Z — 1.14: the reach in words');
   assert.match(plain(choice(engine, 'polish_party_union_investments.union_organize_rail').subtitle), /control of strategic infrastructure/);
-  assert.match(JSON.stringify(engine.ui.paragraphs), /Strong unions add 1% to every collection for each point of their average reach above 20; now \+0%\./);
+  const page = plain(engine.ui.paragraphs);
+  assert.match(page, /PPS has \d+ resources?\. Strong unions raise every collection of the party; today they are too weak for it\./);
   choose(engine, 'polish_party_union_investments.union_organize_rail');
   assert.ok(Math.abs(Q.S.unions.rail.reach - 36.5) < 1e-9, 'rail +15 × 1.10: the character of a workers’ party (10.6)');
   assert.equal(Q.month_actions, 1, 'the month is spent');
