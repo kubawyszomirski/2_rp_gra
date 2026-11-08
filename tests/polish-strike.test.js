@@ -339,3 +339,56 @@ test('B14 in the game: the toleration offer to Grabski with the protections is m
   assert.match(JSON.stringify(engine.ui.paragraphs), /protections and a heavier burden on wealth/);
   assert.equal(Q.month_actions || 0, 0);
 });
+
+// Z — 1.12 (decision 7A of 8 XI 2026): while PPS sits in the cabinet, the dispute card does not come; the unions strike on their own,
+// and the government answers on an urgent card of the Government deck.
+test('Strajk w rządzie 1.12: no dispute card with PPS in the cabinet; the urgent card of the government; meet the demands, arbitration, an order, nothing', () => {
+  const answer = (option, prepare) => {
+    const engine = dendry.startGame(1922, 'pl');
+    const Q = engine.state.qualities, S = Q.S;
+    S.cabinet.status = 'active';
+    if (!S.cabinet.partner_ids.includes('pps')) S.cabinet.partner_ids.push('pps');
+    for (const id of ['industry', 'rail']) { S.unions[id].reach = 50; S.unions[id].readiness = 40; S.unions[id].trust = 50; S.unions[id].dissent = 10; }
+    const rec = wageCase(Q);
+    if (prepare) prepare(Q);
+    engine.goToScene('main');
+    return { engine, Q, S, rec };
+  };
+  try {
+    const { engine, Q, S, rec } = answer('meet');
+    assert.equal(PolishUnions.disputeCardAvailable(Q), false, 'no dispute card for a governing PPS');
+    assert.ok(!dendry.urgentCards(engine).includes('polish_union_agenda'));
+    assert.ok(dendry.urgentCards(engine).includes('polish_gov_strike'));
+    assert.equal(dendry.urgentDeck(engine, 'polish_gov_strike'), 'main.govt');
+    dendry.playCard(engine, 'polish_gov_strike');
+    assert.deepEqual(ids(engine), ['polish_gov_strike.meet', 'polish_gov_strike.arbitration', 'polish_gov_strike.order', 'polish_gov_strike.nothing']);
+    assert.match(JSON.stringify(engine.ui.paragraphs), /Robotnicy \(przemysł i kolej\) strajkują: płace realne spadły, a związki żądają podwyżek\. PPS jest w rządzie, więc odpowiedzieć musi nasz gabinet\./);
+    const pool = S.economy.budget, t = Q.time;
+    choose(engine, 'polish_gov_strike.meet');
+    assert.match(JSON.stringify(engine.ui.paragraphs), /Rząd spełnia żądania: płace rosną na dwa miesiące/);
+    assert.deepEqual([S.economy.budget, rec.status, rec.outcome, S.unions.industry.trust, Q.time], [pool - 1, 'ended', 'government_concession', 55, t]);
+    assert.equal(rec.settlements[0].clauses[0].kind, 'wages', 'the wage rise is signed');
+    // Arbitration: half the rise, no money.
+    const arb = answer('arbitration');
+    const pool2 = arb.S.economy.budget;
+    PolishUnions.govStrikeChoose(arb.Q, 'arbitration');
+    assert.deepEqual([arb.S.economy.budget, arb.rec.outcome, arb.rec.settlements[0].wage_factor, arb.S.unions.rail.trust], [pool2, 'arbitration', 0.5, 52]);
+    // An order: an imposed end and the Left protests.
+    const ord = answer('order');
+    const lewica = ord.S.actors.pps.factions.lewica.dissent;
+    PolishUnions.govStrikeChoose(ord.Q, 'order');
+    assert.deepEqual([ord.rec.outcome, ord.S.unions.industry.trust, ord.S.unions.industry.dissent], ['ordered_end', 42, 20]);
+    assert.ok(ord.S.actors.pps.factions.lewica.dissent > lewica, 'the Left of PPS protests');
+    // Nothing: the card waits a month; three months without an answer and the strike collapses.
+    const none = answer('nothing');
+    PolishUnions.govStrikeChoose(none.Q, 'nothing');
+    assert.equal(PolishUnions.govStrikeAvailable(none.Q), false, 'not again this month');
+    assert.ok(none.S.economy.shocks.some(s => s.channel === 'output' && s.value < 0));
+    none.Q.time += 1;
+    assert.equal(PolishUnions.govStrikeAvailable(none.Q), true, 'back next month');
+    PolishUnions.endMonth(none.Q, { t: none.rec.case_opened_at + 3 });
+    assert.deepEqual([none.rec.status, none.rec.outcome, none.S.unions.industry.trust], ['ended', 'collapsed', 45]);
+  } finally {
+    PolishRules.setLanguage('en');
+  }
+});

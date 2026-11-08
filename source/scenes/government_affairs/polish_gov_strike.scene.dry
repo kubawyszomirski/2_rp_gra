@@ -1,0 +1,63 @@
+title: Strike: the Government's Answer
+subtitle: An urgent card: the unions strike, and our cabinet has to answer.
+new-page: true
+is-card: true
+view-if: {! return !!Q.S && typeof PolishUnions !== 'undefined' && PolishUnions.govStrikeAvailable(Q) !}
+on-arrival: {!
+// Card government.strike (Z — 1.12, decision 7A of 8 XI 2026; P): while PPS sits in the cabinet, a dispute over wages is a strike the
+// unions start on their own, and the government answers here for no month: meet the demands, arbitration, an order to end it, or
+// nothing (the card comes back; after three months without an answer the strike collapses).
+PolishUnions.govStrikeView(Q);
+!}
+
+= [+ pl_gstr_title +]
+
+[+ pl_gstr_text +]
+
+- @meet
+- @arbitration
+- @order
+- @nothing
+
+@meet
+title: Meet the demands
+subtitle: Cost: 1 budget unit. Wages rise for two months, the unions and the workers trust PPS more, but business presses harder.
+choose-if: {! return PolishUnions.govStrikeStatus(Q, 'meet').available !}
+unavailable-subtitle: [+ pl_gstr_meet_why +]
+on-arrival: {!
+Q.pl_gstr_result = PolishUnions.govStrikeChoose(Q, 'meet');
+!}
+go-to: result
+
+@arbitration
+title: Call an arbitration
+subtitle: A compromise at no cost: wages rise by half of what the unions demand, the unions trust PPS a little more, and business presses a little harder.
+on-arrival: {!
+Q.pl_gstr_result = PolishUnions.govStrikeChoose(Q, 'arbitration');
+!}
+go-to: result
+
+@order
+title: Order the end of the strike
+subtitle: No rise: the unions feel betrayed, and the Left of PPS protests.
+on-arrival: {!
+Q.pl_gstr_result = PolishUnions.govStrikeChoose(Q, 'order');
+!}
+go-to: result
+
+@nothing
+title: Do nothing
+subtitle: The strike goes on and output falls; the card comes back next month. A strike left without an answer for three months collapses, and the unions trust PPS less.
+on-arrival: {!
+Q.pl_gstr_result = PolishUnions.govStrikeChoose(Q, 'nothing');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= [+ pl_gstr_title +]
+
+[+ pl_gstr_result +]
+
+- @root: Continue.

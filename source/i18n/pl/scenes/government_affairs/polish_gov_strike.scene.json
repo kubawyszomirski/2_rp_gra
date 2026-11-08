@@ -1,0 +1,17 @@
+{
+  "source": "scenes/government_affairs/polish_gov_strike.scene.dry",
+  "status": "complete",
+  "lines": {
+    "title: Strike: the Government's Answer": "title: Strajk: odpowiedź rządu",
+    "subtitle: An urgent card: the unions strike, and our cabinet has to answer.": "subtitle: Karta pilna: związki strajkują, a nasz gabinet musi odpowiedzieć.",
+    "title: Meet the demands": "title: Spełnij żądania",
+    "subtitle: Cost: 1 budget unit. Wages rise for two months, the unions and the workers trust PPS more, but business presses harder.": "subtitle: Koszt: 1 jednostka budżetu. Płace rosną na dwa miesiące, związki i robotnicy bardziej ufają PPS, ale przedsiębiorcy mocniej naciskają.",
+    "title: Call an arbitration": "title: Zwołaj arbitraż",
+    "title: Order the end of the strike": "title: Nakaż zakończenie strajku",
+    "subtitle: No rise: the unions feel betrayed, and the Left of PPS protests.": "subtitle: Bez podwyżek: związki czują się zdradzone, a Lewica PPS protestuje.",
+    "title: Do nothing": "title: Nic nie robimy",
+    "subtitle: The strike goes on and output falls; the card comes back next month. A strike left without an answer for three months collapses, and the unions trust PPS less.": "subtitle: Strajk trwa, a produkcja spada; karta wróci w przyszłym miesiącu. Strajk bez odpowiedzi przez trzy miesiące upada, a związki mniej ufają PPS.",
+    "- @root: Continue.": "- @root: Dalej.",
+    "subtitle: A compromise at no cost: wages rise by half of what the unions demand, the unions trust PPS a little more, and business presses a little harder.": "subtitle: Kompromis bez kosztu: płace rosną o połowę mniej, niż żądają związki; związki trochę bardziej ufają PPS, a przedsiębiorcy trochę mocniej naciskają."
+  }
+}

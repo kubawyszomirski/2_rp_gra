@@ -180,6 +180,8 @@ const PASSIVE_EVENTS = {
   polish_presidential_first: ['decline_daszynski'],
   polish_presidential_second: ['do_not_run_daszynski_second'],
   polish_budget_package: ['refuse', 'later'],
+  // Z — 1.12: a strike while PPS governs — a passive PPS does nothing.
+  polish_gov_strike: ['nothing'],
   polish_initiative_vote: ['passed', 'rejected', 'withdraw'],
   // Z — 0.82: the motions PPS supports in the constitutional debate, in its order (none by default); the vote card has one answer.
   constitution_debate: [],
@@ -204,6 +206,7 @@ const ACTIVE_EVENTS = Object.assign({}, PASSIVE_EVENTS, {
   polish_event_austerity_1926_threat: ['back_down'],
   polish_speaker_election: ['rataj', 'daszynski'],
   polish_budget_package: ['protect', 'support', 'refuse', 'later'],
+  polish_gov_strike: ['arbitration', 'meet', 'nothing'],
   polish_initiative_vote: ['passed', 'limited', 'rejected'],
   polish_union_agenda: ['threaten', 'small'],
   coup_stance: 'defend_legal', coup_commit: 'both', coup_f9: 'accept',
@@ -426,7 +429,8 @@ function playMonth(engine, strat, used) {
   // Z — 0.81: the vote on a bill of the legislative initiative is an urgent card that costs no month; it is answered first.
   // Z — 0.82: so is the vote on a motion of the constitutional debate.
   // Z — 0.87: so is the government's offer in a strike.
-  for (const card of ['polish_initiative_vote', 'polish_constitution_vote', 'polish_strike_offer']) if (runPath(engine, [card])) {
+  // Z — 1.12: so is the answer of a government of PPS to a strike.
+  for (const card of ['polish_initiative_vote', 'polish_constitution_vote', 'polish_strike_offer', 'polish_gov_strike']) if (runPath(engine, [card])) {
     while (engine.state.sceneId !== 'main' && Q.S.chapter.status !== 'ended' && Q.time === ctx.t) {
       if (!answer(engine, strat)) break;
     }

@@ -514,7 +514,7 @@
       for (const settlement of rec.settlements) {
         const wages = settlement.clauses.filter(c => c.kind === 'wages' && c.status === 'executed')[0];
         if (!wages || t < wages.executed_at || t >= wages.executed_at + WAGE_AGREEMENT_MONTHS) continue;
-        pp += WAGE_AGREEMENT_PP * settlement.branches.reduce((n, b) => n + WAGE_SCOPE[b], 0);
+        pp += WAGE_AGREEMENT_PP * (settlement.wage_factor || 1) * settlement.branches.reduce((n, b) => n + WAGE_SCOPE[b], 0);
       }
     }
     return pp;
@@ -619,6 +619,7 @@
             branches: rec.branches.slice()});
         }
       }
+      govStrikeMonth(Q, t);
       watchWages(Q, t);
       watchHarvest(Q, t);
       recordPlants(Q, t);
@@ -1416,10 +1417,105 @@
   function leadershipBranch(S) {
     return BRANCHES.filter(id => S.unions[id] && openCause(S.unions[id]))[0] || null;
   }
+  // Z — 1.12 (decision 7A of 8 XI 2026): while PPS sits in the cabinet, a dispute over wages is answered by the government on the card
+  // polish_gov_strike; the card of the dispute keeps only the dispute of a branch with the leadership of PPS.
+  const ppsGoverns = S => government.ppsStance(S) === 'member';
   function disputeCardAvailable(Q) {
-    return agendaAvailable(Q) && (!!disputeRecord(Q.S) || !!leadershipBranch(Q.S));
+    return agendaAvailable(Q) && ((!!disputeRecord(Q.S) && !ppsGoverns(Q.S)) || !!leadershipBranch(Q.S));
   }
-  const disputeUrgent = Q => agendaAvailable(Q) && !!disputeRecord(Q.S) && !government.formationPending(Q);
+  const disputeUrgent = Q => agendaAvailable(Q) && !!disputeRecord(Q.S) && !ppsGoverns(Q.S) && !government.formationPending(Q);
+
+  // ---- Z — 1.12 (decision 7A of 8 XI 2026): a strike while PPS governs ------------------------------------------------------
+  // The unions strike on their own, and the government of PPS answers on an urgent card of the Government deck, for no month:
+  // meet the demands (1 B; the wage rise signed at once, the unions' trust +5, the workers' support +1, business +4), arbitration
+  // (half the rise for no money; trust +2, business +2), an order to end the strike (an imposed end: trust −8 and dissent +10 in each
+  // branch; the Left of PPS +6) or nothing (the strike goes on: output falls for the month; after three months it collapses, and the
+  // unions' trust falls −5). P: the numbers are game values.
+  const GOV_STRIKE = Object.freeze({price: 1, floor: -3, trust_meet: 5, business_meet: 4, trust_arbitration: 2, business_arbitration: 2,
+    lewica: 6, output: -0.3, months: 3, collapse_trust: 5});
+  const GOV_STRIKE_OPTIONS = Object.freeze(['meet', 'arbitration', 'order', 'nothing']);
+  function govStrikeRecord(S) {
+    return ppsGoverns(S) ? disputeRecord(S) : null;
+  }
+  function govStrikeAvailable(Q) {
+    if (!agendaAvailable(Q) || government.formationPending(Q)) return false;
+    const rec = govStrikeRecord(Q.S);
+    return !!rec && rec.gov_waited_at !== Q.time;
+  }
+  function govStrikeStatus(Q, option) {
+    const S = Q.S;
+    if (!govStrikeAvailable(Q)) return no(L('No strike waits for the government.', 'Żaden strajk nie czeka na odpowiedź rządu.'));
+    if (GOV_STRIKE_OPTIONS.indexOf(option) < 0) return no(L('Unknown answer.', 'Nieznana odpowiedź.'));
+    if (option === 'meet' && S.economy.budget - GOV_STRIKE.price < GOV_STRIKE.floor - 1e-9) {
+      return no(L('The budget cannot go below −3 B.', 'Budżet nie może zejść niżej niż −3 B.'));
+    }
+    return OK;
+  }
+  function govStrikeView(Q) {
+    const S = Q.S, rec = govStrikeRecord(S);
+    if (!rec) return;
+    const months = Math.max(0, Q.time - (rec.case_opened_at === null || rec.case_opened_at === undefined ? Q.time : rec.case_opened_at + 1));
+    const who = rec.kind === 'harvest' ? L('The agricultural labourers strike during the harvest: they demand higher pay from the estates.',
+      'Robotnicy rolni strajkują w czasie żniw: żądają od majątków wyższej płacy.') :
+      L('The workers of ' + rec.branches.map(b => BRANCH_NAMES[b].toLowerCase()).join(' and ') + ' strike: real wages have fallen, and the unions demand a rise.',
+        'Robotnicy (' + branchList(rec.branches) + ') strajkują: płace realne spadły, a związki żądają podwyżek.');
+    Q.pl_gstr_title = rec.kind === 'harvest' ? L('A strike of the agricultural labourers', 'Strajk robotników rolnych') :
+      L('A strike in ' + rec.branches.map(b => BRANCH_NAMES[b].toLowerCase()).join(' and '), 'Strajk: ' + branchList(rec.branches));
+    Q.pl_gstr_text = who + ' ' + L('PPS sits in the government, so it is our cabinet that has to answer.', 'PPS jest w rządzie, więc odpowiedzieć musi nasz gabinet.') +
+      (months > 0 ? ' ' + L('The strike has gone on for ' + (months === 1 ? 'a month' : months + ' months') + '.', months === 1 ? ' Strajk trwa już miesiąc.'.trim() :
+        'Strajk trwa już ' + months + ' miesiące.') : '');
+    for (const option of GOV_STRIKE_OPTIONS) Q['pl_gstr_' + option + '_why'] = govStrikeStatus(Q, option).reason || '';
+  }
+  function govStrikeChoose(Q, option) {
+    const S = Q.S, t = Q.time, rec = govStrikeRecord(S), status = govStrikeStatus(Q, option);
+    if (!status.available) throw new Error('govStrikeChoose: ' + option + ': ' + status.reason);
+    const id = 'gov_strike:' + rec.id + ':' + option + ':t' + t;
+    S.history.actions.push({t: t, action_id: 'government.strike.' + option, strike_id: rec.id, cost_t: 0});
+    rec.history.push({t: t, kind: 'government_answer', answer: option});
+    if (option === 'meet' || option === 'arbitration') {
+      const offer = offerOf(rec, ['wages'], t);
+      offer.status = 'accepted';
+      const settlement = signSettlement(Q, rec, offer, true);
+      if (option === 'arbitration') settlement.wage_factor = 0.5;
+      const trust = option === 'meet' ? GOV_STRIKE.trust_meet : GOV_STRIKE.trust_arbitration;
+      for (const b of rec.branches) S.unions[b].trust = clip(S.unions[b].trust + trust, 0, 100);
+      economy.changeBusinessPressure(S, option === 'meet' ? GOV_STRIKE.business_meet : GOV_STRIKE.business_arbitration, id, t, 'government_strike');
+      rec.agreed_end = true;
+      endRecord(S, rec, option === 'meet' ? 'government_concession' : 'arbitration', t, Q);
+      if (option === 'meet') {
+        economy.changePool(S, -GOV_STRIKE.price, t, id, 'Wage rise after a strike', 'Podwyżka po strajku');
+        const gained = wonSupport(Q, rec.branches);
+        return L('The government meets the demands: wages rise for two months; it costs the budget 1 unit. The unions trust PPS more (+' + trust + ')' +
+          (gained ? ', and the workers support it more' : '') + '; business presses harder (+' + GOV_STRIKE.business_meet + ').',
+          'Rząd spełnia żądania: płace rosną na dwa miesiące; kosztuje to budżet 1 jednostkę. Związki bardziej ufają PPS (+' + trust + ')' +
+          (gained ? ', a robotnicy chętniej ją popierają' : '') + '; przedsiębiorcy mocniej naciskają (+' + GOV_STRIKE.business_meet + ').');
+      }
+      return L('An arbitration ends the strike: for two months wages rise by half of what the unions demanded, at no cost to the budget. The unions trust PPS a little more (+' + trust +
+        '), and business presses a little harder (+' + GOV_STRIKE.business_arbitration + ').',
+        'Arbitraż kończy strajk: przez dwa miesiące płace rosną o połowę mniej, niż żądały związki, bez kosztu dla budżetu. Związki trochę bardziej ufają PPS (+' + trust +
+        '), a przedsiębiorcy trochę mocniej naciskają (+' + GOV_STRIKE.business_arbitration + ').');
+    }
+    if (option === 'order') {
+      for (const b of rec.branches) imposeEnd(S.unions[b], rec, t, S);
+      government.factionReaction(Q, 'lewica', {dissent: GOV_STRIKE.lewica}, {id: id, kind: 'cabinet_policy', reverse: null});
+      endRecord(S, rec, 'ordered_end', t, Q);
+      return L('The government orders the end of the strike without concessions. The unions feel betrayed (dissent +10, trust −8), and the Left of PPS protests (+' +
+        GOV_STRIKE.lewica + ').', 'Rząd nakazuje zakończenie strajku bez ustępstw. Związki czują się zdradzone (sprzeciw +10, zaufanie −8), a Lewica PPS protestuje (+' +
+        GOV_STRIKE.lewica + ').');
+    }
+    rec.gov_waited_at = t;
+    economy.addShock(S.economy, {id: id + ':output', channel: 'output', value: GOV_STRIKE.output, starts_at: t, ends_at: t + 1});
+    return L('The government does nothing; the strike goes on, and output falls this month. The card comes back next month.',
+      'Rząd nic nie robi; strajk trwa, a produkcja w tym miesiącu spada. Karta wróci w przyszłym miesiącu.');
+  }
+  // A strike left without an answer of the government collapses after three months: the unions' trust falls.
+  function govStrikeMonth(Q, t) {
+    const S = Q.S, rec = govStrikeRecord(S);
+    if (!rec || rec.case_opened_at === null || rec.case_opened_at === undefined || t - rec.case_opened_at < GOV_STRIKE.months) return;
+    for (const b of rec.branches) S.unions[b].trust = clip(S.unions[b].trust - trustLoss(S, GOV_STRIKE.collapse_trust), 0, 100);
+    rec.history.push({t: t, kind: 'collapsed_without_answer'});
+    endRecord(S, rec, 'collapsed', t, Q);
+  }
 
   // The harvest case: from the settlement of June or July, while the agricultural union reaches 40, once a year; a case left
   // without an answer lapses after August.
@@ -1962,6 +2058,8 @@
   // Z — 0.87: the card of a dispute is urgent in the Party deck while a dispute waits for PPS; the offer of the government or the
   // repression of a strike is the urgent card "The Government's Offer" of the same deck.
   rules.registerUrgentCard('polish_union_agenda', {deck: () => 'main.party', active: disputeUrgent});
+  // Z — 1.12 (decision 7A): the strike while PPS governs, an urgent card of the Government deck.
+  rules.registerUrgentCard('polish_gov_strike', {deck: () => 'main.govt', active: govStrikeAvailable});
   rules.registerUrgentCard('polish_strike_offer', {deck: () => 'main.party', active: offerCardActive});
 
   return Object.freeze({
@@ -1971,6 +2069,11 @@
     DROP_TRUST: DROP_TRUST,
     disputeRecord: disputeRecord,
     disputeCardAvailable: disputeCardAvailable,
+    govStrikeAvailable: govStrikeAvailable,
+    govStrikeStatus: govStrikeStatus,
+    govStrikeView: govStrikeView,
+    govStrikeChoose: govStrikeChoose,
+    GOV_STRIKE: GOV_STRIKE,
     disputeUrgent: disputeUrgent,
     disputeView: disputeView,
     disputeLeadershipBranch: Q => leadershipBranch(Q.S),
