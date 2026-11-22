@@ -45,6 +45,8 @@ function withPortfolios(Q, ...portfolios) {
   const cabinet = Q.S.cabinet;
   if (!cabinet.partner_ids.includes('pps')) cabinet.partner_ids.push('pps');
   for (const key of portfolios) cabinet.portfolios[key] = 'pps';
+  // Z — 1.27: PPS added to the opening cabinet has no majority of its own; the fixture keeps the opposition from moving its dismissal.
+  cabinet.opposition_motion_at = 1e6;
   return Q;
 }
 // A fixture Sejm in which PPS carries its acts (250 of 444 MPs).

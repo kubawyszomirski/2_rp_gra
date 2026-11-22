@@ -1,0 +1,20 @@
+{
+  "source": "scenes/polish_gov_no_confidence.scene.dry",
+  "status": "complete",
+  "lines": {
+    "title: No Confidence": "title: Wotum nieufności",
+    "subtitle: The opposition demands the dismissal of our cabinet; one answer before the vote.": "subtitle: Opozycja żąda odwołania naszego rządu; jedna odpowiedź przed głosowaniem.",
+    "= A motion of no confidence": "= Wniosek o wotum nieufności",
+    "[+ pl_nc_intro +]": "[+ pl_nc_intro +]",
+    "title: Withdraw from one of our reforms": "title: Wycofaj się z jednej z naszych reform",
+    "subtitle: [+ pl_nc_withdraw_line +]": "subtitle: [+ pl_nc_withdraw_line +]",
+    "unavailable-subtitle: [+ pl_nc_withdraw_why +]": "unavailable-subtitle: [+ pl_nc_withdraw_why +]",
+    "title: Seek the support of [+ pl_nc_club +]": "title: Zabiegaj o poparcie: [+ pl_nc_club +]",
+    "subtitle: [+ pl_nc_club_line +]": "subtitle: [+ pl_nc_club_line +]",
+    "unavailable-subtitle: [+ pl_nc_court_why +]": "unavailable-subtitle: [+ pl_nc_court_why +]",
+    "title: Let them vote": "title: Niech głosują",
+    "subtitle: Cost: 0 resources. The Sejm votes at the next settlement; if the opposition still outnumbers us, the cabinet falls.": "subtitle: Koszt: 0 jednostek środków. Sejm zagłosuje przy najbliższym rozliczeniu; jeśli opozycja nadal będzie liczniejsza, rząd upadnie.",
+    "[+ pl_nc_result +]": "[+ pl_nc_result +]",
+    "- @root: Continue.": "- @root: Dalej."
+  }
+}

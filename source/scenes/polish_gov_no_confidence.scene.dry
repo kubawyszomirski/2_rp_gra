@@ -1,0 +1,57 @@
+title: No Confidence
+subtitle: The opposition demands the dismissal of our cabinet; one answer before the vote.
+new-page: true
+is-card: true
+view-if: {! return !!Q.S && PolishGovernment.noConfidenceAvailable(Q) !}
+on-arrival: {!
+// Card government.no_confidence (Z — 1.27, decision 4A of 22 XI 2026 and the user's note: withdrawing a reform also cuts its
+// spending, one option): when the clubs against a cabinet with PPS ministers outnumber those that stand by it, the opposition moves
+// a motion of no confidence (art. 58 of the March constitution); the Sejm votes at the next settlement. An urgent card of the
+// Government deck; the answer costs no month.
+PolishGovernment.noConfidenceView(Q);
+!}
+
+= A motion of no confidence
+
+[+ pl_nc_intro +]
+
+- @withdraw
+- @court
+- @vote
+
+@withdraw
+title: Withdraw from one of our reforms
+subtitle: [+ pl_nc_withdraw_line +]
+choose-if: {! return PolishGovernment.noConfidenceStatus(Q, 'withdraw').available !}
+unavailable-subtitle: [+ pl_nc_withdraw_why +]
+on-arrival: {!
+PolishGovernment.noConfidenceChoose(Q, 'withdraw');
+!}
+go-to: done
+
+@court
+title: Seek the support of [+ pl_nc_club +]
+subtitle: [+ pl_nc_club_line +]
+choose-if: {! return PolishGovernment.noConfidenceStatus(Q, 'court').available !}
+unavailable-subtitle: [+ pl_nc_court_why +]
+on-arrival: {!
+PolishGovernment.noConfidenceChoose(Q, 'court');
+!}
+go-to: done
+
+@vote
+title: Let them vote
+subtitle: Cost: 0 resources. The Sejm votes at the next settlement; if the opposition still outnumbers us, the cabinet falls.
+on-arrival: {!
+PolishGovernment.noConfidenceChoose(Q, 'vote');
+!}
+go-to: done
+
+@done
+new-page: true
+
+= A motion of no confidence
+
+[+ pl_nc_result +]
+
+- @root: Continue.

@@ -769,3 +769,58 @@ test('Nasz stosunek do rządu: every six months, and at once after an act of the
   assert.equal(PolishGovernment.coalitionCardAvailable(Q), true, 'the half-yearly review');
   assert.match(PolishGovernment.supportReason(Q), /^Half a year has passed/);
 });
+
+// Z — 1.27 (decisions 3A and 4A of 22 XI 2026 and the user's note): when the clubs against a cabinet with PPS ministers outnumber those
+// that stand by it, the opposition moves a motion of no confidence; an urgent card gives one answer (withdraw a reform, which also
+// stops its spending; win over the closest club; let them vote), and the Sejm votes at the next settlement.
+test('Wotum nieufności 1.27: the opposition moves it when it outnumbers us; the card answers once; the Sejm votes a month later', () => {
+  const engine = dendry.startGame(1922, 'pl');
+  const Q = engine.state.qualities;
+  try {
+    november(engine, LEFT_SEJM_ROWS);
+    strongLeft(engine);
+    dendry.formCabinet(engine, { configuration: 'left_minority', mode: 'member' });
+    const S = Q.S, G = PolishGovernment;
+    assert.equal(S.cabinet.configuration_id, 'left_minority');
+    assert.equal(G.oppositionMotionDue(Q, Q.time), false, 'it stands while it has more for than against');
+    // Fixture: the clubs outside the cabinet turn against it.
+    for (const id of ['psl_piast', 'npr', 'jewish_rep', 'other_minorities_rep', 'minorities_bloc']) {
+      if (S.actors.relations[id] !== undefined) G.changeRelation(Q, id, -S.actors.relations[id], 'fixture');
+    }
+    assert.equal(G.oppositionMotionDue(Q, Q.time), true);
+    G.openOppositionMotion(Q, Q.time);
+    engine.goToScene('main');
+    assert.ok(dendry.urgentCards(engine).includes('polish_gov_no_confidence'));
+    engine.goToScene('polish_gov_no_confidence');
+    const ids = (engine.getCurrentChoices() || []).map(c => c.id);
+    assert.deepEqual(ids, ['polish_gov_no_confidence.withdraw', 'polish_gov_no_confidence.court', 'polish_gov_no_confidence.vote']);
+    assert.match(Q.pl_nc_intro, /Opozycja zebrała podpisy pod wnioskiem o wotum nieufności/);
+    assert.match(Q.pl_nc_withdraw_why, /Żadnej z naszych spornych reform/, 'no disputed reform yet');
+    const club = G.noConfidenceStatus(Q, 'court').available ? Q.pl_nc_club : null;
+    assert.ok(club, 'a club to win over');
+    dendry.choose(engine, 'polish_gov_no_confidence.court');
+    assert.match(Q.pl_nc_result, /stosunki z nim wyraźnie się poprawiają/);
+    assert.equal(G.noConfidenceAvailable(Q), false, 'one answer');
+    // The vote at the next settlement: the opposition still outnumbers the cabinet, so it falls.
+    Q.time += 1;
+    G.settleAgreements(Q);
+    assert.equal(S.cabinet.status, 'caretaker');
+    assert.equal(S.cabinet.fall_reason, 'dismissal');
+  } finally {
+    PolishRules.setLanguage('en');
+  }
+});
+
+test('Zrażanie 1.27: a reform of a PPS ministry costs the relation with the clubs outside the cabinet that reject it, not twice', () => {
+  const Q = dendry.startGame().state.qualities, S = Q.S, G = PolishGovernment;
+  S.cabinet.partner_ids = S.cabinet.partner_ids.concat(['pps']);
+  S.cabinet.opposition_motion_at = 1e6;
+  const before = { zln: S.actors.relations.zln, pschd: S.actors.relations.pschd, wyz: S.actors.relations.psl_wyzwolenie };
+  const list = G.outsideObjections(Q, 'finance_package.progressive');
+  assert.ok(list.some(o => o.party === 'zln') && !list.some(o => o.party === 'psl_wyzwolenie'), 'the right rejects a progressive tax, Wyzwolenie does not');
+  G.applyOutsideObjections(Q, 'finance_package.progressive', null, ['pschd']);
+  assert.ok(S.actors.relations.zln < before.zln || before.zln === 0);
+  assert.equal(S.actors.relations.pschd, before.pschd, 'a club already charged by the reform is not charged again');
+  assert.equal(S.actors.relations.psl_wyzwolenie, before.wyz);
+  assert.match(G.outsideObjectionsLine(list), /Outside the cabinet .+ are displeased/);
+});

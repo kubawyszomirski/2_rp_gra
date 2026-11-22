@@ -4270,7 +4270,7 @@
     const S = Q.S;
     if (!government.REFORM_STANCES[key]) return run();
     const before = {projects: Object.fromEntries(Object.keys(S.projects).map(id => [id, S.projects[id].status])), policies: S.economy.policies.length,
-      laws: S.parliament.laws.length};
+      laws: S.parliament.laws.length, relations: Object.assign({}, S.actors.relations)};
     const out = run();
     const rejected = S.parliament.laws.slice(before.laws).some(b => b.status === 'rejected');
     const started = startedBy(S, before);
@@ -4280,6 +4280,11 @@
       if (objections.length && Q.pl_gc_result) {
         Q.pl_gc_result += RESULT_BREAK + objectionsLine(objections);
       }
+      // Z — 1.27 (decision 3A): the clubs outside the cabinet that reject the reform think worse of PPS.
+      // A club that the reform itself already cost us (a named relation change) is not punished twice.
+      const hit = Object.keys(before.relations).filter(id => S.actors.relations[id] < before.relations[id]);
+      const outside = government.applyOutsideObjections(Q, key, target, hit);
+      if (outside.length && Q.pl_gc_result) Q.pl_gc_result += RESULT_BREAK + government.outsideObjectionsLine(outside);
     }
     return out;
   }

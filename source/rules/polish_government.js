@@ -3182,8 +3182,15 @@
     // A motion that PPS did not answer is voted at the next settlement, PPS abstaining (decision 7).
     const cabinet = S.cabinet;
     if (cabinet && cabinet.dismissal_motion && cabinet.dismissal_motion.status === 'open' && cabinet.dismissal_motion.opened_at < t) {
+      const by = !!cabinet.dismissal_motion.by_opposition;
       const ballot = decideDismissal(Q, 'unanswered');
+      if (by) cabinet.opposition_vote = {t: t, result: ballot.result, yes: ballot.yes, no: ballot.no};
       events.push({kind: 'dismissal_vote', result: ballot.result});
+    }
+    // Z — 1.27 (decision 4A): the opposition gathers the signatures when it outnumbers the cabinet with PPS ministers.
+    if (S.cabinet && oppositionMotionDue(Q, t)) {
+      openOppositionMotion(Q, t);
+      events.push({kind: 'opposition_motion'});
     }
     S.history.reasons.push({t: t, kind: 'agreements_settled', events: events.length});
     return events;
@@ -3279,6 +3286,140 @@
     if (applied.length) S.history.reasons.push({t: t, kind: 'reform_objections', key: key, objections: applied});
     writeGovernmentMirrors(Q);
     return applied;
+  }
+
+  // ---- Z — 1.27 (decisions 3A and 4A of 22 XI 2026): the Sejm outside the cabinet ------------------------------------------------
+  // A reform of a PPS ministry that a club outside the cabinet rejects worsens our relations with it (−2, or −4 when it rejects it
+  // strongly; reformism halves it), as the same reform raises the tension of a partner. The disputed reforms are kept on the cabinet,
+  // so the card of a no-confidence motion can withdraw one of them.
+  const OUTSIDE_OBJECTION = Object.freeze({step: 2, max: 4});
+  function outsideObjections(Q, key) {
+    const S = Q.S, stance = REFORM_STANCES[key], cabinet = S && S.cabinet;
+    if (!stance || !stance.position || !cabinet || cabinet.status !== 'active' || cabinet.partner_ids.indexOf('pps') < 0) return [];
+    const bound = cabinet.partner_ids.concat(cabinet.supporter_ids);
+    return S.parliament.clubs.map(c => c.id).filter(id => id !== 'pps' && id !== 'kpp' && ACTOR_PROFILES[id] && bound.indexOf(id) < 0 &&
+      S.actors.relations[id] !== undefined).map(id => {
+      const distance = Math.abs(stance.position - stanceOf(id, stance.topic));
+      const delta = distance >= 3 ? OUTSIDE_OBJECTION.max : distance === 2 ? OUTSIDE_OBJECTION.step : 0;
+      return {party: id, delta: rules.profileActive(S, 'reformism') ? Math.round(delta / 2) : delta};
+    }).filter(o => o.delta > 0).sort((a, b) => b.delta - a.delta || compareId(a.party, b.party));
+  }
+  function applyOutsideObjections(Q, key, target, already) {
+    const S = Q.S, t = Q.time, list = outsideObjections(Q, key).filter(o => (already || []).indexOf(o.party) < 0);
+    for (const o of list) changeRelation(Q, o.party, -o.delta, 'reform_outside:' + key + ':t' + t);
+    if (list.length) {
+      S.cabinet.disputed = (S.cabinet.disputed || []).concat([{key: key, t: t, target: target || null, clubs: list.map(o => o.party)}]);
+      S.history.reasons.push({t: t, kind: 'reform_outside', key: key, clubs: list});
+    }
+    return list;
+  }
+  // The line of the result: who outside the cabinet is displeased.
+  function outsideObjectionsLine(list) {
+    return list.length ? L('Outside the cabinet ' + plainParties(list.map(o => o.party)) + ' are displeased; our relations with them worsen.',
+      'Poza rządem niezadowoleni: ' + plainParties(list.map(o => o.party)) + '; nasze stosunki z nimi się psują.') : '';
+  }
+
+  // The opposition's motion of no confidence (art. 58 of the March constitution: the cabinet resigns at the demand of the Sejm). In a
+  // cabinet with PPS ministers, when the clubs that would vote against it outnumber those that stand by it, the opposition gathers the
+  // signatures: the motion is voted at the next settlement, and in the month between PPS can answer on the urgent card. After a vote
+  // the opposition waits half a year before a new motion.
+  const OPPOSITION_MOTION_REST = 6;
+  function oppositionMotionDue(Q, t) {
+    const S = Q.S, cabinet = S.cabinet;
+    if (!cabinet || cabinet.status !== 'active' || cabinet.partner_ids.indexOf('pps') < 0 || formationPending(Q)) return false;
+    if (cabinet.dismissal_motion && cabinet.dismissal_motion.status === 'open') return false;
+    if (cabinet.opposition_motion_at !== undefined && cabinet.opposition_motion_at !== null && t - cabinet.opposition_motion_at < OPPOSITION_MOTION_REST) return false;
+    const fc = forecast(Q, cabinetAsOffer(S), cabinet.partner_ids.concat(cabinet.supporter_ids));
+    return fc.no > fc.yes;
+  }
+  function openOppositionMotion(Q, t) {
+    const S = Q.S, cabinet = S.cabinet;
+    cabinet.dismissal_motion = {id: 'motion-' + cabinet.id + '-t' + t + '-opposition', opened_at: t, after_withdrawal_of: null, by_opposition: true,
+      status: 'open', pps_vote: null, ballot_id: null, successor: null, answer: null};
+    cabinet.opposition_motion_at = t;
+    S.history.reasons.push({t: t, kind: 'opposition_motion', cabinet_id: cabinet.id, motion_id: cabinet.dismissal_motion.id});
+    return cabinet.dismissal_motion;
+  }
+  const oppositionMotion = S => {
+    const m = S && S.cabinet && S.cabinet.dismissal_motion;
+    return m && m.status === 'open' && m.by_opposition ? m : null;
+  };
+  function noConfidenceAvailable(Q) {
+    const S = Q.S, m = oppositionMotion(S);
+    return !!m && !m.answer && ppsBound(S) && S.chapter.status !== 'ended';
+  }
+  // The reform to withdraw: the last disputed one that still runs.
+  function noConfidenceTarget(Q) {
+    const S = Q.S, proj = globalThis.PolishProjects, list = (S.cabinet && S.cabinet.disputed) || [];
+    for (let i = list.length - 1; i >= 0; i--) if (list[i].target && proj && proj.stoppable(Q, list[i].target)) return list[i];
+    return null;
+  }
+  // The club to win over: of those that would vote for the dismissal, the one closest to changing its mind.
+  function noConfidenceClub(Q) {
+    const S = Q.S, cabinet = S.cabinet, offer = cabinetAsOffer(S), bound = cabinet.partner_ids.concat(cabinet.supporter_ids);
+    // The National Democrats are the main enemy of PPS: they cannot be won over (Z — 1.27).
+    const list = S.parliament.clubs.filter(c => ['pps', 'kpp', 'zln'].indexOf(c.id) < 0 && ACTOR_PROFILES[c.id] && bound.indexOf(c.id) < 0)
+      .map(c => ({id: c.id, stance: programmeStance(S, c.id, offer)})).filter(c => c.stance < VOTE_AGAINST_BELOW)
+      .sort((a, b) => b.stance - a.stance || compareId(a.id, b.id));
+    return list.length ? list[0].id : null;
+  }
+  const NO_CONFIDENCE = Object.freeze({withdraw_relation: 8, withdraw_lewica: 5, court_relation: 12, court_cost: 1});
+  function noConfidenceStatus(Q, option) {
+    const S = Q.S;
+    if (!noConfidenceAvailable(Q)) return {available: false, reason: L('No motion of the opposition is open.', 'Nie ma wniosku opozycji.')};
+    if (option === 'withdraw') return noConfidenceTarget(Q) ? {available: true, reason: ''} :
+      {available: false, reason: L('None of our disputed reforms can still be withdrawn.', 'Żadnej z naszych spornych reform nie da się już wycofać.')};
+    if (option === 'court') {
+      if (!noConfidenceClub(Q)) return {available: false, reason: L('No club against us can be won over.', 'Żadnego klubu przeciw nam nie da się przekonać.')};
+      return S.party_orgs.cash + 1e-9 >= NO_CONFIDENCE.court_cost ? {available: true, reason: ''} :
+        {available: false, reason: L('Needs 1 resource.', 'Wymaga 1 jednostki środków.')};
+    }
+    return option === 'vote' ? {available: true, reason: ''} : {available: false, reason: L('Unknown option.', 'Nieznana opcja.')};
+  }
+  function noConfidenceView(Q) {
+    const S = Q.S, m = oppositionMotion(S);
+    const fc = forecast(Q, cabinetAsOffer(S), S.cabinet.partner_ids.concat(S.cabinet.supporter_ids));
+    Q.pl_nc_intro = L('The opposition has gathered the signatures for a motion of no confidence; the Sejm votes at the settlement of ' + rules.monthYear(m.opened_at + 1, 'gen') +
+      '. Today ' + fc.no + ' MPs would vote to dismiss the cabinet and ' + fc.yes + ' would stand by it.',
+      'Opozycja zebrała podpisy pod wnioskiem o wotum nieufności; Sejm zagłosuje przy rozliczeniu ' + rules.monthYear(m.opened_at + 1, 'gen') +
+      '. Dziś ' + fc.no + ' posłów głosowałoby za odwołaniem rządu, a ' + fc.yes + ' stanęłoby za nim.');
+    const target = noConfidenceTarget(Q), club = noConfidenceClub(Q);
+    Q.pl_nc_withdraw_line = target ? L('Cost: 0 budget units. We stop „' + target.target.name[0] + '”, which also saves its spending; ' +
+      plainParties(target.clubs) + ' soften, and the Left of PPS is displeased.', 'Koszt: 0 jednostek budżetu. Wstrzymujemy „' + target.target.name[1] +
+      '”, co oszczędza też jego wydatki; ' + plainParties(target.clubs) + ' łagodnieją, a Lewica PPS jest niezadowolona.') : '';
+    Q.pl_nc_club = club ? plainParties([club]) : '';
+    Q.pl_nc_club_line = club ? L('Cost: 1 resource. Talks and favours: our relations with ' + plainParties([club]) + ' clearly improve.',
+      'Koszt: 1 jednostka środków. Rozmowy i względy: nasze stosunki z klubem (' + plainParties([club]) + ') wyraźnie się poprawiają.') : '';
+    for (const option of ['withdraw', 'court', 'vote']) Q['pl_nc_' + option + '_why'] = noConfidenceStatus(Q, option).reason;
+  }
+  function noConfidenceChoose(Q, option) {
+    const status = noConfidenceStatus(Q, option);
+    if (!status.available) throw new Error('noConfidenceChoose: ' + option + ': ' + status.reason);
+    const S = Q.S, t = Q.time, m = oppositionMotion(S), lines = [];
+    S.history.actions.push({t: t, action_id: 'government.no_confidence.' + option, cost_t: 0});
+    if (option === 'withdraw') {
+      const entry = noConfidenceTarget(Q);
+      globalThis.PolishProjects.stopTarget(Q, entry.target, 'no_confidence');
+      for (const id of entry.clubs) if (S.actors.relations[id] !== undefined) changeRelation(Q, id, NO_CONFIDENCE.withdraw_relation, 'no_confidence_withdraw:' + m.id);
+      factionReaction(Q, 'lewica', {dissent: NO_CONFIDENCE.withdraw_lewica}, {id: 'no_confidence_withdraw:' + m.id, kind: 'cabinet_policy', reverse: null});
+      lines.push(L('We withdraw „' + entry.target.name[0] + '”; its spending stops.', 'Wycofujemy się z reformy „' + entry.target.name[1] + '”; jej wydatki ustają.'),
+        L(capitalise(plainParties(entry.clubs)) + ' soften, and the Left of PPS is displeased.', capitalise(plainParties(entry.clubs)) + ' łagodnieją, a Lewica PPS jest niezadowolona.'));
+    } else if (option === 'court') {
+      const club = noConfidenceClub(Q);
+      S.party_orgs.cash = Math.max(0, Math.round((S.party_orgs.cash - NO_CONFIDENCE.court_cost) * 10) / 10);
+      changeRelation(Q, club, NO_CONFIDENCE.court_relation, 'no_confidence_court:' + m.id);
+      lines.push(L('Our envoys talk to ' + plainParties([club]) + '; relations with them clearly improve.', 'Nasi wysłannicy rozmawiają z klubem (' + plainParties([club]) +
+        '); stosunki z nim wyraźnie się poprawiają.'));
+    } else {
+      lines.push(L('We let the Sejm vote.', 'Pozwalamy Sejmowi głosować.'));
+    }
+    m.answer = option;
+    const fc = forecast(Q, cabinetAsOffer(S), S.cabinet.partner_ids.concat(S.cabinet.supporter_ids));
+    lines.push(fc.no > fc.yes ? L('Today the cabinet would still lose the vote.', 'Dziś rząd nadal przegrałby głosowanie.') :
+      L('Today the cabinet would survive the vote.', 'Dziś rząd przetrwałby głosowanie.'));
+    Q.pl_nc_result = lines.join('<br>');
+    writeRelationMirrors(Q);
+    return Q.pl_nc_result;
   }
 
   // The sentence a card adds to an option that some partners of this cabinet reject.
@@ -4488,9 +4629,18 @@
       }
     }
     const motion = S.cabinet && S.cabinet.dismissal_motion;
-    if (motion && motion.status === 'open') {
+    if (motion && motion.status === 'open' && motion.by_opposition) {
+      // Z — 1.27: the opposition's motion and, in the month after its vote, its result.
+      lines.push(L('The opposition has gathered the signatures for a motion of no confidence; the Sejm votes at the settlement of ' + rules.monthYear(motion.opened_at + 1, 'gen') + '.',
+        'Opozycja zebrała podpisy pod wotum nieufności; Sejm zagłosuje przy rozliczeniu ' + rules.monthYear(motion.opened_at + 1, 'gen') + '.'));
+    } else if (motion && motion.status === 'open') {
       lines.push(L('A motion to dismiss the cabinet is open after ' + describeParty(motion.after_withdrawal_of) + ' withdrew its support.',
         'Wniosek o odwołanie gabinetu czeka na głosowanie po wycofaniu poparcia (' + describeParty(motion.after_withdrawal_of) + ').'));
+    }
+    const vote = S.cabinet && S.cabinet.opposition_vote;
+    if (vote && vote.t === Q.time - 1 && vote.result !== 'passed' && S.cabinet.status === 'active') {
+      lines.push(L('The opposition\'s motion of no confidence failed: ' + vote.yes + ' for, ' + vote.no + ' against.',
+        'Wniosek opozycji o wotum nieufności upadł: ' + vote.yes + ' za, ' + vote.no + ' przeciw.'));
     }
     return {
       // Shown only once a promise has raised it; the opening toleration has no partner or programme.
@@ -4623,6 +4773,8 @@
 
   // Z — Koalicja: the coalition crisis is an urgent card of the Government deck; unanswered, the partner leaves at its date.
   rules.registerUrgentCard('polish_coalition_crisis', {active: Q => !!crisisCase(Q), deck: () => 'main.govt'});
+  // Z — 1.27: the urgent card of the opposition's motion of no confidence.
+  rules.registerUrgentCard('polish_gov_no_confidence', {active: Q => !!Q.S && noConfidenceAvailable(Q), deck: () => 'main.govt'});
   rules.registerCardDeadline('polish_coalition_crisis', Q => { const c = Q.S ? crisisCase(Q) : null; return c ? c.ultimatum.due_at - 1 : null; });
   rules.registerUrgentCard('polish_government_response', {active: Q => !!responseCase(Q),
     deck: Q => ppsStance(Q.S) === 'member' ? 'main.govt' : 'main.parliament'});
@@ -4760,6 +4912,15 @@
     buildCabinetOffer: buildCabinetOffer,
     npcOffer: npcOffer,
     programmeStance: programmeStance,
+    outsideObjections: outsideObjections,
+    applyOutsideObjections: applyOutsideObjections,
+    outsideObjectionsLine: outsideObjectionsLine,
+    oppositionMotionDue: oppositionMotionDue,
+    openOppositionMotion: openOppositionMotion,
+    noConfidenceAvailable: noConfidenceAvailable,
+    noConfidenceStatus: noConfidenceStatus,
+    noConfidenceView: noConfidenceView,
+    noConfidenceChoose: noConfidenceChoose,
     VOTE_AGAINST_BELOW: VOTE_AGAINST_BELOW,
     forecast: forecast,
     configurationStatus: configurationStatus,

@@ -102,7 +102,7 @@ test('Wolności obywatelskie: no confiscation for a year and democracy +1; easie
   const zln = S.actors.relations.zln, kpp = S.actors.relations.kpp;
   PolishProjects.chooseOption(Q, 'civil_liberties', 'squads');
   assert.equal(episode(Q, 'squads_dissolved').value, -10);
-  assert.deepEqual([S.actors.relations.zln, S.actors.relations.kpp], [zln - 5, kpp - 10]);
+  assert.deepEqual([S.actors.relations.zln, S.actors.relations.kpp], [Math.max(0, zln - 5), Math.max(0, kpp - 10)]); // Z — 1.27: endecja may be at 0 already
   assert.ok(S.militia.strength > 0, 'the PPS Militia stays');
   free(Q);
   assert.match(PolishProjects.optionStatus(Q, 'civil_liberties', 'squads').reason, /already dissolved/);
