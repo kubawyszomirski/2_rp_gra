@@ -983,6 +983,17 @@
         const free = ownPortfolios(member).filter(key => !owner[key])[0];
         if (free) owner[free] = member;
       }
+      // Z — 1.22 (decision 4A of 22 XI 2026): the portfolios nobody claimed go to the partners in turn, the larger club first (the KPP
+      // asks for none; without partners they go to PPS). Military Affairs stays with a non-party general: the ministers of military
+      // affairs of 1918–1926 were serving generals (a gameplay rule; the source is TBD).
+      const takers = order.filter(m => m !== 'kpp');
+      const rest = takers.length ? takers : (members.indexOf('pps') >= 0 ? ['pps'] : []);
+      let turn = 0;
+      for (const key of PORTFOLIOS) {
+        if (owner[key] || key === 'reichswehr' || !rest.length) continue;
+        owner[key] = rest[turn % rest.length];
+        turn += 1;
+      }
     }
     // One owner for each of the nine portfolios, always in the same order.
     const ordered = {};
@@ -1084,8 +1095,8 @@
     const left = influencePoints(Q, draft).points - claimCost(claim);
     const cost = PORTFOLIO_COSTS[key];
     if (cost > left) {
-      return {available: false, held: false, note: '', reason: L('Not enough influence points: ' + left + ' left, ' + cost + ' needed.',
-        'Za mało punktów wpływu: zostało ' + left + ', potrzeba ' + cost + '.')};
+      return {available: false, held: false, note: '', reason: L('Not enough influence points: ' + left + ' left, it costs ' + cost + '.',
+        'Za mało punktów wpływu: zostało ' + left + ', a ten resort kosztuje ' + cost + '.')};
     }
     const before = buildCabinetOffer(Q, draft, context);
     const after = buildCabinetOffer(Q, Object.assign({}, draft, {portfolio_claim: claim.concat([key])}), context);
@@ -1093,12 +1104,11 @@
       .map(m => ({id: m, was: evaluateCabinetPartner(S, m, before).score, now: evaluateCabinetPartner(S, m, after).score}));
     const blocking = losers.filter(l => l.now < FORMATION_THRESHOLD)[0];
     if (blocking) {
-      return {available: false, held: false, note: '', reason: L('Without it ' + ACTOR_PROFILES[blocking.id].name + ' refuses: its score falls from ' +
-        shownScore(blocking.was) + ' to ' + shownScore(blocking.now) + ', below 60.', 'Bez niego ' + actorName(blocking.id) + ' odmówi: jego ocena spada z ' +
-        shownScore(blocking.was) + ' do ' + shownScore(blocking.now) + ', poniżej 60.')};
+      return {available: false, held: false, note: '', reason: L('Without it ' + ACTOR_PROFILES[blocking.id].name + ' would refuse to enter the cabinet.',
+        'Bez niego ' + actorName(blocking.id) + ' nie wejdzie do rządu.')};
     }
-    return {available: true, held: false, reason: '', note: losers.map(l => L(ACTOR_PROFILES[l.id].name + ' loses its portfolio: score ' +
-      shownScore(l.was) + ' → ' + shownScore(l.now) + '.', actorName(l.id) + ' traci swój resort: ocena ' + shownScore(l.was) + ' → ' + shownScore(l.now) + '.')).join(' ')};
+    return {available: true, held: false, reason: '', note: losers.map(l => L(ACTOR_PROFILES[l.id].name + ' loses its portfolio, but still agrees.',
+      actorName(l.id) + ' traci swój resort, ale nadal się zgadza.')).join(' ')};
   }
 
   // The first of Labour and Industry and Trade that PPS can take; none when neither is possible.
@@ -1208,8 +1218,8 @@
   // Z — 1.10 (the user's note of 8 XI 2026): no counts of the first budget; only a warning when it would fail.
   function budgetText(budget) {
     if (!budget || budget.passes) return '';
-    return L(' Its first budget would fail without the votes of PSL Piast or of the minorities, and the cabinet would resign over it.',
-      ' Jego pierwszy budżet nie przejdzie bez głosów PSL „Piast” albo mniejszości, a wtedy rząd poda się do dymisji.');
+    return '<br>' + L('Its first budget would fail without the votes of PSL Piast or of the minorities, and the cabinet would resign over it.',
+      'Jego pierwszy budżet nie przejdzie bez głosów PSL „Piast” albo mniejszości, a wtedy rząd poda się do dymisji.');
   }
   // Z — 0.67 (decision 3A of 7 X 2026; P): after the election of 1922 a cabinet with PPS needs a good election result — its
   // own clubs, without the minority representations, need 185 MPs (178 historically for PPS, PSL Wyzwolenie, PSL Piast
@@ -1809,23 +1819,46 @@
     return '<details class="pl-score"><summary>' + head + '</summary>' + body + '</details>';
   }
 
+  // Z — 1.22 (the user's note of 22 XI 2026): who agrees and who refuses, with the reason in words, instead of the scores of the clubs.
+  function partnersText(S, offer, evaluations) {
+    const expert = expertOffer(offer);
+    const asked = (offer.supporters || []).concat(offer.members || []);
+    const name = id => plainParties([id]);
+    const why = e => {
+      if (SEGMENTS.indexOf(e.actor) >= 0 && asked.indexOf(e.actor) < 0) return L('we did not ask for its votes', 'nie zabiegamy o ich głosy');
+      if (e.red_lines.length) return L('a red line: ', 'czerwona linia: ') + redLineText(e.red_lines.join(', ').replace(/_/g, ' '));
+      if ((offer.gates || []).some(g => g.actor === e.actor && relation(S, e.actor) < g.min)) return L('our relations are too cool', 'nasze stosunki są zbyt chłodne');
+      if (e.opponent) return L('it opposes this prime minister', 'sprzeciw wobec tego premiera');
+      return L('the offer gives too little', 'oferta daje za mało');
+    };
+    const yes = evaluations.filter(e => e.accept), no = evaluations.filter(e => !e.accept);
+    const lines = [];
+    const many = list => pluralParties(list.map(e => e.actor));
+    if (yes.length) lines.push((expert ? (many(yes) ? L('Support it: ', 'Popierają: ') : L('Supports it: ', 'Popiera: ')) :
+      (many(yes) ? L('Agree: ', 'Zgadzają się: ') : L('Agrees: ', 'Zgadza się: '))) + plainParties(yes.map(e => e.actor)) + '.');
+    if (no.length) lines.push((expert ? (many(no) ? L('Do not support it: ', 'Nie popierają: ') : L('Does not support it: ', 'Nie popiera: ')) :
+      (many(no) ? L('Refuse: ', 'Odmawiają: ') : L('Refuses: ', 'Odmawia: '))) +
+      no.map(e => name(e.actor) + ' (' + why(e) + ')').join('; ') + '.');
+    return lines.join(LINE_BREAK);
+  }
+
   function clubsText(S, members) {
     const list = members.filter(m => m === 'pps' || seatsOf(S, m) > 0);
     return list.map(m => describeParty(m) + ' ' + seatsOf(S, m)).join(' + ') + ' = ' +
       seatsOfList(S, list) + L(' MPs', ' posłów');
   }
 
+  // Z — 1.22 (the user's note of 22 XI 2026): the counter of the vote in its own lines — for, against, abstaining and the majority —
+  // then what it means.
   function votesText(S, fc) {
-    const base = L(fc.yes + ' for, ' + fc.no + ' against, ' + fc.abstain + ' abstaining; a majority is ' + majorityRequired(S) + '. ',
-      fc.yes + ' za, ' + fc.no + ' przeciw, ' + fc.abstain + ' wstrzymujących się; większość to ' + majorityRequired(S) + '. ');
-    const reaction = fc.minority_reaction ? L('PSL Piast, NPR, the Christian Democrats and ZLN vote against a cabinet that rests on the votes of the minorities. ',
-      'PSL Piast, NPR, chadecja i ZLN głosują przeciw rządowi opartemu na głosach mniejszości. ') : '';
-    if (fc.majority) return base + reaction + L('A majority cabinet.', 'Rząd większościowy.');
-    if (fc.viable) {
-      return base + reaction + L('A minority cabinet: more votes for than against, so it can govern until the Sejm dismisses it.',
-        'Rząd mniejszościowy: więcej głosów za niż przeciw, więc może rządzić, dopóki Sejm go nie odwoła.');
-    }
-    return base + reaction + L('Too few votes: more against than for.', 'Za mało głosów: więcej przeciw niż za.');
+    const count = L('<strong>for ' + fc.yes + '</strong> · against ' + fc.no + ' · abstaining ' + fc.abstain + ' · a majority is ' + majorityRequired(S) + '.',
+      '<strong>za ' + fc.yes + '</strong> · przeciw ' + fc.no + ' · wstrzymuje się ' + fc.abstain + ' · większość to ' + majorityRequired(S) + '.');
+    const reaction = fc.minority_reaction ? L('The right votes against a cabinet that rests on the votes of the minorities.',
+      'Prawica głosuje przeciw rządowi opartemu na głosach mniejszości.') : '';
+    const meaning = fc.majority ? L('A majority cabinet.', 'Rząd większościowy.') : fc.viable ?
+      L('A minority cabinet: it governs until the Sejm dismisses it.', 'Rząd mniejszościowy: rządzi, dopóki Sejm go nie odwoła.') :
+      L('Too few votes: more against than for.', 'Za mało głosów: więcej przeciw niż za.');
+    return [count, reaction, meaning].filter(Boolean).join(LINE_BREAK);
   }
 
   function cabinetName(entry) {
@@ -1907,13 +1940,6 @@
     });
     return parts.join(', ');
   }
-  function votesSentence(S, fc) {
-    const base = L(fc.yes + ' MPs would vote for the cabinet and ' + fc.no + ' against. ', 'Za rządem stanie ' + fc.yes + ' posłów, przeciw ' + fc.no + '. ');
-    if (fc.majority) return base + L('That is a majority of the Sejm.', 'To większość Sejmu.');
-    if (fc.viable) return base + L('That is less than half of the Sejm, but more than its opponents, so the cabinet can govern until the Sejm dismisses it.',
-      'To mniej niż połowa Sejmu, ale więcej niż przeciwników, więc rząd może rządzić, dopóki Sejm go nie odwoła.');
-    return base + L('Its opponents would outnumber it, so the Sejm would not accept it.', 'Przeciwników byłoby więcej, więc Sejm go nie przyjmie.');
-  }
   // Why a variant cannot be formed now, in a sentence (the reasons of configurationStatus and variantStatus).
   function variantReasonText(Q, configId, reason) {
     const S = Q.S, config = CONFIGURATIONS[configId], context = S.negotiation ? S.negotiation.context : {};
@@ -1943,56 +1969,64 @@
     return reason;
   }
 
-  // Step 1: the description of each variant (Z — 0.80; earlier 2A, 3A of 0.61).
+  // Step 1: the description of each variant (Z — 0.80; earlier 2A, 3A of 0.61). Z — 1.22 (the user's note of 22 XI 2026): short lines —
+  // who forms it and how many MPs they have, who agrees, the vote in the Sejm, the first budget, the minorities and the programme.
+  const LINE_BREAK = '<br>';
+  // The vote in the Sejm in one line: for, against and what it means.
+  function sejmLine(S, fc) {
+    const head = L('In the Sejm: ' + fc.yes + ' for, ' + fc.no + ' against (a majority is ' + majorityRequired(S) + ')', 'W Sejmie: ' + fc.yes + ' za, ' + fc.no +
+      ' przeciw (większość to ' + majorityRequired(S) + ')');
+    if (fc.majority) return head + L(' — a majority cabinet.', ' — rząd większościowy.');
+    if (fc.viable) return head + L(' — a minority cabinet: it governs until the Sejm dismisses it.', ' — rząd mniejszościowy: rządzi, dopóki Sejm go nie odwoła.');
+    return head + L(' — more against than for, so the Sejm would not accept it.', ' — więcej przeciw niż za, więc Sejm go nie przyjmie.');
+  }
   function coalitionLine(Q, configId) {
     const S = Q.S, neg = S.negotiation, config = CONFIGURATIONS[configId];
     const status = variantStatus(Q, configId);
-    const total = seatsOfList(S, S.parliament.clubs.map(c => c.id)), majority = majorityRequired(S);
-    const chosen = status.available && currentVariant(neg.draft) === configId ? L('Our present choice. ', 'Nasz obecny wybór. ') : '';
+    const total = seatsOfList(S, S.parliament.clubs.map(c => c.id));
+    const chosen = status.available && currentVariant(neg.draft) === configId ? [L('Our present choice.', 'Nasz obecny wybór.')] : [];
     if (config.expert) {
-      if (!status.available) return {available: false, line: L('A non-party prime minister and ministers from outside the parties. ', 'Bezpartyjny premier i ministrowie spoza partii. ') + status.reason};
+      if (!status.available) return {available: false, line: [L('A non-party prime minister and ministers from outside the parties.',
+        'Bezpartyjny premier i ministrowie spoza partii.'), status.reason].join(LINE_BREAK)};
       const sample = sampleDraft(Q, configId);
       const assessed = assessDraft(Q, sample), record = assessed.pps_offer;
       const yes = record.evaluations.filter(e => e.accept).map(e => e.actor);
       // Those who vote against, from the vote of each club; a club that abstains is not "against" (Z — 0.80).
       const votes = assessed.entry && assessed.entry.forecast && assessed.entry.forecast.lines;
       const no = votes ? votes.filter(l => l.vote === 'no' && PLAIN_PARTY[l.club]).map(l => l.club) : record.evaluations.filter(e => !e.accept).map(e => e.actor);
-      return {available: true, line: chosen + L('The prime minister is the non-party ' + CANDIDATES[sample.candidate_id].name + ', and the ministers are experts from outside the parties. PPS has no ministers in this cabinet — it only votes for it in the Sejm.',
-        'Premierem zostaje bezpartyjny ' + CANDIDATES[sample.candidate_id].name + ', a ministrami fachowcy spoza partii. PPS nie ma w tym rządzie ministrów — tylko głosuje za nim w Sejmie.') +
-        (yes.length ? L(' ' + capitalise(plainParties(yes)) + ' will also support it', (pluralParties(yes) ? ' Poprą go też ' : ' Poprze go też ') + plainParties(yes)) : '') +
-        (no.length ? (votes ? L('; ' + plainParties(no) + ' will be against it.', '; ' + plainParties(no) + (pluralParties(no) ? ' będą przeciw.' : ' będzie przeciw.')) :
-          L('; ' + plainParties(no) + ' will not support it.', '; ' + plainParties(no) + (pluralParties(no) ? ' go nie poprą.' : ' go nie poprze.'))) : '.') + ' ' +
-        votesSentence(S, record.forecast) + ' ' + L('The cabinet follows the policy of its prime minister.', 'Rząd prowadzi politykę swojego premiera.')};
+      return {available: true, line: chosen.concat([
+        L('Prime minister: the non-party ' + CANDIDATES[sample.candidate_id].name + '; ministers from outside the parties.', 'Premier: bezpartyjny ' +
+          CANDIDATES[sample.candidate_id].name + '; ministrowie spoza partii.'),
+        L('PPS has no ministers and only votes for the cabinet.', 'PPS nie ma ministrów, tylko głosuje za rządem.'),
+        yes.length ? L('Also for it: ' + plainParties(yes) + '.', 'Poprą go też: ' + plainParties(yes) + '.') : '',
+        no.length ? L('Against it: ' + plainParties(no) + '.', 'Przeciw: ' + plainParties(no) + '.') : '',
+        sejmLine(S, record.forecast),
+        L('The cabinet follows the policy of its prime minister.', 'Rząd prowadzi politykę swojego premiera.')]).filter(Boolean).join(LINE_BREAK)};
     }
     const own = seatsOfList(S, config.members);
-    const what = L('This is a cabinet of ' + CABINET_OF[configId][0] + '. ', 'To rząd ' + CABINET_OF[configId][1] + '. ');
-    const seats = (config.members.length > 1 ? L('Together they have ' + own + ' of ' + total + ' MPs', 'Razem mają ' + own + ' z ' + total + ' posłów') :
-      L(plainParties(config.members) + ' has ' + own + ' of ' + total + ' MPs', plainParties(config.members) + ' ma ' + own + ' z ' + total + ' posłów')) +
-      (own >= majority ? L(', so it would have a safe majority in the Sejm. ', ', więc miałby pewną większość w Sejmie. ') : '. ');
-    if (!status.available) return {available: false, line: what + seats + variantReasonText(Q, configId, status.reason)};
+    const who = capitalise(plainParties(config.members)) + ': ' + own + L(' of ' + total + ' MPs', ' z ' + total + ' posłów') +
+      (own >= majorityRequired(S) ? L(' — a safe majority.', ' — pewna większość.') : '.');
+    if (!status.available) return {available: false, line: [who, variantReasonText(Q, configId, status.reason)].join(LINE_BREAK)};
     const sample = sampleDraft(Q, configId);
     const record = assessDraft(Q, sample).pps_offer;
     const partners = record.evaluations.filter(e => config.members.indexOf(e.actor) >= 0);
     const yes = partners.filter(e => e.accept).map(e => e.actor), no = partners.filter(e => !e.accept).map(e => e.actor);
-    const agree = (yes.length ? L(capitalise(plainParties(yes)) + (pluralParties(yes) ? ' agree' : ' agrees') + ' to enter it',
-      (pluralParties(yes) ? 'Na wejście do rządu zgadzają się ' : 'Na wejście do rządu zgadza się ') + plainParties(yes)) : '') +
-      (no.length ? L((yes.length ? '; ' : '') + plainParties(no) + ' refuse', (yes.length ? '; ' : '') + plainParties(no) + (pluralParties(no) ? ' się nie zgodzą' : ' się nie zgodzi')) : '') +
-      (yes.length || no.length ? '. ' : '');
-    let minorities = '';
+    const lines = chosen.concat([who]);
+    if (yes.length) lines.push(L((pluralParties(yes) ? 'Agree to enter: ' : 'Agrees to enter: ') + plainParties(yes) + '.',
+      (pluralParties(yes) ? 'Zgadzają się: ' : 'Zgadza się: ') + plainParties(yes) + '.'));
+    if (no.length) lines.push(L((pluralParties(no) ? 'Refuse: ' : 'Refuses: ') + plainParties(no) + '.', (pluralParties(no) ? 'Odmawiają: ' : 'Odmawia: ') + plainParties(no) + '.'));
+    lines.push(sejmLine(S, record.forecast));
+    // Z — 0.88 (decision 2A): a cabinet that would not carry its first budget alone says so on the list of variants.
+    if (record.budget && !record.budget.passes) lines.push(L('Its first budget passes only with the votes of PSL Piast or of the minorities.',
+      'Pierwszy budżet przejdzie tylko z głosami PSL „Piast” albo mniejszości.'));
     if (config.minority_support && seatsOfList(S, SEGMENTS) > 0) {
       const withMinorities = assessDraft(Q, Object.assign(sampleDraft(Q, configId), {seek_minority_support: true})).pps_offer;
-      minorities = L(' The deputies of the national minorities (' + seatsOfList(S, SEGMENTS) + ') may support it too',
-        ' Mogą go też poprzeć posłowie mniejszości narodowych (' + seatsOfList(S, SEGMENTS) + ')') +
-        (withMinorities.forecast.minority_reaction ? L(', but then PSL Piast, the National Workers’ Party, the Christian Democrats and the National Democrats will be against it.',
-          ', ale wtedy PSL „Piast”, Narodowa Partia Robotnicza, chadecja i endecja będą przeciw.') : '.');
+      lines.push(L('The deputies of the national minorities can add ' + seatsOfList(S, SEGMENTS) + ' MPs', 'Posłowie mniejszości narodowych mogą dodać ' +
+        seatsOfList(S, SEGMENTS) + ' głosów') + (withMinorities.forecast.minority_reaction ? L(', but then the right votes against.', ', ale wtedy prawica głosuje przeciw.') : '.'));
     }
-    // Z — 0.88 (decision 2A): a cabinet that would not carry its first budget alone says so on the list of variants.
-    const budget = record.budget;
-    const budgetLine = budget && !budget.passes ? L(' But its first budget needs the votes of PSL Piast or of the minorities.',
-      ' Jego pierwszy budżet wymaga jednak głosów PSL „Piast” albo mniejszości.') : '';
     const programme = plainProgramme(config.programme);
-    return {available: true, line: chosen + what + seats + agree + votesSentence(S, record.forecast) + budgetLine + minorities +
-      (programme ? L(' Its programme: ' + programme + '.', ' W programie: ' + programme + '.') : '')};
+    if (programme) lines.push(L('Programme: ' + programme + '.', 'Program: ' + programme + '.'));
+    return {available: true, line: lines.join(LINE_BREAK)};
   }
 
   // Polish genitive of the prime ministers, for "the cabinet of experts of Julian Nowak" (Z — 0.80).
@@ -2071,12 +2105,12 @@
     const id = probe.minority_concessions[club], concession = MINORITY_CONCESSIONS[id];
     const evaluation = evaluateCabinetPartner(S, club, probe);
     const seats = seatsOf(S, club);
-    const cost = Object.keys(concession.costs).map(actor => actorName(actor) + ' −' + Math.abs(concession.costs[actor])).join(', ');
     const promise = L(CONCESSION_PROMISES[id][0], CONCESSION_PROMISES[id][1]);
     const reason = evaluation.accept ? '' : L('This club (' + seats + ' MPs) refuses even for ' + concessionName(concession) + ': ' + evaluation.reasons.join(', ') + '.',
       'Ten klub (' + seats + ' posłów) odmówi nawet za ' + concessionName(concession) + ': ' + evaluation.reasons.map(reasonText).join(', ') + '.');
-    const line = evaluation.accept ? L('For ' + concessionName(concession) + ' — the smallest concession after which this club (' + seats + ' MPs) supports the cabinet. When the cabinet is appointed: ' + cost + '. ' + promise,
-      'Za ' + concessionName(concession) + ' — najmniejsze ustępstwo, za które ten klub (' + seats + ' posłów) poprze rząd. Przy powołaniu rządu: ' + cost + '. ' + promise) : reason;
+    // Z — 1.22 (the user's note of 22 XI 2026): what the club adds and what it wants, without the numbers of the reactions.
+    const line = evaluation.accept ? L('+' + seats + ' MPs for the cabinet, for ' + concessionName(concession) + '. The right dislikes it. ' + promise,
+      '+' + seats + ' posłów za rządem, w zamian za ' + concessionName(concession) + '. Nie podoba się to prawicy. ' + promise) : reason;
     return {club: club, on: on, allowed: true, available: on || evaluation.accept, accepts: evaluation.accept, concession: id, line: line, reason: reason};
   }
 
@@ -2264,11 +2298,9 @@
     if (draft.pps_mode !== 'member' || config.expert) return L('PPS is outside the cabinet and takes no portfolios.', 'PPS jest poza gabinetem i nie obejmuje resortów.');
     if (config.majority_alone) return L('PPS governs alone and takes every portfolio.', 'PPS rządzi sama i obejmuje wszystkie resorty.');
     if (config.portfolio_map) return L('The portfolios of this cabinet are fixed.', 'Resorty tego gabinetu są ustalone.');
+    // Z — 1.22 (decision 5A of 22 XI 2026): a plain counter of what is left.
     const ip = influencePoints(Q, draft), cost = claimCost(draft.portfolio_claim);
-    return L('Influence points: ' + ip.points + ' = PPS share of the cabinet’s seats ' + ip.share + '%' +
-      (ip.pivotal ? ' + ' + PIVOT_BONUS + ', because without PPS this cabinet has no majority' : '') + '. The chosen portfolios cost ' + cost + ', ' + (ip.points - cost) + ' left.',
-      'Punkty wpływu: ' + ip.points + ' = udział PPS w mandatach gabinetu ' + ip.share + '%' +
-      (ip.pivotal ? ' + ' + PIVOT_BONUS + ', bo bez PPS ten gabinet nie ma większości' : '') + '. Wybrane resorty kosztują ' + cost + ', zostaje ' + (ip.points - cost) + '.');
+    return L('Influence points: ' + (ip.points - cost) + ' of ' + ip.points + ' left.', 'Punkty wpływu: zostało ' + (ip.points - cost) + ' z ' + ip.points + '.');
   }
 
   // Step 4: one line for one portfolio — its cost and who takes it now.
@@ -2277,9 +2309,12 @@
     const offer = buildCabinetOffer(Q, neg.draft, neg.context);
     const status = portfolioStatus(Q, key);
     const owner = offer.portfolios[key];
-    const now = owner === 'pps' ? L('PPS takes it', 'obejmuje PPS') : owner === 'expert' ? L('a non-party expert takes it', 'obejmie bezpartyjny fachowiec') :
-      L(describeParty(owner) + ' takes it', 'obejmie ' + describeParty(owner));
-    return L('Costs ' + PORTFOLIO_COSTS[key] + ' points; now ' + now + '.', 'Kosztuje ' + PORTFOLIO_COSTS[key] + ' pkt; teraz ' + now + '.') +
+    // Z — 1.22: the cost in influence points and who takes the portfolio without us, in words.
+    const who = owner === 'expert' ? (key === 'reichswehr' ? L('a non-party general', 'bezpartyjny generał') : L('a non-party expert', 'bezpartyjny fachowiec')) :
+      plainParties([owner]);
+    const cost = PORTFOLIO_COSTS[key];
+    return (owner === 'pps' ? L('Costs ' + cost + ' influence points; PPS takes it.', 'Kosztuje ' + cost + ' punktów wpływu; obejmuje go PPS.') :
+      L('Costs ' + cost + ' influence points; without us ' + who + ' takes it.', 'Kosztuje ' + cost + ' punktów wpływu; bez nas obejmie go ' + who + '.')) +
       (status.note ? ' ' + status.note : '');
   }
 
@@ -2329,6 +2364,7 @@
       points: pointsText(Q, draft),
       allocation: PORTFOLIOS.map(key => portfolioShort(key) + ': ' + describeParty(offer.portfolios[key])).join('; '),
       partner_lines: partnerLines,
+      partners_text: record ? partnersText(S, assessed.offer, record.evaluations) : '',
       clubs: config.expert ? L('a non-party cabinet', 'gabinet bezpartyjny') : clubsText(S, offer.members),
       members_seats: seatsOfList(S, offer.members), requested_seats: forecast(Q, offer, offer.members.concat(offer.supporters)).yes, majority: majorityRequired(S),
       votes: record ? votesText(S, record.forecast) + budgetText(record.budget) : '',

@@ -431,9 +431,8 @@ for (var key of PolishGovernment.PORTFOLIOS) {
 
 [+ pl_port_points +]
 
-Each portfolio costs influence points: Labour 10, Interior and the Treasury 20, the others 10. A partner keeps its preferred portfolio when it would refuse without it; the remaining portfolios go to non-party experts. Public works are part of Labour. PPS does not take Foreign Affairs.
+Each portfolio costs influence points. A partner keeps the portfolio without which it would refuse; the portfolios nobody takes go to the partners, and Military Affairs to a non-party general. Public works are part of Labour. PPS does not take Foreign Affairs.
 
-Now: [+ pl_port_allocation +].
 
 - @take_labor
 - @drop_labor
@@ -652,7 +651,8 @@ Q.pl_form_submit_reason = submit.reason;
 Q.pl_form_terms_open = view.stabilisation_open ? 1 : 0;
 Q.pl_form_terms_protections_why = PolishGovernment.stabilisationTermsStatus('protections', Q).reason;
 // One block per club, all in one paragraph, so that no empty paragraphs are left when there are fewer clubs.
-Q.pl_form_partners = view.partner_lines.join('');
+// Z — 1.22: who agrees and who refuses, in words (the scores of the clubs left the summary).
+Q.pl_form_partners = view.partners_text;
 // Z — Koalicja: only the minority concessions are promises.
 Q.pl_form_promises = view.promises;
 !}
@@ -663,9 +663,9 @@ Q.pl_form_promises = view.promises;
 
 [? if pl_form_promises : **What we promise.** [+ pl_form_promises +] ?]
 
-[? if not pl_form_is_opposition : **What follows from it — the clubs.** Each club agrees at 60 points or more; click a club for the parts of its score. [+ pl_form_partners +] ?]
+[? if not pl_form_is_opposition : **Partners:** [+ pl_form_partners +] ?]
 
-[? if not pl_form_is_opposition : **What follows from it — the Sejm.** [+ pl_form_votes +] ?]
+[? if not pl_form_is_opposition : **Votes in the Sejm:** [+ pl_form_votes +] ?]
 
 **Result:** [+ pl_form_verdict +]
 

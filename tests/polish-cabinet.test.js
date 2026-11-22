@@ -128,9 +128,9 @@ test('C1 0.71: the introduction, the variant, the prime minister, the portfolios
   assert.equal(choice(engine, 'polish_cabinet_formation.var_broad_centre').canChoose, false, 'greyed with its reason');
   assert.match(JSON.stringify(choice(engine, 'polish_cabinet_formation.var_broad_centre').subtitle), /only in a serious crisis of the state: when two cabinets fall within half a year, or a currency or credit crisis breaks out\. There is no such crisis now, so it cannot be formed\./);
   assert.match(JSON.stringify(choice(engine, 'polish_cabinet_formation.var_expert').title), /We support a cabinet of experts/);
-  assert.match(JSON.stringify(choice(engine, 'polish_cabinet_formation.var_expert').subtitle), /The prime minister is the non-party Julian Nowak, and the ministers are experts from outside the parties\. PPS has no ministers in this cabinet — it only votes for it in the Sejm\. The National Workers’ Party, PSL Wyzwolenie, PSL Piast/);
-  assert.match(JSON.stringify(choice(engine, 'polish_cabinet_formation.var_pps_majority').subtitle), /This is a cabinet of PPS alone\. PPS has 110 of 444 MPs\. PPS would need a majority of the Sejm on its own\./);
-  assert.match(JSON.stringify(choice(engine, 'polish_cabinet_formation.var_left_labour').subtitle), /PSL Wyzwolenie and the National Workers’ Party agree to enter it\. 210 MPs would vote for the cabinet and 100 against\. That is less than half of the Sejm, but more than its opponents/);
+  assert.match(JSON.stringify(choice(engine, 'polish_cabinet_formation.var_expert').subtitle), /Prime minister: the non-party Julian Nowak; ministers from outside the parties\.<br>PPS has no ministers and only votes for the cabinet\.<br>Also for it: the National Workers’ Party, PSL Wyzwolenie, PSL Piast/); // Z — 1.22: short lines
+  assert.match(JSON.stringify(choice(engine, 'polish_cabinet_formation.var_pps_majority').subtitle), /PPS: 110 of 444 MPs\.<br>PPS would need a majority of the Sejm on its own\./);
+  assert.match(JSON.stringify(choice(engine, 'polish_cabinet_formation.var_left_labour').subtitle), /Agree to enter: PSL Wyzwolenie and the National Workers’ Party\.<br>In the Sejm: 210 for, 100 against \(a majority is 223\) — a minority cabinet/);
   assert.match(JSON.stringify(choice(engine, 'polish_cabinet_formation.var_opposition').subtitle), /The Naczelnik Państwa will then appoint a cabinet of experts of Julian Nowak without us\./);
   assert.equal(choice(engine, 'polish_cabinet_formation.var_mode_external_support'), undefined, 'no external support of a party cabinet');
   choose(engine, 'polish_cabinet_formation.var_left_labour');
@@ -151,7 +151,7 @@ test('C1 0.71: the introduction, the variant, the prime minister, the portfolios
   // Z — 0.61: the portfolios are bought with influence points (62 = 52% of the cabinet's seats + 10). Z — 0.88 (decision 1A):
   // PPS starts with Labour; NPR takes Industry and Trade instead.
   assert.equal(engine.state.sceneId, 'polish_cabinet_formation.portfolio_menu');
-  assert.match(content(engine), /Influence points: 62 = PPS share of the cabinet’s seats 52% \+ 10/);
+  assert.match(content(engine), /Influence points: 52 of 62 left\./); // Z — 1.22: a plain counter (Labour already costs 10)
   assert.equal(choice(engine, 'polish_cabinet_formation.drop_labor').canChoose, true, 'PPS holds Labour');
   choose(engine, 'polish_cabinet_formation.take_interior');
   assert.equal(choice(engine, 'polish_cabinet_formation.drop_interior').canChoose, true, 'it can be given back');
@@ -161,8 +161,9 @@ test('C1 0.71: the introduction, the variant, the prime minister, the portfolios
     seek_minority_support: false, portfolio_claim: ['labor', 'interior'] });
   // The summary: our offer apart from what follows from it; each club in one line, its parts open on a click.
   assert.match(content(engine), /Our offer:"\]\}," ","A cabinet of PPS, PSL Wyzwolenie and the National Workers’ Party, PPS in the cabinet; prime minister: the candidate of PPS \(the Centre\), Ignacy Daszyński; PPS portfolios: Labour, Interior\. Its programme: /);
-  assert.match(content(engine), /<details class=\\"pl-score\\"><summary>PSL Wyzwolenie — agrees · \d+\/60<\/summary>relation with PPS \+20 · programme of the cabinet and the club’s views/);
-  assert.match(content(engine), /<details class=\\"pl-score\\"><summary>NPR — agrees · \d+\/60<\/summary>/);
+  // Z — 1.22 (the user's note of 22 XI 2026): who agrees in one line, without the scores of the clubs.
+  assert.match(content(engine), /Partners:"\]\}," ","Agree: PSL Wyzwolenie and the National Workers’ Party\./);
+  assert.doesNotMatch(content(engine), /pl-score|\/60/);
   assert.match(content(engine), /after the commit the cabinet is appointed at once — a cabinet of PPS, PSL Wyzwolenie and the National Workers’ Party, prime minister: the candidate of PPS \(the Centre\), Ignacy Daszyński/);
   choose(engine, 'polish_cabinet_formation.back_summary');
   assert.equal(engine.state.sceneId, 'polish_cabinet_formation.portfolio_menu', 'Back from the summary to the portfolios');
@@ -218,13 +219,13 @@ test('Warianty 0.80: plain Polish variants, summary and result, without abbrevia
     assert.doesNotMatch(content(engine), /Sejm liczy 444 posłów; większość to 223/);
     choose(engine, 'polish_cabinet_formation.variants');
     const sub = id => plain(choice(engine, 'polish_cabinet_formation.' + id).subtitle);
-    assert.equal(sub('var_national_unity'), 'To rząd wszystkich dużych partii. Razem mają 400 z 444 posłów, więc miałby pewną większość w Sejmie. ' +
+    assert.equal(sub('var_national_unity'), 'PPS, PSL „Wyzwolenie”, PSL „Piast”, Narodowa Partia Robotnicza, chadecja i endecja: 400 z 444 posłów — pewna większość.<br>' +
       'Partie zgodzą się na taki rząd tylko w poważnym kryzysie państwa: gdy w ciągu pół roku upadną dwa rządy albo wybuchnie kryzys walutowy ' +
       'lub kredytowy. Teraz takiego kryzysu nie ma, więc nie można go utworzyć.');
-    assert.match(sub('var_expert'), /^Premierem zostaje bezpartyjny Julian Nowak, a ministrami fachowcy spoza partii\. PPS nie ma w tym rządzie ministrów — tylko głosuje za nim w Sejmie\. Poprą go też .+\. Za rządem stanie \d+ posłów, przeciw \d+\. .+ Rząd prowadzi politykę swojego premiera\.$/);
+    assert.match(sub('var_expert'), /^Premier: bezpartyjny Julian Nowak; ministrowie spoza partii\.<br>PPS nie ma ministrów, tylko głosuje za rządem\.<br>Poprą go też: .+\.<br>(Przeciw: .+\.<br>)?W Sejmie: \d+ za, \d+ przeciw \(większość to \d+\) — .+<br>Rząd prowadzi politykę swojego premiera\.$/);
     assert.equal(sub('var_opposition'), 'Naczelnik Państwa powoła wtedy bez nas rząd fachowców Juliana Nowaka.');
-    assert.match(sub('var_pps_majority'), /^To rząd samej PPS\. PPS ma 110 z 444 posłów\./);
-    assert.match(sub('var_left_minority'), /Na wejście do rządu zgadza się PSL „Wyzwolenie”\. Za rządem stanie 190 posłów, przeciw 130\. To mniej niż połowa Sejmu, ale więcej niż przeciwników, więc rząd może rządzić, dopóki Sejm go nie odwoła\./);
+    assert.match(sub('var_pps_majority'), /^PPS: 110 z 444 posłów\./);
+    assert.match(sub('var_left_minority'), /Zgadza się: PSL „Wyzwolenie”\.<br>W Sejmie: 190 za, 130 przeciw \(większość to 223\) — rząd mniejszościowy: rządzi, dopóki Sejm go nie odwoła\./);
     assert.match(sub('var_centre_left'), /PSL „Piast” nie wejdzie do takiego rządu, dopóki nasze stosunki są zbyt chłodne: potrzeba relacji 55 \(teraz \d+\)\./);
     assert.equal(plain(choice(engine, 'polish_cabinet_formation.var_left_labour').title), 'Wchodzimy do rządu z PSL „Wyzwolenie” i Narodową Partią Robotniczą');
     for (const id of ids(engine).filter(id => /var_/.test(id))) {
@@ -260,8 +261,9 @@ test('Premier z frakcji 0.71: Moraczewski adds +5 with Wyzwolenie, Piast and NPR
   assert.equal(choice(engine, 'polish_cabinet_formation.cand_thugutt').canChoose, true, 'Thugutt may lead the centre-left');
   choose(engine, 'polish_cabinet_formation.cand_moraczewski');
   choose(engine, 'polish_cabinet_formation.ports_next');
-  assert.match(content(engine), /<summary>PSL Piast — agrees · \d+\/60<\/summary>[^<]* · the premier of PPS \+5/);
-  assert.match(content(engine), /<summary>PSL Wyzwolenie — agrees · \d+\/60<\/summary>[^<]* · the premier of PPS \+5/);
+  // Z — 1.22: the summary names who agrees in words; the +5 of the premier stays in the scores (premierPart below).
+  assert.match(content(engine), /Agree: [^<"]*PSL Piast/);
+  assert.match(content(engine), /Agree: [^<"]*PSL Wyzwolenie/);
   const offer = PolishGovernment.buildCabinetOffer(Q, Q.S.negotiation.draft, Q.S.negotiation.context);
   assert.deepEqual(['psl_wyzwolenie', 'psl_piast', 'npr', 'pschd', 'zln'].map(id => PolishGovernment.premierPart(id, offer)), [5, 5, 5, -5, -5]);
   const before = clone(Q.S.actors.pps.factions);
@@ -369,7 +371,7 @@ test('Status and Library show the prime minister, support and the nine portfolio
   assert.match(cabinet, /nine stable Polish gameplay categories/);
   assert.match(cabinet, /Praca i Opieka Społeczna \(Labour\): ","PPS/);
   assert.match(cabinet, /Rolnictwo i Dobra Państwowe \(Agriculture\): ","PSL Wyzwolenie/);
-  assert.equal((cabinet.match(/: ","non-party expert/g) || []).length, 7);
+  assert.equal((cabinet.match(/: ","non-party expert/g) || []).length, 1, 'Z — 1.22: the partner takes the unclaimed portfolios; Military Affairs stays non-party');
   assert.doesNotMatch(cabinet, /Public Works \/ Communications|Coalition dissent/);
   assert.equal(Q.time, 11);
 });
@@ -660,7 +662,7 @@ test('Funkcja kandydata w grze 0.88: Polish titles of the candidates by their fu
   assert.deepEqual(['min_jewish_rep', 'min_other_minorities_rep'].map(id => title('polish_cabinet_formation.' + id)),
     ['□ Poparcie reprezentacji żydowskiej', '□ Poparcie pozostałych mniejszości narodowych']);
   assert.match(JSON.stringify(choice(engine, 'polish_cabinet_formation.min_jewish_rep').subtitle),
-    /Za (równość wobec prawa|prawa językowe i szkoły mniejszości) — najmniejsze ustępstwo, za które ten klub \(\d+ posłów\) poprze rząd\. Przy powołaniu rządu: PSL Piast −\d+, PSChD −\d+, ZLN −\d+\./);
+    /^\["\+\d+ posłów za rządem, w zamian za (równość wobec prawa|prawa językowe i szkoły mniejszości)\. Nie podoba się to prawicy\./);
   assert.match(content(engine), /premier: kandydat PPS \(Centrum\), Ignacy Daszyński/);
   // Z — 1.10 (the user's note of 8 XI 2026): no counts of the first budget; a budget that passes is not mentioned.
   assert.doesNotMatch(content(engine), /pierwszy budżet/);

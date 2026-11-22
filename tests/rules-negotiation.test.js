@@ -189,7 +189,8 @@ test('Resorty docelowe: exactly nine unique portfolios; public works is no offic
   assert.equal(owners.labor, 'pps');
   assert.equal(owners.agriculture, 'psl_piast', 'PSL Piast (99 MPs) before PSL Wyzwolenie (25)');
   assert.equal(owners.interior, 'psl_wyzwolenie', 'its second preference');
-  assert.equal(owners.foreign, 'expert');
+  assert.equal(owners.foreign, 'psl_piast', 'Z — 1.22: the unclaimed portfolios go to the partners in turn, the larger first');
+  assert.equal(owners.reichswehr, 'expert', 'Military Affairs stays with a non-party general');
   // A PPS majority government holds all nine; the fixed map of Skrzyński's cabinet is kept.
   assert.ok(Object.values(gov.allocatePortfolios(Q.S, gov.CONFIGURATIONS.pps_majority, ['pps'], [])).every(owner => owner === 'pps'));
   const broad = gov.CONFIGURATIONS.skrzynski_broad;
@@ -277,7 +278,7 @@ test('Poparcie mniejszości: one segment accepts, the other refuses; appointment
   assert.match(gov.formationView(Q).minority_clubs[0].line, /This club \(30 MPs\) refuses even for language rights and minority schools: score \d+ is below 60\./);
   gov.changeRelation(Q, 'other_minorities_rep', -50, 'fixture');
   assert.equal(gov.formationView(Q).minority_clubs[1].concession, 'autonomy', 'a weaker relation needs the larger concession');
-  assert.match(gov.formationView(Q).minority_clubs[1].line, /For self-government in the east — the smallest concession after which this club \(60 MPs\) supports the cabinet\. When the cabinet is appointed: PSL Piast −8, PSChD −5, ZLN −10\./);
+  assert.match(gov.formationView(Q).minority_clubs[1].line, /^\+60 MPs for the cabinet, for self-government in the east\. The right dislikes it\./);
   const result = gov.submitFormation(Q);
   const answer = id => result.pps_offer.evaluations.find(e => e.actor === id);
   assert.equal(answer('jewish_rep').accept, false);
@@ -732,7 +733,7 @@ test('Konieczny resort 0.61: a partner keeps its preferred portfolio when it wou
   // Interior; PSL Piast still needs Agriculture and would fall by 20 without it.
   assert.equal(gov.portfolioStatus(Q, 'labor').available, true);
   assert.equal(gov.portfolioStatus(Q, 'interior').available, true);
-  assert.match(gov.portfolioStatus(Q, 'agriculture').reason, /Without it PSL Piast refuses: its score falls from 77 to 57/);
+  assert.match(gov.portfolioStatus(Q, 'agriculture').reason, /Without it PSL Piast would refuse to enter the cabinet\./);
   assert.deepEqual(Q.S.negotiation.draft.portfolio_claim, ['labor'], 'PPS starts with Labour');
   assert.throws(() => gov.setDraft(Q, 'portfolio_take', 'agriculture'), /cannot be taken/);
   gov.setDraft(Q, 'portfolio_take', 'interior');
@@ -743,7 +744,7 @@ test('Konieczny resort 0.61: a partner keeps its preferred portfolio when it wou
   const R = centreLeft({ psl_piast_relation: 100 });
   const status = gov.portfolioStatus(R, 'agriculture');
   assert.equal(status.available, true);
-  assert.match(status.note, /^PSL Piast loses its portfolio: score \d+ → \d+\.$/);
+  assert.match(status.note, /^PSL Piast loses its portfolio, but still agrees\.$/); // Z — 1.22: in words
 });
 
 test('Punkty wpływu 0.61: the PPS share of the cabinet’s seats + 10 when it is indispensable; Labour 10, Interior and Treasury 20, others 10', () => {
@@ -754,8 +755,8 @@ test('Punkty wpływu 0.61: the PPS share of the cabinet’s seats + 10 when it i
   gov.setDraft(Q, 'portfolio_take', 'finance');
   gov.setDraft(Q, 'portfolio_take', 'justice');
   assert.equal(gov.claimCost(Q.S.negotiation.draft.portfolio_claim), 40);
-  assert.match(gov.portfolioStatus(Q, 'education').reason, /Not enough influence points: 6 left, 10 needed/);
-  assert.match(gov.formationView(Q).points, /Influence points: 46 = PPS share of the cabinet’s seats 36% \+ 10, because without PPS this cabinet has no majority\. The chosen portfolios cost 40, 6 left\./);
+  assert.match(gov.portfolioStatus(Q, 'education').reason, /Not enough influence points: 6 left, it costs 10\./);
+  assert.match(gov.formationView(Q).points, /^Influence points: 6 of 46 left\.$/);
   // A programmatic claim above the points cannot be submitted; a cabinet with a majority without PPS gives no +10.
   gov.setDraft(Q, 'portfolio_claim', ['finance', 'interior', 'justice']);
   assert.match(gov.submitStatus(Q).reason, /The chosen portfolios cost 50 influence points; PPS has 46/);
@@ -824,12 +825,12 @@ test('Lista gabinetów 0.61: every cabinet in one line with its clubs, seats, pa
   assert.equal(line.available, true);
   // Z — 0.80 (the user's text of 20 X 2026): the variant in plain sentences — what the cabinet is, its MPs and what that means,
   // who agrees, the votes and the programme in words; no minorities' sentence when they have no MPs.
-  assert.match(line.line, /^Our present choice\. This is a cabinet of the centre-left: PPS, both peasant parties and the National Workers’ Party\. Together they have 280 of 444 MPs, so it would have a safe majority in the Sejm\. PSL Wyzwolenie, PSL Piast and the National Workers’ Party agree to enter it\. 280 MPs would vote for the cabinet and 0 against\. That is a majority of the Sejm\. Its programme: /);
+  assert.match(line.line, /^Our present choice\.<br>PPS, PSL Wyzwolenie, PSL Piast and the National Workers’ Party: 280 of 444 MPs — a safe majority\.<br>Agree to enter: PSL Wyzwolenie, PSL Piast and the National Workers’ Party\.<br>In the Sejm: 280 for, 0 against \(a majority is 223\) — a majority cabinet\.<br>Programme: /);
   assert.doesNotMatch(line.line, /national minorities \(0\)/);
   // Z — 0.67: after the election of 1922 the 160 MPs of PPS and PSL Wyzwolenie are below the 185 of decision 3A.
   const left = gov.coalitionLine(Q, 'left_minority');
   assert.equal(left.available, false);
-  assert.match(left.line, /^This is a cabinet of PPS and PSL Wyzwolenie\. Together they have 160 of 444 MPs\. After the election of 1922 a cabinet with PPS must have at least 185 MPs of its own parties, without the minorities\./);
+  assert.match(left.line, /^PPS and PSL Wyzwolenie: 160 of 444 MPs\.<br>After the election of 1922 a cabinet with PPS must have at least 185 MPs of its own parties, without the minorities\./);
   const broad = gov.coalitionLine(Q, 'broad_centre');
   assert.equal(broad.available, false);
   assert.match(broad.line, /of 444 MPs.*The parties agree to such a cabinet only in a serious crisis of the state/);
@@ -890,7 +891,7 @@ test('Stosunek do fachowca 0.71: a supporter judges him with 80, a neutral club 
     'no demands +20 · fixed part +7).</details>'), view.partner_lines.join(' | '));
   assert.ok(view.partner_lines.some(l => l.startsWith('<details class="pl-score"><summary>PSL Piast — supports it · 86/60</summary>a supporter of the premier +24')));
   // The opponents vote against: 198 for (PPS, the peasants, NPR and the minorities), 110 against (ZLN and PSChD).
-  assert.match(view.votes, /^198 for, 110 against, 136 abstaining; a majority is 223\./);
+  assert.match(view.votes, /^<strong>for 198<\/strong> · against 110 · abstaining 136 · a majority is 223\./);
   assert.match(gov.candidateNote(Q, 'sliwinski'), /Behind him:<\/strong> PPS, PSL Wyzwolenie, PSL Piast, NPR, Jewish representation, Other national minorities \(198 MPs\)\.<br><strong>Against him:<\/strong> ZLN, PSChD \(110 MPs\)\./);
 });
 
@@ -923,7 +924,7 @@ test('Głosy mniejszości 0.67: a cabinet without PSL Piast that passes only wit
   const wf = gov.forecast(weak, w, w.members.concat(w.supporters));
   assert.deepEqual([wf.minority_reaction, wf.yes, wf.no, wf.viable], [true, 190, 254, false]);
   assert.deepEqual(wf.lines.filter(l => l.minority_reaction).map(l => l.club).sort(), ['npr', 'psl_piast']);
-  assert.match(gov.formationView(weak).votes, /PSL Piast, NPR, the Christian Democrats and ZLN vote against a cabinet that rests on the votes of the minorities\./);
+  assert.match(gov.formationView(weak).votes, /The right votes against a cabinet that rests on the votes of the minorities\./);
   assert.match(gov.configurationStatus(weak, 'left_minority', { reason: 'crisis' }).reason, /No realistic parliamentary support/);
   // A strong left (150 MPs against 114) does not need the minorities: their votes cause no reaction.
   const strong = chamber({ pps: 90, psl_wyzwolenie: 60, minorities_bloc: 90, psl_piast: 70, npr: 20, pschd: 34, zln: 80 }, { time: 20, year: 1923, month: 8 });

@@ -378,6 +378,20 @@
     });
   };
 
+  // The order of the formation steps: the variants, prime ministers and portfolios that can be chosen first, the greyed ones after
+  // them, the navigation (back, next, put back) where it was. Null when nothing moves.
+  var FORMATION_OPTION = /^polish_cabinet_formation\.(var|cand|take|drop)_/;
+  var availableFirst = function(choices) {
+    if (!choices || !choices.some(function(c) { return c && FORMATION_OPTION.test(String(c.id || '').replace(/^@/, '')); })) return null;
+    var open = [], closed = [], rest = [];
+    choices.forEach(function(c, i) {
+      if (c && FORMATION_OPTION.test(String(c.id || '').replace(/^@/, ''))) (c.canChoose ? open : closed).push(i);
+      else rest.push(i);
+    });
+    var order = open.concat(closed, rest);
+    return order.every(function(v, i) { return v === i; }) ? null : order;
+  };
+
   // Plain nested lists are flattened and neighbouring strings joined; formatted parts (bold, italics) stay as they are.
   var joinTextPieces = function(content) {
     var out = [];
@@ -416,8 +430,18 @@
             return choice && Array.isArray(choice.subtitle) ? Object.assign({}, choice, {subtitle: joinTextPieces(choice.subtitle)}) : choice;
           });
         }
-        var result = displayChoices.call(this, choices);
-        addChoicePortraits(this, choices);
+        // Z — 1.22 (the user's note of 22 XI 2026): on the steps of the cabinet formation the options that can be chosen stand on top;
+        // only the order on the screen changes, and each link keeps the number of its choice in the engine.
+        var order = availableFirst(choices);
+        var shown = order ? order.map(function(i) { return choices[i]; }) : choices;
+        var result = displayChoices.call(this, shown);
+        if (order) {
+          this.$content.find('ul.choices').last().find('a[data-choice]').each(function() {
+            var at = parseInt(this.getAttribute('data-choice'), 10);
+            this.setAttribute('data-choice', String(order[at]));
+          });
+        }
+        addChoicePortraits(this, shown);
         return result;
       };
     }
