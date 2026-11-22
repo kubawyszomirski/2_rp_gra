@@ -1086,8 +1086,8 @@
     S.security.protect_until = t + POLICE_ORDERS_MONTHS;
     economy.changeBusinessPressure(S, POLICE_ORDERS_BUSINESS, 'police_orders:t' + t, t, 'police_orders');
     S.history.reasons.push({t: t, kind: 'police_orders', until: S.security.protect_until});
-    return result(Q, L('Until ' + rules.monthYear(S.security.protect_until) + ' the police guard lawful rallies and strikes, whoever holds the ministry; business presses harder (+' +
-      POLICE_ORDERS_BUSINESS + ').', 'Do ' + rules.monthYear(S.security.protect_until, 'gen') + ' policja pilnuje legalnych wieców i strajków, kto by nie kierował resortem; przedsiębiorcy mocniej naciskają (+' +
+    return result(Q, L('Until ' + rules.monthYear(S.security.protect_until) + ' the police guard lawful rallies and strikes, whoever holds the ministry; the industrialists are more displeased (+' +
+      POLICE_ORDERS_BUSINESS + ').', 'Do ' + rules.monthYear(S.security.protect_until, 'gen') + ' policja pilnuje legalnych wieców i strajków, kto by nie kierował resortem; przemysłowcy są bardziej niezadowoleni (+' +
       POLICE_ORDERS_BUSINESS + ').'));
   }
 
@@ -2078,12 +2078,12 @@
   // ---- Z — 1.11 (decision 6A of 8 XI 2026): the card “Budżet w kryzysie” in plain words ---------------------------------------
   // What the cabinet wants and what each instrument does, without numbers; four answers: support, against, abstain, not now.
   const INSTRUMENT_EFFECTS = Object.freeze({
-    progressive: ['the budget gains, business presses harder, and the Left of PPS is pleased', 'budżet zyskuje, przedsiębiorcy mocniej naciskają, a Lewica PPS jest zadowolona'],
-    progressive_top: ['the budget gains a little, and business presses harder', 'budżet trochę zyskuje, a przedsiębiorcy mocniej naciskają'],
-    progressive_raise: ['the budget gains, and business presses harder', 'budżet zyskuje, a przedsiębiorcy mocniej naciskają'],
-    wealth_tax: ['the budget gains quickly, but business is outraged', 'budżet szybko zyskuje, ale przedsiębiorcy są oburzeni'],
+    progressive: ['the budget gains, the industrialists are more displeased, and the Left of PPS is pleased', 'budżet zyskuje, przemysłowcy są bardziej niezadowoleni, a Lewica PPS jest zadowolona'],
+    progressive_top: ['the budget gains a little, and the industrialists are more displeased', 'budżet trochę zyskuje, a przemysłowcy są bardziej niezadowoleni'],
+    progressive_raise: ['the budget gains, and the industrialists are more displeased', 'budżet zyskuje, a przemysłowcy są bardziej niezadowoleni'],
+    wealth_tax: ['the budget gains quickly, but the industrialists are outraged', 'budżet szybko zyskuje, ale przemysłowcy są oburzeni'],
     indirect: ['the budget gains, but prices for the poorest rise and the Left of PPS protests', 'budżet zyskuje, ale ceny dla najbiedniejszych rosną, a Lewica PPS protestuje'],
-    broad: ['the budget gains, business presses harder, and the middle class is discontented', 'budżet zyskuje, przedsiębiorcy mocniej naciskają, a klasa średnia jest niezadowolona'],
+    broad: ['the budget gains, the industrialists are more displeased, and the middle class is discontented', 'budżet zyskuje, przemysłowcy są bardziej niezadowoleni, a klasa średnia jest niezadowolona'],
     customs: ['the budget gains a little, but prices rise', 'budżet trochę zyskuje, ale ceny rosną'],
     loan: ['the budget gains now, but in a year part of the loan must be repaid', 'budżet zyskuje teraz, ale za rok trzeba spłacić część pożyczki'],
     admin_cuts: ['the budget gains a little, but the public employees are discontented', 'budżet trochę zyskuje, ale urzędnicy są niezadowoleni'],
@@ -2142,7 +2142,7 @@
   // An urgent card of the Government deck: one of four instruments as a budget law; the Sejm votes at the next settlement, and a law
   // that passes brings one unit more than the same decision on the card of the Treasury (P). After a plan the card rests three months.
   const PLAN_KINDS = Object.freeze(['progressive', 'loan', 'admin_cuts', 'emission']);
-  const PLAN_EFFECTS = Object.freeze({progressive: ['business presses harder, and the Left of PPS is pleased', 'przedsiębiorcy mocniej naciskają, a Lewica PPS jest zadowolona'],
+  const PLAN_EFFECTS = Object.freeze({progressive: ['the industrialists are more displeased, and the Left of PPS is pleased', 'przemysłowcy są bardziej niezadowoleni, a Lewica PPS jest zadowolona'],
     loan: ['in a year 2 of them must be repaid', 'za rok trzeba będzie spłacić 2 z nich'], admin_cuts: ['the public employees are discontented', 'urzędnicy są niezadowoleni'],
     emission: ['inflation rises', 'rośnie inflacja']});
   const PLAN_BONUS = 1;
@@ -3265,8 +3265,8 @@
           L('The limited benefit is paid from the next settlement; it costs 1 budget unit.', 'Ograniczony zasiłek będzie wypłacany od najbliższego rozliczenia; kosztuje 1 jednostkę budżetu.');
       }},
     {id: 'labor_inspection', portfolio: 'labor', name: ['Labour inspection and working time', 'Inspekcja pracy i czas pracy'],
-      text: ['Inspectors enforce the statutory working time; it costs 1 budget unit. The discontent of the workers falls, and business presses harder (+4).',
-        'Inspektorzy pilnują ustawowego czasu pracy; kosztuje to 1 jednostkę budżetu. Niezadowolenie robotników spada, a przedsiębiorcy mocniej naciskają (+4).'],
+      text: ['Inspectors enforce the statutory working time; it costs 1 budget unit. The discontent of the workers falls, and the industrialists are more displeased (+4).',
+        'Inspektorzy pilnują ustawowego czasu pracy; kosztuje to 1 jednostkę budżetu. Niezadowolenie robotników spada, a przemysłowcy są bardziej niezadowoleni (+4).'],
       raise: ['The inspection works today only in large industry; the law extends it to all workplaces.', 'Dziś inspekcja działa tylko w wielkim przemyśle; ustawa obejmuje nią wszystkie zakłady.'],
       variants: [{key: 'inspection', name: ['inspection everywhere', 'inspekcja we wszystkich zakładach'], programme: {fiscal: 1}},
         {key: 'industry_only', name: ['inspection in large industry only', 'inspekcja tylko w wielkim przemyśle'], programme: {fiscal: 0}}],
@@ -3280,8 +3280,8 @@
         return L('The labour administration builds the inspection.', 'Administracja resortu Pracy buduje inspekcję.');
       }},
     {id: 'progressive_tax', portfolio: 'finance', name: ['Progressive tax on high incomes and wealth', 'Podatek progresywny od wysokich dochodów i majątku'],
-      text: ['The budget gains 2 units at once, business presses harder on the cabinet (+4) and the Left of PPS is satisfied.',
-        'Budżet od razu zyskuje 2 jednostki, przedsiębiorcy mocniej naciskają na rząd (+4), a Lewica PPS jest zadowolona.'],
+      text: ['The budget gains 2 units at once, the industrialists are more displeased (+4) and the Left of PPS is satisfied.',
+        'Budżet od razu zyskuje 2 jednostki, przemysłowcy są bardziej niezadowoleni (+4), a Lewica PPS jest zadowolona.'],
       raise: ['Today only the highest incomes are taxed; the law extends the tax to high incomes and wealth.', 'Dziś opodatkowane są tylko najwyższe dochody; ustawa obejmuje podatkiem wysokie dochody i majątek.'],
       variants: [{key: 'progressive', name: ['the tax on high incomes and wealth', 'podatek od wysokich dochodów i majątku'], programme: {fiscal: 2}},
         {key: 'progressive_top', name: ['the tax on the highest incomes only, without wealth', 'podatek tylko od najwyższych dochodów, bez majątku'], programme: {fiscal: 1}}],
@@ -3371,10 +3371,10 @@
         return L('The ministry of the interior carries out the autonomy.', 'Resort Spraw Wewnętrznych wprowadza autonomię.');
       }},
     {id: 'land_reform', portfolio: 'agriculture', name: ['Land reform', 'Reforma rolna'],
-      text: ['Full: the expropriation of large estates without compensation (1 budget unit; a very strong reaction of business, +25). Limited: an accelerated reform with compensation (2 budget units; +12). It covers the first of three parts of the countryside.',
-        'Pełna: wywłaszczenie wielkiej własności bez odszkodowania (1 jednostka budżetu; bardzo silna reakcja przedsiębiorców, +25). Ograniczona: przyspieszona reforma z odszkodowaniem (2 jednostki budżetu; +12). Obejmuje pierwszą z trzech części wsi.'],
+      text: ['Full: the expropriation of large estates without compensation (1 budget unit; a very strong displeasure of the industrialists, +25). Limited: an accelerated reform with compensation (2 budget units; +12). It covers the first of three parts of the countryside.',
+        'Pełna: wywłaszczenie wielkiej własności bez odszkodowania (1 jednostka budżetu; bardzo silne niezadowolenie przemysłowców, +25). Ograniczona: przyspieszona reforma z odszkodowaniem (2 jednostki budżetu; +12). Obejmuje pierwszą z trzech części wsi.'],
       raise: ['A land reform with compensation is carried out today; the law turns it into expropriation without compensation (business +13).',
-        'Dziś trwa reforma z odszkodowaniem; ustawa zmienia ją w wywłaszczenie bez odszkodowania (przedsiębiorcy +13).'],
+        'Dziś trwa reforma z odszkodowaniem; ustawa zmienia ją w wywłaszczenie bez odszkodowania (niezadowolenie przemysłowców +13).'],
       variants: [{key: 'expropriation', name: ['expropriation without compensation', 'wywłaszczenie bez odszkodowania'], programme: {land: 2}, flags: ['pps_land_reform']},
         {key: 'accelerated', name: ['an accelerated reform with compensation', 'przyspieszona reforma z odszkodowaniem'], programme: {land: 1}, flags: ['pps_land_reform']}],
       level: S => projectLevel(S, 'land_program', ['expropriation'], ['compensated', 'accelerated']),
@@ -3442,8 +3442,8 @@
         return L('The courts apply the new rules at once.', 'Sądy stosują nowe przepisy od razu.');
       }},
     {id: 'old_age', portfolio: null, name: ['Old-age insurance of workers', 'Ubezpieczenie robotników na starość'],
-      text: ['Insurance of workers for old age, widows and orphans from the contributions of employers and workers with a state subsidy: it costs 2 budget units; business presses harder (+6).',
-        'Ubezpieczenie robotników na starość, wdów i sierot ze składek pracodawców i robotników z dopłatą państwa: kosztuje 2 jednostki budżetu; przedsiębiorcy mocniej naciskają (+6).'],
+      text: ['Insurance of workers for old age, widows and orphans from the contributions of employers and workers with a state subsidy: it costs 2 budget units; the industrialists are more displeased (+6).',
+        'Ubezpieczenie robotników na starość, wdów i sierot ze składek pracodawców i robotników z dopłatą państwa: kosztuje 2 jednostki budżetu; przemysłowcy są bardziej niezadowoleni (+6).'],
       raise: ['Only the workers of large industry and the railways are insured today; the law covers all workers.', 'Dziś ubezpieczeni są tylko robotnicy wielkiego przemysłu i kolei; ustawa obejmuje wszystkich robotników.'],
       variants: [{key: 'pension_all', name: ['the insurance of all workers', 'ubezpieczenie wszystkich robotników'], programme: {fiscal: 2}},
         {key: 'pension_industry', name: ['the insurance of large industry and the railways', 'ubezpieczenie wielkiego przemysłu i kolei'], programme: {fiscal: 1}}],
@@ -3507,7 +3507,7 @@
       L('relations with ' + WITH_EN[e.actor] + ' worsen (' + n(e.value) + ')', 'stosunki z ' + WITH_PL[e.actor] + ' się pogarszają (' + n(e.value) + ')');
     if (e.type === 'faction') return e.dissent < 0 ? L('the dissent of ' + FACTION_OF_EN[e.faction] + ' falls (' + n(e.dissent) + ')', 'sprzeciw ' + FACTION_OF_PL[e.faction] + ' spada (' + n(e.dissent) + ')') :
       L('the dissent of ' + FACTION_OF_EN[e.faction] + ' rises (' + n(e.dissent) + ')', 'sprzeciw ' + FACTION_OF_PL[e.faction] + ' rośnie (' + n(e.dissent) + ')');
-    if (e.type === 'business') return L('business presses harder (' + n(e.value) + ')', 'przedsiębiorcy naciskają mocniej (' + n(e.value) + ')');
+    if (e.type === 'business') return L('the industrialists are more displeased (' + n(e.value) + ')', 'przemysłowcy są bardziej niezadowoleni (' + n(e.value) + ')');
     if (e.type === 'trust') return L('the trust of workers and the intelligentsia in PPS grows (' + n(e.value) + ')', 'zaufanie robotników i inteligencji do PPS rośnie (' + n(e.value) + ')');
     return '';
   }
@@ -4265,8 +4265,7 @@
       const target = started ? Object.assign(started, {name: REFORM_NAMES[key].slice()}) : null;
       const objections = government.applyReformObjections(Q, key, target);
       if (objections.length && Q.pl_gc_result) {
-        Q.pl_gc_result += ' ' + objections.map(o => L(government.partyWords(o.party) + ' objects: tension +' + o.delta + '.',
-          'Sprzeciw: ' + government.partyWords(o.party) + ', napięcie +' + o.delta + '.')).join(' ');
+        Q.pl_gc_result += RESULT_BREAK + objectionsLine(objections);
       }
     }
     return out;
@@ -4345,20 +4344,25 @@
           const unions = unionsModule(), branch = (extra && extra.branch) || unions.collectiveTarget(Q);
           const agreement = unions.signCollective(Q, branch);
           economy.changeBusinessPressure(S, COLLECTIVE_BUSINESS, agreement.id + ':business', t, 'collective_agreement');
-          return result(Q, L('The collective agreement of ' + unions.BRANCH_NAMES[branch].toLowerCase() + ' is signed: wages +' +
-            round(agreement.wage_pp, 2) + ' pp for two months, paid by the employers who sign it; business presses harder (+' + COLLECTIVE_BUSINESS + '). It runs for ' +
-            unions.COLLECTIVE_TERM + ' months.', 'Układ zbiorowy (' + unions.branchName(branch).toLowerCase() + ') zostaje podpisany: płace +' +
-            num(round(agreement.wage_pp, 2)) + ' pkt proc. przez dwa miesiące, płacone przez pracodawców, którzy go podpisują; przedsiębiorcy mocniej naciskają (+' +
-            COLLECTIVE_BUSINESS + '). Obowiązuje przez ' + months(unions.COLLECTIVE_TERM) + '.'));
+          // Z — 1.21 (the user's note of 22 XI 2026): the result in plain words, without the points of the wage rise.
+          return result(Q, L('The collective agreement of ' + unions.BRANCH_NAMES[branch].toLowerCase() + ' is signed: wages there rise for two months, paid by the employers. ' +
+            'The industrialists are more displeased (+' + COLLECTIVE_BUSINESS + '). The agreement runs for ' + unions.COLLECTIVE_TERM + ' months.',
+            'Układ zbiorowy (' + unions.branchName(branch).toLowerCase() + ') zostaje podpisany: płace rosną tam na dwa miesiące, a płacą je pracodawcy. ' +
+            'Przemysłowcy są bardziej niezadowoleni (+' + COLLECTIVE_BUSINESS + '). Układ obowiązuje przez ' + months(unions.COLLECTIVE_TERM) + '.'));
         }
         if (option === 'derogation') {
           const unions = unionsModule(), plant = unions.grantDerogation(Q);
           // Z — 0.94: the Left of PPS protests against a derogation from the eight-hour day (+3).
-          government.factionReaction(Q, 'lewica', {dissent: DEROGATION_LEWICA}, {id: 'derogation:' + plant.id + ':t' + t, kind: 'cabinet_policy', reverse: null});
+          government.factionReaction(Q, 'lewica', {dissent: DEROGATION_LEWICA}, {id: 'derogation:' + (plant ? plant.id : 'general') + ':t' + t, kind: 'cabinet_policy', reverse: null});
+          // Z — 1.21 (decision 2B): without a recorded plant the plants in difficulty in general may work longer.
+          if (!plant) {
+            return result(Q, L('For ' + unions.DEROGATION_MONTHS + ' months the plants in difficulty may work longer than eight hours.\nThe industrialists are less displeased; the workers are a little more discontented, and the Left of PPS protests.',
+              'Przez ' + months(unions.DEROGATION_MONTHS) + ' zakłady w trudnościach mogą pracować dłużej niż 8 godzin.\nPrzemysłowcy są mniej niezadowoleni; robotnicy są trochę bardziej niezadowoleni, a Lewica PPS protestuje.'));
+          }
           return result(Q, L('A limited derogation from working time is granted to the ' + unions.plantName(plant) + ' for ' +
-            unions.DEROGATION_MONTHS + ' months: business pressure −4; its workers’ grievance +3 at the next monthly settlement; the Left of PPS protests (+3).',
+            unions.DEROGATION_MONTHS + ' months: the displeasure of the industrialists −4; its workers’ grievance +3 at the next monthly settlement; the Left of PPS protests (+3).',
             'Ograniczone odstępstwo od czasu pracy zostaje przyznane (' + unions.plantName(plant) + ') na ' + months(unions.DEROGATION_MONTHS) +
-            ': presja przedsiębiorców −4; niezadowolenie robotników zakładu +3 przy następnym miesięcznym rozliczeniu; Lewica PPS protestuje (+3).'));
+            ': niezadowolenie przemysłowców −4; niezadowolenie robotników zakładu +3 przy następnym miesięcznym rozliczeniu; Lewica PPS protestuje (+3).'));
         }
         const project = prepareProject(Q, 'labor_inspection', 'inspection', ppsFields, {match: p => p.sponsor === 'pps'});
         return result(Q, launchPrepared(Q, project));
@@ -4426,10 +4430,10 @@
           plant.history.push({t: t, kind: 'public_control_submitted', law_id: bill.id});
           return result(Q, bill.status === 'rejected' ? L('The Sejm rejects the act; the ' + plantLabel(plant) + ' stays private.',
             'Sejm odrzuca akt; zakład (' + plantLabel(plant) + ') pozostaje prywatny.') :
-            bill.status === 'enacted' ? L('The ' + plantLabel(plant) + ' passes under public control, managed by a public board: business pressure +15.',
-              capital(plantLabel(plant)) + ' przechodzi pod kontrolę publiczną i zarządza nim zarząd publiczny: presja przedsiębiorców +15.') :
-              L('The Sejm passes the act of public control of the ' + plantLabel(plant) + '; business pressure +15 comes when it takes effect.',
-                'Sejm uchwala akt kontroli publicznej (' + plantLabel(plant) + '); presja przedsiębiorców +15 przyjdzie, gdy akt wejdzie w życie.') + lawNote(bill));
+            bill.status === 'enacted' ? L('The ' + plantLabel(plant) + ' passes under public control, managed by a public board: the displeasure of the industrialists +15.',
+              capital(plantLabel(plant)) + ' przechodzi pod kontrolę publiczną i zarządza nim zarząd publiczny: niezadowolenie przemysłowców +15.') :
+              L('The Sejm passes the act of public control of the ' + plantLabel(plant) + '; the displeasure of the industrialists +15 comes when it takes effect.',
+                'Sejm uchwala akt kontroli publicznej (' + plantLabel(plant) + '); niezadowolenie przemysłowców +15 przyjdzie, gdy akt wejdzie w życie.') + lawNote(bill));
         }
         if (option === 'worker_representation') {
           const variant = (extra && extra.variant) || 'consultative';
@@ -4543,9 +4547,18 @@
       rules.plural(value, 'jednostkę', 'jednostki', 'jednostek') + '.') : '';
   }
 
+  // Z — 1.21 (decision 3A of 22 XI 2026): the result of a ministry decision in short lines, one sentence a line, instead of one run of text.
+  const RESULT_BREAK = '<br>';
+  const resultLines = text => String(text).replace(/\n/g, RESULT_BREAK).replace(/([.!?])\s+(?=[A-ZĄĆĘŁŃÓŚŹŻ„])/g, '$1' + RESULT_BREAK);
   function result(Q, text) {
-    Q.pl_gc_result = text;
+    Q.pl_gc_result = resultLines(text);
     return {text: text};
+  }
+  // The partners that object to a reform, in one line (Z — 1.21).
+  function objectionsLine(objections) {
+    const names = objections.map(o => government.partyWords(o.party) + ' (+' + o.delta + ')');
+    const list = names.length > 1 ? names.slice(0, -1).join(', ') + L(' and ', ' i ') + names[names.length - 1] : names[0];
+    return L('Objecting in the coalition: ' + list + '; the tension grows.', 'Sprzeciw w koalicji: ' + list + '; napięcie rośnie.');
   }
 
   function lawNote(law) {

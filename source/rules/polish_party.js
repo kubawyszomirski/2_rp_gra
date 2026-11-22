@@ -1657,9 +1657,13 @@
 
   function programmeCampaignNote(S, cells) {
     const names = programmeGroupNames(S, cells);
-    return names.length ? L(' The economic programme of PPS makes it 10% stronger among ' + andList(names) + '.',
-      ' Program gospodarczy PPS wzmacnia ją o 10% wśród ' + andList(names) + '.') : '';
+    return names.length ? L(' The economic programme of PPS makes it stronger among ' + andList(names) + '.',
+      ' Program gospodarczy PPS wzmacnia ją wśród ' + andList(names) + '.') : '';
   }
+
+  // The change of the support for PPS in a group, in words (Z — 1.21), from its points: below 0.05 nothing, then a little, then clearly.
+  const campaignGainWords = d => (d < 0.05 ? ['hardly changes', 'prawie się nie zmienia'] : d < 0.5 ? ['grows a little', 'trochę rośnie'] :
+    d < 1.5 ? ['grows', 'rośnie'] : ['grows clearly', 'wyraźnie rośnie']);
 
   // The effect of one campaign in its cells (5.3), without its action and cost: the card above pays 1 T and 1 R; an
   // event of stage 7 (B4, B5) pays its own cost in the same decision. A null audience is every cell the
@@ -1691,13 +1695,15 @@
     if (kind === 'polemic') for (const id of sources) government.changeRelation(Q, id, -2, 'polemic:' + id + ':t' + t);
     const after = electorate.aggregate(S, filter, 'pps');
     const name = audience ? electorate.AUDIENCES[audience].name : 'the voters it reaches';
+    // Z — 1.21 (the user's note of 22 XI 2026): the result in words, without the shares in per cent.
+    const grew = campaignGainWords(after - before);
     const text = L('The ' + (kind === 'polemic' ? 'polemic' : kind === 'unions' ? 'campaign through the unions and meetings' : 'press campaign') +
-      (topic && kind !== 'polemic' ? ' on ' + TOPICS[topic] : '') + ' reaches ' + name + ': PPS ' +
-      fmt(before) + '% → ' + fmt(after) + '% among them.' + (kind === 'polemic' ? ' The addressee’s relation with PPS −2.' : ''),
+      (topic && kind !== 'polemic' ? ' on ' + TOPICS[topic] : '') + ' reaches ' + name + ': support for PPS among them ' + grew[0] + '.' +
+      (kind === 'polemic' ? ' The addressee’s relations with PPS worsen.' : ''),
       (kind === 'polemic' ? 'Polemika' : kind === 'unions' ? 'Kampania przez związki i zebrania' : 'Kampania prasowa') +
       (topic && kind !== 'polemic' ? ' (temat: ' + topicName(topic) + ')' : '') + ' dociera do ' +
-      (audience ? electorate.AUDIENCE_NAMES_PL_GENITIVE[audience] : 'wyborców w swoim zasięgu') + ': PPS ' +
-      fmt(before) + '% → ' + fmt(after) + '% w tej grupie.' + (kind === 'polemic' ? ' Relacja adresata z PPS −2.' : '')) +
+      (audience ? electorate.AUDIENCE_NAMES_PL_GENITIVE[audience] : 'wyborców w swoim zasięgu') + ': poparcie PPS wśród nich ' + grew[1] + '.' +
+      (kind === 'polemic' ? ' Stosunki adresata z PPS się psują.' : '')) +
       programmeCampaignNote(S, cells);
     S.history.reasons.push({t: t, kind: 'campaign', campaign: kind, topic: key, audience: audience || 'reached', moved: moved});
     electorate.writeClassMirrors(Q);
@@ -2030,7 +2036,7 @@
       gives: ['a stronger threat of a strike and workers who are ready to fight sooner', 'skuteczniejsza groźba strajku i robotnicy szybciej gotowi do walki'],
       resolution: ['Resolution on mass action', 'Uchwała o akcji masowej'],
       text: ['The party makes the strike its main weapon: the threat of a strike carries more weight, and the workers are ready sooner. The Left grows stronger; the Centre and the employers are alarmed.',
-        'Partia czyni strajk swoją główną bronią: groźba strajku waży więcej, a robotnicy szybciej są gotowi. Lewica się wzmacnia, a Centrum i przedsiębiorcy są zaniepokojeni.']},
+        'Partia czyni strajk swoją główną bronią: groźba strajku waży więcej, a robotnicy szybciej są gotowi. Lewica się wzmacnia, a Centrum i przemysłowcy są zaniepokojeni.']},
     militarism: {name: ['Militarism', 'Militaryzm'], acc: ['militarism', 'militaryzm'], patron: 'pilsudczycy', rivals: {centrum: 5},
       builds: ['recruiting and training the Milicja, the Akcja Socjalistyczna and guarding rallies', 'werbunek i szkolenie Milicji, Akcja Socjalistyczna i ochrona wieców'],
       gives: ['a stronger Milicja when it comes to a fight in a coup', 'mocniejsza Milicja, gdy dojdzie do walki w czasie zamachu'],
@@ -2048,10 +2054,11 @@
       gives: ['stronger campaigns among the workers and the unemployed, closer relations with the KPP and a cheaper socialisation', 'mocniejsze kampanie wśród robotników i bezrobotnych, bliższe stosunki z KPP i tańsze uspołecznienie'],
       resolution: ['Resolution on the class struggle', 'Uchwała o walce klasowej'],
       text: ['The party breaks with reformism and bets on the class struggle and the councils: the workers and the unemployed listen more readily, and the communists come closer. The Left grows stronger; the Centre and the employers are alarmed.',
-        'Partia zrywa z reformizmem i stawia na walkę klasową i rady: robotnicy i bezrobotni chętniej słuchają, a komuniści się zbliżają. Lewica się wzmacnia, a Centrum i przedsiębiorcy są zaniepokojeni.']},
+        'Partia zrywa z reformizmem i stawia na walkę klasową i rady: robotnicy i bezrobotni chętniej słuchają, a komuniści się zbliżają. Lewica się wzmacnia, a Centrum i przemysłowcy są zaniepokojeni.']},
   });
   const profileName = id => L(PROFILES[id].name[0], PROFILES[id].name[1]);
   const profileAcc = id => L(PROFILES[id].acc[0], PROFILES[id].acc[1]);
+  const profileNameLower = id => profileName(id).charAt(0).toLowerCase() + profileName(id).slice(1);
   const adoptedProfiles = S => (rules.profileState(S) ? rules.profileState(S).adopted.map(a => a.id) : []);
   function profileExcluded(S, id) {
     const other = PROFILE_EXCLUSIVE[id];
@@ -2101,9 +2108,10 @@
       Q['pl_cg_' + id + '_on'] = rules.profileActive(S, id) ? 1 : 0;
       Q['pl_cg_' + id + '_why'] = congressStatus(Q, 'adopt:' + id).reason || '';
       // Z — 1.10 (the user's note of 8 XI 2026): plain titles — "Adopt reformism", "Give up parliamentarism".
-      Q['pl_cg_' + id + '_title'] = L('Adopt ' + profileAcc(id), 'Przyjmij ' + profileAcc(id));
+      // Z — 1.21 (the user's note of 22 XI 2026): the title says that the resolution is about a characteristic of the party.
+      Q['pl_cg_' + id + '_title'] = L('Adopt the characteristic: ', 'Przyjmij charakterystykę: ') + profileNameLower(id);
       Q['pl_cg_' + id + '_text'] = L(PROFILES[id].text[0], PROFILES[id].text[1]);
-      Q['pl_cg_' + id + '_drop'] = L('Give up ' + profileAcc(id), 'Porzuć ' + profileAcc(id));
+      Q['pl_cg_' + id + '_drop'] = L('Give up the characteristic: ', 'Porzuć charakterystykę: ') + profileNameLower(id);
       Q['pl_cg_' + id + '_drop_text'] = L('The party gives up this course; ' + FACTION_WORDS[PROFILES[id].patron][0] + ' protests (+' + PROFILE_DROP_DISSENT + '). The congress goes on: it can then adopt another characteristic.',
         'Partia rezygnuje z tego kursu; ' + FACTION_WORDS[PROFILES[id].patron][1] + ' protestuje (+' + PROFILE_DROP_DISSENT + '). Kongres trwa dalej: potem może przyjąć inną charakterystykę.');
     }
@@ -3257,6 +3265,13 @@
     Q.pl_org_cash = fmt(Q.S.party_orgs.cash);
     // Z — 0.57: the TUR package founds TUR while its level is 0.
     Q.pl_tur_level = Q.S.party_orgs.tur.level;
+    // Z — 1.21 (the user's question „I co to daje?” of 22 XI 2026): what the next level gives, in words — more from the organisational
+    // work and the course that the TUR card offers from that level.
+    const next = Math.min(TUR_MAX, Q.S.party_orgs.tur.level + 1);
+    const course = Object.keys(COURSES).find(id => COURSES[id].level === next);
+    Q.pl_tur_gain = L('our organisational work brings more', 'nasza praca organizacyjna przynosi więcej') +
+      (course ? L(', and the TUR card offers a new course: ' + COURSES[course].name.toLowerCase() + '.', ', a karta Towarzystwa daje nowy kurs: ' +
+        COURSE_NAMES_PL[course].toLowerCase() + '.') : '.');
   }
 
   // The union card: why each of its packages cannot be taken now (Z — 0.56).

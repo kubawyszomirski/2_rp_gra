@@ -42,7 +42,7 @@ go-to: result
 
 @insurance
 title: Introduce the old-age insurance of workers
-subtitle: Cost: [+ pl_cost2 +]. Employers and workers pay the rest in contributions; the workers are less discontented (−2), but business presses harder (+6). [? if pl_social_welfare_insurance_coalition : [+ pl_social_welfare_insurance_coalition +] ?]
+subtitle: Cost: [+ pl_cost2 +]. Employers and workers pay the rest in contributions; the workers are less discontented (−2), but the industrialists are more displeased (+6). [? if pl_social_welfare_insurance_coalition : [+ pl_social_welfare_insurance_coalition +] ?]
 choose-if: {! return PolishProjects.optionStatus(Q, 'social_welfare', 'insurance').available !}
 unavailable-subtitle: [+ pl_social_welfare_insurance_why +]
 on-arrival: {!
@@ -62,7 +62,6 @@ go-to: result
 
 @nothing
 title: Do nothing now
-subtitle: The card is played and comes back in three months.
 on-arrival: {!
 PolishRules.skipCard(Q);
 !}

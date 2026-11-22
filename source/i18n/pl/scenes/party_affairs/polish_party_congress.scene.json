@@ -3,9 +3,9 @@
   "status": "complete",
   "lines": {
     "title: The Congress of PPS": "title: Kongres PPS",
-    "subtitle: An urgent card: the delegates gather, and the congress can adopt a resolution.": "subtitle: Karta pilna: zbierają się delegaci, a kongres może przyjąć uchwałę.",
+    "subtitle: An urgent card: the delegates gather, and the congress can adopt a characteristic of the party.": "subtitle: Karta pilna: zbierają się delegaci, a kongres może przyjąć charakterystykę partii.",
     "= The congress of PPS": "= Kongres PPS",
-    "Delegates from the whole country gather in Warsaw. The congress can adopt a resolution that will define for years what the party is. [? if pl_cg_intro : [+ pl_cg_intro +] ?]": "Do Warszawy zjeżdżają delegaci z całego kraju. Kongres może przyjąć uchwałę, która na lata określi, czym jest partia. [? if pl_cg_intro : [+ pl_cg_intro +] ?]",
+    "Delegates from the whole country gather in Warsaw. The congress can adopt a characteristic of the party that is ready for a resolution; it will define for years what the party is. [? if pl_cg_intro : [+ pl_cg_intro +] ?]": "Do Warszawy zjeżdżają delegaci z całego kraju. Kongres może przyjąć charakterystykę partii, która dojrzała do uchwały; określi ona na lata, czym jest partia. [? if pl_cg_intro : [+ pl_cg_intro +] ?]",
     "title: No new resolutions": "title: Bez nowych uchwał",
     "subtitle: The congress ends, and the next one meets in a year at the earliest.": "subtitle: Kongres się kończy, a następny zbierze się najwcześniej za rok.",
     "title: Not now": "title: Nie teraz",

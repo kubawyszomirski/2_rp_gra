@@ -579,7 +579,7 @@ test('Program bez zmiany in the game (Z — 0.56, 0.57): six described prioritie
   assert.equal(plain(choice(engine, 'polish_party_economic_program.confirm_present').title),
     'Confirm the present programme: Cooperatives and housing; Public works and employment');
   assert.equal(plain(choice(engine, 'polish_party_economic_program.edit').title).trim(), 'Change the programme');
-  assert.match(plain(engine.ui.paragraphs), /10% stronger among workers, the peasants, the intelligentsia and the unemployed/);
+  assert.match(plain(engine.ui.paragraphs), /stronger among workers, the peasants, the intelligentsia and the unemployed/);
   choose(engine, 'polish_party_economic_program.edit');
   for (const id of PRIORITY_IDS) {
     const marked = ['public_works', 'cooperatives_housing'].includes(id);

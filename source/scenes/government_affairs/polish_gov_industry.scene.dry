@@ -45,7 +45,7 @@ go-to: result
 
 @rescue
 title: Rescue a threatened plant with credit
-subtitle: Cost: [+ pl_cost2 +]. In return the owner keeps the plant and its jobs; business presses less at once (−4), and the plant works in full again.
+subtitle: Cost: [+ pl_cost2 +]. In return the owner keeps the plant and its jobs; the industrialists are at once less displeased (−4), and the plant works in full again.
 choose-if: {! return PolishProjects.optionStatus(Q, 'industrial_policy', 'rescue').available !}
 unavailable-subtitle: [+ pl_industrial_policy_rescue_why +]
 on-arrival: {!
@@ -55,7 +55,7 @@ go-to: result
 
 @public_control
 title: Take a plant under public control
-subtitle: Cost: 0 budget units. A public board takes over the management of the plant. The workers keep their jobs, but business pressure rises sharply (+15). [? if pl_industrial_policy_public_control_coalition : [+ pl_industrial_policy_public_control_coalition +] ?]
+subtitle: Cost: 0 budget units. A public board takes over the management of the plant. The workers keep their jobs, but the displeasure of the industrialists rises sharply (+15). [? if pl_industrial_policy_public_control_coalition : [+ pl_industrial_policy_public_control_coalition +] ?]
 choose-if: {! return PolishProjects.optionStatus(Q, 'industrial_policy', 'public_control').available !}
 unavailable-subtitle: [+ pl_industrial_policy_public_control_why +]
 on-arrival: {!
@@ -76,7 +76,6 @@ go-to: result
 
 @nothing
 title: Do nothing now
-subtitle: The card is played and comes back in three months.
 on-arrival: {!
 PolishRules.skipCard(Q);
 !}

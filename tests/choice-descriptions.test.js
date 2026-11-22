@@ -152,3 +152,29 @@ test('Koszt 0 w 1.17: every decision on a card with costs opens with its cost li
   assert.equal(rules().markEffectNumbers('Koszt: 0 jednostek środków. Sprzeciw spada (−3).'),
     '<span class="pl-cost">Koszt: 0 jednostek środków.</span>Sprzeciw spada<span class="pl-fx"> (−3)</span>.');
 });
+
+// Z — 1.21 (the user's play notes of 22 XI 2026): "Do nothing" has no description; the eight cards of the party line say plainly what
+// each line gives, without multipliers or scales; campaign results are words, not shares in per cent; the cost written from a value
+// ("Koszt: [+ … +].") gets its own line once its pieces are joined.
+test('Opisy 1.21: „Nic nie robimy” bez opisu, linie partii słowami, kampanie bez procentów', () => {
+  const problems = [];
+  for (const file of walk(path.join(ROOT, 'source/scenes')).filter(f => f.endsWith('.scene.dry'))) {
+    const rel = path.relative(path.join(ROOT, 'source/scenes'), file), text = fs.readFileSync(file, 'utf8');
+    if (/The card is played and comes back in three months\./.test(text)) problems.push(rel + ': do-nothing description');
+    if (/polish_party_(direction|main_opponent|pils_influence|form_of_power|electoral_base|slavic_autonomy|jewish_cooperation|ussr_position)\.scene/.test(rel)) {
+      if (/×|scale from|the card waits/.test(text)) problems.push(rel + ': a multiplier, a scale or the waiting card');
+    }
+  }
+  assert.deepEqual(problems, []);
+  const direction = read('source/scenes/party_affairs/polish_party_direction.scene.dry');
+  assert.match(direction, /Grow faster: parliamentarism and reformism\./);
+  const engine = dendry.startGame(1922, 'pl');
+  try {
+    const Q = engine.state.qualities;
+    const effect = globalThis.PolishParty.campaignEffect(Q, 'press', 'democracy', 'workers');
+    assert.doesNotMatch(effect.text, /%|→/);
+    assert.match(effect.text, /dociera do robotników: poparcie PPS wśród nich (prawie się nie zmienia|trochę rośnie|rośnie|wyraźnie rośnie)\./);
+  } finally {
+    rules().setLanguage('en');
+  }
+});

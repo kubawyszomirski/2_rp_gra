@@ -23,7 +23,7 @@ The present line: **[+ pl_stance_current +]**. A new declaration changes no law 
 
 @workers
 title: A workers’ party
-subtitle: [? if pl_stance_workers_present = 1 : **Present line** Confirming it changes nothing, and the card waits as after a change. ?][? if pl_stance_workers_present = 0 : Reach grows faster in the three union branches and among the workers (+0.10). ?]
+subtitle: [? if pl_stance_workers_present = 1 : **Present line** Confirming it changes nothing. ?][? if pl_stance_workers_present = 0 : Our organisational work brings more in the unions and among the workers. Grows faster: unionism. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'electoral_base', 'workers').available !}
 unavailable-subtitle: [+ pl_stance_workers_why +]
 on-arrival: {!
@@ -33,7 +33,7 @@ go-to: result
 
 @workers_peasants
 title: A party of workers and peasants
-subtitle: [? if pl_stance_workers_peasants_present = 1 : **Present line** Confirming it changes nothing, and the card waits as after a change. ?][? if pl_stance_workers_peasants_present = 0 : The same, and in the peasants’ cells. ?]
+subtitle: [? if pl_stance_workers_peasants_present = 1 : **Present line** Confirming it changes nothing. ?][? if pl_stance_workers_peasants_present = 0 : The same, and also among the peasants. Grows faster: the worker-peasant alliance. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'electoral_base', 'workers_peasants').available !}
 unavailable-subtitle: [+ pl_stance_workers_peasants_why +]
 on-arrival: {!
@@ -43,7 +43,7 @@ go-to: result
 
 @broad_democratic
 title: A broad democratic party
-subtitle: [? if pl_stance_broad_democratic_present = 1 : **Present line** Confirming it changes nothing, and the card waits as after a change. ?][? if pl_stance_broad_democratic_present = 0 : Reach grows faster among the intelligentsia and the petty bourgeoisie (+0.10). ?]
+subtitle: [? if pl_stance_broad_democratic_present = 1 : **Present line** Confirming it changes nothing. ?][? if pl_stance_broad_democratic_present = 0 : Our organisational work brings more among the intelligentsia and the petty bourgeoisie. Grows faster: federalism. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'electoral_base', 'broad_democratic').available !}
 unavailable-subtitle: [+ pl_stance_broad_democratic_why +]
 on-arrival: {!

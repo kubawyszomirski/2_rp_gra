@@ -161,8 +161,8 @@ test('Charakterystyka w grze 1.07: the Party tab shows the eight characteristics
     // Z — 1.10 (the user's notes and decision 3A of 8 XI 2026): plain titles; giving one up keeps the congress open, and another
     // one is adopted within the same action.
     const title = id => plainText((engine.getCurrentChoices() || []).find(c => c.id === id).title);
-    assert.equal(title('polish_party_congress.adopt_parliamentarism'), 'Przyjmij parlamentaryzm');
-    assert.equal(title('polish_party_congress.drop_unionism'), 'Porzuć uzwiązkowienie');
+    assert.equal(title('polish_party_congress.adopt_parliamentarism'), 'Przyjmij charakterystykę: parlamentaryzm'); // Z — 1.21
+    assert.equal(title('polish_party_congress.drop_unionism'), 'Porzuć charakterystykę: uzwiązkowienie');
     dendry.choose(engine, 'polish_party_congress.drop_unionism');
     assert.match(content(), /Kongres porzucił uzwiązkowienie\. Może teraz przyjąć inną charakterystykę albo zakończyć obrady\./);
     assert.equal(Q.month_actions, 1);

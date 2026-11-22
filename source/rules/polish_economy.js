@@ -561,8 +561,10 @@
 
   const REGIME_NAMES = Object.freeze({marka: 'Polish mark', stabilizing: 'Polish mark, currency reform in progress', zloty: 'złoty'});
   const REGIME_NAMES_PL = Object.freeze({marka: 'marka polska', stabilizing: 'marka polska, trwa reforma walutowa', zloty: 'złoty'});
-  const BUSINESS_NAMES = Object.freeze({quiet: 'calm', warning: 'warning', active: 'active resistance (credit and output penalties)'});
-  const BUSINESS_NAMES_PL = Object.freeze({quiet: 'spokój', warning: 'ostrzeżenie', active: 'aktywny opór (kary dla kredytu i produkcji)'});
+  // Z — 1.21 (decision 1A of 22 XI 2026): the big industrialists in words — calm, displeased, holding back investment (the active resistance
+  // that harms credit and output).
+  const BUSINESS_NAMES = Object.freeze({quiet: 'calm', warning: 'displeased', active: 'holding back investment'});
+  const BUSINESS_NAMES_PL = Object.freeze({quiet: 'spokojni', warning: 'niezadowoleni', active: 'wstrzymują inwestycje'});
 
   // Z — 1.01: the pool in words — its units, and below zero the printing and the programmes it limits.
   function poolText(pool) {
@@ -589,7 +591,7 @@
       unemployment: rules.num(round(E.unemployment, 2), 2) + '%' + (E.market_unemployment - E.unemployment > 1e-9 ?
         ' (' + rules.num(round(E.market_unemployment, 2), 2) + L('% without public works)', '% bez robót publicznych)') : ''),
       agrarian: rules.num(round(S.society.agrarian_pressure, 1), 1),
-      business: L(BUSINESS_NAMES[E.business_state], BUSINESS_NAMES_PL[E.business_state]) + L(', pressure ', ', presja ') + round(E.business_pressure, 0),
+      business: L(BUSINESS_NAMES[E.business_state], BUSINESS_NAMES_PL[E.business_state]),
       currency: L(REGIME_NAMES[E.currency_regime], REGIME_NAMES_PL[E.currency_regime]) || E.currency_regime,
       forecast: forecast,
     };

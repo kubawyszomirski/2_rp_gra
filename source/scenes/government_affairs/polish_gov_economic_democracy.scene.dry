@@ -31,7 +31,7 @@ Socialists want the workers to have a say in the plants and the economy to serve
 
 @works_councils
 title: Introduce works councils
-subtitle: Cost: 0 budget units. In the larger plants workers’ councils have a say on dismissals and the wage rules. The workers are less discontented (−3) and trust their unions more (+5), but business presses harder (+8). [? if pl_economic_democracy_works_councils_coalition : [+ pl_economic_democracy_works_councils_coalition +] ?]
+subtitle: Cost: 0 budget units. In the larger plants workers’ councils have a say on dismissals and the wage rules. The workers are less discontented (−3) and trust their unions more (+5), but the industrialists are more displeased (+8). [? if pl_economic_democracy_works_councils_coalition : [+ pl_economic_democracy_works_councils_coalition +] ?]
 choose-if: {! return PolishProjects.optionStatus(Q, 'economic_democracy', 'works_councils').available !}
 unavailable-subtitle: [+ pl_economic_democracy_works_councils_why +]
 on-arrival: {!
@@ -51,7 +51,7 @@ go-to: result
 
 @socialise_mining
 title: Socialise coal mining
-subtitle: Cost: [+ pl_cost_soc +] (compensation for the owners), once in the game. The miners’ unions trust the party more and the dissent of the Left of PPS falls (−5), but business pressure jumps (+25). [? if pl_economic_democracy_socialise_mining_coalition : [+ pl_economic_democracy_socialise_mining_coalition +] ?]
+subtitle: Cost: [+ pl_cost_soc +] (compensation for the owners), once in the game. The miners’ unions trust the party more and the dissent of the Left of PPS falls (−5), but the industrialists are outraged (+25). [? if pl_economic_democracy_socialise_mining_coalition : [+ pl_economic_democracy_socialise_mining_coalition +] ?]
 choose-if: {! return PolishProjects.optionStatus(Q, 'economic_democracy', 'socialise_mining').available !}
 unavailable-subtitle: [+ pl_economic_democracy_socialise_mining_why +]
 on-arrival: {!
@@ -61,7 +61,6 @@ go-to: result
 
 @nothing
 title: Do nothing now
-subtitle: The card is played and comes back in three months.
 on-arrival: {!
 PolishRules.skipCard(Q);
 !}

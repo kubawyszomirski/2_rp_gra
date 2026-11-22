@@ -21,7 +21,7 @@ PolishUnions.govStrikeView(Q);
 
 @meet
 title: Meet the demands
-subtitle: Cost: 1 budget unit. Wages rise for two months, the unions and the workers trust PPS more, but business presses harder.
+subtitle: Cost: 1 budget unit. Wages rise for two months, the unions and the workers trust PPS more, but the industrialists are more displeased.
 choose-if: {! return PolishUnions.govStrikeStatus(Q, 'meet').available !}
 unavailable-subtitle: [+ pl_gstr_meet_why +]
 on-arrival: {!
@@ -31,7 +31,7 @@ go-to: result
 
 @arbitration
 title: Call an arbitration
-subtitle: Cost: 0 budget units. A compromise: wages rise by half of what the unions demand, the unions trust PPS a little more, and business presses a little harder.
+subtitle: Cost: 0 budget units. A compromise: wages rise by half of what the unions demand, the unions trust PPS a little more, and the industrialists are a little more displeased.
 on-arrival: {!
 Q.pl_gstr_result = PolishUnions.govStrikeChoose(Q, 'arbitration');
 !}

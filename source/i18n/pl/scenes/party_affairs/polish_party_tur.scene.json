@@ -13,7 +13,6 @@
   "title: Run a national education campaign": "title: Poprowadź kampanię oświatową w całym kraju",
   "subtitle: [+ pl_tur_national_education_target +] Trust in PPS rises in all three groups (+4).": "subtitle: [+ pl_tur_national_education_target +] Zaufanie do PPS rośnie we wszystkich trzech grupach (+4).",
   "- @root: Continue.": "- @root: Dalej.",
-  "title: Do nothing now": "title: Nic nie robimy",
-  "subtitle: The card is played and comes back in three months.": "subtitle: Karta zostaje zagrana i wróci za trzy miesiące."
+  "title: Do nothing now": "title: Nic nie robimy"
  }
 }

@@ -13,9 +13,8 @@
     "title: Protect rallies and strikes": "title: Chroń wiece i strajki",
     "- @root: Continue.": "- @root: Dalej.",
     "title: Do nothing now": "title: Nic nie robimy",
-    "subtitle: The card is played and comes back in three months.": "subtitle: Karta zostaje zagrana i wróci za trzy miesiące.",
     "title: Cut the police establishment": "title: Zmniejsz etaty policji",
-    "subtitle: Cost: 0 budget units. For half a year the police guard lawful rallies and strikes, even if PPS loses the ministry, so there are fewer clashes; business presses harder on the cabinet (+3).": "subtitle: Koszt: 0 jednostek budżetu. Przez pół roku policja pilnuje legalnych wieców i strajków, nawet gdyby PPS straciła resort, więc starć jest mniej, ale przedsiębiorcy mocniej naciskają na rząd (+3).",
+    "subtitle: Cost: 0 budget units. For half a year the police guard lawful rallies and strikes, even if PPS loses the ministry, so there are fewer clashes; the industrialists are more displeased (+3).": "subtitle: Koszt: 0 jednostek budżetu. Przez pół roku policja pilnuje legalnych wieców i strajków, nawet gdyby PPS straciła resort, więc starć jest mniej, ale przemysłowcy są bardziej niezadowoleni (+3).",
     "subtitle: Cost: 0 budget units. The budget gains 1 unit at once. The police are weaker, and there is a little more violence in the country (+2).": "subtitle: Koszt: 0 jednostek budżetu. Budżet od razu zyskuje 1 jednostkę. Policja słabnie, a przemocy w kraju trochę przybywa (+2)."
   }
 }

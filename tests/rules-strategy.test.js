@@ -326,7 +326,7 @@ test('Program w praktyce (Z — 0.57): campaigns +10% among the groups served; +
   const served = PolishParty.campaignEffect(B, 'press', 'class', 'rural');
   close(served.moved / plain.moved, 1.10, 1e-9);
   assert.doesNotMatch(plain.text, /programme/);
-  assert.match(served.text, /The economic programme of PPS makes it 10% stronger among the peasants\.$/);
+  assert.match(served.text, /The economic programme of PPS makes it stronger among the peasants\.$/);
   const C = game();
   C.S.actors.pps.strategy.economic_priorities = ['agrarian_labour'];
   const other = PolishParty.campaignEffect(C, 'press', 'class', 'bourgeois_landowners');

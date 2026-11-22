@@ -13,7 +13,6 @@
     "title: Build a public radio": "title: Zbuduj publiczne radio",
     "subtitle: Cost: [+ pl_cost2 +]. People hear the news from the country and from the Sejm, and democracy grows stronger (+2).": "subtitle: Koszt: [+ pl_cost2n +]. Ludzie słyszą wiadomości z kraju i z Sejmu, a demokracja się umacnia (+2).",
     "- @root: Continue.": "- @root: Dalej.",
-    "title: Do nothing now": "title: Nic nie robimy",
-    "subtitle: The card is played and comes back in three months.": "subtitle: Karta zostaje zagrana i wróci za trzy miesiące."
+    "title: Do nothing now": "title: Nic nie robimy"
   }
 }

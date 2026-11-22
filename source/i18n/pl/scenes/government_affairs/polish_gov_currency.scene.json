@@ -13,7 +13,6 @@
     "The financial crisis goes on, and the reform of the currency has not begun. Choosing a variant starts it at once; when it is completed, the złoty replaces the marka.": "Kryzys finansowy trwa, a reformy waluty jeszcze nie rozpoczęto. Wybór wariantu od razu ją rozpoczyna; gdy się zakończy, złoty zastąpi markę.",
     "subtitle: Cost: [+ pl_cost3 +]. The złoty comes after three months; needs adopted cuts; the credit shock grows for three months from the launch (+10). [? if pl_currency_stabilisation_rapid_cuts_coalition : [+ pl_currency_stabilisation_rapid_cuts_coalition +] ?]": "subtitle: Koszt: [+ pl_cost3 +]. Złoty wchodzi po trzech miesiącach; wymaga przyjętych cięć; szok kredytowy rośnie przez trzy miesiące od uruchomienia (+10). [? if pl_currency_stabilisation_rapid_cuts_coalition : [+ pl_currency_stabilisation_rapid_cuts_coalition +] ?]",
     "subtitle: Cost: [+ pl_cost3 +]. The złoty comes after three months; needs a protection for the unemployed and its financing; the same credit shock. [? if pl_currency_stabilisation_protected_coalition : [+ pl_currency_stabilisation_protected_coalition +] ?]": "subtitle: Koszt: [+ pl_cost3 +]. Złoty wchodzi po trzech miesiącach; wymaga osłony dla bezrobotnych i jej finansowania; ten sam szok kredytowy. [? if pl_currency_stabilisation_protected_coalition : [+ pl_currency_stabilisation_protected_coalition +] ?]",
-    "title: Do nothing now": "title: Nic nie robimy",
-    "subtitle: The card is played and comes back in three months.": "subtitle: Karta zostaje zagrana i wróci za trzy miesiące."
+    "title: Do nothing now": "title: Nic nie robimy"
   }
 }

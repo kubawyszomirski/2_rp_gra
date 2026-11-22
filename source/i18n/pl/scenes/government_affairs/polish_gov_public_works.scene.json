@@ -13,7 +13,6 @@
     "title: Build workers’ housing": "title: Buduj mieszkania robotnicze",
     "subtitle: Cost: [+ pl_cost2 +]. It creates no new jobs, but the discontent of the workers grows more slowly.": "subtitle: Koszt: [+ pl_cost2n +]. Nie daje nowych miejsc pracy, ale niezadowolenie robotników rośnie wolniej.",
     "- @root: Continue.": "- @root: Dalej.",
-    "title: Do nothing now": "title: Nic nie robimy",
-    "subtitle: The card is played and comes back in three months.": "subtitle: Karta zostaje zagrana i wróci za trzy miesiące."
+    "title: Do nothing now": "title: Nic nie robimy"
   }
 }

@@ -298,7 +298,7 @@ test('the plant cards in the game: Labour signs a collective agreement in its st
   playFromHand(engine, 'polish_gov_labor_rights');
   assert.match(JSON.stringify(engine.ui.paragraphs), /industrial plant no\. 1 \(industry\): in difficulty, private owner, capacity 80%/);
   assert.equal(choice(engine, 'polish_gov_labor_rights.derogation').canChoose, true, 'the act on working time of 1919 is enough');
-  assert.match([].concat(choice(engine, 'polish_gov_labor_rights.collective').subtitle).join(''), /where our union is strongest \(now: industry\)/);
+  assert.match([].concat(choice(engine, 'polish_gov_labor_rights.collective').subtitle).join(''), /where our union is strongest \(today: industry\)/);
   choose(engine, 'polish_gov_labor_rights.collective');
   assert.match(JSON.stringify(engine.ui.paragraphs), /collective agreement of industry is signed/);
   choose(engine, 'root');
@@ -313,7 +313,7 @@ test('the plant cards in the game: Labour signs a collective agreement in its st
     'polish_gov_industry.public_control', 'polish_gov_industry.halt_orders', 'polish_gov_industry.nothing']);
   choose(engine, 'polish_gov_industry.rescue');
   // Z — 0.93 (decision 4A of 24 X 2026): the rescue starts in the same decision.
-  assert.match(JSON.stringify(engine.ui.paragraphs), /rescue of the industrial plant no\. 1 is a conditional credit\. Started: Rescue of a plant/);
+  assert.match(JSON.stringify(engine.ui.paragraphs), /rescue of the industrial plant no\. 1 is a conditional credit\.<br>Started: Rescue of a plant/);
   choose(engine, 'root');
   toMain(engine);
   const rescue = Object.values(S.projects).find(p => p.type === 'plant_rescue');

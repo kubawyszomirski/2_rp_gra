@@ -1,5 +1,5 @@
 title: The Congress of PPS
-subtitle: An urgent card: the delegates gather, and the congress can adopt a resolution.
+subtitle: An urgent card: the delegates gather, and the congress can adopt a characteristic of the party.
 new-page: true
 is-card: true
 view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.congressAvailable(Q) !}
@@ -14,7 +14,7 @@ PolishParty.congressView(Q);
 
 = The congress of PPS
 
-Delegates from the whole country gather in Warsaw. The congress can adopt a resolution that will define for years what the party is. [? if pl_cg_intro : [+ pl_cg_intro +] ?]
+Delegates from the whole country gather in Warsaw. The congress can adopt a characteristic of the party that is ready for a resolution; it will define for years what the party is. [? if pl_cg_intro : [+ pl_cg_intro +] ?]
 
 [? if pl_cg_note : **[+ pl_cg_note +]** ?]
 

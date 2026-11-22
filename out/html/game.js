@@ -378,6 +378,18 @@
     });
   };
 
+  // Plain nested lists are flattened and neighbouring strings joined; formatted parts (bold, italics) stay as they are.
+  var joinTextPieces = function(content) {
+    var out = [];
+    var add = function(part) {
+      if (Array.isArray(part)) { part.forEach(add); return; }
+      if (typeof part === 'string' && out.length && typeof out[out.length - 1] === 'string') { out[out.length - 1] += part; return; }
+      out.push(part);
+    };
+    add(content);
+    return out;
+  };
+
   var main = function(dendryUI) {
     ui = dendryUI;
     game = ui.game;
@@ -395,6 +407,13 @@
         if (window.currentLanguage !== 'en' && choices) {
           choices = choices.map(function(choice) {
             return choice && choice.title === 'Continue...' ? Object.assign({}, choice, {title: uiText('continue_choice')}) : choice;
+          });
+        }
+        // Z — 1.21 (the user's note of 22 XI 2026): a cost written as "Koszt: [+ value +]." comes in pieces; they are joined first, so
+        // the cost gets its own line (markEffectNumbers) like a cost written in full.
+        if (choices) {
+          choices = choices.map(function(choice) {
+            return choice && Array.isArray(choice.subtitle) ? Object.assign({}, choice, {subtitle: joinTextPieces(choice.subtitle)}) : choice;
           });
         }
         var result = displayChoices.call(this, choices);

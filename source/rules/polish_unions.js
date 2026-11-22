@@ -713,7 +713,7 @@
     if (running) return no(L('The collective agreement of this branch runs until ' + dateOf(running.term_until - 1) + '.',
       'Układ zbiorowy tej branży obowiązuje do ' + dateOf(running.term_until - 1) + '.'));
     // P: employers ready to sign — none while the reaction of business is active (11.7).
-    if (S.economy.business_state === 'active') return no(L('The employers refuse new agreements while the reaction of business is active.', 'Pracodawcy odmawiają nowych układów, dopóki trwa reakcja przedsiębiorców.'));
+    if (S.economy.business_state === 'active') return no(L('The employers refuse new agreements while the industrialists hold back investment.', 'Pracodawcy odmawiają nowych układów, dopóki przemysłowcy wstrzymują inwestycje.'));
     return OK;
   }
 
@@ -748,10 +748,16 @@
 
   // Z — 0.94 (the decisions of 24 X 2026): a derogation rests on the act on working time of 1919 itself (P), so it no longer needs the
   // inspection of the Labour card; the inspection is still named as its basis when it is in force.
+  // Z — 1.21 (decision 2B of 22 XI 2026): the derogation is always open — for a recorded plant in difficulty as before, otherwise for
+  // the plants in difficulty in general (a device of the game: no list of plants), one at a time for half a year.
+  const DEROGATION_GENERAL_GRIEVANCE = 1;
+  const generalDerogationActive = (S, t) => !!(S.economy.general_derogation && t < S.economy.general_derogation.expires_at);
   function derogationStatus(Q) {
     const S = Q.S;
-    if (!derogationTarget(S)) return no(L('Needs a recorded plant in difficulty without a derogation; ' + PLANT_HINT + '.',
-      'Wymaga zakładu w trudnościach z listy resortu, bez odstępstwa; ' + PLANT_HINT_PL + '.'));
+    if (!derogationTarget(S) && generalDerogationActive(S, Q.time)) {
+      return no(L('Derogations are in force until ' + dateOf(S.economy.general_derogation.expires_at - 1) + '.',
+        'Odstępstwa obowiązują do ' + dateOf(S.economy.general_derogation.expires_at - 1) + '.'));
+    }
     return OK;
   }
 
@@ -759,6 +765,14 @@
     const status = derogationStatus(Q);
     if (!status.available) throw new Error('grantDerogation: ' + status.reason);
     const S = Q.S, t = Q.time, plant = derogationTarget(S), law = workingTimeLaw(S);
+    if (!plant) {
+      const id = 'derogation-general-t' + t;
+      S.economy.general_derogation = {id: id, starts_at: t, expires_at: t + DEROGATION_MONTHS};
+      economy.changeBusinessPressure(S, DEROGATION_BUSINESS, id, t, 'derogation');
+      electorate.changeCells(S, cell => cell.class_id === 'workers' && cell.employment === 'employed', {grievance: DEROGATION_GENERAL_GRIEVANCE});
+      S.history.reasons.push({t: t, kind: 'derogation_general', expires_at: t + DEROGATION_MONTHS});
+      return null;
+    }
     const id = 'derogation-' + plant.id + '-t' + t;
     plant.exemption = {restriction_id: id, basis: law ? law.law_id || law.id : 'the act of 18 XII 1919 on working time', scope: 'working time in this plant only', starts_at: t,
       expires_at: t + DEROGATION_MONTHS, status: 'active'};
@@ -1319,7 +1333,7 @@
       'Bez zgody: ' + branchList(refusing) + '; zakończenie zostaje narzucone (sprzeciw +10, zaufanie −8). ') : '') +
       (gained ? L('The workers the strike covered trust PPS more (support +' + WON_SUPPORT + ').', 'Robotnicy objęci strajkiem bardziej ufają PPS (poparcie +' + WON_SUPPORT + ').') : '') +
       (councils ? ' ' + L('The crews elect works councils; the employers press harder (+' + COUNCILS_BUSINESS + ').',
-        'Załogi wybierają rady zakładowe; przedsiębiorcy naciskają mocniej (+' + COUNCILS_BUSINESS + ').') : '');
+        'Załogi wybierają rady zakładowe; przemysłowcy są bardziej niezadowoleni (+' + COUNCILS_BUSINESS + ').') : '');
     return {names: names, refusing: refusing, councils: councils, settlement: settlement, text: text.trim()};
   }
 
@@ -1487,14 +1501,14 @@
         economy.changePool(S, -GOV_STRIKE.price, t, id, 'Wage rise after a strike', 'Podwyżka po strajku');
         const gained = wonSupport(Q, rec.branches);
         return L('The government meets the demands: wages rise for two months; it costs the budget 1 unit. The unions trust PPS more (+' + trust + ')' +
-          (gained ? ', and the workers support it more' : '') + '; business presses harder (+' + GOV_STRIKE.business_meet + ').',
+          (gained ? ', and the workers support it more' : '') + '; the industrialists are more displeased (+' + GOV_STRIKE.business_meet + ').',
           'Rząd spełnia żądania: płace rosną na dwa miesiące; kosztuje to budżet 1 jednostkę. Związki bardziej ufają PPS (+' + trust + ')' +
-          (gained ? ', a robotnicy chętniej ją popierają' : '') + '; przedsiębiorcy mocniej naciskają (+' + GOV_STRIKE.business_meet + ').');
+          (gained ? ', a robotnicy chętniej ją popierają' : '') + '; przemysłowcy są bardziej niezadowoleni (+' + GOV_STRIKE.business_meet + ').');
       }
       return L('An arbitration ends the strike: for two months wages rise by half of what the unions demanded, at no cost to the budget. The unions trust PPS a little more (+' + trust +
-        '), and business presses a little harder (+' + GOV_STRIKE.business_arbitration + ').',
+        '), and the industrialists are a little more displeased (+' + GOV_STRIKE.business_arbitration + ').',
         'Arbitraż kończy strajk: przez dwa miesiące płace rosną o połowę mniej, niż żądały związki, bez kosztu dla budżetu. Związki trochę bardziej ufają PPS (+' + trust +
-        '), a przedsiębiorcy trochę mocniej naciskają (+' + GOV_STRIKE.business_arbitration + ').');
+        '), a przemysłowcy są trochę bardziej niezadowoleni (+' + GOV_STRIKE.business_arbitration + ').');
     }
     if (option === 'order') {
       for (const b of rec.branches) imposeEnd(S.unions[b], rec, t, S);

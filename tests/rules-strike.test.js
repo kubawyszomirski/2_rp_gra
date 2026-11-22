@@ -739,8 +739,8 @@ test('Układ zbiorowy i odstępstwo: an agreement in the strongest branch costs 
   assert.match(PolishProjects.optionStatus(Q, 'labor_rights', 'collective', { branch: 'farm_labour' }).reason, /employers refuse/);
   S.economy.business_state = 'quiet';
 
-  // The derogation needs a threatened plant; the act on working time of 1919 is its basis (Z — 0.94).
-  assert.match(PolishProjects.optionStatus(Q, 'labor_rights', 'derogation').reason, /recorded plant in difficulty/);
+  // Z — 1.21 (decision 2B): without a recorded plant the derogation is open for the plants in difficulty in general.
+  assert.equal(PolishProjects.optionStatus(Q, 'labor_rights', 'derogation').available, true);
   PolishProjects.chooseOption(Q, 'labor_rights', 'inspection');
   free(Q);
   const plant = creditCrisisPlant(Q);
@@ -755,12 +755,22 @@ test('Układ zbiorowy i odstępstwo: an agreement in the strongest branch costs 
   const inspection = Object.values(S.projects).find(p => p.type === 'labor_inspection');
   assert.equal(inspection.authorized, true, 'no general removal of the protection of working time');
   free(Q);
-  assert.match(PolishProjects.optionStatus(Q, 'labor_rights', 'derogation').reason, /without a derogation/, 'one derogation per plant at a time');
+  assert.equal(PolishProjects.optionStatus(Q, 'labor_rights', 'derogation').available, true, 'Z — 1.21: a further derogation is a general one');
   PolishUnions.expireRecords(S, at + 4);
   assert.equal(plant.exemption.status, 'active');
   PolishUnions.expireRecords(S, at + 5);
   assert.equal(plant.exemption.status, 'expired', 'it lapses after its six settlements');
   assert.equal(S.economy.business_pressure, pressure - 4, 'the expiry does not undo the one-off change');
+  // Z — 1.21 (decision 2B): a general derogation without a recorded plant — business −4, the employed workers a little more
+  // discontented, the Left +3, one at a time for half a year.
+  const G = withPortfolios(game(), 'labor'), gS = G.S, g0 = {business: gS.economy.business_pressure, lewica: gS.actors.pps.factions.lewica.dissent};
+  const worker = gS.society.cells.find(c => c.class_id === 'workers' && c.employment === 'employed'), grievance = worker.grievance;
+  PolishProjects.chooseOption(G, 'labor_rights', 'derogation');
+  assert.deepEqual([gS.economy.business_pressure, gS.actors.pps.factions.lewica.dissent], [g0.business - 4, Math.min(99, g0.lewica + 3)]);
+  close(worker.grievance, Math.min(100, grievance + 1));
+  assert.match(G.pl_gc_result, /plants in difficulty may work longer than eight hours\.<br>The industrialists are less displeased/);
+  free(G);
+  assert.match(PolishProjects.optionStatus(G, 'labor_rights', 'derogation').reason, /Derogations are in force until/);
 });
 
 test('Ratunek zakładu: the general credit adds 5 to the credit target; the rescue of a recorded plant costs 2 B once (Z — 1.01) and restores its lost capacity once', () => {

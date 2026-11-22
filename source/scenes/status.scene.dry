@@ -433,7 +433,7 @@ if (Q.economic_growth) {
 
 [? if polish_economy_system : **Agrarian pressure (0–100):** {!<i class="pl-gauge pl-red"></i>!}[+ pl_eco_agrarian +] ?]
 
-[? if polish_economy_system : **Business:** [+ pl_eco_business +] ?]
+[? if polish_economy_system : **Industrialists:** [+ pl_eco_business +] ?]
 
 [? if pl_eco_projects : **Projects:** [+ pl_eco_projects +] ?]
 

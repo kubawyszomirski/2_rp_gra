@@ -10,10 +10,9 @@
     "title: Set up a public fund": "title: Załóż fundusz publiczny",
     "subtitle: Cost: [+ pl_cost2 +]. The state itself chooses whom it lends to; it helps the workers’ towns and the crafts.": "subtitle: Koszt: [+ pl_cost2n +]. Państwo samo wybiera, komu daje kredyt; pomaga robotniczym miastom i rzemiosłu.",
     "title: Make an agreement with the banks": "title: Zawrzyj porozumienie z bankami",
-    "subtitle: Cost: 1 budget unit. Business presses less (−8); the Left of PPS protests against a deal with capital (+4); needs credit of at least 40.": "subtitle: Koszt: 1 jednostka budżetu. Przedsiębiorcy mniej naciskają (−8); Lewica PPS protestuje przeciw układowi z kapitałem (+4); wymaga kredytu co najmniej 40.",
+    "subtitle: Cost: 1 budget unit. The industrialists are less displeased (−8); the Left of PPS protests against a deal with capital (+4); needs credit of at least 40.": "subtitle: Koszt: 1 jednostka budżetu. Przemysłowcy są mniej niezadowoleni (−8); Lewica PPS protestuje przeciw układowi z kapitałem (+4); wymaga kredytu co najmniej 40.",
     "title: Finance the credit through the cooperatives": "title: Finansuj kredyt przez spółdzielnie",
     "subtitle: Cost: [+ pl_cost2 +]. It helps peasant farms and workshops instead of the towns.": "subtitle: Koszt: [+ pl_cost2n +]. Pomaga gospodarstwom chłopskim i warsztatom zamiast miastom.",
-    "title: Do nothing now": "title: Nic nie robimy",
-    "subtitle: The card is played and comes back in three months.": "subtitle: Karta zostaje zagrana i wróci za trzy miesiące."
+    "title: Do nothing now": "title: Nic nie robimy"
   }
 }

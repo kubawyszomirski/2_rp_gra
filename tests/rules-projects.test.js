@@ -1021,7 +1021,7 @@ test('Budżet w kryzysie 1.11: the cabinet\'s package in plain words; PPS can ab
   T.S.economy.budget = -1;
   assert.equal(proj.budgetPlanAvailable(T), true);
   proj.budgetPlanView(T);
-  assert.match(T.pl_plan_progressive_line, /^If the Sejm passes it, the budget gains 3 units; business presses harder, and the Left of PPS is pleased\. Today the Sejm would (pass|refuse) it\.$/);
+  assert.match(T.pl_plan_progressive_line, /^If the Sejm passes it, the budget gains 3 units; the industrialists are more displeased, and the Left of PPS is pleased\. Today the Sejm would (pass|refuse) it\.$/);
   const text = proj.budgetPlanChoose(T, 'admin_cuts');
   assert.match(text, /^Our Treasury puts a budget law to the Sejm: cuts in named administrative spending\. The Sejm votes at the settlement of /);
   const pkg = T.S.economy.pending_package;

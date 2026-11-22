@@ -13,7 +13,6 @@
     "subtitle: Cost: 1 budget unit. The trade unions trust PPS more (+5).": "subtitle: Koszt: 1 jednostka budżetu. Związki zawodowe bardziej ufają PPS (+5).",
     "- @root: Continue.": "- @root: Dalej.",
     "title: Do nothing now": "title: Nic nie robimy",
-    "subtitle: The card is played and comes back in three months.": "subtitle: Karta zostaje zagrana i wróci za trzy miesiące.",
     "title: Make savings in the courts": "title: Oszczędzaj w sądach",
     "subtitle: Cost: 0 budget units. Once in the chapter. The workers trust PPS more (+3), but squad members leave the prisons too, and political violence rises (+3). [? if pl_justice_policy_amnesty_coalition : [+ pl_justice_policy_amnesty_coalition +] ?]": "subtitle: Koszt: 0 jednostek budżetu. Raz w rozdziale. Robotnicy bardziej ufają PPS (+3), ale na wolność wychodzą też bojówkarze, więc przemoc polityczna rośnie (+3). [? if pl_justice_policy_amnesty_coalition : [+ pl_justice_policy_amnesty_coalition +] ?]",
     "subtitle: Cost: 0 budget units. The budget gains 1 unit at once. Trials drag on, and democracy weakens a little (−1).": "subtitle: Koszt: 0 jednostek budżetu. Budżet od razu zyskuje 1 jednostkę. Procesy się wloką, a demokracja trochę słabnie (−1)."

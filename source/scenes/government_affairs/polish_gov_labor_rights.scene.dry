@@ -17,7 +17,7 @@ Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_labor_rights');
 
 *[+ pl_gc_ministry +]*
 
-Labour enforces the statutory working time and the conditions in the plants. Every gain of the workers strengthens the pressure of business on the cabinet, which now stands at [+ pl_gc_business +] of 100.
+Labour enforces the statutory working time and the conditions in the plants. Every gain of the workers adds to the displeasure of the industrialists, which now stands at [+ pl_gc_business +] of 100.
 
 [+ pl_gc_budget +]
 
@@ -34,7 +34,7 @@ Labour enforces the statutory working time and the conditions in the plants. Eve
 
 @inspection
 title: Introduce a labour inspection
-subtitle: Cost: 1 budget unit. The workers are less discontented (−3), but business presses harder on the cabinet (+4). [? if pl_labor_rights_inspection_coalition : [+ pl_labor_rights_inspection_coalition +] ?]
+subtitle: Cost: 1 budget unit. The workers are less discontented (−3), but the industrialists are more displeased (+4). [? if pl_labor_rights_inspection_coalition : [+ pl_labor_rights_inspection_coalition +] ?]
 choose-if: {! return PolishProjects.optionStatus(Q, 'labor_rights', 'inspection').available !}
 unavailable-subtitle: [+ pl_labor_rights_inspection_why +]
 on-arrival: {!
@@ -44,7 +44,7 @@ go-to: result
 
 @collective
 title: Bring about a collective agreement
-subtitle: Cost: 0 budget units. The agreement covers the branch where our union is strongest (now: [+ pl_gc_collective_branch +]). Wages rise for two months, most in industry (+1.2 percentage points), but business presses harder (+3).
+subtitle: Cost: 0 budget units. The employers of the branch where our union is strongest (today: [+ pl_gc_collective_branch +]) sign an agreement: wages there rise for two months, but the industrialists are more displeased (+3).
 choose-if: {! return PolishProjects.optionStatus(Q, 'labor_rights', 'collective').available !}
 unavailable-subtitle: [+ pl_labor_rights_collective_why +]
 on-arrival: {!
@@ -54,7 +54,7 @@ go-to: result
 
 @derogation
 title: Agree to derogations from the eight-hour day
-subtitle: Cost: 0 budget units. For half a year in a plant threatened with closure. Business presses less (−4), but the workers of the plant are more discontented (+3) and the Left of PPS protests (+3).
+subtitle: Cost: 0 budget units. For half a year the plants in difficulty may work longer than eight hours. The industrialists are less displeased (−4), but the workers are more discontented and the Left of PPS protests (+3).
 choose-if: {! return PolishProjects.optionStatus(Q, 'labor_rights', 'derogation').available !}
 unavailable-subtitle: [+ pl_labor_rights_derogation_why +]
 on-arrival: {!
@@ -64,7 +64,6 @@ go-to: result
 
 @nothing
 title: Do nothing now
-subtitle: The card is played and comes back in three months.
 on-arrival: {!
 PolishRules.skipCard(Q);
 !}

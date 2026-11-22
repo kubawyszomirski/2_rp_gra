@@ -93,7 +93,7 @@
     "[? if polish_economy_system : **Real wages (index, 100 at the opening):** [+ pl_eco_wage +] ?]": "[? if polish_economy_system : **Płace realne (indeks, styczeń 1922 = 100):** [+ pl_eco_wage +] ?]",
     "[? if polish_economy_system : **Output (index):** [+ pl_eco_output +] ?]": "[? if polish_economy_system : **Produkcja (indeks):** [+ pl_eco_output +] ?]",
     "[? if polish_economy_system : **Unemployment:** [+ pl_eco_unemployment +] ?]": "[? if polish_economy_system : **Bezrobocie:** [+ pl_eco_unemployment +] ?]",
-    "[? if polish_economy_system : **Business:** [+ pl_eco_business +] ?]": "[? if polish_economy_system : **Przedsiębiorcy:** [+ pl_eco_business +] ?]",
+    "[? if polish_economy_system : **Industrialists:** [+ pl_eco_business +] ?]": "[? if polish_economy_system : **Przemysłowcy:** [+ pl_eco_business +] ?]",
     "[? if pl_eco_projects : **Projects:** [+ pl_eco_projects +] ?]": "[? if pl_eco_projects : **Projekty:** [+ pl_eco_projects +] ?]",
     "[? if pl_eco_laws : **Laws in procedure:** [+ pl_eco_laws +] ?]": "[? if pl_eco_laws : **Ustawy w toku:** [+ pl_eco_laws +] ?]",
     "[? if not polish_economy_system and spd_in_government = 1 : **Budget:** [+ budget +] ?]": "[? if not polish_economy_system and spd_in_government = 1 : **Budżet:** [+ budget +] ?]",

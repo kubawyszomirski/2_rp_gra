@@ -62,7 +62,6 @@ go-to: result
 
 @nothing
 title: Do nothing now
-subtitle: The card is played and comes back in three months.
 on-arrival: {!
 PolishRules.skipCard(Q);
 !}

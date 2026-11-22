@@ -15,9 +15,8 @@
     "title: Emission financing": "title: Finansowanie emisją",
     "subtitle: Brings the budget 2 units at once, but inflation rises for three months; after the złoty: transitional coinage, 1 unit.": "subtitle: Od razu zasila budżet: 2 jednostki, ale inflacja rośnie przez trzy miesiące; po wprowadzeniu złotego: emisja bilonu, 1 jednostka.",
     "- @root: Continue.": "- @root: Dalej.",
-    "subtitle: Taxes rise one level, which brings the budget 2 units at once; business pressure grows (+4); Lewica dissent falls (−3). [? if pl_finance_package_progressive_coalition : [+ pl_finance_package_progressive_coalition +] ?]": "subtitle: Podatki rosną o jeden poziom, co od razu zasila budżet: 2 jednostki; presja przedsiębiorców rośnie (+4); sprzeciw Lewicy spada (−3). [? if pl_finance_package_progressive_coalition : [+ pl_finance_package_progressive_coalition +] ?]",
+    "subtitle: Taxes rise one level, which brings the budget 2 units at once; the displeasure of the industrialists grows (+4); Lewica dissent falls (−3). [? if pl_finance_package_progressive_coalition : [+ pl_finance_package_progressive_coalition +] ?]": "subtitle: Podatki rosną o jeden poziom, co od razu zasila budżet: 2 jednostki; niezadowolenie przemysłowców rośnie (+4); sprzeciw Lewicy spada (−3). [? if pl_finance_package_progressive_coalition : [+ pl_finance_package_progressive_coalition +] ?]",
     "subtitle: Taxes rise one level, which brings the budget 2 units at once; the discontent of poor recipients grows (+3); Lewica dissent rises (+3). [? if pl_finance_package_indirect_coalition : [+ pl_finance_package_indirect_coalition +] ?]": "subtitle: Podatki rosną o jeden poziom, co od razu zasila budżet: 2 jednostki; niezadowolenie ubogich odbiorców rośnie (+3); sprzeciw Lewicy rośnie (+3). [? if pl_finance_package_indirect_coalition : [+ pl_finance_package_indirect_coalition +] ?]",
-    "title: Do nothing now": "title: Nic nie robimy",
-    "subtitle: The card is played and comes back in three months.": "subtitle: Karta zostaje zagrana i wróci za trzy miesiące."
+    "title: Do nothing now": "title: Nic nie robimy"
   }
 }

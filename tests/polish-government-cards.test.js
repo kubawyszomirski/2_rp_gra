@@ -221,7 +221,7 @@ test('the Budget card: a package of the cabinet before the Sejm; PPS as its supp
   engine.playCard('polish_budget_package');
   // Z — 1.11 (decision 6A of 8 XI 2026): “Budget in Crisis” in plain words with four answers; the conditions of PPS left the card.
   assert.deepEqual(ids(engine), ['polish_budget_package.support', 'polish_budget_package.refuse', 'polish_budget_package.abstain', 'polish_budget_package.later']);
-  assert.match(content(engine), /The state lacks money: the budget has fallen below zero\. The cabinet wants to solve it so: a broader tax base — the budget gains, business presses harder, and the middle class is discontented\./);
+  assert.match(content(engine), /The state lacks money: the budget has fallen below zero\. The cabinet wants to solve it so: a broader tax base — the budget gains, the industrialists are more displeased, and the middle class is discontented\./);
   const plain = x => (x == null ? '' : typeof x === 'string' ? x : Array.isArray(x) ? x.map(plain).join('') : plain(x.content));
   assert.match(plain(choice(engine, 'polish_budget_package.refuse').subtitle), /^PPS votes against\. (The package will probably pass all the same|Without our votes the package will probably fail)/);
   choose(engine, 'polish_budget_package.support');

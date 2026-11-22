@@ -109,7 +109,7 @@ test('Status shows the Polish budget, currency, prices, output, credit, unemploy
   assert.match(text, /"4\.0% a month"/);
   // The top bar (7 XI 2026): a marker for the bar of 0-100 stands between the label and the value.
   assert.match(text, /Agrarian pressure \(0–100\):.{0,140}45\.0"/);
-  assert.match(text, /"calm, pressure 10"/);
+  assert.match(text, /"calm"/); // Z — 1.21: the industrialists in words
   assert.doesNotMatch(text, /Economic growth: /, 'the German growth line is hidden in the Polish game');
   engine.goToScene('library.sidebar_notes');
   assert.match(content(engine), /working balance \(economy_simple_v1\)/, 'the note on the numbers is in the Library');

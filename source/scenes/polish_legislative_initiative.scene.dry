@@ -105,7 +105,6 @@ go-to: result
 
 @skip
 title: We file no bill
-subtitle: The card is played and comes back in three months.
 on-arrival: {!
 Q.pl_ini_result = PolishProjects.initiativeSkip(Q, 'economy');
 !}
