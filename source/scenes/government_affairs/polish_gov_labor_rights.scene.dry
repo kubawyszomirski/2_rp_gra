@@ -44,7 +44,7 @@ go-to: result
 
 @collective
 title: Bring about a collective agreement
-subtitle: No cost to the budget; the agreement covers the branch where our union is strongest (now: [+ pl_gc_collective_branch +]). Wages rise for two months, most in industry (+1.2 percentage points), but business presses harder (+3).
+subtitle: Cost: 0 budget units. The agreement covers the branch where our union is strongest (now: [+ pl_gc_collective_branch +]). Wages rise for two months, most in industry (+1.2 percentage points), but business presses harder (+3).
 choose-if: {! return PolishProjects.optionStatus(Q, 'labor_rights', 'collective').available !}
 unavailable-subtitle: [+ pl_labor_rights_collective_why +]
 on-arrival: {!
@@ -54,7 +54,7 @@ go-to: result
 
 @derogation
 title: Agree to derogations from the eight-hour day
-subtitle: No cost to the budget, for half a year in a plant threatened with closure. Business presses less (−4), but the workers of the plant are more discontented (+3) and the Left of PPS protests (+3).
+subtitle: Cost: 0 budget units. For half a year in a plant threatened with closure. Business presses less (−4), but the workers of the plant are more discontented (+3) and the Left of PPS protests (+3).
 choose-if: {! return PolishProjects.optionStatus(Q, 'labor_rights', 'derogation').available !}
 unavailable-subtitle: [+ pl_labor_rights_derogation_why +]
 on-arrival: {!

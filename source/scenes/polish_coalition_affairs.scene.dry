@@ -34,7 +34,7 @@ Q.pl_coal_faction = PolishGovernment.concessionFactionName(Q.S);
 
 @concession
 title: Give way to our coalition partners
-subtitle: The tension with all the partners falls (−20), but [+ pl_coal_faction +] sees it as a retreat (+5).
+subtitle: Cost: 0 resources. The tension with all the partners falls (−20), but [+ pl_coal_faction +] sees it as a retreat (+5).
 choose-if: {! return PolishGovernment.concessionStatus(Q).available !}
 unavailable-subtitle: [+ pl_coal_concession_reason +]
 on-arrival: {!
@@ -56,7 +56,7 @@ go-to: talked
 
 @break
 title: Break the coalition
-subtitle: Our ministers leave, and PPS goes into opposition; without us the cabinet may lose its majority. [+ pl_coal_faction +] takes it with relief (−10).
+subtitle: Cost: 0 resources. Our ministers leave, and PPS goes into opposition; without us the cabinet may lose its majority. [+ pl_coal_faction +] takes it with relief (−10).
 choose-if: {! return PolishGovernment.supportOptionStatus(Q, 'withdraw', 'ordinary').available !}
 unavailable-subtitle: [+ pl_sup_withdraw_reason +]
 on-arrival: {!

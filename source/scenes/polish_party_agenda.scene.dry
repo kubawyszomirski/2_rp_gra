@@ -32,7 +32,7 @@ TUR: [+ pl_party_tur +].
 
 @fundraise
 title: An extraordinary collection
-subtitle: Brings [+ pl_pa_fundraise_gain +] resources (dues × membership / 100, with the bonus of the apparatus); waits three months.
+subtitle: Cost: 0 resources. The party collects [+ pl_pa_fundraise_units +]; the next collection in three months.
 choose-if: {! return PolishParty.fundraiseStatus(Q).available !}
 unavailable-subtitle: [+ pl_pa_fundraise_why +]
 on-arrival: {!
@@ -52,7 +52,7 @@ go-to: result
 
 @organize_unions
 title: Organisational work in the unions
-subtitle: No money. [+ pl_pa_org_unions_text +]
+subtitle: Cost: 0 resources. [+ pl_pa_org_unions_text +]
 choose-if: {! return PolishParty.organizeStatusOf(Q, 'unions').available !}
 unavailable-subtitle: [+ pl_pa_org_unions_why +]
 on-arrival: {!
@@ -62,7 +62,7 @@ go-to: result
 
 @organize_voters
 title: Organisational work among our voters
-subtitle: No money. [+ pl_pa_org_voters_text +]
+subtitle: Cost: 0 resources. [+ pl_pa_org_voters_text +]
 choose-if: {! return PolishParty.organizeStatusOf(Q, 'voters').available !}
 unavailable-subtitle: [+ pl_pa_org_voters_why +]
 on-arrival: {!
@@ -74,7 +74,7 @@ go-to: result
 # communists (14.3, 9.6), so this option is not on the agenda's list; the scene stays for the rule PolishParty.kppStep.
 @kpp_trial
 title: Cooperation with the KPP: agree on a trial
-subtitle: A trial of joint action for an existing demand, at a relation of 30 or more. Relation now [+ pl_kpp_relation +].
+subtitle: Cost: 0 resources. A trial of joint action for an existing demand, at a relation of 30 or more. Relation now [+ pl_kpp_relation +].
 view-if: pl_pa_kpp_open = 1
 choose-if: {! return PolishParty.kppStepStatus(Q, 'trial').available !}
 unavailable-subtitle: [+ pl_kpp_trial_why +]
@@ -85,7 +85,7 @@ go-to: result
 
 @kpp_rules
 title: Cooperation with the KPP: agree on the rules
-subtitle: After two different successful joint actions, one of them full, at a relation of 50 or more.
+subtitle: Cost: 0 resources. After two different successful joint actions, one of them full, at a relation of 50 or more.
 view-if: pl_pa_kpp_open = 1
 choose-if: {! return PolishParty.kppStepStatus(Q, 'rules').available !}
 unavailable-subtitle: [+ pl_kpp_rules_why +]

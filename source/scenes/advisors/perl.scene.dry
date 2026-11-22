@@ -20,7 +20,7 @@ Perl represents Centrum PPS and concentrates on the party line and socialist pre
 
 @define_party_line
 title: Define the Party Line
-subtitle: Centrum grows stronger (+8) and its dissent falls (−8), the Piłsudczycy grow weaker (−4); among the workers votes move from the KPP to PPS.
+subtitle: Cost: 0 resources. Centrum grows stronger (+8) and its dissent falls (−8), the Piłsudczycy grow weaker (−4); among the workers votes move from the KPP to PPS.
 choose-if: {! return PolishParty.advisorActionStatus(Q, 'perl', 'define_party_line').available !}
 unavailable-subtitle: [+ pl_advact_define_party_line_why +]
 call: polish_advisor_commit

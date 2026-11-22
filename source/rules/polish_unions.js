@@ -1589,11 +1589,13 @@
     }
     Q.pl_dsp_start_why = startStatus(Q).reason;
     Q.pl_dsp_threat_why = threatStatus(Q).reason;
-    Q.pl_dsp_threat_line = rec ? L('The workers get ready to fight (readiness +' + THREAT_READINESS + '), and the government may give way at once (chance: ' +
+    // Z — 1.17 (the user's note of 22 XI 2026): every decision names its cost, also a cost of nothing; a strike its monthly cost.
+    Q.pl_dsp_strike_cost = coopPays(S) ? L('a quarter of a resource', 'ćwierć jednostki środków') : L('half a resource', 'pół jednostki środków');
+    Q.pl_dsp_threat_line = rec ? L('Cost: 0 resources. ', 'Koszt: 0 jednostek środków. ') + L('The workers get ready to fight (readiness +' + THREAT_READINESS + '), and the government may give way at once (chance: ' +
       chanceWord(threatChance(S, rec)) + '). If it refuses, you can start a strike next month.',
       'Robotnicy szykują się do walki (gotowość +' + THREAT_READINESS + '), a rząd może ustąpić od razu (szansa: ' + chanceWord(threatChance(S, rec)) +
       '). Jeśli odmówi, w przyszłym miesiącu możesz zacząć strajk.') : '';
-    Q.pl_dsp_drop_line = rec ? (rec.kind === 'wage_case' ? L('The unions’ trust falls (−' + DROP_TRUST + '); the dispute can come back in three months if it lasts.',
+    Q.pl_dsp_drop_line = rec ? L('Cost: 0 resources. ', 'Koszt: 0 jednostek środków. ') + (rec.kind === 'wage_case' ? L('The unions’ trust falls (−' + DROP_TRUST + '); the dispute can come back in three months if it lasts.',
       'Zaufanie związków spada (−' + DROP_TRUST + '); spór może wrócić za trzy miesiące, jeśli będzie trwał.') :
       L('The union’s trust falls (−' + DROP_TRUST + ').', 'Zaufanie związku spada (−' + DROP_TRUST + ').')) : '';
     Q.pl_dsp_mediate_why = lead ? mediateStatus(Q, lead).reason : '';
@@ -1729,7 +1731,9 @@
     const rows = rec.branches.map(b => branchName(b) + ' — ' + participationWord(participation(S, b)));
     const chance = roundChance(S, Object.assign({}, rec, {status: 'active', participants: rec.branches.reduce((m, b) => Object.assign(m, {[b]: participation(S, b)}), {}),
       communist_cooperation: null}), st.goal === 'big' ? THRESHOLDS.broad : THRESHOLDS.limited, S.turn.last_settled_time + 1).chance;
-    Q.pl_su_launch_line = L('Expected participation: ', 'Oczekiwany udział: ') + rows.join(', ') +
+    Q.pl_su_launch_line = L('Cost: ' + (coopPays(S) ? 'a quarter of a resource' : 'half a resource') + ' for each branch every month of the strike. ',
+      'Koszt: ' + (coopPays(S) ? 'ćwierć jednostki środków' : 'pół jednostki środków') + ' za każdą branżę co miesiąc strajku. ') +
+      L('Expected participation: ', 'Oczekiwany udział: ') + rows.join(', ') +
       L('; the chance of a government offer in a month: ', '; szansa na ofertę rządu w miesiącu: ') + chanceWord(chance) + '.' +
       (st.goal === 'political' ? ' ' + L('The cabinet will refuse to resign; the talks then turn to wages and working conditions.', 'Rząd odmówi dymisji; potem rokowania wrócą do płac i warunków pracy.') : '');
     Q.pl_su_launch_why = launchStatus(Q).reason;

@@ -20,7 +20,7 @@ Ziemięcki represents the Piłsudczyk current while favoring conditional parliam
 
 @emergency_fundraising
 title: Emergency Fundraising
-subtitle: An emergency infusion of resources: the party's money grows at once (+2).
+subtitle: Cost: 0 resources. An emergency infusion of resources: the party's money grows at once (+2).
 choose-if: {! return PolishParty.advisorActionStatus(Q, 'ziemiecki', 'emergency_fundraising').available !}
 unavailable-subtitle: [+ pl_advact_emergency_fundraising_why +]
 call: polish_advisor_commit

@@ -88,3 +88,15 @@ test('Głosowanie 1.10 (decision 1A): the counts of a bill of the initiative add
     globalThis.PolishRules.setLanguage('en');
   }
 });
+
+test('Spółdzielnia 1.17 (the user\'s request of 22 XI 2026): the cooperative in one plain sentence — it feeds the strikers, so a strike costs half', () => {
+  const engine = dendry.startGame(1922, 'pl');
+  try {
+    engine.state.currentHands.main = [{ id: 'polish_party_organizations', title: 'Organizacje' }];
+    engine.playCard('polish_party_organizations');
+    const c = (engine.getCurrentChoices() || []).find(x => x.id === 'polish_party_organizations.cooperative_workers');
+    assert.equal(plain(c.subtitle), 'Koszt: 1 jednostka środków. Spółdzielnia dostarcza strajkującym żywność, więc strajk kosztuje partię o połowę mniej.');
+  } finally {
+    globalThis.PolishRules.setLanguage('en');
+  }
+});

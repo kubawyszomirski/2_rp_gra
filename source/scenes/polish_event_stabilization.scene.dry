@@ -33,7 +33,7 @@ for (var option of ['rapid_cuts', 'protected', 'gradual', 'campaign']) {
 
 @rapid_cuts
 title: Rapid stabilisation with savings
-subtitle: The złoty comes after three months ([+ pl_cost3 +]), but the cuts and the lack of credit will hit the factories.
+subtitle: Cost: [+ pl_cost3 +]. The złoty comes after three months, but the cuts and the lack of credit will hit the factories.
 view-if: pl_ev_treasury
 choose-if: {! return PolishProjects.eventStatus(Q, 'stabilization', 'rapid_cuts').available !}
 unavailable-subtitle: [+ pl_ev_rapid_cuts_why +]
@@ -44,7 +44,7 @@ go-to: result
 
 @protected
 title: Stabilisation with protection for the unemployed and a tax on wealth
-subtitle: The złoty comes after three months ([+ pl_cost3 +]); it needs a working protection for the unemployed.
+subtitle: Cost: [+ pl_cost3 +]. The złoty comes after three months; it needs a working protection for the unemployed.
 view-if: pl_ev_treasury
 choose-if: {! return PolishProjects.eventStatus(Q, 'stabilization', 'protected').available !}
 unavailable-subtitle: [+ pl_ev_protected_why +]
@@ -55,7 +55,7 @@ go-to: result
 
 @gradual
 title: Gradual limitation of emission
-subtitle: Cheaper ([+ pl_cost2 +]), but the złoty comes only after five months.
+subtitle: Cost: [+ pl_cost2 +]. Cheaper, but the złoty comes only after five months.
 view-if: pl_ev_treasury
 choose-if: {! return PolishProjects.eventStatus(Q, 'stabilization', 'gradual').available !}
 unavailable-subtitle: [+ pl_ev_gradual_why +]
@@ -66,7 +66,7 @@ go-to: result
 
 @postpone
 title: Postpone the reform
-subtitle: No cost now; the reform can be started later with the card “Currency Stabilisation”.
+subtitle: Cost: 0 budget units. The reform can be started later with the card “Currency Stabilisation”.
 view-if: pl_ev_treasury
 on-arrival: {!
 PolishProjects.eventChoose(Q, 'stabilization', 'postpone');
@@ -86,7 +86,7 @@ go-to: result
 
 @wait
 title: Leave the reform to the cabinet
-subtitle: No cost; the cabinet will prepare the reform itself.
+subtitle: Cost: 0 budget units. The cabinet will prepare the reform itself.
 view-if: not pl_ev_treasury
 on-arrival: {!
 PolishProjects.eventChoose(Q, 'stabilization', 'wait');

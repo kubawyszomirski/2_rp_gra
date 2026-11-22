@@ -33,7 +33,7 @@ go-to: protection
 
 @restraint
 title: Restraint and a focus on the lawful succession
-subtitle: No cost. We speak in the National Assembly without calling people into the streets; those who expected a mass protest may be disappointed.
+subtitle: Cost: 0 resources. We speak in the National Assembly without calling people into the streets; those who expected a mass protest may be disappointed.
 choose-if: {! return PolishPolitics.responseStatus(Q, 'restraint').available !}
 unavailable-subtitle: [+ pl_b4_restraint_why +]
 on-arrival: {!

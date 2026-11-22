@@ -1,19 +1,19 @@
 {
- "source": "scenes/polish_event_niewiadomski_cult.scene.dry",
- "status": "complete",
- "lines": {
-  "title: The Cult of the Assassin": "title: Kult zamachowca",
-  "subtitle: A public commemoration of Eligiusz Niewiadomski; PPS decides how it answers.": "subtitle: Publiczne uczczenie Eligiusza Niewiadomskiego; PPS decyduje, jak odpowie.",
-  "= A commemoration of the assassin": "= Uczczenie zamachowca",
-  "Eligiusz Niewiadomski, who killed President Narutowicz, was executed on 31 January 1923. On 6 February about ten thousand people follow his funeral at the Powązki cemetery in Warsaw, with a requiem mass, and services in his honour are announced in churches in other towns. PPS must decide how its members and organisations answer. Opposing the cult of a murderer is not a position on religion or on the Church.": "Eligiusz Niewiadomski, który zabił prezydenta Narutowicza, został stracony 31 stycznia 1923 roku. 6 lutego około dziesięciu tysięcy ludzi idzie w jego pogrzebie na cmentarzu Powązkowskim w Warszawie, z mszą żałobną, a w kościołach innych miast zapowiadane są nabożeństwa ku jego czci. PPS musi zdecydować, jak odpowiedzą jej członkowie i organizacje. Sprzeciw wobec kultu mordercy nie jest stanowiskiem wobec religii ani Kościoła.",
-  "title: Condemn the cult and order our members not to disturb the service": "title: Potęp kult i nakaż członkom nie zakłócać nabożeństwa",
-  "subtitle: No cost. Our members keep away from the churches; the Christian Democrats may join the condemnation if they are close to us.": "subtitle: Bez kosztów. Nasi członkowie trzymają się z dala od kościołów; chadecja może przyłączyć się do potępienia, jeśli jest nam bliska.",
-  "title: Organise a mass for the defence of democracy": "title: Zorganizuj mszę w obronie demokracji",
-  "subtitle: Cost: 1 resource. It needs a priest who agrees to celebrate it; the mass in defence of democracy strengthens it (+2), without changing our view of the Church.": "subtitle: Koszt: 1 jednostka środków. Wymaga zgody księdza; msza w obronie demokracji ją wzmacnia (+2), nie zmieniając naszego stosunku do Kościoła.",
-  "title: Break up the services with the Milicja": "title: Rozbij nabożeństwa siłami Milicji",
-  "subtitle: Cost: half a resource. It needs a free Milicja; the Centrum of the party protests (+8) and the Christian Democrats are outraged; a clash may bring a case against PPS and even a ban of the Milicja.": "subtitle: Koszt: pół jednostki środków. Wymaga wolnej Milicji; Centrum partii protestuje (+8), a chadecja jest oburzona; starcie może przynieść sprawę przeciw PPS, a nawet zakaz Milicji.",
-  "title: Do not engage our organisations": "title: Nie angażuj naszych organizacji",
-  "subtitle: No cost. The Left of the party protests if we had promised a public answer.": "subtitle: Bez kosztów. Lewica partii protestuje, jeśli obiecaliśmy publiczną odpowiedź.",
-  "- @root: Continue.": "- @root: Dalej."
- }
+  "source": "scenes/polish_event_niewiadomski_cult.scene.dry",
+  "status": "complete",
+  "lines": {
+    "title: The Cult of the Assassin": "title: Kult zamachowca",
+    "subtitle: A public commemoration of Eligiusz Niewiadomski; PPS decides how it answers.": "subtitle: Publiczne uczczenie Eligiusza Niewiadomskiego; PPS decyduje, jak odpowie.",
+    "= A commemoration of the assassin": "= Uczczenie zamachowca",
+    "Eligiusz Niewiadomski, who killed President Narutowicz, was executed on 31 January 1923. On 6 February about ten thousand people follow his funeral at the Powązki cemetery in Warsaw, with a requiem mass, and services in his honour are announced in churches in other towns. PPS must decide how its members and organisations answer. Opposing the cult of a murderer is not a position on religion or on the Church.": "Eligiusz Niewiadomski, który zabił prezydenta Narutowicza, został stracony 31 stycznia 1923 roku. 6 lutego około dziesięciu tysięcy ludzi idzie w jego pogrzebie na cmentarzu Powązkowskim w Warszawie, z mszą żałobną, a w kościołach innych miast zapowiadane są nabożeństwa ku jego czci. PPS musi zdecydować, jak odpowiedzą jej członkowie i organizacje. Sprzeciw wobec kultu mordercy nie jest stanowiskiem wobec religii ani Kościoła.",
+    "title: Condemn the cult and order our members not to disturb the service": "title: Potęp kult i nakaż członkom nie zakłócać nabożeństwa",
+    "title: Organise a mass for the defence of democracy": "title: Zorganizuj mszę w obronie demokracji",
+    "subtitle: Cost: 1 resource. It needs a priest who agrees to celebrate it; the mass in defence of democracy strengthens it (+2), without changing our view of the Church.": "subtitle: Koszt: 1 jednostka środków. Wymaga zgody księdza; msza w obronie demokracji ją wzmacnia (+2), nie zmieniając naszego stosunku do Kościoła.",
+    "title: Break up the services with the Milicja": "title: Rozbij nabożeństwa siłami Milicji",
+    "subtitle: Cost: half a resource. It needs a free Milicja; the Centrum of the party protests (+8) and the Christian Democrats are outraged; a clash may bring a case against PPS and even a ban of the Milicja.": "subtitle: Koszt: pół jednostki środków. Wymaga wolnej Milicji; Centrum partii protestuje (+8), a chadecja jest oburzona; starcie może przynieść sprawę przeciw PPS, a nawet zakaz Milicji.",
+    "title: Do not engage our organisations": "title: Nie angażuj naszych organizacji",
+    "- @root: Continue.": "- @root: Dalej.",
+    "subtitle: Cost: 0 resources. Our members keep away from the churches; the Christian Democrats may join the condemnation if they are close to us.": "subtitle: Koszt: 0 jednostek środków. Nasi członkowie trzymają się z dala od kościołów; chadecja może przyłączyć się do potępienia, jeśli jest nam bliska.",
+    "subtitle: Cost: 0 resources. The Left of the party protests if we had promised a public answer.": "subtitle: Koszt: 0 jednostek środków. Lewica partii protestuje, jeśli obiecaliśmy publiczną odpowiedź."
+  }
 }

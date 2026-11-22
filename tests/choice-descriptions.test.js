@@ -129,3 +129,26 @@ test('Przegląd i „Nic nie robimy” 1.08: the Overview shows the resources an
     rules().setLanguage('en');
   }
 });
+
+// Z — 1.17 (the user's note of 22 XI 2026): on every card where a choice costs money, every decision names its cost, also a cost of
+// nothing ("Koszt: 0 jednostek środków."). Moving around (do nothing, put back, not now) and the sub-steps of the strike page have none.
+test('Koszt 0 w 1.17: every decision on a card with costs opens with its cost line', () => {
+  const NAV = new Set(['nothing', 'easy_discard', 'cancel_advisor_action', 'later', 'root', 'result', 'skip', 'seen']);
+  const SUBSTEPS = new Set(['polish_union_agenda.scene.dry:g_small', 'polish_union_agenda.scene.dry:g_big', 'polish_union_agenda.scene.dry:g_political',
+    'polish_union_agenda.scene.dry:c_no', 'polish_union_agenda.scene.dry:c_yes', 'polish_union_agenda.scene.dry:p_no',
+    'polish_event_credit_crisis.scene.dry:protection']);
+  const problems = [];
+  for (const file of walk(path.join(ROOT, 'source/scenes')).filter(f => f.endsWith('.scene.dry') && !/unemployment_bill/.test(f))) {
+    const rel = path.relative(path.join(ROOT, 'source/scenes'), file);
+    const blocks = fs.readFileSync(file, 'utf8').split(/\n(?=@[a-z0-9_]+\n)/).slice(1).map(b => ({ id: b.split('\n', 1)[0].slice(1), sub: (b.match(/^subtitle: (.*)$/m) || [])[1] }));
+    if (!blocks.some(b => b.sub && b.sub.startsWith('Cost:'))) continue;
+    for (const b of blocks) {
+      if (!b.sub || NAV.has(b.id) || SUBSTEPS.has(rel + ':' + b.id) || b.sub.startsWith('Cost:') || /^\[\? if pl_tur_level/.test(b.sub)) continue;
+      if (/^\[\+ pl_\w+ \+\]$/.test(b.sub)) continue; // a line written by the rules (checked in their own tests)
+      problems.push(rel + ': ' + b.id + ': ' + b.sub.slice(0, 60));
+    }
+  }
+  assert.deepEqual(problems, []);
+  assert.equal(rules().markEffectNumbers('Koszt: 0 jednostek środków. Sprzeciw spada (−3).'),
+    '<span class="pl-cost">Koszt: 0 jednostek środków.</span>Sprzeciw spada<span class="pl-fx"> (−3)</span>.');
+});

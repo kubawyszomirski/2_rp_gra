@@ -1,24 +1,24 @@
 {
- "source": "scenes/polish_event_stabilization.scene.dry",
- "status": "complete",
- "lines": {
-  "title: A Financial Crisis": "title: Kryzys finansowy",
-  "subtitle: The marka collapses and the budget has no cover.": "subtitle: Marka się załamuje, a budżet nie ma pokrycia.",
-  "= A financial crisis": "= Kryzys finansowy",
-  "[? if pl_ev_currency : The marka loses value from day to day, and prices rise faster than wages. The budget has no cover, and without a currency reform it will only get worse. ?]": "[? if pl_ev_currency : Marka traci wartość z dnia na dzień, a ceny rosną szybciej niż płace. Budżet nie ma pokrycia i bez reformy waluty będzie coraz gorzej. ?]",
-  "[? if not pl_ev_currency : The budget has had no cover for months, and the state lives on the printing press. Without a currency reform it will only get worse. ?]": "[? if not pl_ev_currency : Budżet od miesięcy nie ma pokrycia, a państwo żyje z drukowania pieniędzy. Bez reformy waluty będzie coraz gorzej. ?]",
-  "title: Rapid stabilisation with savings": "title: Szybka stabilizacja z oszczędnościami",
-  "subtitle: The złoty comes after three months ([+ pl_cost3 +]), but the cuts and the lack of credit will hit the factories.": "subtitle: Złoty wchodzi po trzech miesiącach ([+ pl_cost3 +]), ale cięcia i brak kredytu uderzą w zakłady.",
-  "title: Stabilisation with protection for the unemployed and a tax on wealth": "title: Stabilizacja z ochroną bezrobotnych i podatkiem od majątku",
-  "subtitle: The złoty comes after three months ([+ pl_cost3 +]); it needs a working protection for the unemployed.": "subtitle: Złoty wchodzi po trzech miesiącach ([+ pl_cost3 +]); wymaga działającej ochrony bezrobotnych.",
-  "title: Gradual limitation of emission": "title: Stopniowe ograniczanie emisji",
-  "subtitle: Cheaper ([+ pl_cost2 +]), but the złoty comes only after five months.": "subtitle: Taniej ([+ pl_cost2n +]), ale złoty wchodzi dopiero po pięciu miesiącach.",
-  "title: Postpone the reform": "title: Odłóż reformę",
-  "subtitle: No cost now; the reform can be started later with the card “Currency Stabilisation”.": "subtitle: Bez kosztów teraz; reformę można zacząć później kartą „Stabilizacja waluty”.",
-  "title: Start the campaign “Against high prices”": "title: Rozpocznij kampanię „Przeciw drożyźnie”",
-  "subtitle: Cost: 1 resource. It reaches the workers and the intelligentsia[? if pl_ev_strong : , and in this crisis more strongly than usual ?].": "subtitle: Koszt: 1 jednostka środków. Trafia do robotników i inteligencji[? if pl_ev_strong : , a w tym kryzysie mocniej niż zwykle ?].",
-  "title: Leave the reform to the cabinet": "title: Zostaw reformę rządowi",
-  "subtitle: No cost; the cabinet will prepare the reform itself.": "subtitle: Bez kosztów; rząd sam przygotuje reformę.",
-  "- @root: Continue.": "- @root: Dalej."
- }
+  "source": "scenes/polish_event_stabilization.scene.dry",
+  "status": "complete",
+  "lines": {
+    "title: A Financial Crisis": "title: Kryzys finansowy",
+    "subtitle: The marka collapses and the budget has no cover.": "subtitle: Marka się załamuje, a budżet nie ma pokrycia.",
+    "= A financial crisis": "= Kryzys finansowy",
+    "[? if pl_ev_currency : The marka loses value from day to day, and prices rise faster than wages. The budget has no cover, and without a currency reform it will only get worse. ?]": "[? if pl_ev_currency : Marka traci wartość z dnia na dzień, a ceny rosną szybciej niż płace. Budżet nie ma pokrycia i bez reformy waluty będzie coraz gorzej. ?]",
+    "[? if not pl_ev_currency : The budget has had no cover for months, and the state lives on the printing press. Without a currency reform it will only get worse. ?]": "[? if not pl_ev_currency : Budżet od miesięcy nie ma pokrycia, a państwo żyje z drukowania pieniędzy. Bez reformy waluty będzie coraz gorzej. ?]",
+    "title: Rapid stabilisation with savings": "title: Szybka stabilizacja z oszczędnościami",
+    "title: Stabilisation with protection for the unemployed and a tax on wealth": "title: Stabilizacja z ochroną bezrobotnych i podatkiem od majątku",
+    "title: Gradual limitation of emission": "title: Stopniowe ograniczanie emisji",
+    "title: Postpone the reform": "title: Odłóż reformę",
+    "title: Start the campaign “Against high prices”": "title: Rozpocznij kampanię „Przeciw drożyźnie”",
+    "subtitle: Cost: 1 resource. It reaches the workers and the intelligentsia[? if pl_ev_strong : , and in this crisis more strongly than usual ?].": "subtitle: Koszt: 1 jednostka środków. Trafia do robotników i inteligencji[? if pl_ev_strong : , a w tym kryzysie mocniej niż zwykle ?].",
+    "title: Leave the reform to the cabinet": "title: Zostaw reformę rządowi",
+    "- @root: Continue.": "- @root: Dalej.",
+    "subtitle: Cost: [+ pl_cost3 +]. The złoty comes after three months, but the cuts and the lack of credit will hit the factories.": "subtitle: Koszt: [+ pl_cost3 +]. Złoty wchodzi po trzech miesiącach, ale cięcia i brak kredytu uderzą w zakłady.",
+    "subtitle: Cost: [+ pl_cost3 +]. The złoty comes after three months; it needs a working protection for the unemployed.": "subtitle: Koszt: [+ pl_cost3 +]. Złoty wchodzi po trzech miesiącach; wymaga działającej ochrony bezrobotnych.",
+    "subtitle: Cost: [+ pl_cost2 +]. Cheaper, but the złoty comes only after five months.": "subtitle: Koszt: [+ pl_cost2n +]. Taniej, ale złoty wchodzi dopiero po pięciu miesiącach.",
+    "subtitle: Cost: 0 budget units. The reform can be started later with the card “Currency Stabilisation”.": "subtitle: Koszt: 0 jednostek budżetu. Reformę można zacząć później kartą „Stabilizacja waluty”.",
+    "subtitle: Cost: 0 budget units. The cabinet will prepare the reform itself.": "subtitle: Koszt: 0 jednostek budżetu. Rząd sam przygotuje reformę."
+  }
 }

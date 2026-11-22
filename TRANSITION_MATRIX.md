@@ -1,13 +1,14 @@
 # Polish Adaptation: Transition Matrix and Content Boundary
 
-## Current state — reference 1.16, 8 November 2026
+## Current state — reference 1.17, 22 November 2026
 
 This section is the only current summary in this file. This matrix lists approved transitions and the content boundary of implemented slices. Everything under "Archive of entries" below is kept unchanged for traceability. It is history, not an implementation instruction; where it differs from the technical reference, the technical reference wins.
 
-- **Canonical specification:** `docs/POLISH_TECHNICAL_REFERENCE.md`, chapters 1–22 (reference 1.16); its chapter 23 holds the decision history.
+- **Canonical specification:** `docs/POLISH_TECHNICAL_REFERENCE.md`, chapters 1–22 (reference 1.17); its chapter 23 holds the decision history.
 - **Player-facing description:** `docs/POLISH_DESCRIPTIVE_GUIDE.md`.
 - **Audit:** every item of `docs/POLISH_MECHANICS_AUDIT.md` (M01–M19) is closed in documentation; stage 8 measured balance and behaviour in full automated campaigns (`analysis/stage8-campaigns/REPORT.md`).
 - **Card catalogue for coding:** `docs/POLISH_CARD_CATALOGUE.md` (reference 0.32) has one table for each of its 69 entries (card families, agenda actions and events): access, options, time and resource cost, effects, end state and cooldown. It creates no rules; where it differs from the technical reference, the reference wins.
+- **The cost of nothing and a plainer cooperative, 22 November 2026 (Z, K, 1.17):** the workers’ consumer cooperative in one plain sentence (it supplies the strikers with food, so a strike costs half; the mechanism is unchanged). On every card where a choice costs money, every decision opens with its cost line, also a cost of nothing (“Cost: 0 resources.” or “Cost: 0 budget units.”) instead of “No money”, “No cost to the budget” or “Costs nothing”; a cost in brackets moves into that line; the start and the launch of a strike name the monthly cost for each branch; the emergency collection without its formula. Moving around and the sub-steps of the strike page have none. The test campaigns are unchanged.
 - **The KPP in a strike without a chance in per cent, 8 November 2026 (Z, K, 1.16):** no chance in per cent at the KPP in a strike (the user’s request): the result of the cooperation with the communists says only whether the KPP keeps or breaks the agreed rules; the roll stays hidden, as in the coup and the laws. The test campaigns are unchanged.
 - **The union reach on the Party tab in words, 8 November 2026 (Z, K, 1.15):** the reach of the unions on the Party tab in words (the user’s request), with the same words as on the cards. The test campaigns are unchanged.
 - **The union cards in words, 8 November 2026 (Z, K, 1.14):** the union cards in words (the user’s request). The organising card: the cost first, the reach of a branch, the addition of the unions to collections and the money of the party in words, the harvest strike without its threshold. The strike page: the expected participation, the influence of the communists and our relations with the KPP in words; the protection of the Milicja costs “half a unit of resources”. The offer card and the strike line of the Party tab: participation in words. The test campaigns are unchanged.

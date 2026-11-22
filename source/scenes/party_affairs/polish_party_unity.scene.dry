@@ -64,7 +64,7 @@ go-to: result
 @kpp_line
 title: Agree on the line of cooperation with the communists
 view-if: pl_unity_kpp_line_show = 1
-subtitle: No money; every faction accepts the cooperation more readily (+15). Waits six months.
+subtitle: Cost: 0 resources. Every faction accepts the cooperation more readily (+15). Waits six months.
 choose-if: {! return PolishParty.unityStatus(Q, 'kpp_line').available !}
 unavailable-subtitle: [+ pl_unity_kpp_line_why +]
 on-arrival: {!
@@ -75,7 +75,7 @@ go-to: result
 @postpone_centrum
 title: Persuade Centrum PPS to wait
 view-if: pl_unity_postpone_centrum_show = 1
-subtitle: Its case cannot lead to a split for three months; its dissent does not change. Once per case.
+subtitle: Cost: 0 resources. Its case cannot lead to a split for three months; its dissent does not change. Once per case.
 choose-if: {! return PolishParty.unityStatus(Q, 'postpone', 'centrum').available !}
 unavailable-subtitle: [+ pl_unity_postpone_centrum_why +]
 on-arrival: {!
@@ -86,7 +86,7 @@ go-to: result
 @postpone_lewica
 title: Persuade Lewica PPS to wait
 view-if: pl_unity_postpone_lewica_show = 1
-subtitle: Its case cannot lead to a split for three months; its dissent does not change. Once per case.
+subtitle: Cost: 0 resources. Its case cannot lead to a split for three months; its dissent does not change. Once per case.
 choose-if: {! return PolishParty.unityStatus(Q, 'postpone', 'lewica').available !}
 unavailable-subtitle: [+ pl_unity_postpone_lewica_why +]
 on-arrival: {!
@@ -97,7 +97,7 @@ go-to: result
 @postpone_pilsudczycy
 title: Persuade Piłsudczycy to wait
 view-if: pl_unity_postpone_pilsudczycy_show = 1
-subtitle: Its case cannot lead to a split for three months; its dissent does not change. Once per case.
+subtitle: Cost: 0 resources. Its case cannot lead to a split for three months; its dissent does not change. Once per case.
 choose-if: {! return PolishParty.unityStatus(Q, 'postpone', 'pilsudczycy').available !}
 unavailable-subtitle: [+ pl_unity_postpone_pilsudczycy_why +]
 on-arrival: {!

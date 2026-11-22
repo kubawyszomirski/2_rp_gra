@@ -34,7 +34,7 @@ The courts judge by the different laws of the former partitions, and workers’ 
 
 @amnesty
 title: Declare an amnesty for political prisoners
-subtitle: No cost to the budget; once in the chapter. The workers trust PPS more (+3), but squad members leave the prisons too, and political violence rises (+3). [? if pl_justice_policy_amnesty_coalition : [+ pl_justice_policy_amnesty_coalition +] ?]
+subtitle: Cost: 0 budget units. Once in the chapter. The workers trust PPS more (+3), but squad members leave the prisons too, and political violence rises (+3). [? if pl_justice_policy_amnesty_coalition : [+ pl_justice_policy_amnesty_coalition +] ?]
 choose-if: {! return PolishProjects.optionStatus(Q, 'justice_policy', 'amnesty').available !}
 unavailable-subtitle: [+ pl_justice_policy_amnesty_why +]
 on-arrival: {!
@@ -64,7 +64,7 @@ go-to: result
 
 @court_savings
 title: Make savings in the courts
-subtitle: The budget gains 1 unit at once. Trials drag on, and democracy weakens a little (−1).
+subtitle: Cost: 0 budget units. The budget gains 1 unit at once. Trials drag on, and democracy weakens a little (−1).
 choose-if: {! return PolishProjects.optionStatus(Q, 'justice_policy', 'court_savings').available !}
 unavailable-subtitle: [+ pl_justice_policy_court_savings_why +]
 on-arrival: {!

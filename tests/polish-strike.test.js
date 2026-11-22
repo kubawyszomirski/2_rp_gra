@@ -404,7 +404,7 @@ test('Związki słowami 1.14: no numbers of the mechanics on the union cards', (
     engine.goToScene('main');
     playDispute(engine);
     choose(engine, 'polish_union_agenda.start');
-    assert.match(Q.pl_su_launch_line, /^Oczekiwany udział: Przemysł — średni, Kolej — średni; szansa na ofertę rządu w miesiącu: /);
+    assert.match(Q.pl_su_launch_line, /^Koszt: pół jednostki środków za każdą branżę co miesiąc strajku\. Oczekiwany udział: Przemysł — średni, Kolej — średni; szansa na ofertę rządu w miesiącu: /);
     assert.doesNotMatch(Q.pl_su_launch_line, /\d/);
     PolishParty.unionInvestmentsView(Q);
     for (const id of ['union_organize_industry', 'union_organize_rail', 'union_organize_farm_labour']) {

@@ -20,7 +20,7 @@ Pużak represents Centrum PPS and concentrates on discipline and party organizat
 
 @party_discipline
 title: Party Discipline
-subtitle: Dissent falls in each of the three factions (−12). It removes no cause of later growth.
+subtitle: Cost: 0 resources. Dissent falls in each of the three factions (−12). It removes no cause of later growth.
 choose-if: {! return PolishParty.advisorActionStatus(Q, 'puzak', 'party_discipline').available !}
 unavailable-subtitle: [+ pl_advact_party_discipline_why +]
 call: polish_advisor_commit

@@ -46,7 +46,7 @@ go-to: result
 
 @debate
 title: An open debate in the columns of the press
-subtitle: Costs no money. The factions argue in the columns of the press, and the dissent of each falls (−3).
+subtitle: Cost: 0 resources. The factions argue in the columns of the press, and the dissent of each falls (−3).
 choose-if: {! return PolishParty.pressActionStatus(Q, 'debate').available !}
 unavailable-subtitle: [+ pl_press_debate_why +]
 on-arrival: {!

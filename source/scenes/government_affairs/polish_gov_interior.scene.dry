@@ -54,7 +54,7 @@ go-to: result
 
 @protect
 title: Protect rallies and strikes
-subtitle: No cost to the budget. For half a year the police guard lawful rallies and strikes, even if PPS loses the ministry, so there are fewer clashes; business presses harder on the cabinet (+3).
+subtitle: Cost: 0 budget units. For half a year the police guard lawful rallies and strikes, even if PPS loses the ministry, so there are fewer clashes; business presses harder on the cabinet (+3).
 choose-if: {! return PolishProjects.optionStatus(Q, 'internal_security', 'protect').available !}
 unavailable-subtitle: [+ pl_internal_security_protect_why +]
 on-arrival: {!
@@ -64,7 +64,7 @@ go-to: result
 
 @police_cuts
 title: Cut the police establishment
-subtitle: The budget gains 1 unit at once. The police are weaker, and there is a little more violence in the country (+2).
+subtitle: Cost: 0 budget units. The budget gains 1 unit at once. The police are weaker, and there is a little more violence in the country (+2).
 choose-if: {! return PolishProjects.optionStatus(Q, 'internal_security', 'police_cuts').available !}
 unavailable-subtitle: [+ pl_internal_security_police_cuts_why +]
 on-arrival: {!

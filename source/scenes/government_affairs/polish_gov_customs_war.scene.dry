@@ -25,7 +25,7 @@ In June 1925 Germany closed its market to Polish coal, and Poland answered with 
 
 @retaliation
 title: Answer with retaliatory duties
-subtitle: No cost to the budget; home industry keeps the home market and the fall of output weakens. Prices rise (+1 percentage point of inflation for two months).
+subtitle: Cost: 0 budget units. Home industry keeps the home market and the fall of output weakens. Prices rise (+1 percentage point of inflation for two months).
 choose-if: {! return PolishProjects.optionStatus(Q, 'customs_war', 'retaliation').available !}
 unavailable-subtitle: [+ pl_customs_war_retaliation_why +]
 on-arrival: {!
@@ -45,7 +45,7 @@ go-to: result
 
 @concessions
 title: Make concessions to Germany
-subtitle: No cost to the budget; trade returns sooner and credit recovers. The National Democrats accuse the cabinet of weakness, and the relation with the National Popular Union worsens (−8).
+subtitle: Cost: 0 budget units. Trade returns sooner and credit recovers. The National Democrats accuse the cabinet of weakness, and the relation with the National Popular Union worsens (−8).
 choose-if: {! return PolishProjects.optionStatus(Q, 'customs_war', 'concessions').available !}
 unavailable-subtitle: [+ pl_customs_war_concessions_why +]
 on-arrival: {!

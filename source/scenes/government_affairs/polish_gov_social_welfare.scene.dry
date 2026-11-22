@@ -52,7 +52,7 @@ go-to: result
 
 @limit
 title: Limit the benefits
-subtitle: Brings the budget 1 unit at once. The unemployed get less, and the dissent of the Left of PPS rises (+8). [? if pl_social_welfare_limit_coalition : [+ pl_social_welfare_limit_coalition +] ?]
+subtitle: Cost: 0 budget units. Brings the budget 1 unit at once. The unemployed get less, and the dissent of the Left of PPS rises (+8). [? if pl_social_welfare_limit_coalition : [+ pl_social_welfare_limit_coalition +] ?]
 choose-if: {! return PolishProjects.optionStatus(Q, 'social_welfare', 'limit').available !}
 unavailable-subtitle: [+ pl_social_welfare_limit_why +]
 on-arrival: {!

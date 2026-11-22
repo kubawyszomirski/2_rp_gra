@@ -3324,6 +3324,8 @@
     const S = Q.S;
     Q.pl_pa_fundraise_why = fundraiseStatus(Q).reason;
     Q.pl_pa_fundraise_gain = fmt(collectionGain(S));
+    // Z — 1.17: the collection with its unit declined by its number ("2 jednostki", "5 jednostek", "2,9 jednostki").
+    Q.pl_pa_fundraise_units = rules.units(collectionGain(S), 'resources', 'acc');
     Q.pl_pa_apparatus_why = apparatusStatus(Q).reason;
     for (const id of BRANCHES) Q['pl_pa_branch_' + id + '_why'] = organizeStatus(Q, 'branch:' + id).reason;
     for (const c of ORGANIZE_CLASSES) Q['pl_pa_class_' + c + '_why'] = organizeStatus(Q, 'class:' + c).reason;

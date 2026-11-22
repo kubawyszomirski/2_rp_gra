@@ -1,23 +1,23 @@
 {
- "source": "scenes/polish_event_credit_crisis.scene.dry",
- "status": "complete",
- "lines": {
-  "title: Credit Crisis": "title: Kryzys kredytowy",
-  "subtitle: The banks hold back credit; the firms dismiss workers.": "subtitle: Banki wstrzymują kredyt; firmy zwalniają ludzi.",
-  "= A credit crisis": "= Kryzys kredytowy",
-  "The banks hold back credit, and the factories cut work and dismiss people. Unemployment grows from month to month.": "Banki wstrzymują kredyt, a fabryki ograniczają pracę i zwalniają ludzi. Bezrobocie rośnie z miesiąca na miesiąc.",
-  "title: Lend to the threatened firms": "title: Udziel kredytu zagrożonym zakładom",
-  "subtitle: The state lends to the firms that would otherwise stop ([+ pl_cost2 +]).": "subtitle: Państwo pożycza zakładom, które inaczej by stanęły ([+ pl_cost2n +]).",
-  "title: Order public works or public orders": "title: Zleć zamówienia albo roboty publiczne",
-  "subtitle: The unemployed get work ([+ pl_cost2 +]).": "subtitle: Bezrobotni dostają pracę ([+ pl_cost2n +]).",
-  "title: Strengthen the help for those losing work": "title: Wzmocnij osłonę dla zwalnianych",
-  "subtitle: The unemployed get more help, but no new jobs come of it.": "subtitle: Bezrobotni dostają więcej pomocy, ale miejsc pracy nie przybywa.",
-  "title: Start the campaign “Work and benefits for the unemployed”": "title: Rozpocznij kampanię „Praca i zasiłek dla bezrobotnych”",
-  "subtitle: Cost: 1 resource. It reaches the unemployed and the workers[? if pl_ev_strong : , and now more strongly than usual ?].": "subtitle: Koszt: 1 jednostka środków. Trafia do bezrobotnych i robotników[? if pl_ev_strong : , a teraz mocniej niż zwykle ?].",
-  "title: Let the unions help those losing work": "title: Niech związki pomogą zwalnianym",
-  "subtitle: Cost: 1 resource. The unions of industry and the railways trust PPS more (+5).": "subtitle: Koszt: 1 jednostka środków. Związki w przemyśle i na kolei bardziej ufają PPS (+5).",
-  "title: Do nothing new": "title: Nie podejmuj działań",
-  "subtitle: No cost; the crisis goes on.": "subtitle: Bez kosztów; kryzys toczy się dalej.",
-  "- @root: Continue.": "- @root: Dalej."
- }
+  "source": "scenes/polish_event_credit_crisis.scene.dry",
+  "status": "complete",
+  "lines": {
+    "title: Credit Crisis": "title: Kryzys kredytowy",
+    "subtitle: The banks hold back credit; the firms dismiss workers.": "subtitle: Banki wstrzymują kredyt; firmy zwalniają ludzi.",
+    "= A credit crisis": "= Kryzys kredytowy",
+    "The banks hold back credit, and the factories cut work and dismiss people. Unemployment grows from month to month.": "Banki wstrzymują kredyt, a fabryki ograniczają pracę i zwalniają ludzi. Bezrobocie rośnie z miesiąca na miesiąc.",
+    "title: Lend to the threatened firms": "title: Udziel kredytu zagrożonym zakładom",
+    "title: Order public works or public orders": "title: Zleć zamówienia albo roboty publiczne",
+    "title: Strengthen the help for those losing work": "title: Wzmocnij osłonę dla zwalnianych",
+    "subtitle: The unemployed get more help, but no new jobs come of it.": "subtitle: Bezrobotni dostają więcej pomocy, ale miejsc pracy nie przybywa.",
+    "title: Start the campaign “Work and benefits for the unemployed”": "title: Rozpocznij kampanię „Praca i zasiłek dla bezrobotnych”",
+    "subtitle: Cost: 1 resource. It reaches the unemployed and the workers[? if pl_ev_strong : , and now more strongly than usual ?].": "subtitle: Koszt: 1 jednostka środków. Trafia do bezrobotnych i robotników[? if pl_ev_strong : , a teraz mocniej niż zwykle ?].",
+    "title: Let the unions help those losing work": "title: Niech związki pomogą zwalnianym",
+    "subtitle: Cost: 1 resource. The unions of industry and the railways trust PPS more (+5).": "subtitle: Koszt: 1 jednostka środków. Związki w przemyśle i na kolei bardziej ufają PPS (+5).",
+    "title: Do nothing new": "title: Nie podejmuj działań",
+    "- @root: Continue.": "- @root: Dalej.",
+    "subtitle: Cost: [+ pl_cost2 +]. The state lends to the firms that would otherwise stop.": "subtitle: Koszt: [+ pl_cost2n +]. Państwo pożycza zakładom, które inaczej by stanęły.",
+    "subtitle: Cost: [+ pl_cost2 +]. The unemployed get work.": "subtitle: Koszt: [+ pl_cost2n +]. Bezrobotni dostają pracę.",
+    "subtitle: Cost: 0 budget units. The crisis goes on.": "subtitle: Koszt: 0 jednostek budżetu. Kryzys toczy się dalej."
+  }
 }

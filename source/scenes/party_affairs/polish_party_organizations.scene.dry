@@ -45,7 +45,7 @@ go-to: result
 
 @cooperative_workers
 title: Found a workers’ consumer cooperative
-subtitle: Cost: 1 resource. The cooperative sells to strikers on credit, so the strike pay costs the party half as much.
+subtitle: Cost: 1 resource. The cooperative supplies the strikers with food, so a strike costs the party half as much.
 choose-if: {! return PolishParty.selectionStatus(Q, ['cooperative_workers']).available !}
 unavailable-subtitle: [+ pl_org_cooperative_workers_why +]
 on-arrival: {!

@@ -64,7 +64,7 @@ go-to: result
 
 @farm_aid_cuts
 title: Cut the help for agriculture
-subtitle: The budget gains 1 unit at once. The peasants trust PPS less (−3), and relations with both PSL worsen (−3).
+subtitle: Cost: 0 budget units. The budget gains 1 unit at once. The peasants trust PPS less (−3), and relations with both PSL worsen (−3).
 choose-if: {! return PolishProjects.optionStatus(Q, 'agriculture_development', 'farm_aid_cuts').available !}
 unavailable-subtitle: [+ pl_agriculture_development_farm_aid_cuts_why +]
 on-arrival: {!

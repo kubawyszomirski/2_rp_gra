@@ -31,7 +31,7 @@ Q.pl_cc_persuade_why = PolishGovernment.crisisStatus(Q, 'persuade').reason;
 
 @stop
 title: Stop [+ pl_cc_target +]
-subtitle: The reform stops and costs the budget nothing more. The partner calms down (−40), but [+ pl_cc_stop_cost +] (+10).
+subtitle: Cost: 0 resources. The reform stops and costs the budget nothing more. The partner calms down (−40), but [+ pl_cc_stop_cost +] (+10).
 view-if: pl_cc_kind = "tension"
 choose-if: {! return PolishGovernment.crisisStatus(Q, 'stop').available !}
 unavailable-subtitle: [+ pl_cc_stop_why +]
@@ -52,7 +52,7 @@ go-to: done
 
 @break
 title: Break the coalition
-subtitle: Our ministers leave the cabinet, and PPS goes into opposition; [+ pl_cc_break_gain +] (−10).
+subtitle: Cost: 0 resources. Our ministers leave the cabinet, and PPS goes into opposition; [+ pl_cc_break_gain +] (−10).
 on-arrival: {!
 Q.pl_cc_result = PolishGovernment.crisisResult(Q, PolishGovernment.crisisChoose(Q, 'break'));
 !}
@@ -60,7 +60,7 @@ go-to: done
 
 @let_go
 title: Let [+ pl_cc_dat +] leave
-subtitle: The partner leaves the cabinet. A cabinet without a majority can be dismissed by the Sejm; if it falls, PPS proposes another coalition.
+subtitle: Cost: 0 resources. The partner leaves the cabinet. A cabinet without a majority can be dismissed by the Sejm; if it falls, PPS proposes another coalition.
 on-arrival: {!
 Q.pl_cc_result = PolishGovernment.crisisResult(Q, PolishGovernment.crisisChoose(Q, 'let_go'));
 !}

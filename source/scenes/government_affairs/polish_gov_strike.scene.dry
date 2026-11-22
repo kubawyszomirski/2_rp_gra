@@ -31,7 +31,7 @@ go-to: result
 
 @arbitration
 title: Call an arbitration
-subtitle: A compromise at no cost: wages rise by half of what the unions demand, the unions trust PPS a little more, and business presses a little harder.
+subtitle: Cost: 0 budget units. A compromise: wages rise by half of what the unions demand, the unions trust PPS a little more, and business presses a little harder.
 on-arrival: {!
 Q.pl_gstr_result = PolishUnions.govStrikeChoose(Q, 'arbitration');
 !}
@@ -39,7 +39,7 @@ go-to: result
 
 @order
 title: Order the end of the strike
-subtitle: No rise: the unions feel betrayed, and the Left of PPS protests.
+subtitle: Cost: 0 budget units. No rise: the unions feel betrayed, and the Left of PPS protests.
 on-arrival: {!
 Q.pl_gstr_result = PolishUnions.govStrikeChoose(Q, 'order');
 !}

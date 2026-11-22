@@ -23,7 +23,7 @@ Eligiusz Niewiadomski, who killed President Narutowicz, was executed on 31 Janua
 
 @condemn
 title: Condemn the cult and order our members not to disturb the service
-subtitle: No cost. Our members keep away from the churches; the Christian Democrats may join the condemnation if they are close to us.
+subtitle: Cost: 0 resources. Our members keep away from the churches; the Christian Democrats may join the condemnation if they are close to us.
 choose-if: {! return PolishPolitics.cultStatus(Q, 'condemn').available !}
 unavailable-subtitle: [+ pl_b5_condemn_why +]
 on-arrival: {!
@@ -55,7 +55,7 @@ go-to: result
 
 @stay_out
 title: Do not engage our organisations
-subtitle: No cost. The Left of the party protests if we had promised a public answer.
+subtitle: Cost: 0 resources. The Left of the party protests if we had promised a public answer.
 choose-if: {! return PolishPolitics.cultStatus(Q, 'stay_out').available !}
 unavailable-subtitle: [+ pl_b5_stay_out_why +]
 on-arrival: {!

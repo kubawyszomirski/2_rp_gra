@@ -33,7 +33,7 @@ Piłsudski demands command of the army independent of the minister and the Sejm;
 
 @subordinate
 title: Subordinate the army to the minister and the Sejm
-subtitle: Piłsudski loses his say in the nominations, and the army leans less towards him (−5 percentage points). The Piłsudczycy in PPS rebel (+10) and relations with Piłsudski worsen (−15). [? if pl_pils_subordinate_coalition : [+ pl_pils_subordinate_coalition +] ?]
+subtitle: Cost: 0 budget units. Piłsudski loses his say in the nominations, and the army leans less towards him (−5 percentage points). The Piłsudczycy in PPS rebel (+10) and relations with Piłsudski worsen (−15). [? if pl_pils_subordinate_coalition : [+ pl_pils_subordinate_coalition +] ?]
 choose-if: {! return PolishSecurity.pilsOptionStatus(Q, 'subordinate').available !}
 unavailable-subtitle: [+ pl_pils_subordinate_why +]
 on-arrival: {!
@@ -53,7 +53,7 @@ go-to: result
 
 @military_function
 title: Give Piłsudski a military function under civilian control
-subtitle: Needs relations of at least 40. He gets a post, but the minister and the Sejm keep their oversight. The pressure towards a coup falls (−12), but the army leans a little more towards him (+3 percentage points).
+subtitle: Cost: 0 budget units. Needs relations of at least 40. He gets a post, but the minister and the Sejm keep their oversight. The pressure towards a coup falls (−12), but the army leans a little more towards him (+3 percentage points).
 choose-if: {! return PolishSecurity.pilsOptionStatus(Q, 'military_function').available !}
 unavailable-subtitle: [+ pl_pils_military_function_why +]
 on-arrival: {!
@@ -63,7 +63,7 @@ go-to: result
 
 @inspectorate
 title: Give Piłsudski an independent inspectorate of the army
-subtitle: Needs relations of at least 60. Piłsudski commands the army and appoints its officers without the oversight of the minister and the Sejm. The pressure towards a coup falls sharply (−25), but the Centrum of PPS protests (+8), and the army leans more towards him (+5 percentage points). [? if pl_pils_inspectorate_coalition : [+ pl_pils_inspectorate_coalition +] ?]
+subtitle: Cost: 0 budget units. Needs relations of at least 60. Piłsudski commands the army and appoints its officers without the oversight of the minister and the Sejm. The pressure towards a coup falls sharply (−25), but the Centrum of PPS protests (+8), and the army leans more towards him (+5 percentage points). [? if pl_pils_inspectorate_coalition : [+ pl_pils_inspectorate_coalition +] ?]
 choose-if: {! return PolishSecurity.pilsOptionStatus(Q, 'inspectorate').available !}
 unavailable-subtitle: [+ pl_pils_inspectorate_why +]
 on-arrival: {!
@@ -73,7 +73,7 @@ go-to: result
 
 @status_quo
 title: Keep the present order in the army
-subtitle: Costs nothing. The Centrum of PPS is content (−3), but Piłsudski feels passed over and relations with him worsen (−3).
+subtitle: Cost: 0 budget units. The Centrum of PPS is content (−3), but Piłsudski feels passed over and relations with him worsen (−3).
 choose-if: {! return PolishSecurity.pilsOptionStatus(Q, 'status_quo').available !}
 unavailable-subtitle: [+ pl_pils_status_quo_why +]
 on-arrival: {!

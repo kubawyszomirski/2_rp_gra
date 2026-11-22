@@ -187,8 +187,8 @@ test('Praca organizacyjna 0.78: two options on the agenda; the weakest branch an
   playFromHand(engine, 'polish_party_agenda');
   assert.ok(ids(engine).includes('polish_party_agenda.organize_unions') && ids(engine).includes('polish_party_agenda.organize_voters'));
   assert.ok(!ids(engine).includes('polish_party_agenda.organize'), 'no second page');
-  assert.match(plain(choice(engine, 'polish_party_agenda.organize_unions').subtitle), /^No money\. The activists strengthen the weakest union, railways; its reach is very weak today\./); // Z — 1.08: in words
-  assert.match(plain(choice(engine, 'polish_party_agenda.organize_voters').subtitle), /^No money\. The activists reach our voters: the workers \(reach (very weak|weak|medium|strong|very strong)\)\.$/); // Z — 1.08: in words
+  assert.match(plain(choice(engine, 'polish_party_agenda.organize_unions').subtitle), /^Cost: 0 resources\. The activists strengthen the weakest union, railways; its reach is very weak today\./); // Z — 1.08: in words
+  assert.match(plain(choice(engine, 'polish_party_agenda.organize_voters').subtitle), /^Cost: 0 resources\. The activists reach our voters: the workers \(reach (very weak|weak|medium|strong|very strong)\)\.$/); // Z — 1.08: in words
   choose(engine, 'easy_discard');
   // A party of workers and peasants organises the peasants too.
   Q.S.actors.pps.strategy.electoral_base = 'workers_peasants';

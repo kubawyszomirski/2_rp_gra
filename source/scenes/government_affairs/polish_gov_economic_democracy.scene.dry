@@ -31,7 +31,7 @@ Socialists want the workers to have a say in the plants and the economy to serve
 
 @works_councils
 title: Introduce works councils
-subtitle: In the larger plants workers’ councils have a say on dismissals and the wage rules. The workers are less discontented (−3) and trust their unions more (+5), but business presses harder (+8). [? if pl_economic_democracy_works_councils_coalition : [+ pl_economic_democracy_works_councils_coalition +] ?]
+subtitle: Cost: 0 budget units. In the larger plants workers’ councils have a say on dismissals and the wage rules. The workers are less discontented (−3) and trust their unions more (+5), but business presses harder (+8). [? if pl_economic_democracy_works_councils_coalition : [+ pl_economic_democracy_works_councils_coalition +] ?]
 choose-if: {! return PolishProjects.optionStatus(Q, 'economic_democracy', 'works_councils').available !}
 unavailable-subtitle: [+ pl_economic_democracy_works_councils_why +]
 on-arrival: {!

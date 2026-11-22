@@ -64,7 +64,7 @@ go-to: result
 
 @delay_schools
 title: Postpone the building of schools
-subtitle: The budget gains 1 unit at once. The teachers and the intelligentsia trust PPS less (−3).
+subtitle: Cost: 0 budget units. The budget gains 1 unit at once. The teachers and the intelligentsia trust PPS less (−3).
 choose-if: {! return PolishProjects.optionStatus(Q, 'education_program', 'delay_schools').available !}
 unavailable-subtitle: [+ pl_education_program_delay_schools_why +]
 on-arrival: {!

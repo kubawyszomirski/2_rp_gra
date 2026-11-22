@@ -54,7 +54,7 @@ go-to: result
 
 @settlers
 title: Give priority to Polish settlers
-subtitle: Like the parcellation with compensation, but the land goes first to Poles, and PSL Piast is pleased (+5). The minorities lose trust (−6); if we promised their clubs equality, we break that promise.
+subtitle: Cost: 0 budget units. Like the parcellation with compensation, but the land goes first to Poles, and PSL Piast is pleased (+5). The minorities lose trust (−6); if we promised their clubs equality, we break that promise.
 choose-if: {! return PolishProjects.optionStatus(Q, 'land_program', 'settlers').available !}
 unavailable-subtitle: [+ pl_land_program_settlers_why +]
 on-arrival: {!

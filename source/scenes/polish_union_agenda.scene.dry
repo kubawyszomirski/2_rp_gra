@@ -29,7 +29,7 @@ PolishUnions.disputeView(Q);
 
 @start
 title: Start a strike
-subtitle: You choose the goal of the strike, the cooperation with the communists and the protection of the Milicja.
+subtitle: Cost: [+ pl_dsp_strike_cost +] for each branch every month of the strike. You choose the goal of the strike, the cooperation with the communists and the protection of the Milicja.
 view-if: pl_dsp_has_dispute = 1
 choose-if: {! return PolishUnions.startStatus(Q).available !}
 unavailable-subtitle: [+ pl_dsp_start_why +]
@@ -57,7 +57,7 @@ go-to: result
 
 @mediate
 title: Mediate the dispute with the leadership
-subtitle: The branch's dissent over a concrete change falls (−8).
+subtitle: Cost: 0 resources. The branch's dissent over a concrete change falls (−8).
 view-if: pl_dsp_has_leadership = 1
 choose-if: {! return PolishUnions.mediateStatus(Q, PolishUnions.disputeLeadershipBranch(Q)).available !}
 unavailable-subtitle: [+ pl_dsp_mediate_why +]
