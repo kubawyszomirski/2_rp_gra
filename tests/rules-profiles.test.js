@@ -240,3 +240,26 @@ test('Reformizm w tekstach 1.07: the cards say the lower price; the pool check u
   P().militiaChoose(M, 'recruit');
   assert.equal(R().profileState(M.S).seeds.militarism, 0.5);
 });
+
+// Z — 1.25 (decision 9 of 22 XI 2026): the actions of the Committee build the characteristics of the party, 1.5 each; the result and the
+// description say which one; the actions that open a ministry card build it when the card is opened.
+test('Doradcy 1.25: the actions of the Committee build the characteristics and say so', () => {
+  const engine = dendry.startGame(1922, 'pl');
+  const Q = engine.state.qualities, seeds = () => R().profileState(Q.S).seeds;
+  try {
+    Q.perl_advisor = 0; Q.zaremba_advisor = 1;
+    const before = seeds().worker_peasant;
+    P().advisorAction(Q, 'zaremba', 'worker_peasant_front');
+    assert.ok(seeds().worker_peasant >= before + 1.5);
+    assert.match(Q.pl_party_result, /Buduje sojusz robotniczo-włościański\.$/);
+    const keys = Object.keys(P().ADVISER_PROFILES);
+    assert.deepEqual(keys.filter(k => /^(puzak\.party_discipline|perl\.|ziemiecki\.emergency)/.test(k)), [], 'discipline, the line, the press and the collection build none');
+    const reformism = seeds().reformism;
+    assert.equal(P().adviserSeed(Q, 'moraczewski.public_works'), 'Buduje reformizm.');
+    assert.ok(seeds().reformism >= reformism + 1.5, 'the line of parliamentary socialism makes it grow faster');
+    engine.goToScene('zaremba');
+    assert.match(JSON.stringify(engine.getCurrentChoices().map(c => c.subtitle)), /Buduje sojusz robotniczo-włościański\./);
+  } finally {
+    R().setLanguage('en');
+  }
+});

@@ -14,9 +14,13 @@ Moraczewski represents the Piłsudczyk current and emphasizes state-directed soc
 
 @public_works
 title: Public Works Programme
-subtitle: Opens the Public Works card for one decision at once; its ordinary budget costs remain.
+subtitle: Opens the Public Works card for one decision at once; its ordinary budget costs remain. Builds reformism.
 choose-if: {! return Q.advisor_action_timer <= 0 && !!Q.S && PolishProjects.cardAvailable(Q, 'public_works') !}
 unavailable-subtitle: [? if advisor_action_timer = 1 : 1 month before the next Committee action. ?][? if advisor_action_timer > 1 : [+ advisor_action_timer +] months before the next Committee action. ?][? if advisor_action_timer <= 0 : Needs PPS in the cabinet with Labour. ?]
 call: polish_advisor_commit
-on-arrival: advisor_action_timer = 6; last_advisor_action = 1
+on-arrival: {!
+Q.advisor_action_timer = 6; Q.last_advisor_action = 1;
+// Z — 1.25: the action builds a characteristic of the party when it opens the ministry card.
+PolishParty.adviserSeed(Q, 'moraczewski.public_works');
+!}
 go-to: polish_gov_public_works

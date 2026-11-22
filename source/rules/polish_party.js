@@ -3032,8 +3032,17 @@
     malinowski: [['Organize the Piłsudczyks: stronger and calmer Piłsudczycy', 'Organizowanie piłsudczyków: silniejsi i spokojniejsi piłsudczycy']],
   });
 
+  // Z — 1.25: the action keys in the order of the lines above, so that each line can say which characteristic it builds.
+  const ADVISER_ACTION_KEYS = Object.freeze({daszynski: ['parliamentary_compromise', 'broker_coalition'], puzak: ['party_discipline', 'mobilize_organization'],
+    perl: ['define_party_line', 'direct_party_press'], niedzialkowski: ['build_centrolew', 'defend_democracy'], arciszewski: ['organize_workers', 'labour_programme'],
+    zaremba: ['worker_peasant_front', 'class_campaign'], czapinski: ['socialist_education', 'economic_finance'], jaworowski: ['back_pilsudski'],
+    moraczewski: ['public_works'], ziemiecki: ['emergency_fundraising', 'municipal_socialism'], malinowski: ['organize_pilsudczyks']});
   function adviserActionsHtml(id) {
-    const items = (ADVISER_ACTION_LINES[id] || []).map(pair => '<br>– ' + L(pair[0], pair[1]));
+    const builds = i => {
+      const profile = ADVISER_PROFILES[id + '.' + ((ADVISER_ACTION_KEYS[id] || [])[i] || '')];
+      return profile ? L(' (builds ' + profileAcc(profile) + ')', ' (buduje ' + profileAcc(profile) + ')') : '';
+    };
+    const items = (ADVISER_ACTION_LINES[id] || []).map((pair, i) => '<br>– ' + L(pair[0], pair[1]) + builds(i));
     return items.length ? '<span class="pl-adv-actions">' + L('Actions:', 'Akcje:') + items.join('') + '</span>' : '';
   }
 
@@ -3208,9 +3217,32 @@
       throw new Error('advisorAction: unknown action ' + key);
     }
     S.history.reasons.push({t: t, kind: 'adviser_action', action_id: key, option: option || null});
+    const built = adviserSeed(Q, advisorId + '.' + actionId);
+    if (built) text += ' ' + built;
     electorate.writeClassMirrors(Q);
     writeMirrors(Q);
     return result(Q, text);
+  }
+
+  // Z — 1.25 (decision 9 of 22 XI 2026): the actions of the Committee build the characteristics of the party (1.5 each, as the work of
+  // the agenda); those that open a ministry card build it when the card is opened. Party discipline, the line of the party, the press
+  // and the emergency collection build none.
+  const ADVISER_PROFILES = Object.freeze({
+    'daszynski.parliamentary_compromise': 'parliamentarism', 'daszynski.broker_coalition': 'reformism',
+    'puzak.mobilize_organization': 'strike_action',
+    'niedzialkowski.build_centrolew': 'worker_peasant', 'niedzialkowski.defend_democracy': 'parliamentarism',
+    'arciszewski.organize_workers': 'unionism', 'arciszewski.labour_programme': 'reformism', 'arciszewski.welfare_programme': 'reformism',
+    'zaremba.worker_peasant_front': 'worker_peasant', 'zaremba.class_campaign': 'radicalism',
+    'czapinski.socialist_education': 'radicalism', 'czapinski.economic_finance': 'radicalism', 'czapinski.economic_public_control': 'radicalism',
+    'czapinski.economic_representation': 'radicalism',
+    'jaworowski.back_pilsudski': 'militarism', 'malinowski.organize_pilsudczyks': 'militarism',
+    'moraczewski.public_works': 'reformism', 'ziemiecki.municipal_socialism': 'reformism',
+  });
+  const ADVISER_SEED = 1.5;
+  function adviserSeed(Q, actionKey) {
+    const id = ADVISER_PROFILES[actionKey];
+    if (!id || !(rules.seedProfile(Q, id, ADVISER_SEED, 'adviser.' + actionKey) > 0)) return '';
+    return L('It builds ' + profileAcc(id) + '.', 'Buduje ' + profileAcc(id) + '.');
   }
 
   function advisorView(Q, advisorId) {
@@ -3496,6 +3528,8 @@
     advisorActionStatus: advisorActionStatus,
     advisorAction: advisorAction,
     advisorView: advisorView,
+    ADVISER_PROFILES: ADVISER_PROFILES,
+    adviserSeed: adviserSeed,
     STANCES: STANCES,
     STANCE_ORDER: STANCE_ORDER,
     FACTION_STANCE_PROFILE_ID: FACTION_STANCE_PROFILE_ID,

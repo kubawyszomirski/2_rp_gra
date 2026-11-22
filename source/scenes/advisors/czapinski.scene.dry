@@ -26,34 +26,46 @@ Czapiński represents Lewica PPS and concentrates on socialist education and eco
 
 @economic_finance
 title: Socialist Economic Programme: progressive and wealth taxes
-subtitle: Cost: 0 resources. Opens the Treasury card for one decision at once; the law, the money and the executor remain.
+subtitle: Cost: 0 resources. Opens the Treasury card for one decision at once; the law, the money and the executor remain. Builds radicalism.
 choose-if: {! return Q.advisor_action_timer <= 0 && !!Q.S && PolishProjects.cardAvailable(Q, 'finance_package') !}
 unavailable-subtitle: [? if advisor_action_timer = 1 : 1 month before the next Committee action. ?][? if advisor_action_timer > 1 : [+ advisor_action_timer +] months before the next Committee action. ?][? if advisor_action_timer <= 0 : Needs PPS in the cabinet with the Treasury. ?]
 call: polish_advisor_commit
-on-arrival: advisor_action_timer = 6; last_advisor_action = 1
+on-arrival: {!
+Q.advisor_action_timer = 6; Q.last_advisor_action = 1;
+// Z — 1.25: the action builds a characteristic of the party when it opens the ministry card.
+PolishParty.adviserSeed(Q, 'czapinski.economic_finance');
+!}
 go-to: polish_gov_finance
 
 @economic_public_control
 title: Socialist Economic Programme: public ownership
-subtitle: Cost: 0 resources. Opens the Industry card for the public control of a recorded plant at once; the act and the vote remain.
+subtitle: Cost: 0 resources. Opens the Industry card for the public control of a recorded plant at once; the act and the vote remain. Builds radicalism.
 choose-if: {! return Q.advisor_action_timer <= 0 && !!Q.S && PolishProjects.optionStatus(Q, 'industrial_policy', 'public_control', {adviser: true}).available !}
 unavailable-subtitle: [? if advisor_action_timer = 1 : 1 month before the next Committee action. ?][? if advisor_action_timer > 1 : [+ advisor_action_timer +] months before the next Committee action. ?][? if advisor_action_timer <= 0 : [+ pl_czap_public_control_why +] ?]
 call: polish_advisor_commit
-on-arrival: advisor_action_timer = 6; last_advisor_action = 1
+on-arrival: {!
+Q.advisor_action_timer = 6; Q.last_advisor_action = 1;
+// Z — 1.25: the action builds a characteristic of the party when it opens the ministry card.
+PolishParty.adviserSeed(Q, 'czapinski.economic_public_control');
+!}
 go-to: polish_gov_industry
 
 @economic_representation
 title: Socialist Economic Programme: works councils
-subtitle: Cost: 0 resources. Opens the card Economic Democracy for the law on works councils at once; the vote in the Sejm remains.
+subtitle: Cost: 0 resources. Opens the card Economic Democracy for the law on works councils at once; the vote in the Sejm remains. Builds radicalism.
 choose-if: {! return Q.advisor_action_timer <= 0 && !!Q.S && PolishProjects.optionStatus(Q, 'economic_democracy', 'works_councils', {adviser: true}).available !}
 unavailable-subtitle: [? if advisor_action_timer = 1 : 1 month before the next Committee action. ?][? if advisor_action_timer > 1 : [+ advisor_action_timer +] months before the next Committee action. ?][? if advisor_action_timer <= 0 : [+ pl_czap_representation_why +] ?]
 call: polish_advisor_commit
-on-arrival: advisor_action_timer = 6; last_advisor_action = 1
+on-arrival: {!
+Q.advisor_action_timer = 6; Q.last_advisor_action = 1;
+// Z — 1.25: the action builds a characteristic of the party when it opens the ministry card.
+PolishParty.adviserSeed(Q, 'czapinski.economic_representation');
+!}
 go-to: polish_gov_economic_democracy
 
 @socialist_education
 title: Socialist Education
-subtitle: Cost: 1 resource. Needs a working TUR; Lewica grows stronger (+6) and its dissent falls (−5); for six months the flow of workers from PPS to the KPP is halved.
+subtitle: Cost: 1 resource. Needs a working TUR; Lewica grows stronger (+6) and its dissent falls (−5); for six months the flow of workers from PPS to the KPP is halved. Builds radicalism.
 choose-if: {! return PolishParty.advisorActionStatus(Q, 'czapinski', 'socialist_education').available !}
 unavailable-subtitle: [+ pl_advact_socialist_education_why +]
 call: polish_advisor_commit
