@@ -31,7 +31,6 @@ const P = {
   organize: () => ['polish_party_agenda', 'polish_party_agenda.organize_unions'],
   organizeClass: () => ['polish_party_agenda', 'polish_party_agenda.organize_voters'],
   fundraise: () => ['polish_party_agenda', 'polish_party_agenda.fundraise'],
-  apparatus: () => ['polish_party_agenda', 'polish_party_agenda.apparatus'],
   // Z — 0.78: the TUR courses are a card of their own; the game picks the branch (the one that trusts PPS least).
   cadres: () => ['polish_party_tur', 'polish_party_tur.union_cadres'],
   // Z — 0.78: the card of the organisations takes one investment at once; a second one named here waits for another month.

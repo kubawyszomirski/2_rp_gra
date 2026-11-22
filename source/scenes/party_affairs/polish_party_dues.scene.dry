@@ -18,7 +18,7 @@ Q.pl_dues_lower_why = PolishParty.duesStatus(Q, 'lower').reason;
 
 = Party dues
 
-Dues are [+ dues +] (from 1 to 4). Every option collects the dues at once: dues × membership / 100, and 25% more for each level of the apparatus above the first.
+Dues are [+ dues +] (from 1 to 4). Every option collects the dues at once.
 
 - @keep
 - @raise

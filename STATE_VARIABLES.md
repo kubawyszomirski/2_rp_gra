@@ -1,13 +1,14 @@
 # State Variable Inventory
 
-## Current state — reference 1.17, 22 November 2026
+## Current state — reference 1.18, 22 November 2026
 
 This section is the only current summary in this file. This inventory lists the important game-state records; the target domains are defined in technical section 2.4. Everything under "Archive of entries" below is kept unchanged for traceability. It is history, not an implementation instruction; where it differs from the technical reference, the technical reference wins.
 
-- **Canonical specification:** `docs/POLISH_TECHNICAL_REFERENCE.md`, chapters 1–22 (reference 1.17); its chapter 23 holds the decision history.
+- **Canonical specification:** `docs/POLISH_TECHNICAL_REFERENCE.md`, chapters 1–22 (reference 1.18); its chapter 23 holds the decision history.
 - **Player-facing description:** `docs/POLISH_DESCRIPTIVE_GUIDE.md`.
 - **Audit:** every item of `docs/POLISH_MECHANICS_AUDIT.md` (M01–M19) is closed in documentation; stage 8 measured balance and behaviour in full automated campaigns (`analysis/stage8-campaigns/REPORT.md`).
 - **Card catalogue for coding:** `docs/POLISH_CARD_CATALOGUE.md` (reference 0.32) has one table for each of its 69 entries (card families, agenda actions and events): access, options, time and resource cost, effects, end state and cooldown. It creates no rules; where it differs from the technical reference, the reference wins.
+- **The party apparatus left the game, 22 November 2026 (Z, K, 1.18):** the party apparatus left the game: the build-up option of the party agenda, the apparatus line of the Party tab and the formula on the dues card are gone; a collection is always dues × membership / 100 (with the bonus of strong unions), and an older save keeps its level without effect. The talks with Grabski about protections need only a union branch of medium reach (40) and a relation of 40. The test campaigns are unchanged.
 - **The cost of nothing and a plainer cooperative, 22 November 2026 (Z, K, 1.17):** the workers’ consumer cooperative in one plain sentence (it supplies the strikers with food, so a strike costs half; the mechanism is unchanged). On every card where a choice costs money, every decision opens with its cost line, also a cost of nothing (“Cost: 0 resources.” or “Cost: 0 budget units.”) instead of “No money”, “No cost to the budget” or “Costs nothing”; a cost in brackets moves into that line; the start and the launch of a strike name the monthly cost for each branch; the emergency collection without its formula. Moving around and the sub-steps of the strike page have none. The test campaigns are unchanged.
 - **The KPP in a strike without a chance in per cent, 8 November 2026 (Z, K, 1.16):** no chance in per cent at the KPP in a strike (the user’s request): the result of the cooperation with the communists says only whether the KPP keeps or breaks the agreed rules; the roll stays hidden, as in the coup and the laws. The test campaigns are unchanged.
 - **The union reach on the Party tab in words, 8 November 2026 (Z, K, 1.15):** the reach of the unions on the Party tab in words (the user’s request), with the same words as on the cards. The test campaigns are unchanged.

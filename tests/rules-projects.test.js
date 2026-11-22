@@ -939,7 +939,7 @@ test('Wspólna karta gabinetowa (stage-4 part): Grabski’s terms belong to the 
   gov.setDraft(Q, 'candidate_id', 'grabski');
   gov.setDraft(Q, 'pps_mode', 'external_support');
   assert.equal(gov.formationView(Q).stabilisation_open, true);
-  assert.throws(() => gov.setDraft(Q, 'stabilisation_terms', 'protections'), /apparatus/);
+  assert.throws(() => gov.setDraft(Q, 'stabilisation_terms', 'protections'), /union branch with reach 40/, 'Z — 1.18: no apparatus in the conditions');
   gov.setDraft(Q, 'stabilisation_terms', 'loan');
   assert.equal(gov.formationView(Q).stabilisation, 'a loan and limited cuts');
   const result = gov.submitFormation(Q);

@@ -59,7 +59,6 @@ test('Brak gotówki: at 0 R no paid action is possible; organisational work and 
   PolishParty.writeMirrors(Q);
   for (const id of PolishParty.PACKAGE_ORDER) assert.equal(PolishParty.packageStatus(Q, id, 0).available, false, id);
   assert.equal(PolishParty.fundraiseStatus(Q).available, true, 'a collection costs no money');
-  assert.equal(PolishParty.apparatusStatus(Q).available, false);
   assert.equal(PolishParty.organizeStatus(Q, 'branch:industry').available, true);
   PolishParty.organizeWithoutFunds(Q, 'branch:industry');
   assert.equal(Q.month_actions, 1);
@@ -145,16 +144,14 @@ test('Silne związki 0.86: +1% to every collection for each point of the average
   close(PolishParty.cellReach(S, rural, 'press'), 0.3 * 50 + 0.3 * PolishParty.pressEffective(S).reach + 0.4 * rural.base_reach_pps);
 });
 
-test('Zwrot aparatu: each level above the first adds 25% to every collection (Z — 0.56); at dues 2 and full membership the second level pays back its 2 R in four collections', () => {
+// Z — 1.18 (decision A of 22 XI 2026): the party apparatus left the game; a collection is dues × membership / 100, whatever level an
+// older save keeps.
+test('Bez aparatu 1.18: a collection does not read the level of the apparatus; the agenda has no build-up', () => {
   const Q = game();
   close(PolishParty.collectionGain(Q.S), 2); // dues 2 × membership 100 / 100
-  PolishParty.buildApparatus(Q);
-  assert.equal(Q.S.party_orgs.apparatus.level, 2);
-  assert.equal(Q.S.party_orgs.cash, 0);
-  close(PolishParty.collectionGain(Q.S), 2.5);
-  close(2 / (PolishParty.collectionGain(Q.S) - 2), 4);
   Q.S.party_orgs.apparatus.level = 4;
-  close(PolishParty.collectionGain(Q.S), 3.5);
+  close(PolishParty.collectionGain(Q.S), 2); // an older save keeps its level without effect
+  assert.equal(PolishParty.buildApparatus, undefined);
 });
 
 // Z — 0.58 (the user's decision of 5 X 2026): TUR can be founded from the start; January 1923 is not a gate.

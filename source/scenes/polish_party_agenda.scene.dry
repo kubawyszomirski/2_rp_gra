@@ -25,7 +25,6 @@ TUR: [+ pl_party_tur +].
 - @organize_unions
 - @organize_voters
 - @fundraise
-- @apparatus
 - @kpp_rules
 - @kpp_agreement
 - @easy_discard
@@ -40,15 +39,6 @@ PolishParty.fundraise(Q);
 !}
 go-to: result
 
-@apparatus
-title: Build up the party apparatus
-subtitle: Cost: 2 resources. One level more (up to 4): every collection brings more (+25% for each level above the first).
-choose-if: {! return PolishParty.apparatusStatus(Q).available !}
-unavailable-subtitle: [+ pl_pa_apparatus_why +]
-on-arrival: {!
-PolishParty.buildApparatus(Q);
-!}
-go-to: result
 
 @organize_unions
 title: Organisational work in the unions

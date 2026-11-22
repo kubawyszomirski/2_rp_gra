@@ -7,8 +7,6 @@
     "Party money: [+ pl_party_cash +]. A collection brings [+ pl_pa_fundraise_gain +] R now.": "Kasa partii: [+ pl_party_cash +]. Zbiórka przynosi teraz [+ pl_pa_fundraise_gain +] R.",
     "[? if pl_pa_priorities : Economic priorities of PPS: [+ pl_pa_priorities +]. Each is prepared through its government card, with its own costs. ?]": "[? if pl_pa_priorities : Priorytety gospodarcze PPS: [+ pl_pa_priorities +]. Każdy z nich przygotowuje się przez właściwą kartę rządową, z jej własnymi kosztami. ?]",
     "title: An extraordinary collection": "title: Zbiórka nadzwyczajna",
-    "title: Build up the party apparatus": "title: Rozbuduj aparat partii",
-    "subtitle: Cost: 2 resources. One level more (up to 4): every collection brings more (+25% for each level above the first).": "subtitle: Koszt: 2 jednostki środków. Poziom wyżej (najwyżej 4): każda zbiórka przynosi więcej (+25% za każdy poziom powyżej pierwszego).",
     "title: Cooperation with the KPP: agree on a trial": "title: Współpraca z KPP: uzgodnij próbę",
     "title: Cooperation with the KPP: agree on the rules": "title: Współpraca z KPP: uzgodnij zasady",
     "title: Cooperation with the KPP: a broader agreement": "title: Współpraca z KPP: szersze porozumienie",

@@ -43,16 +43,16 @@ for (const lang of ['en', 'pl']) {
     const expected = {status: sidebar(engine, 'status'), 'status.politics': sidebar(engine, 'status.politics')};
     const saved = dendry.clone(engine.getExportableState());
     const removed = Object.keys(saved.qualities).filter(k => NEW_FIELDS.test(k));
-    assert.equal(removed.length, 12, removed.join(', '));
+    assert.equal(removed.length, 11, removed.join(', ')); // Z — 1.18: without the level of the apparatus
     for (const k of removed) delete saved.qualities[k];
     const restored = dendry.restoreState(saved, lang);
     for (const id of Object.keys(expected)) assert.equal(sidebar(restored, id), expected[id], id);
     const main = expected.status, politics = expected['status.politics'];
     if (lang === 'pl') {
-      assert.match(main, /\nZbiórka przynosi: 2\u00a0R\s*\nSkładki: 2 z 4\s*\nCzłonkostwo \(indeks\): 100\s*\nPoziom aparatu: 1 z 4 ?\n/);
+      assert.match(main, /\nZbiórka przynosi: 2\u00a0R\s*\nSkładki: 2 z 4\s*\nCzłonkostwo \(indeks\): 100 ?\n/); // Z — 1.18: no apparatus
       assert.match(politics, /\nDemokracja: [1-9][\d,]*\u00a0na\u00a0100 ?\n/);
     } else {
-      assert.match(main, /\nA collection brings: 2\u00a0R\s*\nDues: 2 of 4\s*\nMembership \(index\): 100\s*\nApparatus level: 1 of 4 ?\n/);
+      assert.match(main, /\nA collection brings: 2\u00a0R\s*\nDues: 2 of 4\s*\nMembership \(index\): 100 ?\n/); // Z — 1.18: no apparatus
       assert.match(politics, /\nDemocracy: [1-9][\d.]*\u00a0of\u00a0100 ?\n/);
     }
     assert.deepEqual(errors, []);
@@ -67,7 +67,7 @@ test('Pasek boczny: pogrubione etykiety, rozbite wiersze i liczby bez zbędnych 
   // Z — 0.76: the tab "Partia" has no date heading; its first heading is PPS.
   assert.match(mainText, /^\s*PPS ?\n/);
   assert.doesNotMatch(mainText, /Styczeń 1922/);
-  for (const label of ['Kasa partii:', 'Zbiórka przynosi:', 'Składki:', 'Członkostwo (indeks):', 'Poziom aparatu:',
+  for (const label of ['Kasa partii:', 'Zbiórka przynosi:', 'Składki:', 'Członkostwo (indeks):',
     'Sprzeciw w partii:', 'Spójność:', 'Pozycja PPS:', 'Prasa:', 'Towarzystwo Uniwersytetu Robotniczego:', 'Spółdzielnia spożywców:', 'Przemysł:', 'Kolej:',
     'Robotnicy rolni:', 'Głowa państwa:', 'Premier:', 'Zorganizowani członkowie:', 'Centrum PPS', 'Lewica PPS', 'Piłsudczycy']) {
     assert.ok(bold(main).includes(label), label);

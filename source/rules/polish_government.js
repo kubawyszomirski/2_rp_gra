@@ -1547,20 +1547,18 @@
     return !!draft && draft.candidate_id === 'grabski' && draft.pps_mode === 'external_support';
   }
 
-  // P (9.7, stage 6): talks about protections need a real channel and a prepared base — the party apparatus at
-  // level 2, one union branch with reach 40 and a relation of 40 with the addressee, Grabski (neutral 50 in his
+  // P (9.7, stage 6): talks about protections need a real channel and a prepared base — one union branch with reach 40 and a relation of 40 with the addressee, Grabski (neutral 50 in his
   // test profile). They only open the talks; his answer comes with the offer (protectionTermsAnswer).
-  const PROTECTION_TALKS = Object.freeze({apparatus: 2, reach: 40, relation: 40});
+  const PROTECTION_TALKS = Object.freeze({reach: 40, relation: 40});
 
   function stabilisationTermsStatus(terms, Q) {
     if (terms === 'loan' || terms === 'none') return {available: true, reason: ''};
     if (terms !== 'protections') return {available: false, reason: L('Unknown terms.', 'Nieznane warunki.')};
     const S = Q && Q.S;
-    const apparatus = S && S.party_orgs ? S.party_orgs.apparatus.level : 0;
     const reach = S && S.unions ? Math.max.apply(null, Object.keys(S.unions).map(id => S.unions[id].reach || 0)) : 0;
     const rel = S && S.actors ? relation(S, 'grabski') : 0;
     const missing = [];
-    if (apparatus < PROTECTION_TALKS.apparatus) missing.push(L('party apparatus level 2 (now ' + apparatus + ')', 'aparatu partii na poziomie 2 (teraz ' + apparatus + ')'));
+    // Z — 1.18 (decision A of 22 XI 2026): the party apparatus left the game and with it this condition.
     if (reach < PROTECTION_TALKS.reach) missing.push(L('a union branch with reach 40 (now ' + Math.floor(reach) + ')', 'branży związkowej z zasięgiem 40 (teraz ' + Math.floor(reach) + ')'));
     if (rel < PROTECTION_TALKS.relation) missing.push(L('a relation of 40 with Grabski (now ' + Math.floor(rel) + ')', 'relacji 40 z Grabskim (teraz ' + Math.floor(rel) + ')'));
     return missing.length ? {available: false, reason: L('Negotiating protections needs ' + missing.join(', ') + '.', 'Negocjowanie osłon wymaga ' + missing.join(', ') + '.')} :

@@ -310,7 +310,7 @@ test('Brak gotówki in the game: with an empty cash box the party agenda still o
   Q.S.party_orgs.cash = 0;
   PolishParty.writeMirrors(Q);
   engine.playPinnedCard('polish_party_agenda');
-  assert.equal(choice(engine, 'polish_party_agenda.apparatus').canChoose, false);
+  assert.ok(!ids(engine).includes('polish_party_agenda.apparatus'), 'Z — 1.18: no apparatus');
   // Z — 0.78 (decision 4A): organisational work among our voters, the groups of the character of the party.
   choose(engine, 'polish_party_agenda.organize_voters');
   assert.match(content(engine), /Organisers work among our voters: the base reach of PPS among the workers \+2\.2\./, '×1.10 in the party’s own groups');

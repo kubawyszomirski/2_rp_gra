@@ -55,7 +55,6 @@
   const BRANCH_REACH = Object.freeze({industry: 20, rail: 20, farm_labour: 10});
   const DUES_MIN = 1;
   const DUES_MAX = 4;
-  const APPARATUS_MAX = 4;
   const TUR_MAX = 3;
   // H — the TUR's own 1929 publication confirms its foundation in January 1923 (PL-CONTENT-1922-1926-2026-09);
   // the pace of its levels is P (13.2). Z — 0.58 (the user's decision of 5 X 2026): the date does not block the founding;
@@ -264,13 +263,14 @@
   // Z — 0.56 (item 1 of 5 X 2026): the money of the original game. There is no monthly income, upkeep or arrears; money
   // comes from collections — the card Party Dues and the extraordinary collection of the agenda — and from events. A
   // collection brings dues × membership / 100, and each level of the apparatus above the first adds 25% (decisions 1a, 1b).
-  const APPARATUS_COLLECTION_BONUS = 0.25;
   // Z — 0.86 (decision 6A of 24 X 2026): strong unions add 1% to every collection for each point of the average reach of the three
   // branches above 20.
   const UNION_COLLECTION_FLOOR = 20;
   const unionCollectionBonus = S => Math.max(0, averageUnionReach(S) - UNION_COLLECTION_FLOOR) / 100;
+  // Z — 1.18 (decision A of 22 XI 2026): the party apparatus left the game; a collection no longer reads its level (an older save keeps
+  // its level in the state, without effect).
   function collectionAt(dues, members, level, unionBonus) {
-    return dues * members / 100 * (1 + APPARATUS_COLLECTION_BONUS * (level - 1)) * (1 + (unionBonus || 0));
+    return dues * members / 100 * (1 + (unionBonus || 0));
   }
   // Z — 0.78 (decision 1A of 8 X 2026): money is counted as the page shows it, so a shown "1 R" is really 1 R and pays for a
   // 1 R option; since Z — 0.84 (the user's note of 24 X 2026) the collection is rounded to 0.1 R (MONEY_DIGITS).
@@ -757,26 +757,7 @@
     return result(Q, L('The extraordinary collection brings ', 'Zbiórka nadzwyczajna przynosi ') + fmt(gain) + ' R.');
   }
 
-  function apparatusStatus(Q) {
-    const S = Q.S;
-    if (S.party_orgs.apparatus.level >= APPARATUS_MAX) return no(L('The apparatus has its highest level, 4.', 'Aparat ma najwyższy poziom, 4.'));
-    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
-    if (S.party_orgs.cash + 1e-9 < 2) return no(L('Needs 2 resources.', 'Wymaga 2 jednostek środków.'));
-    return OK;
-  }
-
-  function buildApparatus(Q) {
-    syncMirrors(Q);
-    const status = apparatusStatus(Q);
-    if (!status.available) throw new Error('buildApparatus: ' + status.reason);
-    const S = Q.S, orgs = S.party_orgs;
-    rules.commitMainAction(Q, 'party.apparatus', {resource_cost: {R: 2}});
-    orgs.cash = Math.max(0, orgs.cash - 2);
-    orgs.apparatus.level += 1;
-    writeMirrors(Q);
-    return result(Q, L('The party apparatus reaches level ' + orgs.apparatus.level + ': every collection brings 25% more for each level above the first.',
-      'Aparat partii osiąga poziom ' + orgs.apparatus.level + ': każda zbiórka przynosi o 25% więcej za każdy poziom powyżej pierwszego.'));
-  }
+  // Z — 1.18 (decision A of 22 XI 2026): the build-up of the party apparatus left the game.
 
   // ---- Organisational work without money (4.4; card 5.7) ---------------------------------------------
 
@@ -3305,7 +3286,6 @@
     // Each value has its own line with a bold label in the scene (Z — 0.55); the scales are 1–4 for both levels.
     Q.pl_party_dues = orgs.dues + L(' of ', ' z ') + DUES_MAX;
     Q.pl_party_membership = String(Math.round(orgs.apparatus.member_index));
-    Q.pl_party_apparatus = orgs.apparatus.level + L(' of ', ' z ') + APPARATUS_MAX;
     Q.pl_party_cohesion = String(Math.round(cohesion(S)));
     for (const id of BRANCHES) {
       // Z — 1.15 (the user's request of 8 XI 2026): the reach of a branch in a word, as on the cards.
@@ -3326,7 +3306,6 @@
     Q.pl_pa_fundraise_gain = fmt(collectionGain(S));
     // Z — 1.17: the collection with its unit declined by its number ("2 jednostki", "5 jednostek", "2,9 jednostki").
     Q.pl_pa_fundraise_units = rules.units(collectionGain(S), 'resources', 'acc');
-    Q.pl_pa_apparatus_why = apparatusStatus(Q).reason;
     for (const id of BRANCHES) Q['pl_pa_branch_' + id + '_why'] = organizeStatus(Q, 'branch:' + id).reason;
     for (const c of ORGANIZE_CLASSES) Q['pl_pa_class_' + c + '_why'] = organizeStatus(Q, 'class:' + c).reason;
     // Z — 0.78: the two kinds of organisational work, with their target and gain.
@@ -3367,7 +3346,6 @@
     BRANCH_REACH: BRANCH_REACH,
     ppsWorkerSupport: ppsWorkerSupport,
     memberTarget: memberTarget,
-    APPARATUS_COLLECTION_BONUS: APPARATUS_COLLECTION_BONUS,
     collectionGain: collectionGain,
     pressEffective: pressEffective,
     settleParty: settleParty,
@@ -3401,8 +3379,6 @@
     duesView: duesView,
     fundraiseStatus: fundraiseStatus,
     fundraise: fundraise,
-    apparatusStatus: apparatusStatus,
-    buildApparatus: buildApparatus,
     organizeStatus: organizeStatus,
     organizeWithoutFunds: organizeWithoutFunds,
     courseStatus: courseStatus,

@@ -121,7 +121,7 @@ test('Kolej: rail participation 39 or 40 at coordination 50: only the second del
   assert.deepEqual([delay(39, 50), delay(40, 50), delay(40, 49), delay(64, 70), delay(65, 69), delay(65, 70)], [0, 1, 0, 1, 1, 2]);
 });
 
-test('Otwarcia finansowe: without collections the cash does not move over 52 months (Z — 0.56); three apparatus levels raise a collection by 75%, three expansions of a branch raise it through membership', () => {
+test('Otwarcia finansowe: without collections the cash does not move over 52 months (Z — 0.56); the apparatus left the game (1.18); three expansions of a branch raise a collection through membership', () => {
   const run = kind => {
     const Q = game();
     const S = Q.S;
@@ -136,7 +136,7 @@ test('Otwarcia finansowe: without collections the cash does not move over 52 mon
   };
   const none = run('none'), apparatus = run('apparatus'), reach = run('reach');
   assert.deepEqual([none.party_orgs.cash, apparatus.party_orgs.cash, reach.party_orgs.cash], [10, 4, 7], 'no income and no upkeep');
-  close(PolishParty.collectionGain(apparatus) / PolishParty.collectionGain(none), 1.75, 0.005);
+  close(PolishParty.collectionGain(apparatus) / PolishParty.collectionGain(none), 1, 0.005); // Z — 1.18: the level has no effect
   assert.ok(PolishParty.collectionGain(reach) > PolishParty.collectionGain(none) + 0.05, 'more members after the expansions');
 });
 
@@ -832,13 +832,12 @@ function ppsDecides(Q) {
   for (const [id, n] of [['other', 134], ['zln', 83], ['pschd', 27], ['psl_piast', 21]]) seats(id).seats -= n;
 }
 
-test('Tolerowanie B14: apparatus 1/2, reach 39/40 and relation 39/40 only open the talks; acceptance needs 8.3, money and an executor; no support without the agreement', () => {
+test('Tolerowanie B14: reach 39/40 and relation 39/40 only open the talks (the apparatus left the game in 1.18); acceptance needs 8.3, money and an executor; no support without the agreement', () => {
   const Q = game();
   const S = Q.S;
   grabskiDraft(Q);
   const terms = () => PolishGovernment.stabilisationTermsStatus('protections', Q);
-  assert.match(terms().reason, /apparatus level 2 \(now 1\)/);
-  S.party_orgs.apparatus.level = 2;
+  assert.doesNotMatch(terms().reason, /apparatus/);
   S.unions.industry.reach = 39;
   assert.match(terms().reason, /reach 40 \(now 39\)/);
   S.unions.industry.reach = 40;

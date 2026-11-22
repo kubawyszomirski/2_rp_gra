@@ -42,8 +42,6 @@ if (Q.S && typeof PolishTopbar !== 'undefined') {
 
 [? if polish_party_rules : **Membership (index):** [+ pl_party_membership +] ?]
 
-[? if polish_party_rules : **Apparatus level:** [+ pl_party_apparatus +] ?]
-
 **Internal dissent:** [+ dissent_percent : dissent +]
 
 [? if polish_party_rules : **Cohesion:** [+ pl_party_cohesion +] of 100 ?]

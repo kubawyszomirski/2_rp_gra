@@ -734,7 +734,7 @@ go-to: summary
 
 @terms_protections
 title: Tolerate him for protections and a heavier burden on wealth
-subtitle: The full protection for the unemployed by the fourth month and a wealth tax to pay for it. Needs the party apparatus at level 2, a union branch with reach 40 and a relation of 40 with Grabski; he may still refuse.
+subtitle: The full protection for the unemployed by the fourth month and a wealth tax to pay for it. Needs a union branch of at least medium reach and fair relations with Grabski; he may still refuse.
 choose-if: {! return PolishGovernment.stabilisationTermsStatus('protections', Q).available !}
 unavailable-subtitle: [+ pl_form_terms_protections_why +]
 on-arrival: {!

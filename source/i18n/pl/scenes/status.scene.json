@@ -9,7 +9,6 @@
     "[? if polish_party_rules : **A collection brings:** [+ pl_party_collection +] ?]": "[? if polish_party_rules : **Zbiórka przynosi:** [+ pl_party_collection +] ?]",
     "[? if polish_party_rules : **Dues:** [+ pl_party_dues +] ?]": "[? if polish_party_rules : **Składki:** [+ pl_party_dues +] ?]",
     "[? if polish_party_rules : **Membership (index):** [+ pl_party_membership +] ?]": "[? if polish_party_rules : **Członkostwo (indeks):** [+ pl_party_membership +] ?]",
-    "[? if polish_party_rules : **Apparatus level:** [+ pl_party_apparatus +] ?]": "[? if polish_party_rules : **Poziom aparatu:** [+ pl_party_apparatus +] ?]",
     "**Internal dissent:** [+ dissent_percent : dissent +]": "**Sprzeciw w partii:** [+ dissent_percent : dissent +]",
     "[? if polish_party_rules : **Cohesion:** [+ pl_party_cohesion +] of 100 ?]": "[? if polish_party_rules : **Spójność:** [+ pl_party_cohesion +] na 100 ?]",
     "**PPS position:** [+ pps_government_position +].": "**Pozycja PPS:** [+ pps_government_position +].",
