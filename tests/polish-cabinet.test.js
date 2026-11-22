@@ -40,8 +40,8 @@ test('the talks card: one partner, the month is spent, the partner waits three m
   playFromHand(engine, 'inter_party_relationships');
   assert.equal(choice(engine, 'inter_party_relationships.psl_wyzwolenie').canChoose, false);
   assert.equal(choice(engine, 'inter_party_relationships.psl_piast').canChoose, true);
-  // Z — 0.56: with no income or upkeep the money of the party does not change in a settled month, and the talk costs none.
-  assert.ok(Math.abs(Q.resources - resources) < 1e-9, 'no resources are spent on the talk');
+  // Z — 0.56: no upkeep, and the talk costs none; Z — 1.19: the dues bring money every month, so the money only grows.
+  assert.ok(Q.resources > resources - 1e-9, 'no resources are spent on the talk');
   assert.deepEqual(Q.S.history.actions.filter(a => a.action_id === 'party.outreach').map(a => a.resource_cost), [{}]);
 });
 

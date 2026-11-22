@@ -1,5 +1,5 @@
 title: Party Agenda
-subtitle: Organisational work, collections and the apparatus.
+subtitle: Work of the party that shapes its character.
 is-card: true
 tags: party_affairs
 view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.agendaAvailable(Q) !}
@@ -8,90 +8,87 @@ on-arrival: {!
 // The party's standing actions (technical reference 4.4, 13.1–13.2, 17.2; card catalogue 5.5–5.9): each costs this
 // month's action; organisational work needs no money. Since Z — 0.57 (item 11 of the play notes of 5 X 2026) it is an
 // ordinary card of the Party deck, no longer pinned: it has to be drawn and goes back to the hand unused. Z — 0.78 (decision 5A
-// of 8 X 2026): the TUR courses have their own card, polish_party_tur; organisational work is two options straight on this page,
-// the target picked by the game (decision 4A). Z — 0.92: the cooperative is founded on the card Organisations of PPS at once.
+// of 8 X 2026): the TUR courses have their own card, polish_party_tur. Z — 0.92: the cooperative is founded on the card
+// Organisations of PPS at once. Z — 1.19 (decisions 1A, 2B, 3A and 4A of 22 XI 2026): six kinds of work, each building a
+// characteristic of the party; the extraordinary collection and the steps of the agreement with the KPP left the card, and
+// the dues bring money every month.
 PolishParty.agendaView(Q);
 // Stage 7: the assessment of the forces of the state was a standing action of this agenda; Z — 1.08 (decision 7A) removed it.
 !}
 
 = The party agenda
 
-Party money: [+ pl_party_cash +]. A collection brings [+ pl_pa_fundraise_gain +] R now.
+Party money: [+ pl_pa_cash_words +]. The dues bring [+ pl_pa_dues_monthly +] every month.
 
 TUR: [+ pl_party_tur +].
 
 [? if pl_pa_priorities : Economic priorities of PPS: [+ pl_pa_priorities +]. Each is prepared through its government card, with its own costs. ?]
 
 - @organize_unions
-- @organize_voters
-- @fundraise
-- @kpp_rules
-- @kpp_agreement
+- @organize_rural
+- @organize_minorities
+- @organize_councils
+- @organize_rallies
+- @kpp_work
 - @easy_discard
 
-@fundraise
-title: An extraordinary collection
-subtitle: Cost: 0 resources. The party collects [+ pl_pa_fundraise_units +]; the next collection in three months.
-choose-if: {! return PolishParty.fundraiseStatus(Q).available !}
-unavailable-subtitle: [+ pl_pa_fundraise_why +]
-on-arrival: {!
-PolishParty.fundraise(Q);
-!}
-go-to: result
-
-
 @organize_unions
-title: Organisational work in the unions
-subtitle: Cost: 0 resources. [+ pl_pa_org_unions_text +]
-choose-if: {! return PolishParty.organizeStatusOf(Q, 'unions').available !}
-unavailable-subtitle: [+ pl_pa_org_unions_why +]
+title: Work in the unions
+subtitle: Cost: 0 resources. The activists strengthen all three unions at once. Builds unionism.
+choose-if: {! return PolishParty.agendaWorkStatus(Q, 'unions').available !}
+unavailable-subtitle: [+ pl_pa_work_unions_why +]
 on-arrival: {!
-PolishParty.organizeUnions(Q);
+PolishParty.agendaWork(Q, 'unions');
 !}
 go-to: result
 
-@organize_voters
-title: Organisational work among our voters
-subtitle: Cost: 0 resources. [+ pl_pa_org_voters_text +]
-choose-if: {! return PolishParty.organizeStatusOf(Q, 'voters').available !}
-unavailable-subtitle: [+ pl_pa_org_voters_why +]
+@organize_rural
+title: Work in the villages
+subtitle: Cost: 0 resources. The activists reach the peasants and the farm workers. Builds the worker-peasant alliance.
+choose-if: {! return PolishParty.agendaWorkStatus(Q, 'rural').available !}
+unavailable-subtitle: [+ pl_pa_work_rural_why +]
 on-arrival: {!
-PolishParty.organizeVoters(Q);
+PolishParty.agendaWork(Q, 'rural');
 !}
 go-to: result
 
-# Stage 8 (fix 2): trials of joint action with the KPP are agreed in a strike, in its step of cooperation with the
-# communists (14.3, 9.6), so this option is not on the agenda's list; the scene stays for the rule PolishParty.kppStep.
-@kpp_trial
-title: Cooperation with the KPP: agree on a trial
-subtitle: Cost: 0 resources. A trial of joint action for an existing demand, at a relation of 30 or more. Relation now [+ pl_kpp_relation +].
-view-if: pl_pa_kpp_open = 1
-choose-if: {! return PolishParty.kppStepStatus(Q, 'trial').available !}
-unavailable-subtitle: [+ pl_kpp_trial_why +]
+@organize_minorities
+title: Work among the minorities
+subtitle: Cost: 0 resources. The activists reach the voters of the national minorities. Builds federalism.
+choose-if: {! return PolishParty.agendaWorkStatus(Q, 'minorities').available !}
+unavailable-subtitle: [+ pl_pa_work_minorities_why +]
 on-arrival: {!
-PolishParty.kppStep(Q, 'trial');
+PolishParty.agendaWork(Q, 'minorities');
 !}
 go-to: result
 
-@kpp_rules
-title: Cooperation with the KPP: agree on the rules
-subtitle: Cost: 0 resources. After two different successful joint actions, one of them full, at a relation of 50 or more.
-view-if: pl_pa_kpp_open = 1
-choose-if: {! return PolishParty.kppStepStatus(Q, 'rules').available !}
-unavailable-subtitle: [+ pl_kpp_rules_why +]
+@organize_councils
+title: Work in the town councils
+subtitle: Cost: 0 resources. The councillors of PPS deal with the everyday matters of the towns, which the workers and the intelligentsia notice. Builds reformism and parliamentarism.
+choose-if: {! return PolishParty.agendaWorkStatus(Q, 'councils').available !}
+unavailable-subtitle: [+ pl_pa_work_councils_why +]
 on-arrival: {!
-PolishParty.kppStep(Q, 'rules');
+PolishParty.agendaWork(Q, 'councils');
 !}
 go-to: result
 
-@kpp_agreement
-title: Cooperation with the KPP: a broader agreement
-subtitle: Cost: 1 resource. Needs rules accepted by both sides and the acceptance of 60 inside PPS (now [+ pl_kpp_acceptance +]).
-view-if: pl_pa_kpp_open = 1
-choose-if: {! return PolishParty.kppStepStatus(Q, 'agreement').available !}
-unavailable-subtitle: [+ pl_kpp_agreement_why +]
+@organize_rallies
+title: Rallies in the factories
+subtitle: Cost: 0 resources. The speakers of the party address the workers, who become more ready to strike. Builds strike action.
+choose-if: {! return PolishParty.agendaWorkStatus(Q, 'rallies').available !}
+unavailable-subtitle: [+ pl_pa_work_rallies_why +]
 on-arrival: {!
-PolishParty.kppStep(Q, 'agreement');
+PolishParty.agendaWork(Q, 'rallies');
+!}
+go-to: result
+
+@kpp_work
+title: Cooperation with the communists
+subtitle: Cost: 0 resources. Improves our relations with the KPP, which are [+ kpp_relation : relationships +] today, but displeases the Centre of the party. Good relations open the cabinets of the left with the communists. Builds radicalism.
+choose-if: {! return PolishParty.agendaWorkStatus(Q, 'kpp').available !}
+unavailable-subtitle: [+ pl_pa_work_kpp_why +]
+on-arrival: {!
+PolishParty.agendaWork(Q, 'kpp');
 !}
 go-to: result
 

@@ -36,7 +36,7 @@ if (Q.S && typeof PolishTopbar !== 'undefined') {
 
 [? if polish_party_rules : **Party money:** [+ pl_party_cash +] ?]
 
-[? if polish_party_rules : **A collection brings:** [+ pl_party_collection +] ?]
+[? if polish_party_rules : **Dues income each month:** [+ pl_party_dues_monthly +] ?]
 
 [? if polish_party_rules : **Dues:** [+ pl_party_dues +] ?]
 

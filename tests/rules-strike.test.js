@@ -121,21 +121,25 @@ test('Kolej: rail participation 39 or 40 at coordination 50: only the second del
   assert.deepEqual([delay(39, 50), delay(40, 50), delay(40, 49), delay(64, 70), delay(65, 69), delay(65, 70)], [0, 1, 0, 1, 1, 2]);
 });
 
-test('Otwarcia finansowe: without collections the cash does not move over 52 months (Z — 0.56); the apparatus left the game (1.18); three expansions of a branch raise a collection through membership', () => {
+test('Otwarcia finansowe: over 52 months the cash moves only by the monthly dues (Z — 0.56, 1.19); the apparatus left the game (1.18); three expansions of a branch raise a collection through membership', () => {
   const run = kind => {
     const Q = game();
     const S = Q.S;
     S.party_orgs.cash = 10;
     S.actors.pps.strategy.electoral_base = 'broad_democratic';
+    let dues = 0;
     for (let m = 1; m <= 52; m++) {
       if (kind === 'apparatus' && m <= 3) { S.party_orgs.cash -= 2; S.party_orgs.apparatus.level += 1; }
       if (kind === 'reach' && m <= 3) { S.party_orgs.cash -= 1; S.unions.industry.reach += 15; }
-      PolishParty.settleParty(Q, m);
+      dues += PolishParty.settleParty(Q, m).dues;
     }
+    S.dues_total = dues;
     return S;
   };
   const none = run('none'), apparatus = run('apparatus'), reach = run('reach');
-  assert.deepEqual([none.party_orgs.cash, apparatus.party_orgs.cash, reach.party_orgs.cash], [10, 4, 7], 'no income and no upkeep');
+  // Z — 1.19 (decision 2B): the dues bring money every month; there is no other income and no upkeep.
+  for (const [S, start] of [[none, 10], [apparatus, 4], [reach, 7]]) close(S.party_orgs.cash - S.dues_total, start, 1e-6);
+  assert.ok(none.dues_total > 30, 'about 0.7 R a month');
   close(PolishParty.collectionGain(apparatus) / PolishParty.collectionGain(none), 1, 0.005); // Z — 1.18: the level has no effect
   assert.ok(PolishParty.collectionGain(reach) > PolishParty.collectionGain(none) + 0.05, 'more members after the expansions');
 });

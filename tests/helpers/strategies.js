@@ -29,8 +29,9 @@ const P = {
   // Z — 0.78 (decision 4A): two kinds of organisational work on the agenda; the game picks the weakest branch and the groups of
   // the character of the party, so the branch or class named by a strategy is no longer used.
   organize: () => ['polish_party_agenda', 'polish_party_agenda.organize_unions'],
-  organizeClass: () => ['polish_party_agenda', 'polish_party_agenda.organize_voters'],
-  fundraise: () => ['polish_party_agenda', 'polish_party_agenda.fundraise'],
+  // Z — 1.19 (decisions 1A and 2B of 22 XI 2026): six kinds of work on the agenda, each building a characteristic; the
+  // collection left the game, and the dues bring money every month.
+  work: kind => ['polish_party_agenda', 'polish_party_agenda.' + kind],
   // Z — 0.78: the TUR courses are a card of their own; the game picks the branch (the one that trusts PPS least).
   cadres: () => ['polish_party_tur', 'polish_party_tur.union_cadres'],
   // Z — 0.78: the card of the organisations takes one investment at once; a second one named here waits for another month.
@@ -235,14 +236,11 @@ const FORMATION = {
 const plan = {
   base(ctx) {
     const list = [];
-    if (ctx.cash < 1.5) list.push(P.fundraise());
     list.push(P.organize(lowest(ctx, ['industry', 'rail', 'farm_labour'])));
-    list.push(P.organize('industry'), P.fundraise());
     return list;
   },
   organised(ctx, extra) {
     const list = [];
-    if (ctx.cash < 1.5) list.push(P.fundraise());
     list.push(...(extra || []));
     const month = ctx.t % 6;
     if (month === 0) list.push(P.orgs('union_organize_industry', 'union_organize_rail'));
@@ -355,7 +353,7 @@ const STRATEGIES = {
         if (globalThis.PolishParty.militiaStatus(ctx.Q, 'as').available) extra.push(P.militia('form_as'));
         else if (globalThis.PolishParty.militiaLevel(M) < 3) extra.push(P.militia('militarize'));
         else if (M.strength < 500) extra.push(P.militia('recruit'));
-        else extra.push(P.fundraise());
+        // Z — 1.19: the money for the AS comes from the monthly dues, without a collection.
       }
       // Z — 0.92: the cooperative is founded on the card of the organisations at once; the agenda no longer launches one.
       extra.push(P.orgs('union_organize_industry'), P.orgs('tur', 'cooperative_workers'));

@@ -53,19 +53,22 @@ test('a new game has the party of 13.1–13.3 and the factions of 10.1 in Q.S; t
   assert.equal(S.party_orgs.cash, 3);
 });
 
-test('Brak gotówki: at 0 R no paid action is possible; organisational work and the collection stay available; the cash never goes below 0', () => {
+test('Brak gotówki: at 0 R no paid action is possible; the work of the agenda stays available; the dues bring money every month (1.19)', () => {
   const Q = game();
   Q.S.party_orgs.cash = 0;
   PolishParty.writeMirrors(Q);
   for (const id of PolishParty.PACKAGE_ORDER) assert.equal(PolishParty.packageStatus(Q, id, 0).available, false, id);
-  assert.equal(PolishParty.fundraiseStatus(Q).available, true, 'a collection costs no money');
+  // Z — 1.19 (decisions 1A and 2B): every work of the agenda costs no money; the collection left the game.
+  for (const kind of PolishParty.AGENDA_KINDS) assert.equal(PolishParty.agendaWorkStatus(Q, kind).available, true, kind);
+  assert.equal(PolishParty.fundraise, undefined, 'no collection');
   assert.equal(PolishParty.organizeStatus(Q, 'branch:industry').available, true);
   PolishParty.organizeWithoutFunds(Q, 'branch:industry');
   assert.equal(Q.month_actions, 1);
-  // Z — 0.56: the money of the original game: no income and no upkeep, so a settled month neither adds nor takes money.
+  // Z — 0.56: no upkeep; Z — 1.19 (decision 2B): the dues bring a third of a collection every month, to 0.1 R.
   const ledger = PolishParty.settleParty(Q, Q.time);
-  assert.equal(Q.S.party_orgs.cash, 0);
-  assert.deepEqual([ledger.income, ledger.paid, ledger.unpaid], [undefined, undefined, undefined], 'the ledger records only membership');
+  assert.equal(ledger.dues, 0.7, 'a third of the collection of 2 R');
+  assert.equal(Q.S.party_orgs.cash, 0.7);
+  assert.deepEqual([ledger.income, ledger.paid, ledger.unpaid], [undefined, undefined, undefined], 'no other income or upkeep');
   assert.ok(Object.values(Q.S.party_orgs.arrears).every(v => v === 0) && !('arrears' in Q.S.militia), 'no arrears');
 });
 
@@ -454,7 +457,8 @@ test('Sufit prasy 0.90: the distribution brings the party journal up to 60 and t
 test('Sprzedaż prasy 0.90: the popular paper earns a tenth of a unit a month from reach 50; the journal and a smaller paper earn nothing', () => {
   const Q = game();
   const S = Q.S, press = S.party_orgs.press;
-  const month = () => { const cash = S.party_orgs.cash; PolishParty.settleParty(Q, Q.time); return Math.round(10 * (S.party_orgs.cash - cash)) / 10; };
+  // Z — 1.19: without the monthly dues.
+  const month = () => { const cash = S.party_orgs.cash; PolishParty.settleParty(Q, Q.time); return Math.round(10 * (S.party_orgs.cash - cash - S.party_orgs.last_ledger.dues)) / 10; };
   press.reach = 40;
   assert.equal(month(), 0, 'the journal sells nothing');
   press.format = 'popular';

@@ -11,7 +11,7 @@ const dendry = require('./helpers/dendry.js');
 const flat = c => (c == null ? '' : typeof c === 'string' ? c : Array.isArray(c) ? c.map(flat).join('') :
   typeof c === 'object' ? flat(c.content) + (c.type === 'paragraph' || c.type === 'heading' ? '\n' : '') : String(c));
 // Z — 0.56: the money of the original game has no income, upkeep or sales; a collection line replaces them.
-const NEW_FIELDS = /^pl_party_(collection|dues|membership|apparatus|union_)|^pl_pol_/;
+const NEW_FIELDS = /^pl_party_(collection|dues|membership|apparatus|union_)|^pl_pol_/; // Z — 1.19: pl_party_dues_monthly replaces the collection
 
 // The same steps as window.updateSidebar: the tab's on-arrival, then its content.
 const display = (engine, id) => {
@@ -49,10 +49,10 @@ for (const lang of ['en', 'pl']) {
     for (const id of Object.keys(expected)) assert.equal(sidebar(restored, id), expected[id], id);
     const main = expected.status, politics = expected['status.politics'];
     if (lang === 'pl') {
-      assert.match(main, /\nZbiórka przynosi: 2\u00a0R\s*\nSkładki: 2 z 4\s*\nCzłonkostwo \(indeks\): 100 ?\n/); // Z — 1.18: no apparatus
+      assert.match(main, /\nWpływy ze składek co miesiąc: 0,7\u00a0R\s*\nSkładki: 2 z 4\s*\nCzłonkostwo \(indeks\): 100 ?\n/); // Z — 1.18: no apparatus; 1.19: the monthly dues
       assert.match(politics, /\nDemokracja: [1-9][\d,]*\u00a0na\u00a0100 ?\n/);
     } else {
-      assert.match(main, /\nA collection brings: 2\u00a0R\s*\nDues: 2 of 4\s*\nMembership \(index\): 100 ?\n/); // Z — 1.18: no apparatus
+      assert.match(main, /\nDues income each month: 0\.7\u00a0R\s*\nDues: 2 of 4\s*\nMembership \(index\): 100 ?\n/); // Z — 1.18: no apparatus; 1.19: the monthly dues
       assert.match(politics, /\nDemocracy: [1-9][\d.]*\u00a0of\u00a0100 ?\n/);
     }
     assert.deepEqual(errors, []);
@@ -67,7 +67,7 @@ test('Pasek boczny: pogrubione etykiety, rozbite wiersze i liczby bez zbędnych 
   // Z — 0.76: the tab "Partia" has no date heading; its first heading is PPS.
   assert.match(mainText, /^\s*PPS ?\n/);
   assert.doesNotMatch(mainText, /Styczeń 1922/);
-  for (const label of ['Kasa partii:', 'Zbiórka przynosi:', 'Składki:', 'Członkostwo (indeks):',
+  for (const label of ['Kasa partii:', 'Wpływy ze składek co miesiąc:', 'Składki:', 'Członkostwo (indeks):',
     'Sprzeciw w partii:', 'Spójność:', 'Pozycja PPS:', 'Prasa:', 'Towarzystwo Uniwersytetu Robotniczego:', 'Spółdzielnia spożywców:', 'Przemysł:', 'Kolej:',
     'Robotnicy rolni:', 'Głowa państwa:', 'Premier:', 'Zorganizowani członkowie:', 'Centrum PPS', 'Lewica PPS', 'Piłsudczycy']) {
     assert.ok(bold(main).includes(label), label);

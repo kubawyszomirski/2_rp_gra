@@ -6,7 +6,7 @@
     "[? if not polish_party_rules : **Resources available:** [+ resources +] ?]": "[? if not polish_party_rules : **Dostępne środki:** [+ resources +] ?]",
     "= PPS": "= PPS",
     "[? if polish_party_rules : **Party money:** [+ pl_party_cash +] ?]": "[? if polish_party_rules : **Kasa partii:** [+ pl_party_cash +] ?]",
-    "[? if polish_party_rules : **A collection brings:** [+ pl_party_collection +] ?]": "[? if polish_party_rules : **Zbiórka przynosi:** [+ pl_party_collection +] ?]",
+    "[? if polish_party_rules : **Dues income each month:** [+ pl_party_dues_monthly +] ?]": "[? if polish_party_rules : **Wpływy ze składek co miesiąc:** [+ pl_party_dues_monthly +] ?]",
     "[? if polish_party_rules : **Dues:** [+ pl_party_dues +] ?]": "[? if polish_party_rules : **Składki:** [+ pl_party_dues +] ?]",
     "[? if polish_party_rules : **Membership (index):** [+ pl_party_membership +] ?]": "[? if polish_party_rules : **Członkostwo (indeks):** [+ pl_party_membership +] ?]",
     "**Internal dissent:** [+ dissent_percent : dissent +]": "**Sprzeciw w partii:** [+ dissent_percent : dissent +]",

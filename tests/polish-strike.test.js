@@ -95,7 +95,8 @@ test('Karta sporu 0.87: a wage case makes the card of a dispute urgent; it descr
   toMain(engine);
   assert.equal(Q.time, 2, 'the strike costs the month');
   assert.deepEqual([rec.status, rec.demands.map(d => d.kind), rec.threshold], ['active', ['wages', 'councils'], 60]);
-  assert.ok(Math.abs(S.party_orgs.cash - (cash - 1)) < 1e-9, 'half a unit for each of the two branches');
+  // Z — 1.19 (decision 2B): the dues of the settled month come in.
+  assert.ok(Math.abs(S.party_orgs.cash - (cash - 1 + S.party_orgs.last_ledger.dues)) < 1e-9, 'half a unit for each of the two branches');
   assert.equal(PolishUnions.disputeCardAvailable(Q), false, 'the strike is no longer a waiting dispute');
 });
 
@@ -246,6 +247,7 @@ test('Ugoda kończy strajk 0.87: a branch that refuses the accepted offer has th
   const S = Q.S;
   for (const id of ['industry', 'rail']) { S.unions[id].reach = 60; S.unions[id].readiness = 60; }
   S.unions.industry.trust = 0; // fixture: the industrial union will refuse a partial offer
+  S.unions.rail.trust = 80; // Z — 1.19: with the monthly dues the money covers more of the strike, so the railwaymen need more trust to accept
   const rec = wageCase(Q);
   launch(engine, 'big');
   toMain(engine);

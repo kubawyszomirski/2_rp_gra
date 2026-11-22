@@ -360,28 +360,35 @@ test('Przegląd porozumienia (A3): an agreement carried out by the cabinet is ex
 });
 
 // Stage 8, closing fixes 1–5 (gaps of earlier stages in approved rules and texts).
-test('Front z komunistami (poprawka 1, 9.6): the offers with the KPP stay closed until the broader agreement on its three rules; then the usual gates and votes decide, and the KPP asks for no ministry', () => {
+// Z — 1.19 (decision 4A of 22 XI 2026): good relations with the KPP (50 or more) open the offers with the communists; an older
+// save with the broader agreement keeps it.
+test('Front z komunistami (poprawka 1, 9.6; 1.19): the offers with the KPP stay closed until good relations with the KPP; then the usual gates and votes decide, and the KPP asks for no ministry', () => {
   const Q = quiet();
   const S = Q.S;
-  for (const id of ['united_left', 'workers_front']) assert.match(PolishGovernment.configurationStatus(Q, id, {}).reason, /broader agreement with the KPP/);
-  S.actors.communist_cooperation.rules = { legal_vote: true, no_forced_merger: true, agreed_strike_end: true };
+  for (const id of ['united_left', 'workers_front']) assert.match(PolishGovernment.configurationStatus(Q, id, {}).reason, /good relations with the KPP/);
+  PolishGovernment.changeRelation(Q, 'kpp', 50 - S.actors.relations.kpp, 'fixture');
+  for (const id of ['united_left', 'workers_front']) {
+    assert.doesNotMatch(PolishGovernment.configurationStatus(Q, id, {}).reason, /good relations with the KPP/, id + ': the preparation is met; gates and votes remain');
+  }
+  PolishGovernment.changeRelation(Q, 'kpp', -20, 'fixture');
+  assert.match(PolishGovernment.configurationStatus(Q, 'united_left', {}).reason, /good relations with the KPP/);
   S.actors.communist_cooperation.rules_agreed = true;
   S.actors.communist_cooperation.active_agreement = { agreed_at: Q.time, goal: 'joint_workers_action' };
-  for (const id of ['united_left', 'workers_front']) {
-    assert.doesNotMatch(PolishGovernment.configurationStatus(Q, id, {}).reason, /broader agreement/, id + ': the preparation is met; gates and votes remain');
-  }
+  assert.doesNotMatch(PolishGovernment.configurationStatus(Q, 'united_left', {}).reason, /good relations with the KPP/, 'an older save keeps its agreement');
   assert.equal(PolishGovernment.portfolioFit('kpp', { configuration_id: 'united_left', members: ['pps', 'psl_wyzwolenie', 'npr', 'kpp'], portfolios: {} }), 100);
 });
 
-test('Agenda bez martwej próby (poprawka 2): the trial with the KPP is agreed in a strike, not on the party agenda; its rule keeps an accurate reason', () => {
+// Z — 1.19 (decision 4A): one always available work with the communists replaces the steps of the agreement on the agenda; the
+// trial with the KPP is still agreed in a strike, and its rule keeps an accurate reason.
+test('Agenda bez martwej próby (poprawka 2; 1.19): the agenda has one work with the communists, without a contact; the trial is agreed in a strike', () => {
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
-  PolishGovernment.kppContact(Q);
-  free(Q); Q.time += 1;
   engine.goToScene('polish_party_agenda');
   const ids = (engine.getCurrentChoices() || []).map(c => c.id);
-  assert.ok(ids.includes('polish_party_agenda.kpp_rules'), 'the KPP steps are on the agenda');
-  assert.ok(!ids.includes('polish_party_agenda.kpp_trial'), 'but not the trial');
+  assert.ok(ids.includes('polish_party_agenda.kpp_work'), 'the work with the communists is on the agenda without a contact');
+  for (const id of ['kpp_trial', 'kpp_rules', 'kpp_agreement']) assert.ok(!ids.includes('polish_party_agenda.' + id), id);
+  PolishGovernment.kppContact(Q);
+  free(Q); Q.time += 1;
   PolishGovernment.changeRelation(Q, 'kpp', 30 - Q.S.actors.relations.kpp, 'fixture');
   assert.match(PolishParty.kppStepStatus(Q, 'trial').reason, /in a strike/);
   assert.doesNotMatch(PolishParty.kppStepStatus(Q, 'trial').reason, /stage/);

@@ -1217,11 +1217,15 @@
   const POST_ELECTION_OWN_SEATS = 185;
 
   // 9.6: the broader agreement with the KPP, on its three rules (legal vote, no forced merger, agreed end of strikes),
-  // unlocks the offers united_left and workers_front; they still need the gates, the partners and the votes of 8.6
+  // unlocked the offers united_left and workers_front until 1.19; they still need the gates, the partners and the votes of 8.6
   // (stage 8, fix 1: until then the two offers were never available).
+  // Z — 1.19 (decision 4A of 22 XI 2026): good relations with the KPP (50 or more, built by the work „Cooperation with the
+  // communists” of the party agenda) are enough; an older save with the broader agreement keeps it.
+  const KPP_FRONT_RELATION = 50;
   function kppFrontPrepared(S) {
     const cc = S.actors && S.actors.communist_cooperation;
-    return !!(cc && cc.rules_agreed && cc.active_agreement);
+    if (cc && cc.rules_agreed && cc.active_agreement) return true;
+    return !!(S.actors && S.actors.relations && S.actors.relations.kpp >= KPP_FRONT_RELATION);
   }
 
   function configurationStatus(Q, configId, context) {
@@ -1231,8 +1235,8 @@
     const own = ownCandidateStatus(Q, configId);
     if (!own.available) return own;
     if (config.requires === 'kpp_preparation' && !kppFrontPrepared(S)) {
-      return {available: false, reason: L('Needs the broader agreement with the KPP: its rules on the legal vote, no forced merger and an agreed end of strikes (party agenda).',
-        'Wymaga szerszego porozumienia z KPP: zasad legalnego głosowania, braku przymusowego połączenia i uzgodnionego kończenia strajków (agenda partii).')};
+      return {available: false, reason: L('Needs good relations with the KPP; the party agenda builds them by the cooperation with the communists.',
+        'Wymaga dobrych stosunków z KPP; buduje je współpraca z komunistami w Agendzie partii.')};
     }
     if (config.crisis) {
       const crisis = crisisState(Q, context);
@@ -1913,8 +1917,8 @@
   // Why a variant cannot be formed now, in a sentence (the reasons of configurationStatus and variantStatus).
   function variantReasonText(Q, configId, reason) {
     const S = Q.S, config = CONFIGURATIONS[configId], context = S.negotiation ? S.negotiation.context : {};
-    if (config.requires === 'kpp_preparation' && !kppFrontPrepared(S)) return L('First PPS needs a broader agreement with the communists, made in the party agenda.',
-      'Najpierw trzeba zawrzeć szersze porozumienie z komunistami w Agendzie partii.');
+    if (config.requires === 'kpp_preparation' && !kppFrontPrepared(S)) return L('First PPS needs good relations with the communists; the party agenda builds them by the cooperation with the communists.',
+      'Najpierw PPS potrzebuje dobrych stosunków z komunistami; buduje je współpraca z komunistami w Agendzie partii.');
     if (config.crisis) {
       const crisis = crisisState(Q, context);
       if (!crisis.allowed) return L('The parties agree to such a cabinet only in a serious crisis of the state: when two cabinets fall within half a year, or a currency or credit crisis breaks out. There is no such crisis now, so it cannot be formed.',

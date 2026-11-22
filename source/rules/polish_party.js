@@ -279,6 +279,10 @@
     return round(collectionAt(orgs.dues, orgs.apparatus.member_index, orgs.apparatus.level, unionCollectionBonus(S)), MONEY_DIGITS);
   }
 
+  // Z — 1.19 (decision 2B of 22 XI 2026): the monthly income from the dues, a third of a collection, to 0.1 R.
+  const DUES_MONTHLY_SHARE = 1 / 3;
+  const monthlyDues = S => round(collectionGain(S) * DUES_MONTHLY_SHARE, MONEY_DIGITS);
+
   // Z — 0.92: one workers' consumer cooperative, founded once (`founded_at`); an older save keeps its operating workers'
   // cooperative and loses the prepared ones and the village cooperatives.
   function cooperativeOf(S) {
@@ -325,6 +329,9 @@
     // Z — 0.90 (decision 2A): the popular paper earns from its sales at reach 50 or more.
     const sales = press.format === 'popular' && pressEffective(S).reach >= PRESS_SALES_REACH ? PRESS_SALES : 0;
     if (sales) orgs.cash = round(orgs.cash + sales, MONEY_DIGITS);
+    // Z — 1.19 (decision 2B of 22 XI 2026): the dues bring a third of a collection every month.
+    const dues = monthlyDues(S);
+    orgs.cash = round(orgs.cash + dues, MONEY_DIGITS);
     const tur = orgs.tur;
     if (tur.active_build) {
       tur.active_build.paid_months += 1;
@@ -342,7 +349,7 @@
     // Since stage 6 the unions' own funds are settled by PolishUnions.beginMonth, before a strike draws on them
     // (14.1–14.2).
     orgs.last_ledger = {t: t, cash: round(orgs.cash, 4), member_index: round(apparatus.member_index, 4), member_target: round(target, 4),
-      press_sales: sales};
+      press_sales: sales, dues: dues};
     return orgs.last_ledger;
   }
 
@@ -736,26 +743,8 @@
     return result(Q, text + L(' The collection brings ' + fmt(gain) + ' R.', ' Zbiórka przynosi ' + fmt(gain) + ' R.'));
   }
 
-  function fundraiseStatus(Q) {
-    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
-    const wait = waitReason(Q, 'party.fundraise');
-    return wait ? no(wait) : OK;
-  }
-
-  // An extraordinary collection: dues × membership / 100 R, 1 T, cd 3 M; not a second booking of the
-  // monthly income (13.1).
-  function fundraise(Q) {
-    syncMirrors(Q);
-    const status = fundraiseStatus(Q);
-    if (!status.available) throw new Error('fundraise: ' + status.reason);
-    const S = Q.S, orgs = S.party_orgs;
-    const gain = collectionGain(S);
-    rules.commitMainAction(Q, 'party.fundraise', {});
-    orgs.cash += gain;
-    S.cooldowns['party.fundraise'] = Q.time + 3;
-    writeMirrors(Q);
-    return result(Q, L('The extraordinary collection brings ', 'Zbiórka nadzwyczajna przynosi ') + fmt(gain) + ' R.');
-  }
+  // Z — 1.19 (decision 2B of 22 XI 2026): the extraordinary collection left the agenda; instead the dues bring a third of a collection
+  // every month (settleParty), without this month's action.
 
   // Z — 1.18 (decision A of 22 XI 2026): the build-up of the party apparatus left the game.
 
@@ -824,43 +813,86 @@
     r < 80 ? L('strong', 'mocny') : L('very strong', 'bardzo mocny'));
   // The genitive of a reach word after "z" (Z — 1.14): z bardzo słabego, ze słabego, ze średniego, z mocnego.
   const REACH_GENITIVE = word => ({'bardzo słaby': 'bardzo słabego', 'słaby': 'słabego', 'średni': 'średniego', 'mocny': 'mocnego', 'bardzo mocny': 'bardzo mocnego'})[word] || word;
-  function organizePreview(Q, kind) {
-    const S = Q.S;
-    if (kind === 'unions') {
-      const id = weakestBranch(S);
-      return L('The activists strengthen the weakest union, ' + BRANCH_NAMES[id].toLowerCase() + '; its reach is ' + reachWord(S.unions[id].reach) + ' today.',
-        'Działacze wzmacniają najsłabszy związek: ' + BRANCH_PL_GENITIVE_NAME(id) + '; jego zasięg jest dziś ' + reachWord(S.unions[id].reach) + '.');
-    }
-    if (!electorate.hasCells(S)) return '';
-    const groups = characterClasses(S);
-    return L('The activists reach our voters: ', 'Działacze docierają do naszych wyborców: ') + groups.map(c => {
-      return L(electorate.CLASS_NAMES[c], electorate.CLASS_NAMES_PL_GENITIVE[c] || electorate.CLASS_NAMES_PL[c]) + L(' (reach ', ' (zasięg ') + reachWord(baseReachOf(S, c)) + ')';
-    }).join(', ') + '.';
-  }
   const BRANCH_PL_GENITIVE_NAME = id => ({industry: 'robotników przemysłu', rail: 'kolejarzy', farm_labour: 'robotników rolnych'})[id] || id;
 
+  // Z — 1.19 (decisions 1A, 3A and 4A of 22 XI 2026): the party agenda offers six kinds of work, each for this month's action and
+  // without money, and each builds a characteristic of the party (rules.seedProfile). The unions grow all three at once by half of
+  // the old gain; the work in the villages, among the minorities, in the town councils and the factory rallies reach their groups
+  // of voters; the cooperation with the communists improves the relation with the KPP and angers the Centre, and good relations
+  // open the cabinets of the left with the KPP (PolishGovernment.kppFrontPrepared). The sizes of the gains are devices of the game.
+  const AGENDA_WORK = Object.freeze({
+    unions: Object.freeze({unionism: 1.5}),
+    rural: Object.freeze({worker_peasant: 1.5}),
+    minorities: Object.freeze({federalism: 1.5}),
+    councils: Object.freeze({reformism: 1, parliamentarism: 1}),
+    rallies: Object.freeze({strike_action: 1.5}),
+    kpp: Object.freeze({radicalism: 2}),
+  });
+  const AGENDA_KINDS = Object.freeze(Object.keys(AGENDA_WORK));
+  const KPP_WORK = Object.freeze({relation: 5, centrum_dissent: 3});
+  const RALLY_READINESS = 5;
+  const minorityCell = cell => cell.identity_id !== 'polish';
+  const classGain = (S, classId, amount) => amount * expansionMultiplier(S, {kind: 'class', class_id: classId});
+
+  function agendaWorkStatus(Q, kind) {
+    if (!AGENDA_WORK[kind]) return no(L('Unknown work.', 'Nieznana praca.'));
+    if (kind !== 'unions' && kind !== 'kpp' && !electorate.hasCells(Q.S)) return no(L('The cells of the electorate are not recorded.', 'Grupy wyborców nie są zapisane.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
+    return OK;
+  }
+
+  const AGENDA_RESULTS = Object.freeze({
+    unions: ['The activists work in all three unions: the workers of industry, the railwaymen and the farm workers join them more readily.',
+      'Działacze pracują we wszystkich trzech związkach: robotnicy przemysłu, kolejarze i robotnicy rolni chętniej do nich wstępują.'],
+    rural: ['The activists go to the villages: the peasants listen to PPS more readily, and the union of the farm workers grows.',
+      'Działacze jeżdżą na wieś: chłopi chętniej słuchają PPS, a związek robotników rolnych rośnie.'],
+    minorities: ['The activists reach the voters of the national minorities, who listen to PPS more readily.',
+      'Działacze docierają do wyborców mniejszości narodowych, którzy chętniej słuchają PPS.'],
+    councils: ['The councillors of PPS deal with the everyday matters of the towns, and the workers and the intelligentsia notice it.',
+      'Radni PPS zajmują się codziennymi sprawami miast, co zauważają robotnicy i inteligencja.'],
+    rallies: ['The speakers of the party address the workers in the factories: the workers listen to PPS and are more ready to fight.',
+      'Mówcy partii przemawiają do robotników w fabrykach: robotnicy słuchają PPS i są bardziej gotowi do walki.'],
+    kpp: ['PPS seeks an understanding with the communists on workers’ matters: our relations with the KPP improve, and the Centre of the party is displeased.',
+      'PPS szuka porozumienia z komunistami w sprawach robotniczych: nasze stosunki z KPP się poprawiają, a Centrum partii jest niezadowolone.'],
+  });
+
+  function agendaWork(Q, kind) {
+    syncMirrors(Q);
+    const status = agendaWorkStatus(Q, kind);
+    if (!status.available) throw new Error('agendaWork: ' + status.reason);
+    const S = Q.S, t = Q.time;
+    rules.commitMainAction(Q, 'party.agenda.' + kind, {});
+    if (kind === 'unions') {
+      for (const id of BRANCHES) expandBranch(S, id, 1);
+    } else if (kind === 'rural') {
+      electorate.addBaseReach(S, cell => cell.class_id === 'rural', classGain(S, 'rural', 2));
+      expandBranch(S, 'farm_labour', 1);
+    } else if (kind === 'minorities') {
+      electorate.addBaseReach(S, minorityCell, classGain(S, 'minorities', 2));
+    } else if (kind === 'councils') {
+      for (const c of ['workers', 'new_middle']) electorate.addBaseReach(S, cell => cell.class_id === c, classGain(S, c, 1));
+    } else if (kind === 'rallies') {
+      electorate.addBaseReach(S, cell => cell.class_id === 'workers', classGain(S, 'workers', 1.5));
+      const branch = S.unions.industry;
+      branch.readiness = clip(branch.readiness + RALLY_READINESS * (rules.profileActive(S, 'strike_action') ? 1.25 : 1), 0, 100);
+    } else {
+      government.changeRelation(Q, 'kpp', KPP_WORK.relation, 'party.agenda.kpp');
+      government.factionReaction(Q, 'centrum', {dissent: KPP_WORK.centrum_dissent},
+        {id: 'line_contrary:agenda.kpp:t' + t, kind: 'line_contrary', reverse: null});
+    }
+    for (const id of Object.keys(AGENDA_WORK[kind])) rules.seedProfile(Q, id, AGENDA_WORK[kind][id], 'agenda.' + kind);
+    writeMirrors(Q);
+    return result(Q, L(AGENDA_RESULTS[kind][0], AGENDA_RESULTS[kind][1]));
+  }
+
+
+  // The older names of the agenda's work (Z — 0.78), kept for the tests and older saves.
   function organizeStatusOf(Q, kind) {
-    return kind === 'unions' ? organizeStatus(Q, 'branch:' + weakestBranch(Q.S)) : organizeStatus(Q, 'class:' + characterClasses(Q.S)[0]);
+    return agendaWorkStatus(Q, kind === 'voters' ? 'councils' : kind);
   }
 
   function organizeUnions(Q) {
-    return organizeWithoutFunds(Q, 'branch:' + weakestBranch(Q.S));
-  }
-
-  function organizeVoters(Q) {
-    syncMirrors(Q);
-    const S = Q.S, classes = characterClasses(S);
-    const status = organizeStatus(Q, 'class:' + classes[0]);
-    if (!status.available) throw new Error('organizeVoters: ' + status.reason);
-    rules.commitMainAction(Q, 'party.organize_without_funds', {target: 'class:' + classes.join(',')});
-    const parts = classes.map(c => {
-      const gain = 2 * expansionMultiplier(S, {kind: 'class', class_id: c});
-      electorate.addBaseReach(S, cell => cell.class_id === c, gain);
-      return L(electorate.CLASS_NAMES[c] + ' +' + fmt(gain), electorate.CLASS_NAMES_PL_GENITIVE[c] + ' +' + fmt(gain));
-    });
-    writeMirrors(Q);
-    return result(Q, L('Organisers work among our voters: the base reach of PPS among ', 'Organizatorzy pracują wśród naszych wyborców: bazowy zasięg PPS wśród ') +
-      parts.join(L(' and ', ' i ')) + '.');
+    return agendaWork(Q, 'unions');
   }
 
   // ---- TUR: levels and courses (13.2; cards 5.1 and 5.8) ----------------------------------------------
@@ -1969,32 +2001,32 @@
   const PROFILE_EXCLUSIVE = Object.freeze({reformism: 'radicalism', radicalism: 'reformism'});
   const PROFILES = Object.freeze({
     unionism: {name: ['Unionism', 'Uzwiązkowienie'], acc: ['unionism', 'uzwiązkowienie'], patron: 'centrum', rivals: {lewica: 5},
-      builds: ['building the unions, courses for trade unionists, the help of the unions and won strikes', 'budowa związków, kursy dla związkowców, pomoc związków i wygrane strajki'],
+      builds: ['building the unions and the work in them, courses for trade unionists, the help of the unions and won strikes', 'budowa związków i praca w nich, kursy dla związkowców, pomoc związków i wygrane strajki'],
       gives: ['the unions grow faster and lose half as much trust after a defeat', 'związki rosną szybciej i tracą o połowę mniej zaufania po porażce'],
       resolution: ['Resolution on the trade unions', 'Uchwała o związkach zawodowych'],
       text: ['The party stakes on the unions: they grow faster and bear lost strikes better. The Centre grows stronger, and the Left finds it too cautious.',
         'Partia stawia na związki: rosną szybciej i lepiej znoszą przegrane strajki. Centrum się wzmacnia, a Lewica uważa to za zbyt ostrożne.']},
     worker_peasant: {name: ['The worker-peasant alliance', 'Sojusz robotniczo-włościański'], acc: ['the worker-peasant alliance', 'sojusz robotniczo-włościański'],
       patron: 'centrum', rivals: {}, relations: {psl_wyzwolenie: 10, zln: -5},
-      builds: ['the campaign “Land for the peasants”, a joint list or a cabinet with PSL “Wyzwolenie” and the land reform', 'kampania „Ziemia dla chłopów”, wspólna lista albo rząd z PSL „Wyzwolenie” i reforma rolna'],
+      builds: ['the work in the villages, the campaign “Land for the peasants”, a joint list or a cabinet with PSL “Wyzwolenie” and the land reform', 'praca na wsi, kampania „Ziemia dla chłopów”, wspólna lista albo rząd z PSL „Wyzwolenie” i reforma rolna'],
       gives: ['stronger campaigns in the countryside and closer relations with PSL “Wyzwolenie”', 'mocniejsze kampanie na wsi i bliższe stosunki z PSL „Wyzwolenie”'],
       resolution: ['Resolution on the worker-peasant alliance', 'Uchwała o sojuszu robotniczo-włościańskim'],
       text: ['The party goes to the villages together with the peasant movement: campaigns in the countryside are stronger and PSL “Wyzwolenie” comes closer; the landowners and the National Democrats turn hostile.',
         'Partia idzie na wieś razem z ruchem ludowym: kampanie na wsi są mocniejsze, a PSL „Wyzwolenie” bliższe; ziemianie i endecja stają się wrodzy.']},
     federalism: {name: ['Federalism', 'Federalizm'], acc: ['federalism', 'federalizm'], patron: 'lewica', rivals: {centrum: 3}, relations: {minorities_bloc: 10, zln: -5},
-      builds: ['the rights of language and schools of the minorities, concessions to their clubs and autonomy', 'prawa języka i szkoły mniejszości, ustępstwa wobec ich klubów i autonomia'],
+      builds: ['the work among the minorities, the rights of language and schools of the minorities, concessions to their clubs and autonomy', 'praca wśród mniejszości, prawa języka i szkoły mniejszości, ustępstwa wobec ich klubów i autonomia'],
       gives: ['stronger campaigns among the minorities and closer relations with their clubs', 'mocniejsze kampanie wśród mniejszości i bliższe stosunki z ich klubami'],
       resolution: ['Resolution on the nationalities', 'Uchwała w sprawie narodowościowej'],
       text: ['The party stands for equal rights and self-government of the nationalities: the minorities trust it more; the National Democrats attack, and the Centre is uneasy.',
         'Partia staje za równymi prawami i samorządem narodowości: mniejszości bardziej jej ufają; endecja atakuje, a Centrum jest zaniepokojone.']},
     parliamentarism: {name: ['Parliamentarism', 'Parlamentaryzm'], acc: ['parliamentarism', 'parlamentaryzm'], patron: 'centrum', rivals: {lewica: 3, pilsudczycy: 3},
-      builds: ['bills of the legislative initiative (adopted ones count twice), constitutional motions and the defence of the Sejm', 'ustawy z inicjatywy (przyjęte liczą się podwójnie), wnioski konstytucyjne i obrona Sejmu'],
+      builds: ['bills of the legislative initiative (adopted ones count twice), constitutional motions, the defence of the Sejm and the work in the town councils', 'ustawy z inicjatywy (przyjęte liczą się podwójnie), wnioski konstytucyjne, obrona Sejmu i praca w radach miejskich'],
       gives: ['the bills of our initiative pass more easily', 'ustawy z naszej inicjatywy łatwiej przechodzą'],
       resolution: ['Resolution on the parliamentary road', 'Uchwała o drodze parlamentarnej'],
       text: ['The party binds its fate to the Sejm: the bills of our initiative pass more easily. The Centre grows stronger; the Left and the Piłsudczycy grow impatient.',
         'Partia wiąże swój los z Sejmem: ustawy z naszej inicjatywy łatwiej przechodzą. Centrum się wzmacnia, a Lewica i Piłsudczycy się niecierpliwią.']},
     strike_action: {name: ['Strike action', 'Akcja strajkowa'], acc: ['strike action', 'akcję strajkową'], patron: 'lewica', rivals: {centrum: 5}, business: 5,
-      builds: ['strikes (won ones count twice) and threats of a strike', 'strajki (wygrane liczą się podwójnie) i groźby strajku'],
+      builds: ['strikes (won ones count twice), threats of a strike and factory rallies', 'strajki (wygrane liczą się podwójnie), groźby strajku i wiece w fabrykach'],
       gives: ['a stronger threat of a strike and workers who are ready to fight sooner', 'skuteczniejsza groźba strajku i robotnicy szybciej gotowi do walki'],
       resolution: ['Resolution on mass action', 'Uchwała o akcji masowej'],
       text: ['The party makes the strike its main weapon: the threat of a strike carries more weight, and the workers are ready sooner. The Left grows stronger; the Centre and the employers are alarmed.',
@@ -2006,7 +2038,7 @@
       text: ['The party arms its self-defence: the Milicja counts for more when it comes to a fight. The Piłsudczycy grow stronger, and the Centre fears the authorities’ suspicion.',
         'Partia zbroi swoją samoobronę: Milicja liczy się bardziej, gdy dojdzie do walki. Piłsudczycy się wzmacniają, a Centrum obawia się podejrzliwości władz.']},
     reformism: {name: ['Reformism', 'Reformizm'], acc: ['reformism', 'reformizm'], patron: 'centrum', rivals: {lewica: 8},
-      builds: ['the decisions of our ministries and the months in the cabinet', 'decyzje naszych resortów i miesiące w rządzie'],
+      builds: ['the decisions of our ministries, the months in the cabinet and the work in the town councils', 'decyzje naszych resortów, miesiące w rządzie i praca w radach miejskich'],
       gives: ['dearer decisions of the ministries cost one unit less, and the partners object half as much', 'droższe decyzje resortów kosztują o jedną jednostkę mniej, a partnerzy sprzeciwiają się o połowę słabiej'],
       resolution: ['Resolution on social reform', 'Uchwała o reformie społecznej'],
       text: ['The party chooses reform step by step through the state: our ministries do more for less, and the partners accept it more easily. The Centre grows stronger; the Left protests loudly.',
@@ -3281,8 +3313,8 @@
   function sidebarDisplay(Q) {
     if (!partyReady(Q)) return;
     const S = Q.S, orgs = S.party_orgs;
-    // Z — 0.56: what a collection brings now; there is no monthly income or upkeep.
-    Q.pl_party_collection = fmt(collectionGain(S)) + '\u00a0R';
+    // Z — 1.19 (decision 2B of 22 XI 2026): what the dues bring every month; there is no upkeep.
+    Q.pl_party_dues_monthly = fmt(monthlyDues(S)) + '\u00a0R';
     // Each value has its own line with a bold label in the scene (Z — 0.55); the scales are 1–4 for both levels.
     Q.pl_party_dues = orgs.dues + L(' of ', ' z ') + DUES_MAX;
     Q.pl_party_membership = String(Math.round(orgs.apparatus.member_index));
@@ -3302,20 +3334,11 @@
   function agendaView(Q) {
     syncMirrors(Q);
     const S = Q.S;
-    Q.pl_pa_fundraise_why = fundraiseStatus(Q).reason;
-    Q.pl_pa_fundraise_gain = fmt(collectionGain(S));
-    // Z — 1.17: the collection with its unit declined by its number ("2 jednostki", "5 jednostek", "2,9 jednostki").
-    Q.pl_pa_fundraise_units = rules.units(collectionGain(S), 'resources', 'acc');
-    for (const id of BRANCHES) Q['pl_pa_branch_' + id + '_why'] = organizeStatus(Q, 'branch:' + id).reason;
-    for (const c of ORGANIZE_CLASSES) Q['pl_pa_class_' + c + '_why'] = organizeStatus(Q, 'class:' + c).reason;
-    // Z — 0.78: the two kinds of organisational work, with their target and gain.
-    for (const kind of ['unions', 'voters']) {
-      Q['pl_pa_org_' + kind + '_why'] = organizeStatusOf(Q, kind).reason;
-      Q['pl_pa_org_' + kind + '_text'] = organizePreview(Q, kind);
-    }
-    for (const id of Object.keys(COURSES)) Q['pl_pa_course_' + id + '_why'] = courseStatus(Q, id).reason;
-    Q.pl_pa_kpp_open = channelOpen(S) ? 1 : 0;
-    if (channelOpen(S)) kppView(Q);
+    // Z — 1.19 (decisions 1A, 2B and 4A of 22 XI 2026): the money of the party and the monthly dues in words, and six kinds of
+    // work, each building a characteristic of the party.
+    Q.pl_pa_cash_words = rules.units(S.party_orgs.cash, 'resources');
+    Q.pl_pa_dues_monthly = rules.units(monthlyDues(S), 'resources', 'acc');
+    for (const kind of AGENDA_KINDS) Q['pl_pa_work_' + kind + '_why'] = agendaWorkStatus(Q, kind).reason;
     Q.pl_pa_priorities = strategyOf(S).economic_priorities.map(priorityName).join('; ');
     partyDisplay(Q);
   }
@@ -3377,8 +3400,6 @@
     duesAvailable: duesAvailable,
     duesChoose: duesChoose,
     duesView: duesView,
-    fundraiseStatus: fundraiseStatus,
-    fundraise: fundraise,
     organizeStatus: organizeStatus,
     organizeWithoutFunds: organizeWithoutFunds,
     courseStatus: courseStatus,
@@ -3387,7 +3408,10 @@
     characterClasses: characterClasses,
     organizeStatusOf: organizeStatusOf,
     organizeUnions: organizeUnions,
-    organizeVoters: organizeVoters,
+    AGENDA_KINDS: AGENDA_KINDS,
+    agendaWorkStatus: agendaWorkStatus,
+    agendaWork: agendaWork,
+    monthlyDues: monthlyDues,
     courseTarget: courseTarget,
     turCardAvailable: turCardAvailable,
     turCardView: turCardView,

@@ -176,7 +176,7 @@ test('Pilotaż: ekran tytułowy, strona miesiąca i pasek boczny po polsku', () 
     sidebar[id] = flat(engine._makeDisplayContent(scene.content, true));
     assert.deepEqual(englishLeft(sidebar[id]), [], `sidebar ${id}`);
   }
-  assert.match(sidebar.status, /Kasa partii: 2\u00a0R\s*\nZbiórka przynosi: 2\u00a0R/, 'a no-break space keeps the unit with the number; Z — 0.56: no income line');
+  assert.match(sidebar.status, /Kasa partii: 2\u00a0R\s*\nWpływy ze składek co miesiąc: 0,7\u00a0R/, 'a no-break space keeps the unit with the number; Z — 1.19: the monthly dues');
   assert.match(sidebar.status, /Głowa państwa: Józef Piłsudski — Naczelnik Państwa/);
   // Z — 0.65: the sidebar gives only the number of MPs; the share of seats stays in the Library.
   assert.match(sidebar['status.politics'], /\nPPS: 35 posłów ?\n/);

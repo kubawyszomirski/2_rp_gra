@@ -178,28 +178,67 @@ test('Kursy TUR 0.78: a card of its own once TUR works; one click per course wit
   assert.equal(Q.time, 2);
 });
 
-// Z — 0.78 (decision 4A of 8 X 2026): organisational work is two options straight on the agenda; the game picks the weakest
-// branch and the groups of the character of the party, and says so with the gain.
-test('Praca organizacyjna 0.78: two options on the agenda; the weakest branch and the groups of the character of the party', () => {
+// Z — 1.19 (decisions 1A, 2B, 3A and 4A of 22 XI 2026): six kinds of work on the agenda, each with its cost line and the
+// characteristic it builds; the unions grow all three at once, by half of the old gain; the collection and the steps with the
+// KPP left the card, and the dues bring money every month.
+test('Agenda 1.19: six kinds of work, each building a characteristic; no collection and no steps with the KPP', () => {
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
-  Q.S.unions.rail.reach = 8; // below the agricultural labourers, who start at 10 (Z — 0.86)
   playFromHand(engine, 'polish_party_agenda');
-  assert.ok(ids(engine).includes('polish_party_agenda.organize_unions') && ids(engine).includes('polish_party_agenda.organize_voters'));
-  assert.ok(!ids(engine).includes('polish_party_agenda.organize'), 'no second page');
-  assert.match(plain(choice(engine, 'polish_party_agenda.organize_unions').subtitle), /^Cost: 0 resources\. The activists strengthen the weakest union, railways; its reach is very weak today\./); // Z — 1.08: in words
-  assert.match(plain(choice(engine, 'polish_party_agenda.organize_voters').subtitle), /^Cost: 0 resources\. The activists reach our voters: the workers \(reach (very weak|weak|medium|strong|very strong)\)\.$/); // Z — 1.08: in words
+  const work = ['organize_unions', 'organize_rural', 'organize_minorities', 'organize_councils', 'organize_rallies', 'kpp_work'];
+  assert.deepEqual(ids(engine).filter(id => id !== 'easy_discard'), work.map(id => 'polish_party_agenda.' + id));
+  for (const id of work) assert.match(plain(choice(engine, 'polish_party_agenda.' + id).subtitle), /^Cost: 0 resources\. .+ Builds [a-z -]+\.$/, id);
+  assert.match(plain(engine.ui.paragraphs.map(p => p.content)), /Party money: 2 resources\. The dues bring 0\.7 resources every month\./);
+  assert.match(plain(choice(engine, 'polish_party_agenda.kpp_work').subtitle), /Improves our relations with the KPP, which are frigid today, but displeases the Centre of the party\./);
   choose(engine, 'easy_discard');
-  // A party of workers and peasants organises the peasants too.
-  Q.S.actors.pps.strategy.electoral_base = 'workers_peasants';
-  const peasant = Q.S.society.cells.find(c => c.class_id === 'rural'), worker = Q.S.society.cells.find(c => c.class_id === 'workers');
-  const [p0, w0] = [peasant.base_reach_pps, worker.base_reach_pps];
-  engine.playCard('polish_party_agenda');
-  choose(engine, 'polish_party_agenda.organize_voters');
-  assert.ok(peasant.base_reach_pps > p0 && worker.base_reach_pps > w0);
-  assert.match(content(engine), /among the workers \+[\d.]+ and the peasants \+[\d.]+\./);
-  choose(engine, 'root');
-  assert.equal(Q.time, 2);
+  // Each kind of work in a fresh game: what it moves and the characteristic it seeds (a party of the workers: ×1.10 among them).
+  const run = (option, check) => {
+    const e = dendry.startGame(), q = e.state.qualities, S = q.S;
+    const before = {seeds: Object.assign({}, S.actors.pps.profile.seeds), reach: {}, unions: {}};
+    for (const c of S.society.cells) before.reach[c.id] = c.base_reach_pps;
+    for (const id of Object.keys(S.unions)) before.unions[id] = {reach: S.unions[id].reach, readiness: S.unions[id].readiness};
+    const centrum = S.actors.pps.factions.centrum.dissent, kpp = S.actors.relations.kpp;
+    playFromHand(e, 'polish_party_agenda');
+    choose(e, 'polish_party_agenda.' + option);
+    const seeds = id => Math.round((S.actors.pps.profile.seeds[id] - before.seeds[id]) * 100) / 100;
+    const cell = f => S.society.cells.find(f);
+    const grew = f => Math.round((cell(f).base_reach_pps - before.reach[cell(f).id]) * 1000) / 1000;
+    check({S, seeds, grew, before, centrum, kpp, text: content(e)});
+    choose(e, 'root');
+    assert.equal(q.time, 2, option + ' spends the month');
+  };
+  run('organize_unions', ({S, seeds, before, text}) => {
+    for (const id of ['industry', 'rail', 'farm_labour']) assert.ok(Math.abs(S.unions[id].reach - before.unions[id].reach - 1.1) < 1e-9, id);
+    assert.ok(seeds('unionism') >= 1.5);
+    assert.match(text, /work in all three unions/);
+  });
+  run('organize_rural', ({S, seeds, grew, before}) => {
+    assert.equal(grew(c => c.class_id === 'rural'), 2);
+    assert.equal(grew(c => c.class_id === 'workers'), 0);
+    assert.ok(Math.abs(S.unions.farm_labour.reach - before.unions.farm_labour.reach - 1.1) < 1e-9);
+    assert.ok(seeds('worker_peasant') >= 1.5);
+  });
+  run('organize_minorities', ({seeds, grew}) => {
+    assert.equal(grew(c => c.identity_id === 'jewish'), 2);
+    assert.equal(grew(c => c.identity_id === 'polish'), 0);
+    assert.ok(seeds('federalism') >= 1.5);
+  });
+  run('organize_councils', ({seeds, grew}) => {
+    assert.equal(grew(c => c.class_id === 'workers'), 1.1);
+    assert.equal(grew(c => c.class_id === 'new_middle'), 1);
+    assert.ok(seeds('reformism') >= 1 && seeds('parliamentarism') >= 1);
+  });
+  run('organize_rallies', ({S, seeds, grew, before}) => {
+    assert.equal(grew(c => c.class_id === 'workers'), 1.65);
+    assert.equal(S.unions.industry.readiness, before.unions.industry.readiness + 5);
+    assert.ok(seeds('strike_action') >= 1.5);
+  });
+  run('kpp_work', ({S, seeds, centrum, kpp, text}) => {
+    assert.equal(S.actors.relations.kpp, kpp + 5);
+    assert.equal(S.actors.pps.factions.centrum.dissent, centrum + 3);
+    assert.ok(seeds('radicalism') >= 2);
+    assert.match(text, /our relations with the KPP improve/);
+  });
 });
 
 // Z — 0.79 (decision 8A of 14 X 2026): the card of unity says why it is here — the discontented faction, its demand (also the
@@ -311,13 +350,13 @@ test('Brak gotówki in the game: with an empty cash box the party agenda still o
   PolishParty.writeMirrors(Q);
   engine.playPinnedCard('polish_party_agenda');
   assert.ok(!ids(engine).includes('polish_party_agenda.apparatus'), 'Z — 1.18: no apparatus');
-  // Z — 0.78 (decision 4A): organisational work among our voters, the groups of the character of the party.
-  choose(engine, 'polish_party_agenda.organize_voters');
-  assert.match(content(engine), /Organisers work among our voters: the base reach of PPS among the workers \+2\.2\./, '×1.10 in the party’s own groups');
+  // Z — 1.19 (decision 1A): the work in the town councils, among the workers ×1.10 in the party’s own groups.
+  choose(engine, 'polish_party_agenda.organize_councils');
+  assert.match(content(engine), /The councillors of PPS deal with the everyday matters of the towns/);
   choose(engine, 'root');
   assert.equal(Q.time, 2);
   assert.ok(Q.S.party_orgs.cash >= 0);
-  assert.ok(Q.S.society.cells.filter(c => c.class_id === 'workers').every(c => Math.abs(c.base_reach_pps - 22.2) < 1e-9));
+  assert.ok(Q.S.society.cells.filter(c => c.class_id === 'workers').every(c => Math.abs(c.base_reach_pps - 21.1) < 1e-9));
 });
 
 test('the Milicja card recruits for 1 R and settles the month; the larger Milicja needs no upkeep (Z — 0.56)', () => {
@@ -331,7 +370,9 @@ test('the Milicja card recruits for 1 R and settles the month; the larger Milicj
   assert.deepEqual([Q.time, Q.S.militia.strength, Q.pps_militia_strength], [2, 350, 350], 'Z — 0.89: +150 members');
   const ledger = Q.S.party_orgs.last_ledger;
   assert.equal(ledger.t, 1);
-  assert.ok(Math.abs(Q.S.party_orgs.cash - (cash - 1)) < 1e-9, 'only the 1 R of the recruitment');
+  // Z — 1.19 (decision 2B): the dues of the settled month come in.
+  assert.ok(Math.abs(Q.S.party_orgs.cash - (cash - 1 + ledger.dues)) < 1e-9, 'only the 1 R of the recruitment');
+  assert.equal(ledger.dues, 0.7);
   engine.goToScene('status');
   // The top bar (7 XI 2026): the Party tab shows the Milicja PPS under its own heading.
   assert.match(content(engine), /Organised members:[^0-9]{0,20}350/);
