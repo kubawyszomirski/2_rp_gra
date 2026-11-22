@@ -3301,22 +3301,51 @@
       S.actors.relations[id] !== undefined).map(id => {
       const distance = Math.abs(stance.position - stanceOf(id, stance.topic));
       const delta = distance >= 3 ? OUTSIDE_OBJECTION.max : distance === 2 ? OUTSIDE_OBJECTION.step : 0;
-      return {party: id, delta: rules.profileActive(S, 'reformism') ? Math.round(delta / 2) : delta};
+      const reformism = rules.profileActive(S, 'reformism');
+      // Z — 1.28: the points of patience a reform takes — 1, or 2 when the club rejects it strongly (reformism: 1).
+      return {party: id, delta: reformism ? Math.round(delta / 2) : delta, points: distance >= 3 && !reformism ? 2 : 1};
     }).filter(o => o.delta > 0).sort((a, b) => b.delta - a.delta || compareId(a.party, b.party));
   }
+  // Z — 1.28 (decision A of 22 XI 2026, after the measurement of 1.27): the patience of the clubs outside the cabinet. Each reform of ours
+  // that a club rejects takes its points; at 4 the club goes into opposition to this cabinet and votes against it whatever it thinks of
+  // its programme. A withdrawn reform returns its points, courting a club returns 2, and a new cabinet starts afresh (the points live
+  // on the cabinet). The relation still worsens as in 1.27, but never twice for the same reform (`already`).
+  const PATIENCE_LIMIT = 4;
+  const patienceOf = S => (S.cabinet && S.cabinet.patience) || {};
+  function oppositionClubs(S) {
+    const cabinet = S.cabinet, points = patienceOf(S);
+    if (!cabinet) return [];
+    const bound = cabinet.partner_ids.concat(cabinet.supporter_ids);
+    return Object.keys(points).filter(id => points[id] >= PATIENCE_LIMIT && bound.indexOf(id) < 0).sort();
+  }
+  function changePatience(S, id, points) {
+    const cabinet = S.cabinet;
+    cabinet.patience = Object.assign({}, cabinet.patience || {});
+    cabinet.patience[id] = Math.max(0, (cabinet.patience[id] || 0) + points);
+  }
   function applyOutsideObjections(Q, key, target, already) {
-    const S = Q.S, t = Q.time, list = outsideObjections(Q, key).filter(o => (already || []).indexOf(o.party) < 0);
-    for (const o of list) changeRelation(Q, o.party, -o.delta, 'reform_outside:' + key + ':t' + t);
+    const S = Q.S, t = Q.time, list = outsideObjections(Q, key);
+    const before = oppositionClubs(S);
+    for (const o of list) {
+      if ((already || []).indexOf(o.party) < 0) changeRelation(Q, o.party, -o.delta, 'reform_outside:' + key + ':t' + t);
+      changePatience(S, o.party, o.points);
+    }
     if (list.length) {
-      S.cabinet.disputed = (S.cabinet.disputed || []).concat([{key: key, t: t, target: target || null, clubs: list.map(o => o.party)}]);
+      S.cabinet.disputed = (S.cabinet.disputed || []).concat([{key: key, t: t, target: target || null, clubs: list.map(o => o.party),
+        points: Object.fromEntries(list.map(o => [o.party, o.points]))}]);
       S.history.reasons.push({t: t, kind: 'reform_outside', key: key, clubs: list});
     }
-    return list;
+    const now = oppositionClubs(S);
+    return list.map(o => Object.assign({}, o, {opposition: now.indexOf(o.party) >= 0 && before.indexOf(o.party) < 0}));
   }
-  // The line of the result: who outside the cabinet is displeased.
+  // The line of the result: who outside the cabinet is displeased, and who goes into opposition now.
   function outsideObjectionsLine(list) {
-    return list.length ? L('Outside the cabinet ' + plainParties(list.map(o => o.party)) + ' are displeased; our relations with them worsen.',
-      'Poza rządem niezadowoleni: ' + plainParties(list.map(o => o.party)) + '; nasze stosunki z nimi się psują.') : '';
+    if (!list.length) return '';
+    const gone = list.filter(o => o.opposition).map(o => o.party);
+    return L('Outside the cabinet ' + plainParties(list.map(o => o.party)) + ' are displeased; our relations with them worsen.',
+      'Poza rządem niezadowoleni: ' + plainParties(list.map(o => o.party)) + '; nasze stosunki z nimi się psują.') +
+      (gone.length ? '<br>' + L(capitalise(plainParties(gone)) + (gone.length > 1 ? ' go' : ' goes') + ' into opposition to our cabinet.',
+        capitalise(plainParties(gone)) + (pluralParties(gone) ? ' przechodzą' : ' przechodzi') + ' do opozycji wobec naszego rządu.') : '');
   }
 
   // The opposition's motion of no confidence (art. 58 of the March constitution: the cabinet resigns at the demand of the Sejm). In a
@@ -3329,7 +3358,7 @@
     if (!cabinet || cabinet.status !== 'active' || cabinet.partner_ids.indexOf('pps') < 0 || formationPending(Q)) return false;
     if (cabinet.dismissal_motion && cabinet.dismissal_motion.status === 'open') return false;
     if (cabinet.opposition_motion_at !== undefined && cabinet.opposition_motion_at !== null && t - cabinet.opposition_motion_at < OPPOSITION_MOTION_REST) return false;
-    const fc = forecast(Q, cabinetAsOffer(S), cabinet.partner_ids.concat(cabinet.supporter_ids));
+    const fc = forecast(Q, cabinetAsOffer(S), cabinet.partner_ids.concat(cabinet.supporter_ids), oppositionClubs(S));
     return fc.no > fc.yes;
   }
   function openOppositionMotion(Q, t) {
@@ -3351,19 +3380,22 @@
   // The reform to withdraw: the last disputed one that still runs.
   function noConfidenceTarget(Q) {
     const S = Q.S, proj = globalThis.PolishProjects, list = (S.cabinet && S.cabinet.disputed) || [];
-    for (let i = list.length - 1; i >= 0; i--) if (list[i].target && proj && proj.stoppable(Q, list[i].target)) return list[i];
+    for (let i = list.length - 1; i >= 0; i--) if (!list[i].withdrawn && list[i].target && proj && proj.stoppable(Q, list[i].target)) return list[i];
     return null;
   }
   // The club to win over: of those that would vote for the dismissal, the one closest to changing its mind.
   function noConfidenceClub(Q) {
     const S = Q.S, cabinet = S.cabinet, offer = cabinetAsOffer(S), bound = cabinet.partner_ids.concat(cabinet.supporter_ids);
+    // Z — 1.28: first a club that left us for lost patience, the one closest to coming back; endecja never.
+    const points = patienceOf(S), lost = oppositionClubs(S).filter(id => id !== 'zln').sort((a, b) => points[a] - points[b] || compareId(a, b));
+    if (lost.length) return lost[0];
     // The National Democrats are the main enemy of PPS: they cannot be won over (Z — 1.27).
     const list = S.parliament.clubs.filter(c => ['pps', 'kpp', 'zln'].indexOf(c.id) < 0 && ACTOR_PROFILES[c.id] && bound.indexOf(c.id) < 0)
       .map(c => ({id: c.id, stance: programmeStance(S, c.id, offer)})).filter(c => c.stance < VOTE_AGAINST_BELOW)
       .sort((a, b) => b.stance - a.stance || compareId(a.id, b.id));
     return list.length ? list[0].id : null;
   }
-  const NO_CONFIDENCE = Object.freeze({withdraw_relation: 8, withdraw_lewica: 5, court_relation: 12, court_cost: 1});
+  const NO_CONFIDENCE = Object.freeze({withdraw_relation: 8, withdraw_lewica: 5, court_relation: 12, court_cost: 1, court_patience: 2});
   function noConfidenceStatus(Q, option) {
     const S = Q.S;
     if (!noConfidenceAvailable(Q)) return {available: false, reason: L('No motion of the opposition is open.', 'Nie ma wniosku opozycji.')};
@@ -3378,18 +3410,20 @@
   }
   function noConfidenceView(Q) {
     const S = Q.S, m = oppositionMotion(S);
-    const fc = forecast(Q, cabinetAsOffer(S), S.cabinet.partner_ids.concat(S.cabinet.supporter_ids));
+    const fc = forecast(Q, cabinetAsOffer(S), S.cabinet.partner_ids.concat(S.cabinet.supporter_ids), oppositionClubs(S));
     Q.pl_nc_intro = L('The opposition has gathered the signatures for a motion of no confidence; the Sejm votes at the settlement of ' + rules.monthYear(m.opened_at + 1, 'gen') +
       '. Today ' + fc.no + ' MPs would vote to dismiss the cabinet and ' + fc.yes + ' would stand by it.',
       'Opozycja zebrała podpisy pod wnioskiem o wotum nieufności; Sejm zagłosuje przy rozliczeniu ' + rules.monthYear(m.opened_at + 1, 'gen') +
-      '. Dziś ' + fc.no + ' posłów głosowałoby za odwołaniem rządu, a ' + fc.yes + ' stanęłoby za nim.');
+      '. Dziś ' + fc.no + ' posłów głosowałoby za odwołaniem rządu, a ' + fc.yes + ' stanęłoby za nim.') +
+      (oppositionClubs(S).length ? ' ' + L('Our reforms have turned ' + plainParties(oppositionClubs(S)) + ' against us.',
+        'Nasze reformy zraziły do nas na dobre: ' + plainParties(oppositionClubs(S)) + '.') : '');
     const target = noConfidenceTarget(Q), club = noConfidenceClub(Q);
     Q.pl_nc_withdraw_line = target ? L('Cost: 0 budget units. We stop „' + target.target.name[0] + '”, which also saves its spending; ' +
       plainParties(target.clubs) + ' soften, and the Left of PPS is displeased.', 'Koszt: 0 jednostek budżetu. Wstrzymujemy „' + target.target.name[1] +
       '”, co oszczędza też jego wydatki; ' + plainParties(target.clubs) + ' łagodnieją, a Lewica PPS jest niezadowolona.') : '';
     Q.pl_nc_club = club ? plainParties([club]) : '';
-    Q.pl_nc_club_line = club ? L('Cost: 1 resource. Talks and favours: our relations with ' + plainParties([club]) + ' clearly improve.',
-      'Koszt: 1 jednostka środków. Rozmowy i względy: nasze stosunki z klubem (' + plainParties([club]) + ') wyraźnie się poprawiają.') : '';
+    Q.pl_nc_club_line = club ? L('Cost: 1 resource. Talks and favours: our relations with ' + plainParties([club]) + ' clearly improve, and some of its patience returns.',
+      'Koszt: 1 jednostka środków. Rozmowy i względy: nasze stosunki z klubem (' + plainParties([club]) + ') wyraźnie się poprawiają, a jego cierpliwość częściowo wraca.') : '';
     for (const option of ['withdraw', 'court', 'vote']) Q['pl_nc_' + option + '_why'] = noConfidenceStatus(Q, option).reason;
   }
   function noConfidenceChoose(Q, option) {
@@ -3401,6 +3435,9 @@
       const entry = noConfidenceTarget(Q);
       globalThis.PolishProjects.stopTarget(Q, entry.target, 'no_confidence');
       for (const id of entry.clubs) if (S.actors.relations[id] !== undefined) changeRelation(Q, id, NO_CONFIDENCE.withdraw_relation, 'no_confidence_withdraw:' + m.id);
+      // Z — 1.28: the withdrawn reform returns the patience it took.
+      for (const id of Object.keys(entry.points || {})) changePatience(S, id, -entry.points[id]);
+      entry.withdrawn = true;
       factionReaction(Q, 'lewica', {dissent: NO_CONFIDENCE.withdraw_lewica}, {id: 'no_confidence_withdraw:' + m.id, kind: 'cabinet_policy', reverse: null});
       lines.push(L('We withdraw „' + entry.target.name[0] + '”; its spending stops.', 'Wycofujemy się z reformy „' + entry.target.name[1] + '”; jej wydatki ustają.'),
         L(capitalise(plainParties(entry.clubs)) + ' soften, and the Left of PPS is displeased.', capitalise(plainParties(entry.clubs)) + ' łagodnieją, a Lewica PPS jest niezadowolona.'));
@@ -3408,13 +3445,14 @@
       const club = noConfidenceClub(Q);
       S.party_orgs.cash = Math.max(0, Math.round((S.party_orgs.cash - NO_CONFIDENCE.court_cost) * 10) / 10);
       changeRelation(Q, club, NO_CONFIDENCE.court_relation, 'no_confidence_court:' + m.id);
+      changePatience(S, club, -NO_CONFIDENCE.court_patience);
       lines.push(L('Our envoys talk to ' + plainParties([club]) + '; relations with them clearly improve.', 'Nasi wysłannicy rozmawiają z klubem (' + plainParties([club]) +
         '); stosunki z nim wyraźnie się poprawiają.'));
     } else {
       lines.push(L('We let the Sejm vote.', 'Pozwalamy Sejmowi głosować.'));
     }
     m.answer = option;
-    const fc = forecast(Q, cabinetAsOffer(S), S.cabinet.partner_ids.concat(S.cabinet.supporter_ids));
+    const fc = forecast(Q, cabinetAsOffer(S), S.cabinet.partner_ids.concat(S.cabinet.supporter_ids), oppositionClubs(S));
     lines.push(fc.no > fc.yes ? L('Today the cabinet would still lose the vote.', 'Dziś rząd nadal przegrałby głosowanie.') :
       L('Today the cabinet would survive the vote.', 'Dziś rząd przetrwałby głosowanie.'));
     Q.pl_nc_result = lines.join('<br>');
@@ -3786,6 +3824,8 @@
       if (club.id === 'pps') vote = ppsVote;
       else if (bound.indexOf(club.id) >= 0) vote = 'no';
       else if ((motion.movers || []).indexOf(club.id) >= 0) vote = 'yes';
+      // Z — 1.28: a club whose patience with this cabinet has run out votes for its dismissal.
+      else if (oppositionClubs(S).indexOf(club.id) >= 0) vote = 'yes';
       else if (club.id === 'kpp' || !ACTOR_PROFILES[club.id]) vote = 'abstain';
       else vote = programmeStance(S, club.id, offer) < VOTE_AGAINST_BELOW ? 'yes' : 'abstain';
       const dissidents = club.id === 'psl_piast' && vote === 'no' && cabinet.partner_ids.concat(cabinet.supporter_ids).indexOf('zln') >= 0 ? piastDissidents(S) : 0;
@@ -4913,6 +4953,8 @@
     npcOffer: npcOffer,
     programmeStance: programmeStance,
     outsideObjections: outsideObjections,
+    PATIENCE_LIMIT: PATIENCE_LIMIT,
+    oppositionClubs: oppositionClubs,
     applyOutsideObjections: applyOutsideObjections,
     outsideObjectionsLine: outsideObjectionsLine,
     oppositionMotionDue: oppositionMotionDue,

@@ -824,3 +824,41 @@ test('Zrażanie 1.27: a reform of a PPS ministry costs the relation with the clu
   assert.equal(S.actors.relations.psl_wyzwolenie, before.wyz);
   assert.match(G.outsideObjectionsLine(list), /Outside the cabinet .+ are displeased/);
 });
+
+// Z — 1.28 (decision A of 22 XI 2026): the patience of the clubs outside the cabinet — 1 point for a reform they reject, 2 when they
+// reject it strongly; at 4 a club goes into opposition and votes against the cabinet; a withdrawn reform returns its points.
+test('Cierpliwość klubów 1.28: a few strongly left reforms turn the centre against a minority cabinet; withdrawing one returns its points', () => {
+  const engine = dendry.startGame(1922, 'pl');
+  const Q = engine.state.qualities;
+  try {
+    november(engine, LEFT_SEJM_ROWS);
+    strongLeft(engine);
+    dendry.formCabinet(engine, { configuration: 'left_minority', mode: 'member' });
+    const S = Q.S, G = PolishGovernment;
+    assert.equal(G.PATIENCE_LIMIT, 4);
+    // Moderate reforms do not anger PSL Piast and NPR.
+    for (const key of ['labor_rights.inspection', 'civil_liberties.press_freedom']) G.applyOutsideObjections(Q, key, null, []);
+    assert.ok(!G.oppositionClubs(S).includes('psl_piast') && !G.oppositionClubs(S).includes('npr'));
+    assert.equal(G.oppositionMotionDue(Q, Q.time), false);
+    const strong = ['finance_package.progressive', 'social_welfare.insurance', 'economic_democracy.works_councils', 'industrial_policy.public_control',
+      'education_program.secular', 'economic_democracy.socialise_mining'];
+    let n = 0, line = '';
+    for (const key of strong) {
+      n += 1;
+      const list = G.applyOutsideObjections(Q, key, { kind: 'project', id: 'fixture-' + n, name: ['A reform', 'Reforma'] }, []);
+      line = G.outsideObjectionsLine(list) || line;
+      if (G.oppositionMotionDue(Q, Q.time)) break;
+    }
+    assert.ok(n <= 6, 'the opposition outnumbers the cabinet after a handful of strongly left reforms (' + n + ')');
+    assert.ok(G.oppositionClubs(S).includes('psl_piast'));
+    assert.match(line, /do opozycji wobec naszego rządu/);
+    // Withdrawing a reform returns its points.
+    const entry = S.cabinet.disputed.at(-1), before = { ...S.cabinet.patience };
+    for (const id of Object.keys(entry.points)) S.cabinet.patience[id] -= entry.points[id];
+    assert.ok(Object.keys(entry.points).every(id => S.cabinet.patience[id] === before[id] - entry.points[id]));
+    // A new cabinet starts afresh: the points live on the cabinet.
+    assert.deepEqual(Object.keys(S.cabinet.patience).length > 0, true);
+  } finally {
+    PolishRules.setLanguage('en');
+  }
+});
