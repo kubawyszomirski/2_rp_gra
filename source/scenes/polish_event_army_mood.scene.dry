@@ -1,5 +1,5 @@
-title: The Mood of the Army
-subtitle: Reports from the garrisons about the officers loyal to Piłsudski.
+title: Unrest in the Army
+subtitle: Reports from the garrisons about the officers loyal to Piłsudski; PPS decides how it answers.
 new-page: true
 tags: pl_event
 view-if: {! return !!Q.S && typeof PolishSecurity !== 'undefined' && PolishSecurity.armyMoodDue(Q) !}
@@ -8,6 +8,8 @@ on-arrival: {!
 // "seething" (pressure towards a coup from 40) and to "ready for a coup" (the political crisis from 55), the player learns it on
 // the screen, with the causes of the last month and what eases the tension. It changes nothing by itself.
 PolishSecurity.armyMoodView(Q);
+// Z — 1.24 (decision 8A of 22 XI 2026): the event is a decision with three answers, without this month's action.
+PolishSecurity.unrestView(Q);
 !}
 
 = [+ pl_army_title +]
@@ -16,11 +18,41 @@ PolishSecurity.armyMoodView(Q);
 
 [+ pl_army_help +]
 
-- @seen
+- @appoint
+- @call_to_order
+- @ignore
 
-@seen
-title: Continue
+@appoint
+title: Back a high post in the army for Piłsudski
+subtitle: The pressure towards a coup clearly falls, and the Piłsudczycy in PPS are content; the Centre and the Left are displeased, and the army leans a little more towards him.
+choose-if: {! return PolishSecurity.unrestStatus(Q, 'appoint').available !}
+unavailable-subtitle: [+ pl_unrest_appoint_why +]
 on-arrival: {!
-PolishSecurity.armyMoodSeen(Q);
+PolishSecurity.unrestChoose(Q, 'appoint');
 !}
-go-to: root
+go-to: result
+
+@call_to_order
+title: Call Piłsudski to order
+subtitle: We publicly demand that the army keep out of politics. Piłsudski is irritated: relations with him worsen, the pressure towards a coup rises a little, and the Piłsudczycy in PPS are displeased.
+on-arrival: {!
+PolishSecurity.unrestChoose(Q, 'call_to_order');
+!}
+go-to: result
+
+@ignore
+title: Wave it off
+subtitle: Nothing changes.
+on-arrival: {!
+PolishSecurity.unrestChoose(Q, 'ignore');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= [+ pl_army_title +]
+
+[+ pl_unrest_result +]
+
+- @root: Continue.

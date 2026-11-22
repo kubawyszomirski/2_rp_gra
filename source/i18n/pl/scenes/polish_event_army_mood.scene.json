@@ -2,8 +2,14 @@
   "source": "scenes/polish_event_army_mood.scene.dry",
   "status": "complete",
   "lines": {
-    "title: The Mood of the Army": "title: Nastroje w wojsku",
-    "subtitle: Reports from the garrisons about the officers loyal to Piłsudski.": "subtitle: Doniesienia z garnizonów o oficerach wiernych Piłsudskiemu.",
-    "title: Continue": "title: Dalej"
+    "title: Unrest in the Army": "title: Niepokój w wojsku",
+    "subtitle: Reports from the garrisons about the officers loyal to Piłsudski; PPS decides how it answers.": "subtitle: Doniesienia z garnizonów o oficerach wiernych Piłsudskiemu; PPS decyduje, jak odpowie.",
+    "title: Back a high post in the army for Piłsudski": "title: Poprzyj powierzenie Piłsudskiemu wysokiego stanowiska w wojsku",
+    "subtitle: The pressure towards a coup clearly falls, and the Piłsudczycy in PPS are content; the Centre and the Left are displeased, and the army leans a little more towards him.": "subtitle: Presja na zamach wyraźnie spada, a piłsudczycy w PPS są zadowoleni; Centrum i Lewica są niezadowolone, a wojsko trochę bardziej mu sprzyja.",
+    "title: Call Piłsudski to order": "title: Przywołaj Piłsudskiego do porządku",
+    "subtitle: We publicly demand that the army keep out of politics. Piłsudski is irritated: relations with him worsen, the pressure towards a coup rises a little, and the Piłsudczycy in PPS are displeased.": "subtitle: Publicznie żądamy, by wojsko trzymało się z dala od polityki. Piłsudski jest rozdrażniony: stosunki z nim się psują, presja na zamach trochę rośnie, a piłsudczycy w PPS są niezadowoleni.",
+    "title: Wave it off": "title: Machnij ręką",
+    "subtitle: Nothing changes.": "subtitle: Nic się nie zmienia.",
+    "- @root: Continue.": "- @root: Dalej."
   }
 }

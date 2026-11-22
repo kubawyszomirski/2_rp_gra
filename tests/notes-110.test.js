@@ -8,12 +8,12 @@ const dendry = require('./helpers/dendry.js');
 const plain = x => (x == null ? '' : typeof x === 'string' ? x : Array.isArray(x) ? x.map(plain).join('') : plain(x.content));
 const content = engine => plain(engine.ui.paragraphs);
 
-test('Wojsko 1.10 (decision 4A): the mood of the army in a word on the Overview, a note of each change, an event on the screen at "seething" and "ready for a coup"', () => {
+test('Wojsko 1.10 (decision 4A): the mood of the army in a word on the Overview, a note of each change, a card on the screen when the army becomes agitated (1.24)', () => {
   const engine = dendry.startGame(1922, 'pl');
   const Q = engine.state.qualities, S = Q.S, SEC = globalThis.PolishSecurity, TOP = globalThis.PolishTopbar;
   try {
     const word = p => { S.coup.pressure = p; return SEC.armyMoodWord(S); };
-    assert.deepEqual([word(0), word(24.9), word(25), word(40), word(55)], ['spokojne', 'spokojne', 'niespokojne', 'wrze', 'gotowe do zamachu']);
+    assert.deepEqual([word(0), word(24.9), word(25), word(40), word(55)], ['spokojne', 'spokojne', 'niespokojne', 'wzburzone', 'gotowe do zamachu']);
     const settle = p => { S.coup.pressure = p; SEC.settleArmyMood(Q, Q.time - 1); };
     settle(30);
     assert.equal(SEC.armyNotice(Q), 'Nastroje w wojsku są niespokojne: oficerowie coraz głośniej krytykują rząd i Sejm.');
@@ -23,32 +23,49 @@ test('Wojsko 1.10 (decision 4A): the mood of the army in a word on the Overview,
     // Seething: an event with the causes of the last month and what eases the tension.
     S.coup.history.push({ t: Q.time - 1, pressure: 42, delta: 3.7, parts: { military_case: 1.7, authority: 2, no_cabinet: 0 } });
     settle(42);
-    assert.equal(SEC.armyNotice(Q), 'W wojsku wrze: oficerowie otwarcie mówią o marszu na Warszawę.');
+    assert.equal(SEC.armyNotice(Q), 'Wojsko jest wzburzone: oficerowie otwarcie mówią o marszu na Warszawę.'); // Z — 1.24
     assert.equal(SEC.armyMoodDue(Q), true);
     TOP.overviewView(Q);
-    assert.equal(Q.pl_top_army, '<span class="pl-army-alarm">wrze</span>', 'in red from "seething"');
+    assert.equal(Q.pl_top_army, '<span class="pl-army-alarm">wzburzone</span>', 'in red from "agitated"');
     assert.equal(globalThis.PolishRules.nextEvent(Q, ['polish_event_army_mood']), 'polish_event_army_mood', 'the event has its place in the queue');
     engine.goToScene('polish_event_army_mood');
-    assert.match(content(engine), /Wojsko wrze/);
+    assert.match(content(engine), /Niepokój w wojsku/);
     assert.match(content(engine), /W kasynach oficerskich mówi się o marszu na Warszawę\./);
     assert.match(content(engine), /Oficerów popycha do tego to, że Sejm stracił autorytet i spór o wojsko wciąż jest otwarty\./);
     assert.match(content(engine), /Napięcie słabnie, gdy kraj ma stały rząd/);
-    dendry.choose(engine, 'polish_event_army_mood.seen');
+    // Z — 1.24 (decision 8A): a decision with three answers; outside the cabinet the high post cannot be offered.
+    const ids = (engine.getCurrentChoices() || []).map(c => c.id);
+    assert.deepEqual(ids, ['polish_event_army_mood.appoint', 'polish_event_army_mood.call_to_order', 'polish_event_army_mood.ignore']);
+    assert.equal(engine.getCurrentChoices()[0].canChoose, false);
+    assert.match(Q.pl_unrest_appoint_why, /tylko rząd z udziałem PPS/);
+    dendry.choose(engine, 'polish_event_army_mood.ignore');
+    assert.match(content(engine), /PPS macha na to ręką\. Nic się nie zmienia\./);
     assert.equal(SEC.armyMoodDue(Q), false, 'seen once');
     settle(45);
     assert.equal(SEC.armyMoodDue(Q), false, 'the same mood brings no new event');
-    // Ready for a coup: a second event.
+    // Z — 1.24: "ready for a coup" brings no second card.
     settle(56);
-    assert.equal(SEC.armyMoodDue(Q), true);
-    SEC.armyMoodView(Q);
-    assert.equal(Q.pl_army_title, 'Wojsko gotowe do zamachu');
-    assert.match(Q.pl_army_text, /^Z garnizonów napływają doniesienia o przygotowaniach do zamachu/);
-    SEC.armyMoodSeen(Q);
+    assert.equal(SEC.armyMoodDue(Q), false, 'no card at "ready for a coup"');
     // The army calms down; a new rise is announced again.
     settle(10);
     assert.equal(SEC.armyNotice(Q), 'Nastroje w wojsku się uspokajają: oficerowie są spokojni.');
-    settle(41);
+    S.coup.pressure = 41;
+    SEC.settleArmyMood(Q, Q.time); // a later month (Z — 1.24: one key per rise)
     assert.equal(SEC.armyMoodDue(Q), true, 'a new rise after calm is an event again');
+    // Z — 1.24: with PPS in the cabinet and good relations the high post lowers the pressure; calling him to order raises it.
+    S.cabinet.partner_ids = S.cabinet.partner_ids.concat(['pps']);
+    globalThis.PolishGovernment.changeRelation(Q, 'pilsudski', 50 - S.actors.relations.pilsudski, 'fixture');
+    assert.match(SEC.unrestStatus(Q, 'appoint').reason, /nie są dość dobre/);
+    globalThis.PolishGovernment.changeRelation(Q, 'pilsudski', 10, 'fixture');
+    const p0 = S.coup.pressure, rel = S.actors.relations.pilsudski, dP = S.actors.pps.factions.pilsudczycy.dissent, dC = S.actors.pps.factions.centrum.dissent;
+    SEC.unrestChoose(Q, 'appoint');
+    assert.deepEqual([S.coup.pressure, S.actors.relations.pilsudski, S.actors.pps.factions.pilsudczycy.dissent, S.actors.pps.factions.centrum.dissent],
+      [Math.max(0, p0 - 10), Math.min(100, rel + 5), Math.max(0, dP - 5), Math.min(100, dC + 3)]);
+    assert.equal(SEC.armyMoodDue(Q), false, 'answered');
+    const p1 = S.coup.pressure, rel1 = S.actors.relations.pilsudski;
+    S.politics.due.polish_event_army_mood = 'army:2:fixture';
+    SEC.unrestChoose(Q, 'call_to_order');
+    assert.deepEqual([S.coup.pressure, S.actors.relations.pilsudski], [Math.min(100, p1 + 3), Math.max(0, rel1 - 10)]);
   } finally {
     globalThis.PolishRules.setLanguage('en');
   }

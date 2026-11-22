@@ -1211,7 +1211,8 @@
   // screen, and the first rise to "seething" and to "ready for a coup" (again after the army has calmed down) is an event on the
   // screen. In the test campaigns: restless about VIII 1924, seething about VI 1925, ready about XII 1925, the coup about III 1926.
   const ARMY_MOOD_FROM = Object.freeze([25, 40, 55]);
-  const ARMY_MOOD_WORDS = Object.freeze([['calm', 'spokojne'], ['restless', 'niespokojne'], ['seething', 'wrze'], ['ready for a coup', 'gotowe do zamachu']]);
+  // Z — 1.24 (the user's note of 22 XI 2026): "agitated" (wzburzone) instead of "seething" (wrze).
+  const ARMY_MOOD_WORDS = Object.freeze([['calm', 'spokojne'], ['restless', 'niespokojne'], ['agitated', 'wzburzone'], ['ready for a coup', 'gotowe do zamachu']]);
   function armyMoodLevel(S) {
     const C = S.coup;
     if (!C) return 0;
@@ -1223,7 +1224,9 @@
     const S = Q.S, C = S.coup, level = armyMoodLevel(S), before = C.mood || 0;
     C.mood = level;
     if (level !== before) C.mood_change = {t: t, from: before, to: level};
-    if (level >= 2 && level > (C.mood_announced || 0)) {
+    // Z — 1.24 (decision 8A of 22 XI 2026): one urgent card when the army first becomes agitated (or more) — no second card at
+    // "ready for a coup"; it comes again only after the army has calmed down.
+    if (level >= 2 && (C.mood_announced || 0) < 2) {
       C.mood_announced = level;
       S.politics.due.polish_event_army_mood = 'army:' + level + ':t' + t;
     }
@@ -1235,11 +1238,11 @@
     if (!ch || ch.t !== Q.time - 1 || S.chapter.status === 'ended') return '';
     if (ch.to < ch.from) return [L('The mood in the army calms down: the officers are calm.', 'Nastroje w wojsku się uspokajają: oficerowie są spokojni.'),
       L('The mood in the army calms down, but the officers still criticise the government and the Sejm.', 'Nastroje w wojsku się uspokajają, ale oficerowie wciąż krytykują rząd i Sejm.'),
-      L('The mood in the army calms down a little, but it is still seething.', 'Nastroje w wojsku trochę się uspokajają, ale w wojsku wciąż wrze.')][ch.to];
+      L('The mood in the army calms down a little, but it is still agitated.', 'Nastroje w wojsku trochę się uspokajają, ale wojsko wciąż jest wzburzone.')][ch.to];
     return [L('The officers are calm.', 'Oficerowie są spokojni.'),
       L('The mood in the army is restless: officers criticise the government and the Sejm more and more loudly.',
         'Nastroje w wojsku są niespokojne: oficerowie coraz głośniej krytykują rząd i Sejm.'),
-      L('The army is seething: officers openly talk of a march on Warsaw.', 'W wojsku wrze: oficerowie otwarcie mówią o marszu na Warszawę.'),
+      L('The army is agitated: officers openly talk of a march on Warsaw.', 'Wojsko jest wzburzone: oficerowie otwarcie mówią o marszu na Warszawę.'),
       L('The army is ready for a coup: reports of preparations come from the garrisons.', 'Wojsko jest gotowe do zamachu: z garnizonów napływają doniesienia o przygotowaniach.')][ch.to];
   }
   // The event of a rise to "seething" or "ready for a coup".
@@ -1257,7 +1260,7 @@
     const last = (S.coup.history || []).slice(-1)[0], parts = last ? last.parts || {} : {};
     const causes = Object.keys(MOOD_CAUSES).filter(k => parts[k] > 0).map(k => L(MOOD_CAUSES[k][0], MOOD_CAUSES[k][1]));
     const join = list => list.length < 2 ? list.join('') : list.slice(0, -1).join(', ') + L(' and ', ' i ') + list[list.length - 1];
-    Q.pl_army_title = level >= 3 ? L('The army is ready for a coup', 'Wojsko gotowe do zamachu') : L('The army is seething', 'Wojsko wrze');
+    Q.pl_army_title = L('Unrest in the army', 'Niepokój w wojsku');
     Q.pl_army_text = (level >= 3 ?
       L('From the garrisons come reports of preparations for a coup: units loyal to Piłsudski practise their march, and his circle looks for allies. A coup may come within months.',
         'Z garnizonów napływają doniesienia o przygotowaniach do zamachu: oddziały wierne Piłsudskiemu ćwiczą wymarsz, a jego otoczenie szuka sojuszników. Zamach może przyjść w ciągu kilku miesięcy.') :
@@ -1270,6 +1273,62 @@
   function armyMoodSeen(Q) {
     const S = Q.S;
     S.coup.mood_seen = S.politics.due.polish_event_army_mood || null;
+  }
+
+  // Z — 1.24 (decision 8A of 22 XI 2026): the card of the unrest in the army is a decision of PPS, without this month's action — to back
+  // a high post in the army for Piłsudski (only with PPS in the cabinet; he refuses while our relations are not good), to call him to
+  // order, or to wave it off. A device of the game: historically Piłsudski left the army in 1923, so the post is an alternative.
+  const UNREST = Object.freeze({
+    appoint: {relation_needed: 55, relief: 10, relation: 5, loyalty: 0.03, pilsudczycy: -5, centrum: 3, lewica: 3},
+    call_to_order: {relation: -10, pressure: 3, pilsudczycy: 5},
+  });
+  const UNREST_OPTIONS = Object.freeze(['appoint', 'call_to_order', 'ignore']);
+  function unrestStatus(Q, option) {
+    const S = Q.S;
+    if (UNREST_OPTIONS.indexOf(option) < 0) return no(L('Unknown option.', 'Nieznana opcja.'));
+    if (option !== 'appoint') return OK;
+    const inCabinet = S.cabinet && S.cabinet.status === 'active' && S.cabinet.partner_ids.indexOf('pps') >= 0;
+    if (!inCabinet) return no(L('Only a cabinet with PPS can propose it.', 'Zaproponować to może tylko rząd z udziałem PPS.'));
+    if ((S.actors.relations.pilsudski || 0) < UNREST.appoint.relation_needed) {
+      return no(L('Piłsudski would refuse: our relations with him are not good enough.', 'Piłsudski odrzuci propozycję: nasze stosunki z nim nie są dość dobre.'));
+    }
+    return OK;
+  }
+  function unrestView(Q) {
+    for (const option of UNREST_OPTIONS) Q['pl_unrest_' + option + '_why'] = unrestStatus(Q, option).reason || '';
+  }
+  function unrestChoose(Q, option) {
+    const status = unrestStatus(Q, option);
+    if (!status.available) throw new Error('unrestChoose: ' + option + ': ' + status.reason);
+    const S = Q.S, t = Q.time, key = S.politics.due.polish_event_army_mood || ('army:t' + t);
+    party.syncMirrors(Q);
+    S.history.actions.push({t: t, action_id: 'coup.army_unrest.' + option, cost_t: 0});
+    if (option === 'appoint') {
+      const spec = UNREST.appoint;
+      politics.applyImpulse(Q, 'army_unrest_appoint:' + key, -spec.relief, 'army_unrest');
+      government.changeRelation(Q, 'pilsudski', spec.relation, 'army_unrest_appoint:' + key);
+      moveLoyalty(S, forceOf(S, ARMY), 'loyalty_legal', 'loyalty_pils', spec.loyalty);
+      government.factionReactions(Q, [{faction: 'pilsudczycy', dissent: spec.pilsudczycy}, {faction: 'centrum', dissent: spec.centrum},
+        {faction: 'lewica', dissent: spec.lewica}], {id: 'army_unrest_appoint:' + key, kind: 'cabinet_policy', reverse: null});
+      Q.pl_unrest_result = L('The cabinet entrusts Piłsudski with a high post in the army.<br>The pressure towards a coup clearly falls, and the Piłsudczycy in PPS are content.<br>' +
+        'The Centre and the Left are displeased, and the army leans a little more towards Piłsudski.',
+        'Rząd powierza Piłsudskiemu wysokie stanowisko w wojsku.<br>Presja na zamach wyraźnie spada, a piłsudczycy w PPS są zadowoleni.<br>' +
+        'Centrum i Lewica są niezadowolone, a wojsko trochę bardziej sprzyja Piłsudskiemu.');
+    } else if (option === 'call_to_order') {
+      const spec = UNREST.call_to_order;
+      politics.applyImpulse(Q, 'army_unrest_order:' + key, spec.pressure, 'army_unrest');
+      government.changeRelation(Q, 'pilsudski', spec.relation, 'army_unrest_order:' + key);
+      government.factionReactions(Q, [{faction: 'pilsudczycy', dissent: spec.pilsudczycy}], {id: 'army_unrest_order:' + key, kind: 'cabinet_policy', reverse: null});
+      Q.pl_unrest_result = L('PPS publicly demands that the army keep out of politics.<br>Piłsudski is irritated: relations with him worsen, and the pressure towards a coup rises a little.<br>' +
+        'The Piłsudczycy in PPS are displeased.',
+        'PPS publicznie żąda, by wojsko trzymało się z dala od polityki.<br>Piłsudski jest rozdrażniony: stosunki z nim się psują, a presja na zamach trochę rośnie.<br>' +
+        'Piłsudczycy w PPS są niezadowoleni.');
+    } else {
+      Q.pl_unrest_result = L('PPS waves it off. Nothing changes.', 'PPS macha na to ręką. Nic się nie zmienia.');
+    }
+    armyMoodSeen(Q);
+    party.writeMirrors(Q);
+    return option;
   }
 
   // ---- Views for the scenes ---------------------------------------------------------------------------------
@@ -1438,6 +1497,10 @@
     armyMoodLevel: armyMoodLevel,
     settleArmyMood: settleArmyMood,
     armyMoodWord: armyMoodWord,
+    UNREST_OPTIONS: UNREST_OPTIONS,
+    unrestStatus: unrestStatus,
+    unrestView: unrestView,
+    unrestChoose: unrestChoose,
     armyNotice: armyNotice,
     armyMoodDue: armyMoodDue,
     armyMoodView: armyMoodView,

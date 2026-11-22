@@ -165,6 +165,8 @@ const PASSIVE_EVENTS = {
   polish_event_pils_criticism: ['defend', 'reform', 'support'],
   polish_event_assassination_response: ['restraint'],
   polish_event_niewiadomski_cult: ['stay_out'],
+  // Z — 1.24: the card of the unrest in the army; the bots wave it off, as they used to read the event.
+  polish_event_army_mood: ['ignore'],
   // Z — 0.87: the card of a dispute (urgent; tried before the month's plan) and the urgent card of the government's offer.
   polish_union_agenda: ['drop'],
   polish_strike_offer: ['accept', 'continue', 'end'],
