@@ -2157,11 +2157,37 @@
   function profileTooltip(id) {
     return L('Built by: ' + PROFILES[id].builds[0] + '. Gives: ' + PROFILES[id].gives[0] + '.', 'Buduje: ' + PROFILES[id].builds[1] + '. Daje: ' + PROFILES[id].gives[1] + '.');
   }
+  // Z — 1.20 (decisions 1A–4A of 22 XI 2026): each characteristic in its own block — the name with its state in a word (adopted, ready
+  // for a resolution, maturing, a seed, excluded; never a number), then what it gives and what builds it on lines of their own; the
+  // adopted ones first, then the ready ones, then the others from the most grown; reformism and radicalism say that they exclude
+  // each other. The heading line counts the adopted ones against the two places of the chapter.
+  const PROFILE_SEED_WORD = PROFILE_READY / 2;
+  function profileStage(S, id) {
+    const P = rules.profileState(S), seeds = P ? P.seeds[id] || 0 : 0;
+    if (rules.profileActive(S, id)) return {key: 'adopted', rank: 0, seeds: seeds, word: L('adopted', 'przyjęta')};
+    if (profileExcluded(S, id)) return {key: 'excluded', rank: 4, seeds: seeds, word: L('excluded', 'wykluczona')};
+    if (seeds >= PROFILE_READY) return {key: 'ready', rank: 1, seeds: seeds, word: L('ready for a resolution', 'gotowa do uchwały')};
+    if (seeds >= PROFILE_SEED_WORD) return {key: 'growing', rank: 2, seeds: seeds, word: L('maturing', 'dojrzewa')};
+    if (seeds > 0) return {key: 'growing', rank: 2, seeds: seeds, word: L('a seed', 'zalążek')};
+    return {key: 'none', rank: 3, seeds: 0, word: ''};
+  }
   function profileView(Q) {
     const S = Q.S, own = adoptedProfiles(S);
-    // Z — 1.10 (the user's note of 8 XI 2026): each characteristic on its own line with what builds it and what it gives.
-    Q.pl_profile_html = rules.PROFILE_IDS.map(id => '<span class="' + (own.indexOf(id) >= 0 ? 'pl-profile-on' : 'pl-profile-off') + '">' + profileName(id) +
-      (own.indexOf(id) >= 0 ? L(' (adopted)', ' (przyjęta)') : '') + '</span> — ' + escapeAttr(profileTooltip(id))).join('<br>');
+    const stages = {};
+    for (const id of rules.PROFILE_IDS) stages[id] = profileStage(S, id);
+    const order = rules.PROFILE_IDS.slice().sort((a, b) => stages[a].rank - stages[b].rank ||
+      (stages[a].key === 'adopted' ? own.indexOf(a) - own.indexOf(b) : stages[b].seeds - stages[a].seeds) ||
+      rules.PROFILE_IDS.indexOf(a) - rules.PROFILE_IDS.indexOf(b));
+    const line = (label, text) => '<span class="pl-profile-line"><span class="pl-profile-label">' + label + '</span> ' + escapeAttr(text) + '</span>';
+    Q.pl_profile_html = '<span class="pl-profiles"><span class="pl-profile-count">' + L('Adopted: ', 'Przyjęte: ') + own.length + L(' of ', ' z ') +
+      PROFILE_SLOTS + '</span>' + order.map(id => {
+        const stage = stages[id], other = PROFILE_EXCLUSIVE[id];
+        return '<span class="pl-profile pl-profile-' + stage.key + '"><span class="pl-profile-head"><span class="pl-profile-name">' + profileName(id) +
+          '</span>' + (stage.word ? '<span class="pl-profile-state">' + stage.word + '</span>' : '') + '</span>' +
+          line(L('Gives:', 'Daje:'), L(PROFILES[id].gives[0], PROFILES[id].gives[1]) + '.') +
+          line(L('Built by:', 'Buduje:'), L(PROFILES[id].builds[0], PROFILES[id].builds[1]) + '.' +
+            (other ? L(' It excludes ' + profileAcc(other) + '.', ' Wyklucza ' + profileAcc(other) + '.') : '')) + '</span>';
+      }).join('') + '</span>';
     Q.pl_top_profile = own.length ? L('Characteristics: ', 'Charakterystyka: ') + own.map(id => profileAcc(id)).join(', ') : '';
   }
   function profileLibrary(Q) {

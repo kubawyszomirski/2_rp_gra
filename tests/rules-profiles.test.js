@@ -138,11 +138,13 @@ test('Charakterystyka w grze 1.07: the Party tab shows the eight characteristics
   try {
     engine.goToScene('status');
     assert.match(content(), /Charakterystyka/);
-    assert.match(Q.pl_profile_html, /pl-profile-off">Uzwiązkowienie<\/span> — Buduje:/);
+    // Z — 1.20 (decisions 1A–4A of 22 XI 2026): each characteristic in its own block, what it gives before what builds it.
+    assert.match(Q.pl_profile_html, /pl-profile-count">Przyjęte: 0 z 2</);
+    assert.match(Q.pl_profile_html, /pl-profile pl-profile-none"><span class="pl-profile-head"><span class="pl-profile-name">Uzwiązkowienie<\/span><\/span><span class="pl-profile-line"><span class="pl-profile-label">Daje:<\/span> związki rosną szybciej[^<]*<\/span><span class="pl-profile-line"><span class="pl-profile-label">Buduje:<\/span> budowa związków i praca w nich/);
     assert.equal(Q.pl_top_profile, '');
     R().profileState(Q.S).adopted.push({ id: 'unionism', t: Q.time });
     engine.goToScene('status');
-    assert.match(Q.pl_profile_html, /pl-profile-on">Uzwiązkowienie \(przyjęta\)<\/span>/);
+    assert.match(Q.pl_profile_html, /^<span class="pl-profiles"><span class="pl-profile-count">Przyjęte: 1 z 2<\/span><span class="pl-profile pl-profile-adopted"><span class="pl-profile-head"><span class="pl-profile-name">Uzwiązkowienie<\/span><span class="pl-profile-state">przyjęta<\/span>/, 'the adopted one first');
     assert.equal(Q.pl_top_profile, 'Charakterystyka: uzwiązkowienie');
     assert.equal(P().profileSummary(Q.S), 'PPS przyjęła uzwiązkowienie (1922).');
     engine.goToScene('library.characteristics');
@@ -168,10 +170,29 @@ test('Charakterystyka w grze 1.07: the Party tab shows the eight characteristics
     assert.match(content(), /Kongres przyjmuje parlamentaryzm\. Partia wiąże swój los z Sejmem/);
     assert.equal(Q.month_actions, 1, 'one action for the whole congress');
     assert.ok(R().profileActive(Q.S, 'parliamentarism') && !R().profileActive(Q.S, 'unionism'));
-    // The Party tab: each characteristic with what builds it and what it gives.
+    // The Party tab: each characteristic in its own block, in the order adopted, ready, growing, untouched, excluded; the state in a
+    // word, never a number (Z — 1.20).
+    const seeds = R().profileState(Q.S).seeds;
+    for (const id of Object.keys(seeds)) seeds[id] = 0;
+    seeds.unionism = 3; seeds.strike_action = 6; seeds.radicalism = 12;
+    R().profileState(Q.S).adopted.push({ id: 'reformism', t: Q.time });
     engine.goToScene('status');
-    assert.match(Q.pl_profile_html, /pl-profile-on">Parlamentaryzm \(przyjęta\)<\/span> — Buduje: ustawy z inicjatywy/);
-    assert.equal((Q.pl_profile_html.match(/<br>/g) || []).length, 7, 'eight lines');
+    const blocks = [...Q.pl_profile_html.matchAll(/pl-profile pl-profile-(\w+)"><span class="pl-profile-head"><span class="pl-profile-name">([^<]+)<\/span>(?:<span class="pl-profile-state">([^<]+)<\/span>)?/g)]
+      .map(m => [m[2], m[1], m[3] || '']);
+    assert.deepEqual(blocks, [
+      ['Parlamentaryzm', 'adopted', 'przyjęta'], ['Reformizm', 'adopted', 'przyjęta'], ['Akcja strajkowa', 'growing', 'dojrzewa'],
+      ['Uzwiązkowienie', 'growing', 'zalążek'], ['Sojusz robotniczo-włościański', 'none', ''], ['Federalizm', 'none', ''], ['Militaryzm', 'none', ''],
+      ['Radykalizm', 'excluded', 'wykluczona']]);
+    assert.match(Q.pl_profile_html, /Przyjęte: 2 z 2/);
+    assert.match(Q.pl_profile_html, /Buduje:<\/span> ustawy z inicjatywy \(przyjęte liczą się podwójnie\)/);
+    assert.match(Q.pl_profile_html, /Wyklucza radykalizm\./);
+    assert.match(Q.pl_profile_html, /Wyklucza reformizm\./);
+    assert.doesNotMatch(Q.pl_profile_html, /\d+(,\d+)? ?(pkt|punkt)|<br>/, 'no numbers of points and no run-on lines');
+    seeds.radicalism = 0;
+    R().profileState(Q.S).adopted = R().profileState(Q.S).adopted.filter(a => a.id !== 'reformism');
+    seeds.federalism = 10;
+    engine.goToScene('status');
+    assert.match(Q.pl_profile_html, /pl-profile-ready"><span class="pl-profile-head"><span class="pl-profile-name">Federalizm<\/span><span class="pl-profile-state">gotowa do uchwały<\/span>/);
   } finally {
     R().setLanguage('en');
   }
