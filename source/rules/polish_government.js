@@ -1126,6 +1126,9 @@
   // How a club outside the agreement votes on the budget and on a dismissal (decision 7): its view
   // of the cabinet programme from relation and programme fit, 0–100; below 40 it votes against,
   // otherwise it abstains. KPP and "Inne" abstain; neutral abstentions are never votes for.
+  // Z — 1.26 (decision 1A of 22 XI 2026): a club whose view of a programme is below this votes against it instead of abstaining —
+  // on a cabinet, on a bill and on a dismissal (until 1.25 below 40; 45 rather than 50 so as not to overdo it, the user's note). PPS itself keeps 40 for its own default vote.
+  const VOTE_AGAINST_BELOW = 45;
   function programmeStance(S, clubId, offer) {
     if (!ACTOR_PROFILES[clubId]) return null;
     return clip((0.25 * offerRelation(S, clubId, offer) + 0.35 * programFit(clubId, offer.programme, offer.kind === 'bill')) / 0.60, 0, 100);
@@ -1155,7 +1158,7 @@
       else {
         // A club without a profile (a splinter club of stage 5) abstains (P).
         const stance = programmeStance(S, club.id, offer);
-        vote = stance !== null && stance < 40 ? 'no' : 'abstain';
+        vote = stance !== null && stance < VOTE_AGAINST_BELOW ? 'no' : 'abstain';
       }
       if (club.id === 'psl_piast' && vote === 'yes' && dissidents > 0) {
         yes += club.seats - dissidents; no += dissidents;
@@ -1208,7 +1211,7 @@
       else if (supporting.indexOf(club.id) >= 0) vote = 'yes';
       else {
         const stance = programmeStance(S, club.id, bill);
-        vote = stance >= 60 ? 'yes' : stance < 40 ? 'no' : 'abstain';
+        vote = stance >= 60 ? 'yes' : stance < VOTE_AGAINST_BELOW ? 'no' : 'abstain';
       }
       if (vote === 'yes') yes += club.seats; else if (vote === 'no') no += club.seats; else abstain += club.seats;
     }
@@ -3643,7 +3646,7 @@
       else if (bound.indexOf(club.id) >= 0) vote = 'no';
       else if ((motion.movers || []).indexOf(club.id) >= 0) vote = 'yes';
       else if (club.id === 'kpp' || !ACTOR_PROFILES[club.id]) vote = 'abstain';
-      else vote = programmeStance(S, club.id, offer) < 40 ? 'yes' : 'abstain';
+      else vote = programmeStance(S, club.id, offer) < VOTE_AGAINST_BELOW ? 'yes' : 'abstain';
       const dissidents = club.id === 'psl_piast' && vote === 'no' && cabinet.partner_ids.concat(cabinet.supporter_ids).indexOf('zln') >= 0 ? piastDissidents(S) : 0;
       clubVotes[club.id] = {vote: vote, seats: club.seats - dissidents};
       if (dissidents) clubVotes.psl_piast_dissidents = {vote: 'yes', seats: dissidents};
@@ -4757,6 +4760,7 @@
     buildCabinetOffer: buildCabinetOffer,
     npcOffer: npcOffer,
     programmeStance: programmeStance,
+    VOTE_AGAINST_BELOW: VOTE_AGAINST_BELOW,
     forecast: forecast,
     configurationStatus: configurationStatus,
     bestAlternativeScore: bestAlternativeScore,

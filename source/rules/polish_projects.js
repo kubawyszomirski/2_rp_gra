@@ -1572,8 +1572,12 @@
     if (governing) return governing;
     if (bill.sponsor === 'cabinet' && bound.indexOf(clubId) >= 0) return 'yes';
     const stance = government.programmeStance(S, clubId, offer);
-    return stance >= 60 ? 'yes' : stance < 40 ? 'no' : 'abstain';
+    // Z — 1.26 (decision 2A of 22 XI 2026): while the budget is below zero, the clubs outside the cabinet vote against a bill that costs
+    // the budget, unless they strongly support it.
+    if (bill.costs_budget && S.economy && S.economy.budget < 0 && bound.indexOf(clubId) < 0) return stance >= BUDGET_CRISIS_SUPPORT ? 'yes' : 'no';
+    return stance >= 60 ? 'yes' : stance < government.VOTE_AGAINST_BELOW ? 'no' : 'abstain';
   }
+  const BUDGET_CRISIS_SUPPORT = 75;
 
   function ppsDefaultVote(Q, bill) {
     const S = Q.S;
@@ -3256,7 +3260,7 @@
   // carried out already; available(Q): '' or the reason it is not on the card; blocked(Q): '' or the reason it is greyed;
   // filing: the effects of taking it up; enact(Q, variant, bill, m, raise): the effects of the law, returning a sentence.
   const INITIATIVES = Object.freeze([
-    {id: 'unemployment', portfolio: 'labor', name: ['Protection of the unemployed', 'Ochrona bezrobotnych'],
+    {id: 'unemployment', costs_budget: true, portfolio: 'labor', name: ['Protection of the unemployed', 'Ochrona bezrobotnych'],
       text: ['Benefits for the unemployed from the state budget: the full benefit costs 3 budget units, the limited one 1. The unemployed radicalise less and trust PPS more.',
         'Zasiłek dla bezrobotnych z budżetu państwa: pełny kosztuje 3 jednostki budżetu, ograniczony 1. Bezrobotni mniej się radykalizują i bardziej ufają PPS.'],
       raise: ['A limited benefit is paid today; the law raises it to the full benefit (2 more budget units).',
@@ -3269,7 +3273,7 @@
         return variant === 'full' ? L('The full benefit is paid from the next settlement; it costs 3 budget units.', 'Pełny zasiłek będzie wypłacany od najbliższego rozliczenia; kosztuje 3 jednostki budżetu.') :
           L('The limited benefit is paid from the next settlement; it costs 1 budget unit.', 'Ograniczony zasiłek będzie wypłacany od najbliższego rozliczenia; kosztuje 1 jednostkę budżetu.');
       }},
-    {id: 'labor_inspection', portfolio: 'labor', name: ['Labour inspection and working time', 'Inspekcja pracy i czas pracy'],
+    {id: 'labor_inspection', costs_budget: true, portfolio: 'labor', name: ['Labour inspection and working time', 'Inspekcja pracy i czas pracy'],
       text: ['Inspectors enforce the statutory working time; it costs 1 budget unit. The discontent of the workers falls, and the industrialists are more displeased (+4).',
         'Inspektorzy pilnują ustawowego czasu pracy; kosztuje to 1 jednostkę budżetu. Niezadowolenie robotników spada, a przemysłowcy są bardziej niezadowoleni (+4).'],
       raise: ['The inspection works today only in large industry; the law extends it to all workplaces.', 'Dziś inspekcja działa tylko w wielkim przemyśle; ustawa obejmuje nią wszystkie zakłady.'],
@@ -3403,7 +3407,7 @@
         startByLaw(Q, 'land_program', variant, {executor: 'agriculture', tranche: tranche, policy_choices: {access: 'equal'}}, bill, m);
         return L('The ministry of agriculture carries out the reform in the next part of the countryside.', 'Resort Rolnictwa przeprowadza reformę w kolejnej części wsi.');
       }},
-    {id: 'public_works', portfolio: 'labor', name: ['Public works for the unemployed', 'Roboty publiczne dla bezrobotnych'],
+    {id: 'public_works', costs_budget: true, portfolio: 'labor', name: ['Public works for the unemployed', 'Roboty publiczne dla bezrobotnych'],
       text: ['Work for the unemployed: it costs 2 budget units; two units of employment from the end of the month.',
         'Praca dla bezrobotnych: kosztuje 2 jednostki budżetu; dwie jednostki zatrudnienia od końca miesiąca.'],
       raise: ['A smaller programme runs today; the law enlarges it to two units of employment.', 'Dziś działa mniejszy program; ustawa powiększa go do dwóch jednostek zatrudnienia.'],
@@ -3417,7 +3421,7 @@
         else startByLaw(Q, 'public_works', variant, {executor: 'labor'}, bill, m);
         return L('The labour administration starts the works.', 'Administracja resortu Pracy rozpoczyna roboty.');
       }},
-    {id: 'workers_housing', portfolio: 'labor', name: ['Workers’ housing', 'Mieszkania robotnicze'],
+    {id: 'workers_housing', costs_budget: true, portfolio: 'labor', name: ['Workers’ housing', 'Mieszkania robotnicze'],
       text: ['Houses for workers: it costs 2 budget units; from the end of the month the discontent of the workers grows more slowly.',
         'Domy dla robotników: kosztuje 2 jednostki budżetu; od końca miesiąca niezadowolenie robotników rośnie wolniej.'],
       raise: ['Cooperative houses are built today; the law brings the full programme of workers’ housing.', 'Dziś powstają domy spółdzielcze; ustawa wprowadza pełny program mieszkań robotniczych.'],
@@ -3577,7 +3581,8 @@
   // How the Sejm would vote on one variant now (the preview equals the vote: the rules of 7.1 are deterministic).
   function initiativeCounts(Q, law, index) {
     const v = law.variants[index];
-    const counts = sejmCounts(Q, {sponsor: 'pps', programme: v.programme, flags: v.flags || [], pps_vote: 'yes', t: Q.time, initiative_bill: true});
+    const counts = sejmCounts(Q, {sponsor: 'pps', programme: v.programme, flags: v.flags || [], pps_vote: 'yes', t: Q.time, initiative_bill: true,
+      costs_budget: !!law.costs_budget});
     const ballot = institutions.resolveBallot('ordinary_resolution', counts);
     return {yes: counts.yes, no: counts.no, abstain: counts.abstain, present: counts.present, eligible: counts.eligible, club_votes: counts.club_votes,
       passed: ballot.result === 'passed',
@@ -3639,7 +3644,10 @@
       const today = forecastText(Q, law, status.offer);
       const filing = filingEffects(S, law).map(filingText);
       const cost = L('Cost: ' + rules.units(INITIATIVE_COST) + '. ', 'Koszt: ' + rules.units(INITIATIVE_COST, 'resources', 'nom') + '. ');
-      Q['pl_ini_' + law.id + '_line'] = cost + what + ' ' + today + (filing.length ? L(' Taking it up: ', ' Samo wniesienie: ') + filing.join(', ') + '.' : '');
+      // Z — 1.26: a bill that costs the budget says why it fails in a budget crisis.
+      const crisis = law.costs_budget && S.economy.budget < 0 ? L(' The budget is below zero, so the clubs outside the cabinet will vote against it.',
+        ' Budżet jest poniżej zera, więc kluby spoza rządu zagłosują przeciw.') : '';
+      Q['pl_ini_' + law.id + '_line'] = cost + what + ' ' + today + crisis + (filing.length ? L(' Taking it up: ', ' Samo wniesienie: ') + filing.join(', ') + '.' : '');
     }
     Q.pl_ini_shown = initiativeShown(Q).join(' ');
   }

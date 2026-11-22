@@ -825,7 +825,7 @@ test('Lista gabinetów 0.61: every cabinet in one line with its clubs, seats, pa
   assert.equal(line.available, true);
   // Z — 0.80 (the user's text of 20 X 2026): the variant in plain sentences — what the cabinet is, its MPs and what that means,
   // who agrees, the votes and the programme in words; no minorities' sentence when they have no MPs.
-  assert.match(line.line, /^Our present choice\.<br>PPS, PSL Wyzwolenie, PSL Piast and the National Workers’ Party: 280 of 444 MPs — a safe majority\.<br>Agree to enter: PSL Wyzwolenie, PSL Piast and the National Workers’ Party\.<br>In the Sejm: 280 for, 0 against \(a majority is 223\) — a majority cabinet\.<br>Programme: /);
+  assert.match(line.line, /^Our present choice\.<br>PPS, PSL Wyzwolenie, PSL Piast and the National Workers’ Party: 280 of 444 MPs — a safe majority\.<br>Agree to enter: PSL Wyzwolenie, PSL Piast and the National Workers’ Party\.<br>In the Sejm: 280 for, 100 against \(a majority is 223\) — a majority cabinet\.<br>Programme: /);
   assert.doesNotMatch(line.line, /national minorities \(0\)/);
   // Z — 0.67: after the election of 1922 the 160 MPs of PPS and PSL Wyzwolenie are below the 185 of decision 3A.
   const left = gov.coalitionLine(Q, 'left_minority');
@@ -1025,14 +1025,16 @@ test('Pierwszy budżet 0.88: a cabinet of PPS must carry its first budget; witho
   formation(Q, 'crisis');
   gov.setDraft(Q, 'configuration_id', 'left_labour');
   const without = gov.assessDraft(Q).pps_offer;
+  // Z — 1.26 (decision 1A): the right now votes against a cabinet of the left, so without PSL Piast it fails already at its investiture.
   assert.deepEqual([without.accepted, without.reason, without.budget.position, without.budget.passes],
-    [false, 'no majority for its first budget', 2, false]);
-  assert.ok(without.forecast.viable, 'the investiture alone would pass, as before 0.88');
+    [false, 'too few votes for the budget and against dismissal', 2, false]);
+  assert.ok(!without.forecast.viable, 'more against than for');
   // Z — 1.10: no counts of the first budget, only the warning.
   assert.match(gov.formationView(Q).votes, /Its first budget would fail without the votes of PSL Piast or of the minorities, and the cabinet would resign over it\./);
   gov.setDraft(Q, 'seek_minority_support', true);
   const withMinorities = gov.assessDraft(Q).pps_offer;
-  assert.deepEqual([withMinorities.accepted, withMinorities.budget.passes], [true, true]);
+  // Z — 1.26: the minorities carry its budget, but then the right and PSL Piast vote against it, so it still cannot govern.
+  assert.deepEqual([withMinorities.accepted, withMinorities.budget.passes, withMinorities.forecast.viable], [false, true, false]);
   assert.doesNotMatch(gov.formationView(Q).votes, /first budget/, 'a budget that passes is not mentioned');
   // The centre-left with PSL Piast carries its budget without the minorities.
   gov.setDraft(Q, 'configuration_id', 'centre_left');

@@ -130,7 +130,7 @@ test('C1 0.71: the introduction, the variant, the prime minister, the portfolios
   assert.match(JSON.stringify(choice(engine, 'polish_cabinet_formation.var_expert').title), /We support a cabinet of experts/);
   assert.match(JSON.stringify(choice(engine, 'polish_cabinet_formation.var_expert').subtitle), /Prime minister: the non-party Julian Nowak; ministers from outside the parties\.<br>PPS has no ministers and only votes for the cabinet\.<br>Also for it: the National Workers’ Party, PSL Wyzwolenie, PSL Piast/); // Z — 1.22: short lines
   assert.match(JSON.stringify(choice(engine, 'polish_cabinet_formation.var_pps_majority').subtitle), /PPS: 110 of 444 MPs\.<br>PPS would need a majority of the Sejm on its own\./);
-  assert.match(JSON.stringify(choice(engine, 'polish_cabinet_formation.var_left_labour').subtitle), /Agree to enter: PSL Wyzwolenie and the National Workers’ Party\.<br>In the Sejm: 210 for, 100 against \(a majority is 223\) — a minority cabinet/);
+  assert.match(JSON.stringify(choice(engine, 'polish_cabinet_formation.var_left_labour').subtitle), /Agree to enter: PSL Wyzwolenie and the National Workers’ Party\.<br>In the Sejm: 210 for, 130 against \(a majority is 223\) — a minority cabinet/);
   assert.match(JSON.stringify(choice(engine, 'polish_cabinet_formation.var_opposition').subtitle), /The Naczelnik Państwa will then appoint a cabinet of experts of Julian Nowak without us\./);
   assert.equal(choice(engine, 'polish_cabinet_formation.var_mode_external_support'), undefined, 'no external support of a party cabinet');
   choose(engine, 'polish_cabinet_formation.var_left_labour');

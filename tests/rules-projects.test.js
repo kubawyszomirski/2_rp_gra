@@ -208,7 +208,9 @@ test('Głosowania inicjatywy 0.81: the friends of Piłsudski, the Lanckorona rul
   // Part of the deputies of the other minorities (a half) votes against; the rest and the Jewish deputies do not.
   assert.ok(secular.no_clubs.includes('other_minorities_rep:church') && !secular.no_clubs.includes('other_minorities_rep'));
   assert.ok(!secular.no_clubs.includes('jewish_rep'), 'the Jewish deputies are not against the religious freedom');
-  assert.deepEqual([secular.passed, exemption.passed, exemption.no], [false, true, 0], 'the exemption from religion passes');
+  // Z — 1.26 (decision 1A): a club that dislikes the exemption a little now votes against it, but it still passes.
+  assert.deepEqual([secular.passed, exemption.passed], [false, true], 'the exemption from religion passes');
+  assert.ok(exemption.no < exemption.yes);
 });
 
 // Z — 1.09 (decision 6c of 8 XI 2026): the parties of a cabinet without PPS vote against a bill of PPS in opposition unless it is
@@ -255,14 +257,14 @@ test('Los głosowania 0.81: a majority can fail and a minority can pass; the cou
   Q.sejm_first_election_completed = 1;
   Q.S.party_orgs.cash = 3;
   const key = v => { const p = proj.initiativeState(Q.S).pending; return 'initiative:' + p.id + ':t' + p.filed_at + ':' + v; };
-  // The inspection has a clear majority (198 against 83, chance 95%); a roll of 0.97 makes it fail.
+  // The inspection has a clear majority (198 against 110 since 1.26, chance 94%); a roll of 0.97 makes it fail.
   proj.initiativeFile(Q, 'labor_inspection');
   Q.S.rng.rolls[key('full')] = 0.97;
   Q.S.rng.rolls[key('limited')] = 0.99;
   month(Q);
   const view = proj.initiativeVoteView(Q);
   assert.equal(view.outcome, 'rejected');
-  assert.match(view.line, /116\) did not come to the vote/, 'the supporters who stayed away');
+  assert.match(view.line, /89\) did not come to the vote/, 'the supporters who stayed away');
   assert.equal(proj.initiativeVoteView(Q).outcome, 'rejected', 'the recorded roll does not change');
   proj.initiativeResolve(Q, 'rejected');
   const ballot = Q.S.ballots.at(-1);
@@ -1019,4 +1021,21 @@ test('Budżet w kryzysie 1.11: the cabinet\'s package in plain words; PPS can ab
   T.sejm_first_election_completed = 1;
   T.S.economy.budget = -1;
   assert.equal(proj.budgetPlanAvailable(T), false, 'no budget law of PPS before the Sejm');
+});
+
+// Z — 1.26 (decisions 1A and 2A of 22 XI 2026): a club votes against below 45 instead of 40 (not 50, so as not to overdo it); while the
+// budget is below zero, the clubs outside the cabinet vote against a bill that costs the budget unless they strongly support it.
+test('Sejm 1.26: votes against below 45; spending bills fail in a budget crisis, other bills do not', () => {
+  assert.equal(gov.VOTE_AGAINST_BELOW, 45);
+  const Q = world({ seats: OPENING, time: 13 });
+  const calm = proj.initiativeCounts(Q, 'workers_housing', 0);
+  Q.S.economy.budget = -1;
+  const crisis = proj.initiativeCounts(Q, 'workers_housing', 0);
+  assert.ok(crisis.no > calm.no, 'more against in a crisis');
+  assert.ok(proj.initiativeChance(Q.S, crisis) < proj.initiativeChance(Q.S, calm));
+  for (const club of ['psl_piast', 'npr']) assert.ok(crisis.no_clubs.includes(club), club + ' against spending in a crisis');
+  // A law that costs no money (the tenants) is voted as before.
+  const tenants = proj.initiativeCounts(Q, 'tenants', 0);
+  Q.S.economy.budget = 4;
+  assert.deepEqual(proj.initiativeCounts(Q, 'tenants', 0).no, tenants.no, 'the crisis rule touches only spending bills');
 });
