@@ -186,7 +186,7 @@ test('Pilotaż: ekran tytułowy, strona miesiąca i pasek boczny po polsku', () 
   // The top bar (7 XI 2026): bars and scales are drawn from markers in the lines, and the relations are in the Party tab.
   const plain = id => sidebar[id].replace(/<[^>]*>/g, '');
   // The State tab begins with the police, so its heading is the first line.
-  assert.match(plain('status.paramilitaries'), /(?:^|\n)\s*Policja ?\n\s*Potencjał: 50 ?\n/);
+  assert.match(plain('status.paramilitaries'), /(?:^|\n)\s*Policja ?\n\s*Przeciętnie sprawna, posłuszna rządowi/); // Z — 1.23: in words
   assert.match(plain('status'), /PSL Wyzwolenie: przyjazne/);
   assert.deepEqual(errors, []);
 });

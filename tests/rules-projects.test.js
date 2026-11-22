@@ -1013,29 +1013,10 @@ test('Budżet w kryzysie 1.11: the cabinet\'s package in plain words; PPS can ab
     proj.budgetAnswerText(Q, 'abstain');
     assert.equal(Q.S.economy.pending_package.pps_vote, 'abstain');
   }
-  // The plan of a PPS Treasury.
+  // Z — 1.23 (the user's play notes of 22 XI 2026): the Sejm no longer votes on the budget of a PPS Treasury; the urgent card of the
+  // plan is gone, also below zero.
   const T = withPortfolio(world({ seats: OPENING, time: 20, senate: true }), 'finance');
   T.sejm_first_election_completed = 1;
-  T.S.economy.budget = 1;
-  assert.equal(proj.budgetPlanAvailable(T), false, 'only below zero');
   T.S.economy.budget = -1;
-  assert.equal(proj.budgetPlanAvailable(T), true);
-  proj.budgetPlanView(T);
-  assert.match(T.pl_plan_progressive_line, /^If the Sejm passes it, the budget gains 3 units; the industrialists are more displeased, and the Left of PPS is pleased\. Today the Sejm would (pass|refuse) it\.$/);
-  const text = proj.budgetPlanChoose(T, 'admin_cuts');
-  assert.match(text, /^Our Treasury puts a budget law to the Sejm: cuts in named administrative spending\. The Sejm votes at the settlement of /);
-  const pkg = T.S.economy.pending_package;
-  assert.deepEqual([pkg.pps_plan, pkg.pps_vote, T.month_actions], [true, 'yes', 1]);
-  assert.equal(proj.budgetCardAvailable(T), false, 'our own plan is not answered on the card of the cabinet');
-  assert.equal(proj.budgetPlanAvailable(T), false, 'one plan at a time');
-  const pool = T.S.economy.budget;
-  month(T);
-  assert.ok(T.S.economy.pending_package, 'the vote at the settlement of the next month');
-  month(T);
-  const done = T.S.economy.packages.find(p => p.id === pkg.id);
-  assert.ok(done.law_id, 'the cuts, which need no law on the Treasury card, go to the Sejm as a budget law');
-  const law = T.S.parliament.laws.find(l => l.id === done.law_id);
-  assert.equal(law.status, 'enacted', 'the cabinet of PPS carries its budget law in the fixture Sejm');
-  assert.ok(T.S.economy.pool_log.some(e => e.id === pkg.id + ':plan' && e.delta === 1), 'one unit more');
-  assert.ok(T.S.economy.pool_log.some(e => /^pol-admin_cuts/.test(e.id) && e.delta === 1), 'and the cuts themselves');
+  assert.equal(proj.budgetPlanAvailable(T), false, 'no budget law of PPS before the Sejm');
 });

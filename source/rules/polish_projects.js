@@ -2148,8 +2148,13 @@
   const PLAN_BONUS = 1;
   const PLAN_REST = 3;
   const PLAN_CARD = 'polish_gov_budget_plan';
+  // Z — 1.23 (the user's play notes of 22 XI 2026): the Sejm no longer votes on our budget; the card „Taxes and Loans” is the one place
+  // for these decisions, and a partner that dislikes one raises the tension in the coalition, which can bring the cabinet down. The card
+  // is no longer offered; a budget law already before the Sejm in an older save is still voted (pkg.pps_plan).
+  const BUDGET_PLAN_RETIRED = true;
   function budgetPlanAvailable(Q) {
     const S = Q.S;
+    if (BUDGET_PLAN_RETIRED) return false;
     if (!S || !S.economy || !S.chapter || S.chapter.status === 'ended' || !ppsHolds(S, 'finance')) return false;
     const E = S.economy;
     if (E.pending_package || E.budget >= 0) return false;
@@ -5111,7 +5116,7 @@
   rules.registerUrgentCard('polish_budget_package', {active: Q => budgetCardAvailable(Q), deck: () => 'main.parliament'});
   // Z — 0.94: the customs war with Germany is an urgent card of the Government deck while PPS holds Industry and Trade.
   // Z — 1.11 (decision 1A): the plan of a PPS Treasury while the budget is below zero, an urgent card of the Government deck.
-  rules.registerUrgentCard(PLAN_CARD, {active: Q => budgetPlanAvailable(Q), deck: () => 'main.govt'});
+  // Z — 1.23: the urgent card of the budget law of PPS is no longer registered (budgetPlanAvailable).
   rules.registerUrgentCard('polish_gov_customs_war', {active: Q => !!(Q.S && Q.S.economy && Q.S.chapter) && cardAvailable(Q, 'customs_war'), deck: () => 'main.govt'});
   rules.registerCardDeadline('polish_budget_package', Q => Q.S && Q.S.economy && Q.S.economy.pending_package ? Q.S.economy.pending_package.vote_at : null);
   rules.registerUrgentCard('polish_constitution_vote', {deck: () => 'main.parliament', active: constitutionVoteActive});

@@ -99,7 +99,9 @@ test('Pasek: Milicja PPS w zakładce Partia, policja i wojsko w zakładce Państ
   assert.match(main, /\nMilicja PPS ?\nZorganizowani członkowie: 200 ?\nWyszkolenie: poziom 1\u00a0z\u00a05 ?\nStatus prawny: legalna ?\n/);
   assert.doesNotMatch(main + text, /Przywiązanie do legalnych instytucji|Sprawność/);
   assert.doesNotMatch(text, /Milicja/);
-  assert.match(text, /(?:^|\n)\s*Policja ?\n\s*Potencjał: 50 ?\nDowodzenie: 50 ?\nPraworządność: 50 ?\nOchrona jednego zgromadzenia: [\d,]+\u00a0na\u00a0100 ?\n/);
+  // Z — 1.23 (decision 6A of 22 XI 2026): the police in one line of words.
+  assert.match(text, /(?:^|\n)\s*Policja ?\n\s*Przeciętnie sprawna, posłuszna rządowi, nie zawsze przestrzega prawa\. ?\n/);
+  assert.doesNotMatch(text, /Potencjał|Dowodzenie|Ochrona jednego zgromadzenia/);
   // Z — 1.03 (decision 4A of 7 XI 2026): the army in words, without numbers.
   assert.match(text, /\nWojsko ?\n\s*(Większość oficerów sprzyja Piłsudskiemu|Wojsko jest podzielone; wielu oficerów sprzyja Piłsudskiemu|Większość wojska jest wierna rządowi|Wojsko jest wierne rządowi)\. ?\n/);
   assert.doesNotMatch(text, /Zgrupowania wojska|odwód|\d+–\u2060\d+%/);

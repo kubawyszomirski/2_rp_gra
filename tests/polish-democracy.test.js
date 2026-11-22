@@ -244,8 +244,7 @@ test('B3/B4: the threat settles without a menu; only a confirmed death, after th
   assert.deepEqual(ids(engine), ['polish_event_assassination_response.defend', 'polish_event_assassination_response.restraint',
     'polish_event_assassination_response.retaliation']);
   const cash = S.party_orgs.cash;
-  choose(engine, 'polish_event_assassination_response.defend');
-  choose(engine, 'polish_event_assassination_response.unprotected');
+  choose(engine, 'polish_event_assassination_response.defend'); // Z — 1.23: no step with the Milicja
   assert.ok(Math.abs(S.party_orgs.cash - (cash - 1)) < 1e-6, '1 R');
   assert.deepEqual(S.politics.democracy_effects.filter(e => e.cause === 'B4').map(e => e.value), [2], 'a peaceful gathering: +2 once');
   assert.ok(S.party_orgs.press.campaigns.some(k => k.topic === 'democracy'), 'a campaign on the defence of democracy');

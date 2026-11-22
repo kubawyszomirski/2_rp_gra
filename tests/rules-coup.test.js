@@ -292,7 +292,7 @@ test('Wydatki na wojsko 1.02: more money costs 2 B, the pressure towards a coup 
 test('Piłsudski i wojsko 1.02: subordination moves the army 0.05 to the legal authorities and closes the military case (Z — 1.03), Piłsudski −15, the Piłsudczycy +10 and breaks an agreement; the cult of the Legions 1 B and +10; the status quo Centrum −3 and Piłsudski −3', () => {
   const Q = withPortfolios(ppsMajority(quiet()), 'reichswehr');
   const S = Q.S;
-  assert.deepEqual(PolishSecurity.PILS_OPTIONS, ['subordinate', 'legion_cult', 'military_function', 'inspectorate', 'status_quo']);
+  assert.deepEqual(PolishSecurity.PILS_OPTIONS, ['subordinate', 'military_function', 'inspectorate']); // Z — 1.23: no cult of the Legions, no status quo
   S.coup.pressure = 30;
   PolishSecurity.pilsChoose(Q, 'military_function');
   free(Q);
@@ -308,16 +308,7 @@ test('Piłsudski i wojsko 1.02: subordination moves the army 0.05 to the legal a
   assert.equal(S.coup.pressure, p0 + 8, 'a culpable break: +8');
   assert.match(Q.pl_pils_result, /The agreement with him is broken/);
   free(Q);
-  const pool0 = S.economy.budget, rel1 = S.actors.relations.pilsudski;
-  PolishSecurity.pilsChoose(Q, 'legion_cult');
-  assert.deepEqual([S.economy.budget, S.actors.relations.pilsudski, Q.month_actions], [pool0 - 1, Math.min(100, rel1 + 10), 1]);
-  free(Q);
-  const dC = dissent(S, 'centrum'), rel2 = S.actors.relations.pilsudski;
-  PolishSecurity.pilsChoose(Q, 'status_quo');
-  assert.deepEqual([dissent(S, 'centrum'), S.actors.relations.pilsudski], [Math.max(0, dC - 3), Math.max(0, rel2 - 3)]);
-  free(Q);
-  S.economy.budget = -2.5;
-  assert.match(PolishSecurity.pilsOptionStatus(Q, 'legion_cult').reason, /The budget cannot go below −3 B/);
+  for (const id of ['legion_cult', 'status_quo']) assert.match(PolishSecurity.pilsOptionStatus(Q, id).reason, /Unknown option/, id + ' left the card');
   for (const f of S.security.forces) f.loyalty_pils = 0;
   assert.match(PolishSecurity.pilsOptionStatus(Q, 'subordinate').reason, /no longer leans towards Piłsudski/);
 });

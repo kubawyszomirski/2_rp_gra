@@ -195,7 +195,6 @@ const PASSIVE_EVENTS = {
 const ACTIVE_EVENTS = Object.assign({}, PASSIVE_EVENTS, {
   polish_event_cabinet_1922: ['formation'],
   polish_event_assassination_response: ['defend', 'restraint'],
-  polish_event_assassination_response_protection: ['protected', 'unprotected'],
   polish_event_niewiadomski_cult: ['condemn', 'stay_out'],
   // Z — 1.04 (decisions 4A and 5A of the event audit): the toleration offer is no longer an answer of the event; without the
   // portfolios an active PPS answers both crises with the party.
@@ -396,8 +395,6 @@ function answer(engine, strat) {
     prefs = (ev.polish_presidential_first || []).map(o => 'polish_presidential_sequence.' + o);
   } else if (sid === 'polish_presidential_sequence.second_nomination') {
     prefs = (ev.polish_presidential_second || []).map(o => 'polish_presidential_sequence.' + o);
-  } else if (sid === 'polish_event_assassination_response.protection') {
-    prefs = (ev.polish_event_assassination_response_protection || ['unprotected']).map(o => 'polish_event_assassination_response.' + o);
   } else if (sid === 'polish_event_austerity_1926.threat') {
     prefs = (ev.polish_event_austerity_1926_threat || ['back_down']).map(o => 'polish_event_austerity_1926.' + o);
   } else if (sid === 'polish_speaker_election.choice') {

@@ -23,10 +23,8 @@ Piłsudski demands command of the army independent of the minister and the Sejm;
 [+ pl_pils_line +]
 
 - @subordinate
-- @legion_cult
 - @military_function
 - @inspectorate
-- @status_quo
 - @nothing
 - @easy_discard
 - @cancel_advisor_action
@@ -38,16 +36,6 @@ choose-if: {! return PolishSecurity.pilsOptionStatus(Q, 'subordinate').available
 unavailable-subtitle: [+ pl_pils_subordinate_why +]
 on-arrival: {!
 PolishSecurity.pilsChoose(Q, 'subordinate');
-!}
-go-to: result
-
-@legion_cult
-title: Celebrate the deed of the Legions
-subtitle: Cost: 1 budget unit. The anniversary of the march of the First Cadre Company and decorations for the legionnaires; relations with Piłsudski improve (+10).
-choose-if: {! return PolishSecurity.pilsOptionStatus(Q, 'legion_cult').available !}
-unavailable-subtitle: [+ pl_pils_legion_cult_why +]
-on-arrival: {!
-PolishSecurity.pilsChoose(Q, 'legion_cult');
 !}
 go-to: result
 
@@ -68,16 +56,6 @@ choose-if: {! return PolishSecurity.pilsOptionStatus(Q, 'inspectorate').availabl
 unavailable-subtitle: [+ pl_pils_inspectorate_why +]
 on-arrival: {!
 PolishSecurity.pilsChoose(Q, 'inspectorate');
-!}
-go-to: result
-
-@status_quo
-title: Keep the present order in the army
-subtitle: Cost: 0 budget units. The Centrum of PPS is content (−3), but Piłsudski feels passed over and relations with him worsen (−3).
-choose-if: {! return PolishSecurity.pilsOptionStatus(Q, 'status_quo').available !}
-unavailable-subtitle: [+ pl_pils_status_quo_why +]
-on-arrival: {!
-PolishSecurity.pilsChoose(Q, 'status_quo');
 !}
 go-to: result
 

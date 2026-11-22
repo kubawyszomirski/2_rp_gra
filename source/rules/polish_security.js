@@ -1274,6 +1274,12 @@
 
   // ---- Views for the scenes ---------------------------------------------------------------------------------
 
+  const policeWords = police => [
+    police.capacity < 40 ? L('weak', 'słaba') : police.capacity < 70 ? L('moderately capable', 'przeciętnie sprawna') : L('capable', 'sprawna'),
+    police.command < 40 ? L('it hardly obeys the cabinet', 'słabo słucha rządu') : police.command < 70 ? L('it obeys the cabinet', 'posłuszna rządowi') :
+      L('fully obedient to the cabinet', 'w pełni posłuszna rządowi'),
+    police.lawful_compliance < 40 ? L('it often breaks the law', 'często łamie prawo') : police.lawful_compliance < 70 ?
+      L('it does not always keep to the law', 'nie zawsze przestrzega prawa') : L('lawful', 'praworządna')].join(', ') + '.';
   // The police of 16.3 as the Interior sees it; the capacity of protection at the current command and compliance.
   function policeLine(Q) {
     const S = Q.S, police = S.security.police;
@@ -1285,10 +1291,10 @@
 
   // Z — 1.02 (the user's decisions of 7 XI 2026): the card „Piłsudski i wojsko” from curbing his influence to the independent
   // inspectorate; the premiership and the refusal left the card (their rules stay for older games). P: the numbers are game values.
-  const PILS_OPTIONS = Object.freeze(['subordinate', 'legion_cult', 'military_function', 'inspectorate', 'status_quo']);
+  // Z — 1.23 (the user's play notes of 22 XI 2026): keeping the present order is the same as doing nothing, and the cult of the
+  // Legions left the card.
+  const PILS_OPTIONS = Object.freeze(['subordinate', 'military_function', 'inspectorate']);
   const SUBORDINATE = Object.freeze({forces: [ARMY], loyalty: 0.05, relation: -15, pilsudczycy: 10});
-  const LEGION_CULT = Object.freeze({price: 1, relation: 10});
-  const STATUS_QUO = Object.freeze({centrum: -3, relation: -3});
 
   function pilsOptionStatus(Q, option) {
     const S = Q.S;
@@ -1299,8 +1305,6 @@
       return SUBORDINATE.forces.some(id => forceOf(S, id).loyalty_pils > 0.001) ? OK :
         no(L('The army no longer leans towards Piłsudski.', 'Wojsko nie sprzyja już Piłsudskiemu.'));
     }
-    if (option === 'legion_cult') return projects.affordStatus(Q, LEGION_CULT.price);
-    if (option === 'status_quo') return OK;
     return no(L('Unknown option.', 'Nieznana opcja.'));
   }
 
@@ -1331,19 +1335,6 @@
         'się burzą (+' + SUBORDINATE.pilsudczycy + '), a stosunki z Piłsudskim się psują (−' + Math.abs(SUBORDINATE.relation) + ').' +
         (broke ? ' Porozumienie z nim zostaje zerwane: presja na zamach rośnie.' : ''));
       pilsObjections(Q, option);
-    } else if (option === 'legion_cult') {
-      projects.poolChange(Q, -LEGION_CULT.price, 'legion_cult:t' + t, 'The anniversary of the Legions', 'Rocznica czynu legionowego');
-      government.changeRelation(Q, 'pilsudski', LEGION_CULT.relation, 'legion_cult:t' + t);
-      Q.pl_pils_result = L('The state celebrates the march of the First Cadre Company and decorates the legionnaires; it costs 1 budget unit. Relations with Piłsudski improve (+' +
-        LEGION_CULT.relation + ').', 'Państwo obchodzi rocznicę wymarszu Kadrówki i odznacza legionistów; kosztuje to 1 jednostkę budżetu. Stosunki z Piłsudskim ' +
-        'się poprawiają (+' + LEGION_CULT.relation + ').');
-    } else {
-      government.factionReactions(Q, [{faction: 'centrum', dissent: STATUS_QUO.centrum}], {id: 'pils_status_quo:t' + t, kind: 'cabinet_policy', reverse: null});
-      government.changeRelation(Q, 'pilsudski', STATUS_QUO.relation, 'pils_status_quo:t' + t);
-      const sign = n => (n < 0 ? '−' : '+') + Math.abs(n);
-      Q.pl_pils_result = L('Nothing changes in the army. The Centrum of PPS is content (' + sign(STATUS_QUO.centrum) + '), but Piłsudski feels passed over (' +
-        sign(STATUS_QUO.relation) + ').', 'W wojsku nic się nie zmienia. Centrum PPS jest zadowolone (' + sign(STATUS_QUO.centrum) + '), ale Piłsudski ' +
-        'czuje się pominięty (' + sign(STATUS_QUO.relation) + ').');
     }
     party.writeMirrors(Q);
     return {option: option};
@@ -1421,6 +1412,9 @@
     Q.pl_def_police_command = fmt(police.command);
     Q.pl_def_police_lawful = fmt(police.lawful_compliance);
     Q.pl_def_police_protection = fmt(protectionCapacity(S, null, Q.time)) + L('\u00a0of\u00a0100', '\u00a0na\u00a0100');
+    // Z — 1.23 (decision 6A of 22 XI 2026): the police in one line of words — how capable, how obedient to the cabinet, how lawful.
+    const words = policeWords(police);
+    Q.pl_def_police_words = words.charAt(0).toUpperCase() + words.slice(1);
   }
 
   function statusLine(Q) {

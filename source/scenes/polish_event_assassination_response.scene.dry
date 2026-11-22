@@ -29,7 +29,12 @@ title: A mass defence of the republic
 subtitle: Cost: 1 resource. Our press and unions call people to a peaceful gathering in defence of the Republic, which strengthens democracy (+2).
 choose-if: {! return PolishPolitics.responseStatus(Q, 'defend').available !}
 unavailable-subtitle: [+ pl_b4_defend_why +]
-go-to: protection
+on-arrival: {!
+// Z — 1.23 (the user's play notes of 22 XI 2026): the gathering in defence of the Republic goes without the Milicja; the Milicja stays
+// in the retaliatory confrontation.
+PolishPolitics.responseChoose(Q, 'defend', {protect: false});
+!}
+go-to: result
 
 @restraint
 title: Restraint and a focus on the lawful succession
@@ -48,34 +53,6 @@ choose-if: {! return PolishPolitics.responseStatus(Q, 'retaliation').available !
 unavailable-subtitle: [+ pl_b4_retaliation_why +]
 on-arrival: {!
 PolishPolitics.responseChoose(Q, 'retaliation');
-!}
-go-to: result
-
-@protection
-new-page: true
-
-= Protecting the gathering
-
-Our Milicja can guard the gathering for half a resource more. It makes a clash less likely, though not impossible.
-
-- @unprotected
-- @protected
-- @polish_event_assassination_response: Back to the answers.
-
-@unprotected
-title: Hold the gathering without the Milicja
-on-arrival: {!
-PolishPolitics.responseChoose(Q, 'defend', {protect: false});
-!}
-go-to: result
-
-@protected
-title: Protect the gathering with the Milicja
-subtitle: Cost: half a resource more.
-choose-if: {! return PolishPolitics.responseStatus(Q, 'defend', true).available !}
-unavailable-subtitle: [+ pl_b4_protect_why +]
-on-arrival: {!
-PolishPolitics.responseChoose(Q, 'defend', {protect: true});
 !}
 go-to: result
 

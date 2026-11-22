@@ -411,27 +411,18 @@ test('Rząd z PPS 1.10: no legislative initiative; "Do nothing" on a ministry ca
   assert.ok(PolishRules.cardRest(Q, 'polish_gov_labor_rights') > 0, 'the card rests');
 });
 
-// Z — 1.11 (decision 1A of 8 XI 2026): with PPS at the Treasury and the budget below zero, the urgent card of our plan.
-test('Nasz plan 1.11: an urgent card of the Government deck while PPS holds the Treasury and the budget is below zero; the plan waits for the Sejm', () => {
+// Z — 1.23 (the user's play notes of 22 XI 2026): with PPS at the Treasury and the budget below zero there is no urgent card of a budget
+// law; the card „Podatki i pożyczki” keeps every decision, the savings in administration included.
+test('Bez ustawy budżetowej 1.23: no urgent budget law of PPS below zero; the Treasury card keeps its five decisions', () => {
   const engine = dendry.startGame(1922, 'pl');
   const Q = leftCabinet(engine);
-  const plain = x => (x == null ? '' : typeof x === 'string' ? x : Array.isArray(x) ? x.map(plain).join('') : plain(x.content));
   try {
     Q.S.cabinet.portfolios.finance = 'pps';
     Q.S.economy.budget = -1;
     engine.goToScene('main');
-    assert.ok(dendry.urgentCards(engine).includes('polish_gov_budget_plan'));
-    assert.equal(dendry.urgentDeck(engine, 'polish_gov_budget_plan'), 'main.govt');
-    engine.playCard('polish_gov_budget_plan');
-    assert.match(content(engine), /Budżet jest poniżej zera .*Nasz minister skarbu może przedstawić Sejmowi ustawę budżetową/);
-    assert.deepEqual(ids(engine), ['polish_gov_budget_plan.progressive', 'polish_gov_budget_plan.loan', 'polish_gov_budget_plan.admin_cuts',
-      'polish_gov_budget_plan.emission', 'polish_gov_budget_plan.later']);
-    assert.match(plain(choice(engine, 'polish_gov_budget_plan.emission').subtitle), /^Jeśli Sejm ją przyjmie, budżet zyska 3 jednostki; rośnie inflacja\. Dziś Sejm by ją (przyjął|odrzucił)\.$/);
-    choose(engine, 'polish_gov_budget_plan.emission');
-    assert.match(content(engine), /Nasz Skarb przedstawia Sejmowi ustawę budżetową: finansowanie emisją\. Sejm zagłosuje przy rozliczeniu/);
-    assert.equal(Q.S.economy.pending_package.pps_plan, true);
-    choose(engine, 'root');
-    assert.ok(!dendry.urgentCards(engine).includes('polish_gov_budget_plan'), 'one plan at a time');
+    assert.ok(!dendry.urgentCards(engine).includes('polish_gov_budget_plan'));
+    engine.goToScene('polish_gov_finance');
+    for (const id of ['progressive', 'indirect', 'loan', 'emission', 'admin_cuts']) assert.ok(ids(engine).includes('polish_gov_finance.' + id), id);
   } finally {
     PolishRules.setLanguage('en');
   }

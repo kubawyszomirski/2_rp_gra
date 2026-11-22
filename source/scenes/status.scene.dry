@@ -301,13 +301,7 @@ if (Q.sa_strength) {
 
 [? if polish_security_rules and pl_def_crisis : **[+ pl_def_crisis +]** ?]
 
-[? if polish_security_rules : **Capacity:** {!<i class="pl-gauge"></i>!}[+ pl_def_police_capacity +] ?]
-
-[? if polish_security_rules : **Command:** {!<i class="pl-gauge"></i>!}[+ pl_def_police_command +] ?]
-
-[? if polish_security_rules : **Lawful compliance:** {!<i class="pl-gauge"></i>!}[+ pl_def_police_lawful +] ?]
-
-[? if polish_security_rules : **Protection of one gathering:** [+ pl_def_police_protection +] ?]
+[? if polish_security_rules : [+ pl_def_police_words +] ?]
 
 = [? if polish_security_rules : The army ?]
 
