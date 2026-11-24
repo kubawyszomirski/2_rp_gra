@@ -338,6 +338,8 @@ try {
         Q.pl_eco_projects = projectView.projects;
         Q.pl_eco_laws = projectView.laws;
         Q.pl_economy_notices = PolishProjects.economyNotices(Q);
+        // Z — 1.32: what moved the voters at the last settlement (the reforms, hard times, a halted budget).
+        Q.pl_support_notices = typeof PolishParty !== 'undefined' && PolishParty.supportNotices ? PolishParty.supportNotices(Q) : '';
     }
 } catch (error) {
     displayFailed('the economy', error);

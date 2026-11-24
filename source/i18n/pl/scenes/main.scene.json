@@ -13,6 +13,7 @@
     "title: Government Affairs": "title: Sprawy rządu",
     "title: Parliament": "title: Parlament",
     "[? if pl_election_reminder : **Elections approaching.** [+ pl_election_reminder +] [? if sejm_first_election_completed : This election ends the chapter. ?] ?]": "[? if pl_election_reminder : **Zbliżają się wybory.** [+ pl_election_reminder +] [? if sejm_first_election_completed : Te wybory zakończą rozdział. ?] ?]",
-    "[? if pl_army_notice : **Army:** [+ pl_army_notice +] ?]": "[? if pl_army_notice : **Wojsko:** [+ pl_army_notice +] ?]"
+    "[? if pl_army_notice : **Army:** [+ pl_army_notice +] ?]": "[? if pl_army_notice : **Wojsko:** [+ pl_army_notice +] ?]",
+    "[? if pl_support_notices : **Support:** [+ pl_support_notices +] ?]": "[? if pl_support_notices : **Poparcie:** [+ pl_support_notices +] ?]"
   }
 }

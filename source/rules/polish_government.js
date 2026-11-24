@@ -3462,6 +3462,9 @@
       factionReaction(Q, 'lewica', {dissent: NO_CONFIDENCE.withdraw_lewica}, {id: 'no_confidence_withdraw:' + m.id, kind: 'cabinet_policy', reverse: null});
       lines.push(L('We withdraw „' + entry.target.name[0] + '”; its spending stops.', 'Wycofujemy się z reformy „' + entry.target.name[1] + '”; jej wydatki ustają.'),
         L(capitalise(plainParties(entry.clubs)) + ' soften, and the Left of PPS is displeased.', capitalise(plainParties(entry.clubs)) + ' łagodnieją, a Lewica PPS jest niezadowolona.'));
+      // Z — 1.32: the voters the reform served turn away.
+      const voters = globalThis.PolishProjects.consumeAnnouncement(S, t);
+      if (voters) lines.push(voters);
     } else if (option === 'court') {
       const club = noConfidenceClub(Q);
       S.party_orgs.cash = Math.max(0, Math.round((S.party_orgs.cash - NO_CONFIDENCE.court_cost) * 10) / 10);
@@ -3570,6 +3573,7 @@
     if (option === 'stop') {
       const target = crisisTarget(Q, c);
       globalThis.PolishProjects.stopTarget(Q, target, 'coalition_crisis');
+      out.voters = globalThis.PolishProjects.consumeAnnouncement(S, t);
       lowerCrisisTension(Q, c, CRISIS_STOP_TENSION, 'coalition_crisis_stop');
       factionReaction(Q, RIGHT_OF_PPS.indexOf(c.partner) >= 0 ? 'lewica' : 'centrum', {dissent: CRISIS_FACTION}, cause);
       out.target = target;
@@ -3652,7 +3656,8 @@
     const fell = out.fell ? L(' The cabinet has fallen; a new cabinet is being formed, and PPS can propose another coalition.',
       ' Rząd upadł; trwa tworzenie nowego rządu, a PPS może zaproponować inną koalicję.') : '';
     if (out.option === 'stop') return L(capitalise1(out.target.name[0]) + ' stops. The tension with ' + partyWords(out.partner) + ' is now ' + tension + ' of 100.',
-      capitalise1(out.target.name[1]) + ' — wstrzymane. ' + (tension >= 60 ? 'Partner wciąż jest bliski zerwania.' : tension >= 30 ? 'Partner wciąż jest niezadowolony.' : 'Partner się uspokaja.'));
+      capitalise1(out.target.name[1]) + ' — wstrzymane. ' + (tension >= 60 ? 'Partner wciąż jest bliski zerwania.' : tension >= 30 ? 'Partner wciąż jest niezadowolony.' : 'Partner się uspokaja.')) +
+      (out.voters ? ' ' + out.voters : '');
     if (out.option === 'persuade') return L('The talks calm the partner: the tension is now ' + tension + ' of 100.', 'Rozmowy uspokajają partnera.') +
       (still ? L(' It is not enough: the crisis goes on.', ' To jeszcze za mało: kryzys trwa.') : '');
     if (out.option === 'break') return L('Our ministers leave the cabinet, and PPS goes into opposition.', 'Nasi ministrowie odchodzą z rządu, a PPS przechodzi do opozycji.') + fell;

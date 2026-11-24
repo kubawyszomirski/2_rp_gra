@@ -355,6 +355,10 @@
     return L('fast growth', 'szybki wzrost');
   }
 
+  // Z — 1.32: bad times for a government — a currency or credit crisis or a decline of output. A budget crisis is left out: it comes
+  // mostly from the government's own spending, which already pays for it with inflation and halted programmes.
+  const badEconomy = (E, t) => currencyCrisis(E) || creditCrisis(E, t) || (E.last_growth || 0) < -0.2;
+
   function currencyCrisis(E) {
     const r = lastReadings(E, 2);
     return r.length === 2 && r.every(x => x.inflation_m >= 20);
@@ -627,6 +631,7 @@
     settleEconomy: settleEconomy,
     currencyCrisis: currencyCrisis,
     economyWord: economyWord,
+    badEconomy: badEconomy,
     fiscalCrisis: fiscalCrisis,
     creditCrisis: creditCrisis,
     classConditions: classConditions,

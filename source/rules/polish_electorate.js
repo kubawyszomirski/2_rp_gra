@@ -502,7 +502,21 @@
     if (label === 'national_minorities' || label === 'minorities' || label === 'excluded cells') return cell => cell.identity_id !== 'polish';
     if (label === 'jewish' || label === 'other_minorities') return cell => cell.identity_id === label;
     if (label === 'intelligentsia covered') return cell => cell.class_id === 'new_middle';
+    // Z — 1.32: the workers of the large cities (housing and the protection of tenants).
+    if (label === 'urban_workers') return cell => cell.class_id === 'workers' && cell.settlement === 'major_city';
     return null;
+  }
+
+  // Z — 1.32 (decisions D1–D5 of 24 XI 2026): moves the support of PPS in the cells of a filter so that the whole electorate gains
+  // (or loses) about `national` points; the change in each cell is capped at `cap` points. Returns the move in the whole electorate.
+  function shiftPps(S, filter, national, cap) {
+    if (!S || !S.society || !Array.isArray(S.society.cells) || !filter || !national) return 0;
+    const cells = S.society.cells.filter(filter), total = massOf(S.society.cells), mass = massOf(cells);
+    if (!(mass > 0) || !(total > 0)) return 0;
+    const per = Math.min(cap || 3, Math.abs(national) * total / mass);
+    let moved = 0;
+    for (const cell of cells) moved += cell.mass * (national > 0 ? gainForPps(cell, per, S.society.parties) : lossForPps(cell, per, S.society.parties));
+    return (national > 0 ? 1 : -1) * moved / total;
   }
 
   function filterOfList(labels) {
@@ -630,6 +644,7 @@
     changeCells: changeCells,
     beneficiaryFilter: beneficiaryFilter,
     filterOfList: filterOfList,
+    shiftPps: shiftPps,
     mergeCells: mergeCells,
     validateCells: validateCells,
   });

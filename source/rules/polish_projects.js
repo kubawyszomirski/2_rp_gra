@@ -808,7 +808,13 @@
   function authorize(Q, project, m, authorizationId, ppsVoted) {
     project.authorized = true;
     // Z — 1.31: a reform of PPS carried into force raises its credibility, once for each reform.
-    if (project.sponsor === 'pps' && isReform(project)) government.changeCredibility(Q, 'reform:' + reformKey(project), REFORM_CREDIBILITY, 'reform');
+    if (project.sponsor === 'pps' && isReform(project)) {
+      government.changeCredibility(Q, 'reform:' + reformKey(project), REFORM_CREDIBILITY, 'reform');
+      // Z — 1.32: the gain of the voters, by the route of the reform (a bill of our initiative or a decision of a minister).
+      const law = ((Q.S.parliament && Q.S.parliament.laws) || []).filter(l => l.id === project.law_id)[0];
+      scheduleReformGain(Q, reformKey(project), law && law.kind === 'initiative' ? 'law' : 'ministry', LIMITED_VARIANTS.indexOf(project.variant) >= 0, reformName(project),
+        projectGroups(project));
+    }
     payPrice(Q, project, m);
     project.authorization_id = authorizationId || project.authorization_id;
     if (project.started_at === null || project.started_at < m) {
@@ -3749,7 +3755,8 @@
     const effect = lastInitiativeText;
     lastInitiativeText = '';
     return L('The law is in force from this month. ', 'Ustawa obowiązuje od tego miesiąca. ') + effect +
-      (choice === 'limited' ? ' ' + L('In nine months we can propose its full version.', 'Za dziewięć miesięcy możemy zaproponować jej pełną wersję.') : '');
+      (choice === 'limited' ? ' ' + L('In nine months we can propose its full version.', 'Za dziewięć miesięcy możemy zaproponować jej pełną wersję.') : '') +
+      (supportState(Q.S).announce_t === t ? ' ' + consumeAnnouncement(Q.S, t) : '');
   }
   // The effects of an enacted law of the initiative (lawEnactedHooks). The sentence for the result page is kept outside the
   // state, so the state stays the same in both languages.
@@ -3761,7 +3768,10 @@
     if (RIGHT_LAWS[law.id] && pol) pol.rightMobilise(Q, RIGHT_LAWS[law.id], 'initiative:' + law.id);
     lastInitiativeText = law.enact(Q, bill.variant, bill, m, !!bill.initiative.raise) || '';
     // Z — 1.31: a law of our initiative without a project of its own raises the credibility of PPS too.
-    if (!Object.keys(Q.S.projects).some(id => Q.S.projects[id].law_id === bill.id)) government.changeCredibility(Q, 'reform:law:' + law.id, REFORM_CREDIBILITY, 'reform');
+    if (!Object.keys(Q.S.projects).some(id => Q.S.projects[id].law_id === bill.id)) {
+      government.changeCredibility(Q, 'reform:law:' + law.id, REFORM_CREDIBILITY, 'reform');
+      scheduleReformGain(Q, 'law:' + law.id, 'law', law.variants.length > 1 && bill.variant === law.variants[1].key, law.name);
+    }
   }
 
   // ---- Government cards (17.11; catalogue 8.1–8.11, 8.13, 8.16) -------------------------------------
@@ -4306,6 +4316,118 @@
       (policy.ends_at === null || policy.ends_at > Q.time);
   }
 
+  // ---- The support of the voters for the reforms of PPS and the risk of governing (Z — 1.32, decisions D1–D7 of 24 XI 2026) ----
+  // A reform of PPS that comes into force wins its groups about 0.4 points of the whole electorate over three months (a bill of the
+  // initiative half, a limited variant half again), more with a credible party and a matching characteristic. A withdrawn reform
+  // takes back one and a half times its gain; an unpopular decision of a PPS minister costs 0.15 points in the group it hurts.
+  // PolishParty delivers the pending gains and the wear of governing at each monthly settlement.
+  const REFORM_SUPPORT = Object.freeze({ministry: 0.4, law: 0.2, limited: 0.5, months: 3, withdraw: 1.5, unpopular: 0.15, matching: 1.25});
+  const REFORM_GROUPS = Object.freeze({labor_inspection: ['workers'], works_councils: ['workers'], old_age_insurance: ['workers'],
+    worker_protection: ['unemployed', 'workers'], 'public_works:employment': ['unemployed', 'workers'], 'public_works:infrastructure': ['workers'],
+    'public_works:housing': ['urban_workers'], tenant_protection: ['urban_workers'], land_program: ['rural'], agriculture_development: ['rural'],
+    cooperative_credit: ['workers'], education_program: ['workers', 'rural'], minority_schools: ['minorities'],
+    official_languages: ['minorities'], limited_autonomy: ['minorities'], press_law: ['new_middle'], jury_courts: ['new_middle'],
+    amnesty: ['workers'], legal_aid: ['workers'], civil_marriage: ['new_middle', 'workers'], women_rights: ['new_middle'], science: ['new_middle'],
+    radio: ['new_middle'], army_control: ['new_middle'], currency_reform: ['old_middle', 'new_middle'], credit_instrument: ['old_middle'],
+    mining_socialisation: ['workers'], constitution: ['new_middle'], 'law:progressive_tax': ['workers'], 'law:secular_school': ['new_middle', 'workers'],
+    'law:abortion': ['new_middle'], 'law:autonomy': ['minorities'], 'law:army_oversight': ['new_middle']});
+  const GROUP_WORDS = Object.freeze({workers: ['the workers', 'robotnicy'], unemployed: ['the unemployed', 'bezrobotni'], urban_workers:
+    ['the workers of the cities', 'robotnicy w miastach'], rural: ['the peasants', 'chłopi'], old_middle: ['the petty bourgeoisie', 'drobnomieszczaństwo'],
+    new_middle: ['the intelligentsia', 'inteligencja'], minorities: ['the national minorities', 'mniejszości narodowe']});
+  const DOMAIN_PROFILE = Object.freeze({workers: 'unionism', unemployed: 'unionism', urban_workers: 'unionism', rural: 'worker_peasant',
+    minorities: 'federalism'});
+  const RADICAL_REFORMS = Object.freeze(['works_councils', 'mining_socialisation', 'cooperative_credit', 'law:progressive_tax']);
+  // The options of the ministry cards: the groups a reform serves (gain) and the decisions that hurt a group (loss).
+  const OPTION_VOTERS = Object.freeze({'labor_rights.inspection': ['workers'], 'social_welfare.expand': ['unemployed', 'workers'],
+    'social_welfare.insurance': ['workers'], 'public_works.employment': ['unemployed', 'workers'], 'public_works.infrastructure': ['workers'],
+    'public_works.housing': ['urban_workers'], 'land_program.compensated': ['rural'], 'land_program.accelerated': ['rural'],
+    'land_program.settlers': ['rural'], 'agriculture_development.advisory': ['rural'], 'agriculture_development.consolidation': ['rural'],
+    'agriculture_development.cooperative_processing_sales': ['rural'], 'education_program.rural_access': ['rural'],
+    'education_program.urban_worker_adult_access': ['workers'], 'education_program.secular': ['new_middle', 'workers'],
+    'minority_school_rights.own_language': ['minorities'], 'minority_school_rights.agreed_bilingual': ['minorities'],
+    'minorities_kresy.official_languages': ['minorities'], 'minorities_kresy.self_government': ['minorities'], 'justice_policy.amnesty': ['workers'],
+    'justice_policy.jury': ['new_middle'], 'justice_policy.legal_aid': ['workers'], 'family_law.civil_marriage': ['new_middle', 'workers'],
+    'family_law.women_rights': ['new_middle'], 'civil_liberties.press_freedom': ['new_middle'], 'economic_democracy.works_councils': ['workers'],
+    'economic_democracy.cooperative_credit': ['workers'], 'economic_democracy.socialise_mining': ['workers'],
+    'heritage_restoration.science': ['new_middle'], 'heritage_restoration.radio': ['new_middle']});
+  const UNPOPULAR = Object.freeze({'finance_package.indirect': ['workers', 'unemployed'], 'finance_package.admin_cuts': ['new_middle'],
+    'labor_rights.derogation': ['workers'], 'social_welfare.limit': ['unemployed'], 'agriculture_development.farm_aid_cuts': ['rural'],
+    'education_program.delay_schools': ['new_middle']});
+
+  function supportState(S) {
+    const pps = S.actors.pps;
+    if (!pps.support) pps.support = {pending: [], given: {}, labels: {}, notes: [], announce: null, announce_t: null, halted_at: null};
+    return pps.support;
+  }
+  const groupsOf = key => REFORM_GROUPS[key] || REFORM_GROUPS[String(key).split(':').slice(0, 2).join(':')] || REFORM_GROUPS[String(key).split(':')[0]] || ['workers'];
+  const SINGULAR_GROUPS = Object.freeze(['new_middle', 'old_middle']);
+  // A sentence about groups: the verb agrees with one singular group (inteligencja, drobnomieszczaństwo) or with several.
+  const groupSentence = (labels, en, plPlural, plSingular) => capitalFirst(groupWords(labels)) +
+    L(en, labels.length === 1 && SINGULAR_GROUPS.indexOf(labels[0]) >= 0 ? plSingular : plPlural);
+  function groupWords(labels) {
+    const words = labels.map(l => L(GROUP_WORDS[l][0], GROUP_WORDS[l][1]));
+    return words.length > 1 ? words.slice(0, -1).join(', ') + L(' and ', ' i ') + words[words.length - 1] : words[0];
+  }
+  const capitalFirst = text => (text ? text.charAt(0).toUpperCase() + text.slice(1) : '');
+  function reformGain(S, key, by, limited, groups) {
+    const labels = groups || groupsOf(key);
+    const route = by === 'law' ? 'parliamentarism' : 'reformism';
+    const domain = labels.map(l => DOMAIN_PROFILE[l]).filter(Boolean).concat(RADICAL_REFORMS.indexOf(key) >= 0 ? ['radicalism'] : []);
+    const matching = [route].concat(domain).some(id => rules.profileActive(S, id));
+    const credibility = 0.85 + 0.30 * clip(S.actors.pps.credibility, 0, 100) / 100;
+    return (by === 'law' ? REFORM_SUPPORT.law : REFORM_SUPPORT.ministry) * (limited ? REFORM_SUPPORT.limited : 1) * credibility *
+      (matching ? REFORM_SUPPORT.matching : 1);
+  }
+  // A reform of PPS comes into force: its gain waits for the next three settlements; the decision says who will appreciate it.
+  // The groups of a reform: those its card option names (so the gain goes where the card said), else those of its type.
+  const projectGroups = p => OPTION_VOTERS[String(p.card || '').replace(/^government\./, '') + '.' + p.variant] || groupsOf(reformKey(p));
+  const labelsOf = (sup, key) => (sup.labels && sup.labels[key]) || groupsOf(key);
+  function scheduleReformGain(Q, key, by, limited, name, groups) {
+    const S = Q.S, sup = supportState(S), labels = groups || groupsOf(key);
+    const total = reformGain(S, key, by, limited, labels), before = sup.given[key] || 0;
+    if (total <= before + 1e-9) return '';
+    const add = total - before;
+    sup.given[key] = total;
+    if (!sup.labels) sup.labels = {};
+    sup.labels[key] = labels;
+    sup.pending.push({key: key, labels: labels, total: add, left: REFORM_SUPPORT.months, name: name});
+    sup.announce = {kind: 'gain', labels: labels};
+    sup.announce_t = Q.time;
+    return announcementText(sup.announce);
+  }
+  // A withdrawn or stopped reform takes back one and a half times what it gave.
+  function withdrawReformGain(Q, key) {
+    const S = Q.S, sup = supportState(S), given = sup.given[key] || 0;
+    sup.pending = sup.pending.filter(p => p.key !== key);
+    if (!(given > 0)) return '';
+    sup.given[key] = 0;
+    electorate.shiftPps(S, electorate.filterOfList(labelsOf(sup, key)), -REFORM_SUPPORT.withdraw * given);
+    electorate.writeClassMirrors(Q);
+    return {kind: 'withdraw', labels: labelsOf(sup, key)};
+  }
+  function announcementText(a) {
+    if (!a || !a.labels) return '';
+    return a.kind === 'withdraw' ? groupSentence(a.labels, ' turn away from PPS.', ' odwracają się od PPS.', ' odwraca się od PPS.') :
+      groupSentence(a.labels, ' will appreciate it in the next three months.', ' docenią to w najbliższych trzech miesiącach.', ' doceni to w najbliższych trzech miesiącach.');
+  }
+  // A budget deep below zero halts the programmes: once for each halt, the voters of the PPS reforms that cost the budget turn away
+  // by what those reforms gave them (they do not win it again when the money returns).
+  function budgetHaltLoss(Q) {
+    const S = Q.S, sup = supportState(S);
+    let any = false;
+    for (const id of Object.keys(S.projects).sort()) {
+      const p = S.projects[id], key = reformKey(p);
+      if (p.sponsor !== 'pps' || !p.authorized || !(p.price_B > 0) || REFORM_LIVE.indexOf(p.status) < 0 || !(sup.given[key] > 0)) continue;
+      electorate.shiftPps(S, electorate.filterOfList(labelsOf(sup, key)), -sup.given[key]);
+      sup.given[key] = 0;
+      sup.pending = sup.pending.filter(x => x.key !== key);
+      any = true;
+    }
+    return any;
+  }
+  // The announcement belongs to the decision of this month; one made at a settlement (a law of a later vote) is left to the notes.
+  const consumeAnnouncement = (S, t) => { const sup = supportState(S), text = sup.announce_t === t ? announcementText(sup.announce) : ''; sup.announce = null; return text; };
+
   // ---- The record of the reforms of PPS (Z — 1.31, decisions of 24 XI 2026) ----------------------------------------------
   // A reform of PPS is a project of a PPS ministry or of a PPS bill, authorised and not stopped, of a type that changes the lives of
   // people (the administrative steps of the ministries are left out), or a PPS bill of the initiative in force without a project
@@ -4360,12 +4482,26 @@
     S.history.reasons.push({t: t, kind: 'reform_stopped', target: target, reason: reason || ''});
     // Z — 1.31: a withdrawn reform costs the credibility of PPS.
     government.changeCredibility(Q, 'withdrawn:' + target.kind + ':' + target.id + ':t' + t, -REFORM_CREDIBILITY, 'reform_withdrawn');
+    // Z — 1.32: the voters it served turn away (one and a half times its gain).
+    const stoppedKey = target.kind === 'project' && S.projects[target.id] ? reformKey(S.projects[target.id]) :
+      (S.economy.policies.filter(x => x.id === target.id)[0] || {}).kind === 'progressive' ? 'law:progressive_tax' : null;
+    if (stoppedKey) { const sup = supportState(S); sup.announce = withdrawReformGain(Q, stoppedKey); sup.announce_t = t; }
   }
 
   const CARD_PROFILE_SEEDS = Object.freeze({minority_school_rights: ['federalism', 2], minorities_kresy: ['federalism', 2],
     land_program: ['worker_peasant', 2], 'economic_democracy.works_councils': ['radicalism', 3], 'economic_democracy.socialise_mining': ['radicalism', 3]});
   function chooseOption(Q, cardId, option, extra) {
     const out = withObjections(Q, cardId + '.' + option, () => chooseOptionRun(Q, cardId, option, extra));
+    // Z — 1.32: the voters — an unpopular decision costs its group at once; a reform that came into force announces its gain.
+    const voters = [], hurt = UNPOPULAR[cardId + '.' + option];
+    if (hurt && electorate.hasCells(Q.S)) {
+      electorate.shiftPps(Q.S, electorate.filterOfList(hurt), -REFORM_SUPPORT.unpopular);
+      electorate.writeClassMirrors(Q);
+      voters.push(groupSentence(hurt, ' turn away from PPS.', ' odwracają się od PPS.', ' odwraca się od PPS.'));
+    }
+    const announce = consumeAnnouncement(Q.S, Q.time);
+    if (announce) voters.push(announce);
+    if (voters.length && Q.pl_gc_result) Q.pl_gc_result += RESULT_BREAK + voters.join(RESULT_BREAK);
     const pol = politicsModule(), right = RIGHT_TRIGGERS[cardId + '.' + option];
     if (right && pol) pol.rightMobilise(Q, right, cardId + '.' + option);
     return out;
@@ -4434,14 +4570,16 @@
             const project = createProject(Q, 'worker_protection', 'full', ppsFields);
             launchProject(Q, project, {sponsor: 'pps'});
             return result(Q, L('The protection for the unemployed starts this month; it costs ' + unitsText(profilePrice(Q.S, project.type, project.price_B || 0, project.sponsor)) + '.',
-              'Osłona dla bezrobotnych rusza w tym miesiącu; kosztuje ' + unitsText(profilePrice(Q.S, project.type, project.price_B || 0, project.sponsor)) + '.'));
+              'Zasiłki dla bezrobotnych ruszają w tym miesiącu; kosztuje to ' + unitsText(profilePrice(Q.S, project.type, project.price_B || 0, project.sponsor)) + '.'));
           }
           protection.scope = (protection.scope || 1) + 1;
           const extra = repriceProject(Q, protection, 'full', t);
           pend(protection, {system: 'grievance', stage: 7, value: -6, when: 'scope_' + protection.scope, note: 'newly covered recipients'});
           protection.history.push({t: t, kind: 'expanded', scope: protection.scope});
+          // Z — 1.32: a wider benefit wins its voters too, as a limited reform.
+          scheduleReformGain(Q, 'worker_protection:scope' + protection.scope, 'ministry', true, ['Wider unemployment benefits', 'Szersze zasiłki dla bezrobotnych']);
           return result(Q, L('The protection now covers scope ' + protection.scope + '; it costs ' + unitsText(extra) + '.',
-            'Osłona obejmuje teraz zakres ' + protection.scope + '; kosztuje ' + unitsText(extra) + '.'));
+            'Zasiłki obejmują teraz więcej bezrobotnych; kosztuje to ' + unitsText(extra) + '.'));
         }
         if (option === 'insurance') {
           const project = prepareProject(Q, 'old_age_insurance', 'pension_all', ppsFields, {match: p => p.sponsor === 'pps'});
@@ -4734,7 +4872,8 @@
     if (cardId === 'justice_policy' && S.politics) Q.pl_gc_democracy_words = band(S.politics.democracy, [45, 65], ['słabe', 'umiarkowane', 'silne']);
     if (cardId === 'labor_rights' && unions && S.unions) Q.pl_gc_collective_branch = unions.branchName(unions.collectiveTarget(Q) || 'industry').toLowerCase();
     Q.pl_gc_plants = unions && S.enterprises && (cardId === 'labor_rights' || cardId === 'industrial_policy') ? unions.plantsLine(S) : '';
-    // Z — Koalicja: an option that partners of this cabinet reject says so on the card.
+    // Z — Koalicja: an option that partners of this cabinet reject says so on the card. Z — 1.32: the voters are named by the
+    // option itself („the peasants trust PPS more”) and by the result of the decision, so the card adds no sentence of its own.
     for (const option of card.options) Q['pl_' + cardId + '_' + option + '_coalition'] = government.reformObjectionText(Q, cardId + '.' + option);
     Q.pl_gc_result = '';
   }
@@ -5317,6 +5456,12 @@
     stoppable: stoppable,
     stopTarget: stopTarget,
     ppsReforms: ppsReforms,
+    supportState: supportState,
+    budgetHaltLoss: budgetHaltLoss,
+    consumeAnnouncement: consumeAnnouncement,
+    REFORM_SUPPORT: REFORM_SUPPORT,
+    groupWords: groupWords,
+    groupSentence: groupSentence,
     REFORM_NAMES: REFORM_NAMES,
     cardView: cardView,
     costWords: costWords,

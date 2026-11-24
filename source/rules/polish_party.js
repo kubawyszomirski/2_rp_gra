@@ -351,6 +351,7 @@
       if (tur.active_course.paid_months >= 2) completeCourse(Q, t);
     }
     cooperativeOf(S);
+    settleSupport(Q, t);
     // Since stage 6 the unions' own funds are settled by PolishUnions.beginMonth, before a strike draws on them
     // (14.1–14.2).
     orgs.last_ledger = {t: t, cash: round(orgs.cash, 4), member_index: round(apparatus.member_index, 4), member_target: round(target, 4),
@@ -1701,12 +1702,71 @@
   const campaignGainWords = d => (d < 0.05 ? ['hardly changes', 'prawie się nie zmienia'] : d < 0.5 ? ['grows a little', 'trochę rośnie'] :
     d < 1.5 ? ['grows', 'rośnie'] : ['grows clearly', 'wyraźnie rośnie']);
 
-  // The effect of one campaign in its cells (5.3), without its action and cost: the card above pays 1 T and 1 R; an
-  // event of stage 7 (B4, B5) pays its own cost in the same decision. A null audience is every cell the
-  // organisation reaches — the reach of each cell decides how much it moves.
+  // ---- The voters and the government (Z — 1.32, decisions D1–D6 of 24 XI 2026) ----------------------------------------------
+  // At each settlement: a third of the pending gains of the reforms of PPS; the wear of governing in bad times (a currency or
+  // credit crisis or a decline of output): the workers and the unemployed turn from a PPS that sits in the cabinet (0.02 points a
+  // month) or supports it (half). Bad months are frequent — about 50 in a chapter of governing — so the whole chapter costs about
+  // one point (decision D3A: −1 to −1.3). Once for each halt of the programmes by a budget deep below zero, their voters turn away.
+  const WEAR = Object.freeze({member: 0.02, supporter: 0.01, labels: ['workers', 'unemployed']});
+  function settleSupport(Q, t) {
+    const S = Q.S;
+    if (!electorate.hasCells(S) || !projects.supportState) return;
+    const sup = projects.supportState(S), notes = [];
+    for (const p of sup.pending) {
+      electorate.shiftPps(S, electorate.filterOfList(p.labels), p.total / projects.REFORM_SUPPORT.months);
+      p.left -= 1;
+      notes.push({kind: 'gain', labels: p.labels, name: p.name});
+    }
+    sup.pending = sup.pending.filter(p => p.left > 0);
+    const stance = government.ppsStance(S);
+    if ((stance === 'member' || stance === 'supporter') && economy.badEconomy && economy.badEconomy(S.economy, t)) {
+      electorate.shiftPps(S, electorate.filterOfList(WEAR.labels), -(stance === 'member' ? WEAR.member : WEAR.supporter));
+      notes.push({kind: 'wear', stance: stance});
+    }
+    const halted = economy.fiscalDelivery(S.economy.budget) === 0;
+    if (halted && (sup.halted_at === null || sup.halted_at === undefined)) {
+      sup.halted_at = t;
+      if (projects.budgetHaltLoss(Q)) notes.push({kind: 'halt'});
+    } else if (!halted) sup.halted_at = null;
+    sup.notes = notes;
+    sup.notes_t = t;
+    if (notes.length) electorate.writeClassMirrors(Q);
+  }
+
+  // The line of the month page: what moved the voters at the last settlement.
+  function supportNotices(Q) {
+    const S = Q && Q.S;
+    if (!S || !S.actors || !S.actors.pps || !S.actors.pps.support) return '';
+    const sup = S.actors.pps.support;
+    if (sup.notes_t !== Q.time - 1 || !sup.notes || !sup.notes.length) return '';
+    return sup.notes.map(n => {
+      if (n.kind === 'gain') return projects.groupSentence(n.labels, ' appreciate the reform „' + n.name[0] + '”.', ' doceniają reformę „' + n.name[1] + '”.', ' docenia reformę „' + n.name[1] + '”.');
+      if (n.kind === 'wear') return n.stance === 'member' ?
+        L('Hard times weigh on a cabinet with PPS in it: the workers and the unemployed turn away from us.', 'Ciężkie czasy obciążają rząd z udziałem PPS: robotnicy i bezrobotni odwracają się od nas.') :
+        L('Hard times weigh on PPS too, as it supports the cabinet: the workers and the unemployed turn from us a little.', 'Ciężkie czasy obciążają też PPS, która popiera rząd: robotnicy i bezrobotni trochę się od nas odwracają.');
+      return L('The budget is deep below zero and our programmes have stopped: their voters turn away from PPS.', 'Budżet jest głęboko pod kreską i nasze programy stanęły: ich wyborcy odwracają się od PPS.');
+    }).join(' ');
+  }
+
+  // Z — 1.32 (decision D6A): a campaign on a matter where a reform of PPS is in force reaches the voters more strongly.
+  const RECORD_TOPICS = Object.freeze({eight_hours: ['labor_inspection', 'works_councils'],
+    unemployed: ['worker_protection', 'public_works:employment', 'law:unemployment'],
+    land: ['land_program', 'agriculture_development', 'law:land_reform'],
+    republic: ['press_law', 'jury_courts', 'amnesty', 'army_control', 'law:army_oversight'],
+    prices: ['tenant_protection', 'public_works:housing', 'law:tenants']});
+  const RECORD_FACTOR = 1.25;
+  function recordFactor(S, topic) {
+    const keys = RECORD_TOPICS[topic];
+    if (!keys || !projects.ppsReforms) return 1;
+    return projects.ppsReforms(S).some(r => keys.indexOf(r.key) >= 0) ? RECORD_FACTOR : 1;
+  }
+
   // Z — 1.31 (decision D3A of 24 XI 2026): the credibility of PPS makes its campaigns weaker or stronger, from −15% to +15%.
   const credibilityFactor = S => 0.85 + 0.30 * clip(S.actors.pps.credibility, 0, 100) / 100;
 
+  // The effect of one campaign in its cells (5.3), without its action and cost: the card above pays 1 T and 1 R; an
+  // event of stage 7 (B4, B5) pays its own cost in the same decision. A null audience is every cell the
+  // organisation reaches — the reach of each cell decides how much it moves.
   function campaignEffect(Q, kind, topic, audience) {
     const S = Q.S, t = Q.time, parties = S.society.parties;
     const filter = audience ? audienceFilter(audience) : () => true;
@@ -1716,7 +1776,7 @@
     const key = kind === 'polemic' ? 'polemic:' + S.actors.pps.strategy.main_opponent : topic;
     const sources = kind === 'polemic' ? polemicAddressees(Q) : null;
     const pressFactor = kind === 'unions' ? 1 : 0.5 + 0.5 * pressEffective(S).credibility / 100;
-    const factor = kind === 'polemic' ? 1 : strategyFactor(Q, topic);
+    const factor = kind === 'polemic' ? 1 : strategyFactor(Q, topic) * recordFactor(S, topic);
     const press = kind === 'unions' ? 1 : activeEffect(S, 'press_campaign_multiplier', t);
     const assembly = S.politics && S.politics.assembly_freedom ? ASSEMBLY_CAMPAIGN : 1;
     const before = electorate.aggregate(S, filter, 'pps');
@@ -1955,7 +2015,9 @@
     const S = Q.S, issue = ISSUES[id];
     const line = issue.directions.indexOf(S.actors.pps.strategy.direction) >= 0 ? LINE_FACTOR : 1;
     const situation = issue.situation(S) ? SITUATION_FACTOR : 1;
-    return cell => line * situation * (inEnvironment(S, {kind: 'cell', class_id: cell.class_id}) ? CHARACTER_FACTOR : 1);
+    // Z — 1.32 (decision D6A): a campaign on a matter where a reform of PPS is in force.
+    const record = recordFactor(S, id);
+    return cell => line * situation * record * (inEnvironment(S, {kind: 'cell', class_id: cell.class_id}) ? CHARACTER_FACTOR : 1);
   }
 
   function issueSpec(Q, id) {
@@ -3487,6 +3549,7 @@
     collectionGain: collectionGain,
     pressEffective: pressEffective,
     settleParty: settleParty,
+    supportNotices: supportNotices,
     settleMonth: settleMonth,
     expansionMultiplier: expansionMultiplier,
     packageStatus: packageStatus,
