@@ -64,11 +64,12 @@ test('Pasek boczny: pogrubione etykiety, rozbite wiersze i liczby bez zbędnych 
   const engine = dendry.startGame(1922, 'pl');
   const main = display(engine, 'status'), politics = display(engine, 'status.politics');
   const mainText = flat(main).replace(/<[^>]*>/g, ''), politicsText = flat(politics).replace(/<[^>]*>/g, '');
-  // Z — 0.76: the tab "Partia" has no date heading; its first heading is PPS.
-  assert.match(mainText, /^\s*PPS ?\n/);
+  // Z — 0.76: the tab "Partia" has no date heading. Z — 1.31: its first heading is the goals of the chapter, then PPS.
+  assert.match(mainText, /^\s*Cele rozdziału ?\nWładza: tolerujemy rząd ?\nReformy: jeszcze żadnych ?\nRepublika: spokojnie ?\nCharakter partii: jeszcze żaden ?\nPPS ?\n/);
+  assert.match(mainText, /\nWiarygodność: przeciętna ?\n/, 'Z — 1.31: the credibility of PPS in a word');
   assert.doesNotMatch(mainText, /Styczeń 1922/);
   for (const label of ['Środki partii:', 'Wpływy ze składek co miesiąc:', 'Składki:', 'Członkostwo:',
-    'Sprzeciw w partii:', 'Jedność partii:', 'Pozycja PPS:', 'Prasa:', 'Towarzystwo Uniwersytetu Robotniczego:', 'Spółdzielnia spożywców:', 'Przemysł:', 'Kolej:',
+    'Sprzeciw w partii:', 'Jedność partii:', 'Władza:', 'Reformy:', 'Republika:', 'Charakter partii:', 'Wiarygodność:', 'Pozycja PPS:', 'Prasa:', 'Towarzystwo Uniwersytetu Robotniczego:', 'Spółdzielnia spożywców:', 'Przemysł:', 'Kolej:',
     'Robotnicy rolni:', 'Głowa państwa:', 'Premier:', 'Zorganizowani członkowie:', 'Centrum PPS', 'Lewica PPS', 'Piłsudczycy']) {
     assert.ok(bold(main).includes(label), label);
   }
@@ -114,7 +115,7 @@ test('Pasek boczny: zakładka „Partia” bez daty, przed rozpoczęciem gry i w
   const before = dendry.createEngine(1922, 'pl');
   assert.doesNotMatch(sidebar(before, 'status'), /^Stan ?\n/);
   const engine = dendry.startGame(1922, 'pl');
-  assert.match(sidebar(engine, 'status'), /^\s*PPS ?\n/);
+  assert.match(sidebar(engine, 'status'), /^\s*Cele rozdziału ?\n/); // Z — 1.31: the goals come first
   assert.doesNotMatch(sidebar(engine, 'status'), /Styczeń 1922/);
   assert.deepEqual(errors, []);
 });

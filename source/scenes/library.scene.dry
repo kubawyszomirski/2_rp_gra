@@ -12,6 +12,7 @@ Units: **R** — the resources of PPS (its money); **B** — a unit of the state
 
 @menu
 
+- @goals: Goals and record
 - @government: Poland's opening constitutional arrangements
 - @presidency: Presidential office and December 1922 elections
 - @polish_timeline: Poland 1919–1922: from the Legislative Sejm to the first President
@@ -26,6 +27,30 @@ Units: **R** — the resources of PPS (its money); **B** — a unit of the state
 - @figures: Figures and charts
 - @sidebar_notes: Notes to the top bar
 - @backSpecialScene: Exit library.
+
+@goals
+title: Goals and record
+go-to: menu
+on-arrival: {!
+// Z — 1.31 (decisions of 24 XI 2026): the goals of the chapter and the record of PPS so far.
+if (Q.S && Q.polish_party_rules && typeof PolishTopbar !== 'undefined') {
+    PolishTopbar.goalsView(Q);
+}
+!}
+
+= Goals and record
+
+In the first chapter PPS seeks four things: a share of power, its reforms in force, a Republic that withstands the threat of a coup, and a clear character of the party.
+
+[? if pl_goal_power : **Power now:** [+ pl_goal_power +]. [+ pl_record_power +] ?]
+
+[? if pl_goal_power : **Reforms:** [+ pl_library_reforms +] ?]
+
+[? if pl_goal_power : **Republic:** [+ pl_goal_republic +]. ?]
+
+[? if pl_goal_power : **Character of the party:** [+ pl_goal_character +]. ?]
+
+[? if pl_goal_power : **Credibility:** [+ pl_goal_credibility +]. It grows when PPS keeps its promises, wins offices and carries its reforms into force; it falls when PPS breaks its word, backs down from a threat, withdraws a reform or changes its line. A credible party reaches the voters better with its campaigns. ?]
 
 @government
 go-to: menu
@@ -420,7 +445,7 @@ go-to: menu
 
 = Central Executive Committee
 
-The Central Executive Committee (CKW) was the executive body of PPS. In the game it has three active seats and fourteen candidates; this is a gameplay simplification, not the historical membership of the committee. Using any Committee action starts one shared six-month cooldown. Dismissing a member adds five dissent to their faction. A person's first appointment adds five faction strength; reappointing the same person does not repeat that bonus.
+The Central Executive Committee (CKW) was the executive body of PPS. In the game it has three active seats and fourteen candidates; this is a gameplay simplification, not the historical membership of the committee. Using any Committee action starts one shared nine-month cooldown. Dismissing a member adds five dissent to their faction. A person's first appointment adds five faction strength; reappointing the same person does not repeat that bonus.
 
 In January 1922 the three active seats are held by **Ignacy Daszyński**, **Kazimierz Pużak**, and **Feliks Perl**.
 

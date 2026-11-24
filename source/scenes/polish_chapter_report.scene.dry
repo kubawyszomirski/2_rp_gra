@@ -30,9 +30,8 @@ if (report) {
     }).join('; ');
     Q.pl_report_pps = state.pps.seats + ' MPs (1922: ' + state.pps.seats_1922 + '); ' + state.pps.vote_share.toFixed(1) + '% of the vote';
     var f = state.pps.factions;
-    Q.pl_report_factions = 'Centrum ' + Math.round(f.centrum.strength) + '% (dissent ' + Math.round(f.centrum.dissent) + (f.centrum.resigned ? ', left the party' : '') + '); ' +
-        'Lewica ' + Math.round(f.lewica.strength) + '% (dissent ' + Math.round(f.lewica.dissent) + (f.lewica.split ? ', split' : '') + '); ' +
-        'Piłsudczycy ' + Math.round(f.pilsudczycy.strength) + '% (dissent ' + Math.round(f.pilsudczycy.dissent) + (f.pilsudczycy.split ? ', split' : '') + ')';
+    // Z — 1.31: the factions in words.
+    Q.pl_report_factions = typeof PolishTopbar !== 'undefined' ? PolishTopbar.factionWords(f) : '';
     var president = state.constitution.president;
     Q.pl_report_president = president ? president.holder_name + (president.status === 'acting' ? ' (acting)' : '') : 'None recorded';
     // Stage 8: after a coup the Sejm still sits, so the report names its Marshal; after the election, the outgoing one.
@@ -66,6 +65,8 @@ if (report) {
     Q.pl_report_unfinished = un ? un.projects.length + ' projects under way, ' + un.laws_in_procedure.length + ' laws in procedure, ' +
         un.promises.length + ' agreements with open promises, ' + un.ultimatums.length + ' open ultimatums' : 'not recorded';
     if (!Q.pl_report_continuation) Q.pl_report_continuation = 'nothing recorded';
+    // Z — 1.31 (decisions D4A and D5A of 24 XI 2026): the balance of the chapter — power, reforms, the Republic and credibility.
+    if (typeof PolishTopbar !== 'undefined') PolishTopbar.goalsView(Q);
     Q.pl_report_ready = 1;
 }
 !}
@@ -78,6 +79,16 @@ if (report) {
 
 [? if pl_report_ready and pl_report_coup : **Turning point.** The attempt against the government of [+ pl_report_date +] is resolved: [+ pl_report_coup_line +]. The first chapter ends here. ?]
 
+[? if pl_report_ready : **Power.** [+ pl_verdict_power +]. [+ pl_record_power +] ?]
+
+[? if pl_report_ready : **Reforms.** [+ pl_report_reforms +] ?]
+
+[? if pl_report_ready : **Republic.** [+ pl_verdict_republic +]. ?]
+
+[? if pl_report_ready and pl_report_profile : **Characteristics.** [+ pl_report_profile +] ?]
+
+[? if pl_report_ready : **Credibility of PPS.** [+ pl_verdict_credibility +]. ?]
+
 [? if pl_report_ready and not pl_report_coup : **The new Sejm (444 MPs).** [+ pl_report_seats +]. ?]
 
 [? if pl_report_ready and pl_report_coup : **The Sejm at the end of the chapter (444 MPs).** [+ pl_report_seats +]. ?]
@@ -86,19 +97,9 @@ if (report) {
 
 [? if pl_report_ready : **PPS.** [+ pl_report_pps +]. Factions: [+ pl_report_factions +]. ?]
 
-[? if pl_report_ready and pl_report_profile : **Characteristics.** [+ pl_report_profile +] ?]
-
 [? if pl_report_ready : **Institutions.** President: [+ pl_report_president +]. [+ pl_report_speaker_label +]: [+ pl_report_speaker +]. Senate: [+ pl_report_senate +]. ?]
 
 [? if pl_report_ready : **Government at the end of the chapter.** [+ pl_report_government +]. ?]
-
-[? if pl_report_ready : **Society.** [+ pl_report_society +]. ?]
-
-[? if pl_report_ready : **Democracy.** [+ pl_report_politics +]. ?]
-
-[? if pl_report_ready : **Forces of the state.** [+ pl_report_forces +]. ?]
-
-[? if pl_report_ready : **Unfinished matters.** [+ pl_report_unfinished +]. ?]
 
 This report describes the state of the country and the party at the end of the chapter. No decisions remain. You can still look at the state of the country and the Library or save the game; reload the page to start a new game.
 

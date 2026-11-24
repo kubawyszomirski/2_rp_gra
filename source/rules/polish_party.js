@@ -1190,6 +1190,7 @@
   // One declaration (10.5): 1 T, 0 R, cd 6 M (the Soviet model 12 M); the new line is recorded, the rejecting
   // faction of the test profile +3 dissent, and the reactions of 10.7, 10.8 and 10.10 once.
   // Z — 1.30: a declaration of the line is recorded without this month's action; the card rests as after an action.
+  const LINE_CHANGE_CREDIBILITY = 3;
   function lineRecord(Q, actionId, fields) {
     Q.S.history.actions.push(Object.assign({t: Q.time, action_id: actionId, cost_t: 0}, fields));
     rules.startCardRest(Q);
@@ -1211,6 +1212,8 @@
     }
     lineRecord(Q, card.action, {from: previous, to: value});
     strategy[card.field] = value;
+    // Z — 1.31 (decision D2A of 24 XI 2026): every change of the line costs the credibility of PPS.
+    government.changeCredibility(Q, 'line:' + card.field + ':t' + t, -LINE_CHANGE_CREDIBILITY, 'line_change');
     S.actors.pps.strategy_history.push({t: t, field: card.field, from: previous, to: value});
     S.cooldowns[stanceCooldownKey(cardId)] = t + card.cooldown;
     const reverse = {kind: 'strategy', field: card.field, value: previous, objection: value};
@@ -1701,6 +1704,9 @@
   // The effect of one campaign in its cells (5.3), without its action and cost: the card above pays 1 T and 1 R; an
   // event of stage 7 (B4, B5) pays its own cost in the same decision. A null audience is every cell the
   // organisation reaches — the reach of each cell decides how much it moves.
+  // Z — 1.31 (decision D3A of 24 XI 2026): the credibility of PPS makes its campaigns weaker or stronger, from −15% to +15%.
+  const credibilityFactor = S => 0.85 + 0.30 * clip(S.actors.pps.credibility, 0, 100) / 100;
+
   function campaignEffect(Q, kind, topic, audience) {
     const S = Q.S, t = Q.time, parties = S.society.parties;
     const filter = audience ? audienceFilter(audience) : () => true;
@@ -1720,7 +1726,7 @@
       const programme = served && served(cell) ? PROGRAMME_CAMPAIGN_FACTOR : 1;
       // Z — 1.07: an adopted characteristic strengthens campaigns in its groups (+25%).
       const gain = electorate.campaignGain(cell, cellReach(S, cell, kind), Q.dissent || 0, key, t) * pressFactor * factor * press * workers * programme * assembly *
-        profileCampaignFactor(S, cell);
+        profileCampaignFactor(S, cell) * credibilityFactor(S);
       moved += cell.mass * electorate.gainForPps(cell, gain, parties, sources);
       electorate.recordCampaign(cell, key, t);
     }
@@ -1756,7 +1762,7 @@
   const HIGH_UNEMPLOYMENT = 10;
   const HIGH_INFLATION = 10;
   const ISSUES = Object.freeze({
-    eight_hours: Object.freeze({name: ['In defence of the eight-hour day', 'W obronie 8-godzinnego dnia pracy'],
+    eight_hours: Object.freeze({name: ['In defence of the eight-hour day', 'W obronie ośmiogodzinnego dnia pracy'],
       groups: Object.freeze({employed_workers: 1, unemployed: 0.3, bourgeois_landowners: -0.2}),
       directions: Object.freeze(['workers_gains', 'class_independence']),
       situation: S => gainUnderThreat(S),
@@ -1884,7 +1890,7 @@
       const workers = cell.class_id === 'workers' ? activeEffect(S, 'workers_campaign_multiplier', t) : 1;
       const programme = served && served(cell) ? PROGRAMME_CAMPAIGN_FACTOR : 1;
       const base = electorate.campaignGain(cell, cellReach(S, cell, spec.channel), Q.dissent || 0, spec.key, t) *
-        spec.factor(cell) * workers * programme * (w > 0 ? profileCampaignFactor(S, cell) : 1);
+        spec.factor(cell) * workers * programme * (w > 0 ? profileCampaignFactor(S, cell) * credibilityFactor(S) : 1);
       const amount = base * Math.abs(w);
       let value;
       if (w < 0) {

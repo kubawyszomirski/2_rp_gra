@@ -25,12 +25,25 @@ if (Q.polish_security_rules && Q.S && typeof PolishSecurity !== 'undefined' && P
 }
 if (Q.S && typeof PolishTopbar !== 'undefined') {
     PolishTopbar.lineView(Q);
+    // Z — 1.31: the goals of the chapter at the top of the Party tab.
+    PolishTopbar.goalsView(Q);
 }
 !}
 
 # The sidebar: one fact per line under section headings (Z — 0.54), each with a bold label (Z — 0.55). Z — 0.76 (the user's
 # note of 8 X 2026): the first tab is "Party" and has no date heading; the month is shown elsewhere on the page.
 [? if not polish_party_rules : **Resources available:** [+ resources +] ?]
+
+# Z — 1.31 (decisions of 24 XI 2026): the four goals of the chapter in words, above everything else on the Party tab.
+= Goals of the chapter
+
+[? if pl_goal_power : **Power:** [+ pl_goal_power +] ?]
+
+[? if pl_goal_power : **Reforms:** [+ pl_goal_reforms +] ?]
+
+[? if pl_goal_power : **Republic:** [+ pl_goal_republic +] ?]
+
+[? if pl_goal_power : **Character of the party:** [+ pl_goal_character +] ?]
 
 = PPS
 
@@ -47,6 +60,8 @@ if (Q.S && typeof PolishTopbar !== 'undefined') {
 [? if polish_party_rules : **Cohesion:** [+ pl_party_cohesion +] of 100 ?]
 
 **PPS position:** [+ pps_government_position +].
+
+[? if pl_goal_credibility : **Credibility:** [+ pl_goal_credibility +] ?]
 
 = Organisations
 

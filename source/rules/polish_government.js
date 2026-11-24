@@ -545,6 +545,27 @@
   const PORTFOLIO_SHORT_PL = Object.freeze({labor: 'Praca', interior: 'Sprawy Wewnętrzne', finance: 'Skarb', economic: 'Przemysł i Handel',
     justice: 'Sprawiedliwość', agriculture: 'Rolnictwo', reichswehr: 'Sprawy Wojskowe', education: 'Oświata', foreign: 'Sprawy Zagraniczne'});
   const portfolioName = key => L(PORTFOLIO_NAMES[key], PORTFOLIO_NAMES_PL[key]);
+
+  // Z — 1.31 (the goals of the chapter): how PPS has held power so far — months in a cabinet, months of support from outside
+  // (the opening toleration of Ponikowski is given, not chosen, so it does not count), its portfolios and a premier of PPS.
+  function powerRecord(Q) {
+    const S = Q.S, t = Q.time, list = S.history.cabinets.concat(S.cabinet ? [S.cabinet] : []);
+    const record = {member: 0, support: 0, premier: false, portfolios: [], now: 'opposition'};
+    for (const c of list) {
+      const end = c.ended_at !== null && c.ended_at !== undefined ? c.ended_at : t;
+      const months = Math.max(0, end - (c.formed_at || 0));
+      if (c.pps_mode === 'member') {
+        record.member += months;
+        for (const key of Object.keys(c.portfolios || {})) if (c.portfolios[key] === 'pps' && record.portfolios.indexOf(key) < 0) record.portfolios.push(key);
+        if (c.party === 'pps') record.premier = true;
+      } else if (c.pps_mode === 'external_support' && (c.formed_at || 0) > 1) record.support += months;
+    }
+    const c = S.cabinet;
+    if (!c || c.status !== 'active') record.now = list.length ? 'none' : 'toleration';
+    else record.now = c.pps_mode === 'member' ? (c.party === 'pps' ? 'premier' : 'member') : c.pps_mode === 'external_support' ? 'toleration' : 'opposition';
+    record.portfolio_names = record.portfolios.map(key => L(PORTFOLIO_NAMES[key], PORTFOLIO_SHORT_PL[key]));
+    return record;
+  }
   const portfolioShort = key => L(PORTFOLIO_SHORT[key], PORTFOLIO_SHORT_PL[key]);
   // The position of PPS as the chapter report stores it (English, decision 5A) and its Polish display.
   const POSITIONS_PL = Object.freeze({'Opposition': 'opozycja', 'Government formation pending': 'trwa tworzenie rządu',
@@ -5045,6 +5066,7 @@
     relation: relation,
     changeRelation: changeRelation,
     changeCredibility: changeCredibility,
+    powerRecord: powerRecord,
     programFit: programFit,
     factionReaction: factionReaction,
     factionReactions: factionReactions,

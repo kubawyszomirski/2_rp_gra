@@ -157,5 +157,91 @@
     return Q;
   }
 
-  return Object.freeze({overviewView: overviewView, lineView: lineView});
+  // ---- The goals of the chapter and the record of PPS (Z — 1.31, decisions of 24 XI 2026) --------------------------------
+  // Four goals in words — power, reforms, the Republic and the character of the party — and the credibility of PPS; the record
+  // lists the reforms PPS has carried into force. Read by the Party tab, the Library and the balance of the chapter.
+  const moduleOf = (name, file) => (typeof self !== 'undefined' && self[name]) || (typeof globalThis !== 'undefined' && globalThis[name]) ||
+    (typeof require === 'function' ? require(file) : null);
+  const REFORM_WORDS = Object.freeze([[0, 'none yet', 'jeszcze żadnych'], [1, 'first steps', 'pierwsze kroki'], [3, 'a clear record', 'wyraźny dorobek'],
+    [6, 'a large record', 'duży dorobek'], [10, 'a great record', 'wielki dorobek']]);
+  const CREDIBILITY_WORDS = Object.freeze([[0, 'weak', 'słaba'], [30, 'damaged', 'nadszarpnięta'], [45, 'middling', 'przeciętna'],
+    [60, 'good', 'dobra'], [75, 'high', 'wysoka']]);
+  const band = (value, table) => table.filter(row => value >= row[0]).pop();
+  const POWER_NOW = Object.freeze({premier: ['a premier of PPS', 'premier z PPS'], member: ['ministers of PPS in the cabinet', 'ministrowie PPS w rządzie'],
+    toleration: ['we support the cabinet from outside', 'tolerujemy rząd'], opposition: ['in opposition', 'w opozycji'], none: ['no cabinet now', 'teraz bez rządu']});
+  const REPUBLIC_NOW = Object.freeze([['calm', 'spokojnie'], ['the army is restless', 'wojsko niespokojne'], ['the threat of a coup', 'groźba zamachu'],
+    ['a coup is at hand', 'zamach wisi w powietrzu']]);
+  const REPUBLIC_END = Object.freeze({pils_victory: ['Piłsudski in power', 'Piłsudski u władzy'], legal_victory: ['the government defended', 'rząd obroniony'],
+    constitutional_compromise: ['a compromise', 'kompromis'], prolonged_conflict: ['a conflict without a winner', 'konflikt bez zwycięzcy']});
+
+  function reformsList(list) {
+    return list.map(r => L(r.name[0], r.name[1]) + ' (' + (typeof r.t === 'number' ? rules.yearOf(r.t) : '') +
+      (r.limited ? L(', limited', ', okrojona') : '') + ')').join(', ');
+  }
+
+  function goalsView(Q) {
+    const S = Q && Q.S;
+    if (!S || !Q.polish_party_rules) return Q;
+    const gov = moduleOf('PolishGovernment', './polish_government.js'), proj = moduleOf('PolishProjects', './polish_projects.js');
+    const sec = moduleOf('PolishSecurity', './polish_security.js');
+    const power = gov && gov.powerRecord ? gov.powerRecord(Q) : null;
+    const reforms = proj && proj.ppsReforms ? proj.ppsReforms(S) : [];
+    Q.pl_goal_power = power ? L(POWER_NOW[power.now][0], POWER_NOW[power.now][1]) : '';
+    const words = band(reforms.length, REFORM_WORDS);
+    Q.pl_goal_reforms = L(words[1], words[2]);
+    const C = S.coup;
+    if (C && C.outcome && REPUBLIC_END[C.outcome]) Q.pl_goal_republic = L(REPUBLIC_END[C.outcome][0], REPUBLIC_END[C.outcome][1]);
+    else {
+      const level = sec && sec.armyMoodLevel ? sec.armyMoodLevel(S) : 0;
+      Q.pl_goal_republic = L(REPUBLIC_NOW[level][0], REPUBLIC_NOW[level][1]);
+    }
+    const profile = rules.profileState(S);
+    const adopted = profile ? profile.adopted.map(a => party.PROFILES[a.id] ? L(party.PROFILES[a.id].name[0], party.PROFILES[a.id].name[1]) : a.id) : [];
+    Q.pl_goal_character = adopted.length ? adopted.join(', ') : L('none yet', 'jeszcze żaden');
+    const cred = band(S.actors.pps.credibility, CREDIBILITY_WORDS);
+    Q.pl_goal_credibility = L(cred[1], cred[2]);
+    // The record of PPS: power, the reforms and the party.
+    if (power) {
+      const months = n => n + ' ' + L(n === 1 ? 'month' : 'months', rules.plural(n, 'miesiąc', 'miesiące', 'miesięcy'));
+      const parts = [];
+      if (power.member) parts.push(L('in the cabinet: ' + months(power.member), 'w rządzie: ' + months(power.member)) +
+        (power.portfolio_names.length ? L(' (portfolios: ', ' (resorty: ') + power.portfolio_names.join(', ') + ')' : ''));
+      if (power.support) parts.push(L('support of cabinets from outside: ' + months(power.support), 'tolerowanie rządów z zewnątrz: ' + months(power.support)));
+      Q.pl_record_power = (parts.length ? parts.join(L('; ', '; ')) : L('PPS has had no ministers yet', 'PPS nie miała jeszcze ministrów')) +
+        (power.premier ? L('; PPS gave the cabinet its premier.', '; PPS dała rządowi premiera.') : L('; no premier of PPS.', '; premiera z PPS nie było.'));
+      Q.pl_record_power = Q.pl_record_power.charAt(0).toUpperCase() + Q.pl_record_power.slice(1);
+      Q.pl_verdict_power = power.premier ? L('a premier of PPS', 'premier z PPS') : power.member ? L('PPS governed', 'PPS współrządziła') :
+        power.support ? L('PPS supported cabinets from outside', 'PPS wspierała rządy z zewnątrz') : L('PPS stayed in opposition', 'PPS pozostała w opozycji');
+    }
+    // The verdict of the Republic for the balance: the outcome of a coup, or no coup when the election closed the chapter.
+    if (C && C.outcome && REPUBLIC_END[C.outcome]) {
+      Q.pl_verdict_republic = L(REPUBLIC_END[C.outcome][0], REPUBLIC_END[C.outcome][1]) + (C.pps_contribution === 'decisive' ?
+        L(', and PPS tipped the balance', ', a przesądziła PPS') : C.pps_contribution === 'adverse' ? L(', and PPS harmed the side it backed', ', a PPS zaszkodziła stronie, którą poparła') : '');
+    } else Q.pl_verdict_republic = S.chapter && S.chapter.status === 'ended' ? L('no coup: the election closed the chapter', 'bez zamachu: rozdział zakończyły wybory') : Q.pl_goal_republic;
+    Q.pl_record_reforms = reforms.length ? reformsList(reforms) : '';
+    Q.pl_record_count = reforms.length;
+    // The verdicts begin the sentences of the balance.
+    const cap = text => (text ? text.charAt(0).toUpperCase() + text.slice(1) : '');
+    Q.pl_verdict_power = cap(Q.pl_verdict_power || L('PPS stayed in opposition', 'PPS pozostała w opozycji'));
+    Q.pl_verdict_reforms = reforms.length || !(S.chapter && S.chapter.status === 'ended') ? cap(Q.pl_goal_reforms) :
+      L('No reform of PPS came into force', 'Żadna reforma PPS nie weszła w życie');
+    // One line each for the Library and the balance, so that an empty list leaves no stray mark.
+    const list = Q.pl_record_reforms ? '. ' + Q.pl_record_reforms : '';
+    Q.pl_library_reforms = Q.pl_goal_reforms + list + '.';
+    Q.pl_report_reforms = Q.pl_verdict_reforms + list + '.';
+    Q.pl_verdict_republic = cap(Q.pl_verdict_republic);
+    Q.pl_verdict_credibility = cap(Q.pl_goal_credibility);
+    return Q;
+  }
+
+  // The factions of PPS in words for the balance of the chapter (Z — 1.31: no numbers of strength and dissent).
+  function factionWords(f) {
+    const one = (name, x, broke) => name + ': ' + L((x.strength >= 40 ? 'a strong' : x.strength >= 20 ? 'a middling' : 'a weak') + ' faction, ' +
+      (x.dissent >= 60 ? 'very discontented' : x.dissent >= 30 ? 'discontented' : 'calm') + (broke ? ', after a split' : ''),
+      (x.strength >= 40 ? 'silna' : x.strength >= 20 ? 'średnia' : 'słaba') + ' frakcja, ' +
+      (x.dissent >= 60 ? 'bardzo niezadowolona' : x.dissent >= 30 ? 'niezadowolona' : 'spokojna') + (broke ? ', po rozłamie' : ''));
+    return [one('Centrum', f.centrum, f.centrum.resigned), one('Lewica', f.lewica, f.lewica.split), one(L('Piłsudczycy', 'Piłsudczycy'), f.pilsudczycy, f.pilsudczycy.split)].join('; ');
+  }
+
+  return Object.freeze({overviewView: overviewView, lineView: lineView, goalsView: goalsView, factionWords: factionWords});
 }));

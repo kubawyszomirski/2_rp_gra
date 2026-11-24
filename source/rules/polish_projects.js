@@ -296,7 +296,7 @@
 
   // ---- Polish names (decision 2A) and the Polish display of texts the records keep in English (decision 5A) ------
 
-  const PROJECT_NAMES_PL = Object.freeze({labor_inspection: 'Inspekcja pracy i czas pracy', worker_protection: 'Osłona dla bezrobotnych',
+  const PROJECT_NAMES_PL = Object.freeze({labor_inspection: 'Inspekcja pracy i czas pracy', worker_protection: 'Zasiłki dla bezrobotnych',
     public_works: 'Roboty publiczne', credit_instrument: 'Program tańszego kredytu', orders: 'Zamówienia publiczne dla przemysłu',
     land_program: 'Reforma rolna', agriculture_development: 'Modernizacja rolnictwa', education_program: 'Szkoły i oświata dorosłych',
     minority_schools: 'Prawa językowe i szkoły mniejszości', heritage: 'Odnowa zabytku', currency_reform: 'Reforma walutowa',
@@ -807,6 +807,8 @@
 
   function authorize(Q, project, m, authorizationId, ppsVoted) {
     project.authorized = true;
+    // Z — 1.31: a reform of PPS carried into force raises its credibility, once for each reform.
+    if (project.sponsor === 'pps' && isReform(project)) government.changeCredibility(Q, 'reform:' + reformKey(project), REFORM_CREDIBILITY, 'reform');
     payPrice(Q, project, m);
     project.authorization_id = authorizationId || project.authorization_id;
     if (project.started_at === null || project.started_at < m) {
@@ -3758,6 +3760,8 @@
     const pol = politicsModule();
     if (RIGHT_LAWS[law.id] && pol) pol.rightMobilise(Q, RIGHT_LAWS[law.id], 'initiative:' + law.id);
     lastInitiativeText = law.enact(Q, bill.variant, bill, m, !!bill.initiative.raise) || '';
+    // Z — 1.31: a law of our initiative without a project of its own raises the credibility of PPS too.
+    if (!Object.keys(Q.S.projects).some(id => Q.S.projects[id].law_id === bill.id)) government.changeCredibility(Q, 'reform:law:' + law.id, REFORM_CREDIBILITY, 'reform');
   }
 
   // ---- Government cards (17.11; catalogue 8.1–8.11, 8.13, 8.16) -------------------------------------
@@ -4302,6 +4306,42 @@
       (policy.ends_at === null || policy.ends_at > Q.time);
   }
 
+  // ---- The record of the reforms of PPS (Z — 1.31, decisions of 24 XI 2026) ----------------------------------------------
+  // A reform of PPS is a project of a PPS ministry or of a PPS bill, authorised and not stopped, of a type that changes the lives of
+  // people (the administrative steps of the ministries are left out), or a PPS bill of the initiative in force without a project
+  // of its own (a tax, a law on the school or on the family). A limited variant counts too and is marked as limited.
+  const NOT_REFORMS = Object.freeze(['heritage', 'collection', 'plant_rescue', 'police_investigation', 'police_protection', 'police_training',
+    'police_professionalization', 'justice_review', 'border_protection', 'orders']);
+  const LIMITED_VARIANTS = Object.freeze(['limited', 'focused', 'industry_only', 'progressive_top']);
+  const REFORM_LIVE = Object.freeze(['executing', 'operating', 'completed', 'paused']);
+  const REFORM_CREDIBILITY = 2;
+  const PUBLIC_WORKS_NAMES = Object.freeze({housing: ['Workers’ housing', 'Mieszkania robotnicze'],
+    employment: ['Public works for the unemployed', 'Roboty publiczne dla bezrobotnych'], infrastructure: ['Public works: transport', 'Roboty publiczne: transport i infrastruktura']});
+  const reformKey = p => (p.type === 'public_works' ? 'public_works:' + p.variant : p.type);
+  const reformName = p => (p.type === 'public_works' && PUBLIC_WORKS_NAMES[p.variant] ? PUBLIC_WORKS_NAMES[p.variant] :
+    [PROJECT_TYPES[p.type].name, PROJECT_NAMES_PL[p.type] || PROJECT_TYPES[p.type].name]);
+  const isReform = p => !!PROJECT_TYPES[p.type] && NOT_REFORMS.indexOf(p.type) < 0;
+  function ppsReforms(S) {
+    const out = {}, laws = (S.parliament && S.parliament.laws) || [], ids = Object.keys(S.projects || {}).sort();
+    const keep = entry => { const prev = out[entry.key]; if (!prev || (prev.limited && !entry.limited)) out[entry.key] = entry; };
+    for (const id of ids) {
+      const p = S.projects[id];
+      if (p.sponsor !== 'pps' || !p.authorized || REFORM_LIVE.indexOf(p.status) < 0 || !isReform(p)) continue;
+      const law = laws.filter(l => l.id === p.law_id)[0];
+      keep({key: reformKey(p), name: reformName(p), limited: LIMITED_VARIANTS.indexOf(p.variant) >= 0, t: p.started_at,
+        by: law && law.kind === 'initiative' ? 'law' : 'ministry'});
+    }
+    for (const law of laws) {
+      if (law.kind !== 'initiative' || law.sponsor !== 'pps' || law.status !== 'enacted' || !law.initiative) continue;
+      if (ids.some(id => S.projects[id].law_id === law.id)) continue;
+      const spec = INITIATIVE_BY_ID[law.initiative.id];
+      if (!spec || (spec.level && spec.level(S) === 'none')) continue;
+      keep({key: 'law:' + spec.id, name: spec.name, limited: spec.variants.length > 1 && law.variant === spec.variants[1].key,
+        t: law.closed_at === null || law.closed_at === undefined ? null : law.closed_at, by: 'law'});
+    }
+    return Object.keys(out).map(k => out[k]).sort((a, b) => (a.t || 0) - (b.t || 0) || (a.key < b.key ? -1 : a.key > b.key ? 1 : 0));
+  }
+
   // The concession of the crisis card: the project stops with its costs and its further effects; a tax returns to its level.
   function stopTarget(Q, target, reason) {
     const S = Q.S, t = Q.time;
@@ -4318,6 +4358,8 @@
       policy.ends_at = t;
     }
     S.history.reasons.push({t: t, kind: 'reform_stopped', target: target, reason: reason || ''});
+    // Z — 1.31: a withdrawn reform costs the credibility of PPS.
+    government.changeCredibility(Q, 'withdrawn:' + target.kind + ':' + target.id + ':t' + t, -REFORM_CREDIBILITY, 'reform_withdrawn');
   }
 
   const CARD_PROFILE_SEEDS = Object.freeze({minority_school_rights: ['federalism', 2], minorities_kresy: ['federalism', 2],
@@ -5274,6 +5316,7 @@
     policeOrders: policeOrders,
     stoppable: stoppable,
     stopTarget: stopTarget,
+    ppsReforms: ppsReforms,
     REFORM_NAMES: REFORM_NAMES,
     cardView: cardView,
     costWords: costWords,
