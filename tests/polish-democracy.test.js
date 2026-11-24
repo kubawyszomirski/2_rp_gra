@@ -124,7 +124,7 @@ test('B1/B2: the dispute of June 1922 leads into one free formation where PPS an
   PolishRules.setLanguage('pl');
   try {
     const pl = PolishGovernment.candidateNote(Q, 'nowak').replace(/<br>/g, ' | ').replace(/<[^>]+>/g, '');
-    assert.match(pl, /^Julian Nowak \| Kim jest: bezpartyjny fachowiec; kandydat sejmowego kompromisu\. \| Za nim stoją: .* \| Przeciw niemu: nikt\. \| Program: .* \| Zysk: .* \| Koszt wyboru: 1 jednostka środków na rozmowy, a relacja z Piłsudskim spada \(−5\), bo idziemy wbrew wyborowi Naczelnika\./); // Z — 1.08
+    assert.match(pl, /^Julian Nowak \| Kim jest: bezpartyjny fachowiec; kandydat sejmowego kompromisu\. \| Za nim stoją: .* \| Przeciw niemu: nikt\. \| Program: .* \| Zysk: .* \| Koszt wyboru: 1 jednostka środków na rozmowy, a stosunki z Piłsudskim się pogarszają \(−5\), bo idziemy wbrew wyborowi Naczelnika\./); // Z — 1.08
   } finally {
     PolishRules.setLanguage('en');
   }

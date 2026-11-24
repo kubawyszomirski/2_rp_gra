@@ -49,9 +49,9 @@ test('Reformy wbrew koalicjantom: the partners that reject a reform and by how m
   PolishRules.setLanguage('pl');
   try {
     assert.equal(PolishGovernment.reformObjectionText(Q, 'education_program.secular'),
-      'W tym rządzie sprzeciwi się temu PSL „Piast”, więc napięcie w koalicji wzrośnie (+40).');
+      'W tym rządzie sprzeciwi się temu PSL „Piast”, więc spory w koalicji się zaostrzą (+40).');
     assert.equal(PolishGovernment.reformObjectionText(Q, 'finance_package.progressive'),
-      'W tym rządzie sprzeciwią się temu Narodowa Partia Robotnicza (+20) i PSL „Piast” (+20); napięcie w koalicji wzrośnie.');
+      'W tym rządzie sprzeciwią się temu Narodowa Partia Robotnicza (+20) i PSL „Piast” (+20); spory w koalicji się zaostrzą.');
   } finally {
     PolishRules.setLanguage('en');
   }

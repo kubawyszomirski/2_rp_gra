@@ -7,9 +7,9 @@
   "= Part of [+ pl_e3_faction +] threatens to leave": "= Część frakcji [+ pl_e3_faction +] grozi odejściem",
   "The faction [+ pl_e3_faction +] is on the verge of a split. Its leaders demand that PPS [+ pl_e3_demand +]. If we keep our line, [+ pl_e3_preview +]": "Frakcja [+ pl_e3_faction +] jest bliska rozłamu. Jej przywódcy stawiają PPS żądanie: [+ pl_e3_demand +]. Jeśli utrzymamy naszą linię, [+ pl_e3_preview +]",
   "title: Accept the demand and keep unity": "title: Przyjmij żądanie i zachowaj jedność",
-  "subtitle: We make the change at once; the faction calms down (−5), and the other parties react to our new course.": "subtitle: Wprowadzamy zmianę od razu; frakcja się uspokaja (−5), a inne partie reagują na nasz nowy kurs.",
+  "subtitle: We make the change at once; the faction calms down (−5), and the other parties react to our new course.": "subtitle: Koszt: 0 jednostek środków. Wprowadzamy zmianę od razu; frakcja się uspokaja (−5), a inne partie reagują na nasz nowy kurs.",
   "title: Keep the line of PPS and accept the split": "title: Utrzymaj linię PPS i pogódź się z rozłamem",
-  "subtitle: A large part of the faction leaves the party with its voters and deputies (−40%); those who stay calm down.": "subtitle: Duża część frakcji odchodzi z partii razem ze swoimi wyborcami i posłami (−40%); ci, którzy zostają, się uspokajają.",
+  "subtitle: A large part of the faction leaves the party with its voters and deputies (−40%); those who stay calm down.": "subtitle: Koszt: 0 jednostek środków. Duża część frakcji odchodzi z partii razem ze swoimi wyborcami i posłami; ci, którzy zostają, się uspokajają.",
   "= The faction's answer": "= Odpowiedź frakcji",
   "- @root: Continue.": "- @root: Dalej."
  }

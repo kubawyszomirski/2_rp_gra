@@ -226,7 +226,7 @@ test('Warianty 0.80: plain Polish variants, summary and result, without abbrevia
     assert.equal(sub('var_opposition'), 'Naczelnik Państwa powoła wtedy bez nas rząd fachowców Juliana Nowaka.');
     assert.match(sub('var_pps_majority'), /^PPS: 110 z 444 posłów\./);
     assert.match(sub('var_left_minority'), /Zgadza się: PSL „Wyzwolenie”\.<br>W Sejmie: 190 za, 130 przeciw \(większość to 223\) — rząd mniejszościowy: rządzi, dopóki Sejm go nie odwoła\./);
-    assert.match(sub('var_centre_left'), /PSL „Piast” nie wejdzie do takiego rządu, dopóki nasze stosunki są zbyt chłodne: potrzeba relacji 55 \(teraz \d+\)\./);
+    assert.match(sub('var_centre_left'), /PSL „Piast” nie wejdzie do takiego rządu, dopóki nasze stosunki są zbyt chłodne\./);
     assert.equal(plain(choice(engine, 'polish_cabinet_formation.var_left_labour').title), 'Wchodzimy do rządu z PSL „Wyzwolenie” i Narodową Partią Robotniczą');
     for (const id of ids(engine).filter(id => /var_/.test(id))) {
       assert.doesNotMatch(sub(id.split('.')[1]), /\b(NPR|ZLN|PSChD|KPP)\b|Teraz niemożliwy|program premiera\b|W rządzie:/, id);

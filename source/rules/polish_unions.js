@@ -84,7 +84,7 @@
   const DEMAND_NAMES = Object.freeze({wages: 'wages and working conditions', councils: 'works councils', conditions: 'working conditions', rail_militarization: 'the end of the rail militarisation',
     repression: 'the end of the repression', cabinet_resignation: 'the resignation of the cabinet'});
   const CLAUSE_NAMES_PL = Object.freeze({wages: 'płace i warunki pracy', councils: 'rady zakładowe', conditions: 'warunki pracy', rail_militarization: 'koniec militaryzacji kolei',
-    repression: 'wycofanie wskazanego środka represji'});
+    repression: 'wycofanie represji policyjnych'});
   const DEMAND_NAMES_PL = Object.freeze({wages: 'płace i warunki pracy', councils: 'rady zakładowe', conditions: 'warunki pracy', rail_militarization: 'koniec militaryzacji kolei',
     repression: 'koniec represji', cabinet_resignation: 'dymisja gabinetu'});
   const clauseName = kind => L(CLAUSES[kind].name, CLAUSE_NAMES_PL[kind]);
@@ -882,12 +882,10 @@
         endRecord(S, rec, 'agreement', t, Q);
         return result(Q, L('The talks succeed before any strike: ' + offer.clauses.map(c => CLAUSES[c.kind].name).join(', ') + ' (settlement ' +
           settlement.id + ', due next month). No strike pay is needed.',
-          'Rozmowy kończą się sukcesem jeszcze przed strajkiem: ' + offer.clauses.map(c => clauseName(c.kind)).join(', ') + ' (ugoda ' +
-          settlement.id + ', wykonanie w przyszłym miesiącu). Zasiłek strajkowy nie jest potrzebny.'));
+          'Rozmowy kończą się sukcesem jeszcze przed strajkiem: ' + offer.clauses.map(c => clauseName(c.kind)).join(', ') + ' (ugoda wejdzie w życie w przyszłym miesiącu). Zasiłek strajkowy nie jest potrzebny.'));
       }
       return result(Q, L('The government refuses the limited wage demand. The dispute stays open; a strike can still be started from the unions’ ' +
-        'agenda (1 T). The refusal is not a concession.', 'Rząd odrzuca ograniczony postulat płacowy. Spór pozostaje otwarty; strajk można nadal ' +
-        'rozpocząć z agendy związków (1 T). Odmowa nie jest ustępstwem.'));
+        'agenda (1 T). The refusal is not a concession.', 'Rząd odrzuca ograniczony postulat płacowy. Spór trwa; strajk można nadal ogłosić na karcie związków.'));
     }
     if (strategy === 'cabinet_resignation') {
       addDemand(rec, 'cabinet_resignation', t);
@@ -904,8 +902,8 @@
     party.writeMirrors(Q);
     return result(Q, L((strategy === 'cabinet_resignation' ? 'A strike with the demand that the cabinet resign (threshold 80): ' : 'A limited strike for wages and ' +
       'working conditions: ') + rec.branches.map(b => BRANCH_NAMES[b]).join(' and ') + '. The costs come from the union funds every active month.',
-      (strategy === 'cabinet_resignation' ? 'Strajk z postulatem dymisji gabinetu (próg 80): ' : 'Ograniczony strajk o płace i warunki pracy: ') +
-      branchList(rec.branches) + '. Koszty pokrywają fundusze związkowe w każdym miesiącu strajku.'));
+      (strategy === 'cabinet_resignation' ? 'Strajk z żądaniem dymisji rządu: ' : 'Ograniczony strajk o płace i warunki pracy: ') +
+      branchList(rec.branches) + '. Za każdy miesiąc strajku partia płaci zasiłek strajkowy.'));
   }
 
   // ---- The partner and the protection of a strike (9.6, 17.5; card catalogue 9.7) ----------------------------
@@ -1012,7 +1010,7 @@
     if (choice === 'none') return OK;
     if (S.militia.banned) return no(L('Milicja PPS is banned.', 'Milicja PPS jest objęta zakazem działalności.'));
     if (!(S.militia.strength > 0)) return no(L('Milicja PPS has no members.', 'Milicja PPS nie ma członków.'));
-    return S.party_orgs.cash + 1e-9 >= PROTECTION_COST ? OK : no(L('Needs 0.5 resources.', 'Wymaga 0,5 jednostki środków.'));
+    return S.party_orgs.cash + 1e-9 >= PROTECTION_COST ? OK : no(L('Needs 0.5 resources.', 'Wymaga pół jednostki środków.'));
   }
 
   // 17.5, 16.5: the Milicja protects the strikers with the people it assigns and 0.5 R; the protection cuts the
@@ -1028,7 +1026,7 @@
   function protectionPossible(S) {
     if (S.militia.banned) return no(L('Milicja PPS is banned.', 'Milicja PPS jest objęta zakazem działalności.'));
     if (!(S.militia.strength > 0)) return no(L('Milicja PPS has no members.', 'Milicja PPS nie ma członków.'));
-    return S.party_orgs.cash + 1e-9 >= PROTECTION_COST ? OK : no(L('Needs 0.5 resources.', 'Wymaga 0,5 jednostki środków.'));
+    return S.party_orgs.cash + 1e-9 >= PROTECTION_COST ? OK : no(L('Needs 0.5 resources.', 'Wymaga pół jednostki środków.'));
   }
 
   function applyProtection(Q, rec, choice) {
@@ -1143,7 +1141,7 @@
   function baseStatus(Q, branchId) {
     if (!agendaAvailable(Q)) return no('');
     if (!Q.S.unions[branchId]) return no(L('Unknown branch.', 'Nieznana branża.'));
-    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.'));
     return OK;
   }
 
@@ -1178,8 +1176,7 @@
     }
     return result(Q, L(BRANCH_NAMES[branchId] + ': the demands (' + rec.demands.map(d => DEMAND_NAMES[d.kind]).join(' and ') + ', threshold ' +
       rec.threshold + ') and the end of the action are agreed. Readiness ' + fmt(branch.readiness) + '.',
-      branchName(branchId) + ': postulaty (' + rec.demands.map(d => demandName(d.kind)).join(' i ') + ', próg ' + rec.threshold +
-      ') i zakończenie akcji są uzgodnione. Gotowość ' + fmt(branch.readiness) + '.'));
+      branchName(branchId) + ': postulaty (' + rec.demands.map(d => demandName(d.kind)).join(' i ') + ') i zakończenie akcji są uzgodnione.'));
   }
 
   function alignStatus(Q, branchId, line) {
@@ -1198,7 +1195,7 @@
     rules.commitMainAction(Q, 'union.align', {branch: branchId, line: line});
     branch.alignment[line] = clip(lineAlignment(branch, line) + ALIGN_STEP, 0, 100);
     return result(Q, L(BRANCH_NAMES[branchId] + ': a joint meeting on ' + LINES[line] + ' (alignment ' + fmt(branch.alignment[line]) + ').',
-      branchName(branchId) + ': wspólne zebranie w sprawie linii „' + LINES_PL[line] + '” (zgodność ' + fmt(branch.alignment[line]) + ').'));
+      branchName(branchId) + ': wspólne zebranie w sprawie linii „' + LINES_PL[line] + '”.'));
   }
 
   function openCause(branch) {
@@ -1222,7 +1219,7 @@
     branch.dissent = clip(branch.dissent - MEDIATE_STEP, 0, 100);
     openCause(branch).status = 'answered';
     return result(Q, L(BRANCH_NAMES[branchId] + ': the dispute with the leadership is mediated; dissent ' + fmt(branch.dissent) + '.',
-      branchName(branchId) + ': spór z kierownictwem rozstrzygnięty w mediacji; sprzeciw ' + fmt(branch.dissent) + '.'));
+      branchName(branchId) + ': spór z kierownictwem rozstrzygnięty w mediacji; związek się uspokaja.'));
   }
 
   function strikeStatus(Q, branchId) {
@@ -1239,7 +1236,7 @@
   function harvestStatus(Q) {
     const reach = Q.S.unions.farm_labour.reach;
     if (reach + 1e-9 < HARVEST_REACH) return no(L('The agricultural labourers can strike only at the harvest, once their union reaches 40 (now ' + fmt(reach) + ').',
-      'Robotnicy rolni mogą strajkować tylko w żniwa, gdy ich związek osiągnie zasięg 40 (teraz ' + fmt(reach) + ').'));
+      'Robotnicy rolni mogą strajkować tylko w żniwa i tylko wtedy, gdy ich związek będzie silniejszy.'));
     if (!harvestMonth(Q.time)) return no(L('The agricultural labourers strike only at the harvest, in July and August.',
       'Robotnicy rolni strajkują tylko w żniwa, w lipcu i sierpniu.'));
     return OK;
@@ -1263,7 +1260,7 @@
     return result(Q, L(BRANCH_NAMES[branchId] + ': the strike begins. Expected participation ' + fmt(p.participation) + '. Every month of the strike the party pays ' +
       rules.units(strikeCost(S)) + ' of strike pay (PPS has ' + fmt(S.party_orgs.cash) + ' R); without the money half of the strikers stay away.',
       branchName(branchId) + ': strajk się zaczyna. Oczekiwany udział ' + fmt(p.participation) + '. W każdym miesiącu strajku partia płaci ' +
-      rules.units(strikeCost(S), 'resources', 'acc') + ' zasiłku strajkowego (PPS ma ' + fmt(S.party_orgs.cash) + ' R); bez pieniędzy połowa strajkujących odejdzie.'));
+      rules.units(strikeCost(S), 'resources', 'acc') + ' zasiłku strajkowego (PPS ma ' + rules.units(S.party_orgs.cash, 'resources', 'acc') + '); bez pieniędzy połowa strajkujących odejdzie.'));
   }
 
   // Answering an offer costs no month (14.3). Accepting signs the settlement: branches that agree end on the agreed
@@ -1288,7 +1285,7 @@
       rec.history.push({t: t, kind: 'offer_declined', offer_id: offer.id});
       return result(Q, L('PPS keeps the strike going; the offer lapses. The next settlement brings another round of talks; the Sejm returns ' +
         'to the dispute only when the government makes a different offer.',
-        'PPS kontynuuje strajk; oferta wygasa. Następne rozliczenie przyniesie kolejną rundę rozmów; Sejm wróci do sporu tylko wtedy, ' +
+        'PPS kontynuuje strajk; oferta wygasa. W przyszłym miesiącu rozmowy z rządem ruszą od nowa; Sejm wróci do sporu tylko wtedy, ' +
         'gdy rząd złoży inną ofertę.'));
     }
     if (choice !== 'accept') throw new Error('answerOffer: unknown choice ' + choice);
@@ -1391,8 +1388,7 @@
       endRecord(S, rec, 'agreement', t, Q);
       return result(Q, L('PPS upholds the settlement and calls for the end of the strike. About ' + fmt(continuing) +
         ' points of participation strike on without the support of PPS; the settlement stands.',
-        'PPS podtrzymuje ugodę i wzywa do zakończenia strajku. Około ' + fmt(continuing) +
-        ' pkt udziału strajkuje dalej bez poparcia PPS; ugoda obowiązuje.'));
+        'PPS podtrzymuje ugodę i wzywa do zakończenia strajku. Część robotników strajkuje dalej bez naszego poparcia; ugoda obowiązuje.'));
     }
     if (choice !== 'support') throw new Error('rejectionChoose: unknown choice ' + choice);
     settlement.status = 'breached';
@@ -1462,7 +1458,7 @@
     if (!govStrikeAvailable(Q)) return no(L('No strike waits for the government.', 'Żaden strajk nie czeka na odpowiedź rządu.'));
     if (GOV_STRIKE_OPTIONS.indexOf(option) < 0) return no(L('Unknown answer.', 'Nieznana odpowiedź.'));
     if (option === 'meet' && S.economy.budget - GOV_STRIKE.price < GOV_STRIKE.floor - 1e-9) {
-      return no(L('The budget cannot go below −3 B.', 'Budżet nie może zejść niżej niż −3 B.'));
+      return no(L('The budget cannot go below −3 B.', 'Na to nie ma już pieniędzy: budżet spadłby za głęboko pod kreskę.'));
     }
     return OK;
   }
@@ -1478,7 +1474,7 @@
       L('A strike in ' + rec.branches.map(b => BRANCH_NAMES[b].toLowerCase()).join(' and '), 'Strajk: ' + branchList(rec.branches));
     Q.pl_gstr_text = who + ' ' + L('PPS sits in the government, so it is our cabinet that has to answer.', 'PPS jest w rządzie, więc odpowiedzieć musi nasz gabinet.') +
       (months > 0 ? ' ' + L('The strike has gone on for ' + (months === 1 ? 'a month' : months + ' months') + '.', months === 1 ? ' Strajk trwa już miesiąc.'.trim() :
-        'Strajk trwa już ' + months + ' miesiące.') : '');
+        'Strajk trwa już ' + months + ' ' + rules.plural(months, 'miesiąc', 'miesiące', 'miesięcy') + '.') : '');
     for (const option of GOV_STRIKE_OPTIONS) Q['pl_gstr_' + option + '_why'] = govStrikeStatus(Q, option).reason || '';
   }
   function govStrikeChoose(Q, option) {
@@ -1599,7 +1595,7 @@
     } else {
       Q.pl_dsp_title = L('A dispute with the leadership of PPS', 'Spór z kierownictwem PPS');
       Q.pl_dsp_text = lead ? L(BRANCH_NAMES[lead] + ' is in dispute with the leadership of PPS over a concrete change (dissent ' + fmt(S.unions[lead].dissent) + ').',
-        branchName(lead) + ' jest w sporze z kierownictwem PPS o konkretną zmianę (sprzeciw ' + fmt(S.unions[lead].dissent) + ').') : '';
+        branchName(lead) + ' jest w sporze z kierownictwem PPS o konkretną zmianę.') : '';
     }
     Q.pl_dsp_start_why = startStatus(Q).reason;
     Q.pl_dsp_threat_why = threatStatus(Q).reason;
@@ -1630,14 +1626,14 @@
       const harvest = harvestStatus(Q);
       if (!harvest.available) return harvest;
     }
-    return rules.mainActionAvailable(Q) ? OK : no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
+    return rules.mainActionAvailable(Q) ? OK : no(L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.'));
   }
 
   function threatStatus(Q) {
     const S = Q.S, rec = ready(Q) ? disputeRecord(S) : null;
     if (!rec) return no('');
     if (rec.pps_answered) return no(L('The government has already rejected a threat in this dispute.', 'Rząd już odrzucił groźbę w tym sporze.'));
-    return rules.mainActionAvailable(Q) ? OK : no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
+    return rules.mainActionAvailable(Q) ? OK : no(L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.'));
   }
 
   function threaten(Q) {
@@ -1902,8 +1898,10 @@
     const branch = S.unions[id];
     return L('reach ' + fmt(branch.reach) + ' · readiness ' + fmt(branch.readiness) + ' · fatigue ' + fmt(branch.fatigue) + ' · trust ' +
       fmt(branch.trust) + ' · dissent ' + fmt(branch.dissent) + '. ',
-      'zasięg ' + fmt(branch.reach) + ' · gotowość ' + fmt(branch.readiness) + ' · zmęczenie ' + fmt(branch.fatigue) + ' · zaufanie ' +
-      fmt(branch.trust) + ' · sprzeciw ' + fmt(branch.dissent) + '. ') + nextStepText(S, branchRecord(S, id));
+      'zasięg ' + fifth(branch.reach, ['bardzo słaby', 'słaby', 'średni', 'mocny', 'bardzo mocny']) + ', robotnicy ' +
+      fifth(branch.readiness, ['nie chcą walczyć', 'są mało gotowi do walki', 'są gotowi do walki', 'są bardzo gotowi do walki', 'rwą się do walki']) + ' i ' +
+      fifth(branch.trust, ['nie ufają nam', 'mało nam ufają', 'ufają nam średnio', 'ufają nam', 'bardzo nam ufają']) +
+      (branch.fatigue >= 40 ? ', ale są zmęczeni' : '') + (branch.dissent >= 30 ? '; związek spiera się z kierownictwem PPS' : '') + '. ') + nextStepText(S, branchRecord(S, id));
   }
 
   function nextStepText(S, rec) {
@@ -1943,8 +1941,8 @@
     const consent = consentFor(S, rec, offer);
     return L('The government offers ' + offer.clauses.map(c => CLAUSES[c.kind].name).join(' and ') + ' (' + fmt(100 * offer.fulfilment) +
       '% of the demands). ' + consent.rows.map(r => BRANCH_NAMES[r.branch] + ' would ' + (r.accept ? 'agree' : 'refuse') + ' (' + fmt(r.score) + ')').join('; ') + '.',
-      'Rząd oferuje: ' + offer.clauses.map(c => clauseName(c.kind)).join(' i ') + ' (' + fmt(100 * offer.fulfilment) + '% postulatów). ' +
-      consent.rows.map(r => branchName(r.branch) + ': ' + (r.accept ? 'prawdopodobna zgoda' : 'prawdopodobna odmowa') + ' (' + fmt(r.score) + ')').join('; ') + '.');
+      'Rząd oferuje: ' + offer.clauses.map(c => clauseName(c.kind)).join(' i ') + ' (' + (offer.fulfilment >= 0.75 ? 'większość postulatów' : offer.fulfilment >= 0.5 ? 'około połowy postulatów' : 'mniejszą część postulatów') + '). ' +
+      consent.rows.map(r => branchName(r.branch) + ': ' + (r.accept ? 'prawdopodobna zgoda' : 'prawdopodobna odmowa')).join('; ') + '.');
   }
 
   function agendaView(Q) {
@@ -1953,8 +1951,8 @@
     for (const id of BRANCHES) Q['pl_un_' + id + '_line'] = branchLine(S, id);
     // Z — 0.59: what the card is, why it is in the deck now and where a dispute starts.
     Q.pl_un_intro = L('This card is the work of PPS in three union branches. ',
-      'Ta karta to praca PPS w trzech branżach związkowych. ') +
-      (disputeOpen(S) ? L('It is in the deck now because ' + disputeCauseText(S) + '. ', 'Jest teraz w talii, bo ' + disputeCauseText(S) + '. ') : '') +
+      'Nasi ludzie działają w związkach przemysłu, kolei i robotników rolnych. ') +
+      (disputeOpen(S) ? L('It is in the deck now because ' + disputeCauseText(S) + '. ', 'Sprawa jest pilna, bo ' + disputeCauseText(S) + '. ') : '') +
       L('A dispute usually starts with agreeing the demands; a strike comes only after that.',
         'Zwykle zaczyna się od uzgodnienia postulatów, a dopiero potem przychodzi strajk.');
     const strikes = records(S, STRIKING);
@@ -1969,9 +1967,11 @@
     Q.pl_un_branch_name = branchName(branchId);
     // Z — 0.59: the lines and the autonomy in words.
     const branch = S.unions[branchId], line = branchLine(S, branchId);
-    Q.pl_un_branch_text = line.charAt(0).toUpperCase() + line.slice(1) + L(' Support of the branch for a strike call of PPS: ', ' Poparcie branży dla wezwania PPS do strajku: ') +
-      fmt(lineAlignment(branch, 'strike')) + L(' of 100; for a call to end on agreed terms: ', ' ze 100; dla wezwania do zakończenia na uzgodnionych warunkach: ') +
-      fmt(lineAlignment(branch, 'agreed_end')) + L(' of 100. Autonomy of the union from PPS: ', ' ze 100. Niezależność związku od PPS: ') + fmt(branch.autonomy) + '.';
+    Q.pl_un_branch_text = line.charAt(0).toUpperCase() + line.slice(1) + L(' Support of the branch for a strike call of PPS: ', ' Na wezwanie PPS do strajku branża odpowie ') +
+      L(fmt(lineAlignment(branch, 'strike')), fifth(lineAlignment(branch, 'strike'), ['niechętnie', 'z oporami', 'umiarkowanie', 'chętnie', 'bardzo chętnie'])) +
+      L(' of 100; for a call to end on agreed terms: ', '; na wezwanie do zakończenia strajku na uzgodnionych warunkach — ') +
+      L(fmt(lineAlignment(branch, 'agreed_end')), fifth(lineAlignment(branch, 'agreed_end'), ['niechętnie', 'z oporami', 'umiarkowanie', 'chętnie', 'bardzo chętnie'])) +
+      L(' of 100. Autonomy of the union from PPS: ' + fmt(branch.autonomy), '. Związek jest ' + fifth(branch.autonomy, ['mocno związany z PPS', 'związany z PPS', 'dość samodzielny', 'samodzielny', 'całkiem niezależny od PPS'])) + '.';
     Q.pl_un_offer = offerText(S, rec);
     Q.pl_un_strike_id = rec ? rec.id : '';
     Q.pl_un_prepare_why = prepareStatus(Q, branchId).reason;
@@ -2053,7 +2053,7 @@
       rec.demands.map(d => DEMAND_NAMES[d.kind]).join(', ') + '.',
       'Strajk (' + branchList(rec.branches) + '), postulaty: ' + rec.demands.map(d => demandName(d.kind)).join(', ') + '.'));
     if (rec.repression) parts.push(L('The police have used a named repressive measure' + (rec.rail_militarized ? ' and the railways are militarised' : '') + '.',
-      'Policja użyła wskazanego środka represji' + (rec.rail_militarized ? ', a kolej jest zmilitaryzowana' : '') + '.'));
+      'Policja rozpędza strajkujących' + (rec.rail_militarized ? ', a kolej jest zmilitaryzowana' : '') + '.'));
     if (rec.clashes.some(c => c.clash)) parts.push(L('There has been a clash.', 'Doszło do starcia.'));
     if (rec.offer) parts.push(offerText(S, rec));
     parts.push(responseText(S, rec));

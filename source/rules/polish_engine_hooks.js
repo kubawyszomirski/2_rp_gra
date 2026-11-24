@@ -99,7 +99,7 @@
       // Z — 0.77: when used cards are resting, say when the first of them comes back.
       const back = restingReturn(engine, deckId);
       reason = back ? rules.L('The other cards of this deck are resting after use; the first comes back in ' + back + (back === 1 ? ' month.' : ' months.'),
-        'Pozostałe karty tej talii odpoczywają po użyciu; pierwsza wróci za ' + back + (back === 1 ? ' miesiąc.' : back < 5 ? ' miesiące.' : ' miesięcy.')) :
+        'Pozostałe karty tej talii wracają po użyciu; pierwsza wróci za ' + back + (back === 1 ? ' miesiąc.' : back < 5 ? ' miesiące.' : ' miesięcy.')) :
         rules.L('No card of this deck can be drawn now.', 'Teraz nie można dobrać żadnej karty z tej talii.');
     }
     return {id: deckId, title: scene.title || deckId, image: scene.cardImage || null, available: available, reason: reason,

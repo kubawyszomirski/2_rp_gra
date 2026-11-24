@@ -6,12 +6,12 @@
     "subtitle: Raise or lower the members’ dues.": "subtitle: Podnieś albo obniż składki członkowskie.",
     "= Party dues": "= Składki partyjne",
     "title: Keep the present dues": "title: Zachowaj obecne składki",
-    "subtitle: **Present level** The dues stay at [+ dues +], the collection brings [+ pl_dues_keep_gain +] now, and the card waits six months.": "subtitle: **Obecny poziom** Składki pozostają na poziomie [+ dues +], zbiórka przynosi teraz [+ pl_dues_keep_gain +], a karta czeka sześć miesięcy.",
-    "title: Raise the dues by 1": "title: Podnieś składki o 1",
-    "subtitle: The collection brings [+ pl_dues_raise_gain +] now; the membership falls at once, more in hard times (×0.98; ×0.95 when real wages are below 90 or unemployment is 8% or more). The target of membership falls for every level above 2 (−5% each).": "subtitle: Zbiórka przynosi teraz [+ pl_dues_raise_gain +]; członkostwo od razu spada, w trudnych czasach mocniej (×0,98; ×0,95, gdy płace realne są poniżej 90 albo bezrobocie wynosi 8% lub więcej). Docelowe członkostwo spada za każdy poziom powyżej 2 (−5% za poziom).",
-    "title: Lower the dues by 1": "title: Obniż składki o 1",
-    "subtitle: The collection brings [+ pl_dues_lower_gain +] now; membership rises at once (+2), and at level 1 the target of membership rises too (+5%).": "subtitle: Zbiórka przynosi teraz [+ pl_dues_lower_gain +]; członkostwo od razu rośnie (+2), a na poziomie 1 rośnie też docelowe członkostwo (+5%).",
+    "subtitle: **Present level** The dues stay at [+ dues +], the collection brings [+ pl_dues_keep_gain +] now, and the card waits six months.": "subtitle: **Obecny poziom** Składki pozostają bez zmian, zbiórka przynosi teraz [+ pl_dues_keep_gain +], a do tej sprawy wrócimy za pół roku.",
+    "title: Raise the dues by 1": "title: Podnieś składki",
+    "subtitle: The collection brings [+ pl_dues_raise_gain +] now; the membership falls at once, more in hard times (×0.98; ×0.95 when real wages are below 90 or unemployment is 8% or more). The target of membership falls for every level above 2 (−5% each).": "subtitle: Zbiórka przynosi teraz [+ pl_dues_raise_gain +], ale część członków odchodzi, a w ciężkich czasach więcej. Wysokie składki na dłuższą metę odstraszają nowych członków.",
+    "title: Lower the dues by 1": "title: Obniż składki",
+    "subtitle: The collection brings [+ pl_dues_lower_gain +] now; membership rises at once (+2), and at level 1 the target of membership rises too (+5%).": "subtitle: Zbiórka przynosi teraz [+ pl_dues_lower_gain +], a do partii wstępują nowi członkowie (+2); przy najniższych składkach partia przyciąga ich więcej.",
     "- @root: Continue.": "- @root: Dalej.",
-    "Dues are [+ dues +] (from 1 to 4). Every option collects the dues at once.": "Składki wynoszą [+ dues +] (od 1 do 4). Każda opcja od razu zbiera składki."
+    "Dues are [+ dues +] (from 1 to 4). Every option collects the dues at once.": "Składki są teraz [+ pl_dues_word +]. Każda decyzja od razu przynosi zbiórkę."
   }
 }

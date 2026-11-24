@@ -162,9 +162,9 @@ test('Pilotaż: ekran tytułowy, strona miesiąca i pasek boczny po polsku', () 
   for (const title of ['Sprawy partii', 'Sprawy rządu', 'Parlament']) assert.ok(titles.includes(title), title);
   assert.ok(!titles.includes('Odrzuć kartę'), 'a card is discarded on the card itself');
   // Z — 0.57: the party agenda and the unions are cards of the Party deck, no longer pinned on the month page.
-  for (const title of ['Agenda partii', 'Związki zawodowe: spór']) assert.ok(!titles.includes(title), title);
+  for (const title of ['Praca partyjna', 'Związki zawodowe: spór']) assert.ok(!titles.includes(title), title);
   // Z — 0.87: the card of the unions is the card of a dispute.
-  assert.deepEqual(['polish_party_agenda', 'polish_union_agenda'].map(id => flat(engine.game.scenes[id].title)), ['Agenda partii', 'Związki zawodowe: spór']);
+  assert.deepEqual(['polish_party_agenda', 'polish_union_agenda'].map(id => flat(engine.game.scenes[id].title)), ['Praca partyjna', 'Związki zawodowe: spór']);
   // Z — 0.56: in January 1922 the Parliament deck has no card yet (the constitutional debate opens in XII 1924, the review of
   // the cabinet comes after half a year). Z — 0.60: it is shown but closed, with its reason.
   assert.equal(engine.getCurrentChoices().find(c => c.id === 'main.parliament').canChoose, false, 'the empty Parliament deck is closed');
@@ -176,13 +176,13 @@ test('Pilotaż: ekran tytułowy, strona miesiąca i pasek boczny po polsku', () 
     sidebar[id] = flat(engine._makeDisplayContent(scene.content, true));
     assert.deepEqual(englishLeft(sidebar[id]), [], `sidebar ${id}`);
   }
-  assert.match(sidebar.status, /Kasa partii: 2\u00a0R\s*\nWpływy ze składek co miesiąc: 0,7\u00a0R/, 'a no-break space keeps the unit with the number; Z — 1.19: the monthly dues');
+  assert.match(sidebar.status, /Środki partii: 2\s*\nWpływy ze składek co miesiąc: 0,7\s*\n/, 'Z — 1.29: the Polish sidebar shows the money of the party without the unit R; Z — 1.19: the monthly dues');
   assert.match(sidebar.status, /Głowa państwa: Józef Piłsudski — Naczelnik Państwa/);
   // Z — 0.65: the sidebar gives only the number of MPs; the share of seats stays in the Library.
   assert.match(sidebar['status.politics'], /\nPPS: 35 posłów ?\n/);
   assert.match(sidebar['status.politics'], /\nPSL Piast: 99 posłów ?\n/);
   assert.doesNotMatch(sidebar['status.politics'], /mandatów/);
-  assert.match(sidebar['status.economy'], /Budżet: 4 B/);
+  assert.match(sidebar['status.economy'], /Budżet: 4\b(?! B)/); // Z — 1.29: without the unit B in Polish
   // The top bar (7 XI 2026): bars and scales are drawn from markers in the lines, and the relations are in the Party tab.
   const plain = id => sidebar[id].replace(/<[^>]*>/g, '');
   // The State tab begins with the police, so its heading is the first line.
@@ -195,10 +195,10 @@ test('Pilotaż: ekran tytułowy, strona miesiąca i pasek boczny po polsku', () 
 // written in full in both languages, from the scenes and from the rules alike (Daszyński has one option of each).
 test('Centralny Komitet Wykonawczy: nagłówek i odnowienie akcji z pełną odmianą w obu językach', () => {
   const errors = dendry.watchEngineErrors();
-  const header = {en: 'Central Executive Committee - an action is available.', pl: 'Centralny Komitet Wykonawczy — akcja jest dostępna.'};
+  const header = {en: 'Central Executive Committee - an action is available.', pl: 'Centralny Komitet Wykonawczy może działać.'};
   const wait = {
     en: n => `${n} ${n === 1 ? 'month' : 'months'} before the next Committee action.`,
-    pl: n => `Do następnej akcji CKW: ${n} ${n === 1 ? 'miesiąc' : n <= 4 ? 'miesiące' : 'miesięcy'}.`,
+    pl: n => `Komitet zbierze się ponownie za ${n} ${n === 1 ? 'miesiąc' : n <= 4 ? 'miesiące' : 'miesięcy'}.`,
   };
   for (const lang of ['en', 'pl']) {
     const engine = dendry.startGame(1922, lang);
@@ -220,7 +220,7 @@ test('Centralny Komitet Wykonawczy: nagłówek i odnowienie akcji z pełną odmi
 // Z — 0.53: the present choice of a stance card opens its description with a bold label, in both languages.
 test('Obecna linia: opis obecnego wyboru zaczyna się od pogrubionej etykiety w obu językach', () => {
   const errors = dendry.watchEngineErrors();
-  const labels = {en: 'Present line', pl: 'Obecna linia'};
+  const labels = {en: 'Present line', pl: 'To nasza obecna linia.'};
   const strong = c => (c == null || typeof c === 'string' ? [] : Array.isArray(c) ? c.flatMap(strong) : c.type === 'emphasis-2' ? [flat(c.content)] : strong(c.content));
   for (const lang of ['en', 'pl']) {
     const engine = dendry.startGame(1922, lang);

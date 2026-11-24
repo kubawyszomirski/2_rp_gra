@@ -5,7 +5,7 @@
     "title: Courts and Prisoners": "title: Sądy i więźniowie",
     "subtitle: Justice: an amnesty, jury courts and legal advice for workers.": "subtitle: Resort Sprawiedliwości: amnestia, sądy przysięgłych i porady prawne dla robotników.",
     "= Courts and prisoners": "= Sądy i więźniowie",
-    "The courts judge by the different laws of the former partitions, and workers’ and minority activists sit in the prisons. Democracy stands at [+ pl_gc_democracy +] of 100.": "Sądy orzekają według różnych praw dawnych zaborców, a w więzieniach siedzą działacze robotniczy i mniejszości. Demokracja wynosi teraz [+ pl_gc_democracy +] na 100.",
+    "The courts judge by the different laws of the former partitions, and workers’ and minority activists sit in the prisons. Democracy stands at [+ pl_gc_democracy +] of 100.": "Sądy orzekają według różnych praw dawnych zaborców, a w więzieniach siedzą działacze robotniczy i mniejszości. Przywiązanie ludzi do demokracji jest dziś [+ pl_gc_democracy_words +].",
     "title: Declare an amnesty for political prisoners": "title: Ogłoś amnestię dla więźniów politycznych",
     "title: Introduce jury courts in political and press cases": "title: Wprowadź sądy przysięgłych w sprawach politycznych i prasowych",
     "subtitle: Cost: 1 budget unit. Democracy grows stronger (+2). [? if pl_justice_policy_jury_coalition : [+ pl_justice_policy_jury_coalition +] ?]": "subtitle: Koszt: 1 jednostka budżetu. Demokracja się umacnia (+2). [? if pl_justice_policy_jury_coalition : [+ pl_justice_policy_jury_coalition +] ?]",

@@ -677,10 +677,10 @@
     return {
       smiarowski: {available: true, reason: ''},
       rataj: {available: (Q.psl_piast_relation || 0) >= 45,
-        reason: L('PSL Piast will not accept the package below relation 45.', 'PSL Piast nie przyjmie pakietu przy relacji niższej niż 45.')},
+        reason: L('PSL Piast will not accept the package below relation 45.', 'PSL „Piast” nie przyjmie pakietu, dopóki nasze stosunki są zbyt chłodne.')},
       daszynski: {available: daszynskiAvailable && (Q.psl_wyzwolenie_relation || 0) >= 60,
         reason: !daszynskiAvailable ? L('Ignacy Daszyński is not available.', 'Ignacy Daszyński jest niedostępny.') :
-          L('PSL Wyzwolenie will not sign the nomination below relation 60.', 'PSL Wyzwolenie nie podpisze zgłoszenia przy relacji niższej niż 60.')},
+          L('PSL Wyzwolenie will not sign the nomination below relation 60.', 'PSL „Wyzwolenie” nie podpisze zgłoszenia, dopóki nasze stosunki nie są dobre.')},
     };
   }
 

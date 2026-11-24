@@ -75,7 +75,7 @@ test('Liczby w opisach: ustawienie w Opcjach, domyślnie ukryte, i oznaczanie te
   assert.match(html, /<body class="pl-hide-numbers">/, 'hidden by default');
   for (const id of ['numbers_show', 'numbers_hide']) assert.ok(html.includes(`id="${id}"`), id);
   assert.match(html, /data-i18n="effect_numbers"/);
-  assert.match(js, /effect_numbers: \{en: 'Numbers in choices:', pl: 'Liczby w opisach wyborów:'\}/);
+  assert.match(js, /effect_numbers: \{en: 'Numbers in choices:', pl: 'Liczby w opisach decyzji:'\}/);
   assert.match(js, /window\.setShowNumbers = function/);
   assert.match(js, /window\.displayText = function\(text\) \{\n\s*return window\.PolishRules && window\.PolishRules\.markEffectNumbers/);
   assert.match(css, /body\.pl-hide-numbers ul\.choices \.pl-fx \{\n\s*display: none;/);

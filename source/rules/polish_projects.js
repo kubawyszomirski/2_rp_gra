@@ -297,7 +297,7 @@
   // ---- Polish names (decision 2A) and the Polish display of texts the records keep in English (decision 5A) ------
 
   const PROJECT_NAMES_PL = Object.freeze({labor_inspection: 'Inspekcja pracy i czas pracy', worker_protection: 'Osłona dla bezrobotnych',
-    public_works: 'Roboty publiczne', credit_instrument: 'Instrument kredytowy', orders: 'Zamówienia publiczne dla przemysłu',
+    public_works: 'Roboty publiczne', credit_instrument: 'Program tańszego kredytu', orders: 'Zamówienia publiczne dla przemysłu',
     land_program: 'Reforma rolna', agriculture_development: 'Modernizacja rolnictwa', education_program: 'Szkoły i oświata dorosłych',
     minority_schools: 'Prawa językowe i szkoły mniejszości', heritage: 'Odnowa zabytku', currency_reform: 'Reforma walutowa',
     science: 'Wsparcie nauki i uniwersytetów', radio: 'Publiczne radio', police_training: 'Szkolenie policji',
@@ -311,7 +311,7 @@
     tenant_protection: 'Ochrona lokatorów', old_age_insurance: 'Ubezpieczenie robotników na starość', works_councils: 'Rady zakładowe',
     cooperative_credit: 'Kredyt państwa dla spółdzielni', mining_socialisation: 'Uspołecznienie górnictwa węglowego'});
   const VARIANT_NAMES_PL = Object.freeze({
-    inspection: 'inspekcja i egzekwowanie czasu pracy', full: 'pełna osłona', focused: 'skupiona na najbardziej potrzebujących',
+    inspection: 'inspekcja i egzekwowanie czasu pracy', full: 'pełne zasiłki', focused: 'zasiłki dla najbardziej potrzebujących',
     limited: 'ograniczony zasiłek', employment: 'szybkie zatrudnienie bezrobotnych', infrastructure: 'transport i infrastruktura',
     housing: 'mieszkania robotnicze', public: 'fundusz publiczny', banks: 'porozumienie z bankami i przemysłem', cooperative: 'finansowanie spółdzielcze',
     orders: 'zamówienia dla zagrożonego przemysłu', compensated: 'parcelacja z odszkodowaniem', accelerated: 'przyspieszona parcelacja z odszkodowaniem',
@@ -323,7 +323,7 @@
     universities: 'uczelnie i badania', broadcasting: 'radiofonia publiczna', training: 'szkolenie', prosecution: 'ściganie przemocy politycznej',
     offices: 'języki mniejszości w urzędach', border: 'granica wschodnia', limits: 'ograniczenie konfiskat',
     political: 'więźniowie polityczni', jury: 'sądy przysięgłych', aid: 'porady prawne', civil: 'śluby cywilne i rozwody', equal: 'równe prawa',
-    rapid_cuts: 'szybka stabilizacja z cięciami', protected: 'stabilizacja z osłonami i obciążeniem majątku', gradual: 'stopniowe ograniczanie emisji',
+    rapid_cuts: 'szybka stabilizacja z cięciami', protected: 'stabilizacja z zasiłkami i obciążeniem majątku', gradual: 'stopniowe ograniczanie emisji',
     collection: 'lepszy pobór podatków', democratic_guarantees: 'gwarancje demokratyczne', constructive_vonc: 'konstruktywne wotum nieufności',
     presidential_arbitration: 'arbitraż prezydencki', rescue: 'warunkowy kredyt przywracający utracone moce',
     consultative: 'informacja i konsultacja', decision_rights: 'współdecydowanie o masowych zwolnieniach i zasadach płac',
@@ -395,8 +395,8 @@
     'The Sejm rejected the law; the preparation is kept.': 'Sejm odrzucił ustawę; przygotowanie zostaje zachowane.',
     'the law has not yet taken effect': 'ustawa jeszcze nie weszła w życie', 'there is no cabinet': 'nie ma gabinetu',
     'the caretaker cabinet continues only the current payments': 'gabinet tymczasowy kontynuuje tylko bieżące płatności',
-    'Stopped: the budget is below −5 B.': 'Wstrzymany: budżet jest poniżej −5 B.',
-    'Limited to half: the budget is below −2 B.': 'Ograniczony do połowy: budżet jest poniżej −2 B.',
+    'Stopped: the budget is below −5 B.': 'Wstrzymany: budżet jest głęboko pod kreską.',
+    'Limited to half: the budget is below −2 B.': 'Działa w połowie: budżet jest daleko pod kreską.',
     'no quorum in the Sejm': 'brak kworum w Sejmie', 'no majority in the Sejm': 'brak większości w Sejmie',
     'the Senate is not yet constituted': 'Senat jeszcze się nie ukonstytuował', 'the Sejm that passed it has ended': 'Sejm, który ją uchwalił, zakończył kadencję',
     'no two-thirds majority in the Senate': 'brak większości dwóch trzecich w Senacie',
@@ -446,12 +446,12 @@
   function instrumentBlocked(Q, kind) {
     const S = Q.S, E = S.economy, t = Q.time, spec = INSTRUMENTS[kind];
     if (!spec) return L('Unknown instrument.', 'Nieznany instrument.');
-    if (spec.tax && E.tax_level >= 3) return L('The tax level is already at its maximum of 3.', 'Poziom podatków jest już na maksimum 3.');
+    if (spec.tax && E.tax_level >= 3) return L('The tax level is already at its maximum of 3.', 'Podatki są już tak wysokie, jak tylko się da.');
     if (kind === 'wealth_tax' && runningInstrument(E, 'wealth_tax', t)) return L('The wealth tax is already in force; an extension needs its end.', 'Podatek majątkowy już obowiązuje; przedłużenie wymaga jego wygaśnięcia.');
     if (kind === 'customs' && runningInstrument(E, 'customs', t)) return L('The fiscal duties are still in force.', 'Cła fiskalne nadal obowiązują.');
     if (kind === 'admin_cuts' && runningInstrument(E, 'admin_cuts', t)) return L('The administrative cuts are still in force.', 'Cięcia administracyjne nadal obowiązują.');
     if (kind === 'loan') {
-      if (E.credit < spec.min_credit) return L('Credit is below 40: the financiers do not agree to a loan.', 'Kredyt jest poniżej 40: finansiści nie zgadzają się na pożyczkę.');
+      if (E.credit < spec.min_credit) return L('Credit is below 40: the financiers do not agree to a loan.', 'Kredyt państwa jest zbyt słaby: finansiści nie zgadzają się na pożyczkę.');
       if (runningInstrument(E, 'loan', t)) return L('The previous loan is still being serviced.', 'Poprzednia pożyczka jest nadal spłacana.');
     }
     if (kind === 'benefit_cut') {
@@ -1046,7 +1046,7 @@
 
   function securityOptionStatus(Q, option) {
     const S = Q.S, t = Q.time;
-    if (!securityModule() || !S.security || !S.politics) return no(L('Needs the forces of the state of stage 7.', 'Wymaga sił państwa z etapu 7.'));
+    if (!securityModule() || !S.security || !S.politics) return no(L('Needs the forces of the state of stage 7.', 'Ta decyzja nie jest teraz dostępna.'));
     if (option === 'training') {
       if (projectsOf(S, 'police_training', p => liveProject(p)).length) return no(L('A training of the police is under way.', 'Szkolenie policji już trwa.'));
       const police = S.security.police;
@@ -1177,7 +1177,7 @@
 
   function armyVariantStatus(Q, variant) {
     const S = Q.S, project = armyProject(S);
-    if (!securityModule() || !S.security || !S.security.forces.length) return no(L('Needs the forces of the state of stage 7.', 'Wymaga sił państwa z etapu 7.'));
+    if (!securityModule() || !S.security || !S.security.forces.length) return no(L('Needs the forces of the state of stage 7.', 'Ta decyzja nie jest teraz dostępna.'));
     if (project && !preparedProject(project)) return no(L('The reform of this scope is under way or done; its effects come once.', 'Reforma tego zakresu jest w toku albo zakończona; jej skutki przychodzą raz.'));
     return launchStatus(Q, 'army_control', variant, project && project.variant === variant ? project : null);
   }
@@ -1264,7 +1264,7 @@
 
   function militaryOptionStatus(Q, option) {
     const S = Q.S, security = securityModule();
-    if (!security || !S.security || !S.security.forces.length || !S.coup) return no(L('Needs the forces of the state of stage 7.', 'Wymaga sił państwa z etapu 7.'));
+    if (!security || !S.security || !S.security.forces.length || !S.coup) return no(L('Needs the forces of the state of stage 7.', 'Ta decyzja nie jest teraz dostępna.'));
     if (option === 'raise_spending') return affordStatus(Q, ARMY_SPENDING.price);
     if (option === 'cut_spending') return OK;
     if (option === 'promote_officers') {
@@ -1300,7 +1300,7 @@
     return result(Q, L('Officers loyal to the government are promoted; it costs ' + unitsText(PROMOTION.price) + '. The army leans less towards Piłsudski (−' +
       Math.round(100 * moved) + ' pp). Relations with Piłsudski worsen (−' + Math.abs(PROMOTION.relation) + ') and the Piłsudczycy of PPS protest (+' +
       PROMOTION.pilsudczycy + ').', 'Awansują oficerowie wierni rządowi; kosztuje to ' + unitsText(PROMOTION.price) + '. Wojsko słabiej sprzyja Piłsudskiemu (−' +
-      Math.round(100 * moved) + ' pkt proc.). Stosunki z Piłsudskim się psują (−' + Math.abs(PROMOTION.relation) + '), a piłsudczycy w PPS protestują (+' +
+      Math.round(100 * moved) + '). Stosunki z Piłsudskim się psują (−' + Math.abs(PROMOTION.relation) + '), a piłsudczycy w PPS protestują (+' +
       PROMOTION.pilsudczycy + ').'));
   }
 
@@ -1325,7 +1325,7 @@
 
   function armyOversightStatus(Q, option) {
     if (!armyOversightAvailable(Q)) return no(L('Needs a prepared project or a concrete military case.', 'Wymaga przygotowanego projektu albo konkretnej sprawy wojskowej.'));
-    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.'));
     return armyVariantStatus(Q, ARMY_VARIANTS[option]);
   }
 
@@ -2025,7 +2025,7 @@
     if (option === 'protect') return pkg.instruments.indexOf('benefit_cut') >= 0 ? OK : no(L('The package cuts no benefits.', 'Pakiet nie tnie zasiłków.'));
     if (option === 'wealth') {
       if (!pkg.instruments.some(kind => REGRESSIVE.indexOf(kind) >= 0)) return no(L('The package puts no burden on broad groups to shift.', 'Pakiet nie nakłada na szerokie grupy obciążeń, które można by przenieść.'));
-      if (E.tax_level >= 3 && runningInstrument(E, 'wealth_tax', t)) return no(L('The tax level is at 3 and the wealth tax is already in force.', 'Poziom podatków wynosi 3, a podatek majątkowy już obowiązuje.'));
+      if (E.tax_level >= 3 && runningInstrument(E, 'wealth_tax', t)) return no(L('The tax level is at 3 and the wealth tax is already in force.', 'Podatki są już najwyższe, a podatek majątkowy już obowiązuje.'));
       return OK;
     }
     if (option === 'loan') {
@@ -2069,7 +2069,7 @@
     const S = Q.S, pkg = S.economy.pending_package;
     if (!pkg) return null;
     return {
-      package: pkg.instruments.length ? pkg.instruments.map(instrumentName).join('; ') : L('no new instruments', 'brak nowych instrumentów'),
+      package: pkg.instruments.length ? pkg.instruments.map(instrumentName).join('; ') : L('no new instruments', 'bez nowych podatków ani cięć'),
       project: pkg.project_id && S.projects[pkg.project_id] ? projectName(S.projects[pkg.project_id].type) + ' (' +
         variantName(S.projects[pkg.project_id].variant) + ')' : '',
       reason: L(PACKAGE_REASONS[pkg.reason], PACKAGE_REASONS_PL[pkg.reason]) || pkg.reason,
@@ -2120,7 +2120,7 @@
         (list ? ' i chce to sfinansować tak: ' + list : ' bez nowych podatków')) :
       L('The cabinet wants to solve it so: ' + list, 'Rząd chce to rozwiązać tak: ' + list);
     Q.pl_bud_intro = L('The state lacks money: ' + reason + '. ', 'Państwu brakuje pieniędzy: ' + reason + '. ') + what + '. ' +
-      L('The Sejm votes at the settlement of ' + monthText(pkg.vote_at, 'gen') + '.', 'Sejm głosuje przy rozliczeniu ' + monthText(pkg.vote_at, 'gen') + '.');
+      L('The Sejm votes at the settlement of ' + monthText(pkg.vote_at, 'gen') + '.', 'Sejm głosuje na początku ' + monthText(pkg.vote_at, 'gen') + '.');
     Q.pl_bud_necessary = pkg.necessary ? 1 : 0;
     Q.pl_bud_necessary_text = pkg.revision_of ? L('This is already the revised version: if the Sejm refuses it too, the premier resigns.',
       'To już poprawiona wersja: jeśli Sejm i ją odrzuci, premier poda się do dymisji.') :
@@ -2167,7 +2167,7 @@
   function budgetPlanStatus(Q, kind) {
     if (!budgetPlanAvailable(Q)) return no(L('The budget is not below zero.', 'Budżet nie jest poniżej zera.'));
     if (PLAN_KINDS.indexOf(kind) < 0) return no(L('Unknown option.', 'Nieznana opcja.'));
-    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.'));
     const blocked = instrumentBlocked(Q, kind);
     return blocked ? no(blocked) : OK;
   }
@@ -2175,7 +2175,7 @@
     const S = Q.S;
     Q.pl_plan_intro = L('The budget is below zero (' + economy.poolText(S.economy.budget) + '). Our minister of the Treasury can put a budget law to the Sejm; it votes at the settlement of ' +
       monthText(Q.time + 1, 'gen') + '. A law that passes brings one unit more than the same decision on the card “Taxes and Loans”, but it can fail.',
-      'Budżet jest poniżej zera (' + economy.poolText(S.economy.budget) + '). Nasz minister skarbu może przedstawić Sejmowi ustawę budżetową; Sejm zagłosuje przy rozliczeniu ' +
+      'Budżet jest poniżej zera (' + economy.poolText(S.economy.budget) + '). Nasz minister skarbu może przedstawić Sejmowi ustawę budżetową; Sejm zagłosuje na początku ' +
       monthText(Q.time + 1, 'gen') + '. Ustawa, która przejdzie, da o jedną jednostkę więcej niż ta sama decyzja na karcie „Podatki i pożyczki”, ale może upaść.');
     for (const kind of PLAN_KINDS) {
       const status = budgetPlanStatus(Q, kind), spec = INSTRUMENTS[kind], gain = (spec.pool || 0) + PLAN_BONUS;
@@ -2196,7 +2196,7 @@
     pkg.pps_vote = 'yes';
     S.cooldowns['rest:' + PLAN_CARD] = Q.time + PLAN_REST;
     return L('Our Treasury puts a budget law to the Sejm: ' + INSTRUMENTS[kind].name + '. The Sejm votes at the settlement of ' + monthText(pkg.vote_at, 'gen') + '.',
-      'Nasz Skarb przedstawia Sejmowi ustawę budżetową: ' + instrumentName(kind) + '. Sejm zagłosuje przy rozliczeniu ' + monthText(pkg.vote_at, 'gen') + '.');
+      'Nasz Skarb przedstawia Sejmowi ustawę budżetową: ' + instrumentName(kind) + '. Sejm zagłosuje na początku ' + monthText(pkg.vote_at, 'gen') + '.');
   }
   function budgetPlanSkip(Q) {
     Q.S.cooldowns['rest:' + PLAN_CARD] = Q.time + 1;
@@ -2984,7 +2984,7 @@
     if (record && record.status !== 'waiting') return no(L('The Sejm has already voted on the democratic guarantees.', 'Sejm już głosował nad gwarancjami demokratycznymi.'));
     if (debate.pending && debate.pending.id === 'democratic_guarantees') return no(L('The democratic guarantees wait for their vote.', 'Gwarancje demokratyczne czekają na głosowanie.'));
     if (waitingMotions(debate)[0] === 'democratic_guarantees') return no(L('The democratic guarantees are already the first motion of PPS.', 'Gwarancje demokratyczne są już pierwszym wnioskiem PPS.'));
-    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.'));
     return OK;
   }
   function justiceGuaranteesChoose(Q) {
@@ -3270,8 +3270,8 @@
       filing: [{type: 'faction', faction: 'lewica', dissent: -2}],
       enact: (Q, variant, bill, m) => {
         billEnacted(Q, {id: bill.id, variant: variant, enacted_variant: variant, sponsor: 'pps', pps_vote: 'yes', effective_at: bill.effective_at}, m);
-        return variant === 'full' ? L('The full benefit is paid from the next settlement; it costs 3 budget units.', 'Pełny zasiłek będzie wypłacany od najbliższego rozliczenia; kosztuje 3 jednostki budżetu.') :
-          L('The limited benefit is paid from the next settlement; it costs 1 budget unit.', 'Ograniczony zasiłek będzie wypłacany od najbliższego rozliczenia; kosztuje 1 jednostkę budżetu.');
+        return variant === 'full' ? L('The full benefit is paid from the next settlement; it costs 3 budget units.', 'Pełny zasiłek będzie wypłacany od przyszłego miesiąca; kosztuje 3 jednostki budżetu.') :
+          L('The limited benefit is paid from the next settlement; it costs 1 budget unit.', 'Ograniczony zasiłek będzie wypłacany od przyszłego miesiąca; kosztuje 1 jednostkę budżetu.');
       }},
     {id: 'labor_inspection', costs_budget: true, portfolio: 'labor', name: ['Labour inspection and working time', 'Inspekcja pracy i czas pracy'],
       text: ['Inspectors enforce the statutory working time; it costs 1 budget unit. The discontent of the workers falls, and the industrialists are more displeased (+4).',
@@ -3302,7 +3302,7 @@
       filing: [{type: 'faction', faction: 'lewica', dissent: -3}, {type: 'business', value: 2}, {type: 'relation', actor: 'zln', value: -3}],
       enact: (Q, variant, bill, m, raise) => {
         applyInstrument(Q, raise ? 'progressive_raise' : variant, m, {law_id: bill.id, sponsor: 'pps', pps_answers: true});
-        return L('The tax is collected from the next settlement.', 'Podatek będzie pobierany od najbliższego rozliczenia.');
+        return L('The tax is collected from the next settlement.', 'Podatek będzie pobierany od przyszłego miesiąca.');
       }},
     {id: 'army_oversight', portfolio: 'reichswehr', name: ['Civilian oversight of the army', 'Cywilny nadzór nad wojskiem'],
       text: ['The army under the control of the government and the Sejm: it costs 1 budget unit; one group of the army grows more loyal to the legal authorities.',
@@ -3462,7 +3462,7 @@
           const p = upgradeProject(Q, 'old_age_insurance', ['pension_industry'], 'pension_all', m);
           if (p) { extraGrievance(p, -1, 'raise'); economy.changeBusinessPressure(Q.S, 3, p.id + ':raise', m, 'old_age_insurance'); }
         } else startByLaw(Q, 'old_age_insurance', variant, {executor: 'labor'}, bill, m);
-        return L('The insurance starts with the next settlement.', 'Ubezpieczenie rusza od najbliższego rozliczenia.');
+        return L('The insurance starts with the next settlement.', 'Ubezpieczenie rusza w przyszłym miesiącu.');
       }},
     {id: 'abortion', portfolio: null, name: ['Termination of pregnancy', 'Przerwanie ciąży'],
       text: ['Full: a termination of pregnancy by a doctor is no crime. Limited: allowed when the woman’s health needs it or when the pregnancy is the result of a crime.',
@@ -3561,7 +3561,7 @@
     if (unavailable) return off(unavailable);
     const offer = level === 'limited' || record.level === 'limited' ? 'full' : 'both';
     const blocked = law.blocked ? law.blocked(Q) : '';
-    if (!rules.mainActionAvailable(Q)) return {eligible: true, available: false, offer: offer, reason: L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.')};
+    if (!rules.mainActionAvailable(Q)) return {eligible: true, available: false, offer: offer, reason: L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.')};
     if (S.party_orgs.cash + 1e-9 < INITIATIVE_COST) return {eligible: true, available: false, offer: offer,
       reason: L('Needs ' + rules.units(INITIATIVE_COST) + '.', 'Wymaga ' + rules.units(INITIATIVE_COST, 'resources', 'gen') + '.')};
     return {eligible: true, available: !blocked, offer: offer, reason: blocked};
@@ -3860,7 +3860,7 @@
     } else if (status === 'prepared') {
       step = L('Its law was refused: file it again with the card “' + title + '” when the Sejm has changed.', 'Sejm odrzucił jego ustawę: zgłoś ją ponownie kartą „' + title + '”, gdy układ w Sejmie się zmieni.');
     } else if (status) {
-      step = L('Its project already runs; the promise is counted at the next settlement.', 'Projekt już działa; obietnica zostanie zaliczona przy najbliższym rozliczeniu.');
+      step = L('Its project already runs; the promise is counted at the next settlement.', 'Projekt już działa; obietnica zostanie zaliczona w przyszłym miesiącu.');
     } else {
       step = L('The project is launched with the card “' + title + '” (' + ministry + (variants ? ', variant: ' + variants : '') + ').',
         'Projekt uruchamia się kartą „' + title + '” (' + ministry + (variants ? ', wariant: ' + variants : '') + ').');
@@ -3949,7 +3949,7 @@
     if (!price || pool - price >= DEFICIT_FLOOR - 1e-9) return OK;
     const have = (pool < -0.05 ? '−' : '') + num(Math.abs(pool)) + ' B';
     return no(L('The budget cannot go below −3 B: it needs ' + num(price) + ', the pool has ' + have + '.',
-      'Budżet nie może zejść niżej niż −3 B: potrzeba ' + num(price) + ', jest ' + have + '.'));
+      'Na to nie ma już pieniędzy: budżet spadłby za głęboko pod kreskę.'));
   }
 
   function nextTranche(S, typeId, variantId) {
@@ -3964,7 +3964,7 @@
     const prepared = projectsOf(S, typeId, p => preparedProject(p) && (typeId === 'land_program' || p.variant === variantId))[0];
     if (prepared) return '';
     return nextTranche(S, typeId, variantId) === null ? L('All tranches of this scope are done; the same area gets no second reward.',
-      'Wszystkie transze tego zakresu są wykonane; ten sam obszar nie dostaje drugiej nagrody.') : '';
+      'Reforma objęła już cały ten obszar.') : '';
   }
 
   function minorityAgreements(S) {
@@ -3989,7 +3989,7 @@
   // no branch is named, and the derogation for the oldest threatened plant (P).
   function unionOption(Q, option, extra) {
     const S = Q.S, unions = unionsModule();
-    if (!unions || !S.unions || !S.enterprises) return no(L('Needs the union branches and plant records of stage 6.', 'Wymaga branż związkowych i rejestru zakładów z etapu 6.'));
+    if (!unions || !S.unions || !S.enterprises) return no(L('Needs the union branches and plant records of stage 6.', 'Ta decyzja nie jest teraz dostępna.'));
     if (option === 'derogation') return unions.derogationStatus(Q);
     if (extra && extra.branch) return unions.collectiveStatus(Q, extra.branch);
     const reasons = unions.BRANCHES.map(b => unions.collectiveStatus(Q, b));
@@ -4030,15 +4030,15 @@
     const pol = politicsModule();
     if (RIGHT_TRIGGERS[cardId + '.' + option] && pol && pol.rightPaused(S, t)) return no(pol.rightPauseReason(S));
     if (SAVINGS[cardId] && SAVINGS[cardId].option === option) return rules.mainActionAvailable(Q) ? OK :
-      no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
+      no(L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.'));
     // Z — 0.92 (the user's decision of 24 X 2026): the cooperative variants of 8.5 and 8.9 use the existing cooperative movement
     // and need no cooperative of PPS.
     // Z — 0.94: the answer to the customs war is an answer to an event and costs no month.
-    if (!(extra && extra.adviser) && cardId !== 'customs_war' && !rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.'));
+    if (!(extra && extra.adviser) && cardId !== 'customs_war' && !rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.'));
     switch (cardId) {
       case 'labor_rights': {
         if (option === 'collective' || option === 'derogation') return unionOption(Q, option, extra);
-        if (projectsOf(S, 'labor_inspection', p => liveProject(p)).length) return no(L('The inspection already works; the same variant points to the existing project.', 'Inspekcja już działa; ten sam wariant wskazuje na istniejący projekt.'));
+        if (projectsOf(S, 'labor_inspection', p => liveProject(p)).length) return no(L('The inspection already works; the same variant points to the existing project.', 'Inspekcja pracy już działa.'));
         return launchStatus(Q, 'labor_inspection', 'inspection', projectsOf(S, 'labor_inspection', p => preparedProject(p) && p.sponsor === 'pps')[0] || null);
       }
       case 'economic_democracy': {
@@ -4049,7 +4049,7 @@
         if (!prepared && projectsOf(S, typeId, p => liveProject(p) || p.status === 'completed').length) {
           return no({works_councils: L('The law on works councils is already in force.', 'Ustawa o radach zakładowych już obowiązuje.'),
             cooperative_credit: L('The state credit for the cooperatives already runs.', 'Kredyt państwa dla spółdzielni już działa.'),
-            socialise_mining: L('Coal mining is socialised once; this is under way or done.', 'Górnictwo uspołecznia się raz; to już trwa albo zostało zrobione.')}[option]);
+            socialise_mining: L('Coal mining is socialised once; this is under way or done.', 'Uspołecznienie górnictwa już trwa albo zostało przeprowadzone.')}[option]);
         }
         return launchStatus(Q, typeId, variantId, prepared);
       }
@@ -4060,7 +4060,7 @@
       case 'social_welfare': {
         const protection = operatingProtection(S);
         if (option === 'expand') {
-          if (protection && (protection.scope || 1) >= 3) return no(L('The protection already covers its full scope of 3.', 'Osłona obejmuje już pełny zakres 3.'));
+          if (protection && (protection.scope || 1) >= 3) return no(L('The protection already covers its full scope of 3.', 'Zasiłki obejmują już wszystkich bezrobotnych.'));
           if (protection && protection.variant !== 'full') return no(L('The protection is focused or limited; expanding it means restoring the full benefit first.', 'Osłona jest skupiona albo ograniczona; jej rozszerzenie wymaga najpierw przywrócenia pełnego zasiłku.'));
           // Z — 1.01: a new protection pays the full price; a wider scope pays the full price once more.
           return affordStatus(Q, PROJECT_TYPES.worker_protection.variants.full.price);
@@ -4097,12 +4097,12 @@
           return affordStatus(Q, 1);
         }
         const instrument = projectsOf(S, 'credit_instrument')[0];
-        if (instrument && !preparedProject(instrument)) return no(L('The credit instrument is already running: one financing, one cost, one effect.', 'Instrument kredytowy już działa: jedno finansowanie, jeden koszt, jeden skutek.'));
+        if (instrument && !preparedProject(instrument)) return no(L('The credit instrument is already running: one financing, one cost, one effect.', 'Program tańszego kredytu już działa.'));
         const financing = option === 'credit' ? 'public' : option;
         // Stage 8 (fix 3): an instrument prepared by the cabinet is not on the agenda of PPS; the cabinet launches it itself.
         if (instrument && instrument.sponsor === 'cabinet') return no(L('The cabinet has prepared the credit instrument; it launches it at one of its next reviews.',
-          'Gabinet przygotował instrument kredytowy; uruchomi go przy jednym z kolejnych przeglądów.'));
-        if (financing === 'banks' && E.credit < 40) return no(L('Credit is below 40: the banks do not agree.', 'Kredyt jest poniżej 40: banki się nie zgadzają.'));
+          'Rząd przygotował program tańszego kredytu i wkrótce go uruchomi.'));
+        if (financing === 'banks' && E.credit < 40) return no(L('Credit is below 40: the banks do not agree.', 'Kredyt jest zbyt słaby: banki się nie zgadzają.'));
         return launchStatus(Q, 'credit_instrument', financing, instrument && instrument.variant === financing ? instrument : null);
       }
       case 'public_works': {
@@ -4140,7 +4140,7 @@
         if (option === 'polish_dominance' && reformsRecord(Q).democratic_guarantees) return no(L('The democratic guarantees in force forbid it.', 'Zakazują tego obowiązujące gwarancje demokratyczne.'));
         if (option === 'polish_dominance' && delegation(S, 'schools')) {
           return no(L('The schools of the autonomous area are delegated to its self-government: a central order there is not a lawful act (17.12.6).',
-            'Szkoły obszaru autonomicznego są przekazane jego samorządowi: centralne polecenie nie jest tam aktem legalnym (17.12.6).'));
+            'Szkołami obszaru autonomicznego kieruje jego samorząd; polecenie z Warszawy nie ma tam mocy.'));
         }
         return launchStatus(Q, 'minority_schools', option, null);
       }
@@ -4238,7 +4238,7 @@
     'economic_democracy.works_councils': ['the works councils', 'rady zakładowe'], 'economic_democracy.socialise_mining': ['the socialisation of mining', 'uspołecznienie górnictwa'],
     'finance_package.progressive': ['the progressive tax', 'podatek progresywny'], 'finance_package.indirect': ['the indirect taxes', 'podatki pośrednie'],
     'currency_stabilisation.rapid_cuts': ['the stabilisation with savings', 'stabilizację z oszczędnościami'],
-    'currency_stabilisation.protected': ['the stabilisation with protections', 'stabilizację z osłonami'],
+    'currency_stabilisation.protected': ['the stabilisation with protections', 'stabilizację z zasiłkami'],
     'land_program.accelerated': ['the fast parcellation', 'szybką parcelację'], 'education_program.secular': ['the secular school', 'szkołę świecką'],
     'minority_school_rights.own_language': ['teaching in the mother tongue', 'naukę w języku ojczystym'],
     'minority_school_rights.polish_dominance': ['the Polish school', 'szkołę polską'],
@@ -4380,7 +4380,7 @@
           return result(Q, L('A limited derogation from working time is granted to the ' + unions.plantName(plant) + ' for ' +
             unions.DEROGATION_MONTHS + ' months: the displeasure of the industrialists −4; its workers’ grievance +3 at the next monthly settlement; the Left of PPS protests (+3).',
             'Ograniczone odstępstwo od czasu pracy zostaje przyznane (' + unions.plantName(plant) + ') na ' + months(unions.DEROGATION_MONTHS) +
-            ': niezadowolenie przemysłowców −4; niezadowolenie robotników zakładu +3 przy następnym miesięcznym rozliczeniu; Lewica PPS protestuje (+3).'));
+            ': przemysłowcy są mniej niezadowoleni (−4), robotnicy zakładu w przyszłym miesiącu bardziej (+3), a Lewica PPS protestuje (+3).'));
         }
         const project = prepareProject(Q, 'labor_inspection', 'inspection', ppsFields, {match: p => p.sponsor === 'pps'});
         return result(Q, launchPrepared(Q, project));
@@ -4449,9 +4449,9 @@
           return result(Q, bill.status === 'rejected' ? L('The Sejm rejects the act; the ' + plantLabel(plant) + ' stays private.',
             'Sejm odrzuca akt; zakład (' + plantLabel(plant) + ') pozostaje prywatny.') :
             bill.status === 'enacted' ? L('The ' + plantLabel(plant) + ' passes under public control, managed by a public board: the displeasure of the industrialists +15.',
-              capital(plantLabel(plant)) + ' przechodzi pod kontrolę publiczną i zarządza nim zarząd publiczny: niezadowolenie przemysłowców +15.') :
+              capital(plantLabel(plant)) + ' przechodzi pod zarząd publiczny; przemysłowcy są oburzeni (+15).') :
               L('The Sejm passes the act of public control of the ' + plantLabel(plant) + '; the displeasure of the industrialists +15 comes when it takes effect.',
-                'Sejm uchwala akt kontroli publicznej (' + plantLabel(plant) + '); niezadowolenie przemysłowców +15 przyjdzie, gdy akt wejdzie w życie.') + lawNote(bill));
+                'Sejm uchwala akt kontroli publicznej (' + plantLabel(plant) + '); przemysłowcy będą oburzeni (+15), gdy akt wejdzie w życie.') + lawNote(bill));
         }
         if (option === 'worker_representation') {
           const variant = (extra && extra.variant) || 'consultative';
@@ -4466,7 +4466,7 @@
             applyOnce(project, 'first', () => representationEffects(Q, project, t));
             return result(Q, L('The workers of the ' + plantLabel(plant) + ' are informed and consulted before any change of their conditions, without a veto; their grievance −2 at the next monthly settlement.',
               'Robotnicy zakładu (' + plantLabel(plant) + ') są informowani i konsultowani przed każdą zmianą swoich warunków, bez prawa weta; ' +
-              'ich niezadowolenie −2 przy następnym miesięcznym rozliczeniu.'));
+              'w przyszłym miesiącu ich niezadowolenie spadnie (−2).'));
           }
           const waiting = projectsOf(S, 'enterprise_representation', p => p.variant === 'decision_rights' && preparedProject(p))[0];
           if (waiting) return result(Q, launchPrepared(Q, waiting));
@@ -4481,7 +4481,7 @@
             suppliers: 'domestic industry', profile: 'synthetic_orders_v1'}}, ppsFields));
           launchProject(Q, project, {sponsor: 'pps'});
           return result(Q, L('One package of public orders runs for three settlements; it costs ' + unitsText(profilePrice(Q.S, project.type, project.price_B || 0, project.sponsor)) + '.',
-            'Jeden pakiet zamówień publicznych trwa przez trzy rozliczenia; kosztuje ' + unitsText(profilePrice(Q.S, project.type, project.price_B || 0, project.sponsor)) + '.'));
+            'Zamówienia publiczne trwają trzy miesiące; kosztują ' + unitsText(profilePrice(Q.S, project.type, project.price_B || 0, project.sponsor)) + '.'));
         }
         const financing = option === 'credit' ? 'public' : option;
         const project = prepareProject(Q, 'credit_instrument', financing, ppsFields);
@@ -4576,7 +4576,7 @@
   function objectionsLine(objections) {
     const names = objections.map(o => government.partyWords(o.party) + ' (+' + o.delta + ')');
     const list = names.length > 1 ? names.slice(0, -1).join(', ') + L(' and ', ' i ') + names[names.length - 1] : names[0];
-    return L('Objecting in the coalition: ' + list + '; the tension grows.', 'Sprzeciw w koalicji: ' + list + '; napięcie rośnie.');
+    return L('Objecting in the coalition: ' + list + '; the tension grows.', 'Sprzeciw w koalicji: ' + list + '; spory się zaostrzają.');
   }
 
   function lawNote(law) {
@@ -4633,8 +4633,8 @@
   function deficitWarning(pool) {
     if (pool >= 3) return '';
     return L(' A decision that takes the budget below zero is paid by printing money, and inflation rises; a ministry can spend down to −3 B.',
-      ' Wydatek, który sprowadzi budżet poniżej zera, państwo pokryje dodrukiem pieniędzy, a inflacja wzrośnie; resort może wydawać do −3 B.') +
-      (pool < 1 ? L(' Below −2 B the programmes run at half strength.', ' Poniżej −2 B programy działają w połowie.') : '');
+      ' Wydatek, który sprowadzi budżet pod kreskę, państwo pokryje dodrukiem pieniędzy, a inflacja wzrośnie; resort może zejść najwyżej trzy jednostki pod kreskę.') +
+      (pool < 1 ? L(' Below −2 B the programmes run at half strength.', ' Gdy budżet spadnie głęboko pod kreskę, programy działają w połowie.') : '');
   }
   function cardView(Q, cardId) {
     costWords(Q);
@@ -4674,6 +4674,22 @@
     // Z — 1.02: the card Sprawy wojskowe names the pressure towards a coup.
     if (cardId === 'military_policy' && S.coup) Q.pl_gc_coup_pressure = String(Math.round(S.coup.pressure));
     if (cardId === 'justice_policy' && S.politics) Q.pl_gc_democracy = String(Math.round(S.politics.democracy));
+    // Z — 1.29 (S4 of the wording review): the same states in words for the first sentences of the Polish cards.
+    const band = (v, cuts, words) => words[cuts.filter(c => v >= c).length];
+    if (cardId === 'labor_rights') Q.pl_gc_business_words = band(S.economy.business_pressure, [40, 60], ['są na razie spokojni', 'są już niezadowoleni', 'wstrzymują inwestycje']);
+    if (cardId === 'social_welfare') Q.pl_gc_protection_words = ['', 'Zasiłki dla bezrobotnych są skromne.', 'Zasiłki obejmują wielu bezrobotnych.', 'Zasiłki obejmują wszystkich bezrobotnych.'][Math.min(3, Q.pl_gc_protection_level || 0)];
+    if (cardId === 'agriculture_development') Q.pl_gc_agrarian_words = band(S.society.agrarian_pressure, [30, 60], ['wieś jest na razie spokojna', 'chłopi tracą cierpliwość', 'chłopi są bliscy buntu']);
+    if (cardId === 'internal_security' && S.security) {
+      const sec = securityModule();
+      Q.pl_gc_police_words = sec && sec.policeWords ? 'Policja dziś: ' + sec.policeWords(S.security.police) : '';
+    }
+    if (cardId === 'minorities_kresy' && S.politics) Q.pl_gc_minorities_words = band(politicsModule().grievanceOf(S, cell => cell.identity_id !== 'polish'), [30, 60], ['są na razie spokojne', 'są coraz bardziej rozgoryczone', 'są bliskie buntu']);
+    if (cardId === 'civil_liberties' && S.politics) Q.pl_gc_violence_words = band(S.politics.violence, [20, 40], ['Starcia zdarzają się na razie rzadko.', 'Starcia zdarzają się coraz częściej.', 'Przemoc polityczna jest na porządku dziennym.']);
+    if (cardId === 'military_policy' && S.coup) {
+      const sec = securityModule();
+      Q.pl_gc_army_words = sec && sec.armyMoodWord ? sec.armyMoodWord(S) : '';
+    }
+    if (cardId === 'justice_policy' && S.politics) Q.pl_gc_democracy_words = band(S.politics.democracy, [45, 65], ['słabe', 'umiarkowane', 'silne']);
     if (cardId === 'labor_rights' && unions && S.unions) Q.pl_gc_collective_branch = unions.branchName(unions.collectiveTarget(Q) || 'industry').toLowerCase();
     Q.pl_gc_plants = unions && S.enterprises && (cardId === 'labor_rights' || cardId === 'industrial_policy') ? unions.plantsLine(S) : '';
     // Z — Koalicja: an option that partners of this cabinet reject says so on the card.
@@ -4746,7 +4762,7 @@
       if (!operatingProtection(S)) return {blocked: L('First a protection for the unemployed must be working.', 'Najpierw musi działać ochrona bezrobotnych.'), kinds: []};
       if (!runningInstrument(E, 'wealth_tax', t) && !runningInstrument(E, 'loan', t)) {
         const kind = !instrumentBlocked(Q, 'wealth_tax') ? 'wealth_tax' : !instrumentBlocked(Q, 'loan') ? 'loan' : null;
-        if (!kind) return {blocked: L('No financing of the protection is available: neither a wealth tax nor a loan.', 'Brak finansowania osłony: nie ma ani podatku majątkowego, ani pożyczki.'), kinds: []};
+        if (!kind) return {blocked: L('No financing of the protection is available: neither a wealth tax nor a loan.', 'Brak pieniędzy na zasiłki: nie ma ani podatku majątkowego, ani pożyczki.'), kinds: []};
         kinds.push(kind);
       }
     }
@@ -4896,7 +4912,7 @@
       if (option === 'protection') {
         if (!ppsHolds(S, 'labor')) return no(L('Needs Labour.', 'Wymaga resortu Pracy.'));
         const protection = operatingProtection(S);
-        if (protection && protection.scope >= 3) return no(L('The protection already covers its full scope.', 'Osłona obejmuje już pełny zakres.'));
+        if (protection && protection.scope >= 3) return no(L('The protection already covers its full scope.', 'Zasiłki obejmują już wszystkich bezrobotnych.'));
         return OK;
       }
       if (option === 'none') return OK;
@@ -4952,7 +4968,7 @@
       if (ppsHolds(S, 'economic') && !projectsOf(S, 'orders', p => liveProject(p)).length) {
         const project = createProject(Q, 'orders', 'orders', Object.assign({policy_choices: {profile: 'synthetic_orders_v1'}}, ppsFields));
         launchProject(Q, project, {sponsor: 'pps'});
-        return result(Q, L('A package of public orders runs for three settlements.', 'Pakiet zamówień publicznych trwa przez trzy rozliczenia.'));
+        return result(Q, L('A package of public orders runs for three settlements.', 'Zamówienia publiczne potrwają trzy miesiące.'));
       }
       const works = agendaProject(S, 'public_works') || prepareProject(Q, 'public_works', 'employment', ppsFields, {match: p => p.sponsor === 'pps'});
       return result(Q, launchPrepared(Q, works));
@@ -5087,7 +5103,7 @@
     const pkg = S.economy.pending_package;
     const packageLine = pkg ? L('The cabinet proposes a package (' + (pkg.instruments.map(k => INSTRUMENTS[k].name).join(', ') || 'a project') +
       '); the Sejm votes at the settlement of ' + rules.monthOf(pkg.vote_at) + '/' + rules.yearOf(pkg.vote_at) + '.',
-      'Gabinet proponuje pakiet (' + (pkg.instruments.map(instrumentName).join(', ') || 'projekt') + '); Sejm głosuje przy rozliczeniu ' +
+      'Gabinet proponuje pakiet (' + (pkg.instruments.map(instrumentName).join(', ') || 'projekt') + '); Sejm głosuje na początku ' +
       rules.monthYear(pkg.vote_at, 'gen') + '.') : '';
     return {projects: lines.join(' '), laws: laws.join(' '), package: packageLine};
   }
@@ -5099,12 +5115,12 @@
     if (pkg && pkg.pps_plan) {
       lines.push(L('Our budget law (' + pkg.instruments.map(kind => INSTRUMENTS[kind].name).join(', ') + ') waits for the vote of the Sejm at the settlement of ' +
         rules.monthOf(pkg.vote_at) + '/' + rules.yearOf(pkg.vote_at) + '.', 'Nasza ustawa budżetowa (' + pkg.instruments.map(instrumentName).join(', ') +
-        ') czeka na głosowanie Sejmu przy rozliczeniu ' + rules.monthYear(pkg.vote_at, 'gen') + '.'));
+        ') czeka na głosowanie Sejmu na początku ' + rules.monthYear(pkg.vote_at, 'gen') + '.'));
     } else if (pkg) {
       lines.push(L('The cabinet proposes a package (' + (pkg.instruments.map(kind => INSTRUMENTS[kind].name).join(', ') || 'a project and its law') +
         '); the Sejm votes at the settlement of ' + rules.monthOf(pkg.vote_at) + '/' + rules.yearOf(pkg.vote_at) + '.' +
         (budgetCardAvailable(Q) ? ' PPS can answer it with the card Budget in Crisis.' : ''),
-        'Gabinet proponuje pakiet (' + (pkg.instruments.map(instrumentName).join(', ') || 'projekt i jego ustawa') + '); Sejm głosuje przy rozliczeniu ' +
+        'Gabinet proponuje pakiet (' + (pkg.instruments.map(instrumentName).join(', ') || 'projekt i jego ustawa') + '); Sejm głosuje na początku ' +
         rules.monthYear(pkg.vote_at, 'gen') + '.' + (budgetCardAvailable(Q) ? ' PPS może odpowiedzieć kartą „Budżet w kryzysie”.' : '')));
     }
     if (economy.currencyCrisis(E)) {
@@ -5118,7 +5134,7 @@
       lines.push(L('The unemployment bill has passed the Sejm and waits for the Senate.', 'Ustawa o bezrobociu przeszła przez Sejm i czeka na Senat.'));
     }
     if (bill && bill.status === 'pending' && cabinetActive(S) && ppsMember(S)) {
-      lines.push(L('D2 of the unemployment bill waits until PPS is outside the cabinet.', 'Krok D2 ustawy o bezrobociu czeka, aż PPS znajdzie się poza gabinetem.'));
+      lines.push(L('D2 of the unemployment bill waits until PPS is outside the cabinet.', 'Dalsze losy ustawy o bezrobociu rozstrzygną się, gdy PPS znajdzie się poza rządem.'));
     }
     return lines.join(' ');
   }

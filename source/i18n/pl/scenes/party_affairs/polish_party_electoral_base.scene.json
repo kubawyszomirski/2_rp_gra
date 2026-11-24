@@ -2,16 +2,16 @@
  "source": "scenes/party_affairs/polish_party_electoral_base.scene.dry",
  "status": "complete",
  "lines": {
-  "title: Character of the Party": "title: Charakter partii",
+  "title: Character of the Party": "title: Na kogo stawiamy",
   "subtitle: Where PPS builds its reach.": "subtitle: Gdzie PPS buduje swój zasięg.",
-  "= Character of the Party": "= Charakter partii",
-  "The present line: **[+ pl_stance_current +]**. A new declaration changes no law in force and gives no reform by itself.": "Obecna linia: **[+ pl_stance_current +]**. Nowa deklaracja nie zmienia żadnej obowiązującej ustawy i sama nie daje żadnej reformy.",
+  "= Character of the Party": "= Na kogo stawiamy",
+  "The present line: **[+ pl_stance_current +]**. A new declaration changes no law in force and gives no reform by itself.": "Obecna linia: **[+ pl_stance_current +]**.",
   "title: A workers’ party": "title: Partia robotnicza",
-  "subtitle: [? if pl_stance_workers_present = 1 : **Present line** Confirming it changes nothing. ?][? if pl_stance_workers_present = 0 : Our organisational work brings more in the unions and among the workers. Grows faster: unionism. ?]": "subtitle: [? if pl_stance_workers_present = 1 : **Obecna linia** Potwierdzenie niczego nie zmienia. ?][? if pl_stance_workers_present = 0 : Nasza praca organizacyjna przynosi więcej w związkach i wśród robotników. Szybciej rośnie: uzwiązkowienie. ?]",
+  "subtitle: [? if pl_stance_workers_present = 1 : **Present line** Confirming it changes nothing. ?][? if pl_stance_workers_present = 0 : Our organisational work brings more in the unions and among the workers. Grows faster: unionism. ?]": "subtitle: [? if pl_stance_workers_present = 1 : **To nasza obecna linia.** Potwierdzenie niczego nie zmienia. ?][? if pl_stance_workers_present = 0 : Nasza praca organizacyjna przynosi więcej w związkach i wśród robotników. Szybciej rośnie: uzwiązkowienie. ?]",
   "title: A party of workers and peasants": "title: Partia robotników i chłopów",
-  "subtitle: [? if pl_stance_workers_peasants_present = 1 : **Present line** Confirming it changes nothing. ?][? if pl_stance_workers_peasants_present = 0 : The same, and also among the peasants. Grows faster: the worker-peasant alliance. ?]": "subtitle: [? if pl_stance_workers_peasants_present = 1 : **Obecna linia** Potwierdzenie niczego nie zmienia. ?][? if pl_stance_workers_peasants_present = 0 : To samo, a do tego wśród chłopów. Szybciej rośnie: sojusz robotniczo-włościański. ?]",
+  "subtitle: [? if pl_stance_workers_peasants_present = 1 : **Present line** Confirming it changes nothing. ?][? if pl_stance_workers_peasants_present = 0 : The same, and also among the peasants. Grows faster: the worker-peasant alliance. ?]": "subtitle: [? if pl_stance_workers_peasants_present = 1 : **To nasza obecna linia.** Potwierdzenie niczego nie zmienia. ?][? if pl_stance_workers_peasants_present = 0 : Nasza praca organizacyjna przynosi więcej wśród robotników, w związkach i wśród chłopów. Szybciej rośnie: sojusz robotniczo-włościański. ?]",
   "title: A broad democratic party": "title: Szeroka partia demokratyczna",
-  "subtitle: [? if pl_stance_broad_democratic_present = 1 : **Present line** Confirming it changes nothing. ?][? if pl_stance_broad_democratic_present = 0 : Our organisational work brings more among the intelligentsia and the petty bourgeoisie. Grows faster: federalism. ?]": "subtitle: [? if pl_stance_broad_democratic_present = 1 : **Obecna linia** Potwierdzenie niczego nie zmienia. ?][? if pl_stance_broad_democratic_present = 0 : Nasza praca organizacyjna przynosi więcej wśród inteligencji i drobnomieszczaństwa. Szybciej rośnie: federalizm. ?]",
+  "subtitle: [? if pl_stance_broad_democratic_present = 1 : **Present line** Confirming it changes nothing. ?][? if pl_stance_broad_democratic_present = 0 : Our organisational work brings more among the intelligentsia and the petty bourgeoisie. Grows faster: federalism. ?]": "subtitle: [? if pl_stance_broad_democratic_present = 1 : **To nasza obecna linia.** Potwierdzenie niczego nie zmienia. ?][? if pl_stance_broad_democratic_present = 0 : Nasza praca organizacyjna przynosi więcej wśród inteligencji i drobnomieszczaństwa. Szybciej rośnie: federalizm. ?]",
   "- @root: Continue.": "- @root: Dalej."
  }
 }

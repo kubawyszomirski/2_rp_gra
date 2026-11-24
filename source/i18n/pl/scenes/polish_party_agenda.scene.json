@@ -2,10 +2,10 @@
   "source": "scenes/polish_party_agenda.scene.dry",
   "status": "complete",
   "lines": {
-    "title: Party Agenda": "title: Agenda partii",
+    "title: Party Agenda": "title: Praca partyjna",
     "subtitle: Work of the party that shapes its character.": "subtitle: Praca partii, która kształtuje jej charakter.",
-    "= The party agenda": "= Agenda partii",
-    "Party money: [+ pl_pa_cash_words +]. The dues bring [+ pl_pa_dues_monthly +] every month.": "Kasa partii: [+ pl_pa_cash_words +]. Składki przynoszą co miesiąc [+ pl_pa_dues_monthly +].",
+    "= The party agenda": "= Praca partyjna",
+    "Party money: [+ pl_pa_cash_words +]. The dues bring [+ pl_pa_dues_monthly +] every month.": "Środki partii: [+ pl_pa_cash_words +]. Składki przynoszą co miesiąc [+ pl_pa_dues_monthly +].",
     "TUR: [+ pl_party_tur +].": "Towarzystwo Uniwersytetu Robotniczego: [+ pl_party_tur +].",
     "[? if pl_pa_priorities : Economic priorities of PPS: [+ pl_pa_priorities +]. Each is prepared through its government card, with its own costs. ?]": "[? if pl_pa_priorities : Priorytety gospodarcze PPS: [+ pl_pa_priorities +]. Każdy z nich przygotowuje się przez właściwą kartę rządową, z jej własnymi kosztami. ?]",
     "title: Work in the unions": "title: Praca w związkach",
@@ -19,7 +19,7 @@
     "title: Rallies in the factories": "title: Wiece w fabrykach",
     "subtitle: Cost: 0 resources. The speakers of the party address the workers, who become more ready to strike. Builds strike action.": "subtitle: Koszt: 0 jednostek środków. Mówcy partii przemawiają do robotników, którzy stają się bardziej gotowi do strajku. Buduje akcję strajkową.",
     "title: Cooperation with the communists": "title: Współpraca z komunistami",
-    "subtitle: Cost: 0 resources. Improves our relations with the KPP, which are [+ kpp_relation : relationships +] today, but displeases the Centre of the party. Good relations open the cabinets of the left with the communists. Builds radicalism.": "subtitle: Koszt: 0 jednostek środków. Poprawia nasze stosunki z KPP, dziś [+ kpp_relation : relationships +], ale budzi niezadowolenie Centrum partii. Dobre stosunki otwierają rządy lewicy z komunistami. Buduje radykalizm.",
+    "subtitle: Cost: 0 resources. Improves our relations with the KPP, which are [+ kpp_relation : relationships +] today, but displeases the Centre of the party. Good relations open the cabinets of the left with the communists. Builds radicalism.": "subtitle: Koszt: 0 jednostek środków. Poprawia nasze stosunki z KPP, dziś [+ kpp_relation : relationships +], ale budzi niezadowolenie Centrum PPS. Dobre stosunki otwierają rządy lewicy z komunistami. Buduje radykalizm.",
     "- @root: Continue.": "- @root: Dalej."
   }
 }

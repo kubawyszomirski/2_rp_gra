@@ -49,7 +49,7 @@ for (const lang of ['en', 'pl']) {
     for (const id of Object.keys(expected)) assert.equal(sidebar(restored, id), expected[id], id);
     const main = expected.status, politics = expected['status.politics'];
     if (lang === 'pl') {
-      assert.match(main, /\nWpływy ze składek co miesiąc: 0,7\u00a0R\s*\nSkładki: 2 z 4\s*\nCzłonkostwo \(indeks\): 100 ?\n/); // Z — 1.18: no apparatus; 1.19: the monthly dues
+      assert.match(main, /\nWpływy ze składek co miesiąc: 0,7\s*\nSkładki: 2 z 4\s*\nCzłonkostwo: 100 ?\n/); // Z — 1.18: no apparatus; 1.19: the monthly dues; 1.29: no unit R and no „(indeks)”
       assert.match(politics, /\nDemokracja: [1-9][\d,]*\u00a0na\u00a0100 ?\n/);
     } else {
       assert.match(main, /\nDues income each month: 0\.7\u00a0R\s*\nDues: 2 of 4\s*\nMembership \(index\): 100 ?\n/); // Z — 1.18: no apparatus; 1.19: the monthly dues
@@ -67,8 +67,8 @@ test('Pasek boczny: pogrubione etykiety, rozbite wiersze i liczby bez zbędnych 
   // Z — 0.76: the tab "Partia" has no date heading; its first heading is PPS.
   assert.match(mainText, /^\s*PPS ?\n/);
   assert.doesNotMatch(mainText, /Styczeń 1922/);
-  for (const label of ['Kasa partii:', 'Wpływy ze składek co miesiąc:', 'Składki:', 'Członkostwo (indeks):',
-    'Sprzeciw w partii:', 'Spójność:', 'Pozycja PPS:', 'Prasa:', 'Towarzystwo Uniwersytetu Robotniczego:', 'Spółdzielnia spożywców:', 'Przemysł:', 'Kolej:',
+  for (const label of ['Środki partii:', 'Wpływy ze składek co miesiąc:', 'Składki:', 'Członkostwo:',
+    'Sprzeciw w partii:', 'Jedność partii:', 'Pozycja PPS:', 'Prasa:', 'Towarzystwo Uniwersytetu Robotniczego:', 'Spółdzielnia spożywców:', 'Przemysł:', 'Kolej:',
     'Robotnicy rolni:', 'Głowa państwa:', 'Premier:', 'Zorganizowani członkowie:', 'Centrum PPS', 'Lewica PPS', 'Piłsudczycy']) {
     assert.ok(bold(main).includes(label), label);
   }
@@ -78,7 +78,7 @@ test('Pasek boczny: pogrubione etykiety, rozbite wiersze i liczby bez zbędnych 
   }
   // A union line no longer repeats its branch in the value; cohesion is a whole number.
   assert.match(mainText, /\nPrzemysł: zasięg słaby ?\n/, 'no union funds since Z — 0.86; the reach in a word since Z — 1.15');
-  assert.match(mainText, /\nSpójność: \d+ na 100 ?\n/);
+  assert.match(mainText, /\nJedność partii: (mocna|dość mocna|chwiejna|słaba) ?\n/);
   assert.match(mainText, /\nSprzeciw w partii: [^;\n]+\n/);
   // No space before the colon after the minority deputies; a dash after each faction name. The top bar (7 XI 2026): the
   // Milicja PPS and the factions are in the Party tab, the politics of the state in the State tab.

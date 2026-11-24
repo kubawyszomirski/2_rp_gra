@@ -815,7 +815,7 @@
     if (TIMED_CARDS.indexOf(cardId) >= 0) return no(L('A timed card cannot be discarded; it leaves the hand when its time ends.',
       'Karty czasowej nie można odrzucić; zniknie z ręki po swoim terminie.'));
     if (VISION_CARDS.indexOf(cardId) >= 0) return no(L('A card of the party’s vision cannot be discarded: play it to confirm or change the line.',
-      'Karty wizji partii nie można odrzucić: zagraj ją, aby potwierdzić albo zmienić linię.'));
+      'Karty linii partii nie można odrzucić: zagraj ją, aby potwierdzić albo zmienić linię.'));
     if (EVENT_CARDS.indexOf(cardId) >= 0) return no(L('A card opened by a special event cannot be discarded.',
       'Karty otwartej przez specjalne wydarzenie nie można odrzucić.'));
     if (handCards(state).some(card => card.id === cardId && card.urgent)) return no(L('An urgent card cannot be discarded; it leaves the hand when it is played or its time ends.',

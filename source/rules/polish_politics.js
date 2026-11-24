@@ -412,7 +412,7 @@
       return L('The government waits. Clashes in the streets bring more violence (+' + RIGHT.wait_violence + ')' +
         (partners ? ', and the tension with our partners on the right grows (+' + RIGHT.wait_tension + ')' : '') + '. The card comes back next month.',
         'Rząd czeka. Starcia na ulicach przynoszą więcej przemocy (+' + RIGHT.wait_violence + ')' +
-        (partners ? ', a napięcie z partnerami z prawej strony rośnie (+' + RIGHT.wait_tension + ')' : '') + '. Karta wróci w przyszłym miesiącu.');
+        (partners ? ', a partnerzy z prawicy tracą cierpliwość (+' + RIGHT.wait_tension + ')' : '') + '. Karta wróci w przyszłym miesiącu.');
     }
     rightMobilise(Q, -RIGHT.force, 'force');
     R.streets_months = 0;
@@ -1171,7 +1171,7 @@
     }
     if (choice === 'retaliation') {
       if (!militiaFree(S)) return no(L('Needs able members of the Milicja assigned to it: it is banned, empty or busy elsewhere.', 'Wymaga zdolnych do działania członków Milicji przydzielonych do tego zadania: Milicja jest objęta zakazem, pusta albo zajęta gdzie indziej.'));
-      if (S.party_orgs.cash + 1e-9 < 0.5) return no(L('Needs 0.5 resources.', 'Wymaga 0,5 jednostki środków.'));
+      if (S.party_orgs.cash + 1e-9 < 0.5) return no(L('Needs 0.5 resources.', 'Wymaga pół jednostki środków.'));
     }
     return OK;
   }
@@ -1300,13 +1300,13 @@
     if (!cultDue(Q)) return no('');
     if (choice === 'democracy_mass') {
       if (!hostConsents(S)) return no(L('No clergyman or host agrees to hold it (relation with the Christian Democrats below ' + HOST_RELATION + ').',
-        'Żaden duchowny ani gospodarz nie zgadza się jej odprawić (relacja z chadecją poniżej ' + HOST_RELATION + ').'));
+        'Żaden duchowny ani gospodarz nie zgadza się jej odprawić: nasze stosunki z chadecją są zbyt chłodne.'));
       if (!(S.party_orgs.apparatus.level >= 1)) return no(L('Needs a working organisation of PPS.', 'Wymaga działającej organizacji PPS.'));
       if (S.party_orgs.cash + 1e-9 < 1) return no(L('Needs 1 resource.', 'Wymaga 1 jednostki środków.'));
     }
     if (choice === 'disrupt') {
       if (!militiaFree(S)) return no(L('Needs able members of the Milicja assigned to it: it is banned, empty or busy elsewhere.', 'Wymaga zdolnych do działania członków Milicji przydzielonych do tego zadania: Milicja jest objęta zakazem, pusta albo zajęta gdzie indziej.'));
-      if (S.party_orgs.cash + 1e-9 < DISRUPT_COST) return no(L('Needs 0.5 resources.', 'Wymaga 0,5 jednostki środków.'));
+      if (S.party_orgs.cash + 1e-9 < DISRUPT_COST) return no(L('Needs 0.5 resources.', 'Wymaga pół jednostki środków.'));
     }
     return OK;
   }
@@ -1326,7 +1326,7 @@
       }
       if (hostConsents(S)) {
         government.changeRelation(Q, 'pschd', 2, 'b5_joint_condemnation:' + key);
-        lines.push(L('The Christian Democrats join the condemnation of violence: relation +2.', 'Chadecja przyłącza się do potępienia przemocy: relacja +2.'));
+        lines.push(L('The Christian Democrats join the condemnation of violence: relation +2.', 'Chadecja przyłącza się do potępienia przemocy: stosunki się poprawiają (+2).'));
       }
       lines.push(L('PPS condemns the cult of the assassin and orders its members not to disturb the service.', 'PPS potępia kult zamachowca i nakazuje członkom nie zakłócać nabożeństwa.'));
     } else if (choice === 'democracy_mass') {
@@ -1358,7 +1358,7 @@
         authorised: true, compliance: militiaCompliance(S), militia_people: S.militia.strength, audience: 'workers',
         subject: 'the Milicja of PPS breaking up a service in honour of the assassin'});
       lines.push(record.clash.clash ? L('The Milicja breaks up the service and clashes with its participants: executed unlawful violence, a case against the PPS organisations and a reaction of the authorities.',
-        'Milicja rozbija nabożeństwo i ściera się z jego uczestnikami: dokonana bezprawna przemoc, sprawa przeciw organizacjom PPS i reakcja władz.') :
+        'Milicja rozbija nabożeństwo i ściera się z jego uczestnikami: doszło do bezprawnej przemocy, władze wszczynają sprawę przeciw organizacjom PPS.') :
         L('The Milicja interrupts the service without serious violence: no victims and no case, but the scandal remains.',
           'Milicja przerywa nabożeństwo bez poważnej przemocy: bez ofiar i bez sprawy, ale skandal zostaje.'));
     } else {
@@ -1504,7 +1504,7 @@
   function criticismStatus(Q, choice) {
     if (!CRITICISM[choice]) return {available: false, reason: L('Unknown answer.', 'Nieznana odpowiedź.')};
     if (!criticismDue(Q)) return {available: false, reason: L('No speech waits for an answer.', 'Żadne wystąpienie nie czeka na odpowiedź.')};
-    if (!rules.mainActionAvailable(Q)) return {available: false, reason: L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.')};
+    if (!rules.mainActionAvailable(Q)) return {available: false, reason: L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.')};
     return {available: true, reason: ''};
   }
 

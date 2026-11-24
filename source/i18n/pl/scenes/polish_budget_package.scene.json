@@ -9,7 +9,7 @@
     "title: Vote against": "title: Głosuj przeciw",
     "title: Abstain": "title: Wstrzymaj się",
     "title: Not now": "title: Nie teraz",
-    "subtitle: Without an answer PPS votes as its role binds it; the card stays in the hand until the vote.": "subtitle: Bez odpowiedzi PPS głosuje tak, jak wiąże ją jej rola; karta zostaje w ręce do głosowania.",
+    "subtitle: Without an answer PPS votes as its role binds it; the card stays in the hand until the vote.": "subtitle: Jeśli nie zdecydujemy, nasi posłowie zagłosują jak zwykle: w rządzie za, w opozycji przeciw. Karta zostaje na ręce do głosowania.",
     "- @root: Continue.": "- @root: Dalej."
   }
 }

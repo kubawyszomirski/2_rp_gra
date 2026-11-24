@@ -10,7 +10,7 @@
     "title: No terms of our own": "title: Bez własnych warunków",
     "title: Tolerate him for a loan and limited cuts": "title: Tolerujemy go za pożyczkę i ograniczone cięcia",
     "subtitle: The stabilisation becomes gradual and is financed by a domestic loan; no rapid cuts while PPS tolerates him.": "subtitle: Stabilizacja staje się stopniowa i finansuje ją pożyczka wewnętrzna; bez szybkich cięć, dopóki PPS go toleruje.",
-    "title: Tolerate him for protections and a heavier burden on wealth": "title: Tolerujemy go za osłony i większe obciążenie majątku",
+    "title: Tolerate him for protections and a heavier burden on wealth": "title: Tolerujemy go za zasiłki dla bezrobotnych i większe obciążenie majątku",
     "title: Submit the offer": "title: Złóż ofertę",
     "= The result": "= Wynik",
     "Our offer: [+ pl_fres_offer +].": "Nasza oferta: [+ pl_fres_offer +].",
@@ -34,11 +34,11 @@
     "title: Give up Military Affairs": "title: Oddaj Sprawy Wojskowe",
     "title: Take Education": "title: Weź Oświatę",
     "title: Give up Education": "title: Oddaj Oświatę",
-    "subtitle: What is happening, then four steps: the variant of the cabinet with the role of PPS, the prime minister, the portfolios and the summary.": "subtitle: Co się dzieje, a potem cztery kroki: wariant rządu z rolą PPS, premier, resorty i podsumowanie.",
-    "- @variants: Begin: choose the variant of the cabinet": "- @variants: Zacznij: wybierz wariant rządu",
+    "subtitle: What is happening, then four steps: the variant of the cabinet with the role of PPS, the prime minister, the portfolios and the summary.": "subtitle: Najpierw sytuacja w Sejmie, potem: jaki rząd i jaka rola PPS, premier, resorty i podsumowanie.",
+    "- @variants: Begin: choose the variant of the cabinet": "- @variants: Zacznij: jaki rząd?",
     "title: Back": "title: Wstecz",
     "= The prime minister": "= Premier",
-    "The prime minister of [+ pl_form_variant_name +]. Only those who can lead this cabinet in this period stand; a leader of one of its parties who cannot is greyed with the reason.": "Premier wariantu: [+ pl_form_variant_name +]. Kandydują tylko ci, którzy w tym okresie mogą stanąć na czele takiego rządu; lider jednej z jego partii, który nie może, jest wyszarzony z podanym powodem.",
+    "The prime minister of [+ pl_form_variant_name +]. Only those who can lead this cabinet in this period stand; a leader of one of its parties who cannot is greyed with the reason.": "Premier wariantu: [+ pl_form_variant_name +]. Na liście są tylko politycy, którzy mogą teraz stanąć na czele takiego rządu; przy pozostałych podajemy, dlaczego nie mogą.",
     "= The PPS portfolios": "= Resorty PPS",
     "title: Next: the summary": "title: Dalej: podsumowanie",
     "= The summary of our offer": "= Podsumowanie naszej oferty",
@@ -66,6 +66,6 @@
     "title: [+ pl_form_min_other_minorities_rep_mark +] The support of the other national minorities": "title: [+ pl_form_min_other_minorities_rep_mark +] Poparcie pozostałych mniejszości narodowych",
     "Each portfolio costs influence points. A partner keeps the portfolio without which it would refuse; the portfolios nobody takes go to the partners, and Military Affairs to a non-party general. Public works are part of Labour. PPS does not take Foreign Affairs.": "Każdy resort kosztuje punkty wpływu. Partner zachowuje resort, bez którego by odmówił; resorty, których nikt nie bierze, obejmują partnerzy, a Sprawy Wojskowe bezpartyjny generał. Roboty publiczne należą do resortu Pracy. PPS nie bierze Spraw Zagranicznych.",
     "[? if pl_form_promises : **What we promise.** [+ pl_form_promises +] ?]": "[? if pl_form_promises : **Co obiecujemy.** [+ pl_form_promises +] ?]",
-    "subtitle: The full protection for the unemployed by the fourth month and a wealth tax to pay for it. Needs a union branch of at least medium reach and fair relations with Grabski; he may still refuse.": "subtitle: Pełna osłona dla bezrobotnych do czwartego miesiąca i podatek majątkowy na jej sfinansowanie. Wymaga branży związkowej z zasięgiem co najmniej średnim i co najmniej poprawnych stosunków z Grabskim; mimo to może odmówić."
+    "subtitle: The full protection for the unemployed by the fourth month and a wealth tax to pay for it. Needs a union branch of at least medium reach and fair relations with Grabski; he may still refuse.": "subtitle: Pełne zasiłki dla bezrobotnych od czwartego miesiąca, opłacone podatkiem majątkowym. Grabski może się zgodzić, jeśli mamy silne związki i poprawne z nim stosunki."
   }
 }

@@ -878,7 +878,7 @@
         }
         if (strength < FACTION_CANDIDATE_STRENGTH) {
           return {available: false, reason: L('His faction has ' + Math.round(strength) + '% of the party; it needs ' + FACTION_CANDIDATE_STRENGTH + '%.',
-            'Jego frakcja ma ' + Math.round(strength) + '% siły partii; potrzeba ' + FACTION_CANDIDATE_STRENGTH + '%.')};
+            'Jego frakcja jest w partii za słaba.')};
         }
       }
       // The partner parties in the cabinet count, not the outside support of the minorities, which the summary sets later.
@@ -889,7 +889,7 @@
     }
     if (candidateId === 'thugutt' && (relation(S, 'psl_wyzwolenie') < 60 || relation(S, 'psl_piast') < 55)) {
       return {available: false, reason: L('Needs relations of 60 with PSL Wyzwolenie and 55 with PSL Piast.',
-        'Wymaga relacji 60 z PSL Wyzwolenie i 55 z PSL Piast.')};
+        'Wymaga dobrych stosunków z oboma stronnictwami ludowymi.')};
     }
     return {available: true, reason: ''};
   }
@@ -913,7 +913,7 @@
       }
       if ((S.actors.relations.pilsudski || 0) < 65) {
         return {available: false, reason: L('Needs a relation of 65 with Piłsudski: without it he withdraws his consent.',
-          'Wymaga relacji 65 z Piłsudskim: bez niej wycofuje on zgodę.')};
+          'Bez przyjaznych stosunków z nami Piłsudski wycofuje zgodę.')};
       }
       return {available: true, reason: ''};
     }
@@ -1266,7 +1266,7 @@
       if (relation(S, gate.actor) < gate.min) {
         const now = Math.floor(relation(S, gate.actor));
         return {available: false, reason: L('Relation with ' + ACTOR_PROFILES[gate.actor].name + ' is below ' + gate.min + ' (now ' + now + ').',
-          'Relacja z ' + actorName(gate.actor) + ' jest niższa niż ' + gate.min + ' (teraz ' + now + ').')};
+          'Nasze stosunki z ' + actorName(gate.actor) + ' są zbyt chłodne.')};
       }
     }
     for (const member of config.members) {
@@ -1282,7 +1282,7 @@
       if (own < POST_ELECTION_OWN_SEATS) {
         return {available: false, reason: L('After the election of 1922 a cabinet with PPS needs ' + POST_ELECTION_OWN_SEATS +
           ' MPs of its own clubs, without the minority representations; this one has ' + own + '.',
-          'Po wyborach 1922 r. gabinet z PPS potrzebuje ' + POST_ELECTION_OWN_SEATS + ' posłów własnych klubów, bez mniejszości; ten ma ' + own + '.')};
+          'Po wyborach 1922 r. rząd z PPS musi mieć dość posłów we własnych klubach, bez przedstawicieli mniejszości; temu brakuje ' + (POST_ELECTION_OWN_SEATS - own) + ' ' + rules.plural(POST_ELECTION_OWN_SEATS - own, 'posła', 'posłów', 'posłów') + '.')};
       }
     }
     if (!config.expert) {
@@ -1576,9 +1576,9 @@
     const rel = S && S.actors ? relation(S, 'grabski') : 0;
     const missing = [];
     // Z — 1.18 (decision A of 22 XI 2026): the party apparatus left the game and with it this condition.
-    if (reach < PROTECTION_TALKS.reach) missing.push(L('a union branch with reach 40 (now ' + Math.floor(reach) + ')', 'branży związkowej z zasięgiem 40 (teraz ' + Math.floor(reach) + ')'));
-    if (rel < PROTECTION_TALKS.relation) missing.push(L('a relation of 40 with Grabski (now ' + Math.floor(rel) + ')', 'relacji 40 z Grabskim (teraz ' + Math.floor(rel) + ')'));
-    return missing.length ? {available: false, reason: L('Negotiating protections needs ' + missing.join(', ') + '.', 'Negocjowanie osłon wymaga ' + missing.join(', ') + '.')} :
+    if (reach < PROTECTION_TALKS.reach) missing.push(L('a union branch with reach 40 (now ' + Math.floor(reach) + ')', 'silniejszego związku w jednej z branż'));
+    if (rel < PROTECTION_TALKS.relation) missing.push(L('a relation of 40 with Grabski (now ' + Math.floor(rel) + ')', 'lepszych stosunków z Grabskim'));
+    return missing.length ? {available: false, reason: L('Negotiating protections needs ' + missing.join(', ') + '.', 'Rozmowy o zasiłkach dla bezrobotnych wymagają ' + missing.join(' i ') + '.')} :
       {available: true, reason: ''};
   }
 
@@ -1707,10 +1707,10 @@
     'no signed support': 'brak podpisanego poparcia',
     'no club signs support for the expert': 'żaden klub nie podpisuje poparcia dla fachowca',
     'Grabski has a working support without PPS and refuses its demands': 'Grabski ma działające poparcie bez PPS i odrzuca jej żądania',
-    'no minister of Labour would carry out the protection': 'żaden minister Pracy nie wykonałby osłony',
+    'no minister of Labour would carry out the protection': 'żaden minister Pracy nie wprowadziłby zasiłków',
     'no money for the protection: the wealth tax is already in force, so the terms bring no new burden on wealth':
-      'brak pieniędzy na osłonę: podatek majątkowy już obowiązuje, więc warunki nie dają nowego obciążenia majątku',
-    'no money for the protection: the budget would fall below zero': 'brak pieniędzy na osłonę: budżet spadłby poniżej zera',
+      'brak pieniędzy na zasiłki: podatek majątkowy już obowiązuje, więc warunki nie dają nowych wpływów',
+    'no money for the protection: the budget would fall below zero': 'brak pieniędzy na zasiłki: budżet spadłby pod kreskę',
     'Land reform without compensation needs a prior change of the property guarantees, which this chapter does not offer.':
       'Reforma rolna bez odszkodowania wymaga wcześniejszej zmiany gwarancji własności, której ten rozdział nie przewiduje.',
     'Army and autonomy points are not part of cabinet programmes in this chapter.':
@@ -1720,14 +1720,14 @@
     if (rules.getLanguage() !== 'pl' || !text) return text;
     if (STORED_REASONS_PL[text]) return STORED_REASONS_PL[text];
     let m = text.match(/^red line: (.+)$/);
-    if (m) return 'czerwona linia: ' + redLineText(m[1]);
+    if (m) return 'nie do przyjęcia: ' + redLineText(m[1]);
     m = text.match(/^relation below (\d+)$/);
-    if (m) return 'relacja poniżej ' + m[1];
+    if (m) return 'zbyt chłodne stosunki z nami';
     m = text.match(/^score ([\d.]+) is below 60$/);
-    if (m) return 'ocena ' + (Number.isInteger(+m[1]) ? m[1] : rules.num(+m[1], 1)) + ' poniżej 60';
+    if (m) return 'program zbyt odległy od jego poglądów';
     if (text === 'an opponent of the prime minister') return 'przeciwnik premiera';
     m = text.match(/^Grabski refuses the protections: (.+)$/);
-    if (m) return 'Grabski odrzuca osłony: ' + m[1].split(', ').map(reasonText).join(', ');
+    if (m) return 'Grabski odrzuca zasiłki: ' + m[1].split(', ').map(reasonText).join(', ');
     return text;
   }
 
@@ -1745,7 +1745,7 @@
   // Z — 0.71 (decision 3A and the user's note of 7 X 2026): the parts of a score say what they measure. In an offer of PPS
   // the relation is the club's relation with PPS; in a cabinet of experts it is the club's stance to the premier; the
   // programme is the fit of the cabinet's programme with the club's own views, not with PPS.
-  const SCORE_PART_NAMES = Object.freeze({relation: ['relation with PPS', 'relacja z PPS'], programme: ['programme of the cabinet and the club’s views',
+  const SCORE_PART_NAMES = Object.freeze({relation: ['relation with PPS', 'stosunki z PPS'], programme: ['programme of the cabinet and the club’s views',
     'program gabinetu a poglądy klubu'], premierProgramme: ['programme of the premier and the club’s views', 'program premiera a poglądy klubu'],
     portfolio: ['its portfolio', 'jego resort'], minority: ['minority rights', 'prawa mniejszości'], none: ['no demands', 'bez żądań'],
     credibility: ['credibility of PPS', 'wiarygodność PPS'], fixed: ['fixed part', 'część stała'], penalty: ['broken promises', 'złamane obietnice'],
@@ -1801,14 +1801,14 @@
     let head, body;
     if (evaluation.red_lines.length) {
       head = name + ' — ' + no;
-      body = L('Red line: ', 'Czerwona linia: ') + redLineText(evaluation.red_lines.join(', ').replace(/_/g, ' ')) + '.';
+      body = L('Red line: ', 'Nie do przyjęcia: ') + redLineText(evaluation.red_lines.join(', ').replace(/_/g, ' ')) + '.';
     } else {
       const gate = (offer.gates || []).filter(g => g.actor === id && relation(S, id) < g.min)[0];
       const score = shownScore(evaluation.score);
       if (gate) {
         head = name + ' — ' + no;
         body = L('It needs a relation of ' + gate.min + ' with PPS; now ' + Math.floor(relation(S, id)) + '.',
-          'Wymaga relacji ' + gate.min + ' z PPS; teraz ' + Math.floor(relation(S, id)) + '.');
+          'Nasze stosunki są zbyt chłodne.');
       } else if (evaluation.opponent) {
         head = name + ' — ' + no;
         body = L('An opponent of this prime minister: it votes against his cabinet whatever the score (' + score + ': ',
@@ -1959,7 +1959,7 @@
       if (relation(S, gate.actor) < gate.min) {
         const name = PLAIN_PARTY[gate.actor] ? L(PLAIN_PARTY[gate.actor][0], PLAIN_PARTY[gate.actor][1]) : describeParty(gate.actor);
         return L(capitalise(name) + ' will not join while our relations are too cool: it needs a relation of ' + gate.min + ' (now ' + Math.floor(relation(S, gate.actor)) + ').',
-          capitalise(name) + ' nie wejdzie do takiego rządu, dopóki nasze stosunki są zbyt chłodne: potrzeba relacji ' + gate.min + ' (teraz ' + Math.floor(relation(S, gate.actor)) + ').');
+          capitalise(name) + ' nie wejdzie do takiego rządu, dopóki nasze stosunki są zbyt chłodne.');
       }
     }
     if (config.majority_alone) return L('PPS would need a majority of the Sejm on its own.', 'PPS potrzebowałaby do tego własnej większości w Sejmie.');
@@ -2072,7 +2072,7 @@
       case 'nowak': return headCandidate(Q) === 'nowak' ? head : L('The candidate of a compromise in the Sejm', 'Kandydat sejmowego kompromisu');
       case 'sikorski': return L('A general, the candidate for stabilising the state', 'Generał, kandydat stabilizacji sytuacji w państwie');
       case 'grabski': return L('The non-party candidate of the centre and the right', 'Bezpartyjny kandydat centrum i prawicy');
-      case 'skrzynski': return L('The candidate of the broad coalition from the National Democrats to PPS', 'Kandydat szerokiej koalicji od Endecji do PPS');
+      case 'skrzynski': return L('The candidate of the broad coalition from the National Democrats to PPS', 'Kandydat szerokiej koalicji od endecji do PPS');
       case 'pilsudski': return L('Piłsudski at the head of a legal cabinet', 'Piłsudski na czele legalnego rządu');
       default: return (CANDIDATES[candidateId] || {}).name || '—';
     }
@@ -2153,7 +2153,7 @@
     } else if (candidate.party) {
       who = L('the leader of ' + ACTOR_PROFILES[candidate.party].name + '.', 'lider ' + actorName(candidate.party) + '.');
       behind = withSeats([candidate.party]);
-      gain = L('after the appointment +' + PREMIER_RELATION + ' relation with his party.', 'po powołaniu relacja z jego partią +' + PREMIER_RELATION + '.');
+      gain = L('after the appointment +' + PREMIER_RELATION + ' relation with his party.', 'po powołaniu stosunki z jego partią się poprawią (+' + PREMIER_RELATION + ').');
     } else {
       // Z — 0.72 (8 X 2026): only the one non-party man the head of state proposes is marked as his candidate; another man of
       // the period is described as what he is (decision 2B: Nowak may stand in VI–VII 1922 beside Śliwiński).
@@ -2182,10 +2182,10 @@
         against = profile.against.length ? withSeats(profile.against) : L('nobody.', 'nikt.');
       }
       programme = describeProgramme(candidate.programme) + '.';
-      if (candidateId === head && !president) cost = L('none — supporting him costs nothing with Piłsudski.', 'brak — poparcie go nic nie kosztuje u Piłsudskiego.');
+      if (candidateId === head && !president) cost = L('none — supporting him costs nothing with Piłsudski.', 'brak — poparcie go nie zrazi Piłsudskiego.');
       // Z — 1.08 (the user's note): the cost in plain words — the resources of the party for the talks, and the relation with Piłsudski.
       else if (goesAgainst) cost = L(rules.units(AGAINST_NACZELNIK.cash) + ' for the talks, and the relation with Piłsudski worsens (−' + AGAINST_NACZELNIK.relation +
-        '), because we go against the choice of the Naczelnik.', rules.units(AGAINST_NACZELNIK.cash, 'resources', 'nom') + ' na rozmowy, a relacja z Piłsudskim spada (−' +
+        '), because we go against the choice of the Naczelnik.', rules.units(AGAINST_NACZELNIK.cash, 'resources', 'nom') + ' na rozmowy, a stosunki z Piłsudskim się pogarszają (−' +
         AGAINST_NACZELNIK.relation + '), bo idziemy wbrew wyborowi Naczelnika.');
     }
     const lines = [
@@ -2242,7 +2242,7 @@
       'Sejm liczy ' + seatsOfList(S, S.parliament.clubs.map(c => c.id)) + ' posłów; większość to ' + majorityRequired(S) +
       '. Największe kluby: ' + clubs + '. PPS ma ' + seatsOf(S, 'pps') + '.');
     const plan = L('We choose the variant of the cabinet and the role of PPS, then the prime minister and, if PPS enters the cabinet, its portfolios. The last page shows which clubs agree and how the Sejm would vote; only the commit decides.',
-      'Wybieramy wariant rządu i rolę PPS, potem premiera i — jeśli PPS wejdzie do rządu — jej resorty. Ostatnia strona pokaże, które kluby się zgodzą i jak zagłosuje Sejm; rozstrzyga dopiero zatwierdzenie.');
+      'Wybieramy, jaki to ma być rząd i jaka będzie w nim rola PPS, potem premiera i — jeśli PPS wejdzie do rządu — jej resorty. Na końcu zobaczymy, które kluby nas poprą; nic nie jest przesądzone, dopóki nie złożymy oferty.');
     return {why: why, appoints: appoints + candidate, sejm: sejm, plan: plan};
   }
 
@@ -2267,7 +2267,7 @@
     }
     if (stabilisationTermsOpen(draft) && offer.stabilisation_terms !== 'none') {
       parts.push(L({loan: 'terms: a loan and limited cuts', protections: 'terms: protections and a heavier burden on wealth'}[offer.stabilisation_terms],
-        {loan: 'warunki: pożyczka i ograniczone cięcia', protections: 'warunki: osłony i większe obciążenie majątku'}[offer.stabilisation_terms]));
+        {loan: 'warunki: pożyczka i ograniczone cięcia', protections: 'warunki: zasiłki dla bezrobotnych i większe obciążenie majątku'}[offer.stabilisation_terms]));
     }
     const programme = plainProgramme(config.expert ? (CANDIDATES[draft.candidate_id] || {}).programme : offer.programme);
     return parts.join('; ') + '.' + (programme ? L(' Its programme: ', ' W programie: ') + programme + '.' : '');
@@ -2361,7 +2361,7 @@
       minority_seats: seatsOfList(S, SEGMENTS),
       stabilisation_open: stabilisationTermsOpen(draft),
       stabilisation: L({none: 'no terms', loan: 'a loan and limited cuts', protections: 'protections and a heavier burden on wealth'}[offer.stabilisation_terms] || 'no terms',
-        {none: 'bez warunków', loan: 'pożyczka i ograniczone cięcia', protections: 'osłony i większe obciążenie majątku'}[offer.stabilisation_terms] || 'bez warunków'),
+        {none: 'bez warunków', loan: 'pożyczka i ograniczone cięcia', protections: 'zasiłki dla bezrobotnych i większe obciążenie majątku'}[offer.stabilisation_terms] || 'bez warunków'),
       minority_allowed: !!config.minority_support,
       portfolios: offer.pps_mode === 'member' ? (own.length ? own.map(portfolioShort).join(', ') : L('none', 'brak')) : L('none (outside the cabinet)', 'brak (poza gabinetem)'),
       points: pointsText(Q, draft),
@@ -2720,7 +2720,7 @@
     const S = Q.S, neg = S.negotiation, crisis = S.cabinet_crisis;
     if (!neg || neg.phase !== 'draft') return {available: false, reason: L('No offer is being prepared.', 'Nie przygotowujemy żadnej oferty.')};
     if (formationCost(Q, neg) && (Q.month_actions || 0) >= 1) {
-      return {available: false, reason: L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.')};
+      return {available: false, reason: L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.')};
     }
     const draft = neg.draft;
     if (draft.pps_mode !== 'opposition') {
@@ -3413,7 +3413,7 @@
     const fc = forecast(Q, cabinetAsOffer(S), S.cabinet.partner_ids.concat(S.cabinet.supporter_ids), oppositionClubs(S));
     Q.pl_nc_intro = L('The opposition has gathered the signatures for a motion of no confidence; the Sejm votes at the settlement of ' + rules.monthYear(m.opened_at + 1, 'gen') +
       '. Today ' + fc.no + ' MPs would vote to dismiss the cabinet and ' + fc.yes + ' would stand by it.',
-      'Opozycja zebrała podpisy pod wnioskiem o wotum nieufności; Sejm zagłosuje przy rozliczeniu ' + rules.monthYear(m.opened_at + 1, 'gen') +
+      'Opozycja zebrała podpisy pod wnioskiem o wotum nieufności; Sejm zagłosuje na początku ' + rules.monthYear(m.opened_at + 1, 'gen') +
       '. Dziś ' + fc.no + ' posłów głosowałoby za odwołaniem rządu, a ' + fc.yes + ' stanęłoby za nim.') +
       (oppositionClubs(S).length ? ' ' + L('Our reforms have turned ' + plainParties(oppositionClubs(S)) + ' against us.',
         'Nasze reformy zraziły do nas na dobre: ' + plainParties(oppositionClubs(S)) + '.') : '');
@@ -3466,12 +3466,12 @@
     if (!list.length) return '';
     if (list.length === 1) {
       return L('In this cabinet ' + partyWords(list[0].party) + ' will object, so the tension in the coalition will rise (+' + list[0].delta + ').',
-        'W tym rządzie sprzeciwi się temu ' + partyWords(list[0].party) + ', więc napięcie w koalicji wzrośnie (+' + list[0].delta + ').');
+        'W tym rządzie sprzeciwi się temu ' + partyWords(list[0].party) + ', więc spory w koalicji się zaostrzą (+' + list[0].delta + ').');
     }
     const names = list.map(o => partyWords(o.party) + ' (+' + o.delta + ')');
     const joined = names.slice(0, -1).join(', ') + L(' and ', ' i ') + names[names.length - 1];
     return L('In this cabinet ' + joined + ' will object; the tension in the coalition will rise.',
-      'W tym rządzie sprzeciwią się temu ' + joined + '; napięcie w koalicji wzrośnie.');
+      'W tym rządzie sprzeciwią się temu ' + joined + '; spory w koalicji się zaostrzą.');
   }
 
   // The partner that the reforms or a broken minority promise angered last and that still sits in or supports the cabinet.
@@ -3631,8 +3631,8 @@
     const fell = out.fell ? L(' The cabinet has fallen; a new cabinet is being formed, and PPS can propose another coalition.',
       ' Rząd upadł; trwa tworzenie nowego rządu, a PPS może zaproponować inną koalicję.') : '';
     if (out.option === 'stop') return L(capitalise1(out.target.name[0]) + ' stops. The tension with ' + partyWords(out.partner) + ' is now ' + tension + ' of 100.',
-      capitalise1(out.target.name[1]) + ' — wstrzymane. Napięcie w umowie z partnerem wynosi teraz ' + tension + ' na 100.');
-    if (out.option === 'persuade') return L('The talks calm the partner: the tension is now ' + tension + ' of 100.', 'Rozmowy uspokajają partnera: napięcie wynosi teraz ' + tension + ' na 100.') +
+      capitalise1(out.target.name[1]) + ' — wstrzymane. ' + (tension >= 60 ? 'Partner wciąż jest bliski zerwania.' : tension >= 30 ? 'Partner wciąż jest niezadowolony.' : 'Partner się uspokaja.'));
+    if (out.option === 'persuade') return L('The talks calm the partner: the tension is now ' + tension + ' of 100.', 'Rozmowy uspokajają partnera.') +
       (still ? L(' It is not enough: the crisis goes on.', ' To jeszcze za mało: kryzys trwa.') : '');
     if (out.option === 'break') return L('Our ministers leave the cabinet, and PPS goes into opposition.', 'Nasi ministrowie odchodzą z rządu, a PPS przechodzi do opozycji.') + fell;
     return L(who + ' leaves the cabinet.', who + ' odchodzi z rządu.') + fell;
@@ -3931,9 +3931,9 @@
   function concessionStatus(Q) {
     const S = Q.S;
     if (ppsStance(S) !== 'member') return {available: false, reason: L('PPS is not in the cabinet.', 'PPS nie jest w gabinecie.')};
-    if ((Q.month_actions || 0) >= 1) return {available: false, reason: L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.')};
+    if ((Q.month_actions || 0) >= 1) return {available: false, reason: L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.')};
     if (!cabinetAgreementsUnderTension(S).length) {
-      return {available: false, reason: L('There is no tension in our coalition agreements.', 'W naszych umowach koalicyjnych nie ma napięcia.')};
+      return {available: false, reason: L('There is no tension in our coalition agreements.', 'Nasi koalicjanci nie mają do nas pretensji.')};
     }
     return {available: true, reason: ''};
   }
@@ -4009,8 +4009,8 @@
   function talksStatus(Q) {
     const S = Q.S;
     if (ppsStance(S) !== 'member') return {available: false, reason: L('PPS is not in the cabinet.', 'PPS nie jest w gabinecie.')};
-    if ((Q.month_actions || 0) >= 1) return {available: false, reason: L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.')};
-    if (!cabinetAgreementsUnderTension(S).length) return {available: false, reason: L('There is no tension in our coalition.', 'W naszej koalicji nie ma napięcia.')};
+    if ((Q.month_actions || 0) >= 1) return {available: false, reason: L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.')};
+    if (!cabinetAgreementsUnderTension(S).length) return {available: false, reason: L('There is no tension in our coalition.', 'W naszej koalicji nie ma sporów.')};
     if ((S.party_orgs.cash || 0) < COALITION_TALKS_COST) return {available: false, reason: L('Needs 2 resources.', 'Wymaga 2 jednostek środków.')};
     return {available: true, reason: ''};
   }
@@ -4155,7 +4155,7 @@
     const S = Q.S, stance = ppsStance(S);
     const open = mode === 'response' ? responseCase(Q) : null;
     if (mode === 'response' && !open) return {available: false, reason: L('There is no open case to answer.', 'Nie ma otwartej sprawy, na którą trzeba odpowiedzieć.')};
-    if (mode !== 'response' && (Q.month_actions || 0) >= 1) return {available: false, reason: L('This month’s action has already been used.', 'Akcja tego miesiąca została już wykorzystana.')};
+    if (mode !== 'response' && (Q.month_actions || 0) >= 1) return {available: false, reason: L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.')};
     if (action === 'withdraw') {
       if (stance !== 'member' && stance !== 'supporter') return {available: false, reason: L('PPS does not support this cabinet.', 'PPS nie popiera tego gabinetu.')};
       return {available: true, reason: ''};
@@ -4294,11 +4294,11 @@
     const agreement = target.agreement;
     if (relation(S, target.partner) < 50) {
       return {available: false, reason: L('Needs a relation of 50 with ' + ACTOR_PROFILES[target.partner].name + '.',
-        'Wymaga relacji 50 z partnerem (' + actorName(target.partner) + ').')};
+        'Nasze stosunki z partnerem (' + actorName(target.partner) + ') są zbyt chłodne.')};
     }
     if (weightedFulfillment(agreement) < 0.5) return {available: false, reason: L('Less than half of the obligations are met.', 'Spełniono mniej niż połowę zobowiązań.')};
-    if (agreement.extensions_used > 0) return {available: false, reason: L('The one standard extension has been used.', 'Jedyne standardowe przedłużenie zostało już wykorzystane.')};
-    if (agreement.history.some(h => h.kind === 'red_line_breach')) return {available: false, reason: L('A red line is still open.', 'Czerwona linia wciąż jest przekroczona.')};
+    if (agreement.extensions_used > 0) return {available: false, reason: L('The one standard extension has been used.', 'O zwłokę prosiliśmy już raz.')};
+    if (agreement.history.some(h => h.kind === 'red_line_breach')) return {available: false, reason: L('A red line is still open.', 'Wciąż łamiemy warunek, którego partner nie przyjmie.')};
     return {available: true, reason: ''};
   }
 
@@ -4356,7 +4356,7 @@
       const agreements = S.cabinet.agreement_ids.map(id => S.agreements[id])
         .filter(a => a && a.kind === 'cabinet' && (a.status === 'active' || a.status === 'breached'));
       if (agreements.some(a => a.tension > 0)) return {available: true, mode: 'tension', reason: ''};
-      return {available: false, mode: null, reason: L('No cabinet agreement is under tension.', 'Żadne porozumienie gabinetowe nie jest pod napięciem.')};
+      return {available: false, mode: null, reason: L('No cabinet agreement is under tension.', 'Żaden koalicjant nie ma do nas pretensji.')};
     }
     return {available: false, mode: null, reason: L('Needs PPS in a coalition or a broad cabinet offer in preparation.',
       'Wymaga PPS w koalicji albo przygotowywanej oferty szerokiego gabinetu.')};
@@ -4661,7 +4661,7 @@
       if (agreement.ultimatum && agreement.ultimatum.status === 'open') {
         lines.push(L('Ultimatum from ' + describeParty(agreement.ultimatum.by) + ': support ends at the settlement of ' +
           rules.monthOf(agreement.ultimatum.due_at) + '/' + rules.yearOf(agreement.ultimatum.due_at) + ' unless the broken promise is met or extended.',
-          'Ultimatum (' + describeParty(agreement.ultimatum.by) + '): poparcie wygaśnie przy rozliczeniu ' +
+          'Ultimatum (' + describeParty(agreement.ultimatum.by) + '): poparcie wygaśnie na początku ' +
           rules.monthYear(agreement.ultimatum.due_at, 'gen') + ', chyba że złamana obietnica zostanie spełniona albo przedłużona.'));
       } else if (agreement.response && !agreement.response.used && agreement.response.kind === 'warning') {
         lines.push(L('Warning from ' + describeParty(agreement.response.by) + ': a promise of the agreement is overdue.',
@@ -4672,7 +4672,7 @@
     if (motion && motion.status === 'open' && motion.by_opposition) {
       // Z — 1.27: the opposition's motion and, in the month after its vote, its result.
       lines.push(L('The opposition has gathered the signatures for a motion of no confidence; the Sejm votes at the settlement of ' + rules.monthYear(motion.opened_at + 1, 'gen') + '.',
-        'Opozycja zebrała podpisy pod wotum nieufności; Sejm zagłosuje przy rozliczeniu ' + rules.monthYear(motion.opened_at + 1, 'gen') + '.'));
+        'Opozycja zebrała podpisy pod wotum nieufności; Sejm zagłosuje na początku ' + rules.monthYear(motion.opened_at + 1, 'gen') + '.'));
     } else if (motion && motion.status === 'open') {
       lines.push(L('A motion to dismiss the cabinet is open after ' + describeParty(motion.after_withdrawal_of) + ' withdrew its support.',
         'Wniosek o odwołanie gabinetu czeka na głosowanie po wycofaniu poparcia (' + describeParty(motion.after_withdrawal_of) + ').'));
@@ -4684,7 +4684,7 @@
     }
     return {
       // Shown only once a promise has raised it; the opening toleration has no partner or programme.
-      tension: highest && highest.tension > 0 ? Math.round(highest.tension) + L(' (highest, agreement with ', ' (najwyższe; porozumienie: ') +
+      tension: highest && highest.tension > 0 ? L(Math.round(highest.tension) + ' (highest, agreement with ', (highest.tension >= 60 ? 'bliskie zerwania' : highest.tension >= 30 ? 'coraz ostrzejsze' : 'niewielkie') + ' (') +
         highest.parties.filter(p => p !== 'pps').map(describeParty).join(', ') + ')' : '',
       notices: lines.join(' '),
     };
@@ -4709,7 +4709,7 @@
   // its date, named as the player knows them from the cards.
   const PROMISE_NAMES = Object.freeze({
     land: ['the first tranche of the land reform', 'pierwsza transza reformy rolnej'],
-    worker_protection: ['financed protection for the unemployed in full', 'sfinansowana osłona dla bezrobotnych w pełnym zakresie'],
+    worker_protection: ['financed protection for the unemployed in full', 'pełne zasiłki dla bezrobotnych z zapewnionym finansowaniem'],
     language_rights: ['language rights and minority schools', 'prawa językowe i szkoły mniejszości'],
     school_rights: ['language rights and minority schools', 'prawa językowe i szkoły mniejszości'],
     military_compromise: ['a compromise with Piłsudski under civilian control', 'kompromis z Piłsudskim pod kontrolą cywilną'],
@@ -4746,7 +4746,7 @@
     let what;
     if (!promises.length) {
       what = L('The promises of the agreement are met now; the tension falls at the next settlement.',
-        'Obietnice z porozumienia są już spełnione; napięcie spadnie przy najbliższym rozliczeniu.');
+        'Obietnice z porozumienia są już spełnione; partner uspokoi się w przyszłym miesiącu.');
     } else {
       const names = unique(promises.map(promiseName)).join(L(' and ', ' oraz '));
       const due = Math.min(...promises.map(o => o.due_at));
@@ -4785,11 +4785,11 @@
         const at = t + Math.max(1, Math.ceil((TENSION_ULTIMATUM - agreement.tension) / perMonth)) - 1;
         pace = L(' At ' + ULTIMATUM_THRESHOLD_TEXT + ' ' + partner + ' sets an ultimatum — at this pace at the start of ' + rules.monthYear(at + 1) +
           '; two months later it ' + leaves + '.',
-          ' Przy ' + ULTIMATUM_THRESHOLD_TEXT + ' ' + partner + ' postawi ultimatum — w tym tempie na początku ' + rules.monthYear(at + 1, 'gen') +
+          ' Jeśli tak dalej pójdzie, ' + partner + ' postawi ultimatum na początku ' + rules.monthYear(at + 1, 'gen') +
           '; dwa miesiące później ' + leaves + '.');
       }
       risk = L('Tension in the agreement: ' + tension + ' of 100; it rises by ' + perMonth + ' at each settlement while the promise is unmet.',
-        'Napięcie w porozumieniu: ' + tension + ' na 100; rośnie o ' + perMonth + ' przy każdym rozliczeniu, dopóki obietnica nie jest spełniona.') +
+        (tension >= 60 ? 'Partner jest bliski zerwania' : tension >= 30 ? 'Partner jest coraz bardziej niezadowolony' : 'Partner jest na razie spokojny') + ' i co miesiąc będzie bardziej, dopóki obietnica nie zostanie spełniona.') +
         pace + seatsLine;
     }
     return {what: '<strong>' + L('What happened.', 'Co się stało.') + '</strong> ' + what,
@@ -4806,9 +4806,8 @@
     return L('Conditions: relation with the partner at least 50 (now ' + rel + ')' + mark(rel >= 50) + '; at least half of the promises met (now ' +
       done + '%)' + mark(done >= 50) + '; no extension before' + mark(!used) + '; no red line crossed' + mark(!redLine) +
       '. The partner may still refuse.',
-      'Warunki: relacja z partnerem co najmniej 50 (teraz ' + rel + ')' + mark(rel >= 50) + '; spełniona co najmniej połowa obietnic (teraz ' +
-      done + '%)' + mark(done >= 50) + '; bez wcześniejszego przedłużenia' + mark(!used) + '; bez przekroczonej czerwonej linii' + mark(!redLine) +
-      '. Partner może mimo to odmówić.');
+      'Warunki: dobre stosunki z partnerem' + mark(rel >= 50) + '; spełniona co najmniej połowa obietnic' + mark(done >= 50) + '; bez wcześniejszej prośby o zwłokę' + mark(!used) +
+      '; bez złamanego warunku, którego partner nie przyjmie' + mark(!redLine) + '. Partner może mimo to odmówić.');
   }
 
   // Z — Koalicja: the coalition crisis is an urgent card of the Government deck; unanswered, the partner leaves at its date.

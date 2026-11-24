@@ -8,8 +8,8 @@
     "- @root: Return to main": "- @root: Wróć do głównego ekranu",
     "- @root: Continue.": "- @root: Dalej.",
     "title: Municipal Socialism": "title: Socjalizm municypalny",
-    "subtitle: Cost: 1 resource. In the large cities the base reach of PPS grows (+8) and PPS gains among workers, intelligentsia and petty bourgeoisie; no town hall or city budget. Builds reformism.": "subtitle: Koszt: 1 jednostka środków. W wielkich miastach bazowy zasięg PPS rośnie (+8), a PPS zyskuje wśród robotników, inteligencji i drobnomieszczaństwa; bez ratusza ani budżetu miasta. Buduje reformizm.",
+    "subtitle: Cost: 1 resource. In the large cities the base reach of PPS grows (+8) and PPS gains among workers, intelligentsia and petty bourgeoisie; no town hall or city budget. Builds reformism.": "subtitle: Koszt: 1 jednostka środków. W wielkich miastach PPS dociera do większej liczby wyborców (+8) i zyskuje wśród robotników, inteligencji i drobnomieszczaństwa. Buduje reformizm.",
     "title: Emergency Fundraising": "title: Nadzwyczajna zbiórka",
-    "subtitle: Cost: 0 resources. An emergency infusion of resources: the party's money grows at once (+2).": "subtitle: Koszt: 0 jednostek środków. Nagły zastrzyk środków: pieniądze partii od razu rosną (+2)."
+    "subtitle: Cost: 0 resources. An emergency infusion of resources: the party's money grows at once (+2).": "subtitle: Koszt: 0 jednostek środków. Nadzwyczajna zbiórka: środki partii od razu rosną (+2)."
   }
 }

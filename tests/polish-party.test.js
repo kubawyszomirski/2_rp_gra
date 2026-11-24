@@ -619,10 +619,10 @@ test('Karta Prasy 0.90: full sentences about the press, its readers, their trust
   PolishParty.writeMirrors(Q);
   playFromHand(engine, 'polish_party_media');
   // Z — 0.90 (the user's note: the full version was too long again): two sentences at the top, one or two for each option.
-  assert.match(content(engine), /Pismo partyjne dociera do 30 na 100 czytelników spośród robotników i bezrobotnych, a czytelnicy umiarkowanie mu ufają\. Wzmacnia każdą naszą kampanię wśród nich o 5%\./);
+  assert.match(content(engine), /Pismo partyjne dociera do niewielkiej części czytelników spośród robotników i bezrobotnych, a czytelnicy umiarkowanie mu ufają\. Wzmacnia każdą naszą kampanię wśród nich\./);
   const sub = id => plain(choice(engine, 'polish_party_media.' + id).subtitle);
   assert.match(sub('press_campaign'), /^Koszt: 1 jednostka środków\. Trafia do robotników/);
   assert.equal(sub('reportage'), 'Koszt: 1 jednostka środków. Robotnicy i bezrobotni bardziej ufają PPS (+3), więc następne kampanie wśród nich będą mocniejsze; prasa zyskuje na wiarygodności (+2).');
-  assert.equal([].concat(choice(engine, 'polish_party_media.format').title).join(''), 'Zmień format na gazetę popularną');
-  assert.equal(sub('format'), 'Koszt: 1 jednostka środków. Więcej czytelników (+10), także wśród inteligencji i drobnomieszczaństwa, i dochód ze sprzedaży od zasięgu 50, ale mniej zaufania (−5). Za pierwszym razem sprzeciw Centrum PPS (+3).');
+  assert.equal([].concat(choice(engine, 'polish_party_media.format').title).join(''), 'Przekształć pismo w gazetę popularną');
+  assert.equal(sub('format'), 'Koszt: 1 jednostka środków. Więcej czytelników (+10), także wśród inteligencji i drobnomieszczaństwa, a przy szerokim zasięgu dochód ze sprzedaży, ale mniej zaufania (−5). Za pierwszym razem protestuje Centrum PPS (+3).');
 });

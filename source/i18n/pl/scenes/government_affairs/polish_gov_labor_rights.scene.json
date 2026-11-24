@@ -5,7 +5,7 @@
     "title: Workers’ Rights": "title: Prawa pracownicze",
     "subtitle: Labour: working time, collective agreements, derogations.": "subtitle: Resort Pracy: czas pracy, układy zbiorowe, odstępstwa.",
     "= Workers’ rights": "= Prawa pracownicze",
-    "Labour enforces the statutory working time and the conditions in the plants. Every gain of the workers adds to the displeasure of the industrialists, which now stands at [+ pl_gc_business +] of 100.": "Resort Pracy pilnuje ustawowego czasu pracy i warunków w zakładach. Każda zdobycz robotników zwiększa niezadowolenie przemysłowców, który wynosi teraz [+ pl_gc_business +] na 100.",
+    "Labour enforces the statutory working time and the conditions in the plants. Every gain of the workers adds to the displeasure of the industrialists, which now stands at [+ pl_gc_business +] of 100.": "Resort Pracy pilnuje ustawowego czasu pracy i warunków w zakładach. Każda zdobycz robotników drażni przemysłowców, którzy [+ pl_gc_business_words +].",
     "title: Introduce a labour inspection": "title: Wprowadź inspekcję pracy",
     "title: Bring about a collective agreement": "title: Doprowadź do układu zbiorowego",
     "title: Agree to derogations from the eight-hour day": "title: Zgódź się na odstępstwa od ośmiogodzinnego dnia pracy",
@@ -13,6 +13,6 @@
     "subtitle: Cost: 1 budget unit. The workers are less discontented (−3), but the industrialists are more displeased (+4). [? if pl_labor_rights_inspection_coalition : [+ pl_labor_rights_inspection_coalition +] ?]": "subtitle: Koszt: 1 jednostka budżetu. Robotnicy są mniej niezadowoleni (−3), ale przemysłowcy są bardziej niezadowoleni (+4). [? if pl_labor_rights_inspection_coalition : [+ pl_labor_rights_inspection_coalition +] ?]",
     "title: Do nothing now": "title: Nic nie robimy",
     "subtitle: Cost: 0 budget units. The employers of the branch where our union is strongest (today: [+ pl_gc_collective_branch +]) sign an agreement: wages there rise for two months, but the industrialists are more displeased (+3).": "subtitle: Koszt: 0 jednostek budżetu. Pracodawcy z branży, w której nasz związek jest najsilniejszy (dziś: [+ pl_gc_collective_branch +]), podpisują układ: płace rosną tam na dwa miesiące, ale przemysłowcy są bardziej niezadowoleni (+3).",
-    "subtitle: Cost: 0 budget units. For half a year the plants in difficulty may work longer than eight hours. The industrialists are less displeased (−4), but the workers are more discontented and the Left of PPS protests (+3).": "subtitle: Koszt: 0 jednostek budżetu. Na pół roku zakłady w trudnościach mogą pracować dłużej niż 8 godzin. Przemysłowcy są mniej niezadowoleni (−4), ale robotnicy są bardziej niezadowoleni, a Lewica PPS protestuje (+3)."
+    "subtitle: Cost: 0 budget units. For half a year the plants in difficulty may work longer than eight hours. The industrialists are less displeased (−4), but the workers are more discontented and the Left of PPS protests (+3).": "subtitle: Koszt: 0 jednostek budżetu. Na pół roku zakłady w trudnościach mogą pracować dłużej niż osiem godzin. Przemysłowcy są mniej niezadowoleni (−4), ale robotnicy są bardziej niezadowoleni, a Lewica PPS protestuje (+3)."
   }
 }

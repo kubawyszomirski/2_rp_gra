@@ -69,10 +69,10 @@
       en: 'The recovery of the economy raises the revenue', pl: 'Ożywienie gospodarki podnosi wpływy'},
   ].map(entry => Object.freeze(Object.assign({source_status: 'P'}, entry))));
   const POOL_THRESHOLDS = Object.freeze([
-    {id: 'boom_105', above: 105, value: 1, en: 'Good business: output above 105 brings more taxes', pl: 'Dobra koniunktura: produkcja powyżej 105 przynosi więcej podatków'},
-    {id: 'boom_110', above: 110, value: 1, en: 'Good business: output above 110 brings more taxes', pl: 'Dobra koniunktura: produkcja powyżej 110 przynosi więcej podatków'},
-    {id: 'slump_95', below: 95, value: -1, en: 'A slump: output below 95 brings less taxes', pl: 'Zastój: produkcja poniżej 95 przynosi mniej podatków'},
-    {id: 'slump_90', below: 90, value: -1, en: 'A slump: output below 90 brings less taxes', pl: 'Zastój: produkcja poniżej 90 przynosi mniej podatków'},
+    {id: 'boom_105', above: 105, value: 1, en: 'Good business: output above 105 brings more taxes', pl: 'Dobra koniunktura przynosi więcej podatków'},
+    {id: 'boom_110', above: 110, value: 1, en: 'Good business: output above 110 brings more taxes', pl: 'Bardzo dobra koniunktura przynosi jeszcze więcej podatków'},
+    {id: 'slump_95', below: 95, value: -1, en: 'A slump: output below 95 brings less taxes', pl: 'Zastój przynosi mniej podatków'},
+    {id: 'slump_90', below: 90, value: -1, en: 'A slump: output below 90 brings less taxes', pl: 'Głęboki zastój przynosi jeszcze mniej podatków'},
   ]);
   // The złoty restores the revenue once (P).
   const ZLOTY_POOL = Object.freeze({id: 'zloty', value: 2, en: 'The złoty restores the revenue of the state', pl: 'Złoty przywraca dochody państwa'});
@@ -568,7 +568,7 @@
 
   // Z — 1.01: the pool in words — its units, and below zero the printing and the programmes it limits.
   function poolText(pool) {
-    const value = (pool < -0.05 ? '−' : '') + rules.num(round(Math.abs(pool), 1)) + ' B';
+    const value = (pool < -0.05 ? '−' : '') + rules.num(round(Math.abs(pool), 1)) + L(' B', '');
     if (pool >= 0) return value;
     const delivery = fiscalDelivery(pool);
     return value + L(': a deficit, the state prints money', ': deficyt, państwo dodrukowuje pieniądze') +

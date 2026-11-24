@@ -13,7 +13,7 @@
     "subtitle: [+ pl_nc_club_line +]": "subtitle: [+ pl_nc_club_line +]",
     "unavailable-subtitle: [+ pl_nc_court_why +]": "unavailable-subtitle: [+ pl_nc_court_why +]",
     "title: Let them vote": "title: Niech głosują",
-    "subtitle: Cost: 0 resources. The Sejm votes at the next settlement; if the opposition still outnumbers us, the cabinet falls.": "subtitle: Koszt: 0 jednostek środków. Sejm zagłosuje przy najbliższym rozliczeniu; jeśli opozycja nadal będzie liczniejsza, rząd upadnie.",
+    "subtitle: Cost: 0 resources. The Sejm votes at the next settlement; if the opposition still outnumbers us, the cabinet falls.": "subtitle: Koszt: 0 jednostek środków. Sejm zagłosuje na początku przyszłego miesiąca; jeśli opozycja nadal będzie liczniejsza, rząd upadnie.",
     "[+ pl_nc_result +]": "[+ pl_nc_result +]",
     "- @root: Continue.": "- @root: Dalej."
   }

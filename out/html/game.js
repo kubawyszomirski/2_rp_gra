@@ -124,7 +124,7 @@
     next_song: {en: 'Next song', pl: 'Następny utwór'},
     settings: {en: 'Settings', pl: 'Ustawienia'},
     language: {en: 'Language:', pl: 'Język:'},
-    effect_numbers: {en: 'Numbers in choices:', pl: 'Liczby w opisach wyborów:'},
+    effect_numbers: {en: 'Numbers in choices:', pl: 'Liczby w opisach decyzji:'},
     backgrounds: {en: 'Backgrounds:', pl: 'Tła:'},
     event_images: {en: 'Event images:', pl: 'Obrazy wydarzeń:'},
     animations: {en: 'Animations:', pl: 'Animacje:'},
