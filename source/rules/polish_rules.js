@@ -82,7 +82,7 @@
   // the hand of its deck by itself (an extra place marked "urgent", besides the two ordinary ones); it cannot be discarded and
   // leaves the hand when it is played or when its condition ends.
   const urgentCards = {};
-  const ADVISOR_COOLDOWN_MONTHS = 6; // 4.4: one shared adviser cooldown
+  const ADVISOR_COOLDOWN_MONTHS = 9; // 4.4: one shared adviser cooldown; Z — 1.30 (decision 3A of 24 XI 2026): 9 months instead of 6
   const TXN_SOURCES = ['main', 'advisor', 'event', 'cabinet'];
   const TXN_PHASES = ['preview', 'committed', 'settled'];
 

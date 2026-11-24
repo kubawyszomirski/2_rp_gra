@@ -47,23 +47,23 @@ test('a month is settled once, only after a month-consuming action (4.2)', () =>
   assert.equal(Q.S.history.reasons.at(-1).kind, 'second_settlement_refused');
 });
 
-test('an adviser action is final and blocks all advisers until t+6 (4.4)', () => {
+test('an adviser action is final and blocks all advisers until t+9 (4.4; Z — 1.30)', () => {
   const Q = newQ(1);
   const state = { ...engineState(), sceneId: 'puzak.party_discipline' };
   const txn = rules.commitAdvisorAction(Q, state, game);
   assert.equal(txn.action_id, 'advisor.puzak.party_discipline');
   assert.deepEqual([txn.advisor_id, txn.subaction_id, txn.source, txn.consumes_month], ['puzak', 'party_discipline', 'advisor', false]);
-  assert.equal(Q.S.cooldowns.advisor, 7);
-  assert.equal(Q.advisor_action_timer, 6);
+  assert.equal(Q.S.cooldowns.advisor, 10);
+  assert.equal(Q.advisor_action_timer, 9);
   assert.throws(() => rules.commitAdvisorAction(Q, state, game), /still pending/);
   assert.equal(rules.beginMonthSettlement(Q, engineState()), null, 'an adviser action costs no month');
   assert.equal(Q.S.turn.pending, null);
   assert.equal(Q.S.history.actions.at(-1).phase, 'settled');
-  for (let t = 1; t <= 7; t++) {
+  for (let t = 1; t <= 10; t++) {
     Q.time = t;
     rules.refreshMirrors(Q);
-    assert.equal(rules.isAdvisorAvailable(Q), t >= 7, `t=${t}`);
-    assert.equal(Q.advisor_action_timer, Math.max(0, 7 - t));
+    assert.equal(rules.isAdvisorAvailable(Q), t >= 10, `t=${t}`);
+    assert.equal(Q.advisor_action_timer, Math.max(0, 10 - t));
   }
   Q.time = 3;
   assert.throws(() => rules.commitAdvisorAction(Q, state, game), /cooldown/);

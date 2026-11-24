@@ -2720,7 +2720,7 @@
     const S = Q.S, neg = S.negotiation, crisis = S.cabinet_crisis;
     if (!neg || neg.phase !== 'draft') return {available: false, reason: L('No offer is being prepared.', 'Nie przygotowujemy żadnej oferty.')};
     if (formationCost(Q, neg) && (Q.month_actions || 0) >= 1) {
-      return {available: false, reason: L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.')};
+      return {available: false, reason: L('This month’s action has already been used.', 'Decyzja na ten miesiąc już zapadła.')};
     }
     const draft = neg.draft;
     if (draft.pps_mode !== 'opposition') {
@@ -3931,7 +3931,7 @@
   function concessionStatus(Q) {
     const S = Q.S;
     if (ppsStance(S) !== 'member') return {available: false, reason: L('PPS is not in the cabinet.', 'PPS nie jest w gabinecie.')};
-    if ((Q.month_actions || 0) >= 1) return {available: false, reason: L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.')};
+    if ((Q.month_actions || 0) >= 1) return {available: false, reason: L('This month’s action has already been used.', 'Decyzja na ten miesiąc już zapadła.')};
     if (!cabinetAgreementsUnderTension(S).length) {
       return {available: false, reason: L('There is no tension in our coalition agreements.', 'Nasi koalicjanci nie mają do nas pretensji.')};
     }
@@ -4009,7 +4009,7 @@
   function talksStatus(Q) {
     const S = Q.S;
     if (ppsStance(S) !== 'member') return {available: false, reason: L('PPS is not in the cabinet.', 'PPS nie jest w gabinecie.')};
-    if ((Q.month_actions || 0) >= 1) return {available: false, reason: L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.')};
+    if ((Q.month_actions || 0) >= 1) return {available: false, reason: L('This month’s action has already been used.', 'Decyzja na ten miesiąc już zapadła.')};
     if (!cabinetAgreementsUnderTension(S).length) return {available: false, reason: L('There is no tension in our coalition.', 'W naszej koalicji nie ma sporów.')};
     if ((S.party_orgs.cash || 0) < COALITION_TALKS_COST) return {available: false, reason: L('Needs 2 resources.', 'Wymaga 2 jednostek środków.')};
     return {available: true, reason: ''};
@@ -4155,7 +4155,7 @@
     const S = Q.S, stance = ppsStance(S);
     const open = mode === 'response' ? responseCase(Q) : null;
     if (mode === 'response' && !open) return {available: false, reason: L('There is no open case to answer.', 'Nie ma otwartej sprawy, na którą trzeba odpowiedzieć.')};
-    if (mode !== 'response' && (Q.month_actions || 0) >= 1) return {available: false, reason: L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.')};
+    if (mode !== 'response' && (Q.month_actions || 0) >= 1) return {available: false, reason: L('This month’s action has already been used.', 'Decyzja na ten miesiąc już zapadła.')};
     if (action === 'withdraw') {
       if (stance !== 'member' && stance !== 'supporter') return {available: false, reason: L('PPS does not support this cabinet.', 'PPS nie popiera tego gabinetu.')};
       return {available: true, reason: ''};

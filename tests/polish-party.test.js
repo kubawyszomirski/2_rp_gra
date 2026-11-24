@@ -188,7 +188,7 @@ test('Agenda 1.19: six kinds of work, each building a characteristic; no collect
   const work = ['organize_unions', 'organize_rural', 'organize_minorities', 'organize_councils', 'organize_rallies', 'kpp_work'];
   assert.deepEqual(ids(engine).filter(id => id !== 'easy_discard'), work.map(id => 'polish_party_agenda.' + id));
   for (const id of work) assert.match(plain(choice(engine, 'polish_party_agenda.' + id).subtitle), /^Cost: 0 resources\. .+ Builds [a-z -]+\.$/, id);
-  assert.match(plain(engine.ui.paragraphs.map(p => p.content)), /Party money: 2 resources\. The dues bring 0\.7 resources every month\./);
+  assert.match(plain(engine.ui.paragraphs.map(p => p.content)), /Party money: 2 resources\. The dues bring 0\.3 resources every month\./);
   assert.match(plain(choice(engine, 'polish_party_agenda.kpp_work').subtitle), /Improves our relations with the KPP, which are frigid today, but displeases the Centre of the party\./);
   choose(engine, 'easy_discard');
   // Each kind of work in a fresh game: what it moves and the characteristic it seeds (a party of the workers: ×1.10 among them).
@@ -306,13 +306,13 @@ test('Związki zawodowe — organizowanie (Z — 0.86): a card of its own with t
   assert.deepEqual(ids(engine), ['polish_party_union_investments.union_organize_industry', 'polish_party_union_investments.union_organize_rail',
     'polish_party_union_investments.union_organize_farm_labour', 'polish_party_union_investments.nothing', 'easy_discard'], 'no union funds since Z — 0.86');
   assert.match(plain(choice(engine, 'polish_party_union_investments.union_organize_farm_labour').subtitle),
-    /^Cost: 1 resource\. The reach of the branch grows from very weak to weak\. Votes in the countryside; a strong union can call a harvest strike\.$/,
-    'Z — 1.14: the reach in words');
+    /^Cost: 1 resource\. The reach of the branch grows but stays very weak\. Votes in the countryside; a strong union can call a harvest strike\.$/,
+    'Z — 1.14: the reach in words; Z — 1.30: 6 reach keeps the farm labourers very weak');
   assert.match(plain(choice(engine, 'polish_party_union_investments.union_organize_rail').subtitle), /control of strategic infrastructure/);
   const page = plain(engine.ui.paragraphs);
   assert.match(page, /PPS has \d+ resources?\. Strong unions raise every collection of the party; today they are too weak for it\./);
   choose(engine, 'polish_party_union_investments.union_organize_rail');
-  assert.ok(Math.abs(Q.S.unions.rail.reach - 36.5) < 1e-9, 'rail +15 × 1.10: the character of a workers’ party (10.6)');
+  assert.ok(Math.abs(Q.S.unions.rail.reach - 26.6) < 1e-9, 'rail +6 × 1.10 (Z — 1.30): the character of a workers’ party (10.6)');
   assert.equal(Q.month_actions, 1, 'the month is spent');
   assert.equal(Q.S.cooldowns['party.union_investments'], Q.time + 2, 'the card waits two months');
   assert.equal(Q.S.cooldowns['party.organizations'], undefined, 'the organisations card keeps its own wait');
@@ -372,7 +372,7 @@ test('the Milicja card recruits for 1 R and settles the month; the larger Milicj
   assert.equal(ledger.t, 1);
   // Z — 1.19 (decision 2B): the dues of the settled month come in.
   assert.ok(Math.abs(Q.S.party_orgs.cash - (cash - 1 + ledger.dues)) < 1e-9, 'only the 1 R of the recruitment');
-  assert.equal(ledger.dues, 0.7);
+  assert.equal(ledger.dues, 0.3); // Z — 1.30: a sixth of a collection
   engine.goToScene('status');
   // The top bar (7 XI 2026): the Party tab shows the Milicja PPS under its own heading.
   assert.match(content(engine), /Organised members:[^0-9]{0,20}350/);
@@ -531,7 +531,7 @@ test('Obecna linia in the game: the present line can be confirmed for the month;
   choose(engine, 'polish_party_pils_influence.support');
   assert.match(content(engine), /relation with Piłsudski \+4/);
   choose(engine, 'root');
-  assert.equal(Q.time, 2);
+  assert.deepEqual([Q.time, Q.month_actions || 0], [1, 0], 'Z — 1.30: a change of the line costs no month');
   assert.ok(!deck(engine).includes('polish_party_pils_influence'), 'the card waits six months');
 });
 

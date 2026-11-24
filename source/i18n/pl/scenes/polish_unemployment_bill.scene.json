@@ -4,7 +4,7 @@
  "lines": {
   "title: Protection of the Unemployed": "title: Ochrona bezrobotnych",
   "subtitle: One initiative of PPS in the chapter: first the project, then the vote.": "subtitle: Nasz projekt ustawy o zasiłkach: najpierw projekt, potem głosowanie w Sejmie.",
-  "Q.pl_bill_start_why = PolishRules.mainActionAvailable(Q) ? '' : 'This month’s action has already been used.';": "Q.pl_bill_start_why = PolishRules.mainActionAvailable(Q) ? '' : 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.';",
+  "Q.pl_bill_start_why = PolishRules.mainActionAvailable(Q) ? '' : 'This month’s action has already been used.';": "Q.pl_bill_start_why = PolishRules.mainActionAvailable(Q) ? '' : 'Decyzja na ten miesiąc już zapadła.';",
   "= The protection of the unemployed": "= Ochrona bezrobotnych",
   "[? if pl_bill_d2 : Forecast of the full variant: [+ pl_bill_full_forecast +]. Of the limited variant: [+ pl_bill_limited_forecast +]. [? if pl_bill_compromise : Ready to support the limited variant: [+ pl_bill_compromise +]. ?] ?]": "[? if pl_bill_d2 : Pełny projekt: [+ pl_bill_full_forecast +]. Okrojony: [+ pl_bill_limited_forecast +]. [? if pl_bill_compromise : Gotowi poprzeć okrojony projekt: [+ pl_bill_compromise +]. ?] ?]",
   "title: D1: Start the legislative initiative of PPS": "title: Rozpocznij inicjatywę ustawodawczą PPS",

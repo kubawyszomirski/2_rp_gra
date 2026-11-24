@@ -5,7 +5,7 @@
   "title: Character of the Party": "title: Na kogo stawiamy",
   "subtitle: Where PPS builds its reach.": "subtitle: Gdzie PPS buduje swój zasięg.",
   "= Character of the Party": "= Na kogo stawiamy",
-  "The present line: **[+ pl_stance_current +]**. A new declaration changes no law in force and gives no reform by itself.": "Obecna linia: **[+ pl_stance_current +]**.",
+  "The present line: **[+ pl_stance_current +]**. A new declaration changes no law in force and gives no reform by itself.": "Obecna linia: **[+ pl_stance_current +]**. Zmiana linii nie zabiera miesiąca; następną można ogłosić za pół roku.",
   "title: A workers’ party": "title: Partia robotnicza",
   "subtitle: [? if pl_stance_workers_present = 1 : **Present line** Confirming it changes nothing. ?][? if pl_stance_workers_present = 0 : Our organisational work brings more in the unions and among the workers. Grows faster: unionism. ?]": "subtitle: [? if pl_stance_workers_present = 1 : **To nasza obecna linia.** Potwierdzenie niczego nie zmienia. ?][? if pl_stance_workers_present = 0 : Nasza praca organizacyjna przynosi więcej w związkach i wśród robotników. Szybciej rośnie: uzwiązkowienie. ?]",
   "title: A party of workers and peasants": "title: Partia robotników i chłopów",

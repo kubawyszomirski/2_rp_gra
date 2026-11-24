@@ -5,7 +5,7 @@
   "title: What Power Do We Want": "title: Jakiej władzy chcemy",
   "subtitle: The system of government PPS stands for.": "subtitle: Ustrój, za którym opowiada się PPS.",
   "= What Power Do We Want": "= Jakiej władzy chcemy",
-  "The present line: **[+ pl_stance_current +]**. A new declaration changes no law in force and gives no reform by itself.": "Obecna linia: **[+ pl_stance_current +]**.",
+  "The present line: **[+ pl_stance_current +]**. A new declaration changes no law in force and gives no reform by itself.": "Obecna linia: **[+ pl_stance_current +]**. Zmiana linii nie zabiera miesiąca; następną można ogłosić za pół roku.",
   "title: Parliamentarism": "title: Parlamentaryzm",
   "subtitle: [? if pl_stance_parliamentarism_present = 1 : **Present line** Confirming it changes nothing. ?][? if pl_stance_parliamentarism_present = 0 : The way of a majority in the Sejm and a government responsible before it. The Centre more readily follows our condemnation of political violence. Grows faster: parliamentarism. ?]": "subtitle: [? if pl_stance_parliamentarism_present = 1 : **To nasza obecna linia.** Potwierdzenie niczego nie zmienia. ?][? if pl_stance_parliamentarism_present = 0 : Droga większości w Sejmie i rządu odpowiedzialnego przed Sejmem. Centrum chętniej idzie za nami, gdy potępiamy przemoc polityczną. Szybciej rośnie: parlamentaryzm. ?]",
   "title: A stronger presidency": "title: Silniejsza prezydentura",

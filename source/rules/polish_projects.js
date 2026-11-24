@@ -1325,7 +1325,7 @@
 
   function armyOversightStatus(Q, option) {
     if (!armyOversightAvailable(Q)) return no(L('Needs a prepared project or a concrete military case.', 'Wymaga przygotowanego projektu albo konkretnej sprawy wojskowej.'));
-    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Decyzja na ten miesiąc już zapadła.'));
     return armyVariantStatus(Q, ARMY_VARIANTS[option]);
   }
 
@@ -2167,7 +2167,7 @@
   function budgetPlanStatus(Q, kind) {
     if (!budgetPlanAvailable(Q)) return no(L('The budget is not below zero.', 'Budżet nie jest poniżej zera.'));
     if (PLAN_KINDS.indexOf(kind) < 0) return no(L('Unknown option.', 'Nieznana opcja.'));
-    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Decyzja na ten miesiąc już zapadła.'));
     const blocked = instrumentBlocked(Q, kind);
     return blocked ? no(blocked) : OK;
   }
@@ -2984,7 +2984,7 @@
     if (record && record.status !== 'waiting') return no(L('The Sejm has already voted on the democratic guarantees.', 'Sejm już głosował nad gwarancjami demokratycznymi.'));
     if (debate.pending && debate.pending.id === 'democratic_guarantees') return no(L('The democratic guarantees wait for their vote.', 'Gwarancje demokratyczne czekają na głosowanie.'));
     if (waitingMotions(debate)[0] === 'democratic_guarantees') return no(L('The democratic guarantees are already the first motion of PPS.', 'Gwarancje demokratyczne są już pierwszym wnioskiem PPS.'));
-    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Decyzja na ten miesiąc już zapadła.'));
     return OK;
   }
   function justiceGuaranteesChoose(Q) {
@@ -3561,7 +3561,7 @@
     if (unavailable) return off(unavailable);
     const offer = level === 'limited' || record.level === 'limited' ? 'full' : 'both';
     const blocked = law.blocked ? law.blocked(Q) : '';
-    if (!rules.mainActionAvailable(Q)) return {eligible: true, available: false, offer: offer, reason: L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.')};
+    if (!rules.mainActionAvailable(Q)) return {eligible: true, available: false, offer: offer, reason: L('This month’s action has already been used.', 'Decyzja na ten miesiąc już zapadła.')};
     if (S.party_orgs.cash + 1e-9 < INITIATIVE_COST) return {eligible: true, available: false, offer: offer,
       reason: L('Needs ' + rules.units(INITIATIVE_COST) + '.', 'Wymaga ' + rules.units(INITIATIVE_COST, 'resources', 'gen') + '.')};
     return {eligible: true, available: !blocked, offer: offer, reason: blocked};
@@ -3658,7 +3658,7 @@
     if (!status.available || !initiativeIsShown(Q, id)) throw new Error('initiativeFile: ' + id + ': ' + status.reason);
     rules.commitMainAction(Q, 'parliament.legislative_initiative.' + id, {law: id});
     S.party_orgs.cash = Math.max(0, S.party_orgs.cash - INITIATIVE_COST);
-    rules.seedProfile(Q, 'parliamentarism', 2, 'initiative:' + id);
+    rules.seedProfile(Q, 'parliamentarism', 1, 'initiative:' + id); // Z — 1.30 (decision 6A): 1 instead of 2
     if (id === 'autonomy') rules.seedProfile(Q, 'federalism', 2, 'initiative:autonomy');
     const effects = filingEffects(S, law).map(filingText);
     applyFiling(Q, law, Q.time);
@@ -3743,7 +3743,7 @@
       record.until = null;
     }
     record.history.push({t: t, kind: 'enacted', variant: choice === 'limited' ? law.variants[1].key : law.variants[0].key, law_id: bill.id});
-    rules.seedProfile(Q, 'parliamentarism', 4, 'enacted:' + law.id);
+    rules.seedProfile(Q, 'parliamentarism', 2, 'enacted:' + law.id); // Z — 1.30 (decision 6A): 2 instead of 4
     const effect = lastInitiativeText;
     lastInitiativeText = '';
     return L('The law is in force from this month. ', 'Ustawa obowiązuje od tego miesiąca. ') + effect +
@@ -4030,11 +4030,11 @@
     const pol = politicsModule();
     if (RIGHT_TRIGGERS[cardId + '.' + option] && pol && pol.rightPaused(S, t)) return no(pol.rightPauseReason(S));
     if (SAVINGS[cardId] && SAVINGS[cardId].option === option) return rules.mainActionAvailable(Q) ? OK :
-      no(L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.'));
+      no(L('This month’s action has already been used.', 'Decyzja na ten miesiąc już zapadła.'));
     // Z — 0.92 (the user's decision of 24 X 2026): the cooperative variants of 8.5 and 8.9 use the existing cooperative movement
     // and need no cooperative of PPS.
     // Z — 0.94: the answer to the customs war is an answer to an event and costs no month.
-    if (!(extra && extra.adviser) && cardId !== 'customs_war' && !rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.'));
+    if (!(extra && extra.adviser) && cardId !== 'customs_war' && !rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Decyzja na ten miesiąc już zapadła.'));
     switch (cardId) {
       case 'labor_rights': {
         if (option === 'collective' || option === 'derogation') return unionOption(Q, option, extra);

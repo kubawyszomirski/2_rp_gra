@@ -5,7 +5,7 @@
   "title: Political Direction": "title: Kierunek polityczny",
   "subtitle: How PPS builds its influence.": "subtitle: Jak PPS buduje swoje wpływy.",
   "= Political Direction": "= Kierunek polityczny",
-  "The present line: **[+ pl_stance_current +]**. A new declaration changes no law in force and gives no reform by itself.": "Obecna linia: **[+ pl_stance_current +]**.",
+  "The present line: **[+ pl_stance_current +]**. A new declaration changes no law in force and gives no reform by itself.": "Obecna linia: **[+ pl_stance_current +]**. Zmiana linii nie zabiera miesiąca; następną można ogłosić za pół roku.",
   "title: Parliamentary socialism": "title: Socjalizm parlamentarny",
   "subtitle: [? if pl_stance_parliamentary_socialism_present = 1 : **Present line** Confirming it changes nothing. ?][? if pl_stance_parliamentary_socialism_present = 0 : Press campaigns on parliamentary socialism are stronger while a PPS bill is before the Sejm, and so are the campaigns “Land for the peasants” and “Work and benefits for the unemployed”. Grow faster: parliamentarism and reformism. ?]": "subtitle: [? if pl_stance_parliamentary_socialism_present = 1 : **To nasza obecna linia.** Potwierdzenie niczego nie zmienia. ?][? if pl_stance_parliamentary_socialism_present = 0 : Kampanie prasowe o socjalizmie parlamentarnym są mocniejsze, gdy w Sejmie leży projekt PPS; mocniejsze są też kampanie „Ziemia dla chłopów” i „Praca i zasiłek dla bezrobotnych”. Szybciej rosną: parlamentaryzm i reformizm. ?]",
   "title: Independent class politics": "title: Niezależna polityka klasowa",

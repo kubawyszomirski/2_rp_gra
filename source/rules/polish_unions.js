@@ -1141,7 +1141,7 @@
   function baseStatus(Q, branchId) {
     if (!agendaAvailable(Q)) return no('');
     if (!Q.S.unions[branchId]) return no(L('Unknown branch.', 'Nieznana branża.'));
-    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Decyzja na ten miesiąc już zapadła.'));
     return OK;
   }
 
@@ -1626,14 +1626,14 @@
       const harvest = harvestStatus(Q);
       if (!harvest.available) return harvest;
     }
-    return rules.mainActionAvailable(Q) ? OK : no(L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.'));
+    return rules.mainActionAvailable(Q) ? OK : no(L('This month’s action has already been used.', 'Decyzja na ten miesiąc już zapadła.'));
   }
 
   function threatStatus(Q) {
     const S = Q.S, rec = ready(Q) ? disputeRecord(S) : null;
     if (!rec) return no('');
     if (rec.pps_answered) return no(L('The government has already rejected a threat in this dispute.', 'Rząd już odrzucił groźbę w tym sporze.'));
-    return rules.mainActionAvailable(Q) ? OK : no(L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.'));
+    return rules.mainActionAvailable(Q) ? OK : no(L('This month’s action has already been used.', 'Decyzja na ten miesiąc już zapadła.'));
   }
 
   function threaten(Q) {

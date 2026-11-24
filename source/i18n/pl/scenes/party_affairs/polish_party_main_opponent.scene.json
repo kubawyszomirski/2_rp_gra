@@ -5,7 +5,7 @@
   "title: Main Opponent": "title: Główny przeciwnik",
   "subtitle: Whose voters our press campaigns win over.": "subtitle: Czyich wyborców przeciągają nasze kampanie prasowe.",
   "= Main Opponent": "= Główny przeciwnik",
-  "The present line: **[+ pl_stance_current +]**. A new declaration changes no law in force and gives no reform by itself.": "Obecna linia: **[+ pl_stance_current +]**.",
+  "The present line: **[+ pl_stance_current +]**. A new declaration changes no law in force and gives no reform by itself.": "Obecna linia: **[+ pl_stance_current +]**. Zmiana linii nie zabiera miesiąca; następną można ogłosić za pół roku.",
   "title: The national right": "title: Prawica narodowa",
   "subtitle: [? if pl_stance_nationalist_right_present = 1 : **Present line** Confirming it changes nothing. ?][? if pl_stance_nationalist_right_present = 0 : Our press campaigns win voters above all from the National Democrats (ZLN). ?]": "subtitle: [? if pl_stance_nationalist_right_present = 1 : **To nasza obecna linia.** Potwierdzenie niczego nie zmienia. ?][? if pl_stance_nationalist_right_present = 0 : Nasze kampanie prasowe odbierają wyborców przede wszystkim endecji. ?]",
   "title: The communists": "title: Komuniści",

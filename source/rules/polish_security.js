@@ -134,7 +134,7 @@
     const S = Q.S;
     if (!ready(Q) || S.chapter.status === 'ended') return no('');
     if (S.security.forces.every(f => S.security.known[f.id].radius <= KNOWN_FLOOR)) return no(L('The assessment is already as precise as it can be (±5 pp).', 'Lepiej nastrojów w wojsku już nie rozpoznamy.'));
-    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Decyzja na ten miesiąc już zapadła.'));
     const wait = rules.cooldownRemaining(Q, 'security.assess');
     if (wait > 0) return no(L('Assessed recently: ' + wait + (wait === 1 ? ' month' : ' months') + ' before the next assessment.',
       'Nasi ludzie w wojsku składali raport niedawno; następny za ' + wait + ' ' + rules.plural(wait, 'miesiąc', 'miesiące', 'miesięcy') + '.'));
@@ -319,7 +319,7 @@
     if (!pilsCardAvailable(Q)) return no(L('Needs PPS in the cabinet with Military Affairs; toleration or a party line are not enough.', 'Wymaga PPS w gabinecie z resortem Spraw Wojskowych; tolerowanie ani linia partii nie wystarczą.'));
     if (variant === 'refuse') return OK;
     if (!spec) return no(L('Unknown concession.', 'Nieznane ustępstwo.'));
-    if (!inCrisis(S) && !rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.'));
+    if (!inCrisis(S) && !rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Decyzja na ten miesiąc już zapadła.'));
     const current = pilsAgreement(S);
     if (current && current.status === 'active' && current.variant === variant) return no(L('This concession is already agreed.', 'To ustępstwo jest już uzgodnione.'));
     if ((S.actors.relations.pilsudski || 0) < spec.relation) return no(L('Needs a relation of ' + spec.relation + ' with Piłsudski.',
@@ -1357,7 +1357,7 @@
     const S = Q.S;
     if (option === 'military_function' || option === 'inspectorate') return concessionStatus(Q, option);
     if (!pilsCardAvailable(Q)) return no(L('Needs PPS in the cabinet with Military Affairs; toleration or a party line are not enough.', 'Wymaga PPS w gabinecie z resortem Spraw Wojskowych; tolerowanie ani linia partii nie wystarczą.'));
-    if (!inCrisis(S) && !rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.'));
+    if (!inCrisis(S) && !rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Decyzja na ten miesiąc już zapadła.'));
     if (option === 'subordinate') {
       return SUBORDINATE.forces.some(id => forceOf(S, id).loyalty_pils > 0.001) ? OK :
         no(L('The army no longer leans towards Piłsudski.', 'Wojsko nie sprzyja już Piłsudskiemu.'));

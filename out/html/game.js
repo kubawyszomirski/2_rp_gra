@@ -155,7 +155,7 @@
     urgent: {en: 'urgent', pl: 'pilne'},
     group_party: {en: 'Party', pl: 'Partia'},
     group_state: {en: 'State', pl: 'Państwo'},
-    pinned: {en: 'Central Executive Committee - actions are only usable once per 6 months.', pl: 'Centralny Komitet Wykonawczy — każda akcja raz na 6 miesięcy.'},
+    pinned: {en: 'Central Executive Committee - actions are only usable once per 9 months.', pl: 'Centralny Komitet Wykonawczy — każda decyzja raz na 9 miesięcy.'},
     continue_choice: {en: 'Continue...', pl: 'Dalej…'},
     load_failed: {en: 'The Polish version could not be loaded; the game continues in English.',
       pl: 'Nie udało się wczytać polskiej wersji; gra toczy się dalej po angielsku.'},

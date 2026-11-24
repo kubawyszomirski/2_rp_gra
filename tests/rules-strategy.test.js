@@ -21,7 +21,7 @@ function free(Q) {
 const dissent = (Q, id) => Q.S.actors.pps.factions[id].dissent;
 
 // Z — 0.51 (it replaces Z — 0.32): the present line can be confirmed; it costs the month and the usual wait, nothing else.
-test('Obecna linia (rules): confirming the present line costs one month and the usual wait and changes nothing else; a new line costs one month and waits six months', () => {
+test('Obecna linia (rules): confirming the present line costs the usual wait and changes nothing else; a new line waits six months; since Z — 1.30 neither costs the month', () => {
   const Q = game();
   for (const card of PolishParty.STANCE_ORDER) {
     const field = PolishParty.STANCES[card].field;
@@ -31,13 +31,13 @@ test('Obecna linia (rules): confirming the present line costs one month and the 
   const snapshot = () => JSON.stringify([Q.S.actors.pps.strategy, Q.S.actors.pps.strategy_history, Q.S.actors.pps.factions, Q.S.actors.relations]);
   const before = snapshot();
   PolishParty.stanceChoose(Q, 'pils_influence', 'conditional');
-  assert.equal(Q.month_actions, 1, 'confirming costs the month');
+  assert.equal(Q.month_actions || 0, 0, 'Z — 1.30: confirming costs no month');
   assert.equal(Q.S.cooldowns['party.pils_influence'], Q.time + 6, 'and the usual wait of the card');
   assert.equal(snapshot(), before, 'the line, its history, the factions and the relations do not change');
   assert.match(Q.pl_party_result, /confirms its present line/);
   free(Q);
   PolishParty.stanceChoose(Q, 'direction', 'class_independence');
-  assert.equal(Q.month_actions, 1);
+  assert.equal(Q.month_actions || 0, 0, 'Z — 1.30: a new line costs no month');
   assert.equal(Q.S.cooldowns['party.direction'], Q.time + 6);
   assert.equal(PolishParty.stanceAvailable(Q, 'direction'), false);
   assert.deepEqual(Q.S.actors.pps.strategy_history.at(-1), {t: Q.time, field: 'direction', from: 'parliamentary_socialism', to: 'class_independence'});

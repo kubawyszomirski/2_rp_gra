@@ -5,7 +5,7 @@
   "title: Cooperation with Jewish Organisations": "title: Współpraca z organizacjami żydowskimi",
   "subtitle: The range of agreements, above all with the Bund.": "subtitle: Zakres porozumień, przede wszystkim z Bundem.",
   "= Cooperation with Jewish Organisations": "= Współpraca z organizacjami żydowskimi",
-  "The present line: **[+ pl_stance_current +]**. A new declaration changes no law in force and gives no reform by itself.": "Obecna linia: **[+ pl_stance_current +]**.",
+  "The present line: **[+ pl_stance_current +]**. A new declaration changes no law in force and gives no reform by itself.": "Obecna linia: **[+ pl_stance_current +]**. Zmiana linii nie zabiera miesiąca; następną można ogłosić za pół roku.",
   "title: Broad cooperation and rights in the programme": "title: Szeroka współpraca i prawa w programie",
   "subtitle: [? if pl_stance_broad_present = 1 : **Present line** Confirming it changes nothing. ?][? if pl_stance_broad_present = 0 : Agreements on the rights of the Jews and joint actions, above all with the Bund. Grows faster: federalism. ?]": "subtitle: [? if pl_stance_broad_present = 1 : **To nasza obecna linia.** Potwierdzenie niczego nie zmienia. ?][? if pl_stance_broad_present = 0 : Porozumienia w sprawie praw Żydów i wspólne akcje, przede wszystkim z Bundem. Szybciej rośnie: federalizm. ?]",
   "title: Cooperation of workers’ organisations": "title: Współpraca organizacji robotniczych",

@@ -66,6 +66,7 @@
   // Z — 0.91 (decision 2A): a civic course raises the trust in PPS of its classes by 4, never above 70 from the courses (P).
   const TUR_TRUST = 4;
   const TUR_TRUST_CAP = 70;
+  const TUR_IMPULSE = 1; // Z — 1.30 (decision 5A): the small gain of a civic course or the education campaign at once
   const REACH_MULTIPLIER_CAP = 1.30; // 10.6: character of the party and TUR together
   // Z — 0.92 (the user's decision of 24 X 2026): one workers' consumer cooperative; it pays half of the strike pay (P).
   const COOPERATIVE_STRIKE_SHARE = 0.5;
@@ -282,7 +283,9 @@
   }
 
   // Z — 1.19 (decision 2B of 22 XI 2026): the monthly income from the dues, a third of a collection, to 0.1 R.
-  const DUES_MONTHLY_SHARE = 1 / 3;
+  // Z — 1.30 (decision 2 of 24 XI 2026, chosen after measuring the money of eight campaigns): a sixth of a collection a month
+  // instead of a third, so that the money of the party stays short and its costs matter.
+  const DUES_MONTHLY_SHARE = 1 / 6;
   const monthlyDues = S => round(collectionGain(S) * DUES_MONTHLY_SHARE, MONEY_DIGITS);
 
   // Z — 0.92: one workers' consumer cooperative, founded once (`founded_at`); an older save keeps its operating workers'
@@ -394,6 +397,10 @@
     return Math.min(REACH_MULTIPLIER_CAP, value);
   }
 
+  // Z — 1.30 (decision 1A of 24 XI 2026, after the balance audit): an investment in a union branch adds 6 reach before the
+  // multipliers instead of 15 (it was 11–15 times the organisational work of the agenda).
+  const UNION_ORGANIZE_REACH = 6;
+
   function expandBranch(S, branchId, amount) {
     const branch = S.unions[branchId];
     // Z — 1.07: unionism makes the unions grow a quarter faster.
@@ -487,7 +494,7 @@
     if (owner === UNION_CARD && ids.length !== 1) return no(L('Choose one investment for the unions.', 'Wybierz jedną inwestycję w związki.'));
     if (!ids.length || ids.length > 2) return no(L('Choose one or two organisations.', 'Wybierz jedną albo dwie organizacje.'));
     if (ids.length === 2 && PACKAGES[ids[0]].org === PACKAGES[ids[1]].org) return no(L('The two packages must be for different organisations.', 'Oba pakiety muszą dotyczyć różnych organizacji.'));
-    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Decyzja na ten miesiąc już zapadła.'));
     const total = ids.reduce((n, id) => n + PACKAGES[id].cost, 0);
     if (S.party_orgs.cash + 1e-9 < total) {
       return no(L('The package costs ' + rules.units(total) + '; PPS has only ' + fmt(S.party_orgs.cash) + '.',
@@ -512,7 +519,7 @@
     if (p.kind === 'recruit') rules.seedProfile(Q, 'militarism', 0.5, 'militia_recruit');
     if (p.kind === 'militarize') rules.seedProfile(Q, 'militarism', 1.5, 'militia_training');
     if (p.kind === 'organize') {
-      const gain = fmt(expandBranch(S, p.branch, 15));
+      const gain = fmt(expandBranch(S, p.branch, UNION_ORGANIZE_REACH));
       return L('the ' + BRANCH_NAMES[p.branch].toLowerCase() + ' branch gains ' + gain + ' reach', 'zasięg branży ' + BRANCH_PL_GENITIVE[p.branch] + ' rośnie o ' + gain);
     }
     if (p.kind === 'distribution') {
@@ -609,7 +616,7 @@
 
   function militiaStatus(Q, option) {
     const S = Q.S, m = S.militia;
-    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Decyzja na ten miesiąc już zapadła.'));
     if (m.banned) return no(L('Milicja is banned.', 'Milicja jest zakazana.'));
     if (option === 'recruit') return packageStatus(Q, 'militia_recruit', 0);
     if (option === 'militarize') return packageStatus(Q, 'militia_militarize', 0);
@@ -684,7 +691,7 @@
 
   function duesStatus(Q, option) {
     const S = Q.S, dues = S.party_orgs.dues;
-    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Decyzja na ten miesiąc już zapadła.'));
     const wait = waitReason(Q, 'party.dues');
     if (wait) return no(wait);
     // Z — 0.51: keeping the present level is a decision too, for this month's action and the usual wait.
@@ -762,7 +769,7 @@
     if (isBranch && BRANCHES.indexOf(target.slice(7)) < 0) return no(L('Unknown branch.', 'Nieznana branża.'));
     if (isClass && ORGANIZE_CLASSES.indexOf(target.slice(6)) < 0) return no(L('Unknown class.', 'Nieznana klasa.'));
     if (isClass && !electorate.hasCells(Q.S)) return no(L('The cells of the electorate are not recorded.', 'Ta decyzja nie jest teraz dostępna.'));
-    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Decyzja na ten miesiąc już zapadła.'));
     return OK;
   }
 
@@ -835,13 +842,16 @@
   const AGENDA_KINDS = Object.freeze(Object.keys(AGENDA_WORK));
   const KPP_WORK = Object.freeze({relation: 5, centrum_dissent: 3});
   const RALLY_READINESS = 5;
+  // Z — 1.30 (decision 4A of 24 XI 2026): the tangible effects of three works of the agenda.
+  // The gains differ by the size of the groups: about 0.15 points of support for each use, as the agenda never rests.
+  const AGENDA_IMPULSE = Object.freeze({rural: 0.3, minorities: 0.6, councils: 1}), AGENDA_MINORITY_RELATION = 2;
   const minorityCell = cell => cell.identity_id !== 'polish';
   const classGain = (S, classId, amount) => amount * expansionMultiplier(S, {kind: 'class', class_id: classId});
 
   function agendaWorkStatus(Q, kind) {
     if (!AGENDA_WORK[kind]) return no(L('Unknown work.', 'Nieznana praca.'));
     if (kind !== 'unions' && kind !== 'kpp' && !electorate.hasCells(Q.S)) return no(L('The cells of the electorate are not recorded.', 'Ta decyzja nie jest teraz dostępna.'));
-    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Decyzja na ten miesiąc już zapadła.'));
     return OK;
   }
 
@@ -849,11 +859,11 @@
     unions: ['The activists work in all three unions: the workers of industry, the railwaymen and the farm workers join them more readily.',
       'Działacze pracują we wszystkich trzech związkach: robotnicy przemysłu, kolejarze i robotnicy rolni chętniej do nich wstępują.'],
     rural: ['The activists go to the villages: the peasants listen to PPS more readily, and the union of the farm workers grows.',
-      'Działacze jeżdżą na wieś: chłopi chętniej słuchają PPS, a związek robotników rolnych rośnie.'],
+      'Działacze jeżdżą na wieś: chłopi chętniej słuchają PPS i trochę przychylniej na nią patrzą, a związek robotników rolnych rośnie.'],
     minorities: ['The activists reach the voters of the national minorities, who listen to PPS more readily.',
-      'Działacze docierają do wyborców mniejszości narodowych, którzy chętniej słuchają PPS.'],
+      'Działacze docierają do wyborców mniejszości narodowych, którzy chętniej słuchają PPS; stosunki z klubami mniejszości się poprawiają (+2).'],
     councils: ['The councillors of PPS deal with the everyday matters of the towns, and the workers and the intelligentsia notice it.',
-      'Radni PPS zajmują się codziennymi sprawami miast, co zauważają robotnicy i inteligencja.'],
+      'Radni PPS zajmują się codziennymi sprawami miast, co zauważają robotnicy i inteligencja; w wielkich miastach PPS trochę zyskuje.'],
     rallies: ['The speakers of the party address the workers in the factories: the workers listen to PPS and are more ready to fight.',
       'Mówcy partii przemawiają do robotników w fabrykach: robotnicy słuchają PPS i są bardziej gotowi do walki.'],
     kpp: ['PPS seeks an understanding with the communists on workers’ matters: our relations with the KPP improve, and the Centre of the party is displeased.',
@@ -871,10 +881,17 @@
     } else if (kind === 'rural') {
       electorate.addBaseReach(S, cell => cell.class_id === 'rural', classGain(S, 'rural', 2));
       expandBranch(S, 'farm_labour', 1);
+      // Z — 1.30 (decision 4A): the work in the villages also wins the peasants a little at once.
+      impulse(Q, cell => cell.class_id === 'rural', AGENDA_IMPULSE.rural);
     } else if (kind === 'minorities') {
       electorate.addBaseReach(S, minorityCell, classGain(S, 'minorities', 2));
+      // Z — 1.30 (decision 4A): better relations with both clubs of the minorities and a little support among them at once.
+      for (const id of ['jewish_rep', 'other_minorities_rep']) government.changeRelation(Q, id, AGENDA_MINORITY_RELATION, 'party.agenda.minorities');
+      impulse(Q, minorityCell, AGENDA_IMPULSE.minorities);
     } else if (kind === 'councils') {
       for (const c of ['workers', 'new_middle']) electorate.addBaseReach(S, cell => cell.class_id === c, classGain(S, c, 1));
+      // Z — 1.30 (decision 4A): the work in the town councils wins a little support in the large cities at once.
+      impulse(Q, cell => cell.settlement === 'major_city', AGENDA_IMPULSE.councils);
     } else if (kind === 'rallies') {
       electorate.addBaseReach(S, cell => cell.class_id === 'workers', classGain(S, 'workers', 1.5));
       const branch = S.unions.industry;
@@ -928,7 +945,7 @@
     if (!course) return no(L('Unknown course.', 'Nieznany kurs.'));
     if (tur.level < course.level) return no(L('Needs TUR level ' + course.level + '.', 'Wymaga Towarzystwa Uniwersytetu Robotniczego na poziomie ' + course.level + '.'));
     if (tur.active_course) return no(L('A course is already running.', 'Kurs już trwa.'));
-    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Decyzja na ten miesiąc już zapadła.'));
     const wait = waitReason(Q, 'party.tur_course');
     if (wait) return no(wait);
     if (S.party_orgs.cash + 1e-9 < 1) return no(L('Needs 1 resource.', 'Wymaga 1 jednostki środków.'));
@@ -986,6 +1003,12 @@
     S.party_orgs.cash = Math.max(0, S.party_orgs.cash - 1);
     tur.active_course = {course: courseId, target: target || null, started_at: t, paid_months: 0, effect_id: 'tur:' + courseId + ':t' + t};
     if (courseId === 'union_cadres') rules.seedProfile(Q, 'unionism', 2, 'tur_union_cadres');
+    // Z — 1.30 (decision 5A of 24 XI 2026): a civic course or the education campaign wins its groups a little at once; the trust
+    // that strengthens later campaigns still comes when the course ends.
+    if ((courseId === 'civil_rights' || courseId === 'national_education') && electorate.hasCells(S)) {
+      const classes = courseClasses(courseId, target || null);
+      impulse(Q, cell => classes.indexOf(cell.class_id) >= 0, TUR_IMPULSE);
+    }
     S.cooldowns['party.tur_course'] = t + 4;
     writeMirrors(Q);
     return result(Q, courseName(courseId) + L(': the course runs for two months.', ': kurs trwa dwa miesiące.'));
@@ -1018,7 +1041,7 @@
 
   function pressFormatStatus(Q) {
     const S = Q.S;
-    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Decyzja na ten miesiąc już zapadła.'));
     const wait = waitReason(Q, 'party.press_format');
     if (wait) return no(wait);
     if (S.party_orgs.cash + 1e-9 < 1) return no(L('Needs 1 resource.', 'Wymaga 1 jednostki środków.'));
@@ -1148,7 +1171,7 @@
     const card = STANCES[cardId];
     if (!card || !card.values[value]) return no(L('Unknown line.', 'Nieznana linia.'));
     if ((RETIRED_STANCES[cardId] || []).indexOf(value) >= 0) return no(L('This line is no longer offered.', 'Ta linia nie jest już dostępna.'));
-    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.'));
+    // Z — 1.30 (decision B of 24 XI 2026): a change of the line costs no month; the shared rest of the line cards stays.
     const wait = waitReason(Q, stanceCooldownKey(cardId));
     if (wait) return no(wait);
     return OK;
@@ -1166,6 +1189,12 @@
 
   // One declaration (10.5): 1 T, 0 R, cd 6 M (the Soviet model 12 M); the new line is recorded, the rejecting
   // faction of the test profile +3 dissent, and the reactions of 10.7, 10.8 and 10.10 once.
+  // Z — 1.30: a declaration of the line is recorded without this month's action; the card rests as after an action.
+  function lineRecord(Q, actionId, fields) {
+    Q.S.history.actions.push(Object.assign({t: Q.time, action_id: actionId, cost_t: 0}, fields));
+    rules.startCardRest(Q);
+  }
+
   function stanceChoose(Q, cardId, value) {
     syncMirrors(Q);
     const status = stanceStatus(Q, cardId, value);
@@ -1174,13 +1203,13 @@
     const previous = strategy[card.field];
     if (previous === value) {
       // The confirmed present line: the month and the wait of the card, no record of a change, no reaction (Z — 0.51).
-      rules.commitMainAction(Q, card.action, {from: previous, to: value, kept: true});
+      lineRecord(Q, card.action, {from: previous, to: value, kept: true});
       S.cooldowns[stanceCooldownKey(cardId)] = t + card.cooldown;
       writeMirrors(Q);
       return result(Q, stanceName(cardId) + ': ' + stanceValue(cardId, value) + L('. PPS confirms its present line; nothing else changes.',
         '. PPS potwierdza swoją obecną linię; nic więcej się nie zmienia.'));
     }
-    rules.commitMainAction(Q, card.action, {from: previous, to: value});
+    lineRecord(Q, card.action, {from: previous, to: value});
     strategy[card.field] = value;
     S.actors.pps.strategy_history.push({t: t, field: card.field, from: previous, to: value});
     S.cooldowns[stanceCooldownKey(cardId)] = t + card.cooldown;
@@ -1267,7 +1296,7 @@
     if (set.length > 3) return no(L('At most three priorities.', 'Najwyżej trzy priorytety.'));
     // Z — 0.56: without a present programme an empty set is nothing to confirm (it replaces the empty case of Z — 0.51).
     if (!set.length && !strategyOf(S).economic_priorities.length) return no(L('Choose at least one priority.', 'Wybierz co najmniej jeden priorytet.'));
-    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Decyzja na ten miesiąc już zapadła.'));
     const wait = waitReason(Q, 'party.economic_program');
     if (wait) return no(wait);
     return OK;
@@ -1425,7 +1454,7 @@
   function kppStepStatus(Q, step) {
     const S = Q.S, cc = S.actors.communist_cooperation, relation = S.actors.relations.kpp;
     if (!channelOpen(S)) return no(L('No open channel to the KPP.', 'Brak otwartego kanału do KPP.'));
-    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Decyzja na ten miesiąc już zapadła.'));
     if (step === 'trial') {
       if (relation < 30) return no(L('Needs a relation of 30 with the KPP; it is ' + fmt(relation) + '.', 'Nasze stosunki z KPP są jeszcze zbyt chłodne.'));
       if (!openDemands(S).length) return no(L('Needs an existing joint demand; in this chapter a trial is agreed in a strike, in its step of cooperation with the communists.', 'Najpierw trzeba wspólnie z komunistami poprowadzić strajk.'));
@@ -1602,7 +1631,7 @@
   function campaignStatus(Q, kind, topic, audience) {
     const S = Q.S;
     if (CAMPAIGN_KINDS.indexOf(kind) < 0) return no(L('Unknown campaign.', 'Nieznana kampania.'));
-    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Decyzja na ten miesiąc już zapadła.'));
     if (S.party_orgs.cash + 1e-9 < 1) return no(L('Needs 1 resource.', 'Wymaga 1 jednostki środków.'));
     if (!electorate.hasCells(S)) return no(L('The cells of the electorate are not recorded.', 'Ta decyzja nie jest teraz dostępna.'));
     if ((kind === 'press' || kind === 'unions') && topic !== undefined && !TOPICS[topic]) return no(L('Choose a topic.', 'Wybierz temat.'));
@@ -1932,7 +1961,7 @@
   function issueCampaignStatus(Q, id) {
     const S = Q.S;
     if (!ISSUES[id]) return no(L('Unknown campaign.', 'Nieznana kampania.'));
-    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Decyzja na ten miesiąc już zapadła.'));
     // Z — 0.79 (decision 2A of 14 X 2026): the campaigns of meetings, rallies and unions cost no money, only this month's action.
     if (!electorate.hasCells(S)) return no(L('The cells of the electorate are not recorded.', 'Ta decyzja nie jest teraz dostępna.'));
     return OK;
@@ -2096,7 +2125,7 @@
     if (option === 'none') return OK;
     const [kind, id] = [option.split(':')[0], option.split(':')[1]];
     if (!PROFILES[id]) return no(L('Unknown resolution.', 'Nieznana uchwała.'));
-    if (!rules.mainActionAvailable(Q) && !congressOpen(S, Q.time)) return no(L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.'));
+    if (!rules.mainActionAvailable(Q) && !congressOpen(S, Q.time)) return no(L('This month’s action has already been used.', 'Decyzja na ten miesiąc już zapadła.'));
     if (kind === 'drop') return rules.profileActive(S, id) ? OK : no(L('The party has not adopted it.', 'Partia jej nie przyjęła.'));
     if (kind !== 'adopt') return no(L('Unknown resolution.', 'Nieznana uchwała.'));
     if (readyProfiles(S).indexOf(id) < 0) return no(L('Not ready for a resolution.', 'Nie dojrzała do uchwały.'));
@@ -2252,7 +2281,7 @@
   function rallyStatus(Q) {
     const S = Q.S;
     if (!rallyWindow(Q)) return no(L('Only in the last three months before a Sejm election.', 'Tylko w ostatnich trzech miesiącach przed wyborami do Sejmu.'));
-    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Decyzja na ten miesiąc już zapadła.'));
     if (!electorate.hasCells(S)) return no(L('The cells of the electorate are not recorded.', 'Ta decyzja nie jest teraz dostępna.'));
     return OK;
   }
@@ -2294,7 +2323,7 @@
   function pressActionStatus(Q, option) {
     const S = Q.S;
     if (!pressWorking(S)) return no(L('Needs a working party press.', 'Wymaga działającej prasy partyjnej.'));
-    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Decyzja na ten miesiąc już zapadła.'));
     if (option !== 'debate' && S.party_orgs.cash + 1e-9 < 1) return no(L('Needs 1 resource.', 'Wymaga 1 jednostki środków.'));
     if (option !== 'debate' && !electorate.hasCells(S)) return no(L('The cells of the electorate are not recorded.', 'Ta decyzja nie jest teraz dostępna.'));
     return OK;
@@ -2429,7 +2458,7 @@
   function pressInvestigationStatus(Q) {
     const S = Q.S;
     if (!pressInvestigationTarget(S)) return no(L('Needs an open case with evidence: a recorded case of violence or an unlawful restriction not yet revealed.', 'Wymaga otwartej sprawy z dowodami: znanego przypadku przemocy albo bezprawnego ograniczenia, którego jeszcze nie ujawniono.'));
-    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Decyzja na ten miesiąc już zapadła.'));
     if (S.party_orgs.cash + 1e-9 < 1) return no(L('Needs 1 resource.', 'Wymaga 1 jednostki środków.'));
     return OK;
   }
@@ -2783,7 +2812,7 @@
 
   function unityStatus(Q, option, factionId) {
     const S = Q.S, f = factionsOf(S);
-    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Decyzja na ten miesiąc już zapadła.'));
     if (option === 'concession') {
       if (f[factionId].dissent < 30) return no(L('A concession is for a faction with dissent of 30 or more.', 'Ustępstwo ma sens tylko wobec wyraźnie niezadowolonej frakcji.'));
       const wait = waitReason(Q, 'party.faction_conference.' + factionId);
@@ -2973,7 +3002,7 @@
     if (draft.some(id => current.indexOf(id) < 0 && !adviserInPool(Q, id))) return no(L('Someone in this Committee is not available.', 'Ktoś z tego składu CKW jest niedostępny.'));
     // Z — 0.78 (the user's note of 8 X 2026): the present Committee can simply be accepted; it costs nothing (advisersChoose).
     if (sameSet(draft, current)) return OK;
-    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Decyzja na ten miesiąc już zapadła.'));
     const wait = waitReason(Q, 'party.advisers');
     return wait ? no(wait) : OK;
   }
@@ -3282,7 +3311,7 @@
       militarize: 'Militaryzacja Milicji (lepsze wyszkolenie)',
       found: 'Załóż robotniczą spółdzielnię spożywców',
     } : {
-      organize: 'Organise the ' + (p.branch ? BRANCH_NAMES[p.branch].toLowerCase() : '') + ' branch (+15 reach, more under the workers’ line and with TUR)',
+      organize: 'Organise the ' + (p.branch ? BRANCH_NAMES[p.branch].toLowerCase() : '') + ' branch (+6 reach, more under the workers’ line and with TUR)',
       distribution: 'Extend the distribution of the press (+10 reach)',
       build: (Q.S.party_orgs.tur.level === 0 ? 'Found TUR' : 'Start the next stage of TUR') + ' (two months)',
       recruit: 'Recruit into Milicja (+100 members)',
@@ -3326,7 +3355,7 @@
       if (cardOfPackage(id) !== UNION_CARD) continue;
       Q['pl_uni_' + id + '_why'] = selectionStatus(Q, [id], UNION_CARD).reason;
       const p = PACKAGES[id], reach = S.unions[p.branch].reach;
-      const after = Math.min(100, reach + 15 * expansionMultiplier(S, {kind: 'branch', id: p.branch}));
+      const after = Math.min(100, reach + UNION_ORGANIZE_REACH * expansionMultiplier(S, {kind: 'branch', id: p.branch}));
       // Z — 1.14 (the user's request of 8 XI 2026): the cost first and the reach in words, without numbers.
       const from = reachWord(reach), to = reachWord(after);
       Q['pl_uni_' + id + '_line'] = L('Cost: ' + rules.units(p.cost) + '. ', 'Koszt: ' + rules.units(p.cost, 'resources', 'nom') + '. ') +

@@ -1504,7 +1504,7 @@
   function criticismStatus(Q, choice) {
     if (!CRITICISM[choice]) return {available: false, reason: L('Unknown answer.', 'Nieznana odpowiedź.')};
     if (!criticismDue(Q)) return {available: false, reason: L('No speech waits for an answer.', 'Żadne wystąpienie nie czeka na odpowiedź.')};
-    if (!rules.mainActionAvailable(Q)) return {available: false, reason: L('This month’s action has already been used.', 'W tym miesiącu partia podjęła już swoje główne przedsięwzięcie.')};
+    if (!rules.mainActionAvailable(Q)) return {available: false, reason: L('This month’s action has already been used.', 'Decyzja na ten miesiąc już zapadła.')};
     return {available: true, reason: ''};
   }
 

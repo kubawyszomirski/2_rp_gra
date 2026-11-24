@@ -86,7 +86,7 @@ test('Start i odwołanie: a starting adviser dismissed and brought back gets no 
   const S = Q.S;
   assert.equal(Q.puzak_appointed_once, 1, 'the three advisers of the opening are already marked');
   act(engine, 'daszynski', 'parliamentary_compromise');
-  assert.equal(PolishRules.cooldownRemaining(Q, 'advisor'), 6);
+  assert.equal(PolishRules.cooldownRemaining(Q, 'advisor'), 9); // Z — 1.30
   const opening = strengths(S);
   // Z — 0.76: the Committee has all three seats filled; Ziemięcki stands in for Pużak, marked as appointed before (a fixture),
   // so only Pużak's dismissal and return change the factions.
@@ -95,8 +95,8 @@ test('Start i odwołanie: a starting adviser dismissed and brought back gets no 
   assert.equal(Q.puzak_advisor, 0);
   assert.equal(S.actors.pps.factions.centrum.dissent, 5);
   assert.deepEqual(strengths(S), opening, 'a dismissal is no departure of a group');
-  assert.equal(PolishRules.cooldownRemaining(Q, 'advisor'), 6, 'the team change does not reset the adviser cooldown');
-  free(Q); later(Q, 6);
+  assert.equal(PolishRules.cooldownRemaining(Q, 'advisor'), 9, 'the team change does not reset the adviser cooldown');
+  free(Q); later(Q, 9);
   assert.equal(PolishRules.cooldownRemaining(Q, 'advisor'), 0);
   PolishParty.advisersChoose(Q, ['daszynski', 'perl', 'puzak']);
   assert.equal(Q.puzak_advisor, 1);
@@ -119,7 +119,7 @@ test('Pużak: dissents 8/20/40 and Party Discipline give 0/8/28, with no promise
   assert.deepEqual(dissents(Q.S), [0, 8, 28]);
   assert.deepEqual(strengths(Q.S), opening);
   assert.deepEqual([Q.time, Q.month_actions, Q.S.party_orgs.cash], [1, 0, 2], '0 T and 0 R');
-  assert.equal(PolishRules.cooldownRemaining(Q, 'advisor'), 6);
+  assert.equal(PolishRules.cooldownRemaining(Q, 'advisor'), 9); // Z — 1.30
   assert.deepEqual(Q.S.faction_cases.list || [], [], 'no case, conference or promise is created');
 });
 
@@ -214,6 +214,7 @@ test('Efekty czasowe: Pużak (workers ×1.20) and later Perl (press ×1.25) mult
   close(worker.base_reach_pps, 31);
   assert.deepEqual(ratios(), [1.2, 1], 'Pużak: only the workers’ cells');
   later(Q, 6);
+  Q.S.cooldowns.advisor = Q.time; // Z — 1.30: the Committee now waits 9 months; the fixture frees it after 6, when Pużak has expired
   act(engine, 'perl', 'direct_party_press');
   assert.deepEqual(ratios(), [1.25, 1.25], 'Pużak has expired; Perl: every press campaign');
   later(Q, 6);

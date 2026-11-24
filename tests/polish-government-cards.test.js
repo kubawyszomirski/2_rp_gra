@@ -129,7 +129,7 @@ test('Jedno przekierowanie: Moraczewski opens the Public Works card; its one ste
   choose(engine, 'polish_gov_public_works.infrastructure');
   choose(engine, 'root');
   assert.equal(Q.time, t, 'the adviser step costs no month');
-  assert.equal(PolishRules.cooldownRemaining(Q, 'advisor'), 6);
+  assert.equal(PolishRules.cooldownRemaining(Q, 'advisor'), 9); // Z — 1.30: 9 months
   const works = Object.values(Q.S.projects).find(p => p.type === 'public_works');
   assert.deepEqual([works.status, works.variant], ['executing', 'infrastructure'], 'Z — 0.93: started at once');
   const txn = Q.S.history.actions.filter(a => a.source === 'advisor').at(-1);

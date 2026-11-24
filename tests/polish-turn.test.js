@@ -81,14 +81,14 @@ test('Jedna tura (21.1): a main card through several pages settles exactly one m
   assert.equal(Q.time, 2);
 });
 
-test('Doradca (21.1): an adviser action at t=1 blocks all advisers until t=7, through returns and loads', () => {
+test('Doradca (21.1): an adviser action at t=1 blocks all advisers until t=10 (Z — 1.30), through returns and loads', () => {
   let engine = dendry.startGame();
   dendry.choose(engine, 'puzak');
   dendry.choose(engine, 'puzak.party_discipline');
   actUntilMain(engine);
   let Q = engine.state.qualities;
   assert.equal(Q.time, 1, 'the adviser action costs no month');
-  assert.equal(Q.S.cooldowns.advisor, 7);
+  assert.equal(Q.S.cooldowns.advisor, 10); // Z — 1.30: 9 months
   const adviserOptions = () => {
     const result = {};
     for (const adviser of ['daszynski', 'perl', 'puzak']) {
@@ -99,14 +99,14 @@ test('Doradca (21.1): an adviser action at t=1 blocks all advisers until t=7, th
     }
     return result;
   };
-  for (let t = 1; t <= 7; t++) {
+  for (let t = 1; t <= 10; t++) {
     Q = engine.state.qualities;
     assert.equal(Q.time, t);
     const available = Object.values(adviserOptions()).reduce((a, b) => a + b, 0);
-    assert.equal(available > 0, t >= 7, `advisers at t=${t}`);
-    assert.equal(Q.advisor_action_timer, Math.max(0, 7 - t));
+    assert.equal(available > 0, t >= 10, `advisers at t=${t}`);
+    assert.equal(Q.advisor_action_timer, Math.max(0, 10 - t));
     if (t === 4) engine = dendry.saveAndRestore(engine);
-    if (t < 7) spendMonth(engine);
+    if (t < 10) spendMonth(engine);
   }
   Q = engine.state.qualities;
   assert.equal(Q.S.history.months.length, Q.time - 1, 'one settlement, and so one monthly income, per month');
@@ -239,7 +239,7 @@ test('an adviser opening a card makes that step cost no month; closing it refund
   dendry.choose(engine, 'polish_gov_labor_rights.inspection');
   actUntilMain(engine);
   assert.equal(Q.time, 1, 'the opened step costs no month');
-  assert.equal(Q.S.cooldowns.advisor, 7);
+  assert.equal(Q.S.cooldowns.advisor, 10); // Z — 1.30: 9 months
   const txn = Q.S.history.actions.find(action => action.action_id === 'advisor.arciszewski.labour_programme');
   assert.equal(txn.redirect.card, 'polish_gov_labor_rights');
   assert.equal(txn.redirect.action_id, 'government.labor_rights.inspection');
@@ -260,7 +260,7 @@ test('an adviser opening a card makes that step cost no month; closing it refund
   assert.ok(!choiceIds(other).includes('easy_discard'), 'the ordinary close is hidden in adviser mode');
   dendry.choose(other, 'cancel_advisor_action');
   actUntilMain(other);
-  assert.deepEqual([R.time, R.month_actions, R.S.cooldowns.advisor], [1, 0, 7], 'no month used, no adviser refund');
+  assert.deepEqual([R.time, R.month_actions, R.S.cooldowns.advisor], [1, 0, 10], 'no month used, no adviser refund');
 });
 
 // Z — 0.60 (the user's notes of 7 X 2026): a card is discarded on the card itself, once a month; the timed cards, the cards of
@@ -347,7 +347,7 @@ test('Odstęp kart partii 0.76: a used card rests 3 months, the cards of the par
   dendry.playCard(line, 'polish_party_direction');
   const option = (line.getCurrentChoices() || []).find(c => c.id.startsWith('polish_party_direction.') && c.canChoose !== false);
   dendry.choose(line, option.id);
-  assert.equal(L.month_actions, 1);
+  assert.equal(L.month_actions || 0, 0, 'Z — 1.30: a change of the line costs no month');
   for (const id of PolishRules.VISION_CARDS) assert.equal(PolishRules.cardRest(L, id), 6, `${id} rests with the line`);
   const drawable = PolishEngineHooks.legalDeckCards(line, 'main.party').map(c => c.id);
   assert.deepEqual(drawable.filter(id => PolishRules.VISION_CARDS.includes(id)), [], 'no card of the party line for six months');
@@ -381,9 +381,8 @@ test('due events come one at a time from the queue, in a fixed order, and are no
       reverse: {kind: 'strategy', field: 'direction', value: 'class_independence', objection: 'parliamentary_socialism'}});
   }
   PolishParty.writeMirrors(Q);
-  engine.drawCard('main.party');
-  const card = engine.state.currentHands.main[0];
-  engine.playCard(card.id);
+  // Z — 1.30: a card that uses the month (a line card no longer does), so the month is settled and the events come.
+  dendry.playCard(engine, 'polish_party_agenda');
   const visited = [];
   for (let steps = 0; steps < 80 && engine.state.sceneId !== 'main'; steps++) {
     const scene = engine.state.sceneId.split('.')[0];

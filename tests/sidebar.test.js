@@ -49,10 +49,10 @@ for (const lang of ['en', 'pl']) {
     for (const id of Object.keys(expected)) assert.equal(sidebar(restored, id), expected[id], id);
     const main = expected.status, politics = expected['status.politics'];
     if (lang === 'pl') {
-      assert.match(main, /\nWpływy ze składek co miesiąc: 0,7\s*\nSkładki: 2 z 4\s*\nCzłonkostwo: 100 ?\n/); // Z — 1.18: no apparatus; 1.19: the monthly dues; 1.29: no unit R and no „(indeks)”
+      assert.match(main, /\nWpływy ze składek co miesiąc: 0,3\s*\nSkładki: 2 z 4\s*\nCzłonkostwo: 100 ?\n/); // Z — 1.18: no apparatus; 1.19: the monthly dues; 1.29: no unit R and no „(indeks)”
       assert.match(politics, /\nDemokracja: [1-9][\d,]*\u00a0na\u00a0100 ?\n/);
     } else {
-      assert.match(main, /\nDues income each month: 0\.7\u00a0R\s*\nDues: 2 of 4\s*\nMembership \(index\): 100 ?\n/); // Z — 1.18: no apparatus; 1.19: the monthly dues
+      assert.match(main, /\nDues income each month: 0\.3\u00a0R\s*\nDues: 2 of 4\s*\nMembership \(index\): 100 ?\n/); // Z — 1.18: no apparatus; 1.19: the monthly dues
       assert.match(politics, /\nDemocracy: [1-9][\d.]*\u00a0of\u00a0100 ?\n/);
     }
     assert.deepEqual(errors, []);

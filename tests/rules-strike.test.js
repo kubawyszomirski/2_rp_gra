@@ -139,7 +139,7 @@ test('Otwarcia finansowe: over 52 months the cash moves only by the monthly dues
   const none = run('none'), apparatus = run('apparatus'), reach = run('reach');
   // Z — 1.19 (decision 2B): the dues bring money every month; there is no other income and no upkeep.
   for (const [S, start] of [[none, 10], [apparatus, 4], [reach, 7]]) close(S.party_orgs.cash - S.dues_total, start, 1e-6);
-  assert.ok(none.dues_total > 30, 'about 0.7 R a month');
+  assert.ok(none.dues_total > 15, 'about 0.3 R a month (Z — 1.30: a sixth of a collection)');
   close(PolishParty.collectionGain(apparatus) / PolishParty.collectionGain(none), 1, 0.005); // Z — 1.18: the level has no effect
   assert.ok(PolishParty.collectionGain(reach) > PolishParty.collectionGain(none) + 0.05, 'more members after the expansions');
 });
@@ -151,7 +151,7 @@ test('Zasięg i charakter partii: the rail branch under the workers’ line and 
   const rail = S.unions.rail.reach;
   PolishParty.organizationsChoose(Q, ['union_organize_rail'], 'party.union_investments');
   free(Q);
-  close(S.unions.rail.reach, rail + 16.5);
+  close(S.unions.rail.reach, rail + 6.6); // Z — 1.30: 6 reach before the multipliers
   S.actors.pps.strategy.electoral_base = 'broad_democratic';
   close(PolishParty.expansionMultiplier(S, { kind: 'class', class_id: 'new_middle' }), 1.10);
   close(PolishParty.expansionMultiplier(S, { kind: 'branch', id: 'rail' }), 1);
