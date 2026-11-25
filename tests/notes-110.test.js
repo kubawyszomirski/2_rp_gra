@@ -30,9 +30,9 @@ test('Wojsko 1.10 (decision 4A): the mood of the army in a word on the Overview,
     assert.equal(globalThis.PolishRules.nextEvent(Q, ['polish_event_army_mood']), 'polish_event_army_mood', 'the event has its place in the queue');
     engine.goToScene('polish_event_army_mood');
     assert.match(content(engine), /Niepokój w wojsku/);
-    assert.match(content(engine), /W kasynach oficerskich mówi się o marszu na Warszawę\./);
-    assert.match(content(engine), /Oficerów popycha do tego to, że Sejm stracił autorytet i spór o wojsko wciąż jest otwarty\./);
-    assert.match(content(engine), /Napięcie słabnie, gdy kraj ma stały rząd/);
+    // Z — 1.38: one sentence on the mood and its causes, one on what eases it.
+    assert.match(content(engine), /W kasynach oficerskich mówi się o marszu na Warszawę, a oficerowie wierni Piłsudskiemu otwarcie atakują rząd i Sejm; popycha ich to, że Sejm stracił autorytet i spór o wojsko wciąż jest otwarty\./);
+    assert.match(content(engine), /Napięcie słabnie przy stałym rządzie/);
     // Z — 1.24 (decision 8A): a decision with three answers; outside the cabinet the high post cannot be offered.
     const ids = (engine.getCurrentChoices() || []).map(c => c.id);
     assert.deepEqual(ids, ['polish_event_army_mood.appoint', 'polish_event_army_mood.call_to_order', 'polish_event_army_mood.ignore']);

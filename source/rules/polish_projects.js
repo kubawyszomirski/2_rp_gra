@@ -2639,25 +2639,25 @@
         'Koniec „naczelnego stanowiska” Kościoła katolickiego i przymusowej nauki religii w szkołach.'],
       support: [{type: 'relation', actor: 'pschd', value: -3}, {type: 'relation', actor: 'psl_piast', value: -3}, {type: 'faction', faction: 'lewica', dissent: -2}]},
     {id: 'constructive_vonc', name: ['Constructive vote of no confidence', 'Konstruktywne wotum nieufności'],
-      text: ['The Sejm could dismiss a cabinet only by electing its successor at the same time. It would also protect cabinets PPS does not want.',
-        'Sejm mógłby odwołać rząd tylko razem z wyborem nowego. Chroniłoby to także rządy, których PPS nie chce.'],
+      text: ['The Sejm could dismiss a cabinet only by electing its successor at the same time, which would also protect cabinets PPS does not want.',
+        'Sejm mógłby odwołać rząd tylko razem z wyborem nowego, co chroniłoby też rządy, których PPS nie chce.'],
       support: []},
     {id: 'referendum', name: ['Popular referendum', 'Referendum ludowe'],
       text: ['The citizens could decide the most important matters themselves, in a popular vote.', 'Najważniejsze sprawy mogliby rozstrzygać sami obywatele w głosowaniu ludowym.'],
       support: []},
     {id: 'presidential_arbitration', lines: ['strong_presidency'], name: ['Presidential arbitration', 'Arbitraż prezydencki'],
-      text: ['After two failed attempts to form a cabinet within three months the President could dissolve the Sejm. The Left of PPS would protest.',
-        'Po dwóch nieudanych próbach utworzenia rządu w ciągu trzech miesięcy Prezydent mógłby rozwiązać Sejm. Lewica PPS by protestowała.'],
+      text: ['After two failed attempts to form a cabinet within three months the President could dissolve the Sejm, and the Left of PPS would protest.',
+        'Po dwóch nieudanych próbach utworzenia rządu w ciągu trzech miesięcy Prezydent mógłby rozwiązać Sejm, na co Lewica PPS by protestowała.'],
       support: []},
     {id: 'labour_chamber', lines: CHAMBER_LINES, excludes: 'unicameral', flags: ['senate_abolition'],
       name: ['A Chamber of Labour in place of the Senate', 'Izba Pracy w miejsce Senatu'],
-      text: ['The Senate would give way to a chamber of the representatives of labour, elected at the next elections. The Senate itself would have to vote for its end.',
-        'Senat ustąpiłby miejsca izbie przedstawicieli pracy, wybranej w następnych wyborach. Senat musiałby sam zagłosować za swoim końcem.'],
+      text: ['The Senate would give way to a chamber of the representatives of labour elected at the next elections, but it would have to vote for its own end.',
+        'Senat ustąpiłby miejsca izbie przedstawicieli pracy wybranej w następnych wyborach, ale musiałby sam zagłosować za swoim końcem.'],
       support: [{type: 'faction', faction: 'lewica', dissent: -2}, {type: 'relation', actor: 'zln', value: -2}]},
     {id: 'unicameral', lines: CHAMBER_LINES, excludes: 'labour_chamber', flags: ['senate_abolition'],
       name: ['One chamber: the abolition of the Senate', 'Jedna izba: zniesienie Senatu'],
-      text: ['The Sejm alone would pass the laws and the changes of the constitution. The Senate itself would have to vote for its end.',
-        'Ustawy i zmiany konstytucji uchwalałby sam Sejm. Senat musiałby sam zagłosować za swoim końcem.'],
+      text: ['The Sejm alone would pass the laws and the changes of the constitution, but the Senate would have to vote for its own end.',
+        'Ustawy i zmiany konstytucji uchwalałby sam Sejm, ale Senat musiałby sam zagłosować za swoim końcem.'],
       support: [{type: 'relation', actor: 'psl_wyzwolenie', value: 2}, {type: 'relation', actor: 'zln', value: -2}, {type: 'relation', actor: 'psl_piast', value: -2}]},
   ]);
   const MOTION_BY_ID = Object.freeze(MOTIONS.reduce((map, motion) => Object.assign(map, {[motion.id]: motion}), {}));
@@ -2811,8 +2811,9 @@
       const chance = motionChance(motionCounts(Q, id));
       const support = (motion.support || []).map(filingText);
       // Z — 1.04 (decision 3A of the event audit): the forecast in words only, without a percentage.
-      Q['pl_con_' + id + '_line'] = L(motion.text[0], motion.text[1]) + ' ' + L('Today it ', 'Dziś ') + motionChanceWords(chance) + '.' +
-        (support.length ? L(' Our support: ', ' Samo poparcie: ') + support.join(', ') + '.' : '');
+      // Z — 1.38 (decision D1A of 25 XI 2026): two sentences at most — the motion, then the forecast with the effects of our support.
+      Q['pl_con_' + id + '_line'] = L(motion.text[0], motion.text[1]) + ' ' + L('Today it ', 'Dziś ') + motionChanceWords(chance) +
+        (support.length ? L('; our support alone: ', '; samo poparcie: ') + support.join(', ') : '') + '.';
     }
     Q.pl_con_draft_text = list.length ? list.map((id, i) => (i + 1) + '. ' + motionName(id)).join(', ') : L('no motion yet', 'na razie żaden wniosek');
   }
@@ -4843,11 +4844,12 @@
   }
 
   // Z — 1.11 (decision 5A): the card warns when a decision could take the pool below zero.
+  // Z — 1.38 (decision D1A of 25 XI 2026): one sentence; below zero the reading of the budget already names the printing and the programmes.
   function deficitWarning(pool) {
     if (pool >= 3) return '';
-    return L(' A decision that takes the budget below zero is paid by printing money, and inflation rises; a ministry can spend down to −3 B.',
-      ' Wydatek, który sprowadzi budżet pod kreskę, państwo pokryje dodrukiem pieniędzy, a inflacja wzrośnie; resort może zejść najwyżej trzy jednostki pod kreskę.') +
-      (pool < 1 ? L(' Below −2 B the programmes run at half strength.', ' Gdy budżet spadnie głęboko pod kreskę, programy działają w połowie.') : '');
+    if (pool < 0) return L(' A ministry can spend down to −3 B.', ' Resort może zejść najwyżej trzy jednostki pod kreskę.');
+    return L(' A decision below zero is paid by printing money, and a ministry can spend down to −3 B', ' Wydatek poniżej zera państwo pokryje dodrukiem pieniędzy, a resort może zejść najwyżej trzy jednostki pod kreskę') +
+      (pool < 1 ? L('; deep below zero the programmes run at half strength.', '; głęboko pod kreską programy działają w połowie.') : '.');
   }
   function cardView(Q, cardId) {
     costWords(Q);

@@ -33,8 +33,6 @@ Prime minister: [+ prime_minister_display +]. PPS position: [+ pps_government_po
 
 [? if pl_cabinet_support_display : Declared support: [+ pl_cabinet_support_display +]. ?]
 
-**End our support** takes effect at once; in the same sequence PPS decides whether to support a motion to dismiss the cabinet. **A threat** makes our demand a condition of further support: if the government refuses, we must either carry the threat out or back down. **Persuasion** asks without a threat and costs no relations.
-
 - @withdraw
 - @bargain
 - @persuade
@@ -46,7 +44,7 @@ Prime minister: [+ prime_minister_display +]. PPS position: [+ pps_government_po
 
 @withdraw
 title: [? if pl_sup_member : Leave the cabinet with our ministers ?][? if not pl_sup_member : End our support of the cabinet ?]
-subtitle: [? if pl_sup_member : Our ministers resign and our coalition agreements end. ?][? if not pl_sup_member : Our agreements with the cabinet end. ?] The cabinet continues as a minority government unless the Sejm dismisses it.
+subtitle: [? if pl_sup_member : Our ministers resign and our coalition agreements end. ?][? if not pl_sup_member : Our agreements with the cabinet end at once. ?] Right after, we decide whether to support a motion to dismiss the cabinet.
 choose-if: {! return PolishGovernment.supportOptionStatus(Q, 'withdraw', Q.pl_sup_mode).available !}
 unavailable-subtitle: [+ pl_sup_withdraw_reason +]
 on-arrival: {!
@@ -57,7 +55,7 @@ go-to: motion if not pl_sup_fell; fallen if pl_sup_fell
 
 @bargain
 title: [? if pl_sup_member : Put financed worker protection to the Council of Ministers, or we leave the cabinet ?][? if not pl_sup_member : Demand financed worker protection, or we end our support ?]
-subtitle: [? if pl_sup_member : Our coalition partners weigh how much they need us. ?][? if not pl_sup_member : The government weighs how much it needs us. ?] Parties that give in under a threat think less of us (−3 relation).
+subtitle: [? if pl_sup_member : Our coalition partners weigh how much they need us. ?][? if not pl_sup_member : The government weighs how much it needs us. ?] After a refusal we must carry the threat out or back down; parties that give in under a threat think less of us (−3 relation).
 choose-if: {! return PolishGovernment.supportOptionStatus(Q, 'bargain', Q.pl_sup_mode).available !}
 unavailable-subtitle: [+ pl_sup_demand_reason +]
 on-arrival: {!

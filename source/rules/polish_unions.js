@@ -1665,10 +1665,10 @@
       Q.pl_dsp_title = disputeTitle(rec);
       Q.pl_dsp_text = disputeCause(S, rec) + (rec.pps_answered ? ' ' + L('The government has rejected the threat of a strike.', 'Rząd odrzucił groźbę strajku.') : '');
       Q.pl_dsp_numbers = rec.branches.map(b => unionNumbers(S, b)).join('. ') + '.';
-      Q.pl_dsp_note = L('A won strike: wages rise for two months, the workers’ grievance falls, and the unions’ trust and the support of PPS grow. ',
-          'Wygrany strajk: płace rosną na dwa miesiące, niezadowolenie robotników spada, a zaufanie związków i poparcie PPS rosną. ') +
-        L('Each month of a strike costs the party ' + strikePayWords(S).en + ' for each branch', 'Każdy miesiąc strajku kosztuje partię ' + strikePayWords(S).acc +
-          ' za każdą branżę') + (strikePayRest(S) ? '; ' + strikePayRest(S) : '') + '.';
+      // Z — 1.38 (decision D1A of 25 XI 2026): one sentence on what a strike gives and what it costs.
+      Q.pl_dsp_note = L('A won strike raises wages for two months and wins PPS the trust of the unions and of the voters, and each month of a strike costs the party ' +
+          strikePayWords(S).en + ' for each branch', 'Wygrany strajk podnosi płace na dwa miesiące i zjednuje PPS związki i wyborców, a każdy miesiąc strajku kosztuje partię ' +
+          strikePayWords(S).acc + ' za każdą branżę') + (strikePayRest(S) ? '; ' + strikePayRest(S) : '') + '.';
     } else {
       Q.pl_dsp_title = L('A dispute with the leadership of PPS', 'Spór z kierownictwem PPS');
       Q.pl_dsp_text = lead ? L(BRANCH_NAMES[lead] + ' is in dispute with the leadership of PPS over a concrete change (dissent ' + fmt(S.unions[lead].dissent) + ').',

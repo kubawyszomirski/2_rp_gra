@@ -502,7 +502,8 @@ test('Prasa wzmacnia kampanię 0.90: the press makes a campaign of the Campaign 
   const S = Q.S, press = S.party_orgs.press;
   close(PolishParty.pressBoost(S).value, 0.25 * 0.30 * 0.60);
   PolishParty.campaignView(Q);
-  assert.equal(Q.pl_campaign_press, 'The party press makes a campaign stronger among its readers, workers and the unemployed: by 5%.');
+  assert.equal(Q.pl_campaign_press, 'the party press makes a campaign a little stronger among its readers, workers and the unemployed');
+  assert.match(Q.pl_campaign_line, /^The direction of the party: .+; the party press makes a campaign a little stronger among its readers, workers and the unemployed\.$/);
   const spec = boost => { press.reach = boost; return PolishParty.issueSpec(Q, 'eight_hours'); };
   const worker = S.society.cells.find(c => c.class_id === 'workers'), peasant = S.society.cells.find(c => c.class_id === 'rural');
   const low = spec(30), high = spec(60);

@@ -18,13 +18,9 @@ go-to: results if sejm_forming_government; main if not sejm_election_in_progress
 
 = Wybory do Sejmu — [+ month : month +] [+ year +]
 
-[? if not sejm_first_election_completed : The day of the Sejm election, 5 November 1922, has come. The same result sets the 111-seat Senate in the same party proportions. The National Democrats and the Christian Democrats stand together as the list of the Christian Union of National Unity. ?]
+[? if not sejm_first_election_completed : The day of the Sejm election, 5 November 1922, has come: the votes will fill **444 seats**, a majority needs **223 MPs**, and the same result sets the 111-seat Senate. The National Democrats and the Christian Democrats stand together as the list of the Christian Union of National Unity. ?]
 
-[? if not sejm_first_election_completed : The campaigns and events of the past months have shaped the voters' intentions. The votes will fill **444 seats**; a majority needs **223 MPs**. Then we turn to the government. ?]
-
-[? if sejm_first_election_completed : The five-year term of the Sejm elected in 1922 has ended. The election is held on Sunday 19 February 1928. The same law applies: 444 seats, and every list stands on its own. ?]
-
-[? if sejm_first_election_completed : This election ends the first chapter: the chapter report follows the result, before a new government is formed. ?]
+[? if sejm_first_election_completed : The five-year term of the Sejm elected in 1922 has ended, and the election is held on Sunday 19 February 1928 under the same law, every list standing on its own. This election ends the first chapter: the balance of the chapter follows the result, before a new government is formed. ?]
 
 - @calculate: Count the votes.
 
@@ -100,18 +96,18 @@ The most votes went to [+ sejm_largest_lists +].
 
 {!<div id="sejm_result_table"></div>!}
 
-[? if pl_joint_lists_display : Joint lists at this election: [+ pl_joint_lists_display +]. A joint list shares its MPs among its parties in proportion to their votes; each party keeps its own club, its relations and its own place in a cabinet. ?]
+[? if pl_joint_lists_display : Joint lists at this election: [+ pl_joint_lists_display +]. Each party of a joint list gets MPs by its votes and keeps its own club. ?]
 
-[? if sejm_has_chzjn and not pl_joint_lists_display : ChZJN is shown together, but ZLN and PSChD remain separate parties for relations and cabinet membership; its MPs are shared in proportion to their votes. ?]
+[? if sejm_has_chzjn and not pl_joint_lists_display : The Christian Union of National Unity was a joint list of the National Democrats and the Christian Democrats; in the Sejm they remain two clubs. ?]
 
 @government
 call: polish_opening_state
 
 = Government formation
 
-The new Sejm has [+ sejm_total_seats +] MPs; a majority needs [+ sejm_majority_required +]. PPS has [+ pps_seats +] MPs. The previous cabinet governs as caretaker until the head of state appoints a new one.
+The new Sejm has [+ sejm_total_seats +] MPs; a majority needs [+ sejm_majority_required +], and PPS has [+ pps_seats +].
 
-PPS now makes one offer: a cabinet and its prime minister, the role of PPS, a request for minority support and the PPS portfolios. Each partner answers yes or no with its reason. A cabinet without PPS is formed if PPS stays in opposition or its offer fails. ChZJN was an electoral list, not an obligation to govern together. In December the Sejm elects its Marshal and the National Assembly elects the President, without changing the cabinet.
+PPS now makes its offer of a cabinet; if it fails or we stay in opposition, a cabinet without us is formed. In December the Sejm will elect its Marshal and the National Assembly the President.
 
 - @polish_cabinet_formation: Continue to the government formation.
 - @return_to_play: Continue.

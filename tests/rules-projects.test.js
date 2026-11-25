@@ -808,7 +808,7 @@ test('Debata 0.82: the list of PPS in its order; the lines of What Power Do We W
   assert.equal(Q.pl_con_draft_text, '1. Democratic guarantees, 2. Separation of the Church and the state, 3. Constructive vote of no confidence',
     'an unmarked motion leaves the list and comes back at its end');
   assert.deepEqual([Q.pl_con_church_separation_mark, Q.pl_con_referendum_mark], ['■ 2.', '□']);
-  assert.match(Q.pl_con_church_separation_line, /^The end of the leading position of the Catholic Church.*Our support: relations with the Christian Democrats worsen \(−3\)/);
+  assert.match(Q.pl_con_church_separation_line, /^The end of the leading position of the Catholic Church.* Today it .+; our support alone: relations with the Christian Democrats worsen \(−3\)/);
   const before = { pschd: Q.S.actors.relations.pschd, piast: Q.S.actors.relations.psl_piast, lewica: Q.lewica_dissent };
   const text = proj.debateDeclare(Q);
   assert.equal(Q.month_actions, 0, 'the position costs no month');
@@ -977,7 +977,7 @@ test('Budżet w rządzie 1.11: a ministry of PPS spends down to −3 B and the c
   assert.equal(proj.affordStatus(Q, 3).available, true, 'down to −3 B');
   assert.equal(proj.affordStatus(Q, 4).available, false, 'not below −3 B');
   proj.cardView(Q, 'internal_security');
-  assert.match(Q.pl_gc_budget, /A decision that takes the budget below zero is paid by printing money, and inflation rises; a ministry can spend down to −3 B\. Below −2 B the programmes run at half strength\./);
+  assert.match(Q.pl_gc_budget, /A decision below zero is paid by printing money, and a ministry can spend down to −3 B; deep below zero the programmes run at half strength\./);
   Q.S.economy.budget = 5;
   proj.cardView(Q, 'internal_security');
   assert.doesNotMatch(Q.pl_gc_budget, /printing/, 'no warning with enough money');

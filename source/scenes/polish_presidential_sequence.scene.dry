@@ -82,11 +82,9 @@ new-page: true
 
 = Zgromadzenie Narodowe — 9 December 1922
 
-The first President of the Republic is elected by the **National Assembly**: the 444-member Sejm together with the 111 senators.
+The first President of the Republic is elected by the **National Assembly**, the 444-member Sejm together with the 111 senators: each club votes for its preferred candidate still in the race, and in each round the weakest drops out until someone has more than half of the votes.
 
 The candidates of the other groups are **Maurycy Zamoyski** for the right, **Stanisław Wojciechowski** for PSL Piast, **Jan Baudouin de Courtenay** for the national minorities and **Gabriel Narutowicz** for PSL Wyzwolenie. PPS decides whether to nominate **Ignacy Daszyński**.
-
-Each club votes for its preferred candidate still in the race; in each round the weakest drops out, until someone has more than half of the votes.
 
 - @confirm_daszynski: Nominate Ignacy Daszyński as the PPS candidate.
 - @decline_daszynski: Do not nominate a PPS candidate.

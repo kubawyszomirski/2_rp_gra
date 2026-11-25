@@ -4,7 +4,6 @@
  "lines": {
   "title: Talks with Other Parties": "title: Rozmowy z innymi partiami",
   "= Talks with other parties": "= Rozmowy z innymi partiami",
-  "PPS has no majority of its own. Regular talks with one party improve our relation with it: +4, or +2 once the relation is 70 or more. A talk costs no party resources, and the same party can be approached again after three months. Talks alone create no votes, list agreements or cabinet posts; those are agreed in the parliamentary cards.": "PPS nie ma własnej większości. Rozmowy poprawiają nasze stosunki z jedną partią, choć przy dobrych stosunkach coraz mniej. Do tej samej partii wracamy po trzech miesiącach; głosy, wspólne listy i miejsca w rządzie uzgadnia się na kartach parlamentarnych.",
   "title: Talk to PSL Wyzwolenie": "title: Rozmowy z PSL Wyzwolenie",
   "subtitle: Relation now [+ pl_out_psl_wyzwolenie_relation +]; it improves (+[+ pl_out_psl_wyzwolenie_gain +]).": "subtitle: Nasze stosunki: [+ pl_out_psl_wyzwolenie_relation : relationships +]; rozmowy je poprawią (+[+ pl_out_psl_wyzwolenie_gain +]).",
   "PPS and PSL Wyzwolenie compare their programmes for the countryside and the workplace.": "PPS i PSL Wyzwolenie porównują swoje programy dla wsi i zakładów pracy.",
@@ -31,6 +30,7 @@
   "PPS uses the open channel for a working contact with the communists.": "PPS wykorzystuje otwarty kanał do roboczego kontaktu z komunistami.",
   "title: Open a contact with the KPP": "title: Nawiąż kontakt z KPP",
   "subtitle: Needs relation 10 with the KPP; talks with it become possible from next month.": "subtitle: Najpierw trzeba nawiązać kontakt z KPP; rozmowy będą możliwe od przyszłego miesiąca.",
-  "A first, careful contact with the communists is made. Further cooperation needs separate steps.": "Dochodzi do pierwszego, ostrożnego kontaktu z komunistami. Dalsza współpraca wymaga osobnych kroków."
+  "A first, careful contact with the communists is made. Further cooperation needs separate steps.": "Dochodzi do pierwszego, ostrożnego kontaktu z komunistami. Dalsza współpraca wymaga osobnych kroków.",
+  "PPS has no majority of its own: talks improve our relation with one party, less once the relation is good, and we can return to the same party after three months.": "PPS nie ma własnej większości: rozmowy poprawiają nasze stosunki z jedną partią, przy dobrych stosunkach coraz mniej, a do tej samej partii wracamy po trzech miesiącach."
  }
 }

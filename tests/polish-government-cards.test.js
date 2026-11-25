@@ -268,7 +268,9 @@ test('Debata o konstytucji 0.82 w grze: one page of seven motions marked in orde
     assert.equal(P.constitutionDebateDue(Q), true, 'due in December 1924');
     engine.goToScene('polish_event_constitution_debate');
     // Z — 1.04 (decision 3A of the event audit): the page names no chance in numbers.
-    assert.match(page(), /26 października 1924 r\. Związek Ludowo-Narodowy.*Debata nie oznacza od razu głosowania.*im wyżej na liście, tym szybciej trafi pod obrady.*Nasza lista: na razie żaden wniosek\./);
+    // Z — 1.38: two sentences on top, without the instructions of a form.
+    assert.match(page(), /26 października 1924 r\. Związek Ludowo-Narodowy.*Sejm otwiera debatę: Komisja Konstytucyjna kieruje pod obrady po kolei wnioski, które PPS poprze, zaczynając od najwyżej postawionych.*Nasza lista: na razie żaden wniosek\./);
+    assert.doesNotMatch(page(), /Zaznacz/);
     assert.doesNotMatch(page(), /\d+(,\d+)?\s?%/, 'no percentage on the page of the debate');
     assert.deepEqual([P.constitutionDebateOpen(Q.S), P.constitutionDebateDue(Q)], [true, false], 'once');
     assert.deepEqual(ids(engine), [...P.MOTION_IDS.map(id => 'polish_event_constitution_debate.m_' + id), 'polish_event_constitution_debate.declare']);
@@ -276,7 +278,7 @@ test('Debata o konstytucji 0.82 w grze: one page of seven motions marked in orde
     assert.deepEqual([arbitration.canChoose, plain(arbitration.subtitle)], [false, 'Tylko przy linii „Silniejsza prezydentura” (karta „Jakiej władzy chcemy”).']);
     assert.equal(plain(choice(engine, 'polish_event_constitution_debate.m_referendum').title), '□ Referendum ludowe');
     assert.match(plain(choice(engine, 'polish_event_constitution_debate.m_church_separation').subtitle),
-      /^Koniec „naczelnego stanowiska” Kościoła katolickiego.* Samo poparcie: stosunki z chadecją się pogarszają \(−3\), stosunki z PSL „Piast” się pogarszają \(−3\), sprzeciw Lewicy PPS spada \(−2\)\.$/);
+      /^Koniec „naczelnego stanowiska” Kościoła katolickiego.* Dziś .+; samo poparcie: stosunki z chadecją się pogarszają \(−3\), stosunki z PSL „Piast” się pogarszają \(−3\), sprzeciw Lewicy PPS spada \(−2\)\.$/);
     choose(engine, 'polish_event_constitution_debate.m_constructive_vonc');
     choose(engine, 'polish_event_constitution_debate.m_labour_chamber');
     assert.equal(engine.state.sceneId, 'polish_event_constitution_debate.menu');

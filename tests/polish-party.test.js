@@ -449,11 +449,11 @@ test('Kampania 0.77: five matters over several groups at once, a preview with th
     /^Very popular among employed workers \(\+[\d.]+\), popular among the unemployed \(\+[\d.]+\), disliked among the bourgeoisie and landowners \(−[\d.]+\)\./);
   assert.doesNotMatch(plain(choice(engine, 'polish_party_campaign.eight_hours').subtitle), /points|in the whole country/);
   // The opening direction, parliamentary socialism, strengthens the land and the unemployed; a threat to democracy the Republic.
-  assert.match(plain(choice(engine, 'polish_party_campaign.land').subtitle), /Stronger now: the direction of the party\./);
-  assert.doesNotMatch(plain(choice(engine, 'polish_party_campaign.republic').subtitle), /Stronger now/);
+  assert.match(plain(choice(engine, 'polish_party_campaign.land').subtitle), /now it is strengthened by the direction of the party\./);
+  assert.doesNotMatch(plain(choice(engine, 'polish_party_campaign.republic').subtitle), /now it is strengthened/);
   const before = PolishParty.issuePreview(Q, 'republic');
   Q.S.coup = Object.assign(Q.S.coup || {}, {pressure: 50});
-  assert.match(PolishParty.issuePreview(Q, 'republic'), /Stronger now: the situation of the country\./);
+  assert.match(PolishParty.issuePreview(Q, 'republic'), /now it is strengthened by the situation of the country\./);
   const total = text => [...text.matchAll(/\(([+−])([\d.]+)\)/g)].reduce((n, m) => n + (m[1] === '+' ? 1 : -1) * Number(m[2]), 0);
   assert.ok(total(PolishParty.issuePreview(Q, 'republic')) >= total(before));
   Q.S.coup.pressure = 0;

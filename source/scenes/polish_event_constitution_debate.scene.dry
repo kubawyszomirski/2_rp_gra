@@ -14,9 +14,7 @@ PolishProjects.debateView(Q);
 
 = A debate on the constitution
 
-At its congress on 26 October 1924 the Popular National Union (ZLN) adopted a resolution on the “repair of the constitution”: a President who may dissolve the Sejm, a Senate equal to the Sejm, fewer deputies, a narrower immunity and a constitutional tribunal. In December 1924 the congress of PSL “Piast” also declared a change of the constitution necessary. The Sejm opens a constitutional debate.
-
-A debate does not mean a vote at once: the Constitutional Committee may work for months and now and then brings one motion to the floor. Mark the motions PPS will support, starting with the most important; the higher a motion is on our list, the sooner it comes to the floor. A change of the constitution needs two thirds of the votes in the Sejm and in the Senate. A motion PPS does not support does not come to a vote.
+At its congress on 26 October 1924 the Popular National Union (ZLN) demanded a “repair of the constitution” — a President who may dissolve the Sejm, a Senate equal to the Sejm and fewer deputies — and in December PSL “Piast” also declared a change necessary. The Sejm opens a debate: the Constitutional Committee brings the motions PPS supports to the floor one by one, the highest on our list first, and a change needs two thirds of the votes in the Sejm and in the Senate.
 
 Our list: [+ pl_con_draft_text +].
 
@@ -36,8 +34,6 @@ PolishProjects.debateView(Q);
 !}
 
 = A debate on the constitution
-
-Mark the motions in the order of their importance; a motion you unmark leaves the list, and the later ones move up.
 
 Our list: [+ pl_con_draft_text +].
 

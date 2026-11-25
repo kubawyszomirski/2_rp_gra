@@ -19,7 +19,7 @@ Q.pl_gc_ministry = PolishProjects.ministryLine(Q, 'polish_gov_land');
 
 *[+ pl_gc_ministry +]*
 
-The land reform divides the great estates among peasants and farm workers. Each parcellation covers one of three parts of the country. [+ pl_gc_land_left +]
+The land reform divides the great estates among peasants and farm workers, one of three parts of the country at a time. [+ pl_gc_land_left +]
 
 [+ pl_gc_budget +]
 

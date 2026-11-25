@@ -1307,23 +1307,25 @@
     const causes = Object.keys(MOOD_CAUSES).filter(k => parts[k] > 0).map(k => L(MOOD_CAUSES[k][0], MOOD_CAUSES[k][1]));
     const join = list => list.length < 2 ? list.join('') : list.slice(0, -1).join(', ') + L(' and ', ' i ') + list[list.length - 1];
     const democracy = S.politics.democracy, steps = controlSteps(S).length;
-    Q.pl_cw_push = L('The officers loyal to Piłsudski are preparing to act, and his circle openly speaks of a change of power.',
-      'Oficerowie wierni Piłsudskiemu szykują się do działania, a jego otoczenie otwarcie mówi o zmianie władzy.') +
-      (causes.length ? ' ' + L('They are pushed by this: ', 'Popycha ich to, że ') + join(causes) + '.' : '');
-    Q.pl_cw_stop = L('A coup can still be stopped: by an agreement with Piłsudski, or by a very strong democracy together with the government’s firm hold on the army — the law on the oversight of the army, the army subordinated to the minister and promotions of officers loyal to the government.',
-      'Zamach wciąż można powstrzymać: porozumieniem z Piłsudskim albo bardzo silną demokracją razem z mocną kontrolą rządu nad wojskiem — ustawą o nadzorze nad armią, podporządkowaniem wojska ministrowi i awansami oficerów lojalnych wobec rządu.') + ' ' +
-      (democracy >= DETERRENCE.democracy && steps >= DETERRENCE.steps ? L('We are close to it.', 'Jesteśmy blisko tego.') :
-        democracy >= DETERRENCE.democracy ? L('Democracy is strong, but the government does not yet hold the army.', 'Demokracja jest silna, ale rząd nie panuje jeszcze nad wojskiem.') :
-        steps >= DETERRENCE.steps ? L('The government holds the army, but democracy is not yet strong enough.', 'Rząd panuje nad wojskiem, ale demokracja nie jest jeszcze dość silna.') :
-        L('We are far from it today.', 'Dziś jesteśmy od tego daleko.'));
+    // Z — 1.38 (decision D1A of 25 XI 2026): one sentence for each of the three things the card says.
+    Q.pl_cw_push = causes.length ? L('The officers loyal to Piłsudski are preparing to act; they are pushed by this: ' + join(causes) + '.',
+      'Oficerowie wierni Piłsudskiemu szykują się do działania; popycha ich to, że ' + join(causes) + '.') :
+      L('The officers loyal to Piłsudski are preparing to act, and his circle openly speaks of a change of power.',
+        'Oficerowie wierni Piłsudskiemu szykują się do działania, a jego otoczenie otwarcie mówi o zmianie władzy.');
+    Q.pl_cw_stop = L('A coup will be stopped by an agreement with Piłsudski, or by a very strong democracy together with the government’s hold on the army (the oversight law, the army subordinated to the minister, loyal officers promoted); ',
+      'Zamach powstrzyma porozumienie z Piłsudskim albo bardzo silna demokracja razem z kontrolą rządu nad wojskiem (ustawa o nadzorze, podporządkowanie wojska ministrowi, awanse lojalnych oficerów); ') +
+      (democracy >= DETERRENCE.democracy && steps >= DETERRENCE.steps ? L('we are close to it.', 'jesteśmy blisko tego.') :
+        democracy >= DETERRENCE.democracy ? L('democracy is strong, but the government does not yet hold the army.', 'demokracja jest silna, ale rząd nie panuje jeszcze nad wojskiem.') :
+        steps >= DETERRENCE.steps ? L('the government holds the army, but democracy is not yet strong enough.', 'rząd panuje nad wojskiem, ale demokracja nie jest jeszcze dość silna.') :
+        L('today we are far from it.', 'dziś jesteśmy od tego daleko.'));
     const rail = railStrong(S), militia = militiaStrong(S);
-    Q.pl_cw_fight = L('If it comes to a coup, Piłsudski will most probably win without us. Only a strong union of railway workers and a large Akcja Socjalistyczna can tip the balance.',
-      'Jeśli dojdzie do zamachu, bez nas najpewniej wygra Piłsudski. Przechylić szalę mogą tylko silny związek kolejarzy i liczna Akcja Socjalistyczna.') + ' ' +
-      (rail ? L('Our railway union is strong enough to stop the trains.', 'Nasz związek kolejarzy jest dość silny, by zatrzymać pociągi.') :
-        L('Our railway union is still too weak to stop the trains.', 'Nasz związek kolejarzy jest jeszcze za słaby, by zatrzymać pociągi.')) + ' ' +
+    Q.pl_cw_fight = L('In the fighting Piłsudski will most probably win without us, and only a strong railway union and a large Akcja Socjalistyczna can tip the balance: ',
+      'W walkach bez nas najpewniej wygra Piłsudski, a szalę przechylić mogą tylko silny związek kolejarzy i liczna Akcja Socjalistyczna: ') +
+      (rail ? L('our railway union is strong enough', 'nasz związek kolejarzy jest dość silny') : L('our railway union is still too weak', 'nasz związek kolejarzy jest jeszcze za słaby')) +
+      L(', and ', ', a ') +
       (militia ? L('Akcja Socjalistyczna is ready.', 'Akcja Socjalistyczna jest gotowa.') : S.militia.stage === 2 ?
         L('Akcja Socjalistyczna is still too small.', 'Akcja Socjalistyczna jest jeszcze za mała.') :
-        L('Our Milicja is not yet Akcja Socjalistyczna, so it will not count against the army.', 'Nasza Milicja nie jest jeszcze Akcją Socjalistyczną, więc nie będzie się liczyć wobec wojska.'));
+        L('our Milicja is not yet Akcja Socjalistyczna.', 'nasza Milicja nie jest jeszcze Akcją Socjalistyczną.'));
   }
 
   // ---- Z — 1.35 (decision D6A of 25 XI 2026): the ending of the chapter — first the result, then the side PPS took, then what follows
@@ -1428,14 +1430,14 @@
     const causes = Object.keys(MOOD_CAUSES).filter(k => parts[k] > 0).map(k => L(MOOD_CAUSES[k][0], MOOD_CAUSES[k][1]));
     const join = list => list.length < 2 ? list.join('') : list.slice(0, -1).join(', ') + L(' and ', ' i ') + list[list.length - 1];
     Q.pl_army_title = L('Unrest in the army', 'Niepokój w wojsku');
-    Q.pl_army_text = (level >= 3 ?
-      L('From the garrisons come reports of preparations for a coup: units loyal to Piłsudski practise their march, and his circle looks for allies. A coup may come within months.',
-        'Z garnizonów napływają doniesienia o przygotowaniach do zamachu: oddziały wierne Piłsudskiemu ćwiczą wymarsz, a jego otoczenie szuka sojuszników. Zamach może przyjść w ciągu kilku miesięcy.') :
-      L('In the officers’ messes there is talk of a march on Warsaw. Officers loyal to Piłsudski openly attack the government and the Sejm, and the press writes about a possible coup.',
-        'W kasynach oficerskich mówi się o marszu na Warszawę. Oficerowie wierni Piłsudskiemu otwarcie atakują rząd i Sejm, a prasa pisze o możliwym zamachu.')) +
-      (causes.length ? ' ' + L('The officers are pushed by this: ', 'Oficerów popycha do tego to, że ') + join(causes) + '.' : '');
-    Q.pl_army_help = L('The tension eases when the country has a steady government, the Sejm regains its authority and the dispute over the army is settled. If it comes to a coup, only a strong railway union and a large Akcja Socjalistyczna count.',
-      'Napięcie słabnie, gdy kraj ma stały rząd, Sejm odzyskuje autorytet, a spór o wojsko zostaje rozstrzygnięty. Gdy dojdzie do zamachu, liczy się tylko silny związek kolejarzy i liczna Akcja Socjalistyczna.');
+    // Z — 1.38 (decision D1A of 25 XI 2026): one sentence on the mood and what pushes the officers, one on what eases it.
+    const push = causes.length ? L('; they are pushed by this: ' + join(causes) + '.', '; popycha ich to, że ' + join(causes) + '.') : '.';
+    Q.pl_army_text = level >= 3 ?
+      L('From the garrisons come reports that units loyal to Piłsudski practise their march and a coup may come within months', 'Z garnizonów napływają doniesienia, że oddziały wierne Piłsudskiemu ćwiczą wymarsz, a zamach może przyjść w ciągu kilku miesięcy') + push :
+      L('In the officers’ messes there is talk of a march on Warsaw, and officers loyal to Piłsudski openly attack the government and the Sejm',
+        'W kasynach oficerskich mówi się o marszu na Warszawę, a oficerowie wierni Piłsudskiemu otwarcie atakują rząd i Sejm') + push;
+    Q.pl_army_help = L('The tension eases with a steady government, a Sejm with authority and the dispute over the army settled; if it comes to a coup, only a strong railway union and a large Akcja Socjalistyczna count.',
+      'Napięcie słabnie przy stałym rządzie, Sejmie z autorytetem i rozstrzygniętym sporze o wojsko, a gdy dojdzie do zamachu, liczą się tylko silny związek kolejarzy i liczna Akcja Socjalistyczna.');
   }
   function armyMoodSeen(Q) {
     const S = Q.S;

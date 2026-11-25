@@ -2221,8 +2221,9 @@
     const changes = bundleChanges(S, ISSUES[id].groups, bundleCampaign(Q, issueSpec(Q, id), false));
     const boosts = issueBoosts(Q, id);
     const issue = ISSUES[id];
-    return changesWords(changes, 'preview') + '. ' + capitalise(L(issue.situation_text[0], issue.situation_text[1])) + '.' +
-      (boosts.length ? L(' Stronger now: ', ' Teraz wzmacnia ją: ') + boosts.join(L(' and ', ' i ')) + '.' : '') +
+    // Z — 1.38 (decision D1A): what makes the campaign stronger, and what does so now, in one sentence.
+    return changesWords(changes, 'preview') + '. ' + capitalise(L(issue.situation_text[0], issue.situation_text[1])) +
+      (boosts.length ? L('; now it is strengthened by ', '; teraz wzmacnia ją ') + boosts.join(L(' and ', ' i ')) : '') + '.' +
       (issue.effect_text ? ' ' + L(issue.effect_text[0], issue.effect_text[1]) : '') + (issue.requires ? ' ' + thanksText(issue.requires) : '');
   }
 
@@ -2572,10 +2573,13 @@
     Q.pl_rally_open = rallyWindow(Q) ? 1 : 0;
     Q.pl_rally_why = rallyStatus(Q).reason;
     Q.pl_rally_groups = rallyGroupsText(Q.S);
-    Q.pl_campaign_line = L('The direction of the party: ', 'Kierunek partii: ') + stanceValue('direction', Q.S.actors.pps.strategy.direction) + '.';
+    // Z — 1.38 (decision D1A of 25 XI 2026): the direction and the press in one sentence, the press in words.
     const boost = Math.round(100 * pressBoost(Q.S).value);
-    Q.pl_campaign_press = boost > 0 ? L('The party press makes a campaign stronger among its readers, ' + readerWords(Q.S) + ': by ' + boost + '%.',
-      'Prasa partyjna wzmacnia kampanię wśród swoich czytelników — ' + readerWords(Q.S) + ' — o ' + boost + '%.') : '';
+    const much = boost < 8 ? L('a little', 'trochę') : boost < 15 ? L('clearly', 'wyraźnie') : L('much', 'mocno');
+    Q.pl_campaign_press = boost > 0 ? L('the party press makes a campaign ' + much + ' stronger among its readers, ' + readerWords(Q.S),
+      'prasa partyjna ' + much + ' wzmacnia kampanię wśród swoich czytelników: ' + readerWords(Q.S)) : '';
+    Q.pl_campaign_line = L('The direction of the party: ', 'Kierunek partii: ') + stanceValue('direction', Q.S.actors.pps.strategy.direction) +
+      (Q.pl_campaign_press ? '; ' + Q.pl_campaign_press : '') + '.';
   }
 
   // The Press card. A working press is paid and reaches someone (13.2).

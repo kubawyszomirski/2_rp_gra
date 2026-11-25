@@ -728,8 +728,10 @@ test('Ostrzeżenie 1.35: once, when the pressure first reaches 50; in words, wit
   PolishRules.setLanguage('pl');
   try {
     PolishSecurity.coupWarningView(Q);
-    assert.match(Q.pl_cw_stop, /porozumieniem z Piłsudskim albo bardzo silną demokracją/);
-    assert.match(Q.pl_cw_fight, /bez nas najpewniej wygra Piłsudski\. .*Nasz związek kolejarzy jest jeszcze za słaby/);
+    assert.match(Q.pl_cw_stop, /^Zamach powstrzyma porozumienie z Piłsudskim albo bardzo silna demokracja .*; dziś jesteśmy od tego daleko\.$/);
+    assert.match(Q.pl_cw_fight, /bez nas najpewniej wygra Piłsudski, .*: nasz związek kolejarzy jest jeszcze za słaby, a nasza Milicja nie jest jeszcze Akcją Socjalistyczną\.$/);
+    // Z — 1.38: one sentence each.
+    for (const text of [Q.pl_cw_push, Q.pl_cw_stop, Q.pl_cw_fight]) assert.equal((text.match(/[.!?](\s|$)/g) || []).length, 1, text);
     assert.doesNotMatch(Q.pl_cw_push + Q.pl_cw_stop + Q.pl_cw_fight, /\d/, 'no numbers');
   } finally {
     PolishRules.setLanguage('en');

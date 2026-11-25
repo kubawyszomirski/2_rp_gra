@@ -5,8 +5,6 @@
   "title: A Joint List?": "title: Wspólna lista?",
   "subtitle: The lists for the Sejm election are open: a joint list, or our own.": "subtitle: Listy na wybory do Sejmu są otwarte: wspólna lista albo własna.",
   "= A joint list?": "= Wspólna lista?",
-  "The Sejm election is held on [+ pl_list_vote +]; the lists close at the end of the month before. We can stand on a joint list with partners, or alone.": "Wybory do Sejmu odbędą się [+ pl_list_vote +]; listy zamykają się z końcem poprzedniego miesiąca. Możemy wystartować na wspólnej liście z partnerami albo sami.",
-  "A joint list adds up the votes of its parties when the seats are shared out, and divides its seats by their votes. After the election each party keeps its own club, and the list binds no one when a cabinet is formed.": "Wspólna lista sumuje głosy swoich partii przy podziale mandatów i dzieli mandaty według ich głosów. Po wyborach każda partia ma własny klub, a lista nikogo nie wiąże przy tworzeniu rządu.",
   "title: A joint list of PPS and PSL Wyzwolenie": "title: Wspólna lista PPS i PSL Wyzwolenie",
   "subtitle: Land reform with equal access and protection of labour; seats shared in proportion to votes.": "subtitle: Reforma rolna z równym dostępem i ochrona pracy; mandaty dzielone proporcjonalnie do głosów.",
   "Q.pl_list_name = PolishGovernment.LIST_OPTIONS.left_peasant.name;": "Q.pl_list_name = PolishGovernment.listNameText(PolishGovernment.LIST_OPTIONS.left_peasant.name);",
@@ -24,6 +22,7 @@
   "[? if pl_list_retry : Before the lists close next month, PPS can propose another joint list. ?]": "[? if pl_list_retry : Przed zamknięciem list w przyszłym miesiącu PPS może zaproponować inną wspólną listę. ?]",
   "- @root: Continue.": "- @root: Dalej.",
   "= Our own list": "= Własna lista",
-  "PPS goes to the election alone, with its full programme and all its own candidates.": "PPS idzie do wyborów sama, z pełnym programem i wszystkimi własnymi kandydatami."
+  "PPS goes to the election alone, with its full programme and all its own candidates.": "PPS idzie do wyborów sama, z pełnym programem i wszystkimi własnymi kandydatami.",
+  "The Sejm election is held on [+ pl_list_vote +], and the lists close at the end of the month before; we can stand on a joint list with partners, or alone. A joint list adds up the votes of its parties and divides its seats by their votes, and after the election each party keeps its own club and a free hand in forming a cabinet.": "Wybory do Sejmu odbędą się [+ pl_list_vote +], a listy zamykają się z końcem poprzedniego miesiąca; możemy wystartować na wspólnej liście z partnerami albo sami. Wspólna lista sumuje głosy swoich partii i dzieli mandaty według ich głosów, a po wyborach każda partia ma własny klub i wolną rękę przy tworzeniu rządu."
  }
 }
