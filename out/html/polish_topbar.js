@@ -179,6 +179,138 @@
       (r.limited ? L(', limited', ', okrojona') : '') + ')').join(', ');
   }
 
+  // ---- Z — 1.36 (the user's decisions of 25 XI 2026): the achievements of chapter I ----------------------------------------------
+  // Nineteen achievements, each read from the state of the game. They are checked on every month page and at the end of the chapter;
+  // the month page names one in the month it is earned, the balance of the chapter lists them, and the browser keeps every one ever
+  // earned for the page of the start menu (the German achievements of the original left that page).
+  const LEFT_CABINETS = Object.freeze(['pps_majority', 'left_minority', 'left_labour', 'united_left', 'workers_front']);
+  const LIVE = Object.freeze(['executing', 'operating', 'completed', 'paused']);
+  const reformKeys = (Q, S) => {
+    const proj = moduleOf('PolishProjects', './polish_projects.js');
+    return proj && proj.ppsReforms ? proj.ppsReforms(S).map(r => r.key) : [];
+  };
+  const coupOf = S => S.coup || {};
+  const ppsInCabinet = S => !!S.cabinet && S.cabinet.status === 'active' && S.cabinet.pps_mode === 'member';
+  const ppsSeats = S => ((S.parliament && S.parliament.clubs) || []).filter(c => c.id === 'pps').reduce((n, c) => n + c.seats, 0);
+  const ACHIEVEMENTS = Object.freeze([
+    {id: 'cabinet', name: ['In the cabinet', 'W rządzie'], desc: ['Ministers of PPS sit in a cabinet.', 'Ministrowie PPS zasiedli w rządzie.'],
+      test: (Q, S) => ppsInCabinet(S)},
+    {id: 'premier', name: ['A premier of PPS', 'Premier z PPS'], desc: ['A cabinet with a premier of PPS.', 'Rząd z premierem z PPS.'],
+      test: (Q, S) => ppsInCabinet(S) && S.cabinet.party === 'pps'},
+    {id: 'left_cabinet', name: ['A cabinet of the left', 'Rząd lewicy'], desc: ['PPS forms a cabinet of the left.', 'PPS współtworzy rząd lewicy.'],
+      test: (Q, S) => ppsInCabinet(S) && LEFT_CABINETS.indexOf(S.cabinet.configuration_id) >= 0},
+    {id: 'price_of_support', name: ['The price of support', 'Cena poparcia'], desc: ['A cabinet tolerated by PPS carries out a reform of ours.', 'Rząd tolerowany przez PPS przeprowadza naszą reformę.'],
+      test: (Q, S) => Object.keys(S.projects || {}).some(id => S.projects[id].pps_demand && S.projects[id].authorized && LIVE.indexOf(S.projects[id].status) >= 0)},
+    {id: 'first_reform', name: ['From words to deeds', 'Od słów do czynów'], desc: ['The first reform of PPS comes into force.', 'Pierwsza reforma PPS weszła w życie.'],
+      test: (Q, S) => reformKeys(Q, S).length >= 1},
+    {id: 'three_reforms', name: ['A programme at work', 'Program w działaniu'], desc: ['Three reforms of PPS are in force.', 'Trzy reformy PPS działają.'],
+      test: (Q, S) => reformKeys(Q, S).length >= 3},
+    {id: 'six_reforms', name: ['Rebuilding the state', 'Przebudowa państwa'], desc: ['Six reforms of PPS are in force.', 'Sześć reform PPS działa.'],
+      test: (Q, S) => reformKeys(Q, S).length >= 6},
+    {id: 'eight_hours', name: ['Guarding the eight hours', 'Na straży ośmiu godzin'], desc: ['The labour inspection watches over working time.', 'Działa inspekcja pracy, która pilnuje czasu pracy.'],
+      test: (Q, S) => reformKeys(Q, S).some(k => k === 'labor_inspection' || k === 'law:labor_inspection')},
+    {id: 'benefits', name: ['A benefit, not poverty', 'Zasiłek zamiast nędzy'], desc: ['Unemployment benefits are paid.', 'Działają zasiłki dla bezrobotnych.'],
+      test: (Q, S) => reformKeys(Q, S).some(k => k === 'worker_protection' || k === 'law:unemployment')},
+    {id: 'republic_defended', name: ['The Republic defended', 'Republika obroniona'], desc: ['The coup failed.', 'Zamach się nie powiódł.'],
+      test: (Q, S) => coupOf(S).outcome === 'legal_victory'},
+    {id: 'trains_stopped', name: ['The railwaymen stopped the trains', 'Kolejarze zatrzymali pociągi'], desc: ['The strike of the railway workers counted in the fighting for power.', 'Strajk kolejarzy liczył się w walkach o władzę.'],
+      test: (Q, S) => { const r = coupOf(S).attempt && coupOf(S).attempt.resolution; return !!r && r.fighting && r.strike >= 0.10; }},
+    {id: 'with_pilsudski', name: ['With Piłsudski', 'Z Piłsudskim'], desc: ['We backed Piłsudski, and he won.', 'Poparliśmy Piłsudskiego, a on wygrał.'],
+      test: (Q, S) => coupOf(S).stance === 'support_pils' && coupOf(S).outcome === 'pils_victory'},
+    {id: 'no_coup', name: ['No coup', 'Bez zamachu'], desc: ['The chapter ended with an election, without a coup.', 'Rozdział skończył się wyborami, bez zamachu.'], end: true,
+      test: (Q, S) => !coupOf(S).outcome},
+    {id: 'deterred', name: ['Piłsudski did not dare', 'Piłsudski się nie odważył'], desc: ['Democracy and the government’s control of the army held a coup back.', 'Demokracja i kontrola rządu nad wojskiem powstrzymały zamach.'], end: true,
+      test: (Q, S) => !coupOf(S).outcome && typeof coupOf(S).deterred_at === 'number'},
+    {id: 'character', name: ['The character of the party', 'Charakter partii'], desc: ['The party has adopted two characteristics.', 'Partia przyjęła dwie charakterystyki.'],
+      test: (Q, S) => ((S.actors.pps.profile || {}).adopted || []).length >= 2},
+    {id: 'credible', name: ['A credible party', 'Wiarygodna partia'], desc: ['We end the chapter with high credibility.', 'Rozdział kończymy z wysoką wiarygodnością.'], end: true,
+      test: (Q, S) => (S.actors.pps.credibility || 0) >= 75},
+    {id: 'no_split', name: ['No split', 'Bez rozłamu'], desc: ['No faction left the party in the whole chapter.', 'Przez cały rozdział żadna frakcja nie odeszła z partii.'], end: true,
+      test: (Q, S) => !((S.history && S.history.reasons) || []).some(r => r.kind === 'faction_departure')},
+    {id: 'strike_won', name: ['A strike won', 'Wygrany strajk'], desc: ['A strike won an agreement or a concession of the government.', 'Strajk wywalczył porozumienie albo ustępstwo rządu.'],
+      test: (Q, S) => Object.keys((S.strikes && S.strikes.records) || {}).some(id => { const r = S.strikes.records[id]; return r.started_at !== null && r.started_at !== undefined && (r.outcome === 'agreement' || r.outcome === 'government_concession'); })},
+    {id: 'socialist_action', name: ['Akcja Socjalistyczna', 'Akcja Socjalistyczna'], desc: ['The Milicja has become Akcja Socjalistyczna.', 'Milicja stała się Akcją Socjalistyczną.'],
+      test: (Q, S) => !!S.militia && S.militia.stage === 2},
+    {id: 'fifty_mps', name: ['Fifty deputies', 'Pięćdziesięciu posłów'], desc: ['PPS has at least fifty deputies in the Sejm.', 'PPS ma w Sejmie co najmniej pięćdziesięciu posłów.'],
+      test: (Q, S) => ppsSeats(S) >= 50},
+  ]);
+  const ACHIEVEMENT_BY_ID = Object.freeze(ACHIEVEMENTS.reduce((m, a) => Object.assign(m, {[a.id]: a}), {}));
+  const STORE_KEY = 'pps.achievements';
+  const achievementName = id => L(ACHIEVEMENT_BY_ID[id].name[0], ACHIEVEMENT_BY_ID[id].name[1]);
+  function browserStore() {
+    try { return typeof globalThis !== 'undefined' && typeof globalThis.window !== 'undefined' && globalThis.window.localStorage ? globalThis.window.localStorage : null; } catch (e) { return null; }
+  }
+  function storedAchievements() {
+    try { const store = browserStore(); const list = store ? JSON.parse(store.getItem(STORE_KEY) || '[]') : []; return Array.isArray(list) ? list : []; } catch (e) { return []; }
+  }
+  function storeAchievements(ids) {
+    try {
+      const store = browserStore();
+      const before = storedAchievements(), all = Array.from(new Set(before.concat(ids))).sort();
+      if (store && all.length > before.length) store.setItem(STORE_KEY, JSON.stringify(all));
+    } catch (e) { /* the browser keeps nothing; the game keeps its own */ }
+  }
+  function achievementState(S) {
+    if (!S.achievements) S.achievements = {earned: {}};
+    return S.achievements;
+  }
+  // Checks the achievements not yet earned in this game; those of the end only once the chapter has ended. Returns the new ones.
+  function checkAchievements(Q) {
+    const S = Q && Q.S;
+    if (!S || !Q.polish_party_rules || !S.actors || !S.actors.pps) return [];
+    const state = achievementState(S), ended = !!S.chapter && S.chapter.status === 'ended', fresh = [];
+    for (const a of ACHIEVEMENTS) {
+      if (state.earned[a.id] !== undefined || (a.end && !ended)) continue;
+      let ok = false;
+      try { ok = !!a.test(Q, S); } catch (e) { ok = false; }
+      if (ok) { state.earned[a.id] = Q.time; fresh.push(a.id); }
+    }
+    // The browser keeps all of this game, also those of a game loaded from a save made elsewhere or before 1.36.
+    if (Object.keys(state.earned).length) storeAchievements(Object.keys(state.earned));
+    return fresh;
+  }
+  const quoted = ids => ids.map(id => L('“' + achievementName(id) + '”', '„' + achievementName(id) + '”')).join(', ');
+  // The line of the month page: the achievements earned in this month.
+  function achievementsMonth(Q) {
+    const S = Q && Q.S;
+    if (!S) return '';
+    checkAchievements(Q);
+    const now = ACHIEVEMENTS.map(a => a.id).filter(id => achievementState(S).earned[id] === Q.time);
+    if (!now.length) return '';
+    if (now.length > 1) return '<strong>' + L('Achievements:', 'Osiągnięcia:') + '</strong> ' + quoted(now) + '.';
+    const a = ACHIEVEMENT_BY_ID[now[0]];
+    return '<strong>' + L('Achievement:', 'Osiągnięcie:') + '</strong> ' + quoted(now) + '. ' + L(a.desc[0], a.desc[1]);
+  }
+  // The balance of the chapter: every achievement of this game, in the order of the list.
+  function achievementsReport(Q) {
+    const S = Q && Q.S;
+    if (!S) return '';
+    checkAchievements(Q);
+    const earned = ACHIEVEMENTS.map(a => a.id).filter(id => achievementState(S).earned[id] !== undefined);
+    return earned.length ? quoted(earned) + '.' : L('None in this chapter.', 'W tym rozdziale żadnego.');
+  }
+  // The page of the achievements, in the four groups of the list; the earned ones are marked. In the Library (scope 'game') the
+  // marks are those of this game; on the start menu they are those of any game in this browser.
+  const ACHIEVEMENT_GROUPS = Object.freeze([
+    ['Power', 'Władza', ['cabinet', 'premier', 'left_cabinet', 'price_of_support']],
+    ['Reforms', 'Reformy', ['first_reform', 'three_reforms', 'six_reforms', 'eight_hours', 'benefits']],
+    ['The Republic and the coup', 'Republika i zamach', ['republic_defended', 'trains_stopped', 'with_pilsudski', 'no_coup', 'deterred']],
+    ['The party and the labour movement', 'Partia i ruch robotniczy', ['character', 'credible', 'no_split', 'strike_won', 'socialist_action', 'fifty_mps']]]);
+  function achievementsPage(Q, scope) {
+    const S = Q && Q.S;
+    if (S) checkAchievements(Q);
+    const game = new Set(S && S.achievements ? Object.keys(S.achievements.earned) : []);
+    const all = new Set(storedAchievements().concat(Array.from(game)));
+    const mine = scope === 'game' ? game : all, n = ACHIEVEMENTS.length;
+    Q.pl_ach_count = scope === 'game' ? L('In this game: ' + game.size + ' of ' + n + '; in all games: ' + all.size + '.',
+      'W tej grze: ' + game.size + ' z ' + n + '; we wszystkich grach: ' + all.size + '.') :
+      L('Earned: ' + mine.size + ' of ' + n + '.', 'Zdobyte: ' + mine.size + ' z ' + n + '.');
+    const line = id => { const a = ACHIEVEMENT_BY_ID[id];
+      return (mine.has(id) ? '■ <strong>' + L(a.name[0], a.name[1]) + '.</strong>' : '□ ' + L(a.name[0], a.name[1]) + '.') + ' ' + L(a.desc[0], a.desc[1]); };
+    Q.pl_ach_page = ACHIEVEMENT_GROUPS.map(g => '<em>' + L(g[0], g[1]) + '</em><br>' + g[2].map(line).join('<br>')).join('<br><br>');
+    return Q.pl_ach_page;
+  }
+
   function goalsView(Q) {
     const S = Q && Q.S;
     if (!S || !Q.polish_party_rules) return Q;
@@ -221,6 +353,7 @@
     // Z — 1.35 (decision D6A): the ending of the chapter — the result, our side and what follows.
     const security = globalThis.PolishSecurity;
     Q.pl_report_ending = S.chapter && S.chapter.status === 'ended' && security && security.coupEnding ? security.coupEnding(Q) : '';
+    Q.pl_report_achievements = S.chapter && S.chapter.status === 'ended' ? achievementsReport(Q) : '';
     Q.pl_record_reforms = reforms.length ? reformsList(reforms) : '';
     Q.pl_record_count = reforms.length;
     // The verdicts begin the sentences of the balance.
@@ -246,5 +379,7 @@
     return [one('Centrum', f.centrum, f.centrum.resigned), one('Lewica', f.lewica, f.lewica.split), one(L('Piłsudczycy', 'Piłsudczycy'), f.pilsudczycy, f.pilsudczycy.split)].join('; ');
   }
 
-  return Object.freeze({overviewView: overviewView, lineView: lineView, goalsView: goalsView, factionWords: factionWords});
+  return Object.freeze({overviewView: overviewView, lineView: lineView, goalsView: goalsView, factionWords: factionWords,
+    ACHIEVEMENTS: ACHIEVEMENTS, checkAchievements: checkAchievements, achievementsMonth: achievementsMonth, achievementsReport: achievementsReport,
+    achievementsPage: achievementsPage, storedAchievements: storedAchievements});
 }));

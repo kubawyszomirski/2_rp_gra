@@ -49,6 +49,8 @@ max-cards: 6
 
 [? if pl_support_notices : **Support:** [+ pl_support_notices +] ?]
 
+[? if pl_achievement_notices : [+ pl_achievement_notices +] ?]
+
 [? if pl_army_notice : **Army:** [+ pl_army_notice +] ?]
 
 [? if pl_election_reminder : **Elections approaching.** [+ pl_election_reminder +] [? if sejm_first_election_completed : This election ends the chapter. ?] ?]

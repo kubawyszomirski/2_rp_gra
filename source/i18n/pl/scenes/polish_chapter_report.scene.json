@@ -44,6 +44,7 @@
   "[? if pl_report_ready : **Credibility of PPS.** [+ pl_verdict_credibility +]. ?]": "[? if pl_report_ready : **Wiarygodność PPS.** [+ pl_verdict_credibility +]. ?]",
   "[? if pl_report_ready : **Reforms.** [+ pl_report_reforms +] ?]": "[? if pl_report_ready : **Reformy.** [+ pl_report_reforms +] ?]",
   "[? if pl_report_ready and pl_report_coup : **Turning point.** The attempt against the government of [+ pl_report_date +] is resolved. The first chapter ends here. ?]": "[? if pl_report_ready and pl_report_coup : **Punkt zwrotny.** Próba zamachu na rząd z [+ pl_report_date +] została rozstrzygnięta. Pierwszy rozdział kończy się tutaj. ?]",
-  "[? if pl_report_ready and pl_report_ending : **Ending.** [+ pl_report_ending +] ?]": "[? if pl_report_ready and pl_report_ending : **Zakończenie.** [+ pl_report_ending +] ?]"
+  "[? if pl_report_ready and pl_report_ending : **Ending.** [+ pl_report_ending +] ?]": "[? if pl_report_ready and pl_report_ending : **Zakończenie.** [+ pl_report_ending +] ?]",
+  "[? if pl_report_ready and pl_report_achievements : **Achievements.** [+ pl_report_achievements +] ?]": "[? if pl_report_ready and pl_report_achievements : **Osiągnięcia.** [+ pl_report_achievements +] ?]"
  }
 }

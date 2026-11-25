@@ -91,6 +91,8 @@ if (report) {
 
 [? if pl_report_ready : **Credibility of PPS.** [+ pl_verdict_credibility +]. ?]
 
+[? if pl_report_ready and pl_report_achievements : **Achievements.** [+ pl_report_achievements +] ?]
+
 [? if pl_report_ready and not pl_report_coup : **The new Sejm (444 MPs).** [+ pl_report_seats +]. ?]
 
 [? if pl_report_ready and pl_report_coup : **The Sejm at the end of the chapter (444 MPs).** [+ pl_report_seats +]. ?]

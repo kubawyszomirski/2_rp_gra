@@ -17,7 +17,26 @@ Your goals in this chapter: to bring PPS into power, to carry out its reforms an
 - @start: Start game
 - @election_simulation: Election simulation
 - @credits: Credits
-- @game_over.achievements
+- @achievements_pl
+
+
+@achievements_pl
+title: Achievements
+go-to: start_menu_2
+on-arrival: {!
+// Z — 1.36 (decision D4A): the achievements earned in any game in this browser; the German achievements left this menu.
+if (typeof PolishTopbar !== 'undefined' && PolishTopbar.achievementsPage) {
+    PolishTopbar.achievementsPage(Q, 'all');
+}
+!}
+
+= Achievements
+
+The twenty achievements of the first chapter. The marked ones were earned in a game played in this browser.
+
+[+ pl_ach_count +]
+
+[+ pl_ach_page +]
 
 
 @start

@@ -24,7 +24,8 @@ function dropKnownErrors() {
 test('Jedna trudność (21.1): only the Normal game, with saves and polls available', () => {
   const engine = dendry.createEngine();
   assert.deepEqual((engine.getCurrentChoices() || []).map(choice => choice.id).sort(),
-    ['credits', 'election_simulation', 'root.start'], 'no difficulty or historical-mode selector');
+    ['credits', 'election_simulation', 'root.achievements_pl', 'root.start'],
+    'no difficulty or historical-mode selector; Z — 1.36: the Polish achievements are on the start menu');
   dendry.choose(engine, 'root.start');
   dendry.choose(engine, 'root.1928_main');
   const Q = engine.state.qualities;
