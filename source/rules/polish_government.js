@@ -4653,6 +4653,12 @@
     Q.pl_deck_govt_why = (Q.time < 6 || Q.polish_opening_government_active) ?
       L('PPS tolerates the government but holds no ministries.', 'PPS toleruje rząd, ale nie ma ministerstw.') :
       L('PPS holds no ministry that opens a government card now.', 'PPS nie ma teraz ministerstwa, które otwiera kartę rządową.');
+    // Z — 1.39 (decision D4A of 25 XI 2026): where the player meets the closed deck, the other route to the same reforms — the bills of
+    // the initiative in the Parliament deck, open outside the cabinet after the election of 1922 (a cabinet with PPS closes them).
+    const S = Q.S, inCabinet = !!(S && S.cabinet && (S.cabinet.status === 'active' || S.cabinet.status === 'caretaker') && (S.cabinet.partner_ids || []).indexOf('pps') >= 0);
+    if (S && Q.sejm_first_election_completed && !inCabinet) {
+      Q.pl_deck_govt_why += ' ' + L('Our reforms go as bills from the Parliament deck.', 'Nasze reformy wnosimy jako ustawy z talii „Parlament”.');
+    }
     Q.pl_deck_parliament_why = L('No parliamentary card can be played now.', 'Teraz nie ma żadnej karty parlamentarnej do zagrania.');
   }
 

@@ -14,7 +14,7 @@ PolishProjects.initiativeView(Q);
 
 = Initiative: the State and Society
 
-The club of PPS can file a bill of its own on the state, the army, the school, the minorities and the land. We choose one matter, and next month the Sejm votes on it. A law passed in full leaves this card; one passed only in its limited version, rejected or withdrawn comes back [+ pl_ini_return +].
+The club of PPS files a bill of its own on the state, the army, the school, the minorities and the land, and the Sejm votes on it next month; when PPS joins a cabinet, its ministers bring in these reforms by a decision, without a vote, and this card closes. A law passed in full leaves the card, and one passed only in its limited version, rejected or withdrawn comes back [+ pl_ini_return +].
 
 - @army_oversight
 - @secular_school

@@ -14,6 +14,7 @@ Units: **R** — the resources of PPS (its money); **B** — a unit of the state
 
 - @goals: Goals and record
 - @achievements: Achievements
+- @routes: Routes to reforms
 - @government: Poland's opening constitutional arrangements
 - @presidency: Presidential office and December 1922 elections
 - @polish_timeline: Poland 1919–1922: from the Legislative Sejm to the first President
@@ -72,6 +73,22 @@ The twenty achievements of the first chapter. The marked ones were earned in thi
 [+ pl_ach_count +]
 
 [+ pl_ach_page +]
+
+@routes
+title: Routes to reforms
+go-to: menu
+
+= Routes to reforms
+
+Many reforms of PPS can come into force by more than one route; which one is open depends on the position of PPS.
+
+**A decision of a PPS minister** (PPS in the cabinet with the ministry): the card of the ministry in the Government Affairs deck. The reform comes into force without a vote in the Sejm and usually costs the budget; clubs outside the cabinet may object to it, and reformism softens the objections of the coalition partners.
+
+**A bill of the initiative** (PPS outside the cabinet, after the election of 1922): the cards “Initiative: Labour and the Economy” and “Initiative: the State and Society” in the Parliament deck. The Sejm votes the next month, and the bill may fall or pass only in a limited version; a law wins fewer voters than a decision of a minister, and parliamentarism raises its chances.
+
+**A demand on the cabinet** (PPS tolerates the cabinet): the card “Support for the Government” in the Parliament deck. If the cabinet accepts the demand, it brings in the protection of the unemployed itself; with reformism PPS can also demand labour inspection, workers’ housing or old-age insurance, and such a reform counts in the record of PPS.
+
+**Reforms with more than one route:** benefits for the unemployed (“Benefits and Insurance”, the bill “Protection of the unemployed”, a demand); old-age insurance (“Benefits and Insurance”, a bill, a demand with reformism); labour inspection (“Workers’ Rights”, a bill, a demand with reformism); public works and workers’ housing (“Public Works”, two bills, housing also as a demand with reformism); the progressive tax (“Taxes and Loans”, a bill); the land reform (“Land Reform”, a bill); the secular school (“Education Policy”, a bill); the self-government of the minorities (“The Borderlands and the Minorities”, the bill “Autonomy of the minorities”).
 
 @government
 go-to: menu
