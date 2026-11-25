@@ -360,21 +360,29 @@ test('Przegląd porozumienia (A3): an agreement carried out by the cabinet is ex
 });
 
 // Stage 8, closing fixes 1–5 (gaps of earlier stages in approved rules and texts).
-// Z — 1.19 (decision 4A of 22 XI 2026): good relations with the KPP (50 or more) open the offers with the communists; an older
-// save with the broader agreement keeps it.
-test('Front z komunistami (poprawka 1, 9.6; 1.19): the offers with the KPP stay closed until good relations with the KPP; then the usual gates and votes decide, and the KPP asks for no ministry', () => {
+// Z — 1.19 (decision 4A of 22 XI 2026) opened the offers with the communists at good relations with the KPP (50 or more).
+// Z — 1.37 (decision D1A of 25 XI 2026): chapter I forms no cabinet with the KPP — its club has two MPs; the reason says so, also with
+// very friendly relations and an older save's agreement. The gates of the two cabinets stay for the later chapters.
+test('Front z komunistami (poprawka 1, 9.6; 1.19; 1.37): chapter I forms no cabinet with the KPP and says why; later the usual gates decide, and the KPP asks for no ministry', () => {
   const Q = quiet();
   const S = Q.S;
-  for (const id of ['united_left', 'workers_front']) assert.match(PolishGovernment.configurationStatus(Q, id, {}).reason, /good relations with the KPP/);
-  PolishGovernment.changeRelation(Q, 'kpp', 50 - S.actors.relations.kpp, 'fixture');
-  for (const id of ['united_left', 'workers_front']) {
-    assert.doesNotMatch(PolishGovernment.configurationStatus(Q, id, {}).reason, /good relations with the KPP/, id + ': the preparation is met; gates and votes remain');
-  }
-  PolishGovernment.changeRelation(Q, 'kpp', -20, 'fixture');
-  assert.match(PolishGovernment.configurationStatus(Q, 'united_left', {}).reason, /good relations with the KPP/);
+  const reason = id => PolishGovernment.configurationStatus(Q, id, {}).reason;
+  for (const id of ['united_left', 'workers_front']) assert.equal(reason(id), 'The communists have only two MPs in the Sejm; such a cabinet has no chance of a majority.');
+  for (const id of ['kpp', 'npr', 'psl_wyzwolenie']) PolishGovernment.changeRelation(Q, id, 100 - S.actors.relations[id], 'fixture');
   S.actors.communist_cooperation.rules_agreed = true;
   S.actors.communist_cooperation.active_agreement = { agreed_at: Q.time, goal: 'joint_workers_action' };
-  assert.doesNotMatch(PolishGovernment.configurationStatus(Q, 'united_left', {}).reason, /good relations with the KPP/, 'an older save keeps its agreement');
+  for (const id of ['united_left', 'workers_front']) assert.match(reason(id), /only two MPs/, id + ': not with very friendly relations, nor with an older agreement');
+  PolishRules.setLanguage('pl');
+  try {
+    assert.equal(reason('workers_front'), 'Komuniści mają w Sejmie tylko dwóch posłów; taki rząd nie ma szans na większość.');
+  } finally {
+    PolishRules.setLanguage('en');
+  }
+  // A later chapter: the gates of the cabinets decide again.
+  S.chapter.number = 2;
+  PolishGovernment.changeRelation(Q, 'kpp', 60 - S.actors.relations.kpp, 'fixture');
+  assert.match(reason('united_left'), /Relation with KPP is below 65/);
+  assert.match(reason('workers_front'), /Relation with KPP is below 70/);
   assert.equal(PolishGovernment.portfolioFit('kpp', { configuration_id: 'united_left', members: ['pps', 'psl_wyzwolenie', 'npr', 'kpp'], portfolios: {} }), 100);
 });
 

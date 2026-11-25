@@ -337,6 +337,11 @@
     // Z — 1.19 (decision 2B of 22 XI 2026): the dues bring a third of a collection every month.
     const dues = monthlyDues(S);
     orgs.cash = round(orgs.cash + dues, MONEY_DIGITS);
+    // Z — 1.37 (decision D2A): friendly relations with the KPP calm the Left of PPS a little every month.
+    const lewica = S.actors.pps.factions && S.actors.pps.factions.lewica;
+    if (lewica && !lewica.split && lewica.dissent > 0 && S.actors.relations.kpp >= KPP_CALM.relation) {
+      government.factionReaction(Q, 'lewica', {dissent: -Math.min(KPP_CALM.lewica_dissent, lewica.dissent)}, {id: 'kpp_friendly:t' + t, kind: 'kpp_friendly', reverse: null});
+    }
     const tur = orgs.tur;
     if (tur.active_build) {
       tur.active_build.paid_months += 1;
@@ -904,8 +909,8 @@
   // Z — 1.19 (decisions 1A, 3A and 4A of 22 XI 2026): the party agenda offers six kinds of work, each for this month's action and
   // without money, and each builds a characteristic of the party (rules.seedProfile). The unions grow all three at once by half of
   // the old gain; the work in the villages, among the minorities, in the town councils and the factory rallies reach their groups
-  // of voters; the cooperation with the communists improves the relation with the KPP and angers the Centre, and good relations
-  // open the cabinets of the left with the KPP (PolishGovernment.kppFrontPrepared). The sizes of the gains are devices of the game.
+  // of voters; the cooperation with the communists improves the relation with the KPP and angers the Centre (Z — 1.37: no longer a
+  // way to the cabinets with the KPP, which chapter I does not form). The sizes of the gains are devices of the game.
   const AGENDA_WORK = Object.freeze({
     unions: Object.freeze({unionism: 1.5}),
     rural: Object.freeze({worker_peasant: 1.5}),
@@ -915,7 +920,11 @@
     kpp: Object.freeze({radicalism: 2}),
   });
   const AGENDA_KINDS = Object.freeze(Object.keys(AGENDA_WORK));
-  const KPP_WORK = Object.freeze({relation: 5, centrum_dissent: 3});
+  // Z — 1.37 (decisions D2A and D3A of 25 XI 2026): the work raises the relation up to 75 (very friendly), as the campaigns since 1.33;
+  // above it only joint action counts (the strikes with the communists). While the relation is friendly (65 or more), the Left of PPS
+  // is a little calmer every month — the mirror of the cost in the Centre, a device of the game.
+  const KPP_WORK = Object.freeze({relation: 5, centrum_dissent: 3, ceiling: 75});
+  const KPP_CALM = Object.freeze({relation: 65, lewica_dissent: 1});
   const RALLY_READINESS = 5;
   // Z — 1.30 (decision 4A of 24 XI 2026): the tangible effects of three works of the agenda.
   // The gains differ by the size of the groups: about 0.15 points of support for each use, as the agenda never rests.
@@ -945,11 +954,15 @@
       'PPS szuka porozumienia z komunistami w sprawach robotniczych: nasze stosunki z KPP się poprawiają, a Centrum partii jest niezadowolone.'],
   });
 
+  const KPP_CAPPED_RESULT = Object.freeze(['PPS works with the communists on workers’ matters, but our relations with the KPP are already as good as this work can make them; the Centre of the party is displeased.',
+    'PPS współpracuje z komunistami w sprawach robotniczych, ale stosunki z KPP są już tak dobre, jak może je uczynić ta praca; Centrum partii jest niezadowolone.']);
+
   function agendaWork(Q, kind) {
     syncMirrors(Q);
     const status = agendaWorkStatus(Q, kind);
     if (!status.available) throw new Error('agendaWork: ' + status.reason);
     const S = Q.S, t = Q.time;
+    let kppCapped = false;
     rules.commitMainAction(Q, 'party.agenda.' + kind, {});
     if (kind === 'unions') {
       for (const id of BRANCHES) expandBranch(S, id, 1);
@@ -972,12 +985,15 @@
       const branch = S.unions.industry;
       branch.readiness = clip(branch.readiness + RALLY_READINESS * rules.profileFactor(S, 'strike_action'), 0, 100);
     } else {
-      government.changeRelation(Q, 'kpp', KPP_WORK.relation, 'party.agenda.kpp');
+      const gain = Math.max(0, Math.min(KPP_WORK.relation, KPP_WORK.ceiling - S.actors.relations.kpp));
+      if (gain > 0) government.changeRelation(Q, 'kpp', gain, 'party.agenda.kpp');
+      else kppCapped = true;
       government.factionReaction(Q, 'centrum', {dissent: KPP_WORK.centrum_dissent},
         {id: 'line_contrary:agenda.kpp:t' + t, kind: 'line_contrary', reverse: null});
     }
     for (const id of Object.keys(AGENDA_WORK[kind])) rules.seedProfile(Q, id, AGENDA_WORK[kind][id], 'agenda.' + kind);
     writeMirrors(Q);
+    if (kppCapped) return result(Q, L(KPP_CAPPED_RESULT[0], KPP_CAPPED_RESULT[1]));
     return result(Q, L(AGENDA_RESULTS[kind][0], AGENDA_RESULTS[kind][1]));
   }
 
@@ -3698,6 +3714,7 @@
     Q.pl_pa_cash_words = rules.units(S.party_orgs.cash, 'resources');
     Q.pl_pa_dues_monthly = rules.units(monthlyDues(S), 'resources', 'acc');
     for (const kind of AGENDA_KINDS) Q['pl_pa_work_' + kind + '_why'] = agendaWorkStatus(Q, kind).reason;
+    Q.pl_pa_kpp_capped = S.actors.relations.kpp >= KPP_WORK.ceiling ? 1 : 0;
     Q.pl_pa_priorities = strategyOf(S).economic_priorities.map(priorityName).join('; ');
     partyDisplay(Q);
   }

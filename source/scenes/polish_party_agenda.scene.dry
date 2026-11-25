@@ -84,7 +84,7 @@ go-to: result
 
 @kpp_work
 title: Cooperation with the communists
-subtitle: Cost: 0 resources. Improves our relations with the KPP, which are [+ kpp_relation : relationships +] today, but displeases the Centre of the party. Good relations open the cabinets of the left with the communists. Builds radicalism.
+subtitle: Cost: 0 resources. [? if not pl_pa_kpp_capped : Improves our relations with the KPP, which are [+ kpp_relation : relationships +] today, but displeases the Centre of the party. Better relations bring the communists into our strikes, and friendly ones calm the Left of the party.?][? if pl_pa_kpp_capped : Our relations with the KPP are already very friendly: this work no longer improves them, only joint strikes can, and it still displeases the Centre of the party.?] Builds radicalism.
 choose-if: {! return PolishParty.agendaWorkStatus(Q, 'kpp').available !}
 unavailable-subtitle: [+ pl_pa_work_kpp_why +]
 on-arrival: {!

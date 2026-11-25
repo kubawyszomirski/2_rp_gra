@@ -1262,13 +1262,23 @@
   // 9.6: the broader agreement with the KPP, on its three rules (legal vote, no forced merger, agreed end of strikes),
   // unlocked the offers united_left and workers_front until 1.19; they still need the gates, the partners and the votes of 8.6
   // (stage 8, fix 1: until then the two offers were never available).
-  // Z — 1.19 (decision 4A of 22 XI 2026): good relations with the KPP (50 or more, built by the work „Cooperation with the
-  // communists” of the party agenda) are enough; an older save with the broader agreement keeps it.
-  const KPP_FRONT_RELATION = 50;
+  // Z — 1.19 (decision 4A of 22 XI 2026) opened them at good relations with the KPP (50 or more).
+  // Z — 1.37 (decision D1A of 25 XI 2026): in chapter I no cabinet with the KPP is formed. The KPP has a club of two MPs, and even
+  // with very friendly relations of all the partners neither cabinet had realistic support in the Sejm at any of six dates measured
+  // from 1922 to 1927 (after the election a cabinet with PPS needs 185 MPs of its own clubs; the whole left with the communists has
+  // about 105). The separate threshold of 50 is gone; the gates of the two cabinets (65 and 70) stay for the later chapters.
+  // The front with the KPP is prepared only in a later chapter (the name of 9.6 is kept).
   function kppFrontPrepared(S) {
-    const cc = S.actors && S.actors.communist_cooperation;
-    if (cc && cc.rules_agreed && cc.active_agreement) return true;
-    return !!(S.actors && S.actors.relations && S.actors.relations.kpp >= KPP_FRONT_RELATION);
+    return !!(S.chapter && S.chapter.number > 1);
+  }
+  const SEATS_GENITIVE_PL = Object.freeze(['', 'jednego posła', 'dwóch posłów', 'trzech posłów', 'czterech posłów', 'pięciu posłów', 'sześciu posłów',
+    'siedmiu posłów', 'ośmiu posłów', 'dziewięciu posłów', 'dziesięciu posłów']);
+  const SEATS_EN = Object.freeze(['', 'one MP', 'two MPs', 'three MPs', 'four MPs', 'five MPs', 'six MPs', 'seven MPs', 'eight MPs', 'nine MPs', 'ten MPs']);
+  function kppCabinetReason(S) {
+    const n = seatsOf(S, 'kpp');
+    if (n <= 0) return L('The communists have no MPs in the Sejm; such a cabinet has no chance of a majority.', 'Komuniści nie mają w Sejmie posłów; taki rząd nie ma szans na większość.');
+    return L('The communists have only ' + (SEATS_EN[n] || n + ' MPs') + ' in the Sejm; such a cabinet has no chance of a majority.',
+      'Komuniści mają w Sejmie tylko ' + (SEATS_GENITIVE_PL[n] || n + ' ' + rules.plural(n, 'posła', 'posłów', 'posłów')) + '; taki rząd nie ma szans na większość.');
   }
 
   function configurationStatus(Q, configId, context) {
@@ -1277,10 +1287,7 @@
     if (config.npc) return {available: false, reason: L('Formed by other parties.', 'Tworzą go inne partie.')};
     const own = ownCandidateStatus(Q, configId);
     if (!own.available) return own;
-    if (config.requires === 'kpp_preparation' && !kppFrontPrepared(S)) {
-      return {available: false, reason: L('Needs good relations with the KPP; the party agenda builds them by the cooperation with the communists.',
-        'Wymaga dobrych stosunków z KPP; buduje je współpraca z komunistami w Agendzie partii.')};
-    }
+    if (config.requires === 'kpp_preparation' && !kppFrontPrepared(S)) return {available: false, reason: kppCabinetReason(S)};
     if (config.crisis) {
       const crisis = crisisState(Q, context);
       if (!crisis.allowed) {
@@ -1976,8 +1983,7 @@
   // Why a variant cannot be formed now, in a sentence (the reasons of configurationStatus and variantStatus).
   function variantReasonText(Q, configId, reason) {
     const S = Q.S, config = CONFIGURATIONS[configId], context = S.negotiation ? S.negotiation.context : {};
-    if (config.requires === 'kpp_preparation' && !kppFrontPrepared(S)) return L('First PPS needs good relations with the communists; the party agenda builds them by the cooperation with the communists.',
-      'Najpierw PPS potrzebuje dobrych stosunków z komunistami; buduje je współpraca z komunistami w Agendzie partii.');
+    if (config.requires === 'kpp_preparation' && !kppFrontPrepared(S)) return kppCabinetReason(S);
     if (config.crisis) {
       const crisis = crisisState(Q, context);
       if (!crisis.allowed) return L('The parties agree to such a cabinet only in a serious crisis of the state: when two cabinets fall within half a year, or a currency or credit crisis breaks out. There is no such crisis now, so it cannot be formed.',
