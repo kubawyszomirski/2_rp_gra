@@ -15,6 +15,8 @@ Q.pl_mil_recruit_why = PolishParty.militiaStatus(Q, 'recruit').reason;
 Q.pl_mil_militarize_why = PolishParty.militiaStatus(Q, 'militarize').reason;
 Q.pl_mil_as_why = PolishParty.militiaStatus(Q, 'as').reason;
 Q.pl_mil_veterans_why = PolishParty.militiaStatus(Q, 'veterans').reason;
+Q.pl_mil_communists_why = PolishParty.militiaStatus(Q, 'communists').reason;
+Q.pl_mil_districts_why = PolishParty.militiaStatus(Q, 'districts').reason;
 !}
 
 = Milicja PPS
@@ -25,6 +27,8 @@ The self-defence of the party protects strikes, meetings and the offices of our 
 - @militarize
 - @form_as
 - @veterans
+- @communists
+- @districts
 - @nothing
 - @easy_discard
 
@@ -35,6 +39,29 @@ choose-if: {! return PolishParty.militiaStatus(Q, 'recruit').available !}
 unavailable-subtitle: [+ pl_mil_recruit_why +]
 on-arrival: {!
 PolishParty.militiaChoose(Q, 'recruit');
+!}
+go-to: result
+
+# Z — 1.34: the pair of militarism and radicalism.
+@communists
+title: Take communist fighters into a joint self-defence
+subtitle: Cost: 1 resource. Once: 200 members at once and better relations with the KPP, but the Centre of PPS is outraged and the right is restless. Available thanks to militarism and radicalism.
+view-if: {! return PolishParty.pairMilitiaShown(Q, 'communists') !}
+choose-if: {! return PolishParty.militiaStatus(Q, 'communists').available !}
+unavailable-subtitle: [+ pl_mil_communists_why +]
+on-arrival: {!
+PolishParty.militiaChoose(Q, 'communists');
+!}
+go-to: result
+
+@districts
+title: Keep guard in the workers’ districts
+subtitle: Cost: 1 resource. Once: the workers of every branch are readier to fight, and from then on a training of the Milicja waits one month, not two. Available thanks to militarism and radicalism.
+view-if: {! return PolishParty.pairMilitiaShown(Q, 'districts') !}
+choose-if: {! return PolishParty.militiaStatus(Q, 'districts').available !}
+unavailable-subtitle: [+ pl_mil_districts_why +]
+on-arrival: {!
+PolishParty.militiaChoose(Q, 'districts');
 !}
 go-to: result
 

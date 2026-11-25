@@ -1576,10 +1576,12 @@
     // Z — 0.81: the special votes of the legislative initiative (the army, the autonomy).
     const special = initiativeVote(S, clubId, bill);
     if (special) return special;
+    const pair = pairVote(S, clubId, bill);
+    if (pair) return pair;
     const governing = governingVote(S, clubId, bill, offer);
     if (governing) return governing;
     if (bill.sponsor === 'cabinet' && bound.indexOf(clubId) >= 0) return 'yes';
-    const stance = government.programmeStance(S, clubId, offer);
+    const stance = government.programmeStance(S, clubId, offer) + pairStanceBonus(S, clubId, bill);
     // Z — 1.26 (decision 2A of 22 XI 2026): while the budget is below zero, the clubs outside the cabinet vote against a bill that costs
     // the budget, unless they strongly support it.
     if (bill.costs_budget && S.economy && S.economy.budget < 0 && bound.indexOf(clubId) < 0) return stance >= BUDGET_CRISIS_SUPPORT ? 'yes' : 'no';
@@ -3159,6 +3161,26 @@
   // Z — 1.09 (decision 6b): filing a bill always costs 1 unit of the party's resources.
   const INITIATIVE_COST = 1;
   const INITIATIVE_RETURN_MONTHS = 9;
+  // Z — 1.34 (the pairs of the characteristics; the user's decisions of 25 XI 2026). Parliamentarism and reformism: a bill of ours
+  // rejected, withdrawn or passed only in its limited version returns after three months, not nine, and the clubs of the centre — NPR,
+  // PSL Wyzwolenie, PSL Piast and the Christian Democrats — vote on our bills more kindly (their view +10). Parliamentarism and
+  // federalism: both clubs of the minorities vote for our bills. The worker-peasant alliance and radicalism: PSL Wyzwolenie votes for
+  // our radical bills — the progressive tax and the land reform without compensation.
+  const PAIR_RETURN_MONTHS = 3;
+  const CENTRE_KIND = Object.freeze({clubs: Object.freeze(['npr', 'psl_wyzwolenie', 'psl_piast', 'pschd']), bonus: 10});
+  const returnMonths = S => (rules.pairActive(S, 'parliamentarism', 'reformism') ? PAIR_RETURN_MONTHS : INITIATIVE_RETURN_MONTHS);
+  const returnWords = S => (returnMonths(S) === PAIR_RETURN_MONTHS ? ['three months', 'trzy miesiące'] : ['nine months', 'dziewięć miesięcy']);
+  const ownBill = bill => !!bill && !!bill.initiative_bill && bill.sponsor === 'pps';
+  function pairStanceBonus(S, clubId, bill) {
+    return ownBill(bill) && rules.pairActive(S, 'parliamentarism', 'reformism') && CENTRE_KIND.clubs.indexOf(clubId) >= 0 ? CENTRE_KIND.bonus : 0;
+  }
+  const radicalBill = bill => bill.law_id === 'progressive_tax' || (bill.law_id === 'land_reform' && bill.variant === 'expropriation');
+  function pairVote(S, clubId, bill) {
+    if (!ownBill(bill)) return null;
+    if ((clubId === 'jewish_rep' || clubId === 'other_minorities_rep') && rules.pairActive(S, 'parliamentarism', 'federalism')) return 'yes';
+    if (clubId === 'psl_wyzwolenie' && radicalBill(bill) && rules.pairActive(S, 'worker_peasant', 'radicalism')) return 'yes';
+    return null;
+  }
   const INITIATIVE_REST_MONTHS = 3;
   const HIGH_UNEMPLOYMENT_WORKS = 10;
   const INITIATIVE_SHARE = 0.40;
@@ -3197,7 +3219,7 @@
     if (!bill.initiative_bill || bill.sponsor !== 'pps' || !cabinetSits(S)) return null;
     const cabinet = S.cabinet;
     if (cabinet.partner_ids.indexOf(clubId) < 0 || cabinet.partner_ids.indexOf('pps') >= 0 || (cabinet.supporter_ids || []).indexOf('pps') >= 0) return null;
-    return government.programmeStance(S, clubId, offer) >= GOVERNING_CLOSE ? 'yes' : 'no';
+    return government.programmeStance(S, clubId, offer) + pairStanceBonus(S, clubId, bill) >= GOVERNING_CLOSE ? 'yes' : 'no';
   }
 
   function initiativeState(S) {
@@ -3594,6 +3616,7 @@
   function initiativeCounts(Q, law, index) {
     const v = law.variants[index];
     const counts = sejmCounts(Q, {sponsor: 'pps', programme: v.programme, flags: v.flags || [], pps_vote: 'yes', t: Q.time, initiative_bill: true,
+      law_id: law.id, variant: v.key,
       costs_budget: !!law.costs_budget});
     const ballot = institutions.resolveBallot('ordinary_resolution', counts);
     return {yes: counts.yes, no: counts.no, abstain: counts.abstain, present: counts.present, eligible: counts.eligible, club_votes: counts.club_votes,
@@ -3649,6 +3672,9 @@
   // The card: one line per shown law.
   function initiativeView(Q) {
     const S = Q.S;
+    // Z — 1.34: when a bill comes back — after three months with parliamentarism and reformism.
+    Q.pl_ini_return = L('after ' + returnWords(S)[0], 'po ' + (returnMonths(S) === PAIR_RETURN_MONTHS ? 'trzech miesiącach' : 'dziewięciu miesiącach')) +
+      (returnMonths(S) === PAIR_RETURN_MONTHS ? ' ' + L('(thanks to parliamentarism and reformism)', '(dzięki parlamentaryzmowi i reformizmowi)') : '');
     for (const law of INITIATIVES) {
       const status = initiativeStatus(Q, law.id);
       Q['pl_ini_' + law.id + '_why'] = status.reason || '';
@@ -3716,7 +3742,7 @@
       const against = full.no_clubs.filter(c => c.indexOf(CHURCH_SPLIT_SUFFIX) >= 0 || government.plainParties([c]));
       line = L('The Sejm rejects our bill: ', 'Sejm odrzucił nasz projekt: ') + votes(full) + '.' + absent(full) +
         (against.length ? ' ' + L('Against: ' + clubsText(against) + '.', 'Przeciw głosowali: ' + clubsText(against) + '.') : '') + ' ' +
-        L('We can take it up again in nine months at the earliest.', 'Możemy wnieść go ponownie najwcześniej za dziewięć miesięcy.');
+        L('We can take it up again in ' + returnWords(S)[0] + ' at the earliest.', 'Możemy wnieść go ponownie najwcześniej za ' + returnWords(S)[1] + '.');
     }
     const capital = text => text.charAt(0).toUpperCase() + text.slice(1);
     return {id: law.id, name: lawName(law), outcome: outcome, line: line, limited_name: limited ? capital(variantName(1)) : ''};
@@ -3738,19 +3764,21 @@
       pps_vote: 'yes', programme: law.variants[index].programme, flags: law.variants[index].flags || [], variant: law.variants[index].key,
       initiative: {id: law.id, raise: index === 0 && raise}, counts: countsOf(index === 0 ? rolled.full : rolled.limited)});
     if (choice === 'withdraw') {
-      record.until = t + INITIATIVE_RETURN_MONTHS;
+      record.until = t + returnMonths(Q.S);
       record.history.push({t: t, kind: 'withdrawn'});
-      return L('PPS withdraws its bill. We can take it up again in nine months at the earliest.', 'PPS wycofuje projekt. Możemy wnieść go ponownie najwcześniej za dziewięć miesięcy.');
+      return L('PPS withdraws its bill. We can take it up again in ' + returnWords(Q.S)[0] + ' at the earliest.',
+        'PPS wycofuje projekt. Możemy wnieść go ponownie najwcześniej za ' + returnWords(Q.S)[1] + '.');
     }
     const bill = file(choice === 'limited' ? 1 : 0);
     if (bill.status !== 'enacted') {
-      record.until = t + INITIATIVE_RETURN_MONTHS;
+      record.until = t + returnMonths(Q.S);
       record.history.push({t: t, kind: 'rejected', law_id: bill.id});
-      return L('The bill is rejected. We can take it up again in nine months at the earliest.', 'Projekt został odrzucony. Możemy wnieść go ponownie najwcześniej za dziewięć miesięcy.');
+      return L('The bill is rejected. We can take it up again in ' + returnWords(Q.S)[0] + ' at the earliest.',
+        'Projekt został odrzucony. Możemy wnieść go ponownie najwcześniej za ' + returnWords(Q.S)[1] + '.');
     }
     if (choice === 'limited') {
       record.level = 'limited';
-      record.until = t + INITIATIVE_RETURN_MONTHS;
+      record.until = t + returnMonths(Q.S);
     } else {
       record.level = 'full';
       record.until = null;
@@ -3760,7 +3788,7 @@
     const effect = lastInitiativeText;
     lastInitiativeText = '';
     return L('The law is in force from this month. ', 'Ustawa obowiązuje od tego miesiąca. ') + effect +
-      (choice === 'limited' ? ' ' + L('In nine months we can propose its full version.', 'Za dziewięć miesięcy możemy zaproponować jej pełną wersję.') : '') +
+      (choice === 'limited' ? ' ' + L('In ' + returnWords(Q.S)[0] + ' we can propose its full version.', 'Za ' + returnWords(Q.S)[1] + ' możemy zaproponować jej pełną wersję.') : '') +
       (supportState(Q.S).announce_t === t ? ' ' + consumeAnnouncement(Q.S, t) : '');
   }
   // The effects of an enacted law of the initiative (lawEnactedHooks). The sentence for the result page is kept outside the

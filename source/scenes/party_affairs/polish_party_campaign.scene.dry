@@ -25,6 +25,7 @@ Meetings, rallies and the unions. A campaign costs no money and reaches several 
 - @land_piast
 - @equal_rights
 - @kpp_rallies
+- @worker_peasant_together
 - @easy_discard
 
 @eight_hours
@@ -119,6 +120,18 @@ choose-if: {! return PolishParty.issueCampaignStatus(Q, 'kpp_rallies').available
 unavailable-subtitle: [+ pl_issue_kpp_rallies_why +]
 on-arrival: {!
 PolishParty.issueCampaign(Q, 'kpp_rallies');
+!}
+go-to: result
+
+# Z — 1.34: the campaign of the pair of the worker-peasant alliance and radicalism.
+@worker_peasant_together
+title: Worker and peasant together
+subtitle: [+ pl_issue_worker_peasant_together_effect +]
+view-if: {! return PolishParty.issueUnlocked(Q, 'worker_peasant_together') !}
+choose-if: {! return PolishParty.issueCampaignStatus(Q, 'worker_peasant_together').available !}
+unavailable-subtitle: [+ pl_issue_worker_peasant_together_why +]
+on-arrival: {!
+PolishParty.issueCampaign(Q, 'worker_peasant_together');
 !}
 go-to: result
 

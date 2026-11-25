@@ -421,7 +421,11 @@
     militia_recruit: {org: 'militia', cost: 1, kind: 'recruit'},
     militia_militarize: {org: 'militia', cost: 1, kind: 'militarize'},
     cooperative_workers: {org: 'cooperatives', cost: 1, kind: 'found'},
+    // Z — 1.34 (the pair of unionism and the worker-peasant alliance): the farm labourers organised together with the peasant parties.
+    union_organize_farm_joint: {org: 'unions', cost: 1, branch: 'farm_labour', kind: 'organize', joint: true},
   });
+  // The joint organising reaches half as far again and improves the relations with both PSL by 2 (up to 75).
+  const JOINT_ORGANIZE = Object.freeze({reach: 1.5, relation: 2, ceiling: 75});
   const PACKAGE_ORDER = Object.freeze(Object.keys(PACKAGES));
   // Z — 0.56 (item 4 of 5 X 2026): the union packages have a card of their own, party.union_investments; the other packages
   // stay in party.organizations. Unions are one organisation, so their card takes one package in one action.
@@ -460,6 +464,9 @@
       const tur = S.party_orgs.tur;
       if (tur.level >= TUR_MAX) return no(L('TUR has its full national coordination.', 'Towarzystwo Uniwersytetu Robotniczego ma już pełną koordynację ogólnokrajową.'));
       if (tur.active_build) return no(L('A stage of TUR is already being built.', 'Kolejny etap rozbudowy Towarzystwa Uniwersytetu Robotniczego już trwa.'));
+    }
+    if (p.joint && !rules.pairActive(S, 'unionism', 'worker_peasant')) {
+      return no(L('Only with the characteristics Unionism and the worker-peasant alliance.', 'Tylko przy charakterystykach „Uzwiązkowienie” i „Sojusz robotniczo-włościański”.'));
     }
     if (p.org === 'militia') {
       const m = S.militia;
@@ -513,14 +520,22 @@
     const S = Q.S, p = PACKAGES[id], t = Q.time;
     S.party_orgs.cash = Math.max(0, S.party_orgs.cash - p.cost);
     const key = packageCooldownKey(id);
-    if (key) S.cooldowns[key] = t + SUBACTION_COOLDOWNS[p.kind];
+    if (key) S.cooldowns[key] = t + (p.kind === 'militarize' && S.militia.districts_at >= 0 ? 1 : SUBACTION_COOLDOWNS[p.kind]);
     // Z — 1.07: building the unions and the Milicja builds the characteristics of the party. Militarism grows more slowly (the
     // user's note: a steady building of the Milicja makes it ready in about a year, not in a few months).
     if (p.kind === 'organize') rules.seedProfile(Q, 'unionism', 2, 'organize:' + p.branch);
     if (p.kind === 'recruit') rules.seedProfile(Q, 'militarism', 0.5, 'militia_recruit');
     if (p.kind === 'militarize') rules.seedProfile(Q, 'militarism', 1.5, 'militia_training');
     if (p.kind === 'organize') {
-      const gain = fmt(expandBranch(S, p.branch, UNION_ORGANIZE_REACH));
+      const gain = fmt(expandBranch(S, p.branch, UNION_ORGANIZE_REACH * (p.joint ? JOINT_ORGANIZE.reach : 1)));
+      if (p.joint) {
+        for (const party of ['psl_wyzwolenie', 'psl_piast']) {
+          const up = Math.min(JOINT_ORGANIZE.relation, Math.max(0, JOINT_ORGANIZE.ceiling - S.actors.relations[party]));
+          if (up > 0) government.changeRelation(Q, party, up, 'joint_organize');
+        }
+        return L('together with the peasant parties the farm labour branch gains ' + gain + ' reach, and our relations with both PSL improve',
+          'razem z ludowcami zasięg branży robotników rolnych rośnie o ' + gain + ', a stosunki z oboma PSL się poprawiają');
+      }
       return L('the ' + BRANCH_NAMES[p.branch].toLowerCase() + ' branch gains ' + gain + ' reach', 'zasięg branży ' + BRANCH_PL_GENITIVE[p.branch] + ' rośnie o ' + gain);
     }
     if (p.kind === 'distribution') {
@@ -572,6 +587,11 @@
   // beyond the 800 of the ordinary recruitment (up to 1000), already trained (one level of training more); the Centre is uneasy
   // (+3) and the army grows suspicious (the pressure towards a coup +2). Cost 1.
   const VETERANS = Object.freeze({members: 300, max: 1000, cost: 1, centrum: 3, pressure: 2});
+  // Z — 1.34 (the pair of militarism and radicalism): a joint self-defence with the communists — 200 members at once (up to 1000), the
+  // relations with the KPP +5, the Centre +5 and the right +5; and a guard in the workers' districts — the workers of every branch are
+  // readier to fight (+8) and from then on a training of the Milicja waits one month, not two. Each once, cost 1.
+  const RED_GUARD = Object.freeze({members: 200, kpp: 5, centrum: 5, right: 5, cost: 1});
+  const DISTRICTS = Object.freeze({readiness: 8, cost: 1});
   const MILITIA_DISCIPLINE = Object.freeze({1: 0.80, 2: 0.95});
 
   // The level of the training: the nearest of the five values (an older save may hold another number).
@@ -625,6 +645,13 @@
     if (m.banned) return no(L('Milicja is banned.', 'Milicja jest zakazana.'));
     if (option === 'recruit') return packageStatus(Q, 'militia_recruit', 0);
     if (option === 'militarize') return packageStatus(Q, 'militia_militarize', 0);
+    if (option === 'communists' || option === 'districts') {
+      if (!rules.pairActive(S, 'militarism', 'radicalism')) return no(L('Only with the characteristics Militarism and Radicalism.', 'Tylko przy charakterystykach „Militaryzm” i „Radykalizm”.'));
+      if (m[option + '_at'] >= 0) return no(L('Done already.', 'To już się stało.'));
+      if (option === 'communists' && m.strength >= VETERANS.max) return no(L('Milicja has ' + VETERANS.max + ' members.', 'Milicja ma ' + VETERANS.max + ' członków.'));
+      if (S.party_orgs.cash + 1e-9 < 1) return no(L('Needs 1 resource.', 'Wymaga 1 jednostki środków.'));
+      return OK;
+    }
     if (option === 'veterans') {
       if (!rules.profileActive(S, 'militarism')) return no(L('Only with the characteristic Militarism.', 'Tylko przy charakterystyce „Militaryzm”.'));
       if (m.veterans_at !== null && m.veterans_at !== undefined) return no(L('The former soldiers have already joined.', 'Byli żołnierze już wstąpili do Milicji.'));
@@ -643,6 +670,7 @@
     return no(L('Unknown option.', 'Nieznana opcja.'));
   }
 
+  const pairMilitiaShown = (Q, option) => !!(Q.S && rules.pairActive(Q.S, 'militarism', 'radicalism') && !(Q.S.militia[option + '_at'] >= 0));
   const veteransShown = Q => !!(Q.S && rules.profileActive(Q.S, 'militarism') && (Q.S.militia.veterans_at === null || Q.S.militia.veterans_at === undefined));
   function militiaAvailable(Q) {
     return partyReady(Q) && Q.S.chapter.status !== 'ended' && !Q.S.militia.banned;
@@ -654,7 +682,27 @@
     if (!status.available) throw new Error('militiaChoose: ' + status.reason);
     const S = Q.S, t = Q.time;
     let text;
-    if (option === 'veterans') {
+    if (option === 'communists') {
+      rules.commitMainAction(Q, 'militia.communists', {resource_cost: {R: RED_GUARD.cost}});
+      S.party_orgs.cash = Math.max(0, S.party_orgs.cash - RED_GUARD.cost);
+      const m = S.militia, gain = Math.max(0, Math.min(RED_GUARD.members, VETERANS.max - m.strength));
+      m.strength += gain;
+      m.communists_at = t;
+      government.changeRelation(Q, 'kpp', RED_GUARD.kpp, 'militia_communists');
+      factionReaction(Q, 'centrum', {dissent: RED_GUARD.centrum}, {id: 'militia.communists', kind: 'militarization', reverse: null});
+      const politics = globalThis.PolishPolitics;
+      if (politics && politics.rightMobilise) politics.rightMobilise(Q, RED_GUARD.right, 'militia_communists');
+      text = L('Communist fighters join the Milicja: ' + gain + ' members more. Our relations with the KPP improve, but the Centre of PPS is outraged and the right is restless.',
+        'Komunistyczni bojowcy wstępują do Milicji: ' + gain + ' ' + rules.plural(gain, 'członek', 'członków', 'członków') +
+        ' więcej. Stosunki z KPP się poprawiają, ale Centrum PPS jest oburzone, a prawica się niepokoi.');
+    } else if (option === 'districts') {
+      rules.commitMainAction(Q, 'militia.districts', {resource_cost: {R: DISTRICTS.cost}});
+      S.party_orgs.cash = Math.max(0, S.party_orgs.cash - DISTRICTS.cost);
+      S.militia.districts_at = t;
+      for (const b of BRANCHES) S.unions[b].readiness = clip(S.unions[b].readiness + DISTRICTS.readiness, 0, 100);
+      text = L('The Milicja keeps guard in the workers’ districts: the workers are readier to fight, and from now on its training waits one month, not two.',
+        'Milicja trzyma straż w dzielnicach robotniczych: robotnicy są bardziej gotowi do walki, a jej szkolenie czeka odtąd miesiąc, nie dwa.');
+    } else if (option === 'veterans') {
       rules.commitMainAction(Q, 'militia.veterans', {resource_cost: {R: VETERANS.cost}});
       S.party_orgs.cash = Math.max(0, S.party_orgs.cash - VETERANS.cost);
       const m = S.militia, gain = Math.max(0, Math.min(VETERANS.members, VETERANS.max - m.strength));
@@ -1737,6 +1785,7 @@
   // month) or supports it (half). Bad months are frequent — about 50 in a chapter of governing — so the whole chapter costs about
   // one point (decision D3A: −1 to −1.3). Once for each halt of the programmes by a budget deep below zero, their voters turn away.
   const WEAR = Object.freeze({member: 0.02, supporter: 0.01, labels: ['workers', 'unemployed']});
+  const UNION_LISTS = 0.15;
   function settleSupport(Q, t) {
     const S = Q.S;
     if (!electorate.hasCells(S) || !projects.supportState) return;
@@ -1751,6 +1800,12 @@
     if ((stance === 'member' || stance === 'supporter') && economy.badEconomy && economy.badEconomy(S.economy, t)) {
       electorate.shiftPps(S, electorate.filterOfList(WEAR.labels), -(stance === 'member' ? WEAR.member : WEAR.supporter));
       notes.push({kind: 'wear', stance: stance});
+    }
+    // Z — 1.34 (the pair of unionism and parliamentarism): in the three months before a Sejm election the union men on our lists bring
+    // the workers to PPS — up to 0.15 points of the whole electorate a month, by the reach of the unions.
+    if (rules.pairActive(S, 'unionism', 'parliamentarism') && rallyWindow(Q)) {
+      const reach = BRANCHES.reduce((n, b) => n + S.unions[b].reach, 0) / BRANCHES.length;
+      if (electorate.shiftPps(S, electorate.filterOfList(['workers']), UNION_LISTS * reach / 100) > 0) notes.push({kind: 'union_lists'});
     }
     const halted = economy.fiscalDelivery(S.economy.budget) === 0;
     if (halted && (sup.halted_at === null || sup.halted_at === undefined)) {
@@ -1770,6 +1825,7 @@
     if (sup.notes_t !== Q.time - 1 || !sup.notes || !sup.notes.length) return '';
     return sup.notes.map(n => {
       if (n.kind === 'gain') return projects.groupSentence(n.labels, ' appreciate the reform „' + n.name[0] + '”.', ' doceniają reformę „' + n.name[1] + '”.', ' docenia reformę „' + n.name[1] + '”.');
+      if (n.kind === 'union_lists') return L('The union men on our lists bring the workers to PPS before the election.', 'Związkowcy na naszych listach przyciągają robotników do PPS przed wyborami.');
       if (n.kind === 'wear') return n.stance === 'member' ?
         L('Hard times weigh on a cabinet with PPS in it: the workers and the unemployed turn away from us.', 'Ciężkie czasy obciążają rząd z udziałem PPS: robotnicy i bezrobotni odwracają się od nas.') :
         L('Hard times weigh on PPS too, as it supports the cabinet: the workers and the unemployed turn from us a little.', 'Ciężkie czasy obciążają też PPS, która popiera rząd: robotnicy i bezrobotni trochę się od nas odwracają.');
@@ -1861,7 +1917,12 @@
   const PROFILE_THANKS = Object.freeze({unionism: ['unionism', 'uzwiązkowieniu'], worker_peasant: ['the worker-peasant alliance', 'sojuszowi robotniczo-włościańskiemu'],
     federalism: ['federalism', 'federalizmowi'], parliamentarism: ['parliamentarism', 'parlamentaryzmowi'], strike_action: ['strike action', 'akcji strajkowej'],
     militarism: ['militarism', 'militaryzmowi'], reformism: ['reformism', 'reformizmowi'], radicalism: ['radicalism', 'radykalizmowi']});
-  const thanksText = id => L('Available thanks to ' + PROFILE_THANKS[id][0] + '.', 'Opcja dostępna dzięki ' + PROFILE_THANKS[id][1] + '.');
+  // Z — 1.34: one characteristic or a pair of them ("thanks to unionism and strike action").
+  const thanksText = ids => {
+    const list = [].concat(ids);
+    return L('Available thanks to ' + list.map(id => PROFILE_THANKS[id][0]).join(' and ') + '.',
+      'Opcja dostępna dzięki ' + list.map(id => PROFILE_THANKS[id][1]).join(' i ') + '.');
+  };
   const ISSUES = Object.freeze({
     eight_hours: Object.freeze({name: ['In defence of the eight-hour day', 'W obronie ośmiogodzinnego dnia pracy'],
       groups: Object.freeze({employed_workers: 1, unemployed: 0.3, bourgeois_landowners: -0.2}),
@@ -1927,9 +1988,16 @@
       directions: Object.freeze(['class_independence']),
       situation: S => (S.economy.unemployment || 0) >= HIGH_UNEMPLOYMENT,
       situation_text: ['stronger at high unemployment (' + HIGH_UNEMPLOYMENT + '% or more)', 'silniejsza przy wysokim bezrobociu (' + HIGH_UNEMPLOYMENT + '% i więcej)']}),
+    // Z — 1.34 (the pair of the worker-peasant alliance and radicalism): one campaign to the workers and the peasants at once; at full
+    // strength it gave 4.7 points over a chapter against the monthly land campaign, so on the user's word it was toned down to about 3.
+    worker_peasant_together: Object.freeze({name: ['Worker and peasant together', 'Robotnik i chłop razem'], requires: ['worker_peasant', 'radicalism'],
+      groups: Object.freeze({workers: 0.83, rural: 0.83, bourgeois_landowners: -0.3}),
+      directions: Object.freeze(['class_independence', 'democratic_movement']),
+      situation: S => (S.economy.unemployment || 0) >= HIGH_UNEMPLOYMENT || ISSUES.land.situation(S),
+      situation_text: ['stronger at high unemployment or while a land reform is prepared or carried out', 'silniejsza przy wysokim bezrobociu albo gdy reforma rolna jest w toku']}),
   });
-  const ISSUE_ORDER = Object.freeze(['eight_hours', 'prices', 'land', 'republic', 'unemployed', 'land_wyzwolenie', 'land_piast', 'equal_rights', 'kpp_rallies']);
-  const issueUnlocked = (S, id) => !!ISSUES[id] && (!ISSUES[id].requires || rules.profileActive(S, ISSUES[id].requires));
+  const ISSUE_ORDER = Object.freeze(['eight_hours', 'prices', 'land', 'republic', 'unemployed', 'land_wyzwolenie', 'land_piast', 'equal_rights', 'kpp_rallies', 'worker_peasant_together']);
+  const issueUnlocked = (S, id) => !!ISSUES[id] && [].concat(ISSUES[id].requires || []).every(p => rules.profileActive(S, p));
   const issueName = id => L(ISSUES[id].name[0], ISSUES[id].name[1]);
   // Z — 1.33: the name in quotes; a name with a party in quotes gets the inner quotes (»…« in Polish, ‘…’ in English).
   const issueQuoted = id => L('“' + ISSUES[id].name[0].replace(/“([^”]*)”/g, '‘$1’') + '”', '„' + ISSUES[id].name[1].replace(/„([^”]*)”/g, '»$1«') + '”');
@@ -2111,8 +2179,12 @@
   function issueCampaignStatus(Q, id) {
     const S = Q.S;
     if (!ISSUES[id]) return no(L('Unknown campaign.', 'Nieznana kampania.'));
-    if (!issueUnlocked(S, id)) return no(L('Only with the characteristic ' + profileName(ISSUES[id].requires) + '.',
-      'Tylko przy charakterystyce „' + profileName(ISSUES[id].requires) + '”.'));
+    if (!issueUnlocked(S, id)) {
+      const needed = [].concat(ISSUES[id].requires);
+      return no(needed.length > 1 ? L('Only with the characteristics ' + needed.map(profileName).join(' and ') + '.',
+        'Tylko przy charakterystykach „' + needed.map(profileName).join('” i „') + '”.') :
+        L('Only with the characteristic ' + profileName(needed[0]) + '.', 'Tylko przy charakterystyce „' + profileName(needed[0]) + '”.'));
+    }
     if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Decyzja na ten miesiąc już zapadła.'));
     // Z — 0.79 (decision 2A of 14 X 2026): the campaigns of meetings, rallies and unions cost no money, only this month's action.
     if (!electorate.hasCells(S)) return no(L('The cells of the electorate are not recorded.', 'Ta decyzja nie jest teraz dostępna.'));
@@ -3530,13 +3602,16 @@
       if (cardOfPackage(id) !== UNION_CARD) continue;
       Q['pl_uni_' + id + '_why'] = selectionStatus(Q, [id], UNION_CARD).reason;
       const p = PACKAGES[id], reach = S.unions[p.branch].reach;
-      const after = Math.min(100, reach + UNION_ORGANIZE_REACH * expansionMultiplier(S, {kind: 'branch', id: p.branch}));
+      if (p.joint && !rules.pairActive(S, 'unionism', 'worker_peasant')) { Q['pl_uni_' + id + '_line'] = ''; continue; }
+      const after = Math.min(100, reach + UNION_ORGANIZE_REACH * (p.joint ? JOINT_ORGANIZE.reach : 1) * expansionMultiplier(S, {kind: 'branch', id: p.branch}));
       // Z — 1.14 (the user's request of 8 XI 2026): the cost first and the reach in words, without numbers.
       const from = reachWord(reach), to = reachWord(after);
       Q['pl_uni_' + id + '_line'] = L('Cost: ' + rules.units(p.cost) + '. ', 'Koszt: ' + rules.units(p.cost, 'resources', 'nom') + '. ') +
         (from === to ? L('The reach of the branch grows but stays ' + to + '. ', 'Zasięg branży rośnie, ale zostaje ' + to + '. ') :
           L('The reach of the branch grows from ' + from + ' to ' + to + '. ', 'Zasięg branży rośnie: ' + (/^s/.test(REACH_GENITIVE(from)) ? 'ze ' : 'z ') + REACH_GENITIVE(from) + ' na ' + to + '. ')) +
-        L(BRANCH_ROLES[p.branch][0], BRANCH_ROLES[p.branch][1]);
+        (p.joint ? L('The peasant parties help, so the reach grows more, and our relations with both PSL improve. Available thanks to unionism and the worker-peasant alliance.',
+          'Pomagają ludowcy, więc zasięg rośnie bardziej, a stosunki z oboma PSL się poprawiają. Opcja dostępna dzięki uzwiązkowieniu i sojuszowi robotniczo-włościańskiemu.') :
+          L(BRANCH_ROLES[p.branch][0], BRANCH_ROLES[p.branch][1]));
     }
     const bonus = unionCollectionBonus(S);
     Q.pl_uni_bonus = L('Strong unions raise every collection of the party; ', 'Silne związki zwiększają każdą zbiórkę partii; ') +
@@ -3681,6 +3756,7 @@
     MILITIA_RECRUITS: MILITIA_RECRUITS,
     MILITIA_MAX: MILITIA_MAX,
     veteransShown: veteransShown,
+    pairMilitiaShown: pairMilitiaShown,
     allocateProtection: allocateProtection,
     duesStatus: duesStatus,
     duesAvailable: duesAvailable,

@@ -13,6 +13,7 @@
     "subtitle: [+ pl_uni_union_organize_rail_line +]": "subtitle: [+ pl_uni_union_organize_rail_line +]",
     "subtitle: [+ pl_uni_union_organize_farm_labour_line +]": "subtitle: [+ pl_uni_union_organize_farm_labour_line +]",
     "title: Do nothing now": "title: Nic nie robimy",
-    "PPS has [+ pl_org_cash_words +]. [+ pl_uni_bonus +] Choose one branch to organise; the card waits two months before it comes back.": "PPS ma [+ pl_org_cash_words +]. [+ pl_uni_bonus +] Wybierz jedną branżę do zorganizowania; karta wraca po dwóch miesiącach."
+    "PPS has [+ pl_org_cash_words +]. [+ pl_uni_bonus +] Choose one branch to organise; the card waits two months before it comes back.": "PPS ma [+ pl_org_cash_words +]. [+ pl_uni_bonus +] Wybierz jedną branżę do zorganizowania; karta wraca po dwóch miesiącach.",
+    "title: Organise the farm labourers together with the peasant parties": "title: Organizuj robotników rolnych razem z ludowcami"
   }
 }

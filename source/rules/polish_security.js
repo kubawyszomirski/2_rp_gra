@@ -835,7 +835,10 @@
     const cfg = {strength: Math.max(0, army.base_strength_F - army.losses_F), readiness: readinessOf(army, t), command: army.command,
       loyalty: {pils: round(e.pils, 6), legal: round(e.legal, 6)}, turnout: turnout, stance: side,
       // Z — 1.07: militarism makes the Milicja count more in the coup (Z — 1.33: by its stage, +40% and then +60%).
-      militia_F: militia && side !== 'neutral' ? militia.force * rules.profileFactor(S, 'militarism') : 0, rail_base: rail ? rail.base : 0,
+      // Z — 1.34 (the pair of militarism and strike action): when both the Milicja and the railwaymen are called, they act together as a
+      // workers' guard and each counts a quarter more.
+      militia_F: militia && side !== 'neutral' ? militia.force * rules.profileFactor(S, 'militarism') * workersGuard(S, militia, rail) : 0,
+      rail_base: rail ? rail.base * workersGuard(S, militia, rail) : 0,
       settlement: A.democracy >= COUP_SETTLEMENT_DEMOCRACY, offers: feasibleOffers(Q),
       objective: {pils: cabinetOk, legal: !!head && !!head.holder_id && cabinetOk}};
     A.cfg = cfg;
@@ -1277,14 +1280,30 @@
   // Z — 1.24 (decision 8A of 22 XI 2026): the card of the unrest in the army is a decision of PPS, without this month's action — to back
   // a high post in the army for Piłsudski (only with PPS in the cabinet; he refuses while our relations are not good), to call him to
   // order, or to wave it off. A device of the game: historically Piłsudski left the army in 1923, so the post is an alternative.
+  const WORKERS_GUARD = 1.25;
+  const workersGuard = (S, militia, rail) => (militia && rail && rules.pairActive(S, 'militarism', 'strike_action') ? WORKERS_GUARD : 1);
   const UNREST = Object.freeze({
     appoint: {relation_needed: 55, relief: 10, relation: 5, loyalty: 0.03, pilsudczycy: -5, centrum: 3, lewica: 3},
     call_to_order: {relation: -10, pressure: 3, pilsudczycy: 5},
   });
-  const UNREST_OPTIONS = Object.freeze(['appoint', 'call_to_order', 'ignore']);
+  // Z — 1.34 (the pairs of the characteristics; the user's decisions of 25 XI 2026): two answers more. Parliamentarism and federalism —
+  // a joint declaration of PPS and the clubs of the minorities in defence of the Sejm: the pressure towards a coup falls (−6), democracy
+  // grows (+1) and the relations with both minority clubs (+2). Militarism and strike action — PPS declares its readiness for a general
+  // strike in defence of the Republic: the pressure falls more (−8), but the right is stirred (+10) and Piłsudski is irritated (−3).
+  // Each answer once in the chapter.
+  const UNREST_PAIRS = Object.freeze({
+    declaration: {pair: ['parliamentarism', 'federalism'], relief: 6, democracy: 1, minorities: 2},
+    general_strike: {pair: ['militarism', 'strike_action'], relief: 8, right: 10, pilsudski: -3}});
+  const UNREST_OPTIONS = Object.freeze(['appoint', 'call_to_order', 'ignore', 'declaration', 'general_strike']);
   function unrestStatus(Q, option) {
     const S = Q.S;
     if (UNREST_OPTIONS.indexOf(option) < 0) return no(L('Unknown option.', 'Nieznana opcja.'));
+    if (UNREST_PAIRS[option]) {
+      const pair = UNREST_PAIRS[option].pair;
+      if (!rules.pairActive(S, pair[0], pair[1])) return no(L('Not open to PPS now.', 'Teraz to nie jest dostępne.'));
+      // Once in the chapter: the card comes back whenever the mood rises again, and a repeated answer would hold off a coup for ever.
+      return S.coup.pair_answers && S.coup.pair_answers[option] >= 0 ? no(L('PPS has already done it in this chapter.', 'PPS już to zrobiła w tym rozdziale.')) : OK;
+    }
     if (option !== 'appoint') return OK;
     const inCabinet = S.cabinet && S.cabinet.status === 'active' && S.cabinet.partner_ids.indexOf('pps') >= 0;
     if (!inCabinet) return no(L('Only a cabinet with PPS can propose it.', 'Zaproponować to może tylko rząd z udziałem PPS.'));
@@ -1322,6 +1341,25 @@
         'The Piłsudczycy in PPS are displeased.',
         'PPS publicznie żąda, by wojsko trzymało się z dala od polityki.<br>Piłsudski jest rozdrażniony: stosunki z nim się psują, a presja na zamach trochę rośnie.<br>' +
         'Piłsudczycy w PPS są niezadowoleni.');
+    } else if (option === 'declaration') {
+      const spec = UNREST_PAIRS.declaration;
+      S.coup.pair_answers = Object.assign({}, S.coup.pair_answers, {declaration: t});
+      politics.applyImpulse(Q, 'army_unrest_declaration:' + key, -spec.relief, 'army_unrest');
+      S.politics.democracy = Math.min(100, S.politics.democracy + spec.democracy);
+      for (const club of ['jewish_rep', 'other_minorities_rep']) government.changeRelation(Q, club, spec.minorities, 'army_unrest_declaration:' + key);
+      Q.pl_unrest_result = L('PPS and the clubs of the minorities declare together that they will defend the Sejm and the constitution.<br>' +
+        'The officers calm down a little, democracy grows stronger, and our relations with the minorities improve.',
+        'PPS i kluby mniejszości wspólnie oświadczają, że obronią Sejm i konstytucję.<br>Oficerowie trochę się uspokajają, demokracja się wzmacnia, a stosunki z mniejszościami się poprawiają.');
+    } else if (option === 'general_strike') {
+      const spec = UNREST_PAIRS.general_strike;
+      S.coup.pair_answers = Object.assign({}, S.coup.pair_answers, {general_strike: t});
+      politics.applyImpulse(Q, 'army_unrest_general_strike:' + key, -spec.relief, 'army_unrest');
+      if (politics.rightMobilise) politics.rightMobilise(Q, spec.right, 'army_unrest_general_strike:' + key);
+      government.changeRelation(Q, 'pilsudski', spec.pilsudski, 'army_unrest_general_strike:' + key);
+      Q.pl_unrest_result = L('PPS declares that the workers will answer a coup with a general strike, and the Milicja stands ready.<br>' +
+        'The officers think twice, so the unrest in the army falls, but the right is stirred and Piłsudski is irritated.',
+        'PPS ogłasza, że na zamach robotnicy odpowiedzą strajkiem generalnym, a Milicja jest w gotowości.<br>' +
+        'Oficerowie się zastanawiają, więc niepokój w wojsku maleje, ale prawica się burzy, a Piłsudski jest rozdrażniony.');
     } else {
       Q.pl_unrest_result = L('PPS waves it off. Nothing changes.', 'PPS macha na to ręką. Nic się nie zmienia.');
     }
@@ -1498,6 +1536,7 @@
     policeWords: policeWords,
     UNREST_OPTIONS: UNREST_OPTIONS,
     unrestStatus: unrestStatus,
+    workersGuard: workersGuard,
     unrestView: unrestView,
     unrestChoose: unrestChoose,
     armyNotice: armyNotice,

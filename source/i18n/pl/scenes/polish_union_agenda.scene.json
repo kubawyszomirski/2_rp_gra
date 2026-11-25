@@ -30,7 +30,6 @@
     "title: [+ pl_su_p_no_mark +] Without the protection of the Milicja": "title: [+ pl_su_p_no_mark +] Bez ochrony Milicji",
     "subtitle: The Milicja stays out of the strike.": "subtitle: Milicja trzyma się z dala od strajku.",
     "title: [+ pl_su_p_yes_mark +] Under the protection of the Milicja": "title: [+ pl_su_p_yes_mark +] Pod ochroną Milicji",
-    "subtitle: Cost: half a resource. Fewer injured and arrested strikers in a clash with the police.": "subtitle: Koszt: pół jednostki środków. Mniej rannych i aresztowanych przy starciach z policją.",
     "unavailable-subtitle: [+ pl_su_p_yes_why +]": "unavailable-subtitle: [+ pl_su_p_yes_why +]",
     "title: Announce the strike": "title: Ogłoś strajk",
     "subtitle: [+ pl_su_launch_line +]": "subtitle: [+ pl_su_launch_line +]",
@@ -46,6 +45,11 @@
     "subtitle: Cost: [+ pl_dsp_strike_cost +] for each branch every month of the strike. You choose the goal of the strike, the cooperation with the communists and the protection of the Milicja.": "subtitle: Koszt: [+ pl_dsp_strike_cost +] za każdą branżę co miesiąc strajku. Wybierzesz cel strajku, współpracę z komunistami i ochronę Milicji.",
     "title: [+ pl_su_s_no_mark +] Without a solidarity strike": "title: [+ pl_su_s_no_mark +] Bez strajku solidarnościowego",
     "subtitle: Only the branches of the dispute strike.": "subtitle: Strajkują tylko gałęzie objęte sporem.",
-    "title: [+ pl_su_s_yes_mark +] With a solidarity strike": "title: [+ pl_su_s_yes_mark +] Ze strajkiem solidarnościowym"
+    "title: [+ pl_su_s_yes_mark +] With a solidarity strike": "title: [+ pl_su_s_yes_mark +] Ze strajkiem solidarnościowym",
+    "subtitle: [+ pl_su_p_yes_line +]": "subtitle: [+ pl_su_p_yes_line +]",
+    "title: Hand the dispute to a state arbitrator": "title: Oddaj spór rozjemcy państwowemu",
+    "subtitle: Cost: 0 resources. Wages rise by half of what a won strike would bring, without a strike and without its risk. Available thanks to unionism and reformism.": "subtitle: Koszt: 0 jednostek środków. Płace rosną o połowę tego, co dałby wygrany strajk, bez strajku i bez ryzyka porażki. Opcja dostępna dzięki uzwiązkowieniu i reformizmowi.",
+    "title: [+ pl_su_gs_yes_mark +] A general strike": "title: [+ pl_su_gs_yes_mark +] Strajk powszechny",
+    "subtitle: Cost: the strike pay of all three branches each month. Once in the chapter all three branches strike together: the government will hardly hold out, but the industrialists and the right are furious. Available thanks to unionism and strike action.": "subtitle: Koszt: zasiłek strajkowy dla wszystkich trzech gałęzi co miesiąc. Raz w rozdziale wszystkie trzy gałęzie strajkują razem: rząd raczej nie wytrzyma, ale przemysłowcy i prawica są wściekli. Opcja dostępna dzięki uzwiązkowieniu i akcji strajkowej."
   }
 }

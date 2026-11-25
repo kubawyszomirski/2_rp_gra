@@ -25,6 +25,7 @@ PolishUnions.disputeView(Q);
 - @threaten
 - @drop
 - @mediate
+- @arbitrate
 - @easy_discard
 
 @start
@@ -66,6 +67,16 @@ PolishUnions.mediate(Q, PolishUnions.disputeLeadershipBranch(Q));
 !}
 go-to: result
 
+# Z — 1.34: the state arbitrator of the pair of unionism and reformism.
+@arbitrate
+title: Hand the dispute to a state arbitrator
+subtitle: Cost: 0 resources. Wages rise by half of what a won strike would bring, without a strike and without its risk. Available thanks to unionism and reformism.
+view-if: {! return PolishUnions.arbitrationStatus(Q).available !}
+on-arrival: {!
+Q.pl_union_result = PolishUnions.arbitrate(Q);
+!}
+go-to: result
+
 @setup
 new-page: true
 on-arrival: {!
@@ -85,6 +96,7 @@ Mark the goal of the strike, the cooperation with the communists and the protect
 - @p_yes
 - @s_no
 - @s_yes
+- @gs_yes
 - @launch
 - @polish_union_agenda: Back to the dispute.
 
@@ -142,7 +154,7 @@ go-to: setup
 
 @p_yes
 title: [+ pl_su_p_yes_mark +] Under the protection of the Milicja
-subtitle: Cost: half a resource. Fewer injured and arrested strikers in a clash with the police.
+subtitle: [+ pl_su_p_yes_line +]
 choose-if: {! return PolishUnions.setupWhy(Q, 'protection', true).available !}
 unavailable-subtitle: [+ pl_su_p_yes_why +]
 on-arrival: {!
@@ -167,6 +179,17 @@ choose-if: {! return PolishUnions.setupWhy(Q, 'solidarity', true).available !}
 unavailable-subtitle: [+ pl_su_s_yes_why +]
 on-arrival: {!
 PolishUnions.setupChoose(Q, 'solidarity', true);
+!}
+go-to: setup
+
+@gs_yes
+title: [+ pl_su_gs_yes_mark +] A general strike
+subtitle: Cost: the strike pay of all three branches each month. Once in the chapter all three branches strike together: the government will hardly hold out, but the industrialists and the right are furious. Available thanks to unionism and strike action.
+view-if: pl_su_general = 1
+choose-if: {! return PolishUnions.setupWhy(Q, 'general', true).available !}
+unavailable-subtitle: [+ pl_su_gs_yes_why +]
+on-arrival: {!
+PolishUnions.setupChoose(Q, 'general', true);
 !}
 go-to: setup
 

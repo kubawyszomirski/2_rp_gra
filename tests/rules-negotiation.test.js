@@ -1059,3 +1059,25 @@ test('Samorząd na wschodzie 0.88: the largest concession secures the other mino
   assert.deepEqual([promise.required_project, promise.required_variants, promise.required_stage, promise.portfolio, promise.due_at],
     ['limited_autonomy', ['autonomy', 'regional_sejm'], 'completed', 'interior', 31]);
 });
+
+// Z — 1.34 (the pair of the worker-peasant alliance and federalism, the user's decision of 25 XI 2026): the people's bloc — the clubs of
+// the minorities support a cabinet of the left without a separate concession; no promise and no anger of the right.
+test('Blok ludowy 1.34: with the alliance and federalism the minority clubs back a cabinet of the left without a concession', () => {
+  const seats = { pps: 100, psl_wyzwolenie: 40, minorities_bloc: 90, zln: 214 };
+  const Q = chamber(seats, { time: 11, year: 1922, month: 11 });
+  formation(Q, 'crisis');
+  gov.setDraft(Q, 'configuration_id', 'left_minority');
+  gov.setDraft(Q, 'seek_minority_support', true);
+  assert.deepEqual(gov.formationView(Q).minority_clubs.map(c => c.concession), ['equality', 'schools'], 'without the pair: the usual concessions');
+  for (const id of ['worker_peasant', 'federalism']) rules.profileState(Q.S).adopted.push({ id, t: Q.time });
+  const clubs = gov.formationView(Q).minority_clubs;
+  assert.deepEqual(clubs.map(c => [c.concession, c.accepts]), [['bloc', true], ['bloc', true]]);
+  assert.match(clubs[0].line, /^\+30 MPs for the cabinet in the people’s bloc, without a separate concession\. No promise is needed\./);
+  gov.changeRelation(Q, 'zln', 30, 'fixture: above the floor of 0');
+  const relations = ['psl_piast', 'pschd', 'zln'].map(id => Q.S.actors.relations[id]);
+  const appointed = gov.submitFormation(Q);
+  assert.equal(appointed.appointed.configuration_id, 'left_minority');
+  assert.deepEqual(['psl_piast', 'pschd', 'zln'].map(id => Q.S.actors.relations[id]), relations, 'the right is not angered');
+  const promises = Q.S.cabinet.agreement_ids.map(id => Q.S.agreements[id]).flatMap(a => a.obligations || []).filter(o => o.owner === 'cabinet');
+  assert.deepEqual(promises.map(o => o.topic), [], 'no promise of schools or equality');
+});

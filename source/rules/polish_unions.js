@@ -242,7 +242,51 @@
       .sort((a, b) => S.unions[b].reach - S.unions[a].reach || BRANCHES.indexOf(a) - BRANCHES.indexOf(b))[0] || null;
   }
   const capitalFirst = text => (text ? text.charAt(0).toUpperCase() + text.slice(1) : '');
-  const solidarityPressure = rec => (rec && rec.solidarity ? SOLIDARITY.pressure : 0);
+  const solidarityPressure = rec => (rec && rec.general ? GENERAL.pressure : rec && rec.solidarity ? SOLIDARITY.pressure : 0);
+  // The branches that strike with a dispute: one in solidarity, or every other branch in a general strike (Z — 1.34).
+  const extraBranches = rec => (rec.general ? BRANCHES.filter(b => rec.branches.indexOf(b) < 0).length : rec.solidarity ? 1 : 0);
+
+  // Z — 1.34 (the pairs of the characteristics; the user's decisions of 25 XI 2026).
+  // Unionism and strike action — a general strike: once a chapter all three branches strike together; the pressure on the government
+  // is 25 higher (the government almost surely gives way), the party pays the strike pay of every branch, the employers press harder
+  // (+8) and the right is stirred (+10).
+  const GENERAL = Object.freeze({pressure: 25, business: 8, right: 10});
+  const generalShown = S => rules.pairActive(S, 'unionism', 'strike_action') && !(S.strikes.general_at >= 0);
+  // Unionism and militarism — the union guard: the Milicja protects a strike at no cost and loses no people in a clash.
+  const unionGuard = S => rules.pairActive(S, 'unionism', 'militarism');
+  const protectionCost = S => (unionGuard(S) ? 0 : PROTECTION_COST);
+  // Unionism and reformism — the state arbitrator: while PPS tolerates the cabinet (a PPS in it has the arbitration of the strike card),
+  // a dispute goes to an arbitrator: half the rise of a won strike, without a strike, its costs or its risk; the unions trust PPS a
+  // little more and the employers press a little harder.
+  function arbitrationStatus(Q) {
+    const S = Q.S, rec = disputeRecord(S);
+    if (!rules.pairActive(S, 'unionism', 'reformism')) return no(L('Only with the characteristics Unionism and Reformism.', 'Tylko przy charakterystykach „Uzwiązkowienie” i „Reformizm”.'));
+    if (!rec) return no(L('No dispute waits.', 'Żaden spór nie czeka.'));
+    if (government.ppsStance(S) !== 'supporter') return no(L('Only while PPS tolerates the cabinet from outside.', 'Tylko wtedy, gdy PPS toleruje rząd z zewnątrz.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Decyzja na ten miesiąc już zapadła.'));
+    return OK;
+  }
+  function arbitrate(Q) {
+    const status = arbitrationStatus(Q);
+    if (!status.available) throw new Error('arbitrate: ' + status.reason);
+    const S = Q.S, t = Q.time, rec = disputeRecord(S), id = 'arbitration:' + rec.id + ':t' + t;
+    rules.commitMainAction(Q, 'union.arbitration', {strike_id: rec.id, resource_cost: {R: 0}});
+    rec.pps_answered = true;
+    const offer = offerOf(rec, ['wages'], t);
+    offer.status = 'accepted';
+    const settlement = signSettlement(Q, rec, offer, true);
+    settlement.wage_factor = 0.5;
+    for (const b of rec.branches) S.unions[b].trust = clip(S.unions[b].trust + GOV_STRIKE.trust_arbitration, 0, 100);
+    economy.changeBusinessPressure(S, GOV_STRIKE.business_arbitration, id, t, 'state_arbitration');
+    rec.agreed_end = true;
+    endRecord(S, rec, 'arbitration', t, Q);
+    S.history.reasons.push({t: t, kind: 'state_arbitration', strike_id: rec.id});
+    party.writeMirrors(Q);
+    return result(Q, L('A state arbitrator settles the dispute: for two months wages rise by half of what a won strike would bring, without a strike. ' +
+      'The unions trust PPS a little more, and the industrialists are a little more displeased.',
+      'Rozjemca państwowy rozstrzyga spór: przez dwa miesiące płace rosną o połowę tego, co dałby wygrany strajk, i to bez strajku. ' +
+      'Związki trochę bardziej ufają PPS, a przemysłowcy są trochę bardziej niezadowoleni.'));
+  }
 
   function updateThreshold(rec) {
     const political = rec.demands.some(d => d.kind === 'cabinet_resignation') && !rec.political_refused;
@@ -465,7 +509,7 @@
       recordPendingEffect(S, {id: rec.id + ':violence:' + round, system: 'violence', stage: 7, value: 10, cause: 'strike_clash'});
       recordPendingEffect(S, {id: rec.id + ':repression_exposure:' + round, system: 'repression_exposure', stage: 7, value: 1,
         branches: rec.branches.slice(), exposure_cut: rec.protection ? rec.protection.exposure_cut : 0});
-      if (rec.protection) {
+      if (rec.protection && !rec.protection.guard) {
         const lost = Math.round(MILITIA_LOSS * rec.protection.people);
         S.militia.strength = Math.max(0, S.militia.strength - lost);
         rec.protection.lost += lost;
@@ -584,8 +628,8 @@
       rec.disruption[b] = Math.min(100, rec.participants[b] + (rec.uncontrolled_participation || 0)) * sectorImportance(b, t) / 100;
       striking[b] = true;
     }
-    // Z — 1.33: the strike pay of the branch that strikes in solidarity.
-    if (rec.solidarity && strikePayable(S)) {
+    // Z — 1.33: the strike pay of the branch that strikes in solidarity (Z — 1.34: of every other branch in a general strike).
+    for (let i = 0; i < extraBranches(rec) && strikePayable(S); i++) {
       S.party_orgs.cash = Math.max(0, round(S.party_orgs.cash - strikeCost(S), 6));
       rec.cost_paid = round(rec.cost_paid + strikeCost(S), 6);
     }
@@ -1059,7 +1103,7 @@
   function protectionPossible(S) {
     if (S.militia.banned) return no(L('Milicja PPS is banned.', 'Milicja PPS jest objęta zakazem działalności.'));
     if (!(S.militia.strength > 0)) return no(L('Milicja PPS has no members.', 'Milicja PPS nie ma członków.'));
-    return S.party_orgs.cash + 1e-9 >= PROTECTION_COST ? OK : no(L('Needs 0.5 resources.', 'Wymaga pół jednostki środków.'));
+    return S.party_orgs.cash + 1e-9 >= protectionCost(S) ? OK : no(L('Needs 0.5 resources.', 'Wymaga pół jednostki środków.'));
   }
 
   function applyProtection(Q, rec, choice) {
@@ -1067,13 +1111,14 @@
     rec.steps.protection = 'done';
     S.history.actions.push({t: t, action_id: 'strike.protection.' + choice, strike_id: rec.id, cost_t: 0});
     if (choice === 'none') return result(Q, L('The strike goes on without the Milicja.', 'Strajk trwa bez Milicji.'));
-    S.party_orgs.cash = Math.max(0, round(S.party_orgs.cash - PROTECTION_COST, 6));
+    S.party_orgs.cash = Math.max(0, round(S.party_orgs.cash - protectionCost(S), 6));
     const force = party.militiaForce(S).force;
-    rec.protection = {people: S.militia.strength, force: force, exposure_cut: Math.min(0.40, 0.10 * force), lost: 0, since: t};
+    rec.protection = {people: S.militia.strength, force: force, exposure_cut: Math.min(0.40, 0.10 * force), lost: 0, since: t, guard: unionGuard(S)};
     party.writeMirrors(Q);
-    return result(Q, L('Milicja PPS protects the strikers (' + S.militia.strength + ' people, force ' + fmt(force) + ' F, 0.5 R).',
-      'Milicja PPS chroni strajkujących (' + S.militia.strength + ' ' + rules.plural(S.militia.strength, 'osoba', 'osoby', 'osób') + ', siła ' +
-      fmt(force) + ' F, 0,5 R).'));
+    // Z — 1.33: the result in plain words (it showed the force and the cost in units).
+    return result(Q, L('Milicja PPS protects the strikers (' + S.militia.strength + ' people).', 'Milicja PPS chroni strajkujących (' + S.militia.strength + ' ' +
+      rules.plural(S.militia.strength, 'osoba', 'osoby', 'osób') + ').') + (rec.protection.guard ? ' ' + L('As a union guard it costs nothing and loses no people.',
+      'Jako straż związkowa nic nie kosztuje i nie traci ludzi.') : ''));
   }
 
   // ---- The answer of the Sejm: B11+B12 (17.5.1; card catalogue 7.10) -------------------------------------------
@@ -1715,7 +1760,7 @@
     const rec = disputeRecord(S);
     if (!rec) return null;
     const st = S.strikes.setup;
-    if (!st || st.record_id !== rec.id) S.strikes.setup = {record_id: rec.id, goal: 'small', communists: false, protection: false, solidarity: false};
+    if (!st || st.record_id !== rec.id) S.strikes.setup = {record_id: rec.id, goal: 'small', communists: false, protection: false, solidarity: false, general: false};
     return S.strikes.setup;
   }
   const communistsShown = S => { const rec = disputeRecord(S); return !!rec && communistsActive(S, rec); };
@@ -1726,7 +1771,8 @@
     if (group === 'goal' && GOALS[value]) st.goal = value;
     else if (group === 'communists') st.communists = !!value;
     else if (group === 'protection') st.protection = !!value;
-    else if (group === 'solidarity') st.solidarity = !!value;
+    else if (group === 'solidarity') { st.solidarity = !!value; st.general = false; }
+    else if (group === 'general') { st.general = !!value; if (value) st.solidarity = false; }
     else throw new Error('setupChoose: ' + group + ' ' + value);
     setupView(Q);
   }
@@ -1741,6 +1787,7 @@
     }
     if (group === 'protection' && value) return protectionPossible(S);
     if (group === 'solidarity' && value) return solidarityBranch(S, rec) ? OK : no(L('No other union branch can join.', 'Żadna inna gałąź związków nie może dołączyć.'));
+    if (group === 'general' && value) return generalShown(S) ? OK : no(L('The general strike has already been called in this chapter.', 'Strajk powszechny już był w tym rozdziale.'));
     return OK;
   }
 
@@ -1751,6 +1798,7 @@
     if (st.communists && communistsShown(Q.S)) { const c = setupWhy(Q, 'communists', true); if (!c.available) return c; }
     if (st.protection) { const p = setupWhy(Q, 'protection', true); if (!p.available) return p; }
     if (st.solidarity) { const s = setupWhy(Q, 'solidarity', true); if (!s.available) return s; }
+    if (st.general) { const g = setupWhy(Q, 'general', true); if (!g.available) return g; }
     return OK;
   }
 
@@ -1762,7 +1810,12 @@
     for (const goal of Object.keys(GOALS)) Q['pl_su_g_' + goal + '_mark'] = mark(st.goal === goal);
     Q.pl_su_c_no_mark = mark(!st.communists); Q.pl_su_c_yes_mark = mark(st.communists);
     Q.pl_su_p_no_mark = mark(!st.protection); Q.pl_su_p_yes_mark = mark(st.protection);
-    Q.pl_su_s_no_mark = mark(!st.solidarity); Q.pl_su_s_yes_mark = mark(st.solidarity);
+    Q.pl_su_s_no_mark = mark(!st.solidarity && !st.general); Q.pl_su_s_yes_mark = mark(st.solidarity); Q.pl_su_gs_yes_mark = mark(st.general);
+    Q.pl_su_general = generalShown(S) ? 1 : 0;
+    Q.pl_su_gs_yes_why = setupWhy(Q, 'general', true).reason;
+    Q.pl_su_p_yes_line = unionGuard(S) ? L('Cost: 0 resources. As a union guard the Milicja protects the strikers for nothing and loses no people. Available thanks to unionism and militarism.',
+      'Koszt: 0 jednostek środków. Jako straż związkowa Milicja chroni strajkujących za darmo i nie traci ludzi. Opcja dostępna dzięki uzwiązkowieniu i militaryzmowi.') :
+      L('Cost: half a resource. Fewer injured and arrested strikers in a clash with the police.', 'Koszt: pół jednostki środków. Mniej rannych i aresztowanych strajkujących w starciu z policją.');
     const helper = solidarityBranch(S, rec);
     Q.pl_su_solidarity = rules.profileActive(S, 'strike_action') ? 1 : 0;
     Q.pl_su_s_yes_line = helper ? L('Cost: the strike pay of one branch more each month. ' + capitalFirst(SOLIDARITY_WORDS[helper][0]) +
@@ -1783,7 +1836,7 @@
     // Z — 1.14 (the user's request of 8 XI 2026): the expected participation in words.
     const rows = rec.branches.map(b => branchName(b) + ' — ' + participationWord(participation(S, b)));
     const chance = roundChance(S, Object.assign({}, rec, {status: 'active', participants: rec.branches.reduce((m, b) => Object.assign(m, {[b]: participation(S, b)}), {}),
-      communist_cooperation: null, solidarity: st.solidarity ? helper : null}), st.goal === 'big' ? THRESHOLDS.broad : THRESHOLDS.limited, S.turn.last_settled_time + 1).chance;
+      communist_cooperation: null, solidarity: st.solidarity ? helper : null, general: !!st.general}), st.goal === 'big' ? THRESHOLDS.broad : THRESHOLDS.limited, S.turn.last_settled_time + 1).chance;
     Q.pl_su_launch_line = L('Cost: ' + strikePayWords(S).en + ' for each branch every month of the strike. ',
       'Koszt: ' + strikePayWords(S).nom + ' za każdą branżę co miesiąc strajku. ') +
       L('Expected participation: ', 'Oczekiwany udział: ') + rows.join(', ') +
@@ -1808,6 +1861,13 @@
     rec.declined_clauses = null;
     rec.solidarity = st.solidarity ? solidarityBranch(S, rec) : null;
     if (rec.solidarity) economy.changeBusinessPressure(S, SOLIDARITY.business, rec.id + ':solidarity', t, 'solidarity_strike');
+    rec.general = !!st.general && generalShown(S);
+    if (rec.general) {
+      S.strikes.general_at = t;
+      economy.changeBusinessPressure(S, GENERAL.business, rec.id + ':general', t, 'general_strike');
+      const politics = globalThis.PolishPolitics;
+      if (politics && politics.rightMobilise) politics.rightMobilise(Q, GENERAL.right, 'general_strike:' + rec.id);
+    }
     updateThreshold(rec);
     if (st.goal === 'political') {
       // 17.5: the Left −3 dissent under the class line; the Centre +8 without it.
@@ -1841,7 +1901,9 @@
       'Strajk się zaczyna (' + branchList(rec.branches) + '): o ' + goalText + '. ') + pay +
       (withCommunists ? parts[0] + ' ' : '') + (st.protection ? parts[parts.length - 1] : '') +
       (rec.solidarity ? ' ' + L(capitalFirst(SOLIDARITY_WORDS[rec.solidarity][0]) + ' strike in solidarity with them.',
-        capitalFirst(SOLIDARITY_WORDS[rec.solidarity][1]) + ' strajkują solidarnie razem z nimi.') : ''));
+        capitalFirst(SOLIDARITY_WORDS[rec.solidarity][1]) + ' strajkują solidarnie razem z nimi.') : '') +
+      (rec.general ? ' ' + L('All three branches stand in a general strike: the government will hardly hold out, but the industrialists and the right are furious.',
+        'Wszystkie trzy gałęzie stają do strajku powszechnego: rząd raczej nie wytrzyma, ale przemysłowcy i prawica są wściekli.') : ''));
   }
 
   // ---- The urgent card "The Government's Offer" (Z — 0.87, decision 5A) ----
@@ -2069,6 +2131,11 @@
   }
 
   function stepsView(Q) {
+    // Z — 1.34: the protection of a strike in words — free as a union guard (the pair of unionism and militarism).
+    Q.pl_st_protect_line = unionGuard(Q.S) ? L('Cost: 0 resources. As a union guard the Milicja protects the strikers for nothing and loses no people. Available thanks to unionism and militarism.',
+      'Koszt: 0 jednostek środków. Jako straż związkowa Milicja chroni strajkujących za darmo i nie traci ludzi. Opcja dostępna dzięki uzwiązkowieniu i militaryzmowi.') :
+      L('Cost: half a resource. It needs the people of the Milicja; it lowers the exposure of the covered people, not the risk of a clash, and it can lose people.',
+        'Koszt: pół jednostki środków. Wymaga ludzi Milicji; ochrona zmniejsza narażenie osłanianych osób, ale nie ryzyko starcia, a Milicja może stracić ludzi.');
     if (!ready(Q)) return;
     const S = Q.S, rec = stepsRecord(S);
     Q.pl_st_stage = stepsStage(S);
@@ -2156,6 +2223,9 @@
     dropDispute: dropDispute,
     setupState: setupState,
     setupChoose: setupChoose,
+    arbitrationStatus: arbitrationStatus,
+    arbitrate: arbitrate,
+    protectionCost: protectionCost,
     setupWhy: setupWhy,
     setupView: setupView,
     communistsShown: communistsShown,

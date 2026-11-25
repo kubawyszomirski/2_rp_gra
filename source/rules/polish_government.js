@@ -594,6 +594,9 @@
       costs: Object.freeze({psl_piast: -4, pschd: -3, zln: -4}), name: ['language rights and minority schools', 'prawa językowe i szkoły mniejszości']}),
     autonomy: Object.freeze({terms: Object.freeze(['territorial_autonomy']), fit: 100, assured: true,
       costs: Object.freeze({psl_piast: -8, pschd: -5, zln: -10}), name: ['self-government in the east', 'samorząd na wschodzie']}),
+    // Z — 1.34 (the pair of the worker-peasant alliance and federalism, the user's decision of 25 XI 2026): the people's bloc — the clubs of
+    // the minorities support a cabinet of the left without a separate concession: no promise and no anger of the right.
+    bloc: Object.freeze({terms: Object.freeze([]), fit: 100, assured: false, costs: Object.freeze({}), name: ['the people’s bloc', 'blok ludowy']}),
   });
   const CLUB_CONCESSIONS = Object.freeze({jewish_rep: Object.freeze(['equality', 'schools']), other_minorities_rep: Object.freeze(['schools', 'autonomy'])});
   const concessionOf = (offer, club) => MINORITY_CONCESSIONS[(offer.minority_concessions || {})[club]] || null;
@@ -1052,8 +1055,10 @@
 
   // For each club asked: the cheapest of its concessions after which it agrees; without one, the largest (which it refuses).
   function settleConcessions(S, offer, clubs) {
+    const bloc = rules.pairActive(S, 'worker_peasant', 'federalism') && offer.by === 'pps' &&
+      (LEFT_CONFIGURATIONS.indexOf(offer.configuration_id) >= 0 || offer.configuration_id === 'centre_left');
     for (const club of clubs) {
-      const list = CLUB_CONCESSIONS[club];
+      const list = bloc ? ['bloc'] : CLUB_CONCESSIONS[club];
       let chosen = list[list.length - 1];
       for (const id of list) {
         offer.minority_concessions[club] = id;
@@ -2117,6 +2122,7 @@
     equality: ['A rule of the cabinet: no discrimination of the minorities.', 'Zasada rządu: żadnej dyskryminacji mniejszości.'],
     schools: ['The cabinet must open the minority schools within six months.', 'Rząd musi w ciągu sześciu miesięcy uruchomić szkoły mniejszości.'],
     autonomy: ['The cabinet must introduce self-government in the east within six months.', 'Rząd musi w ciągu sześciu miesięcy wprowadzić samorząd na wschodzie.'],
+    bloc: ['No promise is needed. Available thanks to the worker-peasant alliance and federalism.', 'Nie trzeba żadnej obietnicy. Opcja dostępna dzięki sojuszowi robotniczo-włościańskiemu i federalizmowi.'],
   });
   const concessionName = concession => (concession ? L(concession.name[0], concession.name[1]) : '');
 
@@ -2137,8 +2143,10 @@
     const reason = evaluation.accept ? '' : L('This club (' + seats + ' MPs) refuses even for ' + concessionName(concession) + ': ' + evaluation.reasons.join(', ') + '.',
       'Ten klub (' + seats + ' posłów) odmówi nawet za ' + concessionName(concession) + ': ' + evaluation.reasons.map(reasonText).join(', ') + '.');
     // Z — 1.22 (the user's note of 22 XI 2026): what the club adds and what it wants, without the numbers of the reactions.
-    const line = evaluation.accept ? L('+' + seats + ' MPs for the cabinet, for ' + concessionName(concession) + '. The right dislikes it. ' + promise,
-      '+' + seats + ' posłów za rządem, w zamian za ' + concessionName(concession) + '. Nie podoba się to prawicy. ' + promise) : reason;
+    const line = !evaluation.accept ? reason : id === 'bloc' ?
+      L('+' + seats + ' MPs for the cabinet in the people’s bloc, without a separate concession. ' + promise, '+' + seats + ' posłów za rządem w bloku ludowym, bez osobnych ustępstw. ' + promise) :
+      L('+' + seats + ' MPs for the cabinet, for ' + concessionName(concession) + '. The right dislikes it. ' + promise,
+        '+' + seats + ' posłów za rządem, w zamian za ' + concessionName(concession) + '. Nie podoba się to prawicy. ' + promise);
     return {club: club, on: on, allowed: true, available: on || evaluation.accept, accepts: evaluation.accept, concession: id, line: line, reason: reason};
   }
 

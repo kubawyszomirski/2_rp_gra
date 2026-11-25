@@ -19,8 +19,21 @@ PPS has [+ pl_org_cash_words +]. [+ pl_uni_bonus +] Choose one branch to organis
 - @union_organize_industry
 - @union_organize_rail
 - @union_organize_farm_labour
+- @union_organize_farm_joint
 - @nothing
 - @easy_discard
+
+# Z — 1.34: the pair of unionism and the worker-peasant alliance.
+@union_organize_farm_joint
+title: Organise the farm labourers together with the peasant parties
+subtitle: [+ pl_uni_union_organize_farm_joint_line +]
+view-if: {! return PolishRules.pairActive(Q.S, 'unionism', 'worker_peasant') !}
+choose-if: {! return PolishParty.selectionStatus(Q, ['union_organize_farm_joint'], 'party.union_investments').available !}
+unavailable-subtitle: [+ pl_uni_union_organize_farm_joint_why +]
+on-arrival: {!
+PolishParty.organizationsChoose(Q, ['union_organize_farm_joint'], 'party.union_investments');
+!}
+go-to: result
 
 @union_organize_industry
 title: Organise the industrial branch

@@ -10,6 +10,10 @@
     "subtitle: We publicly demand that the army keep out of politics. Piłsudski is irritated: relations with him worsen, the pressure towards a coup rises a little, and the Piłsudczycy in PPS are displeased.": "subtitle: Koszt: 0 jednostek środków. Publicznie żądamy, by wojsko trzymało się z dala od polityki. Piłsudski jest rozdrażniony: stosunki z nim się psują, presja na zamach trochę rośnie, a piłsudczycy w PPS są niezadowoleni.",
     "title: Wave it off": "title: Machnij ręką",
     "subtitle: Nothing changes.": "subtitle: Koszt: 0 jednostek środków. Nic się nie zmienia.",
-    "- @root: Continue.": "- @root: Dalej."
+    "- @root: Continue.": "- @root: Dalej.",
+    "title: Declare with the clubs of the minorities that we will defend the Sejm": "title: Oświadcz razem z klubami mniejszości, że obronimy Sejm",
+    "subtitle: The officers calm down a little, democracy grows stronger, and our relations with the minorities improve. Available thanks to parliamentarism and federalism.": "subtitle: Oficerowie trochę się uspokajają, demokracja się wzmacnia, a stosunki z mniejszościami się poprawiają. Opcja dostępna dzięki parlamentaryzmowi i federalizmowi.",
+    "title: Declare that the workers will answer a coup with a general strike": "title: Ogłoś, że na zamach robotnicy odpowiedzą strajkiem generalnym",
+    "subtitle: The unrest in the army falls, but the right is stirred and Piłsudski is irritated. Available thanks to militarism and strike action.": "subtitle: Niepokój w wojsku maleje, ale prawica się burzy, a Piłsudski jest rozdrażniony. Opcja dostępna dzięki militaryzmowi i akcji strajkowej."
   }
 }

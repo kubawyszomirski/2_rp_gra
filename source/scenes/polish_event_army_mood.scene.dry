@@ -20,6 +20,8 @@ PolishSecurity.unrestView(Q);
 
 - @appoint
 - @call_to_order
+- @declaration
+- @general_strike
 - @ignore
 
 @appoint
@@ -37,6 +39,25 @@ title: Call Piłsudski to order
 subtitle: We publicly demand that the army keep out of politics. Piłsudski is irritated: relations with him worsen, the pressure towards a coup rises a little, and the Piłsudczycy in PPS are displeased.
 on-arrival: {!
 PolishSecurity.unrestChoose(Q, 'call_to_order');
+!}
+go-to: result
+
+# Z — 1.34: the answers of two pairs of the characteristics; hidden without them.
+@declaration
+title: Declare with the clubs of the minorities that we will defend the Sejm
+subtitle: The officers calm down a little, democracy grows stronger, and our relations with the minorities improve. Available thanks to parliamentarism and federalism.
+view-if: {! return PolishSecurity.unrestStatus(Q, 'declaration').available !}
+on-arrival: {!
+PolishSecurity.unrestChoose(Q, 'declaration');
+!}
+go-to: result
+
+@general_strike
+title: Declare that the workers will answer a coup with a general strike
+subtitle: The unrest in the army falls, but the right is stirred and Piłsudski is irritated. Available thanks to militarism and strike action.
+view-if: {! return PolishSecurity.unrestStatus(Q, 'general_strike').available !}
+on-arrival: {!
+PolishSecurity.unrestChoose(Q, 'general_strike');
 !}
 go-to: result
 

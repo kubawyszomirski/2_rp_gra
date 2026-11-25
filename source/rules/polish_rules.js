@@ -975,6 +975,8 @@
   }
   const profileBonus = (S, id, t) => PROFILE_STAGE_BONUS[profileStage(S, id, t)];
   const profileFactor = (S, id, t) => 1 + profileBonus(S, id, t);
+  // Z — 1.34: a pair of adopted characteristics opens an option of its own (the user's decisions of 25 XI 2026).
+  const pairActive = (S, a, b) => profileActive(S, a) && profileActive(S, b);
   // Adds seeds to a profile not yet adopted; the line of the party makes them grow faster. Returns the points added.
   function seedProfile(Q, id, points, cause) {
     if (PROFILE_IDS.indexOf(id) < 0) throw new Error('seedProfile: unknown profile ' + id);
@@ -1180,6 +1182,7 @@
     profileLineMatch: profileLineMatch,
     profileActive: profileActive,
     profileStage: profileStage,
+    pairActive: pairActive,
     profileBonus: profileBonus,
     profileFactor: profileFactor,
     profileAdoptedAt: profileAdoptedAt,
