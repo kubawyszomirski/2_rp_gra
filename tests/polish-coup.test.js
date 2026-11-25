@@ -134,13 +134,15 @@ function toCoup({ democracy = null, turnout = null } = {}) {
   choose(engine, 'polish_party_agenda.organize_unions');
   choose(engine, 'root');
   assert.equal(engine.state.sceneId, 'polish_event_coup.f3', 'the queue brings the declared attempt at once (category 2)');
-  if (turnout) ['pils', 'legal'].forEach((side, i) => { S.rng.rolls[`coup_${S.coup.attempt_id}:${side}:turnout`] = (turnout[i] - 0.8) / 0.4; });
+  // Z — 1.35: the turnout of each side lies between 0.70 and 1.30.
+  if (turnout) ['pils', 'legal'].forEach((side, i) => { S.rng.rolls[`coup_${S.coup.attempt_id}:${side}:turnout`] = (turnout[i] - 0.7) / 0.6; });
   return engine;
 }
 
 test('Zamach: identical forces with different last commitments of PPS — the outcome is computed only after the commitments; the German coup counter and scenes change nothing', () => {
   const run = commitment => {
-    const engine = toCoup({ turnout: [1.2, 0.97] });
+    // Z — 1.35: the army leans to Piłsudski (0.51 against 0.37), so equal turnouts give him a clear victory without PPS.
+    const engine = toCoup({ turnout: [1.0, 1.0] });
     const Q = engine.state.qualities, S = Q.S;
     Q.coup_progress = 10; // the inherited German counter (leak 3): read by no Polish rule
     const A = S.coup.attempt;
@@ -148,7 +150,8 @@ test('Zamach: identical forces with different last commitments of PPS — the ou
     choose(engine, 'polish_event_coup.begin');
     choose(engine, 'polish_event_coup.defend_legal');
     assert.deepEqual([S.coup.outcome, A.resolution], [null, null], 'nothing is decided before F5');
-    S.militia.strength = 620; S.militia.militancy = 1; // fixture: a Milicja of about 6 F (Z — 0.89: every member answers)
+    // fixture: Akcja Socjalistyczna of 620 members (Z — 1.35: only AS with 500 members counts in the fighting)
+    S.militia.strength = 620; S.militia.militancy = 1; S.militia.stage = 2;
     choose(engine, `polish_event_coup.commit_${commitment}`);
     assert.equal(engine.state.sceneId, 'polish_event_coup.f10', 'Z — 1.03: the outcome right after the organisations');
     return { S, A, engine };
@@ -183,23 +186,26 @@ test('Wczytanie zamachu: a save after the stance, at the choice of the organisat
   assert.equal(R.S.coup.f9, null, 'no F9 any more');
 });
 
-test('Brak zwycięzcy: a close fight at democracy 30, below the level of a settlement, is a prolonged conflict, a report of handover and the end of the chapter', () => {
-  const engine = toCoup({ democracy: 30, turnout: [1.0, 1.1] });
+// Z — 1.35 (decision D4A of 25 XI 2026): no prolonged conflict — below the level of a settlement the stronger side wins after weeks of
+// fighting, with more losses; the report says so.
+test('Brak zwycięzcy (Z — 1.35: long fighting): a close fight at democracy 30, below the level of a settlement, ends with the stronger side after weeks of fighting', () => {
+  const engine = toCoup({ democracy: 30, turnout: [0.75, 1.1] });
   const Q = engine.state.qualities, S = Q.S;
   choose(engine, 'polish_event_coup.begin');
   choose(engine, 'polish_event_coup.mediate');
   choose(engine, 'polish_event_coup.commit_none');
   assert.equal(engine.state.sceneId, 'polish_event_coup.f10');
-  assert.deepEqual([S.coup.outcome, S.coup.round, S.coup.phase, S.coup.effects_complete], ['prolonged_conflict', 4, 'resolved', true]);
+  const res = S.coup.attempt.resolution;
+  assert.ok(res.ratio < 1.15 && res.ratio > 1 / 1.15, 'a close fight: ' + res.ratio);
+  assert.deepEqual([S.coup.outcome, res.long, S.coup.round, S.coup.phase, S.coup.effects_complete], ['pils_victory', true, 6, 'resolved', true]);
+  assert.match(JSON.stringify(engine.ui.paragraphs), /after weeks of fighting the rebels took the capital/);
   assert.deepEqual([S.chapter.status, S.chapter.reason, S.chapter.trigger_id], ['ended', 'coup', S.coup.attempt_id]);
   const report = S.chapter.report;
-  assert.equal(report.state.turning_point.outcome, 'prolonged_conflict');
-  assert.ok(report.state.turning_point.balance.pils > 0 && report.state.turning_point.balance.legal > 0, 'the balance of the two forces');
+  assert.equal(report.state.turning_point.outcome, 'pils_victory');
   assert.ok(report.state.turning_point.effects.forces.every(f => f.id === 'army'), 'the losses of the army');
-  assert.deepEqual(report.continuation_requirements, ['prolonged_conflict']);
+  assert.deepEqual(report.continuation_requirements, ['long_fighting: weeks of fighting, greater destruction and more victims']);
   assert.equal(report.state.last_election.sequence_after_opening, 1, 'the Sejm of 1922 stays in the report');
   choose(engine, 'polish_chapter_report');
-  assert.match(JSON.stringify(engine.ui.paragraphs), /the conflict continues without a winner/);
   // Stage 8: after a coup the Sejm still sits; the report names its Marshal. Z — 0.80: no "Beyond this chapter" (immersion, 4A of 20 X 2026).
   assert.deepEqual([engine.state.qualities.pl_report_speaker_label, engine.state.qualities.pl_report_speaker],
     ['Marshal of the Sejm', S.parliament.speaker ? S.parliament.speaker.name : 'Vacant']);

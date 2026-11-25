@@ -52,7 +52,9 @@
   const FORCE_PROFILE_ID = 'synthetic_army_v1';
   const ARMY = 'army';
   const FORCES = Object.freeze([
-    {id: ARMY, base_strength_F: 160, readiness: 0.80, command: 0.81, loyalty: [0.43, 0.45, 0.12], available_from_phase: 0, transport_route: 'road', rail_delay_cap: 0},
+    // Z — 1.35 (decision D1A of 25 XI 2026): the army leans to Piłsudski (until 1.34: 0.43 legal, 0.45 Piłsudski) — without the
+    // organisations of PPS he wins about two thirds of the attempts, a compromise about a quarter, the government about one in ten.
+    {id: ARMY, base_strength_F: 160, readiness: 0.80, command: 0.81, loyalty: [0.37, 0.51, 0.12], available_from_phase: 0, transport_route: 'road', rail_delay_cap: 0},
   ]);
   const LOGISTICS = 0.80;         // 16.2 (P)
   const KNOWN_START = 30;         // 16.8.1: ±30 pp around the loyalties
@@ -567,11 +569,24 @@
   // organisations of PPS join the side it supports: the Milicja with 1.5 times its force of 13.3, and the strike of the
   // railway workers that holds back the trains of the other side. A side with 1.2 times the force of the other wins; between
   // them the two sides reach a settlement while the institutions still work, else the conflict drags on.
-  const COUP_TURNOUT = Object.freeze({low: 0.80, span: 0.40});
-  const COUP_VICTORY = 1.20;
+  // Z — 1.35: the hidden turnout of each side between 0.70 and 1.30 (0.80–1.20 until 1.34), a victory from 1.15 times the other side.
+  const COUP_TURNOUT = Object.freeze({low: 0.70, span: 0.60});
+  const COUP_VICTORY = 1.15;
   const COUP_SETTLEMENT_DEMOCRACY = 45;
   const MILITIA_COUP_FACTOR = 1.5;
-  const STRIKE_FACTOR = 1 / 200, STRIKE_CAP = 0.25;
+  // Z — 1.35 (decision D2A): only strong organisations count in the fighting — the railway workers with a union of large reach (70)
+  // and readiness (40), whose strike then holds back up to 20% of the other side; the Milicja only as Akcja Socjalistyczna with 500
+  // members or more. A weaker call changes nothing in the fighting (the strike of a weak union still costs the other side nothing).
+  // Calibrated on 22 attempts of the test campaigns: defending the government, strong railway workers alone turn about a third of
+  // the victories of Piłsudski, Akcja Socjalistyczna alone a quarter, both about four in five (to a compromise or a victory).
+  const STRIKE_FACTOR = 1 / 150, STRIKE_CAP = 0.20;
+  const RAIL_STRONG = Object.freeze({reach: 70, readiness: 40});
+  const MILITIA_STRONG = Object.freeze({stage: 2, members: 500});
+  const railStrong = S => !!S.unions && !!S.unions.rail && S.unions.rail.reach >= RAIL_STRONG.reach && S.unions.rail.readiness >= RAIL_STRONG.readiness;
+  const militiaStrong = S => !!S.militia && S.militia.stage === MILITIA_STRONG.stage && S.militia.strength >= MILITIA_STRONG.members;
+  // Z — 1.35 (decision D4A): when no side prevails clearly and no settlement can be made, the stronger side wins after weeks of
+  // fighting, with greater destruction and more victims (6 rounds of losses instead of 2).
+  const LONG_FIGHT_ROUNDS = 6;
 
   // cfg: strength, readiness, command, loyalty {pils, legal}, turnout {pils, legal}, stance ('pils'|'legal'|'neutral'), militia_F,
   // rail_base, settlement (institutions able to carry one), offers (feasible ids), objective {pils, legal}, no_pps (the
@@ -582,14 +597,14 @@
     const side = cfg.stance === 'pils' || cfg.stance === 'legal' ? cfg.stance : null;
     const fighting = !cfg.no_pps && !!side;
     const militiaF = fighting ? (cfg.militia_F || 0) * MILITIA_COUP_FACTOR : 0;
-    const strike = fighting ? Math.min(STRIKE_CAP, (cfg.rail_base || 0) * STRIKE_FACTOR) : 0;
+    const strike = fighting && cfg.rail_strong !== false ? Math.min(STRIKE_CAP, (cfg.rail_base || 0) * STRIKE_FACTOR) : 0;
     if (fighting) {
       F[side] += militiaF;
       F[oppSide(side)] *= 1 - strike;
     }
     // No force on either side is no military advantage of anyone.
     const ratio = F.legal > 0 ? F.pils / F.legal : F.pils > 0 ? Infinity : 1;
-    let outcome, offer = null;
+    let outcome, offer = null, long = false;
     if (ratio >= COUP_VICTORY && cfg.objective.pils) outcome = 'pils_victory';
     else if (ratio <= 1 / COUP_VICTORY && cfg.objective.legal) outcome = 'legal_victory';
     else if (cfg.settlement && cfg.offers.length) {
@@ -597,10 +612,12 @@
       const prefer = F.pils >= F.legal ? 'coup.offer.cabinet_change' : 'coup.offer.inspectorate_law';
       offer = cfg.offers.indexOf(prefer) >= 0 ? prefer : cfg.offers[0];
     } else {
-      outcome = 'prolonged_conflict';
+      // A tie leaves the government in place: nobody prevailed.
+      outcome = F.pils > F.legal ? 'pils_victory' : 'legal_victory';
+      long = true;
     }
     return {stance: cfg.stance || null, fighting: fighting, F: {pils: round(F.pils, 6), legal: round(F.legal, 6)}, ratio: round(ratio, 6),
-      militia_F: round(militiaF, 6), strike: round(strike, 6), outcome: outcome, offer: offer, fought: outcome === 'prolonged_conflict' ? 4 : 2};
+      militia_F: round(militiaF, 6), strike: round(strike, 6), outcome: outcome, offer: offer, long: long, fought: long ? LONG_FIGHT_ROUNDS : 2};
   }
 
   // 16.8.7: the outcomes ordered by the benefit of the side PPS supports.
@@ -634,13 +651,31 @@
       f.base_strength_F - f.losses_F > 0);
   }
 
+  // Z — 1.35 (decision D3A of 25 XI 2026): Piłsudski does not dare when democracy is very high (80) and the government clearly controls
+  // the army — at least two of its steps (the law on the oversight of the army, the army subordinated to the minister, promotions of
+  // officers loyal to the government) and an army more loyal to the government than to Piłsudski.
+  const DETERRENCE = Object.freeze({democracy: 80, steps: 2});
+  function controlSteps(S) {
+    const steps = new Set();
+    for (const r of (S.history && S.history.reasons) || []) {
+      if (r.kind === 'army_control') steps.add('oversight');
+      else if (r.kind === 'officers_promoted' && r.moved > 0) steps.add('promotion');
+      else if (r.kind === 'relation' && /^pils_subordinate:/.test(r.reason || '')) steps.add('subordination');
+    }
+    return Array.from(steps).sort();
+  }
+  function coupDeterred(S) {
+    const democracy = S.politics ? S.politics.democracy : 60, army = forceOf(S, ARMY);
+    if (!army || democracy < DETERRENCE.democracy || controlSteps(S).length < DETERRENCE.steps) return false;
+    return army.loyalty_legal > effectiveLoyalty(army, democracy).pils;
+  }
   function coupGates(Q, now) {
     const S = Q.S, C = S.coup, a = pilsAgreement(S);
     const standDown = credibleStandDown(S, now) && !(a && hasOverdueClause(a, now));
     const g = {pressure: C.pressure >= COUP_GATES.attempt, capacity: capacity(S, now) >= COUP_GATES.capacity,
       window: now >= COUP_WINDOW_FROM && initialStrikeForce(S, now), stand_down: standDown,
-      active: C.attempt_id !== null && C.phase !== 'resolved', cooldown: now < C.next_attempt_available_at};
-    g.allowed = g.pressure && g.capacity && g.window && !g.stand_down && !g.active && !g.cooldown;
+      active: C.attempt_id !== null && C.phase !== 'resolved', cooldown: now < C.next_attempt_available_at, deterred: coupDeterred(S)};
+    g.allowed = g.pressure && g.capacity && g.window && !g.stand_down && !g.active && !g.cooldown && !g.deterred;
     return g;
   }
 
@@ -653,10 +688,13 @@
     if (C.phase === 'resolved') return C.phase;
     C.log = C.log || [];
     const standDown = credibleStandDown(S, now);
-    if (C.phase === 'political_crisis' && (standDown || C.pressure < COUP_GATES.cancel)) {
+    const deterred = coupDeterred(S);
+    if (deterred && !C.deterred_at) C.deterred_at = t;
+    if (C.phase === 'political_crisis' && (standDown || deterred || C.pressure < COUP_GATES.cancel)) {
       C.phase = 'dormant';
       C.next_attempt_available_at = now + COUP_GATES.cooldown;
-      C.log.push({t: t, kind: 'preparations_called_off', reason: standDown ? 'protective_agreement' : 'pressure_below_40', next_attempt_available_at: now + COUP_GATES.cooldown});
+      C.log.push({t: t, kind: 'preparations_called_off', reason: standDown ? 'protective_agreement' : deterred ? 'deterred' : 'pressure_below_40',
+        next_attempt_available_at: now + COUP_GATES.cooldown});
       return C.phase;
     }
     if (C.phase === 'dormant' && C.pressure >= COUP_GATES.crisis && !standDown) {
@@ -834,11 +872,12 @@
     const cabinetOk = !!S.cabinet && (S.cabinet.status === 'active' || S.cabinet.status === 'caretaker');
     const cfg = {strength: Math.max(0, army.base_strength_F - army.losses_F), readiness: readinessOf(army, t), command: army.command,
       loyalty: {pils: round(e.pils, 6), legal: round(e.legal, 6)}, turnout: turnout, stance: side,
-      // Z — 1.07: militarism makes the Milicja count more in the coup (Z — 1.33: by its stage, +40% and then +60%).
+      // Z — 1.07: militarism makes the Milicja count more in the coup (Z — 1.33: by its stage, +40% and then +60%). Z — 1.35: only
+      // Akcja Socjalistyczna with 500 members counts in the fighting, and only a strong union of railway workers.
       // Z — 1.34 (the pair of militarism and strike action): when both the Milicja and the railwaymen are called, they act together as a
       // workers' guard and each counts a quarter more.
-      militia_F: militia && side !== 'neutral' ? militia.force * rules.profileFactor(S, 'militarism') * workersGuard(S, militia, rail) : 0,
-      rail_base: rail ? rail.base * workersGuard(S, militia, rail) : 0,
+      militia_F: militia && side !== 'neutral' && militiaStrong(S) ? militia.force * rules.profileFactor(S, 'militarism') * workersGuard(S, militia, rail) : 0,
+      rail_base: rail ? rail.base * workersGuard(S, militia, rail) : 0, rail_strong: !!rail && railStrong(S),
       settlement: A.democracy >= COUP_SETTLEMENT_DEMOCRACY, offers: feasibleOffers(Q),
       objective: {pils: cabinetOk, legal: !!head && !!head.holder_id && cabinetOk}};
     A.cfg = cfg;
@@ -910,7 +949,7 @@
     // Institutions by the weights of 15.2, once: violence +10, democracy −2 for the attempt, −2 more for a victory of
     // Piłsudski or a prolonged conflict, +1 when the legal cabinet survived.
     const keeps = res.outcome === 'legal_victory' || (res.outcome === 'constitutional_compromise' && res.offer !== 'coup.offer.cabinet_change');
-    const dDemocracy = -2 + (res.outcome === 'pils_victory' || res.outcome === 'prolonged_conflict' ? -2 : 0) + (keeps ? 1 : 0);
+    const dDemocracy = -2 + (res.outcome === 'pils_victory' || res.outcome === 'prolonged_conflict' ? -2 : 0) + (keeps ? 1 : 0) + (res.long ? -1 : 0);
     const P = S.politics;
     P.democracy = clip(P.democracy + dDemocracy, 0, 100);
     P.violence = clip(P.violence + VIOLENCE_SERIOUS, 0, 100);
@@ -936,6 +975,7 @@
     // The executed settlement (16.8.5).
     if (res.outcome === 'constitutional_compromise') settlementExecuted(Q, res.offer, A);
     if (res.outcome === 'prolonged_conflict') A.continuation_requirements.push('prolonged_conflict');
+    if (res.long) A.continuation_requirements.push('long_fighting: weeks of fighting, greater destruction and more victims');
     if (S.militia.assignments) S.militia.assignments = S.militia.assignments.filter(a => a.id !== 'coup:' + C.attempt_id);
     A.effects = effects;
     C.outcome = res.outcome;
@@ -1063,6 +1103,11 @@
     'coup.offer.military_function': ['After two days of fighting the two sides reached a settlement: the government stays, and Piłsudski gets a military function under civilian control.',
       'Po dwóch dniach walk obie strony zawarły ugodę: rząd zostaje, a Piłsudski dostaje funkcję wojskową pod kontrolą cywilną.'],
     prolonged_conflict: ['The fighting goes on, and neither side can prevail.', 'Walki trwają, a żadna strona nie może przeważyć.'],
+    // Z — 1.35 (decision D4A): no settlement could be made, and the stronger side won after weeks of fighting.
+    'pils_victory:long': ['No settlement could be made: after weeks of fighting the rebels took the capital, and the government stepped down. The destruction and the victims were great.',
+      'Ugody nie dało się zawrzeć: po kilku tygodniach walk zamachowcy zajęli stolicę, a rząd ustąpił. Zniszczenia były duże, a ofiar wiele.'],
+    'legal_victory:long': ['No settlement could be made: after weeks of fighting the coup collapsed, and the government held on. The destruction and the victims were great.',
+      'Ugody nie dało się zawrzeć: po kilku tygodniach walk zamach się załamał, a rząd się utrzymał. Zniszczenia były duże, a ofiar wiele.'],
   });
 
   // What happened, told without numbers: the army, the strike, the Milicja, the outcome and what PPS changed.
@@ -1074,13 +1119,16 @@
       L('More soldiers stayed with the government than followed Piłsudski.', 'Przy rządzie zostało więcej żołnierzy, niż poszło za Piłsudskim.')];
     if (res.fighting && o.rail && o.rail.base > 0) {
       parts.push(res.strike >= 0.10 ? L('The strike of the railway workers stopped many trains with troops of the other side.', 'Strajk kolejarzy zatrzymał wiele pociągów z wojskiem przeciwnika.') :
-        L('The strike of the railway workers held back only a few trains.', 'Strajk kolejarzy zatrzymał tylko nieliczne pociągi.'));
+        L('Our railway union was too weak: its strike held back only a few trains.', 'Nasz związek kolejarzy był za słaby: jego strajk zatrzymał tylko nieliczne pociągi.'));
     }
     if (o.militia && o.militia.executing > 0) {
-      parts.push(res.fighting ? L('The Milicja of PPS fought on the side of ' + (res.stance === 'legal' ? 'the government' : 'Piłsudski') + '.',
-        'Milicja PPS walczyła po stronie ' + (res.stance === 'legal' ? 'rządu' : 'Piłsudskiego') + '.') : L('The Milicja protected our own people.', 'Milicja chroniła naszych ludzi.'));
+      parts.push(!res.fighting ? L('The Milicja protected our own people.', 'Milicja chroniła naszych ludzi.') : res.militia_F > 0 ?
+        L('The Milicja of PPS fought on the side of ' + (res.stance === 'legal' ? 'the government' : 'Piłsudski') + '.',
+          'Milicja PPS walczyła po stronie ' + (res.stance === 'legal' ? 'rządu' : 'Piłsudskiego') + '.') :
+        L('The Milicja of PPS went out on the side of ' + (res.stance === 'legal' ? 'the government' : 'Piłsudski') + ', but it was too small to count against the army.',
+          'Milicja PPS wyszła po stronie ' + (res.stance === 'legal' ? 'rządu' : 'Piłsudskiego') + ', ale była za słaba, by liczyć się wobec wojska.'));
     }
-    const story = OUTCOME_STORY[C.outcome === 'constitutional_compromise' ? C.settlement : C.outcome];
+    const story = OUTCOME_STORY[C.outcome === 'constitutional_compromise' ? C.settlement : res.long ? C.outcome + ':long' : C.outcome];
     if (story) parts.push(L(story[0], story[1]));
     if (C.pps_contribution === 'decisive') parts.push(L('It was our organisations that tipped the balance.', 'To nasze organizacje przechyliły szalę.'));
     else if (C.pps_contribution === 'adverse') parts.push(L('Our engagement harmed the side we supported.', 'Nasze zaangażowanie zaszkodziło stronie, którą poparliśmy.'));
@@ -1233,7 +1281,124 @@
       S.politics.due.polish_event_army_mood = 'army:' + level + ':t' + t;
     }
     if (level <= 1) C.mood_announced = level;
+    settleCoupWarning(Q, t);
   }
+  // ---- Z — 1.35 (decision D5 of 25 XI 2026): the warning of a coup — once, when the pressure towards a coup first reaches 50, between
+  // the agitated army (40) and the political crisis (55). It says in plain words what pushes the officers, what can still stop a coup
+  // and what would decide the fighting, with where PPS stands now; no numbers and no chances.
+  const WARNING_FROM = 50;
+  function settleCoupWarning(Q, t) {
+    const S = Q.S, C = S.coup;
+    if (C.warning_announced >= 0 || C.pressure < WARNING_FROM || C.attempt_id !== null || S.chapter.status === 'ended') return;
+    C.warning_announced = t;
+    S.politics.due.polish_event_coup_warning = 'warning:t' + t;
+  }
+  function coupWarningDue(Q) {
+    const S = Q.S;
+    if (!ready(Q) || S.chapter.status === 'ended') return false;
+    const key = S.politics && S.politics.due && S.politics.due.polish_event_coup_warning;
+    return !!key && S.coup.warning_seen !== key;
+  }
+  function coupWarningSeen(Q) {
+    Q.S.coup.warning_seen = Q.S.politics.due.polish_event_coup_warning || null;
+  }
+  function coupWarningView(Q) {
+    const S = Q.S, last = (S.coup.history || []).slice(-1)[0], parts = last ? last.parts || {} : {};
+    const causes = Object.keys(MOOD_CAUSES).filter(k => parts[k] > 0).map(k => L(MOOD_CAUSES[k][0], MOOD_CAUSES[k][1]));
+    const join = list => list.length < 2 ? list.join('') : list.slice(0, -1).join(', ') + L(' and ', ' i ') + list[list.length - 1];
+    const democracy = S.politics.democracy, steps = controlSteps(S).length;
+    Q.pl_cw_push = L('The officers loyal to Piłsudski are preparing to act, and his circle openly speaks of a change of power.',
+      'Oficerowie wierni Piłsudskiemu szykują się do działania, a jego otoczenie otwarcie mówi o zmianie władzy.') +
+      (causes.length ? ' ' + L('They are pushed by this: ', 'Popycha ich to, że ') + join(causes) + '.' : '');
+    Q.pl_cw_stop = L('A coup can still be stopped: by an agreement with Piłsudski, or by a very strong democracy together with the government’s firm hold on the army — the law on the oversight of the army, the army subordinated to the minister and promotions of officers loyal to the government.',
+      'Zamach wciąż można powstrzymać: porozumieniem z Piłsudskim albo bardzo silną demokracją razem z mocną kontrolą rządu nad wojskiem — ustawą o nadzorze nad armią, podporządkowaniem wojska ministrowi i awansami oficerów lojalnych wobec rządu.') + ' ' +
+      (democracy >= DETERRENCE.democracy && steps >= DETERRENCE.steps ? L('We are close to it.', 'Jesteśmy blisko tego.') :
+        democracy >= DETERRENCE.democracy ? L('Democracy is strong, but the government does not yet hold the army.', 'Demokracja jest silna, ale rząd nie panuje jeszcze nad wojskiem.') :
+        steps >= DETERRENCE.steps ? L('The government holds the army, but democracy is not yet strong enough.', 'Rząd panuje nad wojskiem, ale demokracja nie jest jeszcze dość silna.') :
+        L('We are far from it today.', 'Dziś jesteśmy od tego daleko.'));
+    const rail = railStrong(S), militia = militiaStrong(S);
+    Q.pl_cw_fight = L('If it comes to a coup, Piłsudski will most probably win without us. Only a strong union of railway workers and a large Akcja Socjalistyczna can tip the balance.',
+      'Jeśli dojdzie do zamachu, bez nas najpewniej wygra Piłsudski. Przechylić szalę mogą tylko silny związek kolejarzy i liczna Akcja Socjalistyczna.') + ' ' +
+      (rail ? L('Our railway union is strong enough to stop the trains.', 'Nasz związek kolejarzy jest dość silny, by zatrzymać pociągi.') :
+        L('Our railway union is still too weak to stop the trains.', 'Nasz związek kolejarzy jest jeszcze za słaby, by zatrzymać pociągi.')) + ' ' +
+      (militia ? L('Akcja Socjalistyczna is ready.', 'Akcja Socjalistyczna jest gotowa.') : S.militia.stage === 2 ?
+        L('Akcja Socjalistyczna is still too small.', 'Akcja Socjalistyczna jest jeszcze za mała.') :
+        L('Our Milicja is not yet Akcja Socjalistyczna, so it will not count against the army.', 'Nasza Milicja nie jest jeszcze Akcją Socjalistyczną, więc nie będzie się liczyć wobec wojska.'));
+  }
+
+  // ---- Z — 1.35 (decision D6A of 25 XI 2026): the ending of the chapter — first the result, then the side PPS took, then what follows
+  // for the next chapter; and a sentence when PPS ends the chapter in the government. A device of the game: the consequences are the
+  // starting position of the next chapter, not historical facts.
+  const ENDING_RESULT = Object.freeze({
+    pils_victory: ['Piłsudski took power: the coup succeeded, and the government stepped down.', 'Piłsudski przejął władzę: zamach się powiódł, a rząd ustąpił.'],
+    'pils_victory:long': ['After weeks of fighting Piłsudski took power; the destruction and the victims were great.', 'Po kilku tygodniach walk Piłsudski przejął władzę; zniszczenia były duże, a ofiar wiele.'],
+    legal_victory: ['The coup failed: the legal government stayed in power.', 'Zamach się nie powiódł: legalny rząd utrzymał się u władzy.'],
+    'legal_victory:long': ['After weeks of fighting the coup collapsed, and the legal government held on; the destruction and the victims were great.',
+      'Po kilku tygodniach walk zamach się załamał, a legalny rząd się utrzymał; zniszczenia były duże, a ofiar wiele.'],
+    'coup.offer.cabinet_change': ['The coup ended in a settlement: the government stepped down, and a premier accepted by Piłsudski’s camp took its place.',
+      'Zamach zakończył się ugodą: rząd ustąpił, a premierem został człowiek akceptowany przez obóz Piłsudskiego.'],
+    'coup.offer.inspectorate_law': ['The coup ended in a settlement: the government stayed, and Piłsudski got an independent inspectorate of the army.',
+      'Zamach zakończył się ugodą: rząd został, a Piłsudski dostał niezależny inspektorat armii.'],
+    'coup.offer.military_function': ['The coup ended in a settlement: the government stayed, and Piłsudski got a military function under civilian control.',
+      'Zamach zakończył się ugodą: rząd został, a Piłsudski dostał funkcję wojskową pod kontrolą cywilną.'],
+    agreement: ['There was no coup: the agreement with Piłsudski held the army back.', 'Do zamachu nie doszło: porozumienie z Piłsudskim powstrzymało wojsko.'],
+    deterred: ['There was no coup: with a very strong democracy and a government that held the army, Piłsudski did not dare.',
+      'Do zamachu nie doszło: przy bardzo silnej demokracji i rządzie, który panował nad wojskiem, Piłsudski się nie odważył.'],
+    election: ['There was no coup before the election; the unrest in the army remains.', 'Do zamachu nie doszło przed wyborami; niepokój w wojsku zostaje.'],
+  });
+  const ENDING_NEXT = Object.freeze({
+    'pils_victory:pils': ['The new power owes us part of its victory: we begin the next chapter with influence on it, but Piłsudski’s camp will want to bend the party and the unions to its will.',
+      'Nowa władza zawdzięcza nam część zwycięstwa: następny rozdział zaczynamy z wpływem na nią, ale obóz Piłsudskiego będzie chciał podporządkować sobie partię i związki.'],
+    'pils_victory:legal': ['The victors see PPS as an enemy: in the next chapter we face repression and hard years in opposition.',
+      'Zwycięzcy uważają PPS za przeciwnika: w następnym rozdziale grożą nam represje i trudne lata w opozycji.'],
+    'pils_victory:neutral': ['We owe the new power nothing, and it owes us nothing: we begin the next chapter with free hands, but without influence on the government.',
+      'Nie mamy długu wobec nowej władzy ani ona wobec nas: następny rozdział zaczynamy z wolnymi rękami, ale bez wpływu na rząd.'],
+    'legal_victory:legal': ['The Republic survived with us on its side: we begin the next chapter with the trust of the democrats and the hostility of Piłsudski’s followers.',
+      'Republika przetrwała, a my byliśmy po jej stronie: następny rozdział zaczynamy z zaufaniem demokratów i wrogością piłsudczyków.'],
+    'legal_victory:pils': ['We backed the losers: the government and the Sejm will remind us of it, and part of the party will turn against its leaders.',
+      'Poparliśmy przegranych: rząd i Sejm będą nam to wypominać, a część partii odwróci się od kierownictwa.'],
+    'legal_victory:neutral': ['The Republic survived without us: nobody owes us the victory, but nobody holds a grudge against us either.',
+      'Republika przetrwała bez nas: nikt nie zawdzięcza nam zwycięstwa, ale nikt nie ma do nas żalu.'],
+    'compromise:pils': ['The settlement gave Piłsudski’s camp a strong position, and it remembers our support.', 'Ugoda dała obozowi Piłsudskiego mocną pozycję, a on pamięta nasze poparcie.'],
+    'compromise:legal': ['The settlement saved the Sejm, and our stand won us the democrats, but the army does not trust us.', 'Ugoda ocaliła Sejm, a nasza postawa zjednała nam demokratów, ale wojsko nam nie ufa.'],
+    'compromise:neutral': ['The settlement was made without us: the next chapter begins in a fragile calm in which we have no special part.',
+      'Ugodę zawarto bez nas: następny rozdział zaczyna się w kruchym spokoju, w którym nie mamy szczególnej roli.'],
+    agreement: ['The calm has its price: the concessions to the army remain, and Piłsudski is still a force to be reckoned with.',
+      'Spokój ma swoją cenę: ustępstwa wobec wojska zostają, a Piłsudski pozostaje siłą, z którą trzeba się liczyć.'],
+    deterred: ['The Republic enters the next chapter strong, with the army under the government’s control.', 'Republika wchodzi w następny rozdział silna, a wojsko pod kontrolą rządu.'],
+    election: ['The next chapter begins with a new Sejm, and the question of a coup remains open.', 'Następny rozdział zaczyna się od nowego Sejmu, a pytanie o zamach pozostaje otwarte.'],
+  });
+  function coupEnding(Q) {
+    const S = Q.S, C = S.coup, A = C.attempt, res = A && A.resolution;
+    const pair = key => L(ENDING_RESULT[key][0], ENDING_RESULT[key][1]);
+    const next = key => (ENDING_NEXT[key] ? L(ENDING_NEXT[key][0], ENDING_NEXT[key][1]) : '');
+    const parts = [];
+    if (C.outcome && res) {
+      const stance = C.stance === 'support_pils' ? 'pils' : C.stance === 'defend_legal' ? 'legal' : 'neutral';
+      const resultKey = C.outcome === 'constitutional_compromise' ? C.settlement : res.long ? C.outcome + ':long' : C.outcome;
+      parts.push(ENDING_RESULT[resultKey] ? pair(resultKey) : '');
+      const called = (C.commitments || []).length > 0;
+      const decisive = C.pps_contribution === 'decisive', adverse = C.pps_contribution === 'adverse';
+      parts.push(stance === 'pils' ? (decisive ? L('We backed Piłsudski, and it was our organisations that tipped the balance.', 'Poparliśmy Piłsudskiego, a to nasze organizacje przechyliły szalę.') :
+        called ? L('We backed Piłsudski and called out our organisations.', 'Poparliśmy Piłsudskiego i wezwaliśmy nasze organizacje.') :
+          L('We backed Piłsudski, but only in words.', 'Poparliśmy Piłsudskiego, ale tylko słowem.')) :
+        stance === 'legal' ? (decisive ? L('We stood up for the government, and it was our organisations that tipped the balance.', 'Stanęliśmy w obronie rządu i to nasze organizacje przechyliły szalę.') :
+          called ? L('We stood up for the government and called out our organisations.', 'Stanęliśmy w obronie rządu i wezwaliśmy nasze organizacje.') :
+            L('We stood up for the government, but only in words.', 'Stanęliśmy w obronie rządu, ale tylko słowem.')) :
+          L('We stayed neutral.', 'Zachowaliśmy neutralność.'));
+      if (adverse) parts.push(L('Our engagement harmed the side we backed.', 'Nasze zaangażowanie zaszkodziło stronie, którą poparliśmy.'));
+      parts.push(next((C.outcome === 'constitutional_compromise' ? 'compromise' : C.outcome) + ':' + stance));
+    } else {
+      const agreed = (C.log || []).some(e => e.kind === 'preparations_called_off' && e.reason === 'protective_agreement') || credibleStandDown(S, Q.time);
+      const key = C.deterred_at >= 0 ? 'deterred' : agreed ? 'agreement' : 'election';
+      parts.push(pair(key), next(key));
+    }
+    const record = government.powerRecord ? government.powerRecord(Q) : null;
+    if (record && record.now === 'premier') parts.push(L('We end the chapter with a premier of PPS.', 'Rozdział kończymy z premierem z PPS.'));
+    else if (record && record.now === 'member') parts.push(L('We end the chapter with ministers of PPS in the government.', 'Rozdział kończymy z ministrami PPS w rządzie.'));
+    return parts.filter(Boolean).join(' ');
+  }
+
   // The note of the main screen in the month after a change.
   function armyNotice(Q) {
     const S = Q.S, ch = S && S.coup && S.coup.mood_change;
@@ -1269,8 +1434,8 @@
       L('In the officers’ messes there is talk of a march on Warsaw. Officers loyal to Piłsudski openly attack the government and the Sejm, and the press writes about a possible coup.',
         'W kasynach oficerskich mówi się o marszu na Warszawę. Oficerowie wierni Piłsudskiemu otwarcie atakują rząd i Sejm, a prasa pisze o możliwym zamachu.')) +
       (causes.length ? ' ' + L('The officers are pushed by this: ', 'Oficerów popycha do tego to, że ') + join(causes) + '.' : '');
-    Q.pl_army_help = L('The tension eases when the country has a steady government, the Sejm regains its authority and the dispute over the army is settled. If it comes to a coup, the Milicja and a strike of the railwaymen count.',
-      'Napięcie słabnie, gdy kraj ma stały rząd, Sejm odzyskuje autorytet, a spór o wojsko zostaje rozstrzygnięty. Gdy dojdzie do zamachu, liczy się Milicja i strajk kolejarzy.');
+    Q.pl_army_help = L('The tension eases when the country has a steady government, the Sejm regains its authority and the dispute over the army is settled. If it comes to a coup, only a strong railway union and a large Akcja Socjalistyczna count.',
+      'Napięcie słabnie, gdy kraj ma stały rząd, Sejm odzyskuje autorytet, a spór o wojsko zostaje rozstrzygnięty. Gdy dojdzie do zamachu, liczy się tylko silny związek kolejarzy i liczna Akcja Socjalistyczna.');
   }
   function armyMoodSeen(Q) {
     const S = Q.S;
@@ -1536,6 +1701,14 @@
     policeWords: policeWords,
     UNREST_OPTIONS: UNREST_OPTIONS,
     unrestStatus: unrestStatus,
+    coupWarningDue: coupWarningDue,
+    coupWarningView: coupWarningView,
+    coupWarningSeen: coupWarningSeen,
+    coupEnding: coupEnding,
+    controlSteps: controlSteps,
+    coupDeterred: coupDeterred,
+    railStrong: railStrong,
+    militiaStrong: militiaStrong,
     workersGuard: workersGuard,
     unrestView: unrestView,
     unrestChoose: unrestChoose,

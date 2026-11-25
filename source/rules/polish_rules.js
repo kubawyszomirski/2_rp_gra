@@ -103,6 +103,8 @@
     polish_event_pils_departure: Object.freeze({definition_id: 'politics.pils_departure', category: 6}),
     // Z — 1.10 (decision 4A of 8 XI 2026): the rise of the army's mood to "seething" and to "ready for a coup", one instance per rise.
     polish_event_army_mood: Object.freeze({definition_id: 'coup.army_mood', category: 6, keyed_by: 'politics'}),
+    // Z — 1.35 (decision D5): the warning of a coup, once, when the pressure first reaches 50.
+    polish_event_coup_warning: Object.freeze({definition_id: 'coup.warning', category: 6, keyed_by: 'politics'}),
     // Stage 7d: the started confrontation of the coup (category 2), one instance per attempt and phase (card catalogue 9.15).
     polish_event_coup: Object.freeze({definition_id: 'coup.attempt', category: 2, keyed_by: 'coup'}),
     // Stage 6: the wage case of 1923 and the answer of the Sejm are conditional crises (category 5), one instance per

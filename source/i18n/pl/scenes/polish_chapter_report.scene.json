@@ -31,10 +31,8 @@
   "= The end of the first chapter": "= Koniec pierwszego rozdziału",
   "[? if not pl_report_ready : The chapter has not ended. ?]": "[? if not pl_report_ready : Rozdział się nie skończył. ?]",
   "[? if pl_report_ready and not pl_report_coup : **Turning point.** The next lawful Sejm election, held on [+ pl_report_date +], has been certified. The first chapter ends here, before a new government is formed. ?]": "[? if pl_report_ready and not pl_report_coup : **Punkt zwrotny.** Kolejne wybory do Sejmu odbyły się [+ pl_report_date +]. Na nich kończy się pierwszy rozdział, jeszcze przed utworzeniem nowego rządu. ?]",
-  "[? if pl_report_ready and pl_report_coup : **Turning point.** The attempt against the government of [+ pl_report_date +] is resolved: [+ pl_report_coup_line +]. The first chapter ends here. ?]": "[? if pl_report_ready and pl_report_coup : **Punkt zwrotny.** Próba zamachu na rząd z [+ pl_report_date +] została rozstrzygnięta: [+ pl_report_coup_line +]. Pierwszy rozdział kończy się tutaj. ?]",
   "[? if pl_report_ready and not pl_report_coup : **The new Sejm (444 MPs).** [+ pl_report_seats +]. ?]": "[? if pl_report_ready and not pl_report_coup : **Nowy Sejm (444 posłów).** [+ pl_report_seats +]. ?]",
   "[? if pl_report_ready and pl_report_coup : **The Sejm at the end of the chapter (444 MPs).** [+ pl_report_seats +]. ?]": "[? if pl_report_ready and pl_report_coup : **Sejm na koniec rozdziału (444 posłów).** [+ pl_report_seats +]. ?]",
-  "[? if pl_report_ready and pl_report_coup : **What the continuation owes.** [+ pl_report_continuation +]. ?]": "[? if pl_report_ready and pl_report_coup : **Zobowiązania po zamachu.** [+ pl_report_continuation +]. ?]",
   "[? if pl_report_ready : **PPS.** [+ pl_report_pps +]. Factions: [+ pl_report_factions +]. ?]": "[? if pl_report_ready : **PPS.** [+ pl_report_pps +]. Frakcje: [+ pl_report_factions +]. ?]",
   "[? if pl_report_ready : **Institutions.** President: [+ pl_report_president +]. [+ pl_report_speaker_label +]: [+ pl_report_speaker +]. Senate: [+ pl_report_senate +]. ?]": "[? if pl_report_ready : **Instytucje.** Prezydent: [+ pl_report_president +]. [+ pl_report_speaker_label +]: [+ pl_report_speaker +]. Senat: [+ pl_report_senate +]. ?]",
   "[? if pl_report_ready : **Government at the end of the chapter.** [+ pl_report_government +]. ?]": "[? if pl_report_ready : **Rząd na koniec rozdziału.** [+ pl_report_government +]. ?]",
@@ -44,6 +42,8 @@
   "[? if pl_report_ready : **Power.** [+ pl_verdict_power +]. [+ pl_record_power +] ?]": "[? if pl_report_ready : **Władza.** [+ pl_verdict_power +]. [+ pl_record_power +] ?]",
   "[? if pl_report_ready : **Republic.** [+ pl_verdict_republic +]. ?]": "[? if pl_report_ready : **Republika.** [+ pl_verdict_republic +]. ?]",
   "[? if pl_report_ready : **Credibility of PPS.** [+ pl_verdict_credibility +]. ?]": "[? if pl_report_ready : **Wiarygodność PPS.** [+ pl_verdict_credibility +]. ?]",
-  "[? if pl_report_ready : **Reforms.** [+ pl_report_reforms +] ?]": "[? if pl_report_ready : **Reformy.** [+ pl_report_reforms +] ?]"
+  "[? if pl_report_ready : **Reforms.** [+ pl_report_reforms +] ?]": "[? if pl_report_ready : **Reformy.** [+ pl_report_reforms +] ?]",
+  "[? if pl_report_ready and pl_report_coup : **Turning point.** The attempt against the government of [+ pl_report_date +] is resolved. The first chapter ends here. ?]": "[? if pl_report_ready and pl_report_coup : **Punkt zwrotny.** Próba zamachu na rząd z [+ pl_report_date +] została rozstrzygnięta. Pierwszy rozdział kończy się tutaj. ?]",
+  "[? if pl_report_ready and pl_report_ending : **Ending.** [+ pl_report_ending +] ?]": "[? if pl_report_ready and pl_report_ending : **Zakończenie.** [+ pl_report_ending +] ?]"
  }
 }

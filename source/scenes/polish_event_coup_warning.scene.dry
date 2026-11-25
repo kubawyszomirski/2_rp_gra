@@ -1,0 +1,27 @@
+title: The Threat of a Coup
+subtitle: The pressure towards a coup grows; PPS learns what could stop it and what would decide the fighting.
+new-page: true
+tags: pl_event
+view-if: {! return !!Q.S && typeof PolishSecurity !== 'undefined' && PolishSecurity.coupWarningDue(Q) !}
+on-arrival: {!
+// Event coup.warning (Z — 1.35, decision D5 of 25 XI 2026): once, when the pressure towards a coup first reaches 50. It explains in
+// words, without numbers or chances, what pushes the officers, what can still stop a coup and what would decide the fighting.
+PolishSecurity.coupWarningView(Q);
+!}
+
+= The threat of a coup
+
+[+ pl_cw_push +]
+
+[+ pl_cw_stop +]
+
+[+ pl_cw_fight +]
+
+- @seen
+
+@seen
+title: We take note
+on-arrival: {!
+PolishSecurity.coupWarningSeen(Q);
+!}
+go-to: root

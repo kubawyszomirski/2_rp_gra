@@ -218,6 +218,9 @@
       Q.pl_verdict_republic = L(REPUBLIC_END[C.outcome][0], REPUBLIC_END[C.outcome][1]) + (C.pps_contribution === 'decisive' ?
         L(', and PPS tipped the balance', ', a przesądziła PPS') : C.pps_contribution === 'adverse' ? L(', and PPS harmed the side it backed', ', a PPS zaszkodziła stronie, którą poparła') : '');
     } else Q.pl_verdict_republic = S.chapter && S.chapter.status === 'ended' ? L('no coup: the election closed the chapter', 'bez zamachu: rozdział zakończyły wybory') : Q.pl_goal_republic;
+    // Z — 1.35 (decision D6A): the ending of the chapter — the result, our side and what follows.
+    const security = globalThis.PolishSecurity;
+    Q.pl_report_ending = S.chapter && S.chapter.status === 'ended' && security && security.coupEnding ? security.coupEnding(Q) : '';
     Q.pl_record_reforms = reforms.length ? reformsList(reforms) : '';
     Q.pl_record_count = reforms.length;
     // The verdicts begin the sentences of the balance.

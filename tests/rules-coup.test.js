@@ -67,23 +67,24 @@ test('Gotowość wojska: democracy 60 / 75 / 45 / 100 leaves the loyalties of th
   const S = Q.S;
   assert.equal(Q.polish_security_rules, 1);
   assert.equal(S.security.profile_id, 'synthetic_army_v1', 'Z — 1.03 (decision 1B): one army');
-  assert.deepEqual(S.security.forces.map(f => [f.id, f.base_strength_F, f.loyalty_legal, f.loyalty_pils, f.loyalty_neutral]), [['army', 160, 0.43, 0.45, 0.12]]);
+  // Z — 1.35 (decision D1A): the army leans to Piłsudski (0.43 and 0.45 until 1.34).
+  assert.deepEqual(S.security.forces.map(f => [f.id, f.base_strength_F, f.loyalty_legal, f.loyalty_pils, f.loyalty_neutral]), [['army', 160, 0.37, 0.51, 0.12]]);
   const f = army(S);
   const at = d => PolishSecurity.effectiveLoyalty(f, d);
   const e60 = at(60), e75 = at(75), e45 = at(45), e100 = at(100);
-  assert.deepEqual([e60.legal, e60.pils, e60.neutral], [0.43, 0.45, 0.12], 'unchanged at 60');
-  close(e75.pils, 0.45 - 0.0375, 1e-12); close(e75.neutral, 0.12 + 0.0375, 1e-12);
-  close(e45.pils, 0.45 + 0.0375, 1e-12); close(e45.neutral, 0.12 - 0.0375, 1e-12);
-  close(e100.pils, 0.35, 1e-12, 'the limit of 10 pp');
-  close(at(0).pils, 0.55, 1e-12, 'at most 10 pp the other way');
+  assert.deepEqual([e60.legal, e60.pils, e60.neutral], [0.37, 0.51, 0.12], 'unchanged at 60');
+  close(e75.pils, 0.51 - 0.0375, 1e-12); close(e75.neutral, 0.12 + 0.0375, 1e-12);
+  close(e45.pils, 0.51 + 0.0375, 1e-12); close(e45.neutral, 0.12 - 0.0375, 1e-12);
+  close(e100.pils, 0.41, 1e-12, 'the limit of 10 pp');
+  close(at(0).pils, 0.61, 1e-12, 'at most 10 pp the other way');
   for (const e of [e60, e75, e45, e100]) {
-    assert.equal(e.legal, 0.43, 'the legal share never moves');
+    assert.equal(e.legal, 0.37, 'the legal share never moves');
     close(e.legal + e.pils + e.neutral, 1, 1e-12, 'sum');
   }
-  assert.equal(f.loyalty_pils, 0.45, 'the reading never writes the loyalties');
+  assert.equal(f.loyalty_pils, 0.51, 'the reading never writes the loyalties');
 });
 
-test('Zdolność a demokracja: the synthetic capacity falls as democracy rises, is 37.3 at 60 and drops below the gate of 30 only near democracy 100; the interface describes the army in words, never with numbers', () => {
+test('Zdolność a demokracja: the synthetic capacity falls as democracy rises, is 42.3 at 60 and stays above the gate of 30 (Z — 1.35); the interface describes the army in words, never with numbers', () => {
   const Q = quiet();
   const S = Q.S;
   const readings = [];
@@ -92,14 +93,16 @@ test('Zdolność a demokracja: the synthetic capacity falls as democracy rises, 
     readings.push(PolishSecurity.capacity(S));
   }
   assert.ok(readings.every((c, i) => i === 0 || c <= readings[i - 1] + 1e-12), 'more democracy, less capacity');
-  assert.ok(readings.slice(0, 19).every(c => c >= 30) && readings[20] < 30, readings.map(c => c.toFixed(1)).join(', '));
+  // Z — 1.35: with the army leaning to Piłsudski the capacity stays above the gate of 30 even at democracy 100; a very high democracy
+  // stops an attempt only together with the government's control of the army (decision D3A).
+  assert.ok(readings.every(c => c >= 30), readings.map(c => c.toFixed(1)).join(', '));
   S.politics.democracy = 60;
-  close(PolishSecurity.capacity(S), 160 * 0.8 * 0.81 * 0.45 * 0.8, 1e-9, 'strength × readiness × command × loyalty to Piłsudski × logistics 0.8');
+  close(PolishSecurity.capacity(S), 160 * 0.8 * 0.81 * 0.51 * 0.8, 1e-9, 'strength × readiness × command × loyalty to Piłsudski × logistics 0.8');
   const t = Q.time;
   army(S).modifiers.push({ field: 'readiness', value: -0.05, from: t, until: t + 1, source: 'fixture' });
-  close(PolishSecurity.capacity(S, t), 160 * 0.75 * 0.81 * 0.45 * 0.8, 1e-9, 'a temporary fall of readiness');
-  close(PolishSecurity.capacity(S, t + 1), 160 * 0.8 * 0.81 * 0.45 * 0.8, 1e-9);
-  assert.doesNotMatch(PolishSecurity.statusLine(Q), /\d+[–-]\d+%|capacity|37/i, 'words, not numbers');
+  close(PolishSecurity.capacity(S, t), 160 * 0.75 * 0.81 * 0.51 * 0.8, 1e-9, 'a temporary fall of readiness');
+  close(PolishSecurity.capacity(S, t + 1), 160 * 0.8 * 0.81 * 0.51 * 0.8, 1e-9);
+  assert.doesNotMatch(PolishSecurity.statusLine(Q), /\d+[–-]\d+%|capacity|42/i, 'words, not numbers');
   assert.match(PolishSecurity.armyWords(S), /officers|army/);
 });
 
@@ -456,22 +459,23 @@ function declared(pressure = 70) {
   assert.equal(Q.S.coup.phase, 'attempt_declared');
   return Q;
 }
-// The two hidden draws of the turnout (80–120%) fixed for a test: u = (turnout − 0.8) / 0.4.
+// The two hidden draws of the turnout (70–130% since 1.35) fixed for a test: u = (turnout − 0.7) / 0.6.
 function fixTurnout(Q, pils, legal) {
-  Q.S.rng.rolls[`coup_${Q.S.coup.attempt_id}:pils:turnout`] = (pils - 0.8) / 0.4;
-  Q.S.rng.rolls[`coup_${Q.S.coup.attempt_id}:legal:turnout`] = (legal - 0.8) / 0.4;
+  Q.S.rng.rolls[`coup_${Q.S.coup.attempt_id}:pils:turnout`] = (pils - 0.7) / 0.6;
+  Q.S.rng.rolls[`coup_${Q.S.coup.attempt_id}:legal:turnout`] = (legal - 0.7) / 0.6;
 }
 
-test('Profil zamachu 1.03: one comparison of the two forces; over a grid of the hidden turnouts at democracy 60 a settlement is the most common outcome (diagnostics of rules, not a forecast)', () => {
+// Z — 1.35 (decision D1A): over the grid Piłsudski wins most often (until 1.34 a settlement did).
+test('Profil zamachu 1.03: one comparison of the two forces; over a grid of the hidden turnouts at democracy 60 Piłsudski wins most often (diagnostics of rules, not a forecast)', () => {
   const Q = quiet();
   const e = PolishSecurity.effectiveLoyalty(Q.S.security.forces[0], 60);
   const count = {};
   for (const a of [0, 0.25, 0.5, 0.75, 1]) for (const b of [0, 0.25, 0.5, 0.75, 1]) {
-    const r = coup({ loyalty: { pils: e.pils, legal: e.legal }, turnout: { pils: 0.8 + 0.4 * a, legal: 0.8 + 0.4 * b } });
+    const r = coup({ loyalty: { pils: e.pils, legal: e.legal }, turnout: { pils: 0.7 + 0.6 * a, legal: 0.7 + 0.6 * b } });
     const key = r.outcome + (r.offer ? ':' + r.offer.replace('coup.offer.', '') : '');
     count[key] = (count[key] || 0) + 1;
   }
-  assert.deepEqual(count, { 'constitutional_compromise:cabinet_change': 9, 'constitutional_compromise:inspectorate_law': 7, legal_victory: 3, pils_victory: 6 });
+  assert.deepEqual(count, { pils_victory: 18, 'constitutional_compromise:cabinet_change': 3, 'constitutional_compromise:inspectorate_law': 2, legal_victory: 2 });
 });
 
 test('Zero sił: with F = 0 on both sides there is no NaN, no division by zero and no invented military advantage', () => {
@@ -481,7 +485,7 @@ test('Zero sił: with F = 0 on both sides there is no NaN, no division by zero a
   assert.deepEqual([r.F.pils, r.F.legal, r.ratio], [0, 0, 1]);
   assert.ok(!/NaN|Infinity/.test(JSON.stringify(r)));
   assert.equal(r.outcome, 'constitutional_compromise', 'the institutions bring a settlement');
-  assert.equal(coup({ ...none, settlement: false }).outcome, 'prolonged_conflict');
+  assert.equal(coup({ ...none, settlement: false }).outcome, 'legal_victory', 'Z — 1.35: nobody prevailed, so the government stays');
 });
 
 // Z — 0.89 (decision 2A of 24 X 2026): every free member answers; AS is the same people ×1.2. Z — 1.03: in the coup ×1.5.
@@ -546,13 +550,13 @@ test('Losowanie po F5: the two hidden turnouts are drawn once after F5 with the 
   assert.equal(restored.S.coup.outcome, S.coup.outcome);
 });
 
-test('Szybkie zwycięstwo: a side with at least 1.2 times the force of the other wins at once, after two days of fighting; below that nobody wins', () => {
+test('Szybkie zwycięstwo: a side with at least 1.15 times the force of the other wins at once, after two days of fighting; below that nobody wins', () => {
   const quick = coup({ turnout: { pils: 1.2, legal: 0.9 } });
   assert.deepEqual([quick.outcome, quick.fought], ['pils_victory', 2]);
   assert.ok(quick.ratio >= PolishSecurity.COUP_VICTORY);
   const government = coup({ turnout: { pils: 0.8, legal: 1.2 } });
   assert.deepEqual([government.outcome, government.fought], ['legal_victory', 2]);
-  assert.equal(coup({ turnout: { pils: 1.1, legal: 1 } }).outcome, 'constitutional_compromise');
+  assert.equal(coup({ turnout: { pils: 1.05, legal: 1 } }).outcome, 'constitutional_compromise');
 });
 
 test('Nadchodząca rezerwa: the troops of the other side come by train; a strike of the railway workers holds them back and turns a victory of Piłsudski into a settlement', () => {
@@ -562,9 +566,10 @@ test('Nadchodząca rezerwa: the troops of the other side come by train; a strike
   close(strike.F.pils, without.F.pils * 0.8, 1e-5, 'a fifth of his troops held back');
 });
 
-test('Pomiar strajku: the strike holds back base/200 of the other side, at most a quarter; a neutral PPS strikes for nobody; the railway call costs the party nothing', () => {
-  close(coup({ stance: 'legal', rail_base: 11.5 }).strike, 0.0575, 1e-9);
-  close(coup({ stance: 'pils', rail_base: 80 }).strike, 0.25, 1e-9, 'at most a quarter');
+test('Pomiar strajku: the strike of a strong union holds back base/150 of the other side, at most a fifth; a weak union, or a neutral PPS, holds back nothing; the railway call costs the party nothing', () => {
+  close(coup({ stance: 'legal', rail_base: 11.5 }).strike, 11.5 / 150, 1e-5);
+  close(coup({ stance: 'pils', rail_base: 80 }).strike, 0.20, 1e-9, 'at most a fifth');
+  assert.equal(coup({ stance: 'legal', rail_base: 80, rail_strong: false }).strike, 0, 'Z — 1.35: a weak union holds back nothing');
   assert.equal(coup({ stance: 'neutral', rail_base: 80 }).strike, 0);
   const Q = declared();
   const S = Q.S, cash = S.party_orgs.cash;
@@ -585,22 +590,24 @@ test('Istotny udział: the Milicja of 1 F changes nothing in a close fight, the 
 });
 
 test('Ugoda w rundzie 1 (Z — 1.03: the settlement of a close fight): between the two victories the two sides reach a settlement while democracy is at least 45 — the government steps down when Piłsudski is stronger, otherwise he gets the inspectorate; without the institutions the conflict drags on', () => {
-  const stronger = coup({ turnout: { pils: 1.1, legal: 1 } });
+  const stronger = coup({ turnout: { pils: 1.05, legal: 1 } });
   assert.deepEqual([stronger.outcome, stronger.offer], ['constitutional_compromise', 'coup.offer.cabinet_change']);
   const weaker = coup({ turnout: { pils: 1, legal: 1.1 } });
   assert.deepEqual([weaker.outcome, weaker.offer], ['constitutional_compromise', 'coup.offer.inspectorate_law']);
-  assert.deepEqual([coup({ turnout: { pils: 1.1, legal: 1 }, settlement: false }).outcome, coup({ turnout: { pils: 1.1, legal: 1 }, offers: [] }).outcome],
-    ['prolonged_conflict', 'prolonged_conflict']);
-  const four = coup({ turnout: { pils: 1.1, legal: 1 }, settlement: false });
-  assert.equal(four.fought, 4, 'a conflict that drags on is four days of fighting');
+  // Z — 1.35 (decision D4A): without the institutions the stronger side wins after weeks of fighting (6 rounds of losses).
+  assert.deepEqual([coup({ turnout: { pils: 1.05, legal: 1 }, settlement: false }).outcome, coup({ turnout: { pils: 1.05, legal: 1 }, offers: [] }).outcome],
+    ['pils_victory', 'pils_victory']);
+  const long = coup({ turnout: { pils: 1.05, legal: 1 }, settlement: false });
+  assert.deepEqual([long.long, long.fought], [true, 6], 'weeks of fighting');
+  assert.equal(coup({ turnout: { pils: 1, legal: 1.05 }, settlement: false }).outcome, 'legal_victory');
 });
 
-test('Przewaga nie negocjuje: a side with 1.2 times the force wins and accepts no settlement even with working institutions; just below it the settlement comes', () => {
+test('Przewaga nie negocjuje: a side with 1.15 times the force wins and accepts no settlement even with working institutions; just below it the settlement comes', () => {
   const r = coup({ turnout: { pils: 1.15, legal: 1 } });
-  assert.ok(r.ratio >= 1.2);
+  assert.ok(r.ratio >= 1.15);
   assert.deepEqual([r.outcome, r.offer], ['pils_victory', null]);
-  const close119 = coup({ turnout: { pils: 1.13, legal: 1 } });
-  assert.ok(close119.ratio < 1.2);
+  const close119 = coup({ turnout: { pils: 1.09, legal: 1 } });
+  assert.ok(close119.ratio < 1.15);
   assert.equal(close119.outcome, 'constitutional_compromise');
 });
 
@@ -627,7 +634,7 @@ test('Wkład kontrfaktyczny: the same draws with and without PPS give one class 
     S.actors.pps.strategy.pils_influence = line;
     PolishSecurity.checkCoupGates(Q, 50);
     Q.time = 51; Q.month = 3;
-    fixTurnout(Q, 1.1, 1.0);
+    fixTurnout(Q, 0.9, 1.2);
     Object.assign(S.unions.rail, { reach: 100, readiness: 100, fatigue: 0, dissent: 0 });
     PolishSecurity.coupBegin(Q);
     PolishSecurity.coupStance(Q, 'support_pils');
@@ -663,4 +670,88 @@ test('Kryzys i przerwa: pressure 56 is a political crisis; a protective agreemen
   S.coup.pressure = 80;
   for (const t of [52, 53]) assert.notEqual(PolishSecurity.checkCoupGates(Q, t), 'attempt_declared', `no attempt at ${t + 1}`);
   assert.equal(PolishSecurity.checkCoupGates(Q, 54), 'attempt_declared', 'from the date of the cooldown');
+});
+
+// ---- Z — 1.35 (the user's decisions of 25 XI 2026): the recalibrated coup -------------------------------------------------------
+
+test('Kontrola nad wojskiem 1.35: at democracy 80 with two steps of control and an army more loyal to the government, no attempt is declared', () => {
+  const Q = atGates(70);
+  const S = Q.S, f = army(S);
+  S.politics.democracy = 82;
+  assert.equal(PolishSecurity.coupDeterred(S), false, 'democracy alone is not enough');
+  S.history.reasons.push({ t: 40, kind: 'army_control', project_id: 'fixture', force_id: 'army', legal: 0.42 });
+  f.loyalty_legal += 0.05; f.loyalty_pils -= 0.05;
+  assert.deepEqual(PolishSecurity.controlSteps(S), ['oversight']);
+  assert.equal(PolishSecurity.coupDeterred(S), false, 'one step is not enough');
+  S.history.reasons.push({ t: 41, kind: 'relation', actor: 'pilsudski', delta: -15, reason: 'pils_subordinate:t41' });
+  f.loyalty_legal += 0.05; f.loyalty_pils -= 0.05;
+  assert.deepEqual(PolishSecurity.controlSteps(S), ['oversight', 'subordination']);
+  assert.equal(PolishSecurity.coupDeterred(S), true);
+  PolishSecurity.checkCoupGates(Q, 50);
+  assert.notEqual(S.coup.phase, 'attempt_declared', 'Piłsudski does not dare');
+  assert.ok(S.coup.deterred_at >= 0);
+  S.politics.democracy = 70;
+  assert.equal(PolishSecurity.coupDeterred(S), false, 'not with an ordinary democracy');
+});
+
+test('Słabe organizacje 1.35: only a strong union of railway workers and Akcja Socjalistyczna of 500 count in the fighting', () => {
+  const Q = declared();
+  const S = Q.S;
+  Object.assign(S.unions.rail, { reach: 60, readiness: 60 });
+  assert.equal(PolishSecurity.railStrong(S), false, 'reach 60 is not enough');
+  Object.assign(S.unions.rail, { reach: 75, readiness: 45 });
+  assert.equal(PolishSecurity.railStrong(S), true);
+  S.militia.strength = 800; S.militia.stage = 1;
+  assert.equal(PolishSecurity.militiaStrong(S), false, 'the Milicja is not Akcja Socjalistyczna');
+  S.militia.stage = 2; S.militia.strength = 450;
+  assert.equal(PolishSecurity.militiaStrong(S), false, 'too small');
+  S.militia.strength = 600;
+  assert.equal(PolishSecurity.militiaStrong(S), true);
+  S.militia.stage = 1; S.militia.militancy = 1;
+  PolishSecurity.coupBegin(Q);
+  PolishSecurity.coupStance(Q, 'defend_legal');
+  PolishSecurity.coupCommit(Q, 'militia');
+  assert.equal(S.coup.attempt.cfg.militia_F, 0, 'a large Milicja that is not AS adds nothing to the fighting');
+  PolishSecurity.coupView(Q);
+  assert.match(Q.pl_coup_story, /too small to count against the army/);
+});
+
+test('Ostrzeżenie 1.35: once, when the pressure first reaches 50; in words, with where PPS stands', () => {
+  const Q = quiet();
+  const S = Q.S;
+  S.coup.pressure = 45;
+  PolishSecurity.settleArmyMood(Q, Q.time);
+  assert.equal(PolishSecurity.coupWarningDue(Q), false, 'not below 50');
+  S.coup.pressure = 52;
+  PolishSecurity.settleArmyMood(Q, Q.time);
+  assert.equal(PolishSecurity.coupWarningDue(Q), true);
+  PolishRules.setLanguage('pl');
+  try {
+    PolishSecurity.coupWarningView(Q);
+    assert.match(Q.pl_cw_stop, /porozumieniem z Piłsudskim albo bardzo silną demokracją/);
+    assert.match(Q.pl_cw_fight, /bez nas najpewniej wygra Piłsudski\. .*Nasz związek kolejarzy jest jeszcze za słaby/);
+    assert.doesNotMatch(Q.pl_cw_push + Q.pl_cw_stop + Q.pl_cw_fight, /\d/, 'no numbers');
+  } finally {
+    PolishRules.setLanguage('en');
+  }
+  PolishSecurity.coupWarningSeen(Q);
+  assert.equal(PolishSecurity.coupWarningDue(Q), false);
+  S.coup.pressure = 30; PolishSecurity.settleArmyMood(Q, Q.time + 1);
+  S.coup.pressure = 60; PolishSecurity.settleArmyMood(Q, Q.time + 2);
+  assert.equal(PolishSecurity.coupWarningDue(Q), false, 'only once in the chapter');
+});
+
+test('Zakończenie 1.35: first the result, then our side, then what follows', () => {
+  const Q = declared();
+  const S = Q.S;
+  fixTurnout(Q, 1.0, 1.0);
+  PolishSecurity.coupBegin(Q);
+  PolishSecurity.coupStance(Q, 'defend_legal');
+  PolishSecurity.coupCommit(Q, 'none');
+  assert.equal(S.coup.outcome, 'pils_victory', 'without our organisations Piłsudski wins');
+  const text = PolishSecurity.coupEnding(Q);
+  assert.match(text, /^Piłsudski took power: the coup succeeded, and the government stepped down\. We stood up for the government, but only in words\. The victors see PPS as an enemy/);
+  const none = quiet();
+  none.S.chapter.status = 'ended';
+  assert.match(PolishSecurity.coupEnding(none), /^There was no coup before the election/);
 });

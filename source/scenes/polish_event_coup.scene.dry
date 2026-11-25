@@ -70,7 +70,7 @@ new-page: true
 
 = The organisations of PPS
 
-[+ pl_coup_militia_forecast +] [+ pl_coup_rail_forecast +] A strike of the railway workers holds back the trains with troops of the side we oppose; the Milicja fights on the side we support, or protects our own people if we stay neutral.
+[+ pl_coup_militia_forecast +] [+ pl_coup_rail_forecast +] A strike of the railway workers holds back the trains with troops of the side we oppose; the Milicja fights on the side we support, or protects our own people if we stay neutral. A declaration alone, without calling the railway workers or the Milicja, does not change the course of the fighting.
 
 - @commit_none
 - @commit_rail

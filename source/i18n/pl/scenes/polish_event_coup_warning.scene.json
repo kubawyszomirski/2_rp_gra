@@ -1,0 +1,10 @@
+{
+  "source": "scenes/polish_event_coup_warning.scene.dry",
+  "status": "complete",
+  "lines": {
+    "title: The Threat of a Coup": "title: Groźba zamachu",
+    "subtitle: The pressure towards a coup grows; PPS learns what could stop it and what would decide the fighting.": "subtitle: Presja na zamach rośnie; PPS dowiaduje się, co mogłoby go powstrzymać i co rozstrzygnęłoby walki.",
+    "= The threat of a coup": "= Groźba zamachu",
+    "title: We take note": "title: Przyjmujemy to do wiadomości"
+  }
+}

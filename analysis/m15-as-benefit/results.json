@@ -7,9 +7,9 @@
     "protectionCap": 0.4
   },
   "hashes": {
-    "docs/POLISH_TECHNICAL_REFERENCE.md": "20dfa296fe339f957b85458084c7cdb8ed4f80825e32511f434629d131c0178c",
-    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "7522dfe1c48fcd38581b6536705079296e17673f51f80709c1ce231cd362187f",
-    "docs/POLISH_MECHANICS_AUDIT.md": "9a95c851c8f6983ca1c1d9e325b2583881721972a0df106ab03902344e3ba0a4",
+    "docs/POLISH_TECHNICAL_REFERENCE.md": "4b95fecbb6ba7b97c03cddfa8d0acc1593b04ca63fd631f1dc322dc6663c4e51",
+    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "6afd396bf905fe0d9f354c9f2ccbc88dd53bf8a36376e653424d0f5562ab44e7",
+    "docs/POLISH_MECHANICS_AUDIT.md": "1c7d98ae7f1876461c076b9d493d8de5791768e71e46f61f9eb66eadbe62a6da",
     "analysis/m02-robustness/engine.cjs": "e0b544d65a4381ed7698f3f649fd54e41714a3a1027852a7ea455d0ad49b43cd",
     "analysis/m08-coup-profile/check.cjs": "117c774d0d702de80c73d6d39e56e9bd25f35ae418cdee3d1d522d35ff4f21eb"
   },
