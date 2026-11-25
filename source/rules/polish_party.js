@@ -405,7 +405,7 @@
   function expandBranch(S, branchId, amount) {
     const branch = S.unions[branchId];
     // Z — 1.07: unionism makes the unions grow a quarter faster.
-    const gain = amount * expansionMultiplier(S, {kind: 'branch', id: branchId}) * (rules.profileActive(S, 'unionism') ? 1.25 : 1);
+    const gain = amount * expansionMultiplier(S, {kind: 'branch', id: branchId}) * rules.profileFactor(S, 'unionism');
     branch.reach = Math.min(100, branch.reach + gain);
     return gain;
   }
@@ -568,6 +568,10 @@
   const MILITIA_LEVELS = Object.freeze([0.10, 0.25, 0.40, 0.55, 0.70]);
   const MILITIA_RECRUITS = 150, MILITIA_MAX = 800;
   const AS_LEVEL = 3, AS_MEMBERS = 500, AS_FACTOR = 1.2;
+  // Z — 1.33 (militarism; the user's decision of 25 XI 2026): a one-off recruitment of former soldiers — 300 members at once, even
+  // beyond the 800 of the ordinary recruitment (up to 1000), already trained (one level of training more); the Centre is uneasy
+  // (+3) and the army grows suspicious (the pressure towards a coup +2). Cost 1.
+  const VETERANS = Object.freeze({members: 300, max: 1000, cost: 1, centrum: 3, pressure: 2});
   const MILITIA_DISCIPLINE = Object.freeze({1: 0.80, 2: 0.95});
 
   // The level of the training: the nearest of the five values (an older save may hold another number).
@@ -621,6 +625,13 @@
     if (m.banned) return no(L('Milicja is banned.', 'Milicja jest zakazana.'));
     if (option === 'recruit') return packageStatus(Q, 'militia_recruit', 0);
     if (option === 'militarize') return packageStatus(Q, 'militia_militarize', 0);
+    if (option === 'veterans') {
+      if (!rules.profileActive(S, 'militarism')) return no(L('Only with the characteristic Militarism.', 'Tylko przy charakterystyce „Militaryzm”.'));
+      if (m.veterans_at !== null && m.veterans_at !== undefined) return no(L('The former soldiers have already joined.', 'Byli żołnierze już wstąpili do Milicji.'));
+      if (m.strength >= VETERANS.max) return no(L('Milicja has ' + VETERANS.max + ' members.', 'Milicja ma ' + VETERANS.max + ' członków.'));
+      if (S.party_orgs.cash + 1e-9 < VETERANS.cost) return no(L('Needs 1 resource.', 'Wymaga 1 jednostki środków.'));
+      return OK;
+    }
     if (option === 'as') {
       if (m.stage === 2) return no(L('Akcja Socjalistyczna is already formed.', 'Akcja Socjalistyczna już istnieje.'));
       if (militiaLevel(m) < AS_LEVEL) return no(L('Needs training at level ' + AS_LEVEL + '; it is at ' + militiaLevel(m) + '.', 'Wymaga wyszkolenia na poziomie ' + AS_LEVEL + '; teraz ' + militiaLevel(m) + '.'));
@@ -632,6 +643,7 @@
     return no(L('Unknown option.', 'Nieznana opcja.'));
   }
 
+  const veteransShown = Q => !!(Q.S && rules.profileActive(Q.S, 'militarism') && (Q.S.militia.veterans_at === null || Q.S.militia.veterans_at === undefined));
   function militiaAvailable(Q) {
     return partyReady(Q) && Q.S.chapter.status !== 'ended' && !Q.S.militia.banned;
   }
@@ -642,7 +654,21 @@
     if (!status.available) throw new Error('militiaChoose: ' + status.reason);
     const S = Q.S, t = Q.time;
     let text;
-    if (option === 'as') {
+    if (option === 'veterans') {
+      rules.commitMainAction(Q, 'militia.veterans', {resource_cost: {R: VETERANS.cost}});
+      S.party_orgs.cash = Math.max(0, S.party_orgs.cash - VETERANS.cost);
+      const m = S.militia, gain = Math.max(0, Math.min(VETERANS.members, VETERANS.max - m.strength));
+      m.strength += gain;
+      m.veterans_at = t;
+      const level = Math.min(MILITIA_LEVELS.length, militiaLevel(m) + 1);
+      m.militancy = MILITIA_LEVELS[level - 1];
+      factionReaction(Q, 'centrum', {dissent: VETERANS.centrum}, {id: 'militia.veterans', kind: 'militarization', reverse: null});
+      const politics = globalThis.PolishPolitics;
+      if (politics && politics.applyImpulse) politics.applyImpulse(Q, 'militia_veterans', VETERANS.pressure, 'militia_veterans');
+      text = L('Former soldiers join the Milicja: ' + gain + ' members, training level ' + level + ' of 5. The Centre of PPS is uneasy, and the army watches it with suspicion.',
+        'Byli żołnierze wstępują do Milicji: ' + gain + ' ' + rules.plural(gain, 'członek', 'członków', 'członków') + ', wyszkolenie na poziomie ' + level +
+        ' z 5. Centrum PPS jest zaniepokojone, a wojsko patrzy na to podejrzliwie.');
+    } else if (option === 'as') {
       rules.commitMainAction(Q, 'militia.as', {resource_cost: {R: 2}});
       S.party_orgs.cash = Math.max(0, S.party_orgs.cash - 2);
       S.militia.stage = 2;
@@ -896,7 +922,7 @@
     } else if (kind === 'rallies') {
       electorate.addBaseReach(S, cell => cell.class_id === 'workers', classGain(S, 'workers', 1.5));
       const branch = S.unions.industry;
-      branch.readiness = clip(branch.readiness + RALLY_READINESS * (rules.profileActive(S, 'strike_action') ? 1.25 : 1), 0, 100);
+      branch.readiness = clip(branch.readiness + RALLY_READINESS * rules.profileFactor(S, 'strike_action'), 0, 100);
     } else {
       government.changeRelation(Q, 'kpp', KPP_WORK.relation, 'party.agenda.kpp');
       government.factionReaction(Q, 'centrum', {dissent: KPP_WORK.centrum_dissent},
@@ -1036,7 +1062,10 @@
   // ---- The workers' consumer cooperative (13.2; card 5.1) ------------------------------------------------
 
   // Z — 0.92: the share of the strike pay the party itself pays — half while the cooperative works.
-  const strikePayShare = S => (cooperativeWorks(S) ? 1 - COOPERATIVE_STRIKE_SHARE : 1);
+  // Z — 1.33 (the user's decision of 25 XI 2026): with unionism adopted the unions carry half of the strike pay, so a strike costs
+  // the party half as much; with the cooperative as well, a quarter.
+  const UNIONISM_STRIKE_SHARE = 0.5;
+  const strikePayShare = S => (cooperativeWorks(S) ? 1 - COOPERATIVE_STRIKE_SHARE : 1) * (rules.profileActive(S, 'unionism') ? UNIONISM_STRIKE_SHARE : 1);
 
   // ---- The press (13.2): format and restrictions -------------------------------------------------------
 
@@ -1821,6 +1850,18 @@
   const SITUATION_FACTOR = 1.25;
   const HIGH_UNEMPLOYMENT = 10;
   const HIGH_INFLATION = 10;
+  // Z — 1.33: the campaigns opened by a characteristic — a joint campaign on land reaches the peasants 30% more and improves the
+  // relations with the partner by 3; the campaign of the nationalities improves the relations with both clubs of the minorities by 2;
+  // the joint rallies with the KPP reach 30% more, improve the relations with the KPP by 3, anger the Centre (+3) and stir the right.
+  const JOINT_RURAL_FACTOR = 1.3, JOINT_RELATION = 3, MINORITY_CAMPAIGN_RELATION = 2, KPP_RALLY_FACTOR = 1.3;
+  const KPP_RALLY = Object.freeze({relation: 3, centrum: 3, right: 5});
+  // The relations these campaigns win stop at 75: a campaign every month does not make a party a sure friend.
+  const CAMPAIGN_RELATION_CEILING = 75;
+  // Thanks to a characteristic: the sentence on the option it opens.
+  const PROFILE_THANKS = Object.freeze({unionism: ['unionism', 'uzwiązkowieniu'], worker_peasant: ['the worker-peasant alliance', 'sojuszowi robotniczo-włościańskiemu'],
+    federalism: ['federalism', 'federalizmowi'], parliamentarism: ['parliamentarism', 'parlamentaryzmowi'], strike_action: ['strike action', 'akcji strajkowej'],
+    militarism: ['militarism', 'militaryzmowi'], reformism: ['reformism', 'reformizmowi'], radicalism: ['radicalism', 'radykalizmowi']});
+  const thanksText = id => L('Available thanks to ' + PROFILE_THANKS[id][0] + '.', 'Opcja dostępna dzięki ' + PROFILE_THANKS[id][1] + '.');
   const ISSUES = Object.freeze({
     eight_hours: Object.freeze({name: ['In defence of the eight-hour day', 'W obronie ośmiogodzinnego dnia pracy'],
       groups: Object.freeze({employed_workers: 1, unemployed: 0.3, bourgeois_landowners: -0.2}),
@@ -1848,9 +1889,50 @@
       directions: Object.freeze(['workers_gains', 'parliamentary_socialism']),
       situation: S => (S.economy.unemployment || 0) >= HIGH_UNEMPLOYMENT,
       situation_text: ['stronger at high unemployment (' + HIGH_UNEMPLOYMENT + '% or more)', 'silniejsza przy wysokim bezrobociu (' + HIGH_UNEMPLOYMENT + '% i więcej)']}),
+    // Z — 1.33 (the user's decisions of 25 XI 2026): campaigns opened by an adopted characteristic. The joint campaigns on land share
+    // the weariness and the record of „Land for the peasants”; each names its other effects.
+    land_wyzwolenie: Object.freeze({name: ['Land for the peasants, together with PSL “Wyzwolenie”', 'Ziemia dla chłopów, razem z PSL „Wyzwolenie”'],
+      requires: 'worker_peasant', key: 'land', record: 'land', factor: cell => (cell.class_id === 'rural' ? JOINT_RURAL_FACTOR : 1),
+      relations: Object.freeze({psl_wyzwolenie: JOINT_RELATION}),
+      effect_text: ['Our relations with PSL “Wyzwolenie” will improve.', 'Nasze stosunki z PSL „Wyzwolenie” się poprawią.'],
+      after_text: ['Our relations with PSL “Wyzwolenie” improve.', 'Nasze stosunki z PSL „Wyzwolenie” się poprawiają.'],
+      groups: Object.freeze({rural: 0.6, workers: 0.3, bourgeois_landowners: -0.3}),
+      directions: Object.freeze(['parliamentary_socialism']),
+      situation: S => ISSUES.land.situation(S),
+      situation_text: ['stronger while a land reform is prepared or carried out', 'silniejsza, gdy reforma rolna jest przygotowywana albo wykonywana']}),
+    land_piast: Object.freeze({name: ['Land for the peasants, together with PSL “Piast”', 'Ziemia dla chłopów, razem z PSL „Piast”'],
+      requires: 'worker_peasant', key: 'land', record: 'land', factor: cell => (cell.class_id === 'rural' ? JOINT_RURAL_FACTOR : 1),
+      relations: Object.freeze({psl_piast: JOINT_RELATION}),
+      effect_text: ['Our relations with PSL “Piast” will improve.', 'Nasze stosunki z PSL „Piast” się poprawią.'],
+      after_text: ['Our relations with PSL “Piast” improve.', 'Nasze stosunki z PSL „Piast” się poprawiają.'],
+      groups: Object.freeze({rural: 0.6, workers: 0.3, bourgeois_landowners: -0.3}),
+      directions: Object.freeze(['parliamentary_socialism']),
+      situation: S => ISSUES.land.situation(S),
+      situation_text: ['stronger while a land reform is prepared or carried out', 'silniejsza, gdy reforma rolna jest przygotowywana albo wykonywana']}),
+    equal_rights: Object.freeze({name: ['Equal rights for the nationalities', 'Równe prawa narodowości'], requires: 'federalism',
+      relations: Object.freeze({jewish_rep: MINORITY_CAMPAIGN_RELATION, other_minorities_rep: MINORITY_CAMPAIGN_RELATION}),
+      effect_text: ['Our relations with the clubs of the minorities will improve a little.', 'Stosunki z klubami mniejszości trochę się poprawią.'],
+      after_text: ['Our relations with the clubs of the minorities improve a little.', 'Stosunki z klubami mniejszości trochę się poprawiają.'],
+      groups: Object.freeze({jewish: 1, other_minorities: 1, new_middle: 0.2}),
+      directions: Object.freeze(['democratic_movement']),
+      situation: S => democraticThreat(S),
+      situation_text: ['stronger while democracy is threatened (a coup threat, violence, a breach of the law)', 'silniejsza, gdy demokracji coś zagraża (zamach, przemoc, łamanie prawa)']}),
+    kpp_rallies: Object.freeze({name: ['Joint rallies with the KPP', 'Wspólne wiece z KPP'], requires: 'radicalism', factor: () => KPP_RALLY_FACTOR,
+      relations: Object.freeze({kpp: KPP_RALLY.relation}), dissent: Object.freeze({centrum: KPP_RALLY.centrum}), right: KPP_RALLY.right,
+      effect_text: ['Our relations with the KPP will improve, but the Centre of PPS will protest and the right will grow restless.',
+        'Stosunki z KPP się poprawią, ale Centrum PPS zaprotestuje, a prawica się zaniepokoi.'],
+      after_text: ['Our relations with the KPP improve, but the Centre of PPS protests and the right grows restless.',
+        'Stosunki z KPP się poprawiają, ale Centrum PPS protestuje, a prawica się niepokoi.'],
+      groups: Object.freeze({workers: 0.8, unemployed: 1}),
+      directions: Object.freeze(['class_independence']),
+      situation: S => (S.economy.unemployment || 0) >= HIGH_UNEMPLOYMENT,
+      situation_text: ['stronger at high unemployment (' + HIGH_UNEMPLOYMENT + '% or more)', 'silniejsza przy wysokim bezrobociu (' + HIGH_UNEMPLOYMENT + '% i więcej)']}),
   });
-  const ISSUE_ORDER = Object.freeze(['eight_hours', 'prices', 'land', 'republic', 'unemployed']);
+  const ISSUE_ORDER = Object.freeze(['eight_hours', 'prices', 'land', 'republic', 'unemployed', 'land_wyzwolenie', 'land_piast', 'equal_rights', 'kpp_rallies']);
+  const issueUnlocked = (S, id) => !!ISSUES[id] && (!ISSUES[id].requires || rules.profileActive(S, ISSUES[id].requires));
   const issueName = id => L(ISSUES[id].name[0], ISSUES[id].name[1]);
+  // Z — 1.33: the name in quotes; a name with a party in quotes gets the inner quotes (»…« in Polish, ‘…’ in English).
+  const issueQuoted = id => L('“' + ISSUES[id].name[0].replace(/“([^”]*)”/g, '‘$1’') + '”', '„' + ISSUES[id].name[1].replace(/„([^”]*)”/g, '»$1«') + '”');
   // The Press card: the press campaign reaches the groups of its format (P) and takes half of its gains from the voters of the
   // main opponent of the party's line, where they are (the line steers the press; no relation changes).
   const PRESS_GROUPS = Object.freeze({
@@ -2016,19 +2098,21 @@
     const line = issue.directions.indexOf(S.actors.pps.strategy.direction) >= 0 ? LINE_FACTOR : 1;
     const situation = issue.situation(S) ? SITUATION_FACTOR : 1;
     // Z — 1.32 (decision D6A): a campaign on a matter where a reform of PPS is in force.
-    const record = recordFactor(S, id);
-    return cell => line * situation * record * (inEnvironment(S, {kind: 'cell', class_id: cell.class_id}) ? CHARACTER_FACTOR : 1);
+    const record = recordFactor(S, issue.record || id), extra = issue.factor || (() => 1);
+    return cell => line * situation * record * extra(cell) * (inEnvironment(S, {kind: 'cell', class_id: cell.class_id}) ? CHARACTER_FACTOR : 1);
   }
 
   function issueSpec(Q, id) {
     const issue = ISSUES[id], base = issueFactor(Q, id), boost = pressBoost(Q.S);
     const factor = cell => base(cell) * (bundleWeight(boost.groups, cell) > 0 ? 1 + boost.value : 1);
-    return {key: 'issue:' + id, channel: 'unions', bundle: issue.groups, factor: factor};
+    return {key: 'issue:' + (issue.key || id), channel: 'unions', bundle: issue.groups, factor: factor};
   }
 
   function issueCampaignStatus(Q, id) {
     const S = Q.S;
     if (!ISSUES[id]) return no(L('Unknown campaign.', 'Nieznana kampania.'));
+    if (!issueUnlocked(S, id)) return no(L('Only with the characteristic ' + profileName(ISSUES[id].requires) + '.',
+      'Tylko przy charakterystyce „' + profileName(ISSUES[id].requires) + '”.'));
     if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Decyzja na ten miesiąc już zapadła.'));
     // Z — 0.79 (decision 2A of 14 X 2026): the campaigns of meetings, rallies and unions cost no money, only this month's action.
     if (!electorate.hasCells(S)) return no(L('The cells of the electorate are not recorded.', 'Ta decyzja nie jest teraz dostępna.'));
@@ -2050,7 +2134,8 @@
     const boosts = issueBoosts(Q, id);
     const issue = ISSUES[id];
     return changesWords(changes, 'preview') + '. ' + capitalise(L(issue.situation_text[0], issue.situation_text[1])) + '.' +
-      (boosts.length ? L(' Stronger now: ', ' Teraz wzmacnia ją: ') + boosts.join(L(' and ', ' i ')) + '.' : '');
+      (boosts.length ? L(' Stronger now: ', ' Teraz wzmacnia ją: ') + boosts.join(L(' and ', ' i ')) + '.' : '') +
+      (issue.effect_text ? ' ' + L(issue.effect_text[0], issue.effect_text[1]) : '') + (issue.requires ? ' ' + thanksText(issue.requires) : '');
   }
 
   function issueCampaign(Q, id) {
@@ -2063,14 +2148,31 @@
     const moved = bundleCampaign(Q, issueSpec(Q, id), true);
     const changes = bundleChanges(S, ISSUES[id].groups, moved);
     const total = Object.keys(moved).reduce((n, cellId) => n + (S.society.cells.find(c => c.id === cellId).mass * moved[cellId]), 0);
+    const side = issueSideEffects(Q, id);
     S.party_orgs.press.campaigns.push({t: t, kind: 'issue', topic: 'issue:' + id, audience: 'bundle'});
     S.history.reasons.push({t: t, kind: 'campaign', campaign: 'issue', topic: 'issue:' + id, audience: 'bundle', moved: total});
     electorate.writeClassMirrors(Q);
     writeMirrors(Q);
     const boosts = issueBoosts(Q, id);
-    return result(Q, L('The campaign “' + issueName(id) + '”: ', 'Kampania „' + issueName(id) + '”: ') + changesWords(changes, 'result') + '.' +
+    return result(Q, L('The campaign ', 'Kampania ') + issueQuoted(id) + ': ' + changesWords(changes, 'result') + '.' +
       (boosts.length ? L(' It was stronger thanks to ', ' Wzmocniły ją: ') + boosts.join(L(' and ', ' i ')) + '.' : '') +
-      programmeCampaignNote(S, S.society.cells.filter(c => bundleWeight(ISSUES[id].groups, c) > 0)));
+      programmeCampaignNote(S, S.society.cells.filter(c => bundleWeight(ISSUES[id].groups, c) > 0)) + side);
+  }
+
+  // Z — 1.33: the relations, the factions and the right moved by a campaign opened by a characteristic; the sentence of the result.
+  function issueSideEffects(Q, id) {
+    const issue = ISSUES[id];
+    if (!issue.after_text) return '';
+    for (const party of Object.keys(issue.relations || {}).sort()) {
+      const gain = Math.min(issue.relations[party], Math.max(0, CAMPAIGN_RELATION_CEILING - Q.S.actors.relations[party]));
+      if (gain > 0) government.changeRelation(Q, party, gain, 'campaign:' + id);
+    }
+    for (const faction of Object.keys(issue.dissent || {}).sort()) {
+      factionReaction(Q, faction, {dissent: issue.dissent[faction]}, {id: 'party.campaign:' + id, kind: 'campaign', reverse: null});
+    }
+    const politics = globalThis.PolishPolitics;
+    if (issue.right && politics && politics.rightMobilise) politics.rightMobilise(Q, issue.right, 'campaign:' + id);
+    return ' ' + L(issue.after_text[0], issue.after_text[1]);
   }
 
   // Z — 1.04 (decisions 4A and 5A of the event audit, 7 XI 2026): the answer to a crisis event can be a campaign of the Campaign
@@ -2090,7 +2192,7 @@
     electorate.writeClassMirrors(Q);
     writeMirrors(Q);
     const boosts = issueBoosts(Q, id);
-    return L('The campaign “' + issueName(id) + '”: ', 'Kampania „' + issueName(id) + '”: ') + changesWords(changes, 'result') + '.' +
+    return L('The campaign ', 'Kampania ') + issueQuoted(id) + ': ' + changesWords(changes, 'result') + '.' +
       (boosts.length ? L(' It was stronger thanks to ', ' Wzmocniły ją: ') + boosts.join(L(' and ', ' i ')) + '.' : '');
   }
 
@@ -2104,55 +2206,54 @@
   const CONGRESS_INTERVAL = 12;
   const PROFILE_PATRON_STRENGTH = 5;
   const PROFILE_DROP_DISSENT = 8;
-  const PROFILE_FACTOR = 1.25;
   const PROFILE_EXCLUSIVE = Object.freeze({reformism: 'radicalism', radicalism: 'reformism'});
   const PROFILES = Object.freeze({
     unionism: {name: ['Unionism', 'Uzwiązkowienie'], acc: ['unionism', 'uzwiązkowienie'], patron: 'centrum', rivals: {lewica: 5},
       builds: ['building the unions and the work in them, courses for trade unionists, the help of the unions and won strikes', 'budowa związków i praca w nich, kursy dla związkowców, pomoc związków i wygrane strajki'],
-      gives: ['the unions grow faster and lose half as much trust after a defeat', 'związki rosną szybciej i tracą o połowę mniej zaufania po porażce'],
+      gives: ['the unions grow faster and lose half as much trust after a defeat; strikes cost the party half as much', 'związki rosną szybciej i tracą o połowę mniej zaufania po porażce; strajki kosztują partię o połowę mniej'],
       resolution: ['Resolution on the trade unions', 'Uchwała o związkach zawodowych'],
       text: ['The party stakes on the unions: they grow faster and bear lost strikes better. The Centre grows stronger, and the Left finds it too cautious.',
         'Partia stawia na związki: rosną szybciej i lepiej znoszą przegrane strajki. Centrum się wzmacnia, a Lewica uważa to za zbyt ostrożne.']},
     worker_peasant: {name: ['The worker-peasant alliance', 'Sojusz robotniczo-włościański'], acc: ['the worker-peasant alliance', 'sojusz robotniczo-włościański'],
       patron: 'centrum', rivals: {}, relations: {psl_wyzwolenie: 10, zln: -5},
       builds: ['the work in the villages, the campaign “Land for the peasants”, a joint list or a cabinet with PSL “Wyzwolenie” and the land reform', 'praca na wsi, kampania „Ziemia dla chłopów”, wspólna lista albo rząd z PSL „Wyzwolenie” i reforma rolna'],
-      gives: ['stronger campaigns in the countryside and closer relations with PSL “Wyzwolenie”', 'mocniejsze kampanie na wsi i bliższe stosunki z PSL „Wyzwolenie”'],
+      gives: ['stronger campaigns in the countryside and closer relations with PSL “Wyzwolenie”; a joint campaign on land with one of the peasant parties', 'mocniejsze kampanie na wsi i bliższe stosunki z PSL „Wyzwolenie”; wspólna kampania o ziemię z jednym ze stronnictw ludowych'],
       resolution: ['Resolution on the worker-peasant alliance', 'Uchwała o sojuszu robotniczo-włościańskim'],
       text: ['The party goes to the villages together with the peasant movement: campaigns in the countryside are stronger and PSL “Wyzwolenie” comes closer; the landowners and the National Democrats turn hostile.',
         'Partia idzie na wieś razem z ruchem ludowym: kampanie na wsi są mocniejsze, a PSL „Wyzwolenie” bliższe; ziemianie i endecja stają się wrodzy.']},
     federalism: {name: ['Federalism', 'Federalizm'], acc: ['federalism', 'federalizm'], patron: 'lewica', rivals: {centrum: 3}, relations: {minorities_bloc: 10, zln: -5},
       builds: ['the work among the minorities, the rights of language and schools of the minorities, concessions to their clubs and autonomy', 'praca wśród mniejszości, prawa języka i szkoły mniejszości, ustępstwa wobec ich klubów i autonomia'],
-      gives: ['stronger campaigns among the minorities and closer relations with their clubs', 'mocniejsze kampanie wśród mniejszości i bliższe stosunki z ich klubami'],
+      gives: ['stronger campaigns among the minorities and closer relations with their clubs; the campaign “Equal rights for the nationalities”', 'mocniejsze kampanie wśród mniejszości i bliższe stosunki z ich klubami; kampania „Równe prawa narodowości”'],
       resolution: ['Resolution on the nationalities', 'Uchwała w sprawie narodowościowej'],
       text: ['The party stands for equal rights and self-government of the nationalities: the minorities trust it more; the National Democrats attack, and the Centre is uneasy.',
         'Partia staje za równymi prawami i samorządem narodowości: mniejszości bardziej jej ufają; endecja atakuje, a Centrum jest zaniepokojone.']},
     parliamentarism: {name: ['Parliamentarism', 'Parlamentaryzm'], acc: ['parliamentarism', 'parlamentaryzm'], patron: 'centrum', rivals: {lewica: 3, pilsudczycy: 3},
       builds: ['bills of the legislative initiative (adopted ones count twice), constitutional motions, the defence of the Sejm and the work in the town councils', 'ustawy z inicjatywy (przyjęte liczą się podwójnie), wnioski konstytucyjne, obrona Sejmu i praca w radach miejskich'],
-      gives: ['the bills of our initiative pass more easily', 'ustawy z naszej inicjatywy łatwiej przechodzą'],
+      gives: ['the bills of our initiative pass more easily; in opposition, once a year, a Sejm committee of inquiry into the government', 'ustawy z naszej inicjatywy łatwiej przechodzą; w opozycji raz w roku sejmowa komisja śledcza w sprawie rządu'],
       resolution: ['Resolution on the parliamentary road', 'Uchwała o drodze parlamentarnej'],
       text: ['The party binds its fate to the Sejm: the bills of our initiative pass more easily. The Centre grows stronger; the Left and the Piłsudczycy grow impatient.',
         'Partia wiąże swój los z Sejmem: ustawy z naszej inicjatywy łatwiej przechodzą. Centrum się wzmacnia, a Lewica i Piłsudczycy się niecierpliwią.']},
     strike_action: {name: ['Strike action', 'Akcja strajkowa'], acc: ['strike action', 'akcję strajkową'], patron: 'lewica', rivals: {centrum: 5}, business: 5,
       builds: ['strikes (won ones count twice), threats of a strike and factory rallies', 'strajki (wygrane liczą się podwójnie), groźby strajku i wiece w fabrykach'],
-      gives: ['a stronger threat of a strike and workers who are ready to fight sooner', 'skuteczniejsza groźba strajku i robotnicy szybciej gotowi do walki'],
+      gives: ['a stronger threat of a strike and workers who are ready to fight sooner; a solidarity strike of another union branch', 'skuteczniejsza groźba strajku i robotnicy szybciej gotowi do walki; strajk solidarnościowy innej gałęzi związków'],
       resolution: ['Resolution on mass action', 'Uchwała o akcji masowej'],
       text: ['The party makes the strike its main weapon: the threat of a strike carries more weight, and the workers are ready sooner. The Left grows stronger; the Centre and the employers are alarmed.',
         'Partia czyni strajk swoją główną bronią: groźba strajku waży więcej, a robotnicy szybciej są gotowi. Lewica się wzmacnia, a Centrum i przemysłowcy są zaniepokojeni.']},
     militarism: {name: ['Militarism', 'Militaryzm'], acc: ['militarism', 'militaryzm'], patron: 'pilsudczycy', rivals: {centrum: 5},
       builds: ['recruiting and training the Milicja, the Akcja Socjalistyczna and guarding rallies', 'werbunek i szkolenie Milicji, Akcja Socjalistyczna i ochrona wieców'],
-      gives: ['a stronger Milicja when it comes to a fight in a coup', 'mocniejsza Milicja, gdy dojdzie do walki w czasie zamachu'],
+      gives: ['a stronger Milicja when it comes to a fight in a coup; a one-off recruitment of former soldiers', 'mocniejsza Milicja, gdy dojdzie do walki w czasie zamachu; jednorazowy zaciąg byłych żołnierzy do Milicji'],
       resolution: ['Resolution on the self-defence of the workers', 'Uchwała o samoobronie robotniczej'],
       text: ['The party arms its self-defence: the Milicja counts for more when it comes to a fight. The Piłsudczycy grow stronger, and the Centre fears the authorities’ suspicion.',
         'Partia zbroi swoją samoobronę: Milicja liczy się bardziej, gdy dojdzie do walki. Piłsudczycy się wzmacniają, a Centrum obawia się podejrzliwości władz.']},
     reformism: {name: ['Reformism', 'Reformizm'], acc: ['reformism', 'reformizm'], patron: 'centrum', rivals: {lewica: 8},
       builds: ['the decisions of our ministries, the months in the cabinet and the work in the town councils', 'decyzje naszych resortów, miesiące w rządzie i praca w radach miejskich'],
-      gives: ['dearer decisions of the ministries cost one unit less, and the partners object half as much', 'droższe decyzje resortów kosztują o jedną jednostkę mniej, a partnerzy sprzeciwiają się o połowę słabiej'],
+      gives: ['dearer decisions of the ministries cost one unit less, and the partners object less; while we tolerate a cabinet, we can demand a reform of ours, and at the forming of a cabinet our shadow cabinet brings more influence points', 'droższe decyzje resortów kosztują o jedną jednostkę mniej, a partnerzy słabiej się sprzeciwiają; przy tolerowaniu rządu możemy żądać naszej reformy, a przy tworzeniu rządu nasz gabinet cieni daje więcej punktów wpływu'],
       resolution: ['Resolution on social reform', 'Uchwała o reformie społecznej'],
       text: ['The party chooses reform step by step through the state: our ministries do more for less, and the partners accept it more easily. The Centre grows stronger; the Left protests loudly.',
         'Partia wybiera reformę krok po kroku przez państwo: nasze resorty robią więcej za mniej, a partnerzy łatwiej to przyjmują. Centrum się wzmacnia, a Lewica głośno protestuje.']},
     radicalism: {name: ['Radicalism', 'Radykalizm'], acc: ['radicalism', 'radykalizm'], patron: 'lewica', rivals: {centrum: 8}, relations: {kpp: 10}, business: 5,
       builds: ['the line of independent class politics or of workers’ councils, the cooperation with the KPP, a strike for the cabinet’s resignation and works councils', 'linia niezależnej polityki klasowej albo rad robotniczych, współpraca z KPP, strajk o dymisję rządu i rady zakładowe'],
-      gives: ['stronger campaigns among the workers and the unemployed, closer relations with the KPP and a cheaper socialisation', 'mocniejsze kampanie wśród robotników i bezrobotnych, bliższe stosunki z KPP i tańsze uspołecznienie'],
+      gives: ['stronger campaigns among the workers and the unemployed, closer relations with the KPP and a cheaper socialisation; joint rallies with the KPP', 'mocniejsze kampanie wśród robotników i bezrobotnych, bliższe stosunki z KPP i tańsze uspołecznienie; wspólne wiece z KPP'],
       resolution: ['Resolution on the class struggle', 'Uchwała o walce klasowej'],
       text: ['The party breaks with reformism and bets on the class struggle and the councils: the workers and the unemployed listen more readily, and the communists come closer. The Left grows stronger; the Centre and the employers are alarmed.',
         'Partia zrywa z reformizmem i stawia na walkę klasową i rady: robotnicy i bezrobotni chętniej słuchają, a komuniści się zbliżają. Lewica się wzmacnia, a Centrum i przemysłowcy są zaniepokojeni.']},
@@ -2273,7 +2374,13 @@
   const PROFILE_SEED_WORD = PROFILE_READY / 2;
   function profileStage(S, id) {
     const P = rules.profileState(S), seeds = P ? P.seeds[id] || 0 : 0;
-    if (rules.profileActive(S, id)) return {key: 'adopted', rank: 0, seeds: seeds, word: L('adopted', 'przyjęta')};
+    // Z — 1.33: an adopted characteristic says when it was adopted and when it strengthens (in the first chapter it stops there).
+    if (rules.profileActive(S, id)) {
+      const since = rules.profileAdoptedAt(S, id), next = since + rules.PROFILE_STAGE_MONTHS;
+      const word = rules.profileStage(S, id) >= 2 ? L('strengthened since ' + rules.yearOf(next), 'umocniona od ' + rules.yearOf(next)) :
+        L('adopted in ' + rules.yearOf(since) + ', strengthens in ' + rules.yearOf(next), 'przyjęta w ' + rules.yearOf(since) + ', umocni się w ' + rules.yearOf(next));
+      return {key: 'adopted', rank: 0, seeds: seeds, word: word};
+    }
     if (profileExcluded(S, id)) return {key: 'excluded', rank: 4, seeds: seeds, word: L('excluded', 'wykluczona')};
     if (seeds >= PROFILE_READY) return {key: 'ready', rank: 1, seeds: seeds, word: L('ready for a resolution', 'gotowa do uchwały')};
     if (seeds >= PROFILE_SEED_WORD) return {key: 'growing', rank: 2, seeds: seeds, word: L('maturing', 'dojrzewa')};
@@ -2310,12 +2417,12 @@
     if (!own.length) return L('PPS adopted no characteristic in this chapter.', 'W tym rozdziale PPS nie przyjęła żadnej charakterystyki.');
     return L('PPS adopted ', 'PPS przyjęła ') + own.map(a => profileAcc(a.id) + ' (' + rules.yearOf(a.t) + ')').join(L(' and ', ' i ')) + '.';
   }
-  // The effects on campaigns: +25% in the cells of an adopted profile's groups.
+  // The effects on campaigns in the cells of an adopted profile's groups: +25% until 1.32; Z — 1.33: +40%, then +60%.
   function profileCampaignFactor(S, cell) {
     let factor = 1;
-    if (rules.profileActive(S, 'worker_peasant') && cell.class_id === 'rural') factor *= PROFILE_FACTOR;
-    if (rules.profileActive(S, 'federalism') && (cell.identity_id === 'jewish' || cell.identity_id === 'other_minorities')) factor *= PROFILE_FACTOR;
-    if (rules.profileActive(S, 'radicalism') && (cell.class_id === 'workers' || cell.class_id === 'unemployed')) factor *= PROFILE_FACTOR;
+    if (cell.class_id === 'rural') factor *= rules.profileFactor(S, 'worker_peasant');
+    if (cell.identity_id === 'jewish' || cell.identity_id === 'other_minorities') factor *= rules.profileFactor(S, 'federalism');
+    if (cell.class_id === 'workers' || cell.class_id === 'unemployed') factor *= rules.profileFactor(S, 'radicalism');
     return factor;
   }
   // The months that build a profile: reformism for each month in the cabinet, the alliance for a cabinet with PSL "Wyzwolenie".
@@ -3573,6 +3680,7 @@
     MILITIA_LEVELS: MILITIA_LEVELS,
     MILITIA_RECRUITS: MILITIA_RECRUITS,
     MILITIA_MAX: MILITIA_MAX,
+    veteransShown: veteransShown,
     allocateProtection: allocateProtection,
     duesStatus: duesStatus,
     duesAvailable: duesAvailable,
@@ -3678,6 +3786,8 @@
     mediaView: mediaView,
     ISSUES: ISSUES,
     ISSUE_ORDER: ISSUE_ORDER,
+    issueUnlocked: (Q, id) => issueUnlocked(Q.S, id),
+    thanksText: thanksText,
     PRESS_GROUPS: PRESS_GROUPS,
     PRESS_CAP: PRESS_CAP,
     PRESS_CREDIBILITY: PRESS_CREDIBILITY,

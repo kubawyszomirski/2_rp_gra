@@ -21,6 +21,10 @@ Meetings, rallies and the unions. A campaign costs no money and reaches several 
 - @land
 - @republic
 - @unemployed
+- @land_wyzwolenie
+- @land_piast
+- @equal_rights
+- @kpp_rallies
 - @easy_discard
 
 @eight_hours
@@ -70,6 +74,51 @@ choose-if: {! return PolishParty.issueCampaignStatus(Q, 'unemployed').available 
 unavailable-subtitle: [+ pl_issue_unemployed_why +]
 on-arrival: {!
 PolishParty.issueCampaign(Q, 'unemployed');
+!}
+go-to: result
+
+# Z — 1.33 (the user's decisions of 25 XI 2026): campaigns opened by an adopted characteristic; hidden without it.
+@land_wyzwolenie
+title: Land for the peasants, together with PSL “Wyzwolenie”
+subtitle: [+ pl_issue_land_wyzwolenie_effect +]
+view-if: {! return PolishParty.issueUnlocked(Q, 'land_wyzwolenie') !}
+choose-if: {! return PolishParty.issueCampaignStatus(Q, 'land_wyzwolenie').available !}
+unavailable-subtitle: [+ pl_issue_land_wyzwolenie_why +]
+on-arrival: {!
+PolishParty.issueCampaign(Q, 'land_wyzwolenie');
+!}
+go-to: result
+
+@land_piast
+title: Land for the peasants, together with PSL “Piast”
+subtitle: [+ pl_issue_land_piast_effect +]
+view-if: {! return PolishParty.issueUnlocked(Q, 'land_piast') !}
+choose-if: {! return PolishParty.issueCampaignStatus(Q, 'land_piast').available !}
+unavailable-subtitle: [+ pl_issue_land_piast_why +]
+on-arrival: {!
+PolishParty.issueCampaign(Q, 'land_piast');
+!}
+go-to: result
+
+@equal_rights
+title: Equal rights for the nationalities
+subtitle: [+ pl_issue_equal_rights_effect +]
+view-if: {! return PolishParty.issueUnlocked(Q, 'equal_rights') !}
+choose-if: {! return PolishParty.issueCampaignStatus(Q, 'equal_rights').available !}
+unavailable-subtitle: [+ pl_issue_equal_rights_why +]
+on-arrival: {!
+PolishParty.issueCampaign(Q, 'equal_rights');
+!}
+go-to: result
+
+@kpp_rallies
+title: Joint rallies with the KPP
+subtitle: [+ pl_issue_kpp_rallies_effect +]
+view-if: {! return PolishParty.issueUnlocked(Q, 'kpp_rallies') !}
+choose-if: {! return PolishParty.issueCampaignStatus(Q, 'kpp_rallies').available !}
+unavailable-subtitle: [+ pl_issue_kpp_rallies_why +]
+on-arrival: {!
+PolishParty.issueCampaign(Q, 'kpp_rallies');
 !}
 go-to: result
 

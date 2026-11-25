@@ -232,8 +232,10 @@ test('Manifest parlamentu: the pool, the agenda and the events are the 10 famili
     'parliament.strike_response': ['polish_event_strike_response'],
     // Z — 0.56: the criticism of parliament by Piłsudski (B2) is a card of the Parliament deck.
     'politics.pils_parliament_criticism': ['polish_event_pils_criticism'],
+    // Z — 1.33: the Sejm committee of inquiry, opened by parliamentarism.
+    'parliament.inquiry': ['polish_sejm_inquiry'],
   };
-  assert.equal(Object.keys(FAMILIES).length, 11);
+  assert.equal(Object.keys(FAMILIES).length, 12);
   const all = Object.values(FAMILIES).flat();
   for (const id of all) assert.ok(engine.game.scenes[id], id);
   assert.deepEqual(tagged(engine, 'parliament_affairs').filter(id => !all.includes(id)), [], 'every card of the Parliament deck belongs to a family');

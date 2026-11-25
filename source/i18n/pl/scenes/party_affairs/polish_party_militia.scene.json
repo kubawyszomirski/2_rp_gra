@@ -13,6 +13,8 @@
     "title: Reorganise as Akcja Socjalistyczna": "title: Przekształć w Akcję Socjalistyczną",
     "subtitle: Cost: 2 resources, once. A stronger and more disciplined organisation that can protect three matters at once; needs 500 members and training at level 3.": "subtitle: Koszt: 2 jednostki środków, jednorazowo. Milicja staje się zdyscyplinowaną Akcją Socjalistyczną, która może osłaniać naraz trzy strajki lub wiece. Wymaga licznej i dobrze wyszkolonej Milicji.",
     "- @root: Continue.": "- @root: Dalej.",
-    "title: Do nothing now": "title: Nic nie robimy"
+    "title: Do nothing now": "title: Nic nie robimy",
+    "title: Take in former soldiers": "title: Przyjmij byłych żołnierzy",
+    "subtitle: Cost: 1 resource. Once: 300 members at once, up to 1000, and one level of training more. The Centre of PPS is uneasy, and the army watches it with suspicion. Available thanks to militarism.": "subtitle: Koszt: 1 jednostka środków. Jednorazowo: 300 członków od razu, najwyżej do 1000, i wyszkolenie o poziom wyżej. Centrum PPS jest zaniepokojone, a wojsko patrzy na to podejrzliwie. Opcja dostępna dzięki militaryzmowi."
   }
 }

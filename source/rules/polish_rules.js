@@ -955,6 +955,26 @@
     const P = S && S.actors && S.actors.pps && S.actors.pps.profile;
     return !!P && P.adopted.some(a => a.id === id);
   };
+  // Z — 1.33 (decisions D1B and D2A of 25 XI 2026): an adopted profile grows stronger the longer the party holds it — adopted,
+  // strengthened after two years, rooted after four; in the first chapter it stops at strengthened. Its bonus is +40%, +60% and
+  // +80% (before 1.33 every bonus was +25%). Leaving a profile at a congress and adopting it again starts the time afresh.
+  const PROFILE_STAGE_MONTHS = 24;
+  const PROFILE_STAGE_BONUS = Object.freeze([0, 0.4, 0.6, 0.8]);
+  const PROFILE_STAGE_CAP = 2;
+  const profileNow = S => (S && S.turn && Number.isFinite(S.turn.last_settled_time) ? S.turn.last_settled_time : 0);
+  function profileAdoptedAt(S, id) {
+    const P = S && S.actors && S.actors.pps && S.actors.pps.profile;
+    const entry = P ? P.adopted.filter(a => a.id === id)[0] : null;
+    return entry ? entry.t : null;
+  }
+  function profileStage(S, id, t) {
+    const since = profileAdoptedAt(S, id);
+    if (since === null || since === undefined) return 0;
+    const now = Number.isFinite(t) ? t : profileNow(S);
+    return Math.min(PROFILE_STAGE_CAP, 1 + Math.floor(Math.max(0, now - since) / PROFILE_STAGE_MONTHS));
+  }
+  const profileBonus = (S, id, t) => PROFILE_STAGE_BONUS[profileStage(S, id, t)];
+  const profileFactor = (S, id, t) => 1 + profileBonus(S, id, t);
   // Adds seeds to a profile not yet adopted; the line of the party makes them grow faster. Returns the points added.
   function seedProfile(Q, id, points, cause) {
     if (PROFILE_IDS.indexOf(id) < 0) throw new Error('seedProfile: unknown profile ' + id);
@@ -1159,6 +1179,12 @@
     profileState: profileState,
     profileLineMatch: profileLineMatch,
     profileActive: profileActive,
+    profileStage: profileStage,
+    profileBonus: profileBonus,
+    profileFactor: profileFactor,
+    profileAdoptedAt: profileAdoptedAt,
+    PROFILE_STAGE_MONTHS: PROFILE_STAGE_MONTHS,
+    PROFILE_STAGE_CAP: PROFILE_STAGE_CAP,
     seedProfile: seedProfile,
     setLanguage: setLanguage,
     inLanguage: inLanguage,

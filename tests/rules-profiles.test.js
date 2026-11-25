@@ -88,6 +88,7 @@ test('Kongres 1.07: a resolution adopts a characteristic for the action of the m
   assert.equal(Q.month_actions, before, 'no new resolutions cost no action');
 });
 
+// Z — 1.33 (decisions D1B and D2A of 25 XI 2026): +40% when adopted (until 1.32 +25%), +60% after two years, no more in chapter I.
 test('Skutki cech 1.07: unions, strikes, parliament, ministries, the Milicja and campaigns change with an adopted characteristic', () => {
   const Q = game();
   const S = Q.S, adopt = id => R().profileState(S).adopted.push({ id, t: Q.time });
@@ -101,24 +102,30 @@ test('Skutki cech 1.07: unions, strikes, parliament, ministries, the Milicja and
   for (const k of Object.keys(S.cooldowns)) if (/organi|union/.test(k)) delete S.cooldowns[k];
   const reach1 = S.unions.rail.reach;
   P().organizationsChoose(Q, ['union_organize_rail'], 'party.union_investments');
-  assert.ok(Math.abs((S.unions.rail.reach - reach1) - Math.min(100 - reach1, plain * 1.25)) < 1e-6, 'unionism: +25% reach');
-  // Campaigns: radicalism +25% among the workers and the unemployed, the alliance in the countryside, federalism among the minorities.
+  assert.ok(Math.abs((S.unions.rail.reach - reach1) - Math.min(100 - reach1, plain * 1.4)) < 1e-6, 'unionism: +40% reach');
+  // Campaigns: radicalism +40% among the workers and the unemployed, the alliance in the countryside, federalism among the minorities.
   const cell = c => S.society.cells.find(x => x.class_id === c);
   assert.equal(P().profileCampaignFactor(S, cell('workers')), 1);
   adopt('radicalism'); adopt('worker_peasant');
-  assert.equal(P().profileCampaignFactor(S, cell('workers')), 1.25);
-  assert.equal(P().profileCampaignFactor(S, cell('rural')), 1.25);
+  assert.equal(P().profileCampaignFactor(S, cell('workers')), 1.4);
+  assert.equal(P().profileCampaignFactor(S, cell('rural')), 1.4);
+  // Two years later the alliance is strengthened (+60%); four years later it stays there in the first chapter.
+  R().profileState(S).adopted.find(a => a.id === 'worker_peasant').t = S.turn.last_settled_time - 24;
+  assert.equal(R().profileStage(S, 'worker_peasant'), 2);
+  assert.equal(P().profileCampaignFactor(S, cell('rural')), 1.6);
+  R().profileState(S).adopted.find(a => a.id === 'worker_peasant').t = S.turn.last_settled_time - 50;
+  assert.equal(R().profileStage(S, 'worker_peasant'), 2, 'rooted only in chapter II');
   // Reformism: a programme of a PPS ministry that costs 2 or 3 costs one unit less; radicalism: the socialisation of the mines too.
   const PR = globalThis.PolishProjects;
   assert.deepEqual([PR.profilePrice(S, 'land_program', 2, 'pps'), PR.profilePrice(S, 'socialise_mining', 3, 'pps')], [2, 2]);
   adopt('reformism');
   assert.deepEqual([PR.profilePrice(S, 'land_program', 2, 'pps'), PR.profilePrice(S, 'land_program', 1, 'pps'), PR.profilePrice(S, 'land_program', 2, 'zln')], [1, 1, 2]);
   assert.equal(PR.profilePrice(S, 'socialise_mining', 3, 'pps'), 1, 'reformism and radicalism together only in a fixture');
-  // Parliamentarism: a bill of our initiative has ten points more of chance.
+  // Parliamentarism: a bill of our initiative has 16 points more of chance (10 until 1.32).
   const counts = { yes: 200, no: 200 };
   assert.equal(PR.initiativeChance(S, counts), 0.5);
   adopt('parliamentarism');
-  assert.equal(PR.initiativeChance(S, counts), 0.6);
+  assert.ok(Math.abs(PR.initiativeChance(S, counts) - 0.66) < 1e-9);
 });
 
 test('Linia partii 1.07: campaigns of the matching direction +25%; a cabinet against independent class politics angers the Left', () => {
@@ -144,7 +151,7 @@ test('Charakterystyka w grze 1.07: the Party tab shows the eight characteristics
     assert.equal(Q.pl_top_profile, '');
     R().profileState(Q.S).adopted.push({ id: 'unionism', t: Q.time });
     engine.goToScene('status');
-    assert.match(Q.pl_profile_html, /^<span class="pl-profiles"><span class="pl-profile-count">Przyjęte: 1 z 2<\/span><span class="pl-profile pl-profile-adopted"><span class="pl-profile-head"><span class="pl-profile-name">Uzwiązkowienie<\/span><span class="pl-profile-state">przyjęta<\/span>/, 'the adopted one first');
+    assert.match(Q.pl_profile_html, /^<span class="pl-profiles"><span class="pl-profile-count">Przyjęte: 1 z 2<\/span><span class="pl-profile pl-profile-adopted"><span class="pl-profile-head"><span class="pl-profile-name">Uzwiązkowienie<\/span><span class="pl-profile-state">przyjęta w 1922, umocni się w 1924<\/span>/, 'the adopted one first, with its stage');
     assert.equal(Q.pl_top_profile, 'Charakterystyka: uzwiązkowienie');
     assert.equal(P().profileSummary(Q.S), 'PPS przyjęła uzwiązkowienie (1922).');
     engine.goToScene('library.characteristics');
@@ -180,7 +187,8 @@ test('Charakterystyka w grze 1.07: the Party tab shows the eight characteristics
     const blocks = [...Q.pl_profile_html.matchAll(/pl-profile pl-profile-(\w+)"><span class="pl-profile-head"><span class="pl-profile-name">([^<]+)<\/span>(?:<span class="pl-profile-state">([^<]+)<\/span>)?/g)]
       .map(m => [m[2], m[1], m[3] || '']);
     assert.deepEqual(blocks, [
-      ['Parlamentaryzm', 'adopted', 'przyjęta'], ['Reformizm', 'adopted', 'przyjęta'], ['Akcja strajkowa', 'growing', 'dojrzewa'],
+      ['Parlamentaryzm', 'adopted', 'przyjęta w 1922, umocni się w 1924'], ['Reformizm', 'adopted', 'przyjęta w 1922, umocni się w 1924'],
+      ['Akcja strajkowa', 'growing', 'dojrzewa'],
       ['Uzwiązkowienie', 'growing', 'zalążek'], ['Sojusz robotniczo-włościański', 'none', ''], ['Federalizm', 'none', ''], ['Militaryzm', 'none', ''],
       ['Radykalizm', 'excluded', 'wykluczona']]);
     assert.match(Q.pl_profile_html, /Przyjęte: 2 z 2/);

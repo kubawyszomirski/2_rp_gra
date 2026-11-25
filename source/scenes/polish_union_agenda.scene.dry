@@ -83,6 +83,8 @@ Mark the goal of the strike, the cooperation with the communists and the protect
 - @c_yes
 - @p_no
 - @p_yes
+- @s_no
+- @s_yes
 - @launch
 - @polish_union_agenda: Back to the dispute.
 
@@ -145,6 +147,26 @@ choose-if: {! return PolishUnions.setupWhy(Q, 'protection', true).available !}
 unavailable-subtitle: [+ pl_su_p_yes_why +]
 on-arrival: {!
 PolishUnions.setupChoose(Q, 'protection', true);
+!}
+go-to: setup
+
+@s_no
+title: [+ pl_su_s_no_mark +] Without a solidarity strike
+subtitle: Only the branches of the dispute strike.
+view-if: pl_su_solidarity = 1
+on-arrival: {!
+PolishUnions.setupChoose(Q, 'solidarity', false);
+!}
+go-to: setup
+
+@s_yes
+title: [+ pl_su_s_yes_mark +] With a solidarity strike
+subtitle: [+ pl_su_s_yes_line +]
+view-if: pl_su_solidarity = 1
+choose-if: {! return PolishUnions.setupWhy(Q, 'solidarity', true).available !}
+unavailable-subtitle: [+ pl_su_s_yes_why +]
+on-arrival: {!
+PolishUnions.setupChoose(Q, 'solidarity', true);
 !}
 go-to: setup
 

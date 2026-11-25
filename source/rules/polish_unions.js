@@ -47,7 +47,7 @@
   // Z — 1.07 (the characteristics of the party; P): unionism halves the trust the unions lose after a defeat; strike action makes
   // the workers ready a quarter sooner and the threat of a strike a quarter stronger.
   const trustLoss = (S, n) => (S && rules.profileActive(S, 'unionism') ? n / 2 : n);
-  const readinessGain = (S, n) => (S && rules.profileActive(S, 'strike_action') ? n * 1.25 : n);
+  const readinessGain = (S, n) => (S ? n * rules.profileFactor(S, 'strike_action') : n);
   const branchName = id => L(BRANCH_NAMES[id], party.BRANCH_NAMES_PL[id]);
   // A list of branches inside a sentence: 'industry and railways'; in Polish 'przemysł i kolej'.
   const branchList = (ids, joiner) => (PL() ? ids.map(id => party.BRANCH_NAMES_PL[id].toLowerCase()).join(' i ') :
@@ -230,6 +230,20 @@
   const economicDemands = rec => rec.demands.filter(d => CLAUSES[d.kind]).map(d => d.kind);
 
   // A single demand is limited (40), a package broad (60), a political demand structural (80) until it is refused.
+  // Z — 1.33 (strike action; the user's decisions of 25 XI 2026): a solidarity strike — the strongest union branch outside the dispute
+  // stands with the strikers. Every round the pressure on the government is 8 higher (8 points more chance of an offer), the party pays
+  // the strike pay of one branch more each month, and the employers press harder (+3) once.
+  const SOLIDARITY = Object.freeze({pressure: 8, business: 3});
+  const SOLIDARITY_WORDS = Object.freeze({industry: ['the industrial workers', 'robotnicy przemysłu'], rail: ['the railwaymen', 'kolejarze'],
+    farm_labour: ['the agricultural labourers', 'robotnicy rolni']});
+  function solidarityBranch(S, rec) {
+    if (!rec || !rules.profileActive(S, 'strike_action')) return null;
+    return BRANCHES.filter(b => rec.branches.indexOf(b) < 0 && S.unions[b] && S.unions[b].reach > 0)
+      .sort((a, b) => S.unions[b].reach - S.unions[a].reach || BRANCHES.indexOf(a) - BRANCHES.indexOf(b))[0] || null;
+  }
+  const capitalFirst = text => (text ? text.charAt(0).toUpperCase() + text.slice(1) : '');
+  const solidarityPressure = rec => (rec && rec.solidarity ? SOLIDARITY.pressure : 0);
+
   function updateThreshold(rec) {
     const political = rec.demands.some(d => d.kind === 'cabinet_resignation') && !rec.political_refused;
     rec.level = political ? 'structural' : economicDemands(rec).length >= 2 ? 'broad' : 'limited';
@@ -268,7 +282,21 @@
   // Z — 0.92 (the user's decision of 24 X 2026): the workers' consumer cooperative pays half, so the party pays 0.25 (P).
   const strikeCost = S => STRIKE_COST * party.strikePayShare(S);
   const strikePayable = S => S.party_orgs.cash + 1e-9 >= strikeCost(S);
-  const coopPays = S => party.strikePayShare(S) < 1;
+  // Z — 1.33: the share of the party in words (the nominative and the accusative) and who pays the rest — the cooperative and,
+  // with unionism adopted, the unions.
+  function strikePayWords(S) {
+    const c = strikeCost(S);
+    if (c <= STRIKE_COST / 4 + 1e-9) return {en: 'an eighth of a resource', nom: 'jedna ósma jednostki środków', acc: 'jedną ósmą jednostki środków'};
+    if (c <= STRIKE_COST / 2 + 1e-9) return {en: 'a quarter of a resource', nom: 'ćwierć jednostki środków', acc: 'ćwierć jednostki środków'};
+    return {en: 'half a resource', nom: 'pół jednostki środków', acc: 'pół jednostki środków'};
+  }
+  function strikePayRest(S) {
+    const coop = party.cooperativeWorks(S), unions = rules.profileActive(S, 'unionism');
+    if (coop && unions) return L('the cooperative and the unions pay the rest', 'resztę płacą spółdzielnia i związki');
+    if (coop) return L('the cooperative pays the other quarter', 'drugą ćwierć płaci spółdzielnia');
+    if (unions) return L('the unions pay the other quarter', 'drugą ćwierć płacą związki');
+    return '';
+  }
 
   function potential(S, branchId) {
     const value = participation(S, branchId);
@@ -299,7 +327,7 @@
     const when = t === undefined ? S.turn.last_settled_time + 1 : t;
     const rows = rec.branches.map(b => {
       const credible = branchCredible(S, rec, b);
-      const pressure = negotiatingPressure(credible, sectorImportance(b, when), fragility);
+      const pressure = negotiatingPressure(credible, sectorImportance(b, when), fragility) + solidarityPressure(rec);
       return {branch: b, credible: credible, pressure: pressure, chance: successChance(pressure, threshold)};
     });
     return {fragility: fragility, threshold: threshold, rows: rows, chance: rows.length ? Math.min(...rows.map(r => r.chance)) : 0};
@@ -555,6 +583,11 @@
       }
       rec.disruption[b] = Math.min(100, rec.participants[b] + (rec.uncontrolled_participation || 0)) * sectorImportance(b, t) / 100;
       striking[b] = true;
+    }
+    // Z — 1.33: the strike pay of the branch that strikes in solidarity.
+    if (rec.solidarity && strikePayable(S)) {
+      S.party_orgs.cash = Math.max(0, round(S.party_orgs.cash - strikeCost(S), 6));
+      rec.cost_paid = round(rec.cost_paid + strikeCost(S), 6);
     }
     rec.last_processed_time = t;
     rec.history.push({t: t, kind: 'month', participants: copy(rec.participants), coverage: copy(rec.coverage)});
@@ -1589,9 +1622,8 @@
       Q.pl_dsp_numbers = rec.branches.map(b => unionNumbers(S, b)).join('. ') + '.';
       Q.pl_dsp_note = L('A won strike: wages rise for two months, the workers’ grievance falls, and the unions’ trust and the support of PPS grow. ',
           'Wygrany strajk: płace rosną na dwa miesiące, niezadowolenie robotników spada, a zaufanie związków i poparcie PPS rosną. ') +
-        (coopPays(S) ? L('Each month of a strike costs the party a quarter of a unit of its money for each branch; the cooperative pays the other quarter.',
-          'Każdy miesiąc strajku kosztuje partię ćwierć jednostki środków za każdą branżę; drugą ćwierć płaci spółdzielnia.') :
-          L('Each month of a strike costs the party half a unit of its money for each branch.', 'Każdy miesiąc strajku kosztuje partię pół jednostki środków za każdą branżę.'));
+        L('Each month of a strike costs the party ' + strikePayWords(S).en + ' for each branch', 'Każdy miesiąc strajku kosztuje partię ' + strikePayWords(S).acc +
+          ' za każdą branżę') + (strikePayRest(S) ? '; ' + strikePayRest(S) : '') + '.';
     } else {
       Q.pl_dsp_title = L('A dispute with the leadership of PPS', 'Spór z kierownictwem PPS');
       Q.pl_dsp_text = lead ? L(BRANCH_NAMES[lead] + ' is in dispute with the leadership of PPS over a concrete change (dissent ' + fmt(S.unions[lead].dissent) + ').',
@@ -1600,7 +1632,7 @@
     Q.pl_dsp_start_why = startStatus(Q).reason;
     Q.pl_dsp_threat_why = threatStatus(Q).reason;
     // Z — 1.17 (the user's note of 22 XI 2026): every decision names its cost, also a cost of nothing; a strike its monthly cost.
-    Q.pl_dsp_strike_cost = coopPays(S) ? L('a quarter of a resource', 'ćwierć jednostki środków') : L('half a resource', 'pół jednostki środków');
+    Q.pl_dsp_strike_cost = L(strikePayWords(S).en, strikePayWords(S).nom);
     Q.pl_dsp_threat_line = rec ? L('Cost: 0 resources. ', 'Koszt: 0 jednostek środków. ') + L('The workers get ready to fight (readiness +' + THREAT_READINESS + '), and the government may give way at once (chance: ' +
       chanceWord(threatChance(S, rec)) + '). If it refuses, you can start a strike next month.',
       'Robotnicy szykują się do walki (gotowość +' + THREAT_READINESS + '), a rząd może ustąpić od razu (szansa: ' + chanceWord(threatChance(S, rec)) +
@@ -1616,7 +1648,7 @@
     const fragility = government.governmentFragility(S);
     const chance = Math.min(...rec.branches.map(b => successChance(negotiatingPressure(potential(S, b).credible * THREAT_SHARE, sectorImportance(b, S.turn.last_settled_time + 1), fragility),
       THRESHOLDS.limited)));
-    return rules.profileActive(S, 'strike_action') ? Math.min(1, chance * 1.25) : chance;
+    return Math.min(1, chance * rules.profileFactor(S, 'strike_action'));
   }
 
   function startStatus(Q) {
@@ -1683,7 +1715,7 @@
     const rec = disputeRecord(S);
     if (!rec) return null;
     const st = S.strikes.setup;
-    if (!st || st.record_id !== rec.id) S.strikes.setup = {record_id: rec.id, goal: 'small', communists: false, protection: false};
+    if (!st || st.record_id !== rec.id) S.strikes.setup = {record_id: rec.id, goal: 'small', communists: false, protection: false, solidarity: false};
     return S.strikes.setup;
   }
   const communistsShown = S => { const rec = disputeRecord(S); return !!rec && communistsActive(S, rec); };
@@ -1694,6 +1726,7 @@
     if (group === 'goal' && GOALS[value]) st.goal = value;
     else if (group === 'communists') st.communists = !!value;
     else if (group === 'protection') st.protection = !!value;
+    else if (group === 'solidarity') st.solidarity = !!value;
     else throw new Error('setupChoose: ' + group + ' ' + value);
     setupView(Q);
   }
@@ -1707,6 +1740,7 @@
         'Wymaga relacji z KPP co najmniej 20; obecnie ' + fmt(S.actors.relations.kpp) + '.'));
     }
     if (group === 'protection' && value) return protectionPossible(S);
+    if (group === 'solidarity' && value) return solidarityBranch(S, rec) ? OK : no(L('No other union branch can join.', 'Żadna inna gałąź związków nie może dołączyć.'));
     return OK;
   }
 
@@ -1716,6 +1750,7 @@
     const st = setupState(Q.S);
     if (st.communists && communistsShown(Q.S)) { const c = setupWhy(Q, 'communists', true); if (!c.available) return c; }
     if (st.protection) { const p = setupWhy(Q, 'protection', true); if (!p.available) return p; }
+    if (st.solidarity) { const s = setupWhy(Q, 'solidarity', true); if (!s.available) return s; }
     return OK;
   }
 
@@ -1727,6 +1762,14 @@
     for (const goal of Object.keys(GOALS)) Q['pl_su_g_' + goal + '_mark'] = mark(st.goal === goal);
     Q.pl_su_c_no_mark = mark(!st.communists); Q.pl_su_c_yes_mark = mark(st.communists);
     Q.pl_su_p_no_mark = mark(!st.protection); Q.pl_su_p_yes_mark = mark(st.protection);
+    Q.pl_su_s_no_mark = mark(!st.solidarity); Q.pl_su_s_yes_mark = mark(st.solidarity);
+    const helper = solidarityBranch(S, rec);
+    Q.pl_su_solidarity = rules.profileActive(S, 'strike_action') ? 1 : 0;
+    Q.pl_su_s_yes_line = helper ? L('Cost: the strike pay of one branch more each month. ' + capitalFirst(SOLIDARITY_WORDS[helper][0]) +
+      ' strike with them: the government gives way more easily, but the employers press harder. Available thanks to strike action.',
+      'Koszt: zasiłek strajkowy dla jednej gałęzi więcej co miesiąc. ' + capitalFirst(SOLIDARITY_WORDS[helper][1]) +
+      ' strajkują razem z nimi: rząd łatwiej ustępuje, ale przemysłowcy naciskają mocniej. Opcja dostępna dzięki akcji strajkowej.') : '';
+    Q.pl_su_s_yes_why = setupWhy(Q, 'solidarity', true).reason;
     Q.pl_su_communists = communistsShown(S) ? 1 : 0;
     const probe = Object.assign({}, rec, {level: st.goal === 'big' ? 'broad' : st.goal === 'political' ? 'structural' : 'limited'});
     const mode = cooperationMode(S, probe);
@@ -1740,9 +1783,9 @@
     // Z — 1.14 (the user's request of 8 XI 2026): the expected participation in words.
     const rows = rec.branches.map(b => branchName(b) + ' — ' + participationWord(participation(S, b)));
     const chance = roundChance(S, Object.assign({}, rec, {status: 'active', participants: rec.branches.reduce((m, b) => Object.assign(m, {[b]: participation(S, b)}), {}),
-      communist_cooperation: null}), st.goal === 'big' ? THRESHOLDS.broad : THRESHOLDS.limited, S.turn.last_settled_time + 1).chance;
-    Q.pl_su_launch_line = L('Cost: ' + (coopPays(S) ? 'a quarter of a resource' : 'half a resource') + ' for each branch every month of the strike. ',
-      'Koszt: ' + (coopPays(S) ? 'ćwierć jednostki środków' : 'pół jednostki środków') + ' za każdą branżę co miesiąc strajku. ') +
+      communist_cooperation: null, solidarity: st.solidarity ? helper : null}), st.goal === 'big' ? THRESHOLDS.broad : THRESHOLDS.limited, S.turn.last_settled_time + 1).chance;
+    Q.pl_su_launch_line = L('Cost: ' + strikePayWords(S).en + ' for each branch every month of the strike. ',
+      'Koszt: ' + strikePayWords(S).nom + ' za każdą branżę co miesiąc strajku. ') +
       L('Expected participation: ', 'Oczekiwany udział: ') + rows.join(', ') +
       L('; the chance of a government offer in a month: ', '; szansa na ofertę rządu w miesiącu: ') + chanceWord(chance) + '.' +
       (st.goal === 'political' ? ' ' + L('The cabinet will refuse to resign; the talks then turn to wages and working conditions.', 'Rząd odmówi dymisji; potem rokowania wrócą do płac i warunków pracy.') : '');
@@ -1763,6 +1806,8 @@
     rec.demands = GOALS[st.goal].map(kind => ({kind: kind, added_at: t}));
     rec.political_refused = false;
     rec.declined_clauses = null;
+    rec.solidarity = st.solidarity ? solidarityBranch(S, rec) : null;
+    if (rec.solidarity) economy.changeBusinessPressure(S, SOLIDARITY.business, rec.id + ':solidarity', t, 'solidarity_strike');
     updateThreshold(rec);
     if (st.goal === 'political') {
       // 17.5: the Left −3 dissent under the class line; the Centre +8 without it.
@@ -1789,12 +1834,14 @@
     party.writeMirrors(Q);
     const goalText = {small: L('wages and working conditions', 'płace i warunki pracy'), big: L('wages, working conditions and works councils', 'płace, warunki pracy i rady zakładowe'),
       political: L('the resignation of the cabinet', 'dymisję rządu')}[st.goal];
-    const pay = coopPays(S) ? L('Every month of the strike the party pays a quarter of a unit of strike pay for each branch, and the cooperative pays the other quarter. ',
-      'W każdym miesiącu strajku partia płaci ćwierć jednostki środków zasiłku strajkowego za każdą branżę, a drugą ćwierć płaci spółdzielnia. ') :
-      L('Every month of the strike the party pays half a unit of strike pay for each branch. ', 'W każdym miesiącu strajku partia płaci pół jednostki środków zasiłku strajkowego za każdą branżę. ');
+    const pay = L('Every month of the strike the party pays ' + strikePayWords(S).en + ' of strike pay for each branch',
+      'W każdym miesiącu strajku partia płaci ' + strikePayWords(S).acc + ' zasiłku strajkowego za każdą branżę') +
+      (strikePayRest(S) ? L(', and ', ', a ') + strikePayRest(S) : '') + '. ';
     return result(Q, L('The strike begins (' + rec.branches.map(b => BRANCH_NAMES[b].toLowerCase()).join(' and ') + ') for ' + goalText + '. ',
       'Strajk się zaczyna (' + branchList(rec.branches) + '): o ' + goalText + '. ') + pay +
-      (withCommunists ? parts[0] + ' ' : '') + (st.protection ? parts[parts.length - 1] : ''));
+      (withCommunists ? parts[0] + ' ' : '') + (st.protection ? parts[parts.length - 1] : '') +
+      (rec.solidarity ? ' ' + L(capitalFirst(SOLIDARITY_WORDS[rec.solidarity][0]) + ' strike in solidarity with them.',
+        capitalFirst(SOLIDARITY_WORDS[rec.solidarity][1]) + ' strajkują solidarnie razem z nimi.') : ''));
   }
 
   // ---- The urgent card "The Government's Offer" (Z — 0.87, decision 5A) ----
@@ -1825,9 +1872,8 @@
     }
     Q.pl_off_text = text;
     Q.pl_off_has_offer = rec.offer ? 1 : 0;
-    Q.pl_off_continue_line = (coopPays(S) ? L('The strike goes on; next month costs a quarter of a unit of strike pay for each branch (the cooperative pays the other quarter).',
-      'Strajk trwa; kolejny miesiąc kosztuje ćwierć jednostki środków za każdą branżę (drugą ćwierć płaci spółdzielnia).') :
-      L('The strike goes on; next month costs half a unit of strike pay for each branch.', 'Strajk trwa; kolejny miesiąc kosztuje pół jednostki środków za każdą branżę.')) +
+    Q.pl_off_continue_line = L('The strike goes on; next month costs ' + strikePayWords(S).en + ' of strike pay for each branch',
+      'Strajk trwa; kolejny miesiąc kosztuje ' + strikePayWords(S).acc + ' za każdą branżę') + (strikePayRest(S) ? ' (' + strikePayRest(S) + ')' : '') + '.' +
       (rec.offer ? ' ' + L('The offer lapses.', 'Oferta przepada.') : '');
   }
 

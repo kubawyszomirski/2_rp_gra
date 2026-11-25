@@ -1,0 +1,14 @@
+{
+  "source": "scenes/polish_sejm_inquiry.scene.dry",
+  "status": "complete",
+  "lines": {
+    "title: A Sejm Committee of Inquiry": "title: Sejmowa komisja śledcza",
+    "subtitle: Once a year, while PPS is in opposition: the Sejm looks into the abuses of the government.": "subtitle: Raz w roku, gdy PPS jest w opozycji: Sejm bada nadużycia rządu.",
+    "= A Sejm committee of inquiry": "= Sejmowa komisja śledcza",
+    "title: Move a committee of inquiry into the government": "title: Wnieś o komisję śledczą w sprawie rządu",
+    "title: Do nothing now": "title: Nic nie robimy",
+    "- @root: Continue.": "- @root: Dalej.",
+    "As an opposition club PPS can move a committee of the Sejm to look into the abuses of the government. [+ pl_inq_line +]": "Jako klub opozycji PPS może wnieść o powołanie sejmowej komisji, która zbada nadużycia rządu. [+ pl_inq_line +]",
+    "subtitle: Cost: 0 resources. Those the committee looks into lose some support, and the authority of the Sejm grows, but our relations with them worsen. Available thanks to parliamentarism.": "subtitle: Koszt: 0 jednostek środków. Ci, których bada komisja, tracą trochę poparcia, a autorytet Sejmu rośnie, ale nasze stosunki z nimi się pogarszają. Opcja dostępna dzięki parlamentaryzmowi."
+  }
+}

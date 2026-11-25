@@ -18,6 +18,11 @@ Q.pl_sup_member = PolishGovernment.ppsStance(Q.S) === 'member' ? 1 : 0;
 Q.pl_sup_withdraw_reason = PolishGovernment.supportOptionStatus(Q, 'withdraw', 'ordinary').reason;
 Q.pl_sup_demand_reason = PolishGovernment.supportOptionStatus(Q, 'bargain', 'ordinary').reason;
 Q.pl_sup_military_reason = PolishGovernment.supportOptionStatus(Q, 'bargain', 'ordinary', 'military_compromise').reason;
+// Z — 1.33 (reformism): the next reform PPS can demand while it tolerates the cabinet.
+Q.pl_sup_reform_id = PolishGovernment.nextReformDemand(Q.S) || '';
+Q.pl_sup_reform_name = PolishGovernment.reformDemandName(Q.pl_sup_reform_id);
+Q.pl_sup_reform_shown = Q.pl_sup_reform_id && !Q.pl_sup_member && PolishRules.profileActive(Q.S, 'reformism') ? 1 : 0;
+Q.pl_sup_reform_reason = Q.pl_sup_reform_id ? PolishGovernment.supportOptionStatus(Q, 'bargain', 'ordinary', Q.pl_sup_reform_id).reason : '';
 !}
 
 = Our support for the government
@@ -35,6 +40,8 @@ Prime minister: [+ prime_minister_display +]. PPS position: [+ pps_government_po
 - @persuade
 - @bargain_military
 - @persuade_military
+- @bargain_reform
+- @persuade_reform
 - @easy_discard
 
 @withdraw
@@ -101,6 +108,35 @@ Q.pl_sup_accepted = record.accepted ? 1 : 0;
 Q.pl_sup_answers = PolishGovernment.describeAnswers(record);
 !}
 go-to: demand_result
+
+@bargain_reform
+view-if: pl_sup_reform_shown = 1
+title: Demand a reform of ours, [+ pl_sup_reform_name +], or we end our support
+subtitle: The cabinet carries it out itself, and once it comes into force it counts as a reform of PPS. Parties that give in under a threat think less of us. Available thanks to reformism.
+choose-if: {! return PolishGovernment.supportOptionStatus(Q, 'bargain', Q.pl_sup_mode, Q.pl_sup_reform_id).available !}
+unavailable-subtitle: [+ pl_sup_reform_reason +]
+on-arrival: {!
+Q.pl_sup_postulate = 'reform';
+var record = PolishGovernment.supportDemand(Q, 'bargain', Q.pl_sup_reform_id, Q.pl_sup_mode);
+Q.pl_sup_accepted = record.accepted ? 1 : 0;
+Q.pl_sup_answers = PolishGovernment.describeAnswers(record);
+!}
+go-to: demand_result if pl_sup_accepted; threat if not pl_sup_accepted
+
+@persuade_reform
+view-if: pl_sup_reform_shown = 1
+title: Ask for a reform of ours, [+ pl_sup_reform_name +], without a threat
+subtitle: No threat, no change of relations either way; if refused, our support stays as it is. Available thanks to reformism.
+choose-if: {! return PolishGovernment.supportOptionStatus(Q, 'persuade', Q.pl_sup_mode, Q.pl_sup_reform_id).available !}
+unavailable-subtitle: [+ pl_sup_reform_reason +]
+on-arrival: {!
+Q.pl_sup_postulate = 'reform';
+var record = PolishGovernment.supportDemand(Q, 'persuade', Q.pl_sup_reform_id, Q.pl_sup_mode);
+Q.pl_sup_accepted = record.accepted ? 1 : 0;
+Q.pl_sup_answers = PolishGovernment.describeAnswers(record);
+!}
+go-to: demand_result
+
 
 @maintain
 title: [? if pl_sup_member : Stay in the cabinet as before ?][? if not pl_sup_member : Keep our support as it is ?]
@@ -172,6 +208,8 @@ new-page: true
 [? if pl_sup_accepted and pl_sup_postulate = "worker_protection" : **The government accepts.** Financed worker protection enters the plan of the cabinet; its minister of Labour is to start it within four months. ?]
 
 [? if pl_sup_accepted and pl_sup_postulate = "military_compromise" : **The government accepts.** The compromise enters the plan of the cabinet. The cabinet offers Piłsudski a military function under civilian control at its next review; if he refuses, the plan drops it. ?]
+
+[? if pl_sup_accepted and pl_sup_postulate = "reform" : **The government accepts.** The reform enters the plan of the cabinet; its minister of Labour is to start it within three months. Once it comes into force, it counts as a reform of PPS. ?]
 
 [? if not pl_sup_accepted and pl_sup_member : **Our coalition partners refuse.** We stay in the cabinet as before. ?]
 

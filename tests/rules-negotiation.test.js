@@ -750,7 +750,7 @@ test('Konieczny resort 0.61: a partner keeps its preferred portfolio when it wou
 test('Punkty wpływu 0.61: the PPS share of the cabinet’s seats + 10 when it is indispensable; Labour 10, Interior and Treasury 20, others 10', () => {
   const Q = centreLeft();
   // PPS has 100 of the cabinet's 280 MPs (36%); the other three have 180, below 223.
-  assert.deepEqual(gov.influencePoints(Q, Q.S.negotiation.draft), { points: 46, share: 36, pivotal: true });
+  assert.deepEqual(gov.influencePoints(Q, Q.S.negotiation.draft), { points: 46, share: 36, pivotal: true, shadow: 0 });
   assert.deepEqual([gov.PORTFOLIO_COSTS.labor, gov.PORTFOLIO_COSTS.interior, gov.PORTFOLIO_COSTS.finance, gov.PORTFOLIO_COSTS.justice], [10, 20, 20, 10]);
   gov.setDraft(Q, 'portfolio_take', 'finance');
   gov.setDraft(Q, 'portfolio_take', 'justice');
@@ -764,7 +764,7 @@ test('Punkty wpływu 0.61: the PPS share of the cabinet’s seats + 10 when it i
     { time: 11, year: 1922, month: 11, psl_piast_relation: 60, npr_relation: 60 });
   formation(big);
   gov.setDraft(big, 'configuration_id', 'centre_left');
-  assert.deepEqual(gov.influencePoints(big, big.S.negotiation.draft), { points: 18, share: 18, pivotal: false });
+  assert.deepEqual(gov.influencePoints(big, big.S.negotiation.draft), { points: 18, share: 18, pivotal: false, shadow: 0 });
 });
 
 test('Powołanie od razu 0.61: an accepted PPS offer is appointed even when the head of state’s candidate could govern without PPS', () => {

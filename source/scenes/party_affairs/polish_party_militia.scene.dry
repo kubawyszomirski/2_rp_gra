@@ -14,6 +14,7 @@ Q.pl_mil_state = PolishParty.militiaCardLine(Q);
 Q.pl_mil_recruit_why = PolishParty.militiaStatus(Q, 'recruit').reason;
 Q.pl_mil_militarize_why = PolishParty.militiaStatus(Q, 'militarize').reason;
 Q.pl_mil_as_why = PolishParty.militiaStatus(Q, 'as').reason;
+Q.pl_mil_veterans_why = PolishParty.militiaStatus(Q, 'veterans').reason;
 !}
 
 = Milicja PPS
@@ -23,6 +24,7 @@ The self-defence of the party protects strikes, meetings and the offices of our 
 - @recruit
 - @militarize
 - @form_as
+- @veterans
 - @nothing
 - @easy_discard
 
@@ -33,6 +35,17 @@ choose-if: {! return PolishParty.militiaStatus(Q, 'recruit').available !}
 unavailable-subtitle: [+ pl_mil_recruit_why +]
 on-arrival: {!
 PolishParty.militiaChoose(Q, 'recruit');
+!}
+go-to: result
+
+@veterans
+title: Take in former soldiers
+subtitle: Cost: 1 resource. Once: 300 members at once, up to 1000, and one level of training more. The Centre of PPS is uneasy, and the army watches it with suspicion. Available thanks to militarism.
+view-if: {! return PolishParty.veteransShown(Q) !}
+choose-if: {! return PolishParty.militiaStatus(Q, 'veterans').available !}
+unavailable-subtitle: [+ pl_mil_veterans_why +]
+on-arrival: {!
+PolishParty.militiaChoose(Q, 'veterans');
 !}
 go-to: result
 

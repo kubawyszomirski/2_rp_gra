@@ -1084,6 +1084,9 @@
   const PORTFOLIO_COSTS = Object.freeze({labor: 10, interior: 20, finance: 20, economic: 10, justice: 10, agriculture: 10,
     reichswehr: 10, education: 10, foreign: 10});
   const PIVOT_BONUS = 10;
+  // Z — 1.33 (reformism; the user's decision f of 25 XI 2026): the shadow cabinet — a party that prepares its ministers ahead brings
+  // 20 influence points more to the formation, enough for one more portfolio.
+  const SHADOW_CABINET_POINTS = 20;
   const DEFAULT_CLAIMS = Object.freeze(['labor', 'economic']);
 
   function influencePoints(Q, draft) {
@@ -1092,7 +1095,8 @@
     if (!total || config.members.indexOf('pps') < 0) return {points: 0, share: 0, pivotal: false};
     const share = Math.round(100 * pps / total);
     const pivotal = total - pps < majorityRequired(S);
-    return {points: share + (pivotal ? PIVOT_BONUS : 0), share: share, pivotal: pivotal};
+    const shadow = rules.profileActive(S, 'reformism') ? SHADOW_CABINET_POINTS : 0;
+    return {points: share + (pivotal ? PIVOT_BONUS : 0) + shadow, share: share, pivotal: pivotal, shadow: shadow};
   }
 
   function claimCost(claim) {
@@ -2324,7 +2328,8 @@
     if (config.portfolio_map) return L('The portfolios of this cabinet are fixed.', 'Resorty tego gabinetu są ustalone.');
     // Z — 1.22 (decision 5A of 22 XI 2026): a plain counter of what is left.
     const ip = influencePoints(Q, draft), cost = claimCost(draft.portfolio_claim);
-    return L('Influence points: ' + (ip.points - cost) + ' of ' + ip.points + ' left.', 'Punkty wpływu: zostało ' + (ip.points - cost) + ' z ' + ip.points + '.');
+    return L('Influence points: ' + (ip.points - cost) + ' of ' + ip.points + ' left.', 'Punkty wpływu: zostało ' + (ip.points - cost) + ' z ' + ip.points + '.') +
+      (ip.shadow ? ' ' + L('Our shadow cabinet adds ' + ip.shadow + ' of them, thanks to reformism.', 'Nasz gabinet cieni dodaje ich ' + ip.shadow + ' dzięki reformizmowi.') : '');
   }
 
   // Step 4: one line for one portfolio — its cost and who takes it now.
@@ -3016,8 +3021,33 @@
     // Military Affairs (21.1 "Pula ustępstw wojskowych").
     military_compromise: Object.freeze({id: 'military_compromise', name: 'A compromise with Piłsudski under civilian control',
       programme: Object.freeze({army: 0}), required_military: 'military_function', weight: 1, months: 2}),
+    // Z — 1.33 (reformism; the user's decision d of 25 XI 2026): a PPS that tolerates the cabinet may demand one of its reforms,
+    // the next of three in order; the cabinet's own minister of Labour starts it, and once it comes into force it counts as a reform
+    // of PPS in its record and wins the voters as one.
+    reform_labor_inspection: Object.freeze({id: 'reform_labor_inspection', name: 'Labour inspection', name_pl: 'inspekcja pracy', reform: true,
+      programme: Object.freeze({fiscal: 1}), required_project: 'labor_inspection', required_variants: Object.freeze(['inspection']),
+      required_stage: 'launched', portfolio: 'labor', weight: 1, months: 3}),
+    reform_housing: Object.freeze({id: 'reform_housing', name: 'Workers’ housing', name_pl: 'mieszkania robotnicze', reform: true,
+      programme: Object.freeze({fiscal: 1}), required_project: 'public_works', required_variants: Object.freeze(['housing']),
+      required_stage: 'launched', portfolio: 'labor', weight: 1, months: 3}),
+    reform_old_age: Object.freeze({id: 'reform_old_age', name: 'Old-age insurance of workers', name_pl: 'ubezpieczenie robotników na starość', reform: true,
+      programme: Object.freeze({fiscal: 2}), required_project: 'old_age_insurance', required_variants: Object.freeze(['pension_all']),
+      required_stage: 'launched', portfolio: 'labor', weight: 1, months: 3}),
   });
   const TEST_PROGRAMME = POSTULATES.worker_protection;
+  const REFORM_DEMANDS = Object.freeze(['reform_labor_inspection', 'reform_housing', 'reform_old_age']);
+  const LIVE_OR_DONE = Object.freeze(['executing', 'operating', 'completed', 'paused']);
+  // The next reform PPS can demand: the first of the three that no cabinet has started and this cabinet has not accepted.
+  function nextReformDemand(S) {
+    const cabinet = S.cabinet;
+    return REFORM_DEMANDS.filter(id => {
+      const p = POSTULATES[id];
+      if (cabinet && cabinet.accepted_postulates.indexOf(id) >= 0) return false;
+      return !Object.keys(S.projects || {}).some(pid => S.projects[pid].type === p.required_project &&
+        p.required_variants.indexOf(S.projects[pid].variant) >= 0 && LIVE_OR_DONE.indexOf(S.projects[pid].status) >= 0);
+    })[0] || null;
+  }
+  const reformDemandName = id => (id ? L(POSTULATES[id].name, POSTULATES[id].name_pl) : '');
 
   function liveObligation(o) {
     return (o.status === 'active' || o.status === 'breached') && o.due_at !== null && o.due_at !== undefined;
@@ -3279,10 +3309,14 @@
     return partners.map(id => {
       const distance = Math.abs(stance.position - stanceOf(id, stance.topic));
       const delta = distance >= 3 ? OBJECTION_MAX : distance === 2 ? OBJECTION_STEP : 0;
-      // Z — 1.07: reformism halves the objections of the partners to a reform of PPS.
-      return {party: id, delta: rules.profileActive(S, 'reformism') ? Math.round(delta / 2) : delta};
+      // Z — 1.07: reformism halves the objections of the partners to a reform of PPS; Z — 1.33: by two thirds once strengthened.
+      return {party: id, delta: Math.round(delta * reformismObjectionShare(S))};
     }).filter(o => o.delta > 0).sort((a, b) => b.delta - a.delta || compareId(a.party, b.party));
   }
+
+  // Z — 1.33: the share of an objection left by reformism — a half when adopted, a third when strengthened, a quarter when rooted.
+  const REFORMISM_OBJECTION_SHARE = Object.freeze([1, 1 / 2, 1 / 3, 1 / 4]);
+  const reformismObjectionShare = S => REFORMISM_OBJECTION_SHARE[rules.profileStage(S, 'reformism')];
 
   // The agreement of the sitting cabinet that holds a party (one with PPS first).
   function partnerAgreement(S, party) {
@@ -3324,7 +3358,7 @@
       const delta = distance >= 3 ? OUTSIDE_OBJECTION.max : distance === 2 ? OUTSIDE_OBJECTION.step : 0;
       const reformism = rules.profileActive(S, 'reformism');
       // Z — 1.28: the points of patience a reform takes — 1, or 2 when the club rejects it strongly (reformism: 1).
-      return {party: id, delta: reformism ? Math.round(delta / 2) : delta, points: distance >= 3 && !reformism ? 2 : 1};
+      return {party: id, delta: Math.round(delta * reformismObjectionShare(S)), points: distance >= 3 && !reformism ? 2 : 1};
     }).filter(o => o.delta > 0).sort((a, b) => b.delta - a.delta || compareId(a.party, b.party));
   }
   // Z — 1.28 (decision A of 22 XI 2026, after the measurement of 1.27): the patience of the clubs outside the cabinet. Each reform of ours
@@ -4105,6 +4139,17 @@
     return ids;
   }
 
+  // Z — 1.33: a reform PPS demands is decided by the government itself — its premier (his party, or himself as a non-party
+  // premier) and the holder of the portfolio that carries it out — not by every club that supports the cabinet.
+  function reformEvaluators(S, postulate) {
+    const cabinet = S.cabinet, ids = [];
+    if (cabinet.party && cabinet.party !== 'pps' && profileOf(cabinet.party)) ids.push(cabinet.party);
+    else if (!cabinet.party && profileOf(cabinet.pm)) ids.push(cabinet.pm);
+    const holder = postulate && postulate.portfolio ? cabinet.portfolios[postulate.portfolio] : null;
+    if (holder && holder !== 'expert' && holder !== 'pps' && profileOf(holder) && ids.indexOf(holder) < 0) ids.push(holder);
+    return ids;
+  }
+
   // 16.7 (stage 8): the executor of a compromise with Piłsudski is the cabinet's premier (his party, or himself as a
   // non-party premier) and the holder of Military Affairs; they, not every supporter, answer that demand.
   function executorEvaluators(S) {
@@ -4137,6 +4182,13 @@
   function postulateStatus(Q, postulateId) {
     const S = Q.S, cabinet = S.cabinet, postulate = POSTULATES[postulateId];
     if (!postulate) return {available: false, reason: L('Unknown demand.', 'Nieznane żądanie.')};
+    if (postulate.reform) {
+      if (!rules.profileActive(S, 'reformism')) return {available: false, reason: L('Only with the characteristic Reformism.', 'Tylko przy charakterystyce „Reformizm”.')};
+      if (ppsStance(S) !== 'supporter') return {available: false, reason: L('Only while PPS tolerates the cabinet from outside.', 'Tylko wtedy, gdy PPS toleruje rząd z zewnątrz.')};
+      if (nextReformDemand(S) !== postulateId) return {available: false, reason: L('This reform is already under way.', 'Ta reforma jest już w toku.')};
+      if (!reformEvaluators(S, postulate).length) return {available: false, reason: L('Nobody in the cabinet can answer this demand.', 'Nikt w gabinecie nie może odpowiedzieć na to żądanie.')};
+      return {available: true, reason: ''};
+    }
     if (postulate.required_military) {
       const military = S.politics && S.politics.cases ? Object.keys(S.politics.cases).map(id => S.politics.cases[id])
         .filter(c => c.kind === 'military' && c.status === 'open')[0] : null;
@@ -4218,7 +4270,7 @@
     const postulate = POSTULATES[postulateId];
     const offer = demandOffer(S, postulate);
     const discounted = kind === 'bargain' && cabinet.pps_threat_discounted;
-    const evaluators = postulate.required_military ? executorEvaluators(S) : demandEvaluators(S);
+    const evaluators = postulate.required_military ? executorEvaluators(S) : postulate.reform ? reformEvaluators(S, postulate) : demandEvaluators(S);
     const evaluations = evaluators.map(id =>
       evaluatePartner(S, id, offer, kind === 'bargain' && !discounted ? governmentNeed(Q, id, offer) : 0));
     const accepted = evaluations.length > 0 && evaluations.every(e => e.accept);
@@ -4237,6 +4289,8 @@
           required_project: postulate.required_project || null, required_variants: postulate.required_variants ? postulate.required_variants.slice() : null,
           required_stage: postulate.required_stage || null, portfolio: postulate.portfolio || null});
         if (postulate.required_military) item.required_military = postulate.required_military;
+        // Z — 1.33: a reform PPS won as the price of its support counts in its record once the cabinet starts it.
+        if (postulate.reform) item.reform_demand = true;
         cabinet.plan.push(item);
       }
       if (kind === 'bargain') {
@@ -5060,6 +5114,10 @@
     governmentFragility: governmentFragility,
     TOPICS: TOPICS,
     ACTOR_PROFILES: ACTOR_PROFILES,
+    actorName: actorName,
+    partyWords: partyWords,
+    nextReformDemand: nextReformDemand,
+    reformDemandName: reformDemandName,
     PARTNERS: PARTNERS,
     OUTREACH_COOLDOWN_MONTHS: OUTREACH_COOLDOWN_MONTHS,
     pairRelation: pairRelation,

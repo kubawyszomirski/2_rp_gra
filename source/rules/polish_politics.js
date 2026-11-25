@@ -1596,8 +1596,89 @@
     Q.pl_pol_pressure = of100(S.coup.pressure) + (openMilitaryCase(S) ? L(' (an open military case)', ' (otwarta sprawa wojskowa)') : '');
   }
 
+  // ---- Z — 1.33: the Sejm committee of inquiry (parliamentarism; the user's decisions of 25 XI 2026) ----------------------------
+  // Once a year, while PPS is in opposition to an active cabinet, PPS moves a committee to look into the abuses of the government:
+  // the parties with ministers in the cabinet lose about one point of the whole electorate together and our relations with them
+  // worsen by 3; a cabinet of experts has no such parties, so the clubs that support it pay half (decision 1A of 25 XI 2026). The
+  // Sejm takes a resolution (its authority +4 for a year). A gameplay simplification: no vote on the committee.
+  const INQUIRY = Object.freeze({loss: 1, relation: -3, interval: 12, supporters: 0.5});
+  function inquiryTarget(S) {
+    const c = S.cabinet;
+    if (!c || c.status !== 'active') return {parties: [], weight: 0, experts: false};
+    const seats = (S.parliament && S.parliament.clubs) || [];
+    const valid = list => list.filter((id, i, all) => id !== 'pps' && all.indexOf(id) === i && government.ACTOR_PROFILES[id] &&
+      seats.some(club => club.id === id && club.seats > 0)).sort();
+    const partners = valid(c.partner_ids);
+    if (partners.length) return {parties: partners, weight: 1, experts: false};
+    return {parties: valid(c.supporter_ids), weight: INQUIRY.supporters, experts: true};
+  }
+  const inquiryParties = S => inquiryTarget(S).parties;
+  function inquiryLast(S) {
+    const list = (S.politics && S.politics.inquiries) || [];
+    return list.length ? list[list.length - 1].t : null;
+  }
+  function inquiryOpen(Q) {
+    const S = Q && Q.S;
+    if (!S || !S.politics || !rules.profileActive(S, 'parliamentarism') || S.chapter.status === 'ended') return false;
+    if (government.ppsStance(S) !== 'opposition' || !inquiryParties(S).length) return false;
+    const last = inquiryLast(S);
+    return last === null || Q.time - last >= INQUIRY.interval;
+  }
+  function inquiryStatus(Q) {
+    if (!inquiryOpen(Q)) return no(L('No committee can be moved now.', 'Teraz nie można powołać komisji.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Decyzja na ten miesiąc już zapadła.'));
+    return OK;
+  }
+  const inquiryNames = S => {
+    const names = inquiryParties(S).map(id => government.partyWords(id));
+    return names.length > 1 ? names.slice(0, -1).join(', ') + L(' and ', ' i ') + names[names.length - 1] : names[0] || '';
+  };
+  // Who pays, in one sentence: the parties of the cabinet, or the clubs that support a cabinet of experts (less).
+  function inquiryLine(S) {
+    const target = inquiryTarget(S), names = inquiryNames(S);
+    if (!target.parties.length) return '';
+    return target.experts ?
+      L('This is a cabinet of experts: the clubs that support it, ' + names + ', will lose a little support, and the authority of the Sejm will grow.',
+        'To rząd fachowców: popierające go kluby (' + names + ') stracą nieco poparcia, a autorytet Sejmu wzrośnie.') :
+      L('The parties of the cabinet, ' + names + ', will lose some support, and the authority of the Sejm will grow.',
+        'Partie rządu (' + names + ') stracą trochę poparcia, a autorytet Sejmu wzrośnie.');
+  }
+  function inquiryView(Q) {
+    const S = Q.S;
+    Q.pl_inq_why = inquiryStatus(Q).reason;
+    Q.pl_inq_parties = inquiryNames(S);
+    Q.pl_inq_line = inquiryLine(S);
+  }
+  function inquiryChoose(Q) {
+    const status = inquiryStatus(Q);
+    if (!status.available) throw new Error('inquiryChoose: ' + status.reason);
+    const S = Q.S, t = Q.time, target = inquiryTarget(S), parties = target.parties, names = inquiryNames(S);
+    const Names = names.charAt(0).toUpperCase() + names.slice(1);
+    rules.commitMainAction(Q, 'parliament.inquiry', {cabinet: S.cabinet.id, resource_cost: {R: 0}});
+    if (!S.politics.inquiries) S.politics.inquiries = [];
+    S.politics.inquiries.push({t: t, cabinet: S.cabinet.id, parties: parties.slice(), weight: target.weight});
+    const lost = electorate.shiftFrom(S, parties, INQUIRY.loss * target.weight);
+    addLogEntry(S, 'resolution', 'inquiry:' + S.cabinet.id + ':t' + t, t);
+    for (const id of parties) if (S.actors.relations[id] !== undefined) government.changeRelation(Q, id, INQUIRY.relation * target.weight, 'inquiry');
+    electorate.writeClassMirrors(Q);
+    S.history.reasons.push({t: t, kind: 'sejm_inquiry', cabinet: S.cabinet.id, parties: parties, weight: target.weight, lost: round(lost, 3)});
+    const one = parties.length === 1;
+    Q.pl_inq_result = target.experts ?
+      L('The Sejm appoints a committee of inquiry into the cabinet of experts. The clubs that support it, ' + names + ', lose a little support, and the authority of the Sejm grows; our relations with ' + (one ? 'it' : 'them') + ' worsen a little.',
+        'Sejm powołuje komisję śledczą w sprawie rządu fachowców. Popierające go kluby (' + names + ') tracą nieco poparcia, a autorytet Sejmu rośnie; nasze stosunki z ' + (one ? 'nim' : 'nimi') + ' trochę się pogarszają.') :
+      L('The Sejm appoints a committee of inquiry into the government. ' + Names + (one ? ' loses' : ' lose') +
+        ' some support, and the authority of the Sejm grows; our relations with ' + (one ? 'it' : 'them') + ' worsen.',
+        'Sejm powołuje komisję śledczą w sprawie rządu. ' + Names + (one ? ' traci' : ' tracą') + ' trochę poparcia, a autorytet Sejmu rośnie; nasze stosunki z ' +
+        (one ? 'nim' : 'nimi') + ' się pogarszają.');
+    return Q.pl_inq_result;
+  }
+
   return Object.freeze({
     START: START,
+    inquiryOpen: inquiryOpen,
+    inquiryStatus: inquiryStatus,
+    inquiryView: inquiryView,
+    inquiryChoose: inquiryChoose,
     SCENARIO_INPUTS: SCENARIO_INPUTS,
     SPEECHES: SPEECHES,
     IMPULSES: IMPULSES,

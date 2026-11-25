@@ -834,8 +834,8 @@
     const cabinetOk = !!S.cabinet && (S.cabinet.status === 'active' || S.cabinet.status === 'caretaker');
     const cfg = {strength: Math.max(0, army.base_strength_F - army.losses_F), readiness: readinessOf(army, t), command: army.command,
       loyalty: {pils: round(e.pils, 6), legal: round(e.legal, 6)}, turnout: turnout, stance: side,
-      // Z — 1.07: militarism makes the Milicja count a quarter more in the coup.
-      militia_F: militia && side !== 'neutral' ? militia.force * (rules.profileActive(S, 'militarism') ? 1.25 : 1) : 0, rail_base: rail ? rail.base : 0,
+      // Z — 1.07: militarism makes the Milicja count more in the coup (Z — 1.33: by its stage, +40% and then +60%).
+      militia_F: militia && side !== 'neutral' ? militia.force * rules.profileFactor(S, 'militarism') : 0, rail_base: rail ? rail.base : 0,
       settlement: A.democracy >= COUP_SETTLEMENT_DEMOCRACY, offers: feasibleOffers(Q),
       objective: {pils: cabinetOk, legal: !!head && !!head.holder_id && cabinetOk}};
     A.cfg = cfg;

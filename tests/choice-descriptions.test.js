@@ -136,6 +136,8 @@ test('Koszt 0 w 1.17: every decision on a card with costs opens with its cost li
   const NAV = new Set(['nothing', 'easy_discard', 'cancel_advisor_action', 'later', 'root', 'result', 'skip', 'seen']);
   const SUBSTEPS = new Set(['polish_union_agenda.scene.dry:g_small', 'polish_union_agenda.scene.dry:g_big', 'polish_union_agenda.scene.dry:g_political',
     'polish_union_agenda.scene.dry:c_no', 'polish_union_agenda.scene.dry:c_yes', 'polish_union_agenda.scene.dry:p_no',
+    // Z — 1.33: without a solidarity strike (its other step, with one, names its cost).
+    'polish_union_agenda.scene.dry:s_no',
     'polish_event_credit_crisis.scene.dry:protection']);
   const problems = [];
   for (const file of walk(path.join(ROOT, 'source/scenes')).filter(f => f.endsWith('.scene.dry') && !/unemployment_bill/.test(f))) {

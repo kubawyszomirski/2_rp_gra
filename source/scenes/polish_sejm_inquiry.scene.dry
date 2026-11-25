@@ -1,0 +1,45 @@
+title: A Sejm Committee of Inquiry
+subtitle: Once a year, while PPS is in opposition: the Sejm looks into the abuses of the government.
+new-page: true
+is-card: true
+tags: parliament_affairs
+view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishPolitics.inquiryOpen(Q) !}
+on-arrival: {!
+// Card parliament.inquiry (Z — 1.33, the user's decisions of 25 XI 2026): opened by the characteristic parliamentarism. Once a year,
+// while PPS is in opposition to an active cabinet; the month's action. A gameplay simplification: the committee needs no vote.
+PolishPolitics.inquiryView(Q);
+!}
+
+= A Sejm committee of inquiry
+
+As an opposition club PPS can move a committee of the Sejm to look into the abuses of the government. [+ pl_inq_line +]
+
+- @appoint
+- @nothing
+- @easy_discard
+
+@appoint
+title: Move a committee of inquiry into the government
+subtitle: Cost: 0 resources. Those the committee looks into lose some support, and the authority of the Sejm grows, but our relations with them worsen. Available thanks to parliamentarism.
+choose-if: {! return PolishPolitics.inquiryStatus(Q).available !}
+unavailable-subtitle: [+ pl_inq_why +]
+on-arrival: {!
+PolishPolitics.inquiryChoose(Q);
+!}
+go-to: result
+
+@nothing
+title: Do nothing now
+on-arrival: {!
+PolishRules.skipCard(Q);
+!}
+go-to: root
+
+@result
+new-page: true
+
+= A Sejm committee of inquiry
+
+[+ pl_inq_result +]
+
+- @root: Continue.

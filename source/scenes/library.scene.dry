@@ -439,6 +439,8 @@ if (Q.S && Q.polish_party_rules && typeof PolishParty !== 'undefined') {
 
 A characteristic grows from the decisions that build it. When it is ready, a congress of PPS can adopt it with a resolution. In the first chapter the party can have two characteristics, at most one new one at a congress; reformism and radicalism exclude each other. A line of the party that matches a characteristic makes it grow faster.
 
+An adopted characteristic works the more strongly the longer the party holds it: it strengthens after two years and is fully rooted after four, which comes only in the second chapter. Each characteristic also opens an option of its own on one of the cards. A characteristic left at a congress and adopted again starts afresh.
+
 [? if polish_party_rules : [+ pl_profile_library +] ?]
 
 @advisers

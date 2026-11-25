@@ -519,6 +519,33 @@
     return (national > 0 ? 1 : -1) * moved / total;
   }
 
+  // Z — 1.33: the named parties lose together about `national` points of the whole electorate — in every cell the same fraction of
+  // their share, at most a fifth — to all the other parties (PPS too) in proportion to their shares. Returns the points lost.
+  function shiftFrom(S, losers, national) {
+    if (!S || !S.society || !Array.isArray(S.society.cells) || !(national > 0) || !losers.length) return 0;
+    const cells = S.society.cells, total = massOf(cells), parties = S.society.parties;
+    if (!(total > 0)) return 0;
+    const held = cells.reduce((n, cell) => n + cell.mass * losers.reduce((m, p) => m + (cell.propensity[p] || 0), 0), 0) / total;
+    if (!(held > 0)) return 0;
+    const fraction = Math.min(0.2, national / held);
+    let lost = 0;
+    for (const cell of cells) {
+      const others = parties.filter(p => losers.indexOf(p) < 0 && cell.propensity[p] > 0);
+      const pool = others.reduce((n, p) => n + cell.propensity[p], 0);
+      if (!(pool > 0)) continue;
+      let moved = 0;
+      for (const p of losers) {
+        const amount = (cell.propensity[p] || 0) * fraction;
+        if (!(amount > 0)) continue;
+        cell.propensity[p] -= amount;
+        moved += amount;
+      }
+      for (const p of others) cell.propensity[p] += moved * cell.propensity[p] / pool;
+      lost += cell.mass * moved;
+    }
+    return lost / total;
+  }
+
   function filterOfList(labels) {
     const filters = (labels || []).map(beneficiaryFilter).filter(Boolean);
     return filters.length ? (cell => filters.some(f => f(cell))) : null;
@@ -645,6 +672,7 @@
     beneficiaryFilter: beneficiaryFilter,
     filterOfList: filterOfList,
     shiftPps: shiftPps,
+    shiftFrom: shiftFrom,
     mergeCells: mergeCells,
     validateCells: validateCells,
   });

@@ -43,6 +43,9 @@
     "unavailable-subtitle: [+ pl_dsp_threat_why +]": "unavailable-subtitle: [+ pl_dsp_threat_why +]",
     "unavailable-subtitle: [+ pl_dsp_mediate_why +]": "unavailable-subtitle: [+ pl_dsp_mediate_why +]",
     "subtitle: Cost: 0 resources. The branch's dissent over a concrete change falls (−8).": "subtitle: Koszt: 0 jednostek środków. Sprzeciw branży w sprawie konkretnej zmiany spada (−8).",
-    "subtitle: Cost: [+ pl_dsp_strike_cost +] for each branch every month of the strike. You choose the goal of the strike, the cooperation with the communists and the protection of the Milicja.": "subtitle: Koszt: [+ pl_dsp_strike_cost +] za każdą branżę co miesiąc strajku. Wybierzesz cel strajku, współpracę z komunistami i ochronę Milicji."
+    "subtitle: Cost: [+ pl_dsp_strike_cost +] for each branch every month of the strike. You choose the goal of the strike, the cooperation with the communists and the protection of the Milicja.": "subtitle: Koszt: [+ pl_dsp_strike_cost +] za każdą branżę co miesiąc strajku. Wybierzesz cel strajku, współpracę z komunistami i ochronę Milicji.",
+    "title: [+ pl_su_s_no_mark +] Without a solidarity strike": "title: [+ pl_su_s_no_mark +] Bez strajku solidarnościowego",
+    "subtitle: Only the branches of the dispute strike.": "subtitle: Strajkują tylko gałęzie objęte sporem.",
+    "title: [+ pl_su_s_yes_mark +] With a solidarity strike": "title: [+ pl_su_s_yes_mark +] Ze strajkiem solidarnościowym"
   }
 }

@@ -808,7 +808,7 @@
   function authorize(Q, project, m, authorizationId, ppsVoted) {
     project.authorized = true;
     // Z — 1.31: a reform of PPS carried into force raises its credibility, once for each reform.
-    if (project.sponsor === 'pps' && isReform(project)) {
+    if ((project.sponsor === 'pps' || project.pps_demand) && isReform(project)) {
       government.changeCredibility(Q, 'reform:' + reformKey(project), REFORM_CREDIBILITY, 'reform');
       // Z — 1.32: the gain of the voters, by the route of the reform (a bill of our initiative or a decision of a minister).
       const law = ((Q.S.parliament && Q.S.parliament.laws) || []).filter(l => l.id === project.law_id)[0];
@@ -2450,6 +2450,7 @@
     const prepared = projectsOf(S, step.type, p => preparedProject(p) && variants.indexOf(p.variant) >= 0)[0] || null;
     if (type.klass === 'small') {
       const project = prepared || createProject(Q, step.type, step.variant, {sponsor: 'cabinet', cabinet_id: cabinet.id});
+      if (step.obligation.reform_demand) project.pps_demand = step.obligation.topic;
       launchProject(Q, project, {sponsor: 'cabinet'});
       cabinetTxn(Q, t, 'launch', {project_id: project.id, obligation_id: step.obligation.id});
       return reviewReason(Q, t, {result: 'launched', project_id: project.id, obligation_id: step.obligation.id});
@@ -2458,6 +2459,7 @@
       const fields = {sponsor: 'cabinet', cabinet_id: cabinet.id};
       if (step.type === 'land_program') fields.policy_choices = {access: 'equal'};
       const project = prepareProject(Q, step.type, step.variant, fields);
+      if (step.obligation.reform_demand) project.pps_demand = step.obligation.topic;
       if (type.tranches) project.tranche = nextTranche(S, step.type, step.variant);
       cabinetTxn(Q, t, 'prepare', {project_id: project.id, obligation_id: step.obligation.id});
       return reviewReason(Q, t, {result: 'prepared', project_id: project.id, obligation_id: step.obligation.id});
@@ -2478,6 +2480,8 @@
       if (o.required_stage === 'operating') return p.status === 'operating' && p.authorized && (p.first_effect_time === null || p.first_effect_time <= t) &&
         (p.last_coverage === null ? false : p.last_coverage >= (o.min_coverage || 1));
       if (o.required_stage === 'completed') return (p.status === 'completed' || p.status === 'operating') && p.first_effect_time !== null && p.first_effect_time <= t + 1 && p.progress >= 100;
+      // Z — 1.33: a reform demanded by PPS is kept once the cabinet has started it under its authority.
+      if (o.required_stage === 'launched') return p.authorized && REFORM_LIVE.indexOf(p.status) >= 0;
       return false;
     });
   }
@@ -3608,7 +3612,8 @@
   // Z — 1.07: parliamentarism makes a bill of our initiative pass more easily (+10 points of chance; P).
   const PARLIAMENTARISM_CHANCE = 0.10;
   function initiativeChance(S, counts) {
-    return clip(passChance(counts) + (rules.profileActive(S, 'parliamentarism') ? PARLIAMENTARISM_CHANCE : 0), INITIATIVE_CHANCE_MIN, INITIATIVE_CHANCE_MAX);
+    // Z — 1.33: the bonus grows with the stage of parliamentarism (10 points at the old +25%, so 16 and then 24).
+    return clip(passChance(counts) + PARLIAMENTARISM_CHANCE * rules.profileBonus(S, 'parliamentarism') / 0.25, INITIATIVE_CHANCE_MIN, INITIATIVE_CHANCE_MAX);
   }
   function rolledCounts(Q, law, index, key) {
     const counts = initiativeCounts(Q, law, index), chance = initiativeChance(Q.S, counts);
@@ -4417,7 +4422,7 @@
     let any = false;
     for (const id of Object.keys(S.projects).sort()) {
       const p = S.projects[id], key = reformKey(p);
-      if (p.sponsor !== 'pps' || !p.authorized || !(p.price_B > 0) || REFORM_LIVE.indexOf(p.status) < 0 || !(sup.given[key] > 0)) continue;
+      if ((p.sponsor !== 'pps' && !p.pps_demand) || !p.authorized || !(p.price_B > 0) || REFORM_LIVE.indexOf(p.status) < 0 || !(sup.given[key] > 0)) continue;
       electorate.shiftPps(S, electorate.filterOfList(labelsOf(sup, key)), -sup.given[key]);
       sup.given[key] = 0;
       sup.pending = sup.pending.filter(x => x.key !== key);
@@ -4448,7 +4453,7 @@
     const keep = entry => { const prev = out[entry.key]; if (!prev || (prev.limited && !entry.limited)) out[entry.key] = entry; };
     for (const id of ids) {
       const p = S.projects[id];
-      if (p.sponsor !== 'pps' || !p.authorized || REFORM_LIVE.indexOf(p.status) < 0 || !isReform(p)) continue;
+      if ((p.sponsor !== 'pps' && !p.pps_demand) || !p.authorized || REFORM_LIVE.indexOf(p.status) < 0 || !isReform(p)) continue;
       const law = laws.filter(l => l.id === p.law_id)[0];
       keep({key: reformKey(p), name: reformName(p), limited: LIMITED_VARIANTS.indexOf(p.variant) >= 0, t: p.started_at,
         by: law && law.kind === 'initiative' ? 'law' : 'ministry'});
