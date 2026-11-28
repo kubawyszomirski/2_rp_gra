@@ -22,7 +22,7 @@ The present line: **[+ pl_stance_current +]**. A new declaration changes no law 
 
 @support
 title: Support his influence
-subtitle: [? if pl_stance_support_present = 1 : **Present line** Confirming it changes nothing. ?][? if pl_stance_support_present = 0 : Our relations with Piłsudski improve (at most once a year), but the Centre of the party is displeased. If a coup comes, backing Piłsudski divides the party less. Grows faster: militarism. ?]
+subtitle: [? if pl_stance_support_present = 1 : **Present line** [+ pl_line_confirm_pils_influence +] ?][? if pl_stance_support_present = 0 : Our relations with Piłsudski improve (at most once a year), but the Centre of the party is displeased. If a coup comes, backing Piłsudski divides the party less. Grows every month: militarism. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'pils_influence', 'support').available !}
 unavailable-subtitle: [+ pl_stance_support_why +]
 on-arrival: {!
@@ -32,7 +32,7 @@ go-to: result
 
 @conditional
 title: Support it on conditions
-subtitle: [? if pl_stance_conditional_present = 1 : **Present line** Confirming it changes nothing. ?][? if pl_stance_conditional_present = 0 : We agree to concessions to Piłsudski only with civilian control of the army or the responsibility of the government before the Sejm. ?]
+subtitle: [? if pl_stance_conditional_present = 1 : **Present line** [+ pl_line_confirm_pils_influence +] ?][? if pl_stance_conditional_present = 0 : We agree to concessions to Piłsudski only with civilian control of the army or the responsibility of the government before the Sejm. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'pils_influence', 'conditional').available !}
 unavailable-subtitle: [+ pl_stance_conditional_why +]
 on-arrival: {!
@@ -42,7 +42,7 @@ go-to: result
 
 @oppose_military_interference
 title: Oppose the army’s interference
-subtitle: [? if pl_stance_oppose_military_interference_present = 1 : **Present line** Confirming it changes nothing. ?][? if pl_stance_oppose_military_interference_present = 0 : Our relations with Piłsudski worsen, and the Piłsudczycy in the party are displeased. While this line holds, we agree to no military power independent of the government. ?]
+subtitle: [? if pl_stance_oppose_military_interference_present = 1 : **Present line** [+ pl_line_confirm_pils_influence +] ?][? if pl_stance_oppose_military_interference_present = 0 : Our relations with Piłsudski worsen, and the Piłsudczycy in the party are displeased. While this line holds, we agree to no military power independent of the government. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'pils_influence', 'oppose_military_interference').available !}
 unavailable-subtitle: [+ pl_stance_oppose_military_interference_why +]
 on-arrival: {!

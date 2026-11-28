@@ -20,7 +20,7 @@ function free(Q) {
   if (Q.S.turn.pending) { Q.S.turn.pending.phase = 'settled'; Q.S.turn.pending = null; }
   Q.month_actions = 0;
 }
-const adopt = (Q, id) => PolishRules.profileState(Q.S).adopted.push({ id, t: Q.time });
+const adopt = (Q, id) => { PolishRules.profileState(Q.S).seeds[id] = 20; PolishRules.profileState(Q.S).adopted.push({ id, t: Q.time }); };
 const ruralPps = S => {
   const cells = S.society.cells.filter(c => c.class_id === 'rural');
   const mass = cells.reduce((n, c) => n + c.mass, 0);

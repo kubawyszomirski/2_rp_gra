@@ -23,7 +23,7 @@ The present line: **[+ pl_stance_current +]**. A new declaration changes no law 
 
 @parliamentary_socialism
 title: Parliamentary socialism
-subtitle: [? if pl_stance_parliamentary_socialism_present = 1 : **Present line** Confirming it changes nothing. ?][? if pl_stance_parliamentary_socialism_present = 0 : Press campaigns on parliamentary socialism are stronger while a PPS bill is before the Sejm, and so are the campaigns “Land for the peasants” and “Work and benefits for the unemployed”. Grow faster: parliamentarism and reformism. ?]
+subtitle: [? if pl_stance_parliamentary_socialism_present = 1 : **Present line** [+ pl_line_confirm_direction +] ?][? if pl_stance_parliamentary_socialism_present = 0 : Press campaigns on parliamentary socialism are stronger while a PPS bill is before the Sejm, and so are the campaigns “Land for the peasants” and “Work and benefits for the unemployed”. Grow every month: parliamentarism and reformism. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'direction', 'parliamentary_socialism').available !}
 unavailable-subtitle: [+ pl_stance_parliamentary_socialism_why +]
 on-arrival: {!
@@ -33,7 +33,7 @@ go-to: result
 
 @class_independence
 title: Independent class politics
-subtitle: [? if pl_stance_class_independence_present = 1 : **Present line** Confirming it changes nothing. ?][? if pl_stance_class_independence_present = 0 : Press campaigns on independent class politics are stronger, and so are the campaigns for the eight-hour day and against high prices. The Left backs a strike for the cabinet’s resignation but dislikes our entering a cabinet. Grow faster: radicalism and strike action. ?]
+subtitle: [? if pl_stance_class_independence_present = 1 : **Present line** [+ pl_line_confirm_direction +] ?][? if pl_stance_class_independence_present = 0 : Press campaigns on independent class politics are stronger, and so are the campaigns for the eight-hour day and against high prices. The Left backs a strike for the cabinet’s resignation but dislikes our entering a cabinet. Grow every month: radicalism and strike action. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'direction', 'class_independence').available !}
 unavailable-subtitle: [+ pl_stance_class_independence_why +]
 on-arrival: {!
@@ -43,7 +43,7 @@ go-to: result
 
 @workers_gains
 title: Defend the workers’ gains
-subtitle: [? if pl_stance_workers_gains_present = 1 : **Present line** Confirming it changes nothing. ?][? if pl_stance_workers_gains_present = 0 : Campaigns in defence of the workers’ gains are stronger while the protection of the unemployed or the labour inspection works, and strongest when a cut threatens them; so are the campaigns for the eight-hour day and for work and benefits. Grow faster: unionism and strike action. ?]
+subtitle: [? if pl_stance_workers_gains_present = 1 : **Present line** [+ pl_line_confirm_direction +] ?][? if pl_stance_workers_gains_present = 0 : Campaigns in defence of the workers’ gains are stronger while the protection of the unemployed or the labour inspection works, and strongest when a cut threatens them; so are the campaigns for the eight-hour day and for work and benefits. Grow every month: unionism and strike action. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'direction', 'workers_gains').available !}
 unavailable-subtitle: [+ pl_stance_workers_gains_why +]
 on-arrival: {!
@@ -53,7 +53,7 @@ go-to: result
 
 @democratic_movement
 title: A broad democratic movement
-subtitle: [? if pl_stance_democratic_movement_present = 1 : **Present line** Confirming it changes nothing. ?][? if pl_stance_democratic_movement_present = 0 : The campaign “In defence of the Republic” is stronger, and press campaigns in defence of democracy are stronger whenever democracy is threatened. Grow faster: federalism and the worker-peasant alliance. ?]
+subtitle: [? if pl_stance_democratic_movement_present = 1 : **Present line** [+ pl_line_confirm_direction +] ?][? if pl_stance_democratic_movement_present = 0 : The campaign “In defence of the Republic” is stronger, and press campaigns in defence of democracy are stronger whenever democracy is threatened. Grow every month: federalism and the worker-peasant alliance. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'direction', 'democratic_movement').available !}
 unavailable-subtitle: [+ pl_stance_democratic_movement_why +]
 on-arrival: {!

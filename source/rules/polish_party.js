@@ -1296,6 +1296,8 @@
     if (!status.available) throw new Error('stanceChoose: ' + status.reason);
     const S = Q.S, t = Q.time, card = STANCES[cardId], strategy = strategyOf(S);
     const previous = strategy[card.field];
+    // Z — 1.41 (decision C4A): an announced line feeds its characteristics every month; the opening line feeds nothing until announced.
+    rules.profileAnnounce(S, card.field, value);
     if (previous === value) {
       // The confirmed present line: the month and the wait of the card, no record of a change, no reaction (Z — 0.51).
       lineRecord(Q, card.action, {from: previous, to: value, kept: true});
@@ -1365,6 +1367,14 @@
       Q['pl_stance_' + value + '_present'] = value === current ? 1 : 0;
     }
     Q.pl_stance_current = card.values[current] ? stanceValue(cardId, current) : L('not declared', 'nie zadeklarowano');
+    // Z — 1.41 (decision C4A): the present line says what it builds every month, or that confirming it will start that.
+    const builds = ((rules.PROFILE_LINE[card.field] || {})[current] || []).map(profileName).map(n => n.charAt(0).toLowerCase() + n.slice(1));
+    const P = rules.profileState(Q.S), announced = !!(P && P.announced && P.announced[card.field] === current);
+    const list = builds.join(L(' and ', ' i '));
+    // One variable per card: the top bar runs this view for every card of the line.
+    Q['pl_line_confirm_' + cardId] = !builds.length ? L('Confirming it changes nothing.', 'Potwierdzenie niczego nie zmienia.') :
+      announced ? L((builds.length > 1 ? 'Grow' : 'Grows') + ' every month: ' + list + '.', 'Co miesiąc ' + (builds.length > 1 ? 'rosną' : 'rośnie') + ': ' + list + '.') :
+        L('Once confirmed, it makes ' + list + ' grow every month.', 'Po potwierdzeniu co miesiąc ' + (builds.length > 1 ? 'rosną' : 'rośnie') + ': ' + list + '.');
   }
 
   // ---- Economic programme: up to three priorities (10.5; card 6.2) --------------------------------------
@@ -2370,12 +2380,9 @@
     const P = rules.profileState(S);
     return !!P && P.open_congress === t;
   }
-  function congressAvailable(Q) {
-    if (!partyReady(Q) || Q.S.chapter.status === 'ended') return false;
-    if (congressOpen(Q.S, Q.time)) return true;
-    const last = lastCongress(Q.S);
-    if (last !== null && Q.time - last < CONGRESS_INTERVAL) return false;
-    return readyProfiles(Q.S).length > 0;
+  // Z — 1.41 (decision D4A of 28 XI 2026): no congress adopts or leaves a characteristic any more; the card is not drawn.
+  function congressAvailable() {
+    return false;
   }
   function congressStatus(Q, option) {
     const S = Q.S;
@@ -2450,31 +2457,55 @@
     return L('The congress adopts ' + profileAcc(id) + '. ', 'Kongres przyjmuje ' + profileAcc(id) + '. ') + L(spec.text[0], spec.text[1]);
   }
 
+  // Z — 1.41 (decisions C1A and D4A): a characteristic starts to work by itself when its indicator passes the threshold; its patron
+  // faction grows stronger, its rivals protest and the parties it concerns react — the effects of the former resolution of a congress.
+  // A characteristic that fades or is crowded out stops without further effects.
+  rules.registerProfileHook((Q, gained) => {
+    const S = Q.S, t = Q.time;
+    if (!S || !S.actors || !S.actors.pps || !S.actors.pps.factions) return;
+    for (const id of gained) {
+      const spec = PROFILES[id];
+      if (!spec) continue;
+      const cause = {id: 'profile:on:' + id + ':t' + t, kind: 'profile', reverse: null};
+      government.factionReaction(Q, spec.patron, {strength: PROFILE_PATRON_STRENGTH}, cause);
+      for (const f of Object.keys(spec.rivals || {})) government.factionReaction(Q, f, {dissent: spec.rivals[f]}, cause);
+      // A party that does not exist yet (the bloc of the minorities before the election of 1922) is left out.
+      for (const actor of Object.keys(spec.relations || {})) {
+        if (S.actors.relations && Object.prototype.hasOwnProperty.call(S.actors.relations, actor)) government.changeRelation(Q, actor, spec.relations[actor], cause.id);
+      }
+      if (spec.business) economy.changeBusinessPressure(S, spec.business, cause.id, t, 'profile');
+    }
+  });
+
   // The views: the overview line, the section of the Party tab (active profiles in red, the others grey, a tooltip with what
   // builds and what gives each one), the page of the library and the sentence of the chapter report.
   const escapeAttr = text => String(text).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
   function profileTooltip(id) {
     return L('Built by: ' + PROFILES[id].builds[0] + '. Gives: ' + PROFILES[id].gives[0] + '.', 'Buduje: ' + PROFILES[id].builds[1] + '. Daje: ' + PROFILES[id].gives[1] + '.');
   }
-  // Z — 1.20 (decisions 1A–4A of 22 XI 2026): each characteristic in its own block — the name with its state in a word (adopted, ready
-  // for a resolution, maturing, a seed, excluded; never a number), then what it gives and what builds it on lines of their own; the
-  // adopted ones first, then the ready ones, then the others from the most grown; reformism and radicalism say that they exclude
-  // each other. The heading line counts the adopted ones against the two places of the chapter.
-  const PROFILE_SEED_WORD = PROFILE_READY / 2;
+  // Z — 1.20 (decisions 1A–4A of 22 XI 2026): each characteristic in its own block — the name with its state in a word, then what it
+  // gives and what builds it on lines of their own. Z — 1.41 (decisions C1A–C4A): a bar of the indicator with the mark of the threshold
+  // (no numbers); the working ones first, then the others from the strongest; the heading counts the working ones against three.
+  const PROFILE_BAR_FULL = 20;
   function profileStage(S, id) {
     const P = rules.profileState(S), seeds = P ? P.seeds[id] || 0 : 0;
-    // Z — 1.33: an adopted characteristic says when it was adopted and when it strengthens (in the first chapter it stops there).
     if (rules.profileActive(S, id)) {
       const since = rules.profileAdoptedAt(S, id), next = since + rules.PROFILE_STAGE_MONTHS;
-      const word = rules.profileStage(S, id) >= 2 ? L('strengthened since ' + rules.yearOf(next), 'umocniona od ' + rules.yearOf(next)) :
-        L('adopted in ' + rules.yearOf(since) + ', strengthens in ' + rules.yearOf(next), 'przyjęta w ' + rules.yearOf(since) + ', umocni się w ' + rules.yearOf(next));
+      const word = rules.profileStage(S, id) >= 2 ? L('works, strengthened since ' + rules.yearOf(next), 'działa, umocniona od ' + rules.yearOf(next)) :
+        L('works since ' + rules.yearOf(since) + ', strengthens in ' + rules.yearOf(next), 'działa od ' + rules.yearOf(since) + ', umocni się w ' + rules.yearOf(next));
       return {key: 'adopted', rank: 0, seeds: seeds, word: word};
     }
-    if (profileExcluded(S, id)) return {key: 'excluded', rank: 4, seeds: seeds, word: L('excluded', 'wykluczona')};
-    if (seeds >= PROFILE_READY) return {key: 'ready', rank: 1, seeds: seeds, word: L('ready for a resolution', 'gotowa do uchwały')};
-    if (seeds >= PROFILE_SEED_WORD) return {key: 'growing', rank: 2, seeds: seeds, word: L('maturing', 'dojrzewa')};
+    if (profileExcluded(S, id) && seeds >= rules.PROFILE_LOSS) return {key: 'excluded', rank: 2, seeds: seeds, word: L('blocked by ' + profileAcc(PROFILE_EXCLUSIVE[id]), 'blokuje ją ' + profileNameLower(PROFILE_EXCLUSIVE[id]))};
+    if (seeds >= rules.PROFILE_THRESHOLD) return {key: 'ready', rank: 1, seeds: seeds, word: L('above the threshold, but three already work', 'ponad progiem, ale działają już trzy')};
+    if (seeds >= rules.PROFILE_LOSS) return {key: 'growing', rank: 2, seeds: seeds, word: L('close to the threshold', 'blisko progu')};
+    if (seeds >= 3) return {key: 'growing', rank: 2, seeds: seeds, word: L('growing', 'rośnie')};
     if (seeds > 0) return {key: 'growing', rank: 2, seeds: seeds, word: L('a seed', 'zalążek')};
     return {key: 'none', rank: 3, seeds: 0, word: ''};
+  }
+  function profileBar(seeds) {
+    const width = Math.round(100 * Math.min(1, Math.max(0, seeds) / PROFILE_BAR_FULL));
+    const mark = Math.round(100 * rules.PROFILE_THRESHOLD / PROFILE_BAR_FULL);
+    return '<span class="pl-profile-bar"><span class="pl-profile-fill" style="width:' + width + '%"></span><span class="pl-profile-mark" style="left:' + mark + '%"></span></span>';
   }
   function profileView(Q) {
     const S = Q.S, own = adoptedProfiles(S);
@@ -2484,27 +2515,43 @@
       (stages[a].key === 'adopted' ? own.indexOf(a) - own.indexOf(b) : stages[b].seeds - stages[a].seeds) ||
       rules.PROFILE_IDS.indexOf(a) - rules.PROFILE_IDS.indexOf(b));
     const line = (label, text) => '<span class="pl-profile-line"><span class="pl-profile-label">' + label + '</span> ' + escapeAttr(text) + '</span>';
-    Q.pl_profile_html = '<span class="pl-profiles"><span class="pl-profile-count">' + L('Adopted: ', 'Przyjęte: ') + own.length + L(' of ', ' z ') +
-      PROFILE_SLOTS + '</span>' + order.map(id => {
-        const stage = stages[id], other = PROFILE_EXCLUSIVE[id];
+    Q.pl_profile_html = '<span class="pl-profiles"><span class="pl-profile-count">' + L('Working: ', 'Działają: ') + own.length + L(' of ', ' z ') +
+      rules.PROFILE_MAX + '</span>' + order.map(id => {
+        const stage = stages[id], other = PROFILE_EXCLUSIVE[id], opposite = rules.PROFILE_OPPOSITE[id];
         return '<span class="pl-profile pl-profile-' + stage.key + '"><span class="pl-profile-head"><span class="pl-profile-name">' + profileName(id) +
-          '</span>' + (stage.word ? '<span class="pl-profile-state">' + stage.word + '</span>' : '') + '</span>' +
+          '</span>' + (stage.word ? '<span class="pl-profile-state">' + stage.word + '</span>' : '') + '</span>' + profileBar(stage.seeds) +
           line(L('Gives:', 'Daje:'), L(PROFILES[id].gives[0], PROFILES[id].gives[1]) + '.') +
           line(L('Built by:', 'Buduje:'), L(PROFILES[id].builds[0], PROFILES[id].builds[1]) + '.' +
+            (opposite ? L(' Weakened by what builds ' + profileAcc(opposite) + '.', ' Osłabia ją to, co buduje ' + profileAcc(opposite) + '.') : '') +
             (other ? L(' It excludes ' + profileAcc(other) + '.', ' Wyklucza ' + profileAcc(other) + '.') : '')) + '</span>';
       }).join('') + '</span>';
     Q.pl_top_profile = own.length ? L('Characteristics: ', 'Charakterystyka: ') + own.map(id => profileAcc(id)).join(', ') : '';
   }
   function profileLibrary(Q) {
-    Q.pl_profile_library = rules.PROFILE_IDS.map(id => '<strong>' + profileName(id) + (rules.profileActive(Q.S, id) ? L(' (adopted)', ' (przyjęta)') : '') +
+    Q.pl_profile_library = rules.PROFILE_IDS.map(id => '<strong>' + profileName(id) + (rules.profileActive(Q.S, id) ? L(' (works)', ' (działa)') : '') +
       '.</strong> ' + profileTooltip(id) +
+      (rules.PROFILE_OPPOSITE[id] ? L(' Weakened by what builds ' + profileAcc(rules.PROFILE_OPPOSITE[id]) + '.', ' Osłabia ją to, co buduje ' + profileAcc(rules.PROFILE_OPPOSITE[id]) + '.') : '') +
       (PROFILE_EXCLUSIVE[id] ? L(' It excludes ' + profileAcc(PROFILE_EXCLUSIVE[id]) + '.', ' Wyklucza ' + profileAcc(PROFILE_EXCLUSIVE[id]) + '.') : '')).join('<br><br>');
   }
+  // Z — 1.41: the balance names the characteristics that work at the end of the chapter, and since when.
   function profileSummary(S) {
     const P = rules.profileState(S);
     const own = P ? P.adopted : [];
-    if (!own.length) return L('PPS adopted no characteristic in this chapter.', 'W tym rozdziale PPS nie przyjęła żadnej charakterystyki.');
-    return L('PPS adopted ', 'PPS przyjęła ') + own.map(a => profileAcc(a.id) + ' (' + rules.yearOf(a.t) + ')').join(L(' and ', ' i ')) + '.';
+    if (!own.length) return L('No characteristic of the party works at the end of the chapter.', 'Na koniec rozdziału nie działa żadna charakterystyka partii.');
+    return L('Working: ', 'Działają: ') + own.map(a => profileNameLower(a.id) + L(' (since ', ' (od ') + rules.yearOf(a.t) + ')').join(L(' and ', ' i ')) + '.';
+  }
+  // Z — 1.41: the line of the month page — the characteristics that started or stopped working since the last page.
+  function profileNotices(Q) {
+    const S = Q.S, P = rules.profileState(S);
+    if (!P || !P.changes) return '';
+    const fresh = P.changes.filter(c => c.t >= Q.time - 1 && (c.shown_at === undefined || c.shown_at === Q.time));
+    if (!fresh.length) return '';
+    for (const c of fresh) c.shown_at = Q.time;
+    const on = fresh.filter(c => c.on).map(c => profileNameLower(c.id)), off = fresh.filter(c => !c.on).map(c => profileNameLower(c.id));
+    const parts = [];
+    if (on.length) parts.push(L((on.length > 1 ? 'start' : 'starts') + ' to work: ', (on.length > 1 ? 'zaczynają' : 'zaczyna') + ' działać ') + on.join(L(' and ', ' i ')));
+    if (off.length) parts.push(L((off.length > 1 ? 'stop' : 'stops') + ' working: ', (off.length > 1 ? 'przestają' : 'przestaje') + ' działać ') + off.join(L(' and ', ' i ')));
+    return parts.join('; ') + '.';
   }
   // The effects on campaigns in the cells of an adopted profile's groups: +25% until 1.32; Z — 1.33: +40%, then +60%.
   function profileCampaignFactor(S, cell) {
@@ -2517,9 +2564,12 @@
   // The months that build a profile: reformism for each month in the cabinet, the alliance for a cabinet with PSL "Wyzwolenie".
   function profileMonth(Q) {
     const S = Q.S, cabinet = S.cabinet;
-    if (!cabinet || cabinet.status !== 'active' || cabinet.partner_ids.indexOf('pps') < 0) return;
-    rules.seedProfile(Q, 'reformism', 0.5, 'month_in_cabinet');
-    if (cabinet.partner_ids.indexOf('psl_wyzwolenie') >= 0) rules.seedProfile(Q, 'worker_peasant', 0.5, 'cabinet_with_wyzwolenie');
+    if (cabinet && cabinet.status === 'active' && cabinet.partner_ids.indexOf('pps') >= 0) {
+      rules.seedProfile(Q, 'reformism', 0.5, 'month_in_cabinet');
+      if (cabinet.partner_ids.indexOf('psl_wyzwolenie') >= 0) rules.seedProfile(Q, 'worker_peasant', 0.5, 'cabinet_with_wyzwolenie');
+    }
+    // Z — 1.41 (decisions C3B, C4A): the indicators fade, the announced line feeds them, and the working characteristics are updated.
+    rules.profileSettle(Q);
   }
   rules.registerUrgentCard('polish_party_congress', {deck: () => 'main.party', active: congressAvailable});
 
@@ -3009,6 +3059,7 @@
       const previous = S.actors.pps.strategy[reverse.field];
       S.actors.pps.strategy[reverse.field] = reverse.value;
       S.actors.pps.strategy_history.push({t: Q.time, field: reverse.field, from: previous, to: reverse.value, by: 'faction_demand'});
+      rules.profileAnnounce(S, reverse.field, reverse.value);
       writeProgramme(S);
     } else if (reverse.kind === 'press_format') {
       S.party_orgs.press.format = 'party_journal';
@@ -3905,6 +3956,7 @@
     profileView: profileView,
     profileLibrary: profileLibrary,
     profileSummary: profileSummary,
+    profileNotices: profileNotices,
     profileCampaignFactor: profileCampaignFactor,
     eventIssueCampaign: eventIssueCampaign,
     issueSituation: (Q, id) => !!(ISSUES[id] && ISSUES[id].situation(Q.S)),

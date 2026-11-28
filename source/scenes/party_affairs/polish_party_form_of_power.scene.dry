@@ -22,7 +22,7 @@ The present line: **[+ pl_stance_current +]**. A new declaration changes no law 
 
 @parliamentarism
 title: Parliamentarism
-subtitle: [? if pl_stance_parliamentarism_present = 1 : **Present line** Confirming it changes nothing. ?][? if pl_stance_parliamentarism_present = 0 : The way of a majority in the Sejm and a government responsible before it. The Centre more readily follows our condemnation of political violence. Grows faster: parliamentarism. ?]
+subtitle: [? if pl_stance_parliamentarism_present = 1 : **Present line** [+ pl_line_confirm_form_of_power +] ?][? if pl_stance_parliamentarism_present = 0 : The way of a majority in the Sejm and a government responsible before it. The Centre more readily follows our condemnation of political violence. Grows every month: parliamentarism. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'form_of_power', 'parliamentarism').available !}
 unavailable-subtitle: [+ pl_stance_parliamentarism_why +]
 on-arrival: {!
@@ -32,7 +32,7 @@ go-to: result
 
 @strong_presidency
 title: A stronger presidency
-subtitle: [? if pl_stance_strong_presidency_present = 1 : **Present line** Confirming it changes nothing. ?][? if pl_stance_strong_presidency_present = 0 : Only with this line can PPS put forward the motion on presidential arbitration in the constitutional debate; a motion already put forward stays if the line changes later. ?]
+subtitle: [? if pl_stance_strong_presidency_present = 1 : **Present line** [+ pl_line_confirm_form_of_power +] ?][? if pl_stance_strong_presidency_present = 0 : Only with this line can PPS put forward the motion on presidential arbitration in the constitutional debate; a motion already put forward stays if the line changes later. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'form_of_power', 'strong_presidency').available !}
 unavailable-subtitle: [+ pl_stance_strong_presidency_why +]
 on-arrival: {!
@@ -42,7 +42,7 @@ go-to: result
 
 @workers_councils
 title: Workers’ councils
-subtitle: [? if pl_stance_workers_councils_present = 1 : **Present line** Confirming it changes nothing. ?][? if pl_stance_workers_councils_present = 0 : The first time, the Left of the party grows stronger and the Centre is displeased. The line alone brings no votes. Grows faster: radicalism. ?]
+subtitle: [? if pl_stance_workers_councils_present = 1 : **Present line** [+ pl_line_confirm_form_of_power +] ?][? if pl_stance_workers_councils_present = 0 : The first time, the Left of the party grows stronger and the Centre is displeased. The line alone brings no votes. Grows every month: radicalism. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'form_of_power', 'workers_councils').available !}
 unavailable-subtitle: [+ pl_stance_workers_councils_why +]
 on-arrival: {!

@@ -223,7 +223,7 @@
       test: (Q, S) => !coupOf(S).outcome && !coupDeclared(S)},
     {id: 'deterred', name: ['Piłsudski did not dare', 'Piłsudski się nie odważył'], desc: ['Democracy and the government’s control of the army held a coup back.', 'Demokracja i kontrola rządu nad wojskiem powstrzymały zamach.'], end: true,
       test: (Q, S) => !coupOf(S).outcome && !coupDeclared(S) && typeof coupOf(S).deterred_at === 'number'},
-    {id: 'character', name: ['The character of the party', 'Charakter partii'], desc: ['The party has adopted two characteristics.', 'Partia przyjęła dwie charakterystyki.'],
+    {id: 'character', name: ['The character of the party', 'Charakter partii'], desc: ['Two characteristics of the party work at once.', 'Działają naraz dwie charakterystyki partii.'],
       test: (Q, S) => ((S.actors.pps.profile || {}).adopted || []).length >= 2},
     {id: 'credible', name: ['A credible party', 'Wiarygodna partia'], desc: ['We end the chapter with high credibility.', 'Rozdział kończymy z wysoką wiarygodnością.'], end: true,
       test: (Q, S) => (S.actors.pps.credibility || 0) >= 75},

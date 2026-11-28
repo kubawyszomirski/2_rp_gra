@@ -934,7 +934,7 @@
     pils_influence: Object.freeze({support: ['militarism']}),
     main_opponent: Object.freeze({capital_land: ['radicalism'], unconstitutional_force: ['militarism']}),
   });
-  const PROFILE_LINE_FACTOR = 1.5;
+  // Z — 1.41 (decision D3A): the line no longer multiplies the seeds by 1.5; an announced line feeds them every month (profileSettle).
   function profileState(S) {
     const pps = S && S.actors && S.actors.pps;
     if (!pps) return null;
@@ -979,16 +979,105 @@
   const profileFactor = (S, id, t) => 1 + profileBonus(S, id, t);
   // Z — 1.34: a pair of adopted characteristics opens an option of its own (the user's decisions of 25 XI 2026).
   const pairActive = (S, a, b) => profileActive(S, a) && profileActive(S, b);
-  // Adds seeds to a profile not yet adopted; the line of the party makes them grow faster. Returns the points added.
+  // Z — 1.41 (decisions C1A, C2, C3B, C4A of 28 XI 2026 and D1A–D4A of the sketch): the characteristics work by themselves. Each has an
+  // indicator (the seeds) that decisions raise; above the threshold of 10 a characteristic works, below 7 it stops; at most three work
+  // at once — those with the highest indicators — and reformism and radicalism exclude each other. Without matching decisions an
+  // indicator loses half in a year and a half; a decision for one of a pair of opposites lowers the other by half of its gain; a line
+  // of the party that PPS has announced feeds its characteristics every month (alone it reaches the threshold in about a year and a
+  // half). The values are devices of the game. No congress adopts or leaves a characteristic any more.
+  const PROFILE_THRESHOLD = 10;
+  const PROFILE_LOSS = 7;
+  const PROFILE_MAX = 3;
+  const PROFILE_CEILING = 60;
+  const PROFILE_DECAY = Math.pow(0.5, 1 / 18);
+  const PROFILE_LINE_MONTHLY = 0.75;
+  const PROFILE_OPPOSITE = Object.freeze({reformism: 'radicalism', radicalism: 'reformism', parliamentarism: 'militarism', militarism: 'parliamentarism'});
+  const PROFILE_EXCLUSIVE_PAIRS = Object.freeze([['reformism', 'radicalism']]);
+  const profileHooks = [];
+  function registerProfileHook(fn) { profileHooks.push(fn); }
+  const round2 = x => Math.round(x * 100) / 100;
+  // The characteristics that work now: above the threshold, or still above the lower limit when already working; of two exclusive
+  // ones the stronger; then the three strongest (a working one keeps its place on a tie). Records the changes and tells the hooks.
+  function profileRefresh(Q, cause) {
+    const S = Q && Q.S, P = profileState(S);
+    if (!P) return {gained: [], lost: []};
+    const now = Number.isFinite(Q.time) ? Q.time : profileNow(S);
+    const working = P.adopted.map(a => a.id);
+    let candidates = PROFILE_IDS.filter(id => P.seeds[id] >= PROFILE_THRESHOLD || (working.indexOf(id) >= 0 && P.seeds[id] >= PROFILE_LOSS));
+    const better = (a, b) => P.seeds[a] - P.seeds[b] || (working.indexOf(a) >= 0) - (working.indexOf(b) >= 0) || PROFILE_IDS.indexOf(b) - PROFILE_IDS.indexOf(a);
+    for (const pair of PROFILE_EXCLUSIVE_PAIRS) {
+      if (candidates.indexOf(pair[0]) >= 0 && candidates.indexOf(pair[1]) >= 0) {
+        const weaker = better(pair[0], pair[1]) >= 0 ? pair[1] : pair[0];
+        candidates = candidates.filter(id => id !== weaker);
+      }
+    }
+    candidates.sort((a, b) => better(b, a));
+    const keep = candidates.slice(0, PROFILE_MAX);
+    const lost = working.filter(id => keep.indexOf(id) < 0), gained = keep.filter(id => working.indexOf(id) < 0);
+    if (!lost.length && !gained.length) return {gained: gained, lost: lost};
+    P.adopted = P.adopted.filter(a => keep.indexOf(a.id) >= 0).concat(gained.map(id => ({id: id, t: now})));
+    P.changes = P.changes || [];
+    for (const id of lost) {
+      const reason = P.seeds[id] < PROFILE_LOSS ? 'faded' : PROFILE_EXCLUSIVE_PAIRS.some(p => p.indexOf(id) >= 0 && keep.indexOf(p[0] === id ? p[1] : p[0]) >= 0) ? 'excluded' : 'crowded';
+      P.dropped.push({id: id, t: now, reason: reason});
+      P.changes.push({t: now, id: id, on: false, reason: reason, cause: cause || null});
+    }
+    for (const id of gained) P.changes.push({t: now, id: id, on: true, cause: cause || null});
+    if (P.changes.length > 60) P.changes.splice(0, P.changes.length - 60);
+    for (const hook of profileHooks) hook(Q, gained, lost);
+    return {gained: gained, lost: lost};
+  }
+  // Raises the indicator of a characteristic (also of one that works); its opposite loses half of the gain. Returns the points added.
   function seedProfile(Q, id, points, cause) {
     if (PROFILE_IDS.indexOf(id) < 0) throw new Error('seedProfile: unknown profile ' + id);
     const S = Q && Q.S, P = profileState(S);
-    if (!P || !(points > 0) || profileActive(S, id)) return 0;
-    const added = points * (profileLineMatch(S, id) ? PROFILE_LINE_FACTOR : 1);
-    P.seeds[id] = Math.round((P.seeds[id] + added) * 100) / 100;
+    if (!P || !(points > 0)) return 0;
+    const before = P.seeds[id];
+    P.seeds[id] = round2(Math.min(PROFILE_CEILING, P.seeds[id] + points));
+    const added = round2(P.seeds[id] - before);
+    const opposite = PROFILE_OPPOSITE[id];
+    if (opposite) P.seeds[opposite] = round2(Math.max(0, P.seeds[opposite] - points / 2));
     P.log.push({t: Q.time, id: id, points: added, cause: cause || null});
     if (P.log.length > 200) P.log.splice(0, P.log.length - 200);
+    profileRefresh(Q, cause);
     return added;
+  }
+  // The positions of the line that PPS has announced on a card of the line (a change or a confirmation); the opening line of 1922
+  // feeds nothing until PPS announces it.
+  function profileAnnounce(S, field, value) {
+    const P = profileState(S);
+    if (!P) return;
+    P.announced = P.announced || {};
+    P.announced[field] = value;
+  }
+  // The monthly feed of each characteristic from the announced line: a position that builds two characteristics (the card Political
+  // direction) gives each half (the user's decision of 28 XI 2026), so that alone it stays just below the threshold; a characteristic
+  // fed by several positions takes the largest share, not their sum.
+  function profileLineAmounts(S) {
+    const P = profileState(S), strategy = S && S.actors && S.actors.pps && S.actors.pps.strategy;
+    const out = {};
+    if (!P || !strategy || !P.announced) return out;
+    for (const field of Object.keys(PROFILE_LINE)) {
+      if (P.announced[field] === undefined || P.announced[field] !== strategy[field]) continue;
+      const ids = PROFILE_LINE[field][strategy[field]] || [];
+      for (const id of ids) out[id] = Math.max(out[id] || 0, PROFILE_LINE_MONTHLY / ids.length);
+    }
+    return out;
+  }
+  const profileLineFeeds = S => PROFILE_IDS.filter(id => profileLineAmounts(S)[id] > 0);
+  // The month of the characteristics: the indicators fade, the announced line feeds its characteristics, and the working set is updated.
+  function profileSettle(Q) {
+    const S = Q && Q.S, P = profileState(S);
+    if (!P) return;
+    for (const id of PROFILE_IDS) P.seeds[id] = round2(P.seeds[id] * PROFILE_DECAY);
+    const amounts = profileLineAmounts(S);
+    for (const id of PROFILE_IDS) {
+      if (!(amounts[id] > 0)) continue;
+      P.seeds[id] = round2(Math.min(PROFILE_CEILING, P.seeds[id] + amounts[id]));
+      const opposite = PROFILE_OPPOSITE[id];
+      if (opposite) P.seeds[opposite] = round2(Math.max(0, P.seeds[opposite] - amounts[id] / 2));
+    }
+    profileRefresh(Q, 'month');
   }
 
   function markEventEntered(Q) {
@@ -1191,6 +1280,17 @@
     PROFILE_STAGE_MONTHS: PROFILE_STAGE_MONTHS,
     PROFILE_STAGE_CAP: PROFILE_STAGE_CAP,
     seedProfile: seedProfile,
+    profileRefresh: profileRefresh,
+    profileSettle: profileSettle,
+    profileAnnounce: profileAnnounce,
+    profileLineFeeds: profileLineFeeds,
+    profileLineAmounts: profileLineAmounts,
+    registerProfileHook: registerProfileHook,
+    PROFILE_THRESHOLD: PROFILE_THRESHOLD,
+    PROFILE_LOSS: PROFILE_LOSS,
+    PROFILE_MAX: PROFILE_MAX,
+    PROFILE_OPPOSITE: PROFILE_OPPOSITE,
+    PROFILE_LINE_MONTHLY: PROFILE_LINE_MONTHLY,
     setLanguage: setLanguage,
     inLanguage: inLanguage,
     getLanguage: getLanguage,

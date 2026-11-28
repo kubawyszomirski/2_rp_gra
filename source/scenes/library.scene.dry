@@ -473,9 +473,9 @@ if (Q.S && Q.polish_party_rules && typeof PolishParty !== 'undefined') {
 
 **Characteristics of the party**
 
-A characteristic grows from the decisions that build it. When it is ready, a congress of PPS can adopt it with a resolution. In the first chapter the party can have two characteristics, at most one new one at a congress; reformism and radicalism exclude each other. A line of the party that matches a characteristic makes it grow faster.
+A characteristic grows from the decisions that build it and works by itself once its bar passes the mark of the threshold; it stops when the bar falls clearly below it. Without matching decisions a bar fades, and decisions for an opposite weaken it; at most three characteristics work at once, those with the strongest bars, and reformism and radicalism exclude each other. A line of the party that PPS has announced on its card builds its characteristics every month.
 
-An adopted characteristic works the more strongly the longer the party holds it: it strengthens after two years and is fully rooted after four, which comes only in the second chapter. Each characteristic also opens an option of its own on one of the cards. A characteristic left at a congress and adopted again starts afresh.
+A working characteristic acts the more strongly the longer it works: it strengthens after two years and is fully rooted after four, which comes only in the second chapter. Each characteristic also opens an option of its own on one of the cards. A characteristic that stopped and works again starts afresh.
 
 [? if polish_party_rules : [+ pl_profile_library +] ?]
 

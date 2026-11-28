@@ -22,7 +22,7 @@ The present line: **[+ pl_stance_current +]**. A new declaration changes no law 
 
 @broad
 title: Broad cooperation and rights in the programme
-subtitle: [? if pl_stance_broad_present = 1 : **Present line** Confirming it changes nothing. ?][? if pl_stance_broad_present = 0 : Agreements on the rights of the Jews and joint actions, above all with the Bund. Grows faster: federalism. ?]
+subtitle: [? if pl_stance_broad_present = 1 : **Present line** [+ pl_line_confirm_jewish_cooperation +] ?][? if pl_stance_broad_present = 0 : Agreements on the rights of the Jews and joint actions, above all with the Bund. Grows every month: federalism. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'jewish_cooperation', 'broad').available !}
 unavailable-subtitle: [+ pl_stance_broad_why +]
 on-arrival: {!
@@ -32,7 +32,7 @@ go-to: result
 
 @labour_only
 title: Cooperation of workers’ organisations
-subtitle: [? if pl_stance_labour_only_present = 1 : **Present line** Confirming it changes nothing. ?][? if pl_stance_labour_only_present = 0 : Joint actions of the workers’ organisations, above all with the Bund, which joins our strikes in industry. ?]
+subtitle: [? if pl_stance_labour_only_present = 1 : **Present line** [+ pl_line_confirm_jewish_cooperation +] ?][? if pl_stance_labour_only_present = 0 : Joint actions of the workers’ organisations, above all with the Bund, which joins our strikes in industry. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'jewish_cooperation', 'labour_only').available !}
 unavailable-subtitle: [+ pl_stance_labour_only_why +]
 on-arrival: {!
@@ -42,7 +42,7 @@ go-to: result
 
 @none
 title: No cooperation
-subtitle: [? if pl_stance_none_present = 1 : **Present line** Confirming it changes nothing. ?][? if pl_stance_none_present = 0 : No new joint actions; the Bund does not join our strikes. The existing rights of citizens stay. ?]
+subtitle: [? if pl_stance_none_present = 1 : **Present line** [+ pl_line_confirm_jewish_cooperation +] ?][? if pl_stance_none_present = 0 : No new joint actions; the Bund does not join our strikes. The existing rights of citizens stay. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'jewish_cooperation', 'none').available !}
 unavailable-subtitle: [+ pl_stance_none_why +]
 on-arrival: {!

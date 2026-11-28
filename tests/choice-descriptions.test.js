@@ -169,7 +169,7 @@ test('Opisy 1.21: „Nic nie robimy” bez opisu, linie partii słowami, kampani
   }
   assert.deepEqual(problems, []);
   const direction = read('source/scenes/party_affairs/polish_party_direction.scene.dry');
-  assert.match(direction, /Grow faster: parliamentarism and reformism\./);
+  assert.match(direction, /Grow every month: parliamentarism and reformism\./); // Z — 1.41
   const engine = dendry.startGame(1922, 'pl');
   try {
     const Q = engine.state.qualities;

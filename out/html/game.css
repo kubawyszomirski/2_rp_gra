@@ -1562,6 +1562,30 @@ ul.choices li.pl-portrait-choice.unavailable .pl-portrait {
   letter-spacing: 0.04em;
   color: var(--unavailable-color);
 }
+/* Z — 1.41 (decision C1A of 28 XI 2026): the indicator of a characteristic as a thin printed bar with the mark of the threshold. */
+.pl-profile-bar {
+  position: relative;
+  display: block;
+  height: 0.45em;
+  margin: 0.1em 0 0.3em 0.8em;
+  border: 1px solid var(--hair-color);
+}
+.pl-profile-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: var(--unavailable-color);
+}
+.pl-profile-adopted .pl-profile-fill {
+  background: var(--accent-color);
+}
+.pl-profile-mark {
+  position: absolute;
+  top: -0.25em;
+  bottom: -0.25em;
+  border-left: 1.5px solid var(--text-color);
+}
 
 /* Z — 1.08 (decision 3A of the user's notes): the money a choice spends ("Koszt: 1 jednostka środków.") in its own line at the
    start of the description, upright small capitals, so it is seen at once. */

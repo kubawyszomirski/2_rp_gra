@@ -22,7 +22,7 @@ The present line: **[+ pl_stance_current +]**. A new declaration changes no law 
 
 @sympathetic
 title: Solidarity with the Soviet state as an attempt to build socialism
-subtitle: [? if pl_stance_sympathetic_present = 1 : **Present line** Confirming it changes nothing. ?][? if pl_stance_sympathetic_present = 0 : Our relations with the KPP improve (only the first time), and the Centre of the party is very displeased. ?]
+subtitle: [? if pl_stance_sympathetic_present = 1 : **Present line** [+ pl_line_confirm_ussr_position +] ?][? if pl_stance_sympathetic_present = 0 : Our relations with the KPP improve (only the first time), and the Centre of the party is very displeased. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'ussr_position', 'sympathetic').available !}
 unavailable-subtitle: [+ pl_stance_sympathetic_why +]
 on-arrival: {!
@@ -32,7 +32,7 @@ go-to: result
 
 @independent
 title: Independence: workers’ cooperation without the Soviet model
-subtitle: [? if pl_stance_independent_present = 1 : **Present line** Confirming it changes nothing. ?][? if pl_stance_independent_present = 0 : Nothing changes in our relations with the KPP or inside the party. ?]
+subtitle: [? if pl_stance_independent_present = 1 : **Present line** [+ pl_line_confirm_ussr_position +] ?][? if pl_stance_independent_present = 0 : Nothing changes in our relations with the KPP or inside the party. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'ussr_position', 'independent').available !}
 unavailable-subtitle: [+ pl_stance_independent_why +]
 on-arrival: {!
@@ -42,7 +42,7 @@ go-to: result
 
 @critical
 title: Condemn Soviet authoritarianism and the subordination of the labour movement
-subtitle: [? if pl_stance_critical_present = 1 : **Present line** Confirming it changes nothing. ?][? if pl_stance_critical_present = 0 : Our relations with the KPP worsen. ?]
+subtitle: [? if pl_stance_critical_present = 1 : **Present line** [+ pl_line_confirm_ussr_position +] ?][? if pl_stance_critical_present = 0 : Our relations with the KPP worsen. ?]
 choose-if: {! return PolishParty.stanceStatus(Q, 'ussr_position', 'critical').available !}
 unavailable-subtitle: [+ pl_stance_critical_why +]
 on-arrival: {!

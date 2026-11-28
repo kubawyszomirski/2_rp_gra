@@ -2,10 +2,10 @@ const assert = require('node:assert/strict');
 const { test, beforeEach, afterEach } = require('node:test');
 const dendry = require('./helpers/dendry');
 
-// Z — 1.07 (the user's decisions of 7–8 XI 2026): the characteristics of the party. A characteristic grows from the decisions
-// that build it (a line of the party that matches it makes it grow half as fast again), a congress of PPS adopts a ready one with
-// a resolution (the action of the month), two at most in the first chapter, reformism and radicalism exclude each other, an
-// adopted one can be left; each adopted one changes other cards. The views: the Party tab, the Overview, the Library, the report.
+// Z — 1.07 (the user's decisions of 7–8 XI 2026): the characteristics of the party; each working one changes other cards. Z — 1.41
+// (decisions C1A, C2, C3B, C4A and D1A–D4A of 28 XI 2026): they work by themselves above a threshold, fade without matching decisions,
+// lose to their opposites, at most three at once; an announced line feeds them every month; no congress. The views: the Party tab,
+// the Overview, the Library, the report.
 let errors = [];
 beforeEach(() => { errors = dendry.watchEngineErrors(); });
 afterEach(() => assert.deepEqual(errors, [], 'Dendry must not swallow script or condition errors'));
@@ -19,79 +19,90 @@ function free(Q) {
 }
 const R = () => globalThis.PolishRules, P = () => globalThis.PolishParty;
 const plainText = x => (x == null ? '' : typeof x === 'string' ? x : Array.isArray(x) ? x.map(plainText).join('') : plainText(x.content));
-function ripen(Q, id) {
-  R().profileState(Q.S).seeds[id] = P().PROFILE_READY;
+// A working characteristic in a fixture: its indicator well above the threshold, so that no refresh drops it.
+function work(Q, id) {
+  R().profileState(Q.S).seeds[id] = 20;
+  R().profileRefresh(Q, 'fixture');
 }
 
-test('Charakterystyka 1.07: seeds grow from decisions, faster with a matching line; a congress appears only when one is ready', () => {
+test('Charakterystyka 1.41: decisions raise the indicator, the opposite loses half; it works from 10 and stops below 7; no congress', () => {
   const Q = game();
-  const S = Q.S;
+  const S = Q.S, f = S.actors.pps.factions;
   const state = R().profileState(S);
   assert.deepEqual(Object.keys(state.seeds), R().PROFILE_IDS);
   S.actors.pps.strategy.direction = 'parliamentary_socialism';
-  S.actors.pps.strategy.electoral_base = 'workers_peasants';
-  assert.equal(R().seedProfile(Q, 'unionism', 2, 'fixture'), 2, 'no matching line');
-  assert.equal(R().seedProfile(Q, 'reformism', 2, 'fixture'), 3, 'socialist parliamentarism matches reformism (×1.5)');
-  assert.equal(R().seedProfile(Q, 'worker_peasant', 2, 'fixture'), 3, 'the party of workers and peasants matches the alliance');
-  assert.equal(P().congressAvailable(Q), false, 'nothing is ready');
-  // The party's own decisions build the seeds: building a union branch builds unionism.
+  assert.equal(R().seedProfile(Q, 'reformism', 2, 'fixture'), 2, 'no multiplier of the line any more');
+  state.seeds.radicalism = 5;
+  R().seedProfile(Q, 'reformism', 2, 'fixture');
+  assert.deepEqual([state.seeds.reformism, state.seeds.radicalism], [4, 4], 'the opposite loses half of the gain');
+  // The party's own decisions build it: building a union branch builds unionism.
   free(Q);
   S.party_orgs.cash = 5;
   P().organizationsChoose(Q, ['union_organize_industry'], 'party.union_investments');
-  assert.equal(state.seeds.unionism, 4);
-  ripen(Q, 'unionism');
-  assert.deepEqual(P().readyProfiles(S), ['unionism']);
-  assert.equal(P().congressAvailable(Q), true);
-});
-
-test('Kongres 1.07: a resolution adopts a characteristic for the action of the month; two at most; reformism and radicalism exclude each other; an adopted one can be left; one congress a year', () => {
-  const Q = game();
-  const S = Q.S, f = S.actors.pps.factions;
-  free(Q);
+  assert.equal(state.seeds.unionism, 2);
   for (const id of ['centrum', 'lewica', 'pilsudczycy']) f[id].dissent = 20;
   const centrum = f.centrum.strength;
-  ripen(Q, 'reformism');
-  ripen(Q, 'radicalism');
-  assert.match(P().congressChoose(Q, 'adopt:reformism'), /^The congress adopts reformism\./);
-  assert.ok(R().profileActive(S, 'reformism'));
+  R().seedProfile(Q, 'unionism', 7.9, 'fixture');
+  assert.equal(R().profileActive(S, 'unionism'), false, 'below the threshold');
+  R().seedProfile(Q, 'unionism', 0.1, 'fixture');
+  assert.equal(R().profileActive(S, 'unionism'), true, 'from the threshold it works at once');
   assert.ok(f.centrum.strength > centrum, 'the patron grows stronger');
-  assert.equal(f.lewica.dissent, 28, 'the Left protests (+8)');
-  assert.equal(Q.month_actions, 1, 'the resolution is the action of the month');
-  assert.deepEqual(P().readyProfiles(S), [], 'radicalism is excluded by reformism');
-  assert.equal(P().congressAvailable(Q), false, 'one congress a year');
-  Q.time += 12; free(Q);
-  ripen(Q, 'unionism');
-  assert.equal(P().congressAvailable(Q), true);
-  P().congressChoose(Q, 'adopt:unionism');
-  Q.time += 12; free(Q);
-  ripen(Q, 'militarism');
-  assert.match(P().congressStatus(Q, 'adopt:militarism').reason, /already has two characteristics/);
-  assert.equal(P().congressStatus(Q, 'drop:unionism').available, true);
-  f.centrum.dissent = 20;
-  const actions = Q.month_actions;
-  P().congressChoose(Q, 'drop:unionism');
-  assert.deepEqual([R().profileActive(S, 'unionism'), f.centrum.dissent, R().profileState(S).seeds.unionism], [false, 28, 0]);
-  // Z — 1.10 (decision 3A): the congress goes on in the same month and adopts another one within the same action.
-  assert.equal(Q.month_actions, actions + 1, 'giving up costs the action once');
-  assert.equal(P().congressAvailable(Q), true, 'the congress is still open');
-  P().congressView(Q);
-  assert.match(Q.pl_cg_note, /given up unionism/);
-  assert.equal(P().congressStatus(Q, 'adopt:militarism').available, true);
-  P().congressChoose(Q, 'adopt:militarism');
-  assert.equal(Q.month_actions, actions + 1, 'adopting in the same congress costs nothing more');
-  assert.ok(R().profileActive(S, 'militarism'));
-  assert.equal(P().congressAvailable(Q), false, 'the congress has ended');
-  Q.time += 12; free(Q);
-  ripen(Q, 'federalism');
-  const before = Q.month_actions;
-  assert.match(P().congressChoose(Q, 'none'), /without new resolutions/);
-  assert.equal(Q.month_actions, before, 'no new resolutions cost no action');
+  assert.equal(f.lewica.dissent, 25, 'the Left finds it too cautious (+5)');
+  assert.deepEqual(state.changes.at(-1), { t: Q.time, id: 'unionism', on: true, cause: 'fixture' });
+  state.seeds.unionism = 7.5;
+  R().profileRefresh(Q);
+  assert.equal(R().profileActive(S, 'unionism'), true, 'it keeps working down to 7');
+  state.seeds.unionism = 6.9;
+  R().profileRefresh(Q);
+  assert.equal(R().profileActive(S, 'unionism'), false);
+  assert.equal(state.dropped.at(-1).reason, 'faded');
+  assert.equal(P().congressAvailable(Q), false, 'Z — 1.41 (decision D4A): no congress card');
+});
+
+test('Najwyżej trzy 1.41: of four above the threshold the three strongest work; of reformism and radicalism only the stronger', () => {
+  const Q = game();
+  const S = Q.S, seeds = R().profileState(S).seeds;
+  Object.assign(seeds, { unionism: 15, federalism: 12, strike_action: 11, worker_peasant: 10.5 });
+  R().profileRefresh(Q);
+  assert.deepEqual(R().profileState(S).adopted.map(a => a.id).sort(), ['federalism', 'strike_action', 'unionism']);
+  seeds.worker_peasant = 13;
+  R().profileRefresh(Q);
+  assert.deepEqual(R().profileState(S).adopted.map(a => a.id).sort(), ['federalism', 'unionism', 'worker_peasant']);
+  assert.equal(R().profileState(S).dropped.at(-1).reason, 'crowded');
+  const X = game(), xs = R().profileState(X.S).seeds;
+  Object.assign(xs, { reformism: 12, radicalism: 14 });
+  R().profileRefresh(X);
+  assert.deepEqual(R().profileState(X.S).adopted.map(a => a.id), ['radicalism'], 'the stronger of the two');
+});
+
+test('Miesiąc 1.41: an indicator loses half in a year and a half; the opening line feeds nothing, an announced line feeds it every month', () => {
+  const Q = game();
+  const S = Q.S, seeds = R().profileState(S).seeds;
+  seeds.federalism = 8;
+  for (let i = 0; i < 18; i++) R().profileSettle(Q);
+  assert.ok(Math.abs(seeds.federalism - 4) < 0.05, 'half in 18 months: ' + seeds.federalism);
+  assert.deepEqual(R().profileLineFeeds(S), [], 'the opening line of 1922 feeds nothing');
+  free(Q);
+  P().stanceChoose(Q, 'direction', 'parliamentary_socialism'); // a confirmation announces it
+  assert.deepEqual(R().profileLineFeeds(S), ['parliamentarism', 'reformism']);
+  seeds.militarism = 5;
+  R().profileSettle(Q);
+  // The card Political direction builds two characteristics, so each takes half of the monthly feed (the user's decision of 28 XI 2026).
+  assert.deepEqual([seeds.parliamentarism, seeds.reformism, seeds.militarism], [0.38, 0.38, 4.62], 'half each; the opposite fades and loses');
+  for (let i = 0; i < 40; i++) R().profileSettle(Q);
+  assert.ok(!R().profileActive(S, 'parliamentarism') && seeds.parliamentarism > 7, 'the direction alone stays below the threshold: ' + seeds.parliamentarism);
+  // A card of one characteristic feeds it whole: the form of power alone reaches the threshold in about a year and a half.
+  const F = game(), fs = R().profileState(F.S).seeds;
+  free(F);
+  P().stanceChoose(F, 'form_of_power', 'parliamentarism');
+  for (let i = 0; i < 20; i++) R().profileSettle(F);
+  assert.ok(R().profileActive(F.S, 'parliamentarism'), 'one characteristic, the whole feed: ' + fs.parliamentarism);
 });
 
 // Z — 1.33 (decisions D1B and D2A of 25 XI 2026): +40% when adopted (until 1.32 +25%), +60% after two years, no more in chapter I.
 test('Skutki cech 1.07: unions, strikes, parliament, ministries, the Milicja and campaigns change with an adopted characteristic', () => {
   const Q = game();
-  const S = Q.S, adopt = id => R().profileState(S).adopted.push({ id, t: Q.time });
+  const S = Q.S, adopt = id => { R().profileState(S).seeds[id] = 20; R().profileState(S).adopted.push({ id, t: Q.time }); };
   // Unionism: a branch grows a quarter faster.
   free(Q); S.party_orgs.cash = 5;
   const reach0 = S.unions.rail.reach;
@@ -138,69 +149,49 @@ test('Linia partii 1.07: campaigns of the matching direction +25%; a cabinet aga
   assert.equal(P().strategyFactor(Q, 'democracy'), 1.30);
 });
 
-test('Charakterystyka w grze 1.07: the Party tab shows the eight characteristics, the adopted ones in red; the Overview, the Library and the report name them; the congress card in Polish', () => {
+test('Charakterystyka w grze 1.41: the Party tab shows eight bars with the mark of the threshold, the working ones first; the month page, the Overview, the Library and the report name them', () => {
   const engine = dendry.startGame(1922, 'pl');
   const Q = engine.state.qualities;
   const content = () => JSON.stringify(engine.ui.paragraphs);
   try {
     engine.goToScene('status');
     assert.match(content(), /Charakterystyka/);
-    // Z — 1.20 (decisions 1A–4A of 22 XI 2026): each characteristic in its own block, what it gives before what builds it.
-    assert.match(Q.pl_profile_html, /pl-profile-count">Przyjęte: 0 z 2</);
-    assert.match(Q.pl_profile_html, /pl-profile pl-profile-none"><span class="pl-profile-head"><span class="pl-profile-name">Uzwiązkowienie<\/span><\/span><span class="pl-profile-line"><span class="pl-profile-label">Daje:<\/span> związki rosną szybciej[^<]*<\/span><span class="pl-profile-line"><span class="pl-profile-label">Buduje:<\/span> budowa związków i praca w nich/);
+    assert.match(Q.pl_profile_html, /pl-profile-count">Działają: 0 z 3</);
+    // The cards of the line say what the present line builds; the top bar, which reads every card, does not overwrite it.
+    globalThis.PolishTopbar.overviewView(Q);
+    assert.equal(Q.pl_line_confirm_direction, 'Po potwierdzeniu co miesiąc rosną: parlamentaryzm i reformizm.');
+    assert.equal(Q.pl_line_confirm_ussr_position, 'Potwierdzenie niczego nie zmienia.');
+    assert.match(Q.pl_profile_html, /pl-profile pl-profile-none"><span class="pl-profile-head"><span class="pl-profile-name">Uzwiązkowienie<\/span><\/span><span class="pl-profile-bar"><span class="pl-profile-fill" style="width:0%"><\/span><span class="pl-profile-mark" style="left:50%"><\/span><\/span><span class="pl-profile-line"><span class="pl-profile-label">Daje:<\/span> związki rosną szybciej/);
     assert.equal(Q.pl_top_profile, '');
-    R().profileState(Q.S).adopted.push({ id: 'unionism', t: Q.time });
+    work(Q, 'unionism');
     engine.goToScene('status');
-    assert.match(Q.pl_profile_html, /^<span class="pl-profiles"><span class="pl-profile-count">Przyjęte: 1 z 2<\/span><span class="pl-profile pl-profile-adopted"><span class="pl-profile-head"><span class="pl-profile-name">Uzwiązkowienie<\/span><span class="pl-profile-state">przyjęta w 1922, umocni się w 1924<\/span>/, 'the adopted one first, with its stage');
+    assert.match(Q.pl_profile_html, /^<span class="pl-profiles"><span class="pl-profile-count">Działają: 1 z 3<\/span><span class="pl-profile pl-profile-adopted"><span class="pl-profile-head"><span class="pl-profile-name">Uzwiązkowienie<\/span><span class="pl-profile-state">działa od 1922, umocni się w 1924<\/span>/, 'the working one first, with its stage');
     assert.equal(Q.pl_top_profile, 'Charakterystyka: uzwiązkowienie');
-    assert.equal(P().profileSummary(Q.S), 'PPS przyjęła uzwiązkowienie (1922).');
+    assert.equal(P().profileSummary(Q.S), 'Działają: uzwiązkowienie (od 1922).');
+    assert.equal(P().profileNotices(Q), 'zaczyna działać uzwiązkowienie.');
+    assert.equal(P().profileNotices(Q), 'zaczyna działać uzwiązkowienie.', 'the same month page shows it again');
+    Q.time += 1;
+    assert.equal(P().profileNotices(Q), '', 'shown once');
     engine.goToScene('library.characteristics');
-    assert.match(content(), /Charakterystyka partii/);
-    assert.match(Q.pl_profile_library, /Uzwiązkowienie \(przyjęta\)/);
-    ripen(Q, 'parliamentarism');
-    free(Q);
-    engine.goToScene('polish_party_congress');
-    assert.match(content(), /Do Warszawy zjeżdżają delegaci/);
-    const ids = (engine.getCurrentChoices() || []).map(c => c.id);
-    assert.ok(ids.includes('polish_party_congress.adopt_parliamentarism'));
-    assert.ok(ids.includes('polish_party_congress.drop_unionism'));
-    assert.ok(ids.includes('polish_party_congress.none') && ids.includes('polish_party_congress.later'));
-    // Z — 1.10 (the user's notes and decision 3A of 8 XI 2026): plain titles; giving one up keeps the congress open, and another
-    // one is adopted within the same action.
-    const title = id => plainText((engine.getCurrentChoices() || []).find(c => c.id === id).title);
-    assert.equal(title('polish_party_congress.adopt_parliamentarism'), 'Przyjmij charakterystykę: parlamentaryzm'); // Z — 1.21
-    assert.equal(title('polish_party_congress.drop_unionism'), 'Porzuć charakterystykę: uzwiązkowienie');
-    dendry.choose(engine, 'polish_party_congress.drop_unionism');
-    assert.match(content(), /Kongres porzucił uzwiązkowienie\. Może teraz przyjąć inną charakterystykę albo zakończyć obrady\./);
-    assert.equal(Q.month_actions, 1);
-    dendry.choose(engine, 'polish_party_congress.adopt_parliamentarism');
-    assert.match(content(), /Kongres przyjmuje parlamentaryzm\. Partia wiąże swój los z Sejmem/);
-    assert.equal(Q.month_actions, 1, 'one action for the whole congress');
-    assert.ok(R().profileActive(Q.S, 'parliamentarism') && !R().profileActive(Q.S, 'unionism'));
-    // The Party tab: each characteristic in its own block, in the order adopted, ready, growing, untouched, excluded; the state in a
-    // word, never a number (Z — 1.20).
+    assert.match(content(), /zaczyna działać sama, gdy jej pasek przekroczy kreskę progu/);
+    assert.match(Q.pl_profile_library, /Uzwiązkowienie \(działa\)/);
+    // The states in words, never a number; the order: working, above the threshold, the others from the strongest, blocked.
     const seeds = R().profileState(Q.S).seeds;
     for (const id of Object.keys(seeds)) seeds[id] = 0;
-    seeds.unionism = 3; seeds.strike_action = 6; seeds.radicalism = 12;
-    R().profileState(Q.S).adopted.push({ id: 'reformism', t: Q.time });
+    Object.assign(seeds, { unionism: 20, parliamentarism: 18, reformism: 16, federalism: 12, strike_action: 8, worker_peasant: 4, militarism: 1, radicalism: 11 });
+    R().profileRefresh(Q);
     engine.goToScene('status');
     const blocks = [...Q.pl_profile_html.matchAll(/pl-profile pl-profile-(\w+)"><span class="pl-profile-head"><span class="pl-profile-name">([^<]+)<\/span>(?:<span class="pl-profile-state">([^<]+)<\/span>)?/g)]
       .map(m => [m[2], m[1], m[3] || '']);
-    assert.deepEqual(blocks, [
-      ['Parlamentaryzm', 'adopted', 'przyjęta w 1922, umocni się w 1924'], ['Reformizm', 'adopted', 'przyjęta w 1922, umocni się w 1924'],
-      ['Akcja strajkowa', 'growing', 'dojrzewa'],
-      ['Uzwiązkowienie', 'growing', 'zalążek'], ['Sojusz robotniczo-włościański', 'none', ''], ['Federalizm', 'none', ''], ['Militaryzm', 'none', ''],
-      ['Radykalizm', 'excluded', 'wykluczona']]);
-    assert.match(Q.pl_profile_html, /Przyjęte: 2 z 2/);
-    assert.match(Q.pl_profile_html, /Buduje:<\/span> ustawy z inicjatywy \(przyjęte liczą się podwójnie\)/);
+    assert.deepEqual(blocks.map(b => b[0] + ':' + b[1]), ['Uzwiązkowienie:adopted', 'Parlamentaryzm:adopted', 'Reformizm:adopted', 'Federalizm:ready',
+      'Radykalizm:excluded', 'Akcja strajkowa:growing', 'Sojusz robotniczo-włościański:growing', 'Militaryzm:growing']);
+    assert.deepEqual(blocks.slice(3).map(b => b[2]), ['ponad progiem, ale działają już trzy', 'blokuje ją reformizm', 'blisko progu', 'rośnie', 'zalążek']);
+    assert.match(Q.pl_profile_html, /Działają: 3 z 3/);
+    assert.match(Q.pl_profile_html, /Osłabia ją to, co buduje militaryzm\./);
     assert.match(Q.pl_profile_html, /Wyklucza radykalizm\./);
-    assert.match(Q.pl_profile_html, /Wyklucza reformizm\./);
-    assert.doesNotMatch(Q.pl_profile_html, /\d+(,\d+)? ?(pkt|punkt)|<br>/, 'no numbers of points and no run-on lines');
-    seeds.radicalism = 0;
-    R().profileState(Q.S).adopted = R().profileState(Q.S).adopted.filter(a => a.id !== 'reformism');
-    seeds.federalism = 10;
-    engine.goToScene('status');
-    assert.match(Q.pl_profile_html, /pl-profile-ready"><span class="pl-profile-head"><span class="pl-profile-name">Federalizm<\/span><span class="pl-profile-state">gotowa do uchwały<\/span>/);
+    assert.doesNotMatch(Q.pl_profile_html.replace(/style="[^"]*"/g, ''), /\d+(,\d+)? ?(pkt|punkt|%)|<br>/, 'no numbers and no run-on lines');
+    // The congress card is gone.
+    assert.equal(P().congressAvailable(Q), false);
   } finally {
     R().setLanguage('en');
   }

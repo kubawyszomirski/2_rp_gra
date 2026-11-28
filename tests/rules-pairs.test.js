@@ -23,7 +23,7 @@ function free(Q) {
   if (Q.S.turn.pending) { Q.S.turn.pending.phase = 'settled'; Q.S.turn.pending = null; }
   Q.month_actions = 0;
 }
-const adopt = (Q, ...ids) => { for (const id of ids) PolishRules.profileState(Q.S).adopted.push({ id, t: Q.time }); };
+const adopt = (Q, ...ids) => { for (const id of ids) { PolishRules.profileState(Q.S).seeds[id] = 20; PolishRules.profileState(Q.S).adopted.push({ id, t: Q.time }); } };
 function wageCase(Q) {
   const S = Q.S;
   for (const id of ['industry', 'rail', 'farm_labour']) { S.unions[id].reach = 40; S.unions[id].readiness = 40; }
