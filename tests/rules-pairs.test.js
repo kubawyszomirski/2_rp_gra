@@ -136,10 +136,7 @@ test('Ustawy 1.34: the centre kinder with parliamentarism and reformism; the min
   const [a, b] = [votes(plain, 'progressive_tax', 0), votes(centre, 'progressive_tax', 0)];
   for (const club of ['npr', 'psl_wyzwolenie', 'psl_piast', 'pschd']) assert.ok(rank[b[club]] >= rank[a[club]], club);
   assert.ok(['npr', 'psl_piast', 'pschd'].some(club => rank[b[club]] > rank[a[club]]), 'at least one club of the centre votes better');
-  PolishProjects.initiativeView(centre);
-  assert.equal(centre.pl_ini_return, 'after three months (thanks to parliamentarism and reformism)');
-  PolishProjects.initiativeView(plain);
-  assert.equal(plain.pl_ini_return, 'after nine months');
+  // Z — 1.45: the return of a rejected bill (once, after three months) is checked in "Inicjatywa 0.81/1.09".
   const minorities = game();
   adopt(minorities, 'parliamentarism', 'federalism');
   const m = votes(minorities, 'progressive_tax', 0);

@@ -12,6 +12,7 @@ Q.pl_iv_name = view ? view.name : '';
 Q.pl_iv_line = view ? view.line : '';
 Q.pl_iv_outcome = view ? view.outcome : '';
 Q.pl_iv_limited = view ? view.limited_name : '';
+Q.pl_iv_withdraw = view ? view.withdraw : '';
 !}
 
 = The vote on our bill
@@ -44,7 +45,7 @@ go-to: result
 
 @withdraw
 title: We withdraw the bill
-subtitle: The law does not take effect; we can file it again in nine months at the earliest.
+subtitle: [+ pl_iv_withdraw +]
 view-if: pl_iv_outcome = "choice"
 on-arrival: {!
 Q.pl_iv_result = PolishProjects.initiativeResolve(Q, 'withdraw');

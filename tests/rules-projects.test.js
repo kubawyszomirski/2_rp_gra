@@ -109,74 +109,85 @@ test('before the Senate exists a law takes effect with the Sejm vote; a constitu
 // Z — 0.81 (decisions of 20 X 2026): the card Legislative Initiative replaces the cards D1/D2 and of the parliamentary control of
 // the army: at most five laws, taking one up costs the month and moves relations at once, the vote the next month; a law passed
 // in its limited variant, rejected or withdrawn comes back after nine months, after a limited one only in full.
-test('Inicjatywa 0.81/1.09: two cards of at most four laws after the 1922 election; filing costs the month and 1 resource; the vote next month; limited, rejected and back after nine months', () => {
+test('Inicjatywa 0.81/1.09 (Z — 1.45): each bill its own card at its moment for three months, once a chapter; filing costs the month and 1 resource; the vote next month; a limited or rejected law does not come back in the chapter', () => {
   const Q = world({ seats: OPENING, time: 13, senate: true });
-  Q.sejm_first_election_completed = 1;
-  Q.S.party_orgs.cash = 3;
-  // Z — 1.09 (decision 6aA): two cards of at most four laws each.
-  assert.deepEqual(proj.initiativeShown(Q, 'economy'), ['unemployment', 'labor_inspection', 'progressive_tax', 'workers_housing']);
-  assert.deepEqual(proj.initiativeShown(Q, 'state'), ['secular_school', 'land_reform', 'abortion']);
-  assert.equal(proj.initiativeCardOf('land_reform'), 'polish_legislative_initiative_state');
-  assert.equal(proj.initiativeStatus(Q, 'army_oversight').eligible, false, 'the army only at an open military case');
-  assert.equal(proj.initiativeStatus(Q, 'tenants').eligible, false, 'the tenants from VI 1924');
-  // The rolls of a vote are recorded; the test fixes them (0.81: the chance of a vote, see "Los głosowania 0.81").
-  const fix = (full, limited) => {
-    const p = proj.initiativeState(Q.S).pending, base = 'initiative:' + p.id + ':t' + p.filed_at;
-    Q.S.rng.rolls[base + ':full'] = full;
-    if (limited !== undefined) Q.S.rng.rolls[base + ':limited'] = limited;
+  Q.S.party_orgs.cash = 5;
+  const open = (R, id) => proj.billCardAvailable(R, id);
+  const windows = R => proj.billWindows(R, R.time - 1);
+  const at = (R, y, m) => { R.time = rules.timeOf(y, m); R.year = y; R.month = m; freeAction(R); };
+  const fix = (R, full, limited) => {
+    const p = proj.initiativeState(R.S).pending, base = 'initiative:' + p.id + ':t' + p.filed_at;
+    R.S.rng.rolls[base + ':full'] = full;
+    if (limited !== undefined) R.S.rng.rolls[base + ':limited'] = limited;
   };
-  proj.initiativeFile(Q, 'unemployment');
-  fix(0.99, 0);
+  Q.S.economy.unemployment = 6;
+  Q.sejm_first_election_completed = 0;
+  windows(Q);
+  assert.equal(open(Q, 'unemployment'), false, 'not before the election of 1922');
+  Q.sejm_first_election_completed = 1;
+  windows(Q);
+  assert.equal(proj.initiativeCardOf('land_reform'), 'polish_bill_land_reform');
+  assert.equal(open(Q, 'unemployment'), true, 'unemployment above 5%');
+  assert.equal(proj.billDeadline(Q, 'unemployment'), Q.time + 2, 'the card lies three months');
+  for (const id of ['old_age', 'tenants', 'secular_school', 'autonomy', 'land_reform', 'army_oversight', 'public_works', 'workers_housing']) assert.equal(open(Q, id), false, id + ' waits for its moment');
+  assert.equal(proj.BILL_CARDS.abortion, undefined, 'the termination of pregnancy has no card in chapter I (U3B)');
+  proj.billFile(Q, 'unemployment', 'file');
+  fix(Q, 0.99, 0);
   assert.equal(Q.month_actions, 1, 'taking a law up costs this month’s action');
-  assert.equal(Q.S.party_orgs.cash, 2, 'and 1 unit of resources (1.09, decision 6b)');
+  assert.equal(Q.S.party_orgs.cash, 4, 'and 1 unit of resources (1.09, decision 6b)');
   assert.equal(proj.initiativeState(Q.S).records.unemployment.plus_used, true, 'the gain of filing is used up');
-  assert.deepEqual(proj.initiativeShown(Q), [], 'one initiative at a time');
+  assert.equal(open(Q, 'unemployment'), false, 'the card leaves with the filing');
   assert.equal(proj.initiativeVoteActive(Q), false, 'the vote only next month');
   month(Q);
-  assert.equal(proj.initiativeVoteActive(Q), true);
-  const view = proj.initiativeVoteView(Q);
-  assert.equal(view.outcome, 'choice', 'the full benefit has no majority, the limited one has');
+  assert.equal(proj.initiativeVoteView(Q).outcome, 'choice', 'the full benefit has no majority, the limited one has');
   assert.throws(() => proj.initiativeResolve(Q, 'full'));
-  proj.initiativeResolve(Q, 'limited');
+  assert.match(proj.initiativeResolve(Q, 'limited'), /Its full version can come in a later chapter\./);
   assert.equal(Q.month_actions, 0, 'the vote costs no month');
   const protection = proj.operatingProtection(Q.S);
   assert.deepEqual([protection.variant, protection.price_B, protection.sponsor, protection.responsibility.pps], ['limited', 1, 'pps', 0.40]);
-  assert.equal(proj.initiativeStatus(Q, 'unemployment').eligible, false, 'back only after nine months');
-  assert.deepEqual(proj.initiativeShown(Q, 'economy'), ['labor_inspection', 'progressive_tax', 'workers_housing', 'old_age'], 'the next law takes the free place');
-  // Nine months later only the full benefit is offered; the gain of the Left came with the first filing only.
-  Q.time += 9; Q.year = rules.yearOf(Q.time); Q.month = rules.monthOf(Q.time);
-  const status = proj.initiativeStatus(Q, 'unemployment');
-  assert.deepEqual([status.eligible, status.offer], [true, 'full']);
-  proj.initiativeFile(Q, 'unemployment');
-  fix(0.99);
-  assert.equal(proj.initiativeState(Q.S).records.unemployment.filings, 2);
+  Q.S.economy.unemployment = 6;
+  windows(Q);
+  assert.equal(open(Q, 'unemployment'), false, 'once a chapter');
+  // A date: the old-age insurance comes in May 1924 and goes after three months, for the rest of the chapter.
+  at(Q, 1924, 5);
+  windows(Q);
+  assert.equal(open(Q, 'old_age'), true);
+  at(Q, 1924, 8);
+  windows(Q);
+  assert.equal(open(Q, 'old_age'), false, 'gone after three months');
+  at(Q, 1924, 12);
+  windows(Q);
+  assert.equal(open(Q, 'old_age'), false, 'and not again in the chapter');
+  // A rejected bill does not come back in the chapter.
+  at(Q, 1925, 3);
+  windows(Q);
+  proj.billFile(Q, 'secular_school', 'file');
+  fix(Q, 0.99, 0.99);
   month(Q);
-  assert.equal(proj.initiativeVoteView(Q).outcome, 'rejected', 'the full benefit still has no majority');
-  proj.initiativeResolve(Q, 'rejected');
-  assert.equal(proj.operatingProtection(Q.S).variant, 'limited', 'the limited law stays');
-  // A law that passes in full leaves the card for good.
-  freeAction(Q);
-  const npr = Q.S.actors.relations.npr;
-  proj.initiativeFile(Q, 'labor_inspection');
-  fix(0);
-  assert.equal(Q.S.actors.relations.npr, npr + 3, 'the National Workers’ Party welcomes the bill at once');
-  month(Q);
-  assert.equal(proj.initiativeVoteView(Q).outcome, 'full');
-  proj.initiativeResolve(Q, 'full');
-  const inspection = proj.projectsOf(Q.S, 'labor_inspection')[0];
-  assert.deepEqual([inspection.variant, inspection.sponsor, inspection.authorized, inspection.responsibility.pps], ['inspection', 'pps', true, 0.40]);
-  assert.match(proj.initiativeStatus(Q, 'labor_inspection').reason, /already in force/);
-  // Filing no bill plays the card for three months without a month's action.
-  freeAction(Q);
-  proj.initiativeSkip(Q);
-  assert.equal(rules.cardRest(Q, proj.INITIATIVE_CARD), 3);
-  assert.equal(rules.cardRest(Q, proj.INITIATIVE_CARDS.state), 0, 'each card rests on its own');
-  proj.initiativeSkip(Q, 'state');
-  assert.equal(rules.cardRest(Q, proj.INITIATIVE_CARDS.state), 3);
-  assert.equal(Q.month_actions, 0);
+  assert.equal(proj.initiativeVoteView(Q).outcome, 'rejected');
+  assert.match(proj.initiativeResolve(Q, 'rejected'), /The bill is rejected\. This bill does not come back in this chapter\./);
+  // With parliamentarism and reformism a rejected bill comes back once, three months later.
+  const R = world({ seats: OPENING, time: rules.timeOf(1925, 10), senate: true });
+  R.sejm_first_election_completed = 1;
+  R.S.party_orgs.cash = 5;
+  for (const id of ['parliamentarism', 'reformism']) { rules.profileState(R.S).seeds[id] = 20; rules.profileState(R.S).adopted.push({ id, t: R.time }); }
+  windows(R);
+  proj.billFile(R, 'tenants', 'file');
+  fix(R, 0.99, 0.99);
+  month(R);
+  assert.match(proj.initiativeResolve(R, 'rejected'), /its card comes back once, in three months\./);
+  assert.equal(proj.lawCardRecord(R.S, 'tenants').return_at, R.time + 3);
+  for (let i = 0; i < 3; i++) month(R);
+  assert.equal(open(R, 'tenants'), true, 'back after three months');
+  proj.billFile(R, 'tenants', 'file');
+  fix(R, 0.99, 0.99);
+  month(R);
+  assert.match(proj.initiativeResolve(R, 'rejected'), /does not come back in this chapter/, 'only once');
   // Without a unit of resources no bill can be filed.
+  at(Q, 1925, 10);
+  windows(Q);
   Q.S.party_orgs.cash = 0.5;
-  assert.deepEqual([proj.initiativeStatus(Q, 'progressive_tax').available, proj.initiativeStatus(Q, 'progressive_tax').reason], [false, 'Needs 1 resource.']);
+  assert.deepEqual([proj.billFileStatus(Q, 'workers_housing', 'file').available, proj.billFileStatus(Q, 'workers_housing', 'file').reason], [false, 'Needs 1 resource.']);
 });
 
 // Z — 0.81 (P): the special votes of the initiative — the friends of Piłsudski against full civilian oversight, the Lanckorona

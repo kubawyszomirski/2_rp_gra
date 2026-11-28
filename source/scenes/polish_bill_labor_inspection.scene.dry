@@ -1,0 +1,51 @@
+title: Labour Inspection and Working Time
+subtitle: A bill for the Sejm.
+new-page: true
+is-card: true
+tags: parliament_affairs
+view-if: {! return !!Q.S && PolishProjects.billCardAvailable(Q, 'labor_inspection') !}
+on-arrival: {!
+// Card parliament.bill.labor_inspection (Z — 1.45, decision U1A of 28 XI 2026 and U2A, U4 of the sketch): the bill comes at its moment and lies
+// three months, once a chapter. Outside the cabinet PPS files it as a bill of its club; in a cabinet without the ministry it concerns
+// PPS proposes it to its partners (U4). Filing costs 1 resource and this month's action; the Sejm votes the next month on the urgent
+// card polish_initiative_vote (technical reference 7.2).
+PolishProjects.billCardView(Q, 'labor_inspection');
+!}
+
+= Labour Inspection and Working Time
+
+[+ pl_bill_intro +]
+
+- @file
+- @limited
+- @easy_discard
+
+@file
+title: [+ pl_bill_file_title +]
+subtitle: [+ pl_bill_file_line +]
+choose-if: {! return PolishProjects.billFileStatus(Q, 'labor_inspection', 'file').available !}
+unavailable-subtitle: [+ pl_bill_file_why +]
+on-arrival: {!
+Q.pl_ini_result = PolishProjects.billFile(Q, 'labor_inspection', 'file');
+!}
+go-to: result
+
+@limited
+title: [+ pl_bill_limited_title +]
+subtitle: [+ pl_bill_limited_line +]
+view-if: pl_bill_limited_show = 1
+choose-if: {! return PolishProjects.billFileStatus(Q, 'labor_inspection', 'limited').available !}
+unavailable-subtitle: [+ pl_bill_limited_why +]
+on-arrival: {!
+Q.pl_ini_result = PolishProjects.billFile(Q, 'labor_inspection', 'limited');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= Labour Inspection and Working Time
+
+[+ pl_ini_result +]
+
+- @root: Continue.

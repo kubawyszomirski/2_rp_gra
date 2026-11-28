@@ -1,0 +1,18 @@
+{
+ "source": "scenes/polish_bill_army_oversight.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Civilian Oversight of the Army": "title: Cywilny nadzór nad wojskiem",
+  "subtitle: A bill for the Sejm.": "subtitle: Projekt ustawy dla Sejmu.",
+  "= Civilian Oversight of the Army": "= Cywilny nadzór nad wojskiem",
+  "[+ pl_bill_intro +]": "[+ pl_bill_intro +]",
+  "title: [+ pl_bill_file_title +]": "title: [+ pl_bill_file_title +]",
+  "subtitle: [+ pl_bill_file_line +]": "subtitle: [+ pl_bill_file_line +]",
+  "unavailable-subtitle: [+ pl_bill_file_why +]": "unavailable-subtitle: [+ pl_bill_file_why +]",
+  "title: [+ pl_bill_limited_title +]": "title: [+ pl_bill_limited_title +]",
+  "subtitle: [+ pl_bill_limited_line +]": "subtitle: [+ pl_bill_limited_line +]",
+  "unavailable-subtitle: [+ pl_bill_limited_why +]": "unavailable-subtitle: [+ pl_bill_limited_why +]",
+  "[+ pl_ini_result +]": "[+ pl_ini_result +]",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

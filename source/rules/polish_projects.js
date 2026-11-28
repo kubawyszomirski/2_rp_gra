@@ -2598,6 +2598,8 @@
       economy.settleGovernmentClimate(Q, t);
       economy.settleDisappointment(Q, t, ppsOverdueWeight(Q, t + 1), ppsResponsibility(S));
       updateObligations(Q, t);
+      // Z — 1.45 (U1A): the cards of the bills that come next month, and the ones whose three months end.
+      billWindows(Q, t);
       return reading;
     } finally {
       Q.time = clock.time;
@@ -3279,7 +3281,8 @@
   const INITIATIVE_COST = 1;
   const INITIATIVE_RETURN_MONTHS = 9;
   // Z — 1.34 (the pairs of the characteristics; the user's decisions of 25 XI 2026). Parliamentarism and reformism: a bill of ours
-  // rejected, withdrawn or passed only in its limited version returns after three months, not nine, and the clubs of the centre — NPR,
+  // rejected, withdrawn or passed only in its limited version returns after three months, not nine (Z — 1.45: a rejected or withdrawn
+  // bill may come back once in the chapter, three months later), and the clubs of the centre — NPR,
   // PSL Wyzwolenie, PSL Piast and the Christian Democrats — vote on our bills more kindly (their view +10). Parliamentarism and
   // federalism: both clubs of the minorities vote for our bills. The worker-peasant alliance and radicalism: PSL Wyzwolenie votes for
   // our radical bills — the progressive tax and the land reform without compensation.
@@ -3299,7 +3302,8 @@
     return null;
   }
   const INITIATIVE_REST_MONTHS = 3;
-  const HIGH_UNEMPLOYMENT_WORKS = 10;
+  // Z — 1.45 (U2A): 8% instead of 10%, which chapter I hardly reaches.
+  const HIGH_UNEMPLOYMENT_WORKS = 8;
   const INITIATIVE_SHARE = 0.40;
 
   // The clubs friendly to Piłsudski (0.71, decision 5A): until V 1923 Wyzwolenie, Piast and NPR, then Wyzwolenie and NPR.
@@ -3706,7 +3710,6 @@
     const level = law.level(S);
     const off = reason => ({eligible: false, available: false, reason: reason, offer: null});
     if (level === 'full' || record.level === 'full') return off(L('The law is already in force.', 'Ustawa już obowiązuje.'));
-    if (record.until !== null && Q.time < record.until) return off(L('It comes back in ' + rules.monthYear(record.until, 'loc') + '.', 'Wróci w ' + rules.monthYear(record.until, 'loc') + '.'));
     if (law.portfolio && ppsHolds(S, law.portfolio)) return off(L('Our ministry carries it on its own card.', 'Prowadzi ją nasz resort na własnej karcie.'));
     const unavailable = law.available ? law.available(Q) : '';
     if (unavailable) return off(unavailable);
@@ -3724,15 +3727,15 @@
     return INITIATIVES.map(law => law.id).filter(id => groupOf(id) === group && initiativeStatus(Q, id).eligible).slice(0, INITIATIVE_SHOWN);
   }
   const initiativeIsShown = (Q, id) => initiativeShown(Q, groupOf(id)).indexOf(id) >= 0;
+  // Z — 1.45 (U1A): the two cards of the initiative gave way to a card for each bill (billCardAvailable); their scenes stay.
   function initiativeCardAvailable(Q, group) {
-    if (!group) return initiativeCardAvailable(Q, 'economy') || initiativeCardAvailable(Q, 'state');
-    return initiativeCardBase(Q) && rules.cardRest(Q, INITIATIVE_CARDS[group]) === 0 && initiativeShown(Q, group).length > 0;
+    return false;
   }
 
   // How the Sejm would vote on one variant now (the preview equals the vote: the rules of 7.1 are deterministic).
-  function initiativeCounts(Q, law, index) {
+  function initiativeCounts(Q, law, index, sponsor) {
     const v = law.variants[index];
-    const counts = sejmCounts(Q, {sponsor: 'pps', programme: v.programme, flags: v.flags || [], pps_vote: 'yes', t: Q.time, initiative_bill: true,
+    const counts = sejmCounts(Q, {sponsor: sponsor || 'pps', programme: v.programme, flags: v.flags || [], pps_vote: 'yes', t: Q.time, initiative_bill: true,
       law_id: law.id, variant: v.key,
       costs_budget: !!law.costs_budget});
     const ballot = institutions.resolveBallot('ordinary_resolution', counts);
@@ -3755,8 +3758,8 @@
     // Z — 1.33: the bonus grows with the stage of parliamentarism (10 points at the old +25%, so 16 and then 24).
     return clip(passChance(counts) + PARLIAMENTARISM_CHANCE * rules.profileBonus(S, 'parliamentarism') / 0.25, INITIATIVE_CHANCE_MIN, INITIATIVE_CHANCE_MAX);
   }
-  function rolledCounts(Q, law, index, key) {
-    const counts = initiativeCounts(Q, law, index), chance = initiativeChance(Q.S, counts);
+  function rolledCounts(Q, law, index, key, sponsor) {
+    const counts = initiativeCounts(Q, law, index, sponsor), chance = initiativeChance(Q.S, counts);
     const passes = rules.roll(Q.S, key) < chance;
     const out = Object.assign({}, counts, {chance: chance, passed: passes, absent: 0, forecast_passed: counts.passed});
     if (passes !== counts.passed) {
@@ -3770,8 +3773,10 @@
   }
   function initiativeOutcome(Q, pending) {
     const law = INITIATIVE_BY_ID[pending.id], base = 'initiative:' + law.id + ':t' + pending.filed_at;
-    const full = rolledCounts(Q, law, 0, base + ':full');
-    const limited = pending.offer === 'both' && law.variants[1] && !full.passed ? rolledCounts(Q, law, 1, base + ':limited') : null;
+    // Z — 1.45: a bill the cabinet files for PPS (U4) is voted in the variant the partners agreed to, without a fallback.
+    const index = pending.index || 0, sponsor = pending.sponsor || 'pps';
+    const full = rolledCounts(Q, law, index, base + (index ? ':limited' : ':full'), sponsor);
+    const limited = pending.offer === 'both' && index === 0 && law.variants[1] && !full.passed ? rolledCounts(Q, law, 1, base + ':limited', sponsor) : null;
     return {law: law, full: full, limited: limited, outcome: full.passed ? 'full' : limited && limited.passed ? 'choice' : 'rejected'};
   }
   // The words of a chance on the card. Z — 1.06 (the user's request of 7 XI 2026): the chance is no longer shown in per cent, only in
@@ -3848,7 +3853,8 @@
     // Z — 1.10 (decision 1A of 8 XI 2026): the counts add up to the chamber — for, against, abstaining, and those who stayed away.
     const votes = c => L(c.yes + ' MPs for, ' + c.no + ' against, ' + c.abstain + ' abstaining', 'za ' + c.yes + ' posłów, przeciw ' + c.no + ', wstrzymało się ' + c.abstain);
     let line;
-    if (outcome === 'full') line = L('The Sejm passes our bill: ', 'Sejm przyjął nasz projekt: ') + votes(full) + '.' + absent(full);
+    const cabinetBill = pending.sponsor === 'cabinet';
+    if (outcome === 'full') line = (cabinetBill ? L('The Sejm passes the bill of the cabinet: ', 'Sejm przyjął projekt rządu: ') : L('The Sejm passes our bill: ', 'Sejm przyjął nasz projekt: ')) + votes(full) + '.' + absent(full);
     else if (outcome === 'choice') {
       const extra = limited.yes_clubs.filter(c => full.yes_clubs.indexOf(c) < 0 && c !== 'pps');
       line = L('The full bill has no majority: ', 'Pełny projekt nie ma większości: ') + votes(full) + '.' + absent(full) + ' ' +
@@ -3857,55 +3863,54 @@
           L('The limited variant (' + variantName(1) + ') would pass: ', 'Wariant ograniczony (' + variantName(1) + ') by przeszedł: ')) + votes(limited) + '.' + absent(limited);
     } else {
       const against = full.no_clubs.filter(c => c.indexOf(CHURCH_SPLIT_SUFFIX) >= 0 || government.plainParties([c]));
-      line = L('The Sejm rejects our bill: ', 'Sejm odrzucił nasz projekt: ') + votes(full) + '.' + absent(full) +
-        (against.length ? ' ' + L('Against: ' + clubsText(against) + '.', 'Przeciw głosowali: ' + clubsText(against) + '.') : '') + ' ' +
-        L('We can take it up again in ' + returnWords(S)[0] + ' at the earliest.', 'Możemy wnieść go ponownie najwcześniej za ' + returnWords(S)[1] + '.');
+      line = (cabinetBill ? L('The Sejm rejects the bill of the cabinet: ', 'Sejm odrzucił projekt rządu: ') : L('The Sejm rejects our bill: ', 'Sejm odrzucił nasz projekt: ')) + votes(full) + '.' + absent(full) +
+        (against.length ? ' ' + L('Against: ' + clubsText(against) + '.', 'Przeciw głosowali: ' + clubsText(against) + '.') : '');
     }
     const capital = text => text.charAt(0).toUpperCase() + text.slice(1);
-    return {id: law.id, name: lawName(law), outcome: outcome, line: line, limited_name: limited ? capital(variantName(1)) : ''};
+    // Z — 1.45: a withdrawn bill comes back in the chapter only once, with parliamentarism and reformism.
+    const back = rules.pairActive(S, 'parliamentarism', 'reformism') && !lawCardRecord(S, law.id).returned;
+    const withdraw = back ? L('The law does not take effect; thanks to parliamentarism and reformism the card comes back once, in three months.',
+      'Ustawa nie wchodzi w życie; dzięki parlamentaryzmowi i reformizmowi karta wróci raz, za trzy miesiące.') :
+      L('The law does not take effect, and the bill does not come back in this chapter.', 'Ustawa nie wchodzi w życie, a projekt nie wróci w tym rozdziale.');
+    return {id: law.id, name: lawName(law), outcome: outcome, line: line, limited_name: limited ? capital(variantName(1)) : '', withdraw: withdraw};
   }
   // The answer on the vote card: 'full' (the bill passed), 'limited', 'withdraw' or 'rejected'. Costs no month.
   function initiativeResolve(Q, choice) {
     const S = Q.S, state = initiativeState(S), pending = state.pending;
     if (!pending) throw new Error('initiativeResolve: no bill waits for its vote');
-    const view = initiativeVoteView(Q), law = INITIATIVE_BY_ID[pending.id], record = initiativeRecord(S, law.id), t = Q.time;
+    const view = initiativeVoteView(Q), law = INITIATIVE_BY_ID[pending.id], t = Q.time;
+    let record = initiativeRecord(S, law.id);
     const allowed = view.outcome === 'full' ? ['full'] : view.outcome === 'choice' ? ['limited', 'withdraw'] : ['rejected'];
     if (allowed.indexOf(choice) < 0) throw new Error('initiativeResolve: ' + choice + ' is not open (' + view.outcome + ')');
     state.pending = null;
-    const raise = pending.offer === 'full';
+    const raise = pending.raise !== undefined ? pending.raise : pending.offer === 'full';
+    const index = pending.index || 0, sponsor = pending.sponsor || 'pps';
     // The record keeps the English title (decision 5A of the Polish version).
     // The vote of the bill keeps the rolled counts of the vote card (the same recorded rolls).
     const rolled = initiativeOutcome(Q, pending);
     const countsOf = c => ({yes: c.yes, no: c.no, abstain: c.abstain, present: c.present, eligible: c.eligible, club_votes: c.club_votes});
-    const file = index => submitLaw(Q, {kind: 'initiative', title: law.name[0] + ' (' + law.variants[index].name[0] + ')', sponsor: 'pps',
-      pps_vote: 'yes', programme: law.variants[index].programme, flags: law.variants[index].flags || [], variant: law.variants[index].key,
-      initiative: {id: law.id, raise: index === 0 && raise}, counts: countsOf(index === 0 ? rolled.full : rolled.limited)});
+    // Z — 1.45: the variant voted is the one filed (the limited one when the partners agreed only to it); the counts are those rolled.
+    const file = (v, counts) => submitLaw(Q, {kind: 'initiative', title: law.name[0] + ' (' + law.variants[v].name[0] + ')', sponsor: sponsor,
+      pps_vote: 'yes', programme: law.variants[v].programme, flags: law.variants[v].flags || [], variant: law.variants[v].key,
+      initiative: {id: law.id, raise: v === 0 && raise}, counts: countsOf(counts)});
+    record = lawCardRecord(S, law.id);
     if (choice === 'withdraw') {
-      record.until = t + returnMonths(Q.S);
       record.history.push({t: t, kind: 'withdrawn'});
-      return L('PPS withdraws its bill. We can take it up again in ' + returnWords(Q.S)[0] + ' at the earliest.',
-        'PPS wycofuje projekt. Możemy wnieść go ponownie najwcześniej za ' + returnWords(Q.S)[1] + '.');
+      return L('PPS withdraws its bill. ', 'PPS wycofuje projekt. ') + billAfterVote(Q, record, false);
     }
-    const bill = file(choice === 'limited' ? 1 : 0);
+    const enactedIndex = choice === 'limited' ? 1 : index;
+    const bill = file(enactedIndex, choice === 'limited' ? rolled.limited : rolled.full);
     if (bill.status !== 'enacted') {
-      record.until = t + returnMonths(Q.S);
       record.history.push({t: t, kind: 'rejected', law_id: bill.id});
-      return L('The bill is rejected. We can take it up again in ' + returnWords(Q.S)[0] + ' at the earliest.',
-        'Projekt został odrzucony. Możemy wnieść go ponownie najwcześniej za ' + returnWords(Q.S)[1] + '.');
+      return L('The bill is rejected. ', 'Projekt został odrzucony. ') + billAfterVote(Q, record, false);
     }
-    if (choice === 'limited') {
-      record.level = 'limited';
-      record.until = t + returnMonths(Q.S);
-    } else {
-      record.level = 'full';
-      record.until = null;
-    }
-    record.history.push({t: t, kind: 'enacted', variant: choice === 'limited' ? law.variants[1].key : law.variants[0].key, law_id: bill.id});
+    record.level = enactedIndex === 1 ? 'limited' : 'full';
+    record.history.push({t: t, kind: 'enacted', variant: law.variants[enactedIndex].key, law_id: bill.id});
     rules.seedProfile(Q, 'parliamentarism', 2, 'enacted:' + law.id); // Z — 1.30 (decision 6A): 2 instead of 4
     const effect = lastInitiativeText;
     lastInitiativeText = '';
     return L('The law is in force from this month. ', 'Ustawa obowiązuje od tego miesiąca. ') + effect +
-      (choice === 'limited' ? ' ' + L('In ' + returnWords(Q.S)[0] + ' we can propose its full version.', 'Za ' + returnWords(Q.S)[1] + ' możemy zaproponować jej pełną wersję.') : '') +
+      (enactedIndex === 1 ? ' ' + L('Its full version can come in a later chapter.', 'Jej pełna wersja może przyjść w następnym rozdziale.') : '') +
       (supportState(Q.S).announce_t === t ? ' ' + consumeAnnouncement(Q.S, t) : '');
   }
   // The effects of an enacted law of the initiative (lawEnactedHooks). The sentence for the result page is kept outside the
@@ -3922,6 +3927,200 @@
       government.changeCredibility(Q, 'reform:law:' + law.id, REFORM_CREDIBILITY, 'reform');
       scheduleReformGain(Q, 'law:' + law.id, 'law', law.variants.length > 1 && bill.variant === law.variants[1].key, law.name);
     }
+  }
+
+  // ---- Z — 1.45 (decision U1A of 28 XI 2026 and U2A, U3B, U4 of the sketch): each bill its own card of the Parliament deck -------
+  // A bill comes at its moment — a date or a situation of the chapter — and its card lies three months; it comes once in a chapter and
+  // at most twice in the game, and a bill rejected or withdrawn does not come back in the chapter (with parliamentarism and reformism
+  // it may come back once, three months later). Outside the cabinet PPS files it as a bill of its club, as before; in a cabinet without
+  // the ministry the bill concerns PPS proposes it to its partners, and the cabinet files it when all of them agree (U4); while PPS holds
+  // that ministry the bill goes through the ministry card and its card waits. The termination of pregnancy does not come in chapter I
+  // (U3B). Filing, the vote of the next month and its outcomes are those of 0.81. The moments are game values unless a source is named.
+  const BILL_CARDS = Object.freeze({unemployment: 'polish_bill_unemployment', labor_inspection: 'polish_bill_labor_inspection',
+    progressive_tax: 'polish_bill_progressive_tax', public_works: 'polish_bill_public_works', workers_housing: 'polish_bill_workers_housing',
+    tenants: 'polish_bill_tenants', old_age: 'polish_bill_old_age', army_oversight: 'polish_bill_army_oversight', secular_school: 'polish_bill_secular_school',
+    autonomy: 'polish_bill_autonomy', land_reform: 'polish_bill_land_reform'});
+  const BILL_WINDOW = 3;
+  const BILL_SHOWINGS = 2;
+  const BILL_MOMENTS = Object.freeze({
+    // The May Day resolution of PPS of 1924 demanded the protection of the unemployed (HISTORICAL_SOURCES.md); the threshold is ours.
+    unemployment: (S, now) => (S.economy.unemployment || 0) > 5,
+    // The same resolution demanded the insurance for old age.
+    old_age: (S, now) => now >= T(1924, 5),
+    progressive_tax: (S, now) => now >= T(1923, 1) && (economy.currencyCrisis(S.economy) || economy.fiscalCrisis(S.economy)),
+    labor_inspection: (S, now) => S.economy.business_state === 'warning' || S.economy.business_state === 'active',
+    public_works: (S, now) => (S.economy.unemployment || 0) >= HIGH_UNEMPLOYMENT_WORKS,
+    workers_housing: (S, now) => now >= T(1925, 10),
+    // The motion of the PPS deputies on the tenants, printed in Naprzód on 9 X 1925 (HISTORICAL_SOURCES.md).
+    tenants: (S, now) => now >= T(1925, 10),
+    army_oversight: (S, now) => true,
+    // The concordat, signed on 10 II 1925 and ratified at the end of March 1925 (HISTORICAL_SOURCES.md).
+    secular_school: (S, now) => now >= T(1925, 3),
+    // The act of 26 IX 1922 was to start within two years (art. 26; HISTORICAL_SOURCES.md).
+    autonomy: (S, now) => now >= T(1924, 9),
+    // The Sejm worked on the land reform passed on 28 XII 1925 (HISTORICAL_SOURCES.md).
+    land_reform: (S, now) => now >= T(1925, 10),
+  });
+  const PORTFOLIO_WORDS = Object.freeze({labor: ['the ministry of labour', 'resort pracy'], finance: ['the treasury', 'resort skarbu'],
+    reichswehr: ['the ministry of military affairs', 'resort spraw wojskowych'], education: ['the ministry of education', 'resort oświaty'],
+    interior: ['the ministry of the interior', 'resort spraw wewnętrznych'], agriculture: ['the ministry of agriculture', 'resort rolnictwa']});
+  const BILL_CONSENT = 60;
+
+  function lawCardRecord(S, id) {
+    const record = initiativeRecord(S, id);
+    for (const [key, value] of [['window_from', null], ['window_until', null], ['chapter_shown', false], ['shown_count', 0], ['return_at', null], ['returned', false]]) {
+      if (record[key] === undefined) record[key] = value;
+    }
+    return record;
+  }
+  const ppsInCabinet = S => cabinetSits(S) && S.cabinet.partner_ids.indexOf('pps') >= 0;
+  // How PPS can bring the bill now: as a bill of its club, by proposing it to its partners in the cabinet, or through its ministry.
+  function billMode(Q, id) {
+    const S = Q.S, law = INITIATIVE_BY_ID[id];
+    if (!ppsInCabinet(S)) return 'club';
+    return law.portfolio && ppsHolds(S, law.portfolio) ? 'ministry' : 'partners';
+  }
+  const billBase = Q => !!Q.S && Q.S.chapter.status !== 'ended' && !!Q.sejm_first_election_completed && !government.formationPending(Q);
+  function billOpenable(Q, id, now) {
+    const S = Q.S, law = INITIATIVE_BY_ID[id], record = lawCardRecord(S, id);
+    if (!billBase(Q) || billMode(Q, id) === 'ministry' || law.level(S) === 'full' || record.level === 'full') return false;
+    return !(law.available && law.available(Q));
+  }
+  // At each settlement of month t: the windows that end and the cards that come in month t + 1.
+  function billWindows(Q, t) {
+    const S = Q.S, now = t + 1;
+    for (const id of Object.keys(BILL_CARDS)) {
+      const record = lawCardRecord(S, id), moment = BILL_MOMENTS[id];
+      if (record.window_until !== null && now >= record.window_until) {
+        record.window_from = null;
+        record.window_until = null;
+      }
+      if (record.window_from !== null) continue;
+      const open = () => {
+        record.window_from = now;
+        record.window_until = now + BILL_WINDOW;
+        record.history.push({t: now, kind: 'card'});
+      };
+      if (record.return_at !== null && now >= record.return_at) {
+        if (billOpenable(Q, id, now)) {
+          record.return_at = null;
+          record.returned = true;
+          open();
+        }
+        continue;
+      }
+      if (record.chapter_shown || record.shown_count >= BILL_SHOWINGS || !moment || !moment(S, now) || !billOpenable(Q, id, now)) continue;
+      record.chapter_shown = true;
+      record.shown_count += 1;
+      open();
+    }
+  }
+  const billWindowOpen = (Q, record) => record.window_from !== null && Q.time >= record.window_from && Q.time < record.window_until;
+  function billCardAvailable(Q, id) {
+    const S = Q.S;
+    if (!billBase(Q) || !BILL_CARDS[id] || initiativeState(S).pending) return false;
+    return billWindowOpen(Q, lawCardRecord(S, id)) && billMode(Q, id) !== 'ministry' && initiativeStatus(Q, id).eligible;
+  }
+  // The last month a card lies (the badge of the hand).
+  function billDeadline(Q, id) {
+    if (!Q.S || !Q.S.chapter || !BILL_CARDS[id]) return null;
+    const record = lawCardRecord(Q.S, id);
+    return billWindowOpen(Q, record) ? record.window_until - 1 : null;
+  }
+  // The partners of PPS in the cabinet who would not agree to the variant (a red line, or a view of the bill below 60).
+  function billRefusals(Q, law, index) {
+    const S = Q.S, v = law.variants[index];
+    const bill = {sponsor: 'cabinet', programme: v.programme, flags: v.flags || [], t: Q.time, initiative_bill: true, law_id: law.id, variant: v.key,
+      costs_budget: !!law.costs_budget};
+    const offer = billOffer(S, bill);
+    const partners = [S.cabinet.party].concat(S.cabinet.partner_ids || []).filter((p, i, all) => p && p !== 'pps' && all.indexOf(p) === i && !!government.ACTOR_PROFILES[p]);
+    return partners.filter(p => government.redLineViolations(p, offer).length || !(government.programmeStance(S, p, offer) >= BILL_CONSENT));
+  }
+  // which: 'file' (our club's bill, or the full variant proposed to the partners) or 'limited' (the limited variant to the partners).
+  function billFileStatus(Q, id, which) {
+    const S = Q.S, law = INITIATIVE_BY_ID[id];
+    if (!billCardAvailable(Q, id)) return no(L('The card does not lie now.', 'Karty teraz nie ma.'));
+    const status = initiativeStatus(Q, id), mode = billMode(Q, id);
+    if (!status.available) return no(status.reason || '');
+    if (mode === 'club') return which === 'file' ? OK : no('');
+    const index = which === 'limited' ? 1 : 0;
+    if (index === 1 && (status.offer === 'full' || !law.variants[1])) return no('');
+    const refusing = billRefusals(Q, law, index);
+    if (refusing.length) {
+      return no(L('Our partners will not agree: ' + clubsText(refusing) + (refusing.length > 1 ? ' refuse.' : ' refuses.'),
+        'Partnerzy się nie zgodzą: ' + (refusing.length > 1 ? 'odmawiają ' : 'odmawia ') + clubsText(refusing) + '.'));
+    }
+    return OK;
+  }
+  function billForecast(Q, law, index, sponsor) {
+    const chance = initiativeChance(Q.S, initiativeCounts(Q, law, index, sponsor));
+    return L('Today it ', 'Dziś ') + chanceWords(chance) + '.';
+  }
+  // The card: two sentences on top, one line for each option.
+  function billCardView(Q, id) {
+    const S = Q.S, law = INITIATIVE_BY_ID[id], mode = billMode(Q, id), status = initiativeStatus(Q, id);
+    const what = status.offer === 'full' ? L(law.raise[0], law.raise[1]) : L(law.text[0], law.text[1]);
+    const filing = filingEffects(S, law).map(filingText);
+    const cost = L('Cost: ' + rules.units(INITIATIVE_COST) + '. ', 'Koszt: ' + rules.units(INITIATIVE_COST, 'resources', 'nom') + '. ');
+    const crisis = law.costs_budget && S.economy.budget < 0 && mode === 'club' ? L(' The budget is below zero, so the clubs outside the cabinet will vote against it.',
+      ' Budżet jest poniżej zera, więc kluby spoza rządu zagłosują przeciw.') : '';
+    const effects = filing.length ? L(' Taking it up: ', ' Samo wniesienie: ') + filing.join(', ') + '.' : '';
+    if (mode === 'partners') {
+      const ministry = law.portfolio && PORTFOLIO_WORDS[law.portfolio] ? L(PORTFOLIO_WORDS[law.portfolio][0], PORTFOLIO_WORDS[law.portfolio][1]) : '';
+      Q.pl_bill_intro = what + ' ' + (ministry ? L('PPS sits in the cabinet, but ' + ministry + ' is not ours: we propose the bill to our partners, and when all of them agree the cabinet files it and the clubs of the coalition vote for it.',
+        'PPS jest w rządzie, ale ' + ministry + ' nie jest nasz: proponujemy tę ustawę partnerom z rządu, a gdy wszyscy się zgodzą, wniesie ją rząd i kluby koalicji zagłosują za.') :
+        L('PPS sits in the cabinet: we propose the bill to our partners, and when all of them agree the cabinet files it and the clubs of the coalition vote for it.',
+          'PPS jest w rządzie: proponujemy tę ustawę partnerom z rządu, a gdy wszyscy się zgodzą, wniesie ją rząd i kluby koalicji zagłosują za.'));
+      const v = index => L(law.variants[index].name[0], law.variants[index].name[1]);
+      Q.pl_bill_file_title = L('We propose the bill to our partners', 'Proponujemy ustawę partnerom');
+      Q.pl_bill_file_line = cost + L('The full version: ', 'Pełna wersja: ') + v(0) + '. ' + billForecast(Q, law, 0, 'cabinet') + effects;
+      Q.pl_bill_limited_show = status.offer !== 'full' && law.variants[1] ? 1 : 0;
+      Q.pl_bill_limited_title = L('We propose its limited version', 'Proponujemy wersję okrojoną');
+      Q.pl_bill_limited_line = Q.pl_bill_limited_show ? cost + L('The limited version: ', 'Wersja okrojona: ') + v(1) + '. ' + billForecast(Q, law, 1, 'cabinet') + effects : '';
+    } else {
+      Q.pl_bill_intro = what + ' ' + L('The club of PPS files the bill, and the Sejm votes on it next month.', 'Klub PPS wnosi projekt, a Sejm zagłosuje nad nim w przyszłym miesiącu.');
+      Q.pl_bill_file_title = L('We file the bill', 'Wnosimy projekt');
+      Q.pl_bill_file_line = cost + forecastText(Q, law, status.offer) + crisis + effects;
+      Q.pl_bill_limited_show = 0;
+      Q.pl_bill_limited_title = '';
+      Q.pl_bill_limited_line = '';
+    }
+    Q.pl_bill_file_why = billFileStatus(Q, id, 'file').reason || '';
+    Q.pl_bill_limited_why = billFileStatus(Q, id, 'limited').reason || '';
+  }
+  // Taking the bill up: this month's action and 1 unit; the vote of the next month.
+  function billFile(Q, id, which) {
+    const S = Q.S, law = INITIATIVE_BY_ID[id], status = billFileStatus(Q, id, which);
+    if (!status.available) throw new Error('billFile: ' + id + ': ' + status.reason);
+    const mode = billMode(Q, id), offer = initiativeStatus(Q, id).offer;
+    rules.commitMainAction(Q, 'parliament.bill.' + id, {law: id, mode: mode});
+    S.party_orgs.cash = Math.max(0, S.party_orgs.cash - INITIATIVE_COST);
+    rules.seedProfile(Q, 'parliamentarism', 1, 'initiative:' + id);
+    if (id === 'autonomy') rules.seedProfile(Q, 'federalism', 2, 'initiative:autonomy');
+    const effects = filingEffects(S, law).map(filingText);
+    applyFiling(Q, law, Q.time);
+    const record = lawCardRecord(S, id);
+    record.filings += 1;
+    record.window_from = null;
+    record.window_until = null;
+    const partners = mode === 'partners';
+    const index = partners && which === 'limited' ? 1 : 0;
+    record.history.push({t: Q.time, kind: 'filed', offer: offer, mode: mode, index: index});
+    initiativeState(S).pending = {id: id, filed_at: Q.time, offer: partners ? (index === 1 ? 'limited' : 'full_only') : offer, sponsor: partners ? 'cabinet' : 'pps', index: index,
+      raise: offer === 'full' && index === 0};
+    return (partners ? L('Our partners agree, and the cabinet files the bill “' + lawName(law) + '”; the Sejm votes on it next month.',
+      'Partnerzy się zgadzają i rząd wnosi projekt ustawy „' + lawName(law) + '”; Sejm zagłosuje nad nim w przyszłym miesiącu.') :
+      L('PPS files its bill “' + lawName(law) + '”; the Sejm votes on it next month.', 'PPS wnosi projekt ustawy „' + lawName(law) + '”; Sejm zagłosuje nad nim w przyszłym miesiącu.')) +
+      (effects.length ? ' ' + L('At once: ', 'Od razu: ') + effects.join(', ') + '.' : '');
+  }
+  // After a vote: a law passed in full is done for the game, a limited one, a rejected or a withdrawn one for the chapter; with
+  // parliamentarism and reformism a rejected or withdrawn bill may come back once, three months later.
+  function billAfterVote(Q, record, passed) {
+    if (passed || record.returned || !rules.pairActive(Q.S, 'parliamentarism', 'reformism')) {
+      return L('This bill does not come back in this chapter.', 'W tym rozdziale ta ustawa już nie wróci.');
+    }
+    record.return_at = Q.time + PAIR_RETURN_MONTHS;
+    return L('Thanks to parliamentarism and reformism its card comes back once, in three months.', 'Dzięki parlamentaryzmowi i reformizmowi jej karta wróci raz, za trzy miesiące.');
   }
 
   // ---- Government cards (17.11; catalogue 8.1–8.11, 8.13, 8.16) -------------------------------------
@@ -5479,6 +5678,7 @@
   // Z — 1.11 (decision 1A): the plan of a PPS Treasury while the budget is below zero, an urgent card of the Government deck.
   // Z — 1.23: the urgent card of the budget law of PPS is no longer registered (budgetPlanAvailable).
   rules.registerUrgentCard('polish_gov_customs_war', {active: Q => !!(Q.S && Q.S.economy && Q.S.chapter) && cardAvailable(Q, 'customs_war'), deck: () => 'main.govt'});
+  for (const id of Object.keys(BILL_CARDS)) rules.registerCardDeadline(BILL_CARDS[id], Q => billDeadline(Q, id));
   rules.registerCardDeadline('polish_budget_package', Q => Q.S && Q.S.economy && Q.S.economy.pending_package ? Q.S.economy.pending_package.vote_at : null);
   rules.registerUrgentCard('polish_constitution_vote', {deck: () => 'main.parliament', active: constitutionVoteActive});
 
@@ -5497,7 +5697,18 @@
     INITIATIVE_IDS: Object.freeze(INITIATIVES.map(law => law.id)),
     INITIATIVE_CARDS: INITIATIVE_CARDS,
     initiativeGroup: groupOf,
-    initiativeCardOf: id => INITIATIVE_CARDS[groupOf(id)],
+    initiativeCardOf: id => BILL_CARDS[id],
+    BILL_CARDS: BILL_CARDS,
+    BILL_WINDOW: BILL_WINDOW,
+    lawCardRecord: lawCardRecord,
+    billMode: billMode,
+    billWindows: billWindows,
+    billCardAvailable: billCardAvailable,
+    billDeadline: billDeadline,
+    billRefusals: (Q, law, index) => billRefusals(Q, typeof law === 'string' ? INITIATIVE_BY_ID[law] : law, index),
+    billFileStatus: billFileStatus,
+    billCardView: billCardView,
+    billFile: billFile,
     INITIATIVE_CARD: INITIATIVE_CARDS.economy,
     initiativeState: initiativeState,
     initiativeStatus: initiativeStatus,
@@ -5510,7 +5721,7 @@
     initiativeVoteActive: initiativeVoteActive,
     initiativeVoteView: initiativeVoteView,
     initiativeResolve: initiativeResolve,
-    initiativeCounts: (Q, id, index) => initiativeCounts(Q, INITIATIVE_BY_ID[id], index),
+    initiativeCounts: (Q, id, index, sponsor) => initiativeCounts(Q, INITIATIVE_BY_ID[id], index, sponsor),
     programmeFilter: programmeFilter,
     programmeServes: programmeServes,
     programmeMeasureName: programmeMeasureName,

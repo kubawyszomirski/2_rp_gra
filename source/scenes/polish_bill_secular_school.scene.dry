@@ -1,0 +1,51 @@
+title: Secular School
+subtitle: A bill for the Sejm.
+new-page: true
+is-card: true
+tags: parliament_affairs
+view-if: {! return !!Q.S && PolishProjects.billCardAvailable(Q, 'secular_school') !}
+on-arrival: {!
+// Card parliament.bill.secular_school (Z — 1.45, decision U1A of 28 XI 2026 and U2A, U4 of the sketch): the bill comes at its moment and lies
+// three months, once a chapter. Outside the cabinet PPS files it as a bill of its club; in a cabinet without the ministry it concerns
+// PPS proposes it to its partners (U4). Filing costs 1 resource and this month's action; the Sejm votes the next month on the urgent
+// card polish_initiative_vote (technical reference 7.2).
+PolishProjects.billCardView(Q, 'secular_school');
+!}
+
+= Secular School
+
+[+ pl_bill_intro +]
+
+- @file
+- @limited
+- @easy_discard
+
+@file
+title: [+ pl_bill_file_title +]
+subtitle: [+ pl_bill_file_line +]
+choose-if: {! return PolishProjects.billFileStatus(Q, 'secular_school', 'file').available !}
+unavailable-subtitle: [+ pl_bill_file_why +]
+on-arrival: {!
+Q.pl_ini_result = PolishProjects.billFile(Q, 'secular_school', 'file');
+!}
+go-to: result
+
+@limited
+title: [+ pl_bill_limited_title +]
+subtitle: [+ pl_bill_limited_line +]
+view-if: pl_bill_limited_show = 1
+choose-if: {! return PolishProjects.billFileStatus(Q, 'secular_school', 'limited').available !}
+unavailable-subtitle: [+ pl_bill_limited_why +]
+on-arrival: {!
+Q.pl_ini_result = PolishProjects.billFile(Q, 'secular_school', 'limited');
+!}
+go-to: result
+
+@result
+new-page: true
+
+= Secular School
+
+[+ pl_ini_result +]
+
+- @root: Continue.

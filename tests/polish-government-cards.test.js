@@ -129,7 +129,7 @@ test('Jedno przekierowanie (Z — 1.42): no member of the Committee opens a mini
 
 
 // Z — 0.81 (decisions of 20 X 2026): the card Legislative Initiative and the urgent card of its vote in the game, in Polish.
-test('Inicjatywa w grze 0.81/1.09: two cards of the Parliament deck, the laws in plain Polish with the cost first, the urgent vote card next month without a month', () => {
+test('Inicjatywa w grze 0.81/1.09 (Z — 1.45): the card of a bill in the Parliament deck at its moment, in plain Polish with the cost first, the urgent vote card next month without a month', () => {
   const engine = dendry.startGame(1922, 'pl');
   const Q = engine.state.qualities;
   const plain = x => (x == null ? '' : typeof x === 'string' ? x : Array.isArray(x) ? x.map(plain).join('') : plain(x.content));
@@ -144,35 +144,28 @@ test('Inicjatywa w grze 0.81/1.09: two cards of the Parliament deck, the laws in
       }
     };
     settle();
+    Q.S.economy.unemployment = 6;
+    PolishProjects.billWindows(Q, Q.time - 1);
     engine.goToScene('main');
     const parliament = () => (engine._compileChoices(engine.game.scenes['main.parliament']) || []).filter(c => c.canChoose !== false).map(c => c.id);
-    assert.ok(parliament().includes('polish_legislative_initiative'));
-    assert.ok(parliament().includes('polish_legislative_initiative_state'), 'the laws of the state and society on their own card (1.09)');
-    assert.ok(!parliament().includes('polish_unemployment_bill') && !parliament().includes('polish_parliament_army_oversight'), 'the old cards left the deck');
+    assert.ok(parliament().includes('polish_bill_unemployment'), 'the bill comes when unemployment passes 5%');
+    assert.ok(!parliament().includes('polish_legislative_initiative') && !parliament().includes('polish_legislative_initiative_state'), 'the two old cards left the deck');
+    assert.equal(PolishRules.cardDeadline(Q, 'polish_bill_unemployment'), Q.time + 2, 'the badge of the hand: three months');
     const t = Q.time;
-    dendry.playCard(engine, 'polish_legislative_initiative');
-    const shown = PolishProjects.initiativeShown(Q, 'economy');
-    assert.ok(shown.length > 0 && shown.length <= 4);
-    assert.deepEqual(ids(engine).filter(id => id.startsWith('polish_legislative_initiative.')).map(id => id.split('.')[1]).filter(id => !['skip', 'easy_discard'].includes(id)),
-      shown, 'only the laws of labour and the economy');
-    assert.ok(ids(engine).includes('polish_legislative_initiative.skip'));
-    assert.match(plain(choice(engine, 'polish_legislative_initiative.unemployment').subtitle),
-      /^Koszt: 1 jednostka środków\. Zasiłek dla bezrobotnych z budżetu państwa: pełny kosztuje 3 jednostki budżetu, ograniczony 1\..* Samo wniesienie: sprzeciw Lewicy PPS spada \(−2\)\.$/);
-    assert.equal(plain(choice(engine, 'polish_legislative_initiative.unemployment').title), 'Ochrona bezrobotnych');
-    // Z — 1.06 (the user's request of 7 XI 2026): the forecast of each law in words only, without a chance in per cent.
-    for (const id of shown) {
-      const line = plain(choice(engine, 'polish_legislative_initiative.' + id).subtitle);
-      assert.doesNotMatch(line, /%/, id);
-      assert.match(line, /Dziś (pełna wersja )?(niemal na pewno|raczej|miałaby|prawie na pewno)/, id);
-    }
+    dendry.playCard(engine, 'polish_bill_unemployment');
+    assert.match(content(engine), /Ochrona bezrobotnych.*Zasiłek dla bezrobotnych z budżetu państwa.*Klub PPS wnosi projekt, a Sejm zagłosuje nad nim w przyszłym miesiącu\./);
+    assert.deepEqual(ids(engine), ['polish_bill_unemployment.file', 'easy_discard'], 'outside the cabinet one bill of our club');
+    assert.equal(plain(choice(engine, 'polish_bill_unemployment.file').title), 'Wnosimy projekt');
+    const line = plain(choice(engine, 'polish_bill_unemployment.file').subtitle);
+    assert.match(line, /^Koszt: 1 jednostka środków\. Dziś (pełna wersja )?(niemal na pewno|raczej|miałaby|prawie na pewno).* Samo wniesienie: sprzeciw Lewicy PPS spada \(−2\)\.$/);
+    assert.doesNotMatch(line, /%/, 'the forecast in words only (1.06)');
     const cash = Q.S.party_orgs.cash;
-    choose(engine, 'polish_legislative_initiative.unemployment');
+    choose(engine, 'polish_bill_unemployment.file');
     assert.ok(Math.abs(Q.S.party_orgs.cash - (cash - 1)) < 1e-9, 'filing costs 1 unit of resources');
     assert.match(content(engine), /PPS wnosi projekt ustawy „Ochrona bezrobotnych”; Sejm zagłosuje nad nim w przyszłym miesiącu/);
     choose(engine, 'root');
     assert.equal(Q.time, t + 1, 'taking a law up costs one month');
     settle();
-    assert.ok(!parliament().includes('polish_legislative_initiative') && !parliament().includes('polish_legislative_initiative_state'), 'one initiative at a time');
     dendry.playCard(engine, 'polish_initiative_vote');
     const outcome = Q.pl_iv_outcome;
     assert.ok(['full', 'choice', 'rejected'].includes(outcome));
@@ -182,7 +175,7 @@ test('Inicjatywa w grze 0.81/1.09: two cards of the Parliament deck, the laws in
     assert.equal(Q.time, t + 1, 'the vote costs no month');
     if (outcome !== 'rejected') assert.ok(PolishProjects.operatingProtection(Q.S), 'the protection works');
     assert.ok(!Q.S.parliament.laws.some(l => l.status === 'in_procedure'), 'no Senate stage');
-    assert.ok(parliament().includes('polish_legislative_initiative'), 'the card comes back at once');
+    assert.ok(!parliament().includes('polish_bill_unemployment'), 'once a chapter');
   } finally {
     PolishRules.setLanguage('en');
   }

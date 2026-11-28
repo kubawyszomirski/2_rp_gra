@@ -1,0 +1,18 @@
+{
+ "source": "scenes/polish_bill_public_works.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: Public Works for the Unemployed": "title: Roboty publiczne dla bezrobotnych",
+  "subtitle: A bill for the Sejm.": "subtitle: Projekt ustawy dla Sejmu.",
+  "= Public Works for the Unemployed": "= Roboty publiczne dla bezrobotnych",
+  "[+ pl_bill_intro +]": "[+ pl_bill_intro +]",
+  "title: [+ pl_bill_file_title +]": "title: [+ pl_bill_file_title +]",
+  "subtitle: [+ pl_bill_file_line +]": "subtitle: [+ pl_bill_file_line +]",
+  "unavailable-subtitle: [+ pl_bill_file_why +]": "unavailable-subtitle: [+ pl_bill_file_why +]",
+  "title: [+ pl_bill_limited_title +]": "title: [+ pl_bill_limited_title +]",
+  "subtitle: [+ pl_bill_limited_line +]": "subtitle: [+ pl_bill_limited_line +]",
+  "unavailable-subtitle: [+ pl_bill_limited_why +]": "unavailable-subtitle: [+ pl_bill_limited_why +]",
+  "[+ pl_ini_result +]": "[+ pl_ini_result +]",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}
