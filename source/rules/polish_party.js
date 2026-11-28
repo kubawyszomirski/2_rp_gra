@@ -1808,11 +1808,9 @@
     d < 1.5 ? ['grows', 'rośnie'] : ['grows clearly', 'wyraźnie rośnie']);
 
   // ---- The voters and the government (Z — 1.32, decisions D1–D6 of 24 XI 2026) ----------------------------------------------
-  // At each settlement: a third of the pending gains of the reforms of PPS; the wear of governing in bad times (a currency or
-  // credit crisis or a decline of output): the workers and the unemployed turn from a PPS that sits in the cabinet (0.02 points a
-  // month) or supports it (half). Bad months are frequent — about 50 in a chapter of governing — so the whole chapter costs about
-  // one point (decision D3A: −1 to −1.3). Once for each halt of the programmes by a budget deep below zero, their voters turn away.
-  const WEAR = Object.freeze({member: 0.02, supporter: 0.01, labels: ['workers', 'unemployed']});
+  // At each settlement: a third of the pending gains of the reforms of PPS. Once for each halt of the programmes by a budget deep below
+  // zero, their voters turn away. Z — 1.43 (G1A): the wear of governing of 1.32 became a part of the rule for all the parties of the
+  // cabinet (PolishEconomy.settleGovernmentClimate); the month page still says it every month when it touches PPS.
   const UNION_LISTS = 0.15;
   function settleSupport(Q, t) {
     const S = Q.S;
@@ -1824,11 +1822,6 @@
       notes.push({kind: 'gain', labels: p.labels, name: p.name});
     }
     sup.pending = sup.pending.filter(p => p.left > 0);
-    const stance = government.ppsStance(S);
-    if ((stance === 'member' || stance === 'supporter') && economy.badEconomy && economy.badEconomy(S.economy, t)) {
-      electorate.shiftPps(S, electorate.filterOfList(WEAR.labels), -(stance === 'member' ? WEAR.member : WEAR.supporter));
-      notes.push({kind: 'wear', stance: stance});
-    }
     // Z — 1.34 (the pair of unionism and parliamentarism): in the three months before a Sejm election the union men on our lists bring
     // the workers to PPS — up to 0.15 points of the whole electorate a month, by the reach of the unions.
     if (rules.pairActive(S, 'unionism', 'parliamentarism') && rallyWindow(Q)) {
@@ -1845,20 +1838,58 @@
     if (notes.length) electorate.writeClassMirrors(Q);
   }
 
+  // Z — 1.43 (G4A of 28 XI 2026): the times and the government on the month page. Of the other parties of the cabinet one sentence
+  // when the times begin to weigh on them or to help them, or when the cabinet changes; of PPS one sentence every month it is touched.
+  const CLIMATE_PARTY = Object.freeze({pps: ['PPS', 'PPS'], psl_wyzwolenie: ['PSL Wyzwolenie', 'PSL „Wyzwolenie”'], psl_piast: ['PSL Piast', 'PSL „Piast”'],
+    npr: ['the National Workers’ Party', 'Narodowa Partia Robotnicza'], pschd: ['the Christian Democrats', 'chadecja'], zln: ['the National Democrats', 'endecja'],
+    kpp: ['the communists', 'komuniści'], minorities_bloc: ['the Bloc of National Minorities', 'Blok Mniejszości Narodowych']});
+  const climateParties = ids => {
+    const names = ids.map(id => (CLIMATE_PARTY[id] ? L(CLIMATE_PARTY[id][0], CLIMATE_PARTY[id][1]) : id));
+    return names.length > 1 ? names.slice(0, -1).join(', ') + L(' and ', ' i ') + names[names.length - 1] : names.join('');
+  };
+  function climateNotices(Q) {
+    const S = Q.S, c = S.economy && S.economy.climate;
+    if (!c || c.t !== Q.time - 1 || !c.sign) return [];
+    const lines = [], loss = c.sign < 0, cab = S.cabinet;
+    // The premier's party first, then the partners and the supporters in the order of the cabinet.
+    const order = cab ? [cab.party].concat(cab.partner_ids || [], cab.supporter_ids || []) : [];
+    const rank = p => (order.indexOf(p) < 0 ? order.length : order.indexOf(p));
+    const listed = Object.keys(c.weights).filter(p => p !== 'pps').sort((a, b) => rank(a) - rank(b));
+    const members = listed.filter(p => c.weights[p] === 1), supporters = listed.filter(p => c.weights[p] < 1);
+    if (c.began && (members.length || supporters.length)) {
+      const gen = cab ? (government.NAME_GEN_PL && government.NAME_GEN_PL[cab.pm]) || cab.pm_name : '';
+      const en = cab ? 'the cabinet of ' + cab.pm_name : 'the cabinet';
+      const head = loss ? (c.kind === 'crisis' ? L('The crisis weighs on ' + en, 'Kryzys obciąża ' + (cab ? 'rząd ' + gen : 'rząd')) :
+        L('The decline of output weighs on ' + en, 'Spadek produkcji obciąża ' + (cab ? 'rząd ' + gen : 'rząd'))) :
+        L('Good times help ' + en, 'Dobra koniunktura pomaga ' + (cab ? 'rządowi ' + gen : 'rządowi'));
+      const enVerb = loss ? 'voters turn away from ' : 'voters come to ', plVerb = loss ? 'wyborców tracą ' : 'wyborców zyskują ';
+      const text = members.length ?
+        L(enVerb + climateParties(members) + (supporters.length ? ', and by half to ' + climateParties(supporters) + ', which support it from outside' : ''),
+          plVerb + climateParties(members) + (supporters.length ? ', a w połowie także popierające go z zewnątrz ' + climateParties(supporters) : '')) :
+        L('by half, ' + enVerb + climateParties(supporters) + ', which support it from outside', plVerb + 'w połowie popierające go z zewnątrz ' + climateParties(supporters));
+      lines.push(head + ': ' + text.replace(', and by half to ', loss ? ', and by half from ' : ', and by half to ') + '.');
+    }
+    const pps = c.weights.pps;
+    if (pps > 0) {
+      lines.push(loss ? (pps === 1 ? L('Hard times weigh on a cabinet with PPS in it: some of our voters turn away from us.', 'Ciężkie czasy obciążają rząd z udziałem PPS: część naszych wyborców odwraca się od nas.') :
+        L('Hard times weigh on PPS too, as it supports the cabinet: a few of our voters turn away from us.', 'Ciężkie czasy obciążają też PPS, która popiera rząd: niektórzy nasi wyborcy odwracają się od nas.')) :
+        (pps === 1 ? L('Good times help a cabinet with PPS in it: we gain voters.', 'Dobre czasy pomagają rządowi z udziałem PPS: przybywa nam wyborców.') :
+          L('Good times help PPS too, as it supports the cabinet: we gain a few voters.', 'Dobre czasy pomagają też PPS, która popiera rząd: trochę przybywa nam wyborców.')));
+    }
+    return lines;
+  }
+
   // The line of the month page: what moved the voters at the last settlement.
   function supportNotices(Q) {
     const S = Q && Q.S;
-    if (!S || !S.actors || !S.actors.pps || !S.actors.pps.support) return '';
-    const sup = S.actors.pps.support;
-    if (sup.notes_t !== Q.time - 1 || !sup.notes || !sup.notes.length) return '';
-    return sup.notes.map(n => {
+    if (!S || !S.actors || !S.actors.pps) return '';
+    const sup = S.actors.pps.support, climate = climateNotices(Q);
+    if (!sup || sup.notes_t !== Q.time - 1 || !sup.notes || !sup.notes.length) return climate.join(' ');
+    return climate.concat(sup.notes.map(n => {
       if (n.kind === 'gain') return projects.groupSentence(n.labels, ' appreciate the reform „' + n.name[0] + '”.', ' doceniają reformę „' + n.name[1] + '”.', ' docenia reformę „' + n.name[1] + '”.');
       if (n.kind === 'union_lists') return L('The union men on our lists bring the workers to PPS before the election.', 'Związkowcy na naszych listach przyciągają robotników do PPS przed wyborami.');
-      if (n.kind === 'wear') return n.stance === 'member' ?
-        L('Hard times weigh on a cabinet with PPS in it: the workers and the unemployed turn away from us.', 'Ciężkie czasy obciążają rząd z udziałem PPS: robotnicy i bezrobotni odwracają się od nas.') :
-        L('Hard times weigh on PPS too, as it supports the cabinet: the workers and the unemployed turn from us a little.', 'Ciężkie czasy obciążają też PPS, która popiera rząd: robotnicy i bezrobotni trochę się od nas odwracają.');
       return L('The budget is deep below zero and our programmes have stopped: their voters turn away from PPS.', 'Budżet jest głęboko pod kreską i nasze programy stanęły: ich wyborcy odwracają się od PPS.');
-    }).join(' ');
+    })).join(' ');
   }
 
   // Z — 1.32 (decision D6A): a campaign on a matter where a reform of PPS is in force reaches the voters more strongly.
@@ -3775,15 +3806,17 @@
     writeMirrors(Q);
     return result(Q, text);
   }
-  // The caption over the portraits: „Centralny Komitet Wykonawczy: dwa miejsca Centrum PPS, jedno miejsce Lewicy PPS.”
-  function ckwCaption(Q) {
-    const seats = Q.S && Q.S.actors && Q.S.actors.pps ? ckwState(Q).seats : ['centrum', 'centrum', 'centrum'], count = ckwCount(seats), en = [], pl = [];
-    for (const f of CKW_FACTIONS) {
-      if (!count[f]) continue;
-      en.push(SEAT_WORDS[count[f]][0] + ' of ' + FACTION_NAMES_EN[f]);
-      pl.push(SEAT_WORDS[count[f]][1] + ' ' + FACTION_GEN_PL[f]);
-    }
-    return L('The Central Executive Committee: ' + en.join(', ') + '.', 'Centralny Komitet Wykonawczy: ' + pl.join(', ') + '.');
+  // Z — 1.43 (the user's note of 28 XI 2026): the members of the Committee in the Party tab of the top bar, each with the current and
+  // one sentence of biography; the month page has no column of portraits any more.
+  function ckwTabView(Q) {
+    Q.pl_ckw_tab_html = '';
+    if (!Q.S || !Q.S.actors || !Q.S.actors.pps) return '';
+    const cap = text => text.charAt(0).toUpperCase() + text.slice(1);
+    Q.pl_ckw_tab_html = ckwMembers(Q, ckwState(Q).seats).map(id => {
+      const f = ADVISERS[id].faction, bio = SHORT_BIOS[id] ? ' ' + L(SHORT_BIOS[id][0], SHORT_BIOS[id][1]) : '';
+      return '<span class="pl-ckw-member"><strong>' + ADVISERS[id].name + '</strong> — ' + L(cap(FACTION_NAMES_EN[f]), FACTION_NAMES_PL[f]) + '.' + bio + '</span>';
+    }).join('');
+    return Q.pl_ckw_tab_html;
   }
   function shortBio(Q, id) {
     Q.pl_adv_bio = SHORT_BIOS[id] ? L(SHORT_BIOS[id][0], SHORT_BIOS[id][1]) : '';
@@ -4190,7 +4223,7 @@
     ckwReset: ckwReset,
     ckwConfirm: ckwConfirm,
     ckwPortraits: ckwPortraits,
-    ckwCaption: ckwCaption,
+    ckwTabView: ckwTabView,
     shortBio: shortBio,
     defenceAvailable: defenceAvailable,
     defenceStatus: defenceStatus,

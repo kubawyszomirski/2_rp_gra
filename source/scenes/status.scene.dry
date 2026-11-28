@@ -18,6 +18,8 @@ if (Q.polish_party_rules && typeof PolishParty !== 'undefined') {
     PolishParty.sidebarDisplay(Q);
     // Z — 1.07: the characteristics of the party (the section of the Party tab and the line of the Overview).
     PolishParty.profileView(Q);
+    // Z — 1.43: the members of the Central Executive Committee with their currents, under the factions.
+    PolishParty.ckwTabView(Q);
 }
 // The Party tab of the top bar also shows the Milicja PPS and the nine positions of the party line.
 if (Q.polish_security_rules && Q.S && typeof PolishSecurity !== 'undefined' && PolishSecurity.ready(Q)) {
@@ -141,6 +143,9 @@ if (Q.S && typeof PolishTopbar !== 'undefined') {
 
 [? if not polish_party_rules : Affiliated trade unions — labor strength: [+ labor_strength : strength +], dissent: [+ labor_dissent : dissent +]. Labor remains a temporary inherited measure for the affiliated trade-union power centre. It is not normalized as a PPS faction and does not directly enter overall party dissent. ?]
 
+= [? if polish_party_rules : Central Executive Committee ?]
+
+[? if polish_party_rules : [+ pl_ckw_tab_html +] ?]
 
 = Party line
 

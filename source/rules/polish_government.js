@@ -5016,6 +5016,7 @@
     describeAnswers: describeAnswers,
     recordSpeakerOutcome: recordSpeakerOutcome,
     describeParty: describeParty,
+    NAME_GEN_PL: NAME_GEN_PL,
     reasonText: reasonText,
     PORTFOLIOS: PORTFOLIOS,
     PORTFOLIO_NAMES: PORTFOLIO_NAMES,

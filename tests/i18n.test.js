@@ -191,14 +191,19 @@ test('Pilotaż: ekran tytułowy, strona miesiąca i pasek boczny po polsku', () 
   assert.deepEqual(errors, []);
 });
 
-// Z — 0.52: the advisers are shown as the Central Executive Committee (CKW). The wait before its next action is
-// written in full in both languages, from the scenes and from the rules alike (Daszyński has one option of each).
-test('Centralny Komitet Wykonawczy: nagłówek (Z — 1.42) names the currents of the three seats, in both languages', () => {
-  for (const [lang, text] of [['en', 'The Central Executive Committee: three seats of the Centre of PPS.'], ['pl', 'Centralny Komitet Wykonawczy: trzy miejsca Centrum PPS.']]) {
+// Z — 0.52: the advisers are shown as the Central Executive Committee (CKW). Z — 1.43 (the user's note of 28 XI 2026): the month
+// page has no column of the Committee; the Party tab lists its members with their currents, in both languages.
+test('Centralny Komitet Wykonawczy: zakładka Partia (Z — 1.43) lists the members with their currents and a short biography, in both languages', () => {
+  for (const [lang, head, line] of [['en', 'Central Executive Committee', 'Ignacy Daszyński — The Centre of PPS. In November 1918 he headed the Provisional People’s Government in Lublin.'],
+    ['pl', 'Centralny Komitet Wykonawczy', 'Ignacy Daszyński — Centrum PPS. W listopadzie 1918 stanął na czele Tymczasowego Rządu Ludowego w Lublinie.']]) {
     const engine = dendry.startGame(1922, lang);
     try {
-      engine.goToScene('main');
-      assert.equal(engine.state.qualities.pinnedCardsDescription, text);
+      const scene = engine.game.scenes.status;
+      engine._runActions(scene.onArrival);
+      const text = flat(engine._makeDisplayContent(scene.content, true)).replace(/<[^>]*>/g, '');
+      assert.ok(text.includes(head), head);
+      assert.ok(text.includes(line), line);
+      assert.ok(text.indexOf(head) > text.indexOf('Piłsudczycy'), 'under the factions');
     } finally {
       globalThis.PolishRules.setLanguage('en');
     }

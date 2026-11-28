@@ -1,7 +1,7 @@
 {
   "hashes": {
-    "docs/POLISH_TECHNICAL_REFERENCE.md": "3851780b134802ca586594fb5227abedb116f2a80e853695efa350bc7c72c3f7",
-    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "885547405b9931be0afb407229b916856718d4e1a79fb960595a5a383bd1ea84"
+    "docs/POLISH_TECHNICAL_REFERENCE.md": "f2816ace65d86f1fb2ecdadd1edaf123954d96501542b4fe03cac3ad7c71e49c",
+    "docs/POLISH_DESCRIPTIVE_GUIDE.md": "9ef98935fe9900f282de7512bec0de9469f72a017f67f1f1583990a02a7ba98e"
   },
   "assumptions": [
     "Same controlled mandates, consent fixtures, cohort mixing and random seed as the earlier four-run report.",

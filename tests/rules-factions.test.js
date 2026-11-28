@@ -124,7 +124,7 @@ test('Brak resortu (Z — 1.42): no member of the Committee runs a ministry prog
 
 // Z — 1.42 (decisions K1A, K2A of 28 XI 2026): the card that fills three seats by currents replaced the composition card and the actions;
 // the name of this test of 21.1 stays, its body checks the new rule.
-test('Piłsudczycy (Z — 1.42): with three seats their members are on the main page — Jaworowski, Moraczewski and Ziemięcki', () => {
+test('Piłsudczycy (Z — 1.42): with three seats their members — Jaworowski, Moraczewski and Ziemięcki — are in the Party tab', () => {
   const Q = game();
   const ckw = (Q, seats) => {
     if (Q.time < PolishRules.timeOf(1923, 1)) { Q.time = PolishRules.timeOf(1923, 1); Q.year = 1923; Q.month = 1; }
@@ -137,9 +137,10 @@ test('Piłsudczycy (Z — 1.42): with three seats their members are on the main 
   };
   ckw(Q, ['pilsudczycy', 'pilsudczycy', 'pilsudczycy']);
   assert.deepEqual(['daszynski', 'puzak', 'perl', 'jaworowski', 'moraczewski', 'ziemiecki', 'malinowski'].map(id => Q[id + '_advisor']), [0, 0, 0, 1, 1, 1, 0]);
-  assert.equal(PolishParty.ckwCaption(Q), 'The Central Executive Committee: three seats of the Piłsudczycy.');
+  assert.match(PolishParty.ckwTabView(Q), /^<span class="pl-ckw-member"><strong>Rajmund Jaworowski<\/strong> — The Piłsudczycy\./);
   ckw(Q, ['lewica', 'centrum', 'centrum']);
-  assert.equal(PolishParty.ckwCaption(Q), 'The Central Executive Committee: two seats of the Centre of PPS, one seat of the Left of PPS.');
+  assert.deepEqual([...PolishParty.ckwTabView(Q).matchAll(/<strong>([^<]+)<\/strong> — ([^.]+)\./g)].map(m => m[1] + ': ' + m[2]),
+    ['Ignacy Daszyński: The Centre of PPS', 'Kazimierz Pużak: The Centre of PPS', 'Zygmunt Zaremba: The Left of PPS'], 'the Party tab, in the order of the currents');
 });
 
 // Z — 1.42 (decisions K1A, K2A of 28 XI 2026): the card that fills three seats by currents replaced the composition card and the actions;

@@ -156,6 +156,8 @@
     "[? if pl_goal_power : **Reforms:** [+ pl_goal_reforms +] ?]": "[? if pl_goal_power : **Reformy:** [+ pl_goal_reforms +] ?]",
     "[? if pl_goal_power : **Republic:** [+ pl_goal_republic +] ?]": "[? if pl_goal_power : **Republika:** [+ pl_goal_republic +] ?]",
     "[? if pl_goal_power : **Character of the party:** [+ pl_goal_character +] ?]": "[? if pl_goal_power : **Charakter partii:** [+ pl_goal_character +] ?]",
-    "[? if pl_goal_credibility : **Credibility:** [+ pl_goal_credibility +] ?]": "[? if pl_goal_credibility : **Wiarygodność:** [+ pl_goal_credibility +] ?]"
+    "[? if pl_goal_credibility : **Credibility:** [+ pl_goal_credibility +] ?]": "[? if pl_goal_credibility : **Wiarygodność:** [+ pl_goal_credibility +] ?]",
+    "= [? if polish_party_rules : Central Executive Committee ?]": "= [? if polish_party_rules : Centralny Komitet Wykonawczy ?]",
+    "[? if polish_party_rules : [+ pl_ckw_tab_html +] ?]": "[? if polish_party_rules : [+ pl_ckw_tab_html +] ?]"
   }
 }

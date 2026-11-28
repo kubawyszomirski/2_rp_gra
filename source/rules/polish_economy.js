@@ -359,6 +359,20 @@
   // mostly from the government's own spending, which already pays for it with inflation and halted programmes.
   const badEconomy = (E, t) => currencyCrisis(E) || creditCrisis(E, t) || (E.last_growth || 0) < -0.2;
 
+  // Z — 1.43 (decisions G1A, G2A of 28 XI 2026, the rate of 4% approved the same day): the times weigh on the government. In a month
+  // of crisis (the word of the Overview: the currency, the budget or credit in crisis, or output falling by a percent or more) each
+  // party responsible for the cabinet loses a twelfth of 4% of its voters (supporters from outside half of that); in a decline half of
+  // that, in full at an unemployment of 8% or more; in growth it gains half of the rate (2% a year); stagnation changes nothing. With
+  // the flow of the living conditions (5.6), a year of hyperinflation costs the parties of the cabinet together about 2–3 points.
+  const GOVERNMENT_CLIMATE = Object.freeze({rate: 0.04, decline: 0.5, decline_unemployment: 8, growth: -0.5});
+  function governmentClimate(E, t) {
+    const g = E.last_growth || 0;
+    if (currencyCrisis(E) || fiscalCrisis(E) || creditCrisis(E, t) || g <= -1) return {kind: 'crisis', factor: 1};
+    if (g < -0.2) return {kind: 'decline', factor: (E.unemployment || 0) >= GOVERNMENT_CLIMATE.decline_unemployment ? 1 : GOVERNMENT_CLIMATE.decline};
+    if (g > 0.2) return {kind: 'growth', factor: GOVERNMENT_CLIMATE.growth};
+    return {kind: 'stagnation', factor: 0};
+  }
+
   function currencyCrisis(E) {
     const r = lastReadings(E, 2);
     return r.length === 2 && r.every(x => x.inflation_m >= 20);
@@ -505,6 +519,25 @@
     return {conditions: conditions, flows: flows, weights: weights};
   }
 
+  // Z — 1.43: once per settled month, after the flow of 5.6. The record says which parties the times weighed on and whether that began
+  // this month (a new direction or a new cabinet), for the line of the month page.
+  function settleGovernmentClimate(Q, t) {
+    const S = Q.S, E = S.economy, prev = E.climate || null;
+    const climate = governmentClimate(E, t), weights = responsibilityWeights(S, Q.parties);
+    const fraction = GOVERNMENT_CLIMATE.rate / 12 * climate.factor;
+    const moved = electorate.hasCells(S) && fraction ? electorate.shiftResponsible(S, weights, fraction) : {};
+    if (Object.keys(moved).length) electorate.writeClassMirrors(Q);
+    const responsible = {};
+    for (const p of Object.keys(weights).sort()) if (weights[p] > 0) responsible[p] = weights[p];
+    const sign = Object.keys(moved).length ? (climate.factor > 0 ? -1 : 1) : 0;
+    const key = Object.keys(responsible).map(p => p + ':' + responsible[p]).join(',') + '|' + (S.cabinet ? S.cabinet.id : '');
+    const began = sign !== 0 && (!prev || prev.sign !== sign || prev.key !== key);
+    E.climate = {t: t, kind: climate.kind, factor: climate.factor, sign: sign, key: key, began: began, weights: responsible, moved: moved};
+    const reading = E.history.filter(r => r.t === t).slice(-1)[0];
+    if (reading) reading.climate = copy(E.climate);
+    return E.climate;
+  }
+
   // 4.2 step 6, second part (17.4): the ongoing outflow of disappointed voters from PPS for its own
   // overdue obligations, min(PPS share, 0.5 × responsibility × min(1, weight/2)) pp a month, after 5.6.
   // Until the cell profiles of stage 5 every other party with a share in the row counts as an
@@ -632,6 +665,9 @@
     currencyCrisis: currencyCrisis,
     economyWord: economyWord,
     badEconomy: badEconomy,
+    GOVERNMENT_CLIMATE: GOVERNMENT_CLIMATE,
+    governmentClimate: governmentClimate,
+    settleGovernmentClimate: settleGovernmentClimate,
     fiscalCrisis: fiscalCrisis,
     creditCrisis: creditCrisis,
     classConditions: classConditions,

@@ -31,8 +31,6 @@ Q.polish_parliament_actions_available = this._compileChoices(this.game.scenes['m
     .some(function(choice) { return choice.canChoose && this.game.scenes[choice.id].isCard; }, this);
 // Z — 0.60 (the user's notes of 7 X 2026): the three decks are always shown; a closed deck says why.
 PolishGovernment.deckReasons(Q);
-// Z — 1.42 (decision K1A): the portraits are the three members of the Committee, chosen by currents; the Committee has no actions.
-Q.pinnedCardsDescription = PolishParty.ckwCaption(Q);
 !}
 max-cards: 6
 

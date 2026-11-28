@@ -2589,6 +2589,8 @@
       // Stage 5: a change of unemployment moves mass between employed and unemployed cells (5.1).
       electorate.applyEmployment(S, S.economy.unemployment);
       economy.settleLivingConditions(Q, t);
+      // Z — 1.43 (G1A): the times weigh on the parties of the cabinet, or help them.
+      economy.settleGovernmentClimate(Q, t);
       economy.settleDisappointment(Q, t, ppsOverdueWeight(Q, t + 1), ppsResponsibility(S));
       updateObligations(Q, t);
       return reading;
@@ -4354,7 +4356,7 @@
   // A reform of PPS that comes into force wins its groups about 0.4 points of the whole electorate over three months (a bill of the
   // initiative half, a limited variant half again), more with a credible party and a matching characteristic. A withdrawn reform
   // takes back one and a half times its gain; an unpopular decision of a PPS minister costs 0.15 points in the group it hurts.
-  // PolishParty delivers the pending gains and the wear of governing at each monthly settlement.
+  // PolishParty delivers the pending gains at each monthly settlement; Z — 1.43: the wear of governing is PolishEconomy.settleGovernmentClimate.
   const REFORM_SUPPORT = Object.freeze({ministry: 0.4, law: 0.2, limited: 0.5, months: 3, withdraw: 1.5, unpopular: 0.15, matching: 1.25});
   const REFORM_GROUPS = Object.freeze({labor_inspection: ['workers'], works_councils: ['workers'], old_age_insurance: ['workers'],
     worker_protection: ['unemployed', 'workers'], 'public_works:employment': ['unemployed', 'workers'], 'public_works:infrastructure': ['workers'],

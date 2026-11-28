@@ -765,12 +765,19 @@ details.pl-score[open] {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
+  /* Z — 1.43 (the user's note of 28 XI 2026): without the column of the Committee the decks stand in the middle. */
+  justify-content: center;
 }
 #pl-ckw {
   flex: 1 1 100%;
   margin-top: 0.6em;
   padding-top: 0.6em;
   border-top: 1px solid var(--hair-color);
+}
+/* Z — 1.43: the members of the Committee in the Party tab, one to a line. */
+.pl-ckw-member {
+  display: block;
+  margin-bottom: 0.35em;
 }
 #pl-ckw p.pinned-text-description {
   text-indent: 0;

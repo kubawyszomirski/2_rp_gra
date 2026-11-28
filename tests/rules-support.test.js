@@ -2,7 +2,7 @@
 
 // The voters and the reforms of PPS (Z — 1.32, decisions D1–D7 of 24 XI 2026): a reform of a PPS ministry that comes into force
 // announces the groups that will appreciate it and wins them about 0.4 points of the whole electorate over three settlements; a
-// withdrawn reform takes back one and a half times its gain; governing in bad times slowly wears down the workers and the unemployed.
+// withdrawn reform takes back one and a half times its gain; Z — 1.43: governing in bad times costs PPS like any party of the cabinet.
 const assert = require('node:assert/strict');
 const { test } = require('node:test');
 const dendry = require('./helpers/dendry');
@@ -72,16 +72,22 @@ test('Wycofana reforma: stopping it takes back one and a half times its gain and
   assert.equal(PolishProjects.consumeAnnouncement(Q.S, Q.time), 'The peasants turn away from PPS.');
 });
 
-test('Zużycie władzy: a PPS in the cabinet loses 0.02 points a month while output falls; nothing in growth', () => {
-  const Q = formed();
-  Q.S.economy.last_growth = -0.5;
-  assert.equal(PolishEconomy.badEconomy(Q.S.economy, Q.time), true);
-  let before = national(Q.S);
-  PolishParty.settleParty(Q, Q.time);
-  near(national(Q.S), before - 0.02, 'the wear of a member');
-  assert.deepEqual(Q.S.actors.pps.support.notes, [{ kind: 'wear', stance: 'member' }]);
-  Q.S.economy.last_growth = 0.5;
-  before = national(Q.S);
-  PolishParty.settleParty(Q, Q.time);
-  near(national(Q.S), before, 'no wear in growth');
+test('Zużycie władzy (Z — 1.43): the wear of PPS is a part of the rule for the cabinet — in a decline a member loses half of 4% a year of its voters, in full at an unemployment of 8%; growth gives back half; stagnation nothing', () => {
+  const Q = formed(), E = Q.S.economy;
+  const settle = (growth, unemployment) => {
+    Object.assign(E, { last_growth: growth, unemployment });
+    const before = national(Q.S);
+    const climate = PolishEconomy.settleGovernmentClimate(Q, Q.time);
+    return { climate, ratio: national(Q.S) / before };
+  };
+  let r = settle(-0.5, 5);
+  assert.deepEqual([r.climate.kind, r.climate.factor, r.climate.weights.pps], ['decline', 0.5, 1]);
+  near(1000 * r.ratio, 1000 * (1 - 0.04 / 12 * 0.5), 'a decline: half of the rate');
+  r = settle(-0.5, 9);
+  near(1000 * r.ratio, 1000 * (1 - 0.04 / 12), 'a decline at 9% unemployment: the full rate');
+  r = settle(0.5, 9);
+  near(1000 * r.ratio, 1000 * (1 + 0.04 / 12 * 0.5), 'growth: half of the rate back');
+  r = settle(0, 9);
+  assert.equal(r.ratio, 1, 'stagnation');
+  assert.equal(Q.S.actors.pps.support === undefined || !(Q.S.actors.pps.support.notes || []).some(n => n.kind === 'wear'), true, 'no separate wear of PPS any more');
 });

@@ -546,6 +546,40 @@
     return lost / total;
   }
 
+  // Z — 1.43 (decisions G1A, G2A of 28 XI 2026): the times weigh on the parties responsible for the cabinet. In every cell each of them
+  // loses (fraction > 0) or gains (fraction < 0) the same part of its share, times its responsibility (1, supporters 0.5); the other
+  // parties of the cell take or give it in proportion to their shares, and a gain never exceeds what they hold. Returns the change of
+  // each responsible party in points of the whole electorate.
+  function shiftResponsible(S, weights, fraction) {
+    const out = {};
+    if (!hasCells(S) || !fraction) return out;
+    const cells = S.society.cells, parties = partiesOf(S), total = massOf(cells);
+    const responsible = parties.filter(p => weights[p] > 0);
+    if (!responsible.length || !(total > 0)) return out;
+    for (const p of responsible) out[p] = 0;
+    for (const cell of cells) {
+      const free = parties.filter(p => !(weights[p] > 0) && cell.propensity[p] > 0);
+      const pool = free.reduce((n, p) => n + cell.propensity[p], 0);
+      if (!(pool > 0)) continue;
+      const change = {};
+      let sum = 0;
+      for (const p of responsible) {
+        change[p] = -fraction * weights[p] * (cell.propensity[p] || 0);
+        sum += change[p];
+      }
+      if (!sum) continue;
+      const scale = sum > pool ? pool / sum : 1;
+      for (const p of responsible) {
+        cell.propensity[p] += change[p] * scale;
+        out[p] += cell.mass * change[p] * scale;
+      }
+      for (const p of free) cell.propensity[p] -= sum * scale * cell.propensity[p] / pool;
+      for (const p of parties) if (Math.abs(cell.propensity[p]) < 1e-12) cell.propensity[p] = 0;
+    }
+    for (const p of responsible) out[p] /= total;
+    return out;
+  }
+
   function filterOfList(labels) {
     const filters = (labels || []).map(beneficiaryFilter).filter(Boolean);
     return filters.length ? (cell => filters.some(f => f(cell))) : null;
@@ -672,6 +706,7 @@
     beneficiaryFilter: beneficiaryFilter,
     filterOfList: filterOfList,
     shiftPps: shiftPps,
+    shiftResponsible: shiftResponsible,
     shiftFrom: shiftFrom,
     mergeCells: mergeCells,
     validateCells: validateCells,
