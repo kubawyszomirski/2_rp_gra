@@ -81,36 +81,25 @@ test('Jedna tura (21.1): a main card through several pages settles exactly one m
   assert.equal(Q.time, 2);
 });
 
-test('Doradca (21.1): an adviser action at t=1 blocks all advisers until t=10 (Z — 1.30), through returns and loads', () => {
+// Z — 1.42 (decisions K1A, K2A of 28 XI 2026): the card that fills three seats by currents replaced the composition card and the actions;
+// the name of this test of 21.1 stays, its body checks the new rule.
+test('Doradca (21.1; Z — 1.42): the seats picked so far and, after the confirmation, the rest of the card of the Committee survive a save and a load', () => {
   let engine = dendry.startGame();
-  dendry.choose(engine, 'puzak');
-  dendry.choose(engine, 'puzak.party_discipline');
-  actUntilMain(engine);
-  let Q = engine.state.qualities;
-  assert.equal(Q.time, 1, 'the adviser action costs no month');
-  assert.equal(Q.S.cooldowns.advisor, 10); // Z — 1.30: 9 months
-  const adviserOptions = () => {
-    const result = {};
-    for (const adviser of ['daszynski', 'perl', 'puzak']) {
-      dendry.choose(engine, adviser);
-      result[adviser] = open(engine).filter(choice => choice.id.startsWith(adviser + '.')).length;
-      dendry.choose(engine, 'root');
-      assert.equal(engine.state.sceneId, 'main');
-    }
-    return result;
-  };
-  for (let t = 1; t <= 10; t++) {
-    Q = engine.state.qualities;
-    assert.equal(Q.time, t);
-    const available = Object.values(adviserOptions()).reduce((a, b) => a + b, 0);
-    assert.equal(available > 0, t >= 10, `advisers at t=${t}`);
-    assert.equal(Q.advisor_action_timer, Math.max(0, 10 - t));
-    if (t === 4) engine = dendry.saveAndRestore(engine);
-    if (t < 10) spendMonth(engine);
-  }
-  Q = engine.state.qualities;
-  assert.equal(Q.S.history.months.length, Q.time - 1, 'one settlement, and so one monthly income, per month');
-  assert.equal(Q.S.history.actions.filter(txn => txn.source === 'advisor').length, 1);
+  const Q = engine.state.qualities;
+  Q.time = PolishRules.timeOf(1923, 1); Q.year = 1923; Q.month = 1;
+  PolishParty.ckwView(Q, true);
+  PolishParty.ckwPick(Q, 'lewica');
+  engine = dendry.saveAndRestore(engine);
+  let R = engine.state.qualities;
+  for (const f of ['centrum', 'centrum']) PolishParty.ckwPick(R, f);
+  PolishParty.ckwConfirm(R, false);
+  engine = dendry.saveAndRestore(engine);
+  R = engine.state.qualities;
+  assert.deepEqual(R.S.actors.pps.ckw.seats, ['centrum', 'centrum', 'lewica']);
+  assert.equal(PolishRules.cooldownRemaining(R, 'party.ckw'), 12);
+  assert.equal(PolishParty.ckwAvailable(R), false);
+  R.time += 12;
+  assert.equal(PolishParty.ckwAvailable(R), true, 'a year later');
 });
 
 test('Ręka (21.1; Z — 0.60): two places for each deck, no third card of a deck, a legal refill and a lasting project agenda', () => {
@@ -225,43 +214,6 @@ test('after an option, leaving a card refunds nothing (4.3)', () => {
   assert.ok(!engine.state.currentHands.main.some(c => c.id === card.id), 'the card is spent');
 });
 
-test('an adviser opening a card makes that step cost no month; closing it refunds nothing (4.3)', () => {
-  const engine = dendry.startGame();
-  const Q = engine.state.qualities;
-  // Stage 5: the redirects of 10.4.3 open government cards; PPS gets Labour in a fixture of the opening cabinet.
-  Q.S.cabinet.partner_ids.push('pps');
-  Q.S.cabinet.portfolios.labor = 'pps';
-  Q.arciszewski_advisor = 1;
-  engine.goToScene('main');
-  dendry.choose(engine, 'arciszewski');
-  dendry.choose(engine, 'arciszewski.labour_programme');
-  assert.equal(engine.state.sceneId, 'polish_gov_labor_rights');
-  dendry.choose(engine, 'polish_gov_labor_rights.inspection');
-  actUntilMain(engine);
-  assert.equal(Q.time, 1, 'the opened step costs no month');
-  assert.equal(Q.S.cooldowns.advisor, 10); // Z — 1.30: 9 months
-  const txn = Q.S.history.actions.find(action => action.action_id === 'advisor.arciszewski.labour_programme');
-  assert.equal(txn.redirect.card, 'polish_gov_labor_rights');
-  assert.equal(txn.redirect.action_id, 'government.labor_rights.inspection');
-  spendMonth(engine);
-  assert.equal(Q.time, 2, 'the next ordinary card uses the month normally');
-
-  // A card opened by an adviser offers closing in adviser mode; closing refunds nothing.
-  const other = dendry.startGame(1923);
-  const R = other.state.qualities;
-  R.S.cabinet.partner_ids.push('pps');
-  R.S.cabinet.portfolios.labor = 'pps';
-  R.moraczewski_advisor = 1;
-  other.goToScene('main');
-  dendry.choose(other, 'moraczewski');
-  dendry.choose(other, 'moraczewski.public_works');
-  assert.equal(other.state.sceneId, 'polish_gov_public_works');
-  assert.ok(choiceIds(other).includes('cancel_advisor_action'));
-  assert.ok(!choiceIds(other).includes('easy_discard'), 'the ordinary close is hidden in adviser mode');
-  dendry.choose(other, 'cancel_advisor_action');
-  actUntilMain(other);
-  assert.deepEqual([R.time, R.month_actions, R.S.cooldowns.advisor], [1, 0, 10], 'no month used, no adviser refund');
-});
 
 // Z — 0.60 (the user's notes of 7 X 2026): a card is discarded on the card itself, once a month; the timed cards, the cards of
 // the party's vision and the cards opened by a special event cannot be discarded. There is no separate discard card.
@@ -419,7 +371,6 @@ test('walks that play like the page keep every stage 1 rule', () => {
   let months = 0;
   for (const variant of [0, 1, 2]) {
     let engine = dendry.startGame(1922 + variant);
-    const seenAdviserActions = [];
     for (let step = 0; step < 36; step++) {
       const Q = engine.state.qualities;
       assert.equal(engine.state.sceneId, 'main');
@@ -427,12 +378,8 @@ test('walks that play like the page keep every stage 1 rule', () => {
       assert.equal(Q.S.history.months.length, Q.time - 1, 'one settlement per month');
       assert.ok(engine.state.currentHands.main.length <= 3);
       if (Q.time >= 11) break; // the November election has its own tests
-      if (step % 5 === variant && PolishRules.isAdvisorAvailable(Q)) {
-        dendry.choose(engine, 'puzak');
-        dendry.choose(engine, 'puzak.party_discipline');
-        actUntilMain(engine);
-        seenAdviserActions.push(Q.time);
-      } else if (step % 7 === 3 && (engine.state.currentHands.main || []).some(c => PolishRules.discardStatus(Q, engine.state, c.id).available)) {
+      // Z — 1.42: the Committee has no actions any more; the walk discards or spends its months.
+      if (step % 7 === 3 && (engine.state.currentHands.main || []).some(c => PolishRules.discardStatus(Q, engine.state, c.id).available)) {
         // Z — 0.60: a card is discarded on the card itself (the separate discard card is gone).
         const card = engine.state.currentHands.main.find(c => PolishRules.discardStatus(Q, engine.state, c.id).available);
         PolishRules.discardCard(Q, engine.state, card.id);
@@ -440,9 +387,6 @@ test('walks that play like the page keep every stage 1 rule', () => {
         spendMonth(engine);
       }
       if (step % 4 === 2) engine = dendry.saveAndRestore(engine);
-    }
-    for (let i = 1; i < seenAdviserActions.length; i++) {
-      assert.ok(seenAdviserActions[i] - seenAdviserActions[i - 1] >= 6, `adviser actions at ${seenAdviserActions}`);
     }
     months += engine.state.qualities.time - 1;
   }

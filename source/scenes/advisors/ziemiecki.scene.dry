@@ -8,14 +8,13 @@ on-arrival: {!
 // Adviser actions of technical reference 10.4.3 (card catalogue 6.6): 0 T, their own R, one shared cooldown of
 // six months for all advisers (4.4); the effects are the approved P numbers, applied by PolishParty.
 PolishParty.advisorView(Q, 'ziemiecki');
+PolishParty.shortBio(Q, 'ziemiecki');
 !}
 
 = Bronisław Ziemięcki
 
-Ziemięcki represents the Piłsudczyk current while favoring conditional parliamentary cooperation.
+[+ pl_adv_faction +]. [+ pl_adv_bio +]
 
-- @emergency_fundraising
-- @municipal_socialism
 - @root: Return to main
 
 @emergency_fundraising

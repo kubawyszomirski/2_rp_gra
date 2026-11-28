@@ -8,13 +8,13 @@ on-arrival: {!
 // Adviser actions of technical reference 10.4.3 (card catalogue 6.6): 0 T, their own R, one shared cooldown of
 // six months for all advisers (4.4); the effects are the approved P numbers, applied by PolishParty.
 PolishParty.advisorView(Q, 'malinowski');
+PolishParty.shortBio(Q, 'malinowski');
 !}
 
 = Marian Malinowski
 
-Malinowski represents the organizational base of the Piłsudczyk current.
+[+ pl_adv_faction +]. [+ pl_adv_bio +]
 
-- @organize_pilsudczyks
 - @root: Return to main
 
 @organize_pilsudczyks

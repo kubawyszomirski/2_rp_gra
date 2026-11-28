@@ -193,28 +193,16 @@ test('Pilotaż: ekran tytułowy, strona miesiąca i pasek boczny po polsku', () 
 
 // Z — 0.52: the advisers are shown as the Central Executive Committee (CKW). The wait before its next action is
 // written in full in both languages, from the scenes and from the rules alike (Daszyński has one option of each).
-test('Centralny Komitet Wykonawczy: nagłówek i odnowienie akcji z pełną odmianą w obu językach', () => {
-  const errors = dendry.watchEngineErrors();
-  const header = {en: 'Central Executive Committee - an action is available.', pl: 'Centralny Komitet Wykonawczy może działać.'};
-  const wait = {
-    en: n => `${n} ${n === 1 ? 'month' : 'months'} before the next Committee action.`,
-    pl: n => `Komitet zbierze się ponownie za ${n} ${n === 1 ? 'miesiąc' : n <= 4 ? 'miesiące' : 'miesięcy'}.`,
-  };
-  for (const lang of ['en', 'pl']) {
+test('Centralny Komitet Wykonawczy: nagłówek (Z — 1.42) names the currents of the three seats, in both languages', () => {
+  for (const [lang, text] of [['en', 'The Central Executive Committee: three seats of the Centre of PPS.'], ['pl', 'Centralny Komitet Wykonawczy: trzy miejsca Centrum PPS.']]) {
     const engine = dendry.startGame(1922, lang);
-    const Q = engine.state.qualities;
-    assert.equal(Q.pinnedCardsDescription, header[lang], `${lang}: the header of the pinned cards`);
-    for (const n of [1, 3, 6]) {
-      Q.S.cooldowns.advisor = Q.time + n;
-      globalThis.PolishRules.refreshMirrors(Q);
-      engine.goToScene('daszynski');
-      const texts = ['daszynski.parliamentary_compromise', 'daszynski.broker_coalition']
-        .map(id => flat(engine.getCurrentChoices().find(c => c.id === id).subtitle).trim());
-      assert.deepEqual(texts, [wait[lang](n), wait[lang](n)], `${lang}: ${n} months`);
+    try {
+      engine.goToScene('main');
+      assert.equal(engine.state.qualities.pinnedCardsDescription, text);
+    } finally {
+      globalThis.PolishRules.setLanguage('en');
     }
   }
-  globalThis.PolishRules.setLanguage('en');
-  assert.deepEqual(errors, []);
 });
 
 // Z — 0.53: the present choice of a stance card opens its description with a bold label, in both languages.

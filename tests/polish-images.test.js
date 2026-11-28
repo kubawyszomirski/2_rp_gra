@@ -27,7 +27,8 @@ test('Obrazki: każdy obrazek sceny istnieje, a każdy polski obrazek jest użyt
   const files = polishFiles();
   assert.equal(files.length, 62, 'with the card of the unions (Z — 0.56) and the three decks (Z — 0.60)');
   for (const f of files) {
-    assert.equal((used.get('polish/' + f) || []).length, 1, `polish/${f} is used by exactly one scene`);
+    // Z — 1.42: the card Defence of the Constitution shares the image of Constitutional Reform (credits_images.txt names both).
+    assert.equal((used.get('polish/' + f) || []).length, f === 'polish_constitution_project.jpg' ? 2 : 1, `polish/${f} is used by exactly one scene`);
     assert.ok(credits.includes('\npolish/' + f + ': '), `polish/${f} has an entry in credits_images.txt`);
   }
 });

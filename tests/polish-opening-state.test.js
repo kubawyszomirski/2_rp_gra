@@ -235,16 +235,11 @@ test('authority guards cover rally choices, training, direct police route and he
   assert.equal(Q.polish_opening_government_active, 1);
 });
 
-test('external toleration preserves adviser diplomacy and playable militia development', () => {
+test('external toleration preserves the portraits of the Committee and playable militia development', () => {
   const engine = startGame();
   const Q = engine.state.qualities;
-  const relation = Q.psl_piast_relation;
+  // Z — 1.42 (decision K2A): the portraits of the Committee stay; the Committee has no actions.
   assert.equal(condition(engine, 'daszynski'), true);
-  engine.playPinnedCard('daszynski');
-  assert.equal(condition(engine, 'daszynski.broker_coalition', 'chooseIf'), false);
-  choose(engine, 'daszynski.parliamentary_compromise');
-  assert.equal(Q.psl_piast_relation, relation + 5, 'Parliamentary Compromise of 10.4.3: PSL Piast +5');
-  choose(engine, 'root');
   assert.equal(Q.spd_in_government, 0);
   assert.equal(Q.pps_external_toleration, 1);
   const month = Q.month;

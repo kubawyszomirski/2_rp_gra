@@ -144,7 +144,8 @@ test('Otwarcia finansowe: over 52 months the cash moves only by the monthly dues
   assert.ok(PolishParty.collectionGain(reach) > PolishParty.collectionGain(none) + 0.05, 'more members after the expansions');
 });
 
-test('Zasięg i charakter partii: the rail branch under the workers’ line and Ziemięcki under the broad democratic line ×1.10, +5% per level of TUR (Z — 0.91); the press has no multiplier', () => {
+// Z — 1.42: the municipal socialism of Ziemięcki is gone with the actions of the Committee; the multiplier of the class stays.
+test('Zasięg i charakter partii: the rail branch under the workers’ line and the intelligentsia under the broad democratic line ×1.10, +5% per level of TUR (Z — 0.91); the press has no multiplier', () => {
   const Q = game();
   const S = Q.S;
   close(PolishParty.expansionMultiplier(S, { kind: 'branch', id: 'rail' }), 1.10);
@@ -155,11 +156,6 @@ test('Zasięg i charakter partii: the rail branch under the workers’ line and 
   S.actors.pps.strategy.electoral_base = 'broad_democratic';
   close(PolishParty.expansionMultiplier(S, { kind: 'class', class_id: 'new_middle' }), 1.10);
   close(PolishParty.expansionMultiplier(S, { kind: 'branch', id: 'rail' }), 1);
-  const city = S.society.cells.find(c => c.class_id === 'new_middle' && c.settlement === 'major_city');
-  const reach = city.base_reach_pps;
-  Q.perl_advisor = 0; Q.ziemiecki_advisor = 1;
-  PolishParty.advisorAction(Q, 'ziemiecki', 'municipal_socialism');
-  close(city.base_reach_pps, reach + 8 * 1.10);
   S.party_orgs.tur.level = 3;
   close(PolishParty.expansionMultiplier(S, { kind: 'class', class_id: 'new_middle' }), 1.25);
   close(PolishParty.expansionMultiplier(S, { kind: 'branch', id: 'rail' }), 1.15);

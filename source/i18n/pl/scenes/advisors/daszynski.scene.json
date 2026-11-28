@@ -4,7 +4,6 @@
  "lines": {
   "title: Ignacy Daszyński": "title: Ignacy Daszyński",
   "= Ignacy Daszyński": "= Ignacy Daszyński",
-  "Daszyński represents Centrum PPS and specializes in parliamentary negotiation.": "Daszyński reprezentuje Centrum PPS i specjalizuje się w negocjacjach parlamentarnych.",
   "- @root: Return to main": "- @root: Wróć do głównego ekranu",
   "title: Parliamentary Compromise": "title: Kompromis parlamentarny",
   "subtitle: Relations with PSL Piast and NPR improve (+5 each), and with PSChD too (+4). A toleration still needs a candidate, a programme and real support. Builds parliamentarism.": "subtitle: Koszt: 0 jednostek środków. Daszyński zjednuje nam PSL „Piast” i Narodową Partię Robotniczą (+5) oraz chadecję (+4). Buduje parlamentaryzm.",
@@ -12,6 +11,7 @@
   "title: Broker a Coalition": "title: Pośrednictwo w koalicji",
   "subtitle: In a coalition, the tension of each cabinet agreement falls (−10); or the partners judge one broad cabinet offer in preparation better (+5). Builds reformism.": "subtitle: Koszt: 0 jednostek środków. Daszyński łagodzi spory w koalicji (−10) albo przygotowuje grunt pod naszą ofertę szerokiego rządu (+5). Buduje reformizm.",
   "unavailable-subtitle: [? if advisor_action_timer = 1 : 1 month before the next Committee action. ?][? if advisor_action_timer > 1 : [+ advisor_action_timer +] months before the next Committee action. ?][? if advisor_action_timer <= 0 : Needs PPS in a coalition with a cabinet agreement under tension, or a broad cabinet offer in preparation. ?]": "unavailable-subtitle: [? if advisor_action_timer = 1 : Komitet zbierze się ponownie za 1 miesiąc. ?][? if advisor_action_timer >= 2 and advisor_action_timer <= 4 : Komitet zbierze się ponownie za [+ advisor_action_timer +] miesiące. ?][? if advisor_action_timer >= 5 : Komitet zbierze się ponownie za [+ advisor_action_timer +] miesięcy. ?][? if advisor_action_timer <= 0 : Wymaga sporów w koalicji z PPS albo przygotowywanej oferty szerokiego rządu. ?]",
-  "[? if pl_broker_mode = \"tension\" : Daszyński eases the disputes inside the coalition: the tension of each cabinet agreement falls by 10. A broken promise stays broken. ?][? if pl_broker_mode = \"broad_offer\" : Daszyński prepares the ground for our broad cabinet offer: its partners weigh it 5 points more favourably. ?]": "[? if pl_broker_mode = \"tension\" : Daszyński łagodzi spory wewnątrz koalicji (−10), choć złamana obietnica pozostaje złamana. ?][? if pl_broker_mode = \"broad_offer\" : Daszyński przygotowuje grunt pod naszą szeroką ofertę gabinetu: partnerzy oceniają ją o 5 punktów korzystniej. ?]"
+  "[? if pl_broker_mode = \"tension\" : Daszyński eases the disputes inside the coalition: the tension of each cabinet agreement falls by 10. A broken promise stays broken. ?][? if pl_broker_mode = \"broad_offer\" : Daszyński prepares the ground for our broad cabinet offer: its partners weigh it 5 points more favourably. ?]": "[? if pl_broker_mode = \"tension\" : Daszyński łagodzi spory wewnątrz koalicji (−10), choć złamana obietnica pozostaje złamana. ?][? if pl_broker_mode = \"broad_offer\" : Daszyński przygotowuje grunt pod naszą szeroką ofertę gabinetu: partnerzy oceniają ją o 5 punktów korzystniej. ?]",
+  "[+ pl_adv_faction +]. [+ pl_adv_bio +]": "[+ pl_adv_faction +]. [+ pl_adv_bio +]"
  }
 }

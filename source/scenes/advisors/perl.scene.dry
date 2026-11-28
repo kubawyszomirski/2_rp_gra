@@ -8,14 +8,13 @@ on-arrival: {!
 // Adviser actions of technical reference 10.4.3 (card catalogue 6.6): 0 T, their own R, one shared cooldown of
 // six months for all advisers (4.4); the effects are the approved P numbers, applied by PolishParty.
 PolishParty.advisorView(Q, 'perl');
+PolishParty.shortBio(Q, 'perl');
 !}
 
 = Feliks Perl
 
-Perl represents Centrum PPS and concentrates on the party line and socialist press.
+[+ pl_adv_faction +]. [+ pl_adv_bio +]
 
-- @define_party_line
-- @direct_party_press
 - @root: Return to main
 
 @define_party_line

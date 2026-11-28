@@ -242,22 +242,18 @@ test('Reformizm w tekstach 1.07: the cards say the lower price; the pool check u
 
 // Z — 1.25 (decision 9 of 22 XI 2026): the actions of the Committee build the characteristics of the party, 1.5 each; the result and the
 // description say which one; the actions that open a ministry card build it when the card is opened.
-test('Doradcy 1.25: the actions of the Committee build the characteristics and say so', () => {
+// Z — 1.42 (decision K2A): the actions of the Committee are gone; the defence of the constitution, a card of its own, builds
+// parliamentarism and says so.
+test('Obrona konstytucji 1.42: the card builds parliamentarism and says so; the portraits build nothing', () => {
   const engine = dendry.startGame(1922, 'pl');
   const Q = engine.state.qualities, seeds = () => R().profileState(Q.S).seeds;
   try {
-    Q.perl_advisor = 0; Q.zaremba_advisor = 1;
-    const before = seeds().worker_peasant;
-    P().advisorAction(Q, 'zaremba', 'worker_peasant_front');
-    assert.ok(seeds().worker_peasant >= before + 1.5);
-    assert.match(Q.pl_party_result, /Buduje sojusz robotniczo-włościański\.$/);
-    const keys = Object.keys(P().ADVISER_PROFILES);
-    assert.deepEqual(keys.filter(k => /^(puzak\.party_discipline|perl\.|ziemiecki\.emergency)/.test(k)), [], 'discipline, the line, the press and the collection build none');
-    const reformism = seeds().reformism;
-    assert.equal(P().adviserSeed(Q, 'moraczewski.public_works'), 'Buduje reformizm.');
-    assert.ok(seeds().reformism >= reformism + 1.5, 'the line of parliamentary socialism makes it grow faster');
-    engine.goToScene('zaremba');
-    assert.match(JSON.stringify(engine.getCurrentChoices().map(c => c.subtitle)), /Buduje sojusz robotniczo-włościański\./);
+    const before = seeds().parliamentarism;
+    engine.goToScene('polish_party_constitution_defence');
+    assert.match(plainText((engine.getCurrentChoices() || []).find(c => c.id === 'polish_party_constitution_defence.defend').subtitle), /Buduje parlamentaryzm\.$/);
+    P().defenceChoose(Q);
+    assert.equal(seeds().parliamentarism, before + 1.5);
+    assert.equal(P().advisorActionStatus(Q, 'zaremba', 'worker_peasant_front').available, false);
   } finally {
     R().setLanguage('en');
   }

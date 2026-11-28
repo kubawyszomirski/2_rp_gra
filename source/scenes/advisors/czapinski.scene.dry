@@ -8,6 +8,7 @@ on-arrival: {!
 // Adviser actions of technical reference 10.4.3 (card catalogue 6.6): 0 T, their own R, one shared cooldown of
 // six months for all advisers (4.4); the effects are the approved P numbers, applied by PolishParty.
 PolishParty.advisorView(Q, 'czapinski');
+PolishParty.shortBio(Q, 'czapinski');
 // Stage 6: the two variants of the Industry card are checked without the month's action, which the adviser waives.
 Q.pl_czap_public_control_why = Q.S ? PolishProjects.optionStatus(Q, 'industrial_policy', 'public_control', {adviser: true}).reason : '';
 // Z — 0.94: the workers' representation became the law on works councils of the card Economic Democracy.
@@ -16,12 +17,8 @@ Q.pl_czap_representation_why = Q.S ? PolishProjects.optionStatus(Q, 'economic_de
 
 = Kazimierz Czapiński
 
-Czapiński represents Lewica PPS and concentrates on socialist education and economic doctrine.
+[+ pl_adv_faction +]. [+ pl_adv_bio +]
 
-- @economic_finance
-- @economic_public_control
-- @economic_representation
-- @socialist_education
 - @root: Return to main
 
 @economic_finance

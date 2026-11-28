@@ -1,0 +1,38 @@
+title: Defence of the Constitution
+subtitle: PPS stands up for the constitution and the legal institutions.
+new-page: true
+is-card: true
+tags: party_affairs
+card-image: img/polish/polish_constitution_project.jpg
+view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.defenceAvailable(Q) !}
+on-arrival: {!
+// Card party.constitution_defence (Z — 1.42, decision K2A of 28 XI 2026): the former action of Niedziałkowski as a card of its own.
+// The month's decision; the card rests nine months.
+Q.pl_defence_why = PolishParty.defenceStatus(Q).reason;
+!}
+
+= Defence of the constitution
+
+PPS can call the unions and its organisations to stand by the constitution and the legal authorities. The card comes back after nine months.
+
+- @defend
+- @easy_discard
+
+@defend
+title: We defend the constitution
+subtitle: Cost: 0 resources. The unions stand by the legal authorities, and attachment to democracy grows next month; for half a year backing an authoritarian project would anger the Centre. Builds parliamentarism.
+choose-if: {! return PolishParty.defenceStatus(Q).available !}
+unavailable-subtitle: [+ pl_defence_why +]
+on-arrival: {!
+PolishParty.defenceChoose(Q);
+!}
+go-to: result
+
+@result
+new-page: true
+
+= Defence of the constitution
+
+[+ pl_party_result +]
+
+- @root: Continue.

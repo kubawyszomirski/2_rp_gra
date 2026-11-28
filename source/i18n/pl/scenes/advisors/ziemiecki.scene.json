@@ -4,12 +4,12 @@
   "lines": {
     "title: Bronisław Ziemięcki": "title: Bronisław Ziemięcki",
     "= Bronisław Ziemięcki": "= Bronisław Ziemięcki",
-    "Ziemięcki represents the Piłsudczyk current while favoring conditional parliamentary cooperation.": "Ziemięcki reprezentuje nurt piłsudczykowski, ale opowiada się za warunkową współpracą parlamentarną.",
     "- @root: Return to main": "- @root: Wróć do głównego ekranu",
     "- @root: Continue.": "- @root: Dalej.",
     "title: Municipal Socialism": "title: Socjalizm municypalny",
     "subtitle: Cost: 1 resource. In the large cities the base reach of PPS grows (+8) and PPS gains among workers, intelligentsia and petty bourgeoisie; no town hall or city budget. Builds reformism.": "subtitle: Koszt: 1 jednostka środków. W wielkich miastach PPS dociera do większej liczby wyborców (+8) i zyskuje wśród robotników, inteligencji i drobnomieszczaństwa. Buduje reformizm.",
     "title: Emergency Fundraising": "title: Nadzwyczajna zbiórka",
-    "subtitle: Cost: 0 resources. An emergency infusion of resources: the party's money grows at once (+2).": "subtitle: Koszt: 0 jednostek środków. Nadzwyczajna zbiórka: środki partii od razu rosną (+2)."
+    "subtitle: Cost: 0 resources. An emergency infusion of resources: the party's money grows at once (+2).": "subtitle: Koszt: 0 jednostek środków. Nadzwyczajna zbiórka: środki partii od razu rosną (+2).",
+    "[+ pl_adv_faction +]. [+ pl_adv_bio +]": "[+ pl_adv_faction +]. [+ pl_adv_bio +]"
   }
 }

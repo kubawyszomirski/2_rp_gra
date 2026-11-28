@@ -116,36 +116,17 @@ test('Karty rządu 0.77: a used government card rests 3 months; the deck says wh
   assert.match(empty.reason, /resting after use; the first comes back in 1 month\./);
 });
 
-test('Jedno przekierowanie: Moraczewski opens the Public Works card; its one step costs no month and uses the shared adviser cooldown', () => {
-  const engine = dendry.startGame();
-  const Q = leftCabinet(engine);
-  Q.moraczewski_advisor = 1;
-  engine.goToScene('main');
-  const t = Q.time;
-  engine.playPinnedCard('moraczewski');
-  assert.equal(choice(engine, 'moraczewski.public_works').canChoose, true);
-  choose(engine, 'moraczewski.public_works');
-  assert.equal(engine.state.sceneId, 'polish_gov_public_works');
-  choose(engine, 'polish_gov_public_works.infrastructure');
-  choose(engine, 'root');
-  assert.equal(Q.time, t, 'the adviser step costs no month');
-  assert.equal(PolishRules.cooldownRemaining(Q, 'advisor'), 9); // Z — 1.30: 9 months
-  const works = Object.values(Q.S.projects).find(p => p.type === 'public_works');
-  assert.deepEqual([works.status, works.variant], ['executing', 'infrastructure'], 'Z — 0.93: started at once');
-  const txn = Q.S.history.actions.filter(a => a.source === 'advisor').at(-1);
-  assert.equal(txn.redirect.action_id, 'government.public_works.infrastructure');
-});
-
-test('Arciszewski needs PPS with Labour; outside the cabinet his Labour Programme is blocked with its reason', () => {
+// Z — 1.42 (decision K2A of 28 XI 2026): the actions of the Central Executive Committee are gone; no portrait opens a ministry card.
+test('Jedno przekierowanie (Z — 1.42): no member of the Committee opens a ministry card any more; a portrait offers only the way back', () => {
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
-  Q.arciszewski_advisor = 1;
-  engine.goToScene('main');
-  engine.playPinnedCard('arciszewski');
-  assert.equal(choice(engine, 'arciszewski.labour_programme').canChoose, false);
-  assert.equal(choice(engine, 'arciszewski.welfare_programme').canChoose, false);
-  assert.match(String(choice(engine, 'arciszewski.labour_programme').subtitle), /Needs PPS in the cabinet with Labour/);
+  const portrait = (engine, id) => { engine.goToScene(id); return (engine.getCurrentChoices() || []).map(c => c.id); };
+  for (const id of ['moraczewski', 'arciszewski', 'czapinski']) {
+    Q[id + '_advisor'] = 1;
+    assert.deepEqual(portrait(engine, id), ['root'], id);
+  }
 });
+
 
 // Z — 0.81 (decisions of 20 X 2026): the card Legislative Initiative and the urgent card of its vote in the game, in Polish.
 test('Inicjatywa w grze 0.81/1.09: two cards of the Parliament deck, the laws in plain Polish with the cost first, the urgent vote card next month without a month', () => {

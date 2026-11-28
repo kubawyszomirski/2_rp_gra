@@ -1,165 +1,111 @@
-title: Change the Central Executive Committee
-subtitle: The final composition of its three seats, in one decision.
+title: The Central Executive Committee
+subtitle: Once a year PPS fills the three seats of its Committee.
 new-page: true
 is-card: true
 tags: party_affairs
 card-image: img/polish/polish_party_advisers.jpg
-view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.advisersAvailable(Q) !}
+view-if: {! return !!Q.S && !!Q.polish_party_rules && PolishParty.ckwAvailable(Q) !}
 on-arrival: {!
-// Card party.advisers (technical reference 10.4.2; card catalogue 6.5; Z — 0.35: a separate card): 1 T,
-// cd 6 M; it does not reset the adviser cooldown. Próchnik, Drobner and Dubois belong to the continuation.
-Q.pl_adv_draft = PolishParty.activeAdvisers(Q).join(',');
-PolishParty.advisersView(Q);
+// Card party.ckw (Z — 1.42, decision K1A of 28 XI 2026, reworked the same day): once a year the three seats of the Committee; for each
+// seat the player picks a current and the current names the person. It replaced the composition card with its list of candidates
+// and the actions of the members. Confirming the composition is the month's decision; the card rests a year.
+PolishParty.ckwView(Q, true);
 !}
 
-= Change the Central Executive Committee
+= The Central Executive Committee
 
-The present Committee: [+ pl_adv_draft_text +]. A first appointment strengthens the person's faction (+5 strength, −5 dissent); a dismissal adds +5 dissent; a return gives nothing new.
+The Committee now consists of [+ pl_ckw_now +]. For each of its three seats we choose a current, and the current names its candidate; a current that gains seats grows stronger and calmer, and one that loses them is displeased.
 
-- @compose
+- @centrum
+- @lewica
+- @pilsudczycy
+- @keep
 - @easy_discard
 
 @compose
-title: Compose the Committee
-go-to: menu
-
-@menu
 new-page: true
 on-arrival: {!
-PolishParty.advisersView(Q);
+PolishParty.ckwView(Q, false);
 !}
 
 = The new Committee
 
-Chosen: [+ pl_adv_draft_text +]. Nothing is spent until you confirm.
+[+ pl_ckw_draft_text +] [+ pl_ckw_left_text +]
 
-- @toggle_daszynski
-- @toggle_puzak
-- @toggle_perl
-- @toggle_niedzialkowski
-- @toggle_arciszewski
-- @toggle_zaremba
-- @toggle_czapinski
-- @toggle_jaworowski
-- @toggle_moraczewski
-- @toggle_ziemiecki
-- @toggle_malinowski
+- @centrum
+- @lewica
+- @pilsudczycy
 - @confirm
-- @polish_party_advisers: Start again.
+- @restart
+- @easy_discard
 
-@toggle_daszynski
-title: Ignacy Daszyński
-subtitle: **Centrum.** Austrian Reichsrat deputy 1897–1918; in November 1918 he headed the Provisional People’s Government in Lublin. Since 1919 a deputy to the Sejm Ustawodawczy and member of the PPS CKW; deputy prime minister 1920–1921. [+ pl_adv_daszynski_actions +] [+ pl_adv_daszynski_state +]
-choose-if: pl_adv_daszynski_in = 1 or pl_adv_daszynski_can_add = 1
+@centrum
+title: [+ pl_ckw_title_centrum +]
+subtitle: Cost: 0 resources. The moderate socialists of the Sejm and the unions.
+view-if: pl_ckw_draft_n < 3
+choose-if: {! return PolishParty.ckwSeatStatus(Q, 'centrum').available !}
+unavailable-subtitle: [+ pl_ckw_centrum_why +]
 on-arrival: {!
-PolishParty.advisersToggle(Q, 'daszynski');
+PolishParty.ckwPick(Q, 'centrum');
 !}
-go-to: menu
+go-to: compose
 
-@toggle_puzak
-title: Kazimierz Pużak
-subtitle: **Centrum.** A political prisoner of tsarist Russia 1911–1917, from 1915 in the Schlüsselburg fortress. Since 1919 a PPS deputy to the Sejm Ustawodawczy and member of the party’s Rada Naczelna; in 1920 deputy head of the CKW Military Department. [+ pl_adv_puzak_actions +] [+ pl_adv_puzak_state +]
-choose-if: pl_adv_puzak_in = 1 or pl_adv_puzak_can_add = 1
+@lewica
+title: [+ pl_ckw_title_lewica +]
+subtitle: Cost: 0 resources. The supporters of a clearer class politics.
+view-if: pl_ckw_draft_n < 3
+choose-if: {! return PolishParty.ckwSeatStatus(Q, 'lewica').available !}
+unavailable-subtitle: [+ pl_ckw_lewica_why +]
 on-arrival: {!
-PolishParty.advisersToggle(Q, 'puzak');
+PolishParty.ckwPick(Q, 'lewica');
 !}
-go-to: menu
+go-to: compose
 
-@toggle_perl
-title: Feliks Perl
-subtitle: **Centrum.** Co-founder and leading ideologue of the PPS (Paris congress, 1892) and editor-in-chief of the party daily Robotnik; since 1919 a PPS deputy to the Sejm Ustawodawczy. [+ pl_adv_perl_actions +] [+ pl_adv_perl_state +]
-choose-if: pl_adv_perl_in = 1 or pl_adv_perl_can_add = 1
+@pilsudczycy
+title: [+ pl_ckw_title_pilsudczycy +]
+subtitle: Cost: 0 resources. The former fighters close to Piłsudski.
+view-if: pl_ckw_draft_n < 3
+choose-if: {! return PolishParty.ckwSeatStatus(Q, 'pilsudczycy').available !}
+unavailable-subtitle: [+ pl_ckw_pilsudczycy_why +]
 on-arrival: {!
-PolishParty.advisersToggle(Q, 'perl');
+PolishParty.ckwPick(Q, 'pilsudczycy');
 !}
-go-to: menu
+go-to: compose
 
-@toggle_niedzialkowski
-title: Mieczysław Niedziałkowski
-subtitle: **Centrum.** A PPS theorist. In 1918 head of the Sejm department of the Interior Ministry; since 1919 a deputy to the Sejm Ustawodawczy, secretary of its Constitutional Committee and member of the PPS CKW. [+ pl_adv_niedzialkowski_actions +] [+ pl_adv_niedzialkowski_state +]
-choose-if: pl_adv_niedzialkowski_in = 1 or pl_adv_niedzialkowski_can_add = 1
+@keep
+title: We keep the present Committee
+subtitle: Cost: 0 resources. Its currents calm a little.
+choose-if: {! return PolishParty.ckwConfirmStatus(Q, true).available !}
+unavailable-subtitle: [+ pl_ckw_keep_why +]
 on-arrival: {!
-PolishParty.advisersToggle(Q, 'niedzialkowski');
-!}
-go-to: menu
-
-@toggle_arciszewski
-title: Tomasz Arciszewski
-subtitle: **Centrum.** In PPS since 1896 and one of the leaders of its Combat Organisation; in November 1918 minister of labour in the Lublin government, then minister of posts and telegraphs until January 1919; since 1919 a deputy to the Sejm Ustawodawczy. [+ pl_adv_arciszewski_actions +] [+ pl_adv_arciszewski_state +]
-choose-if: pl_adv_arciszewski_in = 1 or pl_adv_arciszewski_can_add = 1
-on-arrival: {!
-PolishParty.advisersToggle(Q, 'arciszewski');
-!}
-go-to: menu
-
-@toggle_zaremba
-title: Zygmunt Zaremba
-subtitle: **Lewica.** A socialist since 1912; in 1917 he led the Polish socialists of southern Russia. In 1918–1919 he represented PPS on the executive of the Warsaw Council of Workers’ Delegates; a member of the PPS CKW and Rada Naczelna. [+ pl_adv_zaremba_actions +] [+ pl_adv_zaremba_state +]
-choose-if: pl_adv_zaremba_in = 1 or pl_adv_zaremba_can_add = 1
-on-arrival: {!
-PolishParty.advisersToggle(Q, 'zaremba');
-!}
-go-to: menu
-
-@toggle_czapinski
-title: Kazimierz Czapiński
-subtitle: **Lewica.** A socialist publicist born in Minsk, in the Galician PPSD from 1910; since 1919 a deputy to the Sejm Ustawodawczy and secretary of the socialist deputies’ club; since 1921 a member of the PPS CKW. [+ pl_adv_czapinski_actions +] [+ pl_adv_czapinski_state +]
-choose-if: pl_adv_czapinski_in = 1 or pl_adv_czapinski_can_add = 1
-on-arrival: {!
-PolishParty.advisersToggle(Q, 'czapinski');
-!}
-go-to: menu
-
-@toggle_jaworowski
-title: Rajmund Jaworowski
-subtitle: **Piłsudczycy.** A PPS militant and in 1914–1915 an intelligence officer of the Legions; since 1918 chairman of the PPS Warsaw District Workers’ Committee, a Warsaw city councillor and, since 1921, a member of the PPS CKW. [+ pl_adv_jaworowski_actions +] [+ pl_adv_jaworowski_state +]
-choose-if: pl_adv_jaworowski_in = 1 or pl_adv_jaworowski_can_add = 1
-on-arrival: {!
-PolishParty.advisersToggle(Q, 'jaworowski');
-!}
-go-to: menu
-
-@toggle_moraczewski
-title: Jędrzej Moraczewski
-subtitle: **Piłsudczycy.** Prime minister of Poland’s first central government (November 1918 – January 1919). Since 1919 vice-marshal of the Sejm Ustawodawczy and member of the PPS CKW; from 1920 a vice-chairman of the railway workers’ union. [+ pl_adv_moraczewski_actions +] [+ pl_adv_moraczewski_state +]
-choose-if: pl_adv_moraczewski_in = 1 or pl_adv_moraczewski_can_add = 1
-on-arrival: {!
-PolishParty.advisersToggle(Q, 'moraczewski');
-!}
-go-to: menu
-
-@toggle_ziemiecki
-title: Bronisław Ziemięcki
-subtitle: **Piłsudczycy.** Minister of industry in the Lublin government in November 1918, then minister of labour and social welfare under Moraczewski until January 1919; since 1919 a deputy to the Sejm Ustawodawczy. [+ pl_adv_ziemiecki_actions +] [+ pl_adv_ziemiecki_state +]
-choose-if: pl_adv_ziemiecki_in = 1 or pl_adv_ziemiecki_can_add = 1
-on-arrival: {!
-PolishParty.advisersToggle(Q, 'ziemiecki');
-!}
-go-to: menu
-
-@toggle_malinowski
-title: Marian Malinowski
-subtitle: **Piłsudczycy.** A PPS militant from the Radom district who twice escaped tsarist exile. In November 1918 minister of public works in the Lublin government, then minister without portfolio under Moraczewski; since 1919 a deputy to the Sejm Ustawodawczy. [+ pl_adv_malinowski_actions +] [+ pl_adv_malinowski_state +]
-choose-if: pl_adv_malinowski_in = 1 or pl_adv_malinowski_can_add = 1
-on-arrival: {!
-PolishParty.advisersToggle(Q, 'malinowski');
-!}
-go-to: menu
-
-@confirm
-title: Confirm the Committee
-subtitle: [+ pl_adv_confirm_note +]
-choose-if: {! return PolishParty.advisersStatus(Q, String(Q.pl_adv_draft || '').split(',').filter(Boolean)).available !}
-unavailable-subtitle: [+ pl_adv_confirm_why +]
-on-arrival: {!
-PolishParty.advisersChoose(Q, String(Q.pl_adv_draft || '').split(',').filter(Boolean));
+PolishParty.ckwConfirm(Q, true);
 !}
 go-to: result
+
+@confirm
+title: We confirm the new Committee
+subtitle: Cost: 0 resources. The currents that gain seats grow stronger and calmer, and those that lose them are displeased.
+view-if: pl_ckw_draft_n = 3
+choose-if: {! return PolishParty.ckwConfirmStatus(Q, false).available !}
+unavailable-subtitle: [+ pl_ckw_confirm_why +]
+on-arrival: {!
+PolishParty.ckwConfirm(Q, false);
+!}
+go-to: result
+
+@restart
+title: We start again
+subtitle: Cost: 0 resources. The chosen seats are cleared.
+view-if: pl_ckw_draft_n > 0
+on-arrival: {!
+PolishParty.ckwReset(Q);
+!}
+go-to: compose
 
 @result
 new-page: true
 
-= Change the Central Executive Committee
+= The Central Executive Committee
 
 [+ pl_party_result +]
 

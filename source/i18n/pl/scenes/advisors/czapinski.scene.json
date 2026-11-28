@@ -4,7 +4,6 @@
   "lines": {
     "title: Kazimierz Czapiński": "title: Kazimierz Czapiński",
     "= Kazimierz Czapiński": "= Kazimierz Czapiński",
-    "Czapiński represents Lewica PPS and concentrates on socialist education and economic doctrine.": "Czapiński reprezentuje Lewicę PPS i skupia się na edukacji socjalistycznej oraz doktrynie ekonomicznej.",
     "- @root: Return to main": "- @root: Wróć do głównego ekranu",
     "title: Socialist Economic Programme: progressive and wealth taxes": "title: Socjalistyczny program gospodarczy: podatki progresywne i majątkowe",
     "unavailable-subtitle: [? if advisor_action_timer = 1 : 1 month before the next Committee action. ?][? if advisor_action_timer > 1 : [+ advisor_action_timer +] months before the next Committee action. ?][? if advisor_action_timer <= 0 : Needs PPS in the cabinet with the Treasury. ?]": "unavailable-subtitle: [? if advisor_action_timer = 1 : Komitet zbierze się ponownie za 1 miesiąc. ?][? if advisor_action_timer >= 2 and advisor_action_timer <= 4 : Komitet zbierze się ponownie za [+ advisor_action_timer +] miesiące. ?][? if advisor_action_timer >= 5 : Komitet zbierze się ponownie za [+ advisor_action_timer +] miesięcy. ?][? if advisor_action_timer <= 0 : Wymaga PPS w gabinecie z resortem Skarbu. ?]",
@@ -17,6 +16,7 @@
     "title: Socialist Economic Programme: works councils": "title: Socjalistyczny program gospodarczy: rady zakładowe",
     "subtitle: Cost: 0 resources. Opens the Treasury card for one decision at once; the law, the money and the executor remain. Builds radicalism.": "subtitle: Koszt: 0 jednostek środków. Od razu otwiera kartę „Podatki i pożyczki”; decyzja wymaga jak zwykle ustawy i pieniędzy. Buduje radykalizm.",
     "subtitle: Cost: 0 resources. Opens the Industry card for the public control of a recorded plant at once; the act and the vote remain. Builds radicalism.": "subtitle: Koszt: 0 jednostek środków. Od razu otwiera kartę „Polityka przemysłowa” z kontrolą publiczną zakładu; akt i tak musi przejść głosowanie w Sejmie. Buduje radykalizm.",
-    "subtitle: Cost: 0 resources. Opens the card Economic Democracy for the law on works councils at once; the vote in the Sejm remains. Builds radicalism.": "subtitle: Koszt: 0 jednostek środków. Od razu otwiera kartę „Demokracja gospodarcza” z ustawą o radach zakładowych; głosowanie w Sejmie zostaje. Buduje radykalizm."
+    "subtitle: Cost: 0 resources. Opens the card Economic Democracy for the law on works councils at once; the vote in the Sejm remains. Builds radicalism.": "subtitle: Koszt: 0 jednostek środków. Od razu otwiera kartę „Demokracja gospodarcza” z ustawą o radach zakładowych; głosowanie w Sejmie zostaje. Buduje radykalizm.",
+    "[+ pl_adv_faction +]. [+ pl_adv_bio +]": "[+ pl_adv_faction +]. [+ pl_adv_bio +]"
   }
 }

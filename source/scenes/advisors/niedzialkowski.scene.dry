@@ -8,14 +8,13 @@ on-arrival: {!
 // Adviser actions of technical reference 10.4.3 (card catalogue 6.6): 0 T, their own R, one shared cooldown of
 // six months for all advisers (4.4); the effects are the approved P numbers, applied by PolishParty.
 PolishParty.advisorView(Q, 'niedzialkowski');
+PolishParty.shortBio(Q, 'niedzialkowski');
 !}
 
 = Mieczysław Niedziałkowski
 
-Niedziałkowski represents Centrum PPS and concentrates on constitutional democracy and democratic alliances.
+[+ pl_adv_faction +]. [+ pl_adv_bio +]
 
-- @build_centrolew
-- @defend_democracy
 - @root: Return to main
 
 @build_centrolew

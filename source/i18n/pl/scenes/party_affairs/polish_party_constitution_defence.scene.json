@@ -1,0 +1,13 @@
+{
+  "source": "scenes/party_affairs/polish_party_constitution_defence.scene.dry",
+  "status": "complete",
+  "lines": {
+    "title: Defence of the Constitution": "title: Obrona konstytucji",
+    "subtitle: PPS stands up for the constitution and the legal institutions.": "subtitle: PPS staje w obronie konstytucji i legalnych instytucji.",
+    "= Defence of the constitution": "= Obrona konstytucji",
+    "PPS can call the unions and its organisations to stand by the constitution and the legal authorities. The card comes back after nine months.": "PPS może wezwać związki i swoje organizacje, by stanęły przy konstytucji i legalnych władzach. Karta wraca po dziewięciu miesiącach.",
+    "title: We defend the constitution": "title: Bronimy konstytucji",
+    "subtitle: Cost: 0 resources. The unions stand by the legal authorities, and attachment to democracy grows next month; for half a year backing an authoritarian project would anger the Centre. Builds parliamentarism.": "subtitle: Koszt: 0 jednostek środków. Związki stają przy legalnych władzach, a w przyszłym miesiącu rośnie przywiązanie do demokracji; przez pół roku poparcie projektu autorytarnego rozgniewałoby Centrum. Buduje parlamentaryzm.",
+    "- @root: Continue.": "- @root: Dalej."
+  }
+}

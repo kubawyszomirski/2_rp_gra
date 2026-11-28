@@ -80,210 +80,109 @@ test('Nowe powołanie: factions 50/15/35 and a first new Piłsudczyk with dissen
   assert.equal(S.actors.pps.factions.pilsudczycy.dissent, 20, 'no second −5');
 });
 
-test('Start i odwołanie: a starting adviser dismissed and brought back gets no opening bonus; the dismissal +5; the adviser cooldown is not reset', () => {
-  const engine = dendry.startGame();
-  const Q = engine.state.qualities;
-  const S = Q.S;
-  assert.equal(Q.puzak_appointed_once, 1, 'the three advisers of the opening are already marked');
-  act(engine, 'daszynski', 'parliamentary_compromise');
-  assert.equal(PolishRules.cooldownRemaining(Q, 'advisor'), 9); // Z — 1.30
-  const opening = strengths(S);
-  // Z — 0.76: the Committee has all three seats filled; Ziemięcki stands in for Pużak, marked as appointed before (a fixture),
-  // so only Pużak's dismissal and return change the factions.
-  Q.ziemiecki_appointed_once = 1;
-  PolishParty.advisersChoose(Q, ['daszynski', 'perl', 'ziemiecki']);
-  assert.equal(Q.puzak_advisor, 0);
-  assert.equal(S.actors.pps.factions.centrum.dissent, 5);
-  assert.deepEqual(strengths(S), opening, 'a dismissal is no departure of a group');
-  assert.equal(PolishRules.cooldownRemaining(Q, 'advisor'), 9, 'the team change does not reset the adviser cooldown');
-  free(Q); later(Q, 9);
-  assert.equal(PolishRules.cooldownRemaining(Q, 'advisor'), 0);
-  PolishParty.advisersChoose(Q, ['daszynski', 'perl', 'puzak']);
-  assert.equal(Q.puzak_advisor, 1);
-  assert.deepEqual(strengths(S), opening, 'no opening bonus the second time');
-  assert.equal(S.actors.pps.factions.centrum.dissent, 5);
-  assert.equal(PolishRules.cooldownRemaining(Q, 'advisor'), 0, 'the team change starts no adviser cooldown');
-  assert.equal(PolishRules.cooldownRemaining(Q, 'party.advisers'), 6, 'the change of team has its own cooldown');
-});
-
-test('Pużak: dissents 8/20/40 and Party Discipline give 0/8/28, with no promise, conference or mediation needed', () => {
-  const engine = dendry.startGame();
-  const Q = engine.state.qualities;
-  const S = Q.S;
-  const f = S.actors.pps.factions;
-  f.centrum.dissent = 8; f.lewica.dissent = 20; f.pilsudczycy.dissent = 40;
-  PolishParty.writeMirrors(Q);
-  const opening = strengths(S);
-  assert.equal(PolishParty.advisorActionStatus(Q, 'puzak', 'party_discipline').available, true);
-  act(engine, 'puzak', 'party_discipline');
-  assert.deepEqual(dissents(Q.S), [0, 8, 28]);
-  assert.deepEqual(strengths(Q.S), opening);
-  assert.deepEqual([Q.time, Q.month_actions, Q.S.party_orgs.cash], [1, 0, 2], '0 T and 0 R');
-  assert.equal(PolishRules.cooldownRemaining(Q, 'advisor'), 9); // Z — 1.30
-  assert.deepEqual(Q.S.faction_cases.list || [], [], 'no case, conference or promise is created');
-});
-
-test('Brak resortu: Moraczewski in opposition, or with PPS holding only the Treasury, cannot run the works; a declined preview takes no cooldown', () => {
-  const engine = dendry.startGame();
-  const Q = engine.state.qualities;
-  Q.perl_advisor = 0; Q.moraczewski_advisor = 1;
-  const declined = () => {
-    engine.goToScene('main');
-    choose(engine, 'moraczewski');
-    const works = choice(engine, 'moraczewski.public_works');
-    assert.equal(works.canChoose, false);
-    assert.match(String(works.subtitle), /Needs PPS in the cabinet with Labour/);
-    choose(engine, 'root');
-    assert.deepEqual([PolishRules.cooldownRemaining(Q, 'advisor'), Q.month_actions, Q.time], [0, 0, 1]);
-    assert.ok(!Object.values(Q.S.projects).some(p => p.type === 'public_works'), 'no works are run');
+// Z — 1.42 (decisions K1A, K2A of 28 XI 2026): the card that fills three seats by currents replaced the composition card and the actions;
+// the name of this test of 21.1 stays, its body checks the new rule.
+test('Start i odwołanie (Z — 1.42): a current that gains a seat grows stronger (+2) and calmer (−2), one that loses a seat is displeased (+3)', () => {
+  const Q = game(), f = Q.S.actors.pps.factions;
+  const ckw = (Q, seats) => {
+    if (Q.time < PolishRules.timeOf(1923, 1)) { Q.time = PolishRules.timeOf(1923, 1); Q.year = 1923; Q.month = 1; }
+    delete Q.S.cooldowns['party.ckw'];
+    if (Q.S.turn.pending) { Q.S.turn.pending.phase = 'settled'; Q.S.turn.pending = null; }
+    Q.month_actions = 0;
+    PolishParty.ckwReset(Q);
+    for (const f of seats) PolishParty.ckwPick(Q, f);
+    return PolishParty.ckwConfirm(Q, false);
   };
-  declined();
-  // PPS in the cabinet with the Treasury only; Labour, the executor of the works, is another party's.
-  Q.S.cabinet.partner_ids.push('pps');
-  Q.S.cabinet.portfolios.finance = 'pps';
-  Q.S.cabinet.portfolios.labor = 'psl_wyzwolenie';
-  declined();
+  for (const id of ['centrum', 'lewica', 'pilsudczycy']) f[id].dissent = 20;
+  const raw = { ...f.lewica };
+  ckw(Q, ['lewica', 'centrum', 'centrum']);
+  assert.deepEqual([f.lewica.dissent, f.centrum.dissent, f.pilsudczycy.dissent], [18, 23, 20]);
+  assert.ok(f.lewica.strength > raw.strength, 'the Left grows stronger');
+  assert.deepEqual(Q.S.actors.pps.ckw.seats, ['centrum', 'centrum', 'lewica']);
+  ckw(Q, ['pilsudczycy', 'pilsudczycy', 'pilsudczycy']);
+  assert.deepEqual([f.lewica.dissent, f.centrum.dissent, f.pilsudczycy.dissent], [21, 29, 14], 'two seats lost by the Centre, one by the Left');
 });
 
-test('Piłsudczycy in a formal coalition: Jaworowski moves the relation and the faction, Malinowski only the faction; Ziemięcki offers the emergency collection (Z — 0.79) and his municipal action', () => {
-  const coalition = adviser => {
-    const engine = dendry.startGame();
-    const Q = engine.state.qualities;
-    Q.S.cabinet.partner_ids.push('pps');
-    Q.S.cabinet.portfolios.labor = 'pps';
-    Q.perl_advisor = 0; Q[`${adviser}_advisor`] = 1;
-    return engine;
+// Z — 1.42 (decisions K1A, K2A of 28 XI 2026): the card that fills three seats by currents replaced the composition card and the actions;
+// the name of this test of 21.1 stays, its body checks the new rule.
+test('Pużak (Z — 1.42): Party Discipline is gone with the actions of the Committee; his portrait offers only the way back', () => {
+  const engine = dendry.startGame();
+  const Q = engine.state.qualities;
+  assert.equal(PolishParty.advisorActionStatus(Q, 'puzak', 'party_discipline').available, false);
+  engine.goToScene('puzak');
+  assert.deepEqual((engine.getCurrentChoices() || []).map(c => c.id), ['root']);
+});
+
+// Z — 1.42 (decisions K1A, K2A of 28 XI 2026): the card that fills three seats by currents replaced the composition card and the actions;
+// the name of this test of 21.1 stays, its body checks the new rule.
+test('Brak resortu (Z — 1.42): no member of the Committee runs a ministry programme; the ministry cards need their ministry as before', () => {
+  const Q = game();
+  assert.equal(PolishProjects.cardAvailable(Q, 'public_works'), false, 'in opposition no card of Labour');
+  Q.moraczewski_advisor = 1;
+  assert.equal(PolishProjects.cardAvailable(Q, 'public_works'), false, 'a portrait opens nothing');
+});
+
+// Z — 1.42 (decisions K1A, K2A of 28 XI 2026): the card that fills three seats by currents replaced the composition card and the actions;
+// the name of this test of 21.1 stays, its body checks the new rule.
+test('Piłsudczycy (Z — 1.42): with three seats their members are on the main page — Jaworowski, Moraczewski and Ziemięcki', () => {
+  const Q = game();
+  const ckw = (Q, seats) => {
+    if (Q.time < PolishRules.timeOf(1923, 1)) { Q.time = PolishRules.timeOf(1923, 1); Q.year = 1923; Q.month = 1; }
+    delete Q.S.cooldowns['party.ckw'];
+    if (Q.S.turn.pending) { Q.S.turn.pending.phase = 'settled'; Q.S.turn.pending = null; }
+    Q.month_actions = 0;
+    PolishParty.ckwReset(Q);
+    for (const f of seats) PolishParty.ckwPick(Q, f);
+    return PolishParty.ckwConfirm(Q, false);
   };
-  const jaworowski = coalition('jaworowski');
-  const J = jaworowski.state.qualities;
-  act(jaworowski, 'jaworowski', 'back_pilsudski');
-  assert.equal(J.S.actors.relations.pilsudski, 68);
-  strengths(J.S).forEach((v, i) => close(v, 100 * [50, 15, 40][i] / 105));
-  assert.deepEqual(dissents(J.S), [3, 23, 5]);
-
-  const malinowski = coalition('malinowski');
-  const M = malinowski.state.qualities;
-  act(malinowski, 'malinowski', 'organize_pilsudczyks');
-  assert.equal(M.S.actors.relations.pilsudski, 60, 'no change of the relation with Piłsudski');
-  strengths(M.S).forEach((v, i) => close(v, 100 * [50, 15, 43][i] / 108));
-  assert.deepEqual(dissents(M.S), [0, 20, 0]);
-
-  const ziemiecki = coalition('ziemiecki');
-  const Z = ziemiecki.state.qualities;
-  ziemiecki.goToScene('main');
-  choose(ziemiecki, 'ziemiecki');
-  // Z — 0.79 (decision 5A of 14 X 2026): the emergency collection replaces the conditional toleration on his card.
-  assert.equal(choice(ziemiecki, 'ziemiecki.conditional_toleration'), undefined);
-  assert.equal(choice(ziemiecki, 'ziemiecki.emergency_fundraising').canChoose, true);
-  assert.equal(choice(ziemiecki, 'ziemiecki.municipal_socialism').canChoose, true);
-  choose(ziemiecki, 'root');
-  const cells = Z.S.society.cells.map(c => ({ city: c.settlement === 'major_city', pps: c.propensity.pps }));
-  act(ziemiecki, 'ziemiecki', 'municipal_socialism');
-  Z.S.society.cells.forEach((c, i) => {
-    if (cells[i].city) assert.ok(c.propensity.pps > cells[i].pps, c.id);
-    else assert.equal(c.propensity.pps, cells[i].pps, c.id);
-  });
-  assert.deepEqual(dissents(Z.S), [0, 20, 5]);
+  ckw(Q, ['pilsudczycy', 'pilsudczycy', 'pilsudczycy']);
+  assert.deepEqual(['daszynski', 'puzak', 'perl', 'jaworowski', 'moraczewski', 'ziemiecki', 'malinowski'].map(id => Q[id + '_advisor']), [0, 0, 0, 1, 1, 1, 0]);
+  assert.equal(PolishParty.ckwCaption(Q), 'The Central Executive Committee: three seats of the Piłsudczycy.');
+  ckw(Q, ['lewica', 'centrum', 'centrum']);
+  assert.equal(PolishParty.ckwCaption(Q), 'The Central Executive Committee: two seats of the Centre of PPS, one seat of the Left of PPS.');
 });
 
-test('Efekty czasowe: Pużak (workers ×1.20) and later Perl (press ×1.25) multiply only the matching campaigns while active; no second reward and no negative share', () => {
-  const engine = dendry.startGame();
-  const Q = engine.state.qualities;
-  const S = Q.S;
-  S.scenario.inputs.dispute_1922 = false; // isolate the advisers from the dated dispute of 1922 (decision 1A of stage 7)
-  S.party_orgs.cash = 10;
-  PolishParty.writeMirrors(Q);
-  const worker = S.society.cells.find(c => c.class_id === 'workers' && c.settlement === 'major_city' && c.identity_id === 'polish' && c.employment === 'employed');
-  const clerk = S.society.cells.find(c => c.class_id === 'new_middle' && c.settlement === 'major_city' && c.identity_id === 'polish');
-  // The gain of one press campaign in the large cities divided by the gain of 5.3 without adviser multipliers.
-  const ratios = () => {
-    PolishParty.syncMirrors(Q);
-    const base = [worker, clerk].map(cell => {
-      const copy = JSON.parse(JSON.stringify(cell));
-      return PolishElectorate.campaignGain(copy, PolishParty.cellReach(S, copy, 'press'), Q.dissent || 0, 'workers_gains', Q.time) *
-        (0.5 + 0.5 * PolishParty.pressEffective(S).credibility / 100) * PolishParty.strategyFactor(Q, 'workers_gains');
-    });
-    const shares = [worker.propensity.pps, clerk.propensity.pps];
-    PolishParty.campaign(Q, 'press', 'workers_gains', 'major_cities');
-    free(Q);
-    return [worker, clerk].map((cell, i) => +((cell.propensity.pps - shares[i]) / base[i]).toFixed(9));
+// Z — 1.42 (decisions K1A, K2A of 28 XI 2026): the card that fills three seats by currents replaced the composition card and the actions;
+// the name of this test of 21.1 stays, its body checks the new rule.
+test('Efekty czasowe (Z — 1.42): the defence of the constitution adds +5 to democracy at the next settlement and, for six months, angers the Centre at an authoritarian project', () => {
+  const Q = game(), S = Q.S;
+  PolishParty.defenceChoose(Q);
+  assert.deepEqual(S.actors.pps.pending_effects.at(-1), { id: 'party.constitution_defence:t' + Q.time, system: 'democracy', stage: 7, value: 5 });
+  const effect = S.advisors.effects.find(e => e.kind === 'authoritarian_support_penalty');
+  assert.deepEqual([effect.value, effect.expires_at - effect.starts_at], [5, 6]);
+  assert.ok(S.unions.rail.alignment.legal_institutions >= 55);
+});
+
+// Z — 1.42 (decisions K1A, K2A of 28 XI 2026): the card that fills three seats by currents replaced the composition card and the actions;
+// the name of this test of 21.1 stays, its body checks the new rule.
+test('KPP i Lewica (Z — 1.42): the Left holds at most two seats, Zaremba and Czapiński; no member of the Committee shields the workers from the KPP any more', () => {
+  const Q = game();
+  assert.equal(PolishParty.advisorActionStatus(Q, 'czapinski', 'socialist_education').available, false);
+  const ckw = (Q, seats) => {
+    if (Q.time < PolishRules.timeOf(1923, 1)) { Q.time = PolishRules.timeOf(1923, 1); Q.year = 1923; Q.month = 1; }
+    delete Q.S.cooldowns['party.ckw'];
+    if (Q.S.turn.pending) { Q.S.turn.pending.phase = 'settled'; Q.S.turn.pending = null; }
+    Q.month_actions = 0;
+    PolishParty.ckwReset(Q);
+    for (const f of seats) PolishParty.ckwPick(Q, f);
+    return PolishParty.ckwConfirm(Q, false);
   };
-  const before = JSON.stringify(S.society.cells.map(c => c.propensity));
-  act(engine, 'puzak', 'mobilize_organization');
-  assert.equal(JSON.stringify(S.society.cells.map(c => c.propensity)), before, 'Mobilize gains no votes by itself');
-  close(worker.base_reach_pps, 31);
-  assert.deepEqual(ratios(), [1.2, 1], 'Pużak: only the workers’ cells');
-  later(Q, 6);
-  Q.S.cooldowns.advisor = Q.time; // Z — 1.30: the Committee now waits 9 months; the fixture frees it after 6, when Pużak has expired
-  act(engine, 'perl', 'direct_party_press');
-  assert.deepEqual(ratios(), [1.25, 1.25], 'Pużak has expired; Perl: every press campaign');
-  later(Q, 6);
-  assert.deepEqual(ratios(), [1, 1], 'both have expired');
-  close(worker.base_reach_pps, 31, 1e-9);
-  assert.equal(S.advisors.effects.filter(e => e.kind === 'workers_campaign_multiplier').length, 1, 'one modifier, not renewed by campaigns');
-  for (const cell of S.society.cells) {
-    for (const party of S.society.parties) assert.ok(cell.propensity[party] >= 0, `${cell.id} ${party}`);
-    close(S.society.parties.reduce((n, p) => n + cell.propensity[p], 0), 100);
-  }
+  assert.throws(() => ckw(Q, ['lewica', 'lewica', 'lewica']), /The Left of PPS has no more candidates/);
+  ckw(Q, ['lewica', 'lewica', 'pilsudczycy']);
+  assert.deepEqual([Q.zaremba_advisor, Q.czapinski_advisor, Q.jaworowski_advisor, Q.daszynski_advisor], [1, 1, 1, 0]);
 });
 
-test('KPP i Lewica: Socialist Education halves the PPS→KPP outflow of the workers (4 → 2 pp); a flow from another party to the KPP stays; Lewica PPS is not the KPP', () => {
-  const engine = dendry.startGame();
-  const Q = engine.state.qualities;
-  const S = Q.S;
-  Q.perl_advisor = 0; Q.czapinski_advisor = 1;
-  S.party_orgs.tur.level = 1; // a working TUR (fixture)
-  PolishParty.writeMirrors(Q);
-  const kpp = JSON.stringify(S.society.cells.map(c => c.propensity.kpp));
-  const relation = S.actors.relations.kpp;
-  const lewica = S.actors.pps.factions.lewica.strength;
-  act(engine, 'czapinski', 'socialist_education');
-  assert.equal(JSON.stringify(S.society.cells.map(c => c.propensity.kpp)), kpp, 'the action moves no voter to or from the KPP');
-  assert.equal(S.actors.relations.kpp, relation);
-  assert.ok(S.actors.pps.factions.lewica.strength > lewica);
-  assert.deepEqual(Object.keys(S.actors.pps.factions), ['centrum', 'lewica', 'pilsudczycy'], 'no communist faction');
-  // Disappointment (17.4) in cells whose only competitor is the KPP: 4 pp would leave PPS.
-  const polishWorkers = S.society.cells.filter(c => c.class_id === 'workers' && c.identity_id === 'polish');
-  const [worker, other] = polishWorkers;
-  const clerk = S.society.cells.find(c => c.class_id === 'new_middle' && c.identity_id === 'polish');
-  const set = (cell, shares) => { for (const p of S.society.parties) cell.propensity[p] = shares[p] || 0; };
-  set(worker, { pps: 50, kpp: 50 });
-  set(clerk, { pps: 50, kpp: 50 });
-  PolishElectorate.settleDisappointment(S, Q.time, 4);
-  close(worker.propensity.pps, 48);
-  close(worker.propensity.kpp, 52);
-  close(clerk.propensity.kpp, 54); // outside the workers' cells nothing is protected
-  // Four months of worse conditions of the workers under a responsible NPR (5.6): NPR → KPP 2 pp.
-  set(other, { npr: 50, kpp: 50 });
-  const weights = {};
-  for (const p of S.society.parties) weights[p] = 0;
-  weights.npr = 1;
-  for (let month = 0; month < 4; month++) {
-    const conditions = { ...S.society.living_conditions_last };
-    conditions.workers -= 5;
-    PolishElectorate.settleLivingConditions(S, Q.time, conditions, weights, PolishEconomy.applyFlow);
-  }
-  close(other.propensity.npr, 48);
-  close(other.propensity.kpp, 52); // the protection of PPS does not stop the KPP gaining from another party
-});
-
-test('Późni doradcy: in chapter 1, up to the coup or the election of 19 II 1928, Próchnik and Drobner cannot join; they are the cast of the continuation', () => {
-  const engine = dendry.startGame();
-  const Q = engine.state.qualities;
-  for (const [year, month] of [[1922, 1], [1926, 5], [1928, 2]]) {
-    Q.year = year; Q.month = month; Q.time = PolishRules.timeOf(year, month);
-    for (const id of ['prochnik', 'drobner', 'dubois']) {
-      assert.equal(PolishParty.ADVISERS[id].continuation, true, id);
-      assert.equal(PolishParty.adviserInPool(Q, id), false, `${id} ${year}`);
-      assert.match(PolishParty.advisersStatus(Q, ['daszynski', 'puzak', id]).reason, /not available/, id);
-    }
-    PolishParty.advisersView(Q);
-    assert.deepEqual([Q.pl_adv_prochnik_can_add, Q.pl_adv_drobner_can_add], [0, 0]);
-    assert.match(Q.pl_adv_prochnik_why, /continuation/);
-  }
-  const menu = engine.game.scenes['polish_party_advisers.menu'].options.map(o => o.id);
-  for (const id of ['prochnik', 'drobner', 'dubois']) assert.ok(!menu.includes(`@toggle_${id}`), `${id} is not offered`);
-  for (const id of ['prochnik', 'drobner']) assert.deepEqual(engine.game.scenes[id].options.map(o => o.id), ['@root'], `${id} has no action`);
+// Z — 1.42 (decisions K1A, K2A of 28 XI 2026): the card that fills three seats by currents replaced the composition card and the actions;
+// the name of this test of 21.1 stays, its body checks the new rule.
+test('Późni doradcy (Z — 1.42): Próchnik, Drobner and Dubois are never candidates in chapter 1; Perl gives way to Niedziałkowski after III 1927', () => {
+  const Q = game();
+  for (const id of ['prochnik', 'drobner', 'dubois']) assert.ok(!Object.values(PolishParty.CKW_CANDIDATES).flat().includes(id), id);
+  Q.time = PolishRules.timeOf(1927, 4);
+  PolishParty.ckwPortraits(Q);
+  assert.deepEqual([Q.perl_advisor, Q.niedzialkowski_advisor, Q.daszynski_advisor, Q.puzak_advisor], [0, 1, 1, 1]);
+  Q.daszynski_left_adviser_pool = 1;
+  PolishParty.ckwPortraits(Q);
+  assert.deepEqual([Q.daszynski_advisor, Q.puzak_advisor, Q.niedzialkowski_advisor, Q.arciszewski_advisor], [0, 1, 1, 1], 'a departure leaves no empty seat');
 });
 
 // ---- The unity card (10.5, 10.9; cards 6.3–6.4) ---------------------------------------------------------
@@ -348,17 +247,15 @@ test('Dostęp karty Jedność: with every dissent below 30 and the KPP channel c
   assert.ok(deck(other).includes('polish_party_unity'), 'an open channel to the KPP is enough');
 });
 
-test('Zmiana doradców osobno: with no dispute in the party the adviser card is in the pool and the unity card is not; the unity card changes no adviser', () => {
-  const engine = dendry.startGame();
-  const cards = deck(engine);
-  assert.ok(cards.includes('polish_party_advisers'));
-  assert.ok(!cards.includes('polish_party_unity'));
-  const unity = Object.keys(engine.game.scenes).filter(id => id === 'polish_party_unity' || id.startsWith('polish_party_unity.'));
-  for (const id of unity) {
-    const scene = engine.game.scenes[id];
-    assert.ok(!(scene.options || []).some(o => /advis|toggle/.test(o.id)), id);
-    assert.ok(!/advisersChoose|_advisor\s*=/.test(JSON.stringify(scene.onArrival || [])), id);
-  }
+// Z — 1.42 (decisions K1A, K2A of 28 XI 2026): the card that fills three seats by currents replaced the composition card and the actions;
+// the name of this test of 21.1 stays, its body checks the new rule.
+test('Zmiana doradców osobno (Z — 1.42): the card of the Committee and the card of unity are separate; the card of the Committee comes from 1923', () => {
+  const Q = game();
+  assert.equal(PolishParty.ckwAvailable(Q), false, 'not in 1922');
+  later(Q, 12);
+  assert.equal(PolishParty.ckwAvailable(Q), true);
+  PolishParty.ckwConfirm(Q, true);
+  assert.deepEqual(Q.S.actors.pps.ckw.seats, ['centrum', 'centrum', 'centrum'], 'the unity card changes no seat, and the Committee no unity');
 });
 
 test('Kompromis w PPS: the compromise on the cooperation with the communists gives 65 in each faction; a later breach of its rules takes 15 (50), once per action', () => {
@@ -416,27 +313,36 @@ test('Rozłam E3: Lewica (strength 15, dissent 65, 5 MPs) refused: 6% of the bas
   assert.equal(Q.lewica_split, 0, 'the inherited split scene did not run');
 });
 
-test('Zamrożeni posłowie: an adviser action that changes the faction strengths before or after the split leaves the division of the club and the MPs who leave', () => {
+// Z — 1.42: a new composition of the Committee instead of the former actions of its members.
+test('Zamrożeni posłowie: a new composition of the Committee that changes the faction strengths before or after the split leaves the division of the club and the MPs who leave', () => {
+  const ckw = (Q, seats) => {
+    if (Q.time < PolishRules.timeOf(1923, 1)) { Q.time = PolishRules.timeOf(1923, 1); Q.year = 1923; Q.month = 1; }
+    delete Q.S.cooldowns['party.ckw'];
+    if (Q.S.turn.pending) { Q.S.turn.pending.phase = 'settled'; Q.S.turn.pending = null; }
+    Q.month_actions = 0;
+    PolishParty.ckwReset(Q);
+    for (const f of seats) PolishParty.ckwPick(Q, f);
+    return PolishParty.ckwConfirm(Q, false);
+  };
   const split = withAdviser => {
     const Q = game();
     const S = Q.S;
-    Q.perl_advisor = 0; Q.zaremba_advisor = 1; Q.malinowski_advisor = 1;
     objects(Q, 'lewica', 65);
     const division = { ...ppsClub(S).faction_seats };
-    if (withAdviser) PolishParty.advisorAction(Q, 'zaremba', 'class_campaign'); // Lewica +4 raw before the split
+    if (withAdviser) ckw(Q, ['lewica', 'lewica', 'centrum']); // Lewica +4 raw before the split
     assert.deepEqual({ ...ppsClub(S).faction_seats }, division);
     assert.equal(PolishParty.factionSplitDue(Q), true);
     const lewica = S.actors.pps.factions.lewica.strength;
     PolishParty.factionSplitRefuse(Q);
     const mps = S.faction_cases.manifests.at(-1).mps;
     const after = { ...ppsClub(S).faction_seats };
-    PolishParty.advisorAction(Q, 'malinowski', 'organize_pilsudczyks'); // after the split
+    if (withAdviser) ckw(Q, ['pilsudczycy', 'pilsudczycy', 'centrum']); // after the split
     assert.deepEqual({ ...ppsClub(S).faction_seats }, after);
     return { mps, after, lewica };
   };
   const plain = split(false);
   const moved = split(true);
-  assert.ok(moved.lewica > plain.lewica, 'the adviser did change the strength');
+  assert.ok(moved.lewica > plain.lewica, 'the new Committee did change the strength');
   assert.deepEqual([plain.mps, moved.mps], [2, 2]);
   assert.deepEqual(moved.after, plain.after);
 });

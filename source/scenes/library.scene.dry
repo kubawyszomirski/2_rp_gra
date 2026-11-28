@@ -485,21 +485,17 @@ go-to: menu
 
 = Central Executive Committee
 
-The Central Executive Committee (CKW) was the executive body of PPS. In the game it has three active seats and fourteen candidates; this is a gameplay simplification, not the historical membership of the committee. Using any Committee action starts one shared nine-month cooldown. Dismissing a member adds five dissent to their faction. A person's first appointment adds five faction strength; reappointing the same person does not repeat that bonus.
+The Central Executive Committee (CKW) was the executive body of PPS. In the game it has three seats: once a year from 1923 the card “The Central Executive Committee” fills them, and for each seat we choose a current — the Centre, the Left or the Piłsudczycy — while the current names its candidate. Confirming the composition is the month's decision; a current that gains seats grows stronger and calmer, one that loses them is displeased, and an unchanged Committee calms its currents a little. This is a gameplay simplification, not the historical membership of the committee.
 
-In January 1922 the three active seats are held by **Ignacy Daszyński**, **Kazimierz Pużak**, and **Feliks Perl**.
+In January 1922 all three seats belong to the Centre: **Ignacy Daszyński**, **Kazimierz Pużak** and **Feliks Perl**.
 
-**Centrum PPS:** Daszyński, Pużak, Perl, Mieczysław Niedziałkowski and Tomasz Arciszewski.
+**Centrum PPS** names in turn Daszyński, Pużak and Perl, then Mieczysław Niedziałkowski and Tomasz Arciszewski; Perl leaves in April 1927.
 
-**Lewica PPS:** Zygmunt Zaremba, Kazimierz Czapiński, Adam Próchnik, Stanisław Dubois and Bolesław Drobner.
+**Lewica PPS** names Zygmunt Zaremba and Kazimierz Czapiński, so it can hold at most two seats.
 
-**Piłsudczycy:** Rajmund Jaworowski, Jędrzej Moraczewski, Bronisław Ziemięcki and Marian Malinowski.
+**Piłsudczycy** name in turn Rajmund Jaworowski, Jędrzej Moraczewski and Bronisław Ziemięcki, then Marian Malinowski.
 
-Próchnik and Drobner enter the pool in 1928; Dubois enters in 1930. Perl leaves in April 1927. Daszyński leaves at the beginning of 1931 under the current year-only gameplay schedule.
-
-Faction splits use named departures. A split only removes a person whose entry date has already arrived. Consequently, a Lewica split before 1930 does not prevent Dubois from entering in 1930.
-
-Every Committee action shows its conditions and costs; when one is not available, its card says why.
+The members have no actions of their own; their portraits on the main page give a short biography. A person who has left the party after a split is no longer a candidate.
 
 
 @figures

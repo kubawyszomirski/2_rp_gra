@@ -188,7 +188,7 @@ polish/perl.jpg: Portrait on the card of Feliks Perl (the Central Executive Comm
 
 polish/polish_cabinet_formation.jpg: Image on the card “Cabinet Formation”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
 
-polish/polish_constitution_project.jpg: Image on the card “Constitutional Reform”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+polish/polish_constitution_project.jpg: Image on the cards “Constitutional Reform” and “Defence of the Constitution” (from 1.42). Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
 
 polish/polish_deck_govt.jpg: Image on the deck “Government Affairs” (a palace building of the government in Warsaw). Supplied by the project author as a screenshot on 7 Oct. 2026; saved as an sRGB JPEG without scaling (774 px wide). Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
 
@@ -256,7 +256,7 @@ polish/polish_list_agreement.jpg: Image on the card “Electoral Agreement”. S
 
 polish/polish_parliament_army_oversight.jpg: Image on the card “Parliamentary Control of the Army”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
 
-polish/polish_party_advisers.jpg: Image on the card “Change the Central Executive Committee”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
+polish/polish_party_advisers.jpg: Image on the card “The Leadership of the Party” (until 1.41 the card “Change the Central Executive Committee”). Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
 
 polish/polish_party_direction.jpg: Image on the card “Political Direction”. Supplied by the project author as a screenshot on 4 Oct. 2026; scaled to at most 800 px and saved as JPEG. Original source, author, date and licence: to be completed (not yet recorded). Not covered by the MIT licence of the code.
 

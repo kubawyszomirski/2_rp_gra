@@ -94,61 +94,50 @@ test('Kolportaż w Organizacjach 0.68: the Media card has no press distribution;
 
 // Z — 0.75 (the user's note of 8 X 2026): on "The new Committee" each candidate opens with the bold faction, says who the
 // person was and what they enable in the game, and ends with the state; a candidate who cannot be added keeps the description.
-test('Nowy skład CKW 0.75/0.76: each candidate has a bold faction, a description, the actions under „Actions:” and the state; three seats are required', () => {
-  const engine = dendry.startGame();
-  playFromHand(engine, 'polish_party_advisers');
-  choose(engine, 'polish_party_advisers.compose');
-  const toggles = () => (engine.getCurrentChoices() || []).filter(c => /\.toggle_/.test(c.id));
-  assert.equal(toggles().length, 11);
-  for (const c of toggles()) {
-    assert.doesNotMatch(plain(c.title), /\(/, `${c.id}: the title is the name only`);
-    assert.equal(bold(c.subtitle).length, 1, `${c.id}: one bold faction`);
-    // Z — 0.76: the actions stand in a paragraph of their own, one per line after a dash.
-    assert.match(plain(c.subtitle), /<span class="pl-adv-actions">Actions:<br>– /, c.id);
-    assert.doesNotMatch(plain(c.subtitle), /In the game: /, c.id);
+// Z — 1.42 (decisions K1A, K2A of 28 XI 2026): the card that fills three seats by currents replaced the composition card and the actions;
+// the name of this test of 21.1 stays, its body checks the new rule.
+test('Nowy skład CKW 0.75 (Z — 1.42): the card fills three seats by currents, the currents name the persons, from 1923, once a year', () => {
+  const engine = dendry.startGame(1922, 'pl');
+  const Q = engine.state.qualities;
+  try {
+    assert.equal(PolishParty.ckwAvailable(Q), false, 'not in 1922');
+    Q.time = PolishRules.timeOf(1923, 1); Q.year = 1923; Q.month = 1;
+    playFromHand(engine, 'polish_party_advisers');
+    const title = id => plain(choice(engine, 'polish_party_advisers.' + id).title);
+    assert.equal(Q.pl_ckw_now, 'Ignacy Daszyński, Kazimierz Pużak i Feliks Perl z Centrum PPS');
+    assert.deepEqual(['centrum', 'lewica', 'pilsudczycy'].map(title), ['Centrum PPS: Ignacy Daszyński', 'Lewica PPS: Zygmunt Zaremba', 'Piłsudczycy: Rajmund Jaworowski']);
+    assert.match(plain(choice(engine, 'polish_party_advisers.keep').subtitle), /^Koszt: 0 jednostek środków\./);
+    dendry.choose(engine, 'polish_party_advisers.lewica');
+    assert.equal(title('lewica'), 'Lewica PPS: Kazimierz Czapiński');
+    dendry.choose(engine, 'polish_party_advisers.lewica');
+    assert.equal(PolishParty.ckwSeatStatus(Q, 'lewica').reason, 'Lewica PPS nie ma więcej kandydatów.');
+    dendry.choose(engine, 'polish_party_advisers.pilsudczycy');
+    assert.equal(Q.pl_ckw_draft_text, 'Dotąd wybrani: Zygmunt Zaremba i Kazimierz Czapiński z Lewicy PPS oraz Rajmund Jaworowski spośród piłsudczyków.');
+    assert.equal(Q.month_actions, 0, 'the picks are not yet the decision of the month');
+    assert.match(plain(choice(engine, 'polish_party_advisers.confirm').subtitle), /^Koszt: 0 jednostek środków\./);
+    dendry.choose(engine, 'polish_party_advisers.confirm');
+    assert.equal(Q.pl_party_result.split('. ').slice(0, 2).join('. '), 'Nowy skład Komitetu: Zygmunt Zaremba i Kazimierz Czapiński z Lewicy PPS oraz Rajmund Jaworowski spośród piłsudczyków. Zyskują nurty Lewicy PPS i piłsudczyków, a rośnie niezadowolenie w Centrum PPS.');
+    assert.deepEqual(['daszynski', 'zaremba', 'czapinski', 'jaworowski'].map(id => Q[id + '_advisor']), [0, 1, 1, 1], 'the portraits follow');
+    assert.equal(PolishParty.ckwAvailable(Q), false, 'once a year');
+  } finally {
+    PolishRules.setLanguage('en');
   }
-  const daszynski = choice(engine, 'polish_party_advisers.toggle_daszynski');
-  assert.equal(plain(daszynski.title), 'Ignacy Daszyński');
-  assert.deepEqual(bold(daszynski.subtitle), ['Centrum.']);
-  assert.match(plain(daszynski.subtitle), /Actions:<br>– Parliamentary Compromise: .*<br>– Broker a Coalition: .*<strong class="pl-adv-in">On the Committee<\/strong> — click to remove\.<\/span>$/);
-  const zaremba = choice(engine, 'polish_party_advisers.toggle_zaremba');
-  assert.equal(zaremba.canChoose, false, 'the three seats are taken');
-  assert.deepEqual(bold(zaremba.subtitle), ['Lewica.']);
-  assert.match(plain(zaremba.subtitle), /Actions:<br>– Worker-Peasant Front: .*The three seats are taken\.<\/span>$/);
-  assert.deepEqual(bold(choice(engine, 'polish_party_advisers.toggle_malinowski').subtitle), ['Piłsudczycy.']);
-  choose(engine, 'polish_party_advisers.toggle_daszynski');
-  assert.match(plain(choice(engine, 'polish_party_advisers.toggle_zaremba').subtitle), /Add to the Committee\.<\/span>$/);
-  assert.match(plain(choice(engine, 'polish_party_advisers.toggle_daszynski').subtitle), /Add to the Committee\.<\/span>$/);
-  // Z — 0.76: with two people chosen the Committee cannot be confirmed.
-  assert.equal(choice(engine, 'polish_party_advisers.confirm').canChoose, false);
-  assert.match(plain(choice(engine, 'polish_party_advisers.confirm').subtitle), /Choose three people for the three seats \(now 2\)/);
 });
 
 // Z — 0.78 (the user's note of 8 X 2026): the present Committee can simply be confirmed — for free; the card leaves the hand
 // and rests; a change still costs the month.
-test('Obecny skład CKW 0.78: confirming the present Committee is possible, free, and changes nothing', () => {
+// Z — 1.42 (decisions K1A, K2A of 28 XI 2026): the card that fills three seats by currents replaced the composition card and the actions;
+// the name of this test of 21.1 stays, its body checks the new rule.
+test('Obecny skład CKW 0.78 (Z — 1.42): keeping the present Committee calms its currents a little, one point a seat, and changes nothing else', () => {
   const engine = dendry.startGame();
-  const Q = engine.state.qualities;
-  const before = PolishParty.activeAdvisers(Q);
-  playFromHand(engine, 'polish_party_advisers');
-  choose(engine, 'polish_party_advisers.compose');
-  const confirm = choice(engine, 'polish_party_advisers.confirm');
-  assert.equal(confirm.canChoose, true, 'the present Committee can be accepted');
-  assert.match(plain(confirm.subtitle), /No change: the present Committee stays\./);
-  choose(engine, 'polish_party_advisers.confirm');
-  assert.match(content(engine), /The Central Executive Committee stays as it is: /);
-  choose(engine, 'root');
-  assert.deepEqual([Q.time, Q.month_actions || 0], [1, 0], 'no month is used');
-  assert.deepEqual(PolishParty.activeAdvisers(Q), before);
-  assert.ok(!engine.state.currentHands.main.some(c => c.id === 'polish_party_advisers'), 'the card leaves the hand');
-  assert.equal(PolishRules.cardRest(Q, 'polish_party_advisers'), 3, 'and rests');
-  // A change still costs the month.
-  const other = dendry.startGame();
-  playFromHand(other, 'polish_party_advisers');
-  choose(other, 'polish_party_advisers.compose');
-  choose(other, 'polish_party_advisers.toggle_daszynski');
-  choose(other, 'polish_party_advisers.toggle_zaremba');
-  assert.match(plain(choice(other, 'polish_party_advisers.confirm').subtitle), /After a change the next one waits six months/);
+  const Q = engine.state.qualities, f = Q.S.actors.pps.factions;
+  Q.time = PolishRules.timeOf(1923, 1);
+  for (const id of ['centrum', 'lewica', 'pilsudczycy']) f[id].dissent = 20;
+  const strength = f.centrum.strength;
+  PolishParty.ckwConfirm(Q, true);
+  assert.deepEqual([f.centrum.dissent, f.lewica.dissent, f.pilsudczycy.dissent, f.centrum.strength], [17, 20, 20, strength]);
+  assert.deepEqual(Q.S.actors.pps.ckw.seats, ['centrum', 'centrum', 'centrum']);
+  assert.equal(Q.month_actions, 1, 'the decision of the month');
 });
 
 // Z — 0.78 (decision 5A of 8 X 2026): the TUR courses are a card of their own once TUR works, one click each; the game picks
@@ -267,31 +256,37 @@ test('Jedność i kierownictwo 0.79: why the card is here, the demand in words a
 });
 
 // Z — 0.79 (decision 5A of 14 X 2026): Ziemięcki's emergency collection, +2 R, with the shared cooldown of the Committee.
-test('Nadzwyczajna zbiórka 0.79: Ziemięcki brings +2 resources at once; the Committee then waits', () => {
+// Z — 1.42 (decisions K1A, K2A of 28 XI 2026): the card that fills three seats by currents replaced the composition card and the actions;
+// the name of this test of 21.1 stays, its body checks the new rule.
+test('Nadzwyczajna zbiórka 0.79 (Z — 1.42): the emergency collection is gone with the actions of the Committee', () => {
   const engine = dendry.startGame();
   const Q = engine.state.qualities;
   Q.ziemiecki_advisor = 1;
-  const cash = Q.S.party_orgs.cash;
+  assert.equal(PolishParty.advisorActionStatus(Q, 'ziemiecki', 'emergency_fundraising').available, false);
   engine.goToScene('ziemiecki');
-  assert.deepEqual(ids(engine), ['ziemiecki.emergency_fundraising', 'ziemiecki.municipal_socialism', 'root']);
-  choose(engine, 'ziemiecki.emergency_fundraising');
-  assert.equal(Q.S.party_orgs.cash, cash + 2);
-  assert.match(content(engine), /An emergency collection organised by the Committee: \+2 resources\./);
-  assert.equal(PolishParty.advisorActionStatus(Q, 'ziemiecki', 'municipal_socialism').available, false, 'the shared cooldown');
+  assert.deepEqual(ids(engine), ['root'], 'the portrait offers only the way back');
 });
 
 // Z — 0.79 (the user's notes of 14 X 2026): an adviser's action says what is missing — the ministry of its government card,
 // or TUR before its price.
-test('Powody niedostępności 0.79: Czapiński names the missing ministry; socialist education asks for TUR before money', () => {
-  const engine = dendry.startGame();
-  const Q = engine.state.qualities;
-  Q.czapinski_advisor = 1;
-  Q.S.party_orgs.cash = 0;
-  PolishParty.writeMirrors(Q);
-  engine.goToScene('czapinski');
-  assert.equal(Q.pl_czap_public_control_why, 'Needs PPS in the cabinet with the Industry and Trade ministry.');
-  assert.equal(PolishParty.advisorActionStatus(Q, 'czapinski', 'socialist_education').reason,
-    'Needs a working TUR (found it with the card Organisations of PPS).', 'TUR before the price');
+// Z — 1.42 (decisions K1A, K2A of 28 XI 2026): the card that fills three seats by currents replaced the composition card and the actions;
+// the name of this test of 21.1 stays, its body checks the new rule.
+test('Powody niedostępności 0.79 (Z — 1.42): the card of the Committee and the defence of the constitution say why they wait', () => {
+  const Q = dendry.startGame(1922, 'pl').state.qualities;
+  try {
+    Q.time = PolishRules.timeOf(1923, 1);
+    PolishParty.ckwView(Q, true);
+    PolishParty.ckwPick(Q, 'lewica');
+    assert.equal(PolishParty.ckwConfirmStatus(Q, false).reason, 'Najpierw obsadźmy wszystkie trzy miejsca.');
+    PolishParty.ckwConfirm(Q, true);
+    if (Q.S.turn.pending) { Q.S.turn.pending.phase = 'settled'; Q.S.turn.pending = null; }
+    Q.month_actions = 0;
+    assert.equal(PolishParty.ckwSeatStatus(Q, 'centrum').reason, 'Skład Komitetu ustala się raz w roku.');
+    PolishParty.defenceChoose(Q);
+    assert.equal(PolishParty.defenceStatus(Q).reason, 'Karta odpoczywa.');
+  } finally {
+    PolishRules.setLanguage('en');
+  }
 });
 
 // Z — 0.56 (item 4 of 5 X 2026): the union packages have a card of their own; one investment in one action.

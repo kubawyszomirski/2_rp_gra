@@ -375,6 +375,8 @@
       const ledger = settleParty(Q, t);
       settleRewards(Q, t);
       profileMonth(Q);
+      // Z — 1.42: the portraits follow the composition of the Committee (Perl until III 1927, then Niedziałkowski).
+      ckwPortraits(Q);
       updateFactionCases(Q, t);
       expireAdvisorEffects(Q.S, t + 1);
       return ledger;
@@ -3303,8 +3305,10 @@
     return true;
   }
 
-  function advisersAvailable(Q) {
-    return partyReady(Q) && Q.S.chapter.status !== 'ended' && rules.cooldownRemaining(Q, 'party.advisers') === 0;
+  // Z — 1.42 (decision K1A): the old card of the composition of the Committee, with its list of candidates, gave way to the card that
+  // fills three seats by currents (ckwView and below).
+  function advisersAvailable() {
+    return false;
   }
 
   const draftOf = Q => String(Q.pl_adv_draft || '').split(',').filter(Boolean);
@@ -3452,6 +3456,8 @@
 
   function advisorActionStatus(Q, advisorId, actionId) {
     const S = Q.S;
+    // Z — 1.42 (decision K2A of 28 XI 2026): the Committee has no actions any more; the rules below are kept for the record.
+    if (S || !S) return no(L('The Committee has no actions any more.', 'Komitet nie ma już osobnych akcji.'));
     if (Q[advisorId + '_advisor'] !== 1) return no(L('Not on the Committee.', 'Nie zasiada w CKW.'));
     if (!rules.isAdvisorAvailable(Q)) {
       const wait = rules.cooldownRemaining(Q, 'advisor');
@@ -3595,6 +3601,222 @@
     const id = ADVISER_PROFILES[actionKey];
     if (!id || !(rules.seedProfile(Q, id, ADVISER_SEED, 'adviser.' + actionKey) > 0)) return '';
     return L('It builds ' + profileAcc(id) + '.', 'Buduje ' + profileAcc(id) + '.');
+  }
+
+  // ---- Z — 1.42 (decision K1A of 28 XI 2026, reworked the same day): the composition of the Central Executive Committee ----------
+  // Once a year from 1923 the card „The Central Executive Committee” fills its three seats: for each seat the player picks a current —
+  // the Centre, the Left or the Piłsudczycy — and the current names the person (its leaders in a fixed order; Perl only until
+  // III 1927, and nobody who left the party). Confirming the composition is the month's decision. A current that gains seats grows stronger and calmer,
+  // one that loses seats is displeased, and an unchanged composition calms its currents a little. The portraits of the main page show
+  // the members with a short biography and no actions; the defence of the constitution of Niedziałkowski became a card of its own.
+  // The sizes are devices of the game.
+  const CKW_CANDIDATES = Object.freeze({centrum: ['daszynski', 'puzak', 'perl', 'niedzialkowski', 'arciszewski'], lewica: ['zaremba', 'czapinski'],
+    pilsudczycy: ['jaworowski', 'moraczewski', 'ziemiecki', 'malinowski']});
+  const CKW_FACTIONS = Object.freeze(['centrum', 'lewica', 'pilsudczycy']);
+  const CKW_SEATS = 3;
+  const CKW_REST = 12;
+  const CKW_FROM = T(1923, 1);
+  const CKW_EFFECT = Object.freeze({strength: 2, calm: 2, loss: 3, keep: 1});
+  const SHORT_BIOS = Object.freeze({
+    daszynski: ['In November 1918 he headed the Provisional People’s Government in Lublin.', 'W listopadzie 1918 stanął na czele Tymczasowego Rządu Ludowego w Lublinie.'],
+    puzak: ['A political prisoner of tsarist Russia in 1911–1917; since 1919 a deputy of PPS.', 'Więzień polityczny caratu w latach 1911–1917; od 1919 poseł PPS.'],
+    perl: ['A co-founder and the leading ideologue of PPS, editor-in-chief of the party daily Robotnik.', 'Współzałożyciel i czołowy ideolog PPS, redaktor naczelny partyjnego dziennika „Robotnik”.'],
+    niedzialkowski: ['A theorist of PPS and the secretary of the Constitutional Committee of the Sejm Ustawodawczy.', 'Teoretyk PPS, sekretarz Komisji Konstytucyjnej Sejmu Ustawodawczego.'],
+    arciszewski: ['One of the leaders of the Combat Organisation of PPS; in November 1918 minister of labour in the Lublin government.', 'Jeden z przywódców Organizacji Bojowej PPS; w listopadzie 1918 minister pracy w rządzie lubelskim.'],
+    zaremba: ['A socialist since 1912; in 1918–1919 he represented PPS in the Warsaw Council of Workers’ Delegates.', 'Socjalista od 1912; w latach 1918–1919 przedstawiciel PPS w Warszawskiej Radzie Delegatów Robotniczych.'],
+    czapinski: ['A socialist publicist; since 1921 a member of the Central Executive Committee of PPS.', 'Publicysta socjalistyczny; od 1921 członek Centralnego Komitetu Wykonawczego PPS.'],
+    jaworowski: ['A PPS militant and in 1914–1915 an intelligence officer of the Legions.', 'Bojowiec PPS, w latach 1914–1915 oficer wywiadu Legionów.'],
+    moraczewski: ['The prime minister of Poland’s first central government (November 1918 – January 1919).', 'Premier pierwszego centralnego rządu polskiego (listopad 1918 – styczeń 1919).'],
+    ziemiecki: ['Minister of labour and social welfare in the government of Moraczewski until January 1919.', 'Minister pracy i opieki społecznej w rządzie Moraczewskiego do stycznia 1919.'],
+    malinowski: ['A PPS militant of the Radom district who twice escaped tsarist exile; in November 1918 minister of public works in the Lublin government.', 'Bojowiec PPS z okręgu radomskiego, dwukrotnie zbiegły z carskiego zesłania; w listopadzie 1918 minister robót publicznych w rządzie lubelskim.'],
+  });
+  const FACTION_NAMES_EN = Object.freeze({centrum: 'the Centre of PPS', lewica: 'the Left of PPS', pilsudczycy: 'the Piłsudczycy'});
+  const FACTION_NAMES_PL = Object.freeze({centrum: 'Centrum PPS', lewica: 'Lewica PPS', pilsudczycy: 'Piłsudczycy'});
+  const FACTION_FROM = Object.freeze({centrum: ['from the Centre of PPS', 'z Centrum PPS'], lewica: ['from the Left of PPS', 'z Lewicy PPS'], pilsudczycy: ['from the Piłsudczycy', 'spośród piłsudczyków']});
+  const FACTION_AMONG = Object.freeze({centrum: ['in the Centre of PPS', 'w Centrum PPS'], lewica: ['in the Left of PPS', 'w Lewicy PPS'], pilsudczycy: ['among the Piłsudczycy', 'wśród piłsudczyków']});
+  const SEAT_WORDS = Object.freeze({1: ['one seat', 'jedno miejsce'], 2: ['two seats', 'dwa miejsca'], 3: ['three seats', 'trzy miejsca']});
+  // The candidates of a current now, in their order: Perl only until III 1927, and nobody who left the party after a split.
+  const leadersOf = (Q, faction) => (CKW_CANDIDATES[faction] || []).filter(id => adviserInPool(Q, id));
+  const listText = (items, last) => (items.length > 1 ? items.slice(0, -1).join(', ') + last + items[items.length - 1] : items.join(''));
+  const ckwOrder = seats => CKW_FACTIONS.reduce((out, f) => out.concat(seats.filter(s => s === f)), []);
+  function ckwCount(seats) {
+    const out = {centrum: 0, lewica: 0, pilsudczycy: 0};
+    for (const f of seats) if (f in out) out[f] += 1;
+    return out;
+  }
+  function ckwState(Q) {
+    const pps = Q.S.actors.pps;
+    if (!pps.ckw) {
+      // A game from before 1.42: the seats follow the currents of the team it had, filled up with the Centre.
+      const seats = activeAdvisers(Q).filter(id => !ADVISERS[id].continuation && CKW_CANDIDATES[ADVISERS[id].faction]).map(id => ADVISERS[id].faction);
+      const count = ckwCount(seats), kept = [];
+      for (const f of CKW_FACTIONS) for (let i = 0; i < Math.min(count[f], leadersOf(Q, f).length); i += 1) kept.push(f);
+      while (kept.length < CKW_SEATS) kept.unshift('centrum');
+      pps.ckw = {seats: ckwOrder(kept.slice(0, CKW_SEATS)), since: 1};
+    }
+    return pps.ckw;
+  }
+  // The persons on the seats: the first leaders of each current, in the order of the currents.
+  function ckwMembers(Q, seats) {
+    const used = {centrum: 0, lewica: 0, pilsudczycy: 0}, out = [];
+    for (const f of ckwOrder(seats)) {
+      const id = leadersOf(Q, f)[used[f]];
+      used[f] += 1;
+      if (id) out.push(id);
+    }
+    return out;
+  }
+  // „Ignacy Daszyński i Kazimierz Pużak z Centrum PPS oraz Zygmunt Zaremba z Lewicy PPS”.
+  function ckwText(Q, seats) {
+    const members = ckwMembers(Q, seats), groups = [];
+    for (const f of CKW_FACTIONS) {
+      const names = members.filter(id => ADVISERS[id].faction === f).map(id => ADVISERS[id].name);
+      if (names.length) groups.push(listText(names, L(' and ', ' i ')) + ' ' + L(FACTION_FROM[f][0], FACTION_FROM[f][1]));
+    }
+    return listText(groups, L(' and ', ' oraz '));
+  }
+  function ckwPortraits(Q) {
+    const members = ckwMembers(Q, ckwState(Q).seats);
+    for (const id of ADVISER_ORDER) Q[id + '_advisor'] = members.indexOf(id) >= 0 ? 1 : 0;
+  }
+  const ckwDraft = Q => (Q.pl_ckw_draft_t === Q.time && typeof Q.pl_ckw_draft === 'string' && Q.pl_ckw_draft ? Q.pl_ckw_draft.split(',') : []);
+  function ckwReset(Q) {
+    Q.pl_ckw_draft = '';
+    Q.pl_ckw_draft_t = Q.time;
+  }
+  function ckwAvailable(Q) {
+    return partyReady(Q) && Q.S.chapter.status !== 'ended' && Q.time >= CKW_FROM && rules.cooldownRemaining(Q, 'party.ckw') === 0;
+  }
+  function ckwDecisionStatus(Q) {
+    if (!ckwAvailable(Q)) return no(L('The Committee is composed once a year.', 'Skład Komitetu ustala się raz w roku.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Decyzja na ten miesiąc już zapadła.'));
+    return OK;
+  }
+  function ckwSeatStatus(Q, faction) {
+    if (!CKW_CANDIDATES[faction]) return no(L('Unknown current.', 'Nieznany nurt.'));
+    const status = ckwDecisionStatus(Q);
+    if (!status.available) return status;
+    const draft = ckwDraft(Q);
+    if (draft.length >= CKW_SEATS) return no(L('All three seats are filled.', 'Wszystkie trzy miejsca są już obsadzone.'));
+    if (ckwCount(draft)[faction] >= leadersOf(Q, faction).length) {
+      const en = FACTION_NAMES_EN[faction];
+      return no(L(en.charAt(0).toUpperCase() + en.slice(1) + (faction === 'pilsudczycy' ? ' have' : ' has') + ' no more candidates.',
+        FACTION_NAMES_PL[faction] + (faction === 'pilsudczycy' ? ' nie mają' : ' nie ma') + ' więcej kandydatów.'));
+    }
+    return OK;
+  }
+  function ckwConfirmStatus(Q, keep) {
+    const status = ckwDecisionStatus(Q);
+    if (!status.available || keep) return status;
+    if (ckwDraft(Q).length < CKW_SEATS) return no(L('Fill all three seats first.', 'Najpierw obsadźmy wszystkie trzy miejsca.'));
+    return OK;
+  }
+  function ckwView(Q, fresh) {
+    if (fresh || Q.pl_ckw_draft_t !== Q.time) ckwReset(Q);
+    const state = ckwState(Q), draft = ckwDraft(Q), count = ckwCount(draft), left = CKW_SEATS - draft.length;
+    Q.pl_ckw_now = ckwText(Q, state.seats);
+    Q.pl_ckw_draft_n = draft.length;
+    Q.pl_ckw_draft_text = draft.length ? L('Chosen so far: ', 'Dotąd wybrani: ') + ckwText(Q, draft) + '.' : L('No seat is filled yet.', 'Żadne miejsce nie jest jeszcze obsadzone.');
+    Q.pl_ckw_left_text = left === 0 ? L('All three seats are filled; we can confirm the composition or start again.', 'Wszystkie trzy miejsca są obsadzone; możemy zatwierdzić skład albo zacząć od nowa.')
+      : L(left === 1 ? 'One seat is left.' : SEAT_WORDS[left][0].charAt(0).toUpperCase() + SEAT_WORDS[left][0].slice(1) + ' are left.',
+        left === 1 ? 'Zostało jedno miejsce.' : 'Zostały ' + SEAT_WORDS[left][1] + '.');
+    for (const f of CKW_FACTIONS) {
+      const next = leadersOf(Q, f)[count[f]];
+      Q['pl_ckw_title_' + f] = L(FACTION_NAMES_EN[f].charAt(0).toUpperCase() + FACTION_NAMES_EN[f].slice(1), FACTION_NAMES_PL[f]) + (next ? ': ' + ADVISERS[next].name : '');
+      Q['pl_ckw_' + f + '_why'] = ckwSeatStatus(Q, f).reason;
+    }
+    Q.pl_ckw_confirm_why = ckwConfirmStatus(Q, false).reason;
+    Q.pl_ckw_keep_why = ckwConfirmStatus(Q, true).reason;
+  }
+  function ckwPick(Q, faction) {
+    const status = ckwSeatStatus(Q, faction);
+    if (!status.available) throw new Error('ckwPick: ' + status.reason);
+    Q.pl_ckw_draft = ckwDraft(Q).concat([faction]).join(',');
+    Q.pl_ckw_draft_t = Q.time;
+    ckwView(Q, false);
+  }
+  function ckwConfirm(Q, keep) {
+    syncMirrors(Q);
+    const status = ckwConfirmStatus(Q, keep);
+    if (!status.available) throw new Error('ckwConfirm: ' + status.reason);
+    const S = Q.S, t = Q.time, state = ckwState(Q);
+    const seats = keep ? state.seats.slice() : ckwOrder(ckwDraft(Q));
+    const before = ckwCount(state.seats), after = ckwCount(seats), cause = {id: 'party.ckw:' + seats.join('-') + ':t' + t, kind: 'ckw', reverse: null};
+    rules.commitMainAction(Q, 'party.ckw', {seats: seats.slice()});
+    S.cooldowns['party.ckw'] = t + CKW_REST;
+    const gained = [], lost = [];
+    for (const f of CKW_FACTIONS) {
+      const d = after[f] - before[f];
+      if (d > 0) {
+        factionReaction(Q, f, {strength: CKW_EFFECT.strength * d, dissent: -CKW_EFFECT.calm * d}, cause);
+        gained.push(f);
+      } else if (d < 0) {
+        factionReaction(Q, f, {dissent: CKW_EFFECT.loss * -d}, cause);
+        lost.push(f);
+      }
+    }
+    let text;
+    if (!gained.length) {
+      for (const f of CKW_FACTIONS) if (after[f]) factionReaction(Q, f, {dissent: -CKW_EFFECT.keep * after[f]}, cause);
+      text = L('The Committee keeps its composition: ' + ckwText(Q, seats) + '. Its currents calm a little.',
+        'Komitet zostaje w dotychczasowym składzie: ' + ckwText(Q, seats) + '. Jego nurty trochę się uspokajają.');
+    } else {
+      state.since = t;
+      const enGain = listText(gained.map(f => FACTION_NAMES_EN[f]), ' and '), plGain = listText(gained.map(f => FACTION_GEN_PL[f]), ' i ');
+      text = L('The new Committee: ' + ckwText(Q, seats) + '. ' + (gained.length > 1 ? 'The currents of ' : 'The current of ') + enGain + (gained.length > 1 ? ' gain' : ' gains') +
+          ' ground, and discontent grows ' + listText(lost.map(f => FACTION_AMONG[f][0]), ' and ') + '.',
+        'Nowy skład Komitetu: ' + ckwText(Q, seats) + '. ' + (gained.length > 1 ? 'Zyskują nurty ' : 'Zyskuje nurt ') + plGain +
+          ', a rośnie niezadowolenie ' + listText(lost.map(f => FACTION_AMONG[f][1]), ' i ') + '.');
+    }
+    state.seats = seats;
+    ckwReset(Q);
+    S.history.reasons.push({t: t, kind: 'ckw', seats: seats.slice()});
+    ckwPortraits(Q);
+    writeMirrors(Q);
+    return result(Q, text);
+  }
+  // The caption over the portraits: „Centralny Komitet Wykonawczy: dwa miejsca Centrum PPS, jedno miejsce Lewicy PPS.”
+  function ckwCaption(Q) {
+    const seats = Q.S && Q.S.actors && Q.S.actors.pps ? ckwState(Q).seats : ['centrum', 'centrum', 'centrum'], count = ckwCount(seats), en = [], pl = [];
+    for (const f of CKW_FACTIONS) {
+      if (!count[f]) continue;
+      en.push(SEAT_WORDS[count[f]][0] + ' of ' + FACTION_NAMES_EN[f]);
+      pl.push(SEAT_WORDS[count[f]][1] + ' ' + FACTION_GEN_PL[f]);
+    }
+    return L('The Central Executive Committee: ' + en.join(', ') + '.', 'Centralny Komitet Wykonawczy: ' + pl.join(', ') + '.');
+  }
+  function shortBio(Q, id) {
+    Q.pl_adv_bio = SHORT_BIOS[id] ? L(SHORT_BIOS[id][0], SHORT_BIOS[id][1]) : '';
+    Q.pl_adv_faction = ADVISERS[id] ? L(FACTION_NAMES_EN[ADVISERS[id].faction], FACTION_NAMES_PL[ADVISERS[id].faction]) : '';
+    return Q.pl_adv_bio;
+  }
+
+  // The defence of the constitution (formerly an action of Niedziałkowski): the unions stand by the legal institutions (+5), attachment to
+  // democracy grows at the next settlement (+5), and for six months backing an openly authoritarian project angers the Centre. Builds
+  // parliamentarism. The card rests nine months.
+  const DEFENCE_REST = 9;
+  function defenceAvailable(Q) {
+    return partyReady(Q) && Q.S.chapter.status !== 'ended' && rules.cooldownRemaining(Q, 'party.constitution_defence') === 0;
+  }
+  function defenceStatus(Q) {
+    if (!defenceAvailable(Q)) return no(L('The card rests.', 'Karta odpoczywa.'));
+    if (!rules.mainActionAvailable(Q)) return no(L('This month’s action has already been used.', 'Decyzja na ten miesiąc już zapadła.'));
+    return OK;
+  }
+  function defenceChoose(Q) {
+    syncMirrors(Q);
+    const status = defenceStatus(Q);
+    if (!status.available) throw new Error('defenceChoose: ' + status.reason);
+    const S = Q.S, t = Q.time, key = 'party.constitution_defence';
+    rules.commitMainAction(Q, key, {});
+    S.cooldowns[key] = t + DEFENCE_REST;
+    (S.actors.pps.pending_effects = S.actors.pps.pending_effects || []).push({id: key + ':t' + t, system: 'democracy', stage: 7, value: 5});
+    for (const id of BRANCHES) S.unions[id].alignment.legal_institutions = Math.min(100, (S.unions[id].alignment.legal_institutions || 50) + 5);
+    addEffect(S, key, 'authoritarian_support_penalty', 5, t);
+    rules.seedProfile(Q, 'parliamentarism', 1.5, key);
+    writeMirrors(Q);
+    return result(Q, L('The trade unions stand by the legal institutions, and attachment to democracy will grow next month.',
+      'Związki stają murem za legalnymi władzami, a w przyszłym miesiącu w kraju wzrośnie przywiązanie do demokracji.'));
   }
 
   function advisorView(Q, advisorId) {
@@ -3957,6 +4179,22 @@
     profileLibrary: profileLibrary,
     profileSummary: profileSummary,
     profileNotices: profileNotices,
+    CKW_CANDIDATES: CKW_CANDIDATES,
+    ckwState: ckwState,
+    ckwMembers: ckwMembers,
+    ckwAvailable: ckwAvailable,
+    ckwSeatStatus: ckwSeatStatus,
+    ckwConfirmStatus: ckwConfirmStatus,
+    ckwView: ckwView,
+    ckwPick: ckwPick,
+    ckwReset: ckwReset,
+    ckwConfirm: ckwConfirm,
+    ckwPortraits: ckwPortraits,
+    ckwCaption: ckwCaption,
+    shortBio: shortBio,
+    defenceAvailable: defenceAvailable,
+    defenceStatus: defenceStatus,
+    defenceChoose: defenceChoose,
     profileCampaignFactor: profileCampaignFactor,
     eventIssueCampaign: eventIssueCampaign,
     issueSituation: (Q, id) => !!(ISSUES[id] && ISSUES[id].situation(Q.S)),

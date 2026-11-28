@@ -456,8 +456,8 @@ test('new games use the approved three-person starting team and full Polish advi
   for (const adviser of polishAdvisers) {
     assert.ok(game.scenes[adviser], adviser);
     // Z — 0.29 (M17): Próchnik, Drobner and Dubois are the cast of the continuation, with no action in chapter 1.
-    if (continuation.includes(adviser)) assert.equal(game.scenes[adviser].options.length, 1, `${adviser} only returns`);
-    else assert.ok(game.scenes[adviser].options.length >= 2, `${adviser} has a usable action and return option`);
+    // Z — 1.42 (decision K2A of 28 XI 2026): the Committee has no actions; every portrait offers only the way back.
+    assert.equal(game.scenes[adviser].options.length, 1, `${adviser} only returns`);
     assert.equal(Q[`${adviser}_left_adviser_pool`], 0, adviser);
   }
   for (const legacy of ['wels', 'muller', 'hilferding']) {
@@ -465,54 +465,6 @@ test('new games use the approved three-person starting team and full Polish advi
   }
 });
 
-test('the six approved starting-adviser actions follow 10.4.3 and write only the Polish state', () => {
-  const compromise = newGameState();
-  runScene('daszynski.parliamentary_compromise', compromise);
-  assert.deepEqual([compromise.S.actors.relations.psl_piast, compromise.S.actors.relations.npr, compromise.S.actors.relations.pschd], [50, 55, 34]);
-  assert.equal(compromise.psl_piast_relation, 50, 'the mirror follows the owner');
-
-  // Broker a Coalition (10.4.3): in a coalition, −10 tension on each cabinet agreement, not below 0.
-  const coalition = runElection(newGameState());
-  coalition.sejm_pending = {id: 'fixture', year: 1922, month: 11, first: true, phase: 'pending'};
-  runScene('sejm_election_result', coalition);
-  strongLeft(coalition);
-  PolishGovernment.chooseCoalition(coalition, 'left_minority');
-  PolishGovernment.setDraft(coalition, 'pps_mode', 'member');
-  PolishGovernment.setDraft(coalition, 'seek_minority_support', true);
-  PolishGovernment.submitFormation(coalition);
-  const agreements = coalition.S.cabinet.agreement_ids.map(id => coalition.S.agreements[id]).filter(a => a.kind === 'cabinet');
-  assert.ok(agreements.length > 0);
-  agreements[0].tension = 25;
-  runScene('daszynski.broker_coalition', coalition);
-  assert.equal(agreements[0].tension, 15);
-  assert.equal(coalition.pl_broker_mode, 'tension');
-
-  // Pużak (21.1): dissents 8/20/40 become 0/8/28.
-  const discipline = newGameState();
-  const f = discipline.S.actors.pps.factions;
-  f.centrum.dissent = 8; f.lewica.dissent = 20; f.pilsudczycy.dissent = 40;
-  runScene('puzak.party_discipline', discipline);
-  assert.deepEqual([f.centrum.dissent, f.lewica.dissent, f.pilsudczycy.dissent], [0, 8, 28]);
-
-  const organization = newGameState();
-  runScene('puzak.mobilize_organization', organization);
-  const workers = organization.S.society.cells.filter(c => c.class_id === 'workers');
-  assert.ok(workers.every(c => Math.abs(c.base_reach_pps - 31) < 1e-9), '+10 × 1.10 in a workers’ party');
-  assert.equal(organization.S.advisors.effects.at(-1).kind, 'workers_campaign_multiplier');
-  assert.equal(organization.S.party_orgs.cash, 1, '1 R');
-
-  const partyLine = newGameState();
-  runScene('perl.define_party_line', partyLine);
-  const line = partyLine.S.actors.pps.factions;
-  closeTo(line.centrum.strength, 100 * 58 / 104);
-  closeTo(line.pilsudczycy.strength, 100 * 31 / 104);
-  assert.equal(line.centrum.dissent, 0);
-
-  const press = newGameState();
-  runScene('perl.direct_party_press', press);
-  assert.equal(press.S.party_orgs.press.credibility, 65);
-  assert.equal(press.S.advisors.effects.at(-1).kind, 'press_campaign_multiplier');
-});
 
 test('leadership appointments strengthen a faction once and dismissals add dissent', () => {
   const Q = newGameState();
@@ -561,6 +513,7 @@ test('dated adviser arrivals and deterministic departures follow the approved sc
   assert.equal(perl.month, 4);
   assert.equal(perl.perl_advisor, 0);
   assert.equal(perl.perl_left_adviser_pool, 1);
+  assert.equal(perl.niedzialkowski_advisor, 1, 'Z — 1.42: Niedziałkowski takes his place among the leaders of the Centre');
   assert.equal(perl.n_advisors, 2);
 
   const daszynski = newGameState();

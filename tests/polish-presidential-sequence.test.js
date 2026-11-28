@@ -287,7 +287,8 @@ test('a prior Centrum departure blocks Daszyński as Marshal and President, rega
   choose(engine, 'polish_presidential_sequence.decline_daszynski');
   assert.equal(Q.polish_presidency.elections[0].pps_candidate, '');
   assert.equal(Q.polish_presidency.pps_decisions[0].decision, 'no_pps_candidate_after_daszynski_departure');
-  assert.equal(Q.daszynski_advisor, 1, 'presidential route does not alter adviser-slot state');
+  // Z — 1.42: the portraits follow the seats of the Committee every month; a member who left the party is not shown.
+  assert.equal(Q.daszynski_advisor, 0, 'the portraits follow the Committee, not the presidential route');
 });
 
 test('the second Daszyński candidacy is available after the answer to the assassination', () => {

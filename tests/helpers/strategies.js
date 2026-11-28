@@ -54,6 +54,8 @@ const P = {
   // Z — 0.64: a PPS member raises the same demands on the coalition card of the Government deck.
   coalition: option => ['polish_coalition_affairs', 'polish_government_support.' + option],
   adviser: (who, action) => ['main:' + who, who + '.' + action],
+  // Z — 1.42 (decision K2A): the defence of the constitution, formerly an action of Niedziałkowski, is a card of the party.
+  defence: () => ['polish_party_constitution_defence', 'polish_party_constitution_defence.defend'],
 };
 
 // Runs one path from main. Returns false when a step is not available; the card is then closed.
@@ -293,12 +295,12 @@ const STRATEGIES = {
   N_A: strategy('N_A', 'N-A: passive PPS', { events: PASSIVE_EVENTS, formation: FORMATION.opposition, month: plan.base }),
   N_B: strategy('N_B', 'N-B: tolerating PPS', {
     formation: FORMATION.tolerate,
-    free: ctx => [P.adviser('niedzialkowski', 'defend_democracy')],
+    free: () => [], defence: true,
     month: ctx => plan.organised(ctx, [...plan.wage(ctx), ...(ctx.after(1925, 6) ? plan.military(ctx) : []), ...plan.support(ctx)]),
   }),
   N_C: strategy('N_C', 'N-C: co-governing PPS', {
     formation: FORMATION.lateCoalition,
-    free: ctx => [P.adviser('niedzialkowski', 'defend_democracy'), P.adviser('moraczewski', 'public_works')],
+    free: () => [], defence: true,
     month: ctx => plan.organised(ctx, [...(ctx.after(1924, 1) && ctx.before(1925, 12) ? prepare(ctx, 'broad') : []), ...plan.wage(ctx), ...plan.government(ctx), ...(ctx.after(1925, 12) ? plan.military(ctx) : []), ...plan.support(ctx)]),
   }),
   N_H: strategy('N_H', 'N-H: historical intentions', {
@@ -343,7 +345,7 @@ const STRATEGIES = {
   }),
   active_employment: strategy('active_employment', '21.2: active employment', {
     formation: FORMATION.coalition,
-    free: ctx => [P.adviser('moraczewski', 'public_works')],
+    free: () => [],
     month: ctx => plan.organised(ctx, [...prepare(ctx, ctx.before(1924, 1) ? 'early' : 'broad'), ...plan.government(ctx), P.initiative('unemployment')]),
   }),
   mass_organizations: strategy('mass_organizations', '21.2: mass organisations', {
@@ -368,7 +370,7 @@ const STRATEGIES = {
     month: ctx => plan.organised(ctx, [ctx.t % 4 === 0 ? P.militia('recruit') : P.militia('militarize'), ...plan.wage(ctx)]),
   }),
   constitutional_defense: strategy('constitutional_defense', '21.2: constitutional defence', {
-    free: ctx => [P.adviser('niedzialkowski', 'defend_democracy')],
+    free: () => [], defence: true,
     events: Object.assign({}, ACTIVE_EVENTS, { constitution_debate: ['democratic_guarantees', 'constructive_vonc', 'referendum'] }),
     month: ctx => plan.organised(ctx, [P.initiative('army_oversight'), P.militia(ctx.t % 2 ? 'militarize' : 'form_as'),
       P.campaign('republic'), ...plan.military(ctx)]),
@@ -461,7 +463,9 @@ function playMonth(engine, strat, used) {
   // Z — 0.87: a waiting dispute is answered first, in the order of the strategy (not taking up the fight costs no month).
   const dispute = globalThis.PolishUnions.disputeUrgent(Q) ? (strat.events.polish_union_agenda || [])
     .map(o => (['small', 'big', 'political'].includes(o) ? P.strike(o) : P.union(o))) : [];
-  for (const path of dispute.concat(strat.month(context(engine)))) {
+  // Z — 1.42: the strategies that used the defence of democracy of Niedziałkowski play its card when it is open.
+  const defence = strat.defence && globalThis.PolishParty.defenceStatus(Q).available ? [P.defence()] : [];
+  for (const path of dispute.concat(defence, strat.month(context(engine)))) {
     if (!R.mainActionAvailable(Q)) break;
     tried.push(path[path.length - 1]);
     if (!runPath(engine, path)) continue;

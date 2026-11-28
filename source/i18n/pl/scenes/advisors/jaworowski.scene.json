@@ -4,10 +4,10 @@
  "lines": {
   "title: Rajmund Jaworowski": "title: Rajmund Jaworowski",
   "= Rajmund Jaworowski": "= Rajmund Jaworowski",
-  "Jaworowski represents the Piłsudczyk current inside the PPS.": "Jaworowski reprezentuje nurt piłsudczykowski wewnątrz PPS.",
   "- @root: Return to main": "- @root: Wróć do głównego ekranu",
   "title: Back Piłsudski": "title: Poparcie dla Piłsudskiego",
   "subtitle: The relation with Piłsudski improves (+8) and the Piłsudczycy grow stronger (+5); Centrum and Lewica dissent rises (+3). No posts or cabinet cooperation by itself. Builds militarism.": "subtitle: Koszt: 0 jednostek środków. Stosunki z Piłsudskim się poprawiają (+8), a piłsudczycy rosną w siłę (+5); Centrum i Lewica protestują (+3). Buduje militaryzm.",
-  "- @root: Continue.": "- @root: Dalej."
+  "- @root: Continue.": "- @root: Dalej.",
+  "[+ pl_adv_faction +]. [+ pl_adv_bio +]": "[+ pl_adv_faction +]. [+ pl_adv_bio +]"
  }
 }

@@ -8,14 +8,13 @@ on-arrival: {!
 // Adviser actions of technical reference 10.4.3 (card catalogue 6.6): 0 T, their own R, one shared cooldown of
 // six months for all advisers (4.4); the effects are the approved P numbers, applied by PolishParty.
 PolishParty.advisorView(Q, 'zaremba');
+PolishParty.shortBio(Q, 'zaremba');
 !}
 
 = Zygmunt Zaremba
 
-Zaremba represents Lewica PPS and emphasizes class campaigning and a future worker–peasant strategy.
+[+ pl_adv_faction +]. [+ pl_adv_bio +]
 
-- @worker_peasant_front
-- @class_campaign
 - @root: Return to main
 
 @worker_peasant_front

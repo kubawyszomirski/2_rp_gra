@@ -4,12 +4,15 @@ tags: advisor
 card-image: img/polish/moraczewski.jpg
 view-if: moraczewski_advisor = 1
 new-page: true
+on-arrival: {!
+// Z — 1.42: a portrait of a member of the Committee with a short biography and no actions.
+PolishParty.shortBio(Q, 'moraczewski');
+!}
 
 = Jędrzej Moraczewski
 
-Moraczewski represents the Piłsudczyk current and emphasizes state-directed social reform.
+[+ pl_adv_faction +]. [+ pl_adv_bio +]
 
-- @public_works
 - @root: Return to main
 
 @public_works

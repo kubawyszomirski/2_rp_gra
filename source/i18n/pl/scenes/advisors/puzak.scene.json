@@ -4,12 +4,12 @@
   "lines": {
     "title: Kazimierz Pużak": "title: Kazimierz Pużak",
     "= Kazimierz Pużak": "= Kazimierz Pużak",
-    "Pużak represents Centrum PPS and concentrates on discipline and party organization.": "Pużak reprezentuje Centrum PPS i skupia się na dyscyplinie i organizacji partii.",
     "- @root: Return to main": "- @root: Wróć do głównego ekranu",
     "title: Party Discipline": "title: Dyscyplina partyjna",
     "- @root: Continue.": "- @root: Dalej.",
     "title: Mobilize the Organization": "title: Mobilizacja organizacji",
     "subtitle: Cost: 1 resource. The base reach of PPS among the workers grows (+10), and campaigns among workers work better for six months (×1.20). Builds strike action.": "subtitle: Koszt: 1 jednostka środków. Organizacja partyjna dociera do większej liczby robotników (+10), a przez pół roku nasze kampanie wśród robotników działają mocniej. Buduje akcję strajkową.",
-    "subtitle: Cost: 0 resources. Dissent falls in each of the three factions (−12). It removes no cause of later growth.": "subtitle: Koszt: 0 jednostek środków. Pużak przywołuje partię do porządku: wszystkie trzy frakcje się uspokajają (−12), choć przyczyny sporów zostają."
+    "subtitle: Cost: 0 resources. Dissent falls in each of the three factions (−12). It removes no cause of later growth.": "subtitle: Koszt: 0 jednostek środków. Pużak przywołuje partię do porządku: wszystkie trzy frakcje się uspokajają (−12), choć przyczyny sporów zostają.",
+    "[+ pl_adv_faction +]. [+ pl_adv_bio +]": "[+ pl_adv_faction +]. [+ pl_adv_bio +]"
   }
 }

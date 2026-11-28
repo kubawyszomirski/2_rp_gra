@@ -127,34 +127,6 @@ test('Oferta Chjeno-Piasta 1923: from V 1923 the competing compromise is evaluat
   assert.ok(S.cabinet_crisis, 'the fall opens a formation, where PPS makes its own offer');
 });
 
-test('Tolerowanie warunkowe Ziemięckiego: with external support of a minority cabinet of Śliwiński or Piłsudski by an agreement, Centrum −10 and Lewica −8 dissent; not for a member, another premier or without an agreement', () => {
-  const Q = quiet();
-  const S = Q.S;
-  Q.ziemiecki_advisor = 1;
-  const status = () => PolishParty.advisorActionStatus(Q, 'ziemiecki', 'conditional_toleration');
-  assert.equal(PolishGovernment.pilsudskiAligned(S), false, 'Ponikowski is not Piłsudski’s candidate');
-  assert.equal(status().available, false);
-  S.cabinet.pm = 'sliwinski';
-  assert.equal(PolishGovernment.pilsudskiAligned(S), true, 'a cabinet of experts is a minority cabinet');
-  assert.equal(status().available, true, status().reason);
-  const before = { centrum: S.actors.pps.factions.centrum.dissent, lewica: S.actors.pps.factions.lewica.dissent };
-  PolishParty.advisorAction(Q, 'ziemiecki', 'conditional_toleration');
-  assert.equal(S.actors.pps.factions.centrum.dissent, Math.max(0, before.centrum - 10));
-  assert.equal(S.actors.pps.factions.lewica.dissent, Math.max(0, before.lewica - 8));
-  assert.equal(S.cabinet.pps_mode, 'external_support', 'the kind of support does not change');
-  // A member, or a supporter without an agreement, does not qualify.
-  const Q2 = quiet();
-  Q2.ziemiecki_advisor = 1;
-  Q2.S.cabinet.pm = 'sliwinski';
-  Q2.S.cabinet.partner_ids.push('pps');
-  Q2.S.cabinet.supporter_ids = Q2.S.cabinet.supporter_ids.filter(id => id !== 'pps');
-  assert.equal(PolishParty.advisorActionStatus(Q2, 'ziemiecki', 'conditional_toleration').available, false, 'full membership');
-  const Q3 = quiet();
-  Q3.ziemiecki_advisor = 1;
-  Q3.S.cabinet.pm = 'sliwinski';
-  Q3.S.agreements.opening_toleration.status = 'expired';
-  assert.match(PolishParty.advisorActionStatus(Q3, 'ziemiecki', 'conditional_toleration').reason, /agreement/);
-});
 
 test('Punkty programu bez wojska i autonomii: no cabinet configuration and no demand puts an army or autonomy point into a programme agreement; the military demand is a promise of the cabinet itself', () => {
   for (const [id, config] of Object.entries(PolishGovernment.CONFIGURATIONS)) {
