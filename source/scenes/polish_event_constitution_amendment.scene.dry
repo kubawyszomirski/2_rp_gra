@@ -1,0 +1,21 @@
+title: The Amendment of the Constitution
+subtitle: The government has prepared an amendment of the constitution and decided on the postulates of PPS.
+new-page: true
+tags: pl_event
+view-if: {! return !!Q.S && PolishProjects.amendmentDue(Q) !}
+on-arrival: {!
+// Event politics.constitution_amendment (Z — 1.44, decisions D1A and D2A of 28 XI 2026 and N1B, N2A of the sketch): in June 1926 the
+// government decides on each postulate PPS announced in the debate, by who governs and by our relations with its parties; the
+// amendment passes with what it took, without a vote. If the coup comes first, the postulates wait for chapter II. 0 T.
+PolishProjects.amendmentView(Q);
+!}
+
+= The amendment of the constitution
+
+[+ pl_am_intro +]
+
+[+ pl_am_lines +]
+
+[+ pl_am_cost +]
+
+- @root: Continue.

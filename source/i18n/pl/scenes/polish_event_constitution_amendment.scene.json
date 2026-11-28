@@ -1,0 +1,13 @@
+{
+ "source": "scenes/polish_event_constitution_amendment.scene.dry",
+ "status": "complete",
+ "lines": {
+  "title: The Amendment of the Constitution": "title: Nowela konstytucji",
+  "subtitle: The government has prepared an amendment of the constitution and decided on the postulates of PPS.": "subtitle: Rząd przygotował nowelę konstytucji i zdecydował o postulatach PPS.",
+  "= The amendment of the constitution": "= Nowela konstytucji",
+  "[+ pl_am_intro +]": "[+ pl_am_intro +]",
+  "[+ pl_am_lines +]": "[+ pl_am_lines +]",
+  "[+ pl_am_cost +]": "[+ pl_am_cost +]",
+  "- @root: Continue.": "- @root: Dalej."
+ }
+}

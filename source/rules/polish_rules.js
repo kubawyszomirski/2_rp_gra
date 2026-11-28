@@ -118,6 +118,8 @@
     polish_event_austerity_1926: Object.freeze({definition_id: 'cabinet.austerity_1926', category: 4}),
     // Z — 0.56: the constitutional debate of December 1924 is background (category 6), once; it opens card 7.6.
     polish_event_constitution_debate: Object.freeze({definition_id: 'politics.constitution_debate', category: 6}),
+    // Z — 1.44: the amendment of the constitution of June 1926 is background too (category 6), once.
+    polish_event_constitution_amendment: Object.freeze({definition_id: 'politics.constitution_amendment', category: 6}),
     // Z — 0.57: the joint list before a Sejm election is a deadline of the lists (category 4), one instance per election
     // and month; it keeps the scene ID of card 7.7, which it replaces.
     polish_list_agreement: Object.freeze({definition_id: 'parliament.list_agreement', category: 4, keyed_by: 'election_month'}),

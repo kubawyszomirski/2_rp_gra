@@ -234,56 +234,56 @@ test('9.11 in the game: a financial crisis without a reform queues the stabilisa
   assert.equal(Q.S.events.resolved.polish_event_stabilization !== undefined || engine.state.sceneId === 'main', true);
 });
 
-// Z — 0.56 (item 2 of 5 X 2026) and 0.82 (the user's decisions of 21 X 2026): the constitutional debate opens with its event in
-// December 1924, once; on its page PPS marks the motions it supports in its order. The old card stays out of the deck.
-test('Debata o konstytucji 0.82 w grze: one page of seven motions marked in order, a free position, the vote card of Parliament in Polish', () => {
+// Z — 0.56 (item 2 of 5 X 2026) and 0.82 (the user's decisions of 21 X 2026): the constitutional debate opens with its event,
+// once; the old card stays out of the deck. Z — 1.44 (D1A, D2A of 28 XI 2026): the debate comes in June 1925 and PPS announces its
+// postulates without an order; in June 1926 the government decides on each of them in its amendment, without a vote.
+test('Debata o konstytucji 0.82 w grze (Z — 1.44): one page of seven postulates in June 1925 without an order, a free position, the page of the amendment of June 1926 in Polish', () => {
   const engine = dendry.startGame(1922, 'pl');
   const Q = engine.state.qualities;
   const P = globalThis.PolishProjects;
   const plain = x => (x == null ? '' : typeof x === 'string' ? x : Array.isArray(x) ? x.map(plain).join('') : plain(x.content));
-  const page = () => plain(engine.ui.paragraphs.map(p => [p.content, ' ']));
+  const page = () => plain(engine.ui.paragraphs.map(p => [p.content, ' '])).replace(/<[^>]*>/g, '');
   try {
-    assert.equal(P.CONSTITUTION_DEBATE_AT, globalThis.PolishRules.timeOf(1924, 12));
+    assert.equal(P.CONSTITUTION_DEBATE_AT, globalThis.PolishRules.timeOf(1925, 6));
     assert.equal(P.constitutionDebateDue(Q), false, 'not in 1922');
     Q.time = P.CONSTITUTION_DEBATE_AT;
-    assert.equal(P.constitutionDebateDue(Q), true, 'due in December 1924');
+    assert.equal(P.constitutionDebateDue(Q), true, 'due in June 1925');
     engine.goToScene('polish_event_constitution_debate');
-    // Z — 1.04 (decision 3A of the event audit): the page names no chance in numbers.
-    // Z — 1.38: two sentences on top, without the instructions of a form.
-    assert.match(page(), /26 października 1924 r\. Związek Ludowo-Narodowy.*Sejm otwiera debatę: Komisja Konstytucyjna kieruje pod obrady po kolei wnioski, które PPS poprze, zaczynając od najwyżej postawionych.*Nasza lista: na razie żaden wniosek\./);
-    assert.doesNotMatch(page(), /Zaznacz/);
+    assert.match(page(), /26 października 1924 r\. Związek Ludowo-Narodowy.*Teraz PPS ogłasza swoje postulaty, a w połowie 1926 roku rząd przygotuje nowelę konstytucji i o każdym z nich zdecyduje osobno\..*Nasze postulaty: na razie żaden\./);
     assert.doesNotMatch(page(), /\d+(,\d+)?\s?%/, 'no percentage on the page of the debate');
     assert.deepEqual([P.constitutionDebateOpen(Q.S), P.constitutionDebateDue(Q)], [true, false], 'once');
     assert.deepEqual(ids(engine), [...P.MOTION_IDS.map(id => 'polish_event_constitution_debate.m_' + id), 'polish_event_constitution_debate.declare']);
     const arbitration = choice(engine, 'polish_event_constitution_debate.m_presidential_arbitration');
     assert.deepEqual([arbitration.canChoose, plain(arbitration.subtitle)], [false, 'Tylko przy linii „Silniejsza prezydentura” (karta „Jakiej władzy chcemy”).']);
     assert.equal(plain(choice(engine, 'polish_event_constitution_debate.m_referendum').title), '□ Referendum ludowe');
-    assert.match(plain(choice(engine, 'polish_event_constitution_debate.m_church_separation').subtitle),
-      /^Koniec „naczelnego stanowiska” Kościoła katolickiego.* Dziś .+; samo poparcie: stosunki z chadecją się pogarszają \(−3\), stosunki z PSL „Piast” się pogarszają \(−3\), sprzeciw Lewicy PPS spada \(−2\)\.$/);
+    assert.equal(plain(choice(engine, 'polish_event_constitution_debate.m_church_separation').subtitle),
+      'Koniec „naczelnego stanowiska” Kościoła katolickiego i przymusowej nauki religii w szkołach. Samo poparcie: stosunki z chadecją się pogarszają (−3), stosunki z PSL „Piast” się pogarszają (−3), sprzeciw Lewicy PPS spada (−2).');
     choose(engine, 'polish_event_constitution_debate.m_constructive_vonc');
     choose(engine, 'polish_event_constitution_debate.m_labour_chamber');
     assert.equal(engine.state.sceneId, 'polish_event_constitution_debate.menu');
-    assert.match(page(), /Nasza lista: 1\. Konstruktywne wotum nieufności, 2\. Izba Pracy w miejsce Senatu\./);
-    assert.equal(plain(choice(engine, 'polish_event_constitution_debate.m_constructive_vonc').title), '■ 1. Konstruktywne wotum nieufności');
+    assert.match(page(), /Nasze postulaty: Konstruktywne wotum nieufności, Izba Pracy w miejsce Senatu\./);
+    assert.equal(plain(choice(engine, 'polish_event_constitution_debate.m_constructive_vonc').title), '■ Konstruktywne wotum nieufności');
     const unicameral = choice(engine, 'polish_event_constitution_debate.m_unicameral');
     assert.deepEqual([unicameral.canChoose, plain(unicameral.subtitle)], [false, 'Wyklucza się z wnioskiem „Izba Pracy w miejsce Senatu”: najpierw go odznacz.']);
+    assert.equal(plain(choice(engine, 'polish_event_constitution_debate.declare').subtitle), 'Koszt: 0 jednostek środków.');
     const t = Q.time, actions = Q.month_actions || 0;
     choose(engine, 'polish_event_constitution_debate.declare');
-    assert.match(page(), /PPS popiera w debacie: 1\. Konstruktywne wotum nieufności, 2\. Izba Pracy w miejsce Senatu\. Komisja Konstytucyjna skieruje wnioski pod obrady/);
+    assert.match(page(), /PPS ogłasza swoje postulaty: Konstruktywne wotum nieufności, Izba Pracy w miejsce Senatu\. W połowie 1926 roku rząd przygotuje nowelę konstytucji/);
     assert.deepEqual([Q.time, Q.month_actions || 0], [t, actions], 'the position costs no month');
     choose(engine, 'root');
     assert.ok(!offered(engine, 'main.parliament').includes('polish_constitution_project'), 'the old card stays out of the deck');
-    // The Committee brought the constructive vote to the floor last month: the urgent vote card of Parliament (a fixture Senate).
-    Q.S.senate = Object.assign({}, Q.S.senate, { status: 'constituted', total: 111, club_seats: { pps: 30, psl_piast: 40, zln: 41 } });
-    P.debateState(Q.S).pending = { id: 'constructive_vonc', drawn_at: Q.time - 1 };
-    engine.goToScene('main');
-    assert.deepEqual([dendry.urgentCards(engine), dendry.urgentDeck(engine, 'polish_constitution_vote')], [['polish_constitution_vote'], 'main.parliament']);
-    dendry.playCard(engine, 'polish_constitution_vote');
-    assert.match(page(), /Głosowanie nad zmianą konstytucji.*Konstruktywne wotum nieufności.*Komisja Konstytucyjna skierowała wniosek pod obrady; obie izby głosują tego samego dnia\. Sejm: za \d+, przeciw \d+, wstrzymało się \d+\./);
-    choose(engine, 'polish_constitution_vote.resolve');
-    assert.match(page(), /Zmiana konstytucji obowiązuje od tego miesiąca|Wniosek upadł i nie wróci w tym Sejmie/);
+    // June 1926: Chjeno-Piast governs (a fixture); it takes the constructive vote and rejects the end of the Senate.
+    Object.assign(Q.S.cabinet, { pm: 'witos', pm_name: 'Wincenty Witos', party: 'psl_piast', partner_ids: ['pschd', 'zln'], supporter_ids: [], pps_mode: 'opposition' });
+    Q.time = P.AMENDMENT_AT;
+    assert.equal(P.amendmentDue(Q), true);
+    engine.goToScene('polish_event_constitution_amendment');
+    assert.match(page(), /Nowela konstytucji.*Rząd Wincentego Witosa przygotował nowelę konstytucji i o każdym postulacie PPS zdecydował osobno\. Nowela przechodzi bez głosowania z tym, co rząd przyjął\./);
+    assert.match(page(), /Konstruktywne wotum nieufności — postulat przyjęty, bo zgadza się z poglądami partii rządu\. Odtąd Sejm może odwołać rząd tylko, wybierając jego następcę\./);
+    assert.match(page(), /Izba Pracy w miejsce Senatu — postulat odrzucony: sprzeciwiają się PSL „Piast”, chadecja i endecja\./);
+    assert.match(page(), /Każda przyjęta zmiana kosztuje budżet 1 jednostkę w tym miesiącu\./);
+    assert.deepEqual([P.reformsRecord(Q).constructive_vonc, Q.S.senate.status !== 'abolished', P.amendmentDue(Q)], [true, true, false]);
     choose(engine, 'root');
-    assert.deepEqual([Q.time, P.debateState(Q.S).pending, dendry.urgentCards(engine)], [t, null, []], 'the vote costs no month and leaves the hand');
+    assert.equal(Q.time, P.AMENDMENT_AT, 'the page of the amendment costs no month');
   } finally {
     globalThis.PolishRules.setLanguage('en');
   }

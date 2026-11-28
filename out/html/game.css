@@ -774,8 +774,8 @@ details.pl-score[open] {
   padding-top: 0.6em;
   border-top: 1px solid var(--hair-color);
 }
-/* Z — 1.43: the members of the Committee in the Party tab, one to a line. */
-.pl-ckw-member {
+/* Z — 1.43: the members of the Committee in the Party tab, one to a line. Z — 1.44: so are the postulates on the page of the amendment. */
+.pl-ckw-member, .pl-am-line {
   display: block;
   margin-bottom: 0.35em;
 }

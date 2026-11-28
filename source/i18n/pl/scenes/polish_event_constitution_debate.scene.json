@@ -3,10 +3,11 @@
  "status": "complete",
  "lines": {
   "title: A Debate on the Constitution": "title: Debata o konstytucji",
-  "subtitle: The right and PSL “Piast” want to repair the March Constitution; PPS states which motions it supports.": "subtitle: Prawica i PSL „Piast” chcą naprawy konstytucji marcowej; PPS ogłasza, które wnioski popiera.",
+  "subtitle: The right and PSL “Piast” want to repair the March Constitution; PPS announces its postulates.": "subtitle: Prawica i PSL „Piast” chcą naprawy konstytucji marcowej; PPS ogłasza swoje postulaty.",
   "= A debate on the constitution": "= Debata o konstytucji",
-  "Our list: [+ pl_con_draft_text +].": "Nasza lista: [+ pl_con_draft_text +].",
-  "title: We announce our position": "title: Ogłaszamy nasze stanowisko",
+  "Our postulates: [+ pl_con_draft_text +].": "Nasze postulaty: [+ pl_con_draft_text +].",
+  "title: We announce our postulates": "title: Ogłaszamy nasze postulaty",
+  "subtitle: Cost: 0 resources.": "subtitle: Koszt: 0 jednostek środków.",
   "- @root: Continue.": "- @root: Dalej.",
   "title: [+ pl_con_democratic_guarantees_mark +] Democratic guarantees": "title: [+ pl_con_democratic_guarantees_mark +] Gwarancje demokratyczne",
   "title: [+ pl_con_church_separation_mark +] Separation of the Church and the state": "title: [+ pl_con_church_separation_mark +] Rozdział Kościoła od państwa",
@@ -15,6 +16,6 @@
   "title: [+ pl_con_presidential_arbitration_mark +] Presidential arbitration": "title: [+ pl_con_presidential_arbitration_mark +] Arbitraż prezydencki",
   "title: [+ pl_con_labour_chamber_mark +] A Chamber of Labour in place of the Senate": "title: [+ pl_con_labour_chamber_mark +] Izba Pracy w miejsce Senatu",
   "title: [+ pl_con_unicameral_mark +] One chamber: the abolition of the Senate": "title: [+ pl_con_unicameral_mark +] Jedna izba: zniesienie Senatu",
-  "At its congress on 26 October 1924 the Popular National Union (ZLN) demanded a “repair of the constitution” — a President who may dissolve the Sejm, a Senate equal to the Sejm and fewer deputies — and in December PSL “Piast” also declared a change necessary. The Sejm opens a debate: the Constitutional Committee brings the motions PPS supports to the floor one by one, the highest on our list first, and a change needs two thirds of the votes in the Sejm and in the Senate.": "Na kongresie 26 października 1924 r. Związek Ludowo-Narodowy zażądał „naprawy konstytucji”: prezydenta z prawem rozwiązania Sejmu, Senatu równorzędnego z Sejmem i mniejszej liczby posłów, a w grudniu zmianę uznał za konieczną także kongres PSL „Piast”. Sejm otwiera debatę: Komisja Konstytucyjna kieruje pod obrady po kolei wnioski, które PPS poprze, zaczynając od najwyżej postawionych, a zmiana wymaga dwóch trzecich głosów w Sejmie i w Senacie."
+  "At its congress on 26 October 1924 the Popular National Union (ZLN) demanded a “repair of the constitution” — a President who may dissolve the Sejm, a Senate equal to the Sejm and fewer deputies — and in December PSL “Piast” also declared a change necessary. Now PPS announces its postulates, and in the middle of 1926 the government will prepare an amendment of the constitution and decide on each of them separately.": "Na kongresie 26 października 1924 r. Związek Ludowo-Narodowy zażądał „naprawy konstytucji”: prezydenta z prawem rozwiązania Sejmu, Senatu równorzędnego z Sejmem i mniejszej liczby posłów, a w grudniu zmianę uznał za konieczną także kongres PSL „Piast”. Teraz PPS ogłasza swoje postulaty, a w połowie 1926 roku rząd przygotuje nowelę konstytucji i o każdym z nich zdecyduje osobno."
  }
 }

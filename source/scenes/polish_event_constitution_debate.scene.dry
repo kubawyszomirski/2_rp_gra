@@ -1,22 +1,22 @@
 title: A Debate on the Constitution
-subtitle: The right and PSL “Piast” want to repair the March Constitution; PPS states which motions it supports.
+subtitle: The right and PSL “Piast” want to repair the March Constitution; PPS announces its postulates.
 new-page: true
 tags: pl_event
 view-if: {! return !!Q.S && PolishProjects.constitutionDebateDue(Q) !}
 on-arrival: {!
-// Event politics.constitution_debate (Z — 0.56, item 2 of 5 X 2026; Z — 0.82, the user's decisions of 21 X 2026): it opens
-// the constitutional debate once, in December 1924. On this page PPS marks the motions it supports, in its order; the
-// Constitutional Committee then brings them to the floor by a monthly chance and the urgent card polish_constitution_vote
-// puts each to both chambers (technical reference 7.6). 0 T. The facts of the text are in HISTORICAL_SOURCES.md.
+// Event politics.constitution_debate (Z — 0.56, item 2 of 5 X 2026; Z — 0.82, the user's decisions of 21 X 2026; Z — 1.44, D1A and
+// the user's date of 28 XI 2026): it opens the constitutional debate once, in June 1925. On this page PPS marks the postulates it
+// announces, without an order; in June 1926 the government decides on each of them in its amendment (the event
+// polish_event_constitution_amendment). 0 T. The facts of the text are in HISTORICAL_SOURCES.md.
 PolishProjects.openConstitutionDebate(Q);
 PolishProjects.debateView(Q);
 !}
 
 = A debate on the constitution
 
-At its congress on 26 October 1924 the Popular National Union (ZLN) demanded a “repair of the constitution” — a President who may dissolve the Sejm, a Senate equal to the Sejm and fewer deputies — and in December PSL “Piast” also declared a change necessary. The Sejm opens a debate: the Constitutional Committee brings the motions PPS supports to the floor one by one, the highest on our list first, and a change needs two thirds of the votes in the Sejm and in the Senate.
+At its congress on 26 October 1924 the Popular National Union (ZLN) demanded a “repair of the constitution” — a President who may dissolve the Sejm, a Senate equal to the Sejm and fewer deputies — and in December PSL “Piast” also declared a change necessary. Now PPS announces its postulates, and in the middle of 1926 the government will prepare an amendment of the constitution and decide on each of them separately.
 
-Our list: [+ pl_con_draft_text +].
+Our postulates: [+ pl_con_draft_text +].
 
 - @m_democratic_guarantees
 - @m_church_separation
@@ -35,7 +35,7 @@ PolishProjects.debateView(Q);
 
 = A debate on the constitution
 
-Our list: [+ pl_con_draft_text +].
+Our postulates: [+ pl_con_draft_text +].
 
 - @m_democratic_guarantees
 - @m_church_separation
@@ -117,7 +117,8 @@ PolishProjects.debateToggle(Q, 'unicameral');
 go-to: menu
 
 @declare
-title: We announce our position
+title: We announce our postulates
+subtitle: Cost: 0 resources.
 on-arrival: {!
 Q.pl_con_result = PolishProjects.debateDeclare(Q);
 !}

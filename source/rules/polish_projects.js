@@ -1682,6 +1682,13 @@
       enactLaw(Q, bill, bill.submitted_at, bill.variant);
       return bill;
     }
+    // Z — 1.44 (decision D2A of 28 XI 2026): the amendment of the government of June 1926 passes with what it took, without a vote.
+    if (spec.cabinet_amendment) {
+      bill.cabinet_amendment = true;
+      bill.senate = 'not_required';
+      enactLaw(Q, bill, bill.submitted_at, bill.variant);
+      return bill;
+    }
     // Z — 0.81: a bill of the legislative initiative brings the counts of its rolled vote.
     const counts = spec.counts ? copy(spec.counts) : sejmCounts(Q, bill);
     const ballot = recordBallot(Q, bill.rule === 'constitutional' ? 'constitutional_amendment_sejm' : 'ordinary_resolution', bill, counts, 'sejm');
@@ -2575,8 +2582,6 @@
       voteDuePackage(Q, t);
       cabinetReview(Q, t);
       processLaws(Q, t);
-      // Z — 0.82: the Constitutional Committee may bring one motion of PPS to the floor (the vote card from t+1).
-      constitutionAgenda(Q, t);
       const budget = economy.budgetAt(S, t);
       const inputs = processProjects(Q, t, budget);
       // Stage 6: strikes and wage agreements of the period, recorded by the union rules before the economy (17.4, 11.4).
@@ -2617,6 +2622,13 @@
   // vote is an urgent card of the Parliament deck: the Sejm and the Senate vote on the same day, two thirds of the votes for and
   // against (7.1), with the light chance of the legislative initiative. A change that passes is in force at once and costs the
   // budget 1 unit for one month; a motion that fails does not come back. The 111 signatures of art. 125 are left out (P).
+  //
+  // Z — 1.44 (decisions D1A, D2A of 28 XI 2026 and N1B, N2A, N3B of the sketch, with the user's dates): the debate page comes in
+  // June 1925 and PPS announces its postulates there, without an order; no motion comes to a vote by itself any more. In June 1926
+  // the government prepares an amendment of the constitution and decides on each postulate separately, by who governs and by our
+  // relations with the parties of the cabinet (amendmentDecide); the amendment passes with what it took, without a vote. If the coup
+  // comes first, the postulates wait for chapter II. The page of the debate says nothing of the government (N3B). Both dates are a
+  // simplification of the game: historically the August amendment of 2 VIII 1926 came after the coup.
 
   const REFORMS = Object.freeze(['democratic_guarantees', 'constructive_vonc', 'presidential_arbitration']);
 
@@ -2676,7 +2688,8 @@
   // Z — 0.56 (item 2 of 5 X 2026): the debate waits for December 1924, after the ZLN congress of 26 X 1924 and the congress of
   // PSL "Piast" in XII 1924 declared the repair of the constitution their programme (HISTORICAL_SOURCES.md); the event
   // politics.constitution_debate opens it once.
-  const CONSTITUTION_DEBATE_AT = T(1924, 12);
+  const CONSTITUTION_DEBATE_AT = T(1925, 6);
+  const AMENDMENT_AT = T(1926, 6);
   const constitutionDebateOpen = S => !!(S && S.politics && S.politics.constitution_debate);
 
   function constitutionDebateDue(Q) {
@@ -2808,16 +2821,15 @@
     for (const motion of MOTIONS) {
       const id = motion.id, place = list.indexOf(id);
       const status = motionStatus(Q, id);
-      Q['pl_con_' + id + '_mark'] = place >= 0 ? '■ ' + (place + 1) + '.' : '□';
+      // Z — 1.44: the postulates have no order any more.
+      Q['pl_con_' + id + '_mark'] = place >= 0 ? '■' : '□';
       Q['pl_con_' + id + '_why'] = status.reason || '';
-      const chance = motionChance(motionCounts(Q, id));
       const support = (motion.support || []).map(filingText);
-      // Z — 1.04 (decision 3A of the event audit): the forecast in words only, without a percentage.
-      // Z — 1.38 (decision D1A of 25 XI 2026): two sentences at most — the motion, then the forecast with the effects of our support.
-      Q['pl_con_' + id + '_line'] = L(motion.text[0], motion.text[1]) + ' ' + L('Today it ', 'Dziś ') + motionChanceWords(chance) +
-        (support.length ? L('; our support alone: ', '; samo poparcie: ') + support.join(', ') : '') + '.';
+      // Z — 1.38 (decision D1A of 25 XI 2026): two sentences at most. Z — 1.44 (N3B): the postulate and the effects of our support,
+      // without a forecast — the government decides in June 1926.
+      Q['pl_con_' + id + '_line'] = L(motion.text[0], motion.text[1]) + (support.length ? ' ' + L('Our support alone: ', 'Samo poparcie: ') + support.join(', ') + '.' : '');
     }
-    Q.pl_con_draft_text = list.length ? list.map((id, i) => (i + 1) + '. ' + motionName(id)).join(', ') : L('no motion yet', 'na razie żaden wniosek');
+    Q.pl_con_draft_text = list.length ? list.map(id => motionName(id)).join(', ') : L('none yet', 'na razie żaden');
   }
 
   // "We announce our position": the list of PPS is fixed, the effects of the support follow at once. Costs no month.
@@ -2842,18 +2854,21 @@
     S.history.reasons.push({t: t, kind: 'constitution_position', ranking: ranking.slice()});
     debateView(Q);
     if (!ranking.length) {
-      return L('PPS supports none of the motions. Without its support none of them comes to a vote in this Sejm.',
-        'PPS nie popiera żadnego wniosku. Bez jej poparcia żaden z nich nie trafi pod głosowanie w tym Sejmie.');
+      return L('PPS announces no postulate. The amendment the government prepares in the middle of 1926 will do without us.',
+        'PPS nie ogłasza żadnego postulatu. Nowela, którą rząd przygotuje w połowie 1926 roku, obejdzie się bez nas.');
     }
-    return L('PPS supports in the debate: ', 'PPS popiera w debacie: ') + ranking.map((id, i) => (i + 1) + '. ' + motionName(id)).join(', ') + '. ' +
-      L('The Constitutional Committee brings the motions to the floor when it is ready; the higher a motion stands on our list, the sooner it may come to a vote.',
-        'Komisja Konstytucyjna skieruje wnioski pod obrady, kiedy będzie gotowa; im wyżej wniosek stoi na naszej liście, tym prędzej może trafić pod głosowanie.') +
+    return L('PPS announces its postulates: ', 'PPS ogłasza swoje postulaty: ') + ranking.map(id => motionName(id)).join(', ') + '. ' +
+      L('In the middle of 1926 the government prepares an amendment of the constitution and decides on each of them separately.',
+        'W połowie 1926 roku rząd przygotuje nowelę konstytucji i o każdym z nich zdecyduje osobno.') +
       (effects.length ? ' ' + L('At once: ', 'Od razu: ') + effects.join(', ') + '.' : '');
   }
 
   // The monthly roll of the Constitutional Committee (settleMonth, period t): at most one motion a month, none while a vote
   // waits or a cabinet is being formed.
+  // Z — 1.44 (D1A): no motion comes to a vote by itself any more; the amendment of June 1926 decides. A vote drawn in a game saved before
+  // 1.44 still comes on its card.
   function constitutionAgenda(Q, t) {
+    if (AMENDMENT_AT) return null;
     const S = Q.S, debate = debateState(S);
     if (!debate || debate.declared_at === null || debate.pending || S.chapter.status === 'ended' || government.formationPending(Q)) return null;
     const waiting = waitingMotions(debate);
@@ -2931,6 +2946,105 @@
     const effect = enactReform(Q, id, project, t);
     return L('The change of the constitution is in force from this month; it costs the budget 1 unit this month.', 'Zmiana konstytucji obowiązuje od tego miesiąca; kosztuje budżet 1 jednostkę w tym miesiącu.') +
       (effect ? ' ' + effect : '');
+  }
+
+  // ---- Z — 1.44: the amendment of June 1926 -----------------------------------------------------------------
+  // The parties of the cabinet are the premier's party and its partners; a cabinet of experts counts the parties that support it.
+  // Each of them agrees with a postulate (the fit of its views, as for a bill, of 75 or more), is neutral (50 or more) or is against
+  // (less, a red line it crosses, or the end of the Senate for the clubs that made it). The government takes a postulate all its parties
+  // agree with; a neutral one when PPS sits in the cabinet or the relations with each of its parties are at least warm; never one
+  // a party of the cabinet is against. Game values (P).
+  const AMENDMENT_FIT = Object.freeze({own: 75, neutral: 50});
+  const AMENDMENT_RELATION = 55;
+  function amendmentParties(S) {
+    const cab = S.cabinet;
+    if (!cab || (cab.status !== 'active' && cab.status !== 'caretaker')) return {parties: [], pps_in: false};
+    const members = [cab.party].concat(cab.partner_ids || []).filter((p, i, all) => p && all.indexOf(p) === i);
+    const ppsIn = members.indexOf('pps') >= 0;
+    let parties = members.filter(p => p !== 'pps');
+    if (!parties.length && !ppsIn) parties = (cab.supporter_ids || []).filter((p, i, all) => p !== 'pps' && all.indexOf(p) === i);
+    return {parties: parties.filter(p => !!government.ACTOR_PROFILES[p]), pps_in: ppsIn};
+  }
+  function amendmentStance(Q, club, id) {
+    const offer = billOffer(Q.S, motionBill(id));
+    if (government.redLineViolations(club, offer).length) return 'against';
+    if ((MOTION_BY_ID[id].flags || []).indexOf('senate_abolition') >= 0 && SENATE_MAKERS.indexOf(club) >= 0) return 'against';
+    const fit = government.programFit(club, offer.programme, true);
+    return fit >= AMENDMENT_FIT.own ? 'own' : fit >= AMENDMENT_FIT.neutral ? 'neutral' : 'against';
+  }
+  function amendmentDecide(Q, id) {
+    const S = Q.S, gov = amendmentParties(S);
+    const stances = gov.parties.map(p => ({party: p, stance: amendmentStance(Q, p, id)}));
+    const against = stances.filter(s => s.stance === 'against').map(s => s.party);
+    if (against.length) return {id: id, taken: false, why: 'against', parties: against};
+    if (stances.every(s => s.stance === 'own')) return {id: id, taken: true, why: 'own', parties: []};
+    if (gov.pps_in) return {id: id, taken: true, why: 'pps', parties: []};
+    const cold = gov.parties.filter(p => !((S.actors.relations[p] || 0) >= AMENDMENT_RELATION));
+    if (cold.length) return {id: id, taken: false, why: 'relations', parties: cold};
+    return {id: id, taken: true, why: 'relations', parties: []};
+  }
+  const amendmentWaiting = debate => debate.ranking.filter(id => debate.motions[id] && debate.motions[id].status === 'waiting');
+  function amendmentDue(Q) {
+    const S = Q.S, debate = S ? debateState(S) : null;
+    return !!debate && debate.declared_at !== null && !debate.amendment && Q.time >= AMENDMENT_AT && S.chapter.status !== 'ended' &&
+      !government.formationPending(Q) && amendmentWaiting(debate).length > 0;
+  }
+  // Once: the decision on each postulate; the ones taken are in force at once, as a law of the amendment without a vote (D2A), each
+  // costing the budget 1 unit this month.
+  function amendmentResolve(Q) {
+    const S = Q.S, debate = debateState(S), t = Q.time;
+    if (debate && debate.amendment) return debate.amendment;
+    if (!amendmentDue(Q)) throw new Error('amendmentResolve: no amendment is due');
+    const decisions = amendmentWaiting(debate).map(id => amendmentDecide(Q, id));
+    for (const d of decisions) {
+      const record = debate.motions[d.id];
+      record.voted_at = t;
+      if (!d.taken) {
+        record.status = 'rejected';
+        continue;
+      }
+      const project = createProject(Q, 'constitution', d.id, {sponsor: 'pps', responsibility: {pps: 0.70}, executor: 'parliament'});
+      project.preparation = 100;
+      project.status = 'prepared';
+      project.prepared_at = t;
+      const bill = submitLaw(Q, Object.assign({kind: 'constitution', title: 'Constitutional amendment: ' + VARIANT_NAMES[d.id], project_id: project.id,
+        constitutional: true, cabinet_amendment: true}, motionBill(d.id)));
+      project.law_id = bill.id;
+      project.authorization_id = bill.id;
+      record.law_id = bill.id;
+      record.status = 'passed';
+      d.effect = enactReform(Q, d.id, project, t);
+    }
+    debate.amendment = {t: t, cabinet_id: S.cabinet ? S.cabinet.id : null, pm: S.cabinet ? S.cabinet.pm : null, pm_name: S.cabinet ? S.cabinet.pm_name : '',
+      decisions: decisions};
+    S.history.reasons.push({t: t, kind: 'constitution_amendment', taken: decisions.filter(d => d.taken).map(d => d.id),
+      rejected: decisions.filter(d => !d.taken).map(d => d.id)});
+    return debate.amendment;
+  }
+  // The page of the amendment: who prepared it and, for each postulate, whether it was taken and why.
+  function amendmentView(Q) {
+    const S = Q.S, a = amendmentResolve(Q);
+    const gen = a.pm && government.NAME_GEN_PL && government.NAME_GEN_PL[a.pm] ? government.NAME_GEN_PL[a.pm] : a.pm_name;
+    Q.pl_am_intro = L('The government of ' + a.pm_name + ' has prepared an amendment of the constitution and decided on each postulate of PPS separately. The amendment passes without a vote, with what the government took.',
+      'Rząd ' + gen + ' przygotował nowelę konstytucji i o każdym postulacie PPS zdecydował osobno. Nowela przechodzi bez głosowania z tym, co rząd przyjął.');
+    const many = ids => ids.length > 1;
+    Q.pl_am_lines = a.decisions.map(d => {
+      const name = '<strong>' + motionName(d.id) + '</strong> — ';
+      if (d.taken) {
+        const why = d.why === 'own' ? L('taken, as it agrees with the views of the parties of the cabinet.', 'postulat przyjęty, bo zgadza się z poglądami partii rządu.') :
+          d.why === 'pps' ? L('taken, as PPS sits in the cabinet.', 'postulat przyjęty, bo PPS jest w rządzie.') :
+            L('taken thanks to our good relations with the parties of the cabinet.', 'postulat przyjęty dzięki dobrym stosunkom z partiami rządu.');
+        return name + why + (d.effect ? ' ' + d.effect : '');
+      }
+      return name + (d.why === 'against' ?
+        L('rejected: ' + government.plainParties(d.parties) + (many(d.parties) ? ' are' : ' is') + ' against it.',
+          'postulat odrzucony: ' + (many(d.parties) ? 'sprzeciwiają się ' : 'sprzeciwia się ') + government.plainParties(d.parties) + '.') :
+        L('rejected: our relations are not good enough with ' + government.plainParties(d.parties) + '.',
+          'postulat odrzucony: nie mamy dość dobrych stosunków z partiami rządu (' + government.plainParties(d.parties) + ').'));
+    }).map(line => '<span class="pl-am-line">' + line + '</span>').join('');
+    const taken = a.decisions.filter(d => d.taken).length;
+    Q.pl_am_cost = taken ? L('Each change taken costs the budget 1 unit this month.', 'Każda przyjęta zmiana kosztuje budżet 1 jednostkę w tym miesiącu.') : '';
+    return a;
   }
 
   // Z — 0.82: a change of the second chamber ends the Senate for the rest of the chapter; the Chamber of Labour would be
@@ -5473,6 +5587,13 @@
     constitutionDebateOpen: constitutionDebateOpen,
     openConstitutionDebate: openConstitutionDebate,
     CONSTITUTION_DEBATE_AT: CONSTITUTION_DEBATE_AT,
+    AMENDMENT_AT: AMENDMENT_AT,
+    amendmentParties: amendmentParties,
+    amendmentStance: amendmentStance,
+    amendmentDecide: amendmentDecide,
+    amendmentDue: amendmentDue,
+    amendmentResolve: amendmentResolve,
+    amendmentView: amendmentView,
     billD1Available: billD1Available,
     billD1Choose: billD1Choose,
     billD2Available: billD2Available,

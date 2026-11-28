@@ -784,8 +784,8 @@ test('Sprawiedliwość (stage-4 part, Z — 1.00): the card has the amnesty, the
   assert.equal(proj.debateState(Q.S).motions.democratic_guarantees.status, 'waiting', 'the debate itself offers the guarantees');
 });
 
-test('Debata 0.82: the list of PPS in its order; the lines of What Power Do We Want and the exclusion; the position costs no month and brings the effects of support once', () => {
-  const Q = world({ seats: LEFT, time: 36, senate: true });
+test('Debata 0.82 (Z — 1.44): the postulates of PPS without an order; the lines of What Power Do We Want and the exclusion; the position costs no month and brings the effects of support once', () => {
+  const Q = world({ seats: LEFT, time: 42, senate: true });
   assert.equal(proj.debateState(Q.S), null, 'no debate before its event');
   proj.openConstitutionDebate(Q);
   assert.deepEqual(proj.MOTION_IDS, ['democratic_guarantees', 'church_separation', 'constructive_vonc', 'referendum', 'presidential_arbitration',
@@ -799,52 +799,43 @@ test('Debata 0.82: the list of PPS in its order; the lines of What Power Do We W
   assert.match(proj.motionStatus(Q, 'unicameral').reason, /excludes the motion “A Chamber of Labour in place of the Senate”/);
   assert.equal(proj.motionToggleable(Q, 'unicameral'), false);
   assert.throws(() => proj.debateToggle(Q, 'unicameral'));
-  assert.equal(proj.motionToggleable(Q, 'labour_chamber'), true, 'a chosen motion can always be unmarked');
+  assert.equal(proj.motionToggleable(Q, 'labour_chamber'), true, 'a chosen postulate can always be unmarked');
   proj.debateToggle(Q, 'labour_chamber');
   assert.equal(proj.motionStatus(Q, 'unicameral').available, true);
   proj.debateToggle(Q, 'church_separation');
-  proj.debateToggle(Q, 'constructive_vonc');
-  proj.debateToggle(Q, 'constructive_vonc');
-  assert.equal(Q.pl_con_draft_text, '1. Democratic guarantees, 2. Separation of the Church and the state, 3. Constructive vote of no confidence',
-    'an unmarked motion leaves the list and comes back at its end');
-  assert.deepEqual([Q.pl_con_church_separation_mark, Q.pl_con_referendum_mark], ['■ 2.', '□']);
-  assert.match(Q.pl_con_church_separation_line, /^The end of the leading position of the Catholic Church.* Today it .+; our support alone: relations with the Christian Democrats worsen \(−3\)/);
+  assert.equal(Q.pl_con_draft_text, 'Constructive vote of no confidence, Democratic guarantees, Separation of the Church and the state');
+  assert.deepEqual([Q.pl_con_church_separation_mark, Q.pl_con_referendum_mark], ['■', '□'], 'no numbers: the postulates have no order');
+  assert.match(Q.pl_con_church_separation_line, /^The end of the leading position of the Catholic Church.*\. Our support alone: relations with the Christian Democrats worsen \(−3\)/);
+  assert.doesNotMatch(Q.pl_con_church_separation_line + Q.pl_con_referendum_line, /Today|would/, 'no forecast on the page of the debate (N3B)');
   const before = { pschd: Q.S.actors.relations.pschd, piast: Q.S.actors.relations.psl_piast, lewica: Q.lewica_dissent };
   const text = proj.debateDeclare(Q);
   assert.equal(Q.month_actions, 0, 'the position costs no month');
-  assert.match(text, /^PPS supports in the debate: 1\. Democratic guarantees, 2\. Separation of the Church and the state, 3\. Constructive vote of no confidence\./);
+  assert.match(text, /^PPS announces its postulates: Constructive vote of no confidence, Democratic guarantees, Separation of the Church and the state\. In the middle of 1926 the government prepares an amendment/);
   const debate = proj.debateState(Q.S);
-  assert.deepEqual([debate.declared_at, debate.ranking, Object.keys(debate.motions).map(id => debate.motions[id].status)],
-    [36, ['democratic_guarantees', 'church_separation', 'constructive_vonc'], ['waiting', 'waiting', 'waiting']]);
+  assert.deepEqual([debate.declared_at, Object.keys(debate.motions).map(id => debate.motions[id].status)], [42, ['waiting', 'waiting', 'waiting']]);
   assert.deepEqual([Q.S.actors.relations.pschd, Q.S.actors.relations.psl_piast, Q.lewica_dissent], [before.pschd - 3, before.piast - 3, before.lewica - 2]);
   assert.throws(() => proj.debateDeclare(Q), /does not wait/, 'one position in the debate');
   assert.throws(() => proj.debateToggle(Q, 'referendum'));
-  // Supporting none is a position too: then no motion comes to a vote.
-  const N = world({ seats: LEFT, time: 36, senate: true });
+  const N = world({ seats: LEFT, time: 42, senate: true });
   proj.openConstitutionDebate(N);
-  assert.match(proj.debateDeclare(N), /supports none of the motions/);
-  for (let i = 0; i < 6; i++) month(N);
-  assert.equal(proj.debateState(N.S).pending, null);
+  assert.match(proj.debateDeclare(N), /announces no postulate/);
 });
 
-test('Komisja Konstytucyjna 0.82: at most one motion a month, by its place among the waiting motions; none while a vote waits; the vote card only the next month', () => {
-  const Q = world({ seats: LEFT, time: 36, senate: true });
-  assert.deepEqual([proj.AGENDA_CHANCES, proj.AGENDA_CHANCE_LATER], [[0.17, 0.10, 0.07], 0.035]);
+test('Komisja Konstytucyjna 0.82 (Z — 1.44): no postulate comes to a vote by itself; the amendment is due once, from June 1926, after a position with postulates', () => {
+  const Q = world({ seats: LEFT, time: 42, senate: true });
+  assert.deepEqual([proj.CONSTITUTION_DEBATE_AT, proj.AMENDMENT_AT], [rules.timeOf(1925, 6), rules.timeOf(1926, 6)]);
   proj.openConstitutionDebate(Q);
   for (const id of ['constructive_vonc', 'democratic_guarantees', 'referendum']) proj.debateToggle(Q, id);
   proj.debateDeclare(Q);
-  const rolls = Q.S.rng.rolls, key = (id, t) => 'constitution:agenda:' + id + ':t' + t;
-  // The first misses (0.5 ≥ 17%), the second and the third would both come (below 10% and 7%): the higher one comes.
-  Object.assign(rolls, { [key('constructive_vonc', 36)]: 0.5, [key('democratic_guarantees', 36)]: 0.09, [key('referendum', 36)]: 0.01 });
-  assert.equal(proj.constitutionVoteActive(Q), false);
+  for (const id of ['constructive_vonc', 'democratic_guarantees', 'referendum']) Q.S.rng.rolls['constitution:agenda:' + id + ':t42'] = 0;
   month(Q);
   const debate = proj.debateState(Q.S);
-  assert.deepEqual(debate.pending, { id: 'democratic_guarantees', drawn_at: 36 });
-  assert.equal(proj.constitutionVoteActive(Q), true, 'the vote card from the next month');
-  rolls[key('constructive_vonc', 37)] = 0;
-  month(Q);
-  assert.deepEqual(debate.pending, { id: 'democratic_guarantees', drawn_at: 36 }, 'no second motion while a vote waits');
-  assert.equal(rolls[key('constructive_vonc', 37)], 0, 'and no roll is drawn');
+  assert.deepEqual([debate.pending, proj.constitutionAgenda(Q, Q.time), proj.constitutionVoteActive(Q)], [null, null, false], 'no Committee and no vote card');
+  assert.equal(proj.amendmentDue(Q), false, 'not before June 1926');
+  Q.time = proj.AMENDMENT_AT;
+  assert.equal(proj.amendmentDue(Q), true);
+  proj.amendmentResolve(Q);
+  assert.equal(proj.amendmentDue(Q), false, 'once');
 });
 
 test('Głosowanie konstytucyjne 0.82: both chambers on the same day by two thirds of the votes for and against; in force at once and 1 B for a month; a failed motion does not come back', () => {
