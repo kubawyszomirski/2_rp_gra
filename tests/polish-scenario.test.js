@@ -210,21 +210,48 @@ test('Płace 79/79/80 i 79/79/79 (21.2b): three full months below 80 are needed;
   assert.ok(!S.strikes.pending_effects.some(e => e.system === 'grievance' && e.value === 8), 'no immediate +8');
 });
 
-test('II 1926 przy presji 100 (21.2b): no attempt before the opportunity of III 1926; from III the pressure alone does not replace the operational gates', () => {
+// Z — 1.40 (decisions Z1–Z3 of 28 XI 2026): the window of the coup opens in I 1926; the preparations last three months from the warning,
+// and the pressure alone no longer calls them off (21.2b replaced).
+test('Termin zamachu 1.40: nothing before I 1926 even at pressure 100; then three months of preparations from the warning, and the attempt at their end', () => {
   const Q = quiet();
-  const S = Q.S;
+  const S = Q.S, T = PolishRules.timeOf;
   S.coup.pressure = 100;
-  const february = PolishSecurity.coupGates(Q, PolishRules.timeOf(1926, 2));
-  assert.deepEqual([february.pressure, february.window, february.allowed], [true, false, false]);
-  PolishSecurity.checkCoupGates(Q, PolishRules.timeOf(1926, 1));
-  assert.equal(S.coup.attempt_id, null, 'no attempt before the window');
-  // A fixture without the units that strike first: from III 1926 the same pressure declares no attempt.
-  for (const force of S.security.forces) if (force.available_from_phase === 0) force.losses_F = force.base_strength_F;
-  const march = PolishSecurity.coupGates(Q, PolishRules.timeOf(1926, 3));
-  assert.equal(march.pressure, true);
-  assert.equal(march.window, false, 'no operational strike force');
-  PolishSecurity.checkCoupGates(Q, PolishRules.timeOf(1926, 2));
-  assert.equal(S.coup.attempt_id, null);
+  PolishSecurity.checkCoupGates(Q, T(1925, 11));
+  assert.deepEqual([S.coup.phase, S.coup.attempt_id], ['dormant', null], 'not before the window');
+  PolishSecurity.checkCoupGates(Q, T(1925, 12));
+  assert.equal(S.coup.phase, 'political_crisis');
+  assert.deepEqual(S.coup.countdown, { started_at: T(1925, 12), due_at: T(1926, 4), trigger: 'pressure' });
+  assert.equal(S.politics.due.polish_event_coup_warning, 'warning:t' + T(1925, 12), 'the warning comes with the preparations');
+  for (const t of [T(1926, 1), T(1926, 2)]) {
+    PolishSecurity.checkCoupGates(Q, t);
+    assert.equal(S.coup.attempt_id, null, 'no attempt during the preparations');
+  }
+  S.coup.pressure = 10;
+  PolishSecurity.checkCoupGates(Q, T(1926, 3));
+  assert.equal(S.coup.phase, 'attempt_declared', 'a fall of the pressure does not call the preparations off');
+  assert.equal(S.coup.attempt.declared_at, T(1926, 4));
+});
+
+test('Termin zamachu 1.40: the right in power starts the preparations at once; without it only a pressure of 75; at the latest in X 1927, with the coup in I 1928', () => {
+  const T = PolishRules.timeOf;
+  const right = quiet(), R = right.S;
+  R.coup.pressure = 20;
+  R.cabinet.configuration_id = 'chjeno_piast';
+  PolishSecurity.checkCoupGates(right, T(1926, 2));
+  assert.deepEqual([R.coup.phase, R.coup.countdown.trigger, R.coup.countdown.due_at], ['political_crisis', 'right_coalition', T(1926, 6)]);
+  const high = quiet(), H = high.S;
+  H.coup.pressure = 74;
+  PolishSecurity.checkCoupGates(high, T(1926, 6));
+  assert.equal(H.coup.phase, 'dormant', 'below 75 without the right the coup waits');
+  H.coup.pressure = 75;
+  PolishSecurity.checkCoupGates(high, T(1926, 7));
+  assert.equal(H.coup.countdown.trigger, 'pressure');
+  const late = quiet(), D = late.S;
+  D.coup.pressure = 20;
+  PolishSecurity.checkCoupGates(late, T(1927, 8));
+  assert.equal(D.coup.phase, 'dormant');
+  PolishSecurity.checkCoupGates(late, T(1927, 9));
+  assert.deepEqual([D.coup.countdown.trigger, D.coup.countdown.due_at], ['deadline', T(1928, 1)], 'the warning in X 1927, the coup before the election');
 });
 
 // ---- Checks of the correction 0.13 (technical reference 21.2c) not covered by the tests of stages 6–7.

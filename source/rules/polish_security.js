@@ -551,7 +551,25 @@
   // cabinet corresponds to the cabinet of Bartel of 15 V 1926 (stage 8, 8f; HISTORICAL_SOURCES.md). The resolution below
   // is the engine of analysis/m08-coup-profile/check.cjs (`resolve`), made resumable at the one decision F9.
   const COUP_PROFILE_ID = 'coup_f_v1';
-  const COUP_WINDOW_FROM = rules.timeOf(1926, 3); // 16.8.1 (P): the Normal scenario opens the window on 1 III 1926
+  const COUP_WINDOW_FROM = rules.timeOf(1926, 1); // Z — 1.40 (decision Z1 of 28 XI 2026): the window opens on 1 I 1926
+  // Z — 1.40 (decisions Z1–Z3 of 28 XI 2026): a coup comes in 1926–1927, before the next election. About three months before it the
+  // warning comes: when a coalition of the right (Chjeno-Piast) governs from January 1926, when the pressure reaches the political
+  // crisis, or at the latest in October 1927, with the coup in January 1928. An agreement with Piłsudski or a very strong democracy
+  // with the government's hold on the army calls the preparations off (1.35 stays): then the election closes the chapter.
+  const COUNTDOWN_MONTHS = 3;
+  // Without the right in power only a very high pressure starts the preparations (a game value: the open military case alone brings
+  // the pressure to the political crisis of 55 by the turn of 1926, so the coup is delayed when PPS keeps the cabinet alive).
+  const COUNTDOWN_PRESSURE = 75;
+  const COUP_WINDOW_TO = rules.timeOf(1928, 1);
+  const COUP_DEADLINE_WARNING = rules.timeOf(1927, 10);
+  const rightCoalition = S => !!S.cabinet && S.cabinet.status === 'active' && S.cabinet.configuration_id === 'chjeno_piast';
+  function countdownTrigger(S, now) {
+    if (now < COUP_WINDOW_FROM || now > COUP_WINDOW_TO) return null;
+    if (rightCoalition(S)) return 'right_coalition';
+    if (S.coup.pressure >= COUNTDOWN_PRESSURE) return 'pressure';
+    if (now >= COUP_DEADLINE_WARNING) return 'deadline';
+    return null;
+  }
   const COUP_GATES = Object.freeze({crisis: 55, cancel: 40, attempt: 65, capacity: 30, cooldown: 3});
   const STANCE_SIDE = Object.freeze({support_pils: 'pils', defend_legal: 'legal', mediate: 'neutral'});
   const COMMITMENTS = Object.freeze(['none', 'rail', 'militia', 'both']);
@@ -690,19 +708,26 @@
     const standDown = credibleStandDown(S, now);
     const deterred = coupDeterred(S);
     if (deterred && !C.deterred_at) C.deterred_at = t;
-    if (C.phase === 'political_crisis' && (standDown || deterred || C.pressure < COUP_GATES.cancel)) {
+    // Z — 1.40: the preparations (the political crisis) run for three months from the warning; only an agreement or a deterring
+    // democracy calls them off — no longer a fall of the pressure.
+    if (C.phase === 'political_crisis' && (standDown || deterred)) {
       C.phase = 'dormant';
+      C.countdown = null;
       C.next_attempt_available_at = now + COUP_GATES.cooldown;
-      C.log.push({t: t, kind: 'preparations_called_off', reason: standDown ? 'protective_agreement' : deterred ? 'deterred' : 'pressure_below_40',
+      C.log.push({t: t, kind: 'preparations_called_off', reason: standDown ? 'protective_agreement' : 'deterred',
         next_attempt_available_at: now + COUP_GATES.cooldown});
       return C.phase;
     }
-    if (C.phase === 'dormant' && C.pressure >= COUP_GATES.crisis && !standDown) {
-      C.phase = 'political_crisis';
-      C.log.push({t: t, kind: 'political_crisis', pressure: round(C.pressure, 4)});
+    if (C.phase === 'dormant' && !standDown && !deterred && now >= (C.next_attempt_available_at || 0)) {
+      const trigger = countdownTrigger(S, now);
+      if (trigger) {
+        C.phase = 'political_crisis';
+        C.countdown = {started_at: t, due_at: Math.min(COUP_WINDOW_TO, now + COUNTDOWN_MONTHS), trigger: trigger};
+        C.log.push({t: t, kind: 'political_crisis', pressure: round(C.pressure, 4), trigger: trigger, due_at: C.countdown.due_at});
+        S.politics.due.polish_event_coup_warning = 'warning:t' + t;
+      }
     }
-    const gates = coupGates(Q, now);
-    if (C.phase === 'political_crisis' && gates.allowed) declareAttempt(Q, now, gates);
+    if (C.phase === 'political_crisis' && C.countdown && now >= C.countdown.due_at) declareAttempt(Q, now, coupGates(Q, now));
     return C.phase;
   }
 
@@ -730,11 +755,13 @@
   }
 
   // The sequence F3–F11 is due from the declaration until the chapter ends with its report (19.1).
+  // Z — 1.40 (decision Z4A): the chapter ends at the outbreak, and the coup runs after the balance as the opening of chapter II.
   function coupDue(Q) {
     const S = Q.S;
-    if (!ready(Q) || S.chapter.status === 'ended') return false;
+    if (!ready(Q)) return false;
     const C = S.coup;
-    return C.attempt_id !== null && C.phase !== 'dormant' && C.phase !== 'political_crisis';
+    if (C.attempt_id === null || C.phase === 'dormant' || C.phase === 'political_crisis') return false;
+    return S.chapter.status !== 'ended' || (S.chapter.reason === 'coup' && S.chapter.trigger_id === C.attempt_id);
   }
 
   // F3 → F4: the attempt is announced; the stance of PPS comes next.
@@ -1286,13 +1313,9 @@
   // ---- Z — 1.35 (decision D5 of 25 XI 2026): the warning of a coup — once, when the pressure towards a coup first reaches 50, between
   // the agitated army (40) and the political crisis (55). It says in plain words what pushes the officers, what can still stop a coup
   // and what would decide the fighting, with where PPS stands now; no numbers and no chances.
-  const WARNING_FROM = 50;
-  function settleCoupWarning(Q, t) {
-    const S = Q.S, C = S.coup;
-    if (C.warning_announced >= 0 || C.pressure < WARNING_FROM || C.attempt_id !== null || S.chapter.status === 'ended') return;
-    C.warning_announced = t;
-    S.politics.due.polish_event_coup_warning = 'warning:t' + t;
-  }
+  // Z — 1.40 (decision Z1 of 28 XI 2026): the warning comes with the start of the preparations, about three months before the coup
+  // (checkCoupGates schedules it); a game saved before 1.40 keeps a warning already due.
+  function settleCoupWarning() {}
   function coupWarningDue(Q) {
     const S = Q.S;
     if (!ready(Q) || S.chapter.status === 'ended') return false;
@@ -1305,13 +1328,16 @@
   function coupWarningView(Q) {
     const S = Q.S, last = (S.coup.history || []).slice(-1)[0], parts = last ? last.parts || {} : {};
     const causes = Object.keys(MOOD_CAUSES).filter(k => parts[k] > 0).map(k => L(MOOD_CAUSES[k][0], MOOD_CAUSES[k][1]));
+    // Z — 1.40: the coalition of the right in power is the first cause, when it started the preparations.
+    if (S.coup.countdown && S.coup.countdown.trigger === 'right_coalition') causes.unshift(L('the right has returned to power', 'do władzy wróciła prawica'));
     const join = list => list.length < 2 ? list.join('') : list.slice(0, -1).join(', ') + L(' and ', ' i ') + list[list.length - 1];
     const democracy = S.politics.democracy, steps = controlSteps(S).length;
-    // Z — 1.38 (decision D1A of 25 XI 2026): one sentence for each of the three things the card says.
-    Q.pl_cw_push = causes.length ? L('The officers loyal to Piłsudski are preparing to act; they are pushed by this: ' + join(causes) + '.',
-      'Oficerowie wierni Piłsudskiemu szykują się do działania; popycha ich to, że ' + join(causes) + '.') :
-      L('The officers loyal to Piłsudski are preparing to act, and his circle openly speaks of a change of power.',
-        'Oficerowie wierni Piłsudskiemu szykują się do działania, a jego otoczenie otwarcie mówi o zmianie władzy.');
+    // Z — 1.38 (decision D1A of 25 XI 2026): one sentence for each of the three things the card says; Z — 1.40: the coup may come within
+    // a few months.
+    Q.pl_cw_push = causes.length ? L('The officers loyal to Piłsudski are preparing to strike within a few months; they are pushed by this: ' + join(causes) + '.',
+      'Oficerowie wierni Piłsudskiemu szykują się, by w ciągu kilku miesięcy uderzyć; popycha ich to, że ' + join(causes) + '.') :
+      L('The officers loyal to Piłsudski are preparing to strike within a few months, and his circle openly speaks of a change of power.',
+        'Oficerowie wierni Piłsudskiemu szykują się, by w ciągu kilku miesięcy uderzyć, a jego otoczenie otwarcie mówi o zmianie władzy.');
     Q.pl_cw_stop = L('A coup will be stopped by an agreement with Piłsudski, or by a very strong democracy together with the government’s hold on the army (the oversight law, the army subordinated to the minister, loyal officers promoted); ',
       'Zamach powstrzyma porozumienie z Piłsudskim albo bardzo silna demokracja razem z kontrolą rządu nad wojskiem (ustawa o nadzorze, podporządkowanie wojska ministrowi, awanse lojalnych oficerów); ') +
       (democracy >= DETERRENCE.democracy && steps >= DETERRENCE.steps ? L('we are close to it.', 'jesteśmy blisko tego.') :
@@ -1370,12 +1396,14 @@
     deterred: ['The Republic enters the next chapter strong, with the army under the government’s control.', 'Republika wchodzi w następny rozdział silna, a wojsko pod kontrolą rządu.'],
     election: ['The next chapter begins with a new Sejm, and the question of a coup remains open.', 'Następny rozdział zaczyna się od nowego Sejmu, a pytanie o zamach pozostaje otwarte.'],
   });
-  function coupEnding(Q) {
-    const S = Q.S, C = S.coup, A = C.attempt, res = A && A.resolution;
+  // Z — 1.40: `opts.outbreak` — the balance of chapter I, written at the outbreak, also when it is read again after the outcome;
+  // `opts.epilogue` — the page after the outcome in chapter II, without the line of the end of the chapter.
+  function coupEnding(Q, opts) {
+    const S = Q.S, C = S.coup, A = C.attempt, res = A && A.resolution, o = opts || {};
     const pair = key => L(ENDING_RESULT[key][0], ENDING_RESULT[key][1]);
     const next = key => (ENDING_NEXT[key] ? L(ENDING_NEXT[key][0], ENDING_NEXT[key][1]) : '');
     const parts = [];
-    if (C.outcome && res) {
+    if (C.outcome && res && !o.outbreak) {
       const stance = C.stance === 'support_pils' ? 'pils' : C.stance === 'defend_legal' ? 'legal' : 'neutral';
       const resultKey = C.outcome === 'constitutional_compromise' ? C.settlement : res.long ? C.outcome + ':long' : C.outcome;
       parts.push(ENDING_RESULT[resultKey] ? pair(resultKey) : '');
@@ -1390,15 +1418,32 @@
           L('We stayed neutral.', 'Zachowaliśmy neutralność.'));
       if (adverse) parts.push(L('Our engagement harmed the side we backed.', 'Nasze zaangażowanie zaszkodziło stronie, którą poparliśmy.'));
       parts.push(next((C.outcome === 'constitutional_compromise' ? 'compromise' : C.outcome) + ':' + stance));
+    } else if (C.attempt_id !== null && C.phase !== 'dormant' && C.phase !== 'political_crisis') {
+      // Z — 1.40 (decision Z4A): the balance of chapter I comes at the outbreak, which its turning point already names; the result, our
+      // side and what follows come in chapter II. Only the line on the ministers of PPS remains.
     } else {
       const agreed = (C.log || []).some(e => e.kind === 'preparations_called_off' && e.reason === 'protective_agreement') || credibleStandDown(S, Q.time);
       const key = C.deterred_at >= 0 ? 'deterred' : agreed ? 'agreement' : 'election';
       parts.push(pair(key), next(key));
     }
-    const record = government.powerRecord ? government.powerRecord(Q) : null;
+    const record = government.powerRecord && !o.epilogue ? government.powerRecord(Q) : null;
     if (record && record.now === 'premier') parts.push(L('We end the chapter with a premier of PPS.', 'Rozdział kończymy z premierem z PPS.'));
     else if (record && record.now === 'member') parts.push(L('We end the chapter with ministers of PPS in the government.', 'Rozdział kończymy z ministrami PPS w rządzie.'));
     return parts.filter(Boolean).join(' ');
+  }
+
+  // Z — 1.40 (decision Z4A): the page after the outcome — the ending of 1.35 (the result, our side, what follows) and the achievements
+  // the coup brought.
+  const COUP_ACHIEVEMENTS = Object.freeze(['republic_defended', 'trains_stopped', 'with_pilsudski']);
+  function epilogueView(Q) {
+    const S = Q.S, top = globalThis.PolishTopbar;
+    Q.pl_ch2_ending = S.coup.outcome ? coupEnding(Q, {epilogue: true}) : '';
+    Q.pl_ch2_achievements = '';
+    if (!top || !top.checkAchievements) return;
+    top.checkAchievements(Q);
+    const earned = (S.achievements && S.achievements.earned) || {};
+    const names = top.ACHIEVEMENTS.filter(a => COUP_ACHIEVEMENTS.indexOf(a.id) >= 0 && earned[a.id] !== undefined).map(a => L('“' + a.name[0] + '”', '„' + a.name[1] + '”'));
+    if (names.length) Q.pl_ch2_achievements = '<strong>' + (names.length > 1 ? L('Achievements:', 'Osiągnięcia:') : L('Achievement:', 'Osiągnięcie:')) + '</strong> ' + names.join(', ') + '.';
   }
 
   // The note of the main screen in the month after a change.
@@ -1707,6 +1752,7 @@
     coupWarningView: coupWarningView,
     coupWarningSeen: coupWarningSeen,
     coupEnding: coupEnding,
+    epilogueView: epilogueView,
     controlSteps: controlSteps,
     coupDeterred: coupDeterred,
     railStrong: railStrong,

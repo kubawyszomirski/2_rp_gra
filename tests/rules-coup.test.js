@@ -454,6 +454,9 @@ function atGates(pressure = 70) {
 }
 function declared(pressure = 70) {
   const Q = atGates(pressure);
+  // Z — 1.40 (decision Z1 of 28 XI 2026): the three months of preparations began in XI 1925 and end with this check.
+  Q.S.coup.phase = 'political_crisis';
+  Q.S.coup.countdown = { started_at: 47, due_at: 51, trigger: 'pressure' };
   PolishSecurity.checkCoupGates(Q, 50);
   Q.time = 51; Q.month = 3;
   assert.equal(Q.S.coup.phase, 'attempt_declared');
@@ -534,6 +537,7 @@ test('Losowanie po F5: the two hidden turnouts are drawn once after F5 with the 
   const S = Q.S;
   Q.time = 50; Q.year = 1926; Q.month = 2; S.turn.last_settled_time = 49; S.coup.pressure = 70;
   S.politics.democracy = 80;
+  S.coup.phase = 'political_crisis'; S.coup.countdown = { started_at: 47, due_at: 51, trigger: 'pressure' }; // Z — 1.40
   PolishSecurity.checkCoupGates(Q, 50);
   Q.time = 51; Q.month = 3;
   const A = S.coup.attempt;
@@ -632,6 +636,7 @@ test('Wkład kontrfaktyczny: the same draws with and without PPS give one class 
     const S = Q.S;
     Q.time = 50; Q.year = 1926; Q.month = 2; S.turn.last_settled_time = 49; S.coup.pressure = 70; S.politics.democracy = 75;
     S.actors.pps.strategy.pils_influence = line;
+    S.coup.phase = 'political_crisis'; S.coup.countdown = { started_at: 47, due_at: 51, trigger: 'pressure' }; // Z — 1.40
     PolishSecurity.checkCoupGates(Q, 50);
     Q.time = 51; Q.month = 3;
     fixTurnout(Q, 0.9, 1.2);
@@ -656,20 +661,25 @@ test('Wkład kontrfaktyczny: the same draws with and without PPS give one class 
   assert.deepEqual(unconditional.S.coup.concessions_to_pps, [], 'unconditional support creates no concessions');
 });
 
-test('Kryzys i przerwa: pressure 56 is a political crisis; a protective agreement at work calls it off (next attempt at t+3); no attempt before that date even at ≥65', () => {
-  const Q = withPortfolios(atGates(56), 'reichswehr');
+// Z — 1.40 (decision Z3 of 28 XI 2026): an agreement with Piłsudski still calls the preparations off (the next start at t+3 at the
+// earliest); when the protection ends, the preparations start again and run their three months.
+test('Kryzys i przerwa (Z — 1.40: three months of preparations): a protective agreement calls the preparations off; after its end new preparations run three months', () => {
+  const Q = withPortfolios(atGates(80), 'reichswehr');
   const S = Q.S;
-  assert.equal(PolishSecurity.checkCoupGates(Q, 50), 'political_crisis', 'a warning, no attempt below 65');
+  assert.equal(PolishSecurity.checkCoupGates(Q, 50), 'political_crisis', 'the warning and three months of preparations');
   assert.match(PolishSecurity.statusLine(Q), /Political crisis/);
   free(Q); Q.time = 51; Q.month = 3;
   PolishSecurity.concessionChoose(Q, 'military_function'); // an answer in the crisis: 0 T
   assert.equal(Q.month_actions || 0, 0, 'the answer in an open crisis costs no action');
   assert.equal(PolishSecurity.checkCoupGates(Q, 51), 'dormant');
   assert.equal(S.coup.next_attempt_available_at, 55, 't + 3 from the month of the check');
+  assert.equal(S.coup.countdown, null);
   S.agreements[S.actors.pilsudski.agreement_id].open_breach = true; // fixture: the protection ends
   S.coup.pressure = 80;
-  for (const t of [52, 53]) assert.notEqual(PolishSecurity.checkCoupGates(Q, t), 'attempt_declared', `no attempt at ${t + 1}`);
-  assert.equal(PolishSecurity.checkCoupGates(Q, 54), 'attempt_declared', 'from the date of the cooldown');
+  for (const t of [52, 53]) assert.equal(PolishSecurity.checkCoupGates(Q, t), 'dormant', `no new preparations at ${t + 1}`);
+  assert.equal(PolishSecurity.checkCoupGates(Q, 54), 'political_crisis', 'from the date of the cooldown');
+  for (const t of [55, 56]) assert.equal(PolishSecurity.checkCoupGates(Q, t), 'political_crisis');
+  assert.equal(PolishSecurity.checkCoupGates(Q, 57), 'attempt_declared', 'three months later');
 });
 
 // ---- Z — 1.35 (the user's decisions of 25 XI 2026): the recalibrated coup -------------------------------------------------------
@@ -716,18 +726,20 @@ test('Słabe organizacje 1.35: only a strong union of railway workers and Akcja 
   assert.match(Q.pl_coup_story, /too small to count against the army/);
 });
 
-test('Ostrzeżenie 1.35: once, when the pressure first reaches 50; in words, with where PPS stands', () => {
+// Z — 1.40 (decision Z1): the warning comes with the start of the preparations, about three months before the coup.
+test('Ostrzeżenie 1.40: with the start of the preparations, about three months before the coup; in words, with where PPS stands', () => {
   const Q = quiet();
-  const S = Q.S;
-  S.coup.pressure = 45;
-  PolishSecurity.settleArmyMood(Q, Q.time);
-  assert.equal(PolishSecurity.coupWarningDue(Q), false, 'not below 50');
-  S.coup.pressure = 52;
-  PolishSecurity.settleArmyMood(Q, Q.time);
+  const S = Q.S, T = PolishRules.timeOf;
+  S.coup.pressure = 60;
+  PolishSecurity.checkCoupGates(Q, T(1926, 3));
+  assert.equal(PolishSecurity.coupWarningDue(Q), false, 'no warning without preparations');
+  S.cabinet.configuration_id = 'chjeno_piast';
+  PolishSecurity.checkCoupGates(Q, T(1926, 4));
   assert.equal(PolishSecurity.coupWarningDue(Q), true);
   PolishRules.setLanguage('pl');
   try {
     PolishSecurity.coupWarningView(Q);
+    assert.match(Q.pl_cw_push, /^Oficerowie wierni Piłsudskiemu szykują się, by w ciągu kilku miesięcy uderzyć; popycha ich to, że do władzy wróciła prawica/);
     assert.match(Q.pl_cw_stop, /^Zamach powstrzyma porozumienie z Piłsudskim albo bardzo silna demokracja .*; dziś jesteśmy od tego daleko\.$/);
     assert.match(Q.pl_cw_fight, /bez nas najpewniej wygra Piłsudski, .*: nasz związek kolejarzy jest jeszcze za słaby, a nasza Milicja nie jest jeszcze Akcją Socjalistyczną\.$/);
     // Z — 1.38: one sentence each.
@@ -738,9 +750,8 @@ test('Ostrzeżenie 1.35: once, when the pressure first reaches 50; in words, wit
   }
   PolishSecurity.coupWarningSeen(Q);
   assert.equal(PolishSecurity.coupWarningDue(Q), false);
-  S.coup.pressure = 30; PolishSecurity.settleArmyMood(Q, Q.time + 1);
-  S.coup.pressure = 60; PolishSecurity.settleArmyMood(Q, Q.time + 2);
-  assert.equal(PolishSecurity.coupWarningDue(Q), false, 'only once in the chapter');
+  PolishSecurity.checkCoupGates(Q, T(1926, 5));
+  assert.equal(PolishSecurity.coupWarningDue(Q), false, 'once for the preparations');
 });
 
 test('Zakończenie 1.35: first the result, then our side, then what follows', () => {

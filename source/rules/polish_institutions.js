@@ -803,10 +803,11 @@
       latest.status === 'certified' && latest.total_seats === SEJM_SEATS);
   }
 
-  // The coup domain arrives in stage 7; until then there is no coup endpoint.
+  // Z — 1.40 (decision Z4A of 28 XI 2026): the chapter ends when the coup breaks out (its declaration); the coup itself opens chapter II
+  // and runs after the balance. A game saved after a resolved coup of an earlier version ends as before.
   function coupEndpoint(S) {
     const coup = S.coup;
-    return !!(coup && coup.attempt_id != null && coup.phase === 'resolved' && coup.outcome != null && coup.effects_complete);
+    return !!(coup && coup.attempt_id != null && coup.phase !== 'dormant' && coup.phase !== 'political_crisis');
   }
 
   function chapterEnds(Q) {
@@ -1016,6 +1017,8 @@
   // sequence or an immediate succession), then elections and offices (category 3), then the other events.
   function route(Q) {
     if (Q.polish_save_incompatible || !Q.S) return 'incompatible';
+    // Z — 1.40: a coup declared at the settlement ends the chapter before the next page.
+    if (Q.S.chapter.status !== 'ended' && coupEndpoint(Q.S)) endChapterIfDue(Q);
     if (Q.S.chapter.status === 'ended') return 'report';
     if (Q.sejm_election_in_progress) return 'sejm';
     if (Q.polish_presidential_in_progress) return 'presidency';

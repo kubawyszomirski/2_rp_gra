@@ -190,6 +190,8 @@
     return proj && proj.ppsReforms ? proj.ppsReforms(S).map(r => r.key) : [];
   };
   const coupOf = S => S.coup || {};
+  // Z — 1.40: the chapter ends at the outbreak, before the outcome; a declared coup is no chapter without a coup.
+  const coupDeclared = S => { const C = coupOf(S); return C.attempt_id !== null && C.attempt_id !== undefined && C.phase !== 'dormant' && C.phase !== 'political_crisis'; };
   const ppsInCabinet = S => !!S.cabinet && S.cabinet.status === 'active' && S.cabinet.pps_mode === 'member';
   const ppsSeats = S => ((S.parliament && S.parliament.clubs) || []).filter(c => c.id === 'pps').reduce((n, c) => n + c.seats, 0);
   const ACHIEVEMENTS = Object.freeze([
@@ -218,9 +220,9 @@
     {id: 'with_pilsudski', name: ['With Piłsudski', 'Z Piłsudskim'], desc: ['We backed Piłsudski, and he won.', 'Poparliśmy Piłsudskiego, a on wygrał.'],
       test: (Q, S) => coupOf(S).stance === 'support_pils' && coupOf(S).outcome === 'pils_victory'},
     {id: 'no_coup', name: ['No coup', 'Bez zamachu'], desc: ['The chapter ended with an election, without a coup.', 'Rozdział skończył się wyborami, bez zamachu.'], end: true,
-      test: (Q, S) => !coupOf(S).outcome},
+      test: (Q, S) => !coupOf(S).outcome && !coupDeclared(S)},
     {id: 'deterred', name: ['Piłsudski did not dare', 'Piłsudski się nie odważył'], desc: ['Democracy and the government’s control of the army held a coup back.', 'Demokracja i kontrola rządu nad wojskiem powstrzymały zamach.'], end: true,
-      test: (Q, S) => !coupOf(S).outcome && typeof coupOf(S).deterred_at === 'number'},
+      test: (Q, S) => !coupOf(S).outcome && !coupDeclared(S) && typeof coupOf(S).deterred_at === 'number'},
     {id: 'character', name: ['The character of the party', 'Charakter partii'], desc: ['The party has adopted two characteristics.', 'Partia przyjęła dwie charakterystyki.'],
       test: (Q, S) => ((S.actors.pps.profile || {}).adopted || []).length >= 2},
     {id: 'credible', name: ['A credible party', 'Wiarygodna partia'], desc: ['We end the chapter with high credibility.', 'Rozdział kończymy z wysoką wiarygodnością.'], end: true,
@@ -346,13 +348,22 @@
         power.support ? L('PPS supported cabinets from outside', 'PPS wspierała rządy z zewnątrz') : L('PPS stayed in opposition', 'PPS pozostała w opozycji');
     }
     // The verdict of the Republic for the balance: the outcome of a coup, or no coup when the election closed the chapter.
-    if (C && C.outcome && REPUBLIC_END[C.outcome]) {
+    const outbreakReport = !!(S.chapter && S.chapter.report && S.chapter.report.state && S.chapter.report.state.turning_point &&
+      S.chapter.report.state.turning_point.type === 'coup' && !S.chapter.report.state.turning_point.outcome);
+    if (C && C.outcome && REPUBLIC_END[C.outcome] && !outbreakReport) {
       Q.pl_verdict_republic = L(REPUBLIC_END[C.outcome][0], REPUBLIC_END[C.outcome][1]) + (C.pps_contribution === 'decisive' ?
         L(', and PPS tipped the balance', ', a przesądziła PPS') : C.pps_contribution === 'adverse' ? L(', and PPS harmed the side it backed', ', a PPS zaszkodziła stronie, którą poparła') : '');
+    } else if (coupDeclared(S)) {
+      Q.pl_verdict_republic = L('facing a coup', 'w obliczu zamachu');
     } else Q.pl_verdict_republic = S.chapter && S.chapter.status === 'ended' ? L('no coup: the election closed the chapter', 'bez zamachu: rozdział zakończyły wybory') : Q.pl_goal_republic;
     // Z — 1.35 (decision D6A): the ending of the chapter — the result, our side and what follows.
     const security = globalThis.PolishSecurity;
-    Q.pl_report_ending = S.chapter && S.chapter.status === 'ended' && security && security.coupEnding ? security.coupEnding(Q) : '';
+    // Z — 1.40 (decision Z4A): a balance written at the outbreak of the coup keeps describing the outbreak, also when it is read
+    // again after the outcome of chapter II.
+    const report = S.chapter && S.chapter.status === 'ended' ? S.chapter.report : null;
+    const point = report && report.state ? report.state.turning_point : null;
+    const outbreak = !!(point && point.type === 'coup' && !point.outcome);
+    Q.pl_report_ending = report && security && security.coupEnding ? security.coupEnding(Q, {outbreak: outbreak}) : '';
     Q.pl_report_achievements = S.chapter && S.chapter.status === 'ended' ? achievementsReport(Q) : '';
     Q.pl_record_reforms = reforms.length ? reformsList(reforms) : '';
     Q.pl_record_count = reforms.length;

@@ -116,8 +116,10 @@ go-to: polish_event_coup
 @f10
 new-page: true
 on-arrival: {!
-// 19.1: the resolved attempt ends the chapter; the report is recorded once.
+// Z — 1.40 (decision Z4A of 28 XI 2026): the chapter ended at the outbreak; the outcome belongs to chapter II. A game of an earlier
+// version, whose chapter had not ended yet, ends it here as before.
 PolishInstitutions.endChapterIfDue(Q);
+PolishSecurity.epilogueView(Q);
 !}
 
 = The coup d’état: how it ended
@@ -128,4 +130,20 @@ PolishInstitutions.endChapterIfDue(Q);
 
 [+ pl_coup_effects +]
 
-- @polish_chapter_report: Continue to the report of the chapter.
+- @epilogue: What follows.
+
+@epilogue
+new-page: true
+on-arrival: {!
+PolishSecurity.epilogueView(Q);
+!}
+
+= What follows
+
+[+ pl_ch2_ending +]
+
+[? if pl_ch2_achievements : [+ pl_ch2_achievements +] ?]
+
+The second chapter, the Republic after the coup, is in preparation. You can read the balance of the first chapter again, look at the state of the country and the Library, or save the game; reload the page to start a new game.
+
+- @polish_chapter_report: Read the balance of the first chapter.

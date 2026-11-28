@@ -4,7 +4,8 @@ new-page: true
 tags: pl_event
 view-if: {! return !!Q.S && typeof PolishSecurity !== 'undefined' && PolishSecurity.coupWarningDue(Q) !}
 on-arrival: {!
-// Event coup.warning (Z — 1.35, decision D5 of 25 XI 2026): once, when the pressure towards a coup first reaches 50. It explains in
+// Event coup.warning (Z — 1.35, decision D5 of 25 XI 2026; Z — 1.40, decision Z1: with the start of the preparations, about three months
+// before the coup). It explains in
 // words, without numbers or chances, what pushes the officers, what can still stop a coup and what would decide the fighting.
 PolishSecurity.coupWarningView(Q);
 !}

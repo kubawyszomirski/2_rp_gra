@@ -128,12 +128,18 @@ function toCoup({ democracy = null, turnout = null } = {}) {
   assert.equal(engine.state.sceneId, 'main');
   Q.year = 1926; Q.month = 2; Q.time = 50; S.turn.last_settled_time = 49;
   S.coup.pressure = 70;
+  // Z — 1.40 (decision Z1 of 28 XI 2026): the three months of preparations began in XI 1925 and end with this settlement.
+  S.coup.phase = 'political_crisis';
+  S.coup.countdown = { started_at: 47, due_at: 51, trigger: 'pressure' };
   if (democracy !== null) S.politics.democracy = democracy;
   engine.goToScene('main');
   dendry.playCard(engine, 'polish_party_agenda');
   choose(engine, 'polish_party_agenda.organize_unions');
   choose(engine, 'root');
-  assert.equal(engine.state.sceneId, 'polish_event_coup.f3', 'the queue brings the declared attempt at once (category 2)');
+  // Z — 1.40 (decision Z4A): the chapter ends at the outbreak; the balance leads to chapter II, which opens with the coup.
+  assert.equal(engine.state.sceneId, 'polish_chapter_report', 'the balance of chapter I comes at the outbreak');
+  choose(engine, 'polish_chapter_report.chapter2');
+  assert.equal(engine.state.sceneId, 'polish_event_coup.f3', 'chapter II opens with the coup');
   // Z — 1.35: the turnout of each side lies between 0.70 and 1.30.
   if (turnout) ['pils', 'legal'].forEach((side, i) => { S.rng.rolls[`coup_${S.coup.attempt_id}:${side}:turnout`] = (turnout[i] - 0.7) / 0.6; });
   return engine;
@@ -201,10 +207,13 @@ test('Brak zwycięzcy (Z — 1.35: long fighting): a close fight at democracy 30
   assert.match(JSON.stringify(engine.ui.paragraphs), /after weeks of fighting the rebels took the capital/);
   assert.deepEqual([S.chapter.status, S.chapter.reason, S.chapter.trigger_id], ['ended', 'coup', S.coup.attempt_id]);
   const report = S.chapter.report;
-  assert.equal(report.state.turning_point.outcome, 'pils_victory');
-  assert.ok(report.state.turning_point.effects.forces.every(f => f.id === 'army'), 'the losses of the army');
-  assert.deepEqual(report.continuation_requirements, ['long_fighting: weeks of fighting, greater destruction and more victims']);
+  // Z — 1.40 (decision Z4A): the balance of chapter I was written at the outbreak; the outcome and its losses belong to chapter II.
+  assert.equal(report.state.turning_point.outcome, null);
+  assert.ok(S.coup.attempt.effects.forces.every(f => f.id === 'army'), 'the losses of the army');
+  assert.deepEqual(S.coup.attempt.continuation_requirements, ['long_fighting: weeks of fighting, greater destruction and more victims']);
   assert.equal(report.state.last_election.sequence_after_opening, 1, 'the Sejm of 1922 stays in the report');
+  choose(engine, 'polish_event_coup.epilogue');
+  assert.match(JSON.stringify(engine.ui.paragraphs), /Piłsudski took power after weeks of fighting|After weeks of fighting Piłsudski took power/);
   choose(engine, 'polish_chapter_report');
   // Stage 8: after a coup the Sejm still sits; the report names its Marshal. Z — 0.80: no "Beyond this chapter" (immersion, 4A of 20 X 2026).
   assert.deepEqual([engine.state.qualities.pl_report_speaker_label, engine.state.qualities.pl_report_speaker],
@@ -440,7 +449,8 @@ test('Kampania od stycznia 1922 do raportu: two walks of the whole chapter end i
     const Q = engine.state.qualities, S = Q.S;
     assert.equal(S.chapter.status, 'ended', `walk ${variant}`);
     assert.ok(['coup', 'next_legal_election'].includes(S.chapter.reason));
-    assert.equal(engine.state.sceneId, 'polish_chapter_report');
+    // Z — 1.40 (decision Z4A): after a coup the walk may also stop in chapter II, at the outcome or at what follows.
+    assert.ok(['polish_chapter_report', 'polish_event_coup.f10', 'polish_event_coup.epilogue'].includes(engine.state.sceneId), engine.state.sceneId);
     assert.ok(S.chapter.report.state.society && S.chapter.report.state.politics && S.chapter.report.state.security && S.chapter.report.state.unfinished);
     assert.deepEqual(PolishRules.validateState(S), []);
   }

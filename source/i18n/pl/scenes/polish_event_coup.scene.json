@@ -22,8 +22,11 @@
     "title: Call the Milicja": "title: Wezwij Milicję",
     "subtitle: One task: to fight on the side we support, or, if we stay neutral, to protect our own people.": "subtitle: Koszt: 0 jednostek środków. Jedno zadanie: walczyć po stronie, którą popieramy, albo — jeśli zachowujemy neutralność — chronić naszych ludzi.",
     "title: Call both the railway workers and the Milicja": "title: Wezwij i kolejarzy, i Milicję",
-    "- @polish_chapter_report: Continue to the report of the chapter.": "- @polish_chapter_report: Przejdź do raportu z rozdziału.",
     "= The coup d’état: how it ended": "= Zamach stanu: rozstrzygnięcie",
-    "[+ pl_coup_militia_forecast +] [+ pl_coup_rail_forecast +] A strike of the railway workers holds back the trains with troops of the side we oppose; the Milicja fights on the side we support, or protects our own people if we stay neutral. A declaration alone, without calling the railway workers or the Milicja, does not change the course of the fighting.": "[+ pl_coup_militia_forecast +] [+ pl_coup_rail_forecast +] Strajk kolejarzy zatrzymuje pociągi z wojskiem strony, przeciw której występujemy; Milicja walczy po stronie, którą popieramy, a jeśli zostajemy neutralni, chroni naszych ludzi. Sama deklaracja, bez wezwania kolejarzy albo Milicji, nie zmienia przebiegu walk."
+    "[+ pl_coup_militia_forecast +] [+ pl_coup_rail_forecast +] A strike of the railway workers holds back the trains with troops of the side we oppose; the Milicja fights on the side we support, or protects our own people if we stay neutral. A declaration alone, without calling the railway workers or the Milicja, does not change the course of the fighting.": "[+ pl_coup_militia_forecast +] [+ pl_coup_rail_forecast +] Strajk kolejarzy zatrzymuje pociągi z wojskiem strony, przeciw której występujemy; Milicja walczy po stronie, którą popieramy, a jeśli zostajemy neutralni, chroni naszych ludzi. Sama deklaracja, bez wezwania kolejarzy albo Milicji, nie zmienia przebiegu walk.",
+    "- @epilogue: What follows.": "- @epilogue: Co dalej.",
+    "= What follows": "= Co dalej",
+    "The second chapter, the Republic after the coup, is in preparation. You can read the balance of the first chapter again, look at the state of the country and the Library, or save the game; reload the page to start a new game.": "Drugi rozdział, Rzeczpospolita po zamachu, jest w przygotowaniu. Możesz jeszcze raz przeczytać bilans pierwszego rozdziału, przejrzeć stan kraju i Bibliotekę albo zapisać grę; nową grę zaczniesz po przeładowaniu strony.",
+    "- @polish_chapter_report: Read the balance of the first chapter.": "- @polish_chapter_report: Przeczytaj bilans pierwszego rozdziału."
   }
 }

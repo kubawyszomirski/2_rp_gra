@@ -480,7 +480,7 @@ function playMonth(engine, strat, used) {
 // ---- A whole campaign.
 // Options: setup(engine) changes the new game before the first month (a calibration fixture); stopWhen(Q) ends the
 // run early, e.g. after the election of 1922; lang 'pl' plays the Polish version of the game.
-function runCampaign(strategyId, seed, { maxSteps = 30000, monthSteps = 400, setup = null, stopWhen = null, onMonth = null, lang = 'en' } = {}) {
+function runCampaign(strategyId, seed, { maxSteps = 30000, monthSteps = 400, setup = null, stopWhen = null, onMonth = null, lang = 'en', chapterTwo = true } = {}) {
   const strat = STRATEGIES[strategyId];
   if (!strat) throw new Error('unknown strategy ' + strategyId);
   const engine = dendry.startGame(seed, lang);
@@ -518,6 +518,15 @@ function runCampaign(strategyId, seed, { maxSteps = 30000, monthSteps = 400, set
   // The chapter ends on the last page of its sequence (F10+F11 or the election result); the report follows.
   for (let n = 0; n < 5 && S.chapter.status === 'ended' && engine.state.sceneId !== 'polish_chapter_report'; n++) {
     if (!pick(engine, 'polish_chapter_report') && !pick(engine, 'sejm_election.chapter_end')) break;
+  }
+  // Z — 1.40 (decision Z4A of 28 XI 2026): the chapter ends at the outbreak of the coup; the coup opens chapter II after the balance.
+  // The strategy answers it, reads the page of what follows and returns to the balance.
+  if (chapterTwo && S.chapter.status === 'ended' && S.chapter.reason === 'coup' && pick(engine, 'polish_chapter_report.chapter2')) {
+    for (let n = 0; n < 40 && engine.state.sceneId !== 'polish_event_coup.epilogue'; n++) {
+      if (engine.state.sceneId === 'polish_event_coup.f10' && pick(engine, 'polish_event_coup.epilogue')) break;
+      if (!answer(engine, strat)) break;
+    }
+    pick(engine, 'polish_chapter_report');
   }
   snapshot();
   return { strategy: strategyId, label: strat.label, seed, engine, months, actions, stuck, steps };

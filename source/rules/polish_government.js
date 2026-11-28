@@ -655,7 +655,8 @@
     moraczewski: {name: 'Jędrzej Moraczewski', party: 'pps', faction: 'pilsudczycy', windows: []},
     czapinski: {name: 'Kazimierz Czapiński', party: 'pps', faction: 'lewica', windows: []},
     thugutt: {name: 'Stanisław Thugutt', party: 'psl_wyzwolenie', windows: []},
-    witos: {name: 'Wincenty Witos', party: 'psl_piast', windows: [[1923, 5, 1923, 12], [1926, 5, 1926, 5]]},
+    // Z — 1.40 (decision Z2A of 28 XI 2026): the return of Witos from the beginning of 1926 (historically 10 V 1926).
+    witos: {name: 'Wincenty Witos', party: 'psl_piast', windows: [[1923, 5, 1923, 12], [1926, 1, 1926, 6]]},
     // Z — 0.71: Ponikowski stands until his resignation of VI 1922, not in the crisis that follows it.
     ponikowski: {name: 'Antoni Ponikowski', party: null, windows: [[1922, 1, 1922, 5]], programme: {fiscal: 0}},
     // Stage 7c (8.7, 17.16.3; H: the attempt of VI–VII 1922 in PL-1922-1926-CABINETS): the Naczelnik's candidate after

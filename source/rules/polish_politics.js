@@ -59,7 +59,7 @@
   // competing compromise, evaluated once while Witos has his window (V–XII 1923).
   const SCENARIO_INPUTS = Object.freeze({profile_id: 'normal_chapter1_v1', dispute_1922: T(1922, 6), military_case: T(1923, 7),
     military_escalation: T(1925, 11), niewiadomski_cult: T(1923, 2), chjeno_piast_1923: T(1923, 5), chjeno_piast_1923_end: T(1923, 12),
-    piast_split_1923: T(1923, 12), grabski_resignation_1925: T(1925, 11)});
+    piast_split_1923: T(1923, 12), cabinet_fall_1926: T(1926, 1), grabski_resignation_1925: T(1925, 11)});
   // 17.16.8 (P, stage 8; the M02 runs): the synthetic departure of test MPs of Piast from a cabinet with the right. Z — 0.71
   // (the user's decision B of 7 X 2026): eleven instead of ten, because the fall of Chjeno-Piast rested on one seat (222 of 444
   // left) and the stances of 0.71 moved one seat of the Christian Democrats in the election of 1922.
@@ -995,10 +995,35 @@
     return episode;
   }
 
+  // Z — 1.40 (decision Z2A of 28 XI 2026): at the beginning of 1926 the cabinet falls and the right returns (Witos has his window from
+  // I 1926), unless PPS keeps the cabinet alive — in it or tolerating it from outside. A cabinet of Chjeno-Piast is left as it is.
+  // Historically the cabinet of Skrzyński fell on 5 V 1926 and Witos formed his third cabinet on 10 V 1926 (a game device: earlier).
+  function scanCabinetFall1926(Q) {
+    const S = Q.S, P = S.politics, cabinet = S.cabinet;
+    if (!inputOn(S, 'cabinet_fall_1926') || Q.time < SCENARIO_INPUTS.cabinet_fall_1926) return null;
+    if (P.episodes.some(e => e.id === 'cabinet_fall_1926')) return null;
+    if (!cabinet || cabinet.status !== 'active' || S.cabinet_crisis) return null;
+    const episode = {id: 'cabinet_fall_1926', kind: 'cabinet_resignation', t: Q.time, cabinet_id: cabinet.id, profile_id: SCENARIO_INPUTS.profile_id};
+    P.episodes.push(episode);
+    const stance = government.ppsStance(S);
+    if (cabinet.configuration_id === 'chjeno_piast' || stance === 'member' || stance === 'supporter') {
+      episode.kind = 'cabinet_kept';
+      episode.reason = cabinet.configuration_id === 'chjeno_piast' ? 'right_in_power' : 'pps_' + stance;
+      return episode;
+    }
+    S.history.reasons.push({t: Q.time, kind: 'scenario_resignation', episode_id: episode.id, cabinet_id: cabinet.id, cause: 'without_pps'});
+    government.cabinetFalls(Q, 'resignation');
+    government.writeGovernmentMirrors(Q);
+    return episode;
+  }
+
   // The line of the formation card that names the cause of a crisis opened by a dated input (stage 8, A1).
   function crisisNote(Q) {
     const S = Q.S, crisis = S && S.cabinet_crisis;
     if (!crisis || !S.politics) return '';
+    const fall1926 = S.politics.episodes.filter(e => e.id === 'cabinet_fall_1926' && e.kind === 'cabinet_resignation' && e.cabinet_id === crisis.fallen_cabinet_id)[0];
+    if (fall1926) return L('Without the support of PPS the cabinet has lost its majority and resigned; the right and PSL “Piast” are ready to govern again.',
+      'Bez poparcia PPS gabinet stracił większość i podał się do dymisji; prawica i PSL „Piast” są gotowe znów rządzić.');
     const episode = S.politics.episodes.filter(e => e.id === 'grabski_resignation_1925' && e.cabinet_id === crisis.fallen_cabinet_id)[0];
     return episode ? L('Władysław Grabski has resigned: the ' + (episode.cause === 'currency_crisis' ? 'currency' : 'credit') +
       ' crisis of autumn 1925 has broken his stabilisation.', 'Władysław Grabski podał się do dymisji: jesienny kryzys ' +
@@ -1428,6 +1453,7 @@
       settleConcordat(Q, t);
       scanDispute(Q);
       scanGrabskiResignation(Q);
+      scanCabinetFall1926(Q);
       scanCompeting(Q);
       scanPiastSplit(Q);
       scanSpeeches(Q);
@@ -1720,6 +1746,7 @@
     authority: authority,
     openCase: openCase,
     scanGrabskiResignation: scanGrabskiResignation,
+    scanCabinetFall1926: scanCabinetFall1926,
     crisisNote: crisisNote,
     closeCase: closeCase,
     activeInstitutionalEmergency: activeInstitutionalEmergency,
